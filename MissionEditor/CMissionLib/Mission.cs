@@ -449,7 +449,6 @@ namespace CMissionLib
 
 		public void CreateArchive(string mutatorPath)
 		{
-			throw new Exception("Test");
 #if DEBUG
 			File.WriteAllText("startscript.txt", GetScript());
 			File.WriteAllText("modinfo.txt", GetModInfo());

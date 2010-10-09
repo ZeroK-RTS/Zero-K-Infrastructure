@@ -11,6 +11,7 @@ using System.Windows.Shapes;
 using CMissionLib;
 using CMissionLib.Actions;
 using CMissionLib.Conditions;
+using CMissionLib.UnitSyncLib;
 using Action = CMissionLib.Action;
 
 namespace MissionEditor2
@@ -38,27 +39,28 @@ namespace MissionEditor2
 		{
 			var dataGrid = ((UnitDefsGrid)e.Source).Grid;
 			var currentLogic = MainWindow.Instance.CurrentLogic;
-			ObservableCollection<string> units = null;
+
+			ObservableCollection<string> logicItemUnitList = null;
 			if (currentLogic is UnitCreatedCondition)
 			{
-				units = ((UnitCreatedCondition)currentLogic).Units;
+				logicItemUnitList = ((UnitCreatedCondition)currentLogic).Units;
 			}
 			else if (currentLogic is UnitFinishedCondition)
 			{
-				units = ((UnitFinishedCondition)currentLogic).Units;
+				logicItemUnitList = ((UnitFinishedCondition)currentLogic).Units;
 			}
 			else if (currentLogic is LockUnitsAction)
 			{
-				units = ((LockUnitsAction)currentLogic).Units;
+				logicItemUnitList = ((LockUnitsAction)currentLogic).Units;
 			}
 			else if (currentLogic is UnlockUnitsAction)
 			{
-				units = ((UnlockUnitsAction)currentLogic).Units;
+				logicItemUnitList = ((UnlockUnitsAction)currentLogic).Units;
 			}
 
-			if (units == null) return;
+			if (logicItemUnitList == null) return;
 
-			foreach (var unit in units.ToArray())
+			foreach (var unit in logicItemUnitList.ToArray())
 			{
 				var unitInfo = MainWindow.Instance.Mission.Mod.UnitDefs.FirstOrDefault(u => u.Name == unit);
 				if (unitInfo != null)
@@ -66,15 +68,18 @@ namespace MissionEditor2
 					dataGrid.SelectedItems.Add(unitInfo);
 				}
 			}
+
 			SelectionChangedEventHandler handler = (s, se) =>
 				{
 					foreach (var item in se.AddedItems)
 					{
-						units.Add(item.ToString());
+						var info = (UnitInfo) item;
+						logicItemUnitList.Add(info.Name);
 					}
 					foreach (var item in se.RemovedItems)
 					{
-						units.Remove(item.ToString());
+						var info = (UnitInfo)item;
+						logicItemUnitList.Remove(info.Name);
 					}
 				};
 			dataGrid.SelectionChanged += handler;
