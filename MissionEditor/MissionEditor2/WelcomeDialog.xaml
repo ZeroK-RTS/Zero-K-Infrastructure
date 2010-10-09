@@ -1,0 +1,39 @@
+﻿<Window x:Class="MissionEditor2.WelcomeDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Spring Mission Editor" SizeToContent="WidthAndHeight"
+    WindowStyle="ToolWindow" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded">
+  <Window.Resources>
+    <Style TargetType="GroupBox">
+      <Setter Property="Margin" Value="2"></Setter>
+      <Setter Property="Padding" Value="2"></Setter>
+    </Style>
+  </Window.Resources>
+  <StackPanel>
+    <StackPanel.Resources>
+      <Style TargetType="Button">
+        <Setter Property="Margin" Value="2"></Setter>
+        <Setter Property="Padding" Value="2"></Setter>
+      </Style>
+    </StackPanel.Resources>
+    <Button Name="NewMissionButton" x:FieldModifier="public" IsDefault="True" Click="NewMissionButton_Click">New Mission</Button>
+    <Button Name="LoadMissionButton" x:FieldModifier="public" Click="LoadMissionButton_Click">Load Mission</Button>
+    <Button Name="ContinueMissionButton" x:FieldModifier="public" Click="ContinueMissionButton_Click">Continue Mission</Button>
+    <GroupBox Header="Spring.exe Path" SnapsToDevicePixels="True">
+      <DockPanel>
+        <Button Name="springExeButton" x:FieldModifier="public" DockPanel.Dock="Right" Click="springExeButton_Click">Browse</Button>
+        <TextBox Name="springExeBox" VerticalContentAlignment="Center" x:FieldModifier="public">C:\Program Files\Spring\spring.exe</TextBox>
+      </DockPanel>
+    </GroupBox>
+    <GroupBox Header="Map Detail">
+      <DockPanel>
+        <Label>High</Label>
+        <Label DockPanel.Dock="Right">Low</Label>
+      <Slider Name="mapDetailSlider" IsSnapToTickEnabled="True"  Minimum="0" x:FieldModifier="public" Maximum="3" Interval="1" TickFrequency="1" TickPlacement="BottomRight" Value="2" />
+        </DockPanel>
+    </GroupBox>
+    <Grid>
+      <TextBlock HorizontalAlignment="Center" Name="LinkBox" x:FieldModifier="public" Visibility="Collapsed">
+          <Hyperlink Click="Hyperlink_Click">New version available!</Hyperlink>
+      </TextBlock>
+    </Grid>
+  </StackPanel>
+</Window>

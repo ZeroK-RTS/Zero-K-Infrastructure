@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="MissionEditor2.UnitIcon" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:MissionEditor2">
+  <UserControl.Resources>
+    <Style x:Key="borderStyle" TargetType="Border">
+      <Setter Property="Border.CornerRadius" Value="1" />
+      <Setter Property="Border.BorderBrush" Value="Black" />
+      <Setter Property="Border.BorderThickness" Value="1" />
+      <Setter Property="Border.Margin" Value="1" />
+      <Setter Property="Border.BorderBrush" Value="{Binding Player.ColorBrush, FallbackValue=Black}" />
+    </Style>
+    <local:CsvConverter x:Key="csvConverter" />
+    <local:OpposedConverter x:Key="opposedConverter" />
+  </UserControl.Resources>
+  <UserControl.RenderTransform>
+    <RotateTransform Angle="{Binding Heading}" CenterX="8" CenterY="8" />
+  </UserControl.RenderTransform>
+  <UserControl.ContextMenu>
+    <ContextMenu>
+      <MenuItem Header="Delete" Click="DeleteItem_Click" />
+      <MenuItem Header="Edit Groups" Click="SetGroupsItem_Click" />
+    </ContextMenu>
+  </UserControl.ContextMenu>
+  <Grid>
+    <Image Source="{Binding UnitDef.BuildPic}" Width="15" Height="15" Cursor="SizeAll"/>
+    <Thumb Name="dragThumb">
+      <Thumb.Template>
+        <ControlTemplate>
+          <Border Name="unitBorder" Width="16" Height="16" Style="{StaticResource borderStyle}" Cursor="SizeAll" />
+        </ControlTemplate>
+      </Thumb.Template>
+    </Thumb>
+    <Thumb Name="rotateThumb" DragDelta="onRotateDelta" Width="16" VerticalAlignment="Top" Height="2">
+      <Thumb.Template>
+        <ControlTemplate>
+          <Grid Cursor="ScrollWE">
+            <Path Margin="1,0,1,0" VerticalAlignment="Top" Fill="{Binding Player.ColorBrush, FallbackValue=Black}"
+                Stretch="Fill" Data="M1.5,1.9 L8.25,0 15,1.9" />
+            <Rectangle Margin="2,1.05,2,0" VerticalAlignment="Top" Height="0.95" Fill="{Binding Player.ColorBrush, FallbackValue=Black}" />
+          </Grid>
+        </ControlTemplate>
+      </Thumb.Template>
+    </Thumb>
+    <TextBlock Text="{Binding Groups, Converter={StaticResource csvConverter}}" Foreground="White" HorizontalAlignment="Center"
+        VerticalAlignment="Bottom" FontSize="4">
+      <TextBlock.RenderTransform>
+        <TransformGroup>
+        <TranslateTransform Y="10" />
+        <RotateTransform Angle="{Binding Heading, Converter={StaticResource opposedConverter}}" CenterX="8" CenterY="8" />
+        </TransformGroup>
+      </TextBlock.RenderTransform>
+      <TextBlock.BitmapEffect>
+        <OuterGlowBitmapEffect GlowColor="Black" GlowSize="3" />
+      </TextBlock.BitmapEffect>
+    </TextBlock>
+  </Grid>
+</UserControl>

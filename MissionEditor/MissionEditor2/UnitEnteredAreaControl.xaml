@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="MissionEditor2.UnitEnteredAreaControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock" xmlns:local="clr-namespace:MissionEditor2" mc:Ignorable="d" 
+             d:DesignHeight="653" d:DesignWidth="961" Loaded="UserControl_Loaded" PreviewMouseMove="UserControl_PreviewMouseMove">
+    <UserControl.Resources>
+        <local:ZoomConverter x:Key="log10Converter" />
+    </UserControl.Resources>
+	<ad:DockingManager>
+		<ad:ResizingPanel Orientation="Horizontal">
+			<ad:DockablePane>
+				<ad:DockableContent Title="Settings">
+					<StackPanel>
+						<Label>Groups</Label>
+						<ListBox x:Name="groupsList" ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" />
+						<Label>Players</Label>
+						<ListBox x:Name="alliancesList" ItemsSource="{Binding Mission.Players, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" />
+						<DockPanel>
+							<Label>Minimum units</Label>
+							<TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+						</DockPanel>
+                        <DataGrid AutoGenerateColumns="True" ItemsSource="{Binding Children, ElementName=canvas}">
+                            
+                        </DataGrid>
+						<GroupBox Header="Help">
+							<TextBlock TextWrapping="WrapWithOverflow">
+								This condition is met when a unit enters the drawn area.
+								<LineBreak />
+								It will be triggered repeatedly while the unit is in the area. Set the trigger counter to one if this is not desirable.
+								<LineBreak />
+								Right-click on the trigger to do so.
+								<LineBreak />
+								Note: You can add units to groups by editing the group column of the unit list in the Create Units display, or right-clicking on unit icons.
+								<LineBreak />
+								Separate multiple groups with commas and no spaces.
+							</TextBlock>
+						</GroupBox>
+					</StackPanel>
+				</ad:DockableContent>
+			</ad:DockablePane>
+			<DockPanel>
+				<ToolBarTray DockPanel.Dock="Top">
+                    <ToolBar x:Name="toolbar">
+                        <ToggleButton x:Name="circleButton" Click="button_Click">Circle</ToggleButton>
+                        <ToggleButton x:Name="rectangleButton" Click="button_Click">Rectangle</ToggleButton>
+                        <ToggleButton x:Name="deleteButton" Click="button_Click">Delete</ToggleButton>
+                    </ToolBar>
+                </ToolBarTray>
+				<ScrollViewer HorizontalScrollBarVisibility="Auto">
+					<Grid>
+						<Canvas x:Name="canvas" DataContext="{Binding Mission.Map.Texture, ElementName=window}" MinHeight="{Binding Height}"
+						        MinWidth="{Binding Width}" MouseDown="canvas_MouseDown" PreviewMouseUp="canvas_PreviewMouseUp" >
+							<Canvas.LayoutTransform>
+								<ScaleTransform ScaleX="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}"
+								                ScaleY="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}" />
+							</Canvas.LayoutTransform>
+							<Canvas.Background>
+								<ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding}" />
+							</Canvas.Background>
+						</Canvas>
+					</Grid>
+				</ScrollViewer>
+			</DockPanel>
+		</ad:ResizingPanel>
+	</ad:DockingManager>
+
+</UserControl>

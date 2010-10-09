@@ -1,0 +1,21 @@
+﻿<Window x:Class="MissionEditor2.ListSelectionDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="ListSelectionDialog" Height="300" Width="300" WindowStyle="ToolWindow" Loaded="Window_Loaded">
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Bottom">
+            <UniformGrid HorizontalAlignment="Right"  Rows="1" Columns="2" DockPanel.Dock="Right">
+                <Button IsDefault="True" Name="OKButton" x:FieldModifier="public" Click="OKButton_Click">OK</Button>
+                <Button Name="CancelButton" IsCancel="True" x:FieldModifier="public">Cancel</Button>
+            </UniformGrid>
+            <ProgressBar Name="ProgressBar" x:FieldModifier="public" IsIndeterminate="True" Visibility="Hidden"/>
+        </DockPanel>
+        <ListBox Name="List" x:FieldModifier="public">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <EventSetter Event="MouseDoubleClick" Handler="List_MouseDoubleClick" />
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+    </DockPanel>
+</Window>
