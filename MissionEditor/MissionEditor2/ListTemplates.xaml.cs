@@ -24,8 +24,6 @@ namespace MissionEditor2
 		public ListTemplates()
 		{
 			InitializeComponent();
-			camera.Width = 50;
-			camera.Height = 50;
 		}
 
 		void Triggers_ListLoaded(object sender, RoutedEventArgs e)
@@ -102,15 +100,13 @@ namespace MissionEditor2
 			}
 		}
 
-		Canvas flagPole = (Canvas) MainWindow.Vectors.FindResource("flagPole");
-		Point poleBase = new Point(0, 0);
-		Viewbox camera = (Viewbox) MainWindow.Vectors.FindResource("camera");
-
 		void MarkerPointCanvas_Loaded(object sender, RoutedEventArgs e)
 		{
 			var currentLogic = MainWindow.Instance.CurrentLogic;
 			if (currentLogic is MarkerPointAction)
 			{
+				var poleBase = new Point(0, 0);
+				var flagPole = (Canvas) new Vectors().FindResource("flagPole");
 				var action = (MarkerPointAction) currentLogic;
 				var markerCanvas = (Canvas) e.Source;
 				markerCanvas.Children.Add(flagPole);
@@ -132,14 +128,15 @@ namespace MissionEditor2
 			}
 			else if (currentLogic is SetCameraPointTargetAction)
 			{
+				var camera = (Viewbox) new Vectors().FindResource("camera");
 				var action = (SetCameraPointTargetAction) currentLogic;
 				var markerCanvas = (Canvas) e.Source;
 				markerCanvas.Children.Add(camera);
 				foreach (var unit in MainWindow.Instance.Mission.AllUnits) markerCanvas.PlaceUnit(unit);
 				System.Action refreshPosition = delegate
 					{
-						Canvas.SetLeft(camera, action.X - poleBase.X);
-						Canvas.SetTop(camera, action.Y - flagPole.Height + poleBase.Y);
+						Canvas.SetLeft(camera, action.X - camera.Width / 2);
+						Canvas.SetTop(camera, action.Y - camera.Height / 2);
 					};
 				markerCanvas.MouseDown += (s, ea) =>
 				{

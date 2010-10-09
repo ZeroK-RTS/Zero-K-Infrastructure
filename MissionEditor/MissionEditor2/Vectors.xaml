@@ -67,7 +67,7 @@
         </Canvas>
       </Canvas>
     </Canvas>
-    <Viewbox x:Key="camera">
+    <Viewbox x:Key="camera" Width="50" Height="50">
       <Canvas Width="463.07864" Height="463.07864">
         <Canvas Canvas.Left="-45.9607" Canvas.Top="-168.3373">
           <Path Fill="#FF212121" Stroke="#FF000000" StrokeThickness="3.54330707" StrokeStartLineCap="Round" StrokeEndLineCap="Round"

@@ -34,7 +34,7 @@ namespace MissionEditor2
 
 		static MainWindow()
 		{
-			Vectors = new Vectors();
+
 			MissionProperty = DependencyProperty.Register("Mission", typeof (Mission), typeof (MainWindow));
 		}
 
@@ -46,8 +46,6 @@ namespace MissionEditor2
 		}
 
 		public static MainWindow Instance { get; private set; }
-
-		public static Vectors Vectors { get; set; }
 
 		public Slider ZoomSlider
 		{
