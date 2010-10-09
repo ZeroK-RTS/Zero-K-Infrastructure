@@ -63,19 +63,20 @@ namespace CMissionLib
 					new UnitStartInfo(unitType, player2, 223, 142),
 				};
 			gameStartTrigger.Logic.Add(new CreateUnitsAction(startUnits));
-			var widgets = new[]
+			var widgets = new string[]
 				{
-					"autoquit.lua", "camera_lockcamera.lua", "dbg_dcicon.lua", "gui_ally_cursors.lua",
-					"gui_center_n_select.lua",
-					"gui_limit_dgun.lua", "gui_loadscreens.lua", "gui_point_tracker.lua", "unit_comm_nametags.lua",
-					"gui_comm_marker.lua",
-					"cmd_unit_mover.lua"
+					// "autoquit.lua", "camera_lockcamera.lua", "dbg_dcicon.lua", "gui_ally_cursors.lua",
+					//"gui_center_n_select.lua",
+					//"gui_limit_dgun.lua", 
+					// "gui_loadscreens.lua", "gui_point_tracker.lua", "unit_comm_nametags.lua",
+					//"gui_comm_marker.lua",
+					//"cmd_unit_mover.lua"
 				};
 			foreach (var widget in widgets) DisabledWidgets.Add(widget);
-			var gadgets = new[]
+			var gadgets = new string[]
 				{
-					"awards.lua", "planetwars.lua", "unit_does_not_count.lua", "unit_spawner.lua",
-					"unit_replace_comm.lua"
+					// "awards.lua", "planetwars.lua", "unit_does_not_count.lua", "unit_spawner.lua",
+					//"unit_replace_comm.lua"
 				};
 			foreach (var gadget in gadgets) DisabledGadgets.Add(gadget);
 		}

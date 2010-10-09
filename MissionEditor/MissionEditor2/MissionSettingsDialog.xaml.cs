@@ -37,6 +37,8 @@ namespace MissionEditor2
 				}
 			}
 			UnitBox.SelectedItems.Clear();
+			WidgetsBox.BindCollection(mission.DisabledWidgets);
+			GadgetsBox.BindCollection(mission.DisabledGadgets);
         }
 
         private void ColorButton_Click(object sender, RoutedEventArgs e)
