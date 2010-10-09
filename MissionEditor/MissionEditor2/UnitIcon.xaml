@@ -48,9 +48,9 @@
         <RotateTransform Angle="{Binding Heading, Converter={StaticResource opposedConverter}}" CenterX="8" CenterY="8" />
         </TransformGroup>
       </TextBlock.RenderTransform>
-      <TextBlock.BitmapEffect>
-        <OuterGlowBitmapEffect GlowColor="Black" GlowSize="3" />
-      </TextBlock.BitmapEffect>
+      <TextBlock.Effect>
+        <DropShadowEffect Color="Black" BlurRadius="3" />
+      </TextBlock.Effect>
     </TextBlock>
   </Grid>
 </UserControl>

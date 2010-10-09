@@ -28,10 +28,10 @@
             <local:UnitIcon MouseDown="UnitIcon_MouseDown"  UnitRequestedDelete="Unit_RequestedDelete" UnitRequestedSetGroups="Unit_RequestedSetGroups" />
             <ControlTemplate.Triggers>
               <Trigger Property="IsSelected" Value="true">
-                <Setter Property="BitmapEffect">
+                <Setter Property="Effect">
                   <Setter.Value>
-                    <OuterGlowBitmapEffect GlowColor="{Binding Player.Color}" GlowSize="3" />
-                  </Setter.Value>
+                    <DropShadowEffect Color="{Binding Player.Color}" BlurRadius="3" />
+                </Setter.Value>
                 </Setter>
               </Trigger>
             </ControlTemplate.Triggers>
