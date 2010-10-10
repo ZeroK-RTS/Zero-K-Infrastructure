@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Widget Downloader Help</title>
+
+<style type="text/css">
+body {
+
+	background-color: #FFFFFF;
+	padding: 0px;
+	margin-top: 7px;
+	margin-right: 15px;
+	margin-bottom: 7px;
+	margin-left: 15px;
+
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+
+p
+{
+margin-bottom: 5px;
+margin-top: 5px;
+}
+
+h1
+{
+
+	font-size: 24px;
+	text-align: left;
+	font-weight: 800;
+}
+
+h2
+{
+	font-size: 14px;
+		margin-bottom: 2px;
+		padding-bottom: 0px;
+	text-align: left;
+	font-weight: 800;
+}
+
+
+h3
+{
+	font-size: 12px;
+		margin-bottom: 2px;
+		padding-bottom: 0px;
+	text-align: left;
+	font-weight: 800;
+}
+
+ol
+{
+ 	margin-top: 0px;
+
+}
+
+a
+{
+	color: #405992;
+	font-weight: 200;
+}
+
+td
+{
+text-align:justify;
+vertical-align:top;
+padding-right: 5px;
+}
+
+.imagecol
+{
+	text-align:right;
+}
+
+
+
+</style>
+
+
+</head>
+
+<body>
+<h1><img src="http://widgetdb.springrts.de/help/help_icon_svg.png" alt="Help Icon" width="60" height="60" align="absmiddle" /> Widget Downloader Help</h1>
+<h2>Contents:</h2>
+<ol><li><a href="#HowTo">How To Use</a></li>
+  <li><a href="#FAQ">FAQ</a></li>
+  <li><a href="#Add" title="Add">How To Add Other Widgets</a></li>
+  <li><a href="#Links">Links</a></li>
+</ol>
+<h2><a name="HowTo" id="HowTo"></a>1. How To Use</h2>
+<p>The Widget Downloader enables you to access the <em>Online Widget Database</em> to install and remove widgets from your local spring installation. You can keep your widgets up-to-date by one click or enable <em>AutoUpdate</em> in the settings menu to update all widgets automatically as soon as new versions are available. </p>
+<p>Also you can enable and disable widgets for ingame use (like ingame F11-menu).</p>
+<p>You can express your opinion about widgets by using the integrated rating and comments system. </p>
+<p>To preserve your current widget installation and activation you can store a list of all currently installed widgets to your online profile (or to a file on your harddisk, to share with a friend for example).</p>
+<p>To use the ratings and comments system or the online profile you have to enter your lobby account data in the <em>Settings-&gt;Advanced Settings</em> of <em>Spring Downloader</em>.</p>
+<p>After opening the Widget Downloader Module, you see two tabs: <em>Install</em> and <em>Activate</em>.</p>
+<p><em>NOTE</em>: Both in the <em>Install</em>-Tab and in the <em>Activate</em>-Tab you can select multiple widgets at once by holding the STRG or the SHIFT key.</p>
+<h3>1.2 Install-Tab</h3>
+<p>You see a list of all known widgets currently registered in the Online Widget Database. In front of each widget you see a colored icon which indicates the current installation status of each widget:</p>
+<table border="0">
+  <tr>
+    <td class="imagecol"><img src="install.png" border="1" /></td>
+    <td><p><img src="green.png" alt="g" width="20" height="20" align="absmiddle" /> You have the latest version of this widget installed. </p>
+      <p><img src="yellow.png" alt="y" width="20" height="20" align="absmiddle" /> You have an outdated version of this widget installed. </p>
+      <p><img src="blue.png" alt="b" width="20" height="20" align="absmiddle" /> You have installed this widget but the version you have is unknown to the database. </p>
+    <p><img src="red.png" alt="r" width="20" height="20" align="absmiddle" /> You don't have this widget installed at all. </p></td>
+  </tr>
+</table>
+<p><em>Show hidden widgets</em>: Some widgets are hidden by default. This may be because they are buggy, deprecated, or anything else you can think of. However, you can still view them by clicking this checkbox.</p>
+<p>Use the  provided GUI elements to install, upate and remove widgets to fit your needs. Remember that you have to activate new widgets after installation to actually enable it for ingame usage! You can use the Activate-Tab for it as described in chapter 1.2.</p>
+<p>&nbsp;</p>
+<p>By right-clicking with your mouse into the widget list you will its context-menu:</p>
+<table border="0">
+  <tr>
+    <td class="imagecol"><img src="install_context.png" border="1" /></td>
+    <td><em>Install/Export widget list</em> 
+<p>These two buttons allow you to import/export a list of your currently of installed widgets. This is useful for example to install your set of widgets on a fresh spring install with a formerly backuped list.</p>
+<p>&nbsp;</p>
+<p><em>Save to/Load from online profile</em></p>
+<p>This is similar to the previous function except that it saves to/loads from your online user profile. Also it saves/loads installation AND activation information. Saving a profile overwrites the currently stored online profile. This functions are identical to the ones found in the context-menu of the <em>Activate</em>-Tab.</p>
+</td>
+  </tr>
+</table>
+<h3>1.2 Activate-Tab</h3>
+<p>This list will show all widgets found in your spring's LuaUI-folder and allows to activate and deactivate them for ingame use (like ingame F11). </p>
+<table border="0">
+  <tr>
+    <td class="imagecol"><img src="activate.png" alt="acl" border="1" /></td>
+    <td><p>Widget names listed in a dark-grey color are widgets only found locally but not known to the database. You still can activate and deactive as you like.</p>
+    <p>Widgets can be activated/deactivated for individual games. So you can enable the widget <em>BuildETA</em> to be active in <em>Balanced Annihilation</em> but no in <em>Complete Annihilation</em>. Use the combobox <em>Game</em> to choose the game you want to activate/deactivate widgets for.</p></td>
+  </tr>
+  <tr>
+    <td class="imagecol"><img src="activate_context.png" alt="acl_context" border="1" /></td>
+    <td><p><em>Load/Save preset</em></p>
+    <p>By this buttons you can save and load your current activation to configuration to and from a file.</p>
+    <p><em>Save to/Load from online profile</em></p>
+    <p>This is similar to the previous function except that it saves to/loads from your online user profile. Also it saves/loads installation AND activation information. Saving a  profile overwrites the currently stored online profile. This functions are identical to the ones found in the context-menu of the <em>Install</em>-Tab.</p>
+    </td>
+  </tr>
+</table>
+<h2><a name="FAQ" id="FAQ"></a>2. FAQ </h2>
+<p><strong>Problem: <em>I have no widgets in my widget list!</em></strong></p>
+<p>Make sure you gave <em>Spring Downloader</em> enough time after startup (usually 4 minutes) to update itself to the latest version and download or update its DLLs. </p>
+<p>If widgets still don't show up for you in the widget lists and you got an error in your <em>Spring Downloader Log History</em> stating &quot;lua51.dll&quot; failed then you probably need to install the <em>Visual Studio 2008 Redistributable Package</em>. Download it from <a href="http://www.microsoft.com/downloads/details.aspx?FamilyID=9b2da534-3e03-4391-8a4d-074b9f2bc1bf&displaylang=en" target="_blank" title="Microsoft Visual C++ 2008 Redistributable Package (x86)">here</a>.</p>
+<p>&nbsp;</p>
+<p><strong>Problem:<em> One of my widgets goes crazy and spring fails to start! </em></strong></p>
+<p>You can go to the Activation-Tab and deactivate the certain widget. It will not be loaded anymore on game start.</p>
+<h2><a name="HowTo" id="HowTo"></a>3. How To Add Other Widgets</h2>
+If you know other useful widgets that are not already included in the database just let me know. If you made your own widgets and want to see them in the Widget Downloader you can get an admin access to add your widgets and administrate them.
+<p>If you are a mod maker and you want the widgets included in your mod to be able to be activated and deactivated in the Widget Downloader you can get access too to get full control over your widgets.</p>
+<p>Contact me by mail via: vbs at springrts.de</p>
+<h2><a name="Links" id="Links"></a>4. Links </h2>
+<p><a target="_blank" href="http://spring.clan-sy.com/phpbb/viewtopic.php?f=23&t=16122">Spring forum thread</a></p>
+<p><a target="_blank" href="http://widgets.springrts.de" title="Browser viewable widget database">Browser viewable widget database</a></p>
+</body>
+</html>

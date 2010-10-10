@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="PlanetWars.MapIcons.StarIcon"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" HorizontalAlignment="Left" VerticalAlignment="Top">
+    <Grid >
+        <Ellipse x:Name="Ellipse" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Ellipse.RenderTransform>
+                <ScaleTransform x:Name="ScaleTransform" />
+            </Ellipse.RenderTransform>
+        </Ellipse>
+        <TextBlock x:Name="Label" Foreground="White"/>
+    </Grid>
+</UserControl>

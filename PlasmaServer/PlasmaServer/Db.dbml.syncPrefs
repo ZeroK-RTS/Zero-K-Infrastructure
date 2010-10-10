@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<SyncPreferences xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <NewTables>true</NewTables>
+  <NewViews>true</NewViews>
+  <DroppedTables>true</DroppedTables>
+  <DroppedViews>true</DroppedViews>
+  <NewColumns>true</NewColumns>
+  <PreserveColumnOrder>true</PreserveColumnOrder>
+  <DroppedColumns>true</DroppedColumns>
+  <ModifiedColumns>true</ModifiedColumns>
+  <ModifiedDataType>true</ModifiedDataType>
+  <IgnoreCustomTypes>true</IgnoreCustomTypes>
+  <ModifiedNullability>true</ModifiedNullability>
+  <ModifiedAutoGen>true</ModifiedAutoGen>
+  <SetToDefaultUpdateCheck>false</SetToDefaultUpdateCheck>
+  <AutoGenConstraints>
+    <string>auto</string>
+    <string>newid()</string>
+    <string>newsequentialid()</string>
+    <string>getdate()</string>
+  </AutoGenConstraints>
+  <PrimaryKeyChanges>true</PrimaryKeyChanges>
+  <NewForeignKeys>true</NewForeignKeys>
+  <DroppedForeignKeys>true</DroppedForeignKeys>
+  <SmartNavigationNaming>true</SmartNavigationNaming>
+  <NewStoredProcedures>true</NewStoredProcedures>
+  <ChangedStoredProcedures>false</ChangedStoredProcedures>
+  <DroppedStoredProcedures>true</DroppedStoredProcedures>
+  <UpdateDocumentation>false</UpdateDocumentation>
+  <CreateNestedEPClasses>false</CreateNestedEPClasses>
+  <CreateRequiredOptionalInterfaces>false</CreateRequiredOptionalInterfaces>
+  <ConnectString>Data Source=planet-wars.eu,100;Initial Catalog=PlasmaServer;Persist Security Info=True;User ID=plasmaserver;Password=devpass</ConnectString>
+  <PersistConnectString>true</PersistConnectString>
+  <IgnoreTables>
+    <string>dbo.WidgetFiles</string>
+    <string>dbo.WidgetImages</string>
+    <string>dbo.WidgetNames</string>
+    <string>dbo.Widgets</string>
+  </IgnoreTables>
+  <IgnoreColumns />
+  <IgnoreFKs />
+  <IgnoreStoredProcs>
+    <string>dbo.GetDateFirstWidgetVersion</string>
+  </IgnoreStoredProcs>
+  <IgnoreTypes />
+  <IgnoreMembers />
+  <IgnoreAssociations />
+  <IgnoreFunctions />
+  <SavePreferences>true</SavePreferences>
+  <SuppressDialog>false</SuppressDialog>
+  <Disable381883>false</Disable381883>
+  <AdvancedMode>false</AdvancedMode>
+</SyncPreferences>

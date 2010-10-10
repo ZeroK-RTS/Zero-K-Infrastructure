@@ -1,0 +1,77 @@
+Hi, so this is it..
+ 
+statsGather.php gathers information from Springies.
+smurfs lists smurfs and stats provides some very basic statistics directly
+for springie 
+DB settings are in globals.php
+ 
+DB structure:
+ 
+CREATE TABLE `Autohosts` (
+   `playerId` int(11) NOT NULL,
+   `password` varchar(255) NOT NULL,
+   PRIMARY KEY  (`playerId`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+ 
+ 
+CREATE TABLE `Games` (
+   `id` int(11) NOT NULL auto_increment,
+   `playerId` int(11) NOT NULL,
+   `title` varchar(255) NOT NULL,
+   `mapId` int(11) NOT NULL,
+   `modId` int(11) NOT NULL,
+   `start` int(11) NOT NULL,
+   `duration` int(11) NOT NULL,
+   `players` int(11) NOT NULL,
+   PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
+ 
+ 
+CREATE TABLE `Games2players` (
+   `gameId` int(11) NOT NULL,
+   `playerId` int(11) NOT NULL,
+   `spectator` tinyint(1) NOT NULL,
+   `victoryTeam` tinyint(1) NOT NULL,
+   `aliveTillEnd` tinyint(1) NOT NULL,
+   `dropTime` int(11) NOT NULL,
+   `leaveTime` int(11) NOT NULL,
+   `side` varchar(20) NOT NULL,
+   `loseTime` int(11) NOT NULL,
+   `allyNumber` int(11) NOT NULL,
+   `rank` int(11) NOT NULL,
+   PRIMARY KEY  (`gameId`,`playerId`),
+   KEY `side` (`side`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+ 
+ 
+CREATE TABLE `Maps` (
+   `id` int(11) NOT NULL auto_increment,
+   `name` varchar(255) NOT NULL,
+   PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+ 
+ 
+CREATE TABLE `Mods` (
+   `id` int(11) NOT NULL auto_increment,
+   `name` varchar(255) NOT NULL,
+   PRIMARY KEY  (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+ 
+ 
+CREATE TABLE `Players` (
+   `id` int(11) NOT NULL auto_increment,
+   `name` varchar(255) NOT NULL,
+   `lastSeen` int(11) NOT NULL,
+   `rank` int(11) NOT NULL,
+   PRIMARY KEY  (`id`),
+   UNIQUE KEY `name` (`name`)
+) ENGINE=MyISAM AUTO_INCREMENT=703 DEFAULT CHARSET=utf8 AUTO_INCREMENT=703
+;
+ 
+ 
+CREATE TABLE `Players2ip` (
+   `playerId` int(11) NOT NULL,
+   `ip` int(11) NOT NULL,
+   PRIMARY KEY  (`playerId`,`ip`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+ 

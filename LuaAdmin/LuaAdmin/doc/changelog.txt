@@ -1,0 +1,5 @@
+﻿0.43
+====
++Widgets description does get urlEncoded correctly now
++MessageBox when image upload ready
++Refresh after uploading images

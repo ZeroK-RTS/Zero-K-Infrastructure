@@ -1,0 +1,187 @@
+[GAME]
+{
+        GameType=%MOD%;
+        Mapname=%MAP%;
+        [MODOPTIONS]
+        {
+                GameMode=3;
+                ghostedbuildings=1;
+                fixedallies=0;
+                MaxUnits=512;
+                MinSpeed=0.1;
+                MaxSpeed=10;
+                StartMetal=1024;
+                StartEnergy=1024;
+                ViewPoint="{px=3815,py=256,pz=2251,rz=0,dx=-0.614,dy=-0.302,name="fps",ry=3.84,rx=-0.307,mode=0,dz=-0.73,oldHeight=176}";
+        }
+        HostIP=localhost;
+        HostPort=0;
+        IsHost=1;
+        StartPosType=3;
+        MyPlayerNum=0;
+        MyPlayerName=SPIM;
+        NumPlayers=1;
+        NumUsers=2;
+        NumTeams=2;
+        NumAllyTeams=2;
+        [PLAYER0]
+        {
+                name=SPIM;
+                Team=0;
+                Spectator=1;
+        }
+        [AI0]
+        {
+                Name=Bot;
+                ShortName=Kernel Panic AI;
+                Team=0;
+                Host=0;
+        }
+        [AI1]
+        {
+                Name=Bot;
+                ShortName=Kernel Panic AI;
+                Team=1;
+                Host=0;
+        }
+        [TEAM0]
+        {
+                TeamLeader=0;
+                AllyTeam=1;
+                Handicap=0;
+                Side=System;
+                RGBColor=1 0.1 0.1;
+                AIDLL=Kernel Panic AI;
+                aioverride=Regenerative AI;
+                StartPosX=3488;
+                StartPosZ=3488;
+                RemoveUnits=1;
+                RemoveFeatures=1;
+                u1= kernel Position 3790 1996 Rotation 270 FireState 2;
+                u2= socket Position 2688 2560;
+                u3= socket Position 3536 1328 FireState 2;
+                u4= socket Position 3680 480;
+                u5= byte Position 3581 1887 Rotation 90 FireState 2;
+                u6= byte Position 3108 1683 Rotation 190 FireState 2;
+                u7= byte Position 3563 1627 Rotation 140 FireState 2;
+                u8= byte Position 2996 1402 Rotation 80 FireState 2;
+                u9= assembler Position 3249 2051 Rotation 10 FireState 2;
+                u10= assembler Position 3692 1513 Rotation 100 FireState 2;
+                u11= pointer Position 3796 2190 Rotation 50 FireState 2 MoveState 0;
+                u12= pointer Position 3479 2137 Rotation 150 FireState 2 MoveState 0;
+                u13= pointer Position 3581 2005 Rotation 270 FireState 2 MoveState 0;
+                u14= pointer Position 2687 1982 Rotation 220 FireState 2 MoveState 0;
+                u15= pointer Position 2951 1787 Rotation 320 FireState 2 MoveState 0;
+                u16= pointer Position 3132 1455 Rotation 300 FireState 2 MoveState 0;
+                u17= pointer Position 3387 925 Rotation 180 FireState 2 MoveState 0;
+                u18= pointer Position 2919 767 Rotation 100 FireState 2 MoveState 0;
+                u19= bit Position 3565 2132 Rotation 310 FireState 2;
+                u20= bit Position 3478 2017 Rotation 320 FireState 2;
+                u21= bit Position 3341 1947 Rotation 110 FireState 2;
+                u22= bit Position 3538 1924 Rotation 300 FireState 2;
+                u23= bit Position 3235 1916 Rotation 90 FireState 2;
+                u24= bit Position 3685 1893 Rotation 350 FireState 2;
+                u25= bit Position 3659 1855 Rotation 350 FireState 2;
+                u26= bit Position 2863 1796 Rotation 60 FireState 2;
+                u27= bit Position 3601 1795 Rotation 340 FireState 2;
+                u28= bit Position 3702 1788 Rotation 110 FireState 2;
+                u29= bit Position 3749 1785 Rotation 160 FireState 2;
+                u30= bit Position 2665 1779 Rotation 320 FireState 2;
+                u31= bit Position 3489 1770 Rotation 130 FireState 2;
+                u32= bit Position 3533 1715 FireState 2;
+                u33= bit Position 3330 1661 Rotation 150 FireState 2;
+                u34= bit Position 2849 1624 Rotation 270 FireState 2;
+                u35= bit Position 2496 1611 Rotation 340 FireState 2;
+                u36= bit Position 3042 1590 Rotation 140 FireState 2;
+                u37= bit Position 2924 1590 Rotation 150 FireState 2;
+                u38= bit Position 3141 1580 Rotation 130 FireState 2;
+                u39= bit Position 3590 1547 Rotation 310 FireState 2;
+                u40= bit Position 3486 1540 Rotation 130 FireState 2;
+                u41= bit Position 2770 1510 Rotation 140 FireState 2;
+                u42= bit Position 2499 1493 Rotation 130 FireState 2;
+                u43= bit Position 3656 1421 Rotation 150 FireState 2;
+                u44= bit Position 2563 1343 Rotation 40 FireState 2;
+                u45= bit Position 3136 1296 Rotation 260 FireState 2;
+                u46= bit Position 2731 1251 Rotation 30 FireState 2;
+                u47= bit Position 2911 1193 Rotation 50 FireState 2;
+                u48= bit Position 3164 1191 Rotation 140 FireState 2;
+                u49= bit Position 3373 1081 Rotation 180 FireState 2;
+                u50= bit Position 3125 889 Rotation 130 FireState 2;
+        }
+        [TEAM1]
+        {
+                TeamLeader=0;
+                AllyTeam=0;
+                Handicap=0;
+                Side=System;
+                RGBColor=1 1 0.1;
+                AIDLL=Kernel Panic AI;
+                aioverride=Regenerative AI;
+                StartPosX=606;
+                StartPosZ=606;
+                RemoveUnits=1;
+                RemoveFeatures=1;
+                u1= kernel Position 1185 608 Rotation 90 FireState 2;
+                u2= socket Position 768 992 Rotation 90 FireState 2;
+                u3= socket Position 2496 704 Rotation 90 FireState 2;
+                u4= socket Position 1408 352 FireState 2;
+                u5= byte Position 928 1244 Rotation 250 FireState 2 Fight 3500 1990;
+                u6= byte Position 1108 1203 Rotation 70 FireState 2 Fight 3481 1793;
+                u7= byte Position 1297 1109 Rotation 110 FireState 2;
+                u8= byte Position 1518 1054 Rotation 60 FireState 2 Move 3479 1890;
+                u9= byte Position 1577 885 Rotation 100 FireState 2 Move 3648 1546;
+                u10= byte Position 1651 775 Rotation 210 FireState 2;
+                u11= byte Position 1790 728 Rotation 300 FireState 2 Fight 3569 1538;
+                u12= byte Position 1785 505 Rotation 150 FireState 2 Fight 3739 1424;
+                u13= assembler Position 745 740 Rotation 30 FireState 2;
+                u14= assembler Position 1190 326 FireState 2;
+                u15= pointer Position 1657 1728 Rotation 50 FireState 2 MoveState 0;
+                u16= pointer Position 1049 1064 Rotation 260 FireState 2 MoveState 0;
+                u17= pointer Position 1387 868 Rotation 50 FireState 2 MoveState 0;
+                u18= pointer Position 2501 563 Rotation 80 FireState 2 MoveState 0;
+                u19= bit Position 1835 1348 Rotation 120 FireState 2 Fight 3405 1919;
+                u20= bit Position 1905 1314 FireState 2 Fight 3371 1885;
+                u21= bit Position 1290 1298 Rotation 80 FireState 2 Move 2277 1747 Move 3387 1956;
+                u22= bit Position 1965 1289 Rotation 70 FireState 2 Fight 3337 1851;
+                u23= bit Position 2008 1267 Rotation 100 FireState 2 Fight 3309 1811;
+                u24= bit Position 2045 1237 Rotation 80 FireState 2 Fight 3290 1768;
+                u25= bit Position 1411 1235 Rotation 130 FireState 2 Move 2450 1659 Move 3410 1898;
+                u26= bit Position 1477 1224 Rotation 90 FireState 2 Move 2622 1570 Move 3442 1845;
+                u27= bit Position 1550 1207 Rotation 90 FireState 2 Move 2787 1470 Move 3472 1790;
+                u28= bit Position 2065 1203 Rotation 80 FireState 2 Fight 3283 1720;
+                u29= bit Position 1610 1176 Rotation 90 FireState 2 Move 2939 1349 Move 3501 1735;
+                u30= bit Position 2085 1172 Rotation 40 FireState 2 Fight 3282 1671;
+                u31= bit Position 2130 1139 Rotation 110 FireState 2 Fight 3286 1623;
+                u32= bit Position 1611 1136 Rotation 340 FireState 2;
+                u33= bit Position 2153 1104 Rotation 120 FireState 2 Fight 3307 1580;
+                u34= bit Position 1668 1096 Rotation 320 FireState 2;
+                u35= bit Position 2173 1060 Rotation 100 FireState 2 Fight 3330 1537;
+                u36= bit Position 1717 1047 Rotation 280 FireState 2;
+                u37= bit Position 2178 1018 Rotation 60 FireState 2 Fight 3364 1503;
+                u38= bit Position 1783 992 Rotation 150 FireState 2;
+                u39= bit Position 2198 980 Rotation 130 FireState 2 Fight 3403 1475;
+                u40= bit Position 2206 931 Rotation 120 FireState 2 Fight 3447 1458;
+                u41= bit Position 1829 924 Rotation 190 FireState 2;
+                u42= bit Position 2218 889 Rotation 110 FireState 2 Fight 3495 1452;
+                u43= bit Position 1871 886 Rotation 10 FireState 2 Move 3068 1205 Move 3532 1681;
+                u44= bit Position 2230 849 Rotation 130 FireState 2 Fight 3543 1445;
+                u45= bit Position 1895 807 Rotation 180 FireState 2 Move 3185 1051 Move 3563 1628;
+                u46= bit Position 2246 797 Rotation 120 FireState 2 Fight 3591 1436;
+                u47= bit Position 1934 755 Rotation 60 FireState 2 Move 3301 896 Move 3596 1575;
+                u48= bit Position 1964 679 Rotation 350 FireState 2 Move 3413 738 Move 3634 1526;
+                u49= bit Position 1986 620 Rotation 230 FireState 2 Move 3534 587 Move 3675 1479;
+                u50= bit Position 2004 540 Rotation 150 FireState 2 Move 3644 427 Move 3720 1437;
+        }
+        [ALLYTEAM0]
+        {
+                NumAllies=0;
+        }
+        [ALLYTEAM1]
+        {
+                NumAllies=0;
+        }
+        NumRestrictions=0;
+        [RESTRICT]
+        {
+        }
+}

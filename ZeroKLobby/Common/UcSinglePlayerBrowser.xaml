@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="SpringDownloader.Common.UcSinglePlayerBrowser" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" d:DesignHeight="274" d:DesignWidth="507" xmlns:my="clr-namespace:SpringDownloader.StartTab" xmlns:PixelShaders="clr-namespace:SpringDownloader.PixelShaders" xmlns:Common="clr-namespace:SpringDownloader.Common" Loaded="UserControl_Loaded">
+
+
+	<ItemsControl x:Name="lbProfiles" >
+		<ItemsControl.ItemTemplate>
+			<DataTemplate>
+				<StackPanel Orientation="Horizontal">
+					<Common:UcRedButton IsCheckingEnabled="True" Padding="12 2 12 12">
+						<StackPanel>
+							<TextBlock Text="{Binding Path=Name}" VerticalAlignment="Bottom" HorizontalAlignment="Center"></TextBlock>
+
+							<Image Source="{Binding Path=Image}" Width="150" Height="150"></Image>
+						</StackPanel>
+					</Common:UcRedButton>
+					<TextBlock Text="{Binding Path=Description}" VerticalAlignment="Center"></TextBlock>
+				</StackPanel>
+			</DataTemplate>
+		</ItemsControl.ItemTemplate>
+	</ItemsControl>
+
+</UserControl>

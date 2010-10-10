@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<NamePreferences xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <EntitySetPrefs>
+    <ProperCase>true</ProperCase>
+    <RemoveUnderscore>true</RemoveUnderscore>
+    <RemovePrefixes />
+    <RemoveSuffixes />
+    <Pluralization>Pluralize</Pluralization>
+    <DualLetterEndingToUpper>false</DualLetterEndingToUpper>
+    <PreserveLeadingParentName>false</PreserveLeadingParentName>
+    <RegExUsage>NoRegex</RegExUsage>
+    <AllowCSKeywords>false</AllowCSKeywords>
+    <AllowVBKeywords>false</AllowVBKeywords>
+    <FullyQualifiedName>false</FullyQualifiedName>
+  </EntitySetPrefs>
+  <EntityTypePrefs>
+    <ProperCase>true</ProperCase>
+    <RemoveUnderscore>true</RemoveUnderscore>
+    <RemovePrefixes />
+    <RemoveSuffixes />
+    <Pluralization>Singularize</Pluralization>
+    <DualLetterEndingToUpper>false</DualLetterEndingToUpper>
+    <PreserveLeadingParentName>false</PreserveLeadingParentName>
+    <RegExUsage>NoRegex</RegExUsage>
+    <AllowCSKeywords>false</AllowCSKeywords>
+    <AllowVBKeywords>false</AllowVBKeywords>
+    <FullyQualifiedName>false</FullyQualifiedName>
+  </EntityTypePrefs>
+  <PropertyPrefs>
+    <ProperCase>true</ProperCase>
+    <RemoveUnderscore>true</RemoveUnderscore>
+    <RemovePrefixes />
+    <RemoveSuffixes />
+    <Pluralization>None</Pluralization>
+    <DualLetterEndingToUpper>false</DualLetterEndingToUpper>
+    <PreserveLeadingParentName>false</PreserveLeadingParentName>
+    <RegExUsage>NoRegex</RegExUsage>
+    <AllowCSKeywords>false</AllowCSKeywords>
+    <AllowVBKeywords>false</AllowVBKeywords>
+    <FullyQualifiedName>false</FullyQualifiedName>
+  </PropertyPrefs>
+  <ProcedurePrefs>
+    <ProperCase>true</ProperCase>
+    <RemoveUnderscore>true</RemoveUnderscore>
+    <RemovePrefixes />
+    <RemoveSuffixes />
+    <Pluralization>None</Pluralization>
+    <DualLetterEndingToUpper>false</DualLetterEndingToUpper>
+    <PreserveLeadingParentName>false</PreserveLeadingParentName>
+    <RegExUsage>NoRegex</RegExUsage>
+    <AllowCSKeywords>false</AllowCSKeywords>
+    <AllowVBKeywords>false</AllowVBKeywords>
+    <FullyQualifiedName>false</FullyQualifiedName>
+  </ProcedurePrefs>
+  <SavePreferences>true</SavePreferences>
+  <Disable381883>false</Disable381883>
+  <AdvancedMode>false</AdvancedMode>
+  <UseExternalNameTool>false</UseExternalNameTool>
+  <NameBase>DBObject</NameBase>
+</NamePreferences>

@@ -1,0 +1,49 @@
+﻿???
+---
++you can downgrade/upgrade to any version available
+
+98.x
+----
++zip-download
++sort-order: state
++widget-list scrolls vertically
+--
+97.03
+----
++context menu on right click, allows multi-install/remove
++image gallery loads images asynchron
+
+
+TODO-
+-----
+//memory leak
+//alles gecatcht: +lua51.dll crash
+//+addModWigets iterations reihenfolge aendern
+Update>-Button richtig machen
+
++Hastable durch dictionary ersetzen
++Path.Directory seperator und Path.Combine benutzen
++foreach
+
+
+
+downloader:
+-"an "overwrite all"-button would be great"
+-ratings
+-comments
+-widget-categories
+
+
+admin
+-----
+[22:14:05] <[MnVt]Marmoth[CA]> or perhaps a possibility to make a new version from the previous one
+[22:14:29] <[MnVt]Marmoth[CA]> just change files that changed...
+
+
+TODO:
+-----
+-image gallery fonts
+-help page
+
+(-image load async linux)
+(-webbrowser documenttext linux (has workaround))

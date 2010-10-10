@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<SyncPreferences xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <NewTables>true</NewTables>
+  <NewViews>true</NewViews>
+  <DroppedTables>true</DroppedTables>
+  <DroppedViews>true</DroppedViews>
+  <NewColumns>true</NewColumns>
+  <DroppedColumns>true</DroppedColumns>
+  <ModifiedColumns>true</ModifiedColumns>
+  <ModifiedDataType>true</ModifiedDataType>
+  <IgnoreCustomTypes>true</IgnoreCustomTypes>
+  <ModifiedNullability>true</ModifiedNullability>
+  <ModifiedAutoGen>true</ModifiedAutoGen>
+  <SetToDefaultUpdateCheck>false</SetToDefaultUpdateCheck>
+  <AutoGenConstraints>
+    <string>auto</string>
+    <string>newid()</string>
+    <string>newsequentialid()</string>
+    <string>getdate()</string>
+  </AutoGenConstraints>
+  <PrimaryKeyChanges>true</PrimaryKeyChanges>
+  <NewForeignKeys>true</NewForeignKeys>
+  <DroppedForeignKeys>true</DroppedForeignKeys>
+  <SmartNavigationNaming>true</SmartNavigationNaming>
+  <NewStoredProcedures>true</NewStoredProcedures>
+  <ChangedStoredProcedures>false</ChangedStoredProcedures>
+  <DroppedStoredProcedures>true</DroppedStoredProcedures>
+  <UpdateDocumentation>false</UpdateDocumentation>
+  <CreateNestedEPClasses>false</CreateNestedEPClasses>
+  <CreateRequiredOptionalInterfaces>false</CreateRequiredOptionalInterfaces>
+  <PersistConnectString>false</PersistConnectString>
+  <IgnoreTables>
+    <string>dbo.sysdiagrams</string>
+  </IgnoreTables>
+  <IgnoreColumns />
+  <IgnoreFKs />
+  <IgnoreStoredProcs>
+    <string>dbo.sp_upgraddiagrams</string>
+    <string>dbo.sp_helpdiagrams</string>
+    <string>dbo.sp_helpdiagramdefinition</string>
+    <string>dbo.sp_creatediagram</string>
+    <string>dbo.sp_renamediagram</string>
+    <string>dbo.sp_alterdiagram</string>
+    <string>dbo.sp_dropdiagram</string>
+    <string>dbo.fn_diagramobjects</string>
+  </IgnoreStoredProcs>
+  <IgnoreTypes />
+  <IgnoreMembers />
+  <IgnoreAssociations />
+  <IgnoreFunctions />
+  <SavePreferences>true</SavePreferences>
+  <SuppressDialog>false</SuppressDialog>
+  <Disable381883>false</Disable381883>
+  <AdvancedMode>false</AdvancedMode>
+</SyncPreferences>

@@ -1,0 +1,363 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="PlanetWars" Class="DbDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=PlanetWars;Persist Security Info=True;User ID=planetwars" SettingsObjectName="ServiceData.Properties.Settings" SettingsPropertyName="PlanetWarsConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Battle" Member="Battles">
+    <Type Name="Battle">
+      <Column Name="BattleID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CelestialObjectID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="IsDone" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Association Name="Battle_BattleEvent" Member="BattleEvents" ThisKey="BattleID" OtherKey="BattleID" Type="BattleEvent" />
+      <Association Name="CelestialObject_Battle" Member="CelestialObject" ThisKey="CelestialObjectID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.BattleEvent" Member="BattleEvents">
+    <Type Name="BattleEvent">
+      <Column Name="BattleID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Battle_BattleEvent" Member="Battle" ThisKey="BattleID" OtherKey="BattleID" Type="Battle" IsForeignKey="true" />
+      <Association Name="Event1_BattleEvent" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event1" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObjectEvent" Member="CelestialObjectEvents">
+    <Type Name="CelestialObjectEvent">
+      <Column Name="ObjectID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Event1_CelestialObjectEvent" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event1" IsForeignKey="true" />
+      <Association Name="CelestialObject_CelestialObjectEvent" Member="CelestialObject" ThisKey="ObjectID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObjectLink" Member="CelestialObjectLinks">
+    <Type Name="CelestialObjectLink">
+      <Column Name="FirstObjectID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SecondObjectID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="CelestialObject_CelestialObjectLink" Member="CelestialObjectByFirstObjectID" ThisKey="FirstObjectID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="CelestialObject_CelestialObjectLink1" Member="CelestialObjectBySecondObjectID" ThisKey="SecondObjectID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Event" Member="Events">
+    <Type Name="Event1">
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="EventType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Time" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="BattleTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Event1_BattleEvent" Member="BattleEvents" ThisKey="EventID" OtherKey="EventID" Type="BattleEvent" />
+      <Association Name="Event1_CelestialObjectEvent" Member="CelestialObjectEvents" ThisKey="EventID" OtherKey="EventID" Type="CelestialObjectEvent" />
+      <Association Name="Event1_PlayerEvent" Member="PlayerEvents" ThisKey="EventID" OtherKey="EventID" Type="PlayerEvent" />
+      <Association Name="Event1_FleetEvent" Member="FleetEvents" ThisKey="EventID" OtherKey="EventID" Type="FleetEvent" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlayerEvent" Member="PlayerEvents">
+    <Type Name="PlayerEvent">
+      <Column Name="PlayerID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Event1_PlayerEvent" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event1" IsForeignKey="true" />
+      <Association Name="Player_PlayerEvent" Member="Player" ThisKey="PlayerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SpringAccount" Member="SpringAccounts">
+    <Type Name="SpringAccount">
+      <Column Name="SpringAccountID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Flags" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
+      <Column Name="UserCookie" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LastLogin" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Created" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LastIP" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="LastCountry" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
+      <Association Name="SpringAccount_Player" Member="Players" ThisKey="SpringAccountID" OtherKey="SpringAccountID" Type="Player" Cardinality="One" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Config" Member="Configs">
+    <Type Name="Config">
+      <Column Name="Started" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CombatTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StartOn" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SecondsPerTurn" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ResourceTick" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="PopulationTick" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="WarpDistance" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="DirtySecond" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="TurnStarted" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObjectStructure" Member="CelestialObjectStructures">
+    <Type Name="CelestialObjectStructure">
+      <Column Name="CelestialObjectID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="StructureTypeID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="[Count]" Member="Count" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="StructureType_CelestialObjectStructure" Member="StructureType" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="StructureType" IsForeignKey="true" DeleteOnNull="true" />
+      <Association Name="CelestialObject_CelestialObjectStructure" Member="CelestialObject" ThisKey="CelestialObjectID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MothershipStructure" Member="MothershipStructures">
+    <Type Name="MothershipStructure">
+      <Column Name="PlayerID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="StructureTypeID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="[Count]" Member="Count" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="StructureType_MothershipStructure" Member="StructureType" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="StructureType" IsForeignKey="true" />
+      <Association Name="Player_MothershipStructure" Member="Player" ThisKey="PlayerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StarSystemTech" Member="StarSystemTeches">
+    <Type Name="StarSystemTech">
+      <Column Name="StarSystemID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TechID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Tech_StarSystemTech" Member="Tech" ThisKey="TechID" OtherKey="TechID" Type="Tech" IsForeignKey="true" />
+      <Association Name="StarSystem_StarSystemTech" Member="StarSystem" ThisKey="StarSystemID" OtherKey="SystemID" Type="StarSystem" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlayerTechSpent" Member="PlayerTechSpents">
+    <Type Name="PlayerTechSpent">
+      <Column Name="PlayerID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TechID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SpentResearch" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="SpentQuantium" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Tech_PlayerTechSpent" Member="Tech" ThisKey="TechID" OtherKey="TechID" Type="Tech" IsForeignKey="true" />
+      <Association Name="Player_PlayerTechSpent" Member="Player" ThisKey="PlayerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FleetShip" Member="FleetShips">
+    <Type Name="FleetShip">
+      <Column Name="FleetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ShipTypeID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="[Count]" Member="Count" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Fleet_FleetShip" Member="Fleet" ThisKey="FleetID" OtherKey="FleetID" Type="Fleet" IsForeignKey="true" />
+      <Association Name="ShipType_FleetShip" Member="ShipType" ThisKey="ShipTypeID" OtherKey="ShipTypeID" Type="ShipType" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObjectShip" Member="CelestialObjectShips">
+    <Type Name="CelestialObjectShip">
+      <Column Name="CelestialObjectID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ShipTypeID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="[Count]" Member="Count" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="ShipType_CelestialObjectShip" Member="ShipType" ThisKey="ShipTypeID" OtherKey="ShipTypeID" Type="ShipType" IsForeignKey="true" />
+      <Association Name="CelestialObject_CelestialObjectShip" Member="CelestialObject" ThisKey="CelestialObjectID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Transit" Member="Transits">
+    <Type Name="Transit">
+      <Column Name="TransitID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FromObjectID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ToObjectID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="FromX" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="FromY" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="ToX" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="ToY" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="StartBattleTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EndBattleTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Warp" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OrbitsObjectID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Association Name="Transit_Fleet" Member="Fleets" ThisKey="TransitID" OtherKey="TransitID" Type="Fleet" Cardinality="One" />
+      <Association Name="Transit_PopulationTransport" Member="PopulationTransports" ThisKey="TransitID" OtherKey="TransitID" Type="PopulationTransport" Cardinality="One" />
+      <Association Name="Transit_Player" Member="Players" ThisKey="TransitID" OtherKey="TransitID" Type="Player" />
+      <Association Name="CelestialObject_Transit" Member="CelestialObjectByFromObjectID" ThisKey="FromObjectID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+      <Association Name="CelestialObject_Transit1" Member="CelestialObjectByToObjectID" ThisKey="ToObjectID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+      <Association Name="CelestialObject_Transit2" Member="CelestialObject" ThisKey="OrbitsObjectID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Fleet" Member="Fleets">
+    <Type Name="Fleet">
+      <Column Name="FleetID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OwnerID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Tactics" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TransitID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CustomName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="CanPresidentControl" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Association Name="Fleet_FleetShip" Member="FleetShips" ThisKey="FleetID" OtherKey="FleetID" Type="FleetShip" />
+      <Association Name="Fleet_FleetEvent" Member="FleetEvents" ThisKey="FleetID" OtherKey="FleetID" Type="FleetEvent" />
+      <Association Name="Transit_Fleet" Member="Transit" ThisKey="TransitID" OtherKey="TransitID" Type="Transit" IsForeignKey="true" />
+      <Association Name="Player_Fleet" Member="Player" ThisKey="OwnerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PopulationTransport" Member="PopulationTransports">
+    <Type Name="PopulationTransport">
+      <Column Name="PopulationTransportID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="OwnerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TransitID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Count" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Transit_PopulationTransport" Member="Transit" ThisKey="TransitID" OtherKey="TransitID" Type="Transit" IsForeignKey="true" />
+      <Association Name="Player_PopulationTransport" Member="Player" ThisKey="OwnerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StructureType" Member="StructureTypes">
+    <Type Name="StructureType">
+      <Column Name="StructureTypeID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="CostMetal" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MakesMetal" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MakesFood" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BuildsMetal" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MakesPeople" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NeedsPeople" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StoresPeople" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NeedsTechID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HitPoints" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MakesResearch" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LaserDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MissileDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="StructureType_CelestialObjectStructure" Member="CelestialObjectStructures" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="CelestialObjectStructure" />
+      <Association Name="StructureType_MothershipStructure" Member="MothershipStructures" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="MothershipStructure" />
+      <Association Name="Tech_StructureType" Member="Tech" ThisKey="NeedsTechID" OtherKey="TechID" Type="Tech" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ShipType" Member="ShipTypes">
+    <Type Name="ShipType">
+      <Column Name="ShipTypeID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Class" Member="Class1" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LaserDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MissileDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BombDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Shortcut" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="NeedsTechID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MetalCost" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Hitpoints" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="QuantiumCost" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMetalCost" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="IsInterdictor" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsStealthy" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Association Name="ShipType_FleetShip" Member="FleetShips" ThisKey="ShipTypeID" OtherKey="ShipTypeID" Type="FleetShip" />
+      <Association Name="ShipType_CelestialObjectShip" Member="CelestialObjectShips" ThisKey="ShipTypeID" OtherKey="ShipTypeID" Type="CelestialObjectShip" />
+      <Association Name="Tech_ShipType" Member="Tech" ThisKey="NeedsTechID" OtherKey="TechID" Type="Tech" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Tech" Member="Teches">
+    <Type Name="Tech">
+      <Column Name="TechID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="NeedsTechID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CostResearch" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CostQuantium" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Tech_StarSystemTech" Member="StarSystemTeches" ThisKey="TechID" OtherKey="TechID" Type="StarSystemTech" />
+      <Association Name="Tech_PlayerTechSpent" Member="PlayerTechSpents" ThisKey="TechID" OtherKey="TechID" Type="PlayerTechSpent" />
+      <Association Name="Tech_StructureType" Member="StructureTypes" ThisKey="TechID" OtherKey="NeedsTechID" Type="StructureType" />
+      <Association Name="Tech_ShipType" Member="ShipTypes" ThisKey="TechID" OtherKey="NeedsTechID" Type="ShipType" />
+      <Association Name="Tech_Tech" Member="Teches" ThisKey="TechID" OtherKey="NeedsTechID" Type="Tech" />
+      <Association Name="Tech_Tech" Member="Tech1" ThisKey="NeedsTechID" OtherKey="TechID" Type="Tech" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FleetEvent" Member="FleetEvents">
+    <Type Name="FleetEvent">
+      <Column Name="FleetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Fleet_FleetEvent" Member="Fleet" ThisKey="FleetID" OtherKey="FleetID" Type="Fleet" IsForeignKey="true" />
+      <Association Name="Event1_FleetEvent" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event1" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StarSystem" Member="StarSystems">
+    <Type Name="StarSystem">
+      <Column Name="SystemID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="HomeStarID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="PresidentID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="CoalitionID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Association Name="StarSystem_StarSystemTech" Member="StarSystemTeches" ThisKey="SystemID" OtherKey="StarSystemID" Type="StarSystemTech" />
+      <Association Name="StarSystem_StarSystem" Member="ChildStarSystems" ThisKey="SystemID" OtherKey="SystemID" Type="StarSystem" Cardinality="One" />
+      <Association Name="StarSystem_Player" Member="Players" ThisKey="SystemID" OtherKey="SystemID" Type="Player" />
+      <Association Name="StarSystem_StarSystem" Member="ParentStarSystem" ThisKey="SystemID" OtherKey="SystemID" Type="StarSystem" IsForeignKey="true" />
+      <Association Name="Player_StarSystem" Member="Player" ThisKey="PresidentID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+      <Association Name="Coalition_StarSystem" Member="Coalition" ThisKey="CoalitionID" OtherKey="CoalitionID" Type="Coalition" IsForeignKey="true" />
+      <Association Name="CelestialObject_StarSystem" Member="CelestialObject" ThisKey="HomeStarID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Coalition" Member="Coalitions">
+    <Type Name="Coalition">
+      <Column Name="CoalitionID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="nvarchar(100) NOT NULL" CanBeNull="false" />
+      <Association Name="Coalition_StarSystem" Member="StarSystems" ThisKey="CoalitionID" OtherKey="CoalitionID" Type="StarSystem" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObject" Member="CelestialObjects">
+    <Type Name="CelestialObject">
+      <Column Name="CelestialObjectID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CelestialObjectType" Type="CelestialObjectType" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="OrbitSpeed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="OrbitDistance" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="OrbitInitialAngle" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="ParentObject" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="X" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Y" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="MetalDensity" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="FoodDensity" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="QuantiumDensity" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMatterDensity" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="[Size]" Member="Size" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="OwnerID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="IsStargate" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="Population" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="HitpointsDamaged" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="IsConnected" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="MaxPopulation" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="MetalIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="FoodIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="QuantiumIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMatterIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Efficiency" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Buildpower" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="ResearchIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="BuildpowerUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="CanBeRenamed" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="CanMapBeChanged" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="MapName" Type="System.String" DbType="varchar(150)" CanBeNull="true" />
+      <Association Name="CelestialObject_Battle" Member="Battles" ThisKey="CelestialObjectID" OtherKey="CelestialObjectID" Type="Battle" />
+      <Association Name="CelestialObject_CelestialObjectEvent" Member="CelestialObjectEvents" ThisKey="CelestialObjectID" OtherKey="ObjectID" Type="CelestialObjectEvent" />
+      <Association Name="CelestialObject_CelestialObjectLink" Member="CelestialObjectLinksByFirstObjectID" ThisKey="CelestialObjectID" OtherKey="FirstObjectID" Type="CelestialObjectLink" />
+      <Association Name="CelestialObject_CelestialObjectLink1" Member="CelestialObjectLinksBySecondObjectID" ThisKey="CelestialObjectID" OtherKey="SecondObjectID" Type="CelestialObjectLink" />
+      <Association Name="CelestialObject_CelestialObjectStructure" Member="CelestialObjectStructures" ThisKey="CelestialObjectID" OtherKey="CelestialObjectID" Type="CelestialObjectStructure" />
+      <Association Name="CelestialObject_CelestialObjectShip" Member="CelestialObjectShips" ThisKey="CelestialObjectID" OtherKey="CelestialObjectID" Type="CelestialObjectShip" />
+      <Association Name="CelestialObject_Transit" Member="TransitsByFromObjectID" ThisKey="CelestialObjectID" OtherKey="FromObjectID" Type="Transit" />
+      <Association Name="CelestialObject_Transit1" Member="TransitsByToObjectID" ThisKey="CelestialObjectID" OtherKey="ToObjectID" Type="Transit" />
+      <Association Name="CelestialObject_Transit2" Member="Transits" ThisKey="CelestialObjectID" OtherKey="OrbitsObjectID" Type="Transit" />
+      <Association Name="CelestialObject_StarSystem" Member="StarSystems" ThisKey="CelestialObjectID" OtherKey="HomeStarID" Type="StarSystem" />
+      <Association Name="CelestialObject_CelestialObject" Member="ChildCelestialObjects" ThisKey="CelestialObjectID" OtherKey="ParentObject" Type="CelestialObject" />
+      <Association Name="CelestialObject_Player" Member="Players" ThisKey="CelestialObjectID" OtherKey="HomeworldID" Type="Player" />
+      <Association Name="CelestialObject_CelestialObject" Member="ParentCelestialObject" ThisKey="ParentObject" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+      <Association Name="Player_CelestialObject" Member="Player" ThisKey="OwnerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Player" Member="Players">
+    <Type Name="Player">
+      <Column Name="PlayerID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SystemID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="SpringAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="MothershipName" Type="System.String" DbType="nvarchar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="TransitID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="Credits" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Metal" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Food" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="MetalIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="FoodIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Population" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="PopulationCapacity" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Quantium" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="QuantiumIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMatter" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMatterIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="XP" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ResearchIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="ResearchPoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="HomeworldID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="PresidentVote" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Association Name="Player_PlayerEvent" Member="PlayerEvents" ThisKey="PlayerID" OtherKey="PlayerID" Type="PlayerEvent" />
+      <Association Name="Player_MothershipStructure" Member="MothershipStructures" ThisKey="PlayerID" OtherKey="PlayerID" Type="MothershipStructure" />
+      <Association Name="Player_PlayerTechSpent" Member="PlayerTechSpents" ThisKey="PlayerID" OtherKey="PlayerID" Type="PlayerTechSpent" />
+      <Association Name="Player_Fleet" Member="Fleets" ThisKey="PlayerID" OtherKey="OwnerID" Type="Fleet" />
+      <Association Name="Player_PopulationTransport" Member="PopulationTransports" ThisKey="PlayerID" OtherKey="OwnerID" Type="PopulationTransport" />
+      <Association Name="Player_StarSystem" Member="StarSystems" ThisKey="PlayerID" OtherKey="PresidentID" Type="StarSystem" />
+      <Association Name="Player_CelestialObject" Member="CelestialObjects" ThisKey="PlayerID" OtherKey="OwnerID" Type="CelestialObject" />
+      <Association Name="Player_Player" Member="ChildPlayers" ThisKey="PlayerID" OtherKey="PresidentVote" Type="Player" />
+      <Association Name="CelestialObject_Player" Member="CelestialObject" ThisKey="HomeworldID" OtherKey="CelestialObjectID" Type="CelestialObject" IsForeignKey="true" />
+      <Association Name="Transit_Player" Member="Transit" ThisKey="TransitID" OtherKey="TransitID" Type="Transit" IsForeignKey="true" />
+      <Association Name="Player_Player" Member="ParentPlayer" ThisKey="PresidentVote" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+      <Association Name="SpringAccount_Player" Member="SpringAccount" ThisKey="SpringAccountID" OtherKey="SpringAccountID" Type="SpringAccount" IsForeignKey="true" />
+      <Association Name="StarSystem_Player" Member="StarSystem" ThisKey="SystemID" OtherKey="SystemID" Type="StarSystem" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

@@ -1,0 +1,403 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 14.375, 16.5" name="Db">
+  <DataContextMoniker Name="/DbDataContext" />
+  <nestedChildShapes>
+    <classShape Id="aa86dad5-2a56-4133-a65f-076068510314" absoluteBounds="6.25, 4.875, 2, 1.3862939453125005">
+      <DataClassMoniker Name="/DbDataContext/Battle" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8af48818-31fd-4b51-9ae3-fc5bd447d8e4" absoluteBounds="6.2650000000000006, 5.3350000000000009, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="1400e77c-5adf-41f5-8a9d-879a073f1a76" absoluteBounds="8.875, 5.625, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/DbDataContext/StarSystem" />
+      <nestedChildShapes>
+        <elementListCompartment Id="db8da3f6-dfcc-4aa7-a8b9-fbd793a3c5b1" absoluteBounds="8.89, 6.085, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="cfd36219-66b0-46d6-a43c-0b65700d8540" absoluteBounds="8.375, 3.875, 2, 1.1939925130208335">
+      <DataClassMoniker Name="/DbDataContext/BattleEvent" />
+      <nestedChildShapes>
+        <elementListCompartment Id="6c2a26b3-09ad-4ffa-8d08-96c88a606919" absoluteBounds="8.39, 4.3350000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="9f770354-3630-4b98-b28d-026733ac730f" absoluteBounds="0.5, 6.5, 2, 6.1938297526041648">
+      <DataClassMoniker Name="/DbDataContext/CelestialObject" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5c8b5eb2-f66b-420d-9bf0-1297226ea982" absoluteBounds="0.51499999999999968, 6.96, 1.9700000000000002, 5.6338297526041661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7f6a22dc-ff48-4c45-841c-51308eb9765a" absoluteBounds="6, 0.5, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/DbDataContext/CelestialObjectEvent" />
+      <nestedChildShapes>
+        <elementListCompartment Id="74199855-6bc9-42fe-90b1-f41484babad9" absoluteBounds="6.0150000000000006, 0.96000000000000085, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="3ce9b9b9-d28f-4874-befb-08eefe6826e4" absoluteBounds="0.5, 11.75, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/DbDataContext/CelestialObjectLink" />
+      <nestedChildShapes>
+        <elementListCompartment Id="fe676100-e619-4c1b-be48-02a106fa9188" absoluteBounds="0.51500000000000057, 12.21, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="4528ea15-4880-4a20-a8d0-9c871ba869da" absoluteBounds="8.875, 1.375, 2, 1.7708968098958329">
+      <DataClassMoniker Name="/DbDataContext/Event" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1f4aff99-17ac-4c4d-8806-504f6f35f167" absoluteBounds="8.89, 1.835, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="3ab30f02-93c0-47cb-afd0-542845a9258c" absoluteBounds="2.875, 2.75, 2, 5.0400211588541657">
+      <DataClassMoniker Name="/DbDataContext/Player" />
+      <nestedChildShapes>
+        <elementListCompartment Id="34b7aa5b-bd36-4d44-a39a-c2f9461d043e" absoluteBounds="2.89, 3.21, 1.9700000000000002, 4.4800211588541661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="5e5c927b-fce0-4e7d-8693-e16b47509deb" absoluteBounds="6, 2, 2, 1.1939925130208335">
+      <DataClassMoniker Name="/DbDataContext/PlayerEvent" />
+      <nestedChildShapes>
+        <elementListCompartment Id="34dfb826-2c50-4540-9a90-c63b9cf18c35" absoluteBounds="6.015, 2.46, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="de94c9db-4a4c-4dad-9ffc-b241725dee9b" absoluteBounds="0.5, 0.5, 2, 2.5401025390625005">
+      <DataClassMoniker Name="/DbDataContext/SpringAccount" />
+      <nestedChildShapes>
+        <elementListCompartment Id="644192c2-6010-4388-a9ca-acbfea7a51bc" absoluteBounds="0.515, 0.96, 1.9700000000000002, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(7.25 : 4.875); (7.25 : 4.47199625651042); (8.375 : 4.47199625651042)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Battle/Battle_BattleEvent" />
+      <nodes>
+        <classShapeMoniker Id="aa86dad5-2a56-4133-a65f-076068510314" />
+        <classShapeMoniker Id="cfd36219-66b0-46d6-a43c-0b65700d8540" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 8.75564697265625); (5.41666666666667 : 8.75564697265625 : JumpStart); (5.58333333333333 : 8.75564697265625 : JumpEnd); (5.91666666666667 : 8.75564697265625 : JumpStart); (6.08333333333333 : 8.75564697265625 : JumpEnd); (6.41666666666667 : 8.75564697265625 : JumpStart); (6.58333333333333 : 8.75564697265625 : JumpEnd); (9.875 : 8.75564697265625); (9.875 : 6.81899251302083)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_StarSystem" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="1400e77c-5adf-41f5-8a9d-879a073f1a76" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.05692307692308 : 10.9631168619792); (1.05692307692308 : 11.3381168619792); (1.5 : 11.3381168619792); (1.5 : 10.9631168619792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_CelestialObject" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.5 : 6.5); (1.5 : 3.2901025390625); (1.91666616666667 : 3.2901025390625 : JumpStart); (2.08333283333333 : 3.2901025390625 : JumpEnd); (2.625 : 3.2901025390625); (2.625 : 2.5); (3.79166666666667 : 2.5 : JumpStart); (3.95833333333333 : 2.5 : JumpEnd); (5.125 : 2.5); (5.125 : 1.09699625651042); (6 : 1.09699625651042)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_CelestialObjectEvent" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="7f6a22dc-ff48-4c45-841c-51308eb9765a" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(0.792115384615385 : 10.9631168619792); (0.792115384615385 : 11.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_CelestialObjectLink" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="3ce9b9b9-d28f-4874-befb-08eefe6826e4" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.12480769230769 : 10.9631168619792); (2.12480769230769 : 11.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_CelestialObjectLink1" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="3ce9b9b9-d28f-4874-befb-08eefe6826e4" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(9.625 : 3.14589680989583); (9.625 : 3.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Event/Event_BattleEvent" />
+      <nodes>
+        <classShapeMoniker Id="4528ea15-4880-4a20-a8d0-9c871ba869da" />
+        <classShapeMoniker Id="cfd36219-66b0-46d6-a43c-0b65700d8540" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.875 : 1.53449625651042); (8 : 1.53449625651042)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Event/Event_CelestialObjectEvent" />
+      <nodes>
+        <classShapeMoniker Id="4528ea15-4880-4a20-a8d0-9c871ba869da" />
+        <classShapeMoniker Id="7f6a22dc-ff48-4c45-841c-51308eb9765a" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.875 : 6.95270914713542); (2.5 : 6.95270914713542)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Player/Player_CelestialObject" />
+      <nodes>
+        <classShapeMoniker Id="3ab30f02-93c0-47cb-afd0-542845a9258c" />
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.875 : 6.57139322916667); (6.08333333333333 : 6.57139322916667 : JumpStart); (5.91666666666667 : 6.57139322916667 : JumpEnd); (4.875 : 6.57139322916667)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/StarSystem/StarSystem_Player" />
+      <nodes>
+        <classShapeMoniker Id="1400e77c-5adf-41f5-8a9d-879a073f1a76" />
+        <classShapeMoniker Id="3ab30f02-93c0-47cb-afd0-542845a9258c" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.875 : 2.57294840494792); (8 : 2.57294840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Event/Event_PlayerEvent" />
+      <nodes>
+        <classShapeMoniker Id="4528ea15-4880-4a20-a8d0-9c871ba869da" />
+        <classShapeMoniker Id="5e5c927b-fce0-4e7d-8693-e16b47509deb" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.875 : 2.97199625651042); (5.41666666666667 : 2.97199625651042 : JumpStart); (5.58333333333333 : 2.97199625651042 : JumpEnd); (6 : 2.97199625651042)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Player/Player_PlayerEvent" />
+      <nodes>
+        <classShapeMoniker Id="3ab30f02-93c0-47cb-afd0-542845a9258c" />
+        <classShapeMoniker Id="5e5c927b-fce0-4e7d-8693-e16b47509deb" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.9999995 : 3.0401025390625); (1.9999995 : 5.83170301231971); (2.875 : 5.83170301231971)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/SpringAccount/SpringAccount_Player" />
+      <nodes>
+        <classShapeMoniker Id="de94c9db-4a4c-4dad-9ffc-b241725dee9b" />
+        <classShapeMoniker Id="3ab30f02-93c0-47cb-afd0-542845a9258c" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="c2a406a6-4eeb-4ba6-a765-3e11f5a1f0b6" absoluteBounds="2.875, 0.5, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/DbDataContext/Config" />
+      <nestedChildShapes>
+        <elementListCompartment Id="26d903d5-8b82-42bf-b1b1-70b704a30129" absoluteBounds="2.89, 0.96000000000000085, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="ffda2310-e455-4d37-b248-d93f78012c66" absoluteBounds="2.875, 6.875, 2, 1.3862939453125">
+      <DataClassMoniker Name="/DbDataContext/CelestialObjectStructure" />
+      <nestedChildShapes>
+        <elementListCompartment Id="058e23ed-092f-4480-8887-85d9e238b6b6" absoluteBounds="2.8900000000000006, 7.335, 1.97, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="93387bf7-4cd1-4ba2-bcbb-d2d25eabcfab" absoluteBounds="3.875, 4.75, 2, 1.3862939453124996">
+      <DataClassMoniker Name="/DbDataContext/MothershipStructure" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0c2c640a-78ae-4cef-9f92-781014bea780" absoluteBounds="3.8900000000000006, 5.21, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d7678602-0603-43c7-b040-468a7f91f4c4" absoluteBounds="11.75, 5.875, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/DbDataContext/StarSystemTech" />
+      <nestedChildShapes>
+        <elementListCompartment Id="c4ce0e29-bf45-4e9a-ae94-f34130038075" absoluteBounds="11.765, 6.3350000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d80ab63c-fdc4-4d3f-bc12-34d5a602ff19" absoluteBounds="11.5, 3.25, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/DbDataContext/PlayerTechSpent" />
+      <nestedChildShapes>
+        <elementListCompartment Id="9d7ad674-af20-4a4f-8a3a-978fcd9fc906" absoluteBounds="11.515, 3.7100000000000009, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="c22b50c1-0754-4dca-81ef-ca1b9b42b6a9" absoluteBounds="6.875, 12.5, 2, 1.3862939453125005">
+      <DataClassMoniker Name="/DbDataContext/FleetShip" />
+      <nestedChildShapes>
+        <elementListCompartment Id="3fd667af-60de-4f09-b43b-af55cdecc8a2" absoluteBounds="6.89, 12.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="7a0278f6-923e-4b9e-84c1-e95a612b683a" absoluteBounds="5.75, 10.5, 2, 1.3862939453125005">
+      <DataClassMoniker Name="/DbDataContext/CelestialObjectShip" />
+      <nestedChildShapes>
+        <elementListCompartment Id="cce9c9c6-8446-4dc1-b15a-e18d69824505" absoluteBounds="5.7650000000000006, 10.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.5 : 10.6112552959736); (2.875 : 10.6112552959736); (2.875 : 9); (5.29166666666667 : 9 : JumpStart); (5.45833333333333 : 9 : JumpEnd); (5.91666666666667 : 9 : JumpStart); (6.08333333333333 : 9 : JumpEnd); (6.41666666666667 : 9 : JumpStart); (6.58333333333333 : 9 : JumpEnd); (7.25 : 9); (7.25 : 6.2612939453125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_Battle" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="aa86dad5-2a56-4133-a65f-076068510314" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 7.66950154622396); (2.875 : 7.66950154622396)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_CelestialObjectStructure" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="ffda2310-e455-4d37-b248-d93f78012c66" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.875 : 4.35798773036859); (2.625 : 4.35798773036859); (2.625 : 5.44314697265625); (3.875 : 5.44314697265625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Player/Player_MothershipStructure" />
+      <nodes>
+        <classShapeMoniker Id="3ab30f02-93c0-47cb-afd0-542845a9258c" />
+        <classShapeMoniker Id="93387bf7-4cd1-4ba2-bcbb-d2d25eabcfab" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(10.875 : 6.34699625651042); (11.75 : 6.34699625651042)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/StarSystem/StarSystem_StarSystemTech" />
+      <nodes>
+        <classShapeMoniker Id="1400e77c-5adf-41f5-8a9d-879a073f1a76" />
+        <classShapeMoniker Id="d7678602-0603-43c7-b040-468a7f91f4c4" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.875 : 3.6796875); (5.41666666666667 : 3.6796875 : JumpStart); (5.58333333333333 : 3.6796875 : JumpEnd); (10.9322891666667 : 3.6796875 : JumpStart); (11.0989558333333 : 3.6796875 : JumpEnd); (11.5 : 3.6796875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Player/Player_PlayerTechSpent" />
+      <nodes>
+        <classShapeMoniker Id="3ab30f02-93c0-47cb-afd0-542845a9258c" />
+        <classShapeMoniker Id="d80ab63c-fdc4-4d3f-bc12-34d5a602ff19" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 8.50846795898438); (5.41666666666667 : 8.50846795898438 : JumpStart); (5.58333333333333 : 8.50846795898438 : JumpEnd); (5.91666666666667 : 8.50846795898438 : JumpStart); (6.08333333333333 : 8.50846795898438 : JumpEnd); (6.5 : 8.50846795898438); (6.5 : 10.5)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_CelestialObjectShip" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="7a0278f6-923e-4b9e-84c1-e95a612b683a" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="2a8d870a-ca36-4a89-ab41-243356a9f254" absoluteBounds="3.125, 9.25, 2, 3.1170068359375">
+      <DataClassMoniker Name="/DbDataContext/Transit" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5cdc9ea2-1d65-4bb5-9e98-57d0d6d4c312" absoluteBounds="3.14, 9.71, 1.9700000000000002, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(5.125 : 9.25); (5.5 : 8.875); (5.5 : 7.78041829427083); (5.25 : 7.78041829427083); (4.875 : 7.40541829427083)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Transit/Transit_Player" />
+      <nodes>
+        <classShapeMoniker Id="2a8d870a-ca36-4a89-ab41-243356a9f254" />
+        <classShapeMoniker Id="3ab30f02-93c0-47cb-afd0-542845a9258c" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 9.96675170898438); (3.125 : 9.96675170898438)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_Transit" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="2a8d870a-ca36-4a89-ab41-243356a9f254" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 10.3876275634766); (3.125 : 10.3876275634766)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_Transit1" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="2a8d870a-ca36-4a89-ab41-243356a9f254" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="b1577b63-58c3-4b66-a903-f036039f605a" absoluteBounds="3.25, 12.875, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/DbDataContext/Fleet" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b10e1fbc-4955-46c8-8be7-d14330779126" absoluteBounds="3.265, 13.335, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(5.25 : 13.3806469726563); (5.41666666666667 : 13.3806469726563 : JumpStart); (5.58333333333333 : 13.3806469726563 : JumpEnd); (6.875 : 13.3806469726563)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Fleet/Fleet_FleetShip" />
+      <nodes>
+        <classShapeMoniker Id="b1577b63-58c3-4b66-a903-f036039f605a" />
+        <classShapeMoniker Id="c22b50c1-0754-4dca-81ef-ca1b9b42b6a9" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(1.5 : 10.9631168619792); (1.5 : 11.5); (2.04147435897436 : 11.5 : JumpStart); (2.20814102564102 : 11.5 : JumpEnd); (2.75 : 11.5); (2.75 : 13.7604484049479); (3.07291666666667 : 13.7604484049479 : JumpStart); (3.23958333333333 : 13.7604484049479 : JumpEnd); (3.25 : 13.7604484049479)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_Fleet" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="b1577b63-58c3-4b66-a903-f036039f605a" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.1875 : 12.3670068359375); (4.1875 : 12.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Transit/Transit_Fleet" />
+      <nodes>
+        <classShapeMoniker Id="2a8d870a-ca36-4a89-ab41-243356a9f254" />
+        <classShapeMoniker Id="b1577b63-58c3-4b66-a903-f036039f605a" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="baa646ea-51b7-4c65-8de4-197cb1dd5e8f" absoluteBounds="5.25, 14.625, 2, 1.5785953776041666">
+      <DataClassMoniker Name="/DbDataContext/PopulationTransport" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ac9e86b2-d20e-4fbd-9610-a06ececbdffc" absoluteBounds="5.265, 15.085, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(3.875 : 2.75); (3.875 : 2.375); (5.5 : 2.375); (5.5 : 4.5); (6 : 4.5); (6 : 9.25); (5.5 : 9.25); (5.5 : 14.25); (6.2500005 : 14.25); (6.2500005 : 14.625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Player/Player_PopulationTransport" />
+      <nodes>
+        <classShapeMoniker Id="3ab30f02-93c0-47cb-afd0-542845a9258c" />
+        <classShapeMoniker Id="baa646ea-51b7-4c65-8de4-197cb1dd5e8f" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(3.15625 : 12.3670068359375); (3.15625 : 15.8610479856771); (5.25 : 15.8610479856771)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Transit/Transit_PopulationTransport" />
+      <nodes>
+        <classShapeMoniker Id="2a8d870a-ca36-4a89-ab41-243356a9f254" />
+        <classShapeMoniker Id="baa646ea-51b7-4c65-8de4-197cb1dd5e8f" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="d806877b-994b-41b3-9d2d-74e1880f0c7e" absoluteBounds="12.125, 12.25, 2, 3.5016097005208309">
+      <DataClassMoniker Name="/DbDataContext/StructureType" />
+      <nestedChildShapes>
+        <elementListCompartment Id="3b5ae75d-112c-40e7-88f2-e6ad7bac53eb" absoluteBounds="12.14, 12.71, 1.9700000000000002, 2.941609700520833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="467ab50b-687e-4984-b40f-314e583ff180" absoluteBounds="12.125, 9.125, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/DbDataContext/ShipType" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1018a489-ebbf-4b61-938d-be7bdc604bf4" absoluteBounds="12.14, 9.585, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="f11ebe8c-27f0-44b3-bdd7-1c3ce4a4c612" absoluteBounds="9.375, 11.5, 2, 1.9631982421874987">
+      <DataClassMoniker Name="/DbDataContext/Tech" />
+      <nestedChildShapes>
+        <elementListCompartment Id="8517ffa2-87ec-4775-afc7-03c4c4236758" absoluteBounds="9.39, 11.96, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(12.125 : 12.25); (11.75 : 11.875); (11.75 : 8.02085561979167); (4.875 : 8.02085561979167)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/StructureType/StructureType_CelestialObjectStructure" />
+      <nodes>
+        <classShapeMoniker Id="d806877b-994b-41b3-9d2d-74e1880f0c7e" />
+        <classShapeMoniker Id="ffda2310-e455-4d37-b248-d93f78012c66" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(13.156252 : 12.25); (13.156252 : 11.5353011067708); (11.6875 : 11.5353011067708); (11.6875 : 5.44314697265625); (11.0989558333333 : 5.44314697265625 : JumpStart); (10.9322891666667 : 5.44314697265625 : JumpEnd); (8.3125 : 5.44314697265625); (8.3125 : 4.8125); (6.09375 : 4.8125); (6.09375 : 5.44314697265625); (6.08333333333333 : 5.44314697265625 : JumpStart); (5.91666666666667 : 5.44314697265625 : JumpEnd); (5.875 : 5.44314697265625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/StructureType/StructureType_MothershipStructure" />
+      <nodes>
+        <classShapeMoniker Id="d806877b-994b-41b3-9d2d-74e1880f0c7e" />
+        <classShapeMoniker Id="93387bf7-4cd1-4ba2-bcbb-d2d25eabcfab" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(12.125 : 9.78125); (11.8333333333333 : 9.78125 : JumpStart); (11.6666666666667 : 9.78125 : JumpEnd); (11.2395833333333 : 9.78125 : JumpStart); (10.9322891666667 : 9.78125 : JumpEnd); (8.34375 : 9.78125); (8.34375 : 12.5)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/ShipType/ShipType_FleetShip" />
+      <nodes>
+        <classShapeMoniker Id="467ab50b-687e-4984-b40f-314e583ff180" />
+        <classShapeMoniker Id="c22b50c1-0754-4dca-81ef-ca1b9b42b6a9" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(12.125 : 10.9864005533854); (11.8333333333333 : 10.9864005533854 : JumpStart); (11.6666666666667 : 10.9864005533854 : JumpEnd); (11.2395833333333 : 10.9864005533854 : JumpStart); (10.9322891666667 : 10.9864005533854 : JumpEnd); (10.2473920833333 : 10.9864005533854 : JumpStart); (10.0807254166667 : 10.9864005533854 : JumpEnd); (7.75 : 10.9864005533854)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/ShipType/ShipType_CelestialObjectShip" />
+      <nodes>
+        <classShapeMoniker Id="467ab50b-687e-4984-b40f-314e583ff180" />
+        <classShapeMoniker Id="7a0278f6-923e-4b9e-84c1-e95a612b683a" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(11.15625 : 11.5); (11.15625 : 6.97524251302083); (11.75 : 6.97524251302083)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Tech/Tech_StarSystemTech" />
+      <nodes>
+        <classShapeMoniker Id="f11ebe8c-27f0-44b3-bdd7-1c3ce4a4c612" />
+        <classShapeMoniker Id="d7678602-0603-43c7-b040-468a7f91f4c4" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(11.0156225 : 11.5); (11.0156225 : 3.421875); (11.5 : 3.421875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Tech/Tech_PlayerTechSpent" />
+      <nodes>
+        <classShapeMoniker Id="f11ebe8c-27f0-44b3-bdd7-1c3ce4a4c612" />
+        <classShapeMoniker Id="d80ab63c-fdc4-4d3f-bc12-34d5a602ff19" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(11.375 : 12.8878516210937); (12.125 : 12.8878516210937)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Tech/Tech_StructureType" />
+      <nodes>
+        <classShapeMoniker Id="f11ebe8c-27f0-44b3-bdd7-1c3ce4a4c612" />
+        <classShapeMoniker Id="d806877b-994b-41b3-9d2d-74e1880f0c7e" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(10.16405875 : 11.5); (10.16405875 : 10.3838252766927); (11.0729166666667 : 10.3838252766927 : JumpStart); (11.2395833333333 : 10.3838252766927 : JumpEnd); (11.6666666666667 : 10.3838252766927 : JumpStart); (11.8333333333333 : 10.3838252766927 : JumpEnd); (12.125 : 10.3838252766927)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Tech/Tech_ShipType" />
+      <nodes>
+        <classShapeMoniker Id="f11ebe8c-27f0-44b3-bdd7-1c3ce4a4c612" />
+        <classShapeMoniker Id="467ab50b-687e-4984-b40f-314e583ff180" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(10.0836362792969 : 13.4631982421875); (10.0836362792969 : 13.7131982421875); (10.6802381835937 : 13.7131982421875); (10.6802381835937 : 13.4631982421875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/Tech/Tech_Tech" />
+      <nodes>
+        <classShapeMoniker Id="f11ebe8c-27f0-44b3-bdd7-1c3ce4a4c612" />
+        <classShapeMoniker Id="f11ebe8c-27f0-44b3-bdd7-1c3ce4a4c612" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 6.66385457356771); (2.875 : 6.66385457356771)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/DbDataContext/CelestialObject/CelestialObject_Player" />
+      <nodes>
+        <classShapeMoniker Id="9f770354-3630-4b98-b28d-026733ac730f" />
+        <classShapeMoniker Id="3ab30f02-93c0-47cb-afd0-542845a9258c" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

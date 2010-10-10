@@ -1,0 +1,4 @@
+1. Copy the php files in your directory
+2. Create the mysql db structure by importing the sql-file into your DBMS
+3. Edit the remote dbConnection.php and enter your db login credentials
+4. Create the directories "files", "images" and "thumbnails"

@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>MonoTorrent</AssemblyName>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>
+    </AppDesignerFolder>
+    <RootNamespace>MonoTorrent</RootNamespace>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <RemoveIntegerChecks>False</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MonoTorrent</RootNamespace>
+    <DebugType>full</DebugType>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <FileAlignment>4096</FileAlignment>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <RegisterForComInterop>False</RegisterForComInterop>
+    <RemoveIntegerChecks>False</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MonoTorrent</RootNamespace>
+    <DebugType>none</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Stats|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Stats\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;STATS</DefineConstants>
+    <BaseAddress>285212672</BaseAddress>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="MyHttpUtility.cs" />
+    <Compile Include="MonoTorrent.BEncoding\RawReader.cs" />
+    <Compile Include="MonoTorrent.BEncoding\BEncodedDictionary.cs" />
+    <Compile Include="MonoTorrent.BEncoding\BEncodedList.cs" />
+    <Compile Include="MonoTorrent.BEncoding\BEncodedNumber.cs" />
+    <Compile Include="MonoTorrent.BEncoding\BEncodedString.cs" />
+    <Compile Include="MonoTorrent.BEncoding\BEncodingException.cs" />
+    <Compile Include="MonoTorrent.BEncoding\IBEncodedValue.cs" />
+    <Compile Include="MonoTorrent.Client\Block.cs" />
+    <Compile Include="MonoTorrent.Client\ClientEngine.cs" />
+    <Compile Include="MonoTorrent.Client\FileStreamBuffer.cs" />
+    <Compile Include="MonoTorrent.Client\Logger.cs" />
+    <Compile Include="MonoTorrent.Client\Piece.cs" />
+    <Compile Include="MonoTorrent.Client\PieceWriter\NtfsSparseFile.cs" />
+    <Compile Include="MonoTorrent.Client\PieceWriter\PieceWriter.cs" />
+    <Compile Include="MonoTorrent.Client\TorrentFileStream.cs" />
+    <Compile Include="MonoTorrent.Client\Managers\BufferManager.cs" />
+    <Compile Include="MonoTorrent.Client\PieceWriter\DiskWriter.cs" />
+    <Compile Include="MonoTorrent.Client\PieceWriter\PieceData.cs" />
+    <Compile Include="MonoTorrent.Common\AsyncResult.cs" />
+    <Compile Include="MonoTorrent.Common\BitField.cs" />
+    <Compile Include="MonoTorrent.Common\Check.cs" />
+    <Compile Include="MonoTorrent.Common\Enums.cs" />
+    <Compile Include="MonoTorrent.Common\HashAlgoFactory.cs" />
+    <Compile Include="MonoTorrent.Common\Hashes.cs" />
+    <Compile Include="MonoTorrent.Common\InfoHash.cs" />
+    <Compile Include="MonoTorrent.Common\MonoTorrentCollectionBase.cs" />
+    <Compile Include="MonoTorrent.Common\ToolBox.cs" />
+    <Compile Include="MonoTorrent.Common\Torrent.cs" />
+    <Compile Include="MonoTorrent.Common\TorrentCreator.cs" />
+    <Compile Include="MonoTorrent.Common\TorrentCreatorAsyncResult.cs" />
+    <Compile Include="MonoTorrent.Common\TorrentException.cs" />
+    <Compile Include="MonoTorrent.Common\TorrentFile.cs" />
+    <Compile Include="MonoTorrent.Common\EventArgs\TorrentCreatorEventArgs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+    <ProjectGuid>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</ProjectGuid>
+    <RootNamespace>MonoTorrent</RootNamespace>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <MonoDevelop.Autotools.MakefileInfo RelativeMakefileName="Makefile.am" IsAutotoolsProject="true" RelativeConfigureInPath="..">
+          <BuildFilesVar Sync="true" Name="FILES" />
+          <DeployFilesVar />
+          <ResourcesVar />
+          <OthersVar />
+          <GacRefVar Name="REFERENCES" />
+          <AsmRefVar Name="REFERENCES" />
+          <ProjectRefVar Name="REFERENCES" />
+        </MonoDevelop.Autotools.MakefileInfo>
+      </Properties>
+    </MonoDevelop>
+    <VisualStudio />
+  </ProjectExtensions>
+</Project>

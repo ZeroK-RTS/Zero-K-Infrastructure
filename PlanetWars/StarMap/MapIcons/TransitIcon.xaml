@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="PlanetWars.MapIcons.TransitIcon" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:PlanetWars">
+    <UserControl.Resources>
+        <local:StringFormatter x:Key="stringFormatter" />
+    </UserControl.Resources>
+    <Canvas x:Name="LayoutRoot">
+        <Line x:Name="PlottedRouteLine" Stroke="Cyan" Opacity="0.7"/>
+        <Line x:Name="PlaceOrderLine" Opacity="0.7" Visibility="Collapsed"/>
+        <Grid x:Name="IconGrid">
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="ScaleTransform" />
+            </Grid.RenderTransform>
+            <Path x:Name="Arrow" Stretch="Fill" Fill="DarkCyan" Opacity="0.5" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Data="F1 M 583.453,145.872L 589.314,155.832L 605.077,146.555L 616.469,139.851L 605.077,133.147L 589.314,123.87L 583.453,133.83L 593.685,139.851L 583.453,145.872 Z ">
+                <Path.RenderTransform>
+                    <RotateTransform x:Name="ArrowRotate" />
+                </Path.RenderTransform>
+            </Path>
+            <StackPanel Margin="10" x:Name="InformationPanel">
+                <TextBlock x:Name="OwnerNameBlock" Foreground="White" />
+                <TextBlock Text="{Binding Fleets.FleetShips.Count, Converter={StaticResource stringFormatter}, ConverterParameter=Ships:\ \{0\}}"
+                        Foreground="White" />
+                <ComboBox x:Name="DestinationBox" />
+                <Button Content="Go!" Click="GoButton_Click" />
+                <Button Content="Order" Click="OrderButton_Click" />
+            </StackPanel>
+        </Grid>
+    </Canvas>
+</UserControl>
