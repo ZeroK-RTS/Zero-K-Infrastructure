@@ -170,7 +170,7 @@ namespace MissionEditor2
 					}
 
 					loadingDialog.Text = "Finalizing";
-					mission.RestoreUnitDefs();
+					mission.RestoreReferences();
 					Settings.Default.MissionPath = fileName;
 					Settings.Default.Save();
 					loadingDialog.Invoke(delegate

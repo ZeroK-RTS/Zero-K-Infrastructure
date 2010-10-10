@@ -20,25 +20,15 @@ namespace MissionEditor2
     /// </summary>
     public partial class MissionSettingsDialog : Window
     {
-    	Mission mission;
+    	public Mission Mission { get; private set; }
     	// todo: refresh boxes when mod changes
         public MissionSettingsDialog()
         {
             InitializeComponent();
-
-        	mission = MainWindow.Instance.Mission;
-        	DataContext = mission;
-			foreach (var unit in mission.DisabledUnits)
-			{
-				var unitDef = mission.Mod.UnitDefs.FirstOrDefault(u => u.Name == unit);
-				if (unitDef != null)
-				{
-					UnitBox.SelectedItems.Add(unitDef);
-				}
-			}
-			UnitBox.SelectedItems.Clear();
-			WidgetsBox.BindCollection(mission.DisabledWidgets);
-			GadgetsBox.BindCollection(mission.DisabledGadgets);
+        	Mission = MainWindow.Instance.Mission;
+        	DataContext = Mission;
+			WidgetsBox.BindCollection(Mission.DisabledWidgets);
+			GadgetsBox.BindCollection(Mission.DisabledGadgets);
         }
 
         private void ColorButton_Click(object sender, RoutedEventArgs e)
@@ -57,29 +47,26 @@ namespace MissionEditor2
 			new MapSelectionDialog().ShowDialog();
 		}
 
-		private void ModButton_Click(object sender, RoutedEventArgs e)
+		private void AIBox_Loaded(object sender, RoutedEventArgs e)
 		{
-			new ModSelectionDialog().ShowDialog();
+			var comboBox = (ComboBox) e.Source;
+			comboBox.ItemsSource = Mission.Mod.AllAis;
 		}
 
-		private void UnitBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    	private void ModButton_Click(object sender, RoutedEventArgs e)
 		{
-			foreach (var item in e.AddedItems) mission.DisabledUnits.Add(item.ToString());
-			foreach (var item in e.RemovedItems)
-			{
-				while (mission.DisabledUnits.Remove(item.ToString())) { }
-			}
+			new ModSelectionDialog().ShowDialog();
 		}
 
 		private void NewPlayerButton_Click(object sender, RoutedEventArgs e)
 		{
 			var player = new Player();
-			mission.Players.Add(player);
+			Mission.Players.Add(player);
 			((INotifyPropertyChanged)player).PropertyChanged += (s, eventArgs) => // fixme: leak
 			{
 				if (eventArgs.PropertyName == "Alliance")
 				{
-					mission.RaisePropertyChanged("Alliances");
+					Mission.RaisePropertyChanged("Alliances");
 				}
 			};
 		}

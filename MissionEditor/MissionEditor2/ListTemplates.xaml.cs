@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
-using CMissionLib;
 using CMissionLib.Actions;
 using CMissionLib.Conditions;
 using CMissionLib.UnitSyncLib;
-using Action = CMissionLib.Action;
 
 namespace MissionEditor2
 {
@@ -35,25 +28,25 @@ namespace MissionEditor2
 
 		void UnitDefGrid_Loaded(object sender, RoutedEventArgs e)
 		{
-			var dataGrid = ((UnitDefsGrid)e.Source).Grid;
+			var dataGrid = ((UnitDefsGrid) e.Source).Grid;
 			var currentLogic = MainWindow.Instance.CurrentLogic;
 
 			ObservableCollection<string> logicItemUnitList = null;
 			if (currentLogic is UnitCreatedCondition)
 			{
-				logicItemUnitList = ((UnitCreatedCondition)currentLogic).Units;
+				logicItemUnitList = ((UnitCreatedCondition) currentLogic).Units;
 			}
 			else if (currentLogic is UnitFinishedCondition)
 			{
-				logicItemUnitList = ((UnitFinishedCondition)currentLogic).Units;
+				logicItemUnitList = ((UnitFinishedCondition) currentLogic).Units;
 			}
 			else if (currentLogic is LockUnitsAction)
 			{
-				logicItemUnitList = ((LockUnitsAction)currentLogic).Units;
+				logicItemUnitList = ((LockUnitsAction) currentLogic).Units;
 			}
 			else if (currentLogic is UnlockUnitsAction)
 			{
-				logicItemUnitList = ((UnlockUnitsAction)currentLogic).Units;
+				logicItemUnitList = ((UnlockUnitsAction) currentLogic).Units;
 			}
 
 			if (logicItemUnitList == null) return;
@@ -76,7 +69,7 @@ namespace MissionEditor2
 					}
 					foreach (var item in se.RemovedItems)
 					{
-						var info = (UnitInfo)item;
+						var info = (UnitInfo) item;
 						logicItemUnitList.Remove(info.Name);
 					}
 				};
@@ -96,7 +89,7 @@ namespace MissionEditor2
 			}
 			else if (currentLogic is UnitFinishedCondition)
 			{
-				unitList.BindCollection(((UnitFinishedCondition)currentLogic).Players);
+				unitList.BindCollection(((UnitFinishedCondition) currentLogic).Players);
 			}
 		}
 
@@ -111,7 +104,7 @@ namespace MissionEditor2
 				var markerCanvas = (Canvas) e.Source;
 				markerCanvas.Children.Add(flagPole);
 				foreach (var unit in MainWindow.Instance.Mission.AllUnits) markerCanvas.PlaceUnit(unit);
-				System.Action refreshPosition = delegate
+				Action refreshPosition = delegate
 					{
 						Canvas.SetLeft(flagPole, action.X - poleBase.X);
 						Canvas.SetTop(flagPole, action.Y - flagPole.Height + poleBase.Y);
@@ -133,22 +126,20 @@ namespace MissionEditor2
 				var markerCanvas = (Canvas) e.Source;
 				markerCanvas.Children.Add(camera);
 				foreach (var unit in MainWindow.Instance.Mission.AllUnits) markerCanvas.PlaceUnit(unit);
-				System.Action refreshPosition = delegate
+				Action refreshPosition = delegate
 					{
-						Canvas.SetLeft(camera, action.X - camera.Width / 2);
-						Canvas.SetTop(camera, action.Y - camera.Height / 2);
+						Canvas.SetLeft(camera, action.X - camera.Width/2);
+						Canvas.SetTop(camera, action.Y - camera.Height/2);
 					};
 				markerCanvas.MouseDown += (s, ea) =>
-				{
-					var mousePos = ea.GetPosition(markerCanvas);
-					action.X = mousePos.X;
-					action.Y = mousePos.Y;
-					refreshPosition();
-				};
+					{
+						var mousePos = ea.GetPosition(markerCanvas);
+						action.X = mousePos.X;
+						action.Y = mousePos.Y;
+						refreshPosition();
+					};
 			}
 		}
-
-
 
 
 		void AddCounterButton_Click(object sender, RoutedEventArgs e)

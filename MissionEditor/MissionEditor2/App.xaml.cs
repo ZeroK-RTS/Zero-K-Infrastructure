@@ -23,7 +23,10 @@ namespace MissionEditor2
 
 
 			var text = exceptionName + "\r\n" + ex.Message + "\r\n" + ex.StackTrace;
-			File.AppendAllText(assemblyLocation + "\\errors.log", text + "\n");
+			var errorLogFile = assemblyLocation + "\\errors.log";
+
+			File.AppendAllText(errorLogFile,"\r\n" + DateTime.Now + "\r\n");
+			File.AppendAllText(errorLogFile, text + "\r\n");
 
 			var message = String.Format("{0} error.\r\n{1}\r\nSee {2}\\errors.log for details.\r\n", exceptionName, ex.Message,
 									assemblyLocation);
