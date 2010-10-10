@@ -1,0 +1,44 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit">
+
+    <Canvas x:Key="planet" Width="550" Height="550">
+        <Canvas x:Name="Ebene_1">
+            <Canvas x:Name="g5780" RenderTransform="0.5973369,0,0,0.598798,0,0" Canvas.Left="-220.3533" Canvas.Top="-13.7003">
+                <Path Fill="#FFFFEEAA" x:Name="path3259" RenderTransform="-2.7084176,0,0,-2.7084176,0,0" Canvas.Left="1355.0446" Canvas.Top="1698.5597"
+                        Data="M340,445.42856A147.14285,147.14285,0,1,1,45.714294,445.42856A147.14285,147.14285,0,1,1,340,445.42856z">
+                    <Path.Effect>
+                        <BlurEffect Radius="50" />
+                    </Path.Effect>
+                </Path>
+                <Path Fill="#64FFFFFF" x:Name="path2968" RenderTransform="-2.7084176,0,0,-2.7084176,0,0" Canvas.Left="1355.0446" Canvas.Top="1698.5597"
+                        Data="M340,445.42856A147.14285,147.14285,0,1,1,45.714294,445.42856A147.14285,147.14285,0,1,1,340,445.42856z">
+                </Path>
+                <Path x:Name="path3198" RenderTransform="-2.7084176,0,0,-2.7084176,0,0" Canvas.Left="1395.0446" Canvas.Top="1698.5597"
+                        Data="M340,445.42856A147.14285,147.14285,0,1,1,45.714294,445.42856A147.14285,147.14285,0,1,1,340,445.42856z">
+                    <Path.Fill>
+                        <LinearGradientBrush StartPoint="100.89381,330.66608" EndPoint="311.85886,546.5033" ColorInterpolationMode="ScRgbLinearInterpolation"
+                                MappingMode="Absolute" SpreadMethod="Pad" Transform="Identity">
+                            <GradientStop Color="#FF00112B" Offset="0" />
+                            <GradientStop Color="#FFAA4400" Offset="1" />
+                        </LinearGradientBrush>
+                    </Path.Fill>
+                    <Path.Effect>
+                        <BlurEffect Radius="50" />
+                    </Path.Effect>
+                </Path>
+                <Path Fill="#59241F1C" x:Name="path5321" RenderTransform="1.130037,0,0,-1.130037,0,0" Canvas.Left="543.9258" Canvas.Top="845.0709"
+                        Data="M340,445.42856A147.14285,147.14285,0,1,1,45.714294,445.42856A147.14285,147.14285,0,1,1,340,445.42856z">
+                    <Path.Effect>
+                        <BlurEffect Radius="100" />
+                    </Path.Effect>
+                </Path>
+                <Path Fill="#59241F1C" x:Name="path5774" RenderTransform="0.8430587,0,0,-0.8430587,0,0" Canvas.Left="451.4778" Canvas.Top="970.6034"
+                        Data="M340,445.42856A147.14285,147.14285,0,1,1,45.714294,445.42856A147.14285,147.14285,0,1,1,340,445.42856z">
+                    <Path.Effect>
+                        <BlurEffect Radius="100" />
+                    </Path.Effect>
+                </Path>
+            </Canvas>
+        </Canvas>
+    </Canvas>
+</ResourceDictionary>

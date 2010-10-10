@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="PlanetWars.Tabs.MapTab" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
+        xmlns:local="clr-namespace:PlanetWars" xmlns:controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls"
+        xmlns:common="clr-namespace:System.Windows;assembly=System.Windows.Controls">
+    <UserControl.Resources>
+        <local:StringFormatter x:Key="stringFormatter" />
+    </UserControl.Resources>
+    <Grid x:Name="LayoutRoot" Background="White">
+        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+            <Grid>
+                <local:ZoomControl x:Name="ZoomControl" Background="Black">
+                    <Canvas x:Name="MapCanvas" />
+                </local:ZoomControl>
+                <StackPanel Margin="20, 100, 0, 0" HorizontalAlignment="Left">
+                    <toolkit:Expander Header="Planet Tree" Foreground="White">
+                        <controls:TreeView x:Name="PlanetTree" SelectedItemChanged="PlanetTree_SelectedItemChanged" HorizontalAlignment="Left">
+                            <controls:TreeView.ItemTemplate>
+                                <common:HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                    <TextBlock Text="{Binding Name}" />
+                                </common:HierarchicalDataTemplate>
+                            </controls:TreeView.ItemTemplate>
+                        </controls:TreeView>
+                    </toolkit:Expander>
+                </StackPanel>
+                <toolkit:DockPanel VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="5">
+                    <Button x:Name="TimeWarpButton" toolkit:DockPanel.Dock="Right" Content="Time Warp" Click="TimeWarpButton_Click" />
+                    <Slider x:Name="TimeSlider" Value="0" Maximum="50000" ValueChanged="TimeSlider_ValueChanged" />
+                </toolkit:DockPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
+

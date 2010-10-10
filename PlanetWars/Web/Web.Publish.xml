@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="ftp://planet-wars.eu/" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="planetwars" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAtIPIPPHCbEyYT2gg2l/viQAAAAACAAAAAAAQZgAAAAEAACAAAADPdvX6WAgF+ku/FQDp/GegEg6DMYoYjCgHP/aKduPYxgAAAAAOgAAAAAIAACAAAAApyKCubhpN2Zaopy03rV6nJjApS4HzRM+4QYlXt8Xa0CAAAADPO9bAisPIWbQicFZAut+IBIy587aVFfubM5FDN2fjUkAAAACChcz6Bw4uXdNHLAksmoEislh32OajFJJSo+Wbj88JkGOwerC4ZVoV9txvS7cfLz/8oyKVCTcHtRIcudO3jFZK" SelectedForPublish="True">
+    <file relUrl="bin/PlanetWarsServiceData.dll" publishTime="09/23/2010 10:50:44" />
+    <file relUrl="SpringAuthService.asmx" publishTime="01/04/2010 19:39:38" />
+    <file relUrl="PlanetWarsService.svc" publishTime="11/19/2009 03:48:54" />
+    <file relUrl="Web.config" publishTime="07/19/2010 16:59:50" />
+    <file relUrl="Silverlight.js" publishTime="11/19/2009 02:55:49" />
+    <file relUrl="crossdomain.xml" publishTime="11/21/2009 23:13:05" />
+    <file relUrl="ClientBin/PlanetWars.xap" publishTime="09/23/2010 10:50:54" />
+    <file relUrl="index.htm" publishTime="11/30/2009 01:57:38" />
+    <file relUrl="bin/PlanetWarsWeb.dll" publishTime="09/23/2010 10:50:46" />
+    <file relUrl="bin/PlanetWarsWeb.pdb" publishTime="09/23/2010 10:50:46" />
+    <file relUrl="bin/PlanetWarsServiceData.pdb" publishTime="09/23/2010 10:50:44" />
+    <file relUrl="clientaccesspolicy.xml" publishTime="11/21/2009 23:12:30" />
+  </publishProfile>
+</publishData>

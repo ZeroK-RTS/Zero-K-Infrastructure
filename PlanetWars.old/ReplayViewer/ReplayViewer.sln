@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ReplayViewer", "ReplayViewer.fsproj", "{A823D9B2-A9BA-4729-8A2D-B3766C003F04}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PWDataLib", "PWDataLib\PWDataLib.fsproj", "{1648F98C-D169-4F29-97E1-23DA5B8FBB56}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DataViewer", "DataViewer\DataViewer.fsproj", "{73EDD79C-3DEF-431A-9740-EEF71B96081F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A823D9B2-A9BA-4729-8A2D-B3766C003F04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A823D9B2-A9BA-4729-8A2D-B3766C003F04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A823D9B2-A9BA-4729-8A2D-B3766C003F04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A823D9B2-A9BA-4729-8A2D-B3766C003F04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1648F98C-D169-4F29-97E1-23DA5B8FBB56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1648F98C-D169-4F29-97E1-23DA5B8FBB56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1648F98C-D169-4F29-97E1-23DA5B8FBB56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1648F98C-D169-4F29-97E1-23DA5B8FBB56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73EDD79C-3DEF-431A-9740-EEF71B96081F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73EDD79C-3DEF-431A-9740-EEF71B96081F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73EDD79C-3DEF-431A-9740-EEF71B96081F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73EDD79C-3DEF-431A-9740-EEF71B96081F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

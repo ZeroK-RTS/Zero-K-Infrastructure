@@ -1,0 +1,13 @@
+[MOD]
+{
+	name=Planet-Wars r1 for Balanced Annihilation V6.6;
+	description=Moooooo!;
+	game=Total Annihilation;
+	shortgame=TA;
+	shortname=BA;
+	mutator=Planet-Wars;
+	version=6.6;
+	modtype=1;
+	numdependencies=1;
+  Depend0=BA66.sd7;
+}

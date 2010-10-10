@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="PlanetWars.Web.PlanetWarsService" CodeBehind="PlanetWarsService.svc.cs" %>

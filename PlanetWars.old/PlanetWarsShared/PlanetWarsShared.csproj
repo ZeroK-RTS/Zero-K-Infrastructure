@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D1C79CF7-2111-4BD5-A029-3DD156BC094C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PlanetWarsShared</RootNamespace>
+    <AssemblyName>PlanetWarsShared</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BA Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\BA Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;BA_UPGRADES</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AuthInfo.cs" />
+    <Compile Include="Award.cs" />
+    <Compile Include="Events\AidSentEvent.cs" />
+    <Compile Include="Events\BattleEvent.cs" />
+    <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\PlanetOwnerChangedEvent.cs" />
+    <Compile Include="Events\PlayerRankChangedEvent.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Events\PlanetNameChangedEvent.cs" />
+    <Compile Include="Events\RankNameChangedEvent.cs" />
+    <Compile Include="Faction.cs" />
+    <Compile Include="Galaxy.cs" />
+    <Compile Include="Hash.cs" />
+    <Compile Include="PurchaseData.cs" />
+    <Compile Include="SpaceFleet.cs" />
+    <Compile Include="IServer.cs" />
+    <Compile Include="Link.cs" />
+    <Compile Include="Events\MapChangedEvent.cs" />
+    <Compile Include="Events\PlayerRegisteredEvent.cs" />
+    <Compile Include="UnitSyncLib\UnitSyncException.cs" />
+    <Compile Include="UnitSyncLib\MapInfo.cs" />
+    <Compile Include="SerializableDictionary.cs" />
+    <Compile Include="SpringieState.cs" />
+    <Compile Include="Springie\EndGamePlayerInfo.cs" />
+    <Compile Include="Springie\ISpringieServer.cs" />
+    <Compile Include="Planet.cs" />
+    <Compile Include="Player.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rank.cs" />
+    <Compile Include="Springie\IFaction.cs" />
+    <Compile Include="Springie\IPlanet.cs" />
+    <Compile Include="Springie\IPlayer.cs" />
+    <Compile Include="Springie\ReminderEvent.cs" />
+    <Compile Include="Springie\ReminderLevel.cs" />
+    <Compile Include="Springie\ReminderRoundInitiative.cs" />
+    <Compile Include="UnitSyncLib\StartPos.cs" />
+    <Compile Include="UnitDef.cs" />
+    <Compile Include="UnitSyncLib\NativeMethods.cs" />
+    <Compile Include="UnitSyncLib\UnitSync.cs" />
+    <Compile Include="UpgradeConfigs_BA.cs" />
+    <Compile Include="UpgradeConfigs_CA.cs" />
+    <Compile Include="UpgradeDef.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

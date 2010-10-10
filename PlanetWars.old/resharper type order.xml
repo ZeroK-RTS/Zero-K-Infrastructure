@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!--
+I. Overall
+
+I.1 Each pattern can have <Match>....</Match> element. For the given type declaration, the pattern with the match, evaluated to 'true' with the largest weight, will be used 
+I.2 Each pattern consists of the sequence of <Entry>...</Entry> elements. Type member declarations are distributed between entries
+I.3 If pattern has RemoveAllRegions="true" attribute, then all regions will be cleared prior to reordering. Otherwise, only auto-generated regions will be cleared
+I.4 The contents of each entry is sorted by given keys (First key is primary,  next key is secondary, etc). Then the declarations are grouped and en-regioned by given property
+
+II. Available match operands
+
+Each operand may have Weight="..." attribute. This weight will be added to the match weight if the operand is evaluated to 'true'.
+The default weight is 1
+
+II.1 Boolean functions:
+II.1.1 <And>....</And>
+II.1.2 <Or>....</Or>
+II.1.3 <Not>....</Not>
+
+II.2 Operands
+II.2.1 <Kind Is="..."/>. Kinds are: class, struct, interface, enum, delegate, type, constructor, destructor, property, indexer, method, operator, field, constant, event, member
+II.2.2 <Name Is="..." [IgnoreCase="true/false"] />. The 'Is' attribute contains regular expression
+II.2.3 <HasAttribute CLRName="..." [Inherit="true/false"] />. The 'CLRName' attribute contains regular expression
+II.2.4 <Access Is="..."/>. The 'Is' values are: public, protected, internal, protected internal, private
+II.2.5 <Static/>
+II.2.6 <Abstract/>
+II.2.7 <Virtual/>
+II.2.8 <Override/>
+II.2.9 <Sealed/>
+II.2.10 <Readonly/>
+II.2.11 <ImplementsInterface CLRName="..."/>. The 'CLRName' attribute contains regular expression
+II.2.12 <HandlesEvent />
+-->
+
+<Patterns xmlns="urn:shemas-jetbrains-com:member-reordering-patterns">
+
+  <!--Do not reorder COM interfaces and structs marked by StructLayout attribute-->
+  <Pattern>
+    <Match>
+      <Or Weight="100">
+        <And>
+          <Kind Is="interface"/>
+          <HasAttribute CLRName="System.Runtime.InteropServices.InterfaceTypeAttribute"/>
+        </And>
+        <HasAttribute CLRName="System.Runtime.InteropServices.StructLayoutAttribute"/>
+      </Or>
+    </Match>
+  </Pattern>
+
+  <!--Special formatting of NUnit test fixture-->
+  <Pattern RemoveAllRegions="true">
+    <Match>
+      <And Weight="100">
+        <Kind Is="class"/>
+        <HasAttribute CLRName="NUnit.Framework.TestFixtureAttribute" Inherit="true"/>
+      </And>
+    </Match>
+
+    <!--Setup/Teardow-->
+    <Entry>
+      <Match>
+        <And>
+          <Kind Is="method"/>
+          <Or>
+            <HasAttribute CLRName="NUnit.Framework.SetUpAttribute" Inherit="true"/>
+            <HasAttribute CLRName="NUnit.Framework.TearDownAttribute" Inherit="true"/>
+            <HasAttribute CLRName="NUnit.Framework.FixtureSetUpAttribute" Inherit="true"/>
+            <HasAttribute CLRName="NUnit.Framework.FixtureTearDownAttribute" Inherit="true"/>
+          </Or>
+        </And>
+      </Match>
+      <Group Region="Setup/Teardown"/>
+    </Entry>
+
+    <!--All other members-->
+    <Entry/>
+
+    <!--Test methods-->
+    <Entry>
+      <Match>
+        <And Weight="100">
+          <Kind Is="method"/>
+          <HasAttribute CLRName="NUnit.Framework.TestAttribute" Inherit="false"/>
+        </And>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+    </Entry>
+  </Pattern>
+
+
+
+
+  <!--Default pattern-->
+  <Pattern>
+
+    <!-- constants-->
+    <Entry>
+      <Match>
+        <Or Weight="100">
+          <Kind Is="constant"/>
+          <And>
+            <Kind Is="field"/>
+            <Static/>
+            <Readonly/>
+          </And>
+        </Or>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+      <Group Region="Constants"/>
+    </Entry>
+
+
+    <!--public delegate-->
+    <Entry>
+      <Match>
+        <And Weight="100">
+          <Access Is="public"/>
+          <Kind Is="delegate"/>
+        </And>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+      <Group Region="Delegates"/>
+    </Entry>
+
+    <!--public enum-->
+    <Entry>
+      <Match>
+        <And Weight="100">
+          <Access Is="public"/>
+          <Kind Is="enum"/>
+        </And>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+      <Group>
+        <Name Region="${Name} enum"/>
+      </Group>
+    </Entry>
+
+    <!-- fields-->
+    <Entry>
+      <Match>
+        <And>
+          <Or>
+            <Kind Is="field"/>
+            <Kind Is="property"/>
+          </Or>
+          <Or>
+          <Access Is="protected"/>
+          <Access Is="private"/>
+          </Or>
+        </And>
+      </Match>
+      <Sort>
+        <Name/>
+        <Access Order="public internal protected private"/>
+      </Sort>
+      <Group Region="Fields"/>
+    </Entry>
+
+    <!-- properties-->
+    <Entry>
+      <Match>
+        <And>
+          <Or>
+            <Kind Is="field"/>
+            <Kind Is="property"/>
+          </Or>
+           <Or>
+          <Access Is="public"/>
+          <Access Is="internal"/>
+         </Or>
+        </And>
+      </Match>
+      <Sort>
+        <Name/>
+        <Access Order="public internal protected private"/>
+      </Sort>
+      <Group Region="Properties"/>
+    </Entry>
+
+    <!--public enum-->
+    <Entry>
+      <Match>
+        <Kind Is="event"/>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+      <Group Region="Events"/>
+    </Entry>
+
+    <!--Constructors. Place static one first-->
+    <Entry>
+      <Match>
+        <Or Weight="200">
+          <Kind Is="constructor"/>
+          <Kind Is="destructor"/>
+         <Name Is="Dispose"/>
+        </Or>
+      </Match>
+      <Sort>
+        <Static/>
+        <Kind Order="constructor destructor method"/>
+        <Name/>
+      </Sort>
+      <Group Region="Constructors"/>
+    </Entry>
+
+    <!--public methods-->
+    <Entry>
+      <Match>
+      <And>
+        <Kind Is="method"/>
+        <Or>
+        <Access Is="public"/>
+        <Access Is="internal"/>
+        </Or>
+      </And>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+      <Group Region="Public methods"/>
+    </Entry>
+
+    <!--overrdies-->
+    <Entry>
+      <Match>
+      <And Weight="100">
+        <Kind Is="method"/>
+        <Override/>
+      </And>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+      <Group Region="Overrides"/>
+    </Entry>
+
+    <!--other methods-->
+    <Entry>
+      <Match>
+      <And>
+        <Kind Is="method"/>
+        <Or>
+          <Access Is="protected"/>
+          <Access Is="private"/>
+        </Or>
+      </And>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+      <Group Region="Other methods"/>
+    </Entry>
+
+
+    <!--properties, indexers-->
+    <Entry>
+      <Match>
+        <Or Weight="100">
+          <Kind Is="indexer"/>
+          <Kind Is="operator"/>
+        </Or>
+      </Match>
+      <Sort>
+        <Kind Order="indexer operator"/>
+      </Sort>
+      <Group Region="Operators"/>
+    </Entry>
+
+    <!--interface implementations-->
+    <Entry>
+      <Match>
+        <And Weight="99">
+          <Kind Is="member"/>
+          <ImplementsInterface/>
+        </And>
+      </Match>
+      <Sort>
+        <ImplementsInterface Immediate="true"/>
+      </Sort>
+      <Group>
+        <ImplementsInterface Immediate="true" Region="${ImplementsInterface} Members"/>
+      </Group>
+    </Entry>
+
+
+    <!--event handlers-->
+    <Entry>
+      <Match>
+       <Or Weight="99">
+        <HandlesEvent />
+        <HandlesEvent />
+       </Or>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+      <Group Region="Event Handlers"/>
+    </Entry>
+
+    <!--all other members-->
+    <Entry>
+
+      <Sort>
+        <Access Order="public internal protected private"/>
+        <Name/>
+      </Sort>
+    </Entry>
+
+    <!--nested types-->
+    <Entry>
+      <Match>
+        <Kind Is="type"/>
+      </Match>
+      <Sort>
+        <Name/>
+      </Sort>
+      <Group>
+        <Name Region="Nested type: ${Name}"/>
+      </Group>
+    </Entry>
+  </Pattern>
+
+</Patterns>

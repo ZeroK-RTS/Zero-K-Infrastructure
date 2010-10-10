@@ -1,0 +1,1013 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Galaxy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <MapNames>
+    <string>2_Continents_Remake.smf</string>
+    <string>2_Mountains_Battlefield.smf</string>
+    <string>2_Valleys-v04.smf</string>
+    <string>AavikkoV2.smf</string>
+    <string>Altored_Arctic.smf</string>
+    <string>Altored_Divide.smf</string>
+    <string>AmazonDeltav20.smf</string>
+    <string>Archers_Valley_v5.smf</string>
+    <string>ArcticPlainsV2.smf</string>
+    <string>AS-BAF2.smf</string>
+    <string>Battle for PlanetXVII-v01.smf</string>
+    <string>CenterrockV12.smf</string>
+    <string>Charlie in the Hills v2.1.smf</string>
+    <string>Crossing_4_final.smf</string>
+    <string>DarkSide Remake.smf</string>
+    <string>Dead Reef Dry.smf</string>
+    <string>DeltaSiege.smf</string>
+    <string>DeltaSiegeDry.smf</string>
+    <string>DeltaSiegeDryRevX_v3.smf</string>
+    <string>DeltaSiegeDuoX.smf</string>
+    <string>DeltaSiegeRevX.smf</string>
+    <string>DeltaSiegeX.smf</string>
+    <string>Deserted_Gully-v05.smf</string>
+    <string>DigSite.smf</string>
+    <string>EE-DustBowl-v02.smf</string>
+    <string>EE-RiverGlade-v02.smf</string>
+    <string>Emain Macha.smf</string>
+    <string>Evergreen_Haven-v04.smf</string>
+    <string>FinnsRevengeRV4.smf</string>
+    <string>FolsomDamFinal.smf</string>
+    <string>Foothills-v08.smf</string>
+    <string>FrostBiteV2.smf</string>
+    <string>Geyser_Plains_TNM04-V3.smf</string>
+    <string>Greenhaven Remake.smf</string>
+    <string>Hikinen_ja_Oksettava_Kaurapuuro-v02.smf</string>
+    <string>MoonQ10x.smf</string>
+    <string>MoonQ20x.smf</string>
+    <string>Parched_mesa-v04.smf</string>
+    <string>Small Supreme Battlefield Dry.smf</string>
+    <string>Small Supreme Battlefield V2.smf</string>
+    <string>Small Supreme Islands V2.smf</string>
+    <string>Small Supreme Islands.smf</string>
+  </MapNames>
+  <Players></Players>
+  <Factions>
+    <Faction>
+      <ColorR>255</ColorR>
+      <ColorG>0</ColorG>
+      <ColorB>0</ColorB>
+      <SpringSide>Core</SpringSide>
+      <Name>Core</Name>
+    </Faction>
+    <Faction>
+      <ColorR>0</ColorR>
+      <ColorG>0</ColorG>
+      <ColorB>255</ColorB>
+      <SpringSide>Arm</SpringSide>
+      <Name>Arm</Name>
+    </Faction>
+  </Factions>
+  <Planets>
+    <Planet>
+      <Position>
+        <X>0.353906244</X>
+        <Y>0.3466797</Y>
+      </Position>
+      <ID>1</ID>
+      <Name>Delta-1 Tauri</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.474218756</X>
+        <Y>0.368164063</Y>
+      </Position>
+      <ID>2</ID>
+      <Name>Pi-1 Ursae Majoris</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.3296875</X>
+        <Y>0.462890625</Y>
+      </Position>
+      <ID>3</ID>
+      <Name>Arm</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.382031262</X>
+        <Y>0.5751953</Y>
+      </Position>
+      <ID>4</ID>
+      <Name>Alpheratz</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.5367187</X>
+        <Y>0.625976563</Y>
+      </Position>
+      <ID>5</ID>
+      <Name>Pi Capricorni</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.59375</X>
+        <Y>0.5283203</Y>
+      </Position>
+      <ID>6</ID>
+      <Name>Asellus Primus</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+      <IsStartingPlanet>true</IsStartingPlanet>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.64453125</X>
+        <Y>0.443359375</Y>
+      </Position>
+      <ID>7</ID>
+      <Name>Chertan</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.286718756</X>
+        <Y>0.555664063</Y>
+      </Position>
+      <ID>8</ID>
+      <Name>Talitha Australis</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.219531253</X>
+        <Y>0.3779297</Y>
+      </Position>
+      <ID>9</ID>
+      <Name>Minkar</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.411718756</X>
+        <Y>0.6455078</Y>
+      </Position>
+      <ID>10</ID>
+      <Name>Beta-1 Sagittarii</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.47265625</X>
+        <Y>0.515625</Y>
+      </Position>
+      <ID>11</ID>
+      <Name>Rastaban</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+      <IsStartingPlanet>true</IsStartingPlanet>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.60546875</X>
+        <Y>0.32421875</Y>
+      </Position>
+      <ID>12</ID>
+      <Name>Delta Ursae Minoris</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.4671875</X>
+        <Y>0.2607422</Y>
+      </Position>
+      <ID>13</ID>
+      <Name>Sun</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.3421875</X>
+        <Y>0.24609375</Y>
+      </Position>
+      <ID>14</ID>
+      <Name>Beta Sagittarii</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.2203125</X>
+        <Y>0.280273438</Y>
+      </Position>
+      <ID>15</ID>
+      <Name>Upsilon Orionis</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.728125</X>
+        <Y>0.55859375</Y>
+      </Position>
+      <ID>16</ID>
+      <Name>Head of Hydrus</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.63125</X>
+        <Y>0.6894531</Y>
+      </Position>
+      <ID>17</ID>
+      <Name>Beta Canis Minoris</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.296093762</X>
+        <Y>0.69921875</Y>
+      </Position>
+      <ID>18</ID>
+      <Name>Sinistra</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.461718738</X>
+        <Y>0.7480469</Y>
+      </Position>
+      <ID>19</ID>
+      <Name>Eta Eridani</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.289843738</X>
+        <Y>0.8105469</Y>
+      </Position>
+      <ID>20</ID>
+      <Name>Omicron Piscium</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.205468744</X>
+        <Y>0.7246094</Y>
+      </Position>
+      <ID>21</ID>
+      <Name>Edasich</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.180468753</X>
+        <Y>0.6123047</Y>
+      </Position>
+      <ID>22</ID>
+      <Name>46 Leonis Minoris</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.175</X>
+        <Y>0.4814453</Y>
+      </Position>
+      <ID>23</ID>
+      <Name>Sigma Sagittarii</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.100781247</X>
+        <Y>0.3701172</Y>
+      </Position>
+      <ID>24</ID>
+      <Name>Sigma Librae</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.124218747</X>
+        <Y>0.263671875</Y>
+      </Position>
+      <ID>25</ID>
+      <Name>Sirius</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.759375</X>
+        <Y>0.3798828</Y>
+      </Position>
+      <ID>26</ID>
+      <Name>Delta1 Tauri</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.821875</X>
+        <Y>0.6220703</Y>
+      </Position>
+      <ID>27</ID>
+      <Name>Epsilon Sagittarii</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.7242187</X>
+        <Y>0.7734375</Y>
+      </Position>
+      <ID>28</ID>
+      <Name>Polaris Australis</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.5492188</X>
+        <Y>0.844726563</Y>
+      </Position>
+      <ID>29</ID>
+      <Name>Gamma Cephei</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.8578125</X>
+        <Y>0.5048828</Y>
+      </Position>
+      <ID>30</ID>
+      <Name>Talitha Borealis</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.7210938</X>
+        <Y>0.275390625</Y>
+      </Position>
+      <ID>31</ID>
+      <Name>Hoedus II</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.867968738</X>
+        <Y>0.28125</Y>
+      </Position>
+      <ID>32</ID>
+      <Name>Decrux</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.6617187</X>
+        <Y>0.18359375</Y>
+      </Position>
+      <ID>33</ID>
+      <Name>Ankaa</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.7835938</X>
+        <Y>0.176757813</Y>
+      </Position>
+      <ID>34</ID>
+      <Name>Thuban</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.4890625</X>
+        <Y>0.1328125</Y>
+      </Position>
+      <ID>35</ID>
+      <Name>Kappa Orionis</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.378125</X>
+        <Y>0.09667969</Y>
+      </Position>
+      <ID>36</ID>
+      <Name>Alruccabah</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.2375</X>
+        <Y>0.12109375</Y>
+      </Position>
+      <ID>37</ID>
+      <Name>Zeta Ursae Majoris</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.11328125</X>
+        <Y>0.133789063</Y>
+      </Position>
+      <ID>38</ID>
+      <Name>Alrami</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.0453125</X>
+        <Y>0.227539063</Y>
+      </Position>
+      <ID>39</ID>
+      <Name>Algol</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.1359375</X>
+        <Y>0.7402344</Y>
+      </Position>
+      <ID>40</ID>
+      <Name>Mothallah</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.1921875</X>
+        <Y>0.83203125</Y>
+      </Position>
+      <ID>41</ID>
+      <Name>Ras Alhague</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+    <Planet>
+      <Position>
+        <X>0.422656238</X>
+        <Y>0.858398438</Y>
+      </Position>
+      <ID>42</ID>
+      <Name>Giennah</Name>
+      <StartBoxes />
+      <AutohostCommands>
+        <string>!preset continues</string>
+      </AutohostCommands>
+    </Planet>
+  </Planets>
+  <Links>
+    <Link>
+      <PlanetIDs>
+        <int>4</int>
+        <int>11</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>3</int>
+        <int>4</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>1</int>
+        <int>3</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>1</int>
+        <int>2</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>2</int>
+        <int>13</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>12</int>
+        <int>13</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>7</int>
+        <int>12</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>6</int>
+        <int>7</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>5</int>
+        <int>6</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>6</int>
+        <int>11</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>5</int>
+        <int>19</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>5</int>
+        <int>10</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>10</int>
+        <int>11</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>7</int>
+        <int>16</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>12</int>
+        <int>31</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>7</int>
+        <int>26</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>26</int>
+        <int>30</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>27</int>
+        <int>30</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>16</int>
+        <int>27</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>27</int>
+        <int>28</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>6</int>
+        <int>16</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>17</int>
+        <int>27</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>17</int>
+        <int>29</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>28</int>
+        <int>29</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>17</int>
+        <int>28</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>19</int>
+        <int>29</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>19</int>
+        <int>42</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>20</int>
+        <int>42</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>18</int>
+        <int>20</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>10</int>
+        <int>18</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>18</int>
+        <int>19</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>18</int>
+        <int>21</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>21</int>
+        <int>41</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>20</int>
+        <int>41</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>40</int>
+        <int>41</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>22</int>
+        <int>40</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>8</int>
+        <int>22</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>4</int>
+        <int>21</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>4</int>
+        <int>18</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>3</int>
+        <int>8</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>9</int>
+        <int>23</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>3</int>
+        <int>9</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>9</int>
+        <int>15</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>9</int>
+        <int>24</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>9</int>
+        <int>25</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>25</int>
+        <int>39</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>25</int>
+        <int>38</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>15</int>
+        <int>38</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>15</int>
+        <int>37</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>14</int>
+        <int>15</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>1</int>
+        <int>14</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>14</int>
+        <int>36</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>36</int>
+        <int>37</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>13</int>
+        <int>36</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>13</int>
+        <int>35</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>12</int>
+        <int>35</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>33</int>
+        <int>35</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>31</int>
+        <int>33</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>31</int>
+        <int>34</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>32</int>
+        <int>34</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>26</int>
+        <int>32</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>12</int>
+        <int>26</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>30</int>
+        <int>32</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>23</int>
+        <int>24</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>5</int>
+        <int>11</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>5</int>
+        <int>17</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>5</int>
+        <int>16</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>7</int>
+        <int>11</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>21</int>
+        <int>22</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>4</int>
+        <int>8</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>18</int>
+        <int>42</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>17</int>
+        <int>19</int>
+      </PlanetIDs>
+    </Link>
+    <Link>
+      <PlanetIDs>
+        <int>10</int>
+        <int>19</int>
+      </PlanetIDs>
+    </Link>
+  </Links>
+  <Turn>0</Turn>
+</Galaxy>

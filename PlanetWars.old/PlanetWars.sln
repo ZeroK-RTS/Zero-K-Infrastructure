@@ -1,0 +1,89 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanetWars", "PlanetWars\PlanetWars.csproj", "{6A5CFC6F-CB9C-4058-933A-C91E8FA04371}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanetWarsShared", "PlanetWarsShared\PlanetWarsShared.csproj", "{D1C79CF7-2111-4BD5-A029-3DD156BC094C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanetWarsServer", "PlanetWarsServer\PlanetWarsServer.csproj", "{275E083C-76C1-4DF6-93E3-122B93D7EF0D}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "WebSite", "WebSite\", "{FFC7526F-BDAF-447C-A3DE-60D5D042F9C1}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFramework = "3.5"
+		ProjectReferences = "{D1C79CF7-2111-4BD5-A029-3DD156BC094C}|PlanetWarsShared.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/WebSite"
+		Debug.AspNetCompiler.PhysicalPath = "WebSite\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\WebSite\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/WebSite"
+		Release.AspNetCompiler.PhysicalPath = "WebSite\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\WebSite\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "4113"
+		DefaultWebSiteLanguage = "Visual C#"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{E32CAB44-E37F-4315-870F-5FD9F08280E9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{275E083C-76C1-4DF6-93E3-122B93D7EF0D} = {275E083C-76C1-4DF6-93E3-122B93D7EF0D}
+		{FFC7526F-BDAF-447C-A3DE-60D5D042F9C1} = {FFC7526F-BDAF-447C-A3DE-60D5D042F9C1}
+		{6A5CFC6F-CB9C-4058-933A-C91E8FA04371} = {6A5CFC6F-CB9C-4058-933A-C91E8FA04371}
+		{D1C79CF7-2111-4BD5-A029-3DD156BC094C} = {D1C79CF7-2111-4BD5-A029-3DD156BC094C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyDesigner", "GalaxyDesigner\GalaxyDesigner.csproj", "{BB4AD85D-23E0-429A-8FE4-74E2A58757D5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		BA Debug|Any CPU = BA Debug|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A5CFC6F-CB9C-4058-933A-C91E8FA04371}.BA Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A5CFC6F-CB9C-4058-933A-C91E8FA04371}.BA Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A5CFC6F-CB9C-4058-933A-C91E8FA04371}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A5CFC6F-CB9C-4058-933A-C91E8FA04371}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A5CFC6F-CB9C-4058-933A-C91E8FA04371}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A5CFC6F-CB9C-4058-933A-C91E8FA04371}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1C79CF7-2111-4BD5-A029-3DD156BC094C}.BA Debug|Any CPU.ActiveCfg = BA Debug|Any CPU
+		{D1C79CF7-2111-4BD5-A029-3DD156BC094C}.BA Debug|Any CPU.Build.0 = BA Debug|Any CPU
+		{D1C79CF7-2111-4BD5-A029-3DD156BC094C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1C79CF7-2111-4BD5-A029-3DD156BC094C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1C79CF7-2111-4BD5-A029-3DD156BC094C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1C79CF7-2111-4BD5-A029-3DD156BC094C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{275E083C-76C1-4DF6-93E3-122B93D7EF0D}.BA Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{275E083C-76C1-4DF6-93E3-122B93D7EF0D}.BA Debug|Any CPU.Build.0 = Debug|Any CPU
+		{275E083C-76C1-4DF6-93E3-122B93D7EF0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{275E083C-76C1-4DF6-93E3-122B93D7EF0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{275E083C-76C1-4DF6-93E3-122B93D7EF0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{275E083C-76C1-4DF6-93E3-122B93D7EF0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFC7526F-BDAF-447C-A3DE-60D5D042F9C1}.BA Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC7526F-BDAF-447C-A3DE-60D5D042F9C1}.BA Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFC7526F-BDAF-447C-A3DE-60D5D042F9C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC7526F-BDAF-447C-A3DE-60D5D042F9C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFC7526F-BDAF-447C-A3DE-60D5D042F9C1}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC7526F-BDAF-447C-A3DE-60D5D042F9C1}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{E32CAB44-E37F-4315-870F-5FD9F08280E9}.BA Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E32CAB44-E37F-4315-870F-5FD9F08280E9}.BA Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E32CAB44-E37F-4315-870F-5FD9F08280E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E32CAB44-E37F-4315-870F-5FD9F08280E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E32CAB44-E37F-4315-870F-5FD9F08280E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E32CAB44-E37F-4315-870F-5FD9F08280E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB4AD85D-23E0-429A-8FE4-74E2A58757D5}.BA Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB4AD85D-23E0-429A-8FE4-74E2A58757D5}.BA Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB4AD85D-23E0-429A-8FE4-74E2A58757D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB4AD85D-23E0-429A-8FE4-74E2A58757D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB4AD85D-23E0-429A-8FE4-74E2A58757D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB4AD85D-23E0-429A-8FE4-74E2A58757D5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

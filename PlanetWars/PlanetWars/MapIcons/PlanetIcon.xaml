@@ -1,0 +1,89 @@
+﻿<UserControl x:Class="PlanetWars.MapIcons.PlanetIcon" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit"
+        xmlns:data="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" xmlns:local="clr-namespace:PlanetWars"
+        HorizontalAlignment="Left" VerticalAlignment="Top">
+        <UserControl.Resources>
+            <local:StringFormatter x:Key="stringFormatter" />
+            <Style x:Key="resourceStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="5,0,0,2" />
+                <Setter Property="VerticalAlignment" Value="Bottom" />
+            </Style>
+            <Style x:Key="incomeStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Margin" Value="0,0,5,2" />
+                <Setter Property="VerticalAlignment" Value="Bottom" />
+            </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Ellipse x:Name="Ellipse" Fill="SandyBrown" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Ellipse.RenderTransform>
+                <ScaleTransform x:Name="scaleTransform" />
+            </Ellipse.RenderTransform>
+        </Ellipse>
+        <Grid x:Name="InformationPanel">
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="planelScale" />
+            </Grid.RenderTransform>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock x:Name="Label" Foreground="White" Grid.ColumnSpan="2"  />
+            <StackPanel x:Name="MetalPanel" Grid.Row="1" Orientation="Horizontal" Grid.ColumnSpan="2" />
+            <StackPanel x:Name="FoodPanel" Grid.Row="2" Orientation="Horizontal" Grid.ColumnSpan="2" />
+            <StackPanel x:Name="QuantumPanel" Grid.Row="3" Orientation="Horizontal" Grid.ColumnSpan="2"/>
+            <StackPanel x:Name="DarkMatterPanel" Grid.Row="4" Orientation="Horizontal" Grid.ColumnSpan="2"/>
+            <TextBlock x:Name="InfoText" Grid.Row="5" Grid.ColumnSpan="2" Visibility="Collapsed" Foreground="White" />
+            <ListBox x:Name="StructureBuildOptions" Grid.Row="6" Visibility="Collapsed">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding StructureType.Name}" HorizontalAlignment="Stretch" Click="StructureBuyButton_Click" IsEnabled="{Binding IsBuildable}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox x:Name="Structures" Grid.Row="7" Visibility="Collapsed">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="{Binding StructureType.Name}" HorizontalAlignment="Stretch" Click="StructureSellButton_Click" />
+                            <TextBlock Text="{Binding Count}"  />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox x:Name="ShipBuildOptions" Grid.Row="6" Grid.Column="1" Visibility="Collapsed">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding ShipType.Name}" HorizontalAlignment="Stretch" Click="ShipBuyButton_Click"
+                                IsEnabled="{Binding IsBuildable}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ListBox x:Name="Ships" Grid.Row="7" Grid.Column="1" Visibility="Collapsed">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding ShipType.Name}" />
+                            <TextBlock Text="{Binding Count}"  />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button x:Name="CreateFleetButton" Grid.Column="1" Grid.Row="8" Visibility="Collapsed" Click="CreateFleetButton_Click" Content="Garrison To Fleet"/>
+        </Grid>
+    </Grid>
+</UserControl>

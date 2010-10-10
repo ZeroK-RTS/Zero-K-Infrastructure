@@ -1,0 +1,19 @@
+﻿<configuration>
+    <system.serviceModel>
+        <bindings>
+            <customBinding>
+                <binding name="CustomBinding_IPlanetWarsService">
+                    <binaryMessageEncoding />
+                    <httpTransport maxReceivedMessageSize="2147483647" maxBufferSize="2147483647">
+                        <extendedProtectionPolicy policyEnforcement="Never" />
+                    </httpTransport>
+                </binding>
+            </customBinding>
+        </bindings>
+        <client>
+            <endpoint address="http://localhost:49426/PlanetWarsService.svc"
+                binding="customBinding" bindingConfiguration="CustomBinding_IPlanetWarsService"
+                contract="ServiceReference.IPlanetWarsService" name="CustomBinding_IPlanetWarsService" />
+        </client>
+    </system.serviceModel>
+</configuration>

@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="PlanetWars.Tabs.TradeTab"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+    xmlns:layout="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Layout.Toolkit" 
+    xmlns:data="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data" 
+    xmlns:input="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit" >
+    <Grid x:Name="LayoutRoot" Background="White">
+        <layout:Accordion HorizontalAlignment="Stretch" SelectionMode="ZeroOrMore" >
+            <layout:AccordionItem Header="Place Order" IsSelected="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Column="0" Grid.Row="0" Margin="3">Type</TextBlock>
+                    <ComboBox Grid.Column="1" Grid.Row="0" Margin="3">
+                        <ComboBoxItem IsSelected="True">
+                            <TextBlock>Buy</TextBlock>
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            <TextBlock>
+                                Sell
+                            </TextBlock>
+                        </ComboBoxItem>
+                    </ComboBox>
+                    <TextBlock Grid.Column="0" Grid.Row="1" Margin="3">Maximum ETA</TextBlock>
+                    <input:NumericUpDown Grid.Column="1" Grid.Row="1" Value="12" Margin="3"/>
+                    <TextBlock Grid.Column="0" Grid.Row="2" Margin="3">Quantity</TextBlock>
+                    <input:NumericUpDown Grid.Column="1" Grid.Row="2" Value="1" Margin="3" />
+                    <TextBlock Grid.Column="0" Grid.Row="3" Margin="3" >Item</TextBlock>
+                    <Button Grid.Column="1" Grid.Row="3" Content="Select" Margin="3"/>
+                    <TextBlock Grid.Column="0" Grid.Row="4" Margin="3">Scope</TextBlock>
+                    <ComboBox Grid.Column="1" Grid.Row="4" Margin="3"/>
+                    <Button Grid.Column="0" Grid.Row="5" Content="Confirm" Margin="3"/>
+                    <Button Grid.Column="1" Grid.Row="5" Content="Cancel" Margin="3"/>
+                </Grid>
+            </layout:AccordionItem>
+            <layout:AccordionItem Header="Quick Buy" IsSelected="True">
+                <data:DataGrid>
+                    <data:DataGrid.Columns>
+                        <data:DataGridTemplateColumn Header="Buy" />
+                        <data:DataGridTextColumn Header="Item" />
+                        <data:DataGridTextColumn Header="Quantity" />
+                        <data:DataGridTextColumn Header="Price" />
+                        <data:DataGridTextColumn Header="Scope" />
+                        <data:DataGridTextColumn Header="Seller" />
+                        <data:DataGridTextColumn Header="ETA" />
+                    </data:DataGrid.Columns>
+                </data:DataGrid>
+            </layout:AccordionItem>
+            <layout:AccordionItem Header="Quick Sell" IsSelected="True">
+                <data:DataGrid>
+                    <data:DataGrid.Columns>
+                        <data:DataGridTemplateColumn Header="Sell" />
+                        <data:DataGridTextColumn Header="Item" />
+                        <data:DataGridTextColumn Header="Quantity" />
+                        <data:DataGridTextColumn Header="Price" />
+                        <data:DataGridTextColumn Header="Scope" />
+                        <data:DataGridTextColumn Header="Buyer" />
+                    </data:DataGrid.Columns>
+                </data:DataGrid>
+            </layout:AccordionItem>
+            <layout:AccordionItem Header="Pending Deliveries" IsSelected="True">
+                <data:DataGrid>
+                    <data:DataGrid.Columns>
+                        <data:DataGridTextColumn Header="Item" />
+                        <data:DataGridTextColumn Header="Quantity" />
+                        <data:DataGridTextColumn Header="Seller" />
+                        <data:DataGridTextColumn Header="ETA" />
+                    </data:DataGrid.Columns>
+                </data:DataGrid>
+            </layout:AccordionItem>
+            <layout:AccordionItem Header="Trade Log" IsSelected="True">
+                <data:DataGrid>
+                    <data:DataGrid.Columns>
+                        <data:DataGridTextColumn Header="Item" />
+                        <data:DataGridTextColumn Header="Quantity" />
+                        <data:DataGridTextColumn Header="Other Party" />
+                        <data:DataGridTextColumn Header="Price" />
+                        <data:DataGridTextColumn Header="Date" />
+                        <data:DataGridTextColumn Header="Type" />
+                    </data:DataGrid.Columns>
+                </data:DataGrid>
+            </layout:AccordionItem>
+            <layout:AccordionItem Header="My Offers" IsSelected="True">
+                <data:DataGrid>
+                    <data:DataGrid.Columns>
+                        <data:DataGridTextColumn Header="Type" />
+                        <data:DataGridTextColumn Header="Item" />
+                        <data:DataGridTextColumn Header="Quantity" />
+                        <data:DataGridTextColumn Header="Price" />
+                        <data:DataGridTextColumn Header="Scope" />
+                        <data:DataGridTextColumn Header="Other Party" />
+                    </data:DataGrid.Columns>
+                </data:DataGrid>
+            </layout:AccordionItem>
+            <!-- chart -->
+        </layout:Accordion>
+    </Grid>
+</UserControl>

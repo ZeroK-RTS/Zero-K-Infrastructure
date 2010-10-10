@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="eb1a96af-0389-4035-ba4b-13753b2d8a0c" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>true</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.ObjectModel.ObservableCollection`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>false</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:49426/PlanetWarsService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="PlanetWarsService.xsd" MetadataType="Schema" ID="8c767b83-8f43-475d-bc69-b1b38307ac5c" SourceId="1" SourceUrl="http://localhost:49426/PlanetWarsService.svc?xsd=xsd2" />
+    <MetadataFile FileName="PlanetWarsService2.xsd" MetadataType="Schema" ID="a751f0bc-097d-4f1e-a679-a102ec992b88" SourceId="1" SourceUrl="http://localhost:49426/PlanetWarsService.svc?xsd=xsd0" />
+    <MetadataFile FileName="PlanetWarsService.disco" MetadataType="Disco" ID="98d9a411-3cda-421d-8a81-dcc9bed61065" SourceId="1" SourceUrl="http://localhost:49426/PlanetWarsService.svc?disco" />
+    <MetadataFile FileName="PlanetWarsService.wsdl" MetadataType="Wsdl" ID="bb46cd00-b5c5-4357-8982-11faf831a0ac" SourceId="1" SourceUrl="http://localhost:49426/PlanetWarsService.svc?wsdl" />
+    <MetadataFile FileName="PlanetWarsService3.xsd" MetadataType="Schema" ID="7e692e19-5503-4d87-9c9e-5461360c0703" SourceId="1" SourceUrl="http://localhost:49426/PlanetWarsService.svc?xsd=xsd1" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

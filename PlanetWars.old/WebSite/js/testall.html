@@ -1,0 +1,73 @@
+<html><head><title>Testing</title>
+
+<style type="text/css">
+.tt {
+	border: 1px solid #000;
+	background-color: #fea;
+	font-family: Verdana, Helvetica;
+	font-size: 0.8em;
+	width: 450px;
+}
+</style>
+
+<script type="text/javascript" src="jq.js"></script>
+<script type="text/javascript" src="PWLib_dev.js"></script>
+
+<script type="text/javascript">
+
+
+function ShowDialog() {
+	window.dia = new PW.Dialog("<center>This is a Dialog!</center><hr><center><br /><br />It does stuff!<br />I should make it prettier...<br />No close button yet :(<br /><a href='#' id='rmme'>Close Me</a>",{
+		windowCss: {
+			backgroundColor: "#fff",
+			border: "1px solid #000",
+			width: 300,
+			height: 150,
+			left: '50%',
+			top: '25%',
+			marginLeft: -150,
+			fontFamily: 'Verdana, Arial',
+			fontSize: '0.8em'
+		}
+	});
+	
+	
+	$('#rmme').click(function(e) {
+		window.dia.Close();
+	});
+}
+
+
+$(document).ready(function() {
+
+PW.init();
+PW.graphics.SetStroke(5);
+PW.graphics.SetColor("#89abcd");
+PW.graphics.DrawLine(300,300,500,500, -5);
+PW.graphics.Paint();
+var timer = {
+	time: 0,
+	now: function()   { return (new Date()).getTime(); },
+	start: function() { this.time = this.now();        },
+	since: function() { return this.now()-this.time;   }
+};
+
+PW.AddTooltip("rrr", "", {myclass: "tt"});
+
+
+
+});
+</script>
+
+
+</head>
+<body>
+
+<div id="rrr" style="width: 200px; height: 25px; background-color: #abcdef;">Testing Tooltips!</div>
+
+<div style="position: absolute; left: 400px;">
+<a href="#" onmousedown="ShowDialog()">Show a dialog!</a>
+</div>
+</body>
+
+</html>

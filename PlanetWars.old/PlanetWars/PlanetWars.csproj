@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6A5CFC6F-CB9C-4058-933A-C91E8FA04371}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PlanetWars</RootNamespace>
+    <AssemblyName>PlanetWars</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LinkDrawing.cs" />
+    <Compile Include="LinkImageGenerator.cs" />
+    <Compile Include="Map.cs" />
+    <Compile Include="PenCapProvider.cs" />
+    <Compile Include="SelfUpdater.cs" />
+    <Compile Include="Simulator.cs" />
+    <Compile Include="UI\BoxEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ChangeMapControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ChangeMapBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ChangeNameControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\ChangeNameControl.Designer.cs">
+      <DependentUpon>ChangeNameControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\CustomPropertyGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GalaxyMap.cs" />
+    <Compile Include="IPositionable.cs" />
+    <Compile Include="UI\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\LoadingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\LoadingForm.Designer.cs">
+      <DependentUpon>LoadingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GalaxyLoader.cs" />
+    <Compile Include="UI\MapInfoView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\MinimapBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\MinimapForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\OKCancelBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PlanetDrawing.cs" />
+    <Compile Include="UI\PlanetInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ScrollablePictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\TabbedControls.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\ToolTabs.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Utility\AutoDictionary.cs" />
+    <Compile Include="Utility\Extensions.cs" />
+    <Compile Include="IDrawable.cs" />
+    <Compile Include="UI\MapBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MapLabel.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="UI\LoadingForm.resx">
+      <DependentUpon>LoadingForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Utility\BackGroundWorker.cs" />
+    <Compile Include="Utility\EventArgs.cs" />
+    <Compile Include="Utility\EventHandlers.cs" />
+    <Compile Include="Utility\ReadOnlyDictionary.cs" />
+    <Compile Include="Utility\Utils.cs" />
+    <Compile Include="Utility\Vector.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\apply.png" />
+    <None Include="Images\button_cancel.png" />
+    <None Include="Images\editclear.png" />
+    <None Include="Images\galaxy.jpg" />
+    <EmbeddedResource Include="UI\ChangeNameControl.resx">
+      <DependentUpon>ChangeNameControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\stars.txt" />
+    <None Include="Images\questionmark.png" />
+    <None Include="Images\map_magnify.png" />
+    <None Include="Images\map.png" />
+    <None Include="Images\world.png" />
+    <EmbeddedResource Include="UI\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PlanetWarsShared\PlanetWarsShared.csproj">
+      <Project>{D1C79CF7-2111-4BD5-A029-3DD156BC094C}</Project>
+      <Name>PlanetWarsShared</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\names.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

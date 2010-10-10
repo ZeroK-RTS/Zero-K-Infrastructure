@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="GalaxyDesigner.XmlEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:TextEditor="clr-namespace:ICSharpCode.TextEditor;assembly=ICSharpCode.TextEditor">
+    <Grid>
+        <DockPanel>
+            <Border DockPanel.Dock="Bottom">
+            <StackPanel Orientation="Horizontal">
+                    <Button Click="findButton_Click">Find</Button>
+                    <TextBox Name="findBox" Width="100"/>
+                    <Button Click="replaceButton_Click">Replace</Button>
+                    <TextBox Name="replaceBox" Width="100"/>
+                    <Button Click="replaceAll_Click">Replace All</Button>
+            </StackPanel>
+            </Border>
+        <WindowsFormsHost>
+            <TextEditor:TextEditorControl 
+                    x:Name="textEditor"
+                    IndentStyle="Smart"
+                    IsIconBarVisible="False"
+                    ShowInvalidLines="False"
+                    ShowEOLMarkers="False"
+                    ShowLineNumbers="False"
+                    ShowMatchingBracket="False"
+                    ShowTabs="False"
+                    ShowSpaces="False"
+                    ShowHRuler="False"
+                    ShowVRuler="False"
+                    UseAntiAliasFont="True"/>
+            </WindowsFormsHost>
+        </DockPanel>
+    </Grid>
+</UserControl>

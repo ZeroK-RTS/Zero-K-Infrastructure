@@ -1,0 +1,85 @@
+﻿<UserControl x:Class="PlanetWars.Tabs.PlanetsTab" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:data="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data"
+        xmlns:controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit" xmlns:local="clr-namespace:PlanetWars">
+    <UserControl.Resources>
+        <local:VisibilityConverter x:Key="VisibilityConverter" />
+    </UserControl.Resources>
+    <controls:DockPanel>
+        <StackPanel>
+            <TextBlock>Filter Name</TextBlock>
+            <TextBox x:Name="FilterBox" KeyDown="FilterBox_KeyDown" />
+            <TextBlock>Filter Columns</TextBlock>
+            <data:DataGrid x:Name="ColumnGrid" AutoGenerateColumns="False" ItemsSource="{Binding Columns, ElementName=PlanetGrid}" HeadersVisibility="None"
+                    GridLinesVisibility="None">
+                <data:DataGrid.Columns>
+                    <data:DataGridTemplateColumn Header="Pinned">
+                        <data:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        IsChecked="{Binding Visibility, Mode=TwoWay, Converter={StaticResource VisibilityConverter}}" />
+                            </DataTemplate>
+                        </data:DataGridTemplateColumn.CellTemplate>
+                    </data:DataGridTemplateColumn>
+                    <data:DataGridTextColumn Header="Header" Binding="{Binding Header}" IsReadOnly="True" />
+                </data:DataGrid.Columns>
+            </data:DataGrid>
+            <TextBlock>Group</TextBlock>
+            <CheckBox Content="Owner" Checked="OwnerCheckBox_Checked" Unchecked="OwnerCheckBox_Unchecked"/>
+            <CheckBox Content="System" Checked="SystemCheckBox_Checked" Unchecked="SystemCheckBox_Unchecked"/>
+            <CheckBox Content="Owner System" Checked="OwnerSystemCheckBox_Checked" Unchecked="OwnerSystemCheckBox_Unchecked" />
+            <CheckBox Content="Parent Body" Checked="ParentCheckBox_Checked" Unchecked="ParentCheckBox_Unchecked" />
+        </StackPanel>
+        <data:DataGrid x:Name="PlanetGrid" AutoGenerateColumns="False">
+            <data:DataGrid.Columns>
+                <data:DataGridTemplateColumn Header="Icon">
+                    <data:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid Height="20" Width="20" Background="Black">
+                                <Ellipse Width="{Binding Size}" Height="{Binding Size}" Fill="{Binding Brush}" />
+                            </Grid>
+                        </DataTemplate>
+                    </data:DataGridTemplateColumn.CellTemplate>
+                </data:DataGridTemplateColumn>
+                <data:DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <data:DataGridTextColumn Header="Type" Binding="{Binding CelestialObjectType}" />
+                <data:DataGridTextColumn Header="Metal Density" Binding="{Binding MetalDensity}" />
+                <data:DataGridTextColumn Header="Food Density" Binding="{Binding FoodDensity}" />
+                <data:DataGridTextColumn Header="Quantium Density" Binding="{Binding QuantiumDensity}" />
+                <data:DataGridTextColumn Header="Dark Matter Density" Binding="{Binding DarkMatterDensity}" />
+                <data:DataGridTextColumn Header="Size" Binding="{Binding Size}" />
+                <data:DataGridTextColumn Header="Owner" Binding="{Binding OwnerName}" />
+                <data:DataGridTextColumn Header="Population" Binding="{Binding Population}" />
+                <data:DataGridTextColumn Header="Max Population" Binding="{Binding MaxPopulation}" />
+                <data:DataGridTextColumn Header="Food Income" Binding="{Binding FoodIncome}" />
+                <data:DataGridTextColumn Header="Quantium Income" Binding="{Binding QuantiumIncome}" />
+                <data:DataGridTextColumn Header="Dark Matter Income" Binding="{Binding DarkMatterIncome}" />
+                <data:DataGridTextColumn Header="Efficiency" Binding="{Binding Efficiency}" />
+                <data:DataGridTextColumn Header="Buildpower" Binding="{Binding Buildpower}" />
+                <data:DataGridTextColumn Header="Research Income" Binding="{Binding ResearchIncome}" />
+                <data:DataGridTextColumn Header="Buildpower Used" Binding="{Binding BuildpowerUsed}" />
+            </data:DataGrid.Columns>
+            <data:DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <ListBox ItemsSource="{Binding Children}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <controls:WrapPanel />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel MouseLeftButtonUp="PlanetIcon_MouseLeftButtonDown" Background="White" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="20" Width="20" Background="Black"
+                                            ToolTipService.ToolTip="{Binding FullName}" >
+                                        <Ellipse Width="{Binding Size}" Height="{Binding Size}" Fill="{Binding Brush}" />
+                                    </Grid>
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DataTemplate>
+            </data:DataGrid.RowDetailsTemplate>
+        </data:DataGrid>
+    </controls:DockPanel>
+</UserControl>

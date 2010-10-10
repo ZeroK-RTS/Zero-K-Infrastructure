@@ -1,0 +1,68 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MainView.master.cs" Inherits="MainView"
+    EnableTheming="true"  %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>PlanetWars</title>
+
+    <script type="text/javascript" src="js/jq.js"></script>
+    <script type="text/javascript" src="js/PWLib_dev.js"></script>
+    <script language="javascript">
+        function addLoadEvent(func)  { 
+            var oldonload = window.onload;
+            if (typeof window.onload != 'function')  { window.onload = func; } 
+            else 
+            {   
+                window.onload = function() 
+                { oldonload();
+                    func();
+                }
+            }
+        }
+    </script>
+
+    <asp:Literal ID="Literal1" runat="server" Text='<script type="text/javascript">' EnableViewState="False"></asp:Literal>
+    <asp:Literal ID="litJavascript" runat="server" EnableViewState="False"></asp:Literal>
+    <asp:Literal ID="Literal2" runat="server" Text='</script>' EnableViewState="False"></asp:Literal>
+    <asp:ContentPlaceHolder ID="head" runat="server" EnableViewState="True">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <asp:Label ID="lbLogin" runat="server"  Text="Login" EnableViewState="False"></asp:Label>
+        <asp:TextBox ID="tbLogin" runat="server" EnableViewState="False"></asp:TextBox>
+        <asp:Label ID="lbPassword" runat="server" Text="Password" EnableViewState="False"></asp:Label>
+        <asp:TextBox ID="tbPassword" runat="server" TextMode="Password" EnableViewState="False"></asp:TextBox>
+        <asp:Button ID="btnLogin" runat="server" Text="Login" EnableViewState="False" OnClick="btnLogin_Click" />
+        &nbsp;<asp:Literal ID="litPlayerInfo" runat="server" EnableViewState="False" Visible="False"></asp:Literal>
+        &nbsp;<asp:Button ID="btnLogout" runat="server" EnableViewState="False" Text="Logout"
+            Visible="False"/>
+        &nbsp; &nbsp; Turn:
+        <asp:Label ID="lbTurn" runat="server" EnableViewState="False"></asp:Label>
+        &nbsp; &nbsp; Attacks:
+        <asp:Label ID="lbAttacks" runat="server" EnableViewState="False"></asp:Label>
+        &nbsp; &nbsp; <a href="index.aspx">MAP</a>
+        &nbsp; &nbsp; | &nbsp; &nbsp;<a href="http://planet-wars.eu:8080/trac">HELP</a>&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;THIS IS BETA!!!
+        &nbsp; &nbsp;&nbsp; &nbsp;Revision 2.5 <a href="http://planet-wars.eu:8080/trac/wiki/ChangeLog">Changelog</a>
+        <table style="border-top: solid 1px grey; width:100%; margin-top: 3px;">
+            <tr>
+                <td style="width: 200px; min-width:200px; border-right:solid 1px grey;" width="200" valign="top">
+                    <div>
+                        <div style="font-family: Verdana; font-size: smaller; color: Aqua;">
+                            <asp:Literal ID="litPlayers" runat="server" EnableViewState="false"></asp:Literal>
+                        </div>
+                    </div>
+                </td>
+                <td valign="top">
+                    <div style="height: auto;">
+                        <asp:ContentPlaceHolder ID="holderMap" runat="server" />
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    </form>
+</body>
+</html>

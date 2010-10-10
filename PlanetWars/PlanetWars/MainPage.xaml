@@ -1,0 +1,78 @@
+﻿<UserControl x:Class="PlanetWars.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit" 
+    xmlns:controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls" 
+    xmlns:local="clr-namespace:PlanetWars" 
+    xmlns:Tabs="clr-namespace:PlanetWars.Tabs">
+	<UserControl.Resources>
+		<local:StringFormatter x:Key="stringFormatter" />
+	</UserControl.Resources>
+	<Grid x:Name="LayoutRoot" Background="White">
+        <!--<MediaElement Source="http://planet-wars.eu/intro.wma" />-->
+		<Popup x:Name="LoginPopup" Width="800" Height="300" HorizontalAlignment="Center" VerticalAlignment="Center">
+			<local:LoginWindow x:Name="LoginWindow"/>
+		</Popup>
+		<toolkit:DockPanel x:Name="DockPanel">
+			<StackPanel toolkit:DockPanel.Dock="Top" Orientation="Horizontal" >
+				<StackPanel.Resources>
+					<Style x:Key="resourceStyle" TargetType="TextBlock">
+						<Setter Property="Margin" Value="5,0,0,2" />
+						<Setter Property="VerticalAlignment" Value="Bottom" />
+					</Style>
+                    <Style x:Key="incomeStyle" TargetType="TextBlock">
+                        <Setter Property="Margin" Value="0,0,5,2" />
+                        <Setter Property="VerticalAlignment" Value="Bottom" />
+                    </Style>
+                </StackPanel.Resources>
+				<TextBlock Text="Planet Wars 2" Margin="0" FontSize="16" VerticalAlignment="Bottom" />
+				<TextBlock Text="{Binding Metal, Converter={StaticResource stringFormatter}, ConverterParameter=Metal:\ \{0:0\} }" Style="{StaticResource resourceStyle}"/>
+				<TextBlock Text="{Binding MetalIncome, Converter={StaticResource stringFormatter}, ConverterParameter=+\{0:0.#\} }" Style="{StaticResource incomeStyle}"/>
+				<TextBlock Text="{Binding Food, Converter={StaticResource stringFormatter}, ConverterParameter=Food:\ \{0:0\} }" Style="{StaticResource resourceStyle}"/>
+                <TextBlock Text="{Binding FoodIncome, Converter={StaticResource stringFormatter}, ConverterParameter=+\{0:0.#\} }"
+                        Style="{StaticResource incomeStyle}" />
+                <TextBlock Text="{Binding Population, Converter={StaticResource stringFormatter}, ConverterParameter=Population:\ \{0:0\} }" Style="{StaticResource resourceStyle}"/>
+                <TextBlock Text="{Binding PopulationCapacity, Converter={StaticResource stringFormatter}, ConverterParameter=\\\{0:0\} }"
+                        Style="{StaticResource incomeStyle}" />
+                <TextBlock Text="{Binding Credits, Converter={StaticResource stringFormatter}, ConverterParameter=Strangelets:\ \{0:0.#\} }" Style="{StaticResource resourceStyle}"/>
+				<TextBlock Text="{Binding ResearchPoints, Converter={StaticResource stringFormatter}, ConverterParameter=Research:\ \{0:0\} }" Style="{StaticResource resourceStyle}"/>
+                <TextBlock Text="{Binding ResearchIncome, Converter={StaticResource stringFormatter}, ConverterParameter=+\{0:0.#\} }"
+                        Style="{StaticResource incomeStyle}" />
+                <TextBlock Text="{Binding DarkMatter, Converter={StaticResource stringFormatter}, ConverterParameter=Dark\ Matter:\ \{0:0\} }" Style="{StaticResource resourceStyle}"/>
+                <TextBlock Text="{Binding DarkMatterIncome, Converter={StaticResource stringFormatter}, ConverterParameter=+\{0:0.#\} }"
+                        Style="{StaticResource incomeStyle}" />
+                <TextBlock Text="{Binding Quantium, Converter={StaticResource stringFormatter}, ConverterParameter=Quantium:\ \{0:0\} }" Style="{StaticResource resourceStyle}"/>
+                <TextBlock Text="{Binding QuantiumIncome, Converter={StaticResource stringFormatter}, ConverterParameter=+\{0:0.#\} }"
+                        Style="{StaticResource incomeStyle}" />
+                <TextBlock Text="{Binding XP, Converter={StaticResource stringFormatter}, ConverterParameter=Experience:\ \{0:0\} }" Style="{StaticResource resourceStyle}"/>
+			</StackPanel>
+
+			<controls:TabControl x:Name="TabControl" TabStripPlacement="Left" SelectionChanged="TabControl_SelectionChanged">
+				<controls:TabItem Header="Map">
+					<Tabs:MapTab />
+				</controls:TabItem>
+				<controls:TabItem Header="Mothership">
+					<Tabs:MothershipTab />
+				</controls:TabItem>
+				<controls:TabItem Header="Star System">
+					<Tabs:StarSystemTab />
+				</controls:TabItem>
+				<controls:TabItem Header="Trade">
+					<Tabs:TradeTab />
+				</controls:TabItem>
+				<controls:TabItem Header="Planets">
+                    <Tabs:PlanetsTab />
+                </controls:TabItem>
+                <controls:TabItem Header="Players">
+                    <Tabs:PlayersTab />
+                </controls:TabItem>
+				<controls:TabItem Header="Fleets" />
+				<controls:TabItem Header="Scores" />
+				<controls:TabItem Header="President" />
+				<controls:TabItem Header="Help" />
+			</controls:TabControl>
+		</toolkit:DockPanel>
+	</Grid>
+</UserControl>

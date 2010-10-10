@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="PlanetWars.Tabs.StarSystemTab" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:toolkit="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Toolkit"
+        xmlns:layout="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Layout.Toolkit"
+        xmlns:data="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Data">
+    <Grid x:Name="LayoutRoot" Background="White">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Border BorderBrush="Black" BorderThickness="2">
+                    <TextBlock Height="100" Width="100">Flag</TextBlock>
+                </Border>
+                <TextBlock FontSize="23">The Space Rabbits</TextBlock>
+            </StackPanel>
+            <layout:Accordion SelectionMode="ZeroOrMore" HorizontalAlignment="Stretch">
+                <layout:AccordionItem Header="Players" IsSelected="True">
+                    <StackPanel>
+                        <data:DataGrid x:Name="PlayerGrid" AutoGenerateColumns="False" IsReadOnly="True">
+                            <data:DataGrid.Columns>
+                                <data:DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                                <data:DataGridTextColumn Header="Metal" Binding="{Binding Metal}" />
+                                <data:DataGridTextColumn Header="Food" Binding="{Binding Food}" />
+                                <data:DataGridTextColumn Header="Population" Binding="{Binding Population}" />
+                                <data:DataGridTextColumn Header="Level" Binding="{Binding Level}" />
+                                <data:DataGridTextColumn Header="Strangelets" Binding="{Binding Credits}" />
+                            </data:DataGrid.Columns>
+                        </data:DataGrid>
+                    </StackPanel>
+                </layout:AccordionItem>
+                <layout:AccordionItem Header="Research" IsSelected="True">
+                    <TextBlock>Research tree goes here</TextBlock>
+                </layout:AccordionItem>
+                <layout:AccordionItem Header="Events" IsSelected="True">
+                    <StackPanel>
+                        <TextBlock>1/1/20012:  Battle Lost</TextBlock>
+                        <TextBlock>31/12/2011: Happy New Year</TextBlock>
+                        <TextBlock>25/12/2011: Happy Christmas</TextBlock>
+                        <TextBlock>25/12/2011: Battle Won</TextBlock>
+                    </StackPanel>
+                </layout:AccordionItem>
+                <layout:AccordionItem Header="Chat" IsSelected="True" HorizontalContentAlignment="Stretch">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBox Text="hi hello" AcceptsReturn="True" TextWrapping="Wrap" Grid.ColumnSpan="2" />
+                        <TextBox Grid.Row="1" AcceptsReturn="True" />
+                        <Button Grid.Row="1" Grid.Column="1" Content="Send" />
+                    </Grid>
+                </layout:AccordionItem>
+            </layout:Accordion>
+        </StackPanel>
+        <!--todo: truce with-->
+    </Grid>
+</UserControl>

@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ServiceData" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ServiceData" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="BodyResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Body" nillable="true" type="tns:CelestialObject" />
+      <xs:element minOccurs="0" name="NewShipOptions" nillable="true" type="tns:ArrayOfShipOption" />
+      <xs:element minOccurs="0" name="NewStructureOptions" nillable="true" type="tns:ArrayOfStructureOption" />
+      <xs:element minOccurs="0" name="Player" nillable="true" type="tns:Player" />
+      <xs:element minOccurs="0" name="Response" type="tns:BuildResponse" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BodyResponse" nillable="true" type="tns:BodyResponse" />
+  <xs:complexType name="CelestialObject">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CelestialObjectID" type="xs:int" />
+      <xs:element minOccurs="0" name="CelestialObjectType" type="tns:CelestialObjectType" />
+      <xs:element minOccurs="0" name="OrbitSpeed" type="xs:double" />
+      <xs:element minOccurs="0" name="OrbitDistance" type="xs:double" />
+      <xs:element minOccurs="0" name="OrbitInitialAngle" type="xs:double" />
+      <xs:element minOccurs="0" name="ParentObject" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="X" type="xs:double" />
+      <xs:element minOccurs="0" name="Y" type="xs:double" />
+      <xs:element minOccurs="0" name="MetalDensity" type="xs:double" />
+      <xs:element minOccurs="0" name="FoodDensity" type="xs:double" />
+      <xs:element minOccurs="0" name="QuantiumDensity" type="xs:double" />
+      <xs:element minOccurs="0" name="DarkMatterDensity" type="xs:double" />
+      <xs:element minOccurs="0" name="Size" type="xs:int" />
+      <xs:element minOccurs="0" name="OwnerID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="IsStargate" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Population" type="xs:int" />
+      <xs:element minOccurs="0" name="HitpointsDamaged" type="xs:double" />
+      <xs:element minOccurs="0" name="IsConnected" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MaxPopulation" type="xs:int" />
+      <xs:element minOccurs="0" name="MetalIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="FoodIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="QuantiumIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="DarkMatterIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="Efficiency" type="xs:double" />
+      <xs:element minOccurs="0" name="Buildpower" type="xs:double" />
+      <xs:element minOccurs="0" name="ResearchIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="BuildpowerUsed" type="xs:double" />
+      <xs:element minOccurs="0" name="CanBeRenamed" type="xs:boolean" />
+      <xs:element minOccurs="0" name="CanMapBeChanged" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MapName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Battles" nillable="true" type="tns:ArrayOfBattle">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CelestialObjectEvents" nillable="true" type="tns:ArrayOfCelestialObjectEvent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CelestialObjectLinksByFirstObjectID" nillable="true" type="tns:ArrayOfCelestialObjectLink">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CelestialObjectLinksBySecondObjectID" nillable="true" type="tns:ArrayOfCelestialObjectLink">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CelestialObjectStructures" nillable="true" type="tns:ArrayOfCelestialObjectStructure">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CelestialObjectShips" nillable="true" type="tns:ArrayOfCelestialObjectShip">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TransitsByFromObjectID" nillable="true" type="tns:ArrayOfTransit">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="TransitsByToObjectID" nillable="true" type="tns:ArrayOfTransit">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Transits" nillable="true" type="tns:ArrayOfTransit">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="StarSystems" nillable="true" type="tns:ArrayOfStarSystem">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ChildCelestialObjects" nillable="true" type="tns:ArrayOfCelestialObject">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Players" nillable="true" type="tns:ArrayOfPlayer">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CelestialObject" nillable="true" type="tns:CelestialObject" />
+  <xs:simpleType name="CelestialObjectType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Star" />
+      <xs:enumeration value="Planet" />
+      <xs:enumeration value="Moon" />
+      <xs:enumeration value="Asteroid" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="CelestialObjectType" nillable="true" type="tns:CelestialObjectType" />
+  <xs:complexType name="ArrayOfBattle">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Battle" nillable="true" type="tns:Battle" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfBattle" nillable="true" type="tns:ArrayOfBattle" />
+  <xs:complexType name="Battle">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BattleID" type="xs:int" />
+      <xs:element minOccurs="0" name="CelestialObjectID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="IsDone" type="xs:boolean" />
+      <xs:element minOccurs="0" name="BattleEvents" nillable="true" type="tns:ArrayOfBattleEvent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Battle" nillable="true" type="tns:Battle" />
+  <xs:complexType name="ArrayOfBattleEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="BattleEvent" nillable="true" type="tns:BattleEvent" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfBattleEvent" nillable="true" type="tns:ArrayOfBattleEvent" />
+  <xs:complexType name="BattleEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="BattleID" type="xs:int" />
+      <xs:element minOccurs="0" name="EventID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="BattleEvent" nillable="true" type="tns:BattleEvent" />
+  <xs:complexType name="ArrayOfCelestialObjectEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CelestialObjectEvent" nillable="true" type="tns:CelestialObjectEvent" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCelestialObjectEvent" nillable="true" type="tns:ArrayOfCelestialObjectEvent" />
+  <xs:complexType name="CelestialObjectEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ObjectID" type="xs:int" />
+      <xs:element minOccurs="0" name="EventID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CelestialObjectEvent" nillable="true" type="tns:CelestialObjectEvent" />
+  <xs:complexType name="ArrayOfCelestialObjectLink">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CelestialObjectLink" nillable="true" type="tns:CelestialObjectLink" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCelestialObjectLink" nillable="true" type="tns:ArrayOfCelestialObjectLink" />
+  <xs:complexType name="CelestialObjectLink">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FirstObjectID" type="xs:int" />
+      <xs:element minOccurs="0" name="SecondObjectID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CelestialObjectLink" nillable="true" type="tns:CelestialObjectLink" />
+  <xs:complexType name="ArrayOfCelestialObjectStructure">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CelestialObjectStructure" nillable="true" type="tns:CelestialObjectStructure" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCelestialObjectStructure" nillable="true" type="tns:ArrayOfCelestialObjectStructure" />
+  <xs:complexType name="CelestialObjectStructure">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CelestialObjectID" type="xs:int" />
+      <xs:element minOccurs="0" name="StructureTypeID" type="xs:int" />
+      <xs:element minOccurs="0" name="Count" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CelestialObjectStructure" nillable="true" type="tns:CelestialObjectStructure" />
+  <xs:complexType name="ArrayOfCelestialObjectShip">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CelestialObjectShip" nillable="true" type="tns:CelestialObjectShip" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCelestialObjectShip" nillable="true" type="tns:ArrayOfCelestialObjectShip" />
+  <xs:complexType name="CelestialObjectShip">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CelestialObjectID" type="xs:int" />
+      <xs:element minOccurs="0" name="ShipTypeID" type="xs:int" />
+      <xs:element minOccurs="0" name="Count" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="CelestialObjectShip" nillable="true" type="tns:CelestialObjectShip" />
+  <xs:complexType name="ArrayOfTransit">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Transit" nillable="true" type="tns:Transit" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTransit" nillable="true" type="tns:ArrayOfTransit" />
+  <xs:complexType name="Transit">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TransitID" type="xs:int" />
+      <xs:element minOccurs="0" name="FromObjectID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="ToObjectID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="FromX" type="xs:float" />
+      <xs:element minOccurs="0" name="FromY" type="xs:float" />
+      <xs:element minOccurs="0" name="ToX" type="xs:float" />
+      <xs:element minOccurs="0" name="ToY" type="xs:float" />
+      <xs:element minOccurs="0" name="StartBattleTurn" type="xs:int" />
+      <xs:element minOccurs="0" name="EndBattleTurn" type="xs:int" />
+      <xs:element minOccurs="0" name="Warp" type="xs:int" />
+      <xs:element minOccurs="0" name="OrbitsObjectID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Fleets" nillable="true" type="tns:Fleet">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PopulationTransports" nillable="true" type="tns:PopulationTransport">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Players" nillable="true" type="tns:ArrayOfPlayer">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Transit" nillable="true" type="tns:Transit" />
+  <xs:complexType name="Fleet">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FleetID" type="xs:int" />
+      <xs:element minOccurs="0" name="OwnerID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Tactics" type="xs:int" />
+      <xs:element minOccurs="0" name="TransitID" type="xs:int" />
+      <xs:element minOccurs="0" name="CustomName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CanPresidentControl" type="xs:boolean" />
+      <xs:element minOccurs="0" name="FleetShips" nillable="true" type="tns:ArrayOfFleetShip">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="FleetEvents" nillable="true" type="tns:ArrayOfFleetEvent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Fleet" nillable="true" type="tns:Fleet" />
+  <xs:complexType name="ArrayOfFleetShip">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="FleetShip" nillable="true" type="tns:FleetShip" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfFleetShip" nillable="true" type="tns:ArrayOfFleetShip" />
+  <xs:complexType name="FleetShip">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FleetID" type="xs:int" />
+      <xs:element minOccurs="0" name="ShipTypeID" type="xs:int" />
+      <xs:element minOccurs="0" name="Count" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="FleetShip" nillable="true" type="tns:FleetShip" />
+  <xs:complexType name="ArrayOfFleetEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="FleetEvent" nillable="true" type="tns:FleetEvent" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfFleetEvent" nillable="true" type="tns:ArrayOfFleetEvent" />
+  <xs:complexType name="FleetEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="FleetID" type="xs:int" />
+      <xs:element minOccurs="0" name="EventID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="FleetEvent" nillable="true" type="tns:FleetEvent" />
+  <xs:complexType name="PopulationTransport">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="PopulationTransportID" type="xs:int" />
+      <xs:element minOccurs="0" name="OwnerID" type="xs:int" />
+      <xs:element minOccurs="0" name="TransitID" type="xs:int" />
+      <xs:element minOccurs="0" name="Count" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PopulationTransport" nillable="true" type="tns:PopulationTransport" />
+  <xs:complexType name="ArrayOfPlayer">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Player" nillable="true" type="tns:Player" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPlayer" nillable="true" type="tns:ArrayOfPlayer" />
+  <xs:complexType name="Player">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NextLevelXP" type="xs:int" />
+      <xs:element minOccurs="0" name="ThisLevelXP" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerID" type="xs:int" />
+      <xs:element minOccurs="0" name="SystemID" type="xs:int" />
+      <xs:element minOccurs="0" name="SpringAccountID" type="xs:int" />
+      <xs:element minOccurs="0" name="IsActive" type="xs:boolean" />
+      <xs:element minOccurs="0" name="MothershipName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="TransitID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="Credits" type="xs:double" />
+      <xs:element minOccurs="0" name="Metal" type="xs:double" />
+      <xs:element minOccurs="0" name="Food" type="xs:double" />
+      <xs:element minOccurs="0" name="MetalIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="FoodIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="Population" type="xs:int" />
+      <xs:element minOccurs="0" name="PopulationCapacity" type="xs:int" />
+      <xs:element minOccurs="0" name="Quantium" type="xs:double" />
+      <xs:element minOccurs="0" name="QuantiumIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="DarkMatter" type="xs:double" />
+      <xs:element minOccurs="0" name="DarkMatterIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="XP" type="xs:int" />
+      <xs:element minOccurs="0" name="Level" type="xs:int" />
+      <xs:element minOccurs="0" name="ResearchIncome" type="xs:double" />
+      <xs:element minOccurs="0" name="ResearchPoints" type="xs:double" />
+      <xs:element minOccurs="0" name="HomeworldID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="PresidentVote" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="PlayerEvents" nillable="true" type="tns:ArrayOfPlayerEvent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="MothershipStructures" nillable="true" type="tns:ArrayOfMothershipStructure">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PlayerTechSpents" nillable="true" type="tns:ArrayOfPlayerTechSpent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Fleets" nillable="true" type="tns:ArrayOfFleet">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PopulationTransports" nillable="true" type="tns:ArrayOfPopulationTransport">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="StarSystems" nillable="true" type="tns:ArrayOfStarSystem">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CelestialObjects" nillable="true" type="tns:ArrayOfCelestialObject">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ChildPlayers" nillable="true" type="tns:ArrayOfPlayer">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Player" nillable="true" type="tns:Player" />
+  <xs:complexType name="ArrayOfPlayerEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PlayerEvent" nillable="true" type="tns:PlayerEvent" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPlayerEvent" nillable="true" type="tns:ArrayOfPlayerEvent" />
+  <xs:complexType name="PlayerEvent">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="PlayerID" type="xs:int" />
+      <xs:element minOccurs="0" name="EventID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PlayerEvent" nillable="true" type="tns:PlayerEvent" />
+  <xs:complexType name="ArrayOfMothershipStructure">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="MothershipStructure" nillable="true" type="tns:MothershipStructure" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfMothershipStructure" nillable="true" type="tns:ArrayOfMothershipStructure" />
+  <xs:complexType name="MothershipStructure">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="PlayerID" type="xs:int" />
+      <xs:element minOccurs="0" name="StructureTypeID" type="xs:int" />
+      <xs:element minOccurs="0" name="Count" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="MothershipStructure" nillable="true" type="tns:MothershipStructure" />
+  <xs:complexType name="ArrayOfPlayerTechSpent">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PlayerTechSpent" nillable="true" type="tns:PlayerTechSpent" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPlayerTechSpent" nillable="true" type="tns:ArrayOfPlayerTechSpent" />
+  <xs:complexType name="PlayerTechSpent">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="PlayerID" type="xs:int" />
+      <xs:element minOccurs="0" name="TechID" type="xs:int" />
+      <xs:element minOccurs="0" name="SpentResearch" type="xs:int" />
+      <xs:element minOccurs="0" name="SpentQuantium" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="PlayerTechSpent" nillable="true" type="tns:PlayerTechSpent" />
+  <xs:complexType name="ArrayOfFleet">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Fleet" nillable="true" type="tns:Fleet" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfFleet" nillable="true" type="tns:ArrayOfFleet" />
+  <xs:complexType name="ArrayOfPopulationTransport">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="PopulationTransport" nillable="true" type="tns:PopulationTransport" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfPopulationTransport" nillable="true" type="tns:ArrayOfPopulationTransport" />
+  <xs:complexType name="ArrayOfStarSystem">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="StarSystem" nillable="true" type="tns:StarSystem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfStarSystem" nillable="true" type="tns:ArrayOfStarSystem" />
+  <xs:complexType name="StarSystem">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="SystemID" type="xs:int" />
+      <xs:element minOccurs="0" name="HomeStarID" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="PresidentID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="CoalitionID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="StarSystemTeches" nillable="true" type="tns:ArrayOfStarSystemTech">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ChildStarSystems" nillable="true" type="tns:StarSystem">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Players" nillable="true" type="tns:ArrayOfPlayer">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StarSystem" nillable="true" type="tns:StarSystem" />
+  <xs:complexType name="ArrayOfStarSystemTech">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="StarSystemTech" nillable="true" type="tns:StarSystemTech" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfStarSystemTech" nillable="true" type="tns:ArrayOfStarSystemTech" />
+  <xs:complexType name="StarSystemTech">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="StarSystemID" type="xs:int" />
+      <xs:element minOccurs="0" name="TechID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StarSystemTech" nillable="true" type="tns:StarSystemTech" />
+  <xs:complexType name="ArrayOfCelestialObject">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CelestialObject" nillable="true" type="tns:CelestialObject" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCelestialObject" nillable="true" type="tns:ArrayOfCelestialObject" />
+  <xs:complexType name="ArrayOfShipOption">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipOption" nillable="true" type="tns:ShipOption" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfShipOption" nillable="true" type="tns:ArrayOfShipOption" />
+  <xs:complexType name="ShipOption">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CanBuild" type="tns:BuildResponse" />
+      <xs:element minOccurs="0" name="ShipType" nillable="true" type="tns:ShipType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ShipOption" nillable="true" type="tns:ShipOption" />
+  <xs:simpleType name="BuildResponse">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Ok" />
+      <xs:enumeration value="NotEnoughRoomOrBuildpower" />
+      <xs:enumeration value="NotEnoughResources" />
+      <xs:enumeration value="DoesNotExist" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="BuildResponse" nillable="true" type="tns:BuildResponse" />
+  <xs:complexType name="ShipType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ShipTypeID" type="xs:int" />
+      <xs:element minOccurs="0" name="Class1" type="xs:int" />
+      <xs:element minOccurs="0" name="LaserDamage" type="xs:int" />
+      <xs:element minOccurs="0" name="MissileDamage" type="xs:int" />
+      <xs:element minOccurs="0" name="BombDamage" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Shortcut" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NeedsTechID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="MetalCost" type="xs:int" />
+      <xs:element minOccurs="0" name="Hitpoints" type="xs:int" />
+      <xs:element minOccurs="0" name="QuantiumCost" type="xs:int" />
+      <xs:element minOccurs="0" name="DarkMetalCost" type="xs:int" />
+      <xs:element minOccurs="0" name="IsInterdictor" type="xs:boolean" />
+      <xs:element minOccurs="0" name="IsStealthy" type="xs:boolean" />
+      <xs:element minOccurs="0" name="FleetShips" nillable="true" type="tns:ArrayOfFleetShip">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CelestialObjectShips" nillable="true" type="tns:ArrayOfCelestialObjectShip">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ShipType" nillable="true" type="tns:ShipType" />
+  <xs:complexType name="ArrayOfStructureOption">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="StructureOption" nillable="true" type="tns:StructureOption" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfStructureOption" nillable="true" type="tns:ArrayOfStructureOption" />
+  <xs:complexType name="StructureOption">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CanBuild" type="tns:BuildResponse" />
+      <xs:element minOccurs="0" name="StructureType" nillable="true" type="tns:StructureType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StructureOption" nillable="true" type="tns:StructureOption" />
+  <xs:complexType name="StructureType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="StructureTypeID" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="CostMetal" type="xs:int" />
+      <xs:element minOccurs="0" name="MakesMetal" type="xs:int" />
+      <xs:element minOccurs="0" name="MakesFood" type="xs:int" />
+      <xs:element minOccurs="0" name="BuildsMetal" type="xs:int" />
+      <xs:element minOccurs="0" name="MakesPeople" type="xs:int" />
+      <xs:element minOccurs="0" name="NeedsPeople" type="xs:int" />
+      <xs:element minOccurs="0" name="StoresPeople" type="xs:int" />
+      <xs:element minOccurs="0" name="NeedsTechID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="HitPoints" type="xs:int" />
+      <xs:element minOccurs="0" name="MakesResearch" type="xs:int" />
+      <xs:element minOccurs="0" name="LaserDamage" type="xs:int" />
+      <xs:element minOccurs="0" name="MissileDamage" type="xs:int" />
+      <xs:element minOccurs="0" name="CelestialObjectStructures" nillable="true" type="tns:ArrayOfCelestialObjectStructure">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="MothershipStructures" nillable="true" type="tns:ArrayOfMothershipStructure">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StructureType" nillable="true" type="tns:StructureType" />
+  <xs:complexType name="ArrayOfShipTypeCount">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipTypeCount" nillable="true" type="tns:ShipTypeCount" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfShipTypeCount" nillable="true" type="tns:ArrayOfShipTypeCount" />
+  <xs:complexType name="ShipTypeCount">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Count" type="xs:int" />
+      <xs:element minOccurs="0" name="ShipTypeID" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ShipTypeCount" nillable="true" type="tns:ShipTypeCount" />
+  <xs:complexType name="TupleOfPopulationTransportCelestialObjectzDaz1WLz">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TupleOf{0}{1}{#}" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="PopulationTransport" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" />
+          <GenericParameter Name="CelestialObject" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TupleOfPopulationTransport_Ps_PKwJ3X">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Second" nillable="true" type="tns:CelestialObject" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TupleOfPopulationTransportCelestialObjectzDaz1WLz" nillable="true" type="tns:TupleOfPopulationTransportCelestialObjectzDaz1WLz" />
+  <xs:complexType name="TupleOfPopulationTransport_Ps_PKwJ3X">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TupleOf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="PopulationTransport" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="First" nillable="true" type="tns:PopulationTransport" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TupleOfPopulationTransport_Ps_PKwJ3X" nillable="true" type="tns:TupleOfPopulationTransport_Ps_PKwJ3X" />
+  <xs:complexType name="ArrayOfEvent1">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Event1" nillable="true" type="tns:Event1" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfEvent1" nillable="true" type="tns:ArrayOfEvent1" />
+  <xs:complexType name="Event1">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="EventID" type="xs:int" />
+      <xs:element minOccurs="0" name="Text" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="EventType" type="xs:int" />
+      <xs:element minOccurs="0" name="Time" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="BattleTurn" type="xs:int" />
+      <xs:element minOccurs="0" name="BattleEvents" nillable="true" type="tns:ArrayOfBattleEvent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CelestialObjectEvents" nillable="true" type="tns:ArrayOfCelestialObjectEvent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PlayerEvents" nillable="true" type="tns:ArrayOfPlayerEvent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="FleetEvents" nillable="true" type="tns:ArrayOfFleetEvent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Event1" nillable="true" type="tns:Event1" />
+  <xs:complexType name="StarMap">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="CelestialObjects" nillable="true" type="tns:ArrayOfCelestialObject" />
+      <xs:element minOccurs="0" name="Config" nillable="true" type="tns:Config" />
+      <xs:element minOccurs="0" name="ObjectLinks" nillable="true" type="tns:ArrayOfCelestialObjectLink" />
+      <xs:element minOccurs="0" name="Players" nillable="true" type="tns:ArrayOfPlayer" />
+      <xs:element minOccurs="0" name="StarSystems" nillable="true" type="tns:ArrayOfStarSystem" />
+      <xs:element minOccurs="0" name="Transits" nillable="true" type="tns:ArrayOfTransit" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="StarMap" nillable="true" type="tns:StarMap" />
+  <xs:complexType name="Config">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="GameSecond" type="xs:int" />
+      <xs:element minOccurs="0" name="Started" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="CombatTurn" type="xs:int" />
+      <xs:element minOccurs="0" name="StartOn" nillable="true" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="GameID" type="xs:int" />
+      <xs:element minOccurs="0" name="SecondsPerTurn" type="xs:int" />
+      <xs:element minOccurs="0" name="ResourceTick" type="xs:int" />
+      <xs:element minOccurs="0" name="PopulationTick" type="xs:int" />
+      <xs:element minOccurs="0" name="WarpDistance" type="xs:int" />
+      <xs:element minOccurs="0" name="DirtySecond" type="xs:int" />
+      <xs:element minOccurs="0" name="TurnStarted" nillable="true" type="xs:dateTime" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Config" nillable="true" type="tns:Config" />
+  <xs:complexType name="Invariants">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="ShipTypes" nillable="true" type="tns:ArrayOfShipType" />
+      <xs:element minOccurs="0" name="StructureTypes" nillable="true" type="tns:ArrayOfStructureType" />
+      <xs:element minOccurs="0" name="Technologies" nillable="true" type="tns:ArrayOfTech" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Invariants" nillable="true" type="tns:Invariants" />
+  <xs:complexType name="ArrayOfShipType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="ShipType" nillable="true" type="tns:ShipType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfShipType" nillable="true" type="tns:ArrayOfShipType" />
+  <xs:complexType name="ArrayOfStructureType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="StructureType" nillable="true" type="tns:StructureType" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfStructureType" nillable="true" type="tns:ArrayOfStructureType" />
+  <xs:complexType name="ArrayOfTech">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Tech" nillable="true" type="tns:Tech" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfTech" nillable="true" type="tns:ArrayOfTech" />
+  <xs:complexType name="Tech">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TechID" type="xs:int" />
+      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NeedsTechID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="CostResearch" type="xs:int" />
+      <xs:element minOccurs="0" name="CostQuantium" type="xs:int" />
+      <xs:element minOccurs="0" name="StarSystemTeches" nillable="true" type="tns:ArrayOfStarSystemTech">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="PlayerTechSpents" nillable="true" type="tns:ArrayOfPlayerTechSpent">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="StructureTypes" nillable="true" type="tns:ArrayOfStructureType">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ShipTypes" nillable="true" type="tns:ArrayOfShipType">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Teches" nillable="true" type="tns:ArrayOfTech">
+        <xs:annotation>
+          <xs:appinfo>
+            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Tech" nillable="true" type="tns:Tech" />
+  <xs:simpleType name="LoginResponse">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Ok" />
+      <xs:enumeration value="InvalidPassword" />
+      <xs:enumeration value="InvalidLogin" />
+      <xs:enumeration value="Unregistered" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="LoginResponse" nillable="true" type="tns:LoginResponse" />
+  <xs:complexType name="TupleOfPlayerCelestialObjectzDaz1WLz">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TupleOf{0}{1}{#}" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="Player" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" />
+          <GenericParameter Name="CelestialObject" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:TupleOfPlayer_Ps_PKwJ3X">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Second" nillable="true" type="tns:CelestialObject" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TupleOfPlayerCelestialObjectzDaz1WLz" nillable="true" type="tns:TupleOfPlayerCelestialObjectzDaz1WLz" />
+  <xs:complexType name="TupleOfPlayer_Ps_PKwJ3X">
+    <xs:annotation>
+      <xs:appinfo>
+        <GenericType Name="TupleOf{0}{#}" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" xmlns="http://schemas.microsoft.com/2003/10/Serialization/">
+          <GenericParameter Name="Player" Namespace="http://schemas.datacontract.org/2004/07/ServiceData" />
+        </GenericType>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="First" nillable="true" type="tns:Player" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TupleOfPlayer_Ps_PKwJ3X" nillable="true" type="tns:TupleOfPlayer_Ps_PKwJ3X" />
+  <xs:simpleType name="RegisterResponse">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Ok" />
+      <xs:enumeration value="AlreadyRegistered" />
+      <xs:enumeration value="IsSmurf" />
+      <xs:enumeration value="NotValidSpringLogin" />
+      <xs:enumeration value="NotValidSpringPassword" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="RegisterResponse" nillable="true" type="tns:RegisterResponse" />
+</xs:schema>

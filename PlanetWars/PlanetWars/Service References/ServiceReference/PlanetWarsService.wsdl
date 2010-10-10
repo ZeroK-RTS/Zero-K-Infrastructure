@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:tns="http://tempuri.org/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" name="PlanetWarsService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="CustomBinding_IPlanetWarsService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:49426/PlanetWarsService.svc?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:49426/PlanetWarsService.svc?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:49426/PlanetWarsService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ServiceData" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IPlanetWarsService_BuildMothershipModule_InputMessage">
+    <wsdl:part name="parameters" element="tns:BuildMothershipModule" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_BuildMothershipModule_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BuildMothershipModuleResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_BuildShip_InputMessage">
+    <wsdl:part name="parameters" element="tns:BuildShip" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_BuildShip_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BuildShipResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_BuildStructure_InputMessage">
+    <wsdl:part name="parameters" element="tns:BuildStructure" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_BuildStructure_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BuildStructureResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_CreateFleet_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreateFleet" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_CreateFleet_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreateFleetResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_CreatePopulationTransport_InputMessage">
+    <wsdl:part name="parameters" element="tns:CreatePopulationTransport" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_CreatePopulationTransport_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CreatePopulationTransportResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_FakeTurn_InputMessage">
+    <wsdl:part name="parameters" element="tns:FakeTurn" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_FakeTurn_OutputMessage">
+    <wsdl:part name="parameters" element="tns:FakeTurnResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetBattleEvents_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetBattleEvents" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetBattleEvents_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetBattleEventsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetBodyEvents_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetBodyEvents" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetBodyEvents_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetBodyEventsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetBodyOptions_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetBodyOptions" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetBodyOptions_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetBodyOptionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetLoginHint_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetLoginHint" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetLoginHint_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetLoginHintResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetMapData_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMapData" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetMapData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMapDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetMotherhipModuleBuildOptions_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetMotherhipModuleBuildOptions" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetMotherhipModuleBuildOptions_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetMotherhipModuleBuildOptionsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetInvariants_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetInvariants" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetInvariants_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetInvariantsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetPlayerData_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlayerData" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetPlayerData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlayerDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetPlayerEvents_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlayerEvents" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetPlayerEvents_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlayerEventsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetPlayerList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlayerList" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetPlayerList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetPlayerListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetStarSystemEvents_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetStarSystemEvents" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetStarSystemEvents_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetStarSystemEventsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetTransits_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetTransits" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetTransits_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetTransitsResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_Login_InputMessage">
+    <wsdl:part name="parameters" element="tns:Login" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_Login_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_ModifyFleet_InputMessage">
+    <wsdl:part name="parameters" element="tns:ModifyFleet" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_ModifyFleet_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ModifyFleetResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_OrderFleet_InputMessage">
+    <wsdl:part name="parameters" element="tns:OrderFleet" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_OrderFleet_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OrderFleetResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_OrderMothership_InputMessage">
+    <wsdl:part name="parameters" element="tns:OrderMothership" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_OrderMothership_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OrderMothershipResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_Register_InputMessage">
+    <wsdl:part name="parameters" element="tns:Register" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_Register_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RegisterResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_SellMotherhipModule_InputMessage">
+    <wsdl:part name="parameters" element="tns:SellMotherhipModule" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_SellMotherhipModule_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SellMotherhipModuleResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_SellStructure_InputMessage">
+    <wsdl:part name="parameters" element="tns:SellStructure" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_SellStructure_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SellStructureResponse" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetDirtyGameSecond_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetDirtyGameSecond" />
+  </wsdl:message>
+  <wsdl:message name="IPlanetWarsService_GetDirtyGameSecond_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetDirtyGameSecondResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IPlanetWarsService">
+    <wsdl:operation name="BuildMothershipModule">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/BuildMothershipModule" message="tns:IPlanetWarsService_BuildMothershipModule_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/BuildMothershipModuleResponse" message="tns:IPlanetWarsService_BuildMothershipModule_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildShip">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/BuildShip" message="tns:IPlanetWarsService_BuildShip_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/BuildShipResponse" message="tns:IPlanetWarsService_BuildShip_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="BuildStructure">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/BuildStructure" message="tns:IPlanetWarsService_BuildStructure_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/BuildStructureResponse" message="tns:IPlanetWarsService_BuildStructure_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateFleet">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/CreateFleet" message="tns:IPlanetWarsService_CreateFleet_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/CreateFleetResponse" message="tns:IPlanetWarsService_CreateFleet_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="CreatePopulationTransport">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/CreatePopulationTransport" message="tns:IPlanetWarsService_CreatePopulationTransport_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/CreatePopulationTransportResponse" message="tns:IPlanetWarsService_CreatePopulationTransport_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="FakeTurn">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/FakeTurn" message="tns:IPlanetWarsService_FakeTurn_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/FakeTurnResponse" message="tns:IPlanetWarsService_FakeTurn_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBattleEvents">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetBattleEvents" message="tns:IPlanetWarsService_GetBattleEvents_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetBattleEventsResponse" message="tns:IPlanetWarsService_GetBattleEvents_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBodyEvents">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetBodyEvents" message="tns:IPlanetWarsService_GetBodyEvents_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetBodyEventsResponse" message="tns:IPlanetWarsService_GetBodyEvents_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetBodyOptions">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetBodyOptions" message="tns:IPlanetWarsService_GetBodyOptions_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetBodyOptionsResponse" message="tns:IPlanetWarsService_GetBodyOptions_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetLoginHint">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetLoginHint" message="tns:IPlanetWarsService_GetLoginHint_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetLoginHintResponse" message="tns:IPlanetWarsService_GetLoginHint_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMapData">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetMapData" message="tns:IPlanetWarsService_GetMapData_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetMapDataResponse" message="tns:IPlanetWarsService_GetMapData_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMotherhipModuleBuildOptions">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetMotherhipModuleBuildOptions" message="tns:IPlanetWarsService_GetMotherhipModuleBuildOptions_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetMotherhipModuleBuildOptionsResponse" message="tns:IPlanetWarsService_GetMotherhipModuleBuildOptions_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetInvariants">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetInvariants" message="tns:IPlanetWarsService_GetInvariants_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetInvariantsResponse" message="tns:IPlanetWarsService_GetInvariants_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPlayerData">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetPlayerData" message="tns:IPlanetWarsService_GetPlayerData_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetPlayerDataResponse" message="tns:IPlanetWarsService_GetPlayerData_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPlayerEvents">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetPlayerEvents" message="tns:IPlanetWarsService_GetPlayerEvents_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetPlayerEventsResponse" message="tns:IPlanetWarsService_GetPlayerEvents_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPlayerList">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetPlayerList" message="tns:IPlanetWarsService_GetPlayerList_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetPlayerListResponse" message="tns:IPlanetWarsService_GetPlayerList_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetStarSystemEvents">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetStarSystemEvents" message="tns:IPlanetWarsService_GetStarSystemEvents_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetStarSystemEventsResponse" message="tns:IPlanetWarsService_GetStarSystemEvents_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTransits">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetTransits" message="tns:IPlanetWarsService_GetTransits_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetTransitsResponse" message="tns:IPlanetWarsService_GetTransits_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/Login" message="tns:IPlanetWarsService_Login_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/LoginResponse" message="tns:IPlanetWarsService_Login_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ModifyFleet">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/ModifyFleet" message="tns:IPlanetWarsService_ModifyFleet_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/ModifyFleetResponse" message="tns:IPlanetWarsService_ModifyFleet_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OrderFleet">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/OrderFleet" message="tns:IPlanetWarsService_OrderFleet_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/OrderFleetResponse" message="tns:IPlanetWarsService_OrderFleet_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="OrderMothership">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/OrderMothership" message="tns:IPlanetWarsService_OrderMothership_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/OrderMothershipResponse" message="tns:IPlanetWarsService_OrderMothership_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Register">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/Register" message="tns:IPlanetWarsService_Register_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/RegisterResponse" message="tns:IPlanetWarsService_Register_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SellMotherhipModule">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/SellMotherhipModule" message="tns:IPlanetWarsService_SellMotherhipModule_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/SellMotherhipModuleResponse" message="tns:IPlanetWarsService_SellMotherhipModule_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SellStructure">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/SellStructure" message="tns:IPlanetWarsService_SellStructure_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/SellStructureResponse" message="tns:IPlanetWarsService_SellStructure_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDirtyGameSecond">
+      <wsdl:input wsaw:Action="http://tempuri.org/IPlanetWarsService/GetDirtyGameSecond" message="tns:IPlanetWarsService_GetDirtyGameSecond_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IPlanetWarsService/GetDirtyGameSecondResponse" message="tns:IPlanetWarsService_GetDirtyGameSecond_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CustomBinding_IPlanetWarsService" type="tns:IPlanetWarsService">
+    <wsp:PolicyReference URI="#CustomBinding_IPlanetWarsService_policy" />
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="BuildMothershipModule">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/BuildMothershipModule" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildShip">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/BuildShip" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="BuildStructure">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/BuildStructure" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateFleet">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/CreateFleet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreatePopulationTransport">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/CreatePopulationTransport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FakeTurn">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/FakeTurn" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBattleEvents">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetBattleEvents" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBodyEvents">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetBodyEvents" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetBodyOptions">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetBodyOptions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetLoginHint">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetLoginHint" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMapData">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetMapData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMotherhipModuleBuildOptions">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetMotherhipModuleBuildOptions" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetInvariants">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetInvariants" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlayerData">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetPlayerData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlayerEvents">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetPlayerEvents" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPlayerList">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetPlayerList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetStarSystemEvents">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetStarSystemEvents" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTransits">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetTransits" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Login">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/Login" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ModifyFleet">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/ModifyFleet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OrderFleet">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/OrderFleet" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="OrderMothership">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/OrderMothership" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Register">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/Register" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SellMotherhipModule">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/SellMotherhipModule" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SellStructure">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/SellStructure" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDirtyGameSecond">
+      <soap12:operation soapAction="http://tempuri.org/IPlanetWarsService/GetDirtyGameSecond" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PlanetWarsService">
+    <wsdl:port name="CustomBinding_IPlanetWarsService" binding="tns:CustomBinding_IPlanetWarsService">
+      <soap12:address location="http://localhost:49426/PlanetWarsService.svc" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://localhost:49426/PlanetWarsService.svc</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

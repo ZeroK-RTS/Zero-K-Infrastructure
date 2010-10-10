@@ -136,7 +136,7 @@ namespace ServiceData
 		public T2 Second { get; set; }
 	}
 
-
+	
 
 	[DataContract()]
 	public class StarMap

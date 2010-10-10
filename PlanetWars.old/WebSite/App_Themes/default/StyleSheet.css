@@ -1,0 +1,40 @@
+﻿body 
+{
+    background-color:Black;
+    color: White;
+    font-weight:bold;
+    font-variant:small-caps;
+    font-family:Tahoma;
+    font-size:small;
+}
+
+img
+{
+ border:0;      
+}
+
+.popup 
+{
+ background-color: Black;
+ padding:4px; 
+ border:1px aqua solid; 
+ white-space:nowrap;  
+}
+
+.mapplanet 
+{
+    position:absolute;z-index:2;vertical-align:top;white-space:nowrap;   
+}
+
+.mapowner 
+{
+    position:absolute;z-index:2;white-space:nowrap;
+}
+
+
+
+
+A:link {text-decoration: underline; color:White;}
+A:visited {text-decoration: underline;color:White;}
+A:active {text-decoration: underline;color:White;}
+A:hover {text-decoration: none;color:White;}

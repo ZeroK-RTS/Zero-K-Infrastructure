@@ -1,0 +1,763 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoogleChartSharp</name>
+    </assembly>
+    <members>
+        <member name="M:GoogleChartSharp.ShapeMarker.#ctor(GoogleChartSharp.ShapeMarkerType,System.String,System.Int32,System.Single,System.Int32)">
+            <summary>
+            Create a shape marker for points on line charts and scatter plots
+            </summary>
+            <param name="markerType"></param>
+            <param name="hexColor">RRGGBB format hexadecimal number</param>
+            <param name="datasetIndex">the index of the line on which to draw the marker. This is 0 for the first data set, 1 for the second and so on</param>
+            <param name="dataPoint">a floating point value that specifies on which data point the marker will be drawn. This is 1 for the first data set, 2 for the second and so on. Specify a fraction to interpolate a marker between two points.</param>
+            <param name="size">the size of the marker in pixels</param>
+        </member>
+        <member name="P:GoogleChartSharp.ShapeMarker.HexColor">
+            <summary>
+            an RRGGBB format hexadecimal number.
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.ShapeMarker.DatasetIndex">
+            <summary>
+            the index of the line on which to draw the marker. This is 0 for the first data set, 1 for the second and so on
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.ShapeMarker.DataPoint">
+            <summary>
+            a floating point value that specifies on which data point the marker will be drawn. This is 1 for the first data set, 2 for the second and so on. Specify a fraction to interpolate a marker between two points
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.ShapeMarker.Size">
+            <summary>
+            the size of the marker in pixels
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ShapeMarkerType.Arrow">
+            <summary>
+            A marker in the shape of an arrow
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ShapeMarkerType.Cross">
+            <summary>
+            A marker in the shape of a cross
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ShapeMarkerType.Diamond">
+            <summary>
+            A marker in the shape of a diamond
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ShapeMarkerType.Circle">
+            <summary>
+            A marker in the shape of a circle
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ShapeMarkerType.Square">
+            <summary>
+            A marker in the shape of a square
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ShapeMarkerType.VerticalLineToDataPoint">
+            <summary>
+            A marker that is a vertical line from the x-axis to the data point
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ShapeMarkerType.VerticalLine">
+            <summary>
+            A marker that is a vertical line from the x-axis to the top of the chart area
+            through the data point
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ShapeMarkerType.HorizontalLine">
+            <summary>
+            A marker that is a horizontal line from the y-axis to the edge of the chart area 
+            through the data point
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ShapeMarkerType.XShape">
+            <summary>
+            A marker in the shape of an X
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.LinearGradientFill.#ctor(GoogleChartSharp.ChartFillTarget,System.Int32)">
+            <summary>
+            Create a linear gradient
+            </summary>
+            <param name="fillTarget">area to be filled</param>
+            <param name="angle">specifies the angle of the gradient between 0 (horizontal) and 90 (vertical)</param>
+        </member>
+        <member name="M:GoogleChartSharp.LinearGradientFill.AddColorOffsetPair(System.String,System.Double)">
+            <summary>
+            Add a color/offset pair to the linear gradient
+            </summary>
+            <param name="color">RRGGBB format hexadecimal number</param>
+            <param name="offset">specify at what point the color is pure where: 0 specifies the right-most chart position and 1 the left-most</param>
+        </member>
+        <member name="P:GoogleChartSharp.LinearGradientFill.FillTarget">
+            <summary>
+            The area that will be filled.
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.LinearGradientFill.Angle">
+            <summary>
+            specifies the angle of the gradient between 0 (horizontal) and 90 (vertical)
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.LinearGradientFill.ColorOffsetPair.Color">
+            <summary>
+            RRGGBB format hexadecimal number
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.LinearGradientFill.ColorOffsetPair.Offset">
+            <summary>
+            specify at what point the color is pure where: 0 specifies the right-most 
+            chart position and 1 the left-most.
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.LinearGradientFill.ColorOffsetPair.#ctor(System.String,System.Double)">
+            <summary>
+            
+            </summary>
+            <param name="color">RRGGBB format hexadecimal number</param>
+            <param name="offset">specify at what point the color is pure where: 0 specifies the right-most chart position and 1 the left-most</param>
+        </member>
+        <member name="M:GoogleChartSharp.SolidFill.#ctor(GoogleChartSharp.ChartFillTarget,System.String)">
+            <summary>
+            Create a solid fill
+            </summary>
+            <param name="fillTarget">The area that will be filled.</param>
+            <param name="color">an RRGGBB format hexadecimal number</param>
+        </member>
+        <member name="P:GoogleChartSharp.SolidFill.FillTarget">
+            <summary>
+            The area that will be filled.
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.SolidFill.Color">
+            <summary>
+            an RRGGBB format hexadecimal number
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ChartFillTarget.Background">
+            <summary>
+            Fill the entire background of the chart
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ChartFillTarget.ChartArea">
+            <summary>
+            Fill only the chart area of the chart
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.Chart">
+            <summary>
+            Base type for all charts.
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Create a chart
+            </summary>
+            <param name="width">width in pixels</param>
+            <param name="height">height in pixels</param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetData(System.Int32[])">
+            <summary>
+            Set chart to use single integer dataset
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetData(System.Collections.Generic.ICollection{System.Int32[]})">
+            <summary>
+            Set chart to use integer dataset collection
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetData(System.Single[])">
+            <summary>
+            Set chart to use single float dataset
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetData(System.Collections.Generic.ICollection{System.Single[]})">
+            <summary>
+            Set chart to use float dataset collection
+            </summary>
+            <param name="data"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetTitle(System.String)">
+            <summary>
+            Set chart title using default color and font size
+            </summary>
+            <param name="title">chart title text</param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetTitle(System.String,System.String)">
+            <summary>
+            Set chart title using default font size
+            </summary>
+            <param name="title">chart title text</param>
+            <param name="color">chart title color an RRGGBB format hexadecimal number</param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetTitle(System.String,System.String,System.Int32)">
+            <summary>
+            Set chart title
+            </summary>
+            <param name="title">chart title text</param>
+            <param name="color">chart title color an RRGGBB format hexadecimal number</param>
+            <param name="fontSize">chart title font size in pixels</param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetDatasetColors(System.String[])">
+            <summary>
+            Set the color for each dataset, match colors to datasets by
+            specifying them in the same order the datasets were added to the
+            chart.
+            </summary>
+            <param name="datasetColors">an array of RRGGBB format hexadecimal numbers</param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.AddSolidFill(GoogleChartSharp.SolidFill)">
+            <summary>
+            Add a solid fill to this chart.
+            </summary>
+            <param name="solidFill"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.AddLinearGradientFill(GoogleChartSharp.LinearGradientFill)">
+            <summary>
+            Add a linear gradient fill to this chart.
+            </summary>
+            <param name="linearGradientFill"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.AddLinearStripesFill(GoogleChartSharp.LinearStripesFill)">
+            <summary>
+            Add a linear stripes fill to this chart.
+            </summary>
+            <param name="linearStripesFill"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetGrid(System.Single,System.Single)">
+            <summary>
+            Add a grid to the chart using default line segment and blank line segment length.
+            </summary>
+            <param name="xAxisStepSize">Space between x-axis grid lines in relation to axis range.</param>
+            <param name="yAxisStepSize">Space between y-axis grid lines in relation to axis range.</param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetGrid(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Add a grid to the chart.
+            </summary>
+            <param name="xAxisStepSize">Space between x-axis grid lines in relation to axis range.</param>
+            <param name="yAxisStepSize">Space between y-axis grid lines in relation to axis range.</param>
+            <param name="lengthLineSegment">Length of each line segment in a grid line</param>
+            <param name="lengthBlankSegment">Length of each blank segment in a grid line</param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.AddFillArea(GoogleChartSharp.FillArea)">
+            <summary>
+            Add a fill area to the chart. Fill areas are fills between / under lines.
+            </summary>
+            <param name="fillArea"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.AddShapeMarker(GoogleChartSharp.ShapeMarker)">
+            <summary>
+            Add a shape marker to the chart. Shape markers are used to call attention to a data point on the chart.
+            </summary>
+            <param name="shapeMarker"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.AddRangeMarker(GoogleChartSharp.RangeMarker)">
+            <summary>
+            Add a range marker to the chart. Range markers are colored bands on the chart.
+            </summary>
+            <param name="rangeMarker"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.SetLegend(System.String[])">
+            <summary>
+            Set chart legend
+            </summary>
+            <param name="strs">legend labels</param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.AddAxis(GoogleChartSharp.ChartAxis)">
+            <summary>
+            Add an axis to the chart
+            </summary>
+            <param name="axis"></param>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.GetUrl">
+            <summary>
+            Return the chart api url for this chart
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.urlChartType">
+            <summary>
+            Returns the api chart identifier for the chart
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GoogleChartSharp.Chart.collectUrlElements">
+            <summary>
+            Collect all the elements that will be used in the chart url
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.Chart.Width">
+            <summary>
+            Chart width in pixels.
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.Chart.Height">
+            <summary>
+            Chart height in pixels.
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.VennDiagram.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Create a venn diagram
+            </summary>
+            <param name="width">width in pixels</param>
+            <param name="height">height in pixels</param>
+        </member>
+        <member name="M:GoogleChartSharp.PieChart.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Create a 2D pie chart
+            </summary>
+            <param name="width">width in pixels</param>
+            <param name="height">height in pixels</param>
+        </member>
+        <member name="M:GoogleChartSharp.PieChart.#ctor(System.Int32,System.Int32,GoogleChartSharp.PieChartType)">
+            <summary>
+            Create a pie chart of specified type
+            </summary>
+            <param name="width">width in pixels</param>
+            <param name="height">height in pixels</param>
+            <param name="pieChartType"></param>
+        </member>
+        <member name="M:GoogleChartSharp.PieChart.SetLegend(System.String[])">
+            <summary>
+            Legend is not supported on Pie Charts
+            </summary>
+            <param name="strs"></param>
+        </member>
+        <member name="M:GoogleChartSharp.PieChart.SetPieChartLabels(System.String[])">
+            <summary>
+            Set labels for the Pie Chart slices
+            </summary>
+            <param name="labels">strings that will be used as label text</param>
+        </member>
+        <member name="F:GoogleChartSharp.PieChartType.TwoD">
+            <summary>
+            Two dimensional pie chart
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.PieChartType.ThreeD">
+            <summary>
+            Three dimensional pie chart
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.RangeMarker.#ctor(GoogleChartSharp.RangeMarkerType,System.String,System.Double,System.Double)">
+            <summary>
+            Create a range marker for line charts and scatter plots
+            </summary>
+            <param name="rangeMarkerType"></param>
+            <param name="color">an RRGGBB format hexadecimal number</param>
+            <param name="startPoint">Must be between 0.0 and 1.0. 0.0 is axis start, 1.0 is axis end.</param>
+            <param name="endPoint">Must be between 0.0 and 1.0. 0.0 is axis start, 1.0 is axis end.</param>
+        </member>
+        <member name="P:GoogleChartSharp.RangeMarker.Color">
+            <summary>
+            an RRGGBB format hexadecimal number.
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.RangeMarker.StartPoint">
+            <summary>
+            for horizontal range markers is the position on the y-axis at which the range starts where 0.00 is the bottom and 1.00 is the top.
+            for vertical range markers is the position on the x-axis at which the range starts where 0.00 is the left and 1.00 is the right.
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.RangeMarker.EndPoint">
+            <summary>
+            for horizontal range markers is the position on the y-axis at which the range ends where 0.00 is the bottom and 1.00 is the top.
+            for vertical range markers is the position on the x-axis at which the range ends where 0.00 is the left and 1.00 is the right.
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.RangeMarkerType.Horizontal">
+            <summary>
+            A horizontal band across the chart area
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.RangeMarkerType.Vertical">
+            <summary>
+            A vertical band across the chart area
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.FillArea">
+            <summary>
+            Fill the area between / under lines
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.FillArea.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>
+            Create a fill area between lines for use on a line chart.
+            </summary>
+            <param name="color">an RRGGBB format hexadecimal number</param>
+            <param name="startLineIndex">line indexes are determined by the order in which datasets are added. The first set is index 0, then index 1 etc</param>
+            <param name="endLineIndex">line indexes are determined by the order in which datasets are added. The first set is index 0, then index 1 etc</param>
+        </member>
+        <member name="M:GoogleChartSharp.FillArea.#ctor(System.String,System.Int32)">
+            <summary>
+            Fill all the area under a line
+            </summary>
+            <param name="color">an RRGGBB format hexadecimal number</param>
+            <param name="lineIndex">line indexes are determined by the order in which datasets are added. The first set is index 0, then index 1 etc</param>
+        </member>
+        <member name="P:GoogleChartSharp.FillArea.Color">
+            <summary>
+            an RRGGBB format hexadecimal number
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.FillArea.StartLineIndex">
+            <summary>
+            the index of the line at which the fill starts. This is determined by the order in which data sets are added. The first data set specified has an index of zero (0), the second 1, and so on.
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.FillArea.EndLineIndex">
+            <summary>
+            the index of the line at which the fill ends. This is determined by the order in which data sets are added. The first data set specified has an index of zero (0), the second 1, and so on.
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.FillAreaType">
+            <summary>
+            Specify area fill behavior
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.FillAreaType.SingleLine">
+            <summary>
+            All area under the line will be filled
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.FillAreaType.MultiLine">
+            <summary>
+            The area between this line and the next will be filled
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.ScatterPlot.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Create a scatter plot
+            </summary>
+            <param name="width">width in pixels</param>
+            <param name="height">height in pixels</param>
+        </member>
+        <member name="T:GoogleChartSharp.LineChartType">
+            <summary>
+            Specifies how the line chart handles datasets
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.LineChartType.SingleDataSet">
+            <summary>
+            One line per dataset, points are evenly spaced along the x-axis
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.LineChartType.MultiDataSet">
+            <summary>
+            Two datasets per line. The first dataset is the x coordinates 
+            of the line. The second dataset is the Y coordinates of the line.
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.LineChart.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Create a line chart with one line per dataset. Points are evenly spaced along the x-axis.
+            </summary>
+            <param name="width">width in pixels</param>
+            <param name="height">height in pixels</param>
+        </member>
+        <member name="M:GoogleChartSharp.LineChart.#ctor(System.Int32,System.Int32,GoogleChartSharp.LineChartType)">
+            <summary>
+            Create a line chart with the specified type.
+            </summary>
+            <param name="width">width in pixels</param>
+            <param name="height">height in pixels</param>
+            <param name="lineChartType">specifies how the chart handles datasets</param>
+        </member>
+        <member name="M:GoogleChartSharp.LineChart.AddLineStyle(GoogleChartSharp.LineStyle)">
+            <summary>
+            Apply a style to a line. Line styles are applied to lines in order, the 
+            first line will use the first line style.
+            </summary>
+            <param name="lineStyle"></param>
+        </member>
+        <member name="T:GoogleChartSharp.LineStyle">
+            <summary>
+            Specifies how a line is drawn.
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.LineStyle.#ctor(System.Single,System.Single,System.Single)">
+            <summary>
+            Create a line style
+            </summary>
+            <param name="lineThickness">line thickness in pixels</param>
+            <param name="lengthOfSegment">length of each solid line segment in pixels</param>
+            <param name="lengthOfBlankSegment">length of each blank line segment in pixels</param>
+        </member>
+        <member name="P:GoogleChartSharp.LineStyle.LineThickness">
+            <summary>
+            line thickness in pixels
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.LineStyle.LengthOfSegment">
+            <summary>
+            length of each solid line segment in pixels
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.LineStyle.LengthOfBlankSegment">
+            <summary>
+            length of each blank line segment in pixels
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.InvalidFeatureForChartTypeException">
+            <summary>
+            Thrown if the current chart type does not support the requested feature
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.ChartType">
+            <summary>
+            Chart types, used internally
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.BarChartOrientation">
+            <summary>
+            The orientation of the bars.
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.BarChartOrientation.Vertical">
+            <summary>
+            Bars will be positioned vertically
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.BarChartOrientation.Horizontal">
+            <summary>
+            Bars will be positioned horizontally
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.BarChartStyle">
+            <summary>
+            Bar chart style when using multiple data sets
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.BarChartStyle.Stacked">
+            <summary>
+            Multiple data sets will be stacked.
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.BarChartStyle.Grouped">
+            <summary>
+            Multiple data sets will be grouped.
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.BarChart">
+            <summary>
+            Bar Chart
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.BarChart.#ctor(System.Int32,System.Int32,GoogleChartSharp.BarChartOrientation,GoogleChartSharp.BarChartStyle)">
+            <summary>
+            Create a bar chart
+            </summary>
+            <param name="width">Width in pixels</param>
+            <param name="height">Height in pixels</param>
+            <param name="orientation">The orientation of the bars.</param>
+            <param name="style">Bar chart style when using multiple data sets</param>
+        </member>
+        <member name="M:GoogleChartSharp.BarChart.SetBarWidth(System.Int32)">
+            <summary>
+            Set the width of the individual bars
+            </summary>
+            <param name="width">Width in pixels</param>
+        </member>
+        <member name="M:GoogleChartSharp.BarChart.urlChartType">
+            <summary>
+            Return the chart identifier used in the chart url.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GoogleChartSharp.BarChart.collectUrlElements">
+            <summary>
+            Collect all the elements that will make up the chart url.
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.BarChart.getChartType">
+            <summary>
+            Return the chart type for this chart
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GoogleChartSharp.LinearStripesFill.#ctor(GoogleChartSharp.ChartFillTarget,System.Int32)">
+            <summary>
+            Create a linear stripes fill.
+            </summary>
+            <param name="fillTarget">The area that will be filled.</param>
+            <param name="angle">specifies the angle of the gradient between 0 (vertical) and 90 (horizontal)</param>
+        </member>
+        <member name="M:GoogleChartSharp.LinearStripesFill.AddColorWidthPair(System.String,System.Double)">
+            <summary>
+            A color/width pair describes a linear stripe.
+            </summary>
+            <param name="color">RRGGBB format hexadecimal number</param>
+            <param name="width">must be between 0 and 1 where 1 is the full width of the chart</param>
+        </member>
+        <member name="P:GoogleChartSharp.LinearStripesFill.FillTarget">
+            <summary>
+            The area that will be filled.
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.LinearStripesFill.Angle">
+            <summary>
+            specifies the angle of the gradient between 0 (vertical) and 90 (horizontal)
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.LinearStripesFill.ColorWidthPair.Color">
+            <summary>
+            RRGGBB format hexadecimal number
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.LinearStripesFill.ColorWidthPair.Width">
+            <summary>
+            must be between 0 and 1 where 1 is the full width of the chart
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.LinearStripesFill.ColorWidthPair.#ctor(System.String,System.Double)">
+            <summary>
+            Describes a linear stripe. Stripes are repeated until the chart is filled.
+            </summary>
+            <param name="color">RGGBB format hexadecimal number</param>
+            <param name="width">must be between 0 and 1 where 1 is the full width of the chart</param>
+        </member>
+        <member name="T:GoogleChartSharp.AxisAlignmentType">
+            <summary>
+            Axis label alignment. By default: x-axis labels are centered, left y-axis 
+            labels are right aligned, right y-axis labels are left aligned
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.AxisAlignmentType.Left">
+            <summary>
+            Left align label
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.AxisAlignmentType.Centered">
+            <summary>
+            Center align label
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.AxisAlignmentType.Right">
+            <summary>
+            Right align label
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.AxisAlignmentType.Unset">
+            <summary>
+            Use default alignment
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.ChartAxis">
+            <summary>
+            Chart Axis
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.ChartAxis.#ctor(GoogleChartSharp.ChartAxisType)">
+            <summary>
+            Create an axis, default is range 0 - 100 evenly spaced. You can create multiple axes of the same ChartAxisType.
+            </summary>
+            <param name="axisType">Axis position</param>
+        </member>
+        <member name="M:GoogleChartSharp.ChartAxis.#ctor(GoogleChartSharp.ChartAxisType,System.String[])">
+            <summary>
+            Create an axis, default is range 0 - 100 evenly spaced. You can create multiple axes of the same ChartAxisType.
+            </summary>
+            <param name="axisType">Axis position</param>
+            <param name="labels">These labels will be added to the axis without position information</param>
+        </member>
+        <member name="M:GoogleChartSharp.ChartAxis.SetRange(System.Int32,System.Int32)">
+            <summary>
+            Specify the axis range
+            </summary>
+            <param name="lowerBound">the lowest value on the axis</param>
+            <param name="upperBound">the highest value on the axis</param>
+        </member>
+        <member name="M:GoogleChartSharp.ChartAxis.AddLabel(GoogleChartSharp.ChartAxisLabel)">
+            <summary>
+            Add a label to the axis
+            </summary>
+            <param name="axisLabel"></param>
+        </member>
+        <member name="P:GoogleChartSharp.ChartAxis.Color">
+            <summary>
+            an RRGGBB format hexadecimal number
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.ChartAxis.FontSize">
+            <summary>
+            optional if used this specifies the size in pixels
+            </summary>
+        </member>
+        <member name="P:GoogleChartSharp.ChartAxis.Alignment">
+            <summary>
+            By default: x-axis labels are centered, left y-axis labels are right aligned, right y-axis labels are left aligned
+            </summary>
+        </member>
+        <member name="T:GoogleChartSharp.ChartAxisLabel">
+            <summary>
+            Describes an axis label
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ChartAxisLabel.Text">
+            <summary>
+            This text will be displayed on the axis
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ChartAxisLabel.Position">
+            <summary>
+            A value within the axis range
+            </summary>
+        </member>
+        <member name="M:GoogleChartSharp.ChartAxisLabel.#ctor(System.String)">
+            <summary>
+            Create an axis label without position information, labels will be evenly spaced on the axis
+            </summary>
+            <param name="text">The label text</param>
+        </member>
+        <member name="M:GoogleChartSharp.ChartAxisLabel.#ctor(System.Single)">
+            <summary>
+            Create an axis label without label text. The axis label will be evenly spaced on the axis and the text will
+            be it's numeric position within the axis range.
+            </summary>
+            <param name="position"></param>
+        </member>
+        <member name="M:GoogleChartSharp.ChartAxisLabel.#ctor(System.String,System.Single)">
+            <summary>
+            Create an axis label with label text and position.
+            </summary>
+            <param name="text">The label text</param>
+            <param name="position">The label position within the axis range</param>
+        </member>
+        <member name="T:GoogleChartSharp.ChartAxisType">
+            <summary>
+            Chart axis locations
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ChartAxisType.Bottom">
+            <summary>
+            Bottom x-axis
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ChartAxisType.Top">
+            <summary>
+            Top x-axis
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ChartAxisType.Left">
+            <summary>
+            Left y-axis
+            </summary>
+        </member>
+        <member name="F:GoogleChartSharp.ChartAxisType.Right">
+            <summary>
+            Right y-axis
+            </summary>
+        </member>
+    </members>
+</doc>

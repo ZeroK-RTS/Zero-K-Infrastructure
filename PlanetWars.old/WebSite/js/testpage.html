@@ -1,0 +1,55 @@
+<html><head><title>Testing</title>
+
+<style type="text/css">
+.tt {
+	border: 1px solid #000;
+	background-color: #fea;
+	font-family: Verdana, Helvetica;
+	font-size: 0.8em;
+	width: 450px;
+}
+</style>
+
+<script type="text/javascript" src="jq.js"></script>
+<script type="text/javascript" src="PWLib_dev.js"></script>
+
+<script type="text/javascript">
+
+
+function ShowDialog() {
+	var dia = new PW.Dialog("<center>This is a Dialog!</center><hr><center><br /><br />It does stuff!<br />I should make it prettier...<br />No close button yet :(<br /><a href='#' id='rmme'>Close Me</a>",
+	{
+		windowCss: {
+			backgroundColor: "#fff",
+			border: "1px solid #000",
+			width: 300,
+			height: 150,
+			left: '50%',
+			top: '25%',
+			marginLeft: -150,
+			fontFamily: 'Verdana, Arial',
+			fontSize: '0.8em'
+		}
+	});
+	
+	
+	$('#rmme').click(function(e) {
+		dia.Remove();
+	});
+}
+
+$(document).ready(function() {
+
+});
+
+</script>
+
+
+</head>
+<body>
+
+<a href="#" onmousedown="ShowDialog()">Show a dialog!</a>
+
+</body>
+
+</html>

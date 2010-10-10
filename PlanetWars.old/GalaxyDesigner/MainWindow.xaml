@@ -1,0 +1,200 @@
+﻿<Window Name="window" x:Class="GalaxyDesigner.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:GalaxyDesigner="clr-namespace:GalaxyDesigner"
+    Title="Galaxy Designer Alpha" Height="600" Width="1000">
+    <Window.Resources>
+        <Style x:Key="smallBorder">
+            <Setter Property="Border.BorderThickness" Value="1"/>
+            <Setter Property="Border.BorderBrush" Value="LightGray"/>
+            <Setter Property="Border.CornerRadius" Value="5" />
+            <Setter Property="Border.Margin" Value="3" />
+            <Setter Property="Border.Padding" Value="1" />
+            <Setter Property="Border.SnapsToDevicePixels" Value="true" />
+        </Style>
+    </Window.Resources>
+    <Window.Style>
+        <Style>
+            <Setter Property="Button.Margin" Value="5"/>
+            <Setter Property="Button.FontFamily" Value="Georgia"/>
+            <Setter Property="Button.FontSize" Value="11px"/>
+            <Setter Property="Button.FontWeight" Value="Bold"/>
+            <Setter Property="CheckBox.Padding" Value="5" />
+        </Style>
+    </Window.Style>
+    <Window.Background>
+        <LinearGradientBrush>
+            <LinearGradientBrush.GradientStops>
+                <GradientStop Offset="0.00" Color="White" />
+                <GradientStop Offset="1.00" Color="LightGray" />
+            </LinearGradientBrush.GradientStops>
+        </LinearGradientBrush>
+    </Window.Background>
+    <TabControl Name="tabControl" SelectionChanged="tabControl_SelectionChanged">
+        <TabItem Name ="mapTab" Header="Map">
+            <DockPanel>
+                <Border Padding="3" 
+                Margin ="3" 
+                BorderBrush="SteelBlue" 
+                BorderThickness="2"
+                CornerRadius="3">
+                    <ScrollViewer 
+                                    HorizontalScrollBarVisibility="Auto" 
+                                    VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <GroupBox Header ="Action" Padding="3" Margin="3">
+                                <StackPanel ButtonBase.Click="actionPanel_Click">
+                                    <RadioButton Name="drawButton" 
+                                     Tag="{x:Static GalaxyDesigner:ToolMode.Draw}"
+                                     Content="Draw"
+                                     IsChecked="True"/>
+                                    <RadioButton Name="moveButton" 
+                                     Tag="{x:Static GalaxyDesigner:ToolMode.Move}" 
+                                     Content="Move"/>
+                                    <RadioButton Name="deleteButton" 
+                                     Tag="{x:Static GalaxyDesigner:ToolMode.Delete}" 
+                                     Content="Delete"/>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Header="Zoom" Padding="3" Margin="3">
+                                <Slider Name="widthSlider" 
+                            DockPanel.Dock="Top" 
+                            Minimum="0.3" 
+                            Value="3" 
+                            Maximum="10"                             
+                            Orientation="Horizontal" />
+                            </GroupBox>
+                            <Border Style="{StaticResource smallBorder}" Padding="3 10 3 10">
+                                <StackPanel>
+                                    <Button Click="backgroundButton_Click">Select Background</Button>
+                                    <Button Click="clearButton_Click">Clear Map</Button>
+                                    <Button Click="importButton_Click">Import galaxy.xml</Button>
+                                    <Button Click="exportButton_Click">Export galaxy.xml</Button>
+                                    <Button Click="helpButton_Click">Help</Button>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource smallBorder}">
+                                <Expander Header="Warnings">
+                                    <ScrollViewer>
+                                        <ListBox Name="warningList" SelectionMode="Single" />
+                                    </ScrollViewer>
+                                </Expander>
+                            </Border>
+                            <Border Style="{StaticResource smallBorder}" >
+                                <Expander Header="Planet Names">
+                                    <StackPanel>
+                                        <CheckBox 
+                                            Name="DisplayNames"
+                                            Checked="DisplayNames_Checked" 
+                                            Unchecked="CheckBox_Unchecked">
+                                            Display Names
+                                        </CheckBox>
+                                        <GroupBox Header="Name Sources">
+                                            <StackPanel>
+                                                <CheckBox IsChecked="True" Name="starNamesBox">Star Names</CheckBox>
+                                                <CheckBox Name="fictionalNamesBox">Fictional Names</CheckBox>
+                                                <CheckBox Name="customNamesCheckBox">Custom Names</CheckBox>
+                                            </StackPanel>
+                                        </GroupBox>
+                                        <GroupBox Header="Custom Name List">
+                                            <ScrollViewer 
+                                                HorizontalScrollBarVisibility="Auto" 
+                                                VerticalScrollBarVisibility="Auto"
+                                                MaxWidth="150"
+                                                MaxHeight="200">
+                                                <TextBox 
+                                                    AcceptsReturn="True"
+                                                    Name="customNamesTextBox"
+                                                    MaxWidth="150"
+                                                    MinLines="3" />
+                                            </ScrollViewer>
+                                        </GroupBox>
+                                    </StackPanel>
+                                </Expander>
+                            </Border>
+                            <Border Style="{StaticResource smallBorder}">
+                                <Expander Header="Maps">
+                                    <TextBox
+                                    AcceptsReturn="True"
+                                    Name="mapNamesTextBox" 
+                                    MinLines="3"
+                                    Text="{Binding ElementName=window, Path=GalaxyDrawing.MapNames, Mode=TwoWay}"/>
+                                </Expander>
+                            </Border>
+                            <Border Style="{StaticResource smallBorder}">
+                                <Expander Header="Numbers">
+                                    <Grid>
+                                        <Grid.Style>
+                                            <Style>
+                                                <Setter Property="Label.FontSize" Value="10"></Setter>
+                                                <Setter Property="Label.FontWeight" Value="Normal"></Setter>
+                                                <Setter Property="Label.Margin" Value="0"></Setter>
+                                                <Setter Property="Label.Padding" Value="0"></Setter>
+                                            </Style>
+                                        </Grid.Style>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition></ColumnDefinition>
+                                            <ColumnDefinition></ColumnDefinition>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition></RowDefinition>
+                                            <RowDefinition></RowDefinition>
+                                        </Grid.RowDefinitions>
+                                        <Label>Planets</Label>
+                                        <Label 
+                                            Grid.Column="1" 
+                                            FlowDirection="RightToLeft" 
+                                            Content="{Binding ElementName=window, Path=GalaxyDrawing.PlanetCount}" />
+                                        <Label Grid.Row="1">Maps</Label>
+                                        <Label 
+                                            Grid.Column="1" 
+                                            Grid.Row="1" 
+                                            FlowDirection="RightToLeft" 
+                                            Content="{Binding ElementName=window, Path=GalaxyDrawing.MapCount}"/>
+                                    </Grid>
+                                </Expander>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+                <Border 
+                    Padding="3" 
+                    Margin ="3" 
+                    BorderBrush="SteelBlue" 
+                    BorderThickness="2"
+                    CornerRadius="3">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                        <Canvas  Name="canvas"
+                            MouseDown="canvas_MouseDown"
+                            MinWidth="{Binding ElementName=window, Path=GalaxyDrawing.ImageSource.Width}"
+                            MinHeight="{Binding ElementName=window, Path=GalaxyDrawing.ImageSource.Height}"
+                            MaxWidth="{Binding ElementName=window, Path=GalaxyDrawing.ImageSource.Width}"
+                            MaxHeight="{Binding ElementName=window, Path=GalaxyDrawing.ImageSource.Height}"
+                            PreviewMouseDown="canvas_PreviewMouseDown"
+                            PreviewMouseUp="canvas_PreviewMouseUp"
+                            PreviewMouseMove="canvas_PreviewMouseMove"
+                            ClipToBounds="True">
+                            <Canvas.LayoutTransform>
+                                <ScaleTransform 
+                                    ScaleX="{Binding ElementName=widthSlider, Path=Value}"
+                                            ScaleY="{Binding ElementName=widthSlider, Path=Value}"/>
+                            </Canvas.LayoutTransform>
+                            <Canvas.Background>
+                                <ImageBrush 
+                                    ImageSource="{Binding ElementName=window, Path=GalaxyDrawing.ImageSource, Mode=TwoWay}"
+                                    AlignmentX="Right" 
+                                    AlignmentY="Bottom" 
+                                    Stretch="Fill" />
+                            </Canvas.Background>
+                        </Canvas>
+                    </ScrollViewer>
+                </Border>
+            </DockPanel>
+        </TabItem>
+        <TabItem Header="XML" Name="xmlTab">
+            <Grid>
+                <GalaxyDesigner:XmlEditor x:Name="xmlEditor"/>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</Window>
