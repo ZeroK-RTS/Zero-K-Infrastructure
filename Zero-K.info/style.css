@@ -1,0 +1,244 @@
+body {
+background: #111;
+color: #cbd3d4;
+font-size: .75em;
+font-family: Arial, sans-serif;
+}
+
+p {text-indent: 2em;}
+b {font-size: 105%; color: #fff;}
+i {}
+
+h1 {font-size: 150%; color: #fff;}
+h2 {background: #000; opacity: .9;}
+h3 {}
+
+a {color: #38bfec; text-decoration: none;}
+a:hover {color: #fff;}
+a:active {color: #cbd3d4;}
+a:visited {color: #4c90a6;}
+a:visited hover {color: #fff;}
+
+img {border-style:none;}
+
+table#vid td 
+{
+	padding: 20px;
+	vertical-align: top;
+}
+
+table#screens
+{
+	background: #000;
+	border: 2px solid #333;
+	padding: 10px;
+	margin: 5px;
+	-moz-border-radius: 10px;
+}
+
+table#screens td
+{
+	border: 2px solid #222;
+	padding: 3px;
+	border-spacing: 15px;
+	-moz-border-radius: 7px;
+}
+
+input
+{
+	color: #cbd3d4; 
+	background: #222; 
+	border: 2px solid #111;
+	padding: 3px;
+}
+
+textarea 
+{
+	 color: #cbd3d4; 
+	 background: #222; 
+	 border: 2px solid #111;
+	 padding: 3px;
+	 margin: 5px;
+}
+
+pre
+{
+	border: 1px dotted #888;
+	background: #222;
+	padding: 7px;
+	margin-left: 4em;
+	margin-right: 4em;
+}
+
+span.righty
+{
+	position:absolute;
+	top:5px;
+	right:5px;
+	text-align:right;
+}
+
+span.lefty
+{
+	position:absolute;
+	top:5px;
+	left:5px;
+	text-align:left;
+}
+
+ul.points {list-style-type: circle;}
+ul.poll {list-style-type: none; text-indent: -3em;}
+
+div#menu a /*menu bar*/
+{
+	text-align: center; 
+	font: bold 1.2em sans-serif;
+	padding: 2px 10px;
+}
+div#menu a span {display:none;} /*menu text sayings*/
+div#menu a:hover span
+{
+	display: block;
+	position: absolute; 
+	background: #000;
+	color: #cbd3d4;
+	/*bottom: 120px; left: -10px; width: 125px;*/
+	top: -0.55em; left: 100%; width: 125px;
+	padding: 5px; margin: 10px;
+	border: 1px solid #222;
+	z-index: 100;
+	opacity: .8;
+	
+}
+
+ul.menu {list-style-type: none; padding:5px;} /*toplevel menu*/
+ul.menu li > ul {display:none;} /*list menu*/
+ul.menu li:hover > ul
+{
+	display:block;
+	position:absolute; 
+	background: #000; 
+	border:1px solid #222;
+	border-top:none;
+	list-style-type: none; 
+	padding:3px;
+}
+
+div#main
+{
+	position:relative;
+	width: 1000px;
+	background: transparent;
+	margin-left:auto;
+	margin-right:auto;
+	z-index:3;
+}
+
+div#logo
+{
+	position:relative;
+	top: -10px;
+	left: 95px;
+	width: 886px;
+	background: #000;
+	border: 2px solid #222;
+	-moz-border-radius-bottomright: 15px;
+	-moz-border-radius-bottomleft: 15px;
+	text-align: center;
+	opacity: .8;
+	z-index:10;
+}
+
+div#menu 
+{
+	position: relative;
+	top: 10px;
+	left: 95px;
+	width: 866px;
+	background: #000;
+	border: 2px solid #222;
+	-moz-border-radius: 15px;
+	padding-left: 10px; 
+	padding-right: 10px;
+	opacity: .8;
+	z-index: 20;
+}
+
+div#rlist
+{
+	position: absolute;
+	top: 236px;
+	left: 725px;
+	width: 240px;
+	padding: 20px;
+}
+
+div#unit
+{
+	height: 280px;
+	background: url('img/pyrog.png') center top;
+	font-size: 100%;
+	opacity: 1;
+	
+}
+
+div#commits
+{
+	display: none;
+}
+
+div.box
+{
+	position: relative;
+	width: 220px;
+	background: #000;
+	border: 2px solid #222;
+	padding: 10px;
+	margin-bottom: 20px;
+	opacity: .8;
+}
+
+div.newslette{color: #fff;}
+{
+	border:1px dotted #999;
+	border-right:none;
+	border-bottom:none;
+	padding:15px;
+	margin-bottom:10px;
+}
+
+div.mid
+{
+	position: relative;
+	width: 600px;
+	top: 10px;
+	left: 75px;
+	background: #000;
+	border: 2px solid #222;
+	padding: 10px;
+	margin: 20px;
+	opacity: .8;
+}
+
+div.midl
+{
+	position: relative;
+	width: 866px;
+	top: 10px;
+	left: 75px;
+	background: #000;
+	border: 2px solid #222;
+	padding: 10px;
+	margin: 20px;
+	opacity: .8;
+}
+
+img.scr
+{
+	border: 2px solid #222;
+	-moz-border-radius: 4%;
+	margin: auto 5px;
+	margin-top: 20px;
+}
+
+
