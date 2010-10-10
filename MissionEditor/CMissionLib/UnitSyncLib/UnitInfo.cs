@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace CMissionLib.UnitSyncLib
@@ -6,16 +7,16 @@ namespace CMissionLib.UnitSyncLib
 	[Serializable]
 	public class UnitInfo : ICloneable
 	{
-		public UnitInfo() {}
-
-		public UnitInfo(string name, string fullName)
+		public UnitInfo()
 		{
-			Name = name;
-			FullName = fullName;
+			BuildOptions = new string[0];
 		}
 
 		public string FullName { get; set; }
 		public string Name { get; set; }
+		public string BuildPicField { get; set; }
+		public string BuildPicFileName { get; set; }
+		public IEnumerable<string> BuildOptions { get; set; }
 
 		public ImageSource BuildPic { get; set; }
 

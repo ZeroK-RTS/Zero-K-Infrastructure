@@ -210,7 +210,7 @@ namespace CMissionLib.UnitSyncLib
 				{
 					Name = modName,
 					ArchiveName = archiveName,
-					UnitDefs = GetUnitList(modName).ToArray(),
+					UnitDefs = ParseUnits(),
 					Desctiption = NativeMethods.GetPrimaryModDescription(modIndex),
 					Game = NativeMethods.GetPrimaryModGame(modIndex),
 					Mutator = NativeMethods.GetPrimaryModMutator(modIndex),
@@ -228,6 +228,8 @@ namespace CMissionLib.UnitSyncLib
 					Widgets = GetFilesInVfsDirectory("LuaUI/Widgets", "*.lua", VfsMode.Mod).Select(Path.GetFileName).ToArray(),
 					Gadgets = GetFilesInVfsDirectory("LuaRules/Gadgets", "*.lua", VfsMode.Mod).Select(Path.GetFileName).ToArray(),
 				};
+
+			ParseUnits();
 
 			if (mod.Sides.Length == 0) Debug.WriteLine("Mod has no faction");
 			if (mod.UnitDefs.Length == 0) Debug.WriteLine("No unit found.");
@@ -601,40 +603,54 @@ namespace CMissionLib.UnitSyncLib
 			{
 				var unitName = NativeMethods.GetUnitName(i);
 				var fullUnitName = NativeMethods.GetFullUnitName(i);
-				var unitInfo = new UnitInfo(unitName, fullUnitName);
+				var unitInfo = new UnitInfo{Name = unitName, FullName = fullUnitName};
 
 				units.Add(unitInfo);
 			}
 
-			foreach (var unit in units)
-			{
-				// try to get the buildpic
-				var files = GetFilesInVfsDirectory("unitpics", unit.Name + "*", VfsMode.Mod);
-				if (files.Any())
-				{
+			foreach (var unit in units) GetBuildPic(unit);
+			return units;
+		}
 
-					var fileData = ReadVfsFile(files.First());
-					if (fileData != null)
-					{
-						var dib = FreeImage.LoadFromStream(new MemoryStream(fileData));
-						try
-						{
-							using (var bitmap = FreeImage.GetBitmap(dib))
-							{
-								unit.BuildPic = bitmap.ToBitmapSource();
-							}
-						}
-						finally
-						{
-							FreeImage.UnloadEx(ref dib);
-						}
-					}
+		BitmapSource LoadBuildpic(byte[] data)
+		{
+			var dib = FreeImage.LoadFromStream(new MemoryStream(data));
+			try
+			{
+				using (var bitmap = FreeImage.GetBitmap(dib))
+				{
+					return bitmap.ToBitmapSource();
+				}
+			}
+			finally
+			{
+				FreeImage.UnloadEx(ref dib);
+			}
+		}
+
+		void GetBuildPic(UnitInfo unit) 
+		{
+			if (!String.IsNullOrEmpty(unit.BuildPicField))
+			{
+				var data = ReadVfsFile("unitpics/" + unit.BuildPicField);
+				if (data != null)
+				{
+					unit.BuildPic = LoadBuildpic(data);
+					return;
 				}
 			}
 
+			// buildpic not specified, try guessing the buildpic
+			var files = GetFilesInVfsDirectory("unitpics", unit.Name + "*", VfsMode.Mod);
+			if (files.Any())
+			{
 
+				var fileData = ReadVfsFile(files.First());
+				if (fileData != null)
+				{
 
-			return units;
+				}
+			}
 		}
 
 		public string GetWritableDataDirectory()
@@ -743,6 +759,126 @@ namespace CMissionLib.UnitSyncLib
 				if (handle != 0) NativeMethods.CloseFileVFS(handle);
 			}
 		}
+
+		void ListStrKeys()
+		{
+			for (var i = 1; i < NativeMethods.lpGetStrKeyListCount(); i++)
+			{
+				var key = NativeMethods.lpGetStrKeyListEntry(i);
+				var type = (LuaType) NativeMethods.lpGetStrKeyType(key);
+				Debug.WriteLine(key + " " + type);
+			}
+		}
+
+		void ListIntKeys()
+		{
+			for (var i = 1; i < NativeMethods.lpGetIntKeyListCount(); i++)
+			{
+				var key = NativeMethods.lpGetIntKeyListEntry(i);
+				var type = (LuaType)NativeMethods.lpGetIntKeyType(key);
+				Debug.WriteLine(key + " " + type);
+			}
+		}
+
+		enum LuaType
+		{
+			String = 4,
+			Table = 5,
+		}
+
+		UnitInfo[] ParseUnits()
+		{
+			var unitInfos = new List<UnitInfo>();
+
+			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
+			if (!NativeMethods.lpOpenFile("gamedata/defs.lua", VfsMode.Mod, VfsMode.Mod)) throw new UnitSyncException("Error parsing defs.lua: " + NativeMethods.lpErrorLog());
+			if (!NativeMethods.lpExecute()) throw new UnitSyncException("Unable to read  defs.lua: " + NativeMethods.lpErrorLog());
+			if (!NativeMethods.lpSubTableStr("unitdefs")) throw new UnitSyncException(); // push unitdefs
+
+			for (var unitKeyIndex = 0; unitKeyIndex < NativeMethods.lpGetStrKeyListCount(); unitKeyIndex++)
+			{
+				var unitName = NativeMethods.lpGetStrKeyListEntry(unitKeyIndex);
+				if (!NativeMethods.lpSubTableStr(unitName)) throw new UnitSyncException(); // push unitdef
+				var unitInfo = new UnitInfo();
+				unitInfo.Name = unitName;
+				if (NativeMethods.lpGetKeyExistsStr("name"))
+				{
+					unitInfo.FullName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);
+				}
+				if (NativeMethods.lpGetKeyExistsStr("buildpic"))
+				{
+					unitInfo.BuildPicField = NativeMethods.lpGetStrKeyStrVal("buildpic", String.Empty);
+				}
+				if (NativeMethods.lpGetKeyExistsStr("buildoptions"))
+				{
+					if (!NativeMethods.lpSubTableStr("buildoptions")) throw new UnitSyncException(); // push buildoptions
+					var unitList = new List<string>();
+					for (var buildOptionIndex = 1; buildOptionIndex < NativeMethods.lpGetIntKeyListCount(); buildOptionIndex++)
+					{
+						var key = NativeMethods.lpGetIntKeyListEntry(buildOptionIndex);
+						var buildOption = NativeMethods.lpGetIntKeyStrVal(key, String.Empty);
+						unitList.Add(buildOption);
+					}
+					NativeMethods.lpPopTable(); // pop buildoptions
+				}
+				unitInfos.Add(unitInfo);
+				NativeMethods.lpPopTable(); // pop unitdef
+			}
+			NativeMethods.lpPopTable(); // pop unitdefs
+			NativeMethods.lpClose();
+			foreach (var unitInfo in unitInfos) GetBuildPic(unitInfo);
+			return unitInfos.ToArray();
+		}
+
+#if false
+		void ReadArchiveCache()
+		{
+			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
+			if (!NativeMethods.lpOpenFile("ArchiveCacheV7.lua", VfsMode.Raw, VfsMode.Raw)) throw new UnitSyncException("Error parsing ArchiveCacheV7.lua: " + NativeMethods.lpErrorLog());
+			if (!NativeMethods.lpExecute()) throw new UnitSyncException("Unable to read  ArchiveCacheV7.lua: " + NativeMethods.lpErrorLog());
+			if (archives != null) return; // already read
+			archives = new List<ArchiveInfo>();
+			if (!NativeMethods.lpSubTableStr("archives")) throw new UnitSyncException(); // push archives
+			for (var archiveIndex = 1; NativeMethods.lpGetKeyExistsInt(archiveIndex); archiveIndex++)
+			{
+				if (!NativeMethods.lpSubTableInt(archiveIndex)) throw new UnitSyncException(); // push archives[archiveIndex]
+				var info = new ArchiveInfo();
+				info.FileName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);
+				if (NativeMethods.lpGetKeyExistsStr("maps") && NativeMethods.lpSubTableStr("maps"))
+				{
+					// push maps
+					if (!NativeMethods.lpSubTableInt(1)) throw new UnitSyncException(); // push maps[1] 
+					info.InternalName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);
+					NativeMethods.lpPopTable(); // pop maps[1]
+					NativeMethods.lpPopTable(); // pop maps
+				}
+				else if (NativeMethods.lpGetKeyExistsStr("moddata") && NativeMethods.lpSubTableStr("moddata"))
+				{
+					// push moddata
+					info.InternalName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);
+					if (NativeMethods.lpGetKeyExistsStr("depend") && NativeMethods.lpSubTableStr("depend"))
+					{
+						// push depend
+						for (var dependencyIndex = 1; NativeMethods.lpGetKeyExistsInt(dependencyIndex); dependencyIndex++) info.Dependencies.Add(NativeMethods.lpGetIntKeyStrVal(dependencyIndex, String.Empty));
+						NativeMethods.lpPopTable(); // pop depend 
+					}
+					if (NativeMethods.lpGetKeyExistsStr("replace") && NativeMethods.lpSubTableStr("replace"))
+					{
+						// push replace
+						for (var replaceIndex = 1; NativeMethods.lpGetKeyExistsInt(replaceIndex); replaceIndex++) info.Replaces.Add(NativeMethods.lpGetIntKeyStrVal(replaceIndex, String.Empty));
+						NativeMethods.lpPopTable(); // pop replace
+					}
+					NativeMethods.lpPopTable(); // pop moddata
+				}
+				info.Replaced = NativeMethods.lpGetStrKeyStrVal("replaced", String.Empty);
+				archives.Add(info);
+				NativeMethods.lpPopTable(); // pop archives[archiveIndex]
+			}
+			NativeMethods.lpPopTable(); // pop archives
+			NativeMethods.lpClose();
+		}
+
+#endif
 
 		static void TestMapInfo(MapInfo mapInfo)
 		{

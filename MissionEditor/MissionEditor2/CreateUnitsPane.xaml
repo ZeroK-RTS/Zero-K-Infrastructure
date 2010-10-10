@@ -1,6 +1,6 @@
 ﻿<UserControl x:Class="MissionEditor2.CreateUnitsPane" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
-    xmlns:local="clr-namespace:MissionEditor2" xmlns:tk="clr-namespace:Microsoft.Windows.Controls;assembly=WPFToolkit" xmlns:MissionEditor2="clr-namespace:MissionEditor2" Name="control" Loaded="CreateUnitsPane_Loaded">
+    xmlns:local="clr-namespace:MissionEditor2"  xmlns:MissionEditor2="clr-namespace:MissionEditor2" Name="control" Loaded="CreateUnitsPane_Loaded">
   <UserControl.Resources>
     <MissionEditor2:TranslateConverter x:Key="translateConverter" />
     <local:ZoomConverter x:Key="log10Converter" />
@@ -67,27 +67,27 @@
 
     <ListBox x:Key="playerListBox" ItemsSource="{Binding Mission.Players, Source={x:Static local:MainWindow.Instance}}" IsSynchronizedWithCurrentItem="True" />
 
-    <tk:DataGrid x:Key="unitGrid" ItemsSource="{Binding LogicGrid.SelectedItem.Units, Source={x:Static local:MainWindow.Instance}}" AutoGenerateColumns="False"
+    <DataGrid x:Key="unitGrid" ItemsSource="{Binding LogicGrid.SelectedItem.Units, Source={x:Static local:MainWindow.Instance}}" AutoGenerateColumns="False"
         IsSynchronizedWithCurrentItem="True" Background="White" VirtualizingStackPanel.IsVirtualizing="True">
-      <tk:DataGrid.Columns>
-        <tk:DataGridTemplateColumn Header="Image" CellTemplate="{StaticResource smallUnitBuildPic}" />
+      <DataGrid.Columns>
+        <DataGridTemplateColumn Header="Image" CellTemplate="{StaticResource smallUnitBuildPic}" />
 
-        <tk:DataGridTextColumn Binding="{Binding UnitDef.Name}" Header="Name" IsReadOnly="True" />
-        <tk:DataGridTextColumn Binding="{Binding UnitDef.FullName}" Header="Full Name" IsReadOnly="True" />
-        <tk:DataGridTemplateColumn Header="Owner">
-          <tk:DataGridTemplateColumn.CellTemplate>
+        <DataGridTextColumn Binding="{Binding UnitDef.Name}" Header="Name" IsReadOnly="True" />
+        <DataGridTextColumn Binding="{Binding UnitDef.FullName}" Header="Full Name" IsReadOnly="True" />
+        <DataGridTemplateColumn Header="Owner">
+          <DataGridTemplateColumn.CellTemplate>
             <DataTemplate>
               <ComboBox ItemsSource="{Binding Instance.Mission.Players, Source={x:Static local:MainWindow.Instance}}"
                   SelectedItem="{Binding Player}" />
             </DataTemplate>
-          </tk:DataGridTemplateColumn.CellTemplate>
-        </tk:DataGridTemplateColumn>
-        <tk:DataGridTextColumn Binding="{Binding X, StringFormat=#}" Header="X" />
-        <tk:DataGridTextColumn Binding="{Binding Y, StringFormat=#}" Header="Y" />
-        <tk:DataGridTextColumn Binding="{Binding Heading, StringFormat=#}" Header="Heading" />
-        <tk:DataGridTextColumn Binding="{Binding Groups, Converter={StaticResource csvConverter}}" Header="Groups" />
-      </tk:DataGrid.Columns>
-    </tk:DataGrid>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTextColumn Binding="{Binding X, StringFormat=#}" Header="X" />
+        <DataGridTextColumn Binding="{Binding Y, StringFormat=#}" Header="Y" />
+        <DataGridTextColumn Binding="{Binding Heading, StringFormat=#}" Header="Heading" />
+        <DataGridTextColumn Binding="{Binding Groups, Converter={StaticResource csvConverter}}" Header="Groups" />
+      </DataGrid.Columns>
+    </DataGrid>
 
     <CollectionViewSource x:Key="unitDefsView" Source="{Binding Mission.Mod.UnitDefs}" />
 

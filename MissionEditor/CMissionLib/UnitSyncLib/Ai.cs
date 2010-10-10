@@ -66,7 +66,7 @@ namespace CMissionLib.UnitSyncLib
 
 		public override string ToString()
 		{
-			return Name + " (" + Description + ")";
+			return Name;
 		}
 	}
 }

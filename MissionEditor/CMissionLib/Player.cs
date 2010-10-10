@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Media;
+using CMissionLib.UnitSyncLib;
 
 namespace CMissionLib
 {
@@ -15,6 +16,7 @@ namespace CMissionLib
 		string alliance = "Alliance 1";
 		bool isHuman = true;
 		string aiDll = "";
+		string aiVersion;
 
 		[DataMember]
 		public string Name
@@ -51,8 +53,7 @@ namespace CMissionLib
 			}
 			set
 			{
-				var v = (SolidColorBrush)value; // this is just to make data binding happy anyway, should never happen
-				color = v.Color;
+				color = value.Color;
 				RaisePropertyChanged("Color");
 				RaisePropertyChanged("ColorBrush");
 			}
@@ -69,6 +70,8 @@ namespace CMissionLib
 			}
 		}
 
+		public Ai ai;
+
 
 		[DataMember]
 		public bool IsHuman
@@ -78,6 +81,37 @@ namespace CMissionLib
 			{
 				isHuman = value;
 				RaisePropertyChanged("IsHuman");
+			}
+		}
+
+		public Ai AI
+		{
+			get { return ai; }
+			set
+			{
+				ai = value;
+				if (ai == null)
+				{
+					AIVersion = null;
+					AIVersion = null;
+				}
+				else
+				{
+					AIVersion = ai.Version;
+					AIDll = ai.ShortName;
+				}
+				RaisePropertyChanged("AI");
+			}
+		}
+
+		[DataMember]
+		public string AIVersion
+		{
+			get { return aiVersion; }
+			set
+			{
+				aiVersion = value;
+				RaisePropertyChanged("AIVersion");
 			}
 		}
 

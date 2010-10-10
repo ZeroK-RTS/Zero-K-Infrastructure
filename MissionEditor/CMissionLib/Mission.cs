@@ -65,18 +65,10 @@ namespace CMissionLib
 			gameStartTrigger.Logic.Add(new CreateUnitsAction(startUnits));
 			var widgets = new string[]
 				{
-					// "autoquit.lua", "camera_lockcamera.lua", "dbg_dcicon.lua", "gui_ally_cursors.lua",
-					//"gui_center_n_select.lua",
-					//"gui_limit_dgun.lua", 
-					// "gui_loadscreens.lua", "gui_point_tracker.lua", "unit_comm_nametags.lua",
-					//"gui_comm_marker.lua",
-					//"cmd_unit_mover.lua"
 				};
 			foreach (var widget in widgets) DisabledWidgets.Add(widget);
 			var gadgets = new string[]
 				{
-					// "awards.lua", "planetwars.lua", "unit_does_not_count.lua", "unit_spawner.lua",
-					//"unit_replace_comm.lua"
 				};
 			foreach (var gadget in gadgets) DisabledGadgets.Add(gadget);
 		}
@@ -272,15 +264,27 @@ namespace CMissionLib
 		}
 
 		/// <summary>
-		/// Fixes unitdef references in triggers
+		/// Fixes mod references that are lost in serialization
 		/// </summary>
-		public void RestoreUnitDefs()
+		public void RestoreReferences()
 		{
 			// when a mission is deserialized or the game is changed, the triggers hold null or old references to unitdefs
 			foreach (var unit in AllUnits)
 			{
 				var unitDef = Mod.UnitDefs.FirstOrDefault(ud => unit.UnitDefName == ud.Name);
 				unit.UnitDef = unitDef ?? Mod.UnitDefs.First(); // if unit not found, use first valid unitdef - show warning?
+			}
+
+			foreach (var player in Players)
+			{
+				// try finding an ai with same name and version
+				var ai = mod.AllAis.FirstOrDefault(a => a.Version == player.AIVersion && a.ShortName == player.AIDll);
+				if (ai == null)
+				{
+					// just try to find an ai with the same name
+					ai = mod.AllAis.FirstOrDefault(a => a.ShortName == player.AIDll);
+				}
+				player.AI = ai;
 			}
 		}
 
@@ -331,8 +335,8 @@ namespace CMissionLib
 				sb.AppendFormat("\t[AI" + index + "]\n");
 				sb.AppendLine("\t{");
 				sb.AppendFormat("\t\tName={0};\n", player.Name.Replace(' ', '_'));
-				sb.AppendFormat("\t\tShortName=Mission AI;\n");
-				sb.AppendFormat("\t\tVersion=<not-versioned>;\n");
+				sb.AppendFormat("\t\tShortName={0};\n", String.IsNullOrEmpty(player.AIDll) ? "NullAI" : player.AIDll);
+				sb.AppendFormat("\t\tVersion={0};\n", String.IsNullOrEmpty(player.AIVersion) ? "<not-versioned>" : player.AIVersion);
 				sb.AppendFormat("\t\tTeam={0};\n", index);
 				sb.AppendFormat("\t\tIsFromDemo=0;\n");
 				sb.AppendFormat("\t\tHost=1;\n");
@@ -477,8 +481,8 @@ namespace CMissionLib
 
 				// disable scripts by hiding them with a blank file
 				var blank = textEncoding.GetBytes("-- intentionally left blank --");
-				foreach (var widget in disabledWidgets) zip.AddEntry("LuaUI/Widgets/" + widget, blank);
-				foreach (var gadget in disabledGadgets) zip.AddEntry("LuaRules/Gadgets/" + gadget, blank);
+				foreach (var widget in disabledWidgets.Distinct()) zip.AddEntry("LuaUI/Widgets/" + widget, blank);
+				foreach (var gadget in disabledGadgets.Distinct()) zip.AddEntry("LuaRules/Gadgets/" + gadget, blank);
 
 				// include media in mod archive
 				foreach (var item in AllLogic)

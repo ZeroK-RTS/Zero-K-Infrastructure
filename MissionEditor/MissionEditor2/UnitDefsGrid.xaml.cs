@@ -12,7 +12,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CMissionLib.UnitSyncLib;
-using Microsoft.Windows.Controls;
 using CMissionLib;
 
 namespace MissionEditor2

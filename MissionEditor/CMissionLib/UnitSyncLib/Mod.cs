@@ -10,7 +10,7 @@ namespace CMissionLib.UnitSyncLib
 	[Serializable]
 	public class Mod
 	{
-		[XmlIgnore] [NonSerialized] public Ai[] AllAis;
+		public Ai[] AllAis { get; set; }
 		string name;
 		string shortBaseName;
 		double version;
