@@ -1,6 +1,6 @@
 using System.Windows.Forms;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
     public interface INotifyBar
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SpringDownloader.LuaMgr
+namespace ZeroKLobby.LuaMgr
 {
     public partial class CommentWindow: Form
     {

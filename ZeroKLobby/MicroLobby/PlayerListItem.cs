@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using LobbyClient;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
 	public class PlayerListItem: IDisposable
 	{
@@ -165,7 +165,7 @@ namespace SpringDownloader.MicroLobby
 			if (qmInfo != null)
 			{
 				g.InterpolationMode = InterpolationMode.NearestNeighbor;
-				g.DrawImage(Resources.sdlogo, bounds.Left + x + 3, bounds.Top + 4, 11, 11);
+				g.DrawImage(Resources.ZK_logo_square, bounds.Left + x + 3, bounds.Top + 4, 11, 11);
 				x += 12;
 				drawText(qmInfo.ToString(), foreColor, backColor);
 			}

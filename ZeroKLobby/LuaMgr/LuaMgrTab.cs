@@ -10,7 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using LuaManagerLib;
 
-namespace SpringDownloader.LuaMgr
+namespace ZeroKLobby.LuaMgr
 {
     public partial class LuaMgrTab: UserControl
     {

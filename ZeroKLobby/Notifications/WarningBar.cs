@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
     public partial class WarningBar: UserControl, INotifyBar
     {

@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public class ScrollMessageFilter: IMessageFilter
     {

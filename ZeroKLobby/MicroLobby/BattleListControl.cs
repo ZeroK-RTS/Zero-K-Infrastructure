@@ -8,9 +8,9 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader.Notifications;
+using ZeroKLobby.Notifications;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
 	public partial class BattleListControl: ScrollableControl
 	{

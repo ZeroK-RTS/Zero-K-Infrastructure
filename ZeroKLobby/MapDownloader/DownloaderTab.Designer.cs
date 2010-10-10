@@ -1,4 +1,4 @@
-﻿namespace SpringDownloader.MapDownloader
+﻿namespace ZeroKLobby.MapDownloader
 {
   partial class DownloaderTab
   {

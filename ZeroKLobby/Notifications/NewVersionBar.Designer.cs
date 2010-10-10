@@ -1,4 +1,4 @@
-﻿namespace SpringDownloader.Notifications
+﻿namespace ZeroKLobby.Notifications
 {
     partial class NewVersionBar
     {

@@ -1,4 +1,4 @@
-﻿namespace SpringDownloader.MicroLobby
+﻿namespace ZeroKLobby.MicroLobby
 {
     class AllGameItem: BattleGameListItem
     {

@@ -4,7 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using LobbyClient;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
 	class BattleIcon: IDisposable
 	{

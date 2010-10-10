@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace SpringDownloader.ModStats {
+namespace ZeroKLobby.ModStats {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -37,7 +37,7 @@ namespace SpringDownloader.ModStats {
         
         /// <remarks/>
         public StatsCollector() {
-            this.Url = global::SpringDownloader.Properties.Settings.Default.SpringDownloader_ModStats_StatsCollector;
+            this.Url = global::ZeroKLobby.Properties.Settings.Default.SpringDownloader_ModStats_StatsCollector;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

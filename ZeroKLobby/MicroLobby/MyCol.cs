@@ -4,7 +4,7 @@ using System.Drawing;
 
 #endregion
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     /// <summary>
     /// Structure for storing lightweight color info and transformation from and to spring format

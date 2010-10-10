@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace SpringDownloader.ToolTips
+namespace ZeroKLobby.ToolTips
 {
     class ToolTipHandler: IMessageFilter, IDisposable
     {

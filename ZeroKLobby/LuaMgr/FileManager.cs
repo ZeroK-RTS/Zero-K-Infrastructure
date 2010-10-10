@@ -13,7 +13,7 @@ using PlasmaShared;
 using FileInfo=LuaManagerLib.FileInfo;
 using Utils=PlasmaShared.Utils;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     public class FileManager
     {

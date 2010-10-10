@@ -10,9 +10,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using SpringDownloader.StartTab;
+using ZeroKLobby.StartTab;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml

@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     class ToolTipForm: Form
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SpringDownloader.MapDownloader
+namespace ZeroKLobby.MapDownloader
 {
     public partial class FormMapPicker: Form
     {
@@ -85,7 +85,7 @@ namespace SpringDownloader.MapDownloader
 
         void FormMapPicker_Load(object sender, EventArgs e)
         {
-            Icon = Resources.SpringDownloader;
+            Icon = Resources.ZkIcon;
             FilterOptions();
         }
 

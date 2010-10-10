@@ -1,4 +1,4 @@
-namespace SpringDownloader.Lines
+namespace ZeroKLobby.Lines
 {
     public interface IChatLine
     {

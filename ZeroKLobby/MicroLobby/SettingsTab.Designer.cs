@@ -1,4 +1,4 @@
-﻿namespace SpringDownloader.MicroLobby
+﻿namespace ZeroKLobby.MicroLobby
 {
     partial class SettingsTab
     {
@@ -47,7 +47,7 @@
             this.groupBox1.Size = new System.Drawing.Size(559, 319);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "SpringDownloader settings: (changes need restart)";
+            this.groupBox1.Text = "Zero-K lobby settings: (changes need restart)";
             // 
             // propertyGrid1
             // 

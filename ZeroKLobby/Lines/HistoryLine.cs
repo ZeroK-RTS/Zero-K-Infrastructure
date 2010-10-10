@@ -1,6 +1,6 @@
-﻿using SpringDownloader.MicroLobby;
+﻿using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Lines
+namespace ZeroKLobby.Lines
 {
     class HistoryLine: IChatLine
     {

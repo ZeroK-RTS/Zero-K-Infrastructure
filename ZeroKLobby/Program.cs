@@ -13,12 +13,12 @@ using System.Windows.Threading;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader.MapDownloader;
-using SpringDownloader.MicroLobby;
-using SpringDownloader.Notifications;
-using SpringDownloader.ToolTips;
+using ZeroKLobby.MapDownloader;
+using ZeroKLobby.MicroLobby;
+using ZeroKLobby.Notifications;
+using ZeroKLobby.ToolTips;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
 	static class Program
 	{
@@ -185,13 +185,13 @@ namespace SpringDownloader
 				{
 					if (!Debugger.IsAttached)
 					{
-						mutex = new Mutex(false, "SpringDownloader" + Conf.ManualSpringPath.GetHashCode());
+						mutex = new Mutex(false, "ZeroKLobby" + Conf.ManualSpringPath.GetHashCode());
 						if (!mutex.WaitOne(15000, false))
 						{
 							MessageBox.Show(
-								"Another copy of SpringDownloader is still running for the spring at " + Conf.ManualSpringPath +
-								"\nMake sure the other downloader is closed (check task manager) before starting new one",
-								"There can be only one downloader for each Spring copy",
+								"Another copy of Zero-K lobby is still running for the spring at " + Conf.ManualSpringPath +
+								"\nMake sure the other lobby is closed (check task manager) before starting new one",
+								"There can be only one lobby running for each Spring engine copy",
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Stop);
 							return;
@@ -217,7 +217,7 @@ namespace SpringDownloader
 				Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
 
 				TasClient = new TasClient(TasClientInvoker,
-				                          string.Format("SD {0}",
+				                          string.Format("ZK {0}",
 				                                        ApplicationDeployment.IsNetworkDeployed
 				                                        	? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
 				                                        	: Application.ProductVersion));

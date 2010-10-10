@@ -8,7 +8,7 @@ using PlasmaDownloader;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
 	/// <summary>
 	/// pre-computes mod data that might be required in the gui

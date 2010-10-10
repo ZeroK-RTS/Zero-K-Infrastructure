@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     public interface IToolTipRenderer
     {

@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public static class DudeRenderer
     {

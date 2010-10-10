@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     class BattleIconManager
     {

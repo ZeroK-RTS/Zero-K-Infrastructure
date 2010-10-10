@@ -3,9 +3,9 @@ using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Windows.Forms;
 using LobbyClient;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
 	/// <summary>
 	/// Handles connection to tasclient

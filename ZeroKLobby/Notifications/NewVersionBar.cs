@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Timer = System.Threading.Timer;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
 	public partial class NewVersionBar: UserControl, INotifyBar
 	{
@@ -24,7 +24,7 @@ namespace SpringDownloader.Notifications
 				timer = new Timer(timer_Tick, null, TimeSpan.FromMinutes(20), TimeSpan.FromMinutes(20));
 			}
 
-			else Trace.TraceError("SpringDownloader not installed propery - get latest version from http://planet-wars.eu/sd/setup.exe");
+			else Trace.TraceError("Zero-K not installed propery - get latest version from http://zero-k.info/lobby");
 		}
 
 
@@ -37,7 +37,7 @@ namespace SpringDownloader.Notifications
 				{
 					Program.FormMain.InvokeFunc(() =>
 						{
-							lbText.Text = string.Format("Updating to SpringDownloader {0}", updateInfo.AvailableVersion);
+							lbText.Text = string.Format("Updating to Zero-K lobby {0}", updateInfo.AvailableVersion);
 							Program.NotifySection.AddBar(this);
 						});
 
@@ -78,7 +78,7 @@ namespace SpringDownloader.Notifications
 				{
 					if (!e.Cancelled && e.Error == null)
 					{
-						lbText.Text = "SpringDownloader self-update done, click restart to upgrade";
+						lbText.Text = "Zero-K lobby self-update done, click restart to upgrade";
 						container.btnDetail.Enabled = true;
 						container.btnDetail.Text = "Restart";
 					}

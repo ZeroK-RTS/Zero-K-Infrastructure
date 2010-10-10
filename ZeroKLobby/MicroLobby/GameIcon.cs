@@ -5,7 +5,7 @@ using System.Drawing.Text;
 using System.Linq;
 using PlasmaShared;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     class GameIcon : IDisposable
     {

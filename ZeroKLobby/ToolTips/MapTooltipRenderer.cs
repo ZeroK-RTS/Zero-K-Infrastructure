@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     public class MapTooltipRenderer: IToolTipRenderer
     {

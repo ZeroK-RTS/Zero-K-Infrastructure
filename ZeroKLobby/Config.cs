@@ -9,13 +9,13 @@ using JetBrains.Annotations;
 using PlasmaDownloader;
 using PlasmaShared;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
 	public class Config: ICloneable, IPlasmaDownloaderConfig
 	{
 		public const string ConfigFileName = "SpringDownloaderConfig.xml";
 		public const string ErrorsUploadSite = "http://files.caspring.org/caupdater/spring_errors/upload.php";
-		public const string LogFile = "SpringDownloaderErrors.txt";
+		public const string LogFile = "ZeroKLobbyErrors.txt";
 		public const string MonoTorrentVersion = "117187-modded";
 		public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
 		public const string SelfUpdateSite = "http://files.caspring.org/caupdater/";
@@ -46,7 +46,7 @@ namespace SpringDownloader
 		public bool AutoInstallWidgets { get; set; }
 		[Category("Chat")]
 		[DisplayName("Automatically Joined Channels")]
-		[Description("SD will automatically join these channels when connecting.")]
+		[Description("Zero-K lobby will automatically join these channels when connecting.")]
 		[Browsable(true)]
 		[Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
 			typeof(UITypeEditor))]
@@ -138,7 +138,7 @@ namespace SpringDownloader
 		public bool HostBattle_UseManage { get; set; }
 		[Category("Quickmatching")]
 		[DisplayName("Idle User Time")]
-		[Description("Idle minutes after which SD assumes the user is gone and quickmatching is stopped.")]
+		[Description("Idle minutes after which Zero-K lobby assumes the user is gone and quickmatching is stopped.")]
 		public int IdleTime { get { return idleTime; } set { idleTime = value; } }
 
 
@@ -187,14 +187,6 @@ namespace SpringDownloader
 		public Color NoticeColor { get { return Color.FromArgb(NoticeColorInt); } set { NoticeColorInt = value.ToArgb(); } }
 		[Browsable(false)]
 		public int NoticeColorInt = Color.Red.ToArgb();
-		[Category("Connection")]
-		[DisplayName("Player Tracker Host")]
-		[Description("Host of server that tells downloader what map and mod you need")]
-		public string PlayerTrackerHost { get { return playerTrackerHost; } set { playerTrackerHost = value; } }
-		[Category("Connection")]
-		[DisplayName("Player Tracker Port")]
-		[Description("Port of server that tells downloader what map and mod you need")]
-		public int PlayerTrackerPort { get { return playerTrackerPort; } set { playerTrackerPort = value; } }
 
 		[Category("General")]
 		[DisplayName("Show Empty Battles")]

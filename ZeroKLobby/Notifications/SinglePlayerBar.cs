@@ -5,9 +5,9 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
 	public partial class SinglePlayerBar: UserControl, INotifyBar
 	{

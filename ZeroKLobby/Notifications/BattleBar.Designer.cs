@@ -1,6 +1,6 @@
-﻿using SpringDownloader.MicroLobby;
+﻿using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
     partial class BattleBar
     {
@@ -38,7 +38,7 @@ namespace SpringDownloader.Notifications
 					this.lbSide = new System.Windows.Forms.Label();
 					this.lbMin = new System.Windows.Forms.Label();
 					this.gameBox = new System.Windows.Forms.PictureBox();
-					this.picoChat = new SpringDownloader.MicroLobby.ChatBox();
+					this.picoChat = new ChatBox();
 					((System.ComponentModel.ISupportInitialize)(this.numMinValue)).BeginInit();
 					((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
 					this.SuspendLayout();

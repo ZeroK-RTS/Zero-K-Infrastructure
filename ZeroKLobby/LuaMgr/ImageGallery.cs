@@ -4,11 +4,11 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using LuaManagerLib;
-using SpringDownloader;
+using ZeroKLobby;
 
 //using System.Linq;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     public class ImageGallery: Form
     {

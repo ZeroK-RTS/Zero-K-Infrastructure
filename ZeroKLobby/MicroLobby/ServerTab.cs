@@ -4,10 +4,10 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader;
-using SpringDownloader.Lines;
+using ZeroKLobby;
+using ZeroKLobby.Lines;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public partial class ServerTab: UserControl
     {

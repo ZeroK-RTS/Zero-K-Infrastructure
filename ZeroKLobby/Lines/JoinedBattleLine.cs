@@ -1,8 +1,8 @@
 ﻿using System;
 using LobbyClient;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Lines
+namespace ZeroKLobby.Lines
 {
     class JoinedBattleLine: IChatLine
     {

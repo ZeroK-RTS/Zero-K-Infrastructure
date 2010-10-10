@@ -4,10 +4,10 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader;
-using SpringDownloader.Lines;
+using ZeroKLobby;
+using ZeroKLobby.Lines;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public partial class PrivateMessageControl: UserControl
     {

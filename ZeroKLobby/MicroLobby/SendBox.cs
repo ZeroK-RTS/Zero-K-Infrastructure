@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using PlasmaShared;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public class SendBox: TextBox
     {

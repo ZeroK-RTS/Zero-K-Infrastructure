@@ -7,15 +7,15 @@ using System.Drawing.Text;
 using System.Linq;
 using System.Windows.Forms;
 using PlasmaShared;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public class GameSelector: ScrollableControl
     {
         const int buttonAntialiasing = 3;
         const string joinText =
-            "SpringDownloader will join a battle for you and take care of everything you need to play, including getting the required files and finding a battle.";
+            "Zero-K will join a battle for you and take care of everything you need to play, including getting the required files and finding a battle.";
         const string watchText = "Watch other people play.";
         bool areButtonsDirty = true;
         Image button1;

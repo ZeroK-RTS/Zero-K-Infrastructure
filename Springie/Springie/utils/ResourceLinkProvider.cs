@@ -47,7 +47,7 @@ namespace Springie
             {
                 Battle b = tas.MyBattle;
                 if (b == null) return;
-                ah.Respond(e, string.Format("Getting SpringDownloader mirrors for currently hosted {0}", type));
+                ah.Respond(e, string.Format("Getting Zero-K mirrors for currently hosted {0}", type));
                 if (type == FileType.Map) plasmaService.DownloadFileAsync(b.MapName, e);
                 else plasmaService.DownloadFileAsync(b.ModName, e);
             }
@@ -61,7 +61,7 @@ namespace Springie
                 string[] resultVals;
                 int cnt = AutoHost.Filter(items.ToArray(), words, out resultVals, out resultIndexes);
                 if (cnt == 0) ah.Respond(e, string.Format("No such {0} found", type));
-                ah.Respond(e, string.Format("Getting SpringDownloader mirrors for {0}, please wait", resultVals[0]));
+                ah.Respond(e, string.Format("Getting Zero-K mirrors for {0}, please wait", resultVals[0]));
 
                 plasmaService.DownloadFileAsync(resultVals[0], e);
             }

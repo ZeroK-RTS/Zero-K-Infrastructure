@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace SpringDownloader.MissionService {
+namespace ZeroKLobby.MissionService {
     using System;
     using System.Web.Services;
     using System.Diagnostics;
@@ -53,7 +53,7 @@ namespace SpringDownloader.MissionService {
         
         /// <remarks/>
         public EditorService() {
-            this.Url = global::SpringDownloader.Properties.Settings.Default.SpringDownloader_MissionService_EditorService;
+            this.Url = global::ZeroKLobby.Properties.Settings.Default.SpringDownloader_MissionService_EditorService;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

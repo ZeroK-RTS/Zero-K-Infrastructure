@@ -4,7 +4,7 @@ using System.Linq;
 using LobbyClient;
 using PlasmaShared;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
 	class SpringieCommand
 	{

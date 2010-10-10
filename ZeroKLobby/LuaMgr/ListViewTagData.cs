@@ -1,4 +1,4 @@
-﻿namespace SpringDownloader.LuaMgr
+﻿namespace ZeroKLobby.LuaMgr
 {
     public class ListViewTagData
     {

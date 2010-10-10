@@ -5,7 +5,7 @@ using LuaManagerLib;
 
 //using System.Linq;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     public partial class FilesDisplay: Form
     {

@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using LobbyClient;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     static class TextImage
     {

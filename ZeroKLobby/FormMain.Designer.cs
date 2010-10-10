@@ -1,9 +1,9 @@
-using SpringDownloader.LuaMgr;
-using SpringDownloader.MapDownloader;
-using SpringDownloader.MicroLobby;
-using SpringDownloader.Notifications;
+using ZeroKLobby.LuaMgr;
+using ZeroKLobby.MapDownloader;
+using ZeroKLobby.MicroLobby;
+using ZeroKLobby.Notifications;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
   partial class FormMain
   {

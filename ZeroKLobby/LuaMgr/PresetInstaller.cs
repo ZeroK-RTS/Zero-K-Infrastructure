@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using LuaManagerLib;
 
-namespace SpringDownloader.LuaMgr
+namespace ZeroKLobby.LuaMgr
 {
     public partial class PresetInstaller: Form
     {

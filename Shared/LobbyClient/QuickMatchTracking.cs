@@ -98,7 +98,7 @@ namespace LobbyClient
 		/// Returns quickmatch info structure for given player. 
 		/// </summary>
 		/// <param name="playerName"></param>
-		/// <returns>null if not using SD, _ and 0 if quickmatching not enabled but using SD</returns>
+		/// <returns>null if not using ZK, _ and 0 if quickmatching not enabled but using SD</returns>
 		public QuickMatchInfo GetQuickMatchInfo(string playerName)
 		{
 			QuickMatchInfo info;

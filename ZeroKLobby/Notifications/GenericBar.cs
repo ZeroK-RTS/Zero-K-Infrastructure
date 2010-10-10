@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
 	public partial class GenericBar: UserControl, INotifyBar
 	{

@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     public partial class FormLog: Form
     {
@@ -76,7 +76,7 @@ namespace SpringDownloader
 
         void FormLog_Load(object sender, EventArgs e)
         {
-            Icon = Resources.SpringDownloader;
+            Icon = Resources.ZkIcon;
             UpdateLines();
         }
 

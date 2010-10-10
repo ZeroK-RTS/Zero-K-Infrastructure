@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
-using SpringDownloader.StartTab;
+using ZeroKLobby.StartTab;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
 	public partial class StartPage: UserControl
 	{
@@ -34,7 +34,7 @@ namespace SpringDownloader.MicroLobby
 					Tutorial = "http://trac.caspring.org/wiki/NewbieGuide",
 					Image = "/Resources/GameLogos/ca.jpg",
 					Description =
-						"Complete Annihilation is a regularly updated game that is often regarded as a showcase of what the Spring Engine can do. It's faster and has a focus on strategic decisions and unit tactics. Complete Annihilation is an open source project with democratic decision making, made by the same group that made SpringDownloader.",
+						"Complete Annihilation is a regularly updated game that is often regarded as a showcase of what the Spring Engine can do. It's faster and has a focus on strategic decisions and unit tactics. Complete Annihilation is an open source project with democratic decision making.",
 					Profiles =
 						new List<SinglePlayerProfile>
 						{

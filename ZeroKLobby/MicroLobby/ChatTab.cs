@@ -4,12 +4,12 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader;
-using SpringDownloader.Lines;
-using SpringDownloader.Notifications;
-using SpringDownloader.ToolTips;
+using ZeroKLobby;
+using ZeroKLobby.Lines;
+using ZeroKLobby.Notifications;
+using ZeroKLobby.ToolTips;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     // fixme: what if a channel and a player have the same name
     public partial class ChatTab: UserControl

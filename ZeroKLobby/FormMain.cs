@@ -8,10 +8,10 @@ using System.Text;
 using System.Windows.Forms;
 using PlasmaDownloader;
 using PlasmaShared;
-using SpringDownloader.MicroLobby;
-using SpringDownloader.Notifications;
+using ZeroKLobby.MicroLobby;
+using ZeroKLobby.Notifications;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
 	public partial class FormMain: Form
 	{
@@ -211,10 +211,10 @@ namespace SpringDownloader
 			;
 			if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
 			else if (ApplicationDeployment.IsNetworkDeployed) Text += " " + ApplicationDeployment.CurrentDeployment.CurrentVersion;
-			else Text += " not installed properly - update from http://planet-wars.eu/sd/setup.exe";
+			else Text += " not installed properly - update from http://zero-k.info/lobby";
 
-			Icon = Resources.SpringDownloader;
-			systrayIcon.Icon = Resources.SpringDownloader;
+			Icon = Resources.ZkIcon;
+			systrayIcon.Icon = Resources.ZkIcon;
 
 			Program.SpringScanner.Start();
 		}

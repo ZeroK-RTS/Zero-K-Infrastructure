@@ -5,10 +5,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using PlasmaShared;
-using SpringDownloader.Common;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.Common;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.StartTab
+namespace ZeroKLobby.StartTab
 {
 	/// <summary>
 	/// Interaction logic for UcStartTab.xaml

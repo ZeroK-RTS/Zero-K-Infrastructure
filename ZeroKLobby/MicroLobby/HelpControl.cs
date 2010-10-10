@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public partial class HelpControl: UserControl
     {
@@ -19,10 +19,10 @@ namespace SpringDownloader.MicroLobby
         void feedbackButton_MouseUp(object sender, MouseEventArgs ea)
         {
             var menu = new ContextMenu();
-            var joinItem = new MenuItem("Chat with us in the SD development channel");
-            joinItem.Click += (s, e) => ActionHandler.JoinAndSwitch("sddev");
+            var joinItem = new MenuItem("Chat with us in the Zero-K development channel");
+            joinItem.Click += (s, e) => ActionHandler.JoinAndSwitch("zkdev");
             menu.MenuItems.Add(joinItem);
-            var siteItem = new MenuItem("Leave us a message on the SD development site");
+            var siteItem = new MenuItem("Leave us a message on the Zero-K development site");
             siteItem.Click += siteFeatureRequestItem_Click;
             menu.MenuItems.Add(siteItem);
             menu.Show(feedbackButton, ea.Location);
@@ -68,7 +68,7 @@ namespace SpringDownloader.MicroLobby
         {
             try
             {
-                Process.Start("http://code.google.com/p/summerspring/issues/entry");
+                Process.Start("http://code.google.com/p/zero-k/issues/entry");
             }
             catch {}
         }
@@ -77,7 +77,7 @@ namespace SpringDownloader.MicroLobby
         {
             try
             {
-                Process.Start("http://code.google.com/p/summerspring/issues/entry?template=Feature%20Request");
+                Process.Start("http://code.google.com/p/zero-k/issues/entry?template=Feature%20Request");
             }
             catch {}
         }

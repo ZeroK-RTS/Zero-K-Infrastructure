@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
 	public partial class NotifySection: UserControl
 	{

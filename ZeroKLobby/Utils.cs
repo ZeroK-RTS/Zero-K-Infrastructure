@@ -7,10 +7,10 @@ using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using SpringDownloader.Notifications;
+using ZeroKLobby.Notifications;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
 	static class Utils
 	{

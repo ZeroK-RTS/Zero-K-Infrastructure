@@ -10,7 +10,7 @@ using LuaManagerLib;
 using LuaManagerLib.Tools;
 using System.Diagnostics;
 
-namespace SpringDownloader.LuaMgr
+namespace ZeroKLobby.LuaMgr
 {
     public class WidgetHandler
     {

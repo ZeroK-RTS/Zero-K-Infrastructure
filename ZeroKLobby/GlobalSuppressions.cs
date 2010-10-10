@@ -8,5 +8,5 @@
 // "In Project Suppression File".
 // You do not need to add suppressions to this file manually.
 
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.Forms.Menu+MenuItemCollection.Add(System.String)", Scope = "member", Target = "SpringDownloader.ContextMenus.#GetPrivateMessageContextMenu(SpringDownloader.MicroLobby.PrivateMessageControl)")]
-[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.Forms.MenuItem.#ctor(System.String)", Scope = "member", Target = "SpringDownloader.ContextMenus.#GetPrivateMessageContextMenu(SpringDownloader.MicroLobby.PrivateMessageControl)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.Forms.Menu+MenuItemCollection.Add(System.String)", Scope = "member", Target = "ZeroKLobby.ContextMenus.#GetPrivateMessageContextMenu(SpringDownloader.MicroLobby.PrivateMessageControl)")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1303:Do not pass literals as localized parameters", MessageId = "System.Windows.Forms.MenuItem.#ctor(System.String)", Scope = "member", Target = "ZeroKLobby.ContextMenus.#GetPrivateMessageContextMenu(SpringDownloader.MicroLobby.PrivateMessageControl)")]

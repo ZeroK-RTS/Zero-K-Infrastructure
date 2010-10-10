@@ -9,7 +9,7 @@ using System.Net;
 using System.Reflection;
 using System.Windows;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     static class Images
     {

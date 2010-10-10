@@ -5,9 +5,9 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     class PlayerTooltipRenderer:IToolTipRenderer
     {
@@ -75,8 +75,8 @@ namespace SpringDownloader
             var quickMatchInfo = Program.QuickMatchTracker.GetQuickMatchInfo(user.Name);
             if (quickMatchInfo != null)
             {
-							drawImage(Resources.sdlogo, 16, 16);
-                drawString("SD User " + quickMatchInfo);
+							drawImage(Resources.ZK_logo_square, 16, 16);
+                drawString("ZK User " + quickMatchInfo);
                 newLine();
             }
             if (!user.IsBot)

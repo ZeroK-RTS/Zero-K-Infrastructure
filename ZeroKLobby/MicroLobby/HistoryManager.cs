@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using SpringDownloader;
-using SpringDownloader.Lines;
+using ZeroKLobby;
+using ZeroKLobby.Lines;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     static class HistoryManager
     {

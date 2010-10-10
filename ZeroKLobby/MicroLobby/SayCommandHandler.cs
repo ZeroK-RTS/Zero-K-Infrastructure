@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using LobbyClient;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public class SayCommandHandler
     {

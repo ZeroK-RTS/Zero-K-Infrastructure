@@ -35,9 +35,9 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using JetBrains.Annotations;
 using PlasmaShared;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public partial class TextWindow: UserControl
     {

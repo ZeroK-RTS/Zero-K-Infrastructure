@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using PlasmaShared;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
 	public partial class SettingsTab: UserControl
 	{

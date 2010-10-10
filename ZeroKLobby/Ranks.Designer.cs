@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SpringDownloader {
+namespace ZeroKLobby {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SpringDownloader {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SpringDownloader.Ranks", typeof(Ranks).Assembly);
+									global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKLobby.Ranks", typeof(Ranks).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

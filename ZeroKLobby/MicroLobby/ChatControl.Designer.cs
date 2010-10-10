@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
 using PlasmaShared;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     partial class ChatControl
     {

@@ -7,11 +7,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using SpringDownloader.ModStats;
+using ZeroKLobby.ModStats;
 
 #endregion
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
 	public class SpringInfologWatcher
 	{

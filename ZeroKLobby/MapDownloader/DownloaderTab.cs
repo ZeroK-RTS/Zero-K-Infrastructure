@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using PlasmaDownloader;
 
-namespace SpringDownloader.MapDownloader
+namespace ZeroKLobby.MapDownloader
 {
     public partial class DownloaderTab: UserControl
     {

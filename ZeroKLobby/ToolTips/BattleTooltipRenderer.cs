@@ -5,9 +5,9 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     public class BattleTooltipRenderer:IToolTipRenderer
     {
@@ -130,7 +130,7 @@ namespace SpringDownloader
                     var qmInfo = Program.QuickMatchTracker.GetQuickMatchInfo(user.Name);
                     if (qmInfo != null)
                     {
-											drawImage(Resources.sdlogo, 16, 16);
+											drawImage(Resources.ZK_logo_square, 16, 16);
                         drawString(qmInfo.ToString());
                     }
                 }

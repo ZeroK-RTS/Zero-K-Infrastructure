@@ -1,4 +1,4 @@
-﻿namespace SpringDownloader
+﻿namespace ZeroKLobby
 {
 	partial class AcceptAgreementForm
 	{

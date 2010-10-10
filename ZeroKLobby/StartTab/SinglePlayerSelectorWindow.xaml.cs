@@ -4,10 +4,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using SpringDownloader.Common;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.Common;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.StartTab
+namespace ZeroKLobby.StartTab
 {
 	/// <summary>
 	/// Interaction logic for SinglePlayerSelectorWindow.xaml

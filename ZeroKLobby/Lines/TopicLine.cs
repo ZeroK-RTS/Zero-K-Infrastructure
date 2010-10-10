@@ -1,7 +1,7 @@
 ﻿using System;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Lines
+namespace ZeroKLobby.Lines
 {
     class TopicLine: IChatLine
     {

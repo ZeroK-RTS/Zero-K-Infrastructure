@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SpringDownloader {
+namespace ZeroKLobby {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SpringDownloader {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SpringDownloader.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKLobby.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -200,13 +200,6 @@ namespace SpringDownloader {
             }
         }
         
-        public static System.Drawing.Bitmap sdlogo {
-            get {
-                object obj = ResourceManager.GetObject("sdlogo", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         public static System.Drawing.Bitmap search {
             get {
                 object obj = ResourceManager.GetObject("search", resourceCulture);
@@ -232,13 +225,6 @@ namespace SpringDownloader {
             get {
                 object obj = ResourceManager.GetObject("spec", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        public static System.Drawing.Icon SpringDownloader {
-            get {
-                object obj = ResourceManager.GetObject("SpringDownloader", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -274,6 +260,20 @@ namespace SpringDownloader {
             get {
                 object obj = ResourceManager.GetObject("XferWebDown", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Bitmap ZK_logo_square {
+            get {
+                object obj = ResourceManager.GetObject("ZK_logo_square", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        public static System.Drawing.Icon ZkIcon {
+            get {
+                object obj = ResourceManager.GetObject("ZkIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

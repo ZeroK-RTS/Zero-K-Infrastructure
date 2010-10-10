@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 
-namespace SpringDownloader.PixelShaders
+namespace ZeroKLobby.PixelShaders
 {
 	public class BlackAndWhite: ShaderEffect
 	{

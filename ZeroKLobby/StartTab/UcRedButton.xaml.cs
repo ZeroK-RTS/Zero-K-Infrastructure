@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 
-namespace SpringDownloader.Common
+namespace ZeroKLobby.Common
 {
 	/// <summary>
 	/// Interaction logic for UcRedButton.xaml

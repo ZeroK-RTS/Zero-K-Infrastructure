@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
 	public partial class LoginForm: Form
 	{
@@ -41,7 +41,7 @@ namespace SpringDownloader.MicroLobby
 
 		private void LoginForm_Load(object sender, EventArgs e)
 		{
-			Icon = Resources.SpringDownloader;
+			Icon = Resources.ZkIcon;
 		}
 	}
 }

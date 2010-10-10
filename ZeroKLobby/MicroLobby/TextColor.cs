@@ -1,8 +1,8 @@
 using System.Drawing;
 using System.Text.RegularExpressions;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public static class TextColor
     {

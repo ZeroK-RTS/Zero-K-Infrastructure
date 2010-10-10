@@ -1,4 +1,4 @@
-﻿namespace SpringDownloader.MicroLobby
+﻿namespace ZeroKLobby.MicroLobby
 {
     partial class HelpControl
     {
@@ -62,7 +62,7 @@
 					this.feedbackButton.Name = "feedbackButton";
 					this.feedbackButton.Size = new System.Drawing.Size(187, 23);
 					this.feedbackButton.TabIndex = 2;
-					this.feedbackButton.Text = "Tell us what you\'d like to see in SD";
+					this.feedbackButton.Text = "Tell us what you\'d like to see in Zero-K";
 					this.feedbackButton.UseVisualStyleBackColor = true;
 					// 
 					// problemButton

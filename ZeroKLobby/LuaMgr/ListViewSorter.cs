@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Windows.Forms;
 using LuaManagerLib;
-using SpringDownloader.LuaMgr;
+using ZeroKLobby.LuaMgr;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     class ListViewTagSorter: IComparer
     {

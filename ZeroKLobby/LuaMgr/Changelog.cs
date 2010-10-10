@@ -5,7 +5,7 @@ using LuaManagerLib;
 
 //using System.Linq;
 
-namespace SpringDownloader.LuaMgr
+namespace ZeroKLobby.LuaMgr
 {
     public partial class Changelog: Form
     {

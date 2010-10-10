@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SpringDownloader.StartTab {
+namespace ZeroKLobby.StartTab {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SpringDownloader.StartTab {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SpringDownloader.StartTab.SinglePlayerStartScripts", typeof(SinglePlayerStartScripts).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKLobby.StartTab.SinglePlayerStartScripts", typeof(SinglePlayerStartScripts).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

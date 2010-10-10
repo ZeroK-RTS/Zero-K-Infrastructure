@@ -10,9 +10,9 @@ using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
 	public partial class BattleBar: UserControl, INotifyBar
 	{
@@ -388,7 +388,7 @@ namespace SpringDownloader.Notifications
 			{
 				client.Say(TasClient.SayPlace.Battle,
 				           "",
-				           string.Format("QuickMatching ( http://licho.eu/qm ), waiting for {0} players. Spec me with !specafk if you want to play with less.",
+				           string.Format("QuickMatching ( http://zero-k.info/lobby ), waiting for {0} players. Spec me with !specafk if you want to play with less.",
 				                         (int)numMinValue.Value),
 				           false);
 			}
@@ -396,7 +396,7 @@ namespace SpringDownloader.Notifications
 			{
 				client.Say(TasClient.SayPlace.Battle,
 				           "",
-				           string.Format("Using SpringDownloader ( http://licho.eu/qm ), waiting for {0} players. ", (int)numMinValue.Value),
+				           string.Format("Using Zero-K ( http://zero-k.info/lobby ), waiting for {0} players. ", (int)numMinValue.Value),
 				           false);
 			}
 
@@ -474,7 +474,7 @@ namespace SpringDownloader.Notifications
 					if (battle.NonSpectatorCount - idlerCount >= numMinValue.Value && !spring.IsRunning && !client.ExistingUsers[battle.Founder].IsInGame)
 					{
 						// even without idlers i can still play
-						FormMain.Instance.systrayIcon.ShowBalloonTip(5000, "SpringDownloader", "Battle has enough people to start!", ToolTipIcon.Info);
+						FormMain.Instance.systrayIcon.ShowBalloonTip(5000, "Zero-K", "Battle has enough people to start!", ToolTipIcon.Info);
 						SystemSounds.Exclamation.Play();
 						lastAlert = DateTime.Now;
 					}

@@ -35,7 +35,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using JetBrains.Annotations;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     /// <summary>
     /// Summary description for PopupNotify.

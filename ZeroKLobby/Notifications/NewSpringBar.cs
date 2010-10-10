@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
 	public partial class NewSpringBar: UserControl, INotifyBar
 	{

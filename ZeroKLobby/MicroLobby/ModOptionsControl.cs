@@ -7,9 +7,9 @@ using System.Linq;
 using System.Windows.Forms;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     class ModOptionsControl: UserControl
     {

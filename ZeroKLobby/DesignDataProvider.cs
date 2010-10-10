@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
 	public class DesignDataProvider {
 		public IEnumerable<SinglePlayerProfile> GetSinglePlayerProfiles()

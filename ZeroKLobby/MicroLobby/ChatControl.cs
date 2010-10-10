@@ -7,9 +7,9 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader.Lines;
+using ZeroKLobby.Lines;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public partial class ChatControl: UserControl
     {

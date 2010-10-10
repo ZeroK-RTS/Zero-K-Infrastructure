@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SpringDownloader.LuaMgr {
+namespace ZeroKLobby.LuaMgr {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SpringDownloader.LuaMgr {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SpringDownloader.LuaMgr.LuaMgrResources", typeof(LuaMgrResources).Assembly);
+									global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKLobby.LuaMgr.LuaMgrResources", typeof(LuaMgrResources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

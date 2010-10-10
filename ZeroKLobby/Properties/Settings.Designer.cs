@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SpringDownloader.Properties {
+namespace ZeroKLobby.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

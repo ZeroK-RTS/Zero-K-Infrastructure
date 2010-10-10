@@ -5,7 +5,7 @@ using System.Net;
 using System.Windows.Forms;
 using PlasmaDownloader;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
     public partial class DownloadBar: UserControl, INotifyBar
     {

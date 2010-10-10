@@ -5,10 +5,10 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaShared;
-using SpringDownloader.MicroLobby;
-using SpringDownloader.Notifications;
+using ZeroKLobby.MicroLobby;
+using ZeroKLobby.Notifications;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
 	/// <summary>
 	/// Central place for gui-centric actions invloving one or more controls

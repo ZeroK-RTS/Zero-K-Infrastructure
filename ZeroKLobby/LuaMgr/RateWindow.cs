@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using XSystem.WinControls;
 
-namespace SpringDownloader.LuaMgr
+namespace ZeroKLobby.LuaMgr
 {
     public partial class RateWindow: Form
     {

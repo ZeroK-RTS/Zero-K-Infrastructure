@@ -4,9 +4,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using PlasmaShared;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Common
+namespace ZeroKLobby.Common
 {
 	/// <summary>
 	/// Interaction logic for UcGameSelector.xaml

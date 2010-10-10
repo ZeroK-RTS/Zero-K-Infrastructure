@@ -1,8 +1,8 @@
 using System;
 using JetBrains.Annotations;
-using SpringDownloader.MicroLobby;
+using ZeroKLobby.MicroLobby;
 
-namespace SpringDownloader.Lines
+namespace ZeroKLobby.Lines
 {
     public class SaidLine: IChatLine
     {

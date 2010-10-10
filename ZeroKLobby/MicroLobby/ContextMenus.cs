@@ -5,9 +5,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
-using SpringDownloader;
+using ZeroKLobby;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     static class ContextMenus
     {
@@ -462,7 +462,7 @@ namespace SpringDownloader.MicroLobby
             var modOptions = new MenuItem("Show Game Options") { Enabled = Program.TasClient.MyBattle != null };
             modOptions.Click += (s, e) =>
                 {
-                    var form = new Form { Width = 1000, Height = 300, Icon = Resources.SpringDownloader, Text = "Game options (Non Changeable)" };
+                    var form = new Form { Width = 1000, Height = 300, Icon = Resources.ZkIcon, Text = "Game options (Non Changeable)" };
                     var optionsControl = new ModOptionsControl { Dock = DockStyle.Fill };
                     form.Controls.Add(optionsControl);
                     Program.TasClient.BattleClosed += (s2, e2) =>

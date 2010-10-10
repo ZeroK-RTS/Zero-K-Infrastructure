@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using PlasmaShared;
 
-namespace SpringDownloader.Notifications
+namespace ZeroKLobby.Notifications
 {
 	public partial class ScannerBar: UserControl, INotifyBar
 	{

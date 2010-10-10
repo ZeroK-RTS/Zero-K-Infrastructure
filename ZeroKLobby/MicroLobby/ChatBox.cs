@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using SpringDownloader;
-using SpringDownloader.Lines;
+using ZeroKLobby;
+using ZeroKLobby.Lines;
 
-namespace SpringDownloader.MicroLobby
+namespace ZeroKLobby.MicroLobby
 {
     public class ChatBox: TextWindow
     {

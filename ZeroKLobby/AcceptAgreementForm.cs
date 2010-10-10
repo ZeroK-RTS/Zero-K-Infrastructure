@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace SpringDownloader
+namespace ZeroKLobby
 {
     public partial class AcceptAgreementForm: Form
     {
@@ -26,7 +26,7 @@ namespace SpringDownloader
 
 				private void AcceptAgreementForm_Load(object sender, EventArgs e)
 				{
-					Icon = Resources.SpringDownloader;
+					Icon = Resources.ZkIcon;
 				}
     }
 }
