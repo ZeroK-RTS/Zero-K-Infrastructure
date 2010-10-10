@@ -7,31 +7,25 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaAdmin", "LuaAdmin\LuaAdm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaManagerLib", "LuaAdmin\LuaManagerLib\LuaManagerLib.csproj", "{EA79A74E-0577-4F74-AE8D-6E259A594FBE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaShared", "PlasmaShared\PlasmaShared.csproj", "{B24E7FB3-A3FB-4B67-A499-721F9B34A404}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaShared", "Shared\PlasmaShared\PlasmaShared.csproj", "{B24E7FB3-A3FB-4B67-A499-721F9B34A404}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaDownloader", "PlasmaDownloader\PlasmaDownloader.csproj", "{F3F74776-46A9-4415-B76E-CEEC771C2ABA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaDownloader", "Shared\PlasmaDownloader\PlasmaDownloader.csproj", "{F3F74776-46A9-4415-B76E-CEEC771C2ABA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaTracker", "CaTracker\CaTracker.csproj", "{6CE1E0F1-447C-4871-9246-CC7CCB359D89}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NightWatch", "NightWatch\NightWatch.csproj", "{6CE1E0F1-447C-4871-9246-CC7CCB359D89}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaSharp", "LuaAdmin\LuaSharp\LuaSharp\LuaSharp.csproj", "{C651A291-775F-46D6-A2D8-BEF573F97D1E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaWrap", "LuaAdmin\LuaSharp\LuaWrap\LuaWrap.csproj", "{76D7F266-456D-4A7C-916E-E35D057E5F98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XSystem.WinControls", "XSystem.WinControls\XSystem.WinControls.csproj", "{860641CF-A2D9-4BC6-A061-A97AE72249F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XSystem.WinControls", "ZeroKLobby\XSystem.WinControls\XSystem.WinControls.csproj", "{860641CF-A2D9-4BC6-A061-A97AE72249F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobbyClient", "LobbyClient\LobbyClient.csproj", "{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LobbyClient", "Shared\LobbyClient\LobbyClient.csproj", "{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpringDownloader", "SpringDownloader\SpringDownloader.csproj", "{AA5F8640-FBBC-4007-9589-6C7CD26D4867}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZeroKLobby", "ZeroKLobby\ZeroKLobby.csproj", "{AA5F8640-FBBC-4007-9589-6C7CD26D4867}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Springie", "..\Springie\Springie\Springie.csproj", "{DD5A4F64-6C82-4F75-9EED-992378EC65FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Springie", "Springie\Springie\Springie.csproj", "{DD5A4F64-6C82-4F75-9EED-992378EC65FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoTorrent", "MonoTorrent\MonoTorrent.csproj", "{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{44159730-54E8-4CC9-858E-F7715EF8890B}"
-	ProjectSection(SolutionItems) = preProject
-		Performance1.psess = Performance1.psess
-		Performance2.psess = Performance2.psess
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoTorrent", "Shared\MonoTorrent\MonoTorrent.csproj", "{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
