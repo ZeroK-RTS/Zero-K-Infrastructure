@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="ModelBase" Class="DatabaseDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=ModelBase;Persist Security Info=True;User ID=modelbase" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="ModelBaseConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Candidate" Member="Candidates">
+    <Type Name="Candidate">
+      <Column Name="UnitID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ModelID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Unit_Candidate" Member="Unit" ThisKey="UnitID" OtherKey="UnitID" Type="Unit" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Model_Candidate" Member="Model" ThisKey="ModelID" OtherKey="ModelID" Type="Model" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ModelTag" Member="ModelTags">
+    <Type Name="ModelTag">
+      <Column Name="ModelID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TagID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Tag_ModelTag" Member="Tag" ThisKey="TagID" OtherKey="TagID" Type="Tag" IsForeignKey="true" />
+      <Association Name="Model_ModelTag" Member="Model" ThisKey="ModelID" OtherKey="ModelID" Type="Model" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Comment" Member="Comments">
+    <Type Name="Comment">
+      <Column Name="CommentID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ModelID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="Time" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="UnitID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Comment_Event" Member="Events" ThisKey="CommentID" OtherKey="CommentID" Type="Event" />
+      <Association Name="User_Comment" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" />
+      <Association Name="Unit_Comment" Member="Unit" ThisKey="UnitID" OtherKey="UnitID" Type="Unit" IsForeignKey="true" DeleteRule="CASCADE" />
+      <Association Name="Model_Comment" Member="Model" ThisKey="ModelID" OtherKey="ModelID" Type="Model" IsForeignKey="true" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.[User]" Member="Users">
+    <Type Name="User">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Login" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IsAdmin" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PasswordText" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="User_Comment" Member="Comments" ThisKey="UserID" OtherKey="UserID" Type="Comment" />
+      <Association Name="User_Unit" Member="Units" ThisKey="UserID" OtherKey="LastChangeUserID" Type="Unit" />
+      <Association Name="User_Event" Member="Events" ThisKey="UserID" OtherKey="UserID" Type="Event" />
+      <Association Name="User_Model" Member="Models" ThisKey="UserID" OtherKey="AuthorUserID" Type="Model" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Unit" Member="Units">
+    <Type Name="Unit">
+      <Column Name="UnitID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="ParentCode" Type="System.String" DbType="VarChar(400)" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="CurrentStatus" Type="System.String" DbType="NVarChar(1000)" CanBeNull="true" />
+      <Column Name="LicenseType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ModelProgress" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TextureProgress" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ScriptProgress" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SelectedModelID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="OverallProgress" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LastChangeUserID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Unit_Candidate" Member="Candidates" ThisKey="UnitID" OtherKey="UnitID" Type="Candidate" />
+      <Association Name="Unit_Comment" Member="Comments" ThisKey="UnitID" OtherKey="UnitID" Type="Comment" />
+      <Association Name="Unit_Event" Member="Events" ThisKey="UnitID" OtherKey="UnitID" Type="Event" />
+      <Association Name="User_Unit" Member="User" ThisKey="LastChangeUserID" OtherKey="UserID" Type="User" IsForeignKey="true" />
+      <Association Name="Game_Unit" Member="Game" ThisKey="GameID" OtherKey="GameID" Type="Game" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Model_Unit" Member="Model" ThisKey="SelectedModelID" OtherKey="ModelID" Type="Model" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Game" Member="Games">
+    <Type Name="Game">
+      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Shortcut" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" />
+      <Association Name="Game_Unit" Member="Units" ThisKey="GameID" OtherKey="GameID" Type="Unit" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Tag" Member="Tags">
+    <Type Name="Tag">
+      <Column Name="TagID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Tag_ModelTag" Member="ModelTags" ThisKey="TagID" OtherKey="TagID" Type="ModelTag" />
+    </Type>
+  </Table>
+  <Table Name="dbo.License" Member="Licenses">
+    <Type Name="License">
+      <Column Name="LicenseID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="DefaultUrl" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Association Name="License_Model" Member="Models" ThisKey="LicenseID" OtherKey="LicenseID" Type="Model" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Event" Member="Events">
+    <Type Name="Event">
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Type" Type="EventType" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ModelID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="UnitID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CommentID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="Time" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="SvnLog" Type="System.String" DbType="NVarChar(2000)" CanBeNull="true" />
+      <Association Name="Comment_Event" Member="Comment" ThisKey="CommentID" OtherKey="CommentID" Type="Comment" IsForeignKey="true" />
+      <Association Name="Unit_Event" Member="Unit" ThisKey="UnitID" OtherKey="UnitID" Type="Unit" IsForeignKey="true" />
+      <Association Name="User_Event" Member="User" ThisKey="UserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" />
+      <Association Name="Model_Event" Member="Model" ThisKey="ModelID" OtherKey="ModelID" Type="Model" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Model" Member="Models">
+    <Type Name="Model">
+      <Column Name="ModelID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AuthorUserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="Modified" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="ModelProgress" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TextureProgress" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ScriptProgress" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OverallProgress" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IconFile" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="LicenseID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ForumPostID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Model_Candidate" Member="Candidates" ThisKey="ModelID" OtherKey="ModelID" Type="Candidate" />
+      <Association Name="Model_ModelTag" Member="ModelTags" ThisKey="ModelID" OtherKey="ModelID" Type="ModelTag" />
+      <Association Name="Model_Comment" Member="Comments" ThisKey="ModelID" OtherKey="ModelID" Type="Comment" />
+      <Association Name="Model_Unit" Member="Units" ThisKey="ModelID" OtherKey="SelectedModelID" Type="Unit" />
+      <Association Name="Model_Event" Member="Events" ThisKey="ModelID" OtherKey="ModelID" Type="Event" />
+      <Association Name="License_Model" Member="License" ThisKey="LicenseID" OtherKey="LicenseID" Type="License" IsForeignKey="true" DeleteRule="SET NULL" />
+      <Association Name="User_Model" Member="User" ThisKey="AuthorUserID" OtherKey="UserID" Type="User" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ForumNewsPost" Member="ForumNewsPosts">
+    <Type Name="ForumNewsPost">
+      <Column Name="Day" Type="System.DateTime" DbType="DateTime NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ForumPostID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+</Database>

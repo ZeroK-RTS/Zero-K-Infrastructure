@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="ModStats" Class="ModStatsLinqDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=ModStats;Persist Security Info=True;User ID=mod_stats" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="ModStatsConnectionString1" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Damage" Member="Damages">
+    <Type Name="Damage">
+      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="AttackerUnit" Type="System.String" DbType="VarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="VictimUnit" Type="System.String" DbType="VarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Damage" Member="Damage1" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="Paralyze" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Association Name="Game_Damage" Member="Game" ThisKey="GameID" OtherKey="GameID" Type="Game" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Unit" Member="Units">
+    <Type Name="Unit">
+      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Unit" Member="Unit1" Type="System.String" DbType="VarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Created" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Destroyed" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Cost" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Health" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Game_Unit" Member="Game" ThisKey="GameID" OtherKey="GameID" Type="Game" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Game" Member="Games">
+    <Type Name="Game">
+      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SpringGameIDString" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Mod" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Players" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Teams" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Created" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IP" Type="System.String" DbType="VarChar(15) NOT NULL" CanBeNull="false" />
+      <Column Name="Version" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="Map" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+      <Column Name="PlayerList" Type="System.String" DbType="VarChar(2000)" CanBeNull="true" />
+      <Association Name="Game_Damage" Member="Damages" ThisKey="GameID" OtherKey="GameID" Type="Damage" />
+      <Association Name="Game_Unit" Member="Units" ThisKey="GameID" OtherKey="GameID" Type="Unit" />
+    </Type>
+  </Table>
+</Database>

@@ -1,0 +1,24 @@
+<publishData>
+  <publishTarget publishUrl="c:\temp\modstats\">
+    <file relUrl="Img/Loader.gif" publishTime="02/05/2009 14:40:37" />
+    <file relUrl="App_Themes/Default/Stylesheet.css" publishTime="03/31/2009 19:52:10" />
+    <file relUrl="Default.aspx" publishTime="02/27/2010 01:28:56" />
+    <file relUrl="UnitSelector.ascx" publishTime="03/31/2009 00:07:10" />
+    <file relUrl="StatsCollector.asmx" publishTime="03/29/2009 20:00:49" />
+    <file relUrl="bin/ModStats.dll" publishTime="08/17/2010 14:24:44" />
+    <file relUrl="bin/ModStats.pdb" publishTime="08/17/2010 14:24:44" />
+  </publishTarget>
+  <publishTarget publishUrl="C:\Work\CaTools\ModStats\publish\">
+    <file relUrl="Img/Loader.gif" publishTime="02/05/2009 14:40:37" />
+    <file relUrl="App_Themes/Default/Stylesheet.css" publishTime="03/31/2009 19:52:10" />
+    <file relUrl="Default.aspx" publishTime="04/16/2009 04:36:59" />
+    <file relUrl="UnitSelector.ascx" publishTime="03/31/2009 00:07:10" />
+    <file relUrl="StatsCollector.asmx" publishTime="03/29/2009 20:00:49" />
+    <file relUrl="bin/ModStats.dll" publishTime="04/19/2009 15:50:29" />
+    <file relUrl="bin/ModStats.pdb" publishTime="04/19/2009 15:50:29" />
+  </publishTarget>
+  <publishTarget publishUrl="ftp://planet-wars.eu/web/ModStats/">
+    <file relUrl="Default.aspx" publishTime="03/29/2009 21:26:16" />
+    <file relUrl="StatsCollector.asmx" publishTime="03/29/2009 20:00:49" />
+  </publishTarget>
+</publishData>

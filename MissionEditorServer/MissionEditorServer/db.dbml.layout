@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11.875, 8.625" name="db">
+  <DataContextMoniker Name="/dbDataContext" />
+  <nestedChildShapes>
+    <classShape Id="f3092045-9c4d-4036-9a0f-f1119ba35312" absoluteBounds="7.625, 3.375, 2, 1.7708968098958327">
+      <DataClassMoniker Name="/dbDataContext/Comment" />
+      <nestedChildShapes>
+        <elementListCompartment Id="4ca845ed-c790-4be0-a7d7-ff137d2e7157" absoluteBounds="7.64, 3.835, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="bf5012b1-0012-43de-ba8b-52f6d8ea4337" absoluteBounds="9.625, 6.625, 2, 1.3862939453125005">
+      <DataClassMoniker Name="/dbDataContext/Rating" />
+      <nestedChildShapes>
+        <elementListCompartment Id="9cfab3ba-9fc8-44f3-9804-a0165936a44a" absoluteBounds="9.64, 7.085, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="a5901d75-742c-4c7a-b0e1-9a80095a91d6" absoluteBounds="2.25, 1.875, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/dbDataContext/Score" />
+      <nestedChildShapes>
+        <elementListCompartment Id="58048d6d-b723-409c-943e-fa776b4bdb74" absoluteBounds="2.2649999999999997, 2.335, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="3f5a57ef-dca1-4001-9a53-490dc935ac82" absoluteBounds="4.5, 3.875, 2, 4.4631168619791666">
+      <DataClassMoniker Name="/dbDataContext/Mission" />
+      <nestedChildShapes>
+        <elementListCompartment Id="aabae10f-ed7b-45c4-836c-b43e3d26a454" absoluteBounds="4.515, 4.335, 1.9700000000000002, 3.9031168619791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.5 : 4.51044840494792); (7.625 : 4.51044840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/dbDataContext/Mission/Mission_Comment" />
+      <nodes>
+        <classShapeMoniker Id="3f5a57ef-dca1-4001-9a53-490dc935ac82" />
+        <classShapeMoniker Id="f3092045-9c4d-4036-9a0f-f1119ba35312" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(6.5 : 7.31814697265625); (9.625 : 7.31814697265625)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/dbDataContext/Mission/Mission_Rating" />
+      <nodes>
+        <classShapeMoniker Id="3f5a57ef-dca1-4001-9a53-490dc935ac82" />
+        <classShapeMoniker Id="bf5012b1-0012-43de-ba8b-52f6d8ea4337" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.5 : 3.875); (4.25 : 3.64589680989583)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/dbDataContext/Mission/Mission_Score" />
+      <nodes>
+        <classShapeMoniker Id="3f5a57ef-dca1-4001-9a53-490dc935ac82" />
+        <classShapeMoniker Id="a5901d75-742c-4c7a-b0e1-9a80095a91d6" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

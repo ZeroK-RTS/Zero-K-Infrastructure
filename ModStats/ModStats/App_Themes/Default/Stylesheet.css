@@ -1,0 +1,14 @@
+﻿#progress
+{
+	width: 230px;
+	text-align: left;
+	padding-left: 40px;
+	line-height: 27px;
+	position: absolute;
+	font-size: 10pt;
+	color: Black;
+    top:200px;  
+    left:200px;
+  	z-index: 3;
+	background-color:Navy;
+}

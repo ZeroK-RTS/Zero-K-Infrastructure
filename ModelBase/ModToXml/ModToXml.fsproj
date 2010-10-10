@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ea18501f-04ae-4f8a-8d86-c1bf6b987b10}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>ModToXml</RootNamespace>
+    <AssemblyName>ModToXml</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Name>ModToXml</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FSharp.Core" />
+    <Reference Include="FSharp.PowerPack, Version=1.9.6.16, Culture=neutral, PublicKeyToken=a19089b1c74d0809">
+      <Name>FSharp.PowerPack</Name>
+      <AssemblyName>FSharp.PowerPack.dll</AssemblyName>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.5.452, Culture=neutral, PublicKeyToken=1b03e6acf1164f73">
+      <Name>ICSharpCode.SharpZipLib</Name>
+      <AssemblyName>ICSharpCode.SharpZipLib.dll</AssemblyName>
+      <HintPath>..\Libraries\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Name>PresentationCore</Name>
+      <AssemblyName>PresentationCore.dll</AssemblyName>
+    </Reference>
+    <Reference Include="SevenZipSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=20de82c62b055c88">
+      <Name>SevenZipSharp</Name>
+      <AssemblyName>SevenZipSharp.dll</AssemblyName>
+      <HintPath>..\Libraries\SevenZipSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <Name>System.Xml</Name>
+      <AssemblyName>System.XML.dll</AssemblyName>
+    </Reference>
+    <Reference Include="System.Xml.Linq, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+      <Name>System.Xml.Linq</Name>
+      <AssemblyName>System.Xml.Linq.dll</AssemblyName>
+    </Reference>
+    <Reference Include="Tao.DevIl, Version=1.6.8.3, Culture=neutral, PublicKeyToken=7ec4053013524957">
+      <Name>Tao.DevIl</Name>
+      <AssemblyName>Tao.DevIl.dll</AssemblyName>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\Tao.DevIl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Tao.Lua, Version=5.1.3.0, Culture=neutral, PublicKeyToken=9c7a200e36c0094e">
+      <Name>Tao.Lua</Name>
+      <AssemblyName>Tao.Lua.dll</AssemblyName>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\Tao.Lua.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
+      <Name>WindowsBase</Name>
+      <AssemblyName>WindowsBase.dll</AssemblyName>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Utils.fs" />
+    <Compile Include="DevIL.fs" />
+    <Compile Include="Archive.fs" />
+    <Compile Include="FLua.fs" />
+    <Compile Include="SpringLua.fs" />
+    <Compile Include="ArchiveLister.fs" />
+    <Compile Include="UnitDefinition.fs" />
+    <Compile Include="UnitDefinitionLoader.fs" />
+    <Compile Include="Mod.fs" />
+    <Compile Include="ModExporter.fs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\FSharp\1.0\Microsoft.FSharp.Targets" Condition="!Exists('$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll')" />
+  <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft F#\v4.0\Microsoft.FSharp.Targets" Condition="Exists('$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	     Other similar extension points exist, see Microsoft.Common.targets.
+	<Target Name="BeforeBuild">
+	</Target>
+	<Target Name="AfterBuild">
+	</Target>
+	-->
+</Project>

@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelBase", "ModelBase\ModelBase.csproj", "{0EB3CC1A-20E2-4267-B35F-425245872CA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitImporter", "UnitImporter\UnitImporter.csproj", "{12D77BF3-C3DE-41C2-8096-AA7599236E12}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ModToXml", "ModToXml\ModToXml.fsproj", "{EA18501F-04AE-4F8A-8D86-C1BF6B987B10}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0EB3CC1A-20E2-4267-B35F-425245872CA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EB3CC1A-20E2-4267-B35F-425245872CA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EB3CC1A-20E2-4267-B35F-425245872CA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EB3CC1A-20E2-4267-B35F-425245872CA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D77BF3-C3DE-41C2-8096-AA7599236E12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D77BF3-C3DE-41C2-8096-AA7599236E12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12D77BF3-C3DE-41C2-8096-AA7599236E12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA18501F-04AE-4F8A-8D86-C1BF6B987B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA18501F-04AE-4F8A-8D86-C1BF6B987B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA18501F-04AE-4F8A-8D86-C1BF6B987B10}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
