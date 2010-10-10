@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("SpringDownloader")]
-[assembly: AssemblyDescription("Jumps straight into spring game")]
+[assembly: AssemblyTitle("Zero-K")]
+[assembly: AssemblyDescription("Free RTS game")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Spring")]
-[assembly: AssemblyProduct("SpringDownloader")]
+[assembly: AssemblyCompany("Zero-K developers")]
+[assembly: AssemblyProduct("Zero-K")]
 [assembly: AssemblyCopyright("Copyright © Licho 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

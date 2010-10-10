@@ -662,6 +662,7 @@
     <EmbeddedResource Include="StartTab\SinglePlayerStartScripts.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SinglePlayerStartScripts.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="StartTab\StartPage.resx">
       <DependentUpon>StartPage.cs</DependentUpon>
