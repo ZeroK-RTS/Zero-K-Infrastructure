@@ -74,11 +74,5 @@ namespace ZeroKLobby.StartTab
 			var game = window.LastClickedGame;
 			if (game != null) Utils.OpenWeb(game.Tutorial);
 		}
-
-		void btnWatch_Click(object sender, RoutedEventArgs e)
-		{
-			PickGamesAndStartQuickMatching();
-			ActionHandler.ChangeDesiredSpectatorState(true);
-		}
 	}
 }

@@ -10,9 +10,6 @@
 		<Common:UcRedButton x:Name="btnMp" Padding="12 12 12 12" Click="btnMp_Click">
 			<TextBlock HorizontalAlignment="Center">MultiPlayer</TextBlock>
 		</Common:UcRedButton>
-		<Common:UcRedButton x:Name="btnWatch" Padding="12 12 12 12" Click="btnWatch_Click">
-			<TextBlock HorizontalAlignment="Center">Watch MultiPlayer</TextBlock>
-		</Common:UcRedButton>
 		<Common:UcRedButton x:Name="btnSettings" Padding="12 12 12 12" Click="btnSettings_Click">
 			<TextBlock HorizontalAlignment="Center">Display settings</TextBlock>
 		</Common:UcRedButton>

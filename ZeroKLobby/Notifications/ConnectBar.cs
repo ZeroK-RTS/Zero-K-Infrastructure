@@ -145,7 +145,8 @@ namespace ZeroKLobby.Notifications
 				if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) MessageBox.Show(Program.FormMain, "Please fill player name and password", "Missing information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			} while (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword));
 			Program.SaveConfig();
-			client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
+			if (canRegister) client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
+			else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
 		}
 
 		public void AddedToContainer(NotifyBarContainer container)
