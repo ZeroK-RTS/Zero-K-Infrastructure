@@ -129,6 +129,7 @@ namespace MissionEditor2
 					addAction("Display Counters", () => new DisplayCountersAction());
 					addAction("Enable Triggers", () => new EnableTriggersAction());
 					addAction("Execute Triggers", () => new ExecuteTriggersAction());
+					// addAction("Give Factory Orders", () => new GiveFactoryOrdersAction());
 					addAction("Give Orders", () => new GiveOrdersAction());
 					addAction("Lock Units", () => new LockUnitsAction());
 					addAction("Make Units Always Visible", () => new MakeUnitsAlwaysVisibleAction());
@@ -506,9 +507,6 @@ namespace MissionEditor2
 
 		void window_Loaded(object sender, RoutedEventArgs e)
 		{
-			var welcomeScreen = new WelcomeDialog();
-			welcomeScreen.ShowDialog();
-
 			var project = MainMenu.AddContainer("Project");
 			project.AddAction("New", WelcomeDialog.PromptForNewMission);
 			project.AddAction("Open", WelcomeDialog.AskForExistingMission);
@@ -535,6 +533,14 @@ namespace MissionEditor2
 			logic.AddAction("Move Down", () => MoveItem(MoveDirection.Down, CurrentLogic));
 			var help = MainMenu.AddContainer("Help");
 			help.AddAction("Basic Help", () => new Help().ShowDialog());
+
+			var welcomeScreen = new WelcomeDialog {ShowInTaskbar = true};
+			welcomeScreen.ShowDialog();
+			if (Mission == null)
+			{
+				MessageBox.Show("A mission needs to be selected");
+				Environment.Exit(0);
+			}
 		}
 
 		public string SavePath { get; set; }
@@ -552,7 +558,7 @@ namespace MissionEditor2
 			try
 			{
 				var missionFile = "testmission.sdz";
-				var writeablePath = unitSync.GetWritableDataDirectory();
+				var writeablePath = unitSync.WritableDataDirectory;
 				var missionPath = writeablePath + "\\mods\\" + missionFile;
 				scriptFile = writeablePath + "\\script.txt";
 				Mission.Name = Mission.Name + " Test";

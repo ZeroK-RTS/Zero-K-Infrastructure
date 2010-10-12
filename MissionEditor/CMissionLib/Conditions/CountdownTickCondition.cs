@@ -81,7 +81,7 @@ namespace CMissionLib.Conditions
 		{
 			var map = new Dictionary<string, object>
 				{
-					{"countdown", Countdown},
+					{"countdown",  Countdown??string.Empty},
 					{"frames", Frames},
 				};
 			return new LuaTable(map);

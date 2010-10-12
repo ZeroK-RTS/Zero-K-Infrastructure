@@ -45,8 +45,9 @@ namespace CMissionLib
 			Name = name;
 			ModName = game.Name;
 			MapName = map.Name;
-			var player1 = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true };
-			var player2 = new Player {Name = "Player 2", Color = Colors.Red, Alliance = "2", IsHuman = false};
+			var testAI = game.AllAis.FirstOrDefault(ai => ai.ShortName.Contains("NullAI"));
+			var player1 = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true, };
+			var player2 = new Player { Name = "Player 2", Color = Colors.Red, Alliance = "2", IsHuman = false, };
 			StartingPlayer = player1;
 			Players.Add(player1);
 			Players.Add(player2);
@@ -336,7 +337,7 @@ namespace CMissionLib
 				sb.AppendLine("\t{");
 				sb.AppendFormat("\t\tName={0};\n", player.Name.Replace(' ', '_'));
 				sb.AppendFormat("\t\tShortName={0};\n", String.IsNullOrEmpty(player.AIDll) ? "NullAI" : player.AIDll);
-				sb.AppendFormat("\t\tVersion={0};\n", String.IsNullOrEmpty(player.AIVersion) ? "<not-versioned>" : player.AIVersion);
+				sb.AppendFormat("\t\tVersion={0};\n", String.IsNullOrEmpty(player.AIVersion) ? "0.1" : player.AIVersion);
 				sb.AppendFormat("\t\tTeam={0};\n", index);
 				sb.AppendFormat("\t\tIsFromDemo=0;\n");
 				sb.AppendFormat("\t\tHost=1;\n");
@@ -492,15 +493,22 @@ namespace CMissionLib
 						var action = (GuiMessageAction) item;
 						if (!String.IsNullOrEmpty(action.ImagePath))
 						{
-							zip.AddFile(action.ImagePath, "LuaUI/Images/");
+							if (!File.Exists(action.ImagePath)) throw new Exception("Image not found: " + action.ImagePath);
+							try
+							{
+								zip.AddFile(action.ImagePath, "LuaUI/Images/");
+							} catch {}
 						}
 					}
 					else if (item is SoundAction)
 					{
 						var action = (SoundAction) item;
-						if (!String.IsNullOrEmpty(action.SoundPath))
+						if (!String.IsNullOrEmpty(action.SoundPath) && File.Exists(action.SoundPath))
 						{
-							zip.AddFile(action.SoundPath, "LuaUI/Sounds/");
+							if (!File.Exists(action.SoundPath)) throw new Exception("Sound not found: " + action.SoundPath);
+							try {
+								zip.AddFile(action.SoundPath, "LuaUI/Sounds/");
+							} catch {}
 						}
 					}
 				}

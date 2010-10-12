@@ -59,7 +59,6 @@
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Alliance" Binding="{Binding Alliance}" />
                         <DataGridCheckBoxColumn Header="Is Human" Binding="{Binding IsHuman}" />
-
                         <DataGridTemplateColumn Header="Color">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

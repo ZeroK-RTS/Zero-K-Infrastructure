@@ -29,7 +29,7 @@ namespace CMissionLib.Conditions
 		{
 			var map = new Dictionary<string, object>
 				{
-					{"countdown", Countdown},
+					{"countdown",  Countdown??string.Empty},
 				};
 			return new LuaTable(map);
 		}

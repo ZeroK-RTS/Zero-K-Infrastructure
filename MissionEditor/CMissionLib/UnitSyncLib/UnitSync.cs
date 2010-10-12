@@ -25,12 +25,6 @@ namespace CMissionLib.UnitSyncLib
 		const int MaxMipLevel = 10;
 		const int MaxUnits = 2000;
 
-		public static string[] DependencyExceptions = new[]
-			{
-				"Spring Bitmaps", "Spring Cursors", "Map Helper v1", "Spring content v1", "TA Content version 2",
-				"tatextures.sdz", "TA Textures v0.62", "tacontent.sdz", "springcontent.sdz", "cursors.sdz"
-			};
-
 		readonly string originalDirectory;
 
 		bool disposed;
@@ -635,8 +629,12 @@ namespace CMissionLib.UnitSyncLib
 				var data = ReadVfsFile("unitpics/" + unit.BuildPicField);
 				if (data != null)
 				{
-					unit.BuildPic = LoadBuildpic(data);
-					return;
+					try
+					{
+						unit.BuildPic = LoadBuildpic(data);
+						return;
+					} catch {}
+
 				}
 			}
 
@@ -644,16 +642,23 @@ namespace CMissionLib.UnitSyncLib
 			var files = GetFilesInVfsDirectory("unitpics", unit.Name + "*", VfsMode.Mod);
 			if (files.Any())
 			{
-
-				var fileData = ReadVfsFile(files.First());
-				if (fileData != null)
+				foreach (var fileName in files)
 				{
-
+					var fileData = ReadVfsFile(fileName);
+					if (fileData != null)
+					{
+						try
+						{
+							unit.BuildPic = LoadBuildpic(fileData);
+							return;
+						}
+						catch { }
+					}
 				}
 			}
 		}
 
-		public string GetWritableDataDirectory()
+		string GetWritableDataDirectory()
 		{
 			return NativeMethods.GetWritableDataDirectory();
 		}
@@ -782,8 +787,16 @@ namespace CMissionLib.UnitSyncLib
 
 		enum LuaType
 		{
+			None = -1,
+			Nil = 0,
+			Boolean = 1,
+			LightUserData = 2,
+			Number = 3,
 			String = 4,
 			Table = 5,
+			Function = 6,
+			Userdata = 7,
+			Thread = 9,
 		}
 
 		UnitInfo[] ParseUnits()
@@ -809,8 +822,32 @@ namespace CMissionLib.UnitSyncLib
 				{
 					unitInfo.BuildPicField = NativeMethods.lpGetStrKeyStrVal("buildpic", String.Empty);
 				}
+
+				if (NativeMethods.lpGetKeyExistsStr("customparams"))
+				{
+					if (!NativeMethods.lpSubTableStr("customparams")) throw new UnitSyncException(); // push customparams
+					if (NativeMethods.lpGetKeyExistsStr("hideinmissioneditor"))
+					{
+						var type = (LuaType) NativeMethods.lpGetStrKeyType("hideinmissioneditor");
+						if (type == LuaType.Boolean)
+						{
+							unitInfo.Hide = NativeMethods.lpGetStrKeyBoolVal("hideinmissioneditor", 0);
+						} 
+						else if (type == LuaType.String)
+						{
+							unitInfo.Hide = NativeMethods.lpGetStrKeyStrVal("hideinmissioneditor", String.Empty) != "false";
+						} 
+						else
+						{
+							unitInfo.Hide = true;
+						}
+					}
+					NativeMethods.lpPopTable(); // pop customparams
+				}
+
 				if (NativeMethods.lpGetKeyExistsStr("buildoptions"))
 				{
+					if (NativeMethods.lpGetKeyExistsStr("yardmap")) unitInfo.IsFactory = true;
 					if (!NativeMethods.lpSubTableStr("buildoptions")) throw new UnitSyncException(); // push buildoptions
 					var unitList = new List<string>();
 					for (var buildOptionIndex = 1; buildOptionIndex < NativeMethods.lpGetIntKeyListCount(); buildOptionIndex++)
@@ -820,8 +857,10 @@ namespace CMissionLib.UnitSyncLib
 						unitList.Add(buildOption);
 					}
 					NativeMethods.lpPopTable(); // pop buildoptions
+					unitInfo.BuildOptions = unitList;
 				}
-				unitInfos.Add(unitInfo);
+				// lazy hide: pretend the unit does not exist
+				if (!unitInfo.Hide) unitInfos.Add(unitInfo);
 				NativeMethods.lpPopTable(); // pop unitdef
 			}
 			NativeMethods.lpPopTable(); // pop unitdefs
@@ -829,56 +868,6 @@ namespace CMissionLib.UnitSyncLib
 			foreach (var unitInfo in unitInfos) GetBuildPic(unitInfo);
 			return unitInfos.ToArray();
 		}
-
-#if false
-		void ReadArchiveCache()
-		{
-			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
-			if (!NativeMethods.lpOpenFile("ArchiveCacheV7.lua", VfsMode.Raw, VfsMode.Raw)) throw new UnitSyncException("Error parsing ArchiveCacheV7.lua: " + NativeMethods.lpErrorLog());
-			if (!NativeMethods.lpExecute()) throw new UnitSyncException("Unable to read  ArchiveCacheV7.lua: " + NativeMethods.lpErrorLog());
-			if (archives != null) return; // already read
-			archives = new List<ArchiveInfo>();
-			if (!NativeMethods.lpSubTableStr("archives")) throw new UnitSyncException(); // push archives
-			for (var archiveIndex = 1; NativeMethods.lpGetKeyExistsInt(archiveIndex); archiveIndex++)
-			{
-				if (!NativeMethods.lpSubTableInt(archiveIndex)) throw new UnitSyncException(); // push archives[archiveIndex]
-				var info = new ArchiveInfo();
-				info.FileName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);
-				if (NativeMethods.lpGetKeyExistsStr("maps") && NativeMethods.lpSubTableStr("maps"))
-				{
-					// push maps
-					if (!NativeMethods.lpSubTableInt(1)) throw new UnitSyncException(); // push maps[1] 
-					info.InternalName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);
-					NativeMethods.lpPopTable(); // pop maps[1]
-					NativeMethods.lpPopTable(); // pop maps
-				}
-				else if (NativeMethods.lpGetKeyExistsStr("moddata") && NativeMethods.lpSubTableStr("moddata"))
-				{
-					// push moddata
-					info.InternalName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);
-					if (NativeMethods.lpGetKeyExistsStr("depend") && NativeMethods.lpSubTableStr("depend"))
-					{
-						// push depend
-						for (var dependencyIndex = 1; NativeMethods.lpGetKeyExistsInt(dependencyIndex); dependencyIndex++) info.Dependencies.Add(NativeMethods.lpGetIntKeyStrVal(dependencyIndex, String.Empty));
-						NativeMethods.lpPopTable(); // pop depend 
-					}
-					if (NativeMethods.lpGetKeyExistsStr("replace") && NativeMethods.lpSubTableStr("replace"))
-					{
-						// push replace
-						for (var replaceIndex = 1; NativeMethods.lpGetKeyExistsInt(replaceIndex); replaceIndex++) info.Replaces.Add(NativeMethods.lpGetIntKeyStrVal(replaceIndex, String.Empty));
-						NativeMethods.lpPopTable(); // pop replace
-					}
-					NativeMethods.lpPopTable(); // pop moddata
-				}
-				info.Replaced = NativeMethods.lpGetStrKeyStrVal("replaced", String.Empty);
-				archives.Add(info);
-				NativeMethods.lpPopTable(); // pop archives[archiveIndex]
-			}
-			NativeMethods.lpPopTable(); // pop archives
-			NativeMethods.lpClose();
-		}
-
-#endif
 
 		static void TestMapInfo(MapInfo mapInfo)
 		{

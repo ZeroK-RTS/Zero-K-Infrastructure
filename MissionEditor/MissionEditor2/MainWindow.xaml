@@ -1,7 +1,7 @@
 ﻿<Window x:Class="MissionEditor2.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:MissionEditor2"
      xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
-    xmlns:ml="clr-namespace:CMissionLib;assembly=CMissionLib" xmlns:Actions="clr-namespace:CMissionLib.Actions;assembly=CMissionLib" Title="{Binding Mission.Name, RelativeSource={RelativeSource Self}}"
+    xmlns:Actions="clr-namespace:CMissionLib.Actions;assembly=CMissionLib" Title="{Binding Mission.Name, RelativeSource={RelativeSource Self}}"
     Height="600" Width="1000" Name="window" DataContext="{Binding RelativeSource={RelativeSource Self}}" WindowState="Maximized" Loaded="window_Loaded">
 
   <Window.Resources>

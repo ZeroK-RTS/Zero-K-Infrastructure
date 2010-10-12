@@ -5,6 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMissionLib", "CMissionLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MissionEditor2", "MissionEditor2\MissionEditor2.csproj", "{713275BF-2FAB-4F51-8766-1E8182BCDAA4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lua", "Lua", "{09C133D0-BB6F-41E5-B662-D737C60E64A2}"
+	ProjectSection(SolutionItems) = preProject
+		MissionBase\LuaRules\Gadgets\mission_runner.lua = MissionBase\LuaRules\Gadgets\mission_runner.lua
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

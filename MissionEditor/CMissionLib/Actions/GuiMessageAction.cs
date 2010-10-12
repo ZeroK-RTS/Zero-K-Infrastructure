@@ -58,7 +58,7 @@ namespace CMissionLib.Actions
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{
-			if (string.IsNullOrEmpty(imagePath))
+			if (string.IsNullOrEmpty(imagePath) || !File.Exists(ImagePath))
 			{
 				var map = new Dictionary<string, object>
 					{

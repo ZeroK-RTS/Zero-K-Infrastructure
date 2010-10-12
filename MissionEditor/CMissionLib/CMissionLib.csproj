@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
+    <Compile Include="Actions\GiveFactoryOrdersAction.cs" />
     <Compile Include="Actions\StartCountdownAction.cs" />
     <Compile Include="Actions\CancelCountdownAction.cs" />
     <Compile Include="Actions\CustomAction.cs" />

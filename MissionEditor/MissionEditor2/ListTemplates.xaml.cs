@@ -131,6 +131,7 @@ namespace MissionEditor2
 						Canvas.SetLeft(camera, action.X - camera.Width/2);
 						Canvas.SetTop(camera, action.Y - camera.Height/2);
 					};
+				refreshPosition();
 				markerCanvas.MouseDown += (s, ea) =>
 					{
 						var mousePos = ea.GetPosition(markerCanvas);

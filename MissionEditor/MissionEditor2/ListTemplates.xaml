@@ -47,7 +47,11 @@
       <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
     </DataTemplate>
 
-    <DataTemplate x:Key="UnlockUnitsAction">
+        <DataTemplate x:Key="GiveFactoryOrdersAction">
+            <local:FactoryBuildOrdersPane />
+        </DataTemplate>
+
+            <DataTemplate x:Key="UnlockUnitsAction">
       <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
     </DataTemplate>
 

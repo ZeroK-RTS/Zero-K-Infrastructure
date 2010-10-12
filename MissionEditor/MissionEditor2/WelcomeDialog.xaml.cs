@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Media;
@@ -144,6 +145,11 @@ namespace MissionEditor2
 
 		public static Map LoadMap(UnitSync unitSync, string mapName)
 		{
+			if (!unitSync.GetMapNames().Any(n => n == mapName))
+			{
+				MessageBox.Show("Map not found: " + mapName);
+				Environment.Exit(1);
+			}
 			var map = unitSync.GetMapNoBitmaps(mapName);
 			map.Texture = unitSync.GetMapTexture(map, Settings.Default.MapDetail);
 			return map;
@@ -151,6 +157,11 @@ namespace MissionEditor2
 
 		public static Mod LoadMod(UnitSync unitSync, string modName)
 		{
+			if (!unitSync.GetModNames().Any(n => n == modName))
+			{
+				MessageBox.Show("Mod not found: " + modName);
+				Environment.Exit(1);
+			}
 			return unitSync.GetMod(modName);
 		}
 

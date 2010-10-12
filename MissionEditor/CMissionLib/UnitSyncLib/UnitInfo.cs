@@ -17,8 +17,11 @@ namespace CMissionLib.UnitSyncLib
 		public string BuildPicField { get; set; }
 		public string BuildPicFileName { get; set; }
 		public IEnumerable<string> BuildOptions { get; set; }
+		public bool Hide { get; set; }
 
 		public ImageSource BuildPic { get; set; }
+
+		public bool IsFactory { get; set; }
 
 		#region ICloneable Members
 

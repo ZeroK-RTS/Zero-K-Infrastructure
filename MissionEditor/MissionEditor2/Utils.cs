@@ -56,12 +56,16 @@ namespace MissionEditor2
 
 		public static void BindCollection<T>(this ListBox list, ICollection<T> collection)
 		{
+			if (list.SelectedItems == collection) throw new ArgumentException();
 			list.SelectedItems.Clear();
-			foreach (var item in collection) list.SelectedItems.Add(item);
+			foreach (var item in collection.ToArray()) list.SelectedItems.Add(item);
 			SelectionChangedEventHandler onSelectionChanged = (s, e) =>
 			{
-				foreach (var item in e.AddedItems) collection.Add((T)item);
-				foreach (var item in e.RemovedItems) collection.Add((T)item);
+				foreach (var item in e.AddedItems)
+				{
+					if (!collection.Contains((T)item)) collection.Add((T)item);
+				}
+				foreach (var item in e.RemovedItems) collection.Remove((T)item);
 			};
 			list.SelectionChanged += onSelectionChanged;
 			// this needs to be done before "Unloaded" because at that point the items will have been all deselected
