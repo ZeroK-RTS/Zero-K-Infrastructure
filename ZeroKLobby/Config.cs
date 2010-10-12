@@ -19,27 +19,19 @@ namespace ZeroKLobby
 		public const string MonoTorrentVersion = "117187-modded";
 		public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
 		public const string SelfUpdateSite = "http://files.caspring.org/caupdater/";
-		bool autoDownload = true;
 		StringCollection autoJoinChannels = new StringCollection();
-        StringCollection ignoredUsers = new StringCollection();
 		bool connectOnStartup = true;
 		Color fadeColor = Color.Gray;
 		StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
 		int idleTime = 10;
+		StringCollection ignoredUsers = new StringCollection();
 		string manualSpringPath = @"C:\Program Files\Spring";
-		string playerTrackerHost = "tracker.caspring.org";
-		int playerTrackerPort = 8203;
+		List<string> selectedGames = new List<string>();
 		bool showHourlyChimes = true;
 
 		string springServerHost = "springrts.com";
 		int springServerPort = 8200;
 
-		List<string> selectedGames = new List<string>();
-
-		[Category("General")]
-		[DisplayName("Automatically download map and mod")]
-		[Description("Should I auto-download map and mod for joined game?")]
-		public bool AutoDownload { get { return autoDownload; } set { autoDownload = value; } }
 		[Category("Widgets")]
 		[Description("Auto-Install Widgets")]
 		[DisplayName("Auto-Install Widgets")]
@@ -51,14 +43,6 @@ namespace ZeroKLobby
 		[Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
 			typeof(UITypeEditor))]
 		public StringCollection AutoJoinChannels { get { return autoJoinChannels; } set { autoJoinChannels = value; } }
-
-        [Category("Chat")]
-        [DisplayName("Ignored Users")]
-        [Description("The messages of these users are ignored.")]
-        [Browsable(true)]
-        [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-            typeof(UITypeEditor))]
-        public StringCollection IgnoredUsers { get { return ignoredUsers; } set { ignoredUsers = value; } }
 
 
 		[Category("Widgets")]
@@ -98,6 +82,8 @@ namespace ZeroKLobby
 		[DisplayName("Connect on startup")]
 		[Description("Connect and login player on program start?")]
 		public bool ConnectOnStartup { get { return connectOnStartup; } set { connectOnStartup = value; } }
+		[Browsable(false)]
+		public int DefaultPlayerColorInt = 16776960; // default teal color
 
 		[Browsable(false)]
 		public string DetectedPlayerName { get; set; }
@@ -140,6 +126,13 @@ namespace ZeroKLobby
 		[DisplayName("Idle User Time")]
 		[Description("Idle minutes after which Zero-K lobby assumes the user is gone and quickmatching is stopped.")]
 		public int IdleTime { get { return idleTime; } set { idleTime = value; } }
+		[Category("Chat")]
+		[DisplayName("Ignored Users")]
+		[Description("The messages of these users are ignored.")]
+		[Browsable(true)]
+		[Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+			typeof(UITypeEditor))]
+		public StringCollection IgnoredUsers { get { return ignoredUsers; } set { ignoredUsers = value; } }
 
 
 		[Category("Chat")]
@@ -187,6 +180,13 @@ namespace ZeroKLobby
 		public Color NoticeColor { get { return Color.FromArgb(NoticeColorInt); } set { NoticeColorInt = value.ToArgb(); } }
 		[Browsable(false)]
 		public int NoticeColorInt = Color.Red.ToArgb();
+		[Category("General")]
+		[DisplayName("Selected games")]
+		[Description("Games selected on the first tab")]
+		[Browsable(true)]
+		[Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+			typeof(UITypeEditor))]
+		public List<string> SelectedGames { get { return selectedGames; } set { selectedGames = value; } }
 
 		[Category("General")]
 		[DisplayName("Show Empty Battles")]
@@ -235,14 +235,6 @@ namespace ZeroKLobby
 		/// Keeps datetime of last topic change for each channel
 		/// </summary>
 		public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
-
-		[Category("General")]
-		[DisplayName("Selected games")]
-		[Description("Games selected on the first tab")]
-		[Browsable(true)]
-		[Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-			typeof(UITypeEditor))]
-		public List<string> SelectedGames { get { return selectedGames; } set { selectedGames = value; } }
 
 
 		public void UpdateFadeColor()

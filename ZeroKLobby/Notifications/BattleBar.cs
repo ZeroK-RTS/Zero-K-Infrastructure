@@ -173,7 +173,8 @@ namespace ZeroKLobby.Notifications
 					             			? SyncStatuses.Synced
 					             			: SyncStatuses.Unsynced,
 					             	IsSpectator = cbSpectate.Checked,
-					             	Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0
+					             	Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0,
+												TeamColor = Program.Conf.DefaultPlayerColorInt
 					             };
 					if (status.SyncStatus == SyncStatuses.Synced && IsHostGameRunning()) Program.FormMain.InvokeFunc(CreateReconnectBar);
 					client.SendMyBattleStatus(status);
