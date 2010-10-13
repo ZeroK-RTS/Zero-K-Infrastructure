@@ -117,9 +117,12 @@ namespace ZeroKLobby.Notifications
 					                                           					var cnt = 0;
 					                                           					foreach (var side in mod.Sides) cbSide.Items.Add(new SideItem(side, mod.SideIcons[cnt++]));
 					                                           					var pickedItem = cbSide.Items.OfType<SideItem>().FirstOrDefault(x => x.Side == previousSide);
-					                                           					if (pickedItem != null) cbSide.SelectedItem = pickedItem;
+
+					                                           					suppressSideChangeEvent = true;
+																															if (pickedItem != null) cbSide.SelectedItem = pickedItem;
 					                                           					else cbSide.SelectedIndex = random.Next(cbSide.Items.Count);
 					                                           					cbSide.Visible = true;
+					                                           					suppressSideChangeEvent = false;
 					                                           				}));
 					                                           		}
 					                                           	},
@@ -205,7 +208,7 @@ namespace ZeroKLobby.Notifications
 					if (client.MyBattleStatus != null)
 					{
 						cbReady.Checked = client.MyBattleStatus.IsReady;
-						barContainer.btnDetail.Enabled = client.MyBattleStatus.IsReady && client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
+						barContainer.btnDetail.Enabled = client.MyBattleStatus.IsReady && client.MyBattleStatus.SyncStatus == SyncStatuses.Synced && !client.ExistingUsers[client.MyBattle.Founder].IsInGame;
 
 						if (client.MyBattleStatus.IsSpectator && !cbSpectate.Checked) // i was spectated
 						{
@@ -499,7 +502,7 @@ namespace ZeroKLobby.Notifications
 		void CreateReconnectBar()
 		{
 			RemoveReconnectBar();
-			reconnectBar = new GenericBar() { DetailButtonLabel = "Rejoin",Text = "Wanna (re)join running game? Click left to connect!" };
+			reconnectBar = new GenericBar() { DetailButtonLabel = "Rejoin",Text = "Wanna (re)join running game? Click left to connect!  WARNING: THIS WILL REPLAY GAME - IT WILL LAG FOR SEVERAL MINUTES" };
 			reconnectBar.DetailButtonClicked += (s2, e2) =>
 				{
 					if (client.MyBattle != null) spring.StartGame(client, null, null, null);
@@ -659,6 +662,7 @@ namespace ZeroKLobby.Notifications
 		}
 
 		NotifyBarContainer barContainer;
+		bool suppressSideChangeEvent;
 
 		public void AddedToContainer(NotifyBarContainer container)
 		{
@@ -712,6 +716,7 @@ namespace ZeroKLobby.Notifications
 
 		void cbSide_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			if (suppressSideChangeEvent) return;
 			if (!client.IsLoggedIn) return;
 
 			var status = client.MyBattleStatus;
