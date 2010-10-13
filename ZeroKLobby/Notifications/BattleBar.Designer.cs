@@ -30,15 +30,19 @@ namespace ZeroKLobby.Notifications
         /// </summary>
         private void InitializeComponent()
         {
+					this.components = new System.ComponentModel.Container();
+					System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BattleBar));
 					this.cbSide = new System.Windows.Forms.ComboBox();
 					this.numMinValue = new System.Windows.Forms.NumericUpDown();
 					this.cbSpectate = new System.Windows.Forms.CheckBox();
 					this.lbPlayers = new System.Windows.Forms.Label();
-					this.lbGameName = new System.Windows.Forms.Label();
 					this.lbSide = new System.Windows.Forms.Label();
 					this.lbMin = new System.Windows.Forms.Label();
 					this.gameBox = new System.Windows.Forms.PictureBox();
-					this.picoChat = new ChatBox();
+					this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
+					this.cbReady = new System.Windows.Forms.CheckBox();
+					this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+					this.cbAuto = new System.Windows.Forms.CheckBox();
 					((System.ComponentModel.ISupportInitialize)(this.numMinValue)).BeginInit();
 					((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
 					this.SuspendLayout();
@@ -92,15 +96,6 @@ namespace ZeroKLobby.Notifications
 					this.lbPlayers.Size = new System.Drawing.Size(0, 13);
 					this.lbPlayers.TabIndex = 3;
 					// 
-					// lbGameName
-					// 
-					this.lbGameName.AutoSize = true;
-					this.lbGameName.Location = new System.Drawing.Point(7, 5);
-					this.lbGameName.Name = "lbGameName";
-					this.lbGameName.Size = new System.Drawing.Size(61, 13);
-					this.lbGameName.TabIndex = 6;
-					this.lbGameName.Text = "Connecting";
-					// 
 					// lbSide
 					// 
 					this.lbSide.AutoSize = true;
@@ -153,16 +148,53 @@ namespace ZeroKLobby.Notifications
 					this.picoChat.TotalDisplayLines = 0;
 					this.picoChat.UseTopicBackground = false;
 					// 
+					// cbReady
+					// 
+					this.cbReady.AutoSize = true;
+					this.cbReady.ImageIndex = 2;
+					this.cbReady.ImageList = this.imageList1;
+					this.cbReady.Location = new System.Drawing.Point(10, 6);
+					this.cbReady.Name = "cbReady";
+					this.cbReady.Size = new System.Drawing.Size(73, 17);
+					this.cbReady.TabIndex = 13;
+					this.cbReady.Text = "Ready";
+					this.cbReady.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+					this.cbReady.UseVisualStyleBackColor = true;
+					this.cbReady.CheckedChanged += new System.EventHandler(this.cbReady_CheckedChanged);
+					this.cbReady.Click += new System.EventHandler(this.cbReady_Click);
+					// 
+					// imageList1
+					// 
+					this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+					this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+					this.imageList1.Images.SetKeyName(0, "joined.ico");
+					this.imageList1.Images.SetKeyName(1, "ok.ico");
+					this.imageList1.Images.SetKeyName(2, "run.ico");
+					// 
+					// cbAuto
+					// 
+					this.cbAuto.AutoSize = true;
+					this.cbAuto.Checked = true;
+					this.cbAuto.CheckState = System.Windows.Forms.CheckState.Checked;
+					this.cbAuto.Location = new System.Drawing.Point(88, 6);
+					this.cbAuto.Name = "cbAuto";
+					this.cbAuto.Size = new System.Drawing.Size(48, 17);
+					this.cbAuto.TabIndex = 14;
+					this.cbAuto.Text = "Auto";
+					this.cbAuto.UseVisualStyleBackColor = true;
+					this.cbAuto.CheckStateChanged += new System.EventHandler(this.cbAuto_CheckStateChanged);
+					// 
 					// BattleBar
 					// 
 					this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 					this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+					this.Controls.Add(this.cbAuto);
+					this.Controls.Add(this.cbReady);
 					this.Controls.Add(this.picoChat);
 					this.Controls.Add(this.gameBox);
 					this.Controls.Add(this.cbSpectate);
 					this.Controls.Add(this.lbMin);
 					this.Controls.Add(this.lbSide);
-					this.Controls.Add(this.lbGameName);
 					this.Controls.Add(this.lbPlayers);
 					this.Controls.Add(this.numMinValue);
 					this.Controls.Add(this.cbSide);
@@ -181,12 +213,14 @@ namespace ZeroKLobby.Notifications
 
         private System.Windows.Forms.ComboBox cbSide;
         private System.Windows.Forms.NumericUpDown numMinValue;
-        private System.Windows.Forms.Label lbPlayers;
-        private System.Windows.Forms.Label lbGameName;
+				private System.Windows.Forms.Label lbPlayers;
         private System.Windows.Forms.Label lbSide;
         private System.Windows.Forms.Label lbMin;
         private System.Windows.Forms.CheckBox cbSpectate;
         private System.Windows.Forms.PictureBox gameBox;
         private ChatBox picoChat;
+				private System.Windows.Forms.CheckBox cbReady;
+				private System.Windows.Forms.ImageList imageList1;
+				private System.Windows.Forms.CheckBox cbAuto;
     }
 }

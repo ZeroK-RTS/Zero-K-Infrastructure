@@ -54,6 +54,7 @@ namespace ZeroKLobby.Notifications
 			                        "Choose the minimum number of players you want in your game.\nYou will only ready up if battle has at least that many players.");
 			Program.ToolTip.SetText(cbSpectate, "As a spectator you will not participate in the gameplay");
 			Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
+			Program.ToolTip.SetText(cbAuto, "Automatically ready-up when there is enough players");
 
 			client = Program.TasClient;
 			spring = new Spring(Program.SpringPaths);
@@ -200,14 +201,24 @@ namespace ZeroKLobby.Notifications
 
 			client.BattleMyUserStatusChanged += (s, e) =>
 				{
-					if (client.MyBattleStatus != null && client.MyBattleStatus.IsSpectator && !cbSpectate.Checked) // i was spectated
+
+					if (client.MyBattleStatus != null)
 					{
-						if (IsQuickPlayActive)
+						cbReady.Checked = client.MyBattleStatus.IsReady;
+						barContainer.btnDetail.Enabled = client.MyBattleStatus.IsReady && client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
+
+						if (client.MyBattleStatus.IsSpectator && !cbSpectate.Checked) // i was spectated
 						{
-							client.Say(TasClient.SayPlace.Battle, "", "QuickMatching ( http://licho.eu/qm ) - leaving because i was specced, I will rejoin later", true);
-							client.LeaveBattle(); // we were specced, get out of there}
+							if (IsQuickPlayActive)
+							{
+								client.Say(TasClient.SayPlace.Battle,
+								           "",
+								           "QuickMatching ( http://zero-k.info/lobby ) - leaving because i was specced, I will rejoin later",
+								           true);
+								client.LeaveBattle(); // we were specced, get out of there}
+							}
+							else if (currentBattleMode == BattleMode.Normal) ChangeGuiSpectatorWithoutEvent(true);
 						}
-						else if (currentBattleMode == BattleMode.Normal) ChangeGuiSpectatorWithoutEvent(true);
 					}
 
 				};
@@ -300,7 +311,6 @@ namespace ZeroKLobby.Notifications
 			currentBattleMode = BattleMode.Follow;
 			isVisible = true;
 			followedPlayer = name;
-			lbGameName.Text = "Following " + name;
 			ChangeGuiSpectatorWithoutEvent(false);
 			cbSpectate.Visible = false;
 			numMinValue.Visible = false;
@@ -343,9 +353,9 @@ namespace ZeroKLobby.Notifications
 			ChangeGuiSpectatorWithoutEvent(false);
 			numMinValue.Visible = true;
 			lbMin.Visible = true;
+			Automatic = true;
 
 			gameInfosDisplayText = string.Join(",", QuickMatchGameInfos.Select(x => x.Shortcut).ToArray());
-			lbGameName.Text = "Joining " + gameInfosDisplayText;
 			cbSide.Items.Clear();
 
 			isVisible = true;
@@ -353,7 +363,7 @@ namespace ZeroKLobby.Notifications
 			Program.QuickMatchTracker.AdvertiseMySetup(null);
 			Program.NotifySection.AddBar(this);
 
-			quickMatchBar = new GenericBar() { Text = "QuickMatching - automatically looking for proper game" };
+			quickMatchBar = new GenericBar() { Text = "QuickMatching - automatically looking for proper game of " + gameInfosDisplayText };
 			Program.NotifySection.AddBar(quickMatchBar);
 			quickMatchBar.BarContainer.btnDetail.Text = "QuickMatch";
 			Program.ToolTip.SetText(quickMatchBar.BarContainer.btnDetail, "Pick another battle");
@@ -466,7 +476,8 @@ namespace ZeroKLobby.Notifications
 			else // quickmatch or normal mode
 			{
 				newStatus.IsSpectator = cbSpectate.Checked;
-				newStatus.IsReady = battle.NonSpectatorCount >= numMinValue.Value;
+				if (Automatic) newStatus.IsReady = battle.NonSpectatorCount >= numMinValue.Value;
+
 
 				if (DateTime.Now.Subtract(lastAlert).TotalSeconds > 120)
 				{
@@ -582,7 +593,6 @@ namespace ZeroKLobby.Notifications
 			if (isVisible) Stop();
 			currentBattleMode = BattleMode.Normal;
 			isVisible = true;
-			lbGameName.Text = string.Format("In battle: {0}", client.MyBattle.Founder);
 			cbSpectate.Visible = true;
 			cbSpectate.Checked = false;
 			numMinValue.Visible = true;
@@ -648,8 +658,11 @@ namespace ZeroKLobby.Notifications
 			return this;
 		}
 
+		NotifyBarContainer barContainer;
+
 		public void AddedToContainer(NotifyBarContainer container)
 		{
+			barContainer = container;
 			container.btnDetail.Image = Resources.Battle;
 			container.btnDetail.Text = "Start";
 			Program.ToolTip.SetText(container.btnDetail, "Start battle");
@@ -723,7 +736,49 @@ namespace ZeroKLobby.Notifications
 		{
 			Program.QuickMatchTracker.AdvertiseMySetup(null);
 		}
+
+		private void cbReady_CheckedChanged(object sender, EventArgs e)
+		{
+			cbReady.ImageIndex = cbReady.Checked ? 1 : 2;
+		}
+
+		private void cbReady_Click(object sender, EventArgs e)
+		{
+			Automatic = false;
+			if (client != null && client.MyBattle != null)
+			{
+				client.ChangeMyStatus(null, cbReady.Checked, null);
+			}
+		}
+
+		private bool Automatic
+		{
+			get
+			{
+				return cbAuto.Checked;
+			}
+			set
+			{
+				
+				cbAuto.Checked = value;
+				lbMin.Visible = value;
+				numMinValue.Visible = value;
+			}
+		}
+
+		private void cbAuto_CheckStateChanged(object sender, EventArgs e)
+		{
+			if (cbAuto.CheckState == CheckState.Checked)
+			{
+				Automatic = true;
+			} else if (cbAuto.CheckState == CheckState.Unchecked)
+			{
+				Automatic = false;
+			}
+		}
 	}
+
+
 
 
 	class SideItem
