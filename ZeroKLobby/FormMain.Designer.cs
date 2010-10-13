@@ -333,7 +333,7 @@ namespace ZeroKLobby
     private System.Windows.Forms.TabPage tabPageGames;
     private System.Windows.Forms.ContextMenuStrip trayStrip;
 		private System.Windows.Forms.ToolStripMenuItem btnExit;
-		public System.Windows.Forms.NotifyIcon systrayIcon;
+		private System.Windows.Forms.NotifyIcon systrayIcon;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private NotifySection notifySection1;
 		private System.Windows.Forms.Timer timer1;

@@ -17,6 +17,11 @@ namespace ZeroKLobby.MicroLobby
         BattleChatControl battleChatControl;
         readonly ToolTabs toolTabs = new ToolTabs { Dock = DockStyle.Fill };
 
+				public void Hilite(string channel)
+				{
+					toolTabs.Hilite(channel);
+				}
+
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public ChatTab()
@@ -150,7 +155,7 @@ namespace ZeroKLobby.MicroLobby
                     {
                         toolTabs.Flash(otherUserName);
                         toolTabs.Hilite(otherUserName);
-                        FormMain.Instance.systrayIcon.ShowBalloonTip(5000, otherUserName, e.Text, ToolTipIcon.Info);
+												FormMain.Instance.NotifyUser(string.Format("{0}: {1}", otherUserName, e.Text), false, true);
                     }
                 }
             }

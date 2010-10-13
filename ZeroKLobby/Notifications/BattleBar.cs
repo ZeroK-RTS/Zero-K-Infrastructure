@@ -16,7 +16,18 @@ namespace ZeroKLobby.Notifications
 {
 	public partial class BattleBar: UserControl, INotifyBar
 	{
+		bool Automatic
+		{
+			get { return cbAuto.Checked; }
+			set
+			{
+				cbAuto.Checked = value;
+				lbMin.Visible = value;
+				numMinValue.Visible = value;
+			}
+		}
 		bool IsQuickPlayActive { get { return client.IsLoggedIn && !spring.IsRunning && isVisible && currentBattleMode == BattleMode.QuickMatch; } }
+		NotifyBarContainer barContainer;
 		readonly TasClient client;
 		BattleMode currentBattleMode = BattleMode.Normal;
 		int downloadFailedCounter;
@@ -37,6 +48,7 @@ namespace ZeroKLobby.Notifications
 		GenericBar reconnectBar;
 
 		readonly Spring spring;
+		bool suppressSideChangeEvent;
 		readonly Timer timer = new Timer();
 		public string CommShareWith { get; set; }
 
@@ -82,17 +94,31 @@ namespace ZeroKLobby.Notifications
 					if (e.Data || IsHostGameRunning()) Program.FormMain.InvokeFunc(CreateReconnectBar);
 				};
 
-			client.Rang += (s, e) => AutoRespond();
+			client.Rang += (s, e) =>
+				{
+					if (Automatic) AutoRespond();
+					else
+					{
+						FormMain.Instance.NotifyUser("Someone demands your attention in battle room!", true, true);
+						FormMain.Instance.ChatTab.Hilite("Battle");
+					}
+
+				};
 			client.Said += (s, e) =>
 				{
-					if (IsQuickPlayActive && !e.IsEmote && (e.Place == TasSayEventArgs.Places.Battle) && e.UserName != client.UserName)
+					if (Automatic && !e.IsEmote && (e.Place == TasSayEventArgs.Places.Battle) && e.UserName != client.UserName && e.Text == "!specafk")
 					{
-						if (e.Text == "!specafk")
+						if (client.MyBattleStatus == null || (!client.MyBattleStatus.IsSpectator && !client.MyBattleStatus.IsReady))
 						{
-							if (client.MyBattleStatus == null || (!client.MyBattleStatus.IsSpectator && !client.MyBattleStatus.IsReady))
+							if (IsQuickPlayActive)
 							{
 								Trace.TraceInformation("Leaving battle because of !specafk");
 								client.LeaveBattle();
+							}
+							else
+							{
+								Trace.TraceInformation("Specced because of !specafk");
+								client.ChangeMyStatus(true, null, null);
 							}
 						}
 					}
@@ -119,7 +145,7 @@ namespace ZeroKLobby.Notifications
 					                                           					var pickedItem = cbSide.Items.OfType<SideItem>().FirstOrDefault(x => x.Side == previousSide);
 
 					                                           					suppressSideChangeEvent = true;
-																															if (pickedItem != null) cbSide.SelectedItem = pickedItem;
+					                                           					if (pickedItem != null) cbSide.SelectedItem = pickedItem;
 					                                           					else cbSide.SelectedIndex = random.Next(cbSide.Items.Count);
 					                                           					cbSide.Visible = true;
 					                                           					suppressSideChangeEvent = false;
@@ -178,7 +204,7 @@ namespace ZeroKLobby.Notifications
 					             			: SyncStatuses.Unsynced,
 					             	IsSpectator = cbSpectate.Checked,
 					             	Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0,
-												TeamColor = Program.Conf.DefaultPlayerColorInt
+					             	TeamColor = Program.Conf.DefaultPlayerColorInt
 					             };
 					if (status.SyncStatus == SyncStatuses.Synced && IsHostGameRunning()) Program.FormMain.InvokeFunc(CreateReconnectBar);
 					client.SendMyBattleStatus(status);
@@ -204,11 +230,11 @@ namespace ZeroKLobby.Notifications
 
 			client.BattleMyUserStatusChanged += (s, e) =>
 				{
-
 					if (client.MyBattleStatus != null)
 					{
 						cbReady.Checked = client.MyBattleStatus.IsReady;
-						barContainer.btnDetail.Enabled = client.MyBattleStatus.IsReady && client.MyBattleStatus.SyncStatus == SyncStatuses.Synced && !client.ExistingUsers[client.MyBattle.Founder].IsInGame;
+						barContainer.btnDetail.Enabled = client.MyBattleStatus.IsReady && client.MyBattleStatus.SyncStatus == SyncStatuses.Synced &&
+						                                 !client.ExistingUsers[client.MyBattle.Founder].IsInGame;
 
 						if (client.MyBattleStatus.IsSpectator && !cbSpectate.Checked) // i was spectated
 						{
@@ -223,7 +249,6 @@ namespace ZeroKLobby.Notifications
 							else if (currentBattleMode == BattleMode.Normal) ChangeGuiSpectatorWithoutEvent(true);
 						}
 					}
-
 				};
 
 			client.BattleClosed += (s, e) =>
@@ -290,6 +315,16 @@ namespace ZeroKLobby.Notifications
 			{
 				ChangeGuiSpectatorWithoutEvent(state);
 				return true;
+			}
+			return false;
+		}
+
+		public static bool DownloadFailed(string name)
+		{
+			if (!Program.SpringScanner.HasResource(name))
+			{
+				var down = Program.Downloader.Downloads.FirstOrDefault(x => x.Name == name);
+				if (down == null || down.IsComplete == false || down.IsAborted) return true;
 			}
 			return false;
 		}
@@ -375,6 +410,11 @@ namespace ZeroKLobby.Notifications
 			quickMatchBar.CloseButtonClicked += (s, e) => StartManualBattle(client.MyBattleID, null);
 		}
 
+		public static bool StillDownloading(string name)
+		{
+			return !Program.SpringScanner.HasResource(name) && !DownloadFailed(name);
+		}
+
 		public void Stop()
 		{
 			Trace.TraceInformation("Closing current battle");
@@ -402,15 +442,16 @@ namespace ZeroKLobby.Notifications
 			{
 				client.Say(TasClient.SayPlace.Battle,
 				           "",
-				           string.Format("QuickMatching ( http://zero-k.info/lobby ), waiting for {0} players. Spec me with !specafk if you want to play with less.",
-				                         (int)numMinValue.Value),
+				           string.Format(
+				           	"QuickMatching ( http://zero-k.info/lobby ), waiting for {0} players. Spec me with !specafk if you want to play with less.",
+				           	(int)numMinValue.Value),
 				           false);
 			}
 			else
 			{
 				client.Say(TasClient.SayPlace.Battle,
 				           "",
-				           string.Format("Using Zero-K ( http://zero-k.info/lobby ), waiting for {0} players. ", (int)numMinValue.Value),
+				           string.Format("Using Zero-K ( http://zero-k.info/lobby ), waiting for {0} players. Spec me with !specafk if you want to play with less.", (int)numMinValue.Value),
 				           false);
 			}
 
@@ -479,19 +520,20 @@ namespace ZeroKLobby.Notifications
 			else // quickmatch or normal mode
 			{
 				newStatus.IsSpectator = cbSpectate.Checked;
-				if (Automatic) newStatus.IsReady = battle.NonSpectatorCount >= numMinValue.Value;
-
-
-				if (DateTime.Now.Subtract(lastAlert).TotalSeconds > 120)
+				if (Automatic)
 				{
-					var idlerCount = GetQuickMatchIdlerCount(battle, (int)numMinValue.Value);
-					// gets number of players unwilling to play at my min value
-					if (battle.NonSpectatorCount - idlerCount >= numMinValue.Value && !spring.IsRunning && !client.ExistingUsers[battle.Founder].IsInGame)
+					newStatus.IsReady = battle.NonSpectatorCount >= numMinValue.Value;
+
+					if (DateTime.Now.Subtract(lastAlert).TotalSeconds > 120)
 					{
-						// even without idlers i can still play
-						FormMain.Instance.systrayIcon.ShowBalloonTip(5000, "Zero-K", "Battle has enough people to start!", ToolTipIcon.Info);
-						SystemSounds.Exclamation.Play();
-						lastAlert = DateTime.Now;
+						var idlerCount = GetQuickMatchIdlerCount(battle, (int)numMinValue.Value);
+						// gets number of players unwilling to play at my min value
+						if (battle.NonSpectatorCount - idlerCount >= numMinValue.Value && !spring.IsRunning && !client.ExistingUsers[battle.Founder].IsInGame)
+						{
+							// even without idlers i can still play
+							FormMain.Instance.NotifyUser("Battle has enough people to start!", true, false);
+							lastAlert = DateTime.Now;
+						}
 					}
 				}
 			}
@@ -502,7 +544,11 @@ namespace ZeroKLobby.Notifications
 		void CreateReconnectBar()
 		{
 			RemoveReconnectBar();
-			reconnectBar = new GenericBar() { DetailButtonLabel = "Rejoin",Text = "Wanna (re)join running game? Click left to connect!  WARNING: THIS WILL REPLAY GAME - IT WILL LAG FOR SEVERAL MINUTES" };
+			reconnectBar = new GenericBar()
+			               {
+			               	DetailButtonLabel = "Rejoin",
+			               	Text = "Wanna (re)join running game? Click left to connect!  WARNING: THIS WILL REPLAY GAME - IT WILL LAG FOR SEVERAL MINUTES"
+			               };
 			reconnectBar.DetailButtonClicked += (s2, e2) =>
 				{
 					if (client.MyBattle != null) spring.StartGame(client, null, null, null);
@@ -510,16 +556,6 @@ namespace ZeroKLobby.Notifications
 					Program.NotifySection.RemoveBar(reconnectBar);
 				};
 			Program.NotifySection.AddBar(reconnectBar);
-		}
-
-		public static bool DownloadFailed(string name)
-		{
-			if (!Program.SpringScanner.HasResource(name))
-			{
-				var down = Program.Downloader.Downloads.FirstOrDefault(x => x.Name == name);
-				if (down == null || down.IsComplete == false || down.IsAborted) return true;
-			}
-			return false;
 		}
 
 		/// <summary>
@@ -651,18 +687,10 @@ namespace ZeroKLobby.Notifications
 			}
 		}
 
-		public static bool StillDownloading(string name)
-		{
-			return !Program.SpringScanner.HasResource(name) && !DownloadFailed(name);
-		}
-
 		public Control GetControl()
 		{
 			return this;
 		}
-
-		NotifyBarContainer barContainer;
-		bool suppressSideChangeEvent;
 
 		public void AddedToContainer(NotifyBarContainer container)
 		{
@@ -681,7 +709,7 @@ namespace ZeroKLobby.Notifications
 		public void DetailClicked(NotifyBarContainer container)
 		{
 			GotoBattleChat();
-			client.Say(TasClient.SayPlace.Battle, "","!start", false);
+			client.Say(TasClient.SayPlace.Battle, "", "!start", false);
 		}
 
 		void BattleIconManager_BattleChanged(object sender, EventArgs<BattleIcon> e)
@@ -699,6 +727,23 @@ namespace ZeroKLobby.Notifications
 		}
 
 		void QuickMatchControl_Load(object sender, EventArgs e) {}
+
+		void cbAuto_CheckStateChanged(object sender, EventArgs e)
+		{
+			if (cbAuto.CheckState == CheckState.Checked) Automatic = true;
+			else if (cbAuto.CheckState == CheckState.Unchecked) Automatic = false;
+		}
+
+		void cbReady_CheckedChanged(object sender, EventArgs e)
+		{
+			cbReady.ImageIndex = cbReady.Checked ? 1 : 2;
+		}
+
+		void cbReady_Click(object sender, EventArgs e)
+		{
+			Automatic = false;
+			if (client != null && client.MyBattle != null) client.ChangeMyStatus(null, cbReady.Checked, null);
+		}
 
 		void cbSide_DrawItem(object sender, DrawItemEventArgs e)
 		{
@@ -741,49 +786,7 @@ namespace ZeroKLobby.Notifications
 		{
 			Program.QuickMatchTracker.AdvertiseMySetup(null);
 		}
-
-		private void cbReady_CheckedChanged(object sender, EventArgs e)
-		{
-			cbReady.ImageIndex = cbReady.Checked ? 1 : 2;
-		}
-
-		private void cbReady_Click(object sender, EventArgs e)
-		{
-			Automatic = false;
-			if (client != null && client.MyBattle != null)
-			{
-				client.ChangeMyStatus(null, cbReady.Checked, null);
-			}
-		}
-
-		private bool Automatic
-		{
-			get
-			{
-				return cbAuto.Checked;
-			}
-			set
-			{
-				
-				cbAuto.Checked = value;
-				lbMin.Visible = value;
-				numMinValue.Visible = value;
-			}
-		}
-
-		private void cbAuto_CheckStateChanged(object sender, EventArgs e)
-		{
-			if (cbAuto.CheckState == CheckState.Checked)
-			{
-				Automatic = true;
-			} else if (cbAuto.CheckState == CheckState.Unchecked)
-			{
-				Automatic = false;
-			}
-		}
 	}
-
-
 
 
 	class SideItem

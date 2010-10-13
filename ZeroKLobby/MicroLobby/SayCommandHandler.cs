@@ -45,10 +45,7 @@ namespace ZeroKLobby.MicroLobby
                     else if (words[0] == "/raw") Program.TasClient.SendRaw(PlasmaShared.Utils.Glue(words, 1));
                     else if (words[0] == "/help") ActionHandler.ChangeTab(Tab.Help);
                     else
-                        FormMain.Instance.systrayIcon.ShowBalloonTip(5000,
-                                                                     "Command not recognized.",
-                                                                     "Consult the command reference in the help tab.",
-                                                                     ToolTipIcon.Info);
+											FormMain.Instance.NotifyUser("Command not recognized", false, false);  
                 }
             }
         }

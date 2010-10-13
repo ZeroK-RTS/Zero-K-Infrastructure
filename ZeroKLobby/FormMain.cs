@@ -4,6 +4,8 @@ using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Media;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using PlasmaDownloader;
@@ -202,6 +204,31 @@ namespace ZeroKLobby
 		void FormMain_SizeChanged(object sender, EventArgs e)
 		{
 			if (WindowState != FormWindowState.Minimized) lastState = WindowState;
+		}
+
+		public void NotifyUser(string message, bool useSound = false, bool useFlashing = false)
+		{
+			systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+			if (useSound) SystemSounds.Exclamation.Play();
+			if (useFlashing)
+			{
+				FlashWindow();
+			}
+		}
+
+		/// <summary>
+		/// Flashes window if its not foreground - until it is foreground
+		/// </summary>
+		protected void FlashWindow()
+		{
+			if (!Focused)
+			{
+				var info = new Utils.FLASHWINFO();
+				info.hwnd = Program.FormMain.Handle;
+				info.dwFlags = 0x0000000C | 0x00000003; // flash all until foreground
+				info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
+				Utils.FlashWindowEx(ref info);
+			}
 		}
 
 
