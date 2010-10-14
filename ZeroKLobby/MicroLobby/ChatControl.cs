@@ -402,7 +402,13 @@ namespace ZeroKLobby.MicroLobby
             {
                 if (e.Place == TasSayEventArgs.Places.Channel)
                 {
-                    if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));
+									if (e.Text.Contains(Program.Conf.LobbyPlayerName))
+									{
+										FormMain.Instance.NotifyUser(string.Format("{0}: {1}", e.UserName, e.Text), false, true);
+										FormMain.Instance.ChatTab.Flash(e.Channel);
+									}
+
+									if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));
                     else AddLine(new SaidExLine(e.UserName, e.Text));
                 }
             }

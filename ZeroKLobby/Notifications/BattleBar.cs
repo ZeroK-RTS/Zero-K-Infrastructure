@@ -100,7 +100,7 @@ namespace ZeroKLobby.Notifications
 					else
 					{
 						FormMain.Instance.NotifyUser("Someone demands your attention in battle room!", true, true);
-						FormMain.Instance.ChatTab.Hilite("Battle");
+						FormMain.Instance.ChatTab.Flash("Battle");
 					}
 				};
 			client.Said += (s, e) =>

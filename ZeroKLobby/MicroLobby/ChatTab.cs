@@ -22,6 +22,11 @@ namespace ZeroKLobby.MicroLobby
 					toolTabs.Hilite(channel);
 				}
 
+				public void Flash(string channel)
+				{
+					toolTabs.Flash(channel);
+				}
+
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public ChatTab()
