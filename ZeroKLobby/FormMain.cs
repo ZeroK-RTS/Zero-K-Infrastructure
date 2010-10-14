@@ -237,7 +237,7 @@ namespace ZeroKLobby
 			if (Program.Conf.StartMinimized) WindowState = FormWindowState.Minimized;
 			;
 			if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
-			else if (ApplicationDeployment.IsNetworkDeployed) Text += " " + ApplicationDeployment.CurrentDeployment.CurrentVersion;
+			else if (ApplicationDeployment.IsNetworkDeployed) Text = string.Format("Zero-K lobby  (v{0})",ApplicationDeployment.CurrentDeployment.CurrentVersion);
 			else Text += " not installed properly - update from http://zero-k.info/lobby";
 
 			Icon = Resources.ZkIcon;
