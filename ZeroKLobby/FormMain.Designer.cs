@@ -73,7 +73,7 @@ namespace ZeroKLobby
         // systrayIcon
         // 
         this.systrayIcon.ContextMenuStrip = this.trayStrip;
-        this.systrayIcon.Text = "Spring Downloader";
+        this.systrayIcon.Text = "Zero-K";
         this.systrayIcon.Visible = true;
         this.systrayIcon.Click += new System.EventHandler(this.systrayIcon_Click);
         this.systrayIcon.MouseDown += new System.Windows.Forms.MouseEventHandler(this.systrayIcon_MouseDown);
@@ -307,7 +307,7 @@ namespace ZeroKLobby
         this.Controls.Add(this.tableLayoutPanel1);
         this.MinimumSize = new System.Drawing.Size(550, 300);
         this.Name = "FormMain";
-        this.Text = "Spring Downloader";
+        this.Text = "Zero-K";
         this.Load += new System.EventHandler(this.MainForm_Load);
         this.SizeChanged += new System.EventHandler(this.FormMain_SizeChanged);
         this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);

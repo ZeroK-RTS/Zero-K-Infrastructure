@@ -31,7 +31,7 @@
     <StartupObject>
     </StartupObject>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
-    <PublishUrl>ftp://planet-wars.eu/sd/</PublishUrl>
+    <PublishUrl>ftp://zero-k.info/zero-k.info/www/lobby/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
     <UpdateEnabled>true</UpdateEnabled>
@@ -41,17 +41,17 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://planet-wars.eu/sd/</InstallUrl>
-    <SupportUrl>http://caspring.org/wiki/sd</SupportUrl>
-    <ErrorReportUrl>http://code.google.com/p/summerspring/issues/entry</ErrorReportUrl>
-    <ProductName>Zero-K lobby</ProductName>
-    <PublisherName>Spring</PublisherName>
+    <InstallUrl>http://zero-k.info/lobby/</InstallUrl>
+    <SupportUrl>http://zero-k.info/</SupportUrl>
+    <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
+    <ProductName>Zero-K</ProductName>
+    <PublisherName>Zero-K</PublisherName>
     <MinimumRequiredVersion>2.1.0.10</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>39</ApplicationRevision>
-    <ApplicationVersion>2.2.0.%2a</ApplicationVersion>
+    <ApplicationRevision>40</ApplicationRevision>
+    <ApplicationVersion>2.3.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
