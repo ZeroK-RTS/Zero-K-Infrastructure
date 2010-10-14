@@ -103,7 +103,7 @@ namespace LobbyClient
         {
             if (IsEnabled)
             {
-                if (CurrentMode == BattleMode.QuickMatch) return string.Format("{2} {0} {1}", MinPlayers, GameName, IsSpectating ? "Speccing" : "QuickMatch");
+							if (CurrentMode == BattleMode.QuickMatch) return string.Format("{2} {0} {1}", MinPlayers > 0 ? MinPlayers.ToString(): "", GameName, IsSpectating ? "Speccing" : "QuickMatch");
                 else if (CurrentMode == BattleMode.Follow) return string.Format("following {0}", GameName);
                 else return string.Format("waiting {0}", MinPlayers);
             }

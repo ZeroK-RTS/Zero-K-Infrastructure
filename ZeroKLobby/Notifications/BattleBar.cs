@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Media;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
@@ -24,6 +23,7 @@ namespace ZeroKLobby.Notifications
 				cbAuto.Checked = value;
 				lbMin.Visible = value;
 				numMinValue.Visible = value;
+				Program.QuickMatchTracker.AdvertiseMySetup(null);				
 			}
 		}
 		bool IsQuickPlayActive { get { return client.IsLoggedIn && !spring.IsRunning && isVisible && currentBattleMode == BattleMode.QuickMatch; } }
@@ -102,7 +102,6 @@ namespace ZeroKLobby.Notifications
 						FormMain.Instance.NotifyUser("Someone demands your attention in battle room!", true, true);
 						FormMain.Instance.ChatTab.Hilite("Battle");
 					}
-
 				};
 			client.Said += (s, e) =>
 				{
@@ -337,7 +336,7 @@ namespace ZeroKLobby.Notifications
 		{
 			if (!isVisible) return new QuickMatchInfo();
 			return new QuickMatchInfo(currentBattleMode == BattleMode.Follow ? followedPlayer : gameInfosDisplayText,
-			                          (int)numMinValue.Value,
+			                          Automatic ? (int)numMinValue.Value : 0,
 			                          currentBattleMode,
 			                          cbSpectate.Checked);
 		}
@@ -451,7 +450,9 @@ namespace ZeroKLobby.Notifications
 			{
 				client.Say(TasClient.SayPlace.Battle,
 				           "",
-				           string.Format("Using Zero-K ( http://zero-k.info/lobby ), waiting for {0} players. Spec me with !specafk if you want to play with less.", (int)numMinValue.Value),
+				           string.Format(
+				           	"Using Zero-K ( http://zero-k.info/lobby ), waiting for {0} players. Spec me with !specafk if you want to play with less.",
+				           	(int)numMinValue.Value),
 				           false);
 			}
 
