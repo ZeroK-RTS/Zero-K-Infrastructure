@@ -23,7 +23,7 @@ function clearinput(a) { document.getElementById(a).value = ""; }
 
 <body id="screen" onload="SwitchContent('showme','hideme','','');">
 
-<?include("menu.inc");?>
+<?php include("menu.inc");?>
 
 <div id="screenshots" class="midl">
 <center>
@@ -41,5 +41,5 @@ for( $i = 2; $i <= count($thumbs); $i++)
 </center>
 </div> <!-- close screenshots -->
 
-<?include("footer.inc");?>
+<?phpinclude("footer.inc");?>
 

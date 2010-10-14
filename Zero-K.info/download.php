@@ -23,7 +23,7 @@ function clearinput(a) { document.getElementById(a).value = ""; }
 
 <body id="dl" onload="SwitchContent('showme','hideme','','');">
 
-<?include("menu.inc");?>
+<?phpinclude("menu.inc");?>
 
 <div id="download" class="midl">
 	<p>The installer is not yet fully operational. There are a few things that need to be completed beforehand. For now you'll just have to follow three easy steps to start playing. These are outlined below.</p>
@@ -73,5 +73,5 @@ sudo aptitude install ca-installer</pre>
 	</div>
 </div> <!-- close download -->
 
-<?include("footer.inc");?>
+<?phpinclude("footer.inc");?>
 

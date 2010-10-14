@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<?
+<?php
+exit ("Not public yet!");
 $screenshots = scandir('img/screenshots');
 
 $count = count($screenshots);
@@ -36,14 +37,14 @@ function clearinput(a) { document.getElementById(a).value = ""; }
 
 //--></script>
 <style type="text/css" > 
-body { background: #000 url('img/screenshots/<? echo $screenshot; ?>') no-repeat fixed top center; } 
+body { background: #000 url('img/screenshots/<?php echo $screenshot; ?>') no-repeat fixed top center; } 
 </style>
 
 </head>
 
 <body id="index" onload="SwitchContent('showme','hideme','','');">
 
-<?include("menu.inc");?>
+<?phpinclude("menu.inc");?>
 
 <div id="rlist">
 
@@ -132,7 +133,7 @@ body { background: #000 url('img/screenshots/<? echo $screenshot; ?>') no-repeat
 	</div> <!-- close newslette -->
 </div> <!-- close news -->
 
-<?include("footer.inc");?>
+<?phpinclude("footer.inc");?>
 
 <!-- lulz... look at the award I got! :P
 <p>
