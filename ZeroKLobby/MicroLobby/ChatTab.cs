@@ -149,8 +149,9 @@ namespace ZeroKLobby.MicroLobby
                     return;
                 }
 
-                if (e.Place == TasSayEventArgs.Places.Channel && !IsIgnoredChannel(e.Channel)) toolTabs.Hilite(e.Channel);
-                else if (e.Place == TasSayEventArgs.Places.Normal)
+								if (e.Place == TasSayEventArgs.Places.Battle) toolTabs.Hilite("Battle");
+								if (e.Place == TasSayEventArgs.Places.Channel && !IsIgnoredChannel(e.Channel)) toolTabs.Hilite(e.Channel);
+								else if (e.Place == TasSayEventArgs.Places.Normal)
                 {
                     var otherUserName = e.Origin == TasSayEventArgs.Origins.Player ? e.Channel : e.UserName;
                     var pmControl = GetPrivateMessageControl(otherUserName) ?? CreatePrivateMessageControl(otherUserName);
