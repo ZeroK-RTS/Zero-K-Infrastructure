@@ -384,5 +384,9 @@ namespace ZeroKLobby
 
 			return sr.ReadToEnd();
 		}
+
+		/// <returns>windowhandle</returns>
+		[DllImport("user32.dll")]
+		public static extern int GetForegroundWindow();
 	}
 }

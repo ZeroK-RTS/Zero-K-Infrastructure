@@ -12,6 +12,7 @@ namespace ZeroKLobby.Notifications
 		NotifyBarContainer container;
 		readonly ApplicationDeployment deployment;
 		readonly Timer timer;
+		static bool closedByUser = false;
 
 		public NewVersionBar()
 		{
@@ -35,7 +36,7 @@ namespace ZeroKLobby.Notifications
 				UpdateCheckInfo updateInfo;
 				if ((updateInfo = deployment.CheckForDetailedUpdate()) != null && updateInfo.UpdateAvailable)
 				{
-					Program.FormMain.InvokeFunc(() =>
+					if (!closedByUser) Program.FormMain.InvokeFunc(() =>
 						{
 							lbText.Text = string.Format("Updating to Zero-K lobby {0}", updateInfo.AvailableVersion);
 							Program.NotifySection.AddBar(this);
@@ -59,6 +60,7 @@ namespace ZeroKLobby.Notifications
 
 		public void CloseClicked(NotifyBarContainer container)
 		{
+			closedByUser = true;
 			Program.NotifySection.RemoveBar(this);
 		}
 
@@ -74,7 +76,7 @@ namespace ZeroKLobby.Notifications
 
 		void deployment_UpdateCompleted(object sender, AsyncCompletedEventArgs e)
 		{
-			Program.FormMain.InvokeFunc(() =>
+			if (!closedByUser) Program.FormMain.InvokeFunc(() =>
 				{
 					if (!e.Cancelled && e.Error == null)
 					{
@@ -92,7 +94,7 @@ namespace ZeroKLobby.Notifications
 
 		void deployment_UpdateProgressChanged(object sender, DeploymentProgressChangedEventArgs e)
 		{
-			Program.FormMain.InvokeFunc(() => { progressBar1.Value = e.ProgressPercentage; });
+			if (!closedByUser) Program.FormMain.InvokeFunc(() => { progressBar1.Value = e.ProgressPercentage; });
 		}
 	}
 }

@@ -17,14 +17,14 @@ namespace ZeroKLobby.MicroLobby
         BattleChatControl battleChatControl;
         readonly ToolTabs toolTabs = new ToolTabs { Dock = DockStyle.Fill };
 
-				public void Hilite(string channel)
+				public bool Hilite(string channel)
 				{
-					toolTabs.Hilite(channel);
+					return toolTabs.Hilite(channel);
 				}
 
-				public void Flash(string channel)
+				public bool Flash(string channel)
 				{
-					toolTabs.Flash(channel);
+					return toolTabs.Flash(channel);
 				}
 
 
@@ -159,9 +159,8 @@ namespace ZeroKLobby.MicroLobby
                     else pmControl.AddLine(new SaidExLine(e.UserName, e.Text));
                     if (e.UserName != Program.TasClient.MyUser.Name)
                     {
-                        toolTabs.Flash(otherUserName);
-                        toolTabs.Hilite(otherUserName);
-												FormMain.Instance.NotifyUser(string.Format("{0}: {1}", otherUserName, e.Text), false, true);
+                    	toolTabs.Hilite(otherUserName);
+											FormMain.Instance.NotifyUser(string.Format("{0}: {1}", otherUserName, e.Text), false, true);
                     }
                 }
             }

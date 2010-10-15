@@ -208,12 +208,11 @@ namespace ZeroKLobby
 
 		public void NotifyUser(string message, bool useSound = false, bool useFlashing = false)
 		{
-			systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+			bool isHidden = WindowState == FormWindowState.Minimized || Visible == false || Utils.GetForegroundWindow() != (int)Handle;
+			// todo use this when its easy to determine what is user looking at (flash when message not seen)
+			if (!string.IsNullOrEmpty(message)) systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+			if (isHidden && useFlashing) FlashWindow();
 			if (useSound) SystemSounds.Exclamation.Play();
-			if (useFlashing)
-			{
-				FlashWindow();
-			}
 		}
 
 		/// <summary>

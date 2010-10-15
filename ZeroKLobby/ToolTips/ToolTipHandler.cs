@@ -89,11 +89,7 @@ namespace ZeroKLobby.ToolTips
             UpdateTooltip(control, GetUserToolTipString(name));
         }
 
-        /// <returns>windowhandle</returns>
-        [DllImport("user32.dll")]
-        static extern int GetForegroundWindow();
-
-        void RefreshToolTip(bool invalidate, bool doActiveWindowCheck)
+    	void RefreshToolTip(bool invalidate, bool doActiveWindowCheck)
         {
             if (Program.FormMain != null && Program.FormMain.IsHandleCreated && !Program.CloseOnNext && Program.FormMain.Visible &&
                 Program.FormMain.WindowState != FormWindowState.Minimized)
@@ -110,7 +106,7 @@ namespace ZeroKLobby.ToolTips
                         tooltip.Dispose();
                     }
 
-                    if (doActiveWindowCheck) isWindowActive = GetForegroundWindow() == (int)Program.FormMain.Handle;
+                    if (doActiveWindowCheck) isWindowActive = Utils.GetForegroundWindow() == (int)Program.FormMain.Handle;
 
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive)
                     {
