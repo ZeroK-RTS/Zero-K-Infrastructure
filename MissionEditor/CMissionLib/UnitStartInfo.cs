@@ -81,13 +81,13 @@ namespace CMissionLib
 
 		public LuaTable GetLuaMap(Mission mission)
 		{
-			var map = new Dictionary<string, object>
+			var map = new Dictionary<object, object>
 			{
 				{"unitDefName", UnitDef.Name},
 				{"x", mission.ToIngameX(X)},
 				{"y", mission.ToIngameY(Y)},
 				{"player", mission.Players.IndexOf(Player)},
-				{"groups", new LuaTable(Groups)},
+				{"groups", LuaTable.CreateSet(Groups)},
 				{"heading", Heading}
 			};
 			return new LuaTable(map);

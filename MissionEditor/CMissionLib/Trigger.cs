@@ -104,7 +104,7 @@ namespace CMissionLib
 			var logicMaps = new List<LuaTable>();
 			foreach (var item in Logic)
 			{
-				var itemMap = new Dictionary<string, object>
+				var itemMap = new Dictionary<object, object>
 					{
 						{"logicType", item.GetType().Name},
 						{"args", item.GetLuaTable(mission)},
@@ -112,9 +112,9 @@ namespace CMissionLib
 					};
 				logicMaps.Add(new LuaTable(itemMap));
 			}
-			var map = new Dictionary<string, object>
+			var map = new Dictionary<object, object>
 				{
-					{"logic", new LuaTable(logicMaps)},
+					{"logic", LuaTable.CreateArray(logicMaps)},
 					{"maxOccurrences", MaxOccurrences},
 					{"enabled", enabled},
 					{"probability", Probability},

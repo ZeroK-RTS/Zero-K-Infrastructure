@@ -23,10 +23,10 @@ namespace CMissionLib.Conditions
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{
-			var map = new Dictionary<string, object>
+			var map = new Dictionary<object, object>
 				{
-					{"units", new LuaTable(Units)},
-					{"players", new LuaTable(Players.Select(p => mission.Players.IndexOf(p)).Cast<object>())},
+					{"units", LuaTable.CreateArray(Units)},
+					{"players", LuaTable.CreateArray(Players.Select(p => mission.Players.IndexOf(p)))},
 				};
 			return new LuaTable(map);
 		}

@@ -25,6 +25,7 @@ namespace CMissionLib
 		ObservableCollection<string> disabledGadgets = new ObservableCollection<string>();
 		ObservableCollection<string> disabledUnits = new ObservableCollection<string>();
 		ObservableCollection<string> disabledWidgets = new ObservableCollection<string>();
+		ObservableCollection<Region> regions = new ObservableCollection<Region>();
 		Map map;
 		string mapName;
 		int maxUnits = 5000;
@@ -37,6 +38,8 @@ namespace CMissionLib
 		int startingMetal = 1000;
 		Player startingPlayer = new Player {Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true};
 		ObservableCollection<Trigger> triggers = new ObservableCollection<Trigger>();
+
+		
 
 		public Mission(string name, Mod game, Map map)
 		{
@@ -234,7 +237,17 @@ namespace CMissionLib
 
 		public IEnumerable<string> AllGroups
 		{
-			get { return AllUnits.SelectMany(u => u.Groups).Distinct(); }
+			get
+			{
+				var groups = new List<string>();
+				groups.AddRange(AllUnits.SelectMany(u => u.Groups));
+				groups.AddRange(AllLogic.OfType<GiveFactoryOrdersAction>().SelectMany(a => a.BuiltUnitsGroups));
+				foreach (var player in players)
+				{
+					groups.Add("Latest Factory Built Unit (" + player.Name + ")");
+				}
+				return groups.Distinct();
+			}
 		}
 
 		public IEnumerable<string> Alliances
@@ -252,6 +265,13 @@ namespace CMissionLib
 		{
 			get { return startingPlayer; }
 			set { startingPlayer = value; }
+		}
+
+		[DataMember]
+		public ObservableCollection<Region> Regions
+		{
+			get { return regions; }
+			set { regions = value; RaisePropertyChanged("Regions"); }
 		}
 
 		public double ToIngameX(double x)
@@ -287,6 +307,8 @@ namespace CMissionLib
 				}
 				player.AI = ai;
 			}
+			// compatibility
+			if (regions == null) regions = new ObservableCollection<Region>();
 		}
 
 		public Trigger FindLogicOwner(TriggerLogic l)
@@ -301,13 +323,18 @@ namespace CMissionLib
 
 		LuaTable GetLuaTable()
 		{
-			var luaMap = new Dictionary<string, object>
+			var luaMap = new Dictionary<object, object>
 				{
-					{"triggers", new LuaTable(triggers.Select(t => t.GetLuaMap(this)))},
+#if DEBUG
+					{"debug", true},
+#endif
+					{"map", Map.Name},
+					{"players", LuaTable.CreateArray(players.Select(p => p.Name))},
+					{"triggers", LuaTable.CreateArray(triggers.Select(t => t.GetLuaMap(this)))},
 					{"startPlayer", Players.IndexOf(StartingPlayer)},
-					{"disabledUnits", new LuaTable(DisabledUnits)},
+					{"disabledUnits", LuaTable.CreateArray(DisabledUnits)},
 					{"scoringMethod", scoringMethod},
-					{"counters", new LuaTable(Counters)},
+					{"counters", LuaTable.CreateArray(Counters)},
 				};
 			return new LuaTable(luaMap);
 		}
@@ -367,7 +394,7 @@ namespace CMissionLib
 			line("HostPort", "8452");
 			line("IsHost", "1");
 			line("MyPlayerNum", Players.IndexOf(StartingPlayer));
-			line("MyPlayerName", StartingPlayer.Name.Replace(" ", "_"));
+			line("MyPlayerName", StartingPlayer.Name.Replace(' ', '_'));
 			line("NumPlayers", Players.Count(p => p.IsHuman));
 			line("NumTeams", Players.Count);
 			line("NumUsers", Players.Count);

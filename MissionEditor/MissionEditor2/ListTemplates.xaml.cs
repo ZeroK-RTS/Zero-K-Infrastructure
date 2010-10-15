@@ -40,6 +40,10 @@ namespace MissionEditor2
 			{
 				logicItemUnitList = ((UnitFinishedCondition) currentLogic).Units;
 			}
+			else if (currentLogic is UnitFinishedInFactoryCondition)
+			{
+				logicItemUnitList = ((UnitFinishedInFactoryCondition)currentLogic).Units;
+			}
 			else if (currentLogic is LockUnitsAction)
 			{
 				logicItemUnitList = ((LockUnitsAction) currentLogic).Units;
@@ -90,6 +94,10 @@ namespace MissionEditor2
 			else if (currentLogic is UnitFinishedCondition)
 			{
 				unitList.BindCollection(((UnitFinishedCondition) currentLogic).Players);
+			}
+			else if (currentLogic is UnitFinishedInFactoryCondition)
+			{
+				unitList.BindCollection(((UnitFinishedInFactoryCondition)currentLogic).Players);
 			}
 		}
 

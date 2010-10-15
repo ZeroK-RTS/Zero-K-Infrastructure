@@ -31,6 +31,7 @@ namespace MissionEditor2
 		public static readonly DependencyProperty MissionProperty;
 		DragInfo dragInfo;
 		Canvas transparentCanvas;
+		MenuItem regions;
 
 		static MainWindow()
 		{
@@ -111,12 +112,14 @@ namespace MissionEditor2
 					addAction("Unit Damaged", () => new UnitDamagedCondition());
 					addAction("Unit Destroyed", () => new UnitDestroyedCondition());
 					addAction("Unit Finished", () => new UnitFinishedCondition());
+					addAction("Unit Finished In Factory", () => new UnitFinishedInFactoryCondition());
 					addAction("Units Are In Area", () => new UnitsAreInAreaCondition());
 				}
 				else if (kvp.Key == "Actions")
 				{
 					var centerMapX = Mission.Map.Texture.Width/2;
 					var centerMapY = Mission.Map.Texture.Height/2;
+					addAction("Allow Unit Transfers", () => new AllowUnitTransfersAction());
 					addAction("Cancel Countdown", () => new CancelCountdownAction(Mission.Countdowns.FirstOrDefault()));
 					addAction("Cause Defeat", () => new DefeatAction());
 					addAction("Cause Sunrise", () => new SunriseAction());
@@ -129,7 +132,7 @@ namespace MissionEditor2
 					addAction("Display Counters", () => new DisplayCountersAction());
 					addAction("Enable Triggers", () => new EnableTriggersAction());
 					addAction("Execute Triggers", () => new ExecuteTriggersAction());
-					// addAction("Give Factory Orders", () => new GiveFactoryOrdersAction());
+					addAction("Give Factory Orders", () => new GiveFactoryOrdersAction());
 					addAction("Give Orders", () => new GiveOrdersAction());
 					addAction("Lock Units", () => new LockUnitsAction());
 					addAction("Make Units Always Visible", () => new MakeUnitsAlwaysVisibleAction());
@@ -531,6 +534,9 @@ namespace MissionEditor2
 			logic.AddAction("Rename Item", () => RenameLogicItem(CurrentLogic));
 			logic.AddAction("Move Up", () => MoveItem(MoveDirection.Up, CurrentLogic));
 			logic.AddAction("Move Down", () => MoveItem(MoveDirection.Down, CurrentLogic));
+			//regions = MainMenu.AddContainer("Regions");
+			//regions.Click += regions_Click;
+
 			var help = MainMenu.AddContainer("Help");
 			help.AddAction("Basic Help", () => new Help().ShowDialog());
 
@@ -541,6 +547,31 @@ namespace MissionEditor2
 				MessageBox.Show("A mission needs to be selected");
 				Environment.Exit(0);
 			}
+		}
+
+		void regions_Click(object sender, RoutedEventArgs e)
+		{
+			regions.Items.Clear();
+			foreach (var region in Mission.Regions)
+			{
+				regions.AddAction(region.Name, delegate
+					{
+						var window = new Window { Content = new AreaControl(region) };
+						window.ShowDialog();
+					});
+			}
+			var newRegionItem = new MenuItem{Header = "New Region"};
+			newRegionItem.Click += newRegionItem_Click;
+			regions.Items.Add(newRegionItem);
+		}
+
+		void newRegionItem_Click(object sender, RoutedEventArgs e)
+		{
+
+			var region = new Region {Name = "New Region"};
+			Mission.Regions.Add(region);
+			var window = new Window { Content = new AreaControl(region) };
+			window.ShowDialog();
 		}
 
 		public string SavePath { get; set; }

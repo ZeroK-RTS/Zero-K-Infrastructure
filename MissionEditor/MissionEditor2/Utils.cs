@@ -65,7 +65,10 @@ namespace MissionEditor2
 				{
 					if (!collection.Contains((T)item)) collection.Add((T)item);
 				}
-				foreach (var item in e.RemovedItems) collection.Remove((T)item);
+				foreach (var item in e.RemovedItems)
+				{
+					collection.Remove((T)item);
+				}
 			};
 			list.SelectionChanged += onSelectionChanged;
 			// this needs to be done before "Unloaded" because at that point the items will have been all deselected

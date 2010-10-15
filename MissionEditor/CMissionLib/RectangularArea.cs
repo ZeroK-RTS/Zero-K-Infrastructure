@@ -61,7 +61,7 @@ namespace CMissionLib
 
 		public override LuaTable GetLuaMap(Mission mission)
 		{
-			var map = new Dictionary<string, object>
+			var map = new Dictionary<object, object>
 				{
 					{"category", "rectangle"},
 					{"x", mission.ToIngameX(X)},

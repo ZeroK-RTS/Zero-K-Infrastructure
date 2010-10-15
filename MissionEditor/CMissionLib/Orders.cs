@@ -17,7 +17,7 @@ namespace CMissionLib
 		public abstract string OrderType { get; }
 		public LuaTable GetLuaMap(Mission mission)
 		{
-			return new LuaTable(new object[0]);
+			return LuaTable.Empty;
 		}
 	}
 
@@ -35,10 +35,10 @@ namespace CMissionLib
 		public abstract string OrderType { get; }
 		public LuaTable GetLuaMap(Mission mission)
 		{
-			var map = new Dictionary<string, object>
+			var map = new Dictionary<object, object>
 				{
 					{"orderType", OrderType},
-					{"args", new LuaTable(new object[] { Mode })},
+					{"args", LuaTable.CreateArray(new [] { Mode })},
 				};
 			return new LuaTable(map);
 		}
@@ -55,8 +55,8 @@ namespace CMissionLib
 
 		public LuaTable GetLuaMap(Mission mission)
 		{
-			var args = new LuaTable(new object[] { mission.ToIngameX(X), 0, mission.ToIngameY(Y) });
-			var map = new Dictionary<string, object>
+			var args = LuaTable.CreateArray(new [] { mission.ToIngameX(X), 0, mission.ToIngameY(Y) });
+			var map = new Dictionary<object, object>
 				{
 					{"orderType", OrderType},
 					{"args", args},

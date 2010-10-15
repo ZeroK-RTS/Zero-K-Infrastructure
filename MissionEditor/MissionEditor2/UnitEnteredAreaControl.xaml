@@ -7,24 +7,21 @@
     <UserControl.Resources>
         <local:ZoomConverter x:Key="log10Converter" />
     </UserControl.Resources>
-	<ad:DockingManager>
-		<ad:ResizingPanel Orientation="Horizontal">
-			<ad:DockablePane>
-				<ad:DockableContent Title="Settings">
-					<StackPanel>
-						<Label>Groups</Label>
-						<ListBox x:Name="groupsList" ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" />
-						<Label>Players</Label>
-						<ListBox x:Name="alliancesList" ItemsSource="{Binding Mission.Players, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" />
-						<DockPanel>
-							<Label>Minimum units</Label>
-							<TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
-						</DockPanel>
-                        <DataGrid AutoGenerateColumns="True" ItemsSource="{Binding Children, ElementName=canvas}">
-                            
-                        </DataGrid>
-						<GroupBox Header="Help">
-							<TextBlock TextWrapping="WrapWithOverflow">
+    <ad:DockingManager>
+        <ad:ResizingPanel Orientation="Horizontal">
+            <ad:DockablePane>
+                <ad:DockableContent Title="Settings">
+                    <StackPanel>
+                        <Label>Groups</Label>
+                        <ListBox x:Name="groupsList" ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" />
+                        <Label>Players</Label>
+                        <ListBox x:Name="alliancesList" ItemsSource="{Binding Mission.Players, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" />
+                        <DockPanel>
+                            <Label>Minimum units</Label>
+                            <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+                        <GroupBox Header="Help">
+                            <TextBlock TextWrapping="WrapWithOverflow">
 								This condition is met when a unit enters the drawn area.
 								<LineBreak />
 								It will be triggered repeatedly while the unit is in the area. Set the trigger counter to one if this is not desirable.
@@ -34,35 +31,35 @@
 								Note: You can add units to groups by editing the group column of the unit list in the Create Units display, or right-clicking on unit icons.
 								<LineBreak />
 								Separate multiple groups with commas and no spaces.
-							</TextBlock>
-						</GroupBox>
-					</StackPanel>
-				</ad:DockableContent>
-			</ad:DockablePane>
-			<DockPanel>
-				<ToolBarTray DockPanel.Dock="Top">
+                            </TextBlock>
+                        </GroupBox>
+                    </StackPanel>
+                </ad:DockableContent>
+            </ad:DockablePane>
+            <DockPanel>
+                <ToolBarTray DockPanel.Dock="Top">
                     <ToolBar x:Name="toolbar">
                         <ToggleButton x:Name="circleButton" Click="button_Click">Circle</ToggleButton>
                         <ToggleButton x:Name="rectangleButton" Click="button_Click">Rectangle</ToggleButton>
                         <ToggleButton x:Name="deleteButton" Click="button_Click">Delete</ToggleButton>
                     </ToolBar>
                 </ToolBarTray>
-				<ScrollViewer HorizontalScrollBarVisibility="Auto">
-					<Grid>
-						<Canvas x:Name="canvas" DataContext="{Binding Mission.Map.Texture, ElementName=window}" MinHeight="{Binding Height}"
+                <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Canvas x:Name="canvas" DataContext="{Binding Mission.Map.Texture, ElementName=window}" MinHeight="{Binding Height}"
 						        MinWidth="{Binding Width}" MouseDown="canvas_MouseDown" PreviewMouseUp="canvas_PreviewMouseUp" >
-							<Canvas.LayoutTransform>
-								<ScaleTransform ScaleX="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}"
+                            <Canvas.LayoutTransform>
+                                <ScaleTransform ScaleX="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}"
 								                ScaleY="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}" />
-							</Canvas.LayoutTransform>
-							<Canvas.Background>
-								<ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding}" />
-							</Canvas.Background>
-						</Canvas>
-					</Grid>
-				</ScrollViewer>
-			</DockPanel>
-		</ad:ResizingPanel>
-	</ad:DockingManager>
+                            </Canvas.LayoutTransform>
+                            <Canvas.Background>
+                                <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding}" />
+                            </Canvas.Background>
+                        </Canvas>
+                    </Grid>
+                </ScrollViewer>
+            </DockPanel>
+        </ad:ResizingPanel>
+    </ad:DockingManager>
 
 </UserControl>

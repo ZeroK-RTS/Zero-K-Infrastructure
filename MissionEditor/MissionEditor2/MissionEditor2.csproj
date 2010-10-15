@@ -36,6 +36,9 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AvalonDock">
       <HintPath>..\Libraries\AvalonDock.dll</HintPath>
@@ -65,11 +68,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="DragInfo.xaml.cs" />
-    <Compile Include="FactoryBuildOrdersPane.xaml.cs">
-      <DependentUpon>FactoryBuildOrdersPane.xaml</DependentUpon>
+    <Compile Include="AreaControl.xaml.cs">
+      <DependentUpon>AreaControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AreaDragInfo.xaml.cs" />
+    <Compile Include="CircleDragInfo.xaml.cs" />
+    <Compile Include="DragInfo.xaml.cs" />
+    <Compile Include="GiveFactoryOrdersPane.xaml.cs">
+      <DependentUpon>GiveFactoryOrdersPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NoArea.xaml.cs" />
     <Compile Include="PublishDialog.xaml.cs" />
+    <Compile Include="RectangleDragInfo.xaml.cs" />
     <Compile Include="Service References\ServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -91,11 +101,15 @@
       <DependentUpon>WelcomeDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ZoomConverter.cs" />
+    <Page Include="AreaControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CreateUnitsPane.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="FactoryBuildOrdersPane.xaml">
+    <Page Include="GiveFactoryOrdersPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
+    <Compile Include="Actions\AllowUnitTransfersAction.cs" />
     <Compile Include="Actions\GiveFactoryOrdersAction.cs" />
     <Compile Include="Actions\StartCountdownAction.cs" />
     <Compile Include="Actions\CancelCountdownAction.cs" />
@@ -79,7 +80,7 @@
     <Compile Include="Actions\UnlockUnitsAction.cs" />
     <Compile Include="Actions\WaitAction.cs" />
     <Compile Include="Area.cs" />
-    <Compile Include="Conditions\Condition.cs" />
+    <Compile Include="Condition.cs" />
     <Compile Include="Conditions\CountdownTickCondition.cs" />
     <Compile Include="Actions\ConsoleMessageAction.cs" />
     <Compile Include="Actions\CreateUnitsAction.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Conditions\UnitDamagedCondition.cs" />
     <Compile Include="Conditions\UnitDestroyedCondition.cs" />
     <Compile Include="Conditions\UnitFinishedCondition.cs" />
+    <Compile Include="Conditions\UnitFinishedInFactoryCondition.cs" />
     <Compile Include="Conditions\UnitsAreInAreaCondition.cs" />
     <Compile Include="Cylinder.cs" />
     <Compile Include="Actions\DefeatAction.cs" />
@@ -110,6 +112,7 @@
     <Compile Include="Actions\SunsetAction.cs" />
     <Compile Include="Actions\SetCameraUnitTargetAction.cs" />
     <Compile Include="Conditions\UnitCreatedCondition.cs" />
+    <Compile Include="Region.cs" />
     <Compile Include="UnitSyncLib\MapTileHeader.cs" />
     <Compile Include="Mission.cs" />
     <Compile Include="Orders.cs" />

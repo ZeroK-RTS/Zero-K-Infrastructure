@@ -7,25 +7,39 @@ namespace CMissionLib
 {
 	public class LuaTable
 	{
-		Dictionary<string, object> Map;
+		Dictionary<object, object> Map;
 
 		public LuaTable()
 		{
-			Map = new Dictionary<string, object>();
+			Map = new Dictionary<object, object>();
 		}
 
-		public LuaTable(IEnumerable<object> collection)
+		public static LuaTable Empty
+		{
+			get
+			{
+				return new LuaTable(new Dictionary<object, object>());
+			}
+		}
+
+		public static LuaTable CreateArray<T>(IEnumerable<T> collection)
 		{
 			var array = collection.ToArray();
-			var map = new Dictionary<string, object>();
+			var map = new Dictionary<object, object>();
 			for (var i = 0; i < array.Length; i++)
 			{
-				map.Add(String.Format("[{0}]", i  + 1), array[i]);
+				map.Add(i  + 1, array[i]);
 			}
-			Map = map;
+			return new LuaTable(map);
 		}
 
-		public LuaTable(Dictionary<string, object> map)
+		public static LuaTable CreateSet(IEnumerable<string> collection)
+		{
+			var map = collection.Distinct().ToDictionary<string, object, object>(item => item, item => true);
+			return new LuaTable(map);
+		}
+
+		public LuaTable(Dictionary<object, object> map)
 		{
 			Map = map;
 		}
@@ -51,9 +65,14 @@ namespace CMissionLib
 					else if (kvp.Value is float) value = kvp.Value.ToString();
 					else if (kvp.Value is bool) value = kvp.Value.ToString().ToLower();
 					else if (kvp.Value is string) value = "[[" + kvp.Value + "]]";
-					else throw new Exception("Unable to convert to lua: " + kvp.Value.GetType().Name);
+					else throw new Exception("Unable to convert value type to lua: " + kvp.Value.GetType().Name);
 
-					sb.AppendFormat("{0}{1} = {2},\n", new String('\t', indentLevel + 1), kvp.Key, value);
+					string key;
+					if (kvp.Key is string) key = String.Format("[\"{0}\"]", kvp.Key);
+					else if (kvp.Key is int) key = String.Format("[{0}]", kvp.Key);
+					else throw new Exception("Unable to convert key type to lua: " + kvp.Key.GetType().Name);
+
+					sb.AppendFormat("{0}{1} = {2},\n", new String('\t', indentLevel + 1), key, value);
 				}
 				return String.Format("{{\n{0}{1}}}", sb, new String('\t', indentLevel));
 			}

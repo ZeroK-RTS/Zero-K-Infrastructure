@@ -59,7 +59,7 @@ namespace CMissionLib.Actions
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{
-			var map = new Dictionary<string, object>
+			var map = new Dictionary<object, object>
 				{
 					{"frames", Frames},
 				};

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 
@@ -20,7 +21,7 @@ namespace CMissionLib.Actions
 			set
 			{
 				factoryGroups = value;
-				RaisePropertyChanged("factoryGroups");
+				RaisePropertyChanged("FactoryGroups");
 			}
 		}
 
@@ -31,7 +32,7 @@ namespace CMissionLib.Actions
 			set
 			{
 				builtUnitsGroups = value;
-				RaisePropertyChanged("builtUnitsGroups");
+				RaisePropertyChanged("BuiltUnitsGroups");
 			}
 		}
 
@@ -59,7 +60,14 @@ namespace CMissionLib.Actions
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{
-			throw new NotImplementedException();
+			var map = new Dictionary<object, object>
+				{
+					{"buildOrders", LuaTable.CreateArray(buildOrders)},
+					{"builtUnitsGroups", LuaTable.CreateSet(builtUnitsGroups)},
+					{"factoryGroups", LuaTable.CreateSet(factoryGroups)},
+					{"repeatOrders", repeat},
+				};
+			return new LuaTable(map);
 		}
 	}
 }

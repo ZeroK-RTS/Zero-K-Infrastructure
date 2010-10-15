@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="MissionEditor2.GiveFactoryOrdersPane"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="clr-namespace:MissionEditor2" mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="804" Loaded="UserControl_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Filter By Factory" Grid.Column="1">
+            <local:UnitDefsGrid x:Name="factoryGrid" />
+        </GroupBox>
+        <DockPanel Grid.Column="2">
+            <UniformGrid DockPanel.Dock="Right" Columns="1" Rows="2" Margin="0,10,0,10">
+                <Button Click="AddButton_Click">>></Button>
+                <Button Click="RemoveButton_Click">&lt;&lt;</Button>
+            </UniformGrid>
+            <GroupBox  Header="Build Options">
+                <local:UnitDefsGrid x:Name="buildOptionsGrid" />
+            </GroupBox>
+        </DockPanel>
+        <Grid Grid.Column="3" >
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <GroupBox Grid.Row="0" Header="Build Queue">
+                <DataGrid x:Name="queueGrid" AutoGenerateColumns="False" Background="White" IsReadOnly="True" CanUserAddRows="True" CanUserDeleteRows="True" > 
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Name" Binding="{Binding Info.Name}"/>
+                        <DataGridTextColumn Header="Full Name" Binding="{Binding Info.FullName}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+            <CheckBox Grid.Row="1" IsChecked="{Binding Repeat}"  DockPanel.Dock="Bottom" Margin="5,5,5,5">Repeat</CheckBox>
+            <Button Grid.Row="2"  Click="MoveUpButton_Click">Move Up</Button>
+            <Button Grid.Row="3" Click="MoveDownButton_Click">Move Down</Button>
+        </Grid>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <GroupBox Grid.Row="0" Header="Give orders to factories in groups:">
+            <ListBox x:Name="factoryGroupsList"  ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectionMode="Multiple" />
+            </GroupBox>
+            <TextBlock Grid.Row="1" TextWrapping="Wrap" Foreground="Gray" Margin="5">
+                If no group is selected, build orders will be give to factories created in this trigger.
+            </TextBlock>
+            <GroupBox Grid.Row="2" Header="Assign built units to groups:">
+            <Button Grid.Row="4" x:Name="setGroupsButton" Click="SetGroupsButton_Click" />
+                </GroupBox>
+            <TextBlock Grid.Row="3" TextWrapping="Wrap" Foreground="Gray"  Margin="5">
+                If the factory is not in repeat mode, units ordered in this action will be placed in the above groups. <LineBreak />
+                If the factory is in repeat mode, <Span FontWeight="Bold">all</Span> units produced by this factory will be placed in the built units group.
+                
+            </TextBlock>
+        </Grid>
+    </Grid>
+</UserControl>

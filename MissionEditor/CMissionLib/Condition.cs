@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace CMissionLib.Conditions
+namespace CMissionLib
 {
 	[DataContract]
 	public abstract class Condition : TriggerLogic
@@ -9,7 +9,7 @@ namespace CMissionLib.Conditions
 
 		public string Category
 		{
-			get { return "Coditions"; }
+			get { return "Conditions"; }
 		}
 	}
 }

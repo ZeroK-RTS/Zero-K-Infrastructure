@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace CMissionLib.Conditions
 {
 	[DataContract]
-	public class UnitCreatedCondition : Condition
+	public class UnitFinishedInFactoryCondition : Condition
 	{
-		public UnitCreatedCondition()
-			: base("Unit Created")
+		public UnitFinishedInFactoryCondition()
+			: base("Unit Finished In Factory")
 		{
 			Players = new ObservableCollection<Player>();
 			Units = new ObservableCollection<string>();

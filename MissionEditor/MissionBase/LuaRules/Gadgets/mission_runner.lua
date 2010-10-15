@@ -23,10 +23,10 @@ if (gadgetHandler:IsSyncedCode()) then
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local mission = VFS.Include"mission.lua"
+local mission = VFS.Include("mission.lua")
 local triggers = mission.triggers -- array
 local allTriggers = {unpack(triggers)} -- we'll never remove triggers from here, so the indices will stay correct
-local unitGroups = {} -- key: unitID, value: group array
+local unitGroups = {} -- key: unitID, value: group set
 local gaiaTeamID = Spring.GetGaiaTeamID()
 local cheatingWasEnabled = false
 local scoreSent = false
@@ -36,7 +36,10 @@ local events = {} -- key: frame, value: event array
 local counters = {} -- key: name, value: count
 local countdowns = {} -- key: name, value: frame
 local displayedCountdowns = {} -- key: name
+local lastFinishedUnits = {} -- key: teamID, value: unitID
 local allowTransfer = false
+local factoryExpectedUnits = {} -- key: factoryID, value: {unitDefID, groups: group set}
+local repeatFactoryGroups = {} -- key: factoryID, value: group set
 
 for _, counter in ipairs(mission.counters) do
   counters[counter] = 0
@@ -45,11 +48,57 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+
+local function CopyTable(original)   -- Warning: circular table references lead to an infinite loop.
+  local copy = {}
+  for k, v in pairs(original) do
+    if (type(v) == "table") then
+      copy[k] = CopyTable(v)
+    else
+      copy[k] = v
+    end
+  end
+  return copy
+end
+
+
+local function ArrayToSet(array)
+  local set = {}
+  for i=1, #array do
+    set[array[i]] = true
+  end
+  return set
+end
+
+
+local function DoSetsIntersect(set1, set2)
+  for key in pairs(set1) do
+    if set2[key] then
+      return true
+    end
+  end
+  return false
+end
+
+
+local function MergeSets(set1, set2)
+  local result = {}
+  for key in pairs(set1) do
+    result[key] = true
+  end
+  for key in pairs(set2) do
+    result[key] = true
+  end
+  return result
+end
+
+
 -- overrules the transfer prohibition
 local function SpecialTransferUnit(...)
+  local oldAllowTransferState = allowTransfer
   allowTransfer = true
   Spring.TransferUnit(...)
-  allowTransfer = false
+  allowTransfer = oldAllowTransferState
 end
 
 local function FindFirstLogic(logicType)
@@ -102,12 +151,45 @@ local function ArrayContains(array, item)
   return false
 end
 
+local function StartsWith(s, startString)
+  return string.sub(s, 1, #startString) == startString
+end
+
+
+local function SetCount(set)
+  local count = 0
+  for _ in pairs(set) do
+    count = count + 1
+  end
+  return count
+end
+
+
+local function FindUnitsInGroup(searchGroup)
+  local results = {}
+  if StartsWith(searchGroup, "Latest Factory Built Unit (") then
+    for playerIndex, player in ipairs(mission.players) do
+      if searchGroup == "Latest Factory Built Unit ("..player..")" then
+        local _, _, _, teamID = Spring.GetPlayerInfo(playerIndex - 1)
+        if lastFinishedUnits[teamID] then
+          results[lastFinishedUnits[teamID]] = true
+        end
+      end
+    end
+  end
+  for unitID, groups in pairs(unitGroups) do
+    if groups[searchGroup] then
+      results[unitID] = true
+    end
+  end
+  return results
+end
+
+
 local function FindUnitsInGroups(searchGroups)
   local results = {}
-  for unitID, groups in pairs(unitGroups) do
-    if ArraysHaveIntersection(groups, searchGroups) then
-      table.insert(results, unitID)
-    end
+  for searchGroup in pairs(searchGroups) do
+    results = MergeSets(results, FindUnitsInGroup(searchGroup))
   end
   return results
 end
@@ -142,17 +224,16 @@ for condition in pairs(FindAllLogic"UnitFinishedCondition") do
   end
 end
 
+for condition in pairs(FindAllLogic"UnitFinishedInFactoryCondition") do
+  condition.args.unitDefIDs = {}
+  for _, unitName in ipairs(condition.args.units) do
+    condition.args.unitDefIDs[UnitDefNames[unitName].id] = true
+  end
+end
+
 local disabledUnitDefIDs = {}
 for _, disabledUnitName in ipairs(mission.disabledUnits) do
   disabledUnitDefIDs[UnitDefNames[disabledUnitName].id] = true
-end
-
-local function SetCount(set)
-  local count = 0
-  for _ in pairs(set) do
-    count = count + 1
-  end
-  return count
 end
 
 --------------------------------------------------------------------------------
@@ -208,7 +289,7 @@ local function ExecuteTrigger(trigger, frame)
         end
       elseif action.logicType == "DestroyUnitsAction" then
         Event = function()
-          for _, unitID in ipairs(FindUnitsInGroups{action.args.group}) do
+          for unitID in pairs(FindUnitsInGroup(action.args.group)) do
             Spring.DestroyUnit(unitID, true, not action.args.explode)
           end
         end
@@ -218,9 +299,13 @@ local function ExecuteTrigger(trigger, frame)
               ExecuteTrigger(allTriggers[triggerIndex])
           end
         end
+      elseif action.logicType == "AllowUnitTransfersAction" then
+        Event = function()
+          allowTransfer = true
+        end
       elseif action.logicType == "TransferUnitsAction" then
         Event = function()
-          for _, unitID in ipairs(FindUnitsInGroups{action.args.group}) do
+          for unitID in pairs(FindUnitsInGroup(action.args.group)) do
             SpecialTransferUnit(unitID, action.args.player, false)
           end
         end
@@ -231,13 +316,13 @@ local function ExecuteTrigger(trigger, frame)
         end
       elseif action.logicType == "ModifyUnitHealthAction" then
         Event = function()
-          for _, unitID in ipairs(FindUnitsInGroups{action.args.group}) do
+          for unitID in pairs(FindUnitsInGroup(action.args.group)) do
             Spring.AddUnitDamage(unitID, action.args.damage)
           end
         end
       elseif action.logicType == "MakeUnitsAlwaysVisibleAction" then
         Event = function()
-          for _, unitID in ipairs(FindUnitsInGroups{action.args.group}) do
+          for unitID in pairs(FindUnitsInGroup(action.args.group)) do
             Spring.SetUnitAlwaysVisible(unitID, true)
           end
         end
@@ -375,9 +460,9 @@ local function ExecuteTrigger(trigger, frame)
               if not isBuilding then
                 Spring.SetUnitRotation(unitID, 0, (unit.heading - 180)/360 * 2 * math.pi, 0)
               end
-              table.insert(createdUnits, unitID)
+              createdUnits[unitID] = true
               if unit.groups and next(unit.groups) then
-                unitGroups[unitID] = unit.groups
+                unitGroups[unitID] = CopyTable(unit.groups)
               end
             end
           end
@@ -436,12 +521,12 @@ local function ExecuteTrigger(trigger, frame)
       elseif action.logicType == "GiveOrdersAction" then
         Event = function()
           local orderedUnits
-          if #action.args.groups == 0 then
+          if not next(action.args.groups) then
             orderedUnits = createdUnits
           else
             orderedUnits = FindUnitsInGroups(action.args.groups)
           end
-          for _, unitID in ipairs(orderedUnits) do
+          for unitID in pairs(orderedUnits) do
             for _, order in ipairs(action.args.orders) do
               -- bug workaround: the table needs to be copied before it's used in GiveOrderToUnit
               local x, y, z = order.args[1], order.args[2], order.args[3] 
@@ -449,6 +534,34 @@ local function ExecuteTrigger(trigger, frame)
             end
           end
         end
+      elseif action.logicType == "GiveFactoryOrdersAction" then
+        Event = function()
+          local orderedUnits
+          if not next(action.args.factoryGroups) then
+            orderedUnits = createdUnits
+          else
+            orderedUnits = FindUnitsInGroups(action.args.factoryGroups)
+          end
+          for factoryID in pairs(orderedUnits) do
+            local factoryDef = UnitDefs[Spring.GetUnitDefID(factoryID)]
+            local hasBeenGivenOrders = false
+            for _, unitDefName in ipairs(action.args.buildOrders) do
+              local unitDef = UnitDefNames[unitDefName]
+              if ArrayContains(factoryDef.buildOptions, unitDef.id) then
+                Spring.GiveOrderToUnit(factoryID, -unitDef.id, {}, {})
+                hasBeenGivenOrders = true
+                if next(action.args.builtUnitsGroups) then
+                  factoryExpectedUnits[factoryID] = factoryExpectedUnits[factoryID] or {}
+                  table.insert(factoryExpectedUnits[factoryID], {unitDefID = unitDef.id, groups = CopyTable(action.args.builtUnitsGroups)})
+                end
+              end
+            end
+            if hasBeenGivenOrders and action.args.repeatOrders then
+              Spring.GiveOrderToUnit(factoryID, CMD.REPEAT, {1}, {})
+              repeatFactoryGroups[factoryID] = CopyTable(action.args.builtUnitsGroups)
+            end
+          end
+        end      
       elseif action.logicType == "SendScoreAction" then
         Event = function()
           if not (cheatingWasEnabled or scoreSent) then
@@ -459,7 +572,7 @@ local function ExecuteTrigger(trigger, frame)
       elseif action.logicType == "SetCameraUnitTargetAction" then
         Event = function()
           for unitID, groups in pairs(unitGroups) do
-            if ArrayContains(groups, action.args.group) then
+            if groups[action.args.group] then
               local x, _, y = Spring.GetUnitPosition(unitID)
               local args = {
                 x = x,
@@ -486,15 +599,15 @@ end
 
 
 local function CheckUnitsEnteredGroups(unitID, condition)
-  if #condition.args.groups == 0 then return true end -- no group selected: any unit is ok
+  if not next(condition.args.groups) then return true end -- no group selected: any unit is ok
   if not unitGroups[unitID] then return false end -- group is required but unit has no group
-  if ArraysHaveIntersection(condition.args.groups, unitGroups[unitID]) then return true end -- unit has one of the required groups
+  if DoSetsIntersect(condition.args.groups, unitGroups[unitID]) then return true end -- unit has one of the required groups
   return false
 end
 
 
 local function CheckUnitsEnteredPlayer(unitID, condition)
-  if #condition.args.players == 0 then return true end -- no player is required: any is ok
+  if not condition.args.players[1] then return true end -- no player is required: any is ok
   return ArrayContains(condition.args.players, Spring.GetUnitTeam(unitID)) -- unit is is owned by one of the selected players
 end
 
@@ -511,9 +624,7 @@ local function CheckUnitsEntered(units, condition)
 end
 
 
-local function StartsWith(s, startString)
-  return string.sub(s, 1, #startString) == startString
-end
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -527,8 +638,8 @@ function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer,
       if condition.logicType == "UnitDamagedCondition" and
          not paralizer and
          (Spring.GetUnitHealth(unitID) < condition.args.value) and
-         (condition.args.anyAttacker or ArrayContains(FindUnitsInGroups{condition.args.attackerGroup}, attackerID)) and
-         (condition.args.anyVictim or ArrayContains(FindUnitsInGroups{condition.args.victimGroup}, unitID)) then
+         (condition.args.anyAttacker or FindUnitsInGroup(condition.args.attackerGroup)[attackerID]) and
+         (condition.args.anyVictim or FindUnitsInGroup(condition.args.victimGroup)[unitID]) then
         ExecuteTrigger(trigger)
         break
       end
@@ -556,6 +667,9 @@ function gadget:GameFrame(n)
           ExecuteTrigger(trigger, n)
         end
       end
+    end
+    if mission.debug then
+      Spring.SendCommands("setmaxspeed 100")
     end
     gameStarted = true
   end
@@ -606,7 +720,6 @@ function gadget:GameFrame(n)
       local args = condition.args
       if condition.logicType == "TimeCondition" and args.frames == n then 
         args.frames = n + args.period
-        -- gadgets still skip frames sometimes? todo: check
         ExecuteTrigger(trigger)
         break
       end
@@ -663,7 +776,7 @@ function gadget:UnitDestroyed(unitID)
     for _, trigger in ipairs(triggers) do
       for _, condition in ipairs(trigger.logic) do
         if condition.logicType == "UnitDestroyedCondition" and 
-          ArraysHaveIntersection(condition.args.groups, unitGroups[unitID]) then
+          DoSetsIntersect(condition.args.groups, unitGroups[unitID]) then
           ExecuteTrigger(trigger)
           break
         end
@@ -671,13 +784,33 @@ function gadget:UnitDestroyed(unitID)
     end
     unitGroups[unitID] = nil
   end
+  factoryExpectedUnits[unitID] = nil
+  repeatFactoryGroups[unitID] = nil
 end
 
 
-function gadget:UnitFinished(unitID, unitDefID, unitTeam)
+function gadget:UnitFromFactory(unitID, unitDefID, unitTeam, factID, factDefID, userOrders)
+
+  lastFinishedUnits[unitTeam] = unitID
+  
+  -- assign groups
+  if repeatFactoryGroups[factID] then
+    for group in pairs(repeatFactoryGroups[factID]) do
+      unitGroups[unitID][group] = true
+    end
+  elseif factoryExpectedUnits[factID] then
+    if factoryExpectedUnits[factID][1].unitDefID == unitDefID then
+      for group in pairs(factoryExpectedUnits[factID][1].groups) do
+        unitGroups[unitID][group] = true
+      end
+      table.remove(factoryExpectedUnits[factID], 1)
+    end
+  end
+  
   for _, trigger in ipairs(triggers) do
     for _, condition in ipairs(trigger.logic) do
-      if condition.logicType == "UnitFinishedCondition" and condition.args.unitDefIDs[unitDefID] then
+      if condition.logicType == "UnitFinishedInFactoryCondition" and 
+        (condition.args.unitDefIDs[unitDefID] or not condition.args.units[0]) then
         if not next(condition.args.players) or ArrayContains(condition.args.players, unitTeam) then
           ExecuteTrigger(trigger)
           break
@@ -687,10 +820,28 @@ function gadget:UnitFinished(unitID, unitDefID, unitTeam)
   end
 end
 
-function gadget:UnitCreated(unitID, unitDefID, unitTeam)
+
+function gadget:UnitFinished(unitID, unitDefID, unitTeam)
   for _, trigger in ipairs(triggers) do
     for _, condition in ipairs(trigger.logic) do
-      if condition.logicType == "UnitCreatedCondition" and condition.args.unitDefIDs[unitDefID] then
+      if condition.logicType == "UnitFinishedCondition" and 
+        (condition.args.unitDefIDs[unitDefID] or not condition.args.units[0]) then
+        if not next(condition.args.players) or ArrayContains(condition.args.players, unitTeam) then
+          ExecuteTrigger(trigger)
+          break
+        end
+      end
+    end
+  end
+end
+
+
+function gadget:UnitCreated(unitID, unitDefID, unitTeam)
+  unitGroups[unitID] = unitGroups[unitID] or {}
+  for _, trigger in ipairs(triggers) do
+    for _, condition in ipairs(trigger.logic) do
+      if condition.logicType == "UnitCreatedCondition" and
+        (condition.args.unitDefIDs[unitDefID] or not condition.args.units[0]) then
         if not next(condition.args.players) or ArrayContains(condition.args.players, unitTeam) then
           ExecuteTrigger(trigger)
           break

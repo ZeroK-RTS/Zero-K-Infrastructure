@@ -60,7 +60,7 @@ namespace CMissionLib.Actions
 		{
 			if (string.IsNullOrEmpty(imagePath) || !File.Exists(ImagePath))
 			{
-				var map = new Dictionary<string, object>
+				var map = new Dictionary<object, object>
 					{
 						{"message", message},
 						{"width", Width},
@@ -71,7 +71,7 @@ namespace CMissionLib.Actions
 			else
 			{
 				var image = new BitmapImage(new Uri(ImagePath));
-				var map = new Dictionary<string, object>
+				var map = new Dictionary<object, object>
 					{
 						{"message", message},
 						{"image", Path.GetFileName(ImagePath)},

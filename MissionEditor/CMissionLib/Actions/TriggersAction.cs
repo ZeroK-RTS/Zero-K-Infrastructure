@@ -12,6 +12,7 @@ namespace CMissionLib.Actions
 
 		protected TriggersAction(string name) : base(name) {}
 
+		[DataMember]
 		public ObservableCollection<INamed> Triggers
 		{
 			get { return triggers; }
@@ -25,9 +26,9 @@ namespace CMissionLib.Actions
 		public override LuaTable GetLuaTable(Mission mission)
 		{
 			var triggerArray = triggers.Select(t => mission.Triggers.IndexOf((Trigger) t) + 1).Cast<object>().ToArray();
-			var map = new Dictionary<string, object>
+			var map = new Dictionary<object, object>
 				{
-					{"triggers", new LuaTable(triggerArray)},
+					{"triggers", LuaTable.CreateArray(triggerArray)},
 				};
 			return new LuaTable(map);
 		}

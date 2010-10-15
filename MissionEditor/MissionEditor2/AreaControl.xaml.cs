@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CMissionLib;
 using CMissionLib.Conditions;
@@ -11,41 +17,41 @@ using CMissionLib.Conditions;
 namespace MissionEditor2
 {
 	/// <summary>
-	/// Interaction logic for UnitEnteredAreaControl.xaml
+	/// Interaction logic for AreaControl.xaml
 	/// </summary>
-	public partial class UnitEnteredAreaControl : UserControl
+	public partial class AreaControl : UserControl
 	{
+		public AreaControl(Region region)
+		{
+			
+			InitializeComponent();
+			DataContext = region;
+			Region = region;
+		}
+
 		List<AreaDragInfo> areaInfos = new List<AreaDragInfo>();
 		const double centerSize = 10.0;
-		UnitsAreInAreaCondition condition;
+		Region Region { get; set; }
 		AreaDragInfo dragInfo = new NoArea();
-
-		public UnitEnteredAreaControl()
-		{
-			InitializeComponent();
-		}
 
 		void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			condition = (UnitsAreInAreaCondition) MainWindow.Instance.CurrentLogic;
-			alliancesList.BindCollection(condition.Players);
-			groupsList.BindCollection(condition.Groups);
 
 			foreach (var unit in MainWindow.Instance.Mission.AllUnits)
 			{
 				canvas.PlaceUnit(unit);
 			}
 
-			foreach (var area in condition.Areas)
+			foreach (var area in Region.Areas)
 			{
 				if (area is Cylinder)
 				{
-					var cylinder = (Cylinder) area;
+					var cylinder = (Cylinder)area;
 					AddCylinder(cylinder);
 				}
 				else if (area is RectangularArea)
 				{
-					AddRectangle((RectangularArea) area);
+					AddRectangle((RectangularArea)area);
 				}
 				else throw new Exception("Unexpected Area");
 			}
@@ -55,23 +61,23 @@ namespace MissionEditor2
 		CircleDragInfo AddCylinder(Cylinder area)
 		{
 			var info = new CircleDragInfo
+			{
+				Area = area,
+				Center = new Ellipse { Fill = Brushes.Yellow, Width = centerSize, Height = centerSize, Opacity = 0.5 },
+				Circle = new Ellipse
 				{
-					Area = area,
-					Center = new Ellipse {Fill = Brushes.Yellow, Width = centerSize, Height = centerSize, Opacity = 0.5},
-					Circle = new Ellipse
-						{
-							Fill = Brushes.Red,
-							StrokeThickness = 5,
-							Opacity = 0.3,
-							Stroke = Brushes.Yellow,
-							Width = area.R*2,
-							Height = area.R*2
-						}
-				};
+					Fill = Brushes.Red,
+					StrokeThickness = 5,
+					Opacity = 0.3,
+					Stroke = Brushes.Yellow,
+					Width = area.R * 2,
+					Height = area.R * 2
+				}
+			};
 			Canvas.SetLeft(info.Circle, area.X - area.R);
 			Canvas.SetTop(info.Circle, area.Y - area.R);
-			Canvas.SetLeft(info.Center, area.X - centerSize/2.0);
-			Canvas.SetTop(info.Center, area.Y - centerSize/2.0);
+			Canvas.SetLeft(info.Center, area.X - centerSize / 2.0);
+			Canvas.SetTop(info.Center, area.Y - centerSize / 2.0);
 			areaInfos.Add(info);
 			canvas.Children.Add(info.Circle);
 			canvas.Children.Add(info.Center);
@@ -81,19 +87,19 @@ namespace MissionEditor2
 		RectangleDragInfo AddRectangle(RectangularArea area)
 		{
 			var info = new RectangleDragInfo
+			{
+				Area = area,
+				Rectangle = new Rectangle
 				{
-					Area = area,
-					Rectangle = new Rectangle
-						{
-							Fill = Brushes.Red,
-							StrokeThickness = 5,
-							Opacity = 0.3,
-							Stroke = Brushes.Yellow,
-							Width = area.Width,
-							Height = area.Height
-						},
-					StartPoint = new Point(area.X, area.Y)
-				};
+					Fill = Brushes.Red,
+					StrokeThickness = 5,
+					Opacity = 0.3,
+					Stroke = Brushes.Yellow,
+					Width = area.Width,
+					Height = area.Height
+				},
+				StartPoint = new Point(area.X, area.Y)
+			};
 			Canvas.SetLeft(info.Rectangle, area.X);
 			Canvas.SetTop(info.Rectangle, area.Y);
 			canvas.Children.Add(info.Rectangle);
@@ -121,19 +127,19 @@ namespace MissionEditor2
 					{
 						// create circle
 						canvas.CaptureMouse();
-						var area = new Cylinder {X = startPoint.X, Y = startPoint.Y, R = 0};
+						var area = new Cylinder { X = startPoint.X, Y = startPoint.Y, R = 0 };
 						var info = AddCylinder(area);
 						dragInfo = info;
-						condition.Areas.Add(info.Area);
+						Region.Areas.Add(info.Area);
 					}
 					else if (rectangleButton.IsChecked == true)
 					{
 						// create rectangle
 						canvas.CaptureMouse();
-						var area = new RectangularArea {X = startPoint.X, Y = startPoint.Y, Height = 0, Width = 0};
+						var area = new RectangularArea { X = startPoint.X, Y = startPoint.Y, Height = 0, Width = 0 };
 						var info = AddRectangle(area);
 						dragInfo = info;
-						condition.Areas.Add(info.Area);
+						Region.Areas.Add(info.Area);
 					}
 					else if (deleteButton.IsChecked == true && e.Source is Shape)
 					{
@@ -143,10 +149,10 @@ namespace MissionEditor2
 							// remove area
 							var circleDragInfo = info as CircleDragInfo;
 							if (circleDragInfo != null &&
-							    (circleDragInfo.Center == e.Source || circleDragInfo.Circle == e.Source))
+								(circleDragInfo.Center == e.Source || circleDragInfo.Circle == e.Source))
 							{
 								areaInfos.Remove(circleDragInfo);
-								condition.Areas.Remove(circleDragInfo.Area);
+								Region.Areas.Remove(circleDragInfo.Area);
 								canvas.Children.Remove(circleDragInfo.Center);
 								canvas.Children.Remove(circleDragInfo.Circle);
 							}
@@ -154,7 +160,7 @@ namespace MissionEditor2
 							if (rectangleDragInfo != null && (rectangleDragInfo.Rectangle == e.Source))
 							{
 								areaInfos.Remove(rectangleDragInfo);
-								condition.Areas.Remove(rectangleDragInfo.Area);
+								Region.Areas.Remove(rectangleDragInfo.Area);
 								canvas.Children.Remove(rectangleDragInfo.Rectangle);
 							}
 							if (info is NoArea) throw new Exception("NoArea should not be in the list");
@@ -171,17 +177,17 @@ namespace MissionEditor2
 			{
 				if (dragInfo is CircleDragInfo)
 				{
-					var info = (CircleDragInfo) dragInfo;
+					var info = (CircleDragInfo)dragInfo;
 					var r = Utils.GetDistance(info.Area.X, info.Area.Y, mousePosition.X, mousePosition.Y);
 					info.Area.R = r;
-					info.Circle.Width = r*2;
-					info.Circle.Height = r*2;
+					info.Circle.Width = r * 2;
+					info.Circle.Height = r * 2;
 					Canvas.SetLeft(info.Circle, info.Area.X - r);
 					Canvas.SetTop(info.Circle, info.Area.Y - r);
 				}
 				else if (dragInfo is RectangleDragInfo)
 				{
-					var info = (RectangleDragInfo) dragInfo;
+					var info = (RectangleDragInfo)dragInfo;
 					var dx = mousePosition.X - info.StartPoint.X;
 					var dy = mousePosition.Y - info.StartPoint.Y;
 
@@ -224,6 +230,11 @@ namespace MissionEditor2
 			e.Handled = true;
 			canvas.ReleaseMouseCapture();
 			dragInfo = new NoArea();
+		}
+
+		private void OkButton_Click(object sender, RoutedEventArgs e)
+		{
+			// Close(); // convert to window
 		}
 	}
 }

@@ -44,10 +44,10 @@ namespace CMissionLib.Actions
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{
-			var map = new Dictionary<string, object>
+			var map = new Dictionary<object, object>
 				{
-					{"orders", new LuaTable(orders.Select(o => o.GetLuaMap(mission)).ToArray())},
-					{"groups", new LuaTable(groups)}
+					{"orders", LuaTable.CreateArray(orders.Select(o => o.GetLuaMap(mission)).ToArray())},
+					{"groups", LuaTable.CreateSet(groups)}
 				};
 			return new LuaTable(map);
 		}

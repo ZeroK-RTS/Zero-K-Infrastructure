@@ -31,6 +31,7 @@ namespace MissionEditor2
             else if (item is ModifyScoreAction) resourceName = "modifyScoreTemplate";
             else if (item is SendScoreAction) resourceName = "sendScoreTemplate";
             else if (item is WaitAction) resourceName = "waitActionTemplate";
+			else if (item is AllowUnitTransfersAction) resourceName = "allowUnitTransfersTemplate";
             if (resourceName != null) return (DataTemplate)Application.Current.MainWindow.FindResource(resourceName);
             
             // list templates that need to be reloaded

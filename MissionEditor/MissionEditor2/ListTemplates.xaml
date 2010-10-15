@@ -2,375 +2,379 @@
     xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:MissionEditor2"
     xmlns:ml="clr-namespace:CMissionLib;assembly=CMissionLib" xmlns:Actions="clr-namespace:CMissionLib.Actions;assembly=CMissionLib" xmlns:Conditions="clr-namespace:CMissionLib.Conditions;assembly=CMissionLib">
-  <UserControl.Resources>
+    <UserControl.Resources>
 
-    <Grid x:Key="triggersList" HorizontalAlignment="Center" VerticalAlignment="Center">
-      <ListBox ItemsSource="{Binding Mission.Triggers, ElementName=window}" SelectionMode="Multiple" Loaded="Triggers_ListLoaded" />
-    </Grid>
+        <Grid x:Key="triggersList" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ListBox ItemsSource="{Binding Mission.Triggers, ElementName=window}" SelectionMode="Multiple" Loaded="Triggers_ListLoaded" />
+        </Grid>
 
-    <DataTemplate x:Key="EnableTriggersAction">
-      <ContentControl Content="{StaticResource triggersList}" />
-    </DataTemplate>
-
-    <DataTemplate x:Key="DisableTriggersAction">
-      <ContentControl Content="{StaticResource triggersList}" />
-    </DataTemplate>
-
-    <DataTemplate x:Key="ExecuteTriggersAction">
-      <ContentControl Content="{StaticResource triggersList}" />
-    </DataTemplate>
-
-    <DataTemplate x:Key="PauseAction">
-      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
-        Pauses the game.
-      </TextBlock>
-    </DataTemplate>
-
-      <DataTemplate x:Key="CreateUnitsAction">
-      <local:CreateUnitsPane />
-    </DataTemplate>
-
-    <DockPanel x:Key="unitConditionPane">
-      <ListBox ItemsSource="{Binding Mission.Players, ElementName=window}" Loaded="PlayersList_Loaded" SelectionMode="Multiple" />
-      <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
-    </DockPanel>
-
-    <DataTemplate x:Key="UnitCreatedCondition">
-      <ContentControl Content="{StaticResource unitConditionPane}" />
-    </DataTemplate>
-
-    <DataTemplate x:Key="UnitFinishedCondition">
-      <ContentControl Content="{StaticResource unitConditionPane}" />
-    </DataTemplate>
-
-    <DataTemplate x:Key="LockUnitsAction">
-      <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
-    </DataTemplate>
-
-        <DataTemplate x:Key="GiveFactoryOrdersAction">
-            <local:FactoryBuildOrdersPane />
+        <DataTemplate x:Key="EnableTriggersAction">
+            <ContentControl Content="{StaticResource triggersList}" />
         </DataTemplate>
 
-            <DataTemplate x:Key="UnlockUnitsAction">
-      <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
-    </DataTemplate>
+        <DataTemplate x:Key="DisableTriggersAction">
+            <ContentControl Content="{StaticResource triggersList}" />
+        </DataTemplate>
 
-    <DataTemplate x:Key="CustomCondition">
-      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+        <DataTemplate x:Key="ExecuteTriggersAction">
+            <ContentControl Content="{StaticResource triggersList}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="PauseAction">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+        Pauses the game.
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate x:Key="CreateUnitsAction">
+            <local:CreateUnitsPane />
+        </DataTemplate>
+
+        <DockPanel x:Key="unitConditionPane">
+            <ListBox ItemsSource="{Binding Mission.Players, ElementName=window}" Loaded="PlayersList_Loaded" SelectionMode="Multiple" />
+            <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
+        </DockPanel>
+
+        <DataTemplate x:Key="UnitCreatedCondition">
+            <ContentControl Content="{StaticResource unitConditionPane}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="UnitFinishedCondition">
+            <ContentControl Content="{StaticResource unitConditionPane}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="UnitFinishedInFactoryCondition">
+            <ContentControl Content="{StaticResource unitConditionPane}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="LockUnitsAction">
+            <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="GiveFactoryOrdersAction">
+            <local:GiveFactoryOrdersPane />
+        </DataTemplate>
+
+        <DataTemplate x:Key="UnlockUnitsAction">
+            <local:UnitDefsGrid Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" Loaded="UnitDefGrid_Loaded" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="CustomCondition">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
         For Advanced users.
         <LineBreak />
         Edit MissionBase/LuaRules/Gadgets/mission_runner.lua and call CustomConditionMet(conditionName) with this condition's name to activate this trigger.
-      </TextBlock>
-    </DataTemplate>
+            </TextBlock>
+        </DataTemplate>
 
-    <DataTemplate x:Key="DisplayCountersAction">
-      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+        <DataTemplate x:Key="DisplayCountersAction">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
         Displays counters in the console. For debugging.
-      </TextBlock>
-    </DataTemplate>
+            </TextBlock>
+        </DataTemplate>
 
-    <DataTemplate x:Key="CustomAction">
-      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
+        <DataTemplate x:Key="CustomAction">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
         For Advanced users.
         <LineBreak />
         Edit MissionBase/LuaRules/Gadgets/mission_runner.lua, and replace "-- fill in your custom actions" with your code.
-      </TextBlock>
-    </DataTemplate>
+            </TextBlock>
+        </DataTemplate>
 
-    <DataTemplate x:Key="DestroyUnitsAction">
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Label>Group of units to destroy:</Label>
-        <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
-        <CheckBox IsChecked="{Binding Explode}">Explode</CheckBox>
-      </StackPanel>
-    </DataTemplate>
+        <DataTemplate x:Key="DestroyUnitsAction">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label>Group of units to destroy:</Label>
+                <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
+                <CheckBox IsChecked="{Binding Explode}">Explode</CheckBox>
+            </StackPanel>
+        </DataTemplate>
 
-    <DataTemplate x:Key="TransferUnitsAction">
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-        <Label>Transfer group</Label>
-        <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
-        <Label>to</Label>
-        <ComboBox ItemsSource="{Binding Mission.Players, ElementName=window}" SelectedItem="{Binding Player}" />
-      </StackPanel>
-    </DataTemplate>
+        <DataTemplate x:Key="TransferUnitsAction">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+                <Label>Transfer group</Label>
+                <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
+                <Label>to</Label>
+                <ComboBox ItemsSource="{Binding Mission.Players, ElementName=window}" SelectedItem="{Binding Player}" />
+            </StackPanel>
+        </DataTemplate>
 
-    <DataTemplate x:Key="ModifyResourcesAction">
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Label>Send</Label>
-        <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" />
-        <ComboBox ItemsSource="{x:Static Actions:ModifyResourcesAction.Categories}" SelectedItem="{Binding Category}" />
-        <Label>to</Label>
-        <ComboBox ItemsSource="{Binding Mission.Players, ElementName=window}" SelectedItem="{Binding Player}" />
-      </StackPanel>
-    </DataTemplate>
+        <DataTemplate x:Key="ModifyResourcesAction">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label>Send</Label>
+                <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" />
+                <ComboBox ItemsSource="{x:Static Actions:ModifyResourcesAction.Categories}" SelectedItem="{Binding Category}" />
+                <Label>to</Label>
+                <ComboBox ItemsSource="{Binding Mission.Players, ElementName=window}" SelectedItem="{Binding Player}" />
+            </StackPanel>
+        </DataTemplate>
 
-    <DataTemplate x:Key="ModifyUnitHealthAction">
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <StackPanel Orientation="Horizontal">
-          <Label>Deal</Label>
-          <TextBox Text="{Binding Damage, UpdateSourceTrigger=PropertyChanged}" />
-          <Label>damage to</Label>
-          <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
-        </StackPanel>
-        <TextBlock>Note: negative amounts are accepted.</TextBlock>
-      </StackPanel>
-    </DataTemplate>
+        <DataTemplate x:Key="ModifyUnitHealthAction">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <Label>Deal</Label>
+                    <TextBox Text="{Binding Damage, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label>damage to</Label>
+                    <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
+                </StackPanel>
+                <TextBlock>Note: negative amounts are accepted.</TextBlock>
+            </StackPanel>
+        </DataTemplate>
 
-    <DataTemplate x:Key="MakeUnitsAlwaysVisibleAction">
-      <DockPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Label>Group:</Label>
-        <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
-      </DockPanel>
-    </DataTemplate>
+        <DataTemplate x:Key="MakeUnitsAlwaysVisibleAction">
+            <DockPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Label>Group:</Label>
+                <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding Group}" />
+            </DockPanel>
+        </DataTemplate>
 
-    <DataTemplate x:Key="ModifyCounterAction">
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Click="AddCounterButton_Click">Add Counter</Button>
-        <Button Click="RemoveCounterButton_Click">Remove Counter</Button>
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
-          <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
-          </Grid.RowDefinitions>
-          <Label Grid.Row="0">Counter</Label>
-          <Label Grid.Row="1">Action</Label>
-          <Label Grid.Row="2">Value</Label>
-          <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Mission.Counters, ElementName=window}"
+        <DataTemplate x:Key="ModifyCounterAction">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Click="AddCounterButton_Click">Add Counter</Button>
+                <Button Click="RemoveCounterButton_Click">Remove Counter</Button>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0">Counter</Label>
+                    <Label Grid.Row="1">Action</Label>
+                    <Label Grid.Row="2">Value</Label>
+                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Mission.Counters, ElementName=window}"
               SelectedItem="{Binding Counter}" />
-          <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static Actions:ModifyCounterAction.Actions}" SelectedItem="{Binding Action}" />
-          <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
-        </Grid>
-      </StackPanel>
-    </DataTemplate>
+                    <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static Actions:ModifyCounterAction.Actions}" SelectedItem="{Binding Action}" />
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
 
-    <DataTemplate x:Key="UnitDamagedCondition">
-      <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-        </Grid.RowDefinitions>
-        <Label Grid.Row="0">Attacker group</Label>
-        <Label Grid.Row="1">Any attacker?</Label>
-        <Label Grid.Row="2">Victim group</Label>
-        <Label Grid.Row="3">Any victim?</Label>
-        <Label Grid.Row="4">Unit health under:</Label>
-        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Mission.AllGroups, ElementName=window}"
+        <DataTemplate x:Key="UnitDamagedCondition">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0">Attacker group</Label>
+                <Label Grid.Row="1">Any attacker?</Label>
+                <Label Grid.Row="2">Victim group</Label>
+                <Label Grid.Row="3">Any victim?</Label>
+                <Label Grid.Row="4">Unit health under:</Label>
+                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Mission.AllGroups, ElementName=window}"
             SelectedItem="{Binding AttackerGroup}" />
-        <CheckBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AnyAttacker}" />
-        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Mission.AllGroups, ElementName=window}"
+                <CheckBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AnyAttacker}" />
+                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Mission.AllGroups, ElementName=window}"
             SelectedItem="{Binding VictimGroup}" />
-        <CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AnyVictim}" />
-        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
-      </Grid>
-    </DataTemplate>
+                <CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AnyVictim}" />
+                <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
 
-    <DataTemplate x:Key="CounterModifiedCondition">
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-        <ComboBox ItemsSource="{Binding Mission.Counters, ElementName=window}" SelectedItem="{Binding Counter}" />
-        <ComboBox ItemsSource="{x:Static Conditions:CounterModifiedCondition.Conditions}" SelectedItem="{Binding Condition}" />
-        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
-      </StackPanel>
-    </DataTemplate>
+        <DataTemplate x:Key="CounterModifiedCondition">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+                <ComboBox ItemsSource="{Binding Mission.Counters, ElementName=window}" SelectedItem="{Binding Counter}" />
+                <ComboBox ItemsSource="{x:Static Conditions:CounterModifiedCondition.Conditions}" SelectedItem="{Binding Condition}" />
+                <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </DataTemplate>
 
-    <DataTemplate x:Key="StartCountdownAction">
-      <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-        </Grid.RowDefinitions>
-        <Label Grid.Row="0">Coundown Description</Label>
-        <Label Grid.Row="1">Show in GUI</Label>
-        <Label Grid.Row="2">Minutes</Label>
-        <Label Grid.Row="3">Seconds</Label>
-        <Label Grid.Row="4">Frames</Label>
-        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Countdown, UpdateSourceTrigger=PropertyChanged}" />
-        <CheckBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" IsChecked="{Binding Display}" />
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
-      </Grid>
-    </DataTemplate>
+        <DataTemplate x:Key="StartCountdownAction">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0">Countdown Description</Label>
+                <Label Grid.Row="1">Show in GUI</Label>
+                <Label Grid.Row="2">Minutes</Label>
+                <Label Grid.Row="3">Seconds</Label>
+                <Label Grid.Row="4">Frames</Label>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Countdown, UpdateSourceTrigger=PropertyChanged}" />
+                <CheckBox Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" IsChecked="{Binding Display}" />
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
 
-    <DataTemplate x:Key="ModifyCountdownAction">
-      <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-        </Grid.RowDefinitions>
-        <Label Grid.Row="0">Coundown</Label>
-        <Label Grid.Row="1">Action</Label>
-        <Label Grid.Row="2">Minutes</Label>
-        <Label Grid.Row="3">Seconds</Label>
-        <Label Grid.Row="4">Frames</Label>
-        <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}"
+        <DataTemplate x:Key="ModifyCountdownAction">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0">Coundown</Label>
+                <Label Grid.Row="1">Action</Label>
+                <Label Grid.Row="2">Minutes</Label>
+                <Label Grid.Row="3">Seconds</Label>
+                <Label Grid.Row="4">Frames</Label>
+                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}"
             SelectedItem="{Binding Countdown}" />
-        <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{x:Static Actions:ModifyCountdownAction.Modes}" SelectedItem="{Binding Mode}" />
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
-      </Grid>
-    </DataTemplate>
+                <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{x:Static Actions:ModifyCountdownAction.Modes}" SelectedItem="{Binding Mode}" />
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
 
-    <DataTemplate x:Key="CancelCountdownAction">
-      <DockPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <Label>Countdown</Label>
-        <ComboBox ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
-      </DockPanel>
-    </DataTemplate>
+        <DataTemplate x:Key="CancelCountdownAction">
+            <DockPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Label>Countdown</Label>
+                <ComboBox ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
+            </DockPanel>
+        </DataTemplate>
 
-    <DataTemplate x:Key="CountdownTickCondition">
-      <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-        </Grid.RowDefinitions>
-        <Label Grid.Row="0">Coundown</Label>
-        <Label Grid.Row="1">Frequency:</Label>
-        <Label Grid.Row="2">Minutes</Label>
-        <Label Grid.Row="3">Seconds</Label>
-        <Label Grid.Row="4">Frames</Label>
-        <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}"
+        <DataTemplate x:Key="CountdownTickCondition">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0">Coundown</Label>
+                <Label Grid.Row="1">Frequency:</Label>
+                <Label Grid.Row="2">Minutes</Label>
+                <Label Grid.Row="3">Seconds</Label>
+                <Label Grid.Row="4">Frames</Label>
+                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}"
             SelectedItem="{Binding Countdown}" />
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
-      </Grid>
-    </DataTemplate>
-    
-    <DataTemplate x:Key="TimeLeftInCountdownCondition">
-      <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-          <RowDefinition />
-        </Grid.RowDefinitions>
-        <Label Grid.Row="0">Coundown</Label>
-        <Label Grid.Row="1">Time Left:</Label>
-        <Label Grid.Row="2">Minutes</Label>
-        <Label Grid.Row="3">Seconds</Label>
-        <Label Grid.Row="4">Frames</Label>
-        <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}"
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TimeLeftInCountdownCondition">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0">Coundown</Label>
+                <Label Grid.Row="1">Time Left:</Label>
+                <Label Grid.Row="2">Minutes</Label>
+                <Label Grid.Row="3">Seconds</Label>
+                <Label Grid.Row="4">Frames</Label>
+                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}"
             SelectedItem="{Binding Countdown}" />
-        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
-        <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
-      </Grid>
-    </DataTemplate>
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
 
-    <DataTemplate x:Key="CountdownEndedCondition">
-      <DockPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <Label>Countdown</Label>
-        <ComboBox ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
-      </DockPanel>
-    </DataTemplate>
+        <DataTemplate x:Key="CountdownEndedCondition">
+            <DockPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Label>Countdown</Label>
+                <ComboBox ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
+            </DockPanel>
+        </DataTemplate>
 
-    <!-- ======== Set Map Marker ======== -->
+        <!-- ======== Set Map Marker ======== -->
 
-    <local:ZoomConverter x:Key="log10Converter" />
+        <local:ZoomConverter x:Key="log10Converter" />
 
-    <Canvas x:Key="markerPointCanvas" DataContext="{Binding ElementName=window}" MinHeight="{Binding Mission.Map.Texture.Height}"
+        <Canvas x:Key="markerPointCanvas" DataContext="{Binding ElementName=window}" MinHeight="{Binding Mission.Map.Texture.Height}"
         MinWidth="{Binding Mission.Map.Texture.Width}" Loaded="MarkerPointCanvas_Loaded">
-      <Canvas.LayoutTransform>
-        <ScaleTransform ScaleX="{Binding ZoomSlider.Value, Converter={StaticResource log10Converter}}"
+            <Canvas.LayoutTransform>
+                <ScaleTransform ScaleX="{Binding ZoomSlider.Value, Converter={StaticResource log10Converter}}"
             ScaleY="{Binding ZoomSlider.Value, Converter={StaticResource log10Converter}}" />
-      </Canvas.LayoutTransform>
-      <Canvas.Background>
-        <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding Mission.Map.Texture}" />
-      </Canvas.Background>
-    </Canvas>
+            </Canvas.LayoutTransform>
+            <Canvas.Background>
+                <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding Mission.Map.Texture}" />
+            </Canvas.Background>
+        </Canvas>
 
-    <DataTemplate x:Key="MarkerPointAction">
-      <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top">
-          <ToolBar>
-            <Label>Message:</Label>
-            <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" />
-            <CheckBox IsChecked="{Binding CenterCamera}">Center Camera</CheckBox>
-          </ToolBar>
-        </ToolBarTray>
-        <ScrollViewer HorizontalScrollBarVisibility="Auto">
-          <ContentControl Content="{StaticResource markerPointCanvas}" />
-        </ScrollViewer>
-      </DockPanel>
-    </DataTemplate>
+        <DataTemplate x:Key="MarkerPointAction">
+            <DockPanel>
+                <ToolBarTray DockPanel.Dock="Top">
+                    <ToolBar>
+                        <Label>Message:</Label>
+                        <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" MinWidth="100" />
+                        <CheckBox IsChecked="{Binding CenterCamera}">Center Camera</CheckBox>
+                    </ToolBar>
+                </ToolBarTray>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                    <ContentControl Content="{StaticResource markerPointCanvas}" />
+                </ScrollViewer>
+            </DockPanel>
+        </DataTemplate>
 
-    <!-- ======== Set Camera Map Target ======== -->
+        <!-- ======== Set Camera Map Target ======== -->
 
-    <DataTemplate x:Key="SetCameraPointTargetAction">
-      <ScrollViewer HorizontalScrollBarVisibility="Auto">
-        <ContentControl Content="{StaticResource markerPointCanvas}" />
-      </ScrollViewer>
-    </DataTemplate>
+        <DataTemplate x:Key="SetCameraPointTargetAction">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                <ContentControl Content="{StaticResource markerPointCanvas}" />
+            </ScrollViewer>
+        </DataTemplate>
 
-    <!-- ======== Set Camera Unit Target ======== -->
+        <!-- ======== Set Camera Unit Target ======== -->
 
-    <DataTemplate x:Key="SetCameraUnitTargetAction">
-      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <DockPanel>
-          <Label DockPanel.Dock="Left">Group:</Label>
-          <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" MaxHeight="200" SelectedItem="{Binding Group}" />
-        </DockPanel>
-        <GroupBox Header="Help">
-          <TextBlock TextWrapping="WrapWithOverflow">
+        <DataTemplate x:Key="SetCameraUnitTargetAction">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <DockPanel>
+                    <Label DockPanel.Dock="Left">Group:</Label>
+                    <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" MaxHeight="200" SelectedItem="{Binding Group}" />
+                </DockPanel>
+                <GroupBox Header="Help">
+                    <TextBlock TextWrapping="WrapWithOverflow">
                     This action points the camera at the first unit found that is marked with the selected group.
                     <LineBreak />
                     You can add units to groups by editing the groups column of the unit list in the Create Units display, or by right-clicking on unit icons.
                     <LineBreak />
                     Separate multiple groups with commas and no spaces.
-          </TextBlock>
-        </GroupBox>
-      </StackPanel>
-    </DataTemplate>
+                    </TextBlock>
+                </GroupBox>
+            </StackPanel>
+        </DataTemplate>
 
-    <!-- ======== Unit Entered Area Template ======== -->
+        <!-- ======== Unit Entered Area Template ======== -->
 
 
 
-    <!--todo: TextSearch.TextPath="@Name"-->
+        <!--todo: TextSearch.TextPath="@Name"-->
 
-    <DataTemplate x:Key="UnitsAreInAreaCondition">
+        <DataTemplate x:Key="UnitsAreInAreaCondition">
             <local:UnitEnteredAreaControl />
-    </DataTemplate>
+        </DataTemplate>
 
-  </UserControl.Resources>
+    </UserControl.Resources>
 </UserControl>
