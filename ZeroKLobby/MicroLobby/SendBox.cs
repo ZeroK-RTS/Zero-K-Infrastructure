@@ -9,6 +9,8 @@ namespace ZeroKLobby.MicroLobby
 {
 	public class SendBox: TextBox
 	{
+		readonly List<string> history = new List<string>();
+		int historyIndex = 0;
 		string ncFirstChunk;
 		IEnumerator ncMatchesEn;
 		string ncSecondChunk;
@@ -22,17 +24,6 @@ namespace ZeroKLobby.MicroLobby
 			Multiline = true;
 		}
 
-		protected override void OnKeyUp(KeyEventArgs e)
-		{
-			if (Lines.Length > 1)
-			{
-				var line = Text.Replace("\t", "  ").TrimEnd(new[] { '\r', '\n' });
-				Text = String.Empty;
-				LineEntered(this, new EventArgs<string>(line));
-			}
-			base.OnKeyUp(e);
-		}
-
 		protected override void OnKeyPress(KeyPressEventArgs e)
 		{
 			if (e.KeyChar == '\t')
@@ -43,13 +34,45 @@ namespace ZeroKLobby.MicroLobby
 			base.OnKeyPress(e);
 		}
 
+		protected override void OnKeyUp(KeyEventArgs e)
+		{
+			if (Lines.Length > 1)
+			{
+				var line = Text.Replace("\t", "  ").TrimEnd(new[] { '\r', '\n' });
+
+				if (!string.IsNullOrEmpty(line))
+				{
+					history.Add(line);
+					historyIndex = history.Count;
+				}
+
+				Text = String.Empty;
+				LineEntered(this, new EventArgs<string>(line));
+			}
+			base.OnKeyUp(e);
+		}
 
 		protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
 		{
+			if (e.KeyCode == Keys.Up)
+			{
+				historyIndex--;
+				if (historyIndex < 0) historyIndex = 0;
+
+				Text = history[historyIndex];
+			}
+			else if (e.KeyCode == Keys.Down)
+			{
+				historyIndex++;
+				if (historyIndex >= history.Count) historyIndex = history.Count - 1;
+				Text = history[historyIndex];
+			}
+			else historyIndex = history.Count;
+
 			//Prevent cutting line in half when sending
 			if (e.KeyCode == Keys.Return) SelectionStart = Text.Length;
 			if (e.KeyCode != Keys.Tab) nickCompleteMode = false;
-		
+
 			base.OnPreviewKeyDown(e);
 		}
 
