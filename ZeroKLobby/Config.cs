@@ -85,8 +85,6 @@ namespace ZeroKLobby
 		[Browsable(false)]
 		public int DefaultPlayerColorInt = 16776960; // default teal color
 
-		[Browsable(false)]
-		public string DetectedPlayerName { get; set; }
 
 
 		[Category("Chat")]

@@ -143,45 +143,6 @@ namespace ZeroKLobby
 			return to;
 		}
 
-		public static void GetDefaultUsername()
-		{
-			string nname = null;
-			nname = (string)Registry.GetValue(@"HKEY_CURRENT_USER\Software\TASClient\Preferences", "Username", "") + "";
-			if (String.IsNullOrEmpty(Program.Conf.LobbyPlayerName))
-			{
-				Program.Conf.LobbyPlayerName = nname;
-				return;
-			}
-
-			if (String.IsNullOrEmpty(nname))
-			{
-				string config = null;
-				try
-				{
-					config = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/springlobby/springlobby.conf");
-				}
-				catch {}
-
-				if (config != null)
-				{
-					var start = config.IndexOf("Nick=") + 5;
-					var end = config.IndexOf('\n', start);
-					if (end == -1) end = config.Length;
-					nname = config.Substring(start, end - start).Trim();
-				}
-			}
-
-			if (nname != Program.Conf.DetectedPlayerName && nname != Program.Conf.LobbyPlayerName)
-			{
-				if (
-					MessageBox.Show(Program.FormMain,
-					                "Do you want downloader to use your new name: " + nname + "\n(used for auto map download)",
-					                "Change in name detected",
-					                MessageBoxButtons.YesNo) == DialogResult.Yes) Program.Conf.LobbyPlayerName = nname;
-				Program.Conf.DetectedPlayerName = nname;
-				Program.SaveConfig();
-			}
-		}
 
 		public static Control GetHoveredControl(Control parentControl)
 		{

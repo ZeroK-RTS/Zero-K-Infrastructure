@@ -200,8 +200,6 @@ namespace ZeroKLobby
 				}
 				catch (AbandonedMutexException) {}
 
-				Utils.GetDefaultUsername();
-
 				SaveConfig();
 
 				InfologWatcher = new SpringInfologWatcher(Path.GetDirectoryName(SpringPaths.WritableDirectory));
