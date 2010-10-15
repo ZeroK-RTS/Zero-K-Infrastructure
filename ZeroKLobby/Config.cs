@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 using PlasmaDownloader;
@@ -16,9 +17,7 @@ namespace ZeroKLobby
 		public const string ConfigFileName = "SpringDownloaderConfig.xml";
 		public const string ErrorsUploadSite = "http://files.caspring.org/caupdater/spring_errors/upload.php";
 		public const string LogFile = "ZeroKLobbyErrors.txt";
-		public const string MonoTorrentVersion = "117187-modded";
 		public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
-		public const string SelfUpdateSite = "http://files.caspring.org/caupdater/";
 		StringCollection autoJoinChannels = new StringCollection();
 		bool connectOnStartup = true;
 		Color fadeColor = Color.Gray;
@@ -84,7 +83,6 @@ namespace ZeroKLobby
 		public bool ConnectOnStartup { get { return connectOnStartup; } set { connectOnStartup = value; } }
 		[Browsable(false)]
 		public int DefaultPlayerColorInt = 16776960; // default teal color
-
 
 
 		[Category("Chat")]
@@ -168,10 +166,15 @@ namespace ZeroKLobby
 		[Description("Player password from lobby (tasclient), needed for widget online profile")]
 		public string LobbyPlayerPassword { get; set; }
 
+
 		[Category("General")]
 		[DisplayName("Spring Path")]
 		[Description("Path to spring")]
 		public string ManualSpringPath { get { return manualSpringPath; } set { manualSpringPath = value; } }
+		[Category("General")]
+		[DisplayName("Minimize to tray")]
+		[Description("Minimize to system tray instead of taskbar")]
+		public bool MinimizeToTray { get; set; }
 		[Category("Chat")]
 		[DisplayName("Color: Notice")]
 		[XmlIgnore]
@@ -233,6 +236,9 @@ namespace ZeroKLobby
 		/// Keeps datetime of last topic change for each channel
 		/// </summary>
 		public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
+
+
+		public FormWindowState LastWindowState { get; set; }
 
 
 		public void UpdateFadeColor()

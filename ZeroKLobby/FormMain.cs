@@ -198,12 +198,17 @@ namespace ZeroKLobby
 
 			Program.CloseOnNext = true;
 			if (Program.TasClient != null) Program.TasClient.Disconnect();
+			Program.Conf.LastWindowState = WindowState;
 			Program.SaveConfig();
 		}
 
 		void FormMain_SizeChanged(object sender, EventArgs e)
 		{
 			if (WindowState != FormWindowState.Minimized) lastState = WindowState;
+			else if (Program.Conf.MinimizeToTray)
+			{
+				Visible = false;
+			}
 		}
 
 		public void NotifyUser(string message, bool useSound = false, bool useFlashing = false)
@@ -220,8 +225,9 @@ namespace ZeroKLobby
 		/// </summary>
 		protected void FlashWindow()
 		{
-			if (!Focused)
+			if (!Focused || !Visible || WindowState == FormWindowState.Minimized)
 			{
+				Visible = true;
 				var info = new Utils.FLASHWINFO();
 				info.hwnd = Program.FormMain.Handle;
 				info.dwFlags = 0x0000000C | 0x00000003; // flash all until foreground
@@ -233,7 +239,6 @@ namespace ZeroKLobby
 
 		void MainForm_Load(object sender, EventArgs e)
 		{
-			if (Program.Conf.StartMinimized) WindowState = FormWindowState.Minimized;
 			;
 			if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
 			else if (ApplicationDeployment.IsNetworkDeployed) Text = string.Format("Zero-K lobby  (v{0})",ApplicationDeployment.CurrentDeployment.CurrentVersion);
@@ -243,6 +248,9 @@ namespace ZeroKLobby
 			systrayIcon.Icon = Resources.ZkIcon;
 
 			Program.SpringScanner.Start();
+
+			if (Program.Conf.StartMinimized) WindowState = FormWindowState.Minimized;
+			else WindowState = Program.Conf.LastWindowState;
 		}
 
 		void TorrentManager_DownloadAdded(object sender, EventArgs<Download> e)
@@ -265,12 +273,12 @@ namespace ZeroKLobby
 
 		void systrayIcon_Click(object sender, EventArgs e)
 		{
-			//PopupSelf();
+			PopupSelf();
 		}
 
 		void systrayIcon_MouseDoubleClick(object sender, MouseEventArgs e)
 		{
-			//PopupSelf();
+			PopupSelf();
 		}
 
 
