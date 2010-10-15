@@ -294,12 +294,20 @@ namespace CMissionLib.UnitSyncLib
 			              	: new Size((int) (squareMinimap.Width*((float) map.Size.Width/map.Size.Height)), squareMinimap.Height);
 
 			var correctMinimap = new Bitmap(newSize.Width, newSize.Height, PixelFormat.Format24bppRgb);
-			using (var graphics = Graphics.FromImage(correctMinimap))
+			try
 			{
-				graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-				graphics.DrawImage(squareMinimap, new Rectangle(Point.Empty, newSize));
+				using (var graphics = Graphics.FromImage(correctMinimap))
+				{
+					graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					graphics.DrawImage(squareMinimap, new Rectangle(Point.Empty, newSize));
+				}
+				squareMinimap.Dispose();
+			} 
+			catch
+			{
+				correctMinimap.Dispose();
+				throw;
 			}
-			squareMinimap.Dispose();
 			return correctMinimap;
 		}
 
@@ -368,18 +376,26 @@ namespace CMissionLib.UnitSyncLib
 			{
 				var infoMapPointer = Marshal.UnsafeAddrOfPinnedArrayElement(infoMapData, 0);
 				var bitmap = new Bitmap(width, height, PixelFormat.Format24bppRgb);
-				if (!NativeMethods.GetInfoMap(mapName, name, infoMapPointer, bytesPerPixel))
-					throw new UnitSyncException("GetInfoMap failed");
-				var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly, bitmap.PixelFormat);
-				const int PixelSize = 3;
-				var p = (byte*) bitmapData.Scan0;
-				for (var i = 0; i < infoMapData.Length; i++)
+				try
 				{
-					var v = infoMapData[i];
-					var d = i/width*bitmapData.Stride + i%width*PixelSize;
-					p[d] = p[d + 1] = p[d + 2] = v;
+					if (!NativeMethods.GetInfoMap(mapName, name, infoMapPointer, bytesPerPixel))
+						throw new UnitSyncException("GetInfoMap failed");
+					var bitmapData = bitmap.LockBits(new Rectangle(Point.Empty, bitmap.Size), ImageLockMode.ReadOnly,
+					                                 bitmap.PixelFormat);
+					const int PixelSize = 3;
+					var p = (byte*) bitmapData.Scan0;
+					for (var i = 0; i < infoMapData.Length; i++)
+					{
+						var v = infoMapData[i];
+						var d = i/width*bitmapData.Stride + i%width*PixelSize;
+						p[d] = p[d + 1] = p[d + 2] = v;
+					}
+					bitmap.UnlockBits(bitmapData);
+				} catch
+				{
+					bitmap.Dispose();
+					throw;
 				}
-				bitmap.UnlockBits(bitmapData);
 				return bitmap;
 			}
 			finally
@@ -608,7 +624,11 @@ namespace CMissionLib.UnitSyncLib
 
 		BitmapSource LoadBuildpic(byte[] data)
 		{
-			var dib = FreeImage.LoadFromStream(new MemoryStream(data));
+			FIBITMAP dib;
+			using (var memoryStream = new MemoryStream(data)) 
+			{
+				dib = FreeImage.LoadFromStream(memoryStream);
+			}
 			try
 			{
 				using (var bitmap = FreeImage.GetBitmap(dib))

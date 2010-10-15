@@ -23,9 +23,11 @@ namespace CMissionLib
 
 		public static byte[] ToArray(this Stream stream)
 		{
-			var memoryStream = new MemoryStream();
-			stream.CopyTo(memoryStream);
-			return memoryStream.ToArray();
+			using (var memoryStream = new MemoryStream()) 
+			{
+				stream.CopyTo(memoryStream);
+				return memoryStream.ToArray();
+			}
 		}
 
 		[DllImport("gdi32.dll")]

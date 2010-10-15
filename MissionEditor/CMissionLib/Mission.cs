@@ -472,10 +472,12 @@ namespace CMissionLib
 				using (var zip = ZipFile.Read(path))
 				{
 					var entry = zip.First(e => e.FileName == projectFileName);
-					var memoryStream = new MemoryStream();
-					entry.Extract(memoryStream);
-					memoryStream.Position = 0;
-					return (Mission)new NetDataContractSerializer().ReadObject(memoryStream);
+					using (var memoryStream = new MemoryStream()) 
+					{
+						entry.Extract(memoryStream);
+						memoryStream.Position = 0;
+						return (Mission)new NetDataContractSerializer().ReadObject(memoryStream);
+					}
 				}
 			}
 		}
