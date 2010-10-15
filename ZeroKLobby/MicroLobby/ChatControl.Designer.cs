@@ -146,8 +146,6 @@ namespace ZeroKLobby.MicroLobby
             this.sendBox.Name = "sendBox";
             this.sendBox.Size = new System.Drawing.Size(851, 20);
             this.sendBox.TabIndex = 0;
-            this.sendBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.sendBox_PreviewKeyDown);
-            this.sendBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.sendBox_KeyPress);
             // 
             // playerBox
             // 
