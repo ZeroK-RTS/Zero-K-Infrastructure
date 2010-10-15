@@ -275,11 +275,12 @@ namespace ZeroKLobby.Notifications
 				{
 					if (client.IsLoggedIn && isVisible)
 					{
-						if (IsQuickPlayActive && client.MyBattle != null && !cbSpectate.Checked && WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime)
+						if (Automatic && client.MyBattle != null && !cbSpectate.Checked && WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime)
 						{
 							ChangeGuiSpectatorWithoutEvent(true);
 							client.ChangeMyStatus(true, null, null);
 							WarningBar.DisplayWarning("User was away for more than " + Program.Conf.IdleTime + " minutes: battle search changed to spectator.");
+							FormMain.Instance.NotifyUser("Away From Keyboard - setting mode to spectator", true, true);
 						}
 						else
 						{
