@@ -58,14 +58,15 @@ namespace ZeroKLobby.MicroLobby
 			{
 				historyIndex--;
 				if (historyIndex < 0) historyIndex = 0;
-
-				Text = history[historyIndex];
+				
+				if (history.Count > historyIndex) Text = history[historyIndex];
 			}
 			else if (e.KeyCode == Keys.Down)
 			{
 				historyIndex++;
 				if (historyIndex >= history.Count) historyIndex = history.Count - 1;
-				Text = history[historyIndex];
+				if (historyIndex < 0) historyIndex = 0;
+				if (history.Count > historyIndex) Text = history[historyIndex];
 			}
 			else historyIndex = history.Count;
 
