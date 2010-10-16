@@ -5,7 +5,9 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
@@ -50,6 +52,7 @@ namespace ZeroKLobby.Notifications
 		readonly Spring spring;
 		bool suppressSideChangeEvent;
 		readonly Timer timer = new Timer();
+		string lastBattleFounder;
 		public string CommShareWith { get; set; }
 
 
@@ -129,7 +132,7 @@ namespace ZeroKLobby.Notifications
 					if (!isVisible) ManualBattleStarted();
 					client.ChangeMyUserStatus(false, false);
 					var battle = client.MyBattle;
-
+					lastBattleFounder = battle.Founder;
 					Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
 					                                           (mod) =>
 					                                           	{
@@ -261,6 +264,29 @@ namespace ZeroKLobby.Notifications
 					if (currentBattleMode == BattleMode.Normal) Stop();
 					else JoinBestBattle();
 				};
+
+			client.BattleEnded += (s, e) =>
+				{
+					var t = new DispatcherTimer();
+					int tryCount = 0;
+					t.Interval = TimeSpan.FromSeconds(1);
+					t.Tick += (s2, e2) =>
+						{
+							tryCount++;
+							if (tryCount > 15) t.Stop();
+							else if (client.IsLoggedIn && client.MyBattle == null)
+							{
+								var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Founder == lastBattleFounder && !x.IsPassworded);
+								if (bat != null)
+								{
+									ActionHandler.JoinBattle(bat.BattleID, null);
+									t.Stop();
+								}
+							}
+						};
+					t.Start();
+				};
+
 
 			client.ConnectionLost += (s, e) =>
 				{

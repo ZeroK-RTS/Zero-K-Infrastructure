@@ -40,6 +40,7 @@ namespace ZeroKLobby.Notifications
 				UpdateCheckInfo updateInfo;
 				if ((updateInfo = deployment.CheckForDetailedUpdate()) != null && updateInfo.UpdateAvailable)
 				{
+					if (updateInfo.IsUpdateRequired) barHidden = false;
 					if (!barHidden) Program.FormMain.InvokeFunc(() =>
 						{
 							lbText.Text = string.Format("Updating to Zero-K lobby {0}", updateInfo.AvailableVersion);

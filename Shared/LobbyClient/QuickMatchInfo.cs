@@ -105,9 +105,9 @@ namespace LobbyClient
             {
 							if (CurrentMode == BattleMode.QuickMatch) return string.Format("{2} {0} {1}", MinPlayers > 0 ? MinPlayers.ToString(): "", GameName, IsSpectating ? "Speccing" : "QuickMatch");
                 else if (CurrentMode == BattleMode.Follow) return string.Format("following {0}", GameName);
-                else return string.Format("waiting {0}", MinPlayers);
+                else if (MinPlayers > 0) return string.Format("waiting {0}", MinPlayers);
             }
-            else return "";
+            return "";
         }
 
         public static bool operator ==(QuickMatchInfo left, QuickMatchInfo right)

@@ -286,7 +286,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			if (e.Place == TasSayEventArgs.Places.Battle && e.Origin == TasSayEventArgs.Origins.Player)
 			{
-				if (e.Text.Contains(Program.Conf.LobbyPlayerName) && !Program.TasClient.MyUser.IsInGame)
+				if (e.Text.Contains(Program.Conf.LobbyPlayerName) && !Program.TasClient.MyUser.IsInGame && !e.IsEmote)
 				{
 					if (FormMain.Instance.ChatTab.Flash("Battle")) 
 					FormMain.Instance.NotifyUser(string.Format("{0}: {1}", e.UserName, e.Text), false, true);
