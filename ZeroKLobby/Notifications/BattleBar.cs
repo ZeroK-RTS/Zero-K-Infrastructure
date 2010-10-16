@@ -72,7 +72,7 @@ namespace ZeroKLobby.Notifications
 			spring = new Spring(Program.SpringPaths);
 			spring.SpringExited += (s, e) =>
 				{
-					client.ChangeMyStatus(false, false);
+					client.ChangeMyUserStatus(false, false);
 
 					var logText = spring.LogLines.ToString();
 					Program.InfologWatcher.ParseInfolog(logText);
@@ -117,7 +117,7 @@ namespace ZeroKLobby.Notifications
 							else
 							{
 								Trace.TraceInformation("Specced because of !specafk");
-								client.ChangeMyStatus(true, null, null);
+								client.ChangeMyBattleStatus(spectate:true);
 							}
 						}
 					}
@@ -127,7 +127,7 @@ namespace ZeroKLobby.Notifications
 				{
 					downloadFailedCounter = 0;
 					if (!isVisible) ManualBattleStarted();
-					client.ChangeMyStatus(false, false);
+					client.ChangeMyUserStatus(false, false);
 					var battle = client.MyBattle;
 
 					Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
@@ -181,7 +181,7 @@ namespace ZeroKLobby.Notifications
 				{
 					if (client.MyBattle != null && !Program.SpringScanner.HasResource(client.MyBattle.MapName))
 					{
-						client.ChangeMyStatus(null, null, SyncStatuses.Unsynced);
+						client.ChangeMyBattleStatus(syncStatus: SyncStatuses.Unsynced);
 						Program.Downloader.GetResource(DownloadType.MAP, client.MyBattle.MapName);
 					}
 					RefreshTooltip();
@@ -215,7 +215,7 @@ namespace ZeroKLobby.Notifications
 					{
 						if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
 						{
-							client.ChangeMyStatus(false, true);
+							client.ChangeMyUserStatus(false, true);
 							lastScript = spring.StartGame(client, null, null, null);
 						}
 						else if (IsQuickPlayActive) client.LeaveBattle(); // battle started without me, lets quit!
@@ -273,12 +273,16 @@ namespace ZeroKLobby.Notifications
 
 			timer.Tick += (s, e) =>
 				{
-					if (client.IsLoggedIn && isVisible)
+					if (client.IsLoggedIn)
 					{
-						if (Automatic && client.MyBattle != null && !cbSpectate.Checked && WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime)
+						if (WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime) client.ChangeMyUserStatus(isAway: true);
+						else client.ChangeMyUserStatus(isAway: false);
+
+						if (isVisible && Automatic && client.MyBattle != null && !cbSpectate.Checked && WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime)
 						{
 							ChangeGuiSpectatorWithoutEvent(true);
-							client.ChangeMyStatus(true, null, null);
+							client.ChangeMyBattleStatus(spectate:true);
+							
 							WarningBar.DisplayWarning("User was away for more than " + Program.Conf.IdleTime + " minutes: battle search changed to spectator.");
 							FormMain.Instance.NotifyUser("Away From Keyboard - setting mode to spectator", true, true);
 						}
@@ -744,7 +748,7 @@ namespace ZeroKLobby.Notifications
 		void cbReady_Click(object sender, EventArgs e)
 		{
 			Automatic = false;
-			if (client != null && client.MyBattle != null) client.ChangeMyStatus(null, cbReady.Checked, null);
+			if (client != null && client.MyBattle != null) client.ChangeMyBattleStatus(ready: cbReady.Checked);
 		}
 
 		void cbSide_DrawItem(object sender, DrawItemEventArgs e)
@@ -768,7 +772,7 @@ namespace ZeroKLobby.Notifications
 
 			var status = client.MyBattleStatus;
 			if (status == null) return;
-			client.ChangeMySide(cbSide.SelectedIndex);
+			client.ChangeMyBattleStatus(side:cbSide.SelectedIndex);
 		}
 
 		void cbSide_VisibleChanged(object sender, EventArgs e)
@@ -778,7 +782,7 @@ namespace ZeroKLobby.Notifications
 
 		void cbSpectate_CheckedChanged(object sender, EventArgs e)
 		{
-			client.ChangeMyStatus(cbSpectate.Checked, null, null);
+			client.ChangeMyBattleStatus(spectate:cbSpectate.Checked);
 			Program.QuickMatchTracker.AdvertiseMySetup(null);
 			if (client.IsConnected && client.IsLoggedIn && client.MyBattle != null && !cbSpectate.Checked) cbSide.Visible = true;
 			else cbSide.Visible = false;

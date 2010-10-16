@@ -222,30 +222,8 @@ namespace LobbyClient
 			}
 		}
 
-		public void ChangeMyAlly(int ally)
-		{
-			var ubs = MyBattleStatus;
-			if (ubs != null)
-			{
-				var clone = (UserBattleStatus)ubs.Clone();
-				clone.AllyNumber = ally;
-				SendMyBattleStatus(clone.ToInt(), clone.TeamColor);
-			}
-		}
-
-		public void ChangeMySide(int side)
-		{
-			var ubs = MyBattleStatus;
-			if (ubs != null)
-			{
-				var clone = (UserBattleStatus)ubs.Clone();
-				clone.Side = side;
-				SendMyBattleStatus(clone.ToInt(), clone.TeamColor);
-			}
-		}
-
-
-		public void ChangeMyStatus(bool? spectate, bool? ready, SyncStatuses? syncStatus)
+		
+		public void ChangeMyBattleStatus(bool? spectate = null, bool? ready = null, SyncStatuses? syncStatus = null, int? side = null, int? ally = null, int? team =null)
 		{
 			var ubs = MyBattleStatus;
 			if (ubs != null)
@@ -254,16 +232,19 @@ namespace LobbyClient
 				if (spectate.HasValue) clone.IsSpectator = spectate.Value;
 				if (ready.HasValue) clone.IsReady = ready.Value;
 				if (syncStatus.HasValue) clone.SyncStatus = syncStatus.Value;
-				SendMyBattleStatus(clone.ToInt(), clone.TeamColor);
+				if (side.HasValue) clone.Side = side.Value;
+				if (ally.HasValue) clone.AllyNumber = ally.Value;
+				if (team.HasValue) clone.TeamNumber = team.Value;
+				if (clone.ToInt() != ubs.ToInt()) SendMyBattleStatus(clone.ToInt(), clone.TeamColor);
 			}
 		}
 
-		public void ChangeMyStatus(bool isAway, bool isInGame)
+		public void ChangeMyUserStatus(bool? isAway = null, bool? isInGame = null)
 		{
 			var u = new User();
-			u.IsAway = isAway;
-			u.IsInGame = isInGame;
-			con.SendCommand("MYSTATUS", u.ToInt());
+			if (isAway != null) u.IsAway = isAway.Value;
+			if (isInGame!=null) u.IsInGame = isInGame.Value;
+			if (MyUser.ToInt() != u.ToInt()) con.SendCommand("MYSTATUS", u.ToInt());
 		}
 
 
@@ -632,7 +613,7 @@ namespace LobbyClient
 				SendUdpPacket(0, serverHost, serverUdpHolePunchingPort);
 				udpPunchingTimer.Start();
 			}
-			else ChangeMyStatus(false, true);
+			else ChangeMyUserStatus(false, true);
 		}
 
 		public void UpdateBattleDetails(BattleDetails bd)
@@ -1107,7 +1088,7 @@ namespace LobbyClient
 							foreach (var ubs in MyBattle.Users) if (ubs.ip != IPAddress.None && ubs.port != 0) SendUdpPacket(lastUdpSourcePort, ubs.ip.ToString(), ubs.port);
 
 							MyBattle.HostPort = lastUdpSourcePort; // update source port for hosting and start it
-							ChangeMyStatus(false, true);
+							ChangeMyUserStatus(false, true);
 						}
 						break;
 

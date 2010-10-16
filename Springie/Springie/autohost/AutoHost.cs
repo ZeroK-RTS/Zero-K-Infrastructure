@@ -485,7 +485,7 @@ namespace Springie.autohost
 			if (manager != null) manager.Stop();
 			StopVote();
 			spring.ExitGame();
-			tas.ChangeMyStatus(false, false);
+			tas.ChangeMyUserStatus(false, false);
 			tas.LeaveBattle();
 		}
 
@@ -519,7 +519,7 @@ namespace Springie.autohost
 				}
 				// kontrola pro pripad ze by se nevypl spring
 				User us;
-				if (!spring.IsRunning && tas.GetExistingUser(tas.UserName, out us) && us.IsInGame) tas.ChangeMyStatus(false, false);
+				if (!spring.IsRunning && tas.GetExistingUser(tas.UserName, out us) && us.IsInGame) tas.ChangeMyUserStatus(false, false);
 			}
 		}
 
@@ -637,7 +637,7 @@ namespace Springie.autohost
 		void spring_SpringExited(object sender, EventArgs e)
 		{
 			tas.ChangeLock(false);
-			tas.ChangeMyStatus(false, false);
+			tas.ChangeMyUserStatus(false, false);
 			if (PlanetWars != null) PlanetWars.SpringExited();
 			var b = tas.MyBattle;
 			foreach (var s in toNotify)
@@ -662,7 +662,7 @@ namespace Springie.autohost
 		void tas_BattleOpened(object sender, TasEventArgs e)
 		{
 			tas.DisableUnits(config.DisabledUnits.Select(x => x.Name).ToArray());
-			tas.ChangeMyStatus(true, false, SyncStatuses.Synced);
+			tas.ChangeMyBattleStatus(true, false, SyncStatuses.Synced);
 		}
 
 
