@@ -149,7 +149,7 @@ namespace ZeroKLobby.MicroLobby
                     return;
                 }
 
-								if (e.Place == TasSayEventArgs.Places.Battle && !e.IsEmote) toolTabs.Hilite("Battle");
+								if (e.Place == TasSayEventArgs.Places.Battle && !e.IsEmote && !Program.TasClient.MyUser.IsInGame) toolTabs.Hilite("Battle");
 								if (e.Place == TasSayEventArgs.Places.Channel && !IsIgnoredChannel(e.Channel)) toolTabs.Hilite(e.Channel);
 								else if (e.Place == TasSayEventArgs.Places.Normal)
                 {
