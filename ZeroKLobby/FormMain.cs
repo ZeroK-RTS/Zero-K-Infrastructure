@@ -241,7 +241,7 @@ namespace ZeroKLobby
 		{
 			;
 			if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
-			else if (ApplicationDeployment.IsNetworkDeployed) Text = "Zero-K lobby  (v{0})";
+			else if (ApplicationDeployment.IsNetworkDeployed) Text = "Zero-K lobby";
 			else Text += " not installed properly - update from http://zero-k.info/lobby";
 
 			Icon = Resources.ZkIcon;
