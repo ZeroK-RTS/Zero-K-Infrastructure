@@ -580,6 +580,14 @@ namespace Springie.autohost
 		{
 			if (activePoll != null) activePoll.TimeEnd();
 			StopVote();
+
+			if (!spring.IsRunning && delayedModChange != null)
+			{
+				var mod = delayedModChange;
+				delayedModChange = null;
+				SayBattle("Updating to latest mod version: " + mod);
+				ComRehost(TasSayEventArgs.Default, new[] { mod });
+			}
 		}
 
 		void spring_GameOver(object sender, SpringLogEventArgs e)
@@ -737,13 +745,6 @@ namespace Springie.autohost
 				tas.ChangeLock(false);
 			}
 
-			if (!spring.IsRunning && delayedModChange != null && battle.NonSpectatorCount == 0)
-			{
-				var mod = delayedModChange;
-				delayedModChange = null;
-				SayBattle("Updating to latest mod version: " + mod);
-				ComRehost(TasSayEventArgs.Default, new[] { mod });
-			}
 		}
 
 		void tas_BattleUserStatusChanged(object sender, TasEventArgs e)

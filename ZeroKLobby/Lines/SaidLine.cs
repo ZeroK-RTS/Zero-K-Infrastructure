@@ -15,7 +15,7 @@ namespace ZeroKLobby.Lines
             if (message == null) throw new ArgumentNullException("message");
             var myName = Program.Conf.LobbyPlayerName;
             var me = myName == author;
-            var hilite = message.Contains(myName);
+        		var hilite = message.Contains(myName) && !message.StartsWith(string.Format("[{0}]", myName));
 
             AuthorName = author;
             Date = DateTime.Now;
