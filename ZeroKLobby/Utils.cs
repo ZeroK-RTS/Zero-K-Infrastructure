@@ -29,22 +29,6 @@ namespace ZeroKLobby
 			}
 		}
 
-		[DllImport("user32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
-
-		[StructLayout(LayoutKind.Sequential)]
-		public struct FLASHWINFO
-		{
-			public UInt32 cbSize;
-			public IntPtr hwnd;
-			public UInt32 dwFlags;
-			public UInt32 uCount;
-			public UInt32 dwTimeout;
-		}
-
-		public const UInt32 FLASHW_ALL = 3;
-
 
 		public static bool CanWrite(string filename)
 		{
@@ -345,9 +329,5 @@ namespace ZeroKLobby
 
 			return sr.ReadToEnd();
 		}
-
-		/// <returns>windowhandle</returns>
-		[DllImport("user32.dll")]
-		public static extern int GetForegroundWindow();
 	}
 }

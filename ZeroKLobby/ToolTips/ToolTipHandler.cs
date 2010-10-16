@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby.ToolTips
 {
@@ -106,7 +107,7 @@ namespace ZeroKLobby.ToolTips
                         tooltip.Dispose();
                     }
 
-                    if (doActiveWindowCheck) isWindowActive = Utils.GetForegroundWindow() == (int)Program.FormMain.Handle;
+                    if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == (int)Program.FormMain.Handle;
 
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive)
                     {

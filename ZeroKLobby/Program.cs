@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Cache;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -13,7 +12,6 @@ using System.Windows.Threading;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
-using ZeroKLobby.MapDownloader;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZeroKLobby.ToolTips;
@@ -50,6 +48,141 @@ namespace ZeroKLobby
 		public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
 		public static TasClient TasClient { get; private set; }
 		public static ToolTipHandler ToolTip;
+
+		[STAThread]
+		public static void Initialize(string[] args)
+		{
+			Trace.Listeners.Add(new ConsoleTraceListener());
+			Trace.Listeners.Add(new LogTraceListener());
+
+			if (!Debugger.IsAttached)
+			{
+				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+				Thread.GetDomain().UnhandledException += UnhandledException;
+				Application.ThreadException += Application_ThreadException;
+				if (System.Windows.Application.Current != null) System.Windows.Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+				Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+			}
+
+			// this sets default caching policy - webbrowser will use local cache if possible -> for loading images from web resources in wpf
+			//HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+			try
+			{
+				if (ApplicationDeployment.IsNetworkDeployed) Trace.TraceInformation("Starting with version {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
+				else
+				{
+					if (Debugger.IsAttached) Trace.TraceInformation("Starting with debugging");
+					else Trace.TraceError("Starting undeployed version!");
+				}
+
+				Directory.SetCurrentDirectory(StartupPath);
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(true);
+
+				WebRequest.DefaultWebProxy = null;
+				ThreadPool.SetMaxThreads(500, 2000);
+				ServicePointManager.Expect100Continue = false;
+
+				LoadConfig();
+
+				FriendManager = new FriendManager();
+				AutoJoinManager = new AutoJoinManager();
+
+				//call this after load config
+				DetectSpringPathes();
+
+				try
+				{
+					if (!Debugger.IsAttached)
+					{
+						mutex = new Mutex(false, "ZeroKLobby" + Conf.ManualSpringPath.GetHashCode());
+						if (!mutex.WaitOne(15000, false))
+						{
+							MessageBox.Show(
+								"Another copy of Zero-K lobby is still running for the spring at " + Conf.ManualSpringPath +
+								"\nMake sure the other lobby is closed (check task manager) before starting new one",
+								"There can be only one lobby running for each Spring engine copy",
+								MessageBoxButtons.OK,
+								MessageBoxIcon.Stop);
+							return;
+						}
+					}
+				}
+				catch (AbandonedMutexException) {}
+
+				SaveConfig();
+
+				InfologWatcher = new SpringInfologWatcher(Path.GetDirectoryName(SpringPaths.WritableDirectory));
+				SpringScanner = new SpringScanner(SpringPaths);
+				SpringScanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
+				SpringScanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
+
+				SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Map registered: {0}", e.MapName);
+				SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Mod registered: {0}", e.Data.Name);
+
+				Downloader = new PlasmaDownloader.PlasmaDownloader(Conf, SpringScanner, SpringPaths);
+				Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
+
+				TasClient = new TasClient(TasClientInvoker,
+				                          string.Format("ZK {0}",
+				                                        ApplicationDeployment.IsNetworkDeployed
+				                                        	? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
+				                                        	: Application.ProductVersion));
+
+				SayCommandHandler = new SayCommandHandler(TasClient);
+
+				// log, for debugging
+				TasClient.Connected += (s, e) => Trace.TraceInformation("TASC connected");
+				TasClient.LoginAccepted += (s, e) => Trace.TraceInformation("TASC login accepted");
+				TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
+				TasClient.ChannelJoined += (s, e) => Trace.TraceInformation("TASC channel joined: " + e.ServerParams[0]);
+				TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
+
+				QuickMatchTracker = new QuickMatchTracking(TasClient, () => BattleBar.GetQuickMatchInfo());
+				ConnectBar = new ConnectBar(TasClient);
+				ModStore = new ModStore();
+				ToolTip = new ToolTipHandler();
+
+				Application.AddMessageFilter(ToolTip);
+
+				FormMain = new FormMain();
+
+				Application.AddMessageFilter(new ScrollMessageFilter(FormMain));
+
+				if (Conf.StartMinimized) FormMain.WindowState = FormWindowState.Minimized;
+				else FormMain.WindowState = FormWindowState.Normal;
+
+				BattleIconManager = new BattleIconManager(FormMain);
+				BattleBar = new BattleBar();
+				NewVersionBar = new NewVersionBar();
+				NewSpringBar = new NewSpringBar(TasClient);
+
+				if (Conf.ConnectOnStartup) ConnectBar.TryToConnectTasClient();
+				else NotifySection.AddBar(ConnectBar);
+
+				Application.Run(FormMain);
+
+				ToolTip.Dispose();
+				Downloader.Dispose();
+				SpringScanner.Dispose();
+				Thread.Sleep(5000);
+
+				if (IsCrash) Application.Restart();
+			}
+			catch (Exception ex)
+			{
+				ErrorHandling.HandleException(ex, true);
+				Trace.TraceError("Error in application:" + ex);
+			}
+			finally
+			{
+				try
+				{
+					if (!Debugger.IsAttached) mutex.ReleaseMutex();
+				}
+				catch {}
+			}
+		}
 
 		/// <summary>
 		/// windows only: do we have admin token?
@@ -144,137 +277,6 @@ namespace ZeroKLobby
 			return Path.Combine(ConfigDirectory, Config.ConfigFileName);
 		}
 
-
-		[STAThread]
-		public static void Initialize(string[] args)
-		{
-			Trace.Listeners.Add(new ConsoleTraceListener());
-			Trace.Listeners.Add(new LogTraceListener());
-
-			if (!Debugger.IsAttached)
-			{
-				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-				Thread.GetDomain().UnhandledException += UnhandledException;
-				Application.ThreadException += Application_ThreadException;
-				if (System.Windows.Application.Current != null) System.Windows.Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
-				Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-			}
-
-			// this sets default caching policy - webbrowser will use local cache if possible -> for loading images from web resources in wpf
-			//HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
-
-			try
-			{
-				Directory.SetCurrentDirectory(StartupPath);
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(true);
-
-				WebRequest.DefaultWebProxy = null;
-				ThreadPool.SetMaxThreads(500, 2000);
-				ServicePointManager.Expect100Continue = false;
-
-				LoadConfig();
-
-				FriendManager = new FriendManager();
-				AutoJoinManager = new AutoJoinManager();
-
-				//call this after load config
-				DetectSpringPathes();
-
-				try
-				{
-					if (!Debugger.IsAttached)
-					{
-						mutex = new Mutex(false, "ZeroKLobby" + Conf.ManualSpringPath.GetHashCode());
-						if (!mutex.WaitOne(15000, false))
-						{
-							MessageBox.Show(
-								"Another copy of Zero-K lobby is still running for the spring at " + Conf.ManualSpringPath +
-								"\nMake sure the other lobby is closed (check task manager) before starting new one",
-								"There can be only one lobby running for each Spring engine copy",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Stop);
-							return;
-						}
-					}
-				}
-				catch (AbandonedMutexException) {}
-
-				SaveConfig();
-
-				InfologWatcher = new SpringInfologWatcher(Path.GetDirectoryName(SpringPaths.WritableDirectory));
-				SpringScanner = new SpringScanner(SpringPaths);
-				SpringScanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
-				SpringScanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
-
-
-				SpringScanner.MapRegistered += (s, e) => Trace.TraceInformation("Map registered: {0}", e.MapName);
-				SpringScanner.ModRegistered += (s, e) => Trace.TraceInformation("Mod registered: {0}", e.Data.Name);
-
-				Downloader = new PlasmaDownloader.PlasmaDownloader(Conf, SpringScanner, SpringPaths);
-				Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-
-				TasClient = new TasClient(TasClientInvoker,
-				                          string.Format("ZK {0}",
-				                                        ApplicationDeployment.IsNetworkDeployed
-				                                        	? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
-				                                        	: Application.ProductVersion));
-
-				SayCommandHandler = new SayCommandHandler(TasClient);
-
-				// log, for debugging
-				TasClient.Connected += (s, e) => Trace.TraceInformation("TASC connected");
-				TasClient.LoginAccepted += (s, e) => Trace.TraceInformation("TASC login accepted");
-				TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
-				TasClient.ChannelJoined += (s, e) => Trace.TraceInformation("TASC channel joined: " + e.ServerParams[0]);
-				TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
-
-				QuickMatchTracker = new QuickMatchTracking(TasClient, () => BattleBar.GetQuickMatchInfo());
-				ConnectBar = new ConnectBar(TasClient);
-				ModStore = new ModStore();
-				ToolTip = new ToolTipHandler();
-
-				Application.AddMessageFilter(ToolTip);
-
-				FormMain = new FormMain();
-
-				Application.AddMessageFilter(new ScrollMessageFilter(FormMain));
-
-				if (Conf.StartMinimized) FormMain.WindowState = FormWindowState.Minimized;
-				else FormMain.WindowState = FormWindowState.Normal;
-
-				BattleIconManager = new BattleIconManager(FormMain);
-				BattleBar = new BattleBar();
-				NewVersionBar = new NewVersionBar();
-				NewSpringBar = new NewSpringBar(TasClient);
-
-
-				if (Conf.ConnectOnStartup) ConnectBar.TryToConnectTasClient();
-				else NotifySection.AddBar(ConnectBar);
-
-				Application.Run(FormMain);
-
-				ToolTip.Dispose();
-				Downloader.Dispose();
-				SpringScanner.Dispose();
-				Thread.Sleep(5000);
-
-				if (IsCrash) Application.Restart();
-			}
-			catch (Exception ex)
-			{
-				ErrorHandling.HandleException(ex, true);
-				Trace.TraceError("Error in application:" + ex);
-			}
-			finally
-			{
-				try
-				{
-					if (!Debugger.IsAttached) mutex.ReleaseMutex();
-				}
-				catch {}
-			}
-		}
 
 		static void TasClientInvoker(TasClient.Invoker a)
 		{

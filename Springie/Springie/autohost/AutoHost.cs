@@ -614,7 +614,7 @@ namespace Springie.autohost
 						if (!string.IsNullOrEmpty(latest) && b != null && b.ModName != latest)
 						{
 							config.DefaultMod = latest;
-							if (!spring.IsRunning && b.NonSpectatorCount == 0)
+							if (!spring.IsRunning)
 							{
 								SayBattle("Updating to latest mod version: " + latest);
 								ComRehost(TasSayEventArgs.Default, new[] { latest });

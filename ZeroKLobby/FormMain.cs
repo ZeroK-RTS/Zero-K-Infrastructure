@@ -213,7 +213,7 @@ namespace ZeroKLobby
 
 		public void NotifyUser(string message, bool useSound = false, bool useFlashing = false)
 		{
-			bool isHidden = WindowState == FormWindowState.Minimized || Visible == false || Utils.GetForegroundWindow() != (int)Handle;
+			bool isHidden = WindowState == FormWindowState.Minimized || Visible == false || WindowsApi.GetForegroundWindow() != (int)Handle;
 			// todo use this when its easy to determine what is user looking at (flash when message not seen)
 			if (!string.IsNullOrEmpty(message)) systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
 			if (isHidden && useFlashing) FlashWindow();
@@ -228,11 +228,11 @@ namespace ZeroKLobby
 			if (!Focused || !Visible || WindowState == FormWindowState.Minimized)
 			{
 				Visible = true;
-				var info = new Utils.FLASHWINFO();
+				var info = new WindowsApi.FLASHWINFO();
 				info.hwnd = Program.FormMain.Handle;
 				info.dwFlags = 0x0000000C | 0x00000003; // flash all until foreground
 				info.cbSize = Convert.ToUInt32(Marshal.SizeOf(info));
-				Utils.FlashWindowEx(ref info);
+				WindowsApi.FlashWindowEx(ref info);
 			}
 		}
 
@@ -241,7 +241,7 @@ namespace ZeroKLobby
 		{
 			;
 			if (Debugger.IsAttached) Text = "==== DEBUGGING ===";
-			else if (ApplicationDeployment.IsNetworkDeployed) Text = string.Format("Zero-K lobby  (v{0})",ApplicationDeployment.CurrentDeployment.CurrentVersion);
+			else if (ApplicationDeployment.IsNetworkDeployed) Text = "Zero-K lobby  (v{0})";
 			else Text += " not installed properly - update from http://zero-k.info/lobby";
 
 			Icon = Resources.ZkIcon;

@@ -289,7 +289,6 @@
     <Compile Include="MicroLobby\TextWindow.designer.cs">
       <DependentUpon>TextWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\WindowsAPI.cs" />
     <Compile Include="MicroLobby\Images.cs" />
     <Compile Include="MicroLobby\LoginForm.cs">
       <SubType>Form</SubType>
@@ -450,6 +449,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindowsApi.cs" />
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
