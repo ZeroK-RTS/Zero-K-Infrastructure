@@ -1,34 +1,34 @@
-﻿<UserControl x:Class="MissionEditor2.AreaControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="clr-namespace:MissionEditor2" xmlns:UnitSyncLib="clr-namespace:CMissionLib.UnitSyncLib;assembly=CMissionLib" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="UserControl_Loaded" PreviewMouseMove="UserControl_PreviewMouseMove">
-    <UserControl.Resources>
+﻿<Window x:Class="MissionEditor2.RegionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:MissionEditor2" Title="RegionWindow" Height="600" Width="800" Loaded="UserControl_Loaded" PreviewMouseMove="UserControl_PreviewMouseMove">
+    <Window.Resources>
         <local:ZoomConverter x:Key="log10Converter" />
-    </UserControl.Resources>
+    </Window.Resources>
     <Grid>
         <DockPanel>
             <ToolBarTray DockPanel.Dock="Top">
                 <ToolBar x:Name="toolbar">
-                    <Label Content="Name: "  />
-                    <TextBox Text="{Binding Name, Mode=TwoWay}" MinWidth="100" />
+                    <Label Content="Name: " />
+                    <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  MinWidth="100" />
+                    <Separator />
                     <ToggleButton x:Name="circleButton" Click="button_Click">Circle</ToggleButton>
                     <ToggleButton x:Name="rectangleButton" Click="button_Click">Rectangle</ToggleButton>
                     <ToggleButton x:Name="deleteButton" Click="button_Click">Delete</ToggleButton>
+                    <Separator />
+                    <Button Click="DeleteButton_Click">Delete Region</Button>
                 </ToolBar>
             </ToolBarTray>
-            <Grid DockPanel.Dock="Bottom" >
+            <Grid DockPanel.Dock="Bottom">
                 <Button IsDefault="True" IsCancel="True" Click="OkButton_Click">OK</Button>
             </Grid>
             <Slider DockPanel.Dock="Bottom" Name="zoomSlider" Minimum="0.01" Maximum="2" Value="1" />
             <ScrollViewer HorizontalScrollBarVisibility="Auto">
                 <Grid>
                     <Canvas x:Name="canvas" DataContext="{Binding Source={x:Static local:MainWindow.Instance}, Path=Mission.Map.Texture}" MinHeight="{Binding Height}"
-						        MinWidth="{Binding Width}" MouseDown="canvas_MouseDown" PreviewMouseUp="canvas_PreviewMouseUp" >
+                            MinWidth="{Binding Width}" MouseDown="canvas_MouseDown" PreviewMouseUp="canvas_PreviewMouseUp">
                         <Canvas.LayoutTransform>
                             <ScaleTransform ScaleX="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}"
-								                ScaleY="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}" />
+                                    ScaleY="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}" />
                         </Canvas.LayoutTransform>
                         <Canvas.Background>
                             <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding}" />
@@ -38,4 +38,4 @@
             </ScrollViewer>
         </DockPanel>
     </Grid>
-</UserControl>
+</Window>

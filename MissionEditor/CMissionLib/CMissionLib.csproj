@@ -97,7 +97,9 @@
     <Compile Include="Conditions\UnitDestroyedCondition.cs" />
     <Compile Include="Conditions\UnitFinishedCondition.cs" />
     <Compile Include="Conditions\UnitFinishedInFactoryCondition.cs" />
+    <Compile Include="Conditions\UnitIsVisibleCondition.cs" />
     <Compile Include="Conditions\UnitsAreInAreaCondition.cs" />
+    <Compile Include="Conditions\UnitSelectedCondition.cs" />
     <Compile Include="Cylinder.cs" />
     <Compile Include="Actions\DefeatAction.cs" />
     <Compile Include="Actions\DummyAction.cs" />

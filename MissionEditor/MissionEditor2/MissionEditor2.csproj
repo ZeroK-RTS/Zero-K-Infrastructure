@@ -69,18 +69,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AreaControl.xaml.cs">
-      <DependentUpon>AreaControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="AreaDragInfo.xaml.cs" />
     <Compile Include="CircleDragInfo.xaml.cs" />
     <Compile Include="DragInfo.xaml.cs" />
     <Compile Include="GiveFactoryOrdersPane.xaml.cs">
       <DependentUpon>GiveFactoryOrdersPane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GiveOrdersPane.xaml.cs">
+      <DependentUpon>GiveOrdersPane.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NoArea.xaml.cs" />
     <Compile Include="PublishDialog.xaml.cs" />
     <Compile Include="RectangleDragInfo.xaml.cs" />
+    <Compile Include="RegionWindow.xaml.cs">
+      <DependentUpon>RegionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Service References\ServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -94,6 +97,12 @@
       <DependentUpon>UnitEnteredAreaControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UnitIcon.xaml.cs" />
+    <Compile Include="UnitIsVisibleConditionControl.xaml.cs">
+      <DependentUpon>UnitIsVisibleConditionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UnitSelectedConditionControl.xaml.cs">
+      <DependentUpon>UnitSelectedConditionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="Vectors.xaml.cs">
       <DependentUpon>Vectors.xaml</DependentUpon>
@@ -102,15 +111,15 @@
       <DependentUpon>WelcomeDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ZoomConverter.cs" />
-    <Page Include="AreaControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="CreateUnitsPane.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="GiveFactoryOrdersPane.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GiveOrdersPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -185,6 +194,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="RegionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StringRequest.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -204,6 +217,14 @@
     <Page Include="UnitIcon.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UnitIsVisibleConditionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UnitSelectedConditionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Vectors.xaml">
       <Generator>MSBuild:Compile</Generator>

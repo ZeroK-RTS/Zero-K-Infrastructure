@@ -25,8 +25,20 @@
         Pauses the game.
             </TextBlock>
         </DataTemplate>
+        
+        <DataTemplate x:Key="UnitSelectedCondition">
+            <local:UnitSelectedConditionControl />
+        </DataTemplate>
 
-        <DataTemplate x:Key="CreateUnitsAction">
+        <DataTemplate x:Key="UnitIsVisibleCondition">
+            <local:UnitIsVisibleConditionControl />
+        </DataTemplate>
+
+        <DataTemplate x:Key="GiveOrdersAction">
+            <local:GiveOrdersPane />
+        </DataTemplate>
+
+            <DataTemplate x:Key="CreateUnitsAction">
             <local:CreateUnitsPane />
         </DataTemplate>
 

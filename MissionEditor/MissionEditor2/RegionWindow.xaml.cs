@@ -9,19 +9,17 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CMissionLib;
-using CMissionLib.Conditions;
 
 namespace MissionEditor2
 {
 	/// <summary>
-	/// Interaction logic for AreaControl.xaml
+	/// Interaction logic for RegionWindow.xaml
 	/// </summary>
-	public partial class AreaControl : UserControl
+	public partial class RegionWindow : Window
 	{
-		public AreaControl(Region region)
+		public RegionWindow(Region region)
 		{
 			
 			InitializeComponent();
@@ -234,7 +232,17 @@ namespace MissionEditor2
 
 		private void OkButton_Click(object sender, RoutedEventArgs e)
 		{
-			// Close(); // convert to window
+			Close();
+		}
+
+		private void DeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (MessageBox.Show("Are you sure you want to delete the region?", "Confirm delete", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+			{
+				MainWindow.Instance.Mission.Regions.Remove(Region);
+				Close();
+			}
+
 		}
 	}
 }

@@ -45,8 +45,13 @@ namespace CMissionLib
 			Map = map;
 		}
 
+		public override string ToString()
+		{
+			return ToString(0);
+		}
 
-		string ToString(int indentLevel = 0)
+
+		string ToString(int indentLevel)
 		{
 			if (Map.Count == 0) return "{}";
 			var sb = new StringBuilder();

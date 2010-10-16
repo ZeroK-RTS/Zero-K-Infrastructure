@@ -15,7 +15,6 @@ namespace MissionEditor2
             string resourceName = null;
 
             if (item is ConsoleMessageAction) resourceName = "showConsoleMessageTemplate";
-            else if (item is GiveOrdersAction) resourceName = "giveOrdersActionTemplate";
             else if (item is GameStartedCondition) resourceName = "gameStartedConditionTemplate";
             else if (item is TimeCondition) resourceName = "timeConditionTemplate";
             else if (item is GameEndedCondition) resourceName = "gameEndedConditionTemplate";

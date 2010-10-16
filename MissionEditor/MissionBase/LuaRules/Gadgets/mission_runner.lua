@@ -49,6 +49,7 @@ end
 --------------------------------------------------------------------------------
 
 
+
 local function CopyTable(original)   -- Warning: circular table references lead to an infinite loop.
   local copy = {}
   for k, v in pairs(original) do
@@ -235,6 +236,37 @@ local disabledUnitDefIDs = {}
 for _, disabledUnitName in ipairs(mission.disabledUnits) do
   disabledUnitDefIDs[UnitDefNames[disabledUnitName].id] = true
 end
+
+
+local selectedUnitConditionGroups = {}
+for condition in pairs(FindAllLogic("UnitSelectedCondition")) do
+  selectedUnitConditionGroups = MergeSets(selectedUnitConditionGroups, condition.args.groups)
+end
+
+local unitIsVisibleConditionGroups = {}
+for condition in pairs(FindAllLogic("UnitIsVisibleCondition")) do
+  unitIsVisibleConditionGroups = MergeSets(unitIsVisibleConditionGroups, condition.args.groups)
+end
+
+
+local function AddUnitGroup(unitID, group)
+  unitGroups[unitID][group] = true
+  if selectedUnitConditionGroups[group] then
+    Spring.SetUnitRulesParam(unitID, "notifyselect", 1)
+  end
+  if unitIsVisibleConditionGroups[group] then
+    Spring.SetUnitRulesParam(unitID, "notifyvisible", 1)
+  end
+end
+
+local function AddUnitGroups(unitID, groups)
+  for group in pairs(groups) do
+    AddUnitGroup(unitID, group)
+  end
+end
+
+
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -462,7 +494,7 @@ local function ExecuteTrigger(trigger, frame)
               end
               createdUnits[unitID] = true
               if unit.groups and next(unit.groups) then
-                unitGroups[unitID] = CopyTable(unit.groups)
+                AddUnitGroups(unitID, unit.groups)
               end
             end
           end
@@ -796,12 +828,12 @@ function gadget:UnitFromFactory(unitID, unitDefID, unitTeam, factID, factDefID, 
   -- assign groups
   if repeatFactoryGroups[factID] then
     for group in pairs(repeatFactoryGroups[factID]) do
-      unitGroups[unitID][group] = true
+      AddUnitGroup(unitID, group)
     end
   elseif factoryExpectedUnits[factID] then
     if factoryExpectedUnits[factID][1].unitDefID == unitDefID then
       for group in pairs(factoryExpectedUnits[factID][1].groups) do
-        unitGroups[unitID][group] = true
+        AddUnitGroup(unitID, group)
       end
       table.remove(factoryExpectedUnits[factID], 1)
     end
@@ -860,6 +892,37 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpt
     return false
   end
   return true
+end
+
+
+function gadget:RecvLuaMsg(msg, player)
+  if StartsWith(msg, "notifyselect ") then
+    local unitID = tonumber(string.match(msg, "%d+"))
+    local _, _, _, teamID = Spring.GetPlayerInfo(player)
+    for _, trigger in ipairs(triggers) do
+      for _, condition in ipairs(trigger.logic) do
+        if condition.logicType == "UnitSelectedCondition" then
+          if not next(condition.args.players) or ArrayContains(condition.args.players, teamID) then
+            ExecuteTrigger(trigger)
+            break
+          end
+        end
+      end
+    end
+  elseif StartsWith(msg, "notifyvisible ") then
+    local unitID = tonumber(string.match(msg, "%d+"))
+    local _, _, _, teamID = Spring.GetPlayerInfo(player)
+    for _, trigger in ipairs(triggers) do
+      for _, condition in ipairs(trigger.logic) do
+        if condition.logicType == "UnitIsVisibleCondition" then
+          if not next(condition.args.players) or ArrayContains(condition.args.players, teamID) then
+            ExecuteTrigger(trigger)
+            break
+          end
+        end
+      end
+    end
+  end
 end
 
 --------------------------------------------------------------------------------
