@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkData", "Shared\ZkData\ZkD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MissionEditorServer", "MissionEditorServer\MissionEditorServer\MissionEditorServer.csproj", "{C4CB1E88-5375-4668-8314-3AC10D9C6231}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMissionLib", "MissionEditor\CMissionLib\CMissionLib.csproj", "{025DB717-770F-4A29-BC33-FFDC3088E25B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MissionEditor2", "MissionEditor\MissionEditor2\MissionEditor2.csproj", "{713275BF-2FAB-4F51-8766-1E8182BCDAA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -337,6 +341,46 @@ Global
 		{C4CB1E88-5375-4668-8314-3AC10D9C6231}.Stats|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{C4CB1E88-5375-4668-8314-3AC10D9C6231}.Stats|Mixed Platforms.Build.0 = Release|Any CPU
 		{C4CB1E88-5375-4668-8314-3AC10D9C6231}.Stats|x86.ActiveCfg = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.LinuxDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.LinuxDebug|Any CPU.Build.0 = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.LinuxDebug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.LinuxDebug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.LinuxDebug|x86.ActiveCfg = Debug|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Release|x86.ActiveCfg = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Stats|Any CPU.ActiveCfg = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Stats|Any CPU.Build.0 = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Stats|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Stats|Mixed Platforms.Build.0 = Release|Any CPU
+		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Stats|x86.ActiveCfg = Release|Any CPU
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Debug|x86.ActiveCfg = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Debug|x86.Build.0 = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.LinuxDebug|Any CPU.ActiveCfg = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.LinuxDebug|Mixed Platforms.ActiveCfg = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.LinuxDebug|Mixed Platforms.Build.0 = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.LinuxDebug|x86.ActiveCfg = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.LinuxDebug|x86.Build.0 = Debug|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Release|Any CPU.ActiveCfg = Release|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Release|Mixed Platforms.Build.0 = Release|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Release|x86.ActiveCfg = Release|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Release|x86.Build.0 = Release|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Stats|Any CPU.ActiveCfg = Release|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Stats|Mixed Platforms.ActiveCfg = Release|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Stats|Mixed Platforms.Build.0 = Release|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Stats|x86.ActiveCfg = Release|x86
+		{713275BF-2FAB-4F51-8766-1E8182BCDAA4}.Stats|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
