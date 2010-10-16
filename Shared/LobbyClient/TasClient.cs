@@ -64,6 +64,7 @@ namespace LobbyClient
 
 		// user info 
 		string username = "";
+		public int MessageID { get; private set; }
 		public bool ConnectionFailed { get; private set; }
 
 		public Dictionary<int, Battle> ExistingBattles { get { return existingBattles; } set { existingBattles = value; } }
@@ -114,6 +115,7 @@ namespace LobbyClient
 		public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
 		public event EventHandler<TasEventArgs> BattleDisabledUnitsChanged = delegate { };
 		public event EventHandler<EventArgs<Battle>> BattleEnded = delegate { }; // raised just after the battle is removed from the battle list
+		public event EventHandler<EventArgs<Battle>> MyBattleEnded = delegate { }; // raised just after the battle is removed from the battle list
 		public event EventHandler<EventArgs<Battle>> BattleEnding = delegate { }; // raised just before the battle is removed from the battle list
 		public event EventHandler BattleForceQuit = delegate { }; // i was kicked from a battle (sent after LEFTBATTLE)
 		public event EventHandler<TasEventArgs> BattleFound = delegate { };
@@ -163,6 +165,8 @@ namespace LobbyClient
 		public event EventHandler<TasEventArgs> UserAdded = delegate { };
 		public event EventHandler<TasEventArgs> UserRemoved = delegate { };
 		public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
+		public event EventHandler<TasEventArgs> TestLoginAccepted = delegate { };
+		public event EventHandler<TasEventArgs> TestLoginDenied = delegate { };
 
 		public TasClient(Invoker<Invoker> guiThreadInvoker, string appName)
 		{
@@ -633,6 +637,8 @@ namespace LobbyClient
 			else DispatchServerCommandOnGuiThread(command, args);
 		}
 
+
+
 		/// <summary>
 		/// Primary method - processes commands from server
 		/// </summary>
@@ -642,9 +648,17 @@ namespace LobbyClient
 		{
 			// is this really needed for the whole thread? it screws with date formatting
 			// Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
+		
 			try
 			{
+				if (command.StartsWith("#"))
+				{
+					MessageID = int.Parse(command.Substring(1));
+					command = args[0];
+					args = Utils.ShiftArray(args, -1);
+				}
+
+
 				Input(this, new TasInputArgs(command, args));
 
 				switch (command)
@@ -1046,7 +1060,11 @@ namespace LobbyClient
 							User user;
 							if (ExistingUsers.TryGetValue(u.Name, out user)) user.IsInBattleRoom = false;
 						}
-						if (battle == MyBattle) BattleClosed(this, new EventArgs<Battle>(battle));
+						if (battle == MyBattle)
+						{
+							BattleClosed(this, new EventArgs<Battle>(battle));
+							MyBattleEnded(this, new EventArgs<Battle>(battle));
+						}
 						BattleEnding(this, new EventArgs<Battle>(battle));
 						existingBattles.Remove(battleID);
 						BattleEnded(this, new EventArgs<Battle>(battle));
@@ -1132,6 +1150,13 @@ namespace LobbyClient
 						StartRectRemoved(this, new TasEventArgs(args));
 					}
 						break;
+					case "TESTLOGINACCEPT":
+						TestLoginAccepted(this, new TasEventArgs(args));
+						break;
+					case "TESTLOGINDENY":
+						TestLoginDenied(this, new TasEventArgs(args));
+						break;
+
 				}
 			}
 			catch (Exception e)

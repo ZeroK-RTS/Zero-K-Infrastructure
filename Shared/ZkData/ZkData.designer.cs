@@ -23,7 +23,7 @@ namespace ZkData
 	
 	
 	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="zero-k")]
-	public partial class ZkDataDataContext : System.Data.Linq.DataContext
+	public partial class ZkDataContext : System.Data.Linq.DataContext
 	{
 		
 		private static System.Data.Linq.Mapping.MappingSource mappingSource = new AttributeMappingSource();
@@ -41,31 +41,31 @@ namespace ZkData
     partial void DeleteMissionRating(MissionRating instance);
     #endregion
 		
-		public ZkDataDataContext() : 
+		public ZkDataContext() : 
 				base(global::ZkData.Properties.Settings.Default.zero_kConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
 		
-		public ZkDataDataContext(string connection) : 
+		public ZkDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
 		}
 		
-		public ZkDataDataContext(System.Data.IDbConnection connection) : 
+		public ZkDataContext(System.Data.IDbConnection connection) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
 		}
 		
-		public ZkDataDataContext(string connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
+		public ZkDataContext(string connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
 		}
 		
-		public ZkDataDataContext(System.Data.IDbConnection connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
+		public ZkDataContext(System.Data.IDbConnection connection, System.Data.Linq.Mapping.MappingSource mappingSource) : 
 				base(connection, mappingSource)
 		{
 			OnCreated();
@@ -244,14 +244,6 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<ShipType>();
-			}
-		}
-		
-		public System.Data.Linq.Table<SpringAccount> SpringAccounts
-		{
-			get
-			{
-				return this.GetTable<SpringAccount>();
 			}
 		}
 		
@@ -2176,7 +2168,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary Image
 		{
 			get
@@ -3668,177 +3660,6 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SpringAccount")]
-	public partial class SpringAccount
-	{
-		
-		private int _SpringAccountID;
-		
-		private string _Name;
-		
-		private string _Flags;
-		
-		private int _UserCookie;
-		
-		private System.Nullable<System.DateTime> _LastLogin;
-		
-		private System.Nullable<System.DateTime> _Created;
-		
-		private string _LastIP;
-		
-		private string _LastCountry;
-		
-		private string _Password;
-		
-		public SpringAccount()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringAccountID", DbType="Int NOT NULL")]
-		public int SpringAccountID
-		{
-			get
-			{
-				return this._SpringAccountID;
-			}
-			set
-			{
-				if ((this._SpringAccountID != value))
-				{
-					this._SpringAccountID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this._Name = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Flags", DbType="VarChar(32) NOT NULL", CanBeNull=false)]
-		public string Flags
-		{
-			get
-			{
-				return this._Flags;
-			}
-			set
-			{
-				if ((this._Flags != value))
-				{
-					this._Flags = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserCookie", DbType="Int NOT NULL")]
-		public int UserCookie
-		{
-			get
-			{
-				return this._UserCookie;
-			}
-			set
-			{
-				if ((this._UserCookie != value))
-				{
-					this._UserCookie = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastLogin", DbType="DateTime")]
-		public System.Nullable<System.DateTime> LastLogin
-		{
-			get
-			{
-				return this._LastLogin;
-			}
-			set
-			{
-				if ((this._LastLogin != value))
-				{
-					this._LastLogin = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Created", DbType="DateTime")]
-		public System.Nullable<System.DateTime> Created
-		{
-			get
-			{
-				return this._Created;
-			}
-			set
-			{
-				if ((this._Created != value))
-				{
-					this._Created = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastIP", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
-		public string LastIP
-		{
-			get
-			{
-				return this._LastIP;
-			}
-			set
-			{
-				if ((this._LastIP != value))
-				{
-					this._LastIP = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastCountry", DbType="VarChar(3) NOT NULL", CanBeNull=false)]
-		public string LastCountry
-		{
-			get
-			{
-				return this._LastCountry;
-			}
-			set
-			{
-				if ((this._LastCountry != value))
-				{
-					this._LastCountry = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="VarChar(150) NOT NULL", CanBeNull=false)]
-		public string Password
-		{
-			get
-			{
-				return this._Password;
-			}
-			set
-			{
-				if ((this._Password != value))
-				{
-					this._Password = value;
-				}
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StarSystem")]
 	public partial class StarSystem
 	{
@@ -4381,6 +4202,16 @@ namespace ZkData
 		
 		private float _EloWeight;
 		
+		private bool _IsLobbyAdministrator;
+		
+		private bool _IsBot;
+		
+		private string _Password;
+		
+		private string _Country;
+		
+		private int _LobbyTimeRank;
+		
 		private EntitySet<Mission> _Missions;
 		
     #region Extensibility Method Definitions
@@ -4401,6 +4232,16 @@ namespace ZkData
     partial void OnEloChanged();
     partial void OnEloWeightChanging(float value);
     partial void OnEloWeightChanged();
+    partial void OnIsLobbyAdministratorChanging(bool value);
+    partial void OnIsLobbyAdministratorChanged();
+    partial void OnIsBotChanging(bool value);
+    partial void OnIsBotChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
+    partial void OnCountryChanging(string value);
+    partial void OnCountryChanged();
+    partial void OnLobbyTimeRankChanging(int value);
+    partial void OnLobbyTimeRankChanged();
     #endregion
 		
 		public Account()
@@ -4545,6 +4386,106 @@ namespace ZkData
 					this._EloWeight = value;
 					this.SendPropertyChanged("EloWeight");
 					this.OnEloWeightChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsLobbyAdministrator", DbType="bit NOT NULL")]
+		public bool IsLobbyAdministrator
+		{
+			get
+			{
+				return this._IsLobbyAdministrator;
+			}
+			set
+			{
+				if ((this._IsLobbyAdministrator != value))
+				{
+					this.OnIsLobbyAdministratorChanging(value);
+					this.SendPropertyChanging();
+					this._IsLobbyAdministrator = value;
+					this.SendPropertyChanged("IsLobbyAdministrator");
+					this.OnIsLobbyAdministratorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBot", DbType="bit NOT NULL")]
+		public bool IsBot
+		{
+			get
+			{
+				return this._IsBot;
+			}
+			set
+			{
+				if ((this._IsBot != value))
+				{
+					this.OnIsBotChanging(value);
+					this.SendPropertyChanging();
+					this._IsBot = value;
+					this.SendPropertyChanged("IsBot");
+					this.OnIsBotChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="varchar(100) NOT NULL", CanBeNull=false)]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Country", DbType="varchar(5)")]
+		public string Country
+		{
+			get
+			{
+				return this._Country;
+			}
+			set
+			{
+				if ((this._Country != value))
+				{
+					this.OnCountryChanging(value);
+					this.SendPropertyChanging();
+					this._Country = value;
+					this.SendPropertyChanged("Country");
+					this.OnCountryChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LobbyTimeRank", DbType="int NOT NULL")]
+		public int LobbyTimeRank
+		{
+			get
+			{
+				return this._LobbyTimeRank;
+			}
+			set
+			{
+				if ((this._LobbyTimeRank != value))
+				{
+					this.OnLobbyTimeRankChanging(value);
+					this.SendPropertyChanging();
+					this._LobbyTimeRank = value;
+					this.SendPropertyChanged("LobbyTimeRank");
+					this.OnLobbyTimeRankChanged();
 				}
 			}
 		}

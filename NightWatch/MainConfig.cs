@@ -16,7 +16,6 @@ namespace CaTracker
         public string AccountPassword { get { return accountPassword; } set { accountPassword = value; } }
         public int AttemptReconnectInterval { get { return attemptReconnectInterval; } set { attemptReconnectInterval = value; } }
         public bool AttemptToRecconnect { get { return attemptToRecconnect; } set { attemptToRecconnect = value; } }
-        public int ClientProtocolPort = 8203;
 
 
         public string[] JoinChannels { get { return joinChannels; } set { joinChannels = value; } }

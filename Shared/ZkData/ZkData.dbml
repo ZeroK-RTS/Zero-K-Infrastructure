@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" Class="ZkDataDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" Class="ZkDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="ZkData.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Battle" Member="Battles">
     <Type Name="Battle">
@@ -253,19 +253,6 @@
       <Column Name="IsStealthy" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
-  <Table Name="dbo.SpringAccount" Member="SpringAccounts">
-    <Type Name="SpringAccount">
-      <Column Name="SpringAccountID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Name" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
-      <Column Name="Flags" Type="System.String" DbType="VarChar(32) NOT NULL" CanBeNull="false" />
-      <Column Name="UserCookie" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="LastLogin" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="Created" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="LastIP" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="LastCountry" Type="System.String" DbType="VarChar(3) NOT NULL" CanBeNull="false" />
-      <Column Name="Password" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
   <Table Name="dbo.StarSystem" Member="StarSystems">
     <Type Name="StarSystem">
       <Column Name="SystemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
@@ -318,6 +305,11 @@
       <Column Name="Aliases" Type="System.String" DbType="varchar(max)" CanBeNull="true" />
       <Column Name="Elo" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" />
       <Column Name="EloWeight" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" />
+      <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="varchar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" />
+      <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
     </Type>
   </Table>

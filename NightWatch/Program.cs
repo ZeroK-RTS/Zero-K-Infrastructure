@@ -12,6 +12,7 @@ namespace CaTracker
             MainInstance = new Main();
             Console.WriteLine("Starting Tracker");
             MainInstance.Start();
+						
             while (true) Thread.Sleep(10000);
         }
     }
