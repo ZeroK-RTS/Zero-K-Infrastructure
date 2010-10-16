@@ -265,26 +265,29 @@ namespace ZeroKLobby.Notifications
 					else JoinBestBattle();
 				};
 
-			client.BattleEnded += (s, e) =>
+			client.MyBattleEnded += (s, e) =>
 				{
-					var t = new DispatcherTimer();
-					int tryCount = 0;
-					t.Interval = TimeSpan.FromSeconds(1);
-					t.Tick += (s2, e2) =>
-						{
-							tryCount++;
-							if (tryCount > 15) t.Stop();
-							else if (client.IsLoggedIn && client.MyBattle == null)
+					if (currentBattleMode == BattleMode.Normal)
+					{
+						var t = new DispatcherTimer();
+						int tryCount = 0;
+						t.Interval = TimeSpan.FromSeconds(1);
+						t.Tick += (s2, e2) =>
 							{
-								var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Founder == lastBattleFounder && !x.IsPassworded);
-								if (bat != null)
+								tryCount++;
+								if (tryCount > 15) t.Stop();
+								else if (client.IsLoggedIn && client.MyBattle == null)
 								{
-									ActionHandler.JoinBattle(bat.BattleID, null);
-									t.Stop();
+									var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Founder == lastBattleFounder && !x.IsPassworded);
+									if (bat != null)
+									{
+										ActionHandler.JoinBattle(bat.BattleID, null);
+										t.Stop();
+									}
 								}
-							}
-						};
-					t.Start();
+							};
+						t.Start();
+					}
 				};
 
 
