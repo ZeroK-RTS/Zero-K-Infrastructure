@@ -169,12 +169,7 @@ namespace Springie.SpringNamespace
 		{
 			lock (locker)
 			{
-				if (!modList.ContainsKey(modName))
-				{
-					foreach (var p in modList) if (p.Value.ArchiveName == modName) return true;
-					return false;
-				}
-				else return true;
+				return !modList.ContainsKey(modName);
 			}
 		}
 
