@@ -46,6 +46,9 @@ namespace LobbyClient
 		Dictionary<string, Channel> joinedChannels = new Dictionary<string, Channel>();
 		int lastSpectatorCount;
 		int lastUdpSourcePort;
+		int lastUserBattleStatus;
+		int lastUserColor;
+		int lastUserStatus;
 		bool lockToChangeTo;
 		int mapChecksumToChangeTo;
 		string mapToChangeTo;
@@ -64,7 +67,6 @@ namespace LobbyClient
 
 		// user info 
 		string username = "";
-		public int MessageID { get; private set; }
 		public bool ConnectionFailed { get; private set; }
 
 		public Dictionary<int, Battle> ExistingBattles { get { return existingBattles; } set { existingBattles = value; } }
@@ -78,6 +80,7 @@ namespace LobbyClient
 		public bool IsLoggedIn { get { return isLoggedIn; } }
 
 		public Dictionary<string, Channel> JoinedChannels { get { return joinedChannels; } }
+		public int MessageID { get; private set; }
 
 		public Battle MyBattle { get; protected set; }
 		public int MyBattleID { get; private set; }
@@ -92,7 +95,15 @@ namespace LobbyClient
 			}
 		}
 
-		public User MyUser { get { return ExistingUsers[username]; } }
+		public User MyUser
+		{
+			get
+			{
+				User us;
+				ExistingUsers.TryGetValue(username, out us);
+				return us;
+			}
+		}
 
 		public int PingInterval
 		{
@@ -115,7 +126,6 @@ namespace LobbyClient
 		public event EventHandler<TasEventArgs> BattleDetailsChanged = delegate { };
 		public event EventHandler<TasEventArgs> BattleDisabledUnitsChanged = delegate { };
 		public event EventHandler<EventArgs<Battle>> BattleEnded = delegate { }; // raised just after the battle is removed from the battle list
-		public event EventHandler<EventArgs<Battle>> MyBattleEnded = delegate { }; // raised just after the battle is removed from the battle list
 		public event EventHandler<EventArgs<Battle>> BattleEnding = delegate { }; // raised just before the battle is removed from the battle list
 		public event EventHandler BattleForceQuit = delegate { }; // i was kicked from a battle (sent after LEFTBATTLE)
 		public event EventHandler<TasEventArgs> BattleFound = delegate { };
@@ -148,6 +158,7 @@ namespace LobbyClient
 		public event EventHandler<TasEventArgs> JoinBattleFailed = delegate { };
 		public event EventHandler<TasEventArgs> LoginAccepted = delegate { };
 		public event EventHandler<TasEventArgs> LoginDenied = delegate { };
+		public event EventHandler<EventArgs<Battle>> MyBattleEnded = delegate { }; // raised just after the battle is removed from the battle list
 		public event EventHandler<TasEventArgs> MyBattleHostExited = delegate { };
 		public event EventHandler<BattleInfoEventArgs> MyBattleMapChanged = delegate { };
 		public event EventHandler<TasEventArgs> MyBattleStarted = delegate { };
@@ -162,11 +173,11 @@ namespace LobbyClient
 		public event EventHandler<SayingEventArgs> Saying = delegate { }; // this client is trying to say somethign
 		public event EventHandler<TasEventArgs> StartRectAdded = delegate { };
 		public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
+		public event EventHandler<TasEventArgs> TestLoginAccepted = delegate { };
+		public event EventHandler<TasEventArgs> TestLoginDenied = delegate { };
 		public event EventHandler<TasEventArgs> UserAdded = delegate { };
 		public event EventHandler<TasEventArgs> UserRemoved = delegate { };
 		public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
-		public event EventHandler<TasEventArgs> TestLoginAccepted = delegate { };
-		public event EventHandler<TasEventArgs> TestLoginDenied = delegate { };
 
 		public TasClient(Invoker<Invoker> guiThreadInvoker, string appName)
 		{
@@ -226,29 +237,44 @@ namespace LobbyClient
 			}
 		}
 
-		
-		public void ChangeMyBattleStatus(bool? spectate = null, bool? ready = null, SyncStatuses? syncStatus = null, int? side = null, int? ally = null, int? team =null)
+		public void ChangeMyBattleStatus(bool? spectate = null,
+		                                 bool? ready = null,
+		                                 SyncStatuses? syncStatus = null,
+		                                 int? side = null,
+		                                 int? ally = null,
+		                                 int? team = null)
 		{
 			var ubs = MyBattleStatus;
 			if (ubs != null)
 			{
 				var clone = (UserBattleStatus)ubs.Clone();
+				clone.SetFrom(lastUserBattleStatus, ubs.TeamColor);
 				if (spectate.HasValue) clone.IsSpectator = spectate.Value;
 				if (ready.HasValue) clone.IsReady = ready.Value;
 				if (syncStatus.HasValue) clone.SyncStatus = syncStatus.Value;
 				if (side.HasValue) clone.Side = side.Value;
 				if (ally.HasValue) clone.AllyNumber = ally.Value;
 				if (team.HasValue) clone.TeamNumber = team.Value;
-				if (clone.ToInt() != ubs.ToInt()) SendMyBattleStatus(clone.ToInt(), clone.TeamColor);
+				if (clone.ToInt() != lastUserBattleStatus)
+				{
+					SendMyBattleStatus(clone.ToInt(), clone.TeamColor);
+					lastUserBattleStatus = clone.ToInt();
+				}
 			}
 		}
 
+
 		public void ChangeMyUserStatus(bool? isAway = null, bool? isInGame = null)
 		{
-			var u = new User();
+			var u = MyUser.Clone();
+			u.FromInt(lastUserStatus);
 			if (isAway != null) u.IsAway = isAway.Value;
-			if (isInGame!=null) u.IsInGame = isInGame.Value;
-			if (MyUser.ToInt() != u.ToInt()) con.SendCommand("MYSTATUS", u.ToInt());
+			if (isInGame != null) u.IsInGame = isInGame.Value;
+			if (MyUser == null || lastUserStatus != u.ToInt())
+			{
+				con.SendCommand("MYSTATUS", u.ToInt());
+				lastUserStatus = u.ToInt();
+			}
 		}
 
 
@@ -638,7 +664,6 @@ namespace LobbyClient
 		}
 
 
-
 		/// <summary>
 		/// Primary method - processes commands from server
 		/// </summary>
@@ -648,7 +673,7 @@ namespace LobbyClient
 		{
 			// is this really needed for the whole thread? it screws with date formatting
 			// Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-		
+
 			try
 			{
 				if (command.StartsWith("#"))
@@ -657,7 +682,6 @@ namespace LobbyClient
 					command = args[0];
 					args = Utils.ShiftArray(args, -1);
 				}
-
 
 				Input(this, new TasInputArgs(command, args));
 
@@ -828,6 +852,8 @@ namespace LobbyClient
 						var old = u.Clone();
 						u.FromInt(status);
 
+						if (u.Name == username) lastUserStatus = u.ToInt();
+
 						if (MyBattle != null && MyBattle.Founder == u.Name)
 						{
 							if (u.IsInGame && old.IsInGame == false) MyBattleStarted(this, new TasEventArgs());
@@ -887,6 +913,7 @@ namespace LobbyClient
 						existingBattles[MyBattleID] = MyBattle;
 						var self = new UserBattleStatus(username, existingUsers[username]);
 						MyBattle.Users.Add(self); // add self
+						lastUserBattleStatus = self.ToInt();
 						UpdateBattleDetails(MyBattle.Details);
 						// SetScriptTag(MyBattle.Mod.GetDefaultModOptionsTags()); // sends default mod options // enable if tasclient is not fixed
 						BattleOpened(this, new TasEventArgs(args[0]));
@@ -914,8 +941,10 @@ namespace LobbyClient
 						var battle = existingBattles[joinedBattleID];
 						var userName = args[1];
 						var scriptPassword = args.Length > 2 ? args[2] : null;
-						battle.Users.Add(new UserBattleStatus(userName, existingUsers[userName], scriptPassword));
+						var ubs = new UserBattleStatus(userName, existingUsers[userName], scriptPassword);
+						battle.Users.Add(ubs);
 						ExistingUsers[userName].IsInBattleRoom = true;
+						if (userName == username) lastUserBattleStatus = ubs.ToInt();
 						BattleUserJoined(this, new BattleUserEventArgs(userName, joinedBattleID, scriptPassword));
 					}
 						break;
@@ -986,7 +1015,11 @@ namespace LobbyClient
 							battleStatus.SetFrom(int.Parse(args[1]), int.Parse(args[2]));
 							MyBattle.Users[userIndex] = battleStatus;
 							UpdateSpectators();
-							if (battleStatus.Name == username) BattleMyUserStatusChanged(this, new TasEventArgs(args));
+							if (battleStatus.Name == username)
+							{
+								lastUserBattleStatus = battleStatus.ToInt();
+								BattleMyUserStatusChanged(this, new TasEventArgs(args));
+							}
 							BattleUserStatusChanged(this, new TasEventArgs(args));
 						}
 					}
@@ -1156,7 +1189,6 @@ namespace LobbyClient
 					case "TESTLOGINDENY":
 						TestLoginDenied(this, new TasEventArgs(args));
 						break;
-
 				}
 			}
 			catch (Exception e)

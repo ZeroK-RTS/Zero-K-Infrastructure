@@ -97,6 +97,13 @@ namespace ZeroKLobby.Notifications
 					if (e.Data || IsHostGameRunning()) Program.FormMain.InvokeFunc(CreateReconnectBar);
 				};
 
+			spring.SpringStarted += (s, e) =>
+				{
+					client.ChangeMyBattleStatus(ready: false);
+					client.ChangeMyUserStatus(isInGame: true);
+
+				};
+
 			client.Rang += (s, e) =>
 				{
 					if (Automatic) AutoRespond();
@@ -130,7 +137,7 @@ namespace ZeroKLobby.Notifications
 				{
 					downloadFailedCounter = 0;
 					if (!isVisible) ManualBattleStarted();
-					client.ChangeMyUserStatus(false, false);
+					//client.ChangeMyUserStatus(false, false);
 					var battle = client.MyBattle;
 					lastBattleFounder = battle.Founder;
 					Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
@@ -218,7 +225,6 @@ namespace ZeroKLobby.Notifications
 					{
 						if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
 						{
-							client.ChangeMyUserStatus(false, true);
 							lastScript = spring.StartGame(client, null, null, null);
 						}
 						else if (IsQuickPlayActive) client.LeaveBattle(); // battle started without me, lets quit!
@@ -557,7 +563,7 @@ namespace ZeroKLobby.Notifications
 				newStatus.IsSpectator = cbSpectate.Checked;
 				if (Automatic)
 				{
-					newStatus.IsReady = battle.NonSpectatorCount >= numMinValue.Value;
+					newStatus.IsReady = !spring.IsRunning && battle.NonSpectatorCount >= numMinValue.Value;
 
 					if (DateTime.Now.Subtract(lastAlert).TotalSeconds > 120)
 					{

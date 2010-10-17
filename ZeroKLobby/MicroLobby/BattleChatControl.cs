@@ -263,7 +263,7 @@ namespace ZeroKLobby.MicroLobby
 		void TasClient_BattleUserLeft(object sender, BattleUserEventArgs e)
 		{
 			var userName = e.UserName;
-			if (userName == Program.TasClient.MyUser.Name)
+			if (userName == Program.Conf.LobbyPlayerName)
 			{
 				playerListItems.Clear();
 				playerBox.Items.Clear();

@@ -36,9 +36,6 @@ namespace NightWatch
 					requests.TryRemove(client.MessageID, out entry);
 				};
 
-			client.Input += (s, e) =>
-				{ Console.Write(e.Command + " " + string.Join(" ", e.Args) + "\n"); };
-
 
 			this.client.TestLoginDenied += (s, e) =>
 				{
