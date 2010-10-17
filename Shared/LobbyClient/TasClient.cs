@@ -175,7 +175,7 @@ namespace LobbyClient
 		public event EventHandler<TasEventArgs> StartRectRemoved = delegate { };
 		public event EventHandler<TasEventArgs> TestLoginAccepted = delegate { };
 		public event EventHandler<TasEventArgs> TestLoginDenied = delegate { };
-		public event EventHandler<TasEventArgs> UserAdded = delegate { };
+		public event EventHandler<EventArgs<User>> UserAdded = delegate { };
 		public event EventHandler<TasEventArgs> UserRemoved = delegate { };
 		public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
 
@@ -283,7 +283,7 @@ namespace LobbyClient
 			serverHost = host;
 			serverPort = port;
 			MyBattle = null;
-			MyBattleID = 0;
+			MyBattleID = 0;	
 			ExistingUsers = new Dictionary<string, User>();
 			existingChannels = new Dictionary<string, ExistingChannel>();
 			joinedChannels = new Dictionary<string, Channel>();
@@ -741,7 +741,7 @@ namespace LobbyClient
 							u.Cpu = cpu;
 							u.AccountID = Convert.ToInt32(args[3]);
 							ExistingUsers.Add(u.Name, u);
-							UserAdded(this, new TasEventArgs(args));
+							UserAdded(this, new EventArgs<User>(u));
 						}
 						catch (Exception e)
 						{

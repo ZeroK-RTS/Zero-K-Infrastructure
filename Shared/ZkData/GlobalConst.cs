@@ -8,6 +8,6 @@ namespace ZkData
 	public static class GlobalConst
 	{
 		public const string AuthServiceHost = "net.tcp://localhost:8202/";
-		public const int AuthServiceTestLoginWait = 5000;
+		public const string NightwatchName = "Nightwatch";
 	}
 }

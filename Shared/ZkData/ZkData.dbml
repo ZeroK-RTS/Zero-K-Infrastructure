@@ -311,6 +311,8 @@
       <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" />
       <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
+      <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
+      <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
     </Type>
   </Table>
   <Table Name="dbo.MissionRating" Member="MissionRatings">
@@ -318,6 +320,26 @@
       <Column Name="MissionID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Rating" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LobbyMessage" Member="LobbyMessages">
+    <Type Name="LobbyMessage">
+      <Column Name="MessageID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SourceName" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="TargetName" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="SourceAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="Message" Type="System.String" DbType="nvarchar(2000)" CanBeNull="true" />
+      <Column Name="Created" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="TargetAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="Channel" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Association Name="Account_LobbyMessage" Member="AccountBySourceAccountID" ThisKey="SourceAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_LobbyMessage1" Member="AccountByTargetAccountID" ThisKey="TargetAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LobbyChannelSubscription" Member="LobbyChannelSubscriptions">
+    <Type Name="LobbyChannelSubscription">
+      <Column Name="Name" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Channel" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
     </Type>
   </Table>
 </Database>

@@ -16,6 +16,7 @@ namespace NightWatch
 
 		readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
 		int messageId;
+		const int AuthServiceTestLoginWait = 8000;
 
 		public AuthService(TasClient client)
 		{
@@ -59,7 +60,7 @@ namespace NightWatch
 			var info = requests[Interlocked.Increment(ref messageId)] = new RequestInfo(login);
 
 			client.SendRaw(string.Format("#{0} TESTLOGIN {1} {2}", messageId, login, hashedPassword));
-			if (info.WaitHandle.WaitOne(GlobalConst.AuthServiceTestLoginWait))
+			if (info.WaitHandle.WaitOne(AuthServiceTestLoginWait))
 			{
 				if (info.AccountID == 0) return null; // not verified/invalid login or password
 				else

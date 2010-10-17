@@ -239,9 +239,9 @@ namespace ZeroKLobby.MicroLobby
             foreach (var channel in Program.AutoJoinManager.Channels) Program.TasClient.JoinChannel(channel, Program.AutoJoinManager.GetPassword(channel));
         }
 
-        void TasClient_UserAdded(object sender, TasEventArgs e)
+        void TasClient_UserAdded(object sender, EventArgs<User> e)
         {
-            var userName = e.ServerParams[0];
+        	var userName = e.Data.Name;
             var pmControl = GetPrivateMessageControl(userName);
             if (pmControl != null) toolTabs.SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? Resources.Friend : TextImage.GetUserImage(userName));
         }

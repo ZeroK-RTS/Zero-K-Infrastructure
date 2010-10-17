@@ -39,6 +39,12 @@ namespace ZkData
     partial void InsertMissionRating(MissionRating instance);
     partial void UpdateMissionRating(MissionRating instance);
     partial void DeleteMissionRating(MissionRating instance);
+    partial void InsertLobbyMessage(LobbyMessage instance);
+    partial void UpdateLobbyMessage(LobbyMessage instance);
+    partial void DeleteLobbyMessage(LobbyMessage instance);
+    partial void InsertLobbyChannelSubscription(LobbyChannelSubscription instance);
+    partial void UpdateLobbyChannelSubscription(LobbyChannelSubscription instance);
+    partial void DeleteLobbyChannelSubscription(LobbyChannelSubscription instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -292,6 +298,22 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<MissionRating>();
+			}
+		}
+		
+		public System.Data.Linq.Table<LobbyMessage> LobbyMessages
+		{
+			get
+			{
+				return this.GetTable<LobbyMessage>();
+			}
+		}
+		
+		public System.Data.Linq.Table<LobbyChannelSubscription> LobbyChannelSubscriptions
+		{
+			get
+			{
+				return this.GetTable<LobbyChannelSubscription>();
 			}
 		}
 	}
@@ -2168,7 +2190,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary Image
 		{
 			get
@@ -4214,6 +4236,10 @@ namespace ZkData
 		
 		private EntitySet<Mission> _Missions;
 		
+		private EntitySet<LobbyMessage> _LobbyMessagesBySourceAccountID;
+		
+		private EntitySet<LobbyMessage> _LobbyMessagesByTargetAccountID;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -4247,6 +4273,8 @@ namespace ZkData
 		public Account()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
+			this._LobbyMessagesBySourceAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesBySourceAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesBySourceAccountID));
+			this._LobbyMessagesByTargetAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesByTargetAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesByTargetAccountID));
 			OnCreated();
 		}
 		
@@ -4503,6 +4531,32 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage", Storage="_LobbyMessagesBySourceAccountID", ThisKey="AccountID", OtherKey="SourceAccountID")]
+		public EntitySet<LobbyMessage> LobbyMessagesBySourceAccountID
+		{
+			get
+			{
+				return this._LobbyMessagesBySourceAccountID;
+			}
+			set
+			{
+				this._LobbyMessagesBySourceAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage1", Storage="_LobbyMessagesByTargetAccountID", ThisKey="AccountID", OtherKey="TargetAccountID")]
+		public EntitySet<LobbyMessage> LobbyMessagesByTargetAccountID
+		{
+			get
+			{
+				return this._LobbyMessagesByTargetAccountID;
+			}
+			set
+			{
+				this._LobbyMessagesByTargetAccountID.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -4533,6 +4587,30 @@ namespace ZkData
 		{
 			this.SendPropertyChanging();
 			entity.Account = null;
+		}
+		
+		private void attach_LobbyMessagesBySourceAccountID(LobbyMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountBySourceAccountID = this;
+		}
+		
+		private void detach_LobbyMessagesBySourceAccountID(LobbyMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountBySourceAccountID = null;
+		}
+		
+		private void attach_LobbyMessagesByTargetAccountID(LobbyMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByTargetAccountID = this;
+		}
+		
+		private void detach_LobbyMessagesByTargetAccountID(LobbyMessage entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByTargetAccountID = null;
 		}
 	}
 	
@@ -4621,6 +4699,404 @@ namespace ZkData
 					this._Rating = value;
 					this.SendPropertyChanged("Rating");
 					this.OnRatingChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.LobbyMessage")]
+	public partial class LobbyMessage : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _MessageID;
+		
+		private string _SourceName;
+		
+		private string _TargetName;
+		
+		private System.Nullable<int> _SourceAccountID;
+		
+		private string _Message;
+		
+		private System.DateTime _Created;
+		
+		private System.Nullable<int> _TargetAccountID;
+		
+		private string _Channel;
+		
+		private EntityRef<Account> _AccountBySourceAccountID;
+		
+		private EntityRef<Account> _AccountByTargetAccountID;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnMessageIDChanging(int value);
+    partial void OnMessageIDChanged();
+    partial void OnSourceNameChanging(string value);
+    partial void OnSourceNameChanged();
+    partial void OnTargetNameChanging(string value);
+    partial void OnTargetNameChanged();
+    partial void OnSourceAccountIDChanging(System.Nullable<int> value);
+    partial void OnSourceAccountIDChanged();
+    partial void OnMessageChanging(string value);
+    partial void OnMessageChanged();
+    partial void OnCreatedChanging(System.DateTime value);
+    partial void OnCreatedChanged();
+    partial void OnTargetAccountIDChanging(System.Nullable<int> value);
+    partial void OnTargetAccountIDChanged();
+    partial void OnChannelChanging(string value);
+    partial void OnChannelChanged();
+    #endregion
+		
+		public LobbyMessage()
+		{
+			this._AccountBySourceAccountID = default(EntityRef<Account>);
+			this._AccountByTargetAccountID = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MessageID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int MessageID
+		{
+			get
+			{
+				return this._MessageID;
+			}
+			set
+			{
+				if ((this._MessageID != value))
+				{
+					this.OnMessageIDChanging(value);
+					this.SendPropertyChanging();
+					this._MessageID = value;
+					this.SendPropertyChanged("MessageID");
+					this.OnMessageIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SourceName", DbType="nvarchar(200) NOT NULL", CanBeNull=false)]
+		public string SourceName
+		{
+			get
+			{
+				return this._SourceName;
+			}
+			set
+			{
+				if ((this._SourceName != value))
+				{
+					this.OnSourceNameChanging(value);
+					this.SendPropertyChanging();
+					this._SourceName = value;
+					this.SendPropertyChanged("SourceName");
+					this.OnSourceNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TargetName", DbType="nvarchar(200) NOT NULL", CanBeNull=false)]
+		public string TargetName
+		{
+			get
+			{
+				return this._TargetName;
+			}
+			set
+			{
+				if ((this._TargetName != value))
+				{
+					this.OnTargetNameChanging(value);
+					this.SendPropertyChanging();
+					this._TargetName = value;
+					this.SendPropertyChanged("TargetName");
+					this.OnTargetNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SourceAccountID", DbType="int")]
+		public System.Nullable<int> SourceAccountID
+		{
+			get
+			{
+				return this._SourceAccountID;
+			}
+			set
+			{
+				if ((this._SourceAccountID != value))
+				{
+					if (this._AccountBySourceAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSourceAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._SourceAccountID = value;
+					this.SendPropertyChanged("SourceAccountID");
+					this.OnSourceAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Message", DbType="nvarchar(2000)")]
+		public string Message
+		{
+			get
+			{
+				return this._Message;
+			}
+			set
+			{
+				if ((this._Message != value))
+				{
+					this.OnMessageChanging(value);
+					this.SendPropertyChanging();
+					this._Message = value;
+					this.SendPropertyChanged("Message");
+					this.OnMessageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Created", DbType="datetime NOT NULL")]
+		public System.DateTime Created
+		{
+			get
+			{
+				return this._Created;
+			}
+			set
+			{
+				if ((this._Created != value))
+				{
+					this.OnCreatedChanging(value);
+					this.SendPropertyChanging();
+					this._Created = value;
+					this.SendPropertyChanged("Created");
+					this.OnCreatedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TargetAccountID", DbType="int")]
+		public System.Nullable<int> TargetAccountID
+		{
+			get
+			{
+				return this._TargetAccountID;
+			}
+			set
+			{
+				if ((this._TargetAccountID != value))
+				{
+					if (this._AccountByTargetAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTargetAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._TargetAccountID = value;
+					this.SendPropertyChanged("TargetAccountID");
+					this.OnTargetAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Channel", DbType="nvarchar(100)")]
+		public string Channel
+		{
+			get
+			{
+				return this._Channel;
+			}
+			set
+			{
+				if ((this._Channel != value))
+				{
+					this.OnChannelChanging(value);
+					this.SendPropertyChanging();
+					this._Channel = value;
+					this.SendPropertyChanged("Channel");
+					this.OnChannelChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage", Storage="_AccountBySourceAccountID", ThisKey="SourceAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountBySourceAccountID
+		{
+			get
+			{
+				return this._AccountBySourceAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountBySourceAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountBySourceAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountBySourceAccountID.Entity = null;
+						previousValue.LobbyMessagesBySourceAccountID.Remove(this);
+					}
+					this._AccountBySourceAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.LobbyMessagesBySourceAccountID.Add(this);
+						this._SourceAccountID = value.AccountID;
+					}
+					else
+					{
+						this._SourceAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountBySourceAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage1", Storage="_AccountByTargetAccountID", ThisKey="TargetAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByTargetAccountID
+		{
+			get
+			{
+				return this._AccountByTargetAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByTargetAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByTargetAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByTargetAccountID.Entity = null;
+						previousValue.LobbyMessagesByTargetAccountID.Remove(this);
+					}
+					this._AccountByTargetAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.LobbyMessagesByTargetAccountID.Add(this);
+						this._TargetAccountID = value.AccountID;
+					}
+					else
+					{
+						this._TargetAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountByTargetAccountID");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.LobbyChannelSubscription")]
+	public partial class LobbyChannelSubscription : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private string _Name;
+		
+		private string _Channel;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnChannelChanging(string value);
+    partial void OnChannelChanged();
+    #endregion
+		
+		public LobbyChannelSubscription()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(100) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Channel", DbType="nvarchar(100) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		public string Channel
+		{
+			get
+			{
+				return this._Channel;
+			}
+			set
+			{
+				if ((this._Channel != value))
+				{
+					this.OnChannelChanging(value);
+					this.SendPropertyChanging();
+					this._Channel = value;
+					this.SendPropertyChanged("Channel");
+					this.OnChannelChanged();
 				}
 			}
 		}

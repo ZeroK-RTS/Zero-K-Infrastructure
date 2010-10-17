@@ -39,9 +39,9 @@ namespace ZeroKLobby.MicroLobby
             AddLine(new LeaveLine(userName));
         }
 
-        void TasClient_UserAdded(object sender, TasEventArgs e)
+        void TasClient_UserAdded(object sender, EventArgs<User> e)
         {
-            var userName = e.ServerParams[0];
+            var userName = e.Data.Name;
             if (userName != UserName) return;
             AddLine(new JoinLine(userName));
         }

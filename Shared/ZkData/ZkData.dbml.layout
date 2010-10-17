@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 22.75, 21" name="ZkData">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 22.75, 22.75" name="ZkData">
   <DataContextMoniker Name="/ZkDataContext" />
   <nestedChildShapes>
     <classShape Id="a37d1f82-9b45-4686-8dbb-bb77d44d1dd6" absoluteBounds="5.75, 8, 2, 1.3862939453125">
@@ -38,10 +38,10 @@
         <elementListCompartment Id="0ede195e-c7cd-40d1-948a-5743795782f2" absoluteBounds="8.39, 5.71, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="51aeccbe-617d-4a1d-ab11-7e570ae7b4cf" absoluteBounds="6.875, 6.25, 2, 1.3862939453125005">
+    <classShape Id="51aeccbe-617d-4a1d-ab11-7e570ae7b4cf" absoluteBounds="10.75, 4.875, 2, 1.3862939453125005">
       <DataClassMoniker Name="/ZkDataContext/CelestialObjectShip" />
       <nestedChildShapes>
-        <elementListCompartment Id="0fb09bdf-53ea-4cf0-aec5-9a1a643d2592" absoluteBounds="6.89, 6.71, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="0fb09bdf-53ea-4cf0-aec5-9a1a643d2592" absoluteBounds="10.765, 5.335, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="ff88d62c-f3c3-4a8b-9199-207ab6a22b4d" absoluteBounds="6.125, 8.375, 2, 1.3862939453124996">
@@ -86,10 +86,10 @@
         <elementListCompartment Id="ca3b8f29-c676-4473-bf3b-9283f8c3e180" absoluteBounds="11.265, 7.335, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" absoluteBounds="3.625, 0.5, 2, 5.4246240234375">
+    <classShape Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" absoluteBounds="0.5, 0.5, 2, 5.4246240234375">
       <DataClassMoniker Name="/ZkDataContext/Mission" />
       <nestedChildShapes>
-        <elementListCompartment Id="416f67b5-32f7-49c6-91aa-4c626f585d9d" absoluteBounds="3.6400000000000006, 0.96000000000000085, 1.9700000000000002, 4.8646240234375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="416f67b5-32f7-49c6-91aa-4c626f585d9d" absoluteBounds="0.51500000000000057, 0.96000000000000085, 1.9700000000000002, 4.8646240234375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="25a9757a-6c00-4ee3-a369-882f749097aa" absoluteBounds="12.75, 8.75, 2, 1.3862939453124987">
@@ -158,10 +158,10 @@
         <elementListCompartment Id="1e12ad16-b30b-4472-8685-bb3224a602a1" absoluteBounds="0.765, 19.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="a1b09883-f64e-4bcf-a198-6df94f999988" absoluteBounds="6.75, 1.375, 2, 3.1170068359374996">
+    <classShape Id="a1b09883-f64e-4bcf-a198-6df94f999988" absoluteBounds="2.875, 0.5, 2, 3.1170068359374996">
       <DataClassMoniker Name="/ZkDataContext/Account" />
       <nestedChildShapes>
-        <elementListCompartment Id="429a36e9-3a5c-48e8-b996-ec7e325e72ed" absoluteBounds="6.7650000000000006, 1.835, 1.97, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="429a36e9-3a5c-48e8-b996-ec7e325e72ed" absoluteBounds="2.8900000000000006, 0.96, 1.97, 2.5570068359375" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="6e7a1f7a-7d0a-4ea7-b614-bca238e11e9d" absoluteBounds="20.5, 4.625, 2, 1.3862939453124996">
@@ -170,12 +170,38 @@
         <elementListCompartment Id="37b0d50a-23be-462d-accb-0c08bff089f9" absoluteBounds="20.515, 5.085, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(6.75 : 2.45274983723958); (5.625 : 2.45274983723958)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(2.875 : 2.05850341796875); (2.5 : 2.05850341796875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_Mission" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
         <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
       </nodes>
     </associationConnector>
+    <classShape Id="30fc41f1-a1a2-49c2-8220-7e32c85b42c3" absoluteBounds="5.25, 0.5, 2, 2.3478011067708335">
+      <DataClassMoniker Name="/ZkDataContext/LobbyMessage" />
+      <nestedChildShapes>
+        <elementListCompartment Id="57e58130-0e91-45c0-a9ed-c7a3bc764853" absoluteBounds="5.265, 0.96000000000000085, 1.9700000000000002, 1.7878011067708333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(4.875 : 1.57774983723958); (5.25 : 1.57774983723958)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Account/Account_LobbyMessage" />
+      <nodes>
+        <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
+        <classShapeMoniker Id="30fc41f1-a1a2-49c2-8220-7e32c85b42c3" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.875 : 0.976374918619792); (5.25 : 0.976374918619792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Account/Account_LobbyMessage1" />
+      <nodes>
+        <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
+        <classShapeMoniker Id="30fc41f1-a1a2-49c2-8220-7e32c85b42c3" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="2d0a4c2e-130d-4c52-8998-f61b7f05e799" absoluteBounds="1, 21.25, 2, 1.1939925130208344">
+      <DataClassMoniker Name="/ZkDataContext/LobbyChannelSubscription" />
+      <nestedChildShapes>
+        <elementListCompartment Id="23e55a58-764c-4a1e-a41e-05d7729fb05d" absoluteBounds="1.015, 21.71, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

@@ -29,6 +29,7 @@ namespace CaTracker
 		public TasClient Tas { get { return tas; } }
 		public static Config config;
 		ServiceHost host;
+		OfflineMessages offlineMessages;
 
 		public Main()
 		{
@@ -93,6 +94,8 @@ namespace CaTracker
 
 			host = AuthService.CreateServiceHost(tas);
 			host.Open();
+
+			offlineMessages = new OfflineMessages(tas);
 
 			return true;
 		}
