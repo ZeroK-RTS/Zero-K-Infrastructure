@@ -44,7 +44,6 @@
   <ItemGroup>
     <Compile Include="Account.cs" />
     <Compile Include="AuthServiceClient.cs" />
-    <Compile Include="GlobalConst.cs" />
     <Compile Include="IAuthService.cs" />
     <Compile Include="LobbyMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,6 +86,12 @@
     <None Include="ZkData.dbml.layout">
       <DependentUpon>ZkData.dbml</DependentUpon>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PlasmaShared\PlasmaShared.csproj">
+      <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
+      <Name>PlasmaShared</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

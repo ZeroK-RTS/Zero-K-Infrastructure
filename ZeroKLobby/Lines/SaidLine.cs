@@ -10,7 +10,7 @@ namespace ZeroKLobby.Lines
         public DateTime Date { get; set; }
         public string Message { get; set; }
 
-        public SaidLine(string author, [NotNull] string message)
+        public SaidLine(string author, [NotNull] string message, DateTime? date = null)
         {
             if (message == null) throw new ArgumentNullException("message");
             var myName = Program.Conf.LobbyPlayerName;
@@ -18,7 +18,8 @@ namespace ZeroKLobby.Lines
         		var hilite = message.Contains(myName) && !message.StartsWith(string.Format("[{0}]", myName));
 
             AuthorName = author;
-            Date = DateTime.Now;
+						if (date != null) Date = date.Value;
+						else Date = DateTime.Now;
             Message = message;
             var icon = TextImage.GetUserImageCode(author);
 

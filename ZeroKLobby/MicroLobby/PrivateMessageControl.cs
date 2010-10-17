@@ -53,7 +53,7 @@ namespace ZeroKLobby.MicroLobby
             ChatBox.AddLine(line);
             HistoryManager.LogLine(UserName, line);
             var saidLine = line as SaidLine;
-            if (saidLine != null && WindowsApi.IdleTime.TotalMinutes > 10 && (DateTime.Now - lastAnsweringMessageTime).TotalMinutes > 10)
+            if (saidLine != null && WindowsApi.IdleTime.TotalMinutes > Program.Conf.IdleTime && (DateTime.Now - lastAnsweringMessageTime).TotalMinutes > Program.Conf.IdleTime)
             {
                 if (saidLine.AuthorName != Program.TasClient.UserName)
                 {

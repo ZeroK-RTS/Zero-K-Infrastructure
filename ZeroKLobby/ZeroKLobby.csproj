@@ -39,19 +39,19 @@
     <UpdateInterval>1</UpdateInterval>
     <UpdateIntervalUnits>Hours</UpdateIntervalUnits>
     <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
+    <UpdateRequired>true</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://zero-k.info/lobby/</InstallUrl>
     <SupportUrl>http://zero-k.info/</SupportUrl>
     <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
     <ProductName>Zero-K</ProductName>
     <PublisherName>Zero-K</PublisherName>
-    <MinimumRequiredVersion>2.1.0.10</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.4.0.1</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>52</ApplicationRevision>
-    <ApplicationVersion>2.3.0.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>2.4.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>

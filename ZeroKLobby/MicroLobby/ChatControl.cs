@@ -121,7 +121,7 @@ namespace ZeroKLobby.MicroLobby
 			ChatBox.Text = String.Empty;
 		}
 
-		protected virtual void AddLine(IChatLine line)
+		public virtual void AddLine(IChatLine line)
 		{
 			if ((line is SaidLine && Program.Conf.IgnoredUsers.Contains(((SaidLine)line).AuthorName)) ||
 			    (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName))) return;

@@ -28,7 +28,7 @@ namespace ZeroKLobby.MicroLobby
 			base.Dispose(disposing);
 		}
 
-		protected override void AddLine(IChatLine line)
+		public override void AddLine(IChatLine line)
 		{
 			base.AddLine(line);
 			BattleLine(this, new EventArgs<IChatLine>(line));

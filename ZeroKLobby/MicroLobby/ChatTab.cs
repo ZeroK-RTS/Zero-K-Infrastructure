@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
@@ -8,6 +10,7 @@ using ZeroKLobby;
 using ZeroKLobby.Lines;
 using ZeroKLobby.Notifications;
 using ZeroKLobby.ToolTips;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -77,7 +80,11 @@ namespace ZeroKLobby.MicroLobby
             }
             toolTabs.AddTab(userName, userName, pmControl, icon, ToolTipHandler.GetUserToolTipString(userName), 0);
             pmControl.ChatLine +=
-                (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(TasClient.SayPlace.User, userName, e.Data, false); };
+                (s, e) => { if (Program.TasClient.IsLoggedIn)
+                {
+                	if (Program.TasClient.ExistingUsers.ContainsKey(userName)) Program.TasClient.Say(TasClient.SayPlace.User, userName, e.Data, false);
+									else Program.TasClient.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!pm {0} {1}", userName, e.Data), false ); // send using PM
+                } };
             return pmControl;
         }
 
@@ -119,7 +126,7 @@ namespace ZeroKLobby.MicroLobby
 
             if (gameInfo != null) toolTabs.AddTab(channelName, gameInfo.FullName, chatControl, Resources.Game, null, 2);
 						else toolTabs.AddTab(channelName, channelName, chatControl, Resources.chat, null, 1);
-            chatControl.ChatLine += (s, e) => Program.TasClient.Say(TasClient.SayPlace.Channel, channelName, e.Data, false);
+        	chatControl.ChatLine += (s, e) => Program.TasClient.Say(TasClient.SayPlace.Channel, channelName, e.Data, false);
             return chatControl;
         }
 
@@ -153,15 +160,64 @@ namespace ZeroKLobby.MicroLobby
 								if (e.Place == TasSayEventArgs.Places.Channel && !IsIgnoredChannel(e.Channel)) toolTabs.Hilite(e.Channel);
 								else if (e.Place == TasSayEventArgs.Places.Normal)
                 {
-                    var otherUserName = e.Origin == TasSayEventArgs.Origins.Player ? e.Channel : e.UserName;
-                    var pmControl = GetPrivateMessageControl(otherUserName) ?? CreatePrivateMessageControl(otherUserName);
-                    if (!e.IsEmote) pmControl.AddLine(new SaidLine(e.UserName, e.Text));
-                    else pmControl.AddLine(new SaidExLine(e.UserName, e.Text));
-                    if (e.UserName != Program.TasClient.MyUser.Name)
-                    {
-                    	toolTabs.Hilite(otherUserName);
+									var otherUserName = e.Origin == TasSayEventArgs.Origins.Player ? e.Channel : e.UserName;									
+
+									// support for offline pm and persistent channels 
+									if (otherUserName == GlobalConst.NightwatchName && e.Text.StartsWith("!pm"))
+									{
+										// message received
+										if (e.UserName == GlobalConst.NightwatchName)
+										{
+											var regex = Regex.Match(e.Text, "!pm\\|([^\\|]*)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)");
+											if (regex.Success)
+											{
+												var chan = regex.Groups[1].Value;
+												var name = regex.Groups[2].Value;
+												var time = DateTime.Parse(regex.Groups[3].Value, CultureInfo.InvariantCulture).ToLocalTime();
+												var text = regex.Groups[4].Value;
+
+												if (string.IsNullOrEmpty(chan))
+												{
+													var pmControl = GetPrivateMessageControl(name) ?? CreatePrivateMessageControl(name);
+													pmControl.AddLine(new SaidLine(name, text, time));
+													toolTabs.Flash(name);
+													FormMain.Instance.NotifyUser(string.Format("{0}: {1}", name, text), false, true);
+												}
+												else
+												{
+													var chatControl = GetChannelControl(chan) ?? CreateChannelControl(chan);
+													chatControl.AddLine(new SaidLine(name, text, time));
+													toolTabs.Hilite(chan);
+												}
+											}
+											else
+											{
+												Trace.TraceWarning("Incomprehensible Nightwatch message: {0}", e.Text);
+											}
+										} else // message sent to nightwatch
+										{
+											var regex = Regex.Match(e.Text, "!pm ([^ ]+) (.*)");
+											if (regex.Success)
+											{
+												var name = regex.Groups[1].Value;
+												var text = regex.Groups[2].Value;
+												var pmControl = GetPrivateMessageControl(name) ?? CreatePrivateMessageControl(name);
+												pmControl.AddLine(new SaidLine(Program.Conf.LobbyPlayerName, text));
+											}
+										}
+									} else
+									{
+
+										var pmControl = GetPrivateMessageControl(otherUserName) ?? CreatePrivateMessageControl(otherUserName);
+										if (!e.IsEmote) pmControl.AddLine(new SaidLine(e.UserName, e.Text));
+										else pmControl.AddLine(new SaidExLine(e.UserName, e.Text));
+										if (e.UserName != Program.TasClient.MyUser.Name)
+										{
+											toolTabs.Hilite(otherUserName);
 											FormMain.Instance.NotifyUser(string.Format("{0}: {1}", otherUserName, e.Text), false, true);
-                    }
+										}
+									}
+                
                 }
             }
             else if (e.Origin == TasSayEventArgs.Origins.Server &&

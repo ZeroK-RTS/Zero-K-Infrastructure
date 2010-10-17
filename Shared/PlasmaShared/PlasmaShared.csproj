@@ -90,6 +90,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
+    <Compile Include="GlobalConst.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="MetaDataCache.cs" />
