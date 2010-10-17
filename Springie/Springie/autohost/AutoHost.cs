@@ -435,7 +435,7 @@ namespace Springie.autohost
 			var version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
 			if (version != null) modname = version.InternalName;
 
-			if (!wrapper.HasMap(mapname)) mapname = modname = wrapper.GetFirstMap();
+			if (!wrapper.HasMap(mapname)) mapname = wrapper.GetFirstMap();
 			if (!wrapper.HasMod(modname)) modname = wrapper.GetFirstMod();
 
 			int mint, maxt;

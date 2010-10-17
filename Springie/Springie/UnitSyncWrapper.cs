@@ -169,7 +169,7 @@ namespace Springie.SpringNamespace
 		{
 			lock (locker)
 			{
-				return !modList.ContainsKey(modName);
+				return modList.ContainsKey(modName);
 			}
 		}
 
