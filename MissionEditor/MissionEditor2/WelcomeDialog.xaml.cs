@@ -19,7 +19,6 @@ namespace MissionEditor2
 	/// </summary>
 	public partial class WelcomeDialog : Window
 	{
-		const int version = 25;
 		public const string MissionExtension = "mission.xml";
 
 		public static string MissionDialogFilter =
@@ -30,15 +29,6 @@ namespace MissionEditor2
 			InitializeComponent();
 			springExeBox.Loaded += (s, ea) => UpdateDialog();
 			springExeBox.TextChanged += (s, ea) => UpdateDialog();
-		}
-
-		void Hyperlink_Click(object sender, RoutedEventArgs e)
-		{
-			try
-			{
-				Process.Start("http://planet-wars.eu/missioneditor/");
-			}
-			catch {}
 		}
 
 
@@ -60,23 +50,6 @@ namespace MissionEditor2
 			{
 				springExeBox.Text = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Spring\\Spring.exe";
 			}
-
-			Utils.InvokeInNewThread(() =>
-			{
-				try
-				{
-					using (var client = new WebClient())
-					{
-						const string latestVersionPath = "http://planet-wars.eu/missioneditor/latest.txt";
-						var latestVersion = int.Parse(client.DownloadString(latestVersionPath));
-						if (latestVersion > version)
-						{
-							this.Invoke(() => LinkBox.Visibility = Visibility.Visible);
-						}
-					}
-				}
-				catch { }
-			});
 		}
 
 		void UpdateDialog()

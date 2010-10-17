@@ -30,10 +30,5 @@
       <Slider Name="mapDetailSlider" IsSnapToTickEnabled="True"  Minimum="0" x:FieldModifier="public" Maximum="3" Interval="1" TickFrequency="1" TickPlacement="BottomRight" Value="2" />
         </DockPanel>
     </GroupBox>
-    <Grid>
-      <TextBlock HorizontalAlignment="Center" Name="LinkBox" x:FieldModifier="public" Visibility="Collapsed">
-          <Hyperlink Click="Hyperlink_Click">New version available!</Hyperlink>
-      </TextBlock>
-    </Grid>
   </StackPanel>
 </Window>
