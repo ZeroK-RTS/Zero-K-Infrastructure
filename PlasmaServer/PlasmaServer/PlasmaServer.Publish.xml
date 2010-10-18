@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
-  <publishProfile publishUrl="c:\temp\plasma" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="True" userName="admin" savePWD="False" userPWD="" SelectedForPublish="True">
+  <publishProfile publishUrl="ftp://zero-k.info/PlasmaServer" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="ResourceDetail.aspx" publishTime="04/03/2010 21:20:06" />
     <file relUrl="Service.asmx" publishTime="04/03/2010 21:20:06" />
     <file relUrl="Web.config" publishTime="09/23/2010 20:06:45" />
-    <file relUrl="bin/PlasmaServer.dll" publishTime="09/23/2010 20:06:51" />
+    <file relUrl="bin/PlasmaServer.dll" publishTime="10/18/2010 23:57:47" />
     <file relUrl="Default.aspx" publishTime="04/03/2010 21:20:06" />
-    <file relUrl="bin/PlasmaServer.pdb" publishTime="09/23/2010 20:06:51" />
+    <file relUrl="bin/PlasmaServer.pdb" publishTime="10/18/2010 23:57:47" />
     <file relUrl="Test.aspx" publishTime="04/03/2010 21:20:06" />
   </publishProfile>
 </publishData>

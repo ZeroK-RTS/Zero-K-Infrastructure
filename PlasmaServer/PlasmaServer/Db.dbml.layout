@@ -47,11 +47,5 @@
         <classShapeMoniker Id="77d5968b-a40d-491e-9e17-9ec9c7f52073" />
       </nodes>
     </associationConnector>
-    <classShape Id="023ed0c1-7370-4474-a7e1-ca80063caa37" absoluteBounds="9.375, 1, 2, 1.3862939453125">
-      <DataClassMoniker Name="/DbDataContext/Admin" />
-      <nestedChildShapes>
-        <elementListCompartment Id="86c39521-665c-42f7-8f93-bb81a44bd467" absoluteBounds="9.39, 1.46, 1.97, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
-      </nestedChildShapes>
-    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Database Name="PlasmaServer" Class="DbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="PlasmaServer" Class="DbDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="WebSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=PlasmaServer;Persist Security Info=True;User ID=plasmaserver" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="PlasmaServerConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Dependency" Member="Dependencies">
     <Type Name="Dependency">
@@ -38,13 +37,6 @@
       <Association Name="Resource_Dependency" Member="Dependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="Dependency" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
-    </Type>
-  </Table>
-  <Table Name="dbo.[Admin]" Member="Admins">
-    <Type Name="Admin">
-      <Column Name="AdminID" Member="Id" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Login" Type="System.String" DbType="varchar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Password" Type="System.String" DbType="varchar(50) NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
 </Database>

