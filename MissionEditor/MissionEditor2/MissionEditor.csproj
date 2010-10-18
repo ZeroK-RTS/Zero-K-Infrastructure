@@ -33,7 +33,7 @@
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>16</ApplicationRevision>
+    <ApplicationRevision>20</ApplicationRevision>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -89,6 +89,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
@@ -118,6 +119,9 @@
       <DependentUpon>GiveOrdersPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="NoArea.xaml.cs" />
+    <Compile Include="OrderIcon.xaml.cs">
+      <DependentUpon>OrderIcon.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PublishDialog.xaml.cs" />
     <Compile Include="RectangleDragInfo.xaml.cs" />
     <Compile Include="RegionWindow.xaml.cs">
@@ -128,6 +132,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="SpringSizeConverter.cs" />
     <Compile Include="StringRequest.xaml.cs" />
     <Compile Include="TranslateConverter.cs" />
     <Compile Include="TriggerSettings.xaml.cs" />
@@ -149,6 +154,7 @@
     <Compile Include="WelcomeDialog.xaml.cs">
       <DependentUpon>WelcomeDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ZoomControl.cs" />
     <Compile Include="ZoomConverter.cs" />
     <Page Include="CreateUnitsPane.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -229,6 +235,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="OrderIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PublishDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -238,6 +248,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="StringRequest.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

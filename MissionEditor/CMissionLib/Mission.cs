@@ -276,12 +276,12 @@ namespace CMissionLib
 
 		public double ToIngameX(double x)
 		{
-			return x*Map.Size.Width/Map.Texture.Width;
+			return x / Map.Texture.Width * Map.Size.Width;
 		}
 
 		public double ToIngameY(double y)
 		{
-			return y*Map.Size.Height/Map.Texture.Height;
+			return y / Map.Texture.Height * Map.Size.Height;
 		}
 
 		/// <summary>

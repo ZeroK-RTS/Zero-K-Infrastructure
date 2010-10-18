@@ -1,31 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Diagnostics;
+using System.Windows.Media.Effects;
 using CMissionLib;
 
 namespace MissionEditor2
 {
-    /// <summary>
-    /// Interaction logic for UnitIcon.xaml
-    /// </summary>
-    public partial class UnitIcon : UserControl
-    {
-        public UnitIcon()
-        {
-            InitializeComponent();
-        }
+	/// <summary>
+	/// Interaction logic for UnitIcon.xaml
+	/// </summary>
+	public partial class UnitIcon : UserControl
+	{
+		public UnitIcon()
+		{
+			InitializeComponent();
+		}
+
+		bool isSelected;
+		public bool IsSelected
+		{
+			get { return isSelected; }
+			set
+			{
+				selectionBorder.Visibility = value ? Visibility.Visible : Visibility.Hidden;
+				isSelected = value;
+			}
+		}
 
 #if false // does not work when the rotatetransform is applied
 
@@ -63,68 +65,98 @@ namespace MissionEditor2
 
 #endif
 
-        private void onRotateDelta(object sender, DragDeltaEventArgs e)
-        {
-            var unit = (UnitStartInfo)DataContext;
-            var newHeading = unit.Heading + e.HorizontalChange;
-            while (newHeading > 360) newHeading = newHeading - 360;
-            while (newHeading < 0) newHeading = newHeading + 360;
-            unit.Heading = newHeading;
-            e.Handled = true;
-        }
+		// adds a new simplified unit icon to a canvas
+		public static void PlaceSimplifiedUnit(Canvas canvas, UnitStartInfo unit, bool isBlurred = false)
+		{
+			var border = new Border
+				{BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(1), Height = 16, Width = 16};
+			if (isBlurred) border.Opacity = 0.5;
+			canvas.Children.Add(border);
+			border.Bind(Border.BorderBrushProperty, unit, "Player.ColorBrush", BindingMode.OneWay);
+			// might need to be databound
+			Canvas.SetLeft(border, unit.X - border.Width/2);
+			Canvas.SetTop(border, unit.Y - border.Height/2);
+			Panel.SetZIndex(border, -10);
+			var image = new Image {Source = unit.UnitDef.BuildPic};
+			border.Child = image;
+		}
 
-        public static readonly RoutedEvent UnitRequestedDeleteEvent = EventManager.RegisterRoutedEvent("UnitRequestedDelete", RoutingStrategy.Direct, typeof(UnitEventHandler), typeof(UnitIcon));
-        public static readonly RoutedEvent UnitRequestedSetGroupsEvent = EventManager.RegisterRoutedEvent("UnitRequestedSetGroups", RoutingStrategy.Direct, typeof(UnitEventHandler), typeof(UnitIcon));
+		void onRotateDelta(object sender, DragDeltaEventArgs e)
+		{
+			var unit = (UnitStartInfo) DataContext;
+			var newHeading = unit.Heading + e.HorizontalChange;
+			while (newHeading > 360) newHeading = newHeading - 360;
+			while (newHeading < 0) newHeading = newHeading + 360;
+			unit.Heading = newHeading;
+			e.Handled = true;
+		}
 
-        public event UnitEventHandler UnitRequestedSetGroups
-        {
-            add { AddHandler(UnitRequestedSetGroupsEvent, value); }
-            remove { RemoveHandler(UnitRequestedSetGroupsEvent, value); }
-        }
+		public static readonly RoutedEvent UnitRequestedDeleteEvent = EventManager.RegisterRoutedEvent("UnitRequestedDelete",
+		                                                                                               RoutingStrategy.Direct,
+		                                                                                               typeof (
+		                                                                                               	UnitEventHandler),
+		                                                                                               typeof (UnitIcon));
 
-        public event UnitEventHandler UnitRequestedDelete
-        {
-            add { AddHandler(UnitRequestedDeleteEvent, value); }
-            remove { RemoveHandler(UnitRequestedDeleteEvent, value); }
-        }
+		public static readonly RoutedEvent UnitRequestedSetGroupsEvent =
+			EventManager.RegisterRoutedEvent("UnitRequestedSetGroups", RoutingStrategy.Direct, typeof (UnitEventHandler),
+			                                 typeof (UnitIcon));
 
-        void RaiseUnitRequestedDeleteEvent()
-        {
-            var unitInfo = (UnitStartInfo)DataContext;
-            if (unitInfo == null) Debugger.Break();
-            var newEventArgs = new UnitEventArgs(unitInfo, UnitRequestedDeleteEvent);
-            RaiseEvent(newEventArgs);
-        }
+		public event UnitEventHandler UnitRequestedSetGroups
+		{
+			add { AddHandler(UnitRequestedSetGroupsEvent, value); }
+			remove { RemoveHandler(UnitRequestedSetGroupsEvent, value); }
+		}
 
-        void RaiseUnitRequestedSetGroupsEvent()
-        {
-            var unitInfo = (UnitStartInfo)DataContext;
-            if (unitInfo == null) Debugger.Break();
-            var newEventArgs = new UnitEventArgs(unitInfo, UnitRequestedSetGroupsEvent);
-            RaiseEvent(newEventArgs);
-        }
+		public event UnitEventHandler UnitRequestedDelete
+		{
+			add { AddHandler(UnitRequestedDeleteEvent, value); }
+			remove { RemoveHandler(UnitRequestedDeleteEvent, value); }
+		}
 
-        private void DeleteItem_Click(object sender, RoutedEventArgs e)
-        {
-            RaiseUnitRequestedDeleteEvent();
-        }
+		void RaiseUnitRequestedDeleteEvent()
+		{
+			var unitInfo = (UnitStartInfo) DataContext;
+			if (unitInfo == null) Debugger.Break();
+			var newEventArgs = new UnitEventArgs(unitInfo, UnitRequestedDeleteEvent);
+			RaiseEvent(newEventArgs);
+		}
 
-        private void SetGroupsItem_Click(object sender, RoutedEventArgs e)
-        {
-            RaiseUnitRequestedSetGroupsEvent();
-        }
+		void RaiseUnitRequestedSetGroupsEvent()
+		{
+			var unitInfo = (UnitStartInfo) DataContext;
+			if (unitInfo == null) Debugger.Break();
+			var newEventArgs = new UnitEventArgs(unitInfo, UnitRequestedSetGroupsEvent);
+			RaiseEvent(newEventArgs);
+		}
 
-    }
+		void DeleteItem_Click(object sender, RoutedEventArgs e)
+		{
+			RaiseUnitRequestedDeleteEvent();
+		}
 
-    public class UnitEventArgs : RoutedEventArgs
-    {
-        public UnitStartInfo UnitInfo { get; set; }
-        public UnitEventArgs(UnitStartInfo unitInfo, RoutedEvent routedEvent):base(routedEvent)
-        {
-            UnitInfo = unitInfo;
-        }
-    }
+		void SetGroupsItem_Click(object sender, RoutedEventArgs e)
+		{
+			RaiseUnitRequestedSetGroupsEvent();
+		}
 
-    public delegate void UnitEventHandler(object sender, UnitEventArgs e);
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			var mission = MainWindow.Instance.Mission;
+			var unit = (UnitStartInfo) DataContext;
+			scaleTransform.ScaleX = 1.0 / 16.0 / mission.Map.Texture.Width * mission.Map.Size.Width * unit.UnitDef.FootprintX;
+			scaleTransform.ScaleY = 1.0 / 16.0 / mission.Map.Texture.Height * mission.Map.Size.Height * unit.UnitDef.FootprintY;
+		}
+	}
 
+	public class UnitEventArgs : RoutedEventArgs
+	{
+		public UnitEventArgs(UnitStartInfo unitInfo, RoutedEvent routedEvent) : base(routedEvent)
+		{
+			UnitInfo = unitInfo;
+		}
+
+		public UnitStartInfo UnitInfo { get; set; }
+	}
+
+	public delegate void UnitEventHandler(object sender, UnitEventArgs e);
 }

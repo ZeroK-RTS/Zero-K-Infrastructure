@@ -1,113 +1,65 @@
-﻿<UserControl x:Class="MissionEditor2.CreateUnitsPane" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
-    xmlns:local="clr-namespace:MissionEditor2"  xmlns:MissionEditor2="clr-namespace:MissionEditor2" Name="control" Loaded="CreateUnitsPane_Loaded">
-  <UserControl.Resources>
-    <MissionEditor2:TranslateConverter x:Key="translateConverter" />
-    <local:ZoomConverter x:Key="log10Converter" />
+﻿<UserControl x:Class="MissionEditor2.CreateUnitsPane" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock" xmlns:local="clr-namespace:MissionEditor2" xmlns:MissionEditor2="clr-namespace:MissionEditor2" Name="control"
+        Loaded="CreateUnitsPane_Loaded">
+    <UserControl.Resources>
+        <local:CsvConverter x:Key="csvConverter" />
 
+        <Style x:Key="smallBuildPicStyle" TargetType="Image">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+        </Style>
 
+        <Style x:Key="smallBuildPicColoredBorderStyle" TargetType="Border">
+            <Setter Property="Border.CornerRadius" Value="2" />
+            <Setter Property="Border.BorderBrush" Value="Black" />
+            <Setter Property="Border.BorderThickness" Value="2" />
+            <Setter Property="Border.Margin" Value="2" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Border.BorderBrush" Value="{Binding Player.ColorBrush, FallbackValue=Green}" />
+        </Style>
 
-    <ItemsPanelTemplate x:Key="orderMap_transparentMapTemplate">
-      <Canvas Background="Transparent" MinHeight="{Binding ElementName=window, Path=Mission.Map.Texture.Height}"
-          MinWidth="{Binding ElementName=window, Path=Mission.Map.Texture.Height}" Tag="unitCanvas">
-        <Canvas.LayoutTransform>
-          <ScaleTransform ScaleX="{Binding Path=Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}"
-              ScaleY="{Binding Path=Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}" />
-        </Canvas.LayoutTransform>
-      </Canvas>
-    </ItemsPanelTemplate>
+        <DataTemplate x:Key="smallUnitBuildPic">
+            <Border Style="{StaticResource smallBuildPicColoredBorderStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="True">
+                <Image Height="32" Width="32" Style="{StaticResource smallBuildPicStyle}" Source="{Binding UnitDef.BuildPic}" Stretch="Fill" SnapsToDevicePixels="True" />
+            </Border>
+        </DataTemplate>
 
-    <Style x:Key="unitStyle" TargetType="ListBoxItem">
-      <Setter Property="Canvas.Left"
-          Value="{Binding X, Converter={StaticResource translateConverter}, ConverterParameter=-8, Mode=TwoWay}" />
-      <Setter Property="Canvas.Top"
-          Value="{Binding Y, Converter={StaticResource translateConverter}, ConverterParameter=-8, Mode=TwoWay}" />
-      <Setter Property="Template">
-        <Setter.Value>
-          <ControlTemplate TargetType="{x:Type ListBoxItem}">
-            <local:UnitIcon MouseDown="UnitIcon_MouseDown"  UnitRequestedDelete="Unit_RequestedDelete" UnitRequestedSetGroups="Unit_RequestedSetGroups" />
-            <ControlTemplate.Triggers>
-              <Trigger Property="IsSelected" Value="true">
-                <Setter Property="Effect">
-                  <Setter.Value>
-                    <DropShadowEffect Color="{Binding Player.Color}" BlurRadius="3" />
-                </Setter.Value>
-                </Setter>
-              </Trigger>
-            </ControlTemplate.Triggers>
-          </ControlTemplate>
-        </Setter.Value>
-      </Setter>
-    </Style>
+       
+        <DataGrid x:Key="unitGrid" ItemsSource="{Binding LogicGrid.SelectedItem.Units, Source={x:Static local:MainWindow.Instance}}" AutoGenerateColumns="False"
+                IsSynchronizedWithCurrentItem="True" Background="White" VirtualizingStackPanel.IsVirtualizing="True">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Image" CellTemplate="{StaticResource smallUnitBuildPic}" />
 
-    <Style x:Key="smallBuildPicColoredBorderStyle" TargetType="Border">
-      <Setter Property="Border.CornerRadius" Value="2" />
-      <Setter Property="Border.BorderBrush" Value="Black" />
-      <Setter Property="Border.BorderThickness" Value="2" />
-      <Setter Property="Border.Margin" Value="2" />
-      <Setter Property="SnapsToDevicePixels" Value="True" />
-      <Setter Property="Border.BorderBrush" Value="{Binding Player.ColorBrush, FallbackValue=Green}" />
-    </Style>
+                <DataGridTextColumn Binding="{Binding UnitDef.Name}" Header="Name" IsReadOnly="True" />
+                <DataGridTextColumn Binding="{Binding UnitDef.FullName}" Header="Full Name" IsReadOnly="True" />
+                <DataGridTemplateColumn Header="Owner">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding Instance.Mission.Players, Source={x:Static local:MainWindow.Instance}}" SelectedItem="{Binding Player}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding X, StringFormat=#}" Header="X" />
+                <DataGridTextColumn Binding="{Binding Y, StringFormat=#}" Header="Y" />
+                <DataGridTextColumn Binding="{Binding Heading, StringFormat=#}" Header="Heading" />
+                <DataGridTextColumn Binding="{Binding Groups, Converter={StaticResource csvConverter}}" Header="Groups" />
+            </DataGrid.Columns>
+        </DataGrid>
 
-    <ImageBrush x:Key="minimapBrush" AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding Mission.Map.Texture, Source={x:Static local:MainWindow.Instance}}" />
+        <CollectionViewSource x:Key="unitDefsView" Source="{Binding Mission.Mod.UnitDefs}" />
 
-    <local:CsvConverter x:Key="csvConverter" />
-
-    <Style x:Key="smallBuildPicStyle" TargetType="Image">
-      <Setter Property="SnapsToDevicePixels" Value="True" />
-    </Style>
-
-    <DataTemplate x:Key="smallUnitBuildPic">
-      <Border Style="{StaticResource smallBuildPicColoredBorderStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"
-          SnapsToDevicePixels="True">
-        <Image Height="32" Width="32" Style="{StaticResource smallBuildPicStyle}" Source="{Binding UnitDef.BuildPic}" Stretch="Fill"
-            SnapsToDevicePixels="True" />
-      </Border>
-    </DataTemplate>
-
-    <ListBox x:Key="playerListBox" ItemsSource="{Binding Mission.Players, Source={x:Static local:MainWindow.Instance}}" IsSynchronizedWithCurrentItem="True" />
-
-    <DataGrid x:Key="unitGrid" ItemsSource="{Binding LogicGrid.SelectedItem.Units, Source={x:Static local:MainWindow.Instance}}" AutoGenerateColumns="False"
-        IsSynchronizedWithCurrentItem="True" Background="White" VirtualizingStackPanel.IsVirtualizing="True">
-      <DataGrid.Columns>
-        <DataGridTemplateColumn Header="Image" CellTemplate="{StaticResource smallUnitBuildPic}" />
-
-        <DataGridTextColumn Binding="{Binding UnitDef.Name}" Header="Name" IsReadOnly="True" />
-        <DataGridTextColumn Binding="{Binding UnitDef.FullName}" Header="Full Name" IsReadOnly="True" />
-        <DataGridTemplateColumn Header="Owner">
-          <DataGridTemplateColumn.CellTemplate>
-            <DataTemplate>
-              <ComboBox ItemsSource="{Binding Instance.Mission.Players, Source={x:Static local:MainWindow.Instance}}"
-                  SelectedItem="{Binding Player}" />
-            </DataTemplate>
-          </DataGridTemplateColumn.CellTemplate>
-        </DataGridTemplateColumn>
-        <DataGridTextColumn Binding="{Binding X, StringFormat=#}" Header="X" />
-        <DataGridTextColumn Binding="{Binding Y, StringFormat=#}" Header="Y" />
-        <DataGridTextColumn Binding="{Binding Heading, StringFormat=#}" Header="Heading" />
-        <DataGridTextColumn Binding="{Binding Groups, Converter={StaticResource csvConverter}}" Header="Groups" />
-      </DataGrid.Columns>
-    </DataGrid>
-
-    <CollectionViewSource x:Key="unitDefsView" Source="{Binding Mission.Mod.UnitDefs}" />
-
-    <local:UnitDefsGrid x:Key="unitDefGrid" Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" IsTabStop="true" />
-
-    <ListBox x:Key="unitListBox" ItemsSource="{Binding Units}" ItemContainerStyle="{StaticResource unitStyle}" SelectionMode="Extended"
-        ItemsPanel="{StaticResource orderMap_transparentMapTemplate}" Background="Transparent" IsSynchronizedWithCurrentItem="True"
-        ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Disabled" />
-
-  </UserControl.Resources>
-  <ad:DockingManager>
-    <ad:ResizingPanel Orientation="Horizontal">
-      <ad:ResizingPanel Orientation="Vertical" ad:ResizingPanel.ResizeWidth="150">
-        <ad:DockablePane ad:ResizingPanel.ResizeHeight="70">
-          <ad:DockableContent Title="Players" Content="{Binding Source={StaticResource playerListBox}}" />
-        </ad:DockablePane>
-        <ad:DockablePane>
-          <ad:DockableContent Title="Help">
-            <ScrollViewer Background="White">
-              <TextBlock TextWrapping="WrapWithOverflow">
+    </UserControl.Resources>
+    <ad:DockingManager>
+        <ad:ResizingPanel Orientation="Horizontal">
+            <ad:ResizingPanel Orientation="Vertical" ad:ResizingPanel.ResizeWidth="150">
+                <ad:DockablePane ad:ResizingPanel.ResizeHeight="70">
+                    <ad:DockableContent Title="Players">
+                        <ListBox x:Name="playerListBox" ItemsSource="{Binding Mission.Players, Source={x:Static local:MainWindow.Instance}}" IsSynchronizedWithCurrentItem="True" />
+                    </ad:DockableContent>
+                </ad:DockablePane>
+                <ad:DockablePane>
+                    <ad:DockableContent Title="Help">
+                        <ScrollViewer Background="White">
+                            <TextBlock TextWrapping="WrapWithOverflow">
                     Add units by clicking on the map. You can drag units around by grabbing their border. 
                     <LineBreak /> 
                     <LineBreak /> 
@@ -115,25 +67,27 @@
                     <LineBreak /> 
                     <LineBreak /> 
                     Remove units by switching to the unit list tab, selecting the unit and pressing the delete key. Or, right-click on the unit in the map.
-              </TextBlock>
-            </ScrollViewer>
-          </ad:DockableContent>
-          <ad:DockableContent Title="Units" Content="{Binding Source={StaticResource unitGrid}}" />
-          <ad:DockableContent Title="Unit Defs" Content="{Binding Source={StaticResource unitDefGrid}}" />
-        </ad:DockablePane>
-      </ad:ResizingPanel>
-      <ScrollViewer HorizontalScrollBarVisibility="Auto">
-        <Grid>
-          <Canvas Name="UnitBackgroundCanvas" x:FieldModifier="public" DataContext="{Binding Mission.Map.Texture, ElementName=window}" MinHeight="{Binding Height}"
-              MinWidth="{Binding Width}" Background="{StaticResource minimapBrush}">
-            <Canvas.LayoutTransform>
-              <ScaleTransform ScaleX="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}"
-                  ScaleY="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}" />
-            </Canvas.LayoutTransform>
-          </Canvas>
-          <ContentControl Content="{StaticResource unitListBox}" />
-        </Grid>
-      </ScrollViewer>
-    </ad:ResizingPanel>
-  </ad:DockingManager>
+                            </TextBlock>
+                        </ScrollViewer>
+                    </ad:DockableContent>
+                    <ad:DockableContent Title="Units" Content="{Binding Source={StaticResource unitGrid}}" />
+                    <ad:DockableContent Title="Unit Defs">
+                        <local:UnitDefsGrid x:Name="unitDefGrid" Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" IsTabStop="true" />
+                    </ad:DockableContent>
+                </ad:DockablePane>
+            </ad:ResizingPanel>
+
+
+            <local:ZoomControl>
+                <Canvas x:Name="unitCanvas" MouseDown="unitCanvas_MouseDown" PreviewMouseUp="unitCanvas_PreviewMouseUp" PreviewMouseMove="unitCanvas_PreviewMouseMove">
+                    <Canvas.Background>
+                        <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding Mission.Map.Texture, Source={x:Static local:MainWindow.Instance}}" />
+                    </Canvas.Background>
+                </Canvas>
+            </local:ZoomControl>
+
+
+
+        </ad:ResizingPanel>
+    </ad:DockingManager>
 </UserControl>

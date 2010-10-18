@@ -364,8 +364,8 @@ namespace MissionEditor2
 			logic.AddAction("Rename Item", () => RenameLogicItem(CurrentLogic));
 			logic.AddAction("Move Up", () => MoveItem(MoveDirection.Up, CurrentLogic));
 			logic.AddAction("Move Down", () => MoveItem(MoveDirection.Down, CurrentLogic));
-			regionsMenu = MainMenu.AddContainer("Regions");
-			regionsMenu.Click += new RoutedEventHandler(regionsMenu_GotFocus);
+			// regionsMenu = MainMenu.AddContainer("Regions");
+			// regionsMenu.Click += new RoutedEventHandler(regionsMenu_GotFocus);
 
 			var help = MainMenu.AddContainer("Help");
 			help.AddAction("Basic Help", () => new Help().ShowDialog());

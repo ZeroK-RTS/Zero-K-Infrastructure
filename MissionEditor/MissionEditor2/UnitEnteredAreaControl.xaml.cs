@@ -33,7 +33,7 @@ namespace MissionEditor2
 
 			foreach (var unit in MainWindow.Instance.Mission.AllUnits)
 			{
-				canvas.PlaceUnit(unit);
+				UnitIcon.PlaceSimplifiedUnit(canvas, unit);
 			}
 
 			foreach (var area in condition.Areas)

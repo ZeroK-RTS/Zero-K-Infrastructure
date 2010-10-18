@@ -842,6 +842,8 @@ namespace CMissionLib.UnitSyncLib
 				{
 					unitInfo.BuildPicField = NativeMethods.lpGetStrKeyStrVal("buildpic", String.Empty);
 				}
+				unitInfo.FootprintX = NativeMethods.lpGetStrKeyIntVal("footprintx", 1);
+				unitInfo.FootprintY = NativeMethods.lpGetStrKeyIntVal("footprintz", 1);
 
 				if (NativeMethods.lpGetKeyExistsStr("customparams"))
 				{

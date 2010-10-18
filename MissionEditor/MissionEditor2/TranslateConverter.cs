@@ -12,12 +12,12 @@ namespace MissionEditor2
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (double) value + Double.Parse((string) parameter);
+            return (double) value + Double.Parse(parameter.ToString());
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (double)value - Double.Parse((string)parameter);
+            return (double)value - Double.Parse(parameter.ToString());
         }
     }
 }

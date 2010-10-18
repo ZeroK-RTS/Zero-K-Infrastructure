@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="MissionEditor2.OrderIcon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+            >
+    <Grid>
+        <Viewbox Width="8" Height="4">
+            <Grid>
+                <Ellipse x:Name="border" Margin="-10" Stroke="Blue" StrokeThickness="2" Fill="White" Opacity="0.5" Cursor="SizeAll" />
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Name}" Cursor="SizeAll" />
+            </Grid>
+        </Viewbox>
+    </Grid>
+</UserControl>

@@ -75,26 +75,10 @@ namespace MissionEditor2
 			MainWindow.Instance.LogicGrid.SelectionChanged += (s, e) => list.SelectionChanged -= onSelectionChanged;
 		}
 
-		public static void Bind(this FrameworkElement target, DependencyProperty property, object source, string path, BindingMode mode)
+		public static void Bind(this FrameworkElement target, DependencyProperty property, object source, string path, BindingMode mode, IValueConverter converter = null, object converterParameter = null)
 		{
-			var binding = new Binding(path) {Source = source, Mode = mode};
+			var binding = new Binding(path) {Source = source, Mode = mode, Converter = converter, ConverterParameter = converterParameter};
 			target.SetBinding(property, binding);
-		}
-
-		// adds a unit icon to a canvas
-		// todo: use UnitIcon control instead
-		public static void PlaceUnit(this Canvas canvas, UnitStartInfo unit, bool isBlurred = false)
-		{
-			var border = new Border {BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(1), Height = 16, Width = 16};
-			if (isBlurred) border.Effect = new BlurEffect {Radius = 2};
-			canvas.Children.Add(border);
-			border.Bind(Border.BorderBrushProperty, unit, "Player.ColorBrush", BindingMode.OneWay);
-			// might need to be databound
-			Canvas.SetLeft(border, unit.X - border.Width/2);
-			Canvas.SetTop(border, unit.Y - border.Height/2);
-			Canvas.SetZIndex(border, -10);
-			var image = new Image {Source = unit.UnitDef.BuildPic};
-			border.Child = image;
 		}
 
 		public static double GetDistance(double x1, double y1, double x2, double y2)

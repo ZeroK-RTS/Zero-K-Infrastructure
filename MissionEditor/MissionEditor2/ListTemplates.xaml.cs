@@ -111,7 +111,7 @@ namespace MissionEditor2
 				var action = (MarkerPointAction) currentLogic;
 				var markerCanvas = (Canvas) e.Source;
 				markerCanvas.Children.Add(flagPole);
-				foreach (var unit in MainWindow.Instance.Mission.AllUnits) markerCanvas.PlaceUnit(unit);
+				foreach (var unit in MainWindow.Instance.Mission.AllUnits) UnitIcon.PlaceSimplifiedUnit(markerCanvas, unit);
 				Action refreshPosition = delegate
 					{
 						Canvas.SetLeft(flagPole, action.X - poleBase.X);
@@ -133,7 +133,7 @@ namespace MissionEditor2
 				var action = (SetCameraPointTargetAction) currentLogic;
 				var markerCanvas = (Canvas) e.Source;
 				markerCanvas.Children.Add(camera);
-				foreach (var unit in MainWindow.Instance.Mission.AllUnits) markerCanvas.PlaceUnit(unit);
+				foreach (var unit in MainWindow.Instance.Mission.AllUnits) UnitIcon.PlaceSimplifiedUnit(markerCanvas, unit);
 				Action refreshPosition = delegate
 					{
 						Canvas.SetLeft(camera, action.X - camera.Width/2);

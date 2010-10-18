@@ -23,6 +23,9 @@ namespace CMissionLib.UnitSyncLib
 
 		public bool IsFactory { get; set; }
 
+		public int FootprintX { get; set; }
+		public int FootprintY { get; set; }
+
 		#region ICloneable Members
 
 		public object Clone()
