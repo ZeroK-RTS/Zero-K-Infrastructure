@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using PlasmaShared;
@@ -13,6 +14,10 @@ namespace ZeroKLobby.MicroLobby
 		public SettingsTab()
 		{
 			InitializeComponent();
+
+			var isDesigner = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working
+			if (isDesigner) return;
+
 			var cfRoot = Path.GetDirectoryName(Program.SpringPaths.Executable);
 
 			cmDisplay = new ContextMenu();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using PlasmaShared;
 
@@ -11,6 +12,10 @@ namespace ZeroKLobby.Notifications
 		public ScannerBar(SpringScanner scanner)
 		{
 			InitializeComponent();
+
+			var isDesigner = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working
+			if (isDesigner) return;
+
 			scanner.WorkStarted += scanner_WorkProgressChanged;
 			scanner.WorkStopped += scanner_WorkStopped;
 			scanner.WorkProgressChanged += scanner_WorkProgressChanged;

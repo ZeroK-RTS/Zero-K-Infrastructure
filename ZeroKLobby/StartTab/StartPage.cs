@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
@@ -212,6 +213,8 @@ namespace ZeroKLobby.MicroLobby
 		public StartPage()
 		{
 			InitializeComponent();
+			var isDesigner = Process.GetCurrentProcess().ProcessName == "devenv";
+			if (isDesigner) return;
 			var host = new ElementHost();
 			host.Child = new UcStartTab();
 			host.Dock = DockStyle.Fill;
