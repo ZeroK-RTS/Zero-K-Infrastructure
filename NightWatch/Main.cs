@@ -149,6 +149,7 @@ namespace CaTracker
 
 		void recon_Elapsed(object sender, ElapsedEventArgs e)
 		{
+			if (tas.IsConnected && tas.IsLoggedIn) return;
 			recon.Stop();
 			try
 			{
