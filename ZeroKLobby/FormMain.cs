@@ -7,9 +7,12 @@ using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using PlasmaDownloader;
 using PlasmaShared;
+using ZeroKLobby.LuaMgr;
+using ZeroKLobby.MapDownloader;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 
@@ -23,7 +26,8 @@ namespace ZeroKLobby
 		FormWindowState lastState = FormWindowState.Normal;
 
 
-		public ChatTab ChatTab { get { return chatControl1; } }
+
+		public ChatTab ChatTab { get { return navigationControl1.ChatTab; } }
 		public static FormMain Instance { get; set; }
 
 
@@ -36,6 +40,9 @@ namespace ZeroKLobby
 			var isDesigner = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working
 			if (isDesigner) return;
 
+			
+
+
 			Invalidate(true);
 
 			Instance = this;
@@ -47,10 +54,6 @@ namespace ZeroKLobby
 				Program.Downloader.DownloadAdded += TorrentManager_DownloadAdded;
 			}
 
-			serverTab1.Visible = Debugger.IsAttached;
-			if (!Debugger.IsAttached) tabControl.TabPages.Remove(tabPageServer);
-
-			tabControl.Layout += tabControl_Layout;
 		}
 
 		public void DisplayLog()
@@ -74,7 +77,7 @@ namespace ZeroKLobby
 
 		public TabPage GetSelectedTab()
 		{
-			return tabControl.SelectedTab;
+			throw new NotImplementedException();
 		}
 
 		public void InvokeFunc(Func funcToInvoke)
@@ -112,11 +115,7 @@ namespace ZeroKLobby
 
 		void SelectTab(string name)
 		{
-			if (!InvokeRequired)
-			{
-				if (tabControl.TabPages.ContainsKey(name)) tabControl.SelectTab(name);
-			}
-			else Invoke((FuncStr)SelectTab, name);
+			throw new NotImplementedException();
 		}
 
 
@@ -285,28 +284,6 @@ namespace ZeroKLobby
 		void systrayIcon_MouseDown(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left) PopupSelf();
-		}
-
-		void tabControl_Layout(object sender, LayoutEventArgs e)
-		{
-			// we want to pre-load all tab controls
-
-			// store the originally selected tab to set the state of the control back to it's original state
-			var originallySelectedTabIndex = tabControl.SelectedIndex;
-
-			// iterate through each TagPage in the collection and select it 
-			foreach (TabPage tab in tabControl.TabPages) tabControl.SelectedTab = tab;
-
-			// detach the Layout event because we only want it to happen once (could happen later if the form is resized or controls changed etc.
-			tabControl.Layout -= tabControl_Layout;
-
-			// restore the selected tabindex
-			tabControl.SelectedIndex = originallySelectedTabIndex;
-		}
-
-		void tabControl_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (tabControl.SelectedTab == tabPageSettings) settingsTab1.RefreshConfig();
 		}
 
 
