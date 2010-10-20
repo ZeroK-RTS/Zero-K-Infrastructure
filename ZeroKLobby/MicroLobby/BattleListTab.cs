@@ -55,21 +55,25 @@ namespace ZeroKLobby.MicroLobby
             moreButton.MouseUp += (s, e) => battleListControl.GetContextMenu().Show(moreButton, e.Location);
         }
 
+		public string PathHead { get { return "battles"; } }
 
-    	public bool TryNavigate(string pathHead, params string[] pathTail)
+    	public bool TryNavigate(params string[] path)
     	{
-			if (pathHead != "battlelist") return false;
-			if (pathTail.Length != 1) return true;
-    		var gameShortcut = pathTail[0];
-			if (!String.IsNullOrEmpty(gameShortcut))
+			if (path.Length == 0) return false;
+			if (path[0] != PathHead) return false;
+
+			if (path.Length == 2)
 			{
-				var game = StartPage.GameList.FirstOrDefault(g => g.Shortcut == gameShortcut);
-				if (game != null)
+				var gameShortcut = path[1];
+				if (!String.IsNullOrEmpty(gameShortcut))
 				{
-					battleListControl.GameFilter = game;
+					var game = StartPage.GameList.FirstOrDefault(g => g.Shortcut == gameShortcut);
+					if (game != null)
+					{
+						battleListControl.GameFilter = game;
+					}
 				}
 			}
-
     		return true;
     	}
     }

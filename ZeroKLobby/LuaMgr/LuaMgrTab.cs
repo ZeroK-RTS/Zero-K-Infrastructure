@@ -12,7 +12,7 @@ using LuaManagerLib;
 
 namespace ZeroKLobby.LuaMgr
 {
-    public partial class LuaMgrTab: UserControl
+    public partial class LuaMgrTab: UserControl, INavigatable
     {
         protected const string descriptionPrequel =
             "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"><style type=\"text/css\"> body {background-color: #e5e5e5; font-family:Gisha;  font-size: 14px; } </style></head><body>";
@@ -74,15 +74,21 @@ namespace ZeroKLobby.LuaMgr
             catch {}
         }
 
-        public static bool checkLobbyInputData()
+		public string PathHead { get { return "widgets"; } }
+
+    	public bool TryNavigate(params string[] path)
+    	{
+			return path.Length > 0 && path[0] == PathHead;
+    	}
+
+    	public static bool checkLobbyInputData()
         {
             return checkLobbyInputData(true);
         }
 
         public static bool checkLobbyInputData(bool showNotifyBox)
         {
-            if (Program.Conf.LobbyPlayerPassword == null || Program.Conf.LobbyPlayerPassword.Length == 0 || Program.Conf.LobbyPlayerName.Length == 0 ||
-                Program.Conf.LobbyPlayerName == null)
+            if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerName))
             {
                 if (showNotifyBox) MessageBox.Show("Please enter your spring lobby account data in the Advanced Options menu to use this function.");
                 return false;

@@ -222,9 +222,11 @@ namespace ZeroKLobby.MicroLobby
 			Controls.Add(host);
 		}
 
-		public bool TryNavigate(string pathHead, params string[] pathTail)
+		public string PathHead { get { return "start"; } }
+
+		public bool TryNavigate(params string[] path)
 		{
-			return pathHead == "start";
+			return path.Length > 0 && path[0] == PathHead;
 		}
 	}
 

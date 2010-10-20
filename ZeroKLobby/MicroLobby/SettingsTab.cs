@@ -6,7 +6,7 @@ using PlasmaShared;
 
 namespace ZeroKLobby.MicroLobby
 {
-	public partial class SettingsTab: UserControl
+	public partial class SettingsTab: UserControl, INavigatable
 	{
 		readonly ContextMenu cmDisplay;
 		readonly ContextMenu cmKeybinds;
@@ -60,6 +60,13 @@ namespace ZeroKLobby.MicroLobby
 		void btnKeybindings_Click(object sender, EventArgs e)
 		{
 			cmKeybinds.Show(this, PointToClient(MousePosition));
+		}
+
+		public string PathHead { get { return "settings"; } }
+
+		public bool TryNavigate(params string[] path)
+		{
+			return path.Length > 0 && path[0] == PathHead;
 		}
 	}
 }

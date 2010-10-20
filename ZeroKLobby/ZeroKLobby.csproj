@@ -348,7 +348,9 @@
     <Compile Include="MicroLobby\ChatControl.Designer.cs">
       <DependentUpon>ChatControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\ChatTab.cs" />
+    <Compile Include="MicroLobby\ChatTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="MicroLobby\ChatTab.Designer.cs">
       <DependentUpon>ChatTab.cs</DependentUpon>
     </Compile>

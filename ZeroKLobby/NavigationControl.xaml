@@ -5,8 +5,22 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:MicroLobby="clr-namespace:ZeroKLobby.MicroLobby" xmlns:LuaMgr="clr-namespace:ZeroKLobby.LuaMgr" xmlns:MapDownloader="clr-namespace:ZeroKLobby.MapDownloader" mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" Loaded="UserControl_Loaded">
-    <TabControl x:Name="tabControl">
-        <TabItem Header="StartTab">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Button x:Name="backButton" Click="backButton_Click">Back</Button>
+            <Button x:Name="forwardButton" Click="forwardButton_Click">Forward</Button>
+        </StackPanel>
+        <TabControl Grid.Row="1" x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged">
+            <TabControl.ItemContainerStyle>
+                <Style TargetType="{x:Type TabItem}">
+                    <EventSetter Event="MouseUp" Handler="TabItem_MouseUp" />
+                </Style>
+                </TabControl.ItemContainerStyle>
+                <TabItem Header="StartTab">
             <WindowsFormsHost>
                 <MicroLobby:StartPage />
             </WindowsFormsHost>
@@ -42,23 +56,6 @@
             </WindowsFormsHost>
         </TabItem>
     </TabControl>
-    <!--<Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <UniformGrid Grid.Row="0">
-            <Button Click="StartPage_Click">Start</Button>
-            <Button Click="BattleListPage_Click">Battles</Button>
-            <Button Click="ChatPage_Click">Chat</Button>
-            <Button Click="HelpPage_Click">Help</Button>
-            <Button Click="WidgetsPage_Click">Widgets</Button>
-            <Button Click="DownloaderPage_Click">Downloader</Button>
-            <Button Click="SettingsPage_Click">Settings</Button>
-            <Button Click="ServerPage_Click">Server</Button>
-            <Button Click="FreedomPage_Click">Freedom</Button>
-        </UniformGrid>
-        <Frame Grid.Row="1" x:Name="frame" />
-    </Grid>-->
+    </Grid>
 
 </UserControl>

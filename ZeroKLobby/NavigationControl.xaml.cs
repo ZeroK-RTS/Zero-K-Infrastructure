@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms.Integration;
 using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby
@@ -19,16 +22,23 @@ namespace ZeroKLobby
 		{
 			Instance = this;
 			InitializeComponent();
+	
 		}
 
-		void UserControl_Loaded(object sender, RoutedEventArgs e) {}
+		void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			NavigateTo("start");
+		}
 
 		public NavigationControl Instance { get; private set; }
 
 		class NavigationStep
 		{
 			public string[] Path { get; set; }
-			public string DisplayName { get; set; }
+			public override string ToString()
+			{
+				return string.Join("/", Path);
+			}
 		}
 
 
@@ -62,27 +72,66 @@ namespace ZeroKLobby
 
 		NavigationStep GoToPage(string[] path)
 		{
-			var tabs = tabControl.Items.OfType<INavigatable>();
-			foreach (var tab in tabs)
+			foreach (var item in tabControl.Items)
 			{
-				var pathHumanName = tab.TryNavigate(path);
-				if (pathHumanName != null)
+				var navigatable = GetINavigatableFromControl(item);
+				if (navigatable != null && navigatable.TryNavigate(path))
 				{
-					return new NavigationStep { DisplayName = pathHumanName, Path = path };
+					tabControl.SelectedItem = item;
+					return new NavigationStep { Path = path };
 				}
 			}
 			return null;
 		}
 
-		void NavigateTo(params string[] path)
+		void NavigateTo(string path)
 		{
-			var step = GoToPage(path);
+			var step = GoToPage(path.Split('/'));
 			if (step != null)
 			{
-				backStack.Push(currentPage);
+				if (currentPage != null) backStack.Push(currentPage);
 				currentPage = step;
 				forwardStack.Clear();
 			}
+		}
+
+		private void backButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (CanGoBack) GoBack();
+		}
+
+		private void forwardButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (CanGoForward) GoForward();
+		}
+
+		INavigatable GetINavigatableFromControl(object obj)
+		{
+			if (obj is TabItem)
+			{
+				obj = ((TabItem)obj).Content;
+			}
+			if (obj is WindowsFormsHost)
+			{
+				obj = ((WindowsFormsHost)obj).Child;
+			}
+			return obj as INavigatable;
+		}
+
+		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
+
+		}
+
+		private void TabItem_MouseUp(object sender, RoutedEventArgs e)
+		{
+			var navigatable = GetINavigatableFromControl(e.Source);
+			if (navigatable == null) return;
+			var step = new NavigationStep { Path = new[] { navigatable.PathHead } };
+			if (currentPage != null) backStack.Push(currentPage);
+			currentPage = step;
+			forwardStack.Clear();
 		}
 	}
 }

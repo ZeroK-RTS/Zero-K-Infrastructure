@@ -7,7 +7,7 @@ using PlasmaDownloader;
 
 namespace ZeroKLobby.MapDownloader
 {
-    public partial class DownloaderTab: UserControl
+    public partial class DownloaderTab: UserControl, INavigatable
     {
         readonly FormMapPicker picker = new FormMapPicker();
 
@@ -122,5 +122,12 @@ namespace ZeroKLobby.MapDownloader
         {
             if (e.Node.Nodes.Count == 0) Program.Downloader.GetResource(DownloadType.UNKNOWN, e.Node.Tag.ToString());
         }
+
+		public string PathHead { get { return "downloader"; } }
+
+    	public bool TryNavigate(params string[] path)
+    	{
+			return path.Length > 0 && path[0] == PathHead;
+    	}
     }
 }
