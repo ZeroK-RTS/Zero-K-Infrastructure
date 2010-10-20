@@ -6,7 +6,7 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<meta name="description" content="Screenshots" />
 	<meta name="keywords" content="Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech" />
-	<link rel="stylesheet" href="style.css" type="text/css" media="screen" title="Main Style" charset="utf-8" />
+	<link rel="stylesheet" href="styles/style.css" type="text/css" media="screen" title="Main Style" charset="utf-8" />
 	<link rel="icon" href="img/favicon.png" />
 	<script type="text/javascript" language="JavaScript"><!--
 function SwitchContent(a,b,c,d) 
