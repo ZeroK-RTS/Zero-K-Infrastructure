@@ -13,6 +13,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using CMissionLib;
 using Microsoft.Win32;
+using MissionEditor2.ServiceReference;
 using Action = System.Action;
 
 namespace MissionEditor2
@@ -139,9 +140,9 @@ namespace MissionEditor2
 			mission.CreateArchive(tempPath);
 			info.Mutator = new System.Data.Linq.Binary(File.ReadAllBytes(tempPath));
 			File.Delete(tempPath);
-			using (var client = new EditorServiceSoapClient())
+			using (var client = new MissionServiceClient())
 			{
-				client.SendMission(data, mission.Author, password);
+				client.SendMission(info, mission.Author, password);
 				MessageBox.Show(
 					"Mission successfully uploaded.\n\rIt is now accessible from SpringDownloader.\r\nPlease make sure it works!");
 			}
