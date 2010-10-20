@@ -59,7 +59,13 @@ namespace ZeroKWeb.missions
 			var opt = new DataLoadOptions();
 			opt.LoadWith<Mission>(x => x.Account);
 			db.LoadOptions = opt;
-			return db.Missions.ToList();
+			var list = db.Missions.ToList();
+			foreach (var m in list)
+			{
+				m.Mutator = new Binary(new byte[]{});
+				m.Script = null;
+			}
+			return list;
 		}
 
 		public void SendMission(Mission mission, string author, string password)

@@ -48,9 +48,9 @@ namespace NightWatch
 
 		public static ServiceHost CreateServiceHost(TasClient client)
 		{
-			var host = new ServiceHost(new AuthService(client));
-			var tcp = new NetTcpBinding();
-			host.AddServiceEndpoint(typeof(IAuthService), tcp, GlobalConst.AuthServiceUri);
+			var host = new ServiceHost(new AuthService(client), new Uri(GlobalConst.AuthServiceUri));
+			var tcp = new NetTcpBinding(SecurityMode.None);
+			host.AddServiceEndpoint(typeof(IAuthService), tcp , GlobalConst.AuthServiceUri);
 			return host;
 		}
 

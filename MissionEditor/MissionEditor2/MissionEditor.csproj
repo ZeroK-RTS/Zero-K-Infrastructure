@@ -119,7 +119,6 @@
     <Compile Include="GiveOrdersPane.xaml.cs">
       <DependentUpon>GiveOrdersPane.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MissionServiceClient.cs" />
     <Compile Include="NoArea.xaml.cs" />
     <Compile Include="OrderIcon.xaml.cs">
       <DependentUpon>OrderIcon.xaml</DependentUpon>

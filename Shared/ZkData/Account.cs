@@ -20,7 +20,10 @@ namespace ZkData
 		{
 			if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value))
 			{
-				var aliases = new List<string>(Aliases.Split(','));
+				List<string> aliases = null;
+				if (!string.IsNullOrEmpty(Aliases)) aliases = new List<string>(Aliases.Split(','));
+				else aliases = new List<string>();
+
 				if (!aliases.Contains(Name)) aliases.Add(Name);
 				Aliases = string.Join(",", aliases);
 			}

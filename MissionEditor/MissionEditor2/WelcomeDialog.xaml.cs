@@ -4,13 +4,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
-using CMissionLib;
 using CMissionLib.UnitSyncLib;
 using Microsoft.Win32;
 using MissionEditor2.Properties;
+using ZkData;
 using Action = System.Action;
+using Mission = CMissionLib.Mission;
 
 namespace MissionEditor2
 {
@@ -34,7 +36,6 @@ namespace MissionEditor2
 
 		void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-
 			mapDetailSlider.Value = Settings.Default.MapDetail;
 			mapDetailSlider.ValueChanged += (s, ea) =>
 				{
