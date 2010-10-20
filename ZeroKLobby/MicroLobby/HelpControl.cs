@@ -20,7 +20,7 @@ namespace ZeroKLobby.MicroLobby
         {
             var menu = new ContextMenu();
             var joinItem = new MenuItem("Chat with us in the Zero-K development channel");
-            joinItem.Click += (s, e) => ActionHandler.JoinAndSwitch("zkdev");
+            joinItem.Click += (s, e) => ActionHandler.JoinAndSwitch("zk");
             menu.MenuItems.Add(joinItem);
             var siteItem = new MenuItem("Leave us a message on the Zero-K development site");
             siteItem.Click += siteFeatureRequestItem_Click;
