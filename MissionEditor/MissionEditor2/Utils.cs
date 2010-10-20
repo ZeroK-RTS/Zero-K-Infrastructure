@@ -124,13 +124,12 @@ namespace MissionEditor2
 		public static void SendMission(Mission mission, string password, int? missionId)
 		{
 
-			var info = new MissionInfo
+			var info = new ZkData.Mission
 				{
 					Description = mission.Description,
 					Map = mission.Map.Name,
 					Mod = mission.Mod.Name,
 					Name = mission.Name,
-					Author = mission.Author,
 					ScoringMethod = mission.ScoringMethod,
 					Image = new byte[0],
 					
@@ -138,7 +137,7 @@ namespace MissionEditor2
 			if (missionId.HasValue) info.MissionID = missionId.Value;
 			var tempPath = Path.GetTempFileName();
 			mission.CreateArchive(tempPath);
-			var data = new MissionData {MissionInfo = info, Mutator = File.ReadAllBytes(tempPath)};
+			info.Mutator = new System.Data.Linq.Binary(File.ReadAllBytes(tempPath));
 			File.Delete(tempPath);
 			using (var client = new EditorServiceSoapClient())
 			{
