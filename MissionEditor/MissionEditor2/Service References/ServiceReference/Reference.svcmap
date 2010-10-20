@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="f655ef62-52e0-4069-a0ec-a3d00b68977a" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="7ead250d-c1c6-41d5-834e-c6ecf5051553" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <EnableDataBinding>true</EnableDataBinding>
@@ -8,7 +8,9 @@
     <GenerateInternalTypes>false</GenerateInternalTypes>
     <GenerateMessageContracts>false</GenerateMessageContracts>
     <NamespaceMappings />
-    <CollectionMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
     <GenerateSerializableTypes>true</GenerateSerializableTypes>
     <Serializer>Auto</Serializer>
     <UseSerializerForFaults>true</UseSerializerForFaults>
@@ -18,11 +20,15 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://planet-wars.eu/MissionEditorServer/EditorService.asmx" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://localhost:37418/missions/MissionService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="EditorService.disco" MetadataType="Disco" ID="046436c3-8b16-4ed0-9049-9d0393fdbc4b" SourceId="1" SourceUrl="http://planet-wars.eu/MissionEditorServer/EditorService.asmx?disco" />
-    <MetadataFile FileName="EditorService.wsdl" MetadataType="Wsdl" ID="8af8deba-ad48-4a1b-8e95-e65c0c0b6441" SourceId="1" SourceUrl="http://planet-wars.eu/MissionEditorServer/EditorService.asmx?wsdl" />
+    <MetadataFile FileName="MissionService.disco" MetadataType="Disco" ID="be3b3a5a-ecd8-4277-9e2a-7f62f1de4ad5" SourceId="1" SourceUrl="http://localhost:37418/missions/MissionService.svc?disco" />
+    <MetadataFile FileName="MissionService.xsd" MetadataType="Schema" ID="8e62695f-399d-46ef-b6d1-6b0a38ad8f98" SourceId="1" SourceUrl="http://localhost:37418/missions/MissionService.svc?xsd=xsd1" />
+    <MetadataFile FileName="MissionService1.xsd" MetadataType="Schema" ID="b2e236c3-9bfb-4c05-b15d-e32581c5648f" SourceId="1" SourceUrl="http://localhost:37418/missions/MissionService.svc?xsd=xsd0" />
+    <MetadataFile FileName="MissionService2.xsd" MetadataType="Schema" ID="aecce033-4f2b-42e0-906b-40b77800b5f1" SourceId="1" SourceUrl="http://localhost:37418/missions/MissionService.svc?xsd=xsd3" />
+    <MetadataFile FileName="MissionService.wsdl" MetadataType="Wsdl" ID="81adb965-2ca7-41e6-8647-bfc567d7fd90" SourceId="1" SourceUrl="http://localhost:37418/missions/MissionService.svc?wsdl" />
+    <MetadataFile FileName="MissionService3.xsd" MetadataType="Schema" ID="38ebc5d8-f24a-4aff-b994-9b3e041f194b" SourceId="1" SourceUrl="http://localhost:37418/missions/MissionService.svc?xsd=xsd2" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
