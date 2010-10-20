@@ -14,7 +14,7 @@
             <Button x:Name="backButton" Click="backButton_Click">Back</Button>
             <Button x:Name="forwardButton" Click="forwardButton_Click">Forward</Button>
         </StackPanel>
-        <TabControl Grid.Row="1" x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged">
+        <TabControl Grid.Row="1" x:Name="tabControl">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <EventSetter Event="MouseUp" Handler="TabItem_MouseUp" />

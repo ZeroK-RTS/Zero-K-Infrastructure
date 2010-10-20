@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ZeroKLobby.MicroLobby
@@ -15,16 +16,23 @@ namespace ZeroKLobby.MicroLobby
         protected override void OnMouseDown(MouseEventArgs e)
         {
             base.OnMouseDown(e);
-            var gameButtons = items.Cast<BattleGameListItem>();
+            var gameButtons = Items.Cast<BattleGameListItem>();
             var selectedItem = gameButtons.SingleOrDefault(i => i.HitTest(e.Y));
-            if (selectedItem != null) foreach (var g in gameButtons) g.IsSelected = selectedItem == g;
-            Invalidate();
+            SelectItem(selectedItem);
+
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
+    	public void SelectItem(BattleGameListItem selectedItem)
+    	{
+			var gameButtons = Items.Cast<BattleGameListItem>();
+    		if (selectedItem != null) foreach (var g in gameButtons) g.IsSelected = selectedItem == g;
+			Invalidate();
+    	}
+
+    	protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            Cursor = items.Any(i => i.HitTest(e.Y)) ? Cursors.Hand : Cursors.Default;
+            Cursor = Items.Any(i => i.HitTest(e.Y)) ? Cursors.Hand : Cursors.Default;
         }
     }
 }

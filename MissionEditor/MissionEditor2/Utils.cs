@@ -133,7 +133,6 @@ namespace MissionEditor2
 					Name = mission.Name,
 					ScoringMethod = mission.ScoringMethod,
 					Image = new byte[0],
-					
 				};
 			if (missionId.HasValue) info.MissionID = missionId.Value;
 			var tempPath = Path.GetTempFileName();

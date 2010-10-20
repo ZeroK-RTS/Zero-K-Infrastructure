@@ -10,6 +10,8 @@ namespace ZeroKLobby.MicroLobby
     public partial class BattleListTab: UserControl, INavigatable
     {
     	BattleListControl battleListControl;
+    	AllGameItem allGameItem;
+    	BattleGameList gameList;
 
     	public BattleListTab()
         {
@@ -37,14 +39,18 @@ namespace ZeroKLobby.MicroLobby
             battleListControl = new BattleListControl(filterBox) { Dock = DockStyle.Fill };
 
             // game list
-            var gameList = new BattleGameList { Dock = DockStyle.Left };
-            var allGameItem = new AllGameItem { IsSelected = true };
-            allGameItem.Click += (s, e) => battleListControl.GameFilter = null;
+            gameList = new BattleGameList { Dock = DockStyle.Left };
+            allGameItem = new AllGameItem { IsSelected = true };
+            allGameItem.Click += (s, e) => NavigationControl.Instance.NavigateTo("battles/all");
             gameList.AddItem(allGameItem);
             foreach (var gameInfo in StartPage.GameList)
             {
                 var gameListItem = new BattleGameListItem(gameInfo);
-                gameListItem.Click += (s, e) => battleListControl.GameFilter = gameListItem.Game;
+				gameListItem.Click += (s, e) =>
+					{
+						NavigationControl.Instance.NavigateTo("battles/" + gameListItem.Game.Shortcut);
+						// battleListControl.GameFilter = gameListItem.Game;
+					};
                 gameList.AddItem(gameListItem);
             }
 
@@ -62,16 +68,22 @@ namespace ZeroKLobby.MicroLobby
 			if (path.Length == 0) return false;
 			if (path[0] != PathHead) return false;
 
-			if (path.Length == 2)
+			if (path.Length == 2 && !String.IsNullOrEmpty(path[1]))
 			{
 				var gameShortcut = path[1];
-				if (!String.IsNullOrEmpty(gameShortcut))
+				if (gameShortcut == "all")
 				{
-					var game = StartPage.GameList.FirstOrDefault(g => g.Shortcut == gameShortcut);
-					if (game != null)
-					{
-						battleListControl.GameFilter = game;
-					}
+					gameList.SelectItem(allGameItem);
+					battleListControl.GameFilter = null;
+					return true;
+				}
+
+				var game = StartPage.GameList.FirstOrDefault(g => g.Shortcut == gameShortcut);
+				if (game != null)
+				{
+					var gameListItem = gameList.Items.Cast<BattleGameListItem>().Single(i => i.Game == game);
+					gameList.SelectItem(gameListItem);
+					battleListControl.GameFilter = game;
 				}
 			}
     		return true;

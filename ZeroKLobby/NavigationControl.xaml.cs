@@ -30,7 +30,7 @@ namespace ZeroKLobby
 			NavigateTo("start");
 		}
 
-		public NavigationControl Instance { get; private set; }
+		public static NavigationControl Instance { get; private set; }
 
 		class NavigationStep
 		{
@@ -84,7 +84,7 @@ namespace ZeroKLobby
 			return null;
 		}
 
-		void NavigateTo(string path)
+		public void NavigateTo(string path)
 		{
 			var step = GoToPage(path.Split('/'));
 			if (step != null)
@@ -116,12 +116,6 @@ namespace ZeroKLobby
 				obj = ((WindowsFormsHost)obj).Child;
 			}
 			return obj as INavigatable;
-		}
-
-		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-
-
 		}
 
 		private void TabItem_MouseUp(object sender, RoutedEventArgs e)

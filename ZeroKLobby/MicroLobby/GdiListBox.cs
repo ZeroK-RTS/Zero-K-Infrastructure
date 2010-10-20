@@ -9,7 +9,8 @@ namespace ZeroKLobby.MicroLobby
     class GdiListBox: ScrollableControl
     {
         public bool IsSorted { get; set; }
-        protected List<GdiListBoxItem> items = new List<GdiListBoxItem>();
+    	public List<GdiListBoxItem> Items { get { return items; } set { items = value; } }
+    	List<GdiListBoxItem> items = new List<GdiListBoxItem>();
 
         public GdiListBox()
         {
