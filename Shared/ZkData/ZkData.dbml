@@ -167,6 +167,8 @@
       <Column Name="TokenCondition" Type="System.String" DbType="varchar(500)" CanBeNull="true" />
       <Column Name="CampaignID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="AccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="ModOptions" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
+      <Association Name="Mission_MissionSlot" Member="MissionSlots" ThisKey="MissionID" OtherKey="MissionID" Type="MissionSlot" />
       <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
@@ -315,13 +317,6 @@
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
     </Type>
   </Table>
-  <Table Name="dbo.MissionRating" Member="MissionRatings">
-    <Type Name="MissionRating">
-      <Column Name="MissionID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Rating" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
   <Table Name="dbo.LobbyMessage" Member="LobbyMessages">
     <Type Name="LobbyMessage">
       <Column Name="MessageID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -340,6 +335,31 @@
     <Type Name="LobbyChannelSubscription">
       <Column Name="Name" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Channel" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MissionSlot" Member="MissionSlots">
+    <Type Name="MissionSlot">
+      <Column Name="MissionID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TeamID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Color" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="TeamName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="AllyID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="IsHuman" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsRequired" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="AiShortName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="AiVersion" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="AllyName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Association Name="Mission_MissionSlot" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ForumThread" Member="ForumThreads">
+    <Type Name="ForumThread">
+      <Column Name="ForumThreadID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="nvarchar(300) NOT NULL" CanBeNull="false" />
+      <Column Name="ThumbsUp" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ThumbsDown" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Created" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="LastPost" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
 </Database>

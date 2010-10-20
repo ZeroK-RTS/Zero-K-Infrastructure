@@ -36,15 +36,18 @@ namespace ZkData
     partial void InsertAccount(Account instance);
     partial void UpdateAccount(Account instance);
     partial void DeleteAccount(Account instance);
-    partial void InsertMissionRating(MissionRating instance);
-    partial void UpdateMissionRating(MissionRating instance);
-    partial void DeleteMissionRating(MissionRating instance);
     partial void InsertLobbyMessage(LobbyMessage instance);
     partial void UpdateLobbyMessage(LobbyMessage instance);
     partial void DeleteLobbyMessage(LobbyMessage instance);
     partial void InsertLobbyChannelSubscription(LobbyChannelSubscription instance);
     partial void UpdateLobbyChannelSubscription(LobbyChannelSubscription instance);
     partial void DeleteLobbyChannelSubscription(LobbyChannelSubscription instance);
+    partial void InsertMissionSlot(MissionSlot instance);
+    partial void UpdateMissionSlot(MissionSlot instance);
+    partial void DeleteMissionSlot(MissionSlot instance);
+    partial void InsertForumThread(ForumThread instance);
+    partial void UpdateForumThread(ForumThread instance);
+    partial void DeleteForumThread(ForumThread instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -293,14 +296,6 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<MissionRating> MissionRatings
-		{
-			get
-			{
-				return this.GetTable<MissionRating>();
-			}
-		}
-		
 		public System.Data.Linq.Table<LobbyMessage> LobbyMessages
 		{
 			get
@@ -314,6 +309,22 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<LobbyChannelSubscription>();
+			}
+		}
+		
+		public System.Data.Linq.Table<MissionSlot> MissionSlots
+		{
+			get
+			{
+				return this.GetTable<MissionSlot>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ForumThread> ForumThreads
+		{
+			get
+			{
+				return this.GetTable<ForumThread>();
 			}
 		}
 	}
@@ -2028,6 +2039,10 @@ namespace ZkData
 		
 		private System.Nullable<int> _AccountID;
 		
+		private string _ModOptions;
+		
+		private EntitySet<MissionSlot> _MissionSlots;
+		
 		private EntityRef<Account> _Account;
 		
     #region Extensibility Method Definitions
@@ -2082,10 +2097,13 @@ namespace ZkData
     partial void OnCampaignIDChanged();
     partial void OnAccountIDChanging(System.Nullable<int> value);
     partial void OnAccountIDChanged();
+    partial void OnModOptionsChanging(string value);
+    partial void OnModOptionsChanged();
     #endregion
 		
 		public Mission()
 		{
+			this._MissionSlots = new EntitySet<MissionSlot>(new Action<MissionSlot>(this.attach_MissionSlots), new Action<MissionSlot>(this.detach_MissionSlots));
 			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
@@ -2190,7 +2208,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
 		public System.Data.Linq.Binary Image
 		{
 			get
@@ -2574,6 +2592,39 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModOptions", DbType="nvarchar(max)")]
+		public string ModOptions
+		{
+			get
+			{
+				return this._ModOptions;
+			}
+			set
+			{
+				if ((this._ModOptions != value))
+				{
+					this.OnModOptionsChanging(value);
+					this.SendPropertyChanging();
+					this._ModOptions = value;
+					this.SendPropertyChanged("ModOptions");
+					this.OnModOptionsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionSlot", Storage="_MissionSlots", ThisKey="MissionID", OtherKey="MissionID")]
+		public EntitySet<MissionSlot> MissionSlots
+		{
+			get
+			{
+				return this._MissionSlots;
+			}
+			set
+			{
+				this._MissionSlots.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Mission", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
 		public Account Account
 		{
@@ -2626,6 +2677,18 @@ namespace ZkData
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_MissionSlots(MissionSlot entity)
+		{
+			this.SendPropertyChanging();
+			entity.Mission = this;
+		}
+		
+		private void detach_MissionSlots(MissionSlot entity)
+		{
+			this.SendPropertyChanging();
+			entity.Mission = null;
 		}
 	}
 	
@@ -4614,116 +4677,6 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MissionRating")]
-	public partial class MissionRating : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _MissionID;
-		
-		private int _AccountID;
-		
-		private int _Rating;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnMissionIDChanging(int value);
-    partial void OnMissionIDChanged();
-    partial void OnAccountIDChanging(int value);
-    partial void OnAccountIDChanged();
-    partial void OnRatingChanging(int value);
-    partial void OnRatingChanged();
-    #endregion
-		
-		public MissionRating()
-		{
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionID", DbType="int NOT NULL", IsPrimaryKey=true)]
-		public int MissionID
-		{
-			get
-			{
-				return this._MissionID;
-			}
-			set
-			{
-				if ((this._MissionID != value))
-				{
-					this.OnMissionIDChanging(value);
-					this.SendPropertyChanging();
-					this._MissionID = value;
-					this.SendPropertyChanged("MissionID");
-					this.OnMissionIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
-		public int AccountID
-		{
-			get
-			{
-				return this._AccountID;
-			}
-			set
-			{
-				if ((this._AccountID != value))
-				{
-					this.OnAccountIDChanging(value);
-					this.SendPropertyChanging();
-					this._AccountID = value;
-					this.SendPropertyChanged("AccountID");
-					this.OnAccountIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rating", DbType="int NOT NULL")]
-		public int Rating
-		{
-			get
-			{
-				return this._Rating;
-			}
-			set
-			{
-				if ((this._Rating != value))
-				{
-					this.OnRatingChanging(value);
-					this.SendPropertyChanging();
-					this._Rating = value;
-					this.SendPropertyChanged("Rating");
-					this.OnRatingChanged();
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.LobbyMessage")]
 	public partial class LobbyMessage : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -5097,6 +5050,507 @@ namespace ZkData
 					this._Channel = value;
 					this.SendPropertyChanged("Channel");
 					this.OnChannelChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MissionSlot")]
+	public partial class MissionSlot : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _MissionID;
+		
+		private int _TeamID;
+		
+		private System.Nullable<int> _Color;
+		
+		private string _TeamName;
+		
+		private int _AllyID;
+		
+		private bool _IsHuman;
+		
+		private bool _IsRequired;
+		
+		private string _AiShortName;
+		
+		private string _AiVersion;
+		
+		private string _AllyName;
+		
+		private EntityRef<Mission> _Mission;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnMissionIDChanging(int value);
+    partial void OnMissionIDChanged();
+    partial void OnTeamIDChanging(int value);
+    partial void OnTeamIDChanged();
+    partial void OnColorChanging(System.Nullable<int> value);
+    partial void OnColorChanged();
+    partial void OnTeamNameChanging(string value);
+    partial void OnTeamNameChanged();
+    partial void OnAllyIDChanging(int value);
+    partial void OnAllyIDChanged();
+    partial void OnIsHumanChanging(bool value);
+    partial void OnIsHumanChanged();
+    partial void OnIsRequiredChanging(bool value);
+    partial void OnIsRequiredChanged();
+    partial void OnAiShortNameChanging(string value);
+    partial void OnAiShortNameChanged();
+    partial void OnAiVersionChanging(string value);
+    partial void OnAiVersionChanged();
+    partial void OnAllyNameChanging(string value);
+    partial void OnAllyNameChanged();
+    #endregion
+		
+		public MissionSlot()
+		{
+			this._Mission = default(EntityRef<Mission>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		public int MissionID
+		{
+			get
+			{
+				return this._MissionID;
+			}
+			set
+			{
+				if ((this._MissionID != value))
+				{
+					if (this._Mission.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMissionIDChanging(value);
+					this.SendPropertyChanging();
+					this._MissionID = value;
+					this.SendPropertyChanged("MissionID");
+					this.OnMissionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TeamID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		public int TeamID
+		{
+			get
+			{
+				return this._TeamID;
+			}
+			set
+			{
+				if ((this._TeamID != value))
+				{
+					this.OnTeamIDChanging(value);
+					this.SendPropertyChanging();
+					this._TeamID = value;
+					this.SendPropertyChanged("TeamID");
+					this.OnTeamIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Color", DbType="int")]
+		public System.Nullable<int> Color
+		{
+			get
+			{
+				return this._Color;
+			}
+			set
+			{
+				if ((this._Color != value))
+				{
+					this.OnColorChanging(value);
+					this.SendPropertyChanging();
+					this._Color = value;
+					this.SendPropertyChanged("Color");
+					this.OnColorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TeamName", DbType="nvarchar(100)")]
+		public string TeamName
+		{
+			get
+			{
+				return this._TeamName;
+			}
+			set
+			{
+				if ((this._TeamName != value))
+				{
+					this.OnTeamNameChanging(value);
+					this.SendPropertyChanging();
+					this._TeamName = value;
+					this.SendPropertyChanged("TeamName");
+					this.OnTeamNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyID", DbType="int NOT NULL")]
+		public int AllyID
+		{
+			get
+			{
+				return this._AllyID;
+			}
+			set
+			{
+				if ((this._AllyID != value))
+				{
+					this.OnAllyIDChanging(value);
+					this.SendPropertyChanging();
+					this._AllyID = value;
+					this.SendPropertyChanged("AllyID");
+					this.OnAllyIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsHuman", DbType="bit NOT NULL")]
+		public bool IsHuman
+		{
+			get
+			{
+				return this._IsHuman;
+			}
+			set
+			{
+				if ((this._IsHuman != value))
+				{
+					this.OnIsHumanChanging(value);
+					this.SendPropertyChanging();
+					this._IsHuman = value;
+					this.SendPropertyChanged("IsHuman");
+					this.OnIsHumanChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRequired", DbType="bit NOT NULL")]
+		public bool IsRequired
+		{
+			get
+			{
+				return this._IsRequired;
+			}
+			set
+			{
+				if ((this._IsRequired != value))
+				{
+					this.OnIsRequiredChanging(value);
+					this.SendPropertyChanging();
+					this._IsRequired = value;
+					this.SendPropertyChanged("IsRequired");
+					this.OnIsRequiredChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AiShortName", DbType="nvarchar(100)")]
+		public string AiShortName
+		{
+			get
+			{
+				return this._AiShortName;
+			}
+			set
+			{
+				if ((this._AiShortName != value))
+				{
+					this.OnAiShortNameChanging(value);
+					this.SendPropertyChanging();
+					this._AiShortName = value;
+					this.SendPropertyChanged("AiShortName");
+					this.OnAiShortNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AiVersion", DbType="nvarchar(100)")]
+		public string AiVersion
+		{
+			get
+			{
+				return this._AiVersion;
+			}
+			set
+			{
+				if ((this._AiVersion != value))
+				{
+					this.OnAiVersionChanging(value);
+					this.SendPropertyChanging();
+					this._AiVersion = value;
+					this.SendPropertyChanged("AiVersion");
+					this.OnAiVersionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyName", DbType="nvarchar(100)")]
+		public string AllyName
+		{
+			get
+			{
+				return this._AllyName;
+			}
+			set
+			{
+				if ((this._AllyName != value))
+				{
+					this.OnAllyNameChanging(value);
+					this.SendPropertyChanging();
+					this._AllyName = value;
+					this.SendPropertyChanged("AllyName");
+					this.OnAllyNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionSlot", Storage="_Mission", ThisKey="MissionID", OtherKey="MissionID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Mission Mission
+		{
+			get
+			{
+				return this._Mission.Entity;
+			}
+			set
+			{
+				Mission previousValue = this._Mission.Entity;
+				if (((previousValue != value) 
+							|| (this._Mission.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Mission.Entity = null;
+						previousValue.MissionSlots.Remove(this);
+					}
+					this._Mission.Entity = value;
+					if ((value != null))
+					{
+						value.MissionSlots.Add(this);
+						this._MissionID = value.MissionID;
+					}
+					else
+					{
+						this._MissionID = default(int);
+					}
+					this.SendPropertyChanged("Mission");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ForumThread")]
+	public partial class ForumThread : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ForumThreadID;
+		
+		private string _Title;
+		
+		private int _ThumbsUp;
+		
+		private int _ThumbsDown;
+		
+		private System.DateTime _Created;
+		
+		private System.DateTime _LastPost;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnForumThreadIDChanging(int value);
+    partial void OnForumThreadIDChanged();
+    partial void OnTitleChanging(string value);
+    partial void OnTitleChanged();
+    partial void OnThumbsUpChanging(int value);
+    partial void OnThumbsUpChanged();
+    partial void OnThumbsDownChanging(int value);
+    partial void OnThumbsDownChanged();
+    partial void OnCreatedChanging(System.DateTime value);
+    partial void OnCreatedChanged();
+    partial void OnLastPostChanging(System.DateTime value);
+    partial void OnLastPostChanged();
+    #endregion
+		
+		public ForumThread()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int ForumThreadID
+		{
+			get
+			{
+				return this._ForumThreadID;
+			}
+			set
+			{
+				if ((this._ForumThreadID != value))
+				{
+					this.OnForumThreadIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumThreadID = value;
+					this.SendPropertyChanged("ForumThreadID");
+					this.OnForumThreadIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="nvarchar(300) NOT NULL", CanBeNull=false)]
+		public string Title
+		{
+			get
+			{
+				return this._Title;
+			}
+			set
+			{
+				if ((this._Title != value))
+				{
+					this.OnTitleChanging(value);
+					this.SendPropertyChanging();
+					this._Title = value;
+					this.SendPropertyChanged("Title");
+					this.OnTitleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ThumbsUp", DbType="int NOT NULL")]
+		public int ThumbsUp
+		{
+			get
+			{
+				return this._ThumbsUp;
+			}
+			set
+			{
+				if ((this._ThumbsUp != value))
+				{
+					this.OnThumbsUpChanging(value);
+					this.SendPropertyChanging();
+					this._ThumbsUp = value;
+					this.SendPropertyChanged("ThumbsUp");
+					this.OnThumbsUpChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ThumbsDown", DbType="int NOT NULL")]
+		public int ThumbsDown
+		{
+			get
+			{
+				return this._ThumbsDown;
+			}
+			set
+			{
+				if ((this._ThumbsDown != value))
+				{
+					this.OnThumbsDownChanging(value);
+					this.SendPropertyChanging();
+					this._ThumbsDown = value;
+					this.SendPropertyChanged("ThumbsDown");
+					this.OnThumbsDownChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Created", DbType="datetime NOT NULL")]
+		public System.DateTime Created
+		{
+			get
+			{
+				return this._Created;
+			}
+			set
+			{
+				if ((this._Created != value))
+				{
+					this.OnCreatedChanging(value);
+					this.SendPropertyChanging();
+					this._Created = value;
+					this.SendPropertyChanged("Created");
+					this.OnCreatedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastPost", DbType="datetime NOT NULL")]
+		public System.DateTime LastPost
+		{
+			get
+			{
+				return this._LastPost;
+			}
+			set
+			{
+				if ((this._LastPost != value))
+				{
+					this.OnLastPostChanging(value);
+					this.SendPropertyChanging();
+					this._LastPost = value;
+					this.SendPropertyChanged("LastPost");
+					this.OnLastPostChanged();
 				}
 			}
 		}
