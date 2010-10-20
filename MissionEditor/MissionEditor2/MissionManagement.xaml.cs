@@ -57,7 +57,8 @@ namespace MissionEditor2
 					{
 						using (var client = new MissionServiceClient())
 						{
-							client.DeleteMission(selectedMission.MissionID, selectedMission.Author, password);
+						
+							client.DeleteMission(selectedMission.MissionID, selectedMission.Account.Name, password);
 						}
 						RefreshList();
 					});

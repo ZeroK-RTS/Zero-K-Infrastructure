@@ -1,14 +1,17 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using PlasmaShared;
 using ZeroKLobby;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class BattleListTab: UserControl
+    public partial class BattleListTab: UserControl, INavigatable
     {
-        public BattleListTab()
+    	BattleListControl battleListControl;
+
+    	public BattleListTab()
         {
             InitializeComponent();
         }
@@ -31,7 +34,7 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(filterBox, "Search game, description, map or player");
 
             // battle list
-            var battleListControl = new BattleListControl(filterBox) { Dock = DockStyle.Fill };
+            battleListControl = new BattleListControl(filterBox) { Dock = DockStyle.Fill };
 
             // game list
             var gameList = new BattleGameList { Dock = DockStyle.Left };
@@ -51,5 +54,23 @@ namespace ZeroKLobby.MicroLobby
 
             moreButton.MouseUp += (s, e) => battleListControl.GetContextMenu().Show(moreButton, e.Location);
         }
+
+
+    	public bool TryNavigate(string pathHead, params string[] pathTail)
+    	{
+			if (pathHead != "battlelist") return false;
+			if (pathTail.Length != 1) return true;
+    		var gameShortcut = pathTail[0];
+			if (!String.IsNullOrEmpty(gameShortcut))
+			{
+				var game = StartPage.GameList.FirstOrDefault(g => g.Shortcut == gameShortcut);
+				if (game != null)
+				{
+					battleListControl.GameFilter = game;
+				}
+			}
+
+    		return true;
+    	}
     }
 }

@@ -52,12 +52,7 @@
         <WRAP_LIMIT>150</WRAP_LIMIT>
         <WRAP_PARAMETERS_STYLE>CHOP_IF_LONG</WRAP_PARAMETERS_STYLE>
       </FormatSettings>
-      <UsingsSettings>
-        <KeepImports IsNull="False">
-          <Item>System.Linq</Item>
-          <Item>System.Collections.Generic</Item>
-        </KeepImports>
-      </UsingsSettings>
+      <UsingsSettings />
       <Naming2>
         <EventHandlerPatternLong>$object$_On$event$</EventHandlerPatternLong>
         <EventHandlerPatternShort>$event$Handler</EventHandlerPatternShort>

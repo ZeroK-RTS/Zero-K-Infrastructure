@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -7,7 +8,7 @@ using ZeroKLobby.StartTab;
 
 namespace ZeroKLobby.MicroLobby
 {
-	public partial class StartPage: UserControl
+	public partial class StartPage: UserControl, INavigatable
 	{
 		public static List<GameInfo> GameList =
 			new List<GameInfo>
@@ -219,6 +220,11 @@ namespace ZeroKLobby.MicroLobby
 			host.Child = new UcStartTab();
 			host.Dock = DockStyle.Fill;
 			Controls.Add(host);
+		}
+
+		public bool TryNavigate(string pathHead, params string[] pathTail)
+		{
+			return pathHead == "start";
 		}
 	}
 

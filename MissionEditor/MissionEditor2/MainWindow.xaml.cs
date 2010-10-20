@@ -348,8 +348,8 @@ namespace MissionEditor2
 			var mission = MainMenu.AddContainer("Mission");
 			mission.AddAction("Create Mutator", BuildMission);
 			mission.AddAction("Test Mission", TestMission);
-			// mission.AddAction("Publish", () => Utils.Publish(Mission, null));
-			// mission.AddAction("Manage Missions", ShowMissionManagement);
+			mission.AddAction("Publish", () => Utils.Publish(Mission, null));
+			mission.AddAction("Manage Missions", ShowMissionManagement);
 			mission.AddAction("Settings", ShowMissionSettings);
 			var trigger = MainMenu.AddContainer("Trigger");
 			trigger.AddAction("New", AddNewTrigger);
