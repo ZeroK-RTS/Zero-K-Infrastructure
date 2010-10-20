@@ -20,7 +20,7 @@ namespace MissionEditor2
 		{
 			Utils.InvokeInNewThread(delegate
 				{
-					using (var client = new EditorServiceSoapClient())
+					using (var client = new MissionServiceClient())
 					{
 						var list = client.ListMissionInfos();
 						this.Invoke(delegate
@@ -47,7 +47,7 @@ namespace MissionEditor2
 
 		void DeleteButton_Click(object sender, RoutedEventArgs e)
 		{
-			var selectedMission = (MissionInfo) DataGrid.SelectedItem;
+			var selectedMission = (ZkData.Mission) DataGrid.SelectedItem;
 			var dialog = new StringRequest {Title = "Insert Password"};
 			if (dialog.ShowDialog() == true)
 			{
@@ -55,7 +55,7 @@ namespace MissionEditor2
 
 				Utils.InvokeInNewThread(delegate
 					{
-						using (var client = new EditorServiceSoapClient())
+						using (var client = new MissionServiceClient())
 						{
 							client.DeleteMission(selectedMission.MissionID, selectedMission.Author, password);
 						}
@@ -66,7 +66,7 @@ namespace MissionEditor2
 
 		void UpdateButton_Click(object sender, RoutedEventArgs e)
 		{
-			var selectedMission = (MissionInfo) DataGrid.SelectedItem;
+			var selectedMission = (ZkData.Mission) DataGrid.SelectedItem;
 			var dialog = new StringRequest {Title = "Insert Password"};
 			if (dialog.ShowDialog() == true)
 			{
@@ -86,11 +86,11 @@ namespace MissionEditor2
 		void OpenButton_Click(object sender, RoutedEventArgs e)
 		{
 			var dialog = new LoadingDialog {Text = "Opening Mission"};
-			var selectedMission = (MissionInfo) DataGrid.SelectedItem;
+			var selectedMission = (ZkData.Mission) DataGrid.SelectedItem;
 
 			Utils.InvokeInNewThread(delegate
 				{
-					var client = new EditorServiceSoapClient();
+					var client = new MissionServiceClient();
 					var missionData = client.GetMission(selectedMission.Name);
 					dialog.Invoke(delegate
 						{
@@ -99,7 +99,7 @@ namespace MissionEditor2
 							var saveFileDialog = new SaveFileDialog {DefaultExt = "sdz", Filter = filter, RestoreDirectory = true};
 							if (saveFileDialog.ShowDialog() == true)
 							{
-								File.WriteAllBytes(saveFileDialog.FileName, missionData.Mutator);
+								File.WriteAllBytes(saveFileDialog.FileName, missionData.Mutator.ToArray());
 							}
 							WelcomeDialog.LoadExistingMission(saveFileDialog.FileName);
 						});
