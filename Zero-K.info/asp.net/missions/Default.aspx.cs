@@ -6,6 +6,7 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ZkData;
 
 namespace MissionEditorServer
 {
@@ -30,9 +31,9 @@ namespace MissionEditorServer
 
 		protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
 		{
+			var db = new ZkDataContext();
 			if (e.CommandName == "download") {
 				var key = Convert.ToInt32(e.CommandArgument);
-				var db = EditorService.GetContext();
 				Response.Clear();
 				Response.Buffer = true;
 				Response.ContentEncoding = Encoding.UTF8;
@@ -52,15 +53,14 @@ namespace MissionEditorServer
 
 			} else if (e.CommandName =="comments") {
 				var key = Convert.ToInt32(e.CommandArgument);
-				var db = EditorService.GetContext();
-				var items = db.Comments.Where(x => x.MissionID == key).OrderBy(x => x.Time);
+/*				var items = db.Comments.Where(x => x.MissionID == key).OrderBy(x => x.Time);
 				Label1.Text = "";
 				foreach (var i in items) {
 					Label1.Text += string.Format("<hr/>{0}<br/>{1}<br/>{2}<br/>", i.Time.ToLocalTime(), i.Nick, i.Text);
-				}
+				}*/
 
 			} else if (e.CommandName=="top10") {
-				var key = Convert.ToInt32(e.CommandArgument);
+				/*var key = Convert.ToInt32(e.CommandArgument);
 				var db = EditorService.GetContext();
 				Label1.Text = string.Format("Scoring rules: {0}<br/><h3>Top players:</h3>", (from m in db.Missions where m.MissionID == key select m.ScoringMethod).Single());
 
@@ -70,14 +70,15 @@ namespace MissionEditorServer
 
 					Label1.Text += string.Format("<b>{0}. {1}</b>  {2}  (in {3})</br>\n",cnt, i.PlayerName.PadLeft(15), i.Score1.ToString().PadLeft(5), EditorService.SecondsToTime(i.TimeSeconds));
 					cnt++;
-				}
+				}*/
 
 			}
 		}
 
 		protected void LinqDataSource1_Selecting(object sender, LinqDataSourceSelectEventArgs e)
 		{
-			e.Result = EditorService.GetContext().Missions.Select(x => new {x.Name, x.Description, x.Author, x.CreatedTime, x.DownloadCount, x.LastCommentTime, x.Map, x.Mod, x.ModifiedTime, x.Rating, x.CommentCount, x.MissionID, x.TopScoreLine});
+			var db = new ZkDataContext();
+			e.Result = db.Missions.Select(x => new {x.Name, x.Description, Author=x.Account.Name, x.CreatedTime, x.DownloadCount, x.Map, x.Mod, x.ModifiedTime, x.MissionID, x.TopScoreLine});
 		}
 
 	}

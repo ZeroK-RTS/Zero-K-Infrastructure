@@ -9,6 +9,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
@@ -404,6 +405,19 @@ namespace PlasmaShared
 			{
 				return WaitHandle.WaitAll(WaitHandles.ToArray());
 			}
+		}
+
+		/// <summary>
+		/// Hash password with default hash used by remote server
+		/// </summary>
+		/// <param Name="pass">string with password</param>
+		/// <returns>hash string</returns>
+		public static string HashLobbyPassword(string pass)
+		{
+			var md5 = (MD5)HashAlgorithm.Create("MD5");
+			md5.Initialize();
+			var hashed = md5.ComputeHash(Encoding.ASCII.GetBytes(pass));
+			return Convert.ToBase64String(hashed);
 		}
 	}
 }

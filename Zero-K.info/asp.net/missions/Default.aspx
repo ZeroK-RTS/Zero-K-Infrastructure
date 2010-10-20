@@ -25,7 +25,7 @@
                 <asp:TemplateField ShowHeader="False">
                     <ItemTemplate>
                         <asp:LinkButton ID="LinkButton2" runat="server" CausesValidation="false" 
-                            CommandName="comments" CommandArgument='<%# Eval("MissionID") %>' Text='<%# "Comments (" + Eval("CommentCount") + ")" %>'></asp:LinkButton>
+                            CommandName="comments" CommandArgument='<%# Eval("MissionID") %>' Text='<%# "Comments (0)" %>'></asp:LinkButton>
                     </ItemTemplate>
                 </asp:TemplateField>
                 
@@ -38,8 +38,6 @@
                 
                 <asp:BoundField DataField="Name" HeaderText="Name" ReadOnly="True" 
                     SortExpression="Name" />
-                <asp:BoundField DataField="Rating" HeaderText="Rating" ReadOnly="True" 
-                    SortExpression="Rating" DataFormatString="{0:0.0}" />
                 <asp:BoundField DataField="Author" HeaderText="Author" ReadOnly="True" 
                     SortExpression="Author" />
                 <asp:BoundField DataField="Description" HeaderText="Description" 
@@ -57,10 +55,6 @@
                     SortExpression="CreatedTime" />
                 <asp:BoundField DataField="ModifiedTime" HeaderText="ModifiedTime" 
                     SortExpression="ModifiedTime" />
-                <asp:BoundField DataField="CommentCount" HeaderText="CommentCount" 
-                    SortExpression="CommentCount" />
-                <asp:BoundField DataField="LastCommentTime" HeaderText="LastCommentTime" 
-                    SortExpression="LastCommentTime" />
                     
             </Columns>
             <FooterStyle BackColor="#1C5E55" Font-Bold="True" ForeColor="White" />

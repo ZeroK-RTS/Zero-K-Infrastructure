@@ -37,6 +37,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
@@ -54,6 +56,7 @@
     <Content Include="img\favicon.png" />
     <Content Include="img\logo_big.png" />
     <Content Include="img\logo_bt.png" />
+    <Content Include="missions\Default.aspx" />
     <Content Include="missions\MissionService.asmx" />
     <Content Include="Styles\Site.css" />
     <Content Include="Default.aspx" />
@@ -87,6 +90,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="missions\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="missions\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="missions\MissionService.asmx.cs">
       <DependentUpon>MissionService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -101,6 +111,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\PlasmaShared\PlasmaShared.csproj">
+      <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
+      <Name>PlasmaShared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Shared\ZkData\ZkData.csproj">
       <Project>{AA34952B-DF40-415A-9523-1D3BFEF69CF3}</Project>
       <Name>ZkData</Name>

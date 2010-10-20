@@ -1,5 +1,6 @@
 ﻿using System.ServiceModel;
 using System.ServiceModel.Description;
+using PlasmaShared;
 
 namespace ZkData
 {
@@ -13,9 +14,9 @@ namespace ZkData
 		}
 
 
-		public Account VerifyAccount(string login, string passwordHash)
+		public Account VerifyAccount(string login, string password)
 		{
-			return channel.VerifyAccount(login, passwordHash);
+			return channel.VerifyAccount(login, Utils.HashLobbyPassword(password));
 		}
 	}
 }

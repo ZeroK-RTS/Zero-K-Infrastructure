@@ -407,19 +407,6 @@ namespace LobbyClient
 			return ExistingUsers.Values.FirstOrDefault(u => String.Equals(u.Name, userName, StringComparison.InvariantCultureIgnoreCase));
 		}
 
-		/// <summary>
-		/// Hash password with default hash used by remote server
-		/// </summary>
-		/// <param Name="pass">string with password</param>
-		/// <returns>hash string</returns>
-		public static string HashPassword(string pass)
-		{
-			var md5 = (MD5)HashAlgorithm.Create("MD5");
-			md5.Initialize();
-			var hashed = md5.ComputeHash(Encoding.ASCII.GetBytes(pass));
-			return Convert.ToBase64String(hashed);
-		}
-
 		// todo remove this and reimplement in AutoHost if needed
 		public bool IsTeamSpec(int side)
 		{
@@ -501,7 +488,7 @@ namespace LobbyClient
 			var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
 			var h = "0";
 			if (nic != null) h = nic.GetPhysicalAddress().GetAddressBytes().GetHashCode().ToString("x").ToUpper();
-			con.SendCommand("LOGIN", userName, HashPassword(password), mhz, localIp, appName, "\t" + h, "\ta sp");
+			con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), mhz, localIp, appName, "\t" + h, "\ta sp");
 		}
 
 
@@ -544,7 +531,7 @@ namespace LobbyClient
 
 		public void Register(string username, string password)
 		{
-			con.SendCommand("REGISTER", username, HashPassword(password));
+			con.SendCommand("REGISTER", username, Utils.HashLobbyPassword(password));
 		}
 
 		public void RemoveBattleRectangle(int allyno)
