@@ -7,7 +7,8 @@ namespace ZkData
 {
 	public static class GlobalConst
 	{
-		public const string AuthServiceHost = "net.tcp://localhost:8202/";
+		public const string AuthServiceUri = "net.tcp://localhost:8202/";
+		public const string MissionServiceUri = "http://zero-k.info/missions/MissionService.svc";
 		public const string NightwatchName = "Nightwatch";
 	}
 }

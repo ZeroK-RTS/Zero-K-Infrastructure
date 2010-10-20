@@ -50,7 +50,7 @@ namespace NightWatch
 		{
 			var host = new ServiceHost(new AuthService(client));
 			var tcp = new NetTcpBinding();
-			host.AddServiceEndpoint(typeof(IAuthService), tcp, GlobalConst.AuthServiceHost);
+			host.AddServiceEndpoint(typeof(IAuthService), tcp, GlobalConst.AuthServiceUri);
 			return host;
 		}
 

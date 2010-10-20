@@ -70,11 +70,9 @@ namespace ZeroKWeb.missions
 			if (!mission.Name.StartsWith("Mission:")) throw new ApplicationException("Mission name must start with Mission:, please update your editor");
 			var prev = db.Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
 
-			var byName = false;
 			if (prev == null)
 			{
 				prev = db.Missions.Where(x => x.Name == mission.Name).SingleOrDefault();
-				byName = true;
 			}
 
 			if (prev != null)

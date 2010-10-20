@@ -9,7 +9,7 @@ namespace ZkData
 		IAuthService channel;
 		public AuthServiceClient()
 		{
-			var factory = new ChannelFactory<IAuthService>(new NetTcpBinding(), GlobalConst.AuthServiceHost);
+			var factory = new ChannelFactory<IAuthService>(new NetTcpBinding(), GlobalConst.AuthServiceUri);
 			channel = factory.CreateChannel();
 		}
 
