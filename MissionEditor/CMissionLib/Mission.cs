@@ -279,9 +279,19 @@ namespace CMissionLib
 			return x / Map.Texture.Width * Map.Size.Width;
 		}
 
+		public double FromIngameX(double x)
+		{
+			return x * Map.Texture.Width / Map.Size.Width;
+		}
+
 		public double ToIngameY(double y)
 		{
 			return y / Map.Texture.Height * Map.Size.Height;
+		}
+
+		public double FromIngameY(double y)
+		{
+			return y * Map.Texture.Height / Map.Size.Height;
 		}
 
 		/// <summary>

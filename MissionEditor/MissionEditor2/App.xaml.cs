@@ -23,7 +23,7 @@ namespace MissionEditor2
 
 
 			var text = exceptionName + "\r\n" + ex.Message + "\r\n" + ex.StackTrace;
-			var errorLogFile = assemblyLocation + "\\errors.log";
+			var errorLogFile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\My Games\\Spring\\MissionEditorErrors.txt";
 
 			File.AppendAllText(errorLogFile,"\r\n" + DateTime.Now + "\r\n");
 			File.AppendAllText(errorLogFile, text + "\r\n");

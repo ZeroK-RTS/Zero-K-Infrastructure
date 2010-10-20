@@ -73,7 +73,6 @@ namespace MissionEditor2
 			if (isBlurred) border.Opacity = 0.5;
 			canvas.Children.Add(border);
 			border.Bind(Border.BorderBrushProperty, unit, "Player.ColorBrush", BindingMode.OneWay);
-			// might need to be databound
 			Canvas.SetLeft(border, unit.X - border.Width/2);
 			Canvas.SetTop(border, unit.Y - border.Height/2);
 			Panel.SetZIndex(border, -10);
@@ -116,7 +115,6 @@ namespace MissionEditor2
 		void RaiseUnitRequestedDeleteEvent()
 		{
 			var unitInfo = (UnitStartInfo) DataContext;
-			if (unitInfo == null) Debugger.Break();
 			var newEventArgs = new UnitEventArgs(unitInfo, UnitRequestedDeleteEvent);
 			RaiseEvent(newEventArgs);
 		}
@@ -124,7 +122,6 @@ namespace MissionEditor2
 		void RaiseUnitRequestedSetGroupsEvent()
 		{
 			var unitInfo = (UnitStartInfo) DataContext;
-			if (unitInfo == null) Debugger.Break();
 			var newEventArgs = new UnitEventArgs(unitInfo, UnitRequestedSetGroupsEvent);
 			RaiseEvent(newEventArgs);
 		}
@@ -141,22 +138,6 @@ namespace MissionEditor2
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			var mission = MainWindow.Instance.Mission;
-			var unit = (UnitStartInfo) DataContext;
-			scaleTransform.ScaleX = 1.0 / 16.0 / mission.Map.Texture.Width * mission.Map.Size.Width * unit.UnitDef.FootprintX;
-			scaleTransform.ScaleY = 1.0 / 16.0 / mission.Map.Texture.Height * mission.Map.Size.Height * unit.UnitDef.FootprintY;
 		}
 	}
-
-	public class UnitEventArgs : RoutedEventArgs
-	{
-		public UnitEventArgs(UnitStartInfo unitInfo, RoutedEvent routedEvent) : base(routedEvent)
-		{
-			UnitInfo = unitInfo;
-		}
-
-		public UnitStartInfo UnitInfo { get; set; }
-	}
-
-	public delegate void UnitEventHandler(object sender, UnitEventArgs e);
 }

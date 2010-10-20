@@ -15,8 +15,8 @@
     <UserControl.RenderTransform>
         <TransformGroup>
             <RotateTransform Angle="{Binding Heading}" CenterX="8" CenterY="8" />
-            <ScaleTransform x:Name="scaleTransform" CenterX="8" CenterY="8" />
-        </TransformGroup>       
+            <ScaleTransform x:Name="ScaleTransform" x:FieldModifier="public" CenterX="8" CenterY="8" />
+        </TransformGroup>
     </UserControl.RenderTransform>
     <UserControl.ContextMenu>
         <ContextMenu>
@@ -24,32 +24,33 @@
             <MenuItem Header="Edit Groups" Click="SetGroupsItem_Click" />
         </ContextMenu>
     </UserControl.ContextMenu>
-    <Grid>
-        <Border x:Name="selectionBorder" CornerRadius="0" BorderBrush="Red" Visibility="Hidden" BorderThickness="1">
-            <Border.RenderTransform>
-                <ScaleTransform ScaleX="1.2" ScaleY="1.2" CenterX="8" CenterY="8" />
-            </Border.RenderTransform>
-        </Border>
-        <Image Source="{Binding UnitDef.BuildPic}" Width="15" Height="15" Cursor="SizeAll" />
-        <Thumb Name="dragThumb">
-            <Thumb.Template>
-                <ControlTemplate>
-                    <Border Name="unitBorder" Width="16" Height="16" Style="{StaticResource borderStyle}" Cursor="SizeAll" />
-                </ControlTemplate>
-            </Thumb.Template>
-        </Thumb>
-        <Thumb Name="rotateThumb" DragDelta="onRotateDelta" Width="16" VerticalAlignment="Top" Height="2">
-            <Thumb.Template>
-                <ControlTemplate>
-                    <Grid Cursor="ScrollWE">
-                        <Path Margin="1,0,1,0" VerticalAlignment="Top" Fill="{Binding Player.ColorBrush, FallbackValue=Black}" Stretch="Fill" Data="M1.5,1.9 L8.25,0 15,1.9" />
-                        <Rectangle Margin="2,1.05,2,0" VerticalAlignment="Top" Height="0.95" Fill="{Binding Player.ColorBrush, FallbackValue=Black}" />
-                    </Grid>
-                </ControlTemplate>
-            </Thumb.Template>
-        </Thumb>
+    <Viewbox Height="16" Width="16">
+        <Grid>
+            <Border x:Name="selectionBorder" CornerRadius="0" BorderBrush="Red" Visibility="Hidden" BorderThickness="1">
+                <Border.RenderTransform>
+                    <ScaleTransform ScaleX="1.2" ScaleY="1.2" CenterX="8" CenterY="8" />
+                </Border.RenderTransform>
+            </Border>
+            <Image Source="{Binding UnitDef.BuildPic}" Width="15" Height="15" Cursor="SizeAll" />
+            <Thumb Name="dragThumb">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Border Name="unitBorder" Width="16" Height="16" Style="{StaticResource borderStyle}" Cursor="SizeAll" />
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
+            <Thumb Name="rotateThumb" DragDelta="onRotateDelta" Width="16" VerticalAlignment="Top" Height="2">
+                <Thumb.Template>
+                    <ControlTemplate>
+                        <Grid Cursor="ScrollWE">
+                            <Path Margin="1,0,1,0" VerticalAlignment="Top" Fill="{Binding Player.ColorBrush, FallbackValue=Black}" Stretch="Fill" Data="M1.5,1.9 L8.25,0 15,1.9" />
+                            <Rectangle Margin="2,1.05,2,0" VerticalAlignment="Top" Height="0.95" Fill="{Binding Player.ColorBrush, FallbackValue=Black}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Thumb.Template>
+            </Thumb>
 
-        <TextBlock Text="{Binding Groups, Converter={StaticResource csvConverter}}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="4">
+            <TextBlock Text="{Binding Groups, Converter={StaticResource csvConverter}}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="4">
       <TextBlock.RenderTransform>
         <TransformGroup>
           <TranslateTransform Y="10" />
@@ -59,6 +60,7 @@
       <TextBlock.Effect>
         <DropShadowEffect Color="Black" BlurRadius="3" />
       </TextBlock.Effect>
-        </TextBlock>
-    </Grid>
+            </TextBlock>
+        </Grid>
+    </Viewbox>
 </UserControl>

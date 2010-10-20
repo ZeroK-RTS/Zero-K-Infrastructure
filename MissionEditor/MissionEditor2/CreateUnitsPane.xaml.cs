@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using CMissionLib;
 using CMissionLib.Actions;
 using CMissionLib.UnitSyncLib;
@@ -53,23 +55,23 @@ namespace MissionEditor2
 			}
 		}
 
+		int gridSize = 16;
+
 		double SnapToGridX(double x)
 		{
 			var mission = MainWindow.Instance.Mission;
-			x *= mission.Map.Size.Width/mission.Map.Texture.Width;
-			x = (int) x;
-			x -= x % 16;
-			x *= mission.Map.Texture.Width/mission.Map.Size.Width;
+			x = mission.ToIngameX(x);
+			x = ((int) x/gridSize) * gridSize;
+			x = mission.FromIngameX(x);
 			return x;
 		}
 
 		double SnapToGridY(double y)
 		{
 			var mission = MainWindow.Instance.Mission;
-			y *= mission.Map.Size.Height / mission.Map.Texture.Height;
-			y = (int)y;
-			y -= y % 16;
-			y *= mission.Map.Texture.Height / mission.Map.Size.Height;
+			y = mission.ToIngameY(y);
+			y = ((int)y / gridSize) * gridSize;
+			y = mission.FromIngameY(y);
 			return y;
 		}
 
@@ -84,6 +86,12 @@ namespace MissionEditor2
 			unitIcon.MouseDown += unitIcon_MouseDown;
 			unitIcon.UnitRequestedDelete += unitIcon_UnitRequestedDelete;
 			unitIcon.UnitRequestedSetGroups += unitIcon_UnitRequestedSetGroups;
+
+			// make the icons have the correct size
+			var mission = MainWindow.Instance.Mission;
+			unitIcon.ScaleTransform.ScaleX = 1 / 16.0 * mission.FromIngameX(unit.UnitDef.FootprintX * 16);
+			unitIcon.ScaleTransform.ScaleY = 1 / 16.0 * mission.FromIngameY(unit.UnitDef.FootprintY * 16);
+
 			unitCanvas.Children.Add(unitIcon);
 			unitIcons.Add(unitIcon);
 		}

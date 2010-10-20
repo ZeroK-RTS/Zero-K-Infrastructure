@@ -115,10 +115,12 @@ namespace MissionEditor2
 			try
 			{
 				return contentControl.TransformToVisual(this).Inverse.Transform(parentCoords);
+				// use trytransform?
 			}
 			catch
 			{
 				return parentCoords; // fixme: check performance impact of try/catch
+				
 			}
 		}
 
