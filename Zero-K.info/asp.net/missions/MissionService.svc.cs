@@ -31,6 +31,8 @@ namespace ZeroKWeb.missions
 			var opt = new DataLoadOptions();
 			opt.LoadWith<Mission>(x => x.Mutator);
 			opt.LoadWith<Mission>(x => x.Script);
+			opt.LoadWith<Mission>(x => x.Account);
+			db.LoadOptions = opt;
 			var prev = db.Missions.Where(x => x.Name == missionName).SingleOrDefault();
 			prev.DownloadCount++;
 			db.SubmitChanges();
@@ -43,6 +45,8 @@ namespace ZeroKWeb.missions
 			var opt = new DataLoadOptions();
 			opt.LoadWith<Mission>(x => x.Mutator);
 			opt.LoadWith<Mission>(x => x.Script);
+			opt.LoadWith<Mission>(x => x.Account);
+			db.LoadOptions = opt;
 			var prev = db.Missions.Where(x => x.MissionID == missionID).SingleOrDefault();
 			prev.DownloadCount++;
 			db.SubmitChanges();
@@ -52,6 +56,9 @@ namespace ZeroKWeb.missions
 		public IEnumerable<Mission> ListMissionInfos()
 		{
 			var db = new ZkDataContext();
+			var opt = new DataLoadOptions();
+			opt.LoadWith<Mission>(x => x.Account);
+			db.LoadOptions = opt;
 			return db.Missions.ToList();
 		}
 
