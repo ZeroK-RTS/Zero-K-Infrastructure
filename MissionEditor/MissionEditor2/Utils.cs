@@ -13,7 +13,6 @@ using System.Windows.Media.Effects;
 using System.Windows.Threading;
 using CMissionLib;
 using Microsoft.Win32;
-using MissionEditor2.ServiceReference;
 using Action = System.Action;
 
 namespace MissionEditor2

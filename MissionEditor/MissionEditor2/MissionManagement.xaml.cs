@@ -36,7 +36,7 @@ namespace MissionEditor2
 		{
 			Utils.InvokeInNewThread(delegate
 				{
-					using (var client = new EditorServiceSoapClient())
+					using (var client = new MissionServiceClient())
 
 					{
 						var list = client.ListMissionInfos();

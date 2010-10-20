@@ -1,25 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.Linq;
 using System.Linq;
 using System.Transactions;
-using System.Web.Services;
 using ZkData;
 
-namespace asp.net.missions
+namespace ZeroKWeb.missions
 {
-	/// <summary>
-	/// Summary description for MissionService
-	/// </summary>
-	[WebService(Namespace = "http://SpringMissionEditor/")]
-	[WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-	[ToolboxItem(false)]
-	// To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
-		// [System.Web.Script.Services.ScriptService]
-	public class MissionService: WebService
+	// NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "MissionService" in code, svc and config file together.
+	public class MissionService: IMissionService
 	{
-		[WebMethod]
 		public void DeleteMission(int missionID, string author, string password)
 		{
 			var db = new ZkDataContext();
@@ -35,12 +25,6 @@ namespace asp.net.missions
 			else throw new ApplicationException("No such mission found");
 		}
 
-		/// <summary>
-		/// Downloads full mission data
-		/// </summary>
-		/// <param name="missionName"></param>
-		/// <returns></returns>
-		[WebMethod]
 		public Mission GetMission(string missionName)
 		{
 			var db = new ZkDataContext();
@@ -53,8 +37,6 @@ namespace asp.net.missions
 			return prev;
 		}
 
-
-		[WebMethod]
 		public Mission GetMissionByID(int missionID)
 		{
 			var db = new ZkDataContext();
@@ -67,14 +49,12 @@ namespace asp.net.missions
 			return prev;
 		}
 
-		[WebMethod]
-		public List<Mission> ListMissionInfos()
+		public IEnumerable<Mission> ListMissionInfos()
 		{
 			var db = new ZkDataContext();
 			return db.Missions.ToList();
 		}
 
-		[WebMethod]
 		public void SendMission(Mission mission, string author, string password)
 		{
 			var acc = new AuthServiceClient().VerifyAccount(author, password);
@@ -112,17 +92,6 @@ namespace asp.net.missions
 				db.Missions.InsertOnSubmit(mission);
 				db.SubmitChanges();
 			}
-		}
-
-		/// <summary>
-		/// Todo for reuse
-		/// </summary>
-		/// <returns></returns>
-		string GetUserIP()
-		{
-			var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-			if (string.IsNullOrEmpty(ip) || ip.Equals("unknown", StringComparison.OrdinalIgnoreCase)) ip = Context.Request.ServerVariables["REMOTE_ADDR"];
-			return ip;
 		}
 	}
 }
