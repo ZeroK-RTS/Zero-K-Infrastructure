@@ -2,46 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Security;
-using System.Web.SessionState;
+using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace asp.net
 {
-	public class Global : System.Web.HttpApplication
+	// Note: For instructions on enabling IIS6 or IIS7 classic mode, 
+	// visit http://go.microsoft.com/?LinkId=9394801
+
+	public class MvcApplication : System.Web.HttpApplication
 	{
-
-		void Application_Start(object sender, EventArgs e)
+		public static void RegisterRoutes(RouteCollection routes)
 		{
-			// Code that runs on application startup
+			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+			routes.MapRoute(
+					"Default", // Route name
+					"{controller}/{action}/{id}", // URL with parameters
+					new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+			);
 
 		}
 
-		void Application_End(object sender, EventArgs e)
+		protected void Application_Start()
 		{
-			//  Code that runs on application shutdown
+			AreaRegistration.RegisterAllAreas();
 
+			RegisterRoutes(RouteTable.Routes);
 		}
-
-		void Application_Error(object sender, EventArgs e)
-		{
-			// Code that runs when an unhandled error occurs
-
-		}
-
-		void Session_Start(object sender, EventArgs e)
-		{
-			// Code that runs when a new session is started
-
-		}
-
-		void Session_End(object sender, EventArgs e)
-		{
-			// Code that runs when a session ends. 
-			// Note: The Session_End event is raised only when the sessionstate mode
-			// is set to InProc in the Web.config file. If session mode is set to StateServer 
-			// or SQLServer, the event is not raised.
-
-		}
-
 	}
 }
