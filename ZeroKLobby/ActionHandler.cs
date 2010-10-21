@@ -15,17 +15,6 @@ namespace ZeroKLobby
 	/// </summary>
 	public static class ActionHandler
 	{
-		public static void ChangeChatChannel(string name)
-		{
-			Program.FormMain.ChatTab.SelectChatTab(name);
-			ChangeTab(Tab.Chat);
-		}
-
-		public static void ChangeChatToBattle()
-		{
-			Program.FormMain.ChatTab.SelectBattleChat();
-			ChangeTab(Tab.Chat);
-		}
 
 		/// <summary>
 		/// Changes user's desired spectator state of battle - does not actually send tasclient state change
@@ -35,11 +24,6 @@ namespace ZeroKLobby
 		public static bool ChangeDesiredSpectatorState(bool state)
 		{
 			return Program.BattleBar.ChangeDesiredSpectatorState(state);
-		}
-
-		public static void ChangeTab(Tab tab)
-		{
-			Program.FormMain.SelectTab(tab);
 		}
 
 		/// <summary>
@@ -82,8 +66,7 @@ namespace ZeroKLobby
 		public static void FollowPlayer(string name)
 		{
 			Program.BattleBar.StartFollow(name);
-			ChangeTab(Tab.Chat);
-			ChangeChatToBattle();
+			NavigationControl.Instance.Path = "chat/battle";
 		}
 
 		/// <summary>
@@ -120,28 +103,6 @@ namespace ZeroKLobby
 		}
 
 		/// <summary>
-		/// Join a channel and switch to it
-		/// </summary>
-		public static void JoinAndSwitch(string channelName)
-		{
-			if (Program.TasClient.JoinedChannels.ContainsKey(channelName)) ChangeChatChannel(channelName);
-			else
-			{
-				EventHandler<TasEventArgs> joinHandler = null;
-				joinHandler = ((s, e) =>
-					{
-						if (e.ServerParams[0] == channelName)
-						{
-							ChangeChatChannel(channelName);
-							Program.TasClient.ChannelJoined -= joinHandler;
-						}
-					});
-				Program.TasClient.ChannelJoined += joinHandler;
-				Program.TasClient.JoinChannel(channelName);
-			}
-		}
-
-		/// <summary>
 		/// Joins battle manually
 		/// </summary>
 		public static void JoinBattle(int battleID, string password)
@@ -153,8 +114,7 @@ namespace ZeroKLobby
 				{
 					Program.TasClient.BattleJoined -= battleJoinHandler;
 					Program.TasClient.JoinBattleFailed -= battleJoinFailedHandler;
-					ChangeTab(Tab.Chat);
-					ChangeChatToBattle();
+					NavigationControl.Instance.Path = "chat/battle";
 				});
 
 			battleJoinFailedHandler = ((s, e) =>
@@ -184,15 +144,6 @@ namespace ZeroKLobby
 				var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Users.Any(y => y.Name == name));
 				if (bat != null) JoinBattle(bat.BattleID, null);
 			}
-		}
-
-		/// <summary>
-		/// Opens a private message channel and switches to it
-		/// </summary>
-		public static void OpenPrivateMessageChannel(string userName)
-		{
-			Program.FormMain.ChatTab.OpenPrivateMessageChannel(userName);
-			ChangeTab(Tab.Chat);
 		}
 
 		/// <summary>
@@ -232,8 +183,7 @@ namespace ZeroKLobby
 		public static void StartQuickMatching(IEnumerable<GameInfo> games)
 		{
 			Program.BattleBar.StartQuickMatch(games);
-			ChangeTab(Tab.Chat);
-			ChangeChatToBattle();
+			NavigationControl.Instance.Path = "chat/battle";
 		}
 
 		public static void StartSinglePlayer(SinglePlayerProfile profile)

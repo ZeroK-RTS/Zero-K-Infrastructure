@@ -450,7 +450,7 @@ namespace ZeroKLobby.MicroLobby
 		void playerBox_DoubleClick(object sender, EventArgs e)
 		{
 			var playerListItem = playerBox.SelectedItem as PlayerListItem;
-			if (playerListItem != null && playerListItem.User != null) ActionHandler.OpenPrivateMessageChannel(playerListItem.User.Name);
+			if (playerListItem != null && playerListItem.User != null) NavigationControl.Instance.Path = "chat/user/" + playerListItem.User.Name;
 		}
 
 		void playerBox_MouseUp(object sender, MouseEventArgs e)

@@ -340,7 +340,7 @@ namespace ZeroKLobby.Notifications
 
 			BattleChatControl.BattleLine += (s, e) => picoChat.AddLine(e.Data);
 
-			picoChat.MouseClick += (s, e) => GotoBattleChat();
+			picoChat.MouseClick += (s, e) =>NavigationControl.Instance.Path = "chat/battle";
 		}
 
 		/// <summary>
@@ -613,12 +613,6 @@ namespace ZeroKLobby.Notifications
 			return count;
 		}
 
-		void GotoBattleChat()
-		{
-			ActionHandler.ChangeTab(Tab.Chat);
-			ActionHandler.ChangeChatToBattle();
-		}
-
 		bool IsHostGameRunning()
 		{
 			if (client != null)
@@ -749,7 +743,7 @@ namespace ZeroKLobby.Notifications
 
 		public void DetailClicked(NotifyBarContainer container)
 		{
-			GotoBattleChat();
+			NavigationControl.Instance.Path = "chat/battle";
 			client.Say(TasClient.SayPlace.Battle, "", "!start", false);
 		}
 

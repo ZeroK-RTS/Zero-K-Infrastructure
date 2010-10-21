@@ -160,7 +160,7 @@ namespace ZeroKLobby.MicroLobby
 					contextMenu.MenuItems.Add("-");
 
 					var pmItem = new MenuItem("Send Message");
-					pmItem.Click += (s, e) => ActionHandler.OpenPrivateMessageChannel(user.Name);
+					pmItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + user.Name;
 					contextMenu.MenuItems.Add(pmItem);
 
 					if (Program.FriendManager.Friends.Contains(user.Name))

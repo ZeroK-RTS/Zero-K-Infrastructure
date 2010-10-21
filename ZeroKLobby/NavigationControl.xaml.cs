@@ -161,10 +161,5 @@ namespace ZeroKLobby
 		{
 			Path = "settings";
 		}
-
-		private void ServerPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "server";
-		}
 	}
 }

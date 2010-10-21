@@ -99,7 +99,31 @@ namespace ZeroKLobby.MicroLobby
 			}
 			if (!added) toolStrip.Items.Add(button);
 
-			button.Click += (s, e) => ActiveButton = (ToolStripButton)s;
+			button.Click += (s, e) =>
+				{
+					try
+					{
+						if (control is ChatControl)
+						{
+							var chatControl = (ChatControl)control;
+							var channelName = chatControl.ChannelName;
+							NavigationControl.Instance.Path = "chat/channel/" + channelName;
+						}
+						else if (control is PrivateMessageControl)
+						{
+							var pmControl = (PrivateMessageControl)control;
+							var userName = pmControl.UserName;
+							NavigationControl.Instance.Path = "chat/user/" + userName;
+						}
+						else if (control is BattleChatControl)
+						{
+							NavigationControl.Instance.Path = "chat/battle";
+						}
+					} catch(Exception ex)
+					{
+						MessageBox.Show(ex.ToString());
+					}
+				};
 			control.Dock = DockStyle.Fill;
 			control.Visible = false;
 			controls.Add(name, control);

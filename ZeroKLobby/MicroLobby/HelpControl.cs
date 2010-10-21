@@ -22,7 +22,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			var menu = new ContextMenu();
 			var joinItem = new MenuItem("Chat with us in the Zero-K development channel");
-			joinItem.Click += (s, e) => ActionHandler.JoinAndSwitch("zk");
+			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/zk";
 			menu.MenuItems.Add(joinItem);
 			var siteItem = new MenuItem("Leave us a message on the Zero-K development site");
 			siteItem.Click += siteFeatureRequestItem_Click;
@@ -35,7 +35,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			var menu = new ContextMenu();
 			var joinItem = new MenuItem("Ask in the developer channel (#sy)");
-			joinItem.Click += (s, e) => ActionHandler.JoinAndSwitch("sy");
+			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/sy";
 			menu.MenuItems.Add(joinItem);
 			var helpForumItem = new MenuItem("Ask in the Spring Help Forum");
 			helpForumItem.Click += helpForumItem_Click;
@@ -45,7 +45,7 @@ namespace ZeroKLobby.MicroLobby
 			{
 				var item = new MenuItem(admin.Name + (admin.IsAway ? " (Idle)" : String.Empty));
 				var adminName = admin.Name;
-				item.Click += (s, e) => ActionHandler.OpenPrivateMessageChannel(adminName);
+				item.Click += (s, e) => NavigationControl.Instance.Path = "chat/user/" + adminName;
 				adminsItem.MenuItems.Add(item);
 			}
 			menu.MenuItems.Add(adminsItem);

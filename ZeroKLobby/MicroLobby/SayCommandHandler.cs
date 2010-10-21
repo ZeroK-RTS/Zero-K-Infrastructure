@@ -43,7 +43,7 @@ namespace ZeroKLobby.MicroLobby
                         MessageBox.Show("Renaming account to: " + words[1] + ".\r\n The server will disconnect you now.");
                     }
                     else if (words[0] == "/raw") Program.TasClient.SendRaw(PlasmaShared.Utils.Glue(words, 1));
-                    else if (words[0] == "/help") ActionHandler.ChangeTab(Tab.Help);
+					else if (words[0] == "/help") NavigationControl.Instance.Path = "help";
                     else
 											FormMain.Instance.NotifyUser("Command not recognized", false, false);  
                 }

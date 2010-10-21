@@ -1,11 +1,7 @@
-﻿<UserControl x:Class="ZeroKLobby.NavigationControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:MicroLobby="clr-namespace:ZeroKLobby.MicroLobby" xmlns:LuaMgr="clr-namespace:ZeroKLobby.LuaMgr" xmlns:MapDownloader="clr-namespace:ZeroKLobby.MapDownloader" xmlns:ZeroKLobby="clr-namespace:ZeroKLobby" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="UserControl_Loaded"
-             x:Name="userControl">
+﻿<UserControl x:Class="ZeroKLobby.NavigationControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:MicroLobby="clr-namespace:ZeroKLobby.MicroLobby" xmlns:LuaMgr="clr-namespace:ZeroKLobby.LuaMgr" xmlns:MapDownloader="clr-namespace:ZeroKLobby.MapDownloader"
+        xmlns:ZeroKLobby="clr-namespace:ZeroKLobby" mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300" Loaded="UserControl_Loaded" x:Name="userControl">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -20,7 +16,6 @@
             <Button Click="WidgetsPage_Click">Widgets</Button>
             <Button Click="DownloaderPage_Click">Downloader</Button>
             <Button Click="SettingsPage_Click">Settings</Button>
-            <Button Click="ServerPage_Click">Server</Button>
         </UniformGrid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -38,43 +33,48 @@
                     <EventSetter Event="MouseUp" Handler="TabItem_MouseUp" />
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
-                </TabControl.ItemContainerStyle>
-                <TabItem Header="StartTab">
-            <WindowsFormsHost>
-                <MicroLobby:StartPage />
-            </WindowsFormsHost>
-        </TabItem>
-        <TabItem Header="Battles">
-            <WindowsFormsHost>
-                <MicroLobby:BattleListTab />
-            </WindowsFormsHost>
-        </TabItem>
-        <TabItem Header="Chat">
-            <WindowsFormsHost>
-                <MicroLobby:ChatTab x:Name="chatTab" />
-            </WindowsFormsHost>
-        </TabItem>
-        <TabItem Header="Widgets">
-            <WindowsFormsHost>
-                <LuaMgr:LuaMgrTab />
-            </WindowsFormsHost>
-        </TabItem>
-        <TabItem Header="Downloader">
-            <WindowsFormsHost>
-                <MapDownloader:DownloaderTab />
-            </WindowsFormsHost>
-        </TabItem>
-        <TabItem Header="Settings">
-            <WindowsFormsHost>
-                <MicroLobby:SettingsTab />
-            </WindowsFormsHost>
-        </TabItem>
-        <TabItem Header="Help">
-            <WindowsFormsHost>
-                <MicroLobby:HelpControl />
-            </WindowsFormsHost>
-        </TabItem>
-    </TabControl>
+            </TabControl.ItemContainerStyle>
+            <TabItem Header="StartTab">
+                <WindowsFormsHost>
+                    <MicroLobby:StartPage />
+                </WindowsFormsHost>
+            </TabItem>
+            <TabItem Header="Battles">
+                <WindowsFormsHost>
+                    <MicroLobby:BattleListTab />
+                </WindowsFormsHost>
+            </TabItem>
+            <TabItem Header="Chat">
+                <WindowsFormsHost>
+                    <MicroLobby:ChatTab x:Name="chatTab" />
+                </WindowsFormsHost>
+            </TabItem>
+            <TabItem Header="Widgets">
+                <WindowsFormsHost>
+                    <LuaMgr:LuaMgrTab />
+                </WindowsFormsHost>
+            </TabItem>
+            <TabItem Header="Downloader">
+                <WindowsFormsHost>
+                    <MapDownloader:DownloaderTab />
+                </WindowsFormsHost>
+            </TabItem>
+            <TabItem Header="Settings">
+                <WindowsFormsHost>
+                    <MicroLobby:SettingsTab />
+                </WindowsFormsHost>
+            </TabItem>
+            <TabItem Header="Help">
+                <WindowsFormsHost>
+                    <MicroLobby:HelpControl />
+                </WindowsFormsHost>
+            </TabItem>
+            <TabItem>
+                <WindowsFormsHost>
+                    <MicroLobby:ServerTab />
+                </WindowsFormsHost>
+            </TabItem>
+        </TabControl>
     </Grid>
 
 </UserControl>

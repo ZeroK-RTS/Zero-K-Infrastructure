@@ -21,5 +21,10 @@ namespace ZeroKLobby
 			Program.Initialize(e.Args);
 			this.Shutdown();
 		}
+
+		private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+		{
+			// intentionally left empty, just subscribing to this event prevents WPF from swallowing its exceptions
+		}
 	}
 }

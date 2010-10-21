@@ -105,16 +105,6 @@ namespace ZeroKLobby.MicroLobby
             toolTabs.SelectTab(userName);
         }
 
-        public void SelectBattleChat()
-        {
-            toolTabs.SelectTab("Battle");
-        }
-
-        public void SelectChatTab(string channel)
-        {
-            toolTabs.SelectTab(channel);
-        }
-
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         void AddBattleControl()
@@ -321,6 +311,13 @@ namespace ZeroKLobby.MicroLobby
     	{
 			if (path.Length == 0) return false;
 			if (path[0] != PathHead) return false;
+			if (path.Length == 2 && !String.IsNullOrEmpty(path[1]))
+			{
+				if (path[1] == "battle")
+				{
+					toolTabs.SelectTab("Battle");
+				}
+			}
 			if (path.Length == 3 && !String.IsNullOrEmpty(path[1]) && !String.IsNullOrEmpty(path[2]))
 			{
 				var type = path[1];
@@ -333,7 +330,7 @@ namespace ZeroKLobby.MicroLobby
 				else if (type == "channel")
 				{
 					var channelName = path[2];
-					OpenPrivateMessageChannel(channelName);
+					OpenChannel(channelName);
 				}
 			}
 			return true;

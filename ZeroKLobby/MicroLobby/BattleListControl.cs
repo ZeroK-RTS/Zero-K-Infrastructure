@@ -386,7 +386,7 @@ namespace ZeroKLobby.MicroLobby
 							Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
 						}
 						Program.TasClient.JoinBattle(battle.BattleID, password);
-						ActionHandler.ChangeChatToBattle();
+						NavigationControl.Instance.Path = "chat/battle";
 					}
 				};
 
