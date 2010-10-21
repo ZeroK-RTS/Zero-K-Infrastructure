@@ -3,21 +3,40 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:MicroLobby="clr-namespace:ZeroKLobby.MicroLobby" xmlns:LuaMgr="clr-namespace:ZeroKLobby.LuaMgr" xmlns:MapDownloader="clr-namespace:ZeroKLobby.MapDownloader" mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="UserControl_Loaded">
+             xmlns:MicroLobby="clr-namespace:ZeroKLobby.MicroLobby" xmlns:LuaMgr="clr-namespace:ZeroKLobby.LuaMgr" xmlns:MapDownloader="clr-namespace:ZeroKLobby.MapDownloader" xmlns:ZeroKLobby="clr-namespace:ZeroKLobby" mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300" Loaded="UserControl_Loaded"
+             x:Name="userControl">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Button x:Name="backButton" Click="backButton_Click">Back</Button>
-            <Button x:Name="forwardButton" Click="forwardButton_Click">Forward</Button>
-        </StackPanel>
-        <TabControl Grid.Row="1" x:Name="tabControl">
+        <UniformGrid Grid.Row="0" Rows="1">
+            <Button Click="StartPage_Click">Start</Button>
+            <Button Click="BattleListPage_Click">Battles</Button>
+            <Button Click="ChatPage_Click">Chat</Button>
+            <Button Click="HelpPage_Click">Help</Button>
+            <Button Click="WidgetsPage_Click">Widgets</Button>
+            <Button Click="DownloaderPage_Click">Downloader</Button>
+            <Button Click="SettingsPage_Click">Settings</Button>
+            <Button Click="ServerPage_Click">Server</Button>
+        </UniformGrid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="backButton" Grid.Column="0" Click="backButton_Click">Back</Button>
+            <Button x:Name="forwardButton" Grid.Column="1" Click="forwardButton_Click">Forward</Button>
+            <ZeroKLobby:SubmitTextBox Grid.Column="2" Text="{Binding Path, ElementName=userControl}" />
+        </Grid>
+        <TabControl Grid.Row="2" x:Name="tabControl">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <EventSetter Event="MouseUp" Handler="TabItem_MouseUp" />
+                    <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
                 </TabControl.ItemContainerStyle>
                 <TabItem Header="StartTab">

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,7 +10,7 @@ using ZeroKLobby.Lines;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class ServerTab: UserControl
+    public partial class ServerTab: UserControl, INavigatable
     {
         SendBox filterBox;
         SendBox sendBox;
@@ -41,5 +42,11 @@ namespace ZeroKLobby.MicroLobby
         {
             textBox.AddLine(new ToServerLine(e.Data.Key, e.Data.Value.Select(a => a.ToString()).ToArray()));
         }
+
+		public string PathHead { get { return "server"; } }
+    	public bool TryNavigate(params string[] path)
+    	{
+			return path.Length > 0 && path[0] == PathHead;
+    	}
     }
 }

@@ -224,6 +224,7 @@
     <Compile Include="StartTab\UcStartTab.xaml.cs">
       <DependentUpon>UcStartTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SubmitTextBox.cs" />
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
