@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,10 +12,13 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Threading;
-using CMissionLib;
+using CMissionLib.UnitSyncLib;
 using Microsoft.Win32;
+using MissionEditor2.Properties;
 using MissionEditor2.ServiceReference;
+using ZkData;
 using Action = System.Action;
+using Mission = CMissionLib.Mission;
 
 namespace MissionEditor2
 {
@@ -133,8 +137,38 @@ namespace MissionEditor2
 					Name = mission.Name,
 					ScoringMethod = mission.ScoringMethod,
 					Image = new byte[0],
+					Script = mission.GetScript(),
 				};
+
+
+			var alliances = mission.Players.Select(p => p.Alliance).Distinct().ToList();
+			foreach (var player in mission.Players)
+			{
+				var missionSlot = new MissionSlot();
+				missionSlot.AiShortName = player.AIDll;
+				missionSlot.AiVersion = player.AIVersion;
+				missionSlot.AllyID = alliances.IndexOf(player.Alliance);
+				missionSlot.AllyName = player.Alliance;
+				missionSlot.IsHuman = player.IsHuman;
+				missionSlot.IsRequired = player.IsRequired;
+				missionSlot.TeamID = mission.Players.IndexOf(player);
+				missionSlot.TeamName = player.Name;
+				missionSlot.Color = (int)(MyCol)player.Color;
+				info.MissionSlots.Add(missionSlot);
+			}
+
+
+			if (ApplicationDeployment.IsNetworkDeployed)
+			{
+				info.MissionEditorVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
+			}
+			using (var unitSync = new UnitSync(Settings.Default.SpringPath))
+			{
+				info.SpringVersion = unitSync.Version;
+			}
+
 			if (missionId.HasValue) info.MissionID = missionId.Value;
+
 			var tempPath = Path.GetTempFileName();
 			mission.CreateArchive(tempPath);
 			info.Mutator = new System.Data.Linq.Binary(File.ReadAllBytes(tempPath));
@@ -154,7 +188,7 @@ namespace MissionEditor2
 			dialog.OKButton.Click += delegate
 				{
 
-					SendMissionWithDialog(mission, dialog.PasswordBox.Text, missionID);
+					SendMissionWithDialog(mission, dialog.PasswordBox.Password, missionID);
 					dialog.Close();
 				};
 			dialog.ShowDialog();

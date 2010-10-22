@@ -46,7 +46,7 @@ namespace CMissionLib.UnitSyncLib
 
 		public string UnitSyncPath { get; private set; }
 
-		public string Version { get; set; }
+		public string Version { get; private set; }
 
 
 		public string WritableDataDirectory

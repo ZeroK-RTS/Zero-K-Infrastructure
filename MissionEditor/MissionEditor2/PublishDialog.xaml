@@ -12,25 +12,19 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Label Grid.Row="0">Name</Label>
-    <Label Grid.Row="1">Author</Label>
+    <Label Grid.Row="1">Spring Account</Label>
     <Label Grid.Row="2">Password</Label>
     <Label Grid.Row="3">Description</Label>
-    <Label Grid.Row="4">Map</Label>
-    <Label Grid.Row="5">Mod</Label>
-    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}" />
+            <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}" />
     <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Author}" />
-    <TextBox Grid.Column="1" Grid.Row="2" Name="PasswordBox" x:FieldModifier="public" />
-    <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Description}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" MinLines="2" />
-    <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Map}" />
-    <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Mod}" />
-    <TextBlock Grid.ColumnSpan="2" Grid.Row="6" TextWrapping="WrapWithOverflow">
-      This will publish the mission to the SpringDownloader repository. The password will allow you to update your mission
+    <PasswordBox Grid.Column="1" Grid.Row="2" Name="PasswordBox" x:FieldModifier="public" />
+    <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" MinLines="2" />
+    <TextBlock Grid.ColumnSpan="2" Grid.Row="4" TextWrapping="WrapWithOverflow">
+      This will publish the mission to the Zero-K repository.
     </TextBlock>
-    <UniformGrid Grid.ColumnSpan="2" Grid.Row="9" HorizontalAlignment="Right" Rows="1">
+    <UniformGrid Grid.ColumnSpan="2" Grid.Row="5" HorizontalAlignment="Right" Rows="1">
       <Button Name="OKButton" x:FieldModifier="public" Margin="2">OK</Button>
       <Button Margin="2" IsCancel="True">Cancel</Button>
     </UniformGrid>

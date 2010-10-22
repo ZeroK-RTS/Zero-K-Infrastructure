@@ -90,6 +90,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -119,6 +120,7 @@
     <Compile Include="GiveOrdersPane.xaml.cs">
       <DependentUpon>GiveOrdersPane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MyCol.cs" />
     <Compile Include="NoArea.xaml.cs" />
     <Compile Include="OrderIcon.xaml.cs">
       <DependentUpon>OrderIcon.xaml</DependentUpon>

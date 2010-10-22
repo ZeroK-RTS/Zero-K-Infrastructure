@@ -38,7 +38,6 @@ namespace CMissionLib
 		int startingMetal = 1000;
 		Player startingPlayer = new Player {Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true};
 		ObservableCollection<Trigger> triggers = new ObservableCollection<Trigger>();
-
 		
 
 		public Mission(string name, Mod game, Map map)

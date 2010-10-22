@@ -11,6 +11,7 @@
         <UniformGrid Grid.Row="0" Rows="1">
             <Button Click="StartPage_Click">Start</Button>
             <Button Click="BattleListPage_Click">Battles</Button>
+            <Button Click="MissionsPage_Click">Missions</Button>
             <Button Click="ChatPage_Click">Chat</Button>
             <Button Click="HelpPage_Click">Help</Button>
             <Button Click="WidgetsPage_Click">Widgets</Button>
@@ -34,37 +35,37 @@
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
             </TabControl.ItemContainerStyle>
-            <TabItem Header="StartTab">
+            <TabItem>
                 <WindowsFormsHost>
                     <MicroLobby:StartPage />
                 </WindowsFormsHost>
             </TabItem>
-            <TabItem Header="Battles">
+            <TabItem >
                 <WindowsFormsHost>
                     <MicroLobby:BattleListTab />
                 </WindowsFormsHost>
             </TabItem>
-            <TabItem Header="Chat">
+            <TabItem>
                 <WindowsFormsHost>
                     <MicroLobby:ChatTab x:Name="chatTab" />
                 </WindowsFormsHost>
             </TabItem>
-            <TabItem Header="Widgets">
+            <TabItem>
                 <WindowsFormsHost>
                     <LuaMgr:LuaMgrTab />
                 </WindowsFormsHost>
             </TabItem>
-            <TabItem Header="Downloader">
+            <TabItem>
                 <WindowsFormsHost>
                     <MapDownloader:DownloaderTab />
                 </WindowsFormsHost>
             </TabItem>
-            <TabItem Header="Settings">
+            <TabItem >
                 <WindowsFormsHost>
                     <MicroLobby:SettingsTab />
                 </WindowsFormsHost>
             </TabItem>
-            <TabItem Header="Help">
+            <TabItem>
                 <WindowsFormsHost>
                     <MicroLobby:HelpControl />
                 </WindowsFormsHost>
@@ -73,6 +74,9 @@
                 <WindowsFormsHost>
                     <MicroLobby:ServerTab />
                 </WindowsFormsHost>
+            </TabItem>
+            <TabItem>
+                <MicroLobby:MissionControl />
             </TabItem>
         </TabControl>
     </Grid>

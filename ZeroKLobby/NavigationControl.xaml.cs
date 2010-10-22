@@ -161,5 +161,10 @@ namespace ZeroKLobby
 		{
 			Path = "settings";
 		}
+
+		private void MissionsPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = "missions";
+		}
 	}
 }
