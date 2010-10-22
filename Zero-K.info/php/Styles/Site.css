@@ -26,3 +26,13 @@
 {
     display: none;
 }
+
+.mission-tile {
+    width:250px; 
+    height: 100px; 
+    display:block; 
+    float:left; 
+    margin:40px;
+    padding:10px; 
+    background-color: Gray;
+}

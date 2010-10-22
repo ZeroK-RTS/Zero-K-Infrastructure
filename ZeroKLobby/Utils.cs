@@ -1,14 +1,19 @@
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Forms.Integration;
+using System.Windows.Input;
+using System.Windows.Media;
 using Microsoft.Win32;
 using ZeroKLobby.Notifications;
+using Color = System.Drawing.Color;
+using MessageBox = System.Windows.Forms.MessageBox;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 
 namespace ZeroKLobby
