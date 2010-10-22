@@ -44,6 +44,10 @@
                         <ToggleButton x:Name="deleteButton" Click="button_Click">Delete</ToggleButton>
                     </ToolBar>
                 </ToolBarTray>
+                <DockPanel DockPanel.Dock="Bottom" Background="White">
+                    <Label DockPanel.Dock="Left">Map Zoom</Label>
+                    <Slider Name="zoomSlider" Minimum="0.01" Maximum="2" Value="1"/>
+                </DockPanel>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto">
                     <Grid>
                         <Canvas x:Name="canvas" DataContext="{Binding Mission.Map.Texture, ElementName=window}" MinHeight="{Binding Height}"

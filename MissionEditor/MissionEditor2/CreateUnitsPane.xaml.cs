@@ -188,7 +188,7 @@ namespace MissionEditor2
 				dragInfo = null;
 			}
 			Debug.WriteLine(DateTime.Now - mouseDownDate);
-			if (unitDefGrid.Grid.SelectedItem != null && DateTime.Now - mouseDownDate < TimeSpan.FromMilliseconds(150))
+			if (unitDefGrid.Grid.SelectedItem != null && DateTime.Now - mouseDownDate < TimeSpan.FromMilliseconds(150) && e.ChangedButton == MouseButton.Left)
 			{
 				var unitType = (UnitInfo)unitDefGrid.Grid.SelectedItem;
 				var mousePos = e.GetPosition(unitCanvas);

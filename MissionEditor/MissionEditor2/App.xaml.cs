@@ -28,8 +28,7 @@ namespace MissionEditor2
 			File.AppendAllText(errorLogFile,"\r\n" + DateTime.Now + "\r\n");
 			File.AppendAllText(errorLogFile, text + "\r\n");
 
-			var message = String.Format("{0} error.\r\n{1}\r\nSee {2}\\errors.log for details.\r\n", exceptionName, ex.Message,
-									assemblyLocation);
+			var message = String.Format("{0} error.\r\n{1}\r\nSee {2} for details.\r\n", exceptionName, ex.Message, errorLogFile);
 			MessageBox.Show(message);
 
 			Environment.Exit(1);

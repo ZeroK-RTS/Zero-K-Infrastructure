@@ -49,8 +49,8 @@ namespace CMissionLib
 			ModName = game.Name;
 			MapName = map.Name;
 			var testAI = game.AllAis.FirstOrDefault(ai => ai.ShortName.Contains("NullAI"));
-			var player1 = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true, };
-			var player2 = new Player { Name = "Player 2", Color = Colors.Red, Alliance = "2", IsHuman = false, };
+			var player1 = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "Alliance 1", IsHuman = true, };
+			var player2 = new Player { Name = "Player 2", Color = Colors.Red, Alliance = "Alliance 2", IsHuman = false, };
 			StartingPlayer = player1;
 			Players.Add(player1);
 			Players.Add(player2);

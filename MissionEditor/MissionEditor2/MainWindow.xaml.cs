@@ -47,11 +47,6 @@ namespace MissionEditor2
 
 		public static MainWindow Instance { get; private set; }
 
-		public Slider ZoomSlider
-		{
-			get { return zoomSlider; }
-		}
-
 		public ListBox LogicGrid
 		{
 			get { return logicGrid; }
@@ -106,6 +101,7 @@ namespace MissionEditor2
 					addAction("Game Starts", () => new GameStartedCondition());
 					addAction("Metronome Clicks", () => new TimeCondition());
 					addAction("Player Died", () => new PlayerDiedCondition(Mission.Players.First()));
+					addAction("Player Joined", () => new PlayerJoinedCondition(Mission.Players.First()));
 					addAction("Time Left in Countdown", () => new TimeLeftInCountdownCondition(Mission.Countdowns.FirstOrDefault()));
 					addAction("Unit Created", () => new UnitCreatedCondition());
 					addAction("Unit Damaged", () => new UnitDamagedCondition());

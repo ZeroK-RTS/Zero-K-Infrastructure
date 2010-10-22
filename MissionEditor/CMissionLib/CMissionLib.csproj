@@ -91,6 +91,7 @@
     <Compile Include="Conditions\DummyCondition.cs" />
     <Compile Include="Conditions\GameEndedCondition.cs" />
     <Compile Include="Conditions\PlayerDiedCondition.cs" />
+    <Compile Include="Conditions\PlayerJoinedCondition.cs" />
     <Compile Include="Conditions\TimeCondition.cs" />
     <Compile Include="Conditions\TimeLeftInCountdownCondition.cs" />
     <Compile Include="Conditions\UnitDamagedCondition.cs" />

@@ -1,12 +1,27 @@
-﻿<UserControl x:Class="MissionEditor2.ListTemplates" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:MissionEditor2"
-    xmlns:ml="clr-namespace:CMissionLib;assembly=CMissionLib" xmlns:Actions="clr-namespace:CMissionLib.Actions;assembly=CMissionLib" xmlns:Conditions="clr-namespace:CMissionLib.Conditions;assembly=CMissionLib">
+﻿<UserControl x:Class="MissionEditor2.ListTemplates" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:MissionEditor2" xmlns:ml="clr-namespace:CMissionLib;assembly=CMissionLib"
+        xmlns:Actions="clr-namespace:CMissionLib.Actions;assembly=CMissionLib" xmlns:Conditions="clr-namespace:CMissionLib.Conditions;assembly=CMissionLib">
     <UserControl.Resources>
 
         <Grid x:Key="triggersList" HorizontalAlignment="Center" VerticalAlignment="Center">
             <ListBox ItemsSource="{Binding Mission.Triggers, ElementName=window}" SelectionMode="Multiple" Loaded="Triggers_ListLoaded" />
         </Grid>
+
+        <DataTemplate x:Key="PlayerJoinedCondition">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ListBox ItemsSource="{Binding Mission.Players, ElementName=window}" SelectedItem="{Binding Player}" />
+                <GroupBox Grid.Row="1" Header="Description">
+                    <TextBlock TextWrapping="WrapWithOverflow">
+            This condition is met if the selected player is connected when the game starts.
+                    </TextBlock>
+                </GroupBox>
+            </Grid>
+        </DataTemplate>
+
 
         <DataTemplate x:Key="EnableTriggersAction">
             <ContentControl Content="{StaticResource triggersList}" />
@@ -25,7 +40,7 @@
         Pauses the game.
             </TextBlock>
         </DataTemplate>
-        
+
         <DataTemplate x:Key="UnitSelectedCondition">
             <local:UnitSelectedConditionControl />
         </DataTemplate>
@@ -38,7 +53,7 @@
             <local:GiveOrdersPane />
         </DataTemplate>
 
-            <DataTemplate x:Key="CreateUnitsAction">
+        <DataTemplate x:Key="CreateUnitsAction">
             <local:CreateUnitsPane />
         </DataTemplate>
 
@@ -156,8 +171,7 @@
                     <Label Grid.Row="0">Counter</Label>
                     <Label Grid.Row="1">Action</Label>
                     <Label Grid.Row="2">Value</Label>
-                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Mission.Counters, ElementName=window}"
-              SelectedItem="{Binding Counter}" />
+                    <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Mission.Counters, ElementName=window}" SelectedItem="{Binding Counter}" />
                     <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{x:Static Actions:ModifyCounterAction.Actions}" SelectedItem="{Binding Action}" />
                     <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
@@ -183,11 +197,9 @@
                 <Label Grid.Row="2">Victim group</Label>
                 <Label Grid.Row="3">Any victim?</Label>
                 <Label Grid.Row="4">Unit health under:</Label>
-                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Mission.AllGroups, ElementName=window}"
-            SelectedItem="{Binding AttackerGroup}" />
+                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding AttackerGroup}" />
                 <CheckBox Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AnyAttacker}" />
-                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Mission.AllGroups, ElementName=window}"
-            SelectedItem="{Binding VictimGroup}" />
+                <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectedItem="{Binding VictimGroup}" />
                 <CheckBox Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding AnyVictim}" />
                 <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
@@ -245,8 +257,7 @@
                 <Label Grid.Row="2">Minutes</Label>
                 <Label Grid.Row="3">Seconds</Label>
                 <Label Grid.Row="4">Frames</Label>
-                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}"
-            SelectedItem="{Binding Countdown}" />
+                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
                 <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{x:Static Actions:ModifyCountdownAction.Modes}" SelectedItem="{Binding Mode}" />
                 <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
@@ -279,8 +290,7 @@
                 <Label Grid.Row="2">Minutes</Label>
                 <Label Grid.Row="3">Seconds</Label>
                 <Label Grid.Row="4">Frames</Label>
-                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}"
-            SelectedItem="{Binding Countdown}" />
+                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
                 <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
@@ -305,8 +315,7 @@
                 <Label Grid.Row="2">Minutes</Label>
                 <Label Grid.Row="3">Seconds</Label>
                 <Label Grid.Row="4">Frames</Label>
-                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}"
-            SelectedItem="{Binding Countdown}" />
+                <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Mission.Countdowns, ElementName=window}" SelectedItem="{Binding Countdown}" />
                 <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
@@ -324,14 +333,14 @@
 
         <local:ZoomConverter x:Key="log10Converter" />
 
-        <Canvas x:Key="markerPointCanvas" DataContext="{Binding ElementName=window}" MinHeight="{Binding Mission.Map.Texture.Height}"
-        MinWidth="{Binding Mission.Map.Texture.Width}" Loaded="MarkerPointCanvas_Loaded">
+        <Canvas x:Key="markerPointCanvas" MinHeight="{Binding Mission.Map.Texture.Height, ElementName=window}" MinWidth="{Binding Mission.Map.Texture.Width, ElementName=window}"
+                Loaded="MarkerPointCanvas_Loaded">
             <Canvas.LayoutTransform>
-                <ScaleTransform ScaleX="{Binding ZoomSlider.Value, Converter={StaticResource log10Converter}}"
-            ScaleY="{Binding ZoomSlider.Value, Converter={StaticResource log10Converter}}" />
+                <ScaleTransform ScaleX="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}"
+                        ScaleY="{Binding Value, ElementName=zoomSlider, Converter={StaticResource log10Converter}}" />
             </Canvas.LayoutTransform>
             <Canvas.Background>
-                <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding Mission.Map.Texture}" />
+                <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding Mission.Map.Texture, ElementName=window}" />
             </Canvas.Background>
         </Canvas>
 
@@ -344,6 +353,10 @@
                         <CheckBox IsChecked="{Binding CenterCamera}">Center Camera</CheckBox>
                     </ToolBar>
                 </ToolBarTray>
+                <DockPanel DockPanel.Dock="Bottom" Background="White">
+                    <Label DockPanel.Dock="Left">Map Zoom</Label>
+                    <Slider Name="zoomSlider" Minimum="0.01" Maximum="2" Value="1" />
+                </DockPanel>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto">
                     <ContentControl Content="{StaticResource markerPointCanvas}" />
                 </ScrollViewer>
@@ -353,9 +366,15 @@
         <!-- ======== Set Camera Map Target ======== -->
 
         <DataTemplate x:Key="SetCameraPointTargetAction">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto">
-                <ContentControl Content="{StaticResource markerPointCanvas}" />
-            </ScrollViewer>
+            <DockPanel>
+                <DockPanel DockPanel.Dock="Bottom" Background="White">
+                    <Label DockPanel.Dock="Left">Map Zoom</Label>
+                    <Slider Name="zoomSlider" Minimum="0.01" Maximum="2" Value="1" />
+                </DockPanel>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto">
+                    <ContentControl Content="{StaticResource markerPointCanvas}" />
+                </ScrollViewer>
+            </DockPanel>
         </DataTemplate>
 
         <!-- ======== Set Camera Unit Target ======== -->

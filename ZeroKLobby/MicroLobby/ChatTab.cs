@@ -19,8 +19,9 @@ namespace ZeroKLobby.MicroLobby
     {
         BattleChatControl battleChatControl;
         readonly ToolTabs toolTabs = new ToolTabs { Dock = DockStyle.Fill };
+    	string focusWhenJoin;
 
-				public bool Hilite(string channel)
+    	public bool Hilite(string channel)
 				{
 					return toolTabs.Hilite(channel);
 				}
@@ -95,8 +96,12 @@ namespace ZeroKLobby.MicroLobby
 
 		public void OpenChannel(string channelName)
 		{
-			if (GetChannelControl(channelName) == null) Program.TasClient.JoinChannel(channelName);
-			toolTabs.SelectTab(channelName);
+			if (GetChannelControl(channelName) != null) toolTabs.SelectTab(channelName);
+			else
+			{
+				focusWhenJoin = channelName;
+				Program.TasClient.JoinChannel(channelName);
+			}
 		}
 
         public void OpenPrivateMessageChannel(string userName)
@@ -141,6 +146,11 @@ namespace ZeroKLobby.MicroLobby
         {
             var channelName = e.ServerParams[0];
             CreateChannelControl(channelName);
+			if (focusWhenJoin == channelName)
+			{
+				toolTabs.SelectTab(channelName);
+				focusWhenJoin = null;
+			}
         }
 
         void client_Said(object sender, TasSayEventArgs e)

@@ -686,6 +686,7 @@ end
 
 
 function gadget:GameFrame(n)
+  Spring.SendMessage("Game Frame "..n) -- test
   if not gameStarted then
     -- start with a clean slate
     for _, unitID in ipairs(Spring.GetAllUnits()) do
@@ -703,6 +704,20 @@ function gadget:GameFrame(n)
     if mission.debug then
       Spring.SendCommands("setmaxspeed 100")
     end
+    
+    
+    for _, trigger in ipairs(triggers) do
+      for _, condition in ipairs(trigger.logic) do
+        if condition.logicType == "PlayerJoinedCondition" then
+          local players = Spring.GetPlayerList(condition.args.playerNumber, true)
+          if players[1] then
+            ExecuteTrigger(trigger)
+            break
+          end          
+        end
+      end
+    end
+    
     gameStarted = true
   end
   
