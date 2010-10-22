@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="ZeroKWeb.missions.MissionService" CodeBehind="MissionService.svc.cs" %>
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="ZeroKWeb.MissionService" CodeBehind="MissionService.svc.cs" %>

@@ -198,8 +198,9 @@ div.box
 	opacity: .8;
 }
 
-div.newslette{color: #fff;}
+div.newslette 
 {
+	color: #fff;
 	border:1px dotted #999;
 	border-right:none;
 	border-bottom:none;
