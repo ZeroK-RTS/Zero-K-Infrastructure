@@ -4,6 +4,7 @@
 	foreach (var mission in Model)
 	{
 %>
+<a href='<%= Url.Action("Detail", new {id= mission.MissionID}) %>' style='color:white;'>
 <span class="mission-tile">
 	<h3>
 		<%=Html.Encode(mission.Name)%></h3>
@@ -11,6 +12,7 @@
 	Author:
 	<%=Html.Encode(mission.Account.Name)%>
 </span>
+</a>
 <%
 	}
 %>

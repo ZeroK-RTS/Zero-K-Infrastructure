@@ -37,7 +37,7 @@ namespace ZeroKWeb.Controllers
 
 		public ActionResult Detail(int id)
 		{
-			throw new NotImplementedException();
+			return View("Detail", new ZkDataContext().Missions.Single(x => x.MissionID == id));
 		}
 
 		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, int? offset = null)

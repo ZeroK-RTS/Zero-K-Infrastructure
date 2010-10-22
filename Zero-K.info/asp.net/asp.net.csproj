@@ -87,10 +87,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Img\Loader.gif" />
     <Content Include="OldTable.aspx" />
     <Content Include="MissionService.svc" />
     <Content Include="Styles\Site.css" />
     <Content Include="Styles\style.css" />
+    <Content Include="Views\Missions\Detail.aspx" />
     <Content Include="Views\Missions\Index.aspx" />
     <Content Include="Views\Missions\TileList.aspx" />
     <Content Include="Web.config">
@@ -118,9 +120,7 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Img\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
