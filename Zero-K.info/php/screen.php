@@ -41,5 +41,5 @@ for( $i = 2; $i <= count($thumbs); $i++)
 </center>
 </div> <!-- close screenshots -->
 
-<?phpinclude("footer.inc");?>
+<?php include("footer.inc");?>
 

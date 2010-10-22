@@ -1,7 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <?php
-exit ("Not public yet!");
 $screenshots = scandir('img/screenshots');
 
 $count = count($screenshots);
@@ -44,7 +43,7 @@ body { background: #000 url('img/screenshots/<?php echo $screenshot; ?>') no-rep
 
 <body id="index" onload="SwitchContent('showme','hideme','','');">
 
-<?phpinclude("menu.inc");?>
+<?php include("menu.inc");?>
 
 <div id="rlist">
 
@@ -133,7 +132,7 @@ body { background: #000 url('img/screenshots/<?php echo $screenshot; ?>') no-rep
 	</div> <!-- close newslette -->
 </div> <!-- close news -->
 
-<?phpinclude("footer.inc");?>
+<?php include("footer.inc");?>
 
 <!-- lulz... look at the award I got! :P
 <p>

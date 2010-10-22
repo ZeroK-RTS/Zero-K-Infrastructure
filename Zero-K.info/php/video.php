@@ -23,7 +23,7 @@ function clearinput(a) { document.getElementById(a).value = ""; }
 
 <body id="screen" onload="SwitchContent('showme','hideme','','');">
 
-<?phpinclude("menu.inc");?>
+<?php include("menu.inc");?>
 
 <div id="vid" class="midl">
 
@@ -70,5 +70,5 @@ function clearinput(a) { document.getElementById(a).value = ""; }
 
 </div> <!-- close vid -->
 
-<?phpinclude("footer.inc");?>
+<?php include("footer.inc");?>
 
