@@ -87,12 +87,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
     <Content Include="OldTable.aspx" />
     <Content Include="MissionService.svc" />
     <Content Include="Styles\Site.css" />
     <Content Include="Styles\style.css" />
     <Content Include="Views\Missions\Index.aspx" />
+    <Content Include="Views\Missions\TileList.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

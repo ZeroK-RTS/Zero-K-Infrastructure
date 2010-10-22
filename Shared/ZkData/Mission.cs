@@ -7,10 +7,11 @@ namespace ZkData
 {
 	partial class Mission
 	{
-		public string ShortName
-		{
-			get { return Name.Substring(9); }
-		}
 
+		partial void OnCreated()
+		{
+			ModifiedTime = DateTime.UtcNow;
+			CreatedTime = DateTime.UtcNow;
+		}
 	}
 }

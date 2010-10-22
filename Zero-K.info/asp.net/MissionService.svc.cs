@@ -63,7 +63,7 @@ namespace ZeroKWeb
 			var list = db.Missions.ToList();
 			foreach (var m in list)
 			{
-				m.Mutator = new Binary(new byte[]{});
+				m.Mutator = new Binary(new byte[] { });
 				m.Script = null;
 			}
 			return list;
@@ -76,11 +76,7 @@ namespace ZeroKWeb
 			var db = new ZkDataContext();
 			if (!mission.Name.StartsWith("Mission:")) throw new ApplicationException("Mission name must start with Mission:, please update your editor");
 			var prev = db.Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
-
-			if (prev == null)
-			{
-				prev = db.Missions.Where(x => x.Name == mission.Name).SingleOrDefault();
-			}
+			if (prev == null) prev = db.Missions.Where(x => x.Name == mission.Name).SingleOrDefault();
 
 			if (prev != null)
 			{
@@ -101,6 +97,7 @@ namespace ZeroKWeb
 			else
 			{
 				mission.CreatedTime = DateTime.UtcNow;
+				mission.ModifiedTime = DateTime.UtcNow;
 				db.Missions.InsertOnSubmit(mission);
 				db.SubmitChanges();
 			}
