@@ -5,6 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media.Effects;
 using CMissionLib;
+using CMissionLib.UnitSyncLib;
 
 namespace MissionEditor2
 {
@@ -138,6 +139,11 @@ namespace MissionEditor2
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
+			// make the icons have the correct size
+			var mission = MainWindow.Instance.Mission;
+			var unit = (UnitStartInfo)DataContext;
+			ScaleTransform.ScaleX = 1 / 16.0 * mission.FromIngameX(unit.UnitDef.FootprintX * 16);
+			ScaleTransform.ScaleY = 1 / 16.0 * mission.FromIngameY(unit.UnitDef.FootprintY * 16);
 		}
 	}
 }
