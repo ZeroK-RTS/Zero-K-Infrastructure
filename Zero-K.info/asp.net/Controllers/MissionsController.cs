@@ -35,6 +35,11 @@ namespace ZeroKWeb.Controllers
 			return File(db.Missions.Single(x => x.MissionID == id).Image.ToArray(), "image/png");
 		}
 
+		public ActionResult File(int id)
+		{
+			return File(new ZkDataContext().Missions.Single(x => x.MissionID == id).Mutator.ToArray(), "application/octet-stream", "mission.sdz");
+		}
+
 		public ActionResult Detail(int id)
 		{
 			return View("Detail", new ZkDataContext().Missions.Single(x => x.MissionID == id));
