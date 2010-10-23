@@ -15,10 +15,14 @@ namespace ZkData
 			CreatedTime = DateTime.UtcNow;
 		}
 
-		public static string SanitizeFileName(string fileName)
+		public string SanitizedFileName
 		{
-			foreach (var character in Path.GetInvalidFileNameChars()) fileName = fileName.Replace(character, '_');
-			return fileName;
+			get
+			{
+				var fileName = Name;
+				foreach (var character in Path.GetInvalidFileNameChars()) fileName = fileName.Replace(character, '_');
+				return fileName + ".sdz"; 	
+			}
 		}
 	}
 }

@@ -73,15 +73,15 @@ namespace ZeroKWeb
 			var acc = new AuthServiceClient().VerifyAccount(author, password);
 			if (acc == null) throw new ApplicationException("Cannot verify user account");
 			var db = new ZkDataContext();
-			if (!mission.Name.StartsWith("Mission:")) throw new ApplicationException("Mission name must start with Mission:, please update your editor");
-			var prev = db.Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
-			if (prev == null) prev = db.Missions.Where(x => x.Name == mission.Name).SingleOrDefault();
-
-			if (prev != null)
+			using (var scope = new TransactionScope())
 			{
-				if (prev.AccountID != acc.AccountID) throw new ApplicationException("Invalid author or password");
-				using (var scope = new TransactionScope())
+				if (db.Missions.Any(x => x.Name == mission.Name)) throw new ApplicationException("Mission name must be unique");
+				var prev = db.Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
+
+				if (prev != null)
 				{
+					if (prev.AccountID != acc.AccountID) throw new ApplicationException("Invalid author or password");
+
 					db.MissionSlots.DeleteAllOnSubmit(prev.MissionSlots);
 					db.SubmitChanges();
 					db.Missions.Attach(mission, prev);
@@ -90,15 +90,15 @@ namespace ZeroKWeb
 					mission.Revision++;
 					mission.ModifiedTime = DateTime.UtcNow;
 					db.SubmitChanges();
-					scope.Complete();
 				}
-			}
-			else
-			{
-				mission.CreatedTime = DateTime.UtcNow;
-				mission.ModifiedTime = DateTime.UtcNow;
-				db.Missions.InsertOnSubmit(mission);
-				db.SubmitChanges();
+				else
+				{
+					mission.CreatedTime = DateTime.UtcNow;
+					mission.ModifiedTime = DateTime.UtcNow;
+					db.Missions.InsertOnSubmit(mission);
+					db.SubmitChanges();
+				}
+				scope.Complete();
 			}
 		}
 	}

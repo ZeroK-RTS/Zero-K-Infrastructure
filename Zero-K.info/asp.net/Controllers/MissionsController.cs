@@ -37,7 +37,8 @@ namespace ZeroKWeb.Controllers
 
 		public ActionResult File(int id)
 		{
-			return File(new ZkDataContext().Missions.Single(x => x.MissionID == id).Mutator.ToArray(), "application/octet-stream", "mission.sdz");
+			var m = new ZkDataContext().Missions.Single(x => x.MissionID == id);
+			return File(m.Mutator.ToArray(), "application/octet-stream", m.SanitizedFileName);
 		}
 
 		public ActionResult Detail(int id)

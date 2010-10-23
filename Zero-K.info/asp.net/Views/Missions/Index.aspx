@@ -30,8 +30,8 @@
 									 {
 										 InsertionMode = InsertionMode.Replace,
 										 UpdateTargetId = "missions",
-										 OnBegin = string.Format("function(){{offset={0}; enabled=true; $('#loader').css('visibility','visible');}}", Model.FetchInitialCount),
-										 OnComplete = "function(){$('#loader').css('visibility','collapse');}"
+										 OnBegin = string.Format("function(){{offset={0}; enabled=false; $('#loader').css('visibility','visible');}}", Model.FetchInitialCount),
+										 OnComplete = "function(){$('#loader').css('visibility','collapse'); enabled= true;}"
 									 }))
 		{%>
 	<%=Html.TextBox("search", Model.SearchString)%><input type="submit" id="submit" value="Search" />
