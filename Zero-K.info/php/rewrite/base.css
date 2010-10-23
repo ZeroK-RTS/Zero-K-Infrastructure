@@ -1,0 +1,25 @@
+
+p {text-indent: 2em;}
+b {font-size: 110%; font-weight: bold; color: #fff;}
+i {}
+
+h1 {font-size: 170%; color: #fff;}
+h2 {font-size: 140%; color: #cee; text-indent: .5em;}
+h3 {}
+
+a {color: #38bfec; text-decoration: none;}
+a:hover {color: #fff;}
+a:active {color: #cbd3d4;}
+a:visited {color: #4c90a6;}
+a:visited hover {color: #fff;}
+
+img {border: none;}
+
+pre
+{
+	border: 1px dotted #888;
+	background: #222;
+	padding: 7px;
+	margin-left: 4em;
+	margin-right: 4em;
+}

@@ -1,0 +1,1 @@
+function clearinput(a) { document.getElementById(a).value = ""; }
