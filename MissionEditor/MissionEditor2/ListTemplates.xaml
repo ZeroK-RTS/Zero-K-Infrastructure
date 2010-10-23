@@ -35,6 +35,10 @@
             <ContentControl Content="{StaticResource triggersList}" />
         </DataTemplate>
 
+        <DataTemplate x:Key="ExecuteRandomTriggerAction">
+            <ContentControl Content="{StaticResource triggersList}" />
+        </DataTemplate>
+
         <DataTemplate x:Key="PauseAction">
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
         Pauses the game.

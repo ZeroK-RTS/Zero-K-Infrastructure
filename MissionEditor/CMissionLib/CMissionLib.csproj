@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Actions\AllowUnitTransfersAction.cs" />
+    <Compile Include="Actions\ExecuteRandomTriggerAction.cs" />
     <Compile Include="Actions\GiveFactoryOrdersAction.cs" />
     <Compile Include="Actions\StartCountdownAction.cs" />
     <Compile Include="Actions\CancelCountdownAction.cs" />

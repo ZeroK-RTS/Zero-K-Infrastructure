@@ -48,6 +48,9 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+local function TakeRandomI(t)
+  return t[math.random(#t)]
+end
 
 
 local function CopyTable(original)   -- Warning: circular table references lead to an infinite loop.
@@ -330,6 +333,11 @@ local function ExecuteTrigger(trigger, frame)
           for _, triggerIndex in ipairs(action.args.triggers) do
               ExecuteTrigger(allTriggers[triggerIndex])
           end
+        end
+      elseif action.logicType == "ExecuteRandomTriggerAction" then
+        Event = function()
+          local triggerIndex = TakeRandomI(action.args.triggers)
+          ExecuteTrigger(allTriggers[triggerIndex])
         end
       elseif action.logicType == "AllowUnitTransfersAction" then
         Event = function()
@@ -686,7 +694,6 @@ end
 
 
 function gadget:GameFrame(n)
-  Spring.SendMessage("Game Frame "..n) -- test
   if not gameStarted then
     -- start with a clean slate
     for _, unitID in ipairs(Spring.GetAllUnits()) do

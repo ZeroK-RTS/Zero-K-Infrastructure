@@ -128,6 +128,7 @@ namespace MissionEditor2
 					addAction("Disable Triggers", () => new DisableTriggersAction());
 					addAction("Display Counters", () => new DisplayCountersAction());
 					addAction("Enable Triggers", () => new EnableTriggersAction());
+					addAction("Execute Random Trigger", () => new ExecuteRandomTriggerAction());
 					addAction("Execute Triggers", () => new ExecuteTriggersAction());
 					addAction("Give Factory Orders", () => new GiveFactoryOrdersAction());
 					addAction("Give Orders", () => new GiveOrdersAction());

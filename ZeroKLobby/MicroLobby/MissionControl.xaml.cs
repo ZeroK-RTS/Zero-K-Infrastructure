@@ -24,10 +24,23 @@ namespace ZeroKLobby.MicroLobby
 			InitializeComponent();
 		}
 
-		public string PathHead { get { return "missions"; } }
+		public string PathHead { get { return "http://zero-k.info/Missions.mvc"; } }
 		public bool TryNavigate(params string[] path)
 		{
-			return path.Length > 0 && path[0] == PathHead;
+			var pathString = String.Join("/", path);
+			if (!pathString.StartsWith(PathHead)) return false;
+			if (pathString != webBrowser.Source.ToString()) webBrowser.Source = new Uri(pathString);
+			return true;
+		}
+
+		private void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
+		{
+			
+		}
+
+		private void WebBrowser_Navigated(object sender, NavigationEventArgs e)
+		{
+			NavigationControl.Instance.Path = e.Uri.ToString();
 		}
 	}
 }

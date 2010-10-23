@@ -164,7 +164,7 @@ namespace ZeroKLobby
 
 		private void MissionsPage_Click(object sender, RoutedEventArgs e)
 		{
-			Path = "missions";
+			Path = "http://zero-k.info/Missions.mvc";
 		}
 	}
 }
