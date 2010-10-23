@@ -35,6 +35,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMissionLib", "MissionEditor\CMissionLib\CMissionLib.csproj", "{025DB717-770F-4A29-BC33-FFDC3088E25B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MissionEditor", "MissionEditor\MissionEditor2\MissionEditor.csproj", "{713275BF-2FAB-4F51-8766-1E8182BCDAA4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{06EE7D11-6403-4ABF-AD73-24F8394BA69B} = {06EE7D11-6403-4ABF-AD73-24F8394BA69B}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "asp.net", "Zero-K.info\asp.net\asp.net.csproj", "{06EE7D11-6403-4ABF-AD73-24F8394BA69B}"
 EndProject

@@ -73,13 +73,6 @@
       <DependentUpon>Global.asax</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="OldTable.aspx.cs">
-      <DependentUpon>OldTable.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="OldTable.aspx.designer.cs">
-      <DependentUpon>OldTable.aspx</DependentUpon>
-    </Compile>
     <Compile Include="IMissionService.cs" />
     <Compile Include="MissionService.svc.cs">
       <DependentUpon>MissionService.svc</DependentUpon>
@@ -91,7 +84,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Img\Loader.gif" />
-    <Content Include="OldTable.aspx" />
     <Content Include="MissionService.svc" />
     <Content Include="Styles\Site.css" />
     <Content Include="Styles\style.css" />
@@ -126,7 +118,9 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="AppCode\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>

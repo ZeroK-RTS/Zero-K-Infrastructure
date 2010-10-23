@@ -2141,9 +2141,11 @@ namespace ZkData
 		
 		private System.Nullable<int> _CampaignID;
 		
-		private System.Nullable<int> _AccountID;
+		private int _AccountID;
 		
 		private string _ModOptions;
+		
+		private string _ModRapidTag;
 		
 		private EntitySet<MissionSlot> _MissionSlots;
 		
@@ -2193,10 +2195,12 @@ namespace ZkData
     partial void OnTokenConditionChanged();
     partial void OnCampaignIDChanging(System.Nullable<int> value);
     partial void OnCampaignIDChanged();
-    partial void OnAccountIDChanging(System.Nullable<int> value);
+    partial void OnAccountIDChanging(int value);
     partial void OnAccountIDChanged();
     partial void OnModOptionsChanging(string value);
     partial void OnModOptionsChanged();
+    partial void OnModRapidTagChanging(string value);
+    partial void OnModRapidTagChanged();
     #endregion
 		
 		public Mission()
@@ -2603,9 +2607,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
-		public System.Nullable<int> AccountID
+		public int AccountID
 		{
 			get
 			{
@@ -2649,8 +2653,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModRapidTag", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		public string ModRapidTag
+		{
+			get
+			{
+				return this._ModRapidTag;
+			}
+			set
+			{
+				if ((this._ModRapidTag != value))
+				{
+					this.OnModRapidTagChanging(value);
+					this.SendPropertyChanging();
+					this._ModRapidTag = value;
+					this.SendPropertyChanged("ModRapidTag");
+					this.OnModRapidTagChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionSlot", Storage="_MissionSlots", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<MissionSlot> MissionSlots
 		{
 			get
@@ -2695,7 +2720,7 @@ namespace ZkData
 					}
 					else
 					{
-						this._AccountID = default(Nullable<int>);
+						this._AccountID = default(int);
 					}
 					this.SendPropertyChanged("Account");
 				}

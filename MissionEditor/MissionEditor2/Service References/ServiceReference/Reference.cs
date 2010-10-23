@@ -9,54 +9,7 @@
 //------------------------------------------------------------------------------
 
 namespace MissionEditor2.ServiceReference {
-    using System.Runtime.Serialization;
-    using System;
     
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="Binary", Namespace="http://schemas.datacontract.org/2004/07/System.Data.Linq")]
-    [System.SerializableAttribute()]
-    public partial class Binary : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private byte[] BytesField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public byte[] Bytes {
-            get {
-                return this.BytesField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.BytesField, value) != true)) {
-                    this.BytesField = value;
-                    this.RaisePropertyChanged("Bytes");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.IMissionService")]
@@ -65,17 +18,42 @@ namespace MissionEditor2.ServiceReference {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/DeleteMission", ReplyAction="http://tempuri.org/IMissionService/DeleteMissionResponse")]
         void DeleteMission(int missionID, string author, string password);
         
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/DeleteMission", ReplyAction="http://tempuri.org/IMissionService/DeleteMissionResponse")]
+        System.IAsyncResult BeginDeleteMission(int missionID, string author, string password, System.AsyncCallback callback, object asyncState);
+        
+        void EndDeleteMission(System.IAsyncResult result);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/GetMission", ReplyAction="http://tempuri.org/IMissionService/GetMissionResponse")]
         ZkData.Mission GetMission(string missionName);
+        
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/GetMission", ReplyAction="http://tempuri.org/IMissionService/GetMissionResponse")]
+        System.IAsyncResult BeginGetMission(string missionName, System.AsyncCallback callback, object asyncState);
+        
+        ZkData.Mission EndGetMission(System.IAsyncResult result);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/GetMissionByID", ReplyAction="http://tempuri.org/IMissionService/GetMissionByIDResponse")]
         ZkData.Mission GetMissionByID(int missionID);
         
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/GetMissionByID", ReplyAction="http://tempuri.org/IMissionService/GetMissionByIDResponse")]
+        System.IAsyncResult BeginGetMissionByID(int missionID, System.AsyncCallback callback, object asyncState);
+        
+        ZkData.Mission EndGetMissionByID(System.IAsyncResult result);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/ListMissionInfos", ReplyAction="http://tempuri.org/IMissionService/ListMissionInfosResponse")]
         System.Collections.Generic.List<ZkData.Mission> ListMissionInfos();
         
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/ListMissionInfos", ReplyAction="http://tempuri.org/IMissionService/ListMissionInfosResponse")]
+        System.IAsyncResult BeginListMissionInfos(System.AsyncCallback callback, object asyncState);
+        
+        System.Collections.Generic.List<ZkData.Mission> EndListMissionInfos(System.IAsyncResult result);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/SendMission", ReplyAction="http://tempuri.org/IMissionService/SendMissionResponse")]
         void SendMission(ZkData.Mission mission, string author, string password);
+        
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/SendMission", ReplyAction="http://tempuri.org/IMissionService/SendMissionResponse")]
+        System.IAsyncResult BeginSendMission(ZkData.Mission mission, string author, string password, System.AsyncCallback callback, object asyncState);
+        
+        void EndSendMission(System.IAsyncResult result);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -84,7 +62,94 @@ namespace MissionEditor2.ServiceReference {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    public partial class GetMissionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        public GetMissionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        public ZkData.Mission Result {
+            get {
+                base.RaiseExceptionIfNecessary();
+                return ((ZkData.Mission)(this.results[0]));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    public partial class GetMissionByIDCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        public GetMissionByIDCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        public ZkData.Mission Result {
+            get {
+                base.RaiseExceptionIfNecessary();
+                return ((ZkData.Mission)(this.results[0]));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    public partial class ListMissionInfosCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        public ListMissionInfosCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        public System.Collections.Generic.List<ZkData.Mission> Result {
+            get {
+                base.RaiseExceptionIfNecessary();
+                return ((System.Collections.Generic.List<ZkData.Mission>)(this.results[0]));
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class MissionServiceClient : System.ServiceModel.ClientBase<MissionEditor2.ServiceReference.IMissionService>, MissionEditor2.ServiceReference.IMissionService {
+        
+        private BeginOperationDelegate onBeginDeleteMissionDelegate;
+        
+        private EndOperationDelegate onEndDeleteMissionDelegate;
+        
+        private System.Threading.SendOrPostCallback onDeleteMissionCompletedDelegate;
+        
+        private BeginOperationDelegate onBeginGetMissionDelegate;
+        
+        private EndOperationDelegate onEndGetMissionDelegate;
+        
+        private System.Threading.SendOrPostCallback onGetMissionCompletedDelegate;
+        
+        private BeginOperationDelegate onBeginGetMissionByIDDelegate;
+        
+        private EndOperationDelegate onEndGetMissionByIDDelegate;
+        
+        private System.Threading.SendOrPostCallback onGetMissionByIDCompletedDelegate;
+        
+        private BeginOperationDelegate onBeginListMissionInfosDelegate;
+        
+        private EndOperationDelegate onEndListMissionInfosDelegate;
+        
+        private System.Threading.SendOrPostCallback onListMissionInfosCompletedDelegate;
+        
+        private BeginOperationDelegate onBeginSendMissionDelegate;
+        
+        private EndOperationDelegate onEndSendMissionDelegate;
+        
+        private System.Threading.SendOrPostCallback onSendMissionCompletedDelegate;
         
         public MissionServiceClient() {
         }
@@ -105,24 +170,268 @@ namespace MissionEditor2.ServiceReference {
                 base(binding, remoteAddress) {
         }
         
+        public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> DeleteMissionCompleted;
+        
+        public event System.EventHandler<GetMissionCompletedEventArgs> GetMissionCompleted;
+        
+        public event System.EventHandler<GetMissionByIDCompletedEventArgs> GetMissionByIDCompleted;
+        
+        public event System.EventHandler<ListMissionInfosCompletedEventArgs> ListMissionInfosCompleted;
+        
+        public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> SendMissionCompleted;
+        
         public void DeleteMission(int missionID, string author, string password) {
             base.Channel.DeleteMission(missionID, author, password);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginDeleteMission(int missionID, string author, string password, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginDeleteMission(missionID, author, password, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public void EndDeleteMission(System.IAsyncResult result) {
+            base.Channel.EndDeleteMission(result);
+        }
+        
+        private System.IAsyncResult OnBeginDeleteMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            int missionID = ((int)(inValues[0]));
+            string author = ((string)(inValues[1]));
+            string password = ((string)(inValues[2]));
+            return this.BeginDeleteMission(missionID, author, password, callback, asyncState);
+        }
+        
+        private object[] OnEndDeleteMission(System.IAsyncResult result) {
+            this.EndDeleteMission(result);
+            return null;
+        }
+        
+        private void OnDeleteMissionCompleted(object state) {
+            if ((this.DeleteMissionCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.DeleteMissionCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void DeleteMissionAsync(int missionID, string author, string password) {
+            this.DeleteMissionAsync(missionID, author, password, null);
+        }
+        
+        public void DeleteMissionAsync(int missionID, string author, string password, object userState) {
+            if ((this.onBeginDeleteMissionDelegate == null)) {
+                this.onBeginDeleteMissionDelegate = new BeginOperationDelegate(this.OnBeginDeleteMission);
+            }
+            if ((this.onEndDeleteMissionDelegate == null)) {
+                this.onEndDeleteMissionDelegate = new EndOperationDelegate(this.OnEndDeleteMission);
+            }
+            if ((this.onDeleteMissionCompletedDelegate == null)) {
+                this.onDeleteMissionCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnDeleteMissionCompleted);
+            }
+            base.InvokeAsync(this.onBeginDeleteMissionDelegate, new object[] {
+                        missionID,
+                        author,
+                        password}, this.onEndDeleteMissionDelegate, this.onDeleteMissionCompletedDelegate, userState);
         }
         
         public ZkData.Mission GetMission(string missionName) {
             return base.Channel.GetMission(missionName);
         }
         
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginGetMission(string missionName, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginGetMission(missionName, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public ZkData.Mission EndGetMission(System.IAsyncResult result) {
+            return base.Channel.EndGetMission(result);
+        }
+        
+        private System.IAsyncResult OnBeginGetMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            string missionName = ((string)(inValues[0]));
+            return this.BeginGetMission(missionName, callback, asyncState);
+        }
+        
+        private object[] OnEndGetMission(System.IAsyncResult result) {
+            ZkData.Mission retVal = this.EndGetMission(result);
+            return new object[] {
+                    retVal};
+        }
+        
+        private void OnGetMissionCompleted(object state) {
+            if ((this.GetMissionCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.GetMissionCompleted(this, new GetMissionCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void GetMissionAsync(string missionName) {
+            this.GetMissionAsync(missionName, null);
+        }
+        
+        public void GetMissionAsync(string missionName, object userState) {
+            if ((this.onBeginGetMissionDelegate == null)) {
+                this.onBeginGetMissionDelegate = new BeginOperationDelegate(this.OnBeginGetMission);
+            }
+            if ((this.onEndGetMissionDelegate == null)) {
+                this.onEndGetMissionDelegate = new EndOperationDelegate(this.OnEndGetMission);
+            }
+            if ((this.onGetMissionCompletedDelegate == null)) {
+                this.onGetMissionCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetMissionCompleted);
+            }
+            base.InvokeAsync(this.onBeginGetMissionDelegate, new object[] {
+                        missionName}, this.onEndGetMissionDelegate, this.onGetMissionCompletedDelegate, userState);
+        }
+        
         public ZkData.Mission GetMissionByID(int missionID) {
             return base.Channel.GetMissionByID(missionID);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginGetMissionByID(int missionID, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginGetMissionByID(missionID, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public ZkData.Mission EndGetMissionByID(System.IAsyncResult result) {
+            return base.Channel.EndGetMissionByID(result);
+        }
+        
+        private System.IAsyncResult OnBeginGetMissionByID(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            int missionID = ((int)(inValues[0]));
+            return this.BeginGetMissionByID(missionID, callback, asyncState);
+        }
+        
+        private object[] OnEndGetMissionByID(System.IAsyncResult result) {
+            ZkData.Mission retVal = this.EndGetMissionByID(result);
+            return new object[] {
+                    retVal};
+        }
+        
+        private void OnGetMissionByIDCompleted(object state) {
+            if ((this.GetMissionByIDCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.GetMissionByIDCompleted(this, new GetMissionByIDCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void GetMissionByIDAsync(int missionID) {
+            this.GetMissionByIDAsync(missionID, null);
+        }
+        
+        public void GetMissionByIDAsync(int missionID, object userState) {
+            if ((this.onBeginGetMissionByIDDelegate == null)) {
+                this.onBeginGetMissionByIDDelegate = new BeginOperationDelegate(this.OnBeginGetMissionByID);
+            }
+            if ((this.onEndGetMissionByIDDelegate == null)) {
+                this.onEndGetMissionByIDDelegate = new EndOperationDelegate(this.OnEndGetMissionByID);
+            }
+            if ((this.onGetMissionByIDCompletedDelegate == null)) {
+                this.onGetMissionByIDCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetMissionByIDCompleted);
+            }
+            base.InvokeAsync(this.onBeginGetMissionByIDDelegate, new object[] {
+                        missionID}, this.onEndGetMissionByIDDelegate, this.onGetMissionByIDCompletedDelegate, userState);
         }
         
         public System.Collections.Generic.List<ZkData.Mission> ListMissionInfos() {
             return base.Channel.ListMissionInfos();
         }
         
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginListMissionInfos(System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginListMissionInfos(callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.Collections.Generic.List<ZkData.Mission> EndListMissionInfos(System.IAsyncResult result) {
+            return base.Channel.EndListMissionInfos(result);
+        }
+        
+        private System.IAsyncResult OnBeginListMissionInfos(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            return this.BeginListMissionInfos(callback, asyncState);
+        }
+        
+        private object[] OnEndListMissionInfos(System.IAsyncResult result) {
+            System.Collections.Generic.List<ZkData.Mission> retVal = this.EndListMissionInfos(result);
+            return new object[] {
+                    retVal};
+        }
+        
+        private void OnListMissionInfosCompleted(object state) {
+            if ((this.ListMissionInfosCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.ListMissionInfosCompleted(this, new ListMissionInfosCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void ListMissionInfosAsync() {
+            this.ListMissionInfosAsync(null);
+        }
+        
+        public void ListMissionInfosAsync(object userState) {
+            if ((this.onBeginListMissionInfosDelegate == null)) {
+                this.onBeginListMissionInfosDelegate = new BeginOperationDelegate(this.OnBeginListMissionInfos);
+            }
+            if ((this.onEndListMissionInfosDelegate == null)) {
+                this.onEndListMissionInfosDelegate = new EndOperationDelegate(this.OnEndListMissionInfos);
+            }
+            if ((this.onListMissionInfosCompletedDelegate == null)) {
+                this.onListMissionInfosCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnListMissionInfosCompleted);
+            }
+            base.InvokeAsync(this.onBeginListMissionInfosDelegate, null, this.onEndListMissionInfosDelegate, this.onListMissionInfosCompletedDelegate, userState);
+        }
+        
         public void SendMission(ZkData.Mission mission, string author, string password) {
             base.Channel.SendMission(mission, author, password);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginSendMission(ZkData.Mission mission, string author, string password, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginSendMission(mission, author, password, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public void EndSendMission(System.IAsyncResult result) {
+            base.Channel.EndSendMission(result);
+        }
+        
+        private System.IAsyncResult OnBeginSendMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            ZkData.Mission mission = ((ZkData.Mission)(inValues[0]));
+            string author = ((string)(inValues[1]));
+            string password = ((string)(inValues[2]));
+            return this.BeginSendMission(mission, author, password, callback, asyncState);
+        }
+        
+        private object[] OnEndSendMission(System.IAsyncResult result) {
+            this.EndSendMission(result);
+            return null;
+        }
+        
+        private void OnSendMissionCompleted(object state) {
+            if ((this.SendMissionCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.SendMissionCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void SendMissionAsync(ZkData.Mission mission, string author, string password) {
+            this.SendMissionAsync(mission, author, password, null);
+        }
+        
+        public void SendMissionAsync(ZkData.Mission mission, string author, string password, object userState) {
+            if ((this.onBeginSendMissionDelegate == null)) {
+                this.onBeginSendMissionDelegate = new BeginOperationDelegate(this.OnBeginSendMission);
+            }
+            if ((this.onEndSendMissionDelegate == null)) {
+                this.onEndSendMissionDelegate = new EndOperationDelegate(this.OnEndSendMission);
+            }
+            if ((this.onSendMissionCompletedDelegate == null)) {
+                this.onSendMissionCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnSendMissionCompleted);
+            }
+            base.InvokeAsync(this.onBeginSendMissionDelegate, new object[] {
+                        mission,
+                        author,
+                        password}, this.onEndSendMissionDelegate, this.onSendMissionCompletedDelegate, userState);
         }
     }
 }

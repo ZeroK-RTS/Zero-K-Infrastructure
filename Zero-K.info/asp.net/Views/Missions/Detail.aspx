@@ -7,7 +7,7 @@
         
 				<h2>
 				<a href='
-				<%= "zerok://" + Html.Encode(string.Format("http://zero-k.info/detail/{0}@start_mission:{0}", Model.MissionID))
+				<%= "zerok://" + Html.Encode(string.Format("http://zero-k.info/missions.mvc/detail/{0}@start_mission:{0}", Model.MissionID))
 							 %>'>PLAY NOW</a>
 							 </h2>
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ZkData" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ZkData" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:37418/missions/MissionService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Data.Linq" />
+  <xs:import schemaLocation="http://localhost:54720/MissionService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Data.Linq" />
   <xs:complexType name="Mission">
     <xs:sequence>
       <xs:element minOccurs="0" name="MissionID" type="xs:int" />
@@ -22,8 +22,9 @@
       <xs:element minOccurs="0" name="Dependencies" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="TokenCondition" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="CampaignID" nillable="true" type="xs:int" />
-      <xs:element minOccurs="0" name="AccountID" nillable="true" type="xs:int" />
+      <xs:element minOccurs="0" name="AccountID" type="xs:int" />
       <xs:element minOccurs="0" name="ModOptions" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ModRapidTag" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="MissionSlots" nillable="true" type="tns:ArrayOfMissionSlot">
         <xs:annotation>
           <xs:appinfo>
