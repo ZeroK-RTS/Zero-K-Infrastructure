@@ -100,6 +100,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -140,6 +142,11 @@
     </Compile>
     <Compile Include="Notifications\SinglePlayerBar.Designer.cs">
       <DependentUpon>SinglePlayerBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="StartTab\GameSelectorWindow.xaml.cs">
       <DependentUpon>GameSelectorWindow.xaml</DependentUpon>
@@ -622,6 +629,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="LuaMgr\doc\changelog.txt" />
+    <None Include="Service References\ServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ServiceReference\configuration.svcinfo" />
+    <None Include="Service References\ServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\ServiceReference\MissionService.disco" />
     <None Include="Resources\ZK_logo_square.png" />
     <Resource Include="ZK_logo_square.ico" />
     <None Include="PixelShaders\BlackAndWhite.fx" />
@@ -704,6 +718,22 @@
     <EmbeddedResource Include="Notifications\NotifySection.resx">
       <DependentUpon>NotifySection.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Service References\ServiceReference\MissionService.wsdl" />
+    <None Include="Service References\ServiceReference\MissionService.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\MissionService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\MissionService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\MissionService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\ZeroKLobby.ServiceReference.Mission.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="SpringDownloader_TemporaryKey.pfx" />
     <None Include="Web References\ModStats\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -770,7 +800,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ServiceReference\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

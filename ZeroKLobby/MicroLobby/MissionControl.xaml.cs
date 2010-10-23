@@ -15,6 +15,13 @@ namespace ZeroKLobby.MicroLobby
 		public MissionControl()
 		{
 			InitializeComponent();
+			client.GetMissionByIDCompleted += client_GetMissionByIDCompleted;
+		}
+
+		void client_GetMissionByIDCompleted(object sender, ServiceReference.GetMissionByIDCompletedEventArgs e)
+		{
+			var mission = e.Result;
+			
 		}
 
 		void PerformAction(string actionString)
@@ -30,7 +37,10 @@ namespace ZeroKLobby.MicroLobby
 			}
 		}
 
-		void StartMission(int missionID) {}
+		void StartMission(int missionID)
+		{
+			client.GetMissionByIDAsync(missionID);
+		}
 
 		public string PathHead { get { return "http://zero-k.info/Missions.mvc"; } }
 
