@@ -26,16 +26,6 @@ namespace ZeroKLobby.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://planet-wars.eu/MissionEditorServer/EditorService.asmx")]
-        public string SpringDownloader_MissionService_EditorService {
-            get {
-                return ((string)(this["SpringDownloader_MissionService_EditorService"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("http://planet-wars.eu/ModStats/StatsCollector.asmx")]
         public string SpringDownloader_ModStats_StatsCollector {
             get {

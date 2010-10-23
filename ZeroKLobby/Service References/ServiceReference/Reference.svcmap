@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="0ce1d775-c124-4a0a-bf79-4f4da5bd8a15" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:54720/MissionService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="MissionService.wsdl" MetadataType="Wsdl" ID="acf99845-eb80-4565-873c-443a220575fb" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?wsdl" />
+    <MetadataFile FileName="MissionService.disco" MetadataType="Disco" ID="02fa241c-1410-43c5-888c-94205a955a6a" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?disco" />
+    <MetadataFile FileName="MissionService.xsd" MetadataType="Schema" ID="8558455e-91d7-4baa-8ae3-767e17cda25f" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?xsd=xsd1" />
+    <MetadataFile FileName="MissionService1.xsd" MetadataType="Schema" ID="a01db3d4-a2db-4006-9303-de4b64ba0f06" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?xsd=xsd0" />
+    <MetadataFile FileName="MissionService2.xsd" MetadataType="Schema" ID="de17c881-bd0d-4496-aa8b-44ef7ea27529" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?xsd=xsd3" />
+    <MetadataFile FileName="MissionService3.xsd" MetadataType="Schema" ID="aedfc5c4-d546-4bc3-9cf1-e36bcd680646" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?xsd=xsd2" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

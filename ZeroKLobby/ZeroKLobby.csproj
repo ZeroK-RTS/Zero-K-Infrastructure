@@ -548,11 +548,6 @@
     </Compile>
     <Compile Include="ToolTips\ToolTipHandler.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="Web References\MissionService\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\ModStats\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -720,41 +715,12 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Web References\MissionService\CommentInfo.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\MissionService\EditorService.disco" />
-    <None Include="Web References\MissionService\EditorService.wsdl" />
-    <None Include="Web References\MissionService\MissionData.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\MissionService\MissionInfo.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\MissionService\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Web References\MissionService\ScoreEntry.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
     <None Include="Web References\ModStats\StatsCollector.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://planet-wars.eu/MissionEditorServer/EditorService.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\MissionService\</RelPath>
-      <UpdateFromURL>http://planet-wars.eu/MissionEditorServer/EditorService.asmx</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
-      <CachedSettingsPropName>SpringDownloader_MissionService_EditorService</CachedSettingsPropName>
-    </WebReferenceUrl>
     <WebReferenceUrl Include="http://planet-wars.eu/ModStats/StatsCollector.asmx">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\ModStats\</RelPath>
@@ -767,7 +733,9 @@
       <CachedSettingsPropName>SpringDownloader_ModStats_StatsCollector</CachedSettingsPropName>
     </WebReferenceUrl>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
