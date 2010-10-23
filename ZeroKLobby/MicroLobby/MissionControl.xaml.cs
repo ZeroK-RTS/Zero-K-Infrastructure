@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Navigation;
 using ZeroKLobby.ServiceReference;
+using UserControl = System.Windows.Controls.UserControl;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -20,7 +21,7 @@ namespace ZeroKLobby.MicroLobby
 
 		void client_GetMissionByIDCompleted(object sender, ServiceReference.GetMissionByIDCompletedEventArgs e)
 		{
-			var mission = e.Result;
+			
 			
 		}
 
@@ -39,7 +40,8 @@ namespace ZeroKLobby.MicroLobby
 
 		void StartMission(int missionID)
 		{
-			client.GetMissionByIDAsync(missionID);
+			// client.GetMissionByIDAsync(missionID);
+			MessageBox.Show("Not implemented");
 		}
 
 		public string PathHead { get { return "http://zero-k.info/Missions.mvc"; } }
@@ -48,27 +50,27 @@ namespace ZeroKLobby.MicroLobby
 		{
 			var pathString = String.Join("/", path);
 			if (!pathString.StartsWith(PathHead)) return false;
-			if (pathString != webBrowser.Source.ToString()) webBrowser.Source = new Uri(pathString);
+			if (pathString != webBrowser.Source.OriginalString) webBrowser.Navigate(pathString);
 			return true;
 		}
 
 		void WebBrowser_Navigated(object sender, NavigationEventArgs e)
 		{
-			NavigationControl.Instance.Path = e.Uri.ToString();
+			NavigationControl.Instance.Path = e.Uri.OriginalString;
 		}
 
 		void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
 		{
-			var parts = e.Uri.ToString().Split('@');
-			if (parts.Length <= 1) return;
-			var url = parts[0];
+			var parts = e.Uri.OriginalString.Split('@');
+			if (parts.Length < 2) return;
 			for (var i = 1; i < parts.Length; i++)
 			{
 				var action = parts[i];
 				PerformAction(action);
 			}
 			e.Cancel = true;
-			webBrowser.Source = new Uri(url);
+			var url = parts[0].Replace("zerok://", String.Empty);
+			webBrowser.Navigate(url);
 		}
 	}
 }
