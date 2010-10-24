@@ -6,7 +6,7 @@
 <?php include("inc_head.inc"); ?>
 </head>
 
-<body>
+<body id="body">
 	<div id="wrapper">
 <div id="notice">Under heavy development; Some things don't work or might change</div>
 <!-------------------------------------------------------------- -->

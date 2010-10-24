@@ -1,4 +1,4 @@
-<div id="news" class="border left big">
+<div id="news" class="border left part">
 	<h1>New Website!</h1>
 	<p>The new website for Zero-K players is finally here!</p>
 	<p>We're really excited to present this brand-new website for this awesome game. I hope the experienced players enjoy the new layout and look. There is more to come! The main page will be a portal to all of your Zero-K needs; very soon we will start up a "Unit of the Day" which helpfully describes a unit from a large and various collection in the game. Those curious of the new and ongoing development will have easy access to the revision logs, as well as an up to date list of our top players.</p>

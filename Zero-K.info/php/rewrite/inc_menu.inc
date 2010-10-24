@@ -1,6 +1,10 @@
 <div id="menu" class="border">
 <table>
 	<tr>
+	<td><a href="index.php">Home</a></td>
+	<!link to a thank you page maybe?>
+	<td><a href="download.php" onclick="javascript:download();" class="border">Download</a></td>
+	<!-- 
 	<td><ul class="menu">
 	<li><a href="download.php">Download</a>
 		<ul>
@@ -11,7 +15,7 @@
 		</ul>
 	</li>
 	</ul> </td> 
-
+	-->
 	<td><ul class="menu">
 	<li><a href="">Media</a>
 		<ul>
@@ -49,15 +53,15 @@
 	</ul> </td> 
 	<td width="100%">
 	<!-- search bar, and possibly a login/register input as well -->
-	<form method="get" action="">
+	<form action="http://www.google.com/search?ie=UTF-8&oe=UTF-8&sourceid=navclient&gfns=1%3Aspringrts.com">
 		<table>
 		<tr>
-			<td><a href="">Login</a></td>
 			<!--login will replace the searchbar when clicked (ala moddb)
+			<td><a href="">Login</a></td>
 			<input type="text" size="9" name="nick" id="nick" value="Nickname" onClick="clearinput('nick');" />
 			<input type="text" size="9" name="pass" id="pass" value="Password" onClick="clearinput('pass');" />
 			-->
-			<td width="100%" align="right"><input type="text" name="search" id="search" onclick="clearinput('search');" value="Search" /></td>
+			<td width="100%" align="right"><input type="text" name="q" id="search" onclick="clearinput('search');" value="Search" /></td>
 			<td><input type="submit" value="Q" /></td>
 		</tr>
 		</table>

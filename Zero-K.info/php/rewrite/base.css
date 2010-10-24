@@ -8,12 +8,15 @@ h2 {font-size: 140%; color: #cee; text-indent: .5em;}
 h3 {}
 
 a {color: #38bfec; text-decoration: none;}
+a:visited {color: #4c90a6;}
 a:hover {color: #fff;}
 a:active {color: #cbd3d4;}
-a:visited {color: #4c90a6;}
-a:visited hover {color: #fff;}
 
-img {border: none;}
+img {border: none; margin: 5px;}
+
+ul.points {list-style-type: circle;}
+
+ul.poll {list-style-type: none; text-indent: -3em;}
 
 pre
 {
@@ -23,3 +26,85 @@ pre
 	margin-left: 4em;
 	margin-right: 4em;
 }
+
+.part
+{
+	width: 65%;
+}
+
+.border
+{
+	-moz-border-image: url("img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
+	margin: 5px;
+}
+
+.left
+{
+	float: left;
+}
+
+.right
+{
+	float: right;
+}
+
+.center
+{
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+.abstop
+{
+	position: absolute;
+	top: 0;
+}
+
+.absleft
+{
+	position: absolute;
+	left: 0;
+}
+
+.absright
+{
+	position: absolute;
+	right: 0;
+}
+
+.absbottom
+{
+	position: absolute;
+	bottom: 0;
+}
+
+.bold
+{
+	font-weight: bold;
+}
+
+.button
+{
+	color: #38bfec;
+	font-family: sm;
+	background: transparent;
+}
+
+.button:hover /* hover */
+{
+	color: #fff;
+}
+
+.button:focus:hover /* onclick */
+{
+	color: #f00;
+}
+
+.cwhite {color: #fff;}
+.cblack {color: #000;}
+.clight {color: #ded;}
+.cdark   {color: #232;}
+.cred     {color: #f00;}
+.cblue   {color: #00f;}
+.cgray   {color: #888;}

@@ -1,9 +1,24 @@
 @import url("base.css");
 @import url("menu.css");
+@import url("side.css");
+
+div#notice
+{
+	background: #f00;
+	color: #000;
+	font-size: 150%;
+	padding: 20px;
+	border: 12px double #000;
+	border-radius: 10px 10px 10px 10px ;
+	-moz-border-radius: 10px 10px 10px 10px ;
+	-webkit-border-radius: 10px 10px 10px 10px ;
+	text-align: center;
+}
 
 html, body
 {
-	background: #333;
+	/*scroll background is a lot faster, but requires a bigger image to fill page, fixed image makes ff (others?) really horrible for scrolling*/
+	background: #000 url("img/Kbot_map_test_Flash_stealth.jpg") no-repeat scroll 50% 0;
 	color: #fee;
 	font-family: font, sans-serif;
 	font-size: 100%;
@@ -15,10 +30,14 @@ html, body
 	text-align: center;
 }
 
+body
+{
+	background: url("img/fade.png") repeat-y 50% 0;
+}
+
 div#wrapper
 {
 	position: relative;
-	background: #111;
 	width: 1000px;
 	padding: 10px;
 	margin-left: auto;
@@ -41,44 +60,11 @@ div#menu
 
 div#sidebar
 {
-	width: 25%;
+	width: 30%;
 }
 
 div#footer
 {
+	position: relative;
 	clear: both;
-}
-
-div#notice
-{
-	background: #f00;
-	color: #000;
-	font-size: 150%;
-	padding: 20px;
-	border: 12px double #000;
-	border-radius: 10px 10px 10px 10px ;
-	-moz-border-radius: 10px 10px 10px 10px ;
-	-webkit-border-radius: 10px 10px 10px 10px ;
-	text-align: center;
-}
-
-.big
-{
-	width: 65%;
-}
-
-.border
-{
-	-moz-border-image: url("img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
-	margin-bottom: 7px;
-}
-
-.left
-{
-	float: left;
-}
-
-.right
-{
-	float: right;
 }
