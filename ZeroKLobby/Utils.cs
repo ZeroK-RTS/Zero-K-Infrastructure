@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -9,7 +10,9 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using ZeroKLobby.Notifications;
 using Color = System.Drawing.Color;
@@ -20,6 +23,27 @@ namespace ZeroKLobby
 {
 	static class Utils
 	{
+		[DllImport("gdi32.dll")]
+		static extern bool DeleteObject(IntPtr hObject);
+
+		public static BitmapSource ToBitmapSource(this Bitmap bitmap)
+		{
+			var hBitmap = bitmap.GetHbitmap();
+			BitmapSource bitmapSource;
+			try
+			{
+				bitmapSource = Imaging.CreateBitmapSourceFromHBitmap(hBitmap, IntPtr.Zero,
+																	 Int32Rect.Empty,
+																	 BitmapSizeOptions.FromEmptyOptions());
+				bitmapSource.Freeze();
+			}
+			finally
+			{
+				DeleteObject(hBitmap);
+			}
+			return bitmapSource;
+		}
+
 		static IInputElement lastElement;
 		public static bool IsDesignTime
 		{

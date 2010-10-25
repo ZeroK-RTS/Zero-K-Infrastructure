@@ -247,8 +247,8 @@ namespace ZeroKLobby
 			else if (ApplicationDeployment.IsNetworkDeployed) Title = "Zero-K lobby";
 			else Title += " not installed properly - update from http://zero-k.info/lobby";
 
-			// hack Icon = Resources.ZkIcon;
-			// hack systrayIcon.Icon = Resources.ZkIcon;
+			Icon = ZeroKLobby.Resources.ZkIcon.ToBitmap().ToBitmapSource();
+			systrayIcon.Icon = ZeroKLobby.Resources.ZkIcon;
 
 			Program.SpringScanner.Start();
 
