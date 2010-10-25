@@ -2,4 +2,5 @@
 	<meta name="keywords" content="Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech" />
 	<link rel="stylesheet" href="style.css" type="text/css"/>
 	<link rel="icon" href="img/favicon.png" />
-	<script type="text/javascript" language="JavaScript" src="scripts/base.js"></script>
+	<script type="text/javascript" src="scripts/base.js"></script>
+	<script type="text/javascript" src="scripts/browser-css.js"></script>

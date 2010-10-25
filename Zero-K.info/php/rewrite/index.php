@@ -6,19 +6,18 @@
 <?php include("inc_head.inc"); ?>
 </head>
 
+<?php include("inc_rotate.inc"); ?>
+
 <body id="body">
 	<div id="wrapper">
-<div id="notice">Under heavy development; Some things don't work or might change</div>
 <!-------------------------------------------------------------- -->
 <?php include("inc_header.inc"); ?>
 <!-------------------------------------------------------------- -->
 <?php include("inc_menu.inc"); ?>
 <!-------------------------------------------------------------- -->
-<?php include("inc_sidebar.inc"); ?>
+<?php include("_sidebar.inc"); ?>
 <!-------------------------------------------------------------- -->
-<?php include("inc_features.inc"); ?>
-<!-------------------------------------------------------------- -->
-<?php include("inc_news.inc"); ?>
+<?php include("_content.inc"); ?>
 <!-------------------------------------------------------------- -->
 <?php include("inc_footer.inc"); ?>
 <!-------------------------------------------------------------- -->

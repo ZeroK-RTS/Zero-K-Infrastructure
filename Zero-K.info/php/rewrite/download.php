@@ -6,6 +6,8 @@
 <?php include("inc_head.inc"); ?>
 </head>
 
+<?php include("inc_rotate.inc"); ?>
+
 <body>
 	<div id="wrapper">
 <!-------------------------------------------------------------- -->
@@ -26,8 +28,8 @@ sudo apt-get install python-dev python-setuptools python-pip
 sudo easy_install rapid-spring
 rapid pin zk:test
 </pre>
-	<b>3.)</b> Download maps from <a href="http://www.springfiles.com/files.php?subcategory_id=2">here</a>.<br />
-	<br /><b>Start Playing!</b>
+	<b>3.)</b> Download maps from <a href="http://www.springfiles.com/files.php?subcategory_id=2">here</a>.<br /><br />
+	<b>Start Playing!</b>
 	<p>To upgrade to newer version:
 <pre>
 rapid clean-upgrade

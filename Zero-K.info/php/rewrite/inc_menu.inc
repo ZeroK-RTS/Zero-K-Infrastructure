@@ -61,8 +61,11 @@
 			<input type="text" size="9" name="nick" id="nick" value="Nickname" onClick="clearinput('nick');" />
 			<input type="text" size="9" name="pass" id="pass" value="Password" onClick="clearinput('pass');" />
 			-->
-			<td width="100%" align="right"><input type="text" name="q" id="search" onclick="clearinput('search');" value="Search" /></td>
+			<td width="100%" align="right"><input type="text" name="q" id="search" onclick="clearinput('search');" value="Search" class="border" /></td>
+			<!--plain input
+			<td width="100%" align="right"><input type="text" name="q" id="search" onclick="clearinput('search');" value="Search" class="" /></td>
 			<td><input type="submit" value="Q" /></td>
+			-->
 		</tr>
 		</table>
 	</form>

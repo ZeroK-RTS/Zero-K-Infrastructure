@@ -58,9 +58,19 @@ div#menu
 	text-align: center;
 }
 
+div#content
+{
+	width: 70%;
+}
+
 div#sidebar
 {
 	width: 30%;
+}
+
+div#unit
+{
+	position: relative;
 }
 
 div#footer
