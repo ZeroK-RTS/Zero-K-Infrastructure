@@ -28,6 +28,7 @@ namespace ZeroKLobby.MicroLobby
             if (m.Msg == WM_MOUSEWHEEL)
             {
                 var control = MainWindow.Instance.GetHoveredControl();
+								if (control == null) return false;
                 if (control is WebBrowser) return false;
 								SendMessage((int)control.Handle, m.Msg, (int)m.WParam, (int)m.LParam);
                 return true;
