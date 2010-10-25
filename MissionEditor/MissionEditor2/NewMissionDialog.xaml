@@ -20,7 +20,7 @@
             <ProgressBar Name="ProgressBar" x:FieldModifier="public" IsIndeterminate="True" Visibility="Hidden"/>
         </DockPanel>
         <TextBlock DockPanel.Dock="Bottom">
-            <Hyperlink NavigateUri="http://code.google.com/p/zero-k/updates/list" RequestNavigate="Hyperlink_RequestNavigate">
+            <Hyperlink NavigateUri="http://code.google.com/p/zero-k/wiki/MissionEditorCompatibility" RequestNavigate="Hyperlink_RequestNavigate">
                         View Compatibility Issues
             </Hyperlink>
         </TextBlock>

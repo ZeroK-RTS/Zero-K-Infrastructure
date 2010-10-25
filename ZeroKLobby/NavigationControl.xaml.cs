@@ -62,6 +62,12 @@ namespace ZeroKLobby
 			return obj as INavigatable;
 		}
 
+
+		public WindowsFormsHost GetWindowsFormsHostOfCurrentTab()
+		{
+			return tabControl.SelectedContent as WindowsFormsHost;
+		}
+
 		void GoBack()
 		{
 			forwardStack.Push(CurrentPage);

@@ -324,11 +324,15 @@
                             <TreeView.Resources>
                                 <Style TargetType="TreeViewItem">
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay, FallbackValue=true}" />
-                                    <Style.Triggers>
+                                    <!--<Style.Triggers>
                                         <Trigger Property="IsSelected" Value="true">
-                                            <Setter Property="Height" Value="150" />
+                                            <Setter Property="Effect">
+                                                <Setter.Value>
+                                                    <DropShadowEffect />
+                                                </Setter.Value>
+                                            </Setter>
                                         </Trigger>
-                                    </Style.Triggers>
+                                    </Style.Triggers>-->
                                 </Style>
                                 <local:TriggerConverter x:Key="triggerConverter" />
                                 <HierarchicalDataTemplate ItemsSource="{Binding Converter={StaticResource triggerConverter}}" DataType="{x:Type CMissionLib:Trigger}">
