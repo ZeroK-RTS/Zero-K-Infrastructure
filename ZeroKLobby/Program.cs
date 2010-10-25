@@ -54,17 +54,23 @@ namespace ZeroKLobby
 		
 
 		[STAThread]
-		public static void Initialize(string[] args)
+		public static void Main(string[] args)
 		{
 			Trace.Listeners.Add(new ConsoleTraceListener());
 			Trace.Listeners.Add(new LogTraceListener());
+
+			Directory.SetCurrentDirectory(StartupPath);
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+
+			var app = new System.Windows.Application();
 
 			if (!Debugger.IsAttached)
 			{
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 				Thread.GetDomain().UnhandledException += UnhandledException;
 				Application.ThreadException += Application_ThreadException;
-				if (System.Windows.Application.Current != null) System.Windows.Application.Current.DispatcherUnhandledException += Current_DispatcherUnhandledException;
+				app.DispatcherUnhandledException += Current_DispatcherUnhandledException;
 				Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 			}
 
@@ -79,9 +85,6 @@ namespace ZeroKLobby
 					else Trace.TraceError("Starting undeployed version!");
 				}
 
-				Directory.SetCurrentDirectory(StartupPath);
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(true);
 
 				WebRequest.DefaultWebProxy = null;
 				ThreadPool.SetMaxThreads(500, 2000);
@@ -164,7 +167,8 @@ namespace ZeroKLobby
 				if (Conf.ConnectOnStartup) ConnectBar.TryToConnectTasClient();
 				else NotifySection.AddBar(ConnectBar);
 
-				System.Windows.Application.Current.Run(MainWindow);
+				
+				app.Run(MainWindow);
 
 				ToolTip.Dispose();
 				Downloader.Dispose();

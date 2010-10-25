@@ -266,7 +266,8 @@ namespace LobbyClient
 
 		public void ChangeMyUserStatus(bool? isAway = null, bool? isInGame = null)
 		{
-			var u = MyUser.Clone();
+			User u;
+			if (MyUser != null) u = MyUser.Clone(); else u = new User();
 			u.FromInt(lastUserStatus);
 			if (isAway != null) u.IsAway = isAway.Value;
 			if (isInGame != null) u.IsInGame = isInGame.Value;

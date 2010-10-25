@@ -20,6 +20,7 @@ namespace ZeroKLobby
 {
 	static class Utils
 	{
+		static IInputElement lastElement;
 		public static bool IsDesignTime
 		{
 			get { return System.ComponentModel.DesignerProperties.GetIsInDesignMode(new DependencyObject()); }
@@ -137,26 +138,8 @@ namespace ZeroKLobby
 			return to;
 		}
 
+		
 
-		public static Control GetHoveredControl(UIElement parentControl)
-		{
-			/*	hack rewrite!	
-			 * var screenPoint = Control.MousePosition;
-						var parentPoint = parentControl.PointToClient(screenPoint);
-						Control child;
-						while (
-							(child =
-							 parentControl.GetChildAtPoint(parentPoint, GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent)) !=
-							null)
-						{
-							parentControl = child;
-							parentPoint = parentControl.PointToClient(screenPoint);
-						}
-			 return parentControl;
-			 */
-			return null;
-			
-		}
 
 		public static Color Invert(this Color color)
 		{

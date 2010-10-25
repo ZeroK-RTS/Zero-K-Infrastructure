@@ -98,7 +98,7 @@ namespace ZeroKLobby.ToolTips
             if (Program.MainWindow != null && Program.MainWindow.IsLoaded && !Program.CloseOnNext && Program.MainWindow.IsVisible &&
                 Program.MainWindow.WindowState != WindowState.Minimized)
             {
-                var control = Utils.GetHoveredControl(Program.MainWindow); // hack here
+                var control = MainWindow.Instance.GetHoveredControl();
                 string text = null;
                 if (control != null) tooltips.TryGetValue(control, out text);
 
@@ -110,7 +110,7 @@ namespace ZeroKLobby.ToolTips
                         tooltip.Dispose();
                     }
 
-										if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == 0; // hack (int)interHandle;
+										if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == (int)MainWindow.Instance.Handle;
 
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive)
                     {
@@ -125,8 +125,10 @@ namespace ZeroKLobby.ToolTips
                 if (tooltip != null)
                 {
                     var mp = Control.MousePosition;
+                	
+                		var point = MainWindow.Instance.PointToScreen(new System.Windows.Point(5,5));
+                		var scr = Screen.GetWorkingArea(new Point((int)point.X, (int)point.Y)); 
 
-										var scr = Screen.GetWorkingArea(null); // Program.MainWindow
                     //need screen0's bounds because SetDesktopLocation is relative to screen0.
                     var scr1 = Screen.AllScreens[0].WorkingArea;
                     var scr1B = Screen.AllScreens[0].Bounds;
