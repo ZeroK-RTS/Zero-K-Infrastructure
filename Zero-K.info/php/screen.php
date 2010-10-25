@@ -2,44 +2,36 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title>Zero-K - Screenshots</title>
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<meta name="description" content="Screenshots" />
-	<meta name="keywords" content="Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech" />
-	<link rel="stylesheet" href="styles/style.css" type="text/css" media="screen" title="Main Style" charset="utf-8" />
-	<link rel="icon" href="img/favicon.png" />
-	<script type="text/javascript" language="JavaScript"><!--
-function SwitchContent(a,b,c,d) 
-{
-	document.getElementById(a).style.display = "";
-	document.getElementById(b).style.display = "none";
-	document.getElementById(c).style.display = "none";
-	document.getElementById(d).style.display = "none";
-}
-function clearinput(a) { document.getElementById(a).value = ""; }
-
-//--></script>
+	<title>Zero-K - Pics</title>
+<?php include("inc_head.inc"); ?>
 </head>
 
-<body id="screen" onload="SwitchContent('showme','hideme','','');">
+<?php include("inc_plainbg.inc"); ?>
 
-<?php include("menu.inc");?>
+<body>
+	<div id="wrapper">
+<!-------------------------------------------------------------- -->
+<?php include("inc_menu.inc"); ?>
+<!-------------------------------------------------------------- -->
 
-<div id="screenshots" class="midl">
-<center>
 <?php
 $images = scandir('img/screenshots');
-$thumbs = scandir('img/screenshots_thumb');
-for( $i = 2; $i <= count($thumbs); $i++)
+for ($i = 2; $i <= count($images); $i++)
 {
-
-  $fname = $thumbs[$i];
-  $gname = $images[$i];
-  if (substr($fname, strlen($fname) - 4) == ".png") echo "<a href='img/screenshots/$gname'><img src='img/screenshots_thumb/$fname' class='scr' ></img></a>\n";
+	$picname = $images[$i];
+	$picext = substr($picname, strlen($picname)-4);
+	$picpre = substr($picname, 0, 6);
+	if ( $picpre == "thumb_" ) continue;
+	if ( $picext == ".png" or $picext == ".jpg" )
+	{
+		echo "<a href='img/screenshots/$picname'><img src='img/screenshots/thumb_$picname' class='border' /></img></a>\n";
+	}
 }
 ?>
-</center>
-</div> <!-- close screenshots -->
 
-<?php include("footer.inc");?>
-
+<!-------------------------------------------------------------- -->
+<?php include("inc_footer.inc"); ?>
+<!-------------------------------------------------------------- -->
+	</div><!close wrapper>
+</body>
+</html>

@@ -6,6 +6,7 @@ $count = count($screenshots);
 for($i=0; $i<$count; $i++)
 {
 	$file = array_shift($screenshots);
+	if( substr($file, 0, 6) == 'thumb_') continue;
 	if( strtolower( substr($file, -4) ) == '.jpg' )
 	{
 		array_push($screenshots, $file);

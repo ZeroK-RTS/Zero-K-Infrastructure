@@ -43,9 +43,9 @@ ul.menu li:hover > ul
 	display:block;
 	position:absolute; 
 	background: none;
-	border:1px solid #222;
-	border-top:none;
-	-moz-border-image: url("img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
+	border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
+	-moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
+	-webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
 	list-style-type: none; 
 	padding:3px;
 	z-index: 99;

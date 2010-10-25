@@ -2,42 +2,21 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title>Zero-K - Videos</title>
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-	<meta name="description" content="Video" />
-	<meta name="keywords" content="Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech" />
-	<link rel="stylesheet" href="styles/style.css" type="text/css" media="screen" title="Main Style" charset="utf-8" />
-	<link rel="icon" href="img/favicon.png" />
-	<script type="text/javascript" language="JavaScript"><!--
-function SwitchContent(a,b,c,d) 
-{
-	document.getElementById(a).style.display = "";
-	document.getElementById(b).style.display = "none";
-	document.getElementById(c).style.display = "none";
-	document.getElementById(d).style.display = "none";
-}
-function clearinput(a) { document.getElementById(a).value = ""; }
-
-//--></script>
+	<title>Zero-K - Video</title>
+<?php include("inc_head.inc"); ?>
 </head>
 
-<body id="screen" onload="SwitchContent('showme','hideme','','');">
+<?php include("inc_plainbg.inc"); ?>
 
-<?php include("menu.inc");?>
+<body>
+	<div id="wrapper">
+<!-------------------------------------------------------------- -->
+<?php include("inc_menu.inc"); ?>
+<!-------------------------------------------------------------- -->
 
-<div id="vid" class="midl">
+<!temporary filler>
 
 <table id="vid">
-<!--
-<tr>
-	<td></td>
-	<td>
-		<h1></h1>
-		<p></p>
-	</td>
-</tr>
--->
-
 <tr>
 	<td><object width="425" height="344"><param name="movie" value="http://www.youtube.com/v/EZYAxskWXMw&hl=en&fs=1&color1=0x3a3a3a&color2=0x999999"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://www.youtube.com/v/EZYAxskWXMw&hl=en&fs=1&color1=0x3a3a3a&color2=0x999999" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="344"></embed></object></td>
 	<td>
@@ -68,7 +47,9 @@ function clearinput(a) { document.getElementById(a).value = ""; }
 </tr>
 </table>
 
-</div> <!-- close vid -->
-
-<?php include("footer.inc");?>
-
+<!-------------------------------------------------------------- -->
+<?php include("inc_footer.inc"); ?>
+<!-------------------------------------------------------------- -->
+	</div><!close wrapper>
+</body>
+</html>

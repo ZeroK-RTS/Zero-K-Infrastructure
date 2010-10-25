@@ -1,10 +1,9 @@
-
 p {text-indent: 2em;}
 b {font-size: 110%; font-weight: bold; color: #fff;}
 i {}
 
 h1 {font-size: 170%; color: #fff;}
-h2 {font-size: 140%; color: #cee; text-indent: .5em;}
+h2 {font-size: 140%; color: #cee;}
 h3 {}
 
 a {color: #38bfec; text-decoration: none;}
@@ -27,7 +26,6 @@ input
 {
 	color: #cbd3d4; 
 	background: none;
-	-moz-border-image: url("img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
 	padding: 3px;
 }
 
@@ -35,15 +33,19 @@ ul.points {list-style-type: circle;}
 
 ul.poll {list-style-type: none; text-indent: -3em;}
 
+.indent {text-indent: 2em;}
+
 .border
 {
-	-moz-border-image: url("img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
+	border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
+	-moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
+	-webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
 	margin: 5px;
 }
 /*
 .border:hover
 {
-	-moz-border-image: url("img/spiral.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
+	-moz-border-image: url("../img/spiral.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
 	margin: 5px;
 }
 */
