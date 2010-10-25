@@ -12,11 +12,9 @@ namespace ZeroKLobby.MicroLobby
     {
         const int WM_MOUSEWHEEL = 0x20A;
 
-        UIElement filterForm;
 
-        public ScrollMessageFilter(UIElement filterForm)
+        public ScrollMessageFilter()
         {
-            this.filterForm = filterForm;
         }
 
 

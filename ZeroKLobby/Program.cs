@@ -154,7 +154,7 @@ namespace ZeroKLobby
 
 				MainWindow = new MainWindow();
 
-				Application.AddMessageFilter(new ScrollMessageFilter(null)); // hack FormMain));
+				Application.AddMessageFilter(new ScrollMessageFilter()); 
 
 				if (Conf.StartMinimized) MainWindow.WindowState = WindowState.Minimized;
 				else MainWindow.WindowState = WindowState.Normal;
