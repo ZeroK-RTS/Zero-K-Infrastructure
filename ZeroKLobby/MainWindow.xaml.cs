@@ -14,6 +14,7 @@ using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
+using MessageBox = System.Windows.MessageBox;
 using Size = System.Drawing.Size;
 
 namespace ZeroKLobby
@@ -155,14 +156,9 @@ namespace ZeroKLobby
 		{
 			if (Dispatcher.CheckAccess())
 			{
-				Visibility = Visibility.Visible;
-				WindowState = WindowState.Minimized;
-				Visibility = Visibility.Visible;
-				;
-				WindowState = lastState;
+				if (WindowState == WindowState.Minimized) WindowState = lastState;
+				Show();
 				Focus();
-				Topmost = true;
-				Topmost = false;
 			}
 			else InvokeFunc(PopupSelf);
 		}
