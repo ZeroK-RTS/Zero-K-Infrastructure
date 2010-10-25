@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Forms;
 using ZeroKLobby.MicroLobby;
+using Application = System.Windows.Forms.Application;
+using Point = System.Drawing.Point;
 
 namespace ZeroKLobby.ToolTips
 {
@@ -92,10 +95,10 @@ namespace ZeroKLobby.ToolTips
 
     	void RefreshToolTip(bool invalidate, bool doActiveWindowCheck)
         {
-            if (Program.FormMain != null && Program.FormMain.IsHandleCreated && !Program.CloseOnNext && Program.FormMain.Visible &&
-                Program.FormMain.WindowState != FormWindowState.Minimized)
+            if (Program.MainWindow != null && Program.MainWindow.IsLoaded && !Program.CloseOnNext && Program.MainWindow.IsVisible &&
+                Program.MainWindow.WindowState != WindowState.Minimized)
             {
-                var control = Utils.GetHoveredControl(Program.FormMain);
+                var control = Utils.GetHoveredControl(Program.MainWindow); // hack here
                 string text = null;
                 if (control != null) tooltips.TryGetValue(control, out text);
 
@@ -107,7 +110,7 @@ namespace ZeroKLobby.ToolTips
                         tooltip.Dispose();
                     }
 
-                    if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == (int)Program.FormMain.Handle;
+										if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == 0; // hack (int)interHandle;
 
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive)
                     {
@@ -123,7 +126,7 @@ namespace ZeroKLobby.ToolTips
                 {
                     var mp = Control.MousePosition;
 
-                    var scr = Screen.GetWorkingArea(Program.FormMain);
+										var scr = Screen.GetWorkingArea(null); // Program.MainWindow
                     //need screen0's bounds because SetDesktopLocation is relative to screen0.
                     var scr1 = Screen.AllScreens[0].WorkingArea;
                     var scr1B = Screen.AllScreens[0].Bounds;

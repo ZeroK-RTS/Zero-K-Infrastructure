@@ -42,7 +42,7 @@ namespace ZeroKLobby.Notifications
 		{
 			if (e.WorkTotal > 1)
 			{
-				Program.FormMain.Invoke(new Action(() =>
+				Program.MainWindow.Dispatcher.Invoke(new Action(() =>
 					{
 						Program.NotifySection.AddBar(this);
 						progressBar1.Maximum = e.WorkTotal;
@@ -56,7 +56,7 @@ namespace ZeroKLobby.Notifications
 
 		void scanner_WorkStopped(object sender, EventArgs e)
 		{
-			Program.FormMain.Invoke(new Action(() => Program.NotifySection.RemoveBar(this)));
+			Program.MainWindow.Dispatcher.Invoke(new Action(() => Program.NotifySection.RemoveBar(this)));
 		}
 	}
 }

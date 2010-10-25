@@ -187,7 +187,7 @@ namespace ZeroKLobby.MicroLobby
 													var pmControl = GetPrivateMessageControl(name) ?? CreatePrivateMessageControl(name);
 													pmControl.AddLine(new SaidLine(name, text, time));
 													toolTabs.Flash(name);
-													FormMain.Instance.NotifyUser(string.Format("{0}: {1}", name, text), false, true);
+													MainWindow.Instance.NotifyUser(string.Format("{0}: {1}", name, text), false, true);
 												}
 												else
 												{
@@ -220,7 +220,7 @@ namespace ZeroKLobby.MicroLobby
 										if (e.UserName != Program.TasClient.MyUser.Name)
 										{
 											toolTabs.Hilite(otherUserName);
-											FormMain.Instance.NotifyUser(string.Format("{0}: {1}", otherUserName, e.Text), false, true);
+											MainWindow.Instance.NotifyUser(string.Format("{0}: {1}", otherUserName, e.Text), false, true);
 										}
 									}
                 

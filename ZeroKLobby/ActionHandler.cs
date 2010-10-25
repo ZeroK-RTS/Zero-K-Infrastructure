@@ -31,7 +31,7 @@ namespace ZeroKLobby
 		/// </summary>
 		public static void CloseChannel(string key)
 		{
-			Program.FormMain.ChatTab.CloseTab(key);
+			Program.MainWindow.ChatTab.CloseTab(key);
 		}
 
 		/// <summary>
@@ -163,7 +163,7 @@ namespace ZeroKLobby
 		/// </summary>
 		public static void ShowLog()
 		{
-			Program.FormMain.DisplayLog();
+			Program.MainWindow.DisplayLog();
 		}
 
 

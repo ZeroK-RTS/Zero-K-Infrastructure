@@ -19,7 +19,8 @@ namespace ZeroKLobby
 			this.MainWindow = new MainWindow(); // this is  a hack to make wpf app not close after you open/close some other wpf window - wont be needed in full wpf app
 			this.MainWindow.Visibility = Visibility.Hidden;
 			Program.Initialize(e.Args);
-			this.Shutdown();
+			
+			//this.Shutdown();
 		}
 
 		private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)

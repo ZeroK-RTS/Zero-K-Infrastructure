@@ -425,8 +425,8 @@ namespace ZeroKLobby.MicroLobby
 				{
 					if (e.Text.Contains(Program.Conf.LobbyPlayerName))
 					{
-						FormMain.Instance.ChatTab.Flash(e.Channel);
-						FormMain.Instance.NotifyUser(string.Format("{0}: {1}", e.UserName, e.Text), false, true);
+						MainWindow.Instance.ChatTab.Flash(e.Channel);
+						MainWindow.Instance.NotifyUser(string.Format("{0}: {1}", e.UserName, e.Text), false, true);
 					}
 
 					if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));

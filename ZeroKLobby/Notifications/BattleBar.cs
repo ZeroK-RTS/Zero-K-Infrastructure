@@ -94,7 +94,7 @@ namespace ZeroKLobby.Notifications
 						Program.InfologWatcher.WatcherEnabled = true;
 					}
 
-					if (e.Data || IsHostGameRunning()) Program.FormMain.InvokeFunc(CreateReconnectBar);
+					if (e.Data || IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 				};
 
 			spring.SpringStarted += (s, e) =>
@@ -109,8 +109,8 @@ namespace ZeroKLobby.Notifications
 					if (Automatic) AutoRespond();
 					else
 					{
-						FormMain.Instance.NotifyUser("Someone demands your attention in battle room!", true, true);
-						FormMain.Instance.ChatTab.Flash("Battle");
+						MainWindow.Instance.NotifyUser("Someone demands your attention in battle room!", true, true);
+						MainWindow.Instance.ChatTab.Flash("Battle");
 					}
 				};
 			client.Said += (s, e) =>
@@ -145,7 +145,7 @@ namespace ZeroKLobby.Notifications
 					                                           	{
 					                                           		if (!Program.CloseOnNext)
 					                                           		{
-					                                           			Program.FormMain.Invoke(new Action(() =>
+					                                           			Program.MainWindow.Dispatcher.Invoke(new Action(() =>
 					                                           				{
 					                                           					var previousSide = cbSide.SelectedItem != null ? cbSide.SelectedItem.ToString() : null;
 					                                           					cbSide.Items.Clear();
@@ -215,7 +215,7 @@ namespace ZeroKLobby.Notifications
 					             	Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0,
 					             	TeamColor = Program.Conf.DefaultPlayerColorInt
 					             };
-					if (status.SyncStatus == SyncStatuses.Synced && IsHostGameRunning()) Program.FormMain.InvokeFunc(CreateReconnectBar);
+					if (status.SyncStatus == SyncStatuses.Synced && IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 					client.SendMyBattleStatus(status);
 				};
 
@@ -319,7 +319,7 @@ namespace ZeroKLobby.Notifications
 							client.ChangeMyBattleStatus(spectate:true);
 							
 							WarningBar.DisplayWarning("User was away for more than " + Program.Conf.IdleTime + " minutes: battle search changed to spectator.");
-							FormMain.Instance.NotifyUser("Away From Keyboard - setting mode to spectator", true, true);
+							MainWindow.Instance.NotifyUser("Away From Keyboard - setting mode to spectator", true, true);
 						}
 						else
 						{
@@ -527,7 +527,7 @@ namespace ZeroKLobby.Notifications
 				{
 					// if didnt have map and have now, set it
 					newStatus.SyncStatus = SyncStatuses.Synced;
-					if (IsHostGameRunning()) Program.FormMain.InvokeFunc(CreateReconnectBar);
+					if (IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 				}
 				else
 				{
@@ -572,7 +572,7 @@ namespace ZeroKLobby.Notifications
 						if (battle.NonSpectatorCount - idlerCount >= numMinValue.Value && !spring.IsRunning && !client.ExistingUsers[battle.Founder].IsInGame)
 						{
 							// even without idlers i can still play
-							FormMain.Instance.NotifyUser("Battle has enough people to start!", true, false);
+							MainWindow.Instance.NotifyUser("Battle has enough people to start!", true, false);
 							lastAlert = DateTime.Now;
 						}
 					}

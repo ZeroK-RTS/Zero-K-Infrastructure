@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
@@ -14,14 +15,14 @@ namespace ZeroKLobby.MicroLobby
     class BattleIconManager
     {
         readonly List<BattleIcon> battleIcons = new List<BattleIcon>();
-        Control control;
+        UIElement control;
         public IEnumerable<BattleIcon> BattleIcons { get { return battleIcons; } }
         public bool Running { get; set; }
         public event EventHandler<EventArgs<BattleIcon>> BattleAdded = delegate { };
         public event EventHandler<EventArgs<BattleIcon>> BattleChanged = delegate { };
         public event EventHandler<EventArgs<BattleIcon>> RemovedBattle = delegate { };
 
-        public BattleIconManager(Control control)
+        public BattleIconManager(UIElement control)
         {
             this.control = control;
             Program.TasClient.BattleFound += TasClient_BattleFound;
@@ -84,13 +85,13 @@ namespace ZeroKLobby.MicroLobby
 																													if (map != null && map.Name != battleIcon.Battle.MapName) return;
                                                        		Image image = null;
 																													if (minimap != null && minimap.Length != 0) image = Image.FromStream(new MemoryStream(minimap));
-                                                       		control.Invoke(new Action(() =>
+                                                       		control.Dispatcher.Invoke(new Action(() =>
                                                        			{
                                                        				battleIcon.MinimapImage = image;
                                                        				BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
                                                        			}));
                                                        	},
-                                                       a => control.Invoke(new Action(() =>
+                                                       a => control.Dispatcher.Invoke(new Action(() =>
                                                            {
                                                                if (battleIcon != null)
                                                                {

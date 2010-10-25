@@ -132,7 +132,7 @@ namespace ZeroKLobby.Notifications
 			{
 				var loginForm = new LoginForm();
 				loginForm.InfoText = text;
-				if (loginForm.ShowDialog(Program.FormMain) == DialogResult.Cancel)
+				if (loginForm.ShowDialog() == DialogResult.Cancel) // hack dialog Program.MainWindow
 				{
 					tasClientConnectCalled = false;
 					client.Disconnect();
@@ -142,7 +142,7 @@ namespace ZeroKLobby.Notifications
 				canRegister = loginForm.CanRegister;
 				Program.Conf.LobbyPlayerName = loginForm.LoginValue;
 				Program.Conf.LobbyPlayerPassword = loginForm.PasswordValue;
-				if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) MessageBox.Show(Program.FormMain, "Please fill player name and password", "Missing information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) MessageBox.Show("Please fill player name and password", "Missing information", MessageBoxButtons.OK, MessageBoxIcon.Information); // hack dialog Program.MainWindow
 			} while (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword));
 			Program.SaveConfig();
 			if (canRegister) client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);

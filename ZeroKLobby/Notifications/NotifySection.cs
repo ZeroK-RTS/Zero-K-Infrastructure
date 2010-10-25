@@ -21,7 +21,7 @@ namespace ZeroKLobby.Notifications
 			{
 				Controls.Add(new NotifyBarContainer(bar));
 				Height = Controls.OfType<Control>().Sum(x => x.Height);
-				Program.FormMain.Invalidate(true);
+				// hack Program.MainWindow.Invalidate(true);
 			}
 		}
 
@@ -30,7 +30,7 @@ namespace ZeroKLobby.Notifications
 			var container = Controls.OfType<NotifyBarContainer>().Where(x => x.BarContent == bar).SingleOrDefault();
 			if (container != null) Controls.Remove(container);
 			Height = Controls.OfType<Control>().Sum(x => x.Height);
-			Program.FormMain.Invalidate(true);
+			// hack Program.MainWindow.Invalidate(true);
 		}
 
 		void NotifySection_Load(object sender, EventArgs e)

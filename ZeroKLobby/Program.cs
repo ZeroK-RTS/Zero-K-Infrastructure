@@ -7,6 +7,7 @@ using System.Net;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using System.Xml.Serialization;
@@ -15,6 +16,8 @@ using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZeroKLobby.ToolTips;
+using Application = System.Windows.Forms.Application;
+using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace ZeroKLobby
 {
@@ -32,14 +35,13 @@ namespace ZeroKLobby
 		public static ConnectBar ConnectBar { get; private set; }
 		public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
 		public static bool FirstRun { get; private set; }
-		public static FormMain FormMain { get; private set; }
+		public static MainWindow MainWindow { get; private set; }
 		public static FriendManager FriendManager;
 		public static SpringInfologWatcher InfologWatcher { get; private set; }
 		public static bool IsCrash;
-		public static bool IsNoUpdate { get; private set; }
 		public static ModStore ModStore { get; private set; }
 		public static NewSpringBar NewSpringBar { get; private set; }
-		public static NotifySection NotifySection { get { return FormMain.NotifySection; } }
+		public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
 		public static QuickMatchTracking QuickMatchTracker { get; private set; }
 		public static SayCommandHandler SayCommandHandler { get; private set; }
 		public static SpringPaths SpringPaths { get; private set; }
@@ -48,6 +50,8 @@ namespace ZeroKLobby
 		public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
 		public static TasClient TasClient { get; private set; }
 		public static ToolTipHandler ToolTip;
+
+		
 
 		[STAThread]
 		public static void Initialize(string[] args)
@@ -145,14 +149,14 @@ namespace ZeroKLobby
 
 				Application.AddMessageFilter(ToolTip);
 
-				FormMain = new FormMain();
+				MainWindow = new MainWindow();
 
-				Application.AddMessageFilter(new ScrollMessageFilter(FormMain));
+				Application.AddMessageFilter(new ScrollMessageFilter(null)); // hack FormMain));
 
-				if (Conf.StartMinimized) FormMain.WindowState = FormWindowState.Minimized;
-				else FormMain.WindowState = FormWindowState.Normal;
+				if (Conf.StartMinimized) MainWindow.WindowState = WindowState.Minimized;
+				else MainWindow.WindowState = WindowState.Normal;
 
-				BattleIconManager = new BattleIconManager(FormMain);
+				BattleIconManager = new BattleIconManager(MainWindow);
 				BattleBar = new BattleBar();
 				NewVersionBar = new NewVersionBar();
 				NewSpringBar = new NewSpringBar(TasClient);
@@ -160,7 +164,7 @@ namespace ZeroKLobby
 				if (Conf.ConnectOnStartup) ConnectBar.TryToConnectTasClient();
 				else NotifySection.AddBar(ConnectBar);
 
-				Application.Run(FormMain);
+				System.Windows.Application.Current.Run(MainWindow);
 
 				ToolTip.Dispose();
 				Downloader.Dispose();
@@ -280,7 +284,7 @@ namespace ZeroKLobby
 
 		static void TasClientInvoker(TasClient.Invoker a)
 		{
-			if (!CloseOnNext) FormMain.Invoke(a);
+			if (!CloseOnNext) MainWindow.Dispatcher.Invoke(a);
 		}
 
 		static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)

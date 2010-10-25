@@ -41,7 +41,7 @@ namespace ZeroKLobby.Notifications
 				if ((updateInfo = deployment.CheckForDetailedUpdate()) != null && updateInfo.UpdateAvailable)
 				{
 					if (updateInfo.IsUpdateRequired) barHidden = false;
-					if (!barHidden) Program.FormMain.InvokeFunc(() =>
+					if (!barHidden) Program.MainWindow.InvokeFunc(() =>
 						{
 							lbText.Text = string.Format("Updating to Zero-K lobby {0}", updateInfo.AvailableVersion);
 							Program.NotifySection.AddBar(this);
@@ -81,7 +81,7 @@ namespace ZeroKLobby.Notifications
 
 		void deployment_UpdateCompleted(object sender, AsyncCompletedEventArgs e)
 		{
-			if (!barHidden) Program.FormMain.InvokeFunc(() =>
+			if (!barHidden) Program.MainWindow.InvokeFunc(() =>
 				{
 					if (!e.Cancelled && e.Error == null)
 					{
@@ -99,7 +99,7 @@ namespace ZeroKLobby.Notifications
 
 		void deployment_UpdateProgressChanged(object sender, DeploymentProgressChangedEventArgs e)
 		{
-			if (!barHidden) Program.FormMain.InvokeFunc(() => { progressBar1.Value = e.ProgressPercentage; });
+			if (!barHidden) Program.MainWindow.InvokeFunc(() => { progressBar1.Value = e.ProgressPercentage; });
 		}
 	}
 }

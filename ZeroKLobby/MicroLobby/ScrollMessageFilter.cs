@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Windows;
 using System.Windows.Forms;
 using ZeroKLobby;
 
@@ -11,9 +12,9 @@ namespace ZeroKLobby.MicroLobby
     {
         const int WM_MOUSEWHEEL = 0x20A;
 
-        Form filterForm;
+        UIElement filterForm;
 
-        public ScrollMessageFilter(Form filterForm)
+        public ScrollMessageFilter(UIElement filterForm)
         {
             this.filterForm = filterForm;
         }

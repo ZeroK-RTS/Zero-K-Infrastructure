@@ -31,7 +31,7 @@ namespace ZeroKLobby.MicroLobby
 					item.Click += (s, e) =>
 						{
 							var botColor = botStatus.TeamColorRGB;
-							var colorDialog = new ColorDialog { Color = Color.FromArgb(botColor[0], botColor[1], botColor[2]), Site = Program.FormMain.ChatTab.Site };
+							var colorDialog = new ColorDialog { Color = Color.FromArgb(botColor[0], botColor[1], botColor[2]), Site = Program.MainWindow.ChatTab.Site };
 							if (colorDialog.ShowDialog() == DialogResult.OK)
 							{
 								var newColor = (int)(MyCol)colorDialog.Color;
@@ -232,7 +232,7 @@ namespace ZeroKLobby.MicroLobby
 								if (Program.TasClient.MyBattle == null) return;
 								var myColor = Program.TasClient.MyBattleStatus.TeamColorRGB;
 								var colorDialog = new ColorDialog { Color = Color.FromArgb(myColor[0], myColor[1], myColor[2]) };
-								colorDialog.Site = Program.FormMain.ChatTab.Site;
+								colorDialog.Site = Program.MainWindow.ChatTab.Site;
 								if (colorDialog.ShowDialog() == DialogResult.OK)
 								{
 									var newColor = (int)(MyCol)colorDialog.Color;
@@ -450,7 +450,7 @@ namespace ZeroKLobby.MicroLobby
 							form.Dispose();
 							optionsControl.Dispose();
 						};
-					form.Show(Program.FormMain);
+					form.Show();//hack show Program.FormMain
 				};
 			return modOptions;
 		}

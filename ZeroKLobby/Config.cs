@@ -4,11 +4,13 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
+using System.Windows;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 using PlasmaDownloader;
 using PlasmaShared;
+using FontStyle = System.Drawing.FontStyle;
 
 namespace ZeroKLobby
 {
@@ -238,7 +240,7 @@ namespace ZeroKLobby
 		public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
 
 
-		public FormWindowState LastWindowState { get; set; }
+		public WindowState LastWindowState { get; set; }
 
 
 		public void UpdateFadeColor()
