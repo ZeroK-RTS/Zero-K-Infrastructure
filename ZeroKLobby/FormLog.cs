@@ -36,7 +36,8 @@ namespace ZeroKLobby
             lock (locker)
             {
                 if (isError) foreach (var o in args.OfType<Exception>()) ErrorHandling.HandleException(o, false);
-                lines.Add(new TraceLine(isError, string.Format(text, args)));
+								if (args != null && args.Length > 0) text = string.Format(text, args);
+								lines.Add(new TraceLine(isError, text));
             }
         }
 
