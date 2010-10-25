@@ -12,16 +12,18 @@ namespace CMissionLib
 	public class Trigger : PropertyChanged, INamed
 	{
 		string name = "Trigger";
+		string folder;
 
-		ObservableCollection<TriggerLogic> logic = new ObservableCollection<TriggerLogic>
-			{
-				new DummyCondition(),
-				new DummyAction(),
-			};
+		ObservableCollection<TriggerLogic> logic = new ObservableCollection<TriggerLogic>();
 
 		int maxOccurrences = 1;
 		bool enabled = true;
 		double probability = 1;
+
+
+		bool isExpanded = true;
+
+		
 
 		[DataMember]
 		public double Probability
@@ -86,7 +88,7 @@ namespace CMissionLib
 
 		public IEnumerable<Condition> Conditions
 		{
-			get { return logic.OfType<Condition>(); }
+			get { return logic.AsQueryable().OfType<Condition>(); }
 		}
 
 		public override string ToString()
@@ -97,6 +99,29 @@ namespace CMissionLib
 		public IEnumerable<UnitStartInfo> AllUnits
 		{
 			get { return logic.OfType<CreateUnitsAction>().SelectMany(a => a.Units); }
+		}
+
+		[DataMember]
+		public bool IsExpanded
+		{
+			get { return isExpanded; } 
+			set
+			{
+				isExpanded = value;
+				RaisePropertyChanged("IsExpanded");
+			}
+		}
+
+
+		[DataMember]
+		public string Folder
+		{
+			get { return folder; } 
+			set
+			{
+				folder = value;
+				RaisePropertyChanged("Folder");
+			}
 		}
 
 		public LuaTable GetLuaMap(Mission mission)

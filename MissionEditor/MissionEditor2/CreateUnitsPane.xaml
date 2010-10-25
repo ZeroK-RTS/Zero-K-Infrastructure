@@ -78,8 +78,13 @@
             </ad:ResizingPanel>
 
 
-            <local:ZoomControl>
-                <Canvas x:Name="unitCanvas" MouseDown="unitCanvas_MouseDown" PreviewMouseUp="unitCanvas_PreviewMouseUp" PreviewMouseMove="unitCanvas_PreviewMouseMove">
+            <local:ZoomControl Background="White">
+                <Canvas x:Name="unitCanvas" 
+                        MouseDown="unitCanvas_MouseDown" 
+                        PreviewMouseUp="unitCanvas_PreviewMouseUp" 
+                        PreviewMouseMove="unitCanvas_PreviewMouseMove"
+                        Width="{Binding Mission.Map.Texture.Width, Source={x:Static local:MainWindow.Instance}}"
+                        Height="{Binding Mission.Map.Texture.Height, Source={x:Static local:MainWindow.Instance}}">
                     <Canvas.Background>
                         <ImageBrush AlignmentX="Left" AlignmentY="Top" Stretch="None" ImageSource="{Binding Mission.Map.Texture, Source={x:Static local:MainWindow.Instance}}" />
                     </Canvas.Background>

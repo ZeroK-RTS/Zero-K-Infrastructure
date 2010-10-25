@@ -11,12 +11,11 @@ namespace ZeroKLobby.MicroLobby
 	/// </summary>
 	public partial class MissionControl: UserControl, INavigatable
 	{
-		MissionServiceClient client = new MissionServiceClient();
+		MissionServiceClient client;
 
 		public MissionControl()
 		{
 			InitializeComponent();
-			client.GetMissionByIDCompleted += client_GetMissionByIDCompleted;
 		}
 
 		void client_GetMissionByIDCompleted(object sender, ServiceReference.GetMissionByIDCompletedEventArgs e)
@@ -71,6 +70,12 @@ namespace ZeroKLobby.MicroLobby
 			e.Cancel = true;
 			var url = parts[0].Replace("zerok://", String.Empty);
 			webBrowser.Navigate(url);
+		}
+
+		private void webBrowser_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			client = new MissionServiceClient();
+			client.GetMissionByIDCompleted += client_GetMissionByIDCompleted;
 		}
 	}
 }

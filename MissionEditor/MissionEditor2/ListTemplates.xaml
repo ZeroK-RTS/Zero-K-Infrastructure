@@ -112,6 +112,10 @@
             </TextBlock>
         </DataTemplate>
 
+        <DataTemplate x:Key="Trigger">
+            <local:TriggerSettingsControl />
+        </DataTemplate>
+
         <DataTemplate x:Key="DestroyUnitsAction">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Label>Group of units to destroy:</Label>

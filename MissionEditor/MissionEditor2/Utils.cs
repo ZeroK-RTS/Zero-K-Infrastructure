@@ -59,7 +59,7 @@ namespace MissionEditor2
 				};
 			list.SelectionChanged += onSelectionChanged;
 			// this needs to be done before "Unloaded" because at that point the items will have been all deselected
-			MainWindow.Instance.LogicGrid.SelectionChanged += (s, e) => list.SelectionChanged -= onSelectionChanged;
+			MainWindow.Instance.LogicGrid.SelectedItemChanged += (s, e) => list.SelectionChanged -= onSelectionChanged;
 		}
 
 		public static FrameworkElement FindTag(this DependencyObject obj, string tag)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,6 +32,11 @@ namespace MissionEditor2
 			InitializeComponent();
 			springExeBox.Loaded += (s, ea) => UpdateDialog();
 			springExeBox.TextChanged += (s, ea) => UpdateDialog();
+			if (ApplicationDeployment.IsNetworkDeployed)
+			{
+				Title += " " + ApplicationDeployment.CurrentDeployment.CurrentVersion;
+			}
+				
 		}
 
 
@@ -155,7 +161,7 @@ namespace MissionEditor2
 					}
 
 					loadingDialog.Text = "Finalizing";
-					mission.RestoreReferences();
+					mission.PostLoad();
 					Settings.Default.MissionPath = fileName;
 					Settings.Default.Save();
 					loadingDialog.Invoke(delegate

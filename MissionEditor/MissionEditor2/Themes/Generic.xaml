@@ -8,9 +8,9 @@
                 <ControlTemplate TargetType="local:ZoomControl">
                     <Grid Background="{TemplateBinding Background}">
                         <Grid x:Name="transformationGrid">
-                            <Grid.LayoutTransform>
+                            <Grid.RenderTransform>
                                 <MatrixTransform x:Name="matrixTransform" />
-                            </Grid.LayoutTransform>
+                            </Grid.RenderTransform>
                             <ContentPresenter x:Name="contentPresenter" />
                         </Grid>
                         <Grid HorizontalAlignment="Left" VerticalAlignment="Top">

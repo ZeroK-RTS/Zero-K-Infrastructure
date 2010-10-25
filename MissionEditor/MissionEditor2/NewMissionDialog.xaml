@@ -19,6 +19,11 @@
             </UniformGrid>
             <ProgressBar Name="ProgressBar" x:FieldModifier="public" IsIndeterminate="True" Visibility="Hidden"/>
         </DockPanel>
+        <TextBlock DockPanel.Dock="Bottom">
+            <Hyperlink NavigateUri="http://code.google.com/p/zero-k/updates/list" RequestNavigate="Hyperlink_RequestNavigate">
+                        View Compatibility Issues
+            </Hyperlink>
+        </TextBlock>
         <UniformGrid Rows="1" Columns="2">
             <GroupBox  Grid.Row="1" Grid.Column="0" Header="Maps">
                     <ListBox Name="MapList" x:FieldModifier="public" MouseUp="MapList_MouseDown"/>

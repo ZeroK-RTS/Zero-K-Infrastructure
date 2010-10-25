@@ -79,7 +79,7 @@ namespace MissionEditor2
 				};
 			dataGrid.SelectionChanged += handler;
 			// this needs to be done before "Unloaded" because at that point the items will have been all deselected
-			MainWindow.Instance.LogicGrid.SelectionChanged += (s, ea) => dataGrid.SelectionChanged -= handler;
+			MainWindow.Instance.LogicGrid.SelectedItemChanged += (s, ea) => dataGrid.SelectionChanged -= handler;
 		}
 
 

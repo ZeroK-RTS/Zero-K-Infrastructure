@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -47,6 +48,17 @@ namespace MissionEditor2
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			CheckReadiness();
+		}
+
+		private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+		{
+			try
+			{
+				Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+				e.Handled = true;
+			}
+			catch { }
+
 		}
     }
 }

@@ -11,6 +11,7 @@ using System.Windows.Shapes;
 using CMissionLib;
 using CMissionLib.Actions;
 using Action = System.Action;
+using Trigger = CMissionLib.Trigger;
 
 namespace MissionEditor2
 {
@@ -22,11 +23,11 @@ namespace MissionEditor2
 		DragInfo dragInfo;
 		GiveOrdersAction action;
 		DateTime canvasMouseDownDate;
+		Trigger trigger;
 
 		public GiveOrdersPane()
 		{
 			InitializeComponent();
-			action = (GiveOrdersAction)MainWindow.Instance.CurrentLogic;
 		}
 
 		void OrderMouseDown(object sender, MouseButtonEventArgs eventArgs)
@@ -141,7 +142,6 @@ namespace MissionEditor2
 
 		void UpdateLines()
 		{
-			var trigger = MainWindow.Instance.CurrentTrigger;
 
 			foreach (var child in canvas.Children.Cast<UIElement>().Where(e => !(e is Border)).ToArray())
 			{
@@ -189,7 +189,8 @@ namespace MissionEditor2
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			var trigger = MainWindow.Instance.CurrentTrigger;
+			action = (GiveOrdersAction)MainWindow.Instance.CurrentLogic;
+			trigger = MainWindow.Instance.Mission.FindLogicOwner(action);
 
 			var missionUnits = MainWindow.Instance.Mission.AllUnits.ToArray();
 			var triggerUnits = trigger.AllUnits.ToArray();

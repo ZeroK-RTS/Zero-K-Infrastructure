@@ -32,23 +32,23 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Label Grid.Row="0">Name</Label>
-            <Label Grid.Row="1">Author</Label>
-            <Label Grid.Row="2">Description</Label>
-            <Label Grid.Row="3">Map</Label>
-            <Label Grid.Row="4">Mod</Label>
-            <Label Grid.Row="5">Starting Player</Label>
-            <Label Grid.Row="6">Scoring Explanation</Label>
-            <Label Grid.Row="7" Visibility="Collapsed">Starting Metal</Label>
-            <Label Grid.Row="8" Visibility="Collapsed">Starting Energy</Label>
             <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="2" />
+            <Label Grid.Row="1">Author</Label>
             <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Author}" Margin="2" />
-            <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Description}" AcceptsReturn="True" TextWrapping="WrapWithOverflow"
-          MinLines="2" Margin="2" VerticalScrollBarVisibility="Auto" />
+            <Label Grid.Row="2">Description</Label>
+            <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Description}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" MinLines="2" Margin="2"
+                    VerticalScrollBarVisibility="Auto" />
+            <Label Grid.Row="3">Map</Label>
             <Button Grid.Column="1" Grid.Row="3" Content="{Binding Map}" x:Name="MapButton" x:FieldModifier="public" Margin="2" Click="MapButton_Click" />
+            <Label Grid.Row="4">Mod</Label>
             <Button Grid.Column="1" Grid.Row="4" Content="{Binding Mod}" x:Name="ModButton" x:FieldModifier="public" Margin="2" Click="ModButton_Click" />
+            <Label Grid.Row="5">Starting Player</Label>
             <ComboBox Grid.Column="1" Grid.Row="5" ItemsSource="{Binding Players}" SelectedItem="{Binding StartingPlayer}" Margin="2" />
-            <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding ScoringMethod}" Margin="2" AcceptsReturn="True"/>
-            <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding StartingMetal}" Margin="2" Visibility="Collapsed" />
+            <Label Grid.Row="6">Scoring Explanation</Label>
+            <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding ScoringMethod}" Margin="2" AcceptsReturn="True" />
+            <Label Grid.Row="7" >Rapid Tag</Label>
+            <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding RapidTag}" Margin="2"/>
+            <Label Grid.Row="8" Visibility="Collapsed">Starting Energy</Label>
             <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding StartingEnergy}" Margin="2" Visibility="Collapsed"/>
         </Grid>
         <GroupBox Header="Players" Margin="0 0 2 0" Grid.Row="1">

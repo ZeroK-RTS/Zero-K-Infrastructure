@@ -33,7 +33,7 @@
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>25</ApplicationRevision>
+    <ApplicationRevision>27</ApplicationRevision>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -111,9 +111,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ActionsFolder.cs" />
     <Compile Include="AreaDragInfo.xaml.cs" />
     <Compile Include="CircleDragInfo.xaml.cs" />
+    <Compile Include="ConditionsFolder.cs" />
     <Compile Include="DragInfo.xaml.cs" />
+    <Compile Include="FolderConverter.cs" />
     <Compile Include="GiveFactoryOrdersPane.xaml.cs">
       <DependentUpon>GiveFactoryOrdersPane.xaml</DependentUpon>
     </Compile>
@@ -138,7 +141,11 @@
     <Compile Include="SpringSizeConverter.cs" />
     <Compile Include="StringRequest.xaml.cs" />
     <Compile Include="TranslateConverter.cs" />
-    <Compile Include="TriggerSettings.xaml.cs" />
+    <Compile Include="TriggerConverter.cs" />
+    <Compile Include="TriggerSettingsControl.xaml.cs">
+      <DependentUpon>TriggerSettingsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TriggersFolder.cs" />
     <Compile Include="UnitDefsGrid.xaml.cs" />
     <Compile Include="UnitEnteredAreaControl.xaml.cs">
       <DependentUpon>UnitEnteredAreaControl.xaml</DependentUpon>
@@ -260,9 +267,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="TriggerSettings.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="TriggerSettingsControl.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UnitDefsGrid.xaml">
       <Generator>MSBuild:Compile</Generator>
