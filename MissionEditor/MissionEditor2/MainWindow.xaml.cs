@@ -412,6 +412,8 @@ namespace MissionEditor2
 			var trigger = (Trigger)border.DataContext;
 			var menu = new ContextMenu();
 			menu.AddAction("New Trigger", AddNewTrigger);
+			menu.Items.Add(GetNewActionMenu(trigger));
+			menu.Items.Add(GetNewConditionMenu(trigger));
 			menu.Items.Add(new Separator());
 			menu.AddAction("Move Up", () => MoveTrigger(MoveDirection.Up, trigger));
 			menu.AddAction("Move Down", () => MoveTrigger(MoveDirection.Down, trigger));
@@ -426,9 +428,6 @@ namespace MissionEditor2
 			menu.AddAction("Expand All Triggers", ExpandAllTriggers);
 			menu.AddAction("Collapse All Triggers", CollapseAllTriggers);
 			menu.AddAction("Collapse All But This", () => CollapseAllButThisTrigger(trigger));
-			menu.Items.Add(new Separator());
-			menu.Items.Add(GetNewActionMenu(trigger));
-			menu.Items.Add(GetNewConditionMenu(trigger));
 			border.ContextMenu = menu;
 		}
 

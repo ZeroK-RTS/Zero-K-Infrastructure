@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Windows.Navigation;
 using ZeroKLobby.ServiceReference;
@@ -55,11 +56,13 @@ namespace ZeroKLobby.MicroLobby
 
 		void WebBrowser_Navigated(object sender, NavigationEventArgs e)
 		{
+			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 			NavigationControl.Instance.Path = e.Uri.OriginalString;
 		}
 
 		void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
 		{
+			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 			var parts = e.Uri.OriginalString.Split('@');
 			if (parts.Length < 2) return;
 			for (var i = 1; i < parts.Length; i++)
@@ -74,8 +77,10 @@ namespace ZeroKLobby.MicroLobby
 
 		private void webBrowser_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 			client = new MissionServiceClient();
 			client.GetMissionByIDCompleted += client_GetMissionByIDCompleted;
+			webBrowser.Source = new Uri("http://zero-k.info/Missions.mvc");
 		}
 	}
 }
