@@ -158,6 +158,7 @@ namespace ZeroKLobby
 			{
 				if (WindowState == WindowState.Minimized) WindowState = lastState;
 				Show();
+				Activate();
 				Focus();
 			}
 			else InvokeFunc(PopupSelf);
