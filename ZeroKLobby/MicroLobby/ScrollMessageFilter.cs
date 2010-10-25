@@ -25,13 +25,13 @@ namespace ZeroKLobby.MicroLobby
 
         public bool PreFilterMessage(ref Message m)
         {
-            if (m.Msg == WM_MOUSEWHEEL)
+            /*if (m.Msg == WM_MOUSEWHEEL)
             {
                 var control = Utils.GetHoveredControl(filterForm);
                 if (control is WebBrowser) return false;
 								SendMessage((int)control.Handle, m.Msg, (int)m.WParam, (int)m.LParam);
                 return true;
-            }
+            }*/
             return false;
         }
     }
