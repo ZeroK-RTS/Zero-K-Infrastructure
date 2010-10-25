@@ -50,7 +50,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			var pathString = String.Join("/", path);
 			if (!pathString.StartsWith(PathHead)) return false;
-			if (pathString != webBrowser.Source.OriginalString) webBrowser.Navigate(pathString);
+			if (webBrowser.Source != null && pathString != webBrowser.Source.OriginalString) webBrowser.Navigate(pathString);
 			return true;
 		}
 
