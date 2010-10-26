@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Windows.Navigation;
 using ZeroKLobby.ServiceReference;
 using UserControl = System.Windows.Controls.UserControl;
+using WebBrowser = System.Windows.Controls.WebBrowser;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -50,7 +51,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			var pathString = String.Join("/", path);
 			if (!pathString.StartsWith(PathHead)) return false;
-			if (webBrowser.Source != null && pathString != webBrowser.Source.OriginalString) webBrowser.Navigate(pathString);
+			if (WebBrowser.Source != null && pathString != WebBrowser.Source.OriginalString) WebBrowser.Navigate(pathString);
 			return true;
 		}
 
@@ -72,7 +73,7 @@ namespace ZeroKLobby.MicroLobby
 			}
 			e.Cancel = true;
 			var url = parts[0].Replace("zerok://", String.Empty);
-			webBrowser.Navigate(url);
+			WebBrowser.Navigate(url);
 		}
 
 		private void webBrowser_Loaded(object sender, System.Windows.RoutedEventArgs e)
@@ -80,14 +81,13 @@ namespace ZeroKLobby.MicroLobby
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 			client = new MissionServiceClient();
 			client.GetMissionByIDCompleted += client_GetMissionByIDCompleted;
-			webBrowser.Source = new Uri("http://zero-k.info/Missions.mvc");
+			WebBrowser.Source = new Uri("http://zero-k.info/Missions.mvc");
 		}
 
 		public void FocusWeb()
 		{
-			var document = (mshtml.HTMLDocument)webBrowser.Document;
+			var document = (mshtml.HTMLDocument)WebBrowser.Document;
 			document.focus();
 		}
-
 	}
 }

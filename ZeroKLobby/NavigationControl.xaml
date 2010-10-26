@@ -76,7 +76,7 @@
                 </WindowsFormsHost>
             </TabItem>
             <TabItem>
-                <MicroLobby:MissionControl/>
+                <MicroLobby:MissionControl x:Name="browserControl"/>
             </TabItem>
         </TabControl>
     </Grid>

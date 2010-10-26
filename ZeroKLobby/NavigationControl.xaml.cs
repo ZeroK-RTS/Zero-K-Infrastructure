@@ -30,6 +30,13 @@ namespace ZeroKLobby
 			}
 		}
 
+		NavigationStep _currentPage;
+		Stack<NavigationStep> backStack = new Stack<NavigationStep>();
+		Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
+		public WebBrowser Browser { get { return browserControl.WebBrowser; } }
+		public ChatTab ChatTab { get { return chatTab; } }
+		public static NavigationControl Instance { get; private set; }
+		public bool IsBrowserTabSelected { get { return tabControl.SelectedContent is MissionControl; } }
 		public string Path
 		{
 			get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
@@ -45,16 +52,16 @@ namespace ZeroKLobby
 			}
 		}
 
-		NavigationStep _currentPage;
-		Stack<NavigationStep> backStack = new Stack<NavigationStep>();
-		Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
-		public ChatTab ChatTab { get { return chatTab; } }
-		public static NavigationControl Instance { get; private set; }
-
 		public NavigationControl()
 		{
 			Instance = this;
 			InitializeComponent();
+		}
+
+
+		public WindowsFormsHost GetWindowsFormsHostOfCurrentTab()
+		{
+			return tabControl.SelectedContent as WindowsFormsHost;
 		}
 
 		INavigatable GetINavigatableFromControl(object obj)
@@ -62,12 +69,6 @@ namespace ZeroKLobby
 			if (obj is TabItem) obj = ((TabItem)obj).Content;
 			if (obj is WindowsFormsHost) obj = ((WindowsFormsHost)obj).Child;
 			return obj as INavigatable;
-		}
-
-
-		public WindowsFormsHost GetWindowsFormsHostOfCurrentTab()
-		{
-			return tabControl.SelectedContent as WindowsFormsHost;
 		}
 
 		void GoBack()
@@ -100,6 +101,41 @@ namespace ZeroKLobby
 
 		public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
+		void BattleListPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = "battles";
+		}
+
+		void ChatPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = "chat";
+		}
+
+		void DownloaderPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = "downloader";
+		}
+
+		void HelpPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = "help";
+		}
+
+		void MissionsPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = "http://zero-k.info/Missions.mvc";
+		}
+
+		void SettingsPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = "settings";
+		}
+
+		void StartPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = "start";
+		}
+
 		void TabItem_MouseUp(object sender, RoutedEventArgs e)
 		{
 			var navigatable = GetINavigatableFromControl(e.Source);
@@ -115,6 +151,11 @@ namespace ZeroKLobby
 			Path = "start";
 		}
 
+		void WidgetsPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = "widgets";
+		}
+
 		void backButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (CanGoBack) GoBack();
@@ -125,57 +166,7 @@ namespace ZeroKLobby
 			if (CanGoForward) GoForward();
 		}
 
-		class NavigationStep
-		{
-			public string[] Path { get; set; }
-
-			public override string ToString()
-			{
-				return string.Join("/", Path);
-			}
-		}
-
-		private void StartPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "start";
-		}
-
-		private void BattleListPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "battles";
-		}
-
-		private void ChatPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "chat";
-		}
-
-		private void HelpPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "help";
-		}
-
-		private void WidgetsPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "widgets";
-		}
-
-		private void DownloaderPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "downloader";
-		}
-
-		private void SettingsPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "settings";
-		}
-
-		private void MissionsPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "http://zero-k.info/Missions.mvc";
-		}
-
-		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (e.AddedItems.Count == 0) return;
 			var missions = ((TabItem)e.AddedItems[0]).Content as MissionControl;
@@ -189,6 +180,16 @@ namespace ZeroKLobby
 						Dispatcher.Invoke((Action)(missions.FocusWeb));
 					};
 				timer.Start();
+			}
+		}
+
+		class NavigationStep
+		{
+			public string[] Path { get; set; }
+
+			public override string ToString()
+			{
+				return string.Join("/", Path);
 			}
 		}
 	}
