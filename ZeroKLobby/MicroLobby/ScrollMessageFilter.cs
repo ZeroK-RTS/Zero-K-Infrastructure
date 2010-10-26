@@ -27,10 +27,28 @@ namespace ZeroKLobby.MicroLobby
             if (m.Msg == WM_MOUSEWHEEL)
             {
                 var control = MainWindow.Instance.GetHoveredControl();
-								if (control == null) return false;
-                if (control is WebBrowser) return false;
-								SendMessage((int)control.Handle, m.Msg, (int)m.WParam, (int)m.LParam);
-                return true;
+								if (control == null && Mouse.DirectlyOver == null && Program.MainWindow.navigationControl1.IsBrowserTabSelected)
+								{
+									var webBrowser = Program.MainWindow.navigationControl1.Browser;
+									mshtml.HTMLDocument htmlDoc = webBrowser.Document as mshtml.HTMLDocument;
+
+									int x = ((int)m.LParam << 16) >> 16;
+									int y = (int)m.LParam >> 16;
+									
+									var tl = webBrowser.PointToScreen(new Point(0, 0));
+									var br = webBrowser.PointToScreen(new Point(webBrowser.ActualWidth, webBrowser.ActualHeight));
+									if (new Rect(tl, br).Contains(new Point(x,y)))
+									{
+										int delta = ((int)m.WParam >> 16);
+										if (htmlDoc != null) htmlDoc.parentWindow.scrollBy(0, -delta);
+									}
+									return false;
+								}
+								else if (control != null)
+								{
+									SendMessage((int)control.Handle, m.Msg, (int)m.WParam, (int)m.LParam);
+									return true;
+								}
             }
             return false;
         }
