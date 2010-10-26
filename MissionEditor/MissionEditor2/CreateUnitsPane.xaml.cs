@@ -181,7 +181,6 @@ namespace MissionEditor2
 				unitCanvas.ReleaseMouseCapture();
 				dragInfo = null;
 			}
-			Debug.WriteLine(DateTime.Now - mouseDownDate);
 			if (unitDefGrid.Grid.SelectedItem != null && DateTime.Now - mouseDownDate < TimeSpan.FromMilliseconds(150) && e.ChangedButton == MouseButton.Left)
 			{
 				var unitType = (UnitInfo)unitDefGrid.Grid.SelectedItem;
@@ -209,6 +208,11 @@ namespace MissionEditor2
 				pos.X = SnapToGridX(currentPosition.X - dragInfo.MouseOrigin.X + dragInfo.ElementOrigin.X);
 				pos.Y = SnapToGridY(currentPosition.Y - dragInfo.MouseOrigin.Y + dragInfo.ElementOrigin.Y);
 			}
+		}
+
+		private void searchBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			unitDefGrid.GoToText(searchBox.Text);
 		}
 	}
 }

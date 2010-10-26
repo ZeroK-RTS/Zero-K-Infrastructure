@@ -25,6 +25,11 @@ namespace MissionEditor2
             InitializeComponent();
         }
 
+		private void MissionSettingsButton_Click(object sender, RoutedEventArgs e)
+		{
+			new MissionSettingsDialog().ShowDialog();
+		}
+
         
     }
 }

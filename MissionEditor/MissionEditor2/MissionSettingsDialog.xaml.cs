@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CMissionLib;
+using CMissionLib.Actions;
+using Microsoft.Win32;
 
 namespace MissionEditor2
 {
@@ -69,6 +71,21 @@ namespace MissionEditor2
 					Mission.RaisePropertyChanged("Alliances");
 				}
 			};
+		}
+
+		private void SelectImageButton_Click(object sender, RoutedEventArgs e)
+		{
+			var filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG|All files (*.*)|*.*";
+			var dialog = new OpenFileDialog { Filter = filter, RestoreDirectory = true };
+			if (dialog.ShowDialog() == true)
+			{
+				Mission.ImagePath = dialog.FileName;
+			}
+		}
+
+		private void ClearImageButton_Click(object sender, RoutedEventArgs e)
+		{
+			Mission.ImagePath = null;
 		}
     }
 }

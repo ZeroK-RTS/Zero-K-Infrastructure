@@ -8,7 +8,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using CMissionLib;
 using CMissionLib.UnitSyncLib;
 using MissionEditor2.Properties;
 using MissionEditor2.ServiceReference;
@@ -103,8 +105,16 @@ namespace MissionEditor2
 			var dialog = new PublishDialog { DataContext = mission };
 			dialog.OKButton.Click += delegate
 				{
-					SendMissionWithDialog(mission, dialog.PasswordBox.Password, missionID);
-					dialog.Close();
+					var error = mission.VerifyCanPublish();
+					if (error == null)
+					{
+						SendMissionWithDialog(mission, dialog.PasswordBox.Password, missionID);
+						dialog.Close();
+					} 
+					else
+					{
+						MessageBox.Show(error);
+					}
 				};
 			dialog.ShowDialog();
 		}
@@ -120,6 +130,7 @@ namespace MissionEditor2
 			           	ScoringMethod = mission.ScoringMethod,
 			           	Image = new byte[0],
 			           	Script = mission.GetScript(),
+						ModRapidTag = mission.RapidTag,
 			           };
 
 			info.Dependencies = String.Join(";", mission.Mod.Dependencies);
@@ -127,18 +138,29 @@ namespace MissionEditor2
 			var alliances = mission.Players.Select(p => p.Alliance).Distinct().ToList();
 			foreach (var player in mission.Players)
 			{
-				var missionSlot = new MissionSlot();
-				missionSlot.AiShortName = player.AIDll;
-				missionSlot.AiVersion = player.AIVersion;
-				missionSlot.AllyID = alliances.IndexOf(player.Alliance);
-				missionSlot.AllyName = player.Alliance;
-				missionSlot.IsHuman = player.IsHuman;
-				missionSlot.IsRequired = player.IsRequired;
-				missionSlot.TeamID = mission.Players.IndexOf(player);
-				missionSlot.TeamName = player.Name;
-				missionSlot.Color = (int)(MyCol)player.Color;
+				var missionSlot = new MissionSlot
+				                  {
+				                  	AiShortName = player.AIDll,
+				                  	AiVersion = player.AIVersion,
+				                  	AllyID = alliances.IndexOf(player.Alliance),
+				                  	AllyName = player.Alliance,
+				                  	IsHuman = player.IsHuman,
+				                  	IsRequired = player.IsRequired,
+				                  	TeamID = mission.Players.IndexOf(player),
+				                  	TeamName = player.Name,
+				                  	Color = (int)(MyCol)player.Color
+				                  };
 				info.MissionSlots.Add(missionSlot);
 			}
+
+			var image = File.ReadAllBytes(mission.ImagePath).ToImage(96, 96);
+			var pngEncoder = new PngBitmapEncoder();
+			pngEncoder.Frames.Add(BitmapFrame.Create(image));
+			var imageStream = new MemoryStream();
+			pngEncoder.Save(imageStream);
+			imageStream.Position = 0;
+			info.Image = imageStream.ToArray();
+			
 
 			if (ApplicationDeployment.IsNetworkDeployed) info.MissionEditorVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
 			using (var unitSync = new UnitSync(Settings.Default.SpringPath)) info.SpringVersion = unitSync.Version;

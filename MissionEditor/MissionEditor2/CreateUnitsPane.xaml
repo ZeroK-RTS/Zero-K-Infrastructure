@@ -1,6 +1,5 @@
 ﻿<UserControl x:Class="MissionEditor2.CreateUnitsPane" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock" xmlns:local="clr-namespace:MissionEditor2" Name="control"
-        Loaded="CreateUnitsPane_Loaded">
+        xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock" xmlns:local="clr-namespace:MissionEditor2" Name="control" Loaded="CreateUnitsPane_Loaded">
     <UserControl.Resources>
         <local:CsvConverter x:Key="csvConverter" />
 
@@ -23,7 +22,7 @@
             </Border>
         </DataTemplate>
 
-       
+
         <DataGrid x:Key="unitGrid" ItemsSource="{Binding LogicGrid.SelectedItem.Units, Source={x:Static local:MainWindow.Instance}}" AutoGenerateColumns="False"
                 IsSynchronizedWithCurrentItem="True" Background="White" VirtualizingStackPanel.IsVirtualizing="True">
             <DataGrid.Columns>
@@ -72,17 +71,20 @@
                     </ad:DockableContent>
                     <ad:DockableContent Title="Units" Content="{Binding Source={StaticResource unitGrid}}" />
                     <ad:DockableContent Title="Unit Defs">
-                        <local:UnitDefsGrid x:Name="unitDefGrid" Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" IsTabStop="true" />
+                        <DockPanel>
+                            <DockPanel DockPanel.Dock="Top">
+                                <Label DockPanel.Dock="Left">Search</Label>
+                                <TextBox x:Name="searchBox" TextChanged="searchBox_TextChanged" />
+                            </DockPanel>
+                            <local:UnitDefsGrid x:Name="unitDefGrid" Tag="{Binding Mission.Mod.UnitDefs, ElementName=window}" IsTabStop="true" />
+                        </DockPanel>
                     </ad:DockableContent>
                 </ad:DockablePane>
             </ad:ResizingPanel>
 
 
             <local:ZoomControl Background="White">
-                <Canvas x:Name="unitCanvas" 
-                        MouseDown="unitCanvas_MouseDown" 
-                        PreviewMouseUp="unitCanvas_PreviewMouseUp" 
-                        PreviewMouseMove="unitCanvas_PreviewMouseMove"
+                <Canvas x:Name="unitCanvas" MouseDown="unitCanvas_MouseDown" PreviewMouseUp="unitCanvas_PreviewMouseUp" PreviewMouseMove="unitCanvas_PreviewMouseMove"
                         Width="{Binding Mission.Map.Texture.Width, Source={x:Static local:MainWindow.Instance}}"
                         Height="{Binding Mission.Map.Texture.Height, Source={x:Static local:MainWindow.Instance}}">
                     <Canvas.Background>

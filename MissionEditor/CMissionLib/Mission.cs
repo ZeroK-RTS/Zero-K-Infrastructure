@@ -20,7 +20,7 @@ namespace CMissionLib
 	{
 		string author = "Default Author";
 		ObservableCollection<string> counters = new ObservableCollection<string>();
-		string description = "Default Mission";
+		string description = String.Empty;
 		ObservableCollection<string> disabledGadgets = new ObservableCollection<string>();
 		ObservableCollection<string> disabledUnits = new ObservableCollection<string>();
 		ObservableCollection<string> disabledWidgets = new ObservableCollection<string>();
@@ -39,6 +39,7 @@ namespace CMissionLib
 		int startingMetal = 1000;
 		Player startingPlayer = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true };
 		ObservableCollection<Trigger> triggers = new ObservableCollection<Trigger>();
+		string imagePath;
 		public IEnumerable<string> AllGroups
 		{
 			get
@@ -131,7 +132,7 @@ namespace CMissionLib
 		public string ModName { get { return modName; } set { modName = value; } }
 
 		[DataMember]
-		public string Name { get { return name; } set { name = !value.StartsWith("Mission: ") ? "Mission: " + value : value; } }
+		public string Name { get { return name; } set { name = value; } }
 		[DataMember]
 		public ObservableCollection<Player> Players { get { return players; } set { players = value; } }
 		[DataMember]
@@ -175,6 +176,17 @@ namespace CMissionLib
 		public IEnumerable<string> TriggerNames { get { return triggers.Cast<INamed>().Select(t => t.Name); } }
 		[DataMember]
 		public ObservableCollection<Trigger> Triggers { get { return triggers; } set { triggers = value; } }
+
+		[DataMember]
+		public string ImagePath
+		{
+			get { return imagePath; } 
+			set
+			{
+				imagePath = value;
+				RaisePropertyChanged("ImagePath");
+			}
+		}
 
 		public Mission(string name, Mod game, Map map)
 		{
@@ -477,6 +489,13 @@ namespace CMissionLib
 			sb.AppendFormat("\t\tSide={0};\n", Mod.Sides.First());
 			sb.AppendFormat("\t\tHandicap=0;\n");
 			sb.AppendLine("\t}");
+		}
+
+		public string VerifyCanPublish()
+		{
+			if (ImagePath == null || !File.Exists(ImagePath)) return "A mission image needs to be set in the Mission Settings dialog.";
+			if (String.IsNullOrEmpty(Description)) return "A description needs to be set in the Mission Settings dialog.";
+			return null;
 		}
 	}
 }

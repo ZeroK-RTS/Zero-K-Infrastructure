@@ -1,12 +1,11 @@
-﻿<Window x:Class="MissionEditor2.MissionSettingsDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-    Title="Mission Settings" WindowStyle="ToolWindow"
-    WindowStartupLocation="CenterScreen" Height="450" Width="750" x:Name="dialog">
+﻿<Window x:Class="MissionEditor2.MissionSettingsDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Mission Settings" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" Height="450" Width="750" x:Name="dialog">
     <Grid Margin="3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition />
             <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -46,10 +45,10 @@
             <ComboBox Grid.Column="1" Grid.Row="5" ItemsSource="{Binding Players}" SelectedItem="{Binding StartingPlayer}" Margin="2" />
             <Label Grid.Row="6">Scoring Explanation</Label>
             <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding ScoringMethod}" Margin="2" AcceptsReturn="True" />
-            <Label Grid.Row="7" >Rapid Tag</Label>
-            <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding RapidTag}" Margin="2"/>
+            <Label Grid.Row="7">Rapid Tag</Label>
+            <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding RapidTag}" Margin="2" />
             <Label Grid.Row="8" Visibility="Collapsed">Starting Energy</Label>
-            <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding StartingEnergy}" Margin="2" Visibility="Collapsed"/>
+            <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding StartingEnergy}" Margin="2" Visibility="Collapsed" />
         </Grid>
         <GroupBox Header="Players" Margin="0 0 2 0" Grid.Row="1">
             <DockPanel>
@@ -63,21 +62,20 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Button Click="ColorButton_Click">
-                                        <Rectangle Width="10" Height="10" Stretch="Fill" Fill="{Binding ColorBrush}" VerticalAlignment="Stretch"
-                        HorizontalAlignment="Stretch" />
+                                        <Rectangle Width="10" Height="10" Stretch="Fill" Fill="{Binding ColorBrush}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
                                     </Button>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridComboBoxColumn Header="AI"  SelectedItemBinding="{Binding AI}">
+                        <DataGridComboBoxColumn Header="AI" SelectedItemBinding="{Binding AI}">
                             <DataGridComboBoxColumn.EditingElementStyle>
                                 <Style TargetType="ComboBox">
-                                    <EventSetter Event="Loaded" Handler="AIBox_Loaded"/>
+                                    <EventSetter Event="Loaded" Handler="AIBox_Loaded" />
                                 </Style>
                             </DataGridComboBoxColumn.EditingElementStyle>
                             <DataGridComboBoxColumn.ElementStyle>
                                 <Style TargetType="ComboBox">
-                                    <EventSetter Event="Loaded" Handler="AIBox_Loaded"/>
+                                    <EventSetter Event="Loaded" Handler="AIBox_Loaded" />
                                 </Style>
                             </DataGridComboBoxColumn.ElementStyle>
                         </DataGridComboBoxColumn>
@@ -91,7 +89,19 @@
         <GroupBox Grid.Column="2" Grid.RowSpan="2" Header="Disabled Gadgets" Margin="2 0 2 0">
             <ListBox Name="GadgetsBox" x:FieldModifier="public" ItemsSource="{Binding Mod.Gadgets}" SelectionMode="Multiple" />
         </GroupBox>
-        <Button Grid.Row="2" Grid.Column="3" IsCancel="True" IsDefault="True" Width="70" Content="O_K" HorizontalAlignment="Right"
-        Margin="3" />
+        <GroupBox Header="Image" Grid.Column="3" Grid.RowSpan="2">
+            <StackPanel>
+                <Viewbox Width="96" Height="96">
+                    <Grid>
+                        <Image Source="{Binding ImagePath}"  />
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.FontSize="12">?</TextBlock>
+                    </Grid>
+                </Viewbox>
+                <TextBlock Margin="2">Image will appear as 96x96</TextBlock>
+                <Button Margin="2" Click="SelectImageButton_Click">Select</Button>
+                <Button Margin="2" Click="ClearImageButton_Click">Clear</Button>
+            </StackPanel>
+        </GroupBox>
+        <Button Grid.Row="2" Grid.Column="3" IsCancel="True" IsDefault="True" Width="70" Content="O_K" HorizontalAlignment="Right" Margin="3" />
     </Grid>
 </Window>
