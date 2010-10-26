@@ -4,6 +4,7 @@ using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Licho.Utils.Web;
+using ZkData;
 
 namespace PlasmaServer
 {
@@ -19,7 +20,7 @@ namespace PlasmaServer
 
 		protected void lqContentFiles_Selecting(object sender, LinqDataSourceSelectEventArgs e)
 		{
-			var db = new DbDataContext();
+			var db = new ZkDataContext();
 			e.Result =
 				db.ResourceContentFiles.Where(x => x.ResourceID == resourceID).ToList().Select(
 					x =>
@@ -37,7 +38,7 @@ namespace PlasmaServer
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			var db = new DbDataContext();
+			var db = new ZkDataContext();
 			if (!int.TryParse(Request["resourceID"], out resourceID)) {
 				resourceID = db.Resources.Single(x => x.InternalName == Request["name"]).ResourceID;
 			}
@@ -47,7 +48,7 @@ namespace PlasmaServer
 				var res = db.Resources.Where(x => x.ResourceID == resourceID).Single();
 				lbDetails.Text = string.Format("Download count: {0}<br/>\nFailed downloads (no links): {1}<br/>\n", res.DownloadCount, res.NoLinkDownloadCount);
 				lbName.Text = res.InternalName;
-				litLinks.Text = string.Join("<br/>", res.Dependencies.Select(x => x.NeedsInternalName).ToArray());
+				litLinks.Text = string.Join("<br/>", res.ResourceDependencies.Select(x => x.NeedsInternalName).ToArray());
 				litHashes.Text = string.Join("<br/>", res.ResourceSpringHashes.Select(x => string.Format("{0}: {1}", x.SpringVersion, x.SpringHash)).ToArray());
 
 				string name = res.InternalName.EscapePath();
@@ -69,7 +70,7 @@ namespace PlasmaServer
 			e.Cancel = true;
 			if ((bool?)Session["login"] == true)
 			{
-				var db = new DbDataContext();
+				var db = new ZkDataContext();
 				var todel = db.ResourceContentFiles.Single(x => x.Md5 == ((ResourceContentFile)e.OriginalObject).Md5);
 				Utils.SafeDelete(todel.GetTorrentPath());
 

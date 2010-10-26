@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using ZkData;
 
 #endregion
 
@@ -26,7 +27,7 @@ namespace PlasmaServer
         {
             InternalName = r.InternalName;
             ResourceType = r.TypeID;
-            Dependencies = r.Dependencies.Select(x => x.NeedsInternalName).ToList();
+            Dependencies = r.ResourceDependencies.Select(x => x.NeedsInternalName).ToList();
             SpringHashes =
                 r.ResourceSpringHashes.Select(x => new SpringHashEntry {SpringHash = x.SpringHash, SpringVersion = x.SpringVersion}).ToList();
         }

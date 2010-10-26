@@ -8,7 +8,7 @@
 <span class="mission-tile">
 	<h3>
 		<%=Html.Encode(mission.Name)%></h3>
-	<img src='<%=Url.Action("Img", new { id = mission.MissionID })%>' />
+	<img width='96' height='96' border='1' src='<%=Url.Action("Img", new { id = mission.MissionID })%>' />
 	Author:
 	<%=Html.Encode(mission.Account.Name)%>
 </span>

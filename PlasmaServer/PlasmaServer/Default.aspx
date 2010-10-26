@@ -52,7 +52,7 @@
 				<AlternatingRowStyle BackColor="White" />
 			</asp:GridView>
     	<asp:LinqDataSource ID="lqResources" runat="server" 
-				ContextTypeName="PlasmaServer.DbDataContext" EnableDelete="True" 
+				ContextTypeName="ZkData.ZkDataContext" EnableDelete="True" 
 						TableName="Resources" OnSelecting="lqResources_Selecting" 
 				ondeleting="lqResources_Deleting">
 			</asp:LinqDataSource>

@@ -48,7 +48,7 @@
 			</asp:GridView>
     
     	<asp:LinqDataSource ID="lqContentFiles" runat="server" 
-				ContextTypeName="PlasmaServer.DbDataContext" EnableDelete="True" 
+				ContextTypeName="ZkData.ZkDataContext" EnableDelete="True" 
 				onselecting="lqContentFiles_Selecting" TableName="ResourceContentFiles" 
 				ondeleting="lqContentFiles_Deleting">
 			</asp:LinqDataSource>

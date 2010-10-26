@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
+using ZkData;
 
 #endregion
 
@@ -51,7 +52,7 @@ namespace PlasmaServer
 		                                      out ResourceType resourceType,
 		                                      out string torrentFileName)
 		{
-			var db = new DbDataContext();
+			var db = new ZkDataContext();
 
 
 			var resource = db.Resources.SingleOrDefault(x => x.InternalName == internalName);
@@ -64,7 +65,7 @@ namespace PlasmaServer
 				return false;
 			}
 
-			dependencies = resource.Dependencies.Select(x => x.NeedsInternalName).ToList();
+			dependencies = resource.ResourceDependencies.Select(x => x.NeedsInternalName).ToList();
 			resourceType = resource.TypeID;
 
 			var bestOld = resource.ResourceContentFiles.FirstOrDefault(x => x.LinkCount == resource.ResourceContentFiles.Max(y => y.LinkCount));

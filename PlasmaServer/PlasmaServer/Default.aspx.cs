@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Licho.Utils.Web;
+using ZkData;
 
 namespace PlasmaServer
 {
@@ -18,7 +19,7 @@ namespace PlasmaServer
 
 		protected void lqResources_Selecting(object sender, LinqDataSourceSelectEventArgs e)
 		{
-			var db = new DbDataContext();
+			var db = new ZkDataContext();
 			e.Result = db.Resources.Where(x => SqlMethods.Like(x.InternalName, "%" + tbName.Text + "%")).OrderByDescending(x=>x.DownloadCount).Select(x => new
 			                                                                                                         	{
 			                                                                                                         		x.ResourceID,
@@ -51,7 +52,7 @@ namespace PlasmaServer
 		{
 			e.Cancel = true;
 			if ((bool?)Session["login"] == true) {
-				var db = new DbDataContext();
+				var db = new ZkDataContext();
 				var todel = db.Resources.Single(x=>x.InternalName == ((Resource)e.OriginalObject).InternalName);
 				todel.RemoveResourceFiles();
 

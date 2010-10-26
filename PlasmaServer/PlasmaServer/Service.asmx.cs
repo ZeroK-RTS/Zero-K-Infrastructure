@@ -7,6 +7,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web.Services;
+using ZkData;
 
 #endregion
 
@@ -24,7 +25,7 @@ namespace PlasmaServer
 		{
 			if (!IsAdmin(login, password)) return ReturnValue.InvalidLogin;
 
-			var db = new DbDataContext();
+			var db = new ZkDataContext();
 			var todel = db.Resources.SingleOrDefault(x => x.InternalName == internalName);
 			if (todel == null) return ReturnValue.ResourceNotFound;
 			todel.RemoveResourceFiles();
@@ -63,13 +64,13 @@ namespace PlasmaServer
 		[WebMethod]
 		public List<ResourceData> GetResourceList()
 		{
-			var db = new DbDataContext();
+			var db = new ZkDataContext();
 			return db.Resources.Select(r => new ResourceData(r)).ToList();
 		}
 
 		public static bool IsAdmin(string login, string password)
 		{
-			var db = new DbDataContext();
+			var db = new ZkDataContext();
 			return login == "Admin" && password == "Sux";
 		}
 
@@ -98,7 +99,7 @@ namespace PlasmaServer
 			if (latestVersion > apiVersion) throw new Exception("Obsolete PlasmaServer Client");
 			if (dependencies == null) dependencies = new List<string>();
 
-			var db = new DbDataContext();
+			var db = new ZkDataContext();
 
 			if (
 				db.Resources.Any(
@@ -130,16 +131,16 @@ namespace PlasmaServer
 				if (minimap != null) File.WriteAllBytes(string.Format("{0}.minimap.jpg", file), minimap);
 				if (metalMap != null) File.WriteAllBytes(string.Format("{0}.metalmap.jpg", file), metalMap);
 				if (heightMap != null) File.WriteAllBytes(string.Format("{0}.heightmap.jpg", file), heightMap);
-				File.WriteAllBytes(ResourceContentFile.GetTorrentPath(internalName, md5), torrentData);
+				File.WriteAllBytes(Extensions.GetTorrentPath(internalName, md5), torrentData);
 				File.WriteAllBytes(string.Format("{0}.metadata.xml.gz", file), serializedData);
 			}
 
-			if (!resource.Dependencies.Select(x => x.NeedsInternalName).Except(dependencies).Any()) {
+			if (!resource.ResourceDependencies.Select(x => x.NeedsInternalName).Except(dependencies).Any()) {
 				// new dependencies are superset
 				foreach (var depend in dependencies) {
 					// add missing dependencies
 					var s = depend;
-					if (!resource.Dependencies.Any(x => x.NeedsInternalName == s)) resource.Dependencies.Add(new Dependency {NeedsInternalName = depend});
+					if (!resource.ResourceDependencies.Any(x => x.NeedsInternalName == s)) resource.ResourceDependencies.Add(new ResourceDependency {NeedsInternalName = depend});
 				}
 			}
 
@@ -149,7 +150,7 @@ namespace PlasmaServer
 			}
 
 			resource.ResourceContentFiles.Add(new ResourceContentFile {FileName = archiveName, Length = length, Md5 = md5});
-			File.WriteAllBytes(ResourceContentFile.GetTorrentPath(internalName, md5), torrentData); // add new torrent file
+			File.WriteAllBytes(Extensions.GetTorrentPath(internalName, md5), torrentData); // add new torrent file
 			if (!resource.ResourceSpringHashes.Any(x => x.SpringVersion == springVersion)) resource.ResourceSpringHashes.Add(new ResourceSpringHash {SpringVersion = springVersion, SpringHash = springHash});
 
 			db.SubmitChanges();
@@ -164,7 +165,7 @@ namespace PlasmaServer
 
 		private static Resource FindResource(string md5, string internalName)
 		{
-			var db = new DbDataContext();
+			var db = new ZkDataContext();
 			Resource ret = null;
 			if (!string.IsNullOrEmpty(md5)) {
 				var r = db.ResourceContentFiles.SingleOrDefault(x => x.Md5 == md5);

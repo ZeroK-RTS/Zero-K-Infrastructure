@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Database Name="zero-k" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="ZkData.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Battle" Member="Battles">
     <Type Name="Battle">
@@ -165,7 +164,7 @@
       <Column Name="CampaignID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ModOptions" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
-      <Column Name="ModRapidTag" Member="ModRapidTag" Type="System.String" DbType="nvarchar(100)" IsDbGenerated="false" CanBeNull="true" IsPrimaryKey="false" />
+      <Column Name="ModRapidTag" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Association Name="Mission_MissionSlot" Member="MissionSlots" ThisKey="MissionID" OtherKey="MissionID" Type="MissionSlot" />
       <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
@@ -369,6 +368,45 @@
       <Column Name="RemoteIP" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="PlayerName" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ResourceDependency" Member="ResourceDependencies">
+    <Type Name="ResourceDependency">
+      <Column Name="ResourceID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NeedsInternalName" Type="System.String" DbType="varchar(250) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Resource_ResourceDependency" Member="Resource" ThisKey="ResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ResourceContentFile" Member="ResourceContentFiles">
+    <Type Name="ResourceContentFile">
+      <Column Name="ResourceID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Md5" Type="System.String" DbType="char(32) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Length" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="FileName" Type="System.String" DbType="nvarchar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Links" Type="System.String" DbType="text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="LinkCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Resource_ResourceContentFile" Member="Resource" ThisKey="ResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ResourceSpringHash" Member="ResourceSpringHashes">
+    <Type Name="ResourceSpringHash">
+      <Column Name="ResourceID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SpringVersion" Type="System.String" DbType="nvarchar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SpringHash" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Resource_ResourceSpringHash" Member="Resource" ThisKey="ResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Resource" Member="Resources">
+    <Type Name="Resource">
+      <Column Name="ResourceID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="InternalName" Type="System.String" DbType="nvarchar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="TypeID" Type="ResourceType" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="LastLinkCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="DownloadCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="NoLinkDownloadCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
+      <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
+      <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
     </Type>
   </Table>
 </Database>

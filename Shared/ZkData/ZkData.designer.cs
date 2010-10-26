@@ -52,6 +52,18 @@ namespace ZkData
     partial void InsertExceptionLog(ExceptionLog instance);
     partial void UpdateExceptionLog(ExceptionLog instance);
     partial void DeleteExceptionLog(ExceptionLog instance);
+    partial void InsertResourceDependency(ResourceDependency instance);
+    partial void UpdateResourceDependency(ResourceDependency instance);
+    partial void DeleteResourceDependency(ResourceDependency instance);
+    partial void InsertResourceContentFile(ResourceContentFile instance);
+    partial void UpdateResourceContentFile(ResourceContentFile instance);
+    partial void DeleteResourceContentFile(ResourceContentFile instance);
+    partial void InsertResourceSpringHash(ResourceSpringHash instance);
+    partial void UpdateResourceSpringHash(ResourceSpringHash instance);
+    partial void DeleteResourceSpringHash(ResourceSpringHash instance);
+    partial void InsertResource(Resource instance);
+    partial void UpdateResource(Resource instance);
+    partial void DeleteResource(Resource instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -337,6 +349,38 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<ExceptionLog>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ResourceDependency> ResourceDependencies
+		{
+			get
+			{
+				return this.GetTable<ResourceDependency>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ResourceContentFile> ResourceContentFiles
+		{
+			get
+			{
+				return this.GetTable<ResourceContentFile>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ResourceSpringHash> ResourceSpringHashes
+		{
+			get
+			{
+				return this.GetTable<ResourceSpringHash>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Resource> Resources
+		{
+			get
+			{
+				return this.GetTable<Resource>();
 			}
 		}
 	}
@@ -6125,6 +6169,876 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ResourceDependency")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class ResourceDependency : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ResourceID;
+		
+		private string _NeedsInternalName;
+		
+		private EntityRef<Resource> _Resource;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnResourceIDChanging(int value);
+    partial void OnResourceIDChanged();
+    partial void OnNeedsInternalNameChanging(string value);
+    partial void OnNeedsInternalNameChanged();
+    #endregion
+		
+		public ResourceDependency()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResourceID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ResourceID
+		{
+			get
+			{
+				return this._ResourceID;
+			}
+			set
+			{
+				if ((this._ResourceID != value))
+				{
+					if (this._Resource.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnResourceIDChanging(value);
+					this.SendPropertyChanging();
+					this._ResourceID = value;
+					this.SendPropertyChanged("ResourceID");
+					this.OnResourceIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NeedsInternalName", DbType="varchar(250) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string NeedsInternalName
+		{
+			get
+			{
+				return this._NeedsInternalName;
+			}
+			set
+			{
+				if ((this._NeedsInternalName != value))
+				{
+					this.OnNeedsInternalNameChanging(value);
+					this.SendPropertyChanging();
+					this._NeedsInternalName = value;
+					this.SendPropertyChanged("NeedsInternalName");
+					this.OnNeedsInternalNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_Resource", ThisKey="ResourceID", OtherKey="ResourceID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Resource Resource
+		{
+			get
+			{
+				return this._Resource.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._Resource.Entity;
+				if (((previousValue != value) 
+							|| (this._Resource.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resource.Entity = null;
+						previousValue.ResourceDependencies.Remove(this);
+					}
+					this._Resource.Entity = value;
+					if ((value != null))
+					{
+						value.ResourceDependencies.Add(this);
+						this._ResourceID = value.ResourceID;
+					}
+					else
+					{
+						this._ResourceID = default(int);
+					}
+					this.SendPropertyChanged("Resource");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Resource = default(EntityRef<Resource>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ResourceContentFile")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class ResourceContentFile : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ResourceID;
+		
+		private string _Md5;
+		
+		private int _Length;
+		
+		private string _FileName;
+		
+		private string _Links;
+		
+		private int _LinkCount;
+		
+		private EntityRef<Resource> _Resource;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnResourceIDChanging(int value);
+    partial void OnResourceIDChanged();
+    partial void OnMd5Changing(string value);
+    partial void OnMd5Changed();
+    partial void OnLengthChanging(int value);
+    partial void OnLengthChanged();
+    partial void OnFileNameChanging(string value);
+    partial void OnFileNameChanged();
+    partial void OnLinksChanging(string value);
+    partial void OnLinksChanged();
+    partial void OnLinkCountChanging(int value);
+    partial void OnLinkCountChanged();
+    #endregion
+		
+		public ResourceContentFile()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResourceID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ResourceID
+		{
+			get
+			{
+				return this._ResourceID;
+			}
+			set
+			{
+				if ((this._ResourceID != value))
+				{
+					if (this._Resource.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnResourceIDChanging(value);
+					this.SendPropertyChanging();
+					this._ResourceID = value;
+					this.SendPropertyChanged("ResourceID");
+					this.OnResourceIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Md5", DbType="char(32) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string Md5
+		{
+			get
+			{
+				return this._Md5;
+			}
+			set
+			{
+				if ((this._Md5 != value))
+				{
+					this.OnMd5Changing(value);
+					this.SendPropertyChanging();
+					this._Md5 = value;
+					this.SendPropertyChanged("Md5");
+					this.OnMd5Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Length", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int Length
+		{
+			get
+			{
+				return this._Length;
+			}
+			set
+			{
+				if ((this._Length != value))
+				{
+					this.OnLengthChanging(value);
+					this.SendPropertyChanging();
+					this._Length = value;
+					this.SendPropertyChanged("Length");
+					this.OnLengthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FileName", DbType="nvarchar(255) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string FileName
+		{
+			get
+			{
+				return this._FileName;
+			}
+			set
+			{
+				if ((this._FileName != value))
+				{
+					this.OnFileNameChanging(value);
+					this.SendPropertyChanging();
+					this._FileName = value;
+					this.SendPropertyChanged("FileName");
+					this.OnFileNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Links", DbType="text", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public string Links
+		{
+			get
+			{
+				return this._Links;
+			}
+			set
+			{
+				if ((this._Links != value))
+				{
+					this.OnLinksChanging(value);
+					this.SendPropertyChanging();
+					this._Links = value;
+					this.SendPropertyChanged("Links");
+					this.OnLinksChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LinkCount", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public int LinkCount
+		{
+			get
+			{
+				return this._LinkCount;
+			}
+			set
+			{
+				if ((this._LinkCount != value))
+				{
+					this.OnLinkCountChanging(value);
+					this.SendPropertyChanging();
+					this._LinkCount = value;
+					this.SendPropertyChanged("LinkCount");
+					this.OnLinkCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_Resource", ThisKey="ResourceID", OtherKey="ResourceID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Resource Resource
+		{
+			get
+			{
+				return this._Resource.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._Resource.Entity;
+				if (((previousValue != value) 
+							|| (this._Resource.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resource.Entity = null;
+						previousValue.ResourceContentFiles.Remove(this);
+					}
+					this._Resource.Entity = value;
+					if ((value != null))
+					{
+						value.ResourceContentFiles.Add(this);
+						this._ResourceID = value.ResourceID;
+					}
+					else
+					{
+						this._ResourceID = default(int);
+					}
+					this.SendPropertyChanged("Resource");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Resource = default(EntityRef<Resource>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ResourceSpringHash")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class ResourceSpringHash : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ResourceID;
+		
+		private string _SpringVersion;
+		
+		private int _SpringHash;
+		
+		private EntityRef<Resource> _Resource;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnResourceIDChanging(int value);
+    partial void OnResourceIDChanged();
+    partial void OnSpringVersionChanging(string value);
+    partial void OnSpringVersionChanged();
+    partial void OnSpringHashChanging(int value);
+    partial void OnSpringHashChanged();
+    #endregion
+		
+		public ResourceSpringHash()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResourceID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ResourceID
+		{
+			get
+			{
+				return this._ResourceID;
+			}
+			set
+			{
+				if ((this._ResourceID != value))
+				{
+					if (this._Resource.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnResourceIDChanging(value);
+					this.SendPropertyChanging();
+					this._ResourceID = value;
+					this.SendPropertyChanged("ResourceID");
+					this.OnResourceIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringVersion", DbType="nvarchar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string SpringVersion
+		{
+			get
+			{
+				return this._SpringVersion;
+			}
+			set
+			{
+				if ((this._SpringVersion != value))
+				{
+					this.OnSpringVersionChanging(value);
+					this.SendPropertyChanging();
+					this._SpringVersion = value;
+					this.SendPropertyChanged("SpringVersion");
+					this.OnSpringVersionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringHash", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int SpringHash
+		{
+			get
+			{
+				return this._SpringHash;
+			}
+			set
+			{
+				if ((this._SpringHash != value))
+				{
+					this.OnSpringHashChanging(value);
+					this.SendPropertyChanging();
+					this._SpringHash = value;
+					this.SendPropertyChanged("SpringHash");
+					this.OnSpringHashChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_Resource", ThisKey="ResourceID", OtherKey="ResourceID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Resource Resource
+		{
+			get
+			{
+				return this._Resource.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._Resource.Entity;
+				if (((previousValue != value) 
+							|| (this._Resource.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resource.Entity = null;
+						previousValue.ResourceSpringHashes.Remove(this);
+					}
+					this._Resource.Entity = value;
+					if ((value != null))
+					{
+						value.ResourceSpringHashes.Add(this);
+						this._ResourceID = value.ResourceID;
+					}
+					else
+					{
+						this._ResourceID = default(int);
+					}
+					this.SendPropertyChanged("Resource");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Resource = default(EntityRef<Resource>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Resource")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class Resource : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ResourceID;
+		
+		private string _InternalName;
+		
+		private ResourceType _TypeID;
+		
+		private System.Nullable<System.DateTime> _LastLinkCheck;
+		
+		private int _DownloadCount;
+		
+		private int _NoLinkDownloadCount;
+		
+		private EntitySet<ResourceDependency> _ResourceDependencies;
+		
+		private EntitySet<ResourceContentFile> _ResourceContentFiles;
+		
+		private EntitySet<ResourceSpringHash> _ResourceSpringHashes;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnResourceIDChanging(int value);
+    partial void OnResourceIDChanged();
+    partial void OnInternalNameChanging(string value);
+    partial void OnInternalNameChanged();
+    partial void OnTypeIDChanging(ResourceType value);
+    partial void OnTypeIDChanged();
+    partial void OnLastLinkCheckChanging(System.Nullable<System.DateTime> value);
+    partial void OnLastLinkCheckChanged();
+    partial void OnDownloadCountChanging(int value);
+    partial void OnDownloadCountChanged();
+    partial void OnNoLinkDownloadCountChanging(int value);
+    partial void OnNoLinkDownloadCountChanged();
+    #endregion
+		
+		public Resource()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResourceID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ResourceID
+		{
+			get
+			{
+				return this._ResourceID;
+			}
+			set
+			{
+				if ((this._ResourceID != value))
+				{
+					this.OnResourceIDChanging(value);
+					this.SendPropertyChanging();
+					this._ResourceID = value;
+					this.SendPropertyChanged("ResourceID");
+					this.OnResourceIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InternalName", DbType="nvarchar(255) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string InternalName
+		{
+			get
+			{
+				return this._InternalName;
+			}
+			set
+			{
+				if ((this._InternalName != value))
+				{
+					this.OnInternalNameChanging(value);
+					this.SendPropertyChanging();
+					this._InternalName = value;
+					this.SendPropertyChanged("InternalName");
+					this.OnInternalNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public ResourceType TypeID
+		{
+			get
+			{
+				return this._TypeID;
+			}
+			set
+			{
+				if ((this._TypeID != value))
+				{
+					this.OnTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._TypeID = value;
+					this.SendPropertyChanged("TypeID");
+					this.OnTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastLinkCheck", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<System.DateTime> LastLinkCheck
+		{
+			get
+			{
+				return this._LastLinkCheck;
+			}
+			set
+			{
+				if ((this._LastLinkCheck != value))
+				{
+					this.OnLastLinkCheckChanging(value);
+					this.SendPropertyChanging();
+					this._LastLinkCheck = value;
+					this.SendPropertyChanged("LastLinkCheck");
+					this.OnLastLinkCheckChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DownloadCount", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public int DownloadCount
+		{
+			get
+			{
+				return this._DownloadCount;
+			}
+			set
+			{
+				if ((this._DownloadCount != value))
+				{
+					this.OnDownloadCountChanging(value);
+					this.SendPropertyChanging();
+					this._DownloadCount = value;
+					this.SendPropertyChanged("DownloadCount");
+					this.OnDownloadCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NoLinkDownloadCount", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public int NoLinkDownloadCount
+		{
+			get
+			{
+				return this._NoLinkDownloadCount;
+			}
+			set
+			{
+				if ((this._NoLinkDownloadCount != value))
+				{
+					this.OnNoLinkDownloadCountChanging(value);
+					this.SendPropertyChanging();
+					this._NoLinkDownloadCount = value;
+					this.SendPropertyChanged("NoLinkDownloadCount");
+					this.OnNoLinkDownloadCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_ResourceDependencies", ThisKey="ResourceID", OtherKey="ResourceID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		public EntitySet<ResourceDependency> ResourceDependencies
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ResourceDependencies.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ResourceDependencies;
+			}
+			set
+			{
+				this._ResourceDependencies.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_ResourceContentFiles", ThisKey="ResourceID", OtherKey="ResourceID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		public EntitySet<ResourceContentFile> ResourceContentFiles
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ResourceContentFiles.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ResourceContentFiles;
+			}
+			set
+			{
+				this._ResourceContentFiles.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_ResourceSpringHashes", ThisKey="ResourceID", OtherKey="ResourceID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		public EntitySet<ResourceSpringHash> ResourceSpringHashes
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ResourceSpringHashes.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ResourceSpringHashes;
+			}
+			set
+			{
+				this._ResourceSpringHashes.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_ResourceDependencies(ResourceDependency entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource = this;
+		}
+		
+		private void detach_ResourceDependencies(ResourceDependency entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource = null;
+		}
+		
+		private void attach_ResourceContentFiles(ResourceContentFile entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource = this;
+		}
+		
+		private void detach_ResourceContentFiles(ResourceContentFile entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource = null;
+		}
+		
+		private void attach_ResourceSpringHashes(ResourceSpringHash entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource = this;
+		}
+		
+		private void detach_ResourceSpringHashes(ResourceSpringHash entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource = null;
+		}
+		
+		private void Initialize()
+		{
+			this._ResourceDependencies = new EntitySet<ResourceDependency>(new Action<ResourceDependency>(this.attach_ResourceDependencies), new Action<ResourceDependency>(this.detach_ResourceDependencies));
+			this._ResourceContentFiles = new EntitySet<ResourceContentFile>(new Action<ResourceContentFile>(this.attach_ResourceContentFiles), new Action<ResourceContentFile>(this.detach_ResourceContentFiles));
+			this._ResourceSpringHashes = new EntitySet<ResourceSpringHash>(new Action<ResourceSpringHash>(this.attach_ResourceSpringHashes), new Action<ResourceSpringHash>(this.detach_ResourceSpringHashes));
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 }

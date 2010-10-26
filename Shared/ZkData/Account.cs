@@ -25,7 +25,7 @@ namespace ZkData
 				else aliases = new List<string>();
 
 				if (!aliases.Contains(Name)) aliases.Add(Name);
-				Aliases = string.Join(",", aliases);
+				Aliases = string.Join(",", aliases.ToArray());
 			}
 		}
 	}
