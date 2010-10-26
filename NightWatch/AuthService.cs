@@ -29,8 +29,9 @@ namespace NightWatch
 					RequestInfo entry;
 					if (requests.TryGetValue(client.MessageID, out entry))
 					{
-						if (client.ExistingUsers.ContainsKey(entry.Login)) entry.User = client.ExistingUsers[entry.Login];
-						entry.AccountID = Convert.ToInt32(e.ServerParams[0]);
+						entry.CorrectName = e.ServerParams[0];
+						entry.AccountID = Convert.ToInt32(e.ServerParams[1]);
+						if (client.ExistingUsers.ContainsKey(entry.CorrectName)) entry.User = client.ExistingUsers[entry.CorrectName];
 						entry.WaitHandle.Set();
 					}
 
@@ -57,7 +58,7 @@ namespace NightWatch
 
 		public Account VerifyAccount(string login, string hashedPassword)
 		{
-			var info = requests[Interlocked.Increment(ref messageId)] = new RequestInfo(login);
+			var info = requests[Interlocked.Increment(ref messageId)] = new RequestInfo();
 
 			client.SendRaw(string.Format("#{0} TESTLOGIN {1} {2}", messageId, login, hashedPassword));
 			if (info.WaitHandle.WaitOne(AuthServiceTestLoginWait))
@@ -69,11 +70,11 @@ namespace NightWatch
 					var acc = db.Accounts.SingleOrDefault(x => x.AccountID == info.AccountID);
 					if (acc == null)
 					{
-						acc = new Account() { AccountID = info.AccountID };
+						acc = new Account() { AccountID = info.AccountID, Name = info.CorrectName};
 						db.Accounts.InsertOnSubmit(acc);
 					}
 
-					acc.Name = login;
+					acc.Name = info.CorrectName;
 					acc.Password = hashedPassword;
 					acc.LastLogin = DateTime.UtcNow;
 
@@ -97,12 +98,8 @@ namespace NightWatch
 		{
 			public int AccountID;
 			public User User;
+			public string CorrectName;
 			public readonly EventWaitHandle WaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
-			public string Login;
-			public RequestInfo(string login)
-			{
-				Login = login;
-			}
 		}
 	}
 }
