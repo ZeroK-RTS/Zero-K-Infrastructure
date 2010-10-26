@@ -1,5 +1,5 @@
 ﻿<UserControl x:Class="MissionEditor2.CreateUnitsPane" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock" xmlns:local="clr-namespace:MissionEditor2" xmlns:MissionEditor2="clr-namespace:MissionEditor2" Name="control"
+        xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock" xmlns:local="clr-namespace:MissionEditor2" Name="control"
         Loaded="CreateUnitsPane_Loaded">
     <UserControl.Resources>
         <local:CsvConverter x:Key="csvConverter" />

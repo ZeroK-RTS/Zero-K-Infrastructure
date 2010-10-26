@@ -10,7 +10,6 @@
         </Style>
         <local:CsvConverter x:Key="csvConverter" />
         <local:OpposedConverter x:Key="opposedConverter" />
-        <local:SpringSizeConverter x:Key="springSizeConverter" />
     </UserControl.Resources>
     <UserControl.RenderTransform>
         <TransformGroup>
@@ -22,6 +21,8 @@
         <ContextMenu>
             <MenuItem Header="Delete" Click="DeleteItem_Click" />
             <MenuItem Header="Edit Groups" Click="SetGroupsItem_Click" />
+            <Separator />
+        	<MenuItem Header="Tutorial Ghost" IsCheckable="True" IsChecked="{Binding IsGhost}" />
         </ContextMenu>
     </UserControl.ContextMenu>
     <Viewbox Height="16" Width="16">

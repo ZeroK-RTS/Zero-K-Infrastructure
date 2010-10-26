@@ -6,51 +6,14 @@ using CMissionLib.UnitSyncLib;
 namespace CMissionLib
 {
 	[DataContract]
-	public class UnitStartInfo : Positionable
+	public class UnitStartInfo: Positionable
 	{
-		UnitInfo unitDef;
-		Player player;
-		string unitDefName;
 		ObservableCollection<string> groups;
-		double heading = 0;
-
-		public UnitStartInfo(UnitInfo unitDef, Player player, double x, double y) : base(x, y)
-		{
-			this.unitDef = unitDef;
-			this.player = player;
-			unitDefName = unitDef.Name;
-			groups = new ObservableCollection<string>();
-		}
-
-		[DataMember]
-		public string UnitDefName
-		{
-			get { return unitDefName; }
-			set { unitDefName = value; }
-		}
-
-		public UnitInfo UnitDef
-		{
-			get { return unitDef; }
-			set
-			{
-				unitDef = value;
-				unitDefName = unitDef.Name;
-				RaisePropertyChanged("UnitDef");
-				RaisePropertyChanged("UnitDefName");
-			}
-		}
-
-		[DataMember]
-		public Player Player
-		{
-			get { return player; }
-			set
-			{
-				player = value;
-				RaisePropertyChanged("Player");
-			}
-		}
+		double heading;
+		bool isGhost;
+		Player player;
+		UnitInfo unitDef;
+		string unitDefName;
 
 		[DataMember]
 		public ObservableCollection<string> Groups
@@ -74,24 +37,67 @@ namespace CMissionLib
 			}
 		}
 
-		public override string ToString()
+		[DataMember]
+		public bool IsGhost
 		{
-			return unitDefName;
+			get { return isGhost; }
+			set
+			{
+				isGhost = value;
+				RaisePropertyChanged("IsGhost");
+			}
+		}
+
+		[DataMember]
+		public Player Player
+		{
+			get { return player; }
+			set
+			{
+				player = value;
+				RaisePropertyChanged("Player");
+			}
+		}
+		public UnitInfo UnitDef
+		{
+			get { return unitDef; }
+			set
+			{
+				unitDef = value;
+				unitDefName = unitDef.Name;
+				RaisePropertyChanged("UnitDef");
+				RaisePropertyChanged("UnitDefName");
+			}
+		}
+		[DataMember]
+		public string UnitDefName { get { return unitDefName; } set { unitDefName = value; } }
+
+		public UnitStartInfo(UnitInfo unitDef, Player player, double x, double y): base(x, y)
+		{
+			this.unitDef = unitDef;
+			this.player = player;
+			unitDefName = unitDef.Name;
+			groups = new ObservableCollection<string>();
 		}
 
 		public LuaTable GetLuaMap(Mission mission)
 		{
 			var map = new Dictionary<object, object>
-			{
-				{"unitDefName", UnitDef.Name},
-				{"x", mission.ToIngameX(X)},
-				{"y", mission.ToIngameY(Y)},
-				{"player", mission.Players.IndexOf(Player)},
-				{"groups", LuaTable.CreateSet(Groups)},
-				{"heading", Heading}
-			};
+			          {
+			          	{ "unitDefName", UnitDef.Name },
+			          	{ "x", mission.ToIngameX(X) },
+			          	{ "y", mission.ToIngameY(Y) },
+			          	{ "player", mission.Players.IndexOf(Player) },
+			          	{ "groups", LuaTable.CreateSet(Groups) },
+			          	{ "heading", Heading },
+						{ "isGhost", isGhost},
+			          };
 			return new LuaTable(map);
 		}
 
+		public override string ToString()
+		{
+			return unitDefName;
+		}
 	}
 }

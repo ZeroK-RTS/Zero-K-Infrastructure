@@ -14,6 +14,11 @@ function gadget:GetInfo()
   }
 end
 
+
+local callInList = { -- events forwarded to unsynced
+  "UnitFinished",
+}
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
@@ -483,26 +488,32 @@ local function ExecuteTrigger(trigger, frame)
       elseif action.logicType == "CreateUnitsAction" then
         Event = function()
           for _, unit in ipairs(action.args.units) do
-            local ud =  UnitDefNames[unit.unitDefName]
-            local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
-            local cardinalHeading = "n"
-            if isBuilding then
-              if unit.heading > 45 and unit.heading <= 135 then
-                cardinalHeading = "e"
-              elseif unit.heading > 135 and unit.heading <= 225 then
-                cardinalHeading = "s"
-              elseif unit.heading > 225 and unit.heading <- 315 then
-                cardinalHeading = "w"
+            if unit.isGhost then
+              _G.ghostEventArgs = unit
+              SendToUnsynced("GhostEvent")
+              _G.ghostEventArgs = nil
+            else
+              local ud =  UnitDefNames[unit.unitDefName]
+              local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
+              local cardinalHeading = "n"
+              if isBuilding then
+                if unit.heading > 45 and unit.heading <= 135 then
+                  cardinalHeading = "e"
+                elseif unit.heading > 135 and unit.heading <= 225 then
+                  cardinalHeading = "s"
+                elseif unit.heading > 225 and unit.heading <- 315 then
+                  cardinalHeading = "w"
+                end
               end
-            end
-            local unitID = Spring.CreateUnit(unit.unitDefName, unit.x, 0, unit.y, "n", unit.player)
-            if unitID then
-              if not isBuilding then
-                Spring.SetUnitRotation(unitID, 0, (unit.heading - 180)/360 * 2 * math.pi, 0)
-              end
-              createdUnits[unitID] = true
-              if unit.groups and next(unit.groups) then
-                AddUnitGroups(unitID, unit.groups)
+              local unitID = Spring.CreateUnit(unit.unitDefName, unit.x, 0, unit.y, "n", unit.player)
+              if unitID then
+                if not isBuilding then
+                  Spring.SetUnitRotation(unitID, 0, (unit.heading - 180)/360 * 2 * math.pi, 0)
+                end
+                createdUnits[unitID] = true
+                if unit.groups and next(unit.groups) then
+                  AddUnitGroups(unitID, unit.groups)
+                end
               end
             end
           end
@@ -947,6 +958,27 @@ function gadget:RecvLuaMsg(msg, player)
   end
 end
 
+
+function gadget:Initialize()
+    -- Set up the forwarding calls to the unsynced part of the gadget.
+    -- This does not overwrite the calls in the synced part.
+    local SendToUnsynced = SendToUnsynced
+    for _, callIn in pairs(callInList) do
+        local fun = gadget[callIn]
+        if (fun ~= nil) then
+            gadget[callIn] = function(self, ...)
+                SendToUnsynced(callIn, ...)
+                return fun(self, ...)
+            end
+        else
+            gadget[callIn] = function(self, ...)
+                SendToUnsynced(callIn, ...)
+            end
+        end
+        gadgetHandler:UpdateCallIn(callIn)
+    end
+end
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 -- 
@@ -966,11 +998,62 @@ function WrapToLuaUI()
   end
 end
 
+
+local ghosts = {}
+
+
+function GhostEvent()
+  local ghost= {}
+  for k, v in spairs(SYNCED.ghostEventArgs) do
+    ghost[k] = v
+  end
+  ghosts[ghost] = true
+  local _, _, _, teamID = Spring.GetPlayerInfo(ghost.player)
+  ghost.unitDefID = UnitDefNames[ghost.unitDefName].id
+  ghost.teamID = teamID
+end
+
+
+local startTime = Spring.GetTimer()
+
+function gadget:DrawWorld()
+  for ghost in pairs(ghosts) do
+    gl.PushMatrix()
+    local t = Spring.DiffTimers(Spring.GetTimer(), startTime)
+    local alpha = (math.sin(t*6)+1)/6+1/3 -- pulse
+    gl.Color(0.7, 0.7, 1, alpha)
+    gl.Translate(ghost.x, Spring.GetGroundHeight(ghost.x, ghost.y), ghost.y)
+    gl.UnitShape(ghost.unitDefID, ghost.teamID)
+    gl.PopMatrix()
+  end
+end
+
+
+function getDistance(x1, z1, x2, z2)
+  local x, z = x2 - x1, z2- z1
+  return (x*x + z*z)^0.5
+end
+
+
+function gadget:UnitFinished(unitID, unitDefID, unitTeam)
+  local x, y, z = Spring.GetUnitPosition(unitID)
+  for ghost in pairs(ghosts) do
+    if unitDefID == ghost.unitDefID and getDistance(x, z, ghost.x, ghost.y) < 100 then -- ghost.y is no typo
+      ghosts[ghost] = nil
+    end
+  end
+end
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 function gadget:Initialize()
   gadgetHandler:AddSyncAction('MissionEvent', WrapToLuaUI)
+  gadgetHandler:AddSyncAction('GhostEvent', GhostEvent)
+  for _,callIn in pairs(callInList) do
+      local fun = gadget[callIn]
+      gadgetHandler:AddSyncAction(callIn, fun)
+  end
 end
 
 --------------------------------------------------------------------------------
