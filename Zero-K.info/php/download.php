@@ -15,7 +15,7 @@
 <!-------------------------------------------------------------- -->
 <div id="windows" class="border">
 	<h1>Windows</h1>
-	<a href="http://planet-wars.eu/sd/setup.exe" id="download" class="button border">Download</a><br /><br /><br />
+	<a href="/lobby/setup.exe" id="download" class="button border">Download</a><br /><br /><br />
 	<b>Start Playing!</b>
 </div><!close windows>
 <!-------------------------------------------------------------- -->
