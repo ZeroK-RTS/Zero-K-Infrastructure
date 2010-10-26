@@ -2,7 +2,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-	<title>Zero-K - Newbie Guide</title>
+	<title>Zero-K - Terraform Guide</title>
 <?php include("inc_head.inc"); ?>
 </head>
 
@@ -13,18 +13,7 @@
 <!-------------------------------------------------------------- -->
 <?php include("inc_menu.inc"); ?>
 <!-------------------------------------------------------------- -->
-<?php include("inc_newbieguide.inc");
-/*
-$data = file_get_contents("http://trac.caspring.org/wiki/NewbieGuide");
-$start = stripos($data, "<hr />");
-$html = substr($data, $start, strlen($data));
-$start = stripos($html, "<p>");
-$end = stripos($html, "<h3>");
-$html = substr($html, 0, $end);
-$html = substr($html, $start, strlen($html));
-echo $html;
-*/
-?>
+<?php include("inc_guide_terraform.inc"); ?>
 <!-------------------------------------------------------------- -->
 <?php include("inc_footer.inc"); ?>
 <!-------------------------------------------------------------- -->

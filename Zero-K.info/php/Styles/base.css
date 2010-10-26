@@ -1,5 +1,5 @@
 p {text-indent: 2em;}
-b {font-size: 110%; font-weight: bold; color: #fff;}
+b {font-size: 111%; font-weight: bold; color: #fff;}
 i {}
 
 h1 {font-size: 170%; color: #fff;}
@@ -12,6 +12,8 @@ a:hover {color: #fff;}
 a:active {color: #cbd3d4;}
 
 img {border: none; margin: 5px;}
+
+hr {display: block; clear: both; visibility: hidden;}
 
 pre
 {
@@ -37,23 +39,17 @@ ul.poll {list-style-type: none; text-indent: -3em;}
 
 .border
 {
-	border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
-	-moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
-	-webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
-	margin: 5px;
+	border-image: url("../img/zk_border.png") 13% 13% 13% 13% stretch; border-width: 15px 15px 15px 15px ;
+	-moz-border-image: url("../img/zk_border.png") 13% 13% 13% 13% stretch; border-width: 15px 15px 15px 15px ;
+	-webkit-border-image: url("../img/zk_border.png") 13% 13% 13% 13% stretch; border-width: 15px 15px 15px 15px ;
+	margin: 5px 5px 5px 5px;
 }
-/*
-.border:hover
-{
-	-moz-border-image: url("../img/spiral.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
-	margin: 5px;
-}
-*/
+
 .ie .border
 {
 	background: #000;
 	border: 3px solid white;
-	padding: 20px;
+	padding: 15px;
 	margin: 5px;
 }
 

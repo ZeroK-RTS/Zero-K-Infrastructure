@@ -28,12 +28,12 @@
 	</ul> </td>
 	
 	<td><ul class="menu">
-	<li><a href="newbieguide.php">Guide</a>
+	<li><a href="guide-newbie.php">Guide</a>
 		<ul>
 			<li><a target="_new" href="http://trac.caspring.org/wiki/CaIntro">Introduction<span>Don't know where to begin? Click here.</span></a></li>
-			<li><a target="_new" href="http://trac.caspring.org/wiki/UnitGuide#LogosformerlyCORE">Logos Units<span>Bwahaha! Crush those lousy Nova!</span></a></li>
-			<li><a target="_new" href="http://trac.caspring.org/wiki/UnitGuide#NovaformerlyARM">Nova Units<span>Bwahaha! Crush those lousy Logos!</span></a></li>
+			<li><a href="guide-units.php">Units</a></li>
 			<li><a target="_new" href="http://springinfo.info/guides/?p=195">Economy</a></li>
+			<li><a href="guide-terraform.php">Terraforming<span>Let's go play in the dirt!</span></a></li>
 		</ul>
 	</li>
 	</ul> </td> 
