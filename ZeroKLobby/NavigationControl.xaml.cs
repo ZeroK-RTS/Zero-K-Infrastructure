@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms.Integration;
+using System.Windows.Threading;
 using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby
@@ -171,6 +173,23 @@ namespace ZeroKLobby
 		private void MissionsPage_Click(object sender, RoutedEventArgs e)
 		{
 			Path = "http://zero-k.info/Missions.mvc";
+		}
+
+		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (e.AddedItems.Count == 0) return;
+			var missions = ((TabItem)e.AddedItems[0]).Content as MissionControl;
+			if (missions != null)
+			{
+				// SelectionChanged appears to be fired before the browser is ready so wait a bit
+				var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
+				timer.Tick += delegate
+					{
+						timer.Stop();
+						Dispatcher.Invoke((Action)(missions.FocusWeb));
+					};
+				timer.Start();
+			}
 		}
 	}
 }

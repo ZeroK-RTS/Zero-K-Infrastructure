@@ -28,7 +28,7 @@
             <Button x:Name="forwardButton" Grid.Column="1" Click="forwardButton_Click">Forward</Button>
             <ZeroKLobby:SubmitTextBox Grid.Column="2" Text="{Binding Path, ElementName=userControl}" />
         </Grid>
-        <TabControl Grid.Row="2" x:Name="tabControl">
+        <TabControl Grid.Row="2" x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <EventSetter Event="MouseUp" Handler="TabItem_MouseUp" />
@@ -76,7 +76,7 @@
                 </WindowsFormsHost>
             </TabItem>
             <TabItem>
-                <MicroLobby:MissionControl />
+                <MicroLobby:MissionControl/>
             </TabItem>
         </TabControl>
     </Grid>

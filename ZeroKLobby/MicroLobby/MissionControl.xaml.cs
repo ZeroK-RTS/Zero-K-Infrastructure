@@ -82,5 +82,12 @@ namespace ZeroKLobby.MicroLobby
 			client.GetMissionByIDCompleted += client_GetMissionByIDCompleted;
 			webBrowser.Source = new Uri("http://zero-k.info/Missions.mvc");
 		}
+
+		public void FocusWeb()
+		{
+			var document = (mshtml.HTMLDocument)webBrowser.Document;
+			document.focus();
+		}
+
 	}
 }
