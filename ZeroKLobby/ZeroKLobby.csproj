@@ -127,6 +127,9 @@
     <Compile Include="NavigationControl.xaml.cs">
       <DependentUpon>NavigationControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Notifications\MissionBar.xaml.cs">
+      <DependentUpon>MissionBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Notifications\NewSpringBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -762,6 +765,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NavigationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Notifications\MissionBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

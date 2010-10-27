@@ -2,7 +2,7 @@
 <publishData>
   <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Views/Missions/Detail.aspx" publishTime="10/26/2010 03:10:48" />
+    <file relUrl="Views/Missions/Detail.aspx" publishTime="10/27/2010 03:11:04" />
     <file relUrl="Global.asax" publishTime="10/22/2010 17:42:44" />
     <file relUrl="Styles/Site.css" publishTime="10/22/2010 19:20:36" />
     <file relUrl="Scripts/jquery.validate-vsdoc.js" publishTime="10/22/2010 00:51:38" />

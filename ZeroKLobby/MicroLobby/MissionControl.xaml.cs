@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Navigation;
+using mshtml;
+using ZeroKLobby.Notifications;
 using ZeroKLobby.ServiceReference;
-using UserControl = System.Windows.Controls.UserControl;
-using WebBrowser = System.Windows.Controls.WebBrowser;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -20,29 +21,26 @@ namespace ZeroKLobby.MicroLobby
 			InitializeComponent();
 		}
 
-		void client_GetMissionByIDCompleted(object sender, ServiceReference.GetMissionByIDCompletedEventArgs e)
+		public void FocusWeb()
 		{
-			
-			
+			var document = (HTMLDocument)WebBrowser.Document;
+			document.focus();
 		}
 
 		void PerformAction(string actionString)
 		{
-			var parts = actionString.Split(':');
-			if (parts.Length == 2)
+			if (!string.IsNullOrEmpty(actionString))
 			{
-				if (parts[0] == "start_mission")
-				{
-					int missionID;
-					if (int.TryParse(parts[1], out missionID)) StartMission(missionID);
-				}
+				var idx = actionString.IndexOf(':');
+				if (idx > -1 && actionString.Substring(0, idx) == "start_mission") StartMission(Uri.UnescapeDataString(actionString.Substring(idx+1)));
 			}
 		}
 
-		void StartMission(int missionID)
+		void StartMission(string name)
 		{
-			// client.GetMissionByIDAsync(missionID);
-			MessageBox.Show("Not implemented");
+			var wind = new Window();
+			wind.Content = new MissionBar(name);
+			wind.Show();
 		}
 
 		public string PathHead { get { return "http://zero-k.info/Missions.mvc"; } }
@@ -76,18 +74,14 @@ namespace ZeroKLobby.MicroLobby
 			WebBrowser.Navigate(url);
 		}
 
-		private void webBrowser_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		void client_GetMissionByIDCompleted(object sender, ServiceReference.GetMissionByIDCompletedEventArgs e) {}
+
+		void webBrowser_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 			client = new MissionServiceClient();
 			client.GetMissionByIDCompleted += client_GetMissionByIDCompleted;
 			WebBrowser.Source = new Uri("http://zero-k.info/Missions.mvc");
-		}
-
-		public void FocusWeb()
-		{
-			var document = (mshtml.HTMLDocument)WebBrowser.Document;
-			document.focus();
 		}
 	}
 }

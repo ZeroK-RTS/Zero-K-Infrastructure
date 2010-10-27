@@ -7,7 +7,7 @@
 		<legend>Fields</legend>
 		<h2>
 			<a href='
-				<%= "zerok://" + Html.Encode(Url.Action("Detail", "Missions", new {id = Model.MissionID},Request.Url.Scheme) + "@start_mission:" + Model.MissionID)%>'>PLAY NOW</a>
+				<%= "zerok://" + Html.Encode(Url.Action("Detail", "Missions", new {id = Model.MissionID},Request.Url.Scheme) + "@start_mission:" + Model.Name)%>'>PLAY NOW</a>
 		</h2>
 		<div class="display-label">
 			MissionID</div>
