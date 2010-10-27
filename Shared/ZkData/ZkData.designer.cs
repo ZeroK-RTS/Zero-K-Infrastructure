@@ -2161,8 +2161,6 @@ namespace ZkData
 		
 		private string _Description;
 		
-		private int _DownloadCount;
-		
 		private System.Nullable<System.DateTime> _CreatedTime;
 		
 		private System.Nullable<System.DateTime> _ModifiedTime;
@@ -2179,8 +2177,6 @@ namespace ZkData
 		
 		private System.Data.Linq.Link<string> _Script;
 		
-		private string _Dependencies;
-		
 		private string _TokenCondition;
 		
 		private System.Nullable<int> _CampaignID;
@@ -2193,7 +2189,7 @@ namespace ZkData
 		
 		private EntitySet<MissionSlot> _MissionSlots;
 		
-		private EntitySet<Resource> _Resources;
+		private EntityRef<Resource> _Resources;
 		
 		private EntityRef<Account> _Account;
 		
@@ -2217,8 +2213,6 @@ namespace ZkData
     partial void OnImageChanged();
     partial void OnDescriptionChanging(string value);
     partial void OnDescriptionChanged();
-    partial void OnDownloadCountChanging(int value);
-    partial void OnDownloadCountChanged();
     partial void OnCreatedTimeChanging(System.Nullable<System.DateTime> value);
     partial void OnCreatedTimeChanged();
     partial void OnModifiedTimeChanging(System.Nullable<System.DateTime> value);
@@ -2235,8 +2229,6 @@ namespace ZkData
     partial void OnRevisionChanged();
     partial void OnScriptChanging(string value);
     partial void OnScriptChanged();
-    partial void OnDependenciesChanging(string value);
-    partial void OnDependenciesChanged();
     partial void OnTokenConditionChanging(string value);
     partial void OnTokenConditionChanged();
     partial void OnCampaignIDChanging(System.Nullable<int> value);
@@ -2359,7 +2351,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarBinary(MAX)", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public System.Data.Linq.Binary Image
 		{
@@ -2401,29 +2393,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DownloadCount", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public int DownloadCount
-		{
-			get
-			{
-				return this._DownloadCount;
-			}
-			set
-			{
-				if ((this._DownloadCount != value))
-				{
-					this.OnDownloadCountChanging(value);
-					this.SendPropertyChanging();
-					this._DownloadCount = value;
-					this.SendPropertyChanged("DownloadCount");
-					this.OnDownloadCountChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedTime", DbType="DateTime")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public System.Nullable<System.DateTime> CreatedTime
 		{
 			get
@@ -2444,7 +2415,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModifiedTime", DbType="DateTime")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public System.Nullable<System.DateTime> ModifiedTime
 		{
 			get
@@ -2465,7 +2436,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ScoringMethod", DbType="NVarChar(500)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public string ScoringMethod
 		{
 			get
@@ -2486,7 +2457,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TopScoreLine", DbType="NVarChar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public string TopScoreLine
 		{
 			get
@@ -2507,7 +2478,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionEditorVersion", DbType="NVarChar(20)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
 		public string MissionEditorVersion
 		{
 			get
@@ -2528,7 +2499,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringVersion", DbType="NVarChar(20)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
 		public string SpringVersion
 		{
 			get
@@ -2549,7 +2520,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Revision", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
 		public int Revision
 		{
 			get
@@ -2570,7 +2541,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Script", DbType="nvarchar(max)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public string Script
 		{
 			get
@@ -2590,29 +2561,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Dependencies", DbType="varchar(1000)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
-		public string Dependencies
-		{
-			get
-			{
-				return this._Dependencies;
-			}
-			set
-			{
-				if ((this._Dependencies != value))
-				{
-					this.OnDependenciesChanging(value);
-					this.SendPropertyChanging();
-					this._Dependencies = value;
-					this.SendPropertyChanged("Dependencies");
-					this.OnDependenciesChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TokenCondition", DbType="varchar(500)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
 		public string TokenCondition
 		{
 			get
@@ -2633,7 +2583,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CampaignID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
 		public System.Nullable<int> CampaignID
 		{
 			get
@@ -2654,7 +2604,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
 		public int AccountID
 		{
 			get
@@ -2679,7 +2629,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModOptions", DbType="nvarchar(max)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
 		public string ModOptions
 		{
 			get
@@ -2700,7 +2650,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModRapidTag", DbType="nvarchar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
 		public string ModRapidTag
 		{
 			get
@@ -2721,7 +2671,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionSlot", Storage="_MissionSlots", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<MissionSlot> MissionSlots
 		{
 			get
@@ -2739,22 +2689,38 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
-		public EntitySet<Resource> Resources
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		public Resource Resources
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._Resources.HasLoadedOrAssignedValues == false)))
+							&& (this._Resources.HasLoadedOrAssignedValue == false)))
 				{
 					return null;
 				}
-				return this._Resources;
+				return this._Resources.Entity;
 			}
 			set
 			{
-				this._Resources.Assign(value);
+				Resource previousValue = this._Resources.Entity;
+				if (((previousValue != value) 
+							|| (this._Resources.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resources.Entity = null;
+						previousValue.Mission = null;
+					}
+					this._Resources.Entity = value;
+					if ((value != null))
+					{
+						value.Mission = this;
+					}
+					this.SendPropertyChanged("Resources");
+				}
 			}
 		}
 		
@@ -2824,22 +2790,10 @@ namespace ZkData
 			entity.Mission = null;
 		}
 		
-		private void attach_Resources(Resource entity)
-		{
-			this.SendPropertyChanging();
-			entity.Mission = this;
-		}
-		
-		private void detach_Resources(Resource entity)
-		{
-			this.SendPropertyChanging();
-			entity.Mission = null;
-		}
-		
 		private void Initialize()
 		{
 			this._MissionSlots = new EntitySet<MissionSlot>(new Action<MissionSlot>(this.attach_MissionSlots), new Action<MissionSlot>(this.detach_MissionSlots));
-			this._Resources = new EntitySet<Resource>(new Action<Resource>(this.attach_Resources), new Action<Resource>(this.detach_Resources));
+			this._Resources = default(EntityRef<Resource>);
 			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
@@ -7038,12 +6992,12 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._Mission.Entity = null;
-						previousValue.Resources.Remove(this);
+						previousValue.Resources = null;
 					}
 					this._Mission.Entity = value;
 					if ((value != null))
 					{
-						value.Resources.Add(this);
+						value.Resources = this;
 						this._MissionID = value.MissionID;
 					}
 					else

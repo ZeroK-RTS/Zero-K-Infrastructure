@@ -32,7 +32,7 @@
 		<div class="display-label">
 			DownloadCount</div>
 		<div class="display-field">
-			<%: Model.DownloadCount %></div>
+			<%: Model.Resources.DownloadCount %></div>
 		<div class="display-label">
 			CreatedTime</div>
 		<div class="display-field">
@@ -61,10 +61,6 @@
 			Revision</div>
 		<div class="display-field">
 			<%: Model.Revision %></div>
-		<div class="display-label">
-			Dependencies</div>
-		<div class="display-field">
-			<%: Model.Dependencies %></div>
 		<div class="display-label">
 			TokenCondition</div>
 		<div class="display-field">

@@ -150,7 +150,6 @@
       <Column Name="Mutator" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" IsDelayLoaded="true" />
       <Column Name="Image" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX)" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="Description" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
-      <Column Name="DownloadCount" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="CreatedTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="ModifiedTime" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
       <Column Name="ScoringMethod" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
@@ -159,14 +158,13 @@
       <Column Name="SpringVersion" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Column Name="Revision" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="Script" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" IsDelayLoaded="true" />
-      <Column Name="Dependencies" Type="System.String" DbType="varchar(1000)" CanBeNull="true" />
       <Column Name="TokenCondition" Type="System.String" DbType="varchar(500)" CanBeNull="true" />
       <Column Name="CampaignID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ModOptions" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
       <Column Name="ModRapidTag" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Association Name="Mission_MissionSlot" Member="MissionSlots" ThisKey="MissionID" OtherKey="MissionID" Type="MissionSlot" />
-      <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" />
+      <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
       <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
