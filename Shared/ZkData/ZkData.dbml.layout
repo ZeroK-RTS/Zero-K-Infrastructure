@@ -240,10 +240,10 @@
         <elementListCompartment Id="2fbcb111-08d0-447c-a62b-be9b0121bd47" absoluteBounds="10.265, 2.96, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="e29e29d1-36f0-4928-af43-257f6c89dc11" absoluteBounds="7.875, 0.5, 2, 1.9631982421875005">
+    <classShape Id="e29e29d1-36f0-4928-af43-257f6c89dc11" absoluteBounds="7.875, 0.5, 2, 2.1554996744791666">
       <DataClassMoniker Name="/ZkDataContext/Resource" />
       <nestedChildShapes>
-        <elementListCompartment Id="224b6836-6200-4956-b766-b1c320a0a973" absoluteBounds="7.8900000000000006, 0.96000000000000085, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="224b6836-6200-4956-b766-b1c320a0a973" absoluteBounds="7.8900000000000006, 0.96000000000000085, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <associationConnector edgePoints="[(9.875 : 1.09699625651042); (10.375 : 1.09699625651042)]" fixedFrom="NotFixed" fixedTo="NotFixed">
@@ -265,6 +265,13 @@
       <nodes>
         <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
         <classShapeMoniker Id="1c5d3d05-4567-42bb-bbe6-15c033e17a11" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.5 : 0.501537461538462); (2.87653746153846 : 0.125); (7.5 : 0.125); (7.875 : 0.5)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Mission/Mission_Resource" />
+      <nodes>
+        <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
+        <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

@@ -73,8 +73,8 @@
     </None>
     <None Include="ZkData.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>ZkData.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>ZkData.designer.cs</LastGenOutput>
     </None>
     <None Include="ZkData.dbml.namePrefs">
       <DependentUpon>ZkData.dbml</DependentUpon>

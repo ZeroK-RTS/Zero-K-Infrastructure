@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="ZkData.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Battle" Member="Battles">
     <Type Name="Battle">
@@ -166,6 +166,7 @@
       <Column Name="ModOptions" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
       <Column Name="ModRapidTag" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Association Name="Mission_MissionSlot" Member="MissionSlots" ThisKey="MissionID" OtherKey="MissionID" Type="MissionSlot" />
+      <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" />
       <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
@@ -400,13 +401,15 @@
     <Type Name="Resource">
       <Column Name="ResourceID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="InternalName" Type="System.String" DbType="nvarchar(255) NOT NULL" CanBeNull="false" />
-      <Column Name="TypeID" Type="ResourceType" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="TypeID" Type="global::ZkData.ResourceType" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="LastLinkCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="DownloadCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="NoLinkDownloadCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="MissionID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
+      <Association Name="Mission_Resource" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" />
     </Type>
   </Table>
 </Database>

@@ -2193,6 +2193,8 @@ namespace ZkData
 		
 		private EntitySet<MissionSlot> _MissionSlots;
 		
+		private EntitySet<Resource> _Resources;
+		
 		private EntityRef<Account> _Account;
 		
 		private bool serializing;
@@ -2737,6 +2739,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		public EntitySet<Resource> Resources
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Resources.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Resources;
+			}
+			set
+			{
+				this._Resources.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Mission", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
 		public Account Account
 		{
@@ -2803,9 +2824,22 @@ namespace ZkData
 			entity.Mission = null;
 		}
 		
+		private void attach_Resources(Resource entity)
+		{
+			this.SendPropertyChanging();
+			entity.Mission = this;
+		}
+		
+		private void detach_Resources(Resource entity)
+		{
+			this.SendPropertyChanging();
+			entity.Mission = null;
+		}
+		
 		private void Initialize()
 		{
 			this._MissionSlots = new EntitySet<MissionSlot>(new Action<MissionSlot>(this.attach_MissionSlots), new Action<MissionSlot>(this.detach_MissionSlots));
+			this._Resources = new EntitySet<Resource>(new Action<Resource>(this.attach_Resources), new Action<Resource>(this.detach_Resources));
 			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
@@ -6734,7 +6768,7 @@ namespace ZkData
 		
 		private string _InternalName;
 		
-		private ResourceType _TypeID;
+		private global::ZkData.ResourceType _TypeID;
 		
 		private System.Nullable<System.DateTime> _LastLinkCheck;
 		
@@ -6742,11 +6776,15 @@ namespace ZkData
 		
 		private int _NoLinkDownloadCount;
 		
+		private System.Nullable<int> _MissionID;
+		
 		private EntitySet<ResourceDependency> _ResourceDependencies;
 		
 		private EntitySet<ResourceContentFile> _ResourceContentFiles;
 		
 		private EntitySet<ResourceSpringHash> _ResourceSpringHashes;
+		
+		private EntityRef<Mission> _Mission;
 		
 		private bool serializing;
 		
@@ -6758,7 +6796,7 @@ namespace ZkData
     partial void OnResourceIDChanged();
     partial void OnInternalNameChanging(string value);
     partial void OnInternalNameChanged();
-    partial void OnTypeIDChanging(ResourceType value);
+    partial void OnTypeIDChanging(global::ZkData.ResourceType value);
     partial void OnTypeIDChanged();
     partial void OnLastLinkCheckChanging(System.Nullable<System.DateTime> value);
     partial void OnLastLinkCheckChanged();
@@ -6766,6 +6804,8 @@ namespace ZkData
     partial void OnDownloadCountChanged();
     partial void OnNoLinkDownloadCountChanging(int value);
     partial void OnNoLinkDownloadCountChanged();
+    partial void OnMissionIDChanging(System.Nullable<int> value);
+    partial void OnMissionIDChanged();
     #endregion
 		
 		public Resource()
@@ -6815,9 +6855,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TypeID", DbType="int NOT NULL", CanBeNull=false)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public ResourceType TypeID
+		public global::ZkData.ResourceType TypeID
 		{
 			get
 			{
@@ -6899,8 +6939,33 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public System.Nullable<int> MissionID
+		{
+			get
+			{
+				return this._MissionID;
+			}
+			set
+			{
+				if ((this._MissionID != value))
+				{
+					if (this._Mission.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMissionIDChanging(value);
+					this.SendPropertyChanging();
+					this._MissionID = value;
+					this.SendPropertyChanged("MissionID");
+					this.OnMissionIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_ResourceDependencies", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
 		public EntitySet<ResourceDependency> ResourceDependencies
 		{
 			get
@@ -6919,7 +6984,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_ResourceContentFiles", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public EntitySet<ResourceContentFile> ResourceContentFiles
 		{
 			get
@@ -6938,7 +7003,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_ResourceSpringHashes", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<ResourceSpringHash> ResourceSpringHashes
 		{
 			get
@@ -6953,6 +7018,40 @@ namespace ZkData
 			set
 			{
 				this._ResourceSpringHashes.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Mission", ThisKey="MissionID", OtherKey="MissionID", IsForeignKey=true, DeleteRule="CASCADE")]
+		public Mission Mission
+		{
+			get
+			{
+				return this._Mission.Entity;
+			}
+			set
+			{
+				Mission previousValue = this._Mission.Entity;
+				if (((previousValue != value) 
+							|| (this._Mission.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Mission.Entity = null;
+						previousValue.Resources.Remove(this);
+					}
+					this._Mission.Entity = value;
+					if ((value != null))
+					{
+						value.Resources.Add(this);
+						this._MissionID = value.MissionID;
+					}
+					else
+					{
+						this._MissionID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Mission");
+				}
 			}
 		}
 		
@@ -7017,6 +7116,7 @@ namespace ZkData
 			this._ResourceDependencies = new EntitySet<ResourceDependency>(new Action<ResourceDependency>(this.attach_ResourceDependencies), new Action<ResourceDependency>(this.detach_ResourceDependencies));
 			this._ResourceContentFiles = new EntitySet<ResourceContentFile>(new Action<ResourceContentFile>(this.attach_ResourceContentFiles), new Action<ResourceContentFile>(this.detach_ResourceContentFiles));
 			this._ResourceSpringHashes = new EntitySet<ResourceSpringHash>(new Action<ResourceSpringHash>(this.attach_ResourceSpringHashes), new Action<ResourceSpringHash>(this.detach_ResourceSpringHashes));
+			this._Mission = default(EntityRef<Mission>);
 			OnCreated();
 		}
 		

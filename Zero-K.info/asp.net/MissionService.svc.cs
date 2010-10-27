@@ -1,15 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Linq;
+using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Transactions;
+using System.Web.Mvc;
+using MonoTorrent.Common;
+using PlasmaShared;
+using PlasmaShared.UnitSyncLib;
 using ZkData;
+using Hash = PlasmaShared.Hash;
 
 namespace ZeroKWeb
 {
 	// NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "MissionService" in code, svc and config file together.
 	public class MissionService: IMissionService
 	{
+		const string MissionFileUrl = "http://zero-k.info/Missions.mvc/File/{0}";
+
 		public void DeleteMission(int missionID, string author, string password)
 		{
 			var db = new ZkDataContext();
@@ -68,6 +77,8 @@ namespace ZeroKWeb
 			return list;
 		}
 
+		
+
 		public void SendMission(Mission mission, string author, string password)
 		{
 			var acc = new AuthServiceClient().VerifyAccount(author, password);
@@ -76,6 +87,11 @@ namespace ZeroKWeb
 			using (var scope = new TransactionScope())
 			{
 				if (db.Missions.Any(x => x.Name == mission.Name)) throw new ApplicationException("Mission name must be unique");
+				var map = db.Resources.SingleOrDefault(x => x.InternalName == mission.Map && x.TypeID == ZkData.ResourceType.Map);
+				if (map == null) throw new ApplicationException("Map name is unknown");
+				var mod = db.Resources.SingleOrDefault(x => x.InternalName == mission.Mod && x.TypeID == ZkData.ResourceType.Mod);
+				if (mod == null) throw new ApplicationException("Mod name is unknown");
+				
 				var prev = db.Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
 
 				if (prev != null)
@@ -93,11 +109,61 @@ namespace ZeroKWeb
 				}
 				else
 				{
+					mission.AccountID = acc.AccountID;
 					mission.CreatedTime = DateTime.UtcNow;
 					mission.ModifiedTime = DateTime.UtcNow;
 					db.Missions.InsertOnSubmit(mission);
 					db.SubmitChanges();
 				}
+
+				var resource = db.Resources.FirstOrDefault(x => x.InternalName == mission.Name);
+				if (resource == null)
+				{
+					resource = new Resource() { InternalName = mission.Name, DownloadCount = 0, MissionID = mission.MissionID, TypeID = ZkData.ResourceType.Mod };
+					db.Resources.InsertOnSubmit(resource);
+				}
+				resource.ResourceDependencies.Clear();
+				resource.ResourceDependencies.Add(new ResourceDependency() { NeedsInternalName = map.InternalName });
+				resource.ResourceDependencies.Add(new ResourceDependency() { NeedsInternalName = mod.InternalName });
+				resource.ResourceContentFiles.Clear();
+				var modInfo = new Mod()
+				              {
+				              	ArchiveName = mission.SanitizedFileName,
+				              	Name = mission.Name,
+				              	Desctiption = mission.Description,
+				              	Dependencies = new[] { mod.InternalName },
+												MissionScript = mission.Script
+				              };
+
+				// generate torrent
+				var tempFile = Path.Combine(Path.GetTempPath(), mission.SanitizedFileName);
+				File.WriteAllBytes(tempFile, mission.Mutator.ToArray());
+				var creator = new TorrentCreator();
+				creator.Path = tempFile;
+				var torrentStream = new MemoryStream();
+				creator.Create(torrentStream);
+				try
+				{
+					File.Delete(tempFile);
+				}
+				catch {}
+
+				string md5 = Hash.HashBytes(mission.Mutator.ToArray()).ToString();
+				resource.ResourceContentFiles.Add(new ResourceContentFile()
+				                                  {
+				                                  	FileName = mission.SanitizedFileName,
+																						Length = mission.Mutator.Length,
+																						LinkCount = 1,
+																						Links = string.Format(MissionFileUrl, mission.MissionID),
+																						Md5 = md5
+				                                  });
+
+
+				File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}_{1}.torrent", mission.Name.EscapePath(), md5), torrentStream.ToArray());
+				File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}.metadata.xml.gz", mission.Name.EscapePath()), MetaDataCache.SerializeAndCompressMetaData(modInfo));
+
+
+				db.SubmitChanges();
 				scope.Complete();
 			}
 		}
