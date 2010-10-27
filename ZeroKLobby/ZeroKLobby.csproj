@@ -145,11 +145,6 @@
     <Compile Include="Notifications\SinglePlayerBar.Designer.cs">
       <DependentUpon>SinglePlayerBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Service References\ServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
     <Compile Include="StartTab\GameSelectorWindow.xaml.cs">
       <DependentUpon>GameSelectorWindow.xaml</DependentUpon>
     </Compile>
@@ -615,13 +610,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="LuaMgr\doc\changelog.txt" />
-    <None Include="Service References\ServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\ServiceReference\configuration.svcinfo" />
-    <None Include="Service References\ServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\ServiceReference\MissionService.disco" />
     <None Include="Resources\ZK_logo_square.png" />
     <Resource Include="ZK_logo_square.ico" />
     <None Include="PixelShaders\BlackAndWhite.fx" />
@@ -701,22 +689,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\DownloadBar.resx">
     </EmbeddedResource>
-    <None Include="Service References\ServiceReference\MissionService.wsdl" />
-    <None Include="Service References\ServiceReference\MissionService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference\MissionService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference\MissionService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference\MissionService3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ServiceReference\ZeroKLobby.ServiceReference.Mission.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
     <None Include="SpringDownloader_TemporaryKey.pfx" />
     <None Include="Web References\ModStats\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
@@ -786,9 +758,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\ServiceReference\" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="MSHTML">

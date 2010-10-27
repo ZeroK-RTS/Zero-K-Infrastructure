@@ -14,7 +14,6 @@ using Hash = PlasmaShared.Hash;
 
 namespace ZeroKWeb
 {
-	// NOTE: You can use the "Rename" command on the "Refactor" menu to change the class name "MissionService" in code, svc and config file together.
 	public class MissionService: IMissionService
 	{
 		const string MissionFileUrl = "http://zero-k.info/Missions.mvc/File/{0}";

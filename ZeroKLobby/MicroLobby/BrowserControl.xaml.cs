@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Windows.Navigation;
-using ZeroKLobby.ServiceReference;
 using UserControl = System.Windows.Controls.UserControl;
 using WebBrowser = System.Windows.Controls.WebBrowser;
 
@@ -13,18 +12,12 @@ namespace ZeroKLobby.MicroLobby
 	/// </summary>
 	public partial class BrowserControl: UserControl, INavigatable
 	{
-		MissionServiceClient client;
-
+		
 		public BrowserControl()
 		{
 			InitializeComponent();
 		}
 
-		void client_GetMissionByIDCompleted(object sender, ServiceReference.GetMissionByIDCompletedEventArgs e)
-		{
-			
-			
-		}
 
 		void PerformAction(string actionString)
 		{
@@ -79,8 +72,6 @@ namespace ZeroKLobby.MicroLobby
 		private void webBrowser_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-			client = new MissionServiceClient();
-			client.GetMissionByIDCompleted += client_GetMissionByIDCompleted;
 			WebBrowser.Source = new Uri("http://zero-k.info/Missions.mvc");
 		}
 

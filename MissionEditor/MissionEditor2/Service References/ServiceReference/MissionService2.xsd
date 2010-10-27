@@ -3,6 +3,7 @@
   <xs:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Data.Linq" />
   <xs:complexType name="Mission">
     <xs:sequence>
+      <xs:element minOccurs="0" name="AuthorName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="MissionID" type="xs:int" />
       <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Mod" nillable="true" type="xs:string" />
