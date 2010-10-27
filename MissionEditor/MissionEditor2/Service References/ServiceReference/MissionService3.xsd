@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://localhost:54720/MissionService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ZkData" />
+  <xs:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ZkData" />
   <xs:element name="DeleteMission">
     <xs:complexType>
       <xs:sequence>

@@ -20,15 +20,15 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:54720/MissionService.svc" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://zero-k.info/MissionService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="MissionService1.wsdl" MetadataType="Wsdl" ID="5bda300d-200a-48c3-aca1-de0d0f10edb6" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?wsdl" />
-    <MetadataFile FileName="MissionService1.disco" MetadataType="Disco" ID="1e89635b-01da-4fa8-9aae-b026f15901a3" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?disco" />
-    <MetadataFile FileName="MissionService4.xsd" MetadataType="Schema" ID="36b62eb5-df11-40ed-bc7a-09fca2280750" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?xsd=xsd1" />
-    <MetadataFile FileName="MissionService41.xsd" MetadataType="Schema" ID="9d9f07c6-f4b8-4d99-9d16-ff6866fed907" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?xsd=xsd0" />
-    <MetadataFile FileName="MissionService42.xsd" MetadataType="Schema" ID="25c4eecc-159a-49eb-b5ee-4027b4855978" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?xsd=xsd3" />
-    <MetadataFile FileName="MissionService43.xsd" MetadataType="Schema" ID="2c87a6e1-5286-4861-9269-757cce1e62da" SourceId="1" SourceUrl="http://localhost:54720/MissionService.svc?xsd=xsd2" />
+    <MetadataFile FileName="MissionService.disco" MetadataType="Disco" ID="9d61d811-ecfd-4935-87f7-43297ad848d9" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?disco" />
+    <MetadataFile FileName="MissionService.xsd" MetadataType="Schema" ID="dbaf71b9-491f-41da-b783-a6e7a3118575" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd1" />
+    <MetadataFile FileName="MissionService1.xsd" MetadataType="Schema" ID="5fc00048-7106-4d96-be15-eba35fa17d62" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd3" />
+    <MetadataFile FileName="MissionService2.xsd" MetadataType="Schema" ID="10fdd112-d45a-4c14-b315-5e57cecdc9f9" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd2" />
+    <MetadataFile FileName="MissionService.wsdl" MetadataType="Wsdl" ID="0332c667-516f-4f9a-9153-e5a6a0377d88" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?wsdl" />
+    <MetadataFile FileName="MissionService3.xsd" MetadataType="Schema" ID="83a4c698-ed17-4939-a8f4-a473d39e19cf" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
