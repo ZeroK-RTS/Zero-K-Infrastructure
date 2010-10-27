@@ -152,7 +152,7 @@ namespace ZeroKWeb
 				                                  	FileName = mission.SanitizedFileName,
 																						Length = mission.Mutator.Length,
 																						LinkCount = 1,
-																						Links = string.Format(MissionFileUrl, mission.MissionID),
+																						Links = string.Format(MissionFileUrl, mission.Name),
 																						Md5 = md5
 				                                  });
 

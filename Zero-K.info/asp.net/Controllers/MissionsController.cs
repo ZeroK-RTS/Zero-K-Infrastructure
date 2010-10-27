@@ -29,16 +29,17 @@ namespace ZeroKWeb.Controllers
 					});
 		}
 
-		[OutputCache(Duration = int.MaxValue, VaryByParam = "id")]
-		public ActionResult Img(int id)
+		[OutputCache(VaryByParam = "name", Duration = int.MaxValue)]
+		public ActionResult Img(string name)
 		{
 			var db = new ZkDataContext();
-			return File(db.Missions.Single(x => x.MissionID == id).Image.ToArray(), "image/png");
+			return File(db.Missions.Single(x => x.Name == name).Image.ToArray(), "image/png");
 		}
 
-		public ActionResult File(int id)
+		[OutputCache(VaryByParam = "name", Duration = int.MaxValue)]
+		public ActionResult File(string name)
 		{
-			var m = new ZkDataContext().Missions.Single(x => x.MissionID == id);
+			var m = new ZkDataContext().Missions.Single(x => x.Name == name);
 			return File(m.Mutator.ToArray(), "application/octet-stream", m.SanitizedFileName);
 		}
 
