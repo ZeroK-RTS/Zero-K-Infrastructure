@@ -28,9 +28,9 @@ namespace ZeroKLobby.MicroLobby
             if (m.Msg == WM_MOUSEWHEEL)
             {
                 var control = MainWindow.Instance.GetHoveredControl();
-								if (control == null && Mouse.DirectlyOver == null && Program.MainWindow.navigationControl1.IsBrowserTabSelected)
+								if (control == null && Mouse.DirectlyOver == null && Program.MainWindow.navigationControl.IsBrowserTabSelected)
 								{
-									var webBrowser = Program.MainWindow.navigationControl1.Browser;
+									var webBrowser = Program.MainWindow.navigationControl.Browser;
 									mshtml.HTMLDocument htmlDoc = webBrowser.Document as mshtml.HTMLDocument;
 
 									int x = ((int)m.LParam << 16) >> 16;
@@ -52,7 +52,7 @@ namespace ZeroKLobby.MicroLobby
 								}
             }  else if (m.Msg == WM_XBUTTONDOWN)
             {
-            	Program.MainWindow.navigationControl1.NavigateBack();
+            	Program.MainWindow.navigationControl.NavigateBack();
             }
             return false;
         }

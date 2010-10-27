@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Windows.Navigation;
+using ZeroKLobby.Notifications;
+using Control = System.Windows.Controls.Control;
 using UserControl = System.Windows.Controls.UserControl;
 using WebBrowser = System.Windows.Controls.WebBrowser;
 
@@ -35,7 +37,7 @@ namespace ZeroKLobby.MicroLobby
 		void StartMission(int missionID)
 		{
 			// client.GetMissionByIDAsync(missionID);
-			MessageBox.Show("Not implemented");
+			Program.MainWindow.NotifySection.AddBar(new System.Windows.Controls.Label{ Content = "Not Implemented"});
 		}
 
 		public string PathHead { get { return "http://zero-k.info/Missions.mvc"; } }
@@ -79,6 +81,10 @@ namespace ZeroKLobby.MicroLobby
 		{
 			var document = (mshtml.HTMLDocument)WebBrowser.Document;
 			document.focus();
+		}
+
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
 		}
 	}
 }
