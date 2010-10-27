@@ -129,6 +129,7 @@
       <DependentUpon>OrderIcon.xaml</DependentUpon>
     </Compile>
     <Compile Include="PublishDialog.xaml.cs" />
+    <Compile Include="Publishing.cs" />
     <Compile Include="RectangleDragInfo.xaml.cs" />
     <Compile Include="RegionWindow.xaml.cs">
       <DependentUpon>RegionWindow.xaml</DependentUpon>

@@ -36,7 +36,7 @@ namespace ZeroKLobby
 		public WebBrowser Browser { get { return browserControl.WebBrowser; } }
 		public ChatTab ChatTab { get { return chatTab; } }
 		public static NavigationControl Instance { get; private set; }
-		public bool IsBrowserTabSelected { get { return tabControl.SelectedContent is MissionControl; } }
+		public bool IsBrowserTabSelected { get { return tabControl.SelectedContent is BrowserControl; } }
 		public string Path
 		{
 			get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
@@ -169,7 +169,7 @@ namespace ZeroKLobby
 		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			if (e.AddedItems.Count == 0) return;
-			var missions = ((TabItem)e.AddedItems[0]).Content as MissionControl;
+			var missions = ((TabItem)e.AddedItems[0]).Content as BrowserControl;
 			if (missions != null)
 			{
 				// SelectionChanged appears to be fired before the browser is ready so wait a bit

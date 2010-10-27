@@ -105,6 +105,7 @@
     <Compile Include="Cylinder.cs" />
     <Compile Include="Actions\DefeatAction.cs" />
     <Compile Include="Actions\DummyAction.cs" />
+    <Compile Include="EventArgs.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Conditions\GameStartedCondition.cs" />
     <Compile Include="Actions\GiveOrdersAction.cs" />

@@ -1,22 +1,23 @@
-﻿<Window x:Class="MissionEditor2.MissionManagement"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    
-    Title="Mission Management" Width="400" Height="300" Loaded="Window_Loaded">
+﻿<Window x:Class="MissionEditor2.MissionManagement" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Mission Management" Width="400" Height="300" Loaded="Window_Loaded">
     <DockPanel>
-    <UniformGrid DockPanel.Dock="Bottom" Rows="1">
-            <Button Margin="2" Name="OpenButton" x:FieldModifier="public" Click="OpenButton_Click">Open Mission</Button>
-            <Button Margin="2" Name="UpdateButton" x:FieldModifier="public" Click="UpdateButton_Click">Update Mission</Button>
-            <Button Margin="2" Name="DeleteButton" x:FieldModifier="public" Click="DeleteButton_Click">Delete Mission</Button>
-    </UniformGrid>
-    <DataGrid x:Name="DataGrid" x:FieldModifier="public" AutoGenerateColumns="False" Background="White" IsReadOnly="True">
-      <DataGrid.Columns>
-        <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-        <DataGridTextColumn Header="Author" Binding="{Binding Account.Name}" />
-        <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
-        <DataGridTextColumn Header="Mod" Binding="{Binding Mod}" />
-        <DataGridTextColumn Header="Map" Binding="{Binding Map}" />
-      </DataGrid.Columns>
-    </DataGrid>
-  </DockPanel>
+        <DockPanel DockPanel.Dock="Top">
+            <Label DockPanel.Dock="Left">Search</Label>
+            <TextBox x:Name="searchBox" TextChanged="searchBox_TextChanged" />
+        </DockPanel>
+        <UniformGrid DockPanel.Dock="Bottom" Rows="1">
+            <Button Margin="2" Name="OpenButton" Click="OpenButton_Click">Open Mission</Button>
+            <Button Margin="2" Name="UpdateButton" Click="UpdateButton_Click">Update Mission</Button>
+            <Button Margin="2" Name="DeleteButton" Click="DeleteButton_Click">Delete Mission</Button>
+        </UniformGrid>
+        <DataGrid x:Name="DataGrid" x:FieldModifier="public" AutoGenerateColumns="False" Background="White" IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Author" Binding="{Binding Account.Name}" />
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}" />
+                <DataGridTextColumn Header="Mod" Binding="{Binding Mod}" />
+                <DataGridTextColumn Header="Map" Binding="{Binding Map}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
 </Window>

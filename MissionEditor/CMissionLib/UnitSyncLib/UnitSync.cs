@@ -59,6 +59,7 @@ namespace CMissionLib.UnitSyncLib
 			set { writableDataDirectory = value; }
 		}
 
+		
 		#region IDisposable Members
 
 		public void Dispose()
@@ -85,6 +86,14 @@ namespace CMissionLib.UnitSyncLib
 		{
 			Dispose();
 		}
+
+		public event EventHandler<EventArgs<string>> LoadingStatusChanged = delegate { };
+
+		void SetLoadingStatus(string status)
+		{
+			LoadingStatusChanged(this, new EventArgs<string>(status));
+		}
+
 
 		public Bitmap GetHeightMap(string mapName)
 		{
@@ -120,8 +129,10 @@ namespace CMissionLib.UnitSyncLib
 
 		public Dictionary<uint, string> GetMapHashes()
 		{
+			
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
 			if (maps != null) return maps;
+			SetLoadingStatus("Loading Map (Map Hashes)");
 			var mapCount = NativeMethods.GetMapCount();
 			if (mapCount < 0) throw new UnitSyncException(NativeMethods.GetNextError());
 			maps = (from mapIndex in Enumerable.Range(0, mapCount)
@@ -144,6 +155,7 @@ namespace CMissionLib.UnitSyncLib
 		public BitmapSource GetMapTexture(Map map, int detail)
 		{
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
+			SetLoadingStatus("Loading Map (Map Texture)");
 			var sm2 = new SM2();
 			return sm2.GetTexture(map, detail, this);
 		}
@@ -153,7 +165,7 @@ namespace CMissionLib.UnitSyncLib
 			if (mapName == null || archiveName == null) return null;
 			if (maps == null) GetMapNames();
 			NativeMethods.RemoveAllArchives();
-
+			SetLoadingStatus("Loading Map (Map Information)");
 			var checksum = maps.First(kvp => kvp.Value == mapName).Key;
 			var mapInfo = GetMapInfo(checksum);
 			var map = new Map(mapName)
@@ -180,11 +192,13 @@ namespace CMissionLib.UnitSyncLib
 
 		public Bitmap GetMetalMap(string mapName)
 		{
+			SetLoadingStatus("Loading Map (Metal Map)");
 			return GetInfoMap(mapName, "metal", 1);
 		}
 
 		public Bitmap GetMinimap(Map map)
 		{
+			SetLoadingStatus("Loading Map (Minimap)");
 			return FixAspectRatio(map, GetSquareMinimap(map.Name, 0));
 		}
 
@@ -195,16 +209,16 @@ namespace CMissionLib.UnitSyncLib
 			NativeMethods.RemoveAllArchives();
 			NativeMethods.GetPrimaryModCount(); // pre-requisite for the following calls
 			var archiveName = GetModArchiveName(modName);
+			SetLoadingStatus("Loading Mod (Reading Mod Files)");
 			NativeMethods.AddAllArchives(archiveName);
-
 			var modIndex = NativeMethods.GetPrimaryModIndex(modName);
 			string[] sides;
-
+			SetLoadingStatus("Loading Mod (Mod Information)");
 			var mod = new Mod
 				{
 					Name = modName,
 					ArchiveName = archiveName,
-					UnitDefs = ParseUnits(),
+					UnitDefs = ReadUnits(),
 					Desctiption = NativeMethods.GetPrimaryModDescription(modIndex),
 					Game = NativeMethods.GetPrimaryModGame(modIndex),
 					Mutator = NativeMethods.GetPrimaryModMutator(modIndex),
@@ -219,11 +233,13 @@ namespace CMissionLib.UnitSyncLib
 					Dependencies = GetModDependencies(modIndex).Where(x => x != modName && !string.IsNullOrEmpty(x)).ToArray(),
 					AllAis = GetAis().ToArray(),
 					ModAis = GetAis().Where(ai => ai.IsLuaAi).ToArray(),
-					Widgets = GetFilesInVfsDirectory("LuaUI/Widgets", "*.lua", VfsMode.Mod).Select(Path.GetFileName).ToArray(),
-					Gadgets = GetFilesInVfsDirectory("LuaRules/Gadgets", "*.lua", VfsMode.Mod).Select(Path.GetFileName).ToArray(),
-				};
 
-			ParseUnits();
+				};
+			SetLoadingStatus("Loading Mod (Widgets)");
+			mod.Widgets = GetFilesInVfsDirectory("LuaUI/Widgets", "*.lua", VfsMode.Mod).Select(Path.GetFileName).ToArray();
+			SetLoadingStatus("Loading Mod (Gadgets)");
+			mod.Gadgets = GetFilesInVfsDirectory("LuaRules/Gadgets", "*.lua", VfsMode.Mod).Select(Path.GetFileName).ToArray();
+			ReadUnits();
 
 			if (mod.Sides.Length == 0) Debug.WriteLine("Mod has no faction");
 			if (mod.UnitDefs.Length == 0) Debug.WriteLine("No unit found.");
@@ -274,6 +290,7 @@ namespace CMissionLib.UnitSyncLib
 		public IEnumerable<string> GetModNames()
 		{
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
+			SetLoadingStatus("Loading Mod (Mod Names)");
 			var modNames = new List<string>();
 			for (var i = 0; i < NativeMethods.GetPrimaryModCount(); i++) modNames.Add(NativeMethods.GetPrimaryModName(i));
 			return modNames;
@@ -341,6 +358,7 @@ namespace CMissionLib.UnitSyncLib
 
 		IEnumerable<Ai> GetAis()
 		{
+			SetLoadingStatus("Loading Mod (AIs)");
 			var ais = new List<Ai>();
 			for (var i = 0; i < NativeMethods.GetSkirmishAICount(); i++)
 				ais.Add(new Ai {Info = GetAiInfo(i).ToArray(), Options = GetAiOptions(i).ToArray()});
@@ -472,6 +490,7 @@ namespace CMissionLib.UnitSyncLib
 
 		IEnumerable<Option> GetMapOptions(string mapName, string archiveName)
 		{
+			SetLoadingStatus("Loading Map (Map Options)");
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
 			if (archiveName == null) throw new ArgumentNullException("archiveName");
 			NativeMethods.AddAllArchives(archiveName);
@@ -524,6 +543,7 @@ namespace CMissionLib.UnitSyncLib
 
 		IEnumerable<Option> GetModOptions(string archiveName)
 		{
+			SetLoadingStatus("Loading Mod (Mod Options)");
 			NativeMethods.AddAllArchives(archiveName);
 			var optionCount = NativeMethods.GetModOptionCount();
 			var options = new List<Option>();
@@ -563,6 +583,7 @@ namespace CMissionLib.UnitSyncLib
 
 		Dictionary<string, string> GetStartUnits(string modName, out string[] sides)
 		{
+			
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
 			var modIndex = Array.LastIndexOf(GetModNames().ToArray(), modName);
 			if (modIndex < 0) throw new UnitSyncException("Mod not found (" + modName + ").");
@@ -573,6 +594,7 @@ namespace CMissionLib.UnitSyncLib
 		{
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
 			LoadModArchive(modIndex);
+			SetLoadingStatus("Loading Mod (Start Units)");
 			var sideCount = NativeMethods.GetSideCount();
 			var startUnits = new Dictionary<string, string>();
 			sides = new string[sideCount];
@@ -594,6 +616,7 @@ namespace CMissionLib.UnitSyncLib
 
 		IEnumerable<UnitInfo> GetUnitList(int modIndex)
 		{
+			SetLoadingStatus("Loading Mod (Unit List)");
 			if (modIndex != loadedArchiveIndex)
 			{
 				NativeMethods.AddAllArchives(NativeMethods.GetPrimaryModArchive(modIndex));
@@ -819,12 +842,13 @@ namespace CMissionLib.UnitSyncLib
 			Thread = 9,
 		}
 
-		UnitInfo[] ParseUnits()
+		UnitInfo[] ReadUnits()
 		{
 			var unitInfos = new List<UnitInfo>();
 
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
 			if (!NativeMethods.lpOpenFile("gamedata/defs.lua", VfsMode.Mod, VfsMode.Mod)) throw new UnitSyncException("Error parsing defs.lua: " + NativeMethods.lpErrorLog());
+			SetLoadingStatus("Loading Mod (UnitDefs)");
 			if (!NativeMethods.lpExecute()) throw new UnitSyncException("Unable to read  defs.lua: " + NativeMethods.lpErrorLog());
 			if (!NativeMethods.lpSubTableStr("unitdefs")) throw new UnitSyncException(); // push unitdefs
 
@@ -834,6 +858,7 @@ namespace CMissionLib.UnitSyncLib
 				if (!NativeMethods.lpSubTableStr(unitName)) throw new UnitSyncException(); // push unitdef
 				var unitInfo = new UnitInfo();
 				unitInfo.Name = unitName;
+				SetLoadingStatus(String.Format("Loading Mod (Unit: {0})", unitName));
 				if (NativeMethods.lpGetKeyExistsStr("name"))
 				{
 					unitInfo.FullName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);

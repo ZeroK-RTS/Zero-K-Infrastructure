@@ -1,5 +1,12 @@
 ﻿<Window x:Class="ZeroKLobby.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ZeroKLobby="clr-namespace:ZeroKLobby" Title="MainWindow" Height="300" Width="300" Loaded="Window_Loaded" StateChanged="Window_StateChanged" Closing="Window_Closing">
-	<ZeroKLobby:NavigationControl x:Name="navigationControl1"></ZeroKLobby:NavigationControl>
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ZeroKLobby="clr-namespace:ZeroKLobby" xmlns:Notifications="clr-namespace:ZeroKLobby.Notifications" Title="MainWindow" Height="300" Width="300" Loaded="Window_Loaded" StateChanged="Window_StateChanged" Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ZeroKLobby:NavigationControl x:Name="navigationControl1"></ZeroKLobby:NavigationControl>
+        <Notifications:NotifySection x:Name="notifyBox" Grid.Row="1" />
+    </Grid>
 </Window>

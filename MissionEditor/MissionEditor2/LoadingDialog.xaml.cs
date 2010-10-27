@@ -16,7 +16,10 @@ namespace MissionEditor2
 		public string Text
 		{
 			get { return textBlock.Text; }
-			set { Dispatcher.Invoke(new ThreadStart(() => textBlock.Text = value)); }
+			set
+			{
+				Dispatcher.BeginInvoke(new ThreadStart(() => textBlock.Text = value));
+			}
 		}
 	}
 }

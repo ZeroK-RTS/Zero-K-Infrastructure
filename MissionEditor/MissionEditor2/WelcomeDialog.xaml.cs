@@ -154,6 +154,7 @@ namespace MissionEditor2
 					loadingDialog.Text = "Scanning";
 					using (var unitSync = new UnitSync(Settings.Default.SpringPath))
 					{
+						unitSync.LoadingStatusChanged += (se, ea) => loadingDialog.Text = ea.Data;
 						loadingDialog.Text = "Loading Map";
 						mission.Map = LoadMap(unitSync, mission.MapName);
 						loadingDialog.Text = "Loading Mod";
@@ -211,6 +212,7 @@ namespace MissionEditor2
 								loadingDialog.Text = "Scanning";
 								using (var unitSync = new UnitSync(Settings.Default.SpringPath))
 								{
+									unitSync.LoadingStatusChanged += (s, e) => loadingDialog.Text = e.Data;
 									loadingDialog.Text = "Loading Map";
 									var map = LoadMap(unitSync, mapName);
 									loadingDialog.Text = "Loading Mod";
