@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
@@ -14,7 +15,6 @@ namespace MissionEditor2
 	/// </summary>
 	public partial class MissionManagement: Window
 	{
-		MissionServiceClient client;
 
 		public MissionManagement()
 		{
@@ -23,13 +23,17 @@ namespace MissionEditor2
 
 		void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			client = new MissionServiceClient();
 			RefreshList();
 		}
 
 		void RefreshList()
 		{
-			var loadingDialog = new LoadingDialog { Text = "Getting Mission List" };
+			if (Dispatcher.Thread != Thread.CurrentThread)
+			{
+				this.Invoke(RefreshList);
+				return;
+			}
+			var loadingDialog = new LoadingDialog { Text = "Getting Mission List", Owner = MainWindow.Instance };
 			Utils.InvokeInNewThread(delegate
 			{
 				using (var client = new MissionServiceClient())
@@ -48,14 +52,16 @@ namespace MissionEditor2
 		void DeleteButton_Click(object sender, RoutedEventArgs e)
 		{
 			var selectedMission = (Mission)DataGrid.SelectedItem;
-			var dialog = new StringRequest { Title = "Insert Password" };
+			var dialog = new PasswordRequest { Owner = MainWindow.Instance };
 			if (dialog.ShowDialog() == true)
 			{
-				var password = dialog.TextBox.Text;
+				var password = dialog.PasswordBox.Password;
 
 				Utils.InvokeInNewThread(delegate
 					{
-						using (var client = new MissionServiceClient()) client.DeleteMission(selectedMission.MissionID, selectedMission.Account.Name, password);
+#pragma warning disable 612,618
+						using (var client = new MissionServiceClient()) client.DeleteMission(selectedMission.MissionID, selectedMission.AuthorName, password);
+#pragma warning restore 612,618
 						RefreshList();
 					});
 			}
@@ -86,14 +92,19 @@ namespace MissionEditor2
 			var selectedMission = (Mission)DataGrid.SelectedItem;
 			if (selectedMission == null) return;
 			var mission = MainWindow.Instance.Mission;
-			var dialog = new PublishDialog { DataContext = mission };
-			if (dialog.ShowDialog() == true)
+			var dialog = new PublishDialog { DataContext = mission, Owner = this };
+			dialog.OKButton.Click += delegate
 			{
-				if (selectedMission.Name == mission.Name) MessageBox.Show(String.Format("The mission needs to have a new name. For example, rename it to \"{0} v2\"", mission.Name));
-				Publishing.SendMissionWithDialog(mission, dialog.PasswordBox.Password, selectedMission.MissionID);
-				RefreshList();
-				UpdateButton.IsEnabled = true;
-			}
+				var error = mission.VerifyCanPublish();
+				if (error == null)
+				{
+					Publishing.SendMissionWithDialog(mission, dialog.PasswordBox.Password, selectedMission.MissionID);
+					dialog.Close();
+					RefreshList();
+				}
+				else MessageBox.Show(error);
+			};
+			dialog.ShowDialog();
 		}
 
 		void searchBox_TextChanged(object sender, TextChangedEventArgs e)

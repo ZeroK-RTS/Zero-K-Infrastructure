@@ -16,11 +16,11 @@
         <Label Grid.Row="0">Name</Label>
         <Label Grid.Row="1">Spring Account</Label>
         <Label Grid.Row="2">Password</Label>
-        <Label Grid.Row="3">I accept the terms of service</Label>
+        <Label Grid.Row="3" Visibility="Collapsed">I accept the terms of service</Label>
         <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="2" />
         <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Author}" Margin="2" />
         <PasswordBox Grid.Column="1" Grid.Row="2" Name="PasswordBox" x:FieldModifier="public" Margin="2" />
-        <CheckBox x:Name="termsBox" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <CheckBox x:Name="termsBox" Visibility="Collapsed" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" />
         <TextBlock Grid.Row="5" TextWrapping="WrapWithOverflow">
       This will publish the mission <LineBreak /> to the Zero-K repository.
         </TextBlock>

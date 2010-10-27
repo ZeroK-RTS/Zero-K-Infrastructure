@@ -34,14 +34,14 @@ namespace ZeroKLobby
 		readonly WindowInteropHelper interopHelper;
 		WindowState lastState = WindowState.Normal;
 
-		readonly NotifySection notifySection1;
+		readonly NotifySection notifySection;
 		readonly NotifyIcon systrayIcon;
 		readonly DispatcherTimer timer1 = new DispatcherTimer();
 		readonly ContextMenuStrip trayStrip;
 		public ChatTab ChatTab { get { return navigationControl1.ChatTab; } }
 		public static MainWindow Instance { get; private set; }
 
-		public NotifySection NotifySection { get { return notifySection1; } }
+		public NotifySection NotifySection { get { return notifySection; } }
 
 		public IntPtr Handle
 		{
@@ -54,7 +54,7 @@ namespace ZeroKLobby
 
 			if (Utils.IsDesignTime) return;
 
-			notifySection1 = new NotifySection();
+			notifySection = new NotifySection();
 
 			//Invalidate(true);
 

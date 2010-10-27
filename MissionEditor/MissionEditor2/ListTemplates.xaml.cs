@@ -153,14 +153,14 @@ namespace MissionEditor2
 
 		void AddCounterButton_Click(object sender, RoutedEventArgs e)
 		{
-			var dialog = new StringRequest {Title = "Insert counter name."};
+			var dialog = new StringRequest {Title = "Insert counter name.", Owner = MainWindow.Instance};
 			var result = dialog.ShowDialog();
 			if (result.HasValue && result.Value) MainWindow.Instance.Mission.Counters.Add(dialog.TextBox.Text);
 		}
 
 		void RemoveCounterButton_Click(object sender, RoutedEventArgs e)
 		{
-			var dialog = new StringRequest {Title = "Insert counter name."};
+			var dialog = new StringRequest { Title = "Insert counter name.", Owner = MainWindow.Instance };
 			var result = dialog.ShowDialog();
 			if (result.HasValue && result.Value && !MainWindow.Instance.Mission.Counters.Remove(dialog.TextBox.Text))
 			{

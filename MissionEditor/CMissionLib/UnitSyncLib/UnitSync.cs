@@ -858,6 +858,7 @@ namespace CMissionLib.UnitSyncLib
 				if (!NativeMethods.lpSubTableStr(unitName)) throw new UnitSyncException(); // push unitdef
 				var unitInfo = new UnitInfo();
 				unitInfo.Name = unitName;
+				SetLoadingStatus(string.Format("Loading Mod (Unit: {0})", unitName));
 				if (NativeMethods.lpGetKeyExistsStr("name"))
 				{
 					unitInfo.FullName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);

@@ -64,7 +64,7 @@ namespace MissionEditor2
 			var saveFileDialog = new SaveFileDialog { DefaultExt = "sdz", Filter = filter, RestoreDirectory = true };
 			if (saveFileDialog.ShowDialog() == true)
 			{
-				var loadingDialog = new LoadingDialog();
+				var loadingDialog = new LoadingDialog { Owner =this };
 				loadingDialog.Text = "Building Mission";
 				loadingDialog.Loaded += delegate
 					{
@@ -230,14 +230,14 @@ namespace MissionEditor2
 		void RenameLogicItem(TriggerLogic item)
 		{
 			if (item == null) return;
-			var dialog = new StringRequest { Title = "Rename Item", TextBox = { Text = item.Name } };
+			var dialog = new StringRequest { Title = "Rename Item", TextBox = { Text = item.Name }, Owner =this };
 			if (dialog.ShowDialog() == true) item.Name = dialog.TextBox.Text;
 		}
 
 		void Renametrigger(Trigger trigger)
 		{
 			if (trigger == null) return;
-			var dialog = new StringRequest { Title = "Rename Trigger", TextBox = { Text = trigger.Name } };
+			var dialog = new StringRequest { Title = "Rename Trigger", TextBox = { Text = trigger.Name }, Owner =this };
 			if (dialog.ShowDialog() == true)
 			{
 				trigger.Name = dialog.TextBox.Text;
@@ -261,12 +261,12 @@ namespace MissionEditor2
 
 		void ShowMissionManagement()
 		{
-			new MissionManagement().ShowDialog();
+			new MissionManagement { Owner = this }.ShowDialog();
 		}
 
 		void ShowMissionSettings()
 		{
-			new MissionSettingsDialog().ShowDialog();
+			new MissionSettingsDialog { Owner = this }.ShowDialog();
 		}
 
 		/// <summary>
@@ -343,7 +343,7 @@ namespace MissionEditor2
 				regionsMenu.AddAction(region.Name,
 				                      delegate
 				                      	{
-				                      		var window = new RegionWindow(region);
+				                      		var window = new RegionWindow(region){Owner = this};
 				                      		window.ShowDialog();
 				                      	});
 			}
@@ -402,7 +402,7 @@ namespace MissionEditor2
 		{
 			var region = new Region { Name = "New Region" };
 			Mission.Regions.Add(region);
-			var window = new RegionWindow(region);
+			var window = new RegionWindow(region){Owner = this};
 			window.ShowDialog();
 		}
 
@@ -477,8 +477,7 @@ namespace MissionEditor2
 			//var help = MainMenu.AddContainer("Help");
 			//help.AddAction("Basic Help", () => new Help().ShowDialog());
 
-			var welcomeScreen = new WelcomeDialog { ShowInTaskbar = true };
-			welcomeScreen.Owner = this;
+			var welcomeScreen = new WelcomeDialog { ShowInTaskbar = true, Owner = this };
 			welcomeScreen.ShowDialog();
 			if (Mission == null)
 			{

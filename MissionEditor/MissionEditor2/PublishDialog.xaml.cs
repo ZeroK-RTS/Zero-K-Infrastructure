@@ -27,7 +27,7 @@ namespace MissionEditor2
 
 		private void MissionSettingsButton_Click(object sender, RoutedEventArgs e)
 		{
-			new MissionSettingsDialog().ShowDialog();
+			new MissionSettingsDialog { Owner = MainWindow.Instance }.ShowDialog();
 		}
 
         

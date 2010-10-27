@@ -148,7 +148,7 @@ namespace MissionEditor2
 
 		public static void LoadExistingMission(string fileName)
 		{
-			var loadingDialog = new LoadingDialog();
+			var loadingDialog = new LoadingDialog{Owner = MainWindow.Instance};
 			loadingDialog.Loaded += (s, e) => Utils.InvokeInNewThread(delegate 
 				{
 					var mission = Mission.FromFile(fileName);
@@ -178,8 +178,8 @@ namespace MissionEditor2
 
 		public static void PromptForNewMission()
 		{
-			
-			var dialog = new NewMissionDialog();
+
+			var dialog = new NewMissionDialog { Owner = MainWindow.Instance };
 			dialog.ProgressBar.Visibility = Visibility.Visible;
 			Utils.InvokeInNewThread(delegate
 				{
@@ -203,7 +203,7 @@ namespace MissionEditor2
 				var mapName = (string) dialog.MapList.SelectedItem;
 				var gameName = (string) dialog.ModList.SelectedItem;
 				var missionName = dialog.NameBox.Text;
-				var loadingDialog = new LoadingDialog();
+				var loadingDialog = new LoadingDialog { Owner = MainWindow.Instance };
 
 				loadingDialog.Loaded += delegate
 					{

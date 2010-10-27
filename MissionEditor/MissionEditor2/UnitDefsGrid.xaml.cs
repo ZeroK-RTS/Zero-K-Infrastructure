@@ -27,7 +27,7 @@ namespace MissionEditor2
 
 		void Find_Click(object sender, RoutedEventArgs e)
 		{
-			var dialog = new StringRequest { Title = "Insert text to search." };
+			var dialog = new StringRequest { Title = "Insert text to search.", Owner = MainWindow.Instance };
 			if (!(dialog.ShowDialog().GetValueOrDefault())) return;
 			GoToText(dialog.TextBox.Text);
 		}

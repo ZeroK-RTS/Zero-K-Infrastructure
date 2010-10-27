@@ -7,6 +7,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ZeroKLobby:NavigationControl x:Name="navigationControl1"></ZeroKLobby:NavigationControl>
-        <Notifications:NotifySection x:Name="notifyBox" Grid.Row="1" />
+        <Notifications:NotifySection x:Name="notifyBox" Grid.Row="1"/>
     </Grid>
 </Window>

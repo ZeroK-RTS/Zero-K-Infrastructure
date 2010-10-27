@@ -152,12 +152,16 @@ namespace ZeroKLobby
 
 				Application.AddMessageFilter(ToolTip);
 
+
+
 				MainWindow = new MainWindow();
 
 				Application.AddMessageFilter(new ScrollMessageFilter()); 
 
 				if (Conf.StartMinimized) MainWindow.WindowState = WindowState.Minimized;
 				else MainWindow.WindowState = WindowState.Normal;
+
+
 
 				BattleIconManager = new BattleIconManager(MainWindow);
 				BattleBar = new BattleBar();

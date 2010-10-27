@@ -17,7 +17,7 @@ namespace MissionEditor2
 	{
 		public static void Publish(Mission mission, int? missionID)
 		{
-			var dialog = new PublishDialog { DataContext = mission };
+			var dialog = new PublishDialog { DataContext = mission, Owner = MainWindow.Instance};
 			dialog.OKButton.Click += delegate
 				{
 					var error = mission.VerifyCanPublish();
@@ -89,7 +89,7 @@ namespace MissionEditor2
 
 		public static void SendMissionWithDialog(Mission mission, string password, int? missionId)
 		{
-			var loading = new LoadingDialog { Text = "Uploading Mission" };
+			var loading = new LoadingDialog { Text = "Uploading Mission", Owner = MainWindow.Instance };
 			loading.Loaded += delegate
 				{
 					Utils.InvokeInNewThread(delegate

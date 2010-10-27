@@ -103,7 +103,7 @@ namespace MissionEditor2
 
 		public static string ShowStringDialog(string title, string text)
 		{
-			var dialog = new StringRequest { Title = title, TextBox = { Text = text } };
+			var dialog = new StringRequest { Title = title, TextBox = { Text = text }, Owner = MainWindow.Instance};
 			return dialog.ShowDialog() == true ? dialog.TextBox.Text : null;
 		}
 

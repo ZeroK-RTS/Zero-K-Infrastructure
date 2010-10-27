@@ -36,7 +36,7 @@ namespace MissionEditor2
         private void ColorButton_Click(object sender, RoutedEventArgs e)
         {
 			var player = (Player)((Button)e.Source).DataContext;
-			var picker = new Microsoft.Samples.CustomControls.ColorPickerDialog { StartingColor = player.Color, Owner = this };
+			var picker = new Microsoft.Samples.CustomControls.ColorPickerDialog {StartingColor = player.Color, Owner = this };
 			var result = picker.ShowDialog();
 			if (result == true)
 			{
@@ -46,7 +46,7 @@ namespace MissionEditor2
 
 		private void MapButton_Click(object sender, RoutedEventArgs e)
 		{
-			new MapSelectionDialog().ShowDialog();
+			new MapSelectionDialog { Owner = this }.ShowDialog();
 		}
 
 		private void AIBox_Loaded(object sender, RoutedEventArgs e)
@@ -57,7 +57,7 @@ namespace MissionEditor2
 
     	private void ModButton_Click(object sender, RoutedEventArgs e)
 		{
-			new ModSelectionDialog().ShowDialog();
+			new ModSelectionDialog { Owner = this }.ShowDialog();
 		}
 
 		private void NewPlayerButton_Click(object sender, RoutedEventArgs e)
