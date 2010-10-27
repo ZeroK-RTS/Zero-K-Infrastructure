@@ -43,7 +43,6 @@ namespace ZeroKWeb
 			opt.LoadWith<Mission>(x => x.Account);
 			db.LoadOptions = opt;
 			var prev = db.Missions.Where(x => x.Name == missionName).SingleOrDefault();
-			prev.DownloadCount++;
 			db.SubmitChanges();
 			return prev;
 		}
@@ -57,7 +56,6 @@ namespace ZeroKWeb
 			opt.LoadWith<Mission>(x => x.Account);
 			db.LoadOptions = opt;
 			var prev = db.Missions.Where(x => x.MissionID == missionID).SingleOrDefault();
-			prev.DownloadCount++;
 			db.SubmitChanges();
 			return prev;
 		}

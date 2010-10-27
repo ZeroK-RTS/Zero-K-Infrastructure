@@ -133,8 +133,6 @@ namespace MissionEditor2
 						ModRapidTag = mission.RapidTag,
 			           };
 
-			info.Dependencies = String.Join(";", mission.Mod.Dependencies);
-
 			var alliances = mission.Players.Select(p => p.Alliance).Distinct().ToList();
 			foreach (var player in mission.Players)
 			{
