@@ -43,9 +43,6 @@ namespace MissionEditor2
 
 		void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			var cli = new MissionServiceClient();
-			var misi = cli.ListMissionInfos();
-
 			mapDetailSlider.Value = Settings.Default.MapDetail;
 			mapDetailSlider.ValueChanged += (s, ea) =>
 				{
