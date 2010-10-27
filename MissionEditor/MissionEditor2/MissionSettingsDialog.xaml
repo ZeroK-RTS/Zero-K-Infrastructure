@@ -89,19 +89,31 @@
         <GroupBox Grid.Column="2" Grid.RowSpan="2" Header="Disabled Gadgets" Margin="2 0 2 0">
             <ListBox Name="GadgetsBox" x:FieldModifier="public" ItemsSource="{Binding Mod.Gadgets}" SelectionMode="Multiple" />
         </GroupBox>
-        <GroupBox Header="Image" Grid.Column="3" Grid.RowSpan="2">
-            <StackPanel>
-                <Viewbox Width="96" Height="96">
-                    <Grid>
-                        <Image Source="{Binding ImagePath}"  />
-                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.FontSize="12">?</TextBlock>
-                    </Grid>
-                </Viewbox>
-                <TextBlock Margin="2">Image will appear as 96x96</TextBlock>
-                <Button Margin="2" Click="SelectImageButton_Click">Select</Button>
-                <Button Margin="2" Click="ClearImageButton_Click">Clear</Button>
-            </StackPanel>
-        </GroupBox>
+        <StackPanel Grid.Column="3" Grid.RowSpan="2">
+            <GroupBox Header="Image">
+                <StackPanel>
+                    <Viewbox Width="96" Height="96">
+                        <Grid>
+                            <Image Source="{Binding ImagePath}" />
+                            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.FontSize="12">?</TextBlock>
+                        </Grid>
+                    </Viewbox>
+                    <TextBlock Margin="2">Image will appear as above (96x96).</TextBlock>
+                    <Button Margin="2" Click="SelectImageButton_Click">Select</Button>
+                    <Button Margin="2" Click="ClearImageButton_Click">Clear</Button>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Additional Content Folder">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+            </Grid>
+            </GroupBox>
+        </StackPanel>
         <Button Grid.Row="2" Grid.Column="3" IsCancel="True" IsDefault="True" Width="70" Content="O_K" HorizontalAlignment="Right" Margin="3" />
     </Grid>
 </Window>
