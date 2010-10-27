@@ -14,15 +14,23 @@ namespace MissionEditor2
 	/// </summary>
 	public partial class MissionManagement: Window
 	{
+		MissionServiceClient client;
+
 		public MissionManagement()
 		{
 			InitializeComponent();
 		}
 
+		void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			client = new MissionServiceClient();
+			RefreshList();
+		}
+
 		void RefreshList()
 		{
-			var loading = new LoadingDialog { Text = "Getting Mission List" };
-			loading.ShowDialog();
+			var loadingDialog = new LoadingDialog { Text = "Getting Mission List" };
+			loadingDialog.ShowDialog();
 			Utils.InvokeInNewThread(delegate
 			{
 				using (var client = new MissionServiceClient())
@@ -31,7 +39,7 @@ namespace MissionEditor2
 					this.Invoke(delegate
 					{
 						DataGrid.ItemsSource = list;
-						loading.Close();
+						loadingDialog.Close();
 					});
 				}
 			});
@@ -57,7 +65,7 @@ namespace MissionEditor2
 		{
 			var dialog = new LoadingDialog { Text = "Opening Mission" };
 			var selectedMission = (Mission)DataGrid.SelectedItem;
-
+			if (selectedMission == null) return;
 			Utils.InvokeInNewThread(delegate
 				{
 					var client = new MissionServiceClient();
@@ -76,6 +84,7 @@ namespace MissionEditor2
 		void UpdateButton_Click(object sender, RoutedEventArgs e)
 		{
 			var selectedMission = (Mission)DataGrid.SelectedItem;
+			if (selectedMission == null) return;
 			var mission = MainWindow.Instance.Mission;
 			var dialog = new PublishDialog { DataContext = mission };
 			if (dialog.ShowDialog() == true)
@@ -85,11 +94,6 @@ namespace MissionEditor2
 				RefreshList();
 				UpdateButton.IsEnabled = true;
 			}
-		}
-
-		void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			RefreshList();
 		}
 
 		void searchBox_TextChanged(object sender, TextChangedEventArgs e)

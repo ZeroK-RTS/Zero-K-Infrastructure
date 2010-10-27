@@ -478,6 +478,7 @@ namespace MissionEditor2
 			//help.AddAction("Basic Help", () => new Help().ShowDialog());
 
 			var welcomeScreen = new WelcomeDialog { ShowInTaskbar = true };
+			welcomeScreen.Owner = this;
 			welcomeScreen.ShowDialog();
 			if (Mission == null)
 			{

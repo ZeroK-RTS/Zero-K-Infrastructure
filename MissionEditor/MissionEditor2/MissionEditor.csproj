@@ -322,9 +322,23 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Service References\ServiceReference\MissionService.disco" />
+    <None Include="Service References\ServiceReference\MissionService.wsdl" />
+    <None Include="Service References\ServiceReference\MissionService.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\ServiceReference\MissionService1.disco" />
     <None Include="Properties\DataSources\ZkData.Mission.datasource" />
     <None Include="Service References\ServiceReference\MissionService1.wsdl" />
+    <None Include="Service References\ServiceReference\MissionService1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\MissionService2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\MissionService3.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\ServiceReference\MissionService4.xsd">
       <SubType>Designer</SubType>
     </None>
