@@ -81,6 +81,16 @@ namespace ZeroKLobby.LuaMgr
 			return path.Length > 0 && path[0] == PathHead;
     	}
 
+    	public void Hilite(HiliteLevel level, params string[] path)
+    	{
+    		throw new NotImplementedException();
+    	}
+
+    	public string GetTooltip(params string[] path)
+    	{
+    		throw new NotImplementedException();
+    	}
+
     	public static bool checkLobbyInputData()
         {
             return checkLobbyInputData(true);

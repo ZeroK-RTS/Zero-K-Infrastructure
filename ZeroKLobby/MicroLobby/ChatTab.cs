@@ -345,5 +345,16 @@ namespace ZeroKLobby.MicroLobby
 			}
 			return true;
     	}
+
+    	public void Hilite(HiliteLevel level, params string[] path)
+    	{
+				
+    		throw new NotImplementedException();
+    	}
+
+    	public string GetTooltip(params string[] path)
+    	{
+    		throw new NotImplementedException();
+    	}
     }
 }
