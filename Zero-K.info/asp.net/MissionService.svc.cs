@@ -71,6 +71,7 @@ namespace ZeroKWeb
 			{
 				m.Mutator = new Binary(new byte[] { });
 				m.Script = null;
+				m.Image = new Binary(new byte[]{});
 			}
 			return list;
 		}

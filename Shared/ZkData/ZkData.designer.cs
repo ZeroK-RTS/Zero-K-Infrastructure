@@ -2157,7 +2157,7 @@ namespace ZkData
 		
 		private System.Data.Linq.Link<System.Data.Linq.Binary> _Mutator;
 		
-		private System.Data.Linq.Binary _Image;
+		private System.Data.Linq.Link<System.Data.Linq.Binary> _Image;
 		
 		private string _Description;
 		
@@ -2357,15 +2357,15 @@ namespace ZkData
 		{
 			get
 			{
-				return this._Image;
+				return this._Image.Value;
 			}
 			set
 			{
-				if ((this._Image != value))
+				if ((this._Image.Value != value))
 				{
 					this.OnImageChanging(value);
 					this.SendPropertyChanging();
-					this._Image = value;
+					this._Image.Value = value;
 					this.SendPropertyChanged("Image");
 					this.OnImageChanged();
 				}

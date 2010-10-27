@@ -30,7 +30,6 @@ namespace MissionEditor2
 		void RefreshList()
 		{
 			var loadingDialog = new LoadingDialog { Text = "Getting Mission List" };
-			loadingDialog.ShowDialog();
 			Utils.InvokeInNewThread(delegate
 			{
 				using (var client = new MissionServiceClient())
@@ -43,6 +42,7 @@ namespace MissionEditor2
 					});
 				}
 			});
+			loadingDialog.ShowDialog();
 		}
 
 		void DeleteButton_Click(object sender, RoutedEventArgs e)

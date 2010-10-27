@@ -29,6 +29,7 @@ namespace ZeroKWeb.Controllers
 					});
 		}
 
+		[OutputCache(Duration = int.MaxValue, VaryByParam = "id")]
 		public ActionResult Img(int id)
 		{
 			var db = new ZkDataContext();
