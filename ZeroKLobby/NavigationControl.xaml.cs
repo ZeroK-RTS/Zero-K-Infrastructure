@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms.Integration;
+using System.Windows.Input;
 using System.Windows.Threading;
 using ZeroKLobby.MicroLobby;
 
@@ -158,7 +159,7 @@ namespace ZeroKLobby
 
 		void backButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (CanGoBack) GoBack();
+			NavigateBack();
 		}
 
 		void forwardButton_Click(object sender, RoutedEventArgs e)
@@ -191,6 +192,11 @@ namespace ZeroKLobby
 			{
 				return string.Join("/", Path);
 			}
+		}
+
+		public void NavigateBack()
+		{
+			if (CanGoBack) GoBack();
 		}
 	}
 }

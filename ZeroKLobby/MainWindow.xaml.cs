@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using PlasmaDownloader;
@@ -15,6 +16,7 @@ using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using MessageBox = System.Windows.MessageBox;
+using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using Size = System.Drawing.Size;
 
 namespace ZeroKLobby
@@ -239,7 +241,6 @@ namespace ZeroKLobby
 
 		void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			;
 			if (Debugger.IsAttached) Title = "==== DEBUGGING ===";
 			else if (ApplicationDeployment.IsNetworkDeployed) Title = "Zero-K lobby";
 			else Title += " not installed properly - update from http://zero-k.info/lobby";
@@ -249,6 +250,15 @@ namespace ZeroKLobby
 
 			Program.SpringScanner.Start();
 
+/*			// Bind Key  
+			InputBinding ib = new InputBinding(MyAppCommands.SaveAll,
+					new KeyGesture(Key.S, ModifierKeys.Shift | ModifierKeys.Control));
+			this.InputBindings.Add(ib);
+			// Bind handler
+			CommandBinding cb = new CommandBinding(MyAppCommands.SaveAll);
+			cb.Executed += new ExecutedRoutedEventHandler(HandlerThatSavesEverthing);
+			this.CommandBindings.Add(cb);*/
+			
 			if (Program.Conf.StartMinimized) WindowState = WindowState.Minimized;
 			else WindowState = Program.Conf.LastWindowState;
 		}
@@ -294,5 +304,6 @@ namespace ZeroKLobby
 			UpdateDownloads();
 			UpdateSystrayToolTip();
 		}
+
 	}
 }

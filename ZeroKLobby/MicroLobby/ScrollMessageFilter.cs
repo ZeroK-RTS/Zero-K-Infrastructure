@@ -12,6 +12,7 @@ namespace ZeroKLobby.MicroLobby
     public class ScrollMessageFilter: IMessageFilter
     {
         const int WM_MOUSEWHEEL = 0x20A;
+    		const int WM_XBUTTONDOWN = 0x020B;
 
 
         public ScrollMessageFilter()
@@ -49,6 +50,9 @@ namespace ZeroKLobby.MicroLobby
 									SendMessage((int)control.Handle, m.Msg, (int)m.WParam, (int)m.LParam);
 									return true;
 								}
+            }  else if (m.Msg == WM_XBUTTONDOWN)
+            {
+            	Program.MainWindow.navigationControl1.NavigateBack();
             }
             return false;
         }
