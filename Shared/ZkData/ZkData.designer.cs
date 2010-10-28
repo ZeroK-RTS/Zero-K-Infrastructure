@@ -2150,9 +2150,9 @@ namespace ZkData
 		
 		private string _Description;
 		
-		private System.Nullable<System.DateTime> _CreatedTime;
+		private System.DateTime _CreatedTime;
 		
-		private System.Nullable<System.DateTime> _ModifiedTime;
+		private System.DateTime _ModifiedTime;
 		
 		private string _ScoringMethod;
 		
@@ -2204,9 +2204,9 @@ namespace ZkData
     partial void OnImageChanged();
     partial void OnDescriptionChanging(string value);
     partial void OnDescriptionChanged();
-    partial void OnCreatedTimeChanging(System.Nullable<System.DateTime> value);
+    partial void OnCreatedTimeChanging(System.DateTime value);
     partial void OnCreatedTimeChanged();
-    partial void OnModifiedTimeChanging(System.Nullable<System.DateTime> value);
+    partial void OnModifiedTimeChanging(System.DateTime value);
     partial void OnModifiedTimeChanged();
     partial void OnScoringMethodChanging(string value);
     partial void OnScoringMethodChanged();
@@ -2346,7 +2346,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="VarBinary(MAX)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="varbinary(max) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public System.Data.Linq.Binary Image
 		{
@@ -2388,9 +2388,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedTime", DbType="DateTime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedTime", DbType="datetime NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public System.Nullable<System.DateTime> CreatedTime
+		public System.DateTime CreatedTime
 		{
 			get
 			{
@@ -2409,9 +2409,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModifiedTime", DbType="DateTime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModifiedTime", DbType="datetime NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public System.Nullable<System.DateTime> ModifiedTime
+		public System.DateTime ModifiedTime
 		{
 			get
 			{
@@ -2535,7 +2535,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Script", DbType="nvarchar(max)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Script", DbType="nvarchar(max) NOT NULL", CanBeNull=false)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public string Script
 		{
