@@ -1,15 +1,17 @@
-﻿using System.Data.Linq;
+﻿using System.Collections.Generic;
+using System.Data.Linq;
 using System.Deployment.Application;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CMissionLib;
-using CMissionLib.UnitSyncLib;
 using MissionEditor2.Properties;
 using MissionEditor2.ServiceReference;
+using PlasmaShared.UnitSyncLib;
 using ZkData;
 using Mission = CMissionLib.Mission;
+using UnitSync = CMissionLib.UnitSyncLib.UnitSync;
 
 namespace MissionEditor2
 {
@@ -46,6 +48,7 @@ namespace MissionEditor2
 			           };
 
 			var alliances = mission.Players.Select(p => p.Alliance).Distinct().ToList();
+			var slots = new List<MissionSlot>();
 			foreach (var player in mission.Players)
 			{
 				var missionSlot = new MissionSlot
@@ -60,7 +63,7 @@ namespace MissionEditor2
 				                  	TeamName = player.Name,
 				                  	Color = (int)(MyCol)player.Color
 				                  };
-				info.MissionSlots.Add(missionSlot);
+				slots.Add(missionSlot);
 			}
 
 			var image = File.ReadAllBytes(mission.ImagePath).ToImage(96, 96);
@@ -82,7 +85,7 @@ namespace MissionEditor2
 			File.Delete(tempPath);
 			using (var client = new MissionServiceClient())
 			{
-				client.SendMission(info, mission.Author, password);
+				client.SendMission(info, slots, mission.Author, password);
 				MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from SpringDownloader.\r\nPlease make sure it works!");
 			}
 		}

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
+using PlasmaShared.UnitSyncLib;
 using ZkData;
 
 namespace ZeroKWeb
@@ -25,7 +26,7 @@ namespace ZeroKWeb
 		IEnumerable<Mission> ListMissionInfos();
 
 		[OperationContract]
-		void SendMission(Mission mission, string author, string password);
+		void SendMission(Mission mission, List<MissionSlot> slots, string author, string password);
 
 
 	}

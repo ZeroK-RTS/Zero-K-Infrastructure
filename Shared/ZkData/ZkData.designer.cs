@@ -43,9 +43,6 @@ namespace ZkData
     partial void InsertLobbyChannelSubscription(LobbyChannelSubscription instance);
     partial void UpdateLobbyChannelSubscription(LobbyChannelSubscription instance);
     partial void DeleteLobbyChannelSubscription(LobbyChannelSubscription instance);
-    partial void InsertMissionSlot(MissionSlot instance);
-    partial void UpdateMissionSlot(MissionSlot instance);
-    partial void DeleteMissionSlot(MissionSlot instance);
     partial void InsertForumThread(ForumThread instance);
     partial void UpdateForumThread(ForumThread instance);
     partial void DeleteForumThread(ForumThread instance);
@@ -325,14 +322,6 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<LobbyChannelSubscription>();
-			}
-		}
-		
-		public System.Data.Linq.Table<MissionSlot> MissionSlots
-		{
-			get
-			{
-				return this.GetTable<MissionSlot>();
 			}
 		}
 		
@@ -2187,7 +2176,9 @@ namespace ZkData
 		
 		private string _ModRapidTag;
 		
-		private EntitySet<MissionSlot> _MissionSlots;
+		private int _MinHumans;
+		
+		private int _MaxHumans;
 		
 		private EntityRef<Resource> _Resources;
 		
@@ -2239,6 +2230,10 @@ namespace ZkData
     partial void OnModOptionsChanged();
     partial void OnModRapidTagChanging(string value);
     partial void OnModRapidTagChanged();
+    partial void OnMinHumansChanging(int value);
+    partial void OnMinHumansChanged();
+    partial void OnMaxHumansChanging(int value);
+    partial void OnMaxHumansChanged();
     #endregion
 		
 		public Mission()
@@ -2670,27 +2665,50 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionSlot", Storage="_MissionSlots", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
-		public EntitySet<MissionSlot> MissionSlots
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MinHumans", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		public int MinHumans
 		{
 			get
 			{
-				if ((this.serializing 
-							&& (this._MissionSlots.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._MissionSlots;
+				return this._MinHumans;
 			}
 			set
 			{
-				this._MissionSlots.Assign(value);
+				if ((this._MinHumans != value))
+				{
+					this.OnMinHumansChanging(value);
+					this.SendPropertyChanging();
+					this._MinHumans = value;
+					this.SendPropertyChanged("MinHumans");
+					this.OnMinHumansChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxHumans", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		public int MaxHumans
+		{
+			get
+			{
+				return this._MaxHumans;
+			}
+			set
+			{
+				if ((this._MaxHumans != value))
+				{
+					this.OnMaxHumansChanging(value);
+					this.SendPropertyChanging();
+					this._MaxHumans = value;
+					this.SendPropertyChanged("MaxHumans");
+					this.OnMaxHumansChanged();
+				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public Resource Resources
 		{
 			get
@@ -2778,21 +2796,8 @@ namespace ZkData
 			}
 		}
 		
-		private void attach_MissionSlots(MissionSlot entity)
-		{
-			this.SendPropertyChanging();
-			entity.Mission = this;
-		}
-		
-		private void detach_MissionSlots(MissionSlot entity)
-		{
-			this.SendPropertyChanging();
-			entity.Mission = null;
-		}
-		
 		private void Initialize()
 		{
-			this._MissionSlots = new EntitySet<MissionSlot>(new Action<MissionSlot>(this.attach_MissionSlots), new Action<MissionSlot>(this.detach_MissionSlots));
 			this._Resources = default(EntityRef<Resource>);
 			this._Account = default(EntityRef<Account>);
 			OnCreated();
@@ -5380,348 +5385,6 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			OnCreated();
-		}
-		
-		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnDeserializing(StreamingContext context)
-		{
-			this.Initialize();
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MissionSlot")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class MissionSlot : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _MissionID;
-		
-		private int _TeamID;
-		
-		private System.Nullable<int> _Color;
-		
-		private string _TeamName;
-		
-		private int _AllyID;
-		
-		private bool _IsHuman;
-		
-		private bool _IsRequired;
-		
-		private string _AiShortName;
-		
-		private string _AiVersion;
-		
-		private string _AllyName;
-		
-		private EntityRef<Mission> _Mission;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnMissionIDChanging(int value);
-    partial void OnMissionIDChanged();
-    partial void OnTeamIDChanging(int value);
-    partial void OnTeamIDChanged();
-    partial void OnColorChanging(System.Nullable<int> value);
-    partial void OnColorChanged();
-    partial void OnTeamNameChanging(string value);
-    partial void OnTeamNameChanged();
-    partial void OnAllyIDChanging(int value);
-    partial void OnAllyIDChanged();
-    partial void OnIsHumanChanging(bool value);
-    partial void OnIsHumanChanged();
-    partial void OnIsRequiredChanging(bool value);
-    partial void OnIsRequiredChanged();
-    partial void OnAiShortNameChanging(string value);
-    partial void OnAiShortNameChanged();
-    partial void OnAiVersionChanging(string value);
-    partial void OnAiVersionChanged();
-    partial void OnAllyNameChanging(string value);
-    partial void OnAllyNameChanged();
-    #endregion
-		
-		public MissionSlot()
-		{
-			this.Initialize();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionID", DbType="int NOT NULL", IsPrimaryKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int MissionID
-		{
-			get
-			{
-				return this._MissionID;
-			}
-			set
-			{
-				if ((this._MissionID != value))
-				{
-					if (this._Mission.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnMissionIDChanging(value);
-					this.SendPropertyChanging();
-					this._MissionID = value;
-					this.SendPropertyChanged("MissionID");
-					this.OnMissionIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TeamID", DbType="int NOT NULL", IsPrimaryKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int TeamID
-		{
-			get
-			{
-				return this._TeamID;
-			}
-			set
-			{
-				if ((this._TeamID != value))
-				{
-					this.OnTeamIDChanging(value);
-					this.SendPropertyChanging();
-					this._TeamID = value;
-					this.SendPropertyChanged("TeamID");
-					this.OnTeamIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Color", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public System.Nullable<int> Color
-		{
-			get
-			{
-				return this._Color;
-			}
-			set
-			{
-				if ((this._Color != value))
-				{
-					this.OnColorChanging(value);
-					this.SendPropertyChanging();
-					this._Color = value;
-					this.SendPropertyChanged("Color");
-					this.OnColorChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TeamName", DbType="nvarchar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public string TeamName
-		{
-			get
-			{
-				return this._TeamName;
-			}
-			set
-			{
-				if ((this._TeamName != value))
-				{
-					this.OnTeamNameChanging(value);
-					this.SendPropertyChanging();
-					this._TeamName = value;
-					this.SendPropertyChanged("TeamName");
-					this.OnTeamNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyID", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public int AllyID
-		{
-			get
-			{
-				return this._AllyID;
-			}
-			set
-			{
-				if ((this._AllyID != value))
-				{
-					this.OnAllyIDChanging(value);
-					this.SendPropertyChanging();
-					this._AllyID = value;
-					this.SendPropertyChanged("AllyID");
-					this.OnAllyIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsHuman", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public bool IsHuman
-		{
-			get
-			{
-				return this._IsHuman;
-			}
-			set
-			{
-				if ((this._IsHuman != value))
-				{
-					this.OnIsHumanChanging(value);
-					this.SendPropertyChanging();
-					this._IsHuman = value;
-					this.SendPropertyChanged("IsHuman");
-					this.OnIsHumanChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsRequired", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public bool IsRequired
-		{
-			get
-			{
-				return this._IsRequired;
-			}
-			set
-			{
-				if ((this._IsRequired != value))
-				{
-					this.OnIsRequiredChanging(value);
-					this.SendPropertyChanging();
-					this._IsRequired = value;
-					this.SendPropertyChanged("IsRequired");
-					this.OnIsRequiredChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AiShortName", DbType="nvarchar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public string AiShortName
-		{
-			get
-			{
-				return this._AiShortName;
-			}
-			set
-			{
-				if ((this._AiShortName != value))
-				{
-					this.OnAiShortNameChanging(value);
-					this.SendPropertyChanging();
-					this._AiShortName = value;
-					this.SendPropertyChanged("AiShortName");
-					this.OnAiShortNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AiVersion", DbType="nvarchar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public string AiVersion
-		{
-			get
-			{
-				return this._AiVersion;
-			}
-			set
-			{
-				if ((this._AiVersion != value))
-				{
-					this.OnAiVersionChanging(value);
-					this.SendPropertyChanging();
-					this._AiVersion = value;
-					this.SendPropertyChanged("AiVersion");
-					this.OnAiVersionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyName", DbType="nvarchar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public string AllyName
-		{
-			get
-			{
-				return this._AllyName;
-			}
-			set
-			{
-				if ((this._AllyName != value))
-				{
-					this.OnAllyNameChanging(value);
-					this.SendPropertyChanging();
-					this._AllyName = value;
-					this.SendPropertyChanged("AllyName");
-					this.OnAllyNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionSlot", Storage="_Mission", ThisKey="MissionID", OtherKey="MissionID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
-		public Mission Mission
-		{
-			get
-			{
-				return this._Mission.Entity;
-			}
-			set
-			{
-				Mission previousValue = this._Mission.Entity;
-				if (((previousValue != value) 
-							|| (this._Mission.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Mission.Entity = null;
-						previousValue.MissionSlots.Remove(this);
-					}
-					this._Mission.Entity = value;
-					if ((value != null))
-					{
-						value.MissionSlots.Add(this);
-						this._MissionID = value.MissionID;
-					}
-					else
-					{
-						this._MissionID = default(int);
-					}
-					this.SendPropertyChanged("Mission");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void Initialize()
-		{
-			this._Mission = default(EntityRef<Mission>);
 			OnCreated();
 		}
 		

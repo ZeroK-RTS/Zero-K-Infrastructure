@@ -105,6 +105,7 @@
     <Compile Include="UnitSyncLib\Ai.cs" />
     <Compile Include="UnitSyncLib\AiInfoPair.cs" />
     <Compile Include="UnitSyncLib\DependencyMissingException.cs" />
+    <Compile Include="UnitSyncLib\ModMissionSlot.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="UnitSyncLib\ListOption.cs" />
     <Compile Include="UnitSyncLib\Map.cs" />

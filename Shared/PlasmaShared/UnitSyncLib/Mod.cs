@@ -7,87 +7,75 @@ using System.Xml.Serialization;
 
 namespace PlasmaShared.UnitSyncLib
 {
-    [Serializable]
-    public class Mod: IResourceInfo
-    {
-        string name;
+	[Serializable]
+	public class Mod: IResourceInfo
+	{
+		string name;
+		[XmlIgnore]
+		[NonSerialized]
+		public Ai[] AllAis;
 
-				public string[] Dependencies { get; set; }
+		public string[] Dependencies { get; set; }
 
-        public string Desctiption { get; set; }
-        public string Game { get; set; }
-        public string Mutator { get; set; }
-        public Option[] Options { get; set; }
+		public string Desctiption { get; set; }
+		public string Game { get; set; }
+		public bool IsMission { get { return !string.IsNullOrEmpty(MissionScript); } }
+		public string MissionScript { get; set; }
+		public List<MissionSlot> MissionSlots = new List<MissionSlot>();
+		public Ai[] ModAis { get; set; }
+		public string Mutator { get; set; }
+		public Option[] Options { get; set; }
 
-        /// <summary>
-        /// Mod version as unitsync reports it
-        /// </summary>
-        public string PrimaryModVersion { get; set; }
+		/// <summary>
+		/// Mod version as unitsync reports it
+		/// </summary>
+		public string PrimaryModVersion { get; set; }
 
 
-        public string ShortGame { get; set; }
-        public string ShortName { get; set; }
-        public byte[][] SideIcons { get; set; }
-        public string[] Sides { get; set; }
-        public SerializableDictionary<string, string> StartUnits { get; set; }
-        public UnitInfo[] UnitDefs { get; set; }
+		public string ShortGame { get; set; }
+		public string ShortName { get; set; }
+		public byte[][] SideIcons { get; set; }
+		public string[] Sides { get; set; }
+		public SerializableDictionary<string, string> StartUnits { get; set; }
+		public UnitInfo[] UnitDefs { get; set; }
 
-				public string MissionScript { get; set; }
-				public bool IsMission
+		public string GetDefaultModOptionsTags()
+		{
+			var builder = new StringBuilder();
+			foreach (var option in Options)
+			{
+				var res = option.ConstructLine(option.Default);
+				if (builder.Length > 0) builder.Append("\t");
+				builder.Append(res);
+			}
+			return builder.ToString();
+		}
+
+		public static Dictionary<string, string> GetModOptionPairs(IEnumerable<string> scriptTags)
+		{
+			var setOptions = new Dictionary<string, string>();
+			scriptTags = scriptTags.SelectMany(t => t.Split('\t')).ToArray();
+			const string modOptionPattern = @"^game/modoptions/(?<key>.+?)=(?<value>.+?)$";
+			foreach (var tag in scriptTags)
+			{
+				foreach (Match match in Regex.Matches(tag, modOptionPattern))
 				{
-					get { return !string.IsNullOrEmpty(MissionScript); }
+					var key = match.Groups["key"].Value;
+					var value = match.Groups["value"].Value;
+					setOptions[key] = value;
 				}
-			
-        public static Dictionary<string, string> GetModOptionPairs(IEnumerable<string> scriptTags)
-        {
-            var setOptions = new Dictionary<string, string>();
-            scriptTags = scriptTags.SelectMany(t => t.Split('\t')).ToArray();
-            const string modOptionPattern = @"^game/modoptions/(?<key>.+?)=(?<value>.+?)$";
-            foreach (var tag in scriptTags)
-            {
-                foreach (Match match in Regex.Matches(tag, modOptionPattern))
-                {
-                    var key = match.Groups["key"].Value;
-                    var value = match.Groups["value"].Value;
-                    setOptions[key] = value;
-                }
-            }
-            return setOptions;
-        }
+			}
+			return setOptions;
+		}
 
-        public string GetDefaultModOptionsTags()
-        {
-            var builder = new StringBuilder();
-            foreach (var option in Options)
-            {
-                var res = option.ConstructLine(option.Default);
-                if (builder.Length > 0) builder.Append("\t");
-                builder.Append(res);
-            }
-            return builder.ToString();
-        }
+		public override string ToString()
+		{
+			return Name;
+		}
 
-        public override string ToString()
-        {
-            return Name;
-        }
+		public string ArchiveName { get; set; }
+		public int Checksum { get; set; }
 
-        public string ArchiveName { get; set; }
-        public int Checksum { get; set; }
-
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                name = value;
-            }
-        }
-
-        public Ai[] ModAis { get; set; }
-
-        [XmlIgnore]
-        [NonSerialized]
-        public Ai[] AllAis;
-    }
+		public string Name { get { return name; } set { name = value; } }
+	}
 }

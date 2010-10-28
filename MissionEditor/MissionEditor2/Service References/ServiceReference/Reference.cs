@@ -48,10 +48,10 @@ namespace MissionEditor2.ServiceReference {
         System.Collections.Generic.List<ZkData.Mission> EndListMissionInfos(System.IAsyncResult result);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/SendMission", ReplyAction="http://tempuri.org/IMissionService/SendMissionResponse")]
-        void SendMission(ZkData.Mission mission, string author, string password);
+        void SendMission(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password);
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/SendMission", ReplyAction="http://tempuri.org/IMissionService/SendMissionResponse")]
-        System.IAsyncResult BeginSendMission(ZkData.Mission mission, string author, string password, System.AsyncCallback callback, object asyncState);
+        System.IAsyncResult BeginSendMission(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password, System.AsyncCallback callback, object asyncState);
         
         void EndSendMission(System.IAsyncResult result);
     }
@@ -381,13 +381,13 @@ namespace MissionEditor2.ServiceReference {
             base.InvokeAsync(this.onBeginListMissionInfosDelegate, null, this.onEndListMissionInfosDelegate, this.onListMissionInfosCompletedDelegate, userState);
         }
         
-        public void SendMission(ZkData.Mission mission, string author, string password) {
-            base.Channel.SendMission(mission, author, password);
+        public void SendMission(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password) {
+            base.Channel.SendMission(mission, slots, author, password);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSendMission(ZkData.Mission mission, string author, string password, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginSendMission(mission, author, password, callback, asyncState);
+        public System.IAsyncResult BeginSendMission(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginSendMission(mission, slots, author, password, callback, asyncState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -397,9 +397,10 @@ namespace MissionEditor2.ServiceReference {
         
         private System.IAsyncResult OnBeginSendMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
             ZkData.Mission mission = ((ZkData.Mission)(inValues[0]));
-            string author = ((string)(inValues[1]));
-            string password = ((string)(inValues[2]));
-            return this.BeginSendMission(mission, author, password, callback, asyncState);
+            System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots = ((System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot>)(inValues[1]));
+            string author = ((string)(inValues[2]));
+            string password = ((string)(inValues[3]));
+            return this.BeginSendMission(mission, slots, author, password, callback, asyncState);
         }
         
         private object[] OnEndSendMission(System.IAsyncResult result) {
@@ -414,11 +415,11 @@ namespace MissionEditor2.ServiceReference {
             }
         }
         
-        public void SendMissionAsync(ZkData.Mission mission, string author, string password) {
-            this.SendMissionAsync(mission, author, password, null);
+        public void SendMissionAsync(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password) {
+            this.SendMissionAsync(mission, slots, author, password, null);
         }
         
-        public void SendMissionAsync(ZkData.Mission mission, string author, string password, object userState) {
+        public void SendMissionAsync(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password, object userState) {
             if ((this.onBeginSendMissionDelegate == null)) {
                 this.onBeginSendMissionDelegate = new BeginOperationDelegate(this.OnBeginSendMission);
             }
@@ -430,6 +431,7 @@ namespace MissionEditor2.ServiceReference {
             }
             base.InvokeAsync(this.onBeginSendMissionDelegate, new object[] {
                         mission,
+                        slots,
                         author,
                         password}, this.onEndSendMissionDelegate, this.onSendMissionCompletedDelegate, userState);
         }

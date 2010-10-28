@@ -11,6 +11,7 @@ using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
 using Hash = PlasmaShared.Hash;
+using MissionSlot = PlasmaShared.UnitSyncLib.MissionSlot;
 
 namespace ZeroKWeb
 {
@@ -38,8 +39,6 @@ namespace ZeroKWeb
 			var db = new ZkDataContext();
 			var opt = new DataLoadOptions();
 			opt.LoadWith<Mission>(x => x.Mutator);
-			opt.LoadWith<Mission>(x => x.Script);
-			opt.LoadWith<Mission>(x => x.Account);
 			db.LoadOptions = opt;
 			var prev = db.Missions.Where(x => x.Name == missionName).SingleOrDefault();
 			db.SubmitChanges();
@@ -51,8 +50,6 @@ namespace ZeroKWeb
 			var db = new ZkDataContext();
 			var opt = new DataLoadOptions();
 			opt.LoadWith<Mission>(x => x.Mutator);
-			opt.LoadWith<Mission>(x => x.Script);
-			opt.LoadWith<Mission>(x => x.Account);
 			db.LoadOptions = opt;
 			var prev = db.Missions.Where(x => x.MissionID == missionID).SingleOrDefault();
 			db.SubmitChanges();
@@ -62,9 +59,6 @@ namespace ZeroKWeb
 		public IEnumerable<Mission> ListMissionInfos()
 		{
 			var db = new ZkDataContext();
-			var opt = new DataLoadOptions();
-			opt.LoadWith<Mission>(x => x.Account);
-			db.LoadOptions = opt;
 			var list = db.Missions.ToList();
 			foreach (var m in list)
 			{
@@ -77,7 +71,7 @@ namespace ZeroKWeb
 
 		
 
-		public void SendMission(Mission mission, string author, string password)
+		public void SendMission(Mission mission, List<MissionSlot> slots, string author, string password)
 		{
 			var acc = new AuthServiceClient().VerifyAccount(author, password);
 			if (acc == null) throw new ApplicationException("Cannot verify user account");
@@ -89,6 +83,7 @@ namespace ZeroKWeb
 				if (map == null) throw new ApplicationException("Map name is unknown");
 				var mod = db.Resources.SingleOrDefault(x => x.InternalName == mission.Mod && x.TypeID == ZkData.ResourceType.Mod);
 				if (mod == null) throw new ApplicationException("Mod name is unknown");
+
 				
 				var prev = db.Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
 
@@ -96,23 +91,20 @@ namespace ZeroKWeb
 				{
 					if (prev.AccountID != acc.AccountID) throw new ApplicationException("Invalid author or password");
 
-					db.MissionSlots.DeleteAllOnSubmit(prev.MissionSlots);
-					db.SubmitChanges();
 					db.Missions.Attach(mission, prev);
-					db.MissionSlots.AttachAll(prev.MissionSlots);
 
 					mission.Revision++;
-					mission.ModifiedTime = DateTime.UtcNow;
-					db.SubmitChanges();
 				}
 				else
 				{
 					mission.AccountID = acc.AccountID;
 					mission.CreatedTime = DateTime.UtcNow;
-					mission.ModifiedTime = DateTime.UtcNow;
-					db.Missions.InsertOnSubmit(mission);
-					db.SubmitChanges();
 				}
+				mission.MinHumans = slots.Count(x => x.IsHuman && x.IsRequired);
+				mission.MaxHumans = slots.Count(x => x.IsHuman);
+				mission.ModifiedTime = DateTime.UtcNow;
+				
+				db.SubmitChanges();
 
 				var resource = db.Resources.FirstOrDefault(x => x.InternalName == mission.Name);
 				if (resource == null)
@@ -130,8 +122,10 @@ namespace ZeroKWeb
 				              	Name = mission.Name,
 				              	Desctiption = mission.Description,
 				              	Dependencies = new[] { mod.InternalName },
-												MissionScript = mission.Script
+												MissionScript = mission.Script,
+												MissionSlots = slots
 				              };
+
 
 				// generate torrent
 				var tempFile = Path.Combine(Path.GetTempPath(), mission.SanitizedFileName);

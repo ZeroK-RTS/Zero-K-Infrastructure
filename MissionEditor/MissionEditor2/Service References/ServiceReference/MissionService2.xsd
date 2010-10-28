@@ -24,13 +24,8 @@
       <xs:element minOccurs="0" name="AccountID" type="xs:int" />
       <xs:element minOccurs="0" name="ModOptions" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ModRapidTag" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="MissionSlots" nillable="true" type="tns:ArrayOfMissionSlot">
-        <xs:annotation>
-          <xs:appinfo>
-            <DefaultValue EmitDefaultValue="false" xmlns="http://schemas.microsoft.com/2003/10/Serialization/" />
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
+      <xs:element minOccurs="0" name="MinHumans" type="xs:int" />
+      <xs:element minOccurs="0" name="MaxHumans" type="xs:int" />
       <xs:element minOccurs="0" name="Resources" nillable="true" type="tns:Resource">
         <xs:annotation>
           <xs:appinfo>
@@ -41,27 +36,6 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="Mission" nillable="true" type="tns:Mission" />
-  <xs:complexType name="ArrayOfMissionSlot">
-    <xs:sequence>
-      <xs:element minOccurs="0" maxOccurs="unbounded" name="MissionSlot" nillable="true" type="tns:MissionSlot" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="ArrayOfMissionSlot" nillable="true" type="tns:ArrayOfMissionSlot" />
-  <xs:complexType name="MissionSlot">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="MissionID" type="xs:int" />
-      <xs:element minOccurs="0" name="TeamID" type="xs:int" />
-      <xs:element minOccurs="0" name="Color" nillable="true" type="xs:int" />
-      <xs:element minOccurs="0" name="TeamName" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="AllyID" type="xs:int" />
-      <xs:element minOccurs="0" name="IsHuman" type="xs:boolean" />
-      <xs:element minOccurs="0" name="IsRequired" type="xs:boolean" />
-      <xs:element minOccurs="0" name="AiShortName" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="AiVersion" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="AllyName" nillable="true" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="MissionSlot" nillable="true" type="tns:MissionSlot" />
   <xs:complexType name="Resource">
     <xs:sequence>
       <xs:element minOccurs="0" name="ResourceID" type="xs:int" />

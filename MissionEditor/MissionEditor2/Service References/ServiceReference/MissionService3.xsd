@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:tns="http://tempuri.org/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ZkData" />
+  <xs:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib" />
   <xs:element name="DeleteMission">
     <xs:complexType>
       <xs:sequence>
@@ -59,6 +60,7 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/ZkData" minOccurs="0" name="mission" nillable="true" type="q4:Mission" />
+        <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib" minOccurs="0" name="slots" nillable="true" type="q5:ArrayOfMissionSlot" />
         <xs:element minOccurs="0" name="author" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="password" nillable="true" type="xs:string" />
       </xs:sequence>

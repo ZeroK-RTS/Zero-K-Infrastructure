@@ -163,7 +163,8 @@
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ModOptions" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
       <Column Name="ModRapidTag" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
-      <Association Name="Mission_MissionSlot" Member="MissionSlots" ThisKey="MissionID" OtherKey="MissionID" Type="MissionSlot" />
+      <Column Name="MinHumans" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="MaxHumans" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
       <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
@@ -331,21 +332,6 @@
     <Type Name="LobbyChannelSubscription">
       <Column Name="Name" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Channel" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-    </Type>
-  </Table>
-  <Table Name="dbo.MissionSlot" Member="MissionSlots">
-    <Type Name="MissionSlot">
-      <Column Name="MissionID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="TeamID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Color" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="TeamName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
-      <Column Name="AllyID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="IsHuman" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="IsRequired" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="AiShortName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
-      <Column Name="AiVersion" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
-      <Column Name="AllyName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
-      <Association Name="Mission_MissionSlot" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.ForumThread" Member="ForumThreads">
