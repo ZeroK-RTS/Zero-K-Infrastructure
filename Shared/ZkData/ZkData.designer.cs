@@ -5606,7 +5606,7 @@ namespace ZkData
 		
 		private int _ExceptionLogID;
 		
-		private int _ProgramID;
+		private global::ZkData.ProgramType _ProgramID;
 		
 		private string _Exception;
 		
@@ -5624,7 +5624,7 @@ namespace ZkData
     partial void OnCreated();
     partial void OnExceptionLogIDChanging(int value);
     partial void OnExceptionLogIDChanged();
-    partial void OnProgramIDChanging(int value);
+    partial void OnProgramIDChanging(global::ZkData.ProgramType value);
     partial void OnProgramIDChanged();
     partial void OnExceptionChanging(string value);
     partial void OnExceptionChanged();
@@ -5664,9 +5664,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProgramID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProgramID", DbType="int NOT NULL", CanBeNull=false)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int ProgramID
+		public global::ZkData.ProgramType ProgramID
 		{
 			get
 			{

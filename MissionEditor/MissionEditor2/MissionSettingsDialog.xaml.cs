@@ -4,16 +4,18 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CMissionLib;
 using CMissionLib.Actions;
-using Microsoft.Win32;
+using Button = System.Windows.Controls.Button;
+using ComboBox = System.Windows.Controls.ComboBox;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 namespace MissionEditor2
 {
@@ -60,7 +62,7 @@ namespace MissionEditor2
 			new ModSelectionDialog { Owner = this }.ShowDialog();
 		}
 
-		private void NewPlayerButton_Click(object sender, RoutedEventArgs e)
+		private void newPlayerButton_Click(object sender, RoutedEventArgs e)
 		{
 			var player = new Player();
 			Mission.Players.Add(player);
@@ -86,6 +88,22 @@ namespace MissionEditor2
 		private void ClearImageButton_Click(object sender, RoutedEventArgs e)
 		{
 			Mission.ImagePath = null;
+		}
+
+		private void BrowseButton_Click(object sender, RoutedEventArgs e)
+		{
+			var dialog = new FolderBrowserDialog();
+			if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				Mission.ContentFolderPath = dialog.SelectedPath;
+			}
+		}
+
+		private void removePlayerButton_Click(object sender, RoutedEventArgs e)
+		{
+			var selectedPlayer = (Player) playerGrid.SelectedItem;
+			if (selectedPlayer == null) return;
+			Mission.Players.Remove(selectedPlayer);
 		}
     }
 }

@@ -16,15 +16,17 @@ using Ionic.Zip;
 namespace CMissionLib
 {
 	[DataContract]
-	public class Mission: PropertyChanged
+	public class Mission : PropertyChanged
 	{
 		string author = "Default Author";
+		string contentFolderPath;
 		ObservableCollection<string> counters = new ObservableCollection<string>();
 		string description = String.Empty;
 		ObservableCollection<string> disabledGadgets = new ObservableCollection<string>();
 		ObservableCollection<string> disabledUnits = new ObservableCollection<string>();
 		ObservableCollection<string> disabledWidgets = new ObservableCollection<string>();
 		Dictionary<string, string> folders = new Dictionary<string, string>();
+		string imagePath;
 		Map map;
 		string mapName;
 		int maxUnits = 5000;
@@ -39,7 +41,6 @@ namespace CMissionLib
 		int startingMetal = 1000;
 		Player startingPlayer = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true };
 		ObservableCollection<Trigger> triggers = new ObservableCollection<Trigger>();
-		string imagePath;
 		public IEnumerable<string> AllGroups
 		{
 			get
@@ -62,6 +63,16 @@ namespace CMissionLib
 			{
 				author = value;
 				RaisePropertyChanged("Author");
+			}
+		}
+		[DataMember]
+		public string ContentFolderPath
+		{
+			get { return contentFolderPath; }
+			set
+			{
+				contentFolderPath = value;
+				RaisePropertyChanged("ContentFolderPath");
 			}
 		}
 		public IEnumerable<string> Countdowns { get { return AllLogic.OfType<StartCountdownAction>().Select(u => u.Countdown).Distinct(); } }
@@ -100,6 +111,16 @@ namespace CMissionLib
 			{
 				folders = value;
 				RaisePropertyChanged("Folders");
+			}
+		}
+		[DataMember]
+		public string ImagePath
+		{
+			get { return imagePath; }
+			set
+			{
+				imagePath = value;
+				RaisePropertyChanged("ImagePath");
 			}
 		}
 
@@ -177,17 +198,6 @@ namespace CMissionLib
 		[DataMember]
 		public ObservableCollection<Trigger> Triggers { get { return triggers; } set { triggers = value; } }
 
-		[DataMember]
-		public string ImagePath
-		{
-			get { return imagePath; } 
-			set
-			{
-				imagePath = value;
-				RaisePropertyChanged("ImagePath");
-			}
-		}
-
 		public Mission(string name, Mod game, Map map)
 		{
 			Mod = game;
@@ -218,6 +228,8 @@ namespace CMissionLib
 			foreach (var gadget in gadgets) DisabledGadgets.Add(gadget);
 		}
 
+
+
 		public void CreateArchive(string mutatorPath)
 		{
 #if DEBUG
@@ -228,23 +240,29 @@ namespace CMissionLib
 			var textEncoding = Encoding.GetEncoding("iso-8859-1"); // ASCIIEncoding()
 			using (var zip = new ZipFile())
 			{
-				var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-				zip.AddDirectory(Path.Combine(assemblyLocation, "MissionBase"));
+				if (!String.IsNullOrEmpty(ContentFolderPath) && Directory.Exists(ContentFolderPath))
+				{
+					zip.SafeAddDirectory(ContentFolderPath);
+				}
 
-				zip.AddEntry("modinfo.lua", textEncoding.GetBytes(GetModInfo()));
-				zip.AddEntry("mission.lua", textEncoding.GetBytes(SerializeToLua()));
-				zip.AddEntry("script.txt", textEncoding.GetBytes(GetScript()));
-				zip.AddEntry("dependencies.txt", String.Join(";", Mod.Dependencies)); // FIXME
+				var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+				var basePath = Path.Combine(assemblyLocation, "MissionBase");
+				zip.SafeAddDirectory(basePath);
+
+				zip.SafeAddEntry("modinfo.lua", textEncoding.GetBytes(GetModInfo()));
+				zip.SafeAddEntry("mission.lua", textEncoding.GetBytes(SerializeToLua()));
+				zip.SafeAddEntry("script.txt", textEncoding.GetBytes(GetScript()));
+				zip.SafeAddEntry("dependencies.txt", String.Join(";", Mod.Dependencies)); // FIXME
 
 				var stream = new MemoryStream();
 				using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Indent = true, CheckCharacters = true })) new NetDataContractSerializer().WriteObject(writer, this);
 				stream.Position = 0;
-				zip.AddEntry("project.mission.xml", stream);
+				zip.SafeAddEntry("project.mission.xml", stream);
 
 				// disable scripts by hiding them with a blank file
 				var blank = textEncoding.GetBytes("-- intentionally left blank --");
-				foreach (var widget in disabledWidgets.Distinct()) zip.AddEntry("LuaUI/Widgets/" + widget, blank);
-				foreach (var gadget in disabledGadgets.Distinct()) zip.AddEntry("LuaRules/Gadgets/" + gadget, blank);
+				foreach (var widget in disabledWidgets.Distinct()) zip.SafeAddEntry("LuaUI/Widgets/" + widget, blank);
+				foreach (var gadget in disabledGadgets.Distinct()) zip.SafeAddEntry("LuaRules/Gadgets/" + gadget, blank);
 
 				// include media in mod archive
 				foreach (var item in AllLogic)
@@ -255,11 +273,7 @@ namespace CMissionLib
 						if (!String.IsNullOrEmpty(action.ImagePath))
 						{
 							if (!File.Exists(action.ImagePath)) throw new Exception("Image not found: " + action.ImagePath);
-							try
-							{
-								zip.AddFile(action.ImagePath, "LuaUI/Images/");
-							}
-							catch {}
+							zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
 						}
 					}
 					else if (item is SoundAction)
@@ -268,11 +282,7 @@ namespace CMissionLib
 						if (!String.IsNullOrEmpty(action.SoundPath) && File.Exists(action.SoundPath))
 						{
 							if (!File.Exists(action.SoundPath)) throw new Exception("Sound not found: " + action.SoundPath);
-							try
-							{
-								zip.AddFile(action.SoundPath, "LuaUI/Sounds/");
-							}
-							catch {}
+							zip.SafeAddFile(action.SoundPath, "LuaUI/Sounds/");
 						}
 					}
 				}
@@ -307,12 +317,12 @@ namespace CMissionLib
 
 		public double FromIngameX(double x)
 		{
-			return x*Map.Texture.Width/Map.Size.Width;
+			return x * Map.Texture.Width / Map.Size.Width;
 		}
 
 		public double FromIngameY(double y)
 		{
-			return y*Map.Texture.Height/Map.Size.Height;
+			return y * Map.Texture.Height / Map.Size.Height;
 		}
 
 		public string GetScript()
@@ -395,12 +405,19 @@ namespace CMissionLib
 
 		public double ToIngameX(double x)
 		{
-			return x/Map.Texture.Width*Map.Size.Width;
+			return x / Map.Texture.Width * Map.Size.Width;
 		}
 
 		public double ToIngameY(double y)
 		{
-			return y/Map.Texture.Height*Map.Size.Height;
+			return y / Map.Texture.Height * Map.Size.Height;
+		}
+
+		public string VerifyCanPublish()
+		{
+			if (ImagePath == null || !File.Exists(ImagePath)) return "A mission image needs to be set in the Mission Settings dialog.";
+			if (String.IsNullOrEmpty(Description)) return "A description needs to be set in the Mission Settings dialog.";
+			return null;
 		}
 
 		public override string ToString()
@@ -430,9 +447,9 @@ namespace CMissionLib
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("local modinfo = {");
-			sb.AppendFormat("	name		=	[[{0}]],\n", Name);
-			sb.AppendFormat("	description	=	[[{0}]],\n", Description);
-			sb.AppendLine("modtype		=	[[0]],");
+			sb.AppendFormat("  name		=	[[{0}]],\n", Name);
+			sb.AppendFormat("  description	=	[[{0}]],\n", Description);
+			sb.AppendLine("  modtype		=	[[0]],");
 			sb.AppendLine("  depend = {");
 			sb.AppendFormat("    [[{0}]]\n", Mod.Name);
 			sb.AppendLine("  },");
@@ -489,13 +506,6 @@ namespace CMissionLib
 			sb.AppendFormat("\t\tSide={0};\n", Mod.Sides.First());
 			sb.AppendFormat("\t\tHandicap=0;\n");
 			sb.AppendLine("\t}");
-		}
-
-		public string VerifyCanPublish()
-		{
-			if (ImagePath == null || !File.Exists(ImagePath)) return "A mission image needs to be set in the Mission Settings dialog.";
-			if (String.IsNullOrEmpty(Description)) return "A description needs to be set in the Mission Settings dialog.";
-			return null;
 		}
 	}
 }

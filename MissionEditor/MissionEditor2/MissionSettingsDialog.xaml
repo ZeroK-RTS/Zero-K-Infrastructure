@@ -1,5 +1,5 @@
 ﻿<Window x:Class="MissionEditor2.MissionSettingsDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Mission Settings" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" Height="450" Width="750" x:Name="dialog">
+        Title="Mission Settings" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen" Height="450" Width="850" x:Name="dialog">
     <Grid Margin="3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
@@ -50,10 +50,13 @@
             <Label Grid.Row="8" Visibility="Collapsed">Starting Energy</Label>
             <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding StartingEnergy}" Margin="2" Visibility="Collapsed" />
         </Grid>
-        <GroupBox Header="Players" Margin="0 0 2 0" Grid.Row="1">
+        <GroupBox Header="Players" Grid.Row="1">
             <DockPanel>
-                <Button DockPanel.Dock="Bottom" x:Name="NewPlayerButton" x:FieldModifier="public" Margin="0 2 0 0" Content="_Add Player" Click="NewPlayerButton_Click" />
-                <DataGrid ItemsSource="{Binding Players}" AutoGenerateColumns="False" CanUserAddRows="False">
+                <UniformGrid DockPanel.Dock="Bottom" Rows="1">
+                    <Button  x:Name="newPlayerButton" Margin="2"  Content="_Add Player" Click="newPlayerButton_Click" />
+                    <Button  x:Name="removePlayerButton" Margin="2" Content="_Remove Player" Click="removePlayerButton_Click" />
+                </UniformGrid>
+                <DataGrid x:Name="playerGrid" ItemsSource="{Binding Players}" AutoGenerateColumns="False" CanUserAddRows="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Alliance" Binding="{Binding Alliance}" />
@@ -94,8 +97,8 @@
                 <StackPanel>
                     <Viewbox Width="96" Height="96">
                         <Grid>
-                            <Image Source="{Binding ImagePath}" />
                             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.FontSize="12">?</TextBlock>
+                            <Image Source="{Binding ImagePath}" />
                         </Grid>
                     </Viewbox>
                     <TextBlock Margin="2">Image will appear as above (96x96).</TextBlock>
@@ -104,14 +107,19 @@
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="Additional Content Folder">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                
-            </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBox Text="{Binding ContentFolderPath}" />
+                    <Button Grid.Column="2" Click="BrowseButton_Click">Browse</Button>
+                    <TextBlock Grid.ColumnSpan="2" Grid.Row="2">Files in this folder will be <LineBreak /> included in the mission.</TextBlock>
+                </Grid>
             </GroupBox>
         </StackPanel>
         <Button Grid.Row="2" Grid.Column="3" IsCancel="True" IsDefault="True" Width="70" Content="O_K" HorizontalAlignment="Right" Margin="3" />

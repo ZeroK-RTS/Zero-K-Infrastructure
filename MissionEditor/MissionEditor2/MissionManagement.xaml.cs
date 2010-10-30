@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +16,6 @@ namespace MissionEditor2
 	/// </summary>
 	public partial class MissionManagement: Window
 	{
-
 		public MissionManagement()
 		{
 			InitializeComponent();
@@ -26,6 +26,7 @@ namespace MissionEditor2
 			RefreshList();
 		}
 
+
 		void RefreshList()
 		{
 			if (Dispatcher.Thread != Thread.CurrentThread)
@@ -35,20 +36,27 @@ namespace MissionEditor2
 			}
 			var loadingDialog = new LoadingDialog { Text = "Getting Mission List", Owner = MainWindow.Instance };
 			Utils.InvokeInNewThread(delegate
-			{
-				using (var client = new MissionServiceClient())
 				{
-					var list = client.ListMissionInfos();
-					this.Invoke(delegate
+					try
 					{
-						DataGrid.ItemsSource = list;
-						loadingDialog.Close();
-					});
-				}
-			});
+						using (var client = new MissionServiceClient())
+						{
+							var list = client.ListMissionInfos();
+							this.Invoke(delegate
+								{
+									DataGrid.ItemsSource = list;
+									loadingDialog.Close();
+								});
+						}
+					}
+					catch (Exception e)
+					{
+						MessageBox.Show("Could not get mission list: " + e.Message);
+					}
+				});
 			loadingDialog.ShowDialog();
 		}
-
+#pragma warning disable 612,618
 		void DeleteButton_Click(object sender, RoutedEventArgs e)
 		{
 			var selectedMission = (Mission)DataGrid.SelectedItem;
@@ -56,35 +64,48 @@ namespace MissionEditor2
 			if (dialog.ShowDialog() == true)
 			{
 				var password = dialog.PasswordBox.Password;
-
 				Utils.InvokeInNewThread(delegate
 					{
-#pragma warning disable 612,618
-						using (var client = new MissionServiceClient()) client.DeleteMission(selectedMission.MissionID, selectedMission.AuthorName, password);
-#pragma warning restore 612,618
-						RefreshList();
+						try
+						{
+							using (var client = new MissionServiceClient()) client.DeleteMission(selectedMission.MissionID, selectedMission.AuthorName, password);
+							RefreshList();
+						}
+						catch (FaultException<ExceptionDetail> ex)
+						{
+							MessageBox.Show(ex.Message);
+						}
 					});
 			}
 		}
+#pragma warning restore 612,618
 
 		void OpenButton_Click(object sender, RoutedEventArgs e)
 		{
-			var dialog = new LoadingDialog { Text = "Opening Mission" };
+			var loadingDialog = new LoadingDialog { Text = "Opening Mission", Owner = this };
 			var selectedMission = (Mission)DataGrid.SelectedItem;
 			if (selectedMission == null) return;
 			Utils.InvokeInNewThread(delegate
 				{
-					var client = new MissionServiceClient();
-					var missionData = client.GetMission(selectedMission.Name);
-					dialog.Invoke(delegate
-						{
-							dialog.Close();
-							var filter = "Spring Mod Archive (*.sdz)|*.sdz|All files (*.*)|*.*";
-							var saveFileDialog = new SaveFileDialog { DefaultExt = "sdz", Filter = filter, RestoreDirectory = true };
-							if (saveFileDialog.ShowDialog() == true) File.WriteAllBytes(saveFileDialog.FileName, missionData.Mutator.ToArray());
-							WelcomeDialog.LoadExistingMission(saveFileDialog.FileName);
-						});
+					try
+					{
+						var client = new MissionServiceClient();
+						var missionData = client.GetMission(selectedMission.Name);
+						loadingDialog.Invoke(delegate
+							{
+								loadingDialog.Close();
+								var filter = "Spring Mod Archive (*.sdz)|*.sdz|All files (*.*)|*.*";
+								var saveFileDialog = new SaveFileDialog { DefaultExt = "sdz", Filter = filter, RestoreDirectory = true };
+								if (saveFileDialog.ShowDialog() == true) File.WriteAllBytes(saveFileDialog.FileName, missionData.Mutator.ToArray());
+								WelcomeDialog.LoadExistingMission(saveFileDialog.FileName);
+							});
+					}
+					catch (FaultException<ExceptionDetail> ex)
+					{
+						MessageBox.Show(ex.Message);
+					}
 				});
+			loadingDialog.ShowDialog();
 		}
 
 		void UpdateButton_Click(object sender, RoutedEventArgs e)
@@ -94,31 +115,32 @@ namespace MissionEditor2
 			var mission = MainWindow.Instance.Mission;
 			var dialog = new PublishDialog { DataContext = mission, Owner = this };
 			dialog.OKButton.Click += delegate
-			{
-				var error = mission.VerifyCanPublish();
-				if (error == null)
 				{
-					Publishing.SendMissionWithDialog(mission, dialog.PasswordBox.Password, selectedMission.MissionID);
-					dialog.Close();
-					RefreshList();
-				}
-				else MessageBox.Show(error);
-			};
+					var error = mission.VerifyCanPublish();
+					if (error == null)
+					{
+						Publishing.SendMissionWithDialog(mission, dialog.PasswordBox.Password, selectedMission.MissionID);
+						dialog.Close();
+						RefreshList();
+					}
+					else MessageBox.Show(error);
+				};
 			dialog.ShowDialog();
 		}
-
+#pragma warning disable 612,618
 		void searchBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			var text = searchBox.Text;
 			var item =
 				DataGrid.ItemsSource.Cast<Mission>().FirstOrDefault(
 					mission =>
-					mission.Name.ToLower().Contains(text.ToLower()) || 
-					mission.Description.ToLower().Contains(text.ToLower()) ||
-					mission.Account.Name.ToLower().Contains(text.ToLower()));
+					mission.Name.ToLower().Contains(text.ToLower()) || mission.Description.ToLower().Contains(text.ToLower()) ||
+					mission.AuthorName.ToLower().Contains(text.ToLower()));
+
 			if (item == null) return;
 			DataGrid.SelectedItem = item;
 			DataGrid.ScrollIntoView(item);
 		}
 	}
+#pragma warning restore 612,618
 }

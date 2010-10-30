@@ -14,10 +14,10 @@
         <elementListCompartment Id="c1a11d39-4e54-4e50-9bf8-58b5b0d11a32" absoluteBounds="0.515, 8.46, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="462f5372-b3be-4d91-b7cb-d7dfc664e257" absoluteBounds="6, 7.875, 2, 1.193992513020834">
+    <classShape Id="462f5372-b3be-4d91-b7cb-d7dfc664e257" absoluteBounds="2.5, 5.875, 2, 1.193992513020834">
       <DataClassMoniker Name="/ZkDataContext/BattleEvent" />
       <nestedChildShapes>
-        <elementListCompartment Id="2ff321be-f9f1-4011-9d78-fb590c8741d2" absoluteBounds="6.0150000000000006, 8.335, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="2ff321be-f9f1-4011-9d78-fb590c8741d2" absoluteBounds="2.5150000000000006, 6.3350000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="519e29bd-a4cc-4e02-8f2f-d0933bdf94a1" absoluteBounds="3.5, 7.875, 2, 6.7707340494791666">
@@ -26,10 +26,10 @@
         <elementListCompartment Id="53360c29-6326-4f5f-bb26-6172916387ff" absoluteBounds="3.5150000000000006, 8.335, 1.9700000000000002, 6.2107340494791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="8971e364-db34-49a8-b98c-9c871b773629" absoluteBounds="4.25, 8.125, 2, 1.1939925130208335">
+    <classShape Id="8971e364-db34-49a8-b98c-9c871b773629" absoluteBounds="0.5, 6, 2, 1.1939925130208335">
       <DataClassMoniker Name="/ZkDataContext/CelestialObjectEvent" />
       <nestedChildShapes>
-        <elementListCompartment Id="765f1e24-338b-47f8-9113-5b18bd640bc6" absoluteBounds="4.265, 8.585, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="765f1e24-338b-47f8-9113-5b18bd640bc6" absoluteBounds="0.51499999999999968, 6.4600000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="932b44db-9747-4609-b831-cd854b0e6862" absoluteBounds="8.375, 5.25, 2, 1.1939925130208335">
@@ -44,10 +44,10 @@
         <elementListCompartment Id="0fb09bdf-53ea-4cf0-aec5-9a1a643d2592" absoluteBounds="10.765, 5.335, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="ff88d62c-f3c3-4a8b-9199-207ab6a22b4d" absoluteBounds="6.125, 8.375, 2, 1.3862939453124996">
+    <classShape Id="ff88d62c-f3c3-4a8b-9199-207ab6a22b4d" absoluteBounds="5.625, 10.25, 2, 1.3862939453124996">
       <DataClassMoniker Name="/ZkDataContext/CelestialObjectStructure" />
       <nestedChildShapes>
-        <elementListCompartment Id="f8520850-f038-463a-805f-0d280695afa9" absoluteBounds="6.14, 8.835, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="f8520850-f038-463a-805f-0d280695afa9" absoluteBounds="5.64, 10.71, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="a5c80668-0a57-424a-a42d-08b0479ac073" absoluteBounds="6.375, 7.125, 2, 1.1939925130208335">

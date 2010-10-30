@@ -33,7 +33,7 @@
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>31</ApplicationRevision>
+    <ApplicationRevision>32</ApplicationRevision>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -94,6 +94,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -116,6 +117,9 @@
     <Compile Include="CircleDragInfo.xaml.cs" />
     <Compile Include="ConditionsFolder.cs" />
     <Compile Include="DragInfo.xaml.cs" />
+    <Compile Include="ErrorDialog.xaml.cs">
+      <DependentUpon>ErrorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FolderConverter.cs" />
     <Compile Include="GiveFactoryOrdersPane.xaml.cs">
       <DependentUpon>GiveFactoryOrdersPane.xaml</DependentUpon>
@@ -136,6 +140,11 @@
     <Compile Include="RectangleDragInfo.xaml.cs" />
     <Compile Include="RegionWindow.xaml.cs">
       <DependentUpon>RegionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\ContentServiceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="Service References\ServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
@@ -174,6 +183,10 @@
     <Page Include="CreateUnitsPane.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ErrorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="GiveFactoryOrdersPane.xaml">
       <SubType>Designer</SubType>
@@ -329,6 +342,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Service References\ContentServiceReference\MissionEditor2.ContentServiceReference.ExceptionLog.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\ContentServiceReference\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Service References\ContentServiceReference\configuration.svcinfo" />
+    <None Include="Service References\ContentServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\ContentServiceReference\ContentService.disco" />
+    <None Include="Service References\ContentServiceReference\ContentService.wsdl" />
     <None Include="Service References\ServiceReference\MissionService.disco" />
     <None Include="Service References\ServiceReference\MissionService.wsdl" />
     <None Include="Service References\ServiceReference\MissionService.xsd">
@@ -407,9 +431,6 @@
     <Content Include="MissionBase\LuaUI\Widgets\mission_scoreindicator.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="MissionBase\LuaUI\Widgets\mission_selectiondetector.lua">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="MissionBase\LuaUI\Widgets\mission_selection_monitor.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -464,6 +485,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadataStorage Include="Service References\ContentServiceReference\" />
     <WCFMetadataStorage Include="Service References\ServiceReference\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

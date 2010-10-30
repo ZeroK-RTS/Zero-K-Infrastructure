@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using Ionic.Zip;
 
 namespace CMissionLib
 {
@@ -28,6 +30,39 @@ namespace CMissionLib
 				stream.CopyTo(memoryStream);
 				return memoryStream.ToArray();
 			}
+		}
+
+		public static void SafeAddDirectory(this ZipFile zip, string directoryPath)
+		{
+			directoryPath = Path.GetFullPath(directoryPath) + "\\";
+			foreach (var filePath in Directory.GetFiles(directoryPath, "*", SearchOption.AllDirectories))
+			{
+				var pathInArchive = filePath.Replace(directoryPath, String.Empty);
+				if (!File.Exists(filePath)) throw new Exception("File does not exist: " + pathInArchive);
+				zip.SafeAddFile(filePath, Path.GetDirectoryName(pathInArchive));
+			}
+		}
+
+		public static void SafeAddEntry(this ZipFile zip, string itemName, Stream entry)
+		{
+			if (zip[itemName] == null) zip.AddEntry(itemName, entry);
+		}
+
+		public static void SafeAddFile(this ZipFile zip, string fileName, string directoryPathInArchive)
+		{
+			if (!File.Exists(fileName)) throw new Exception("File does not exist: " + fileName);
+			var fileNameInArchive = directoryPathInArchive + Path.GetFileName(fileName);
+			if (zip[fileNameInArchive] == null) zip.AddFile(fileName, directoryPathInArchive);
+		}
+
+		public static void SafeAddEntry(this ZipFile zip, string itemName, string entry)
+		{
+			if (zip[itemName] == null) zip.AddEntry(itemName, entry);
+		}
+
+		public static void SafeAddEntry (this ZipFile zip, string itemName, byte[] entry)
+		{
+			if (zip[itemName] == null) zip.AddEntry(itemName, entry);
 		}
 
 		[DllImport("gdi32.dll")]

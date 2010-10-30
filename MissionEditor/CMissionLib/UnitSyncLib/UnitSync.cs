@@ -848,7 +848,7 @@ namespace CMissionLib.UnitSyncLib
 
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
 			if (!NativeMethods.lpOpenFile("gamedata/defs.lua", VfsMode.Mod, VfsMode.Mod)) throw new UnitSyncException("Error parsing defs.lua: " + NativeMethods.lpErrorLog());
-			SetLoadingStatus("Loading Mod (UnitDefs)");
+			SetLoadingStatus("Loading Mod (Unit Definitions)");
 			if (!NativeMethods.lpExecute()) throw new UnitSyncException("Unable to read  defs.lua: " + NativeMethods.lpErrorLog());
 			if (!NativeMethods.lpSubTableStr("unitdefs")) throw new UnitSyncException(); // push unitdefs
 
@@ -858,7 +858,6 @@ namespace CMissionLib.UnitSyncLib
 				if (!NativeMethods.lpSubTableStr(unitName)) throw new UnitSyncException(); // push unitdef
 				var unitInfo = new UnitInfo();
 				unitInfo.Name = unitName;
-				SetLoadingStatus(string.Format("Loading Mod (Unit: {0})", unitName));
 				if (NativeMethods.lpGetKeyExistsStr("name"))
 				{
 					unitInfo.FullName = NativeMethods.lpGetStrKeyStrVal("name", String.Empty);

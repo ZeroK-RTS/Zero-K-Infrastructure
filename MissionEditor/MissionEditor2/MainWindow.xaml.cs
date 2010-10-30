@@ -466,10 +466,8 @@ namespace MissionEditor2
 			var mission = MainMenu.AddContainer("Mission");
 			mission.AddAction("Create Mutator", BuildMission);
 			mission.AddAction("Test Mission", TestMission);
-#if DEBUG
 			mission.AddAction("Publish", () => Publishing.Publish(Mission, null));
 			mission.AddAction("Manage Missions", ShowMissionManagement);
-#endif
 			mission.AddAction("Settings", ShowMissionSettings);
 			// regionsMenu = MainMenu.AddContainer("Regions");
 			// regionsMenu.Click += new RoutedEventHandler(regionsMenu_GotFocus);

@@ -1,0 +1,39 @@
+﻿<Window x:Class="MissionEditor2.ErrorDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Crash"
+        Height="397" Width="528" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" FontSize="30" HorizontalAlignment="Center">Oops!</TextBlock>
+        <TextBlock Grid.Row="1" FontSize="15" HorizontalAlignment="Center">The mission editor has crashed.</TextBlock>
+        <CheckBox x:Name="sendReportBox" Grid.Row="2" HorizontalAlignment="Center" IsChecked="True">Help us solve the issue by sending an error report</CheckBox>
+        <Grid Grid.Row="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0">Name (Optional)</Label>
+            <TextBox x:Name="nameBox" Grid.Row="1"></TextBox>
+            <Label Grid.Row="2">Description of what you were doing when the crash occurred. (Optional)</Label>
+            <TextBox x:Name="descriptionBox" Grid.Row="3" AcceptsReturn="True"></TextBox>
+        </Grid>
+        <TextBlock HorizontalAlignment="Center" Grid.Row="4">
+            <Hyperlink Click="Hyperlink_Click">View Error Log</Hyperlink>
+        </TextBlock>
+        <ProgressBar x:Name="progressBar" Grid.Row="5" IsIndeterminate="True" Height="20" Margin="3" Visibility="Collapsed" />
+        <Button x:Name="closeButton" Margin="3" Grid.Row="6" Click="Button_Click">Close</Button>
+    </Grid>
+
+</Window>

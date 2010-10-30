@@ -347,7 +347,7 @@
   <Table Name="dbo.ExceptionLog" Member="ExceptionLogs">
     <Type Name="ExceptionLog">
       <Column Name="ExceptionLogID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="ProgramID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ProgramID" Type="global::ZkData.ProgramType" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="[Exception]" Member="Exception" Type="System.String" DbType="nvarchar(max) NOT NULL" CanBeNull="false" />
       <Column Name="ExtraData" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
       <Column Name="RemoteIP" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />

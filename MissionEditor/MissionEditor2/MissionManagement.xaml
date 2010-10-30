@@ -1,5 +1,5 @@
 ﻿<Window x:Class="MissionEditor2.MissionManagement" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Mission Management" Width="400" Height="300" Loaded="Window_Loaded" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen">
+        Title="Mission Management" Width="700" Height="600" Loaded="Window_Loaded" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen">
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
             <Label DockPanel.Dock="Left">Search</Label>
