@@ -9,14 +9,12 @@
 			if (!enabled) return;
 			var el = document.documentElement;
 			if (el.scrollHeight - (document.documentElement.scrollTop + document.documentElement.clientHeight) < 50) {
-				$('#loader').show();
 				enabled = false;
 				$.get('<%= Url.Action("TileList") %>' + '?offset=' + offset + '&search='+ $('#search').val(), function (data) {
 					$('#missions').append(data);
 					offset = offset + <%=Model.FetchTileCount%>;
 					if (data == '') enabled= false;
 					else enabled = true;
-					$('#loader').hide();
 				});
 			}
 		}
@@ -24,7 +22,6 @@
 		window.onscroll = scrollEvent;
 	</script>
 
-	<span id="loader" style="visibility: collapse"><h2>Loading ... <img src="<%= Url.Content("~/img/loader.gif") %>"/></h2></span>
 	<%
 		using (
 		Ajax.BeginForm("TileList",
@@ -32,8 +29,8 @@
 									 {
 										 InsertionMode = InsertionMode.Replace,
 										 UpdateTargetId = "missions",
-										 OnBegin = string.Format("function(){{offset={0}; enabled=false; $('#loader').show();}}", Model.FetchInitialCount),
-										 OnComplete = "function(){$('#loader').hide(); enabled= true;}",
+										 OnBegin = string.Format("function(){{offset={0}; enabled=false;}}", Model.FetchInitialCount),
+										 OnComplete = "function(){enabled= true;}",
 										 
 									 }))
 		{%>
