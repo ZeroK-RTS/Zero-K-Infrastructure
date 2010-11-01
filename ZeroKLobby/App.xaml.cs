@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 
@@ -16,15 +17,22 @@ namespace ZeroKLobby
 
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			//this.MainWindow = new MainWindow(); // this is  a hack to make wpf app not close after you open/close some other wpf window - wont be needed in full wpf app
-			//this.MainWindow.Visibility = Visibility.Hidden;
-			
-			//this.Shutdown();
+			Program.Main(null); // todo some exception handlign (dont catch in main? )
+			MainWindow = Program.MainWindow;
+			MainWindow.Show();
 		}
 
 		private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
 		{
-			// intentionally left empty, just subscribing to this event prevents WPF from swallowing its exceptions
+			if (Debugger.IsAttached) throw e.Exception;
+			ErrorHandling.HandleException(e.Exception, true);
+			Trace.TraceError("Unhandled WPF exception: {0}", e.Exception);
+			e.Handled = true;
+		}
+
+		private void Application_Exit(object sender, ExitEventArgs e)
+		{
+
 		}
 	}
 }

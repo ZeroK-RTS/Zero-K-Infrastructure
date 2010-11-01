@@ -63,14 +63,11 @@ namespace ZeroKLobby
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			var app = new App();
-
 			if (!Debugger.IsAttached)
 			{
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 				Thread.GetDomain().UnhandledException += UnhandledException;
 				Application.ThreadException += Application_ThreadException;
-				app.DispatcherUnhandledException += Current_DispatcherUnhandledException;
 				Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 			}
 
@@ -171,14 +168,6 @@ namespace ZeroKLobby
 				if (Conf.ConnectOnStartup) ConnectBar.TryToConnectTasClient();
 				else NotifySection.AddBar(ConnectBar);
 
-				app.Run(MainWindow);
-				
-				ToolTip.Dispose();
-				Downloader.Dispose();
-				SpringScanner.Dispose();
-				Thread.Sleep(5000);
-
-				if (IsCrash) Application.Restart();
 			}
 			catch (Exception ex)
 			{
@@ -195,6 +184,16 @@ namespace ZeroKLobby
 			}
 		}
 
+
+		public static void ShutDown()
+		{
+			ToolTip.Dispose();
+			Downloader.Dispose();
+			SpringScanner.Dispose();
+			Thread.Sleep(5000);
+
+			if (IsCrash) Application.Restart();
+		}
 		/// <summary>
 		/// windows only: do we have admin token?
 		/// </summary>
@@ -314,12 +313,6 @@ namespace ZeroKLobby
 			catch {}
 		}
 
-		static void Current_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-		{
-			ErrorHandling.HandleException(e.Exception, true);
-			Trace.TraceError("Unhandled WPF exception: {0}", e.Exception);
-			e.Handled = true;
-		}
 
 		static void UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
