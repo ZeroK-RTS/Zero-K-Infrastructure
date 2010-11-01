@@ -12,6 +12,7 @@ namespace ZeroKLobby.Notifications
 	public partial class NotifySection: UserControl
 	{
 		public IEnumerable<INotifyBar> Bars { get { return stackPanel.Children.OfType<WindowsFormsHost>().Select(host => ((NotifyBarContainer)host.Child).BarContent); } }
+		public IEnumerable<WindowsFormsHost> Hosts { get { return stackPanel.Children.OfType<WindowsFormsHost>(); } }
 
 		public NotifySection()
 		{
