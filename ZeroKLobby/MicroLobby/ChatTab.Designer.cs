@@ -28,15 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
-            // 
-            // ChatTab
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Name = "ChatTab";
-            this.Size = new System.Drawing.Size(596, 444);
-            this.ResumeLayout(false);
+			this.SuspendLayout();
+			// 
+			// ChatTab
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.Name = "ChatTab";
+			this.Size = new System.Drawing.Size(596, 444);
+			this.ResumeLayout(false);
 
         }
 
