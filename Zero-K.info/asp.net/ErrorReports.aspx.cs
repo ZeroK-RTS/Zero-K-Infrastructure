@@ -13,9 +13,7 @@ namespace ZeroKWeb
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			ZeroKContext = new ZkDataContext();
 		}
 
-		DataContext ZeroKContext { get; set; }
 	}
 }

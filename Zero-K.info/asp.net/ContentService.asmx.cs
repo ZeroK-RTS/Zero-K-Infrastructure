@@ -17,6 +17,12 @@ namespace ZeroKWeb
 	// [System.Web.Script.Services.ScriptService]
 	public class ContentService : System.Web.Services.WebService
 	{
+		string GetUserIP()
+		{
+			var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+			if (string.IsNullOrEmpty(ip) || ip.Equals("unknown", StringComparison.OrdinalIgnoreCase)) ip = Context.Request.ServerVariables["REMOTE_ADDR"];
+			return ip;
+		}
 
 		[WebMethod]
 		public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData)
@@ -26,24 +32,17 @@ namespace ZeroKWeb
 				var exceptionLog = new ExceptionLog
 				                   {
 				                   	ProgramID = programType,
-				                   	Time = DateTime.Now,
+				                   	Time = DateTime.UtcNow,
 				                   	PlayerName = playerName,
 				                   	ExtraData = extraData,
 				                   	Exception = exception,
-				                   	RemoteIP = HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"]
+				                   	RemoteIP = GetUserIP()
 				                   };
 				db.ExceptionLogs.InsertOnSubmit(exceptionLog);
 				db.SubmitChanges();
 			}
 		}
 
-		[WebMethod]
-		public ExceptionLog[] GetStackTraces()
-		{
-			using (var db = new ZkDataContext()) 
-			{
-				return db.ExceptionLogs.ToArray();
-			}
-		}
+
 	}
 }
