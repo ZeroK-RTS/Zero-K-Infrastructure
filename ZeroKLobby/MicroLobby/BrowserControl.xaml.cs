@@ -18,7 +18,10 @@ namespace ZeroKLobby.MicroLobby
 		public BrowserControl()
 		{
 			InitializeComponent();
+			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 		}
+
+		bool firstTime = true;
 
 
 		void PerformAction(string actionString)
@@ -63,38 +66,40 @@ namespace ZeroKLobby.MicroLobby
 		void WebBrowser_Navigated(object sender, NavigationEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-			NavigationControl.Instance.Path = e.Uri.OriginalString;
+			if (firstTime)
+			{
+				firstTime = false;
+			}
+			else NavigationControl.Instance.Path = e.Uri.OriginalString;
 		}
 
 		void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-			var parts = e.Uri.OriginalString.Split('@');
-			if (parts.Length < 2) return;
-			for (var i = 1; i < parts.Length; i++)
+			if (firstTime)
 			{
-				var action = parts[i];
-				PerformAction(action);
+				var parts = e.Uri.OriginalString.Split('@');
+				if (parts.Length < 2) return;
+				for (var i = 1; i < parts.Length; i++)
+				{
+					var action = parts[i];
+					PerformAction(action);
+				}
+				e.Cancel = true;
+				var url = parts[0].Replace("zerok://", String.Empty);
+				WebBrowser.Navigate(url);
 			}
-			e.Cancel = true;
-			var url = parts[0].Replace("zerok://", String.Empty);
-			WebBrowser.Navigate(url);
 		}
 
 		private void webBrowser_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-			WebBrowser.Source = new Uri("http://zero-k.info/Missions.mvc");
-		}
-
-		public void FocusWeb()
-		{
-			var document = (mshtml.HTMLDocument)WebBrowser.Document;
-			document.focus();
 		}
 
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
+			WebBrowser.Source = new Uri("http://zero-k.info/Missions.mvc");
 		}
 	}
 }

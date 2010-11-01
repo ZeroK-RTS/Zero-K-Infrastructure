@@ -28,18 +28,13 @@
             <Button x:Name="forwardButton" Grid.Column="1" Click="forwardButton_Click">Forward</Button>
             <ZeroKLobby:SubmitTextBox Grid.Column="2" Text="{Binding Path, ElementName=userControl}" />
         </Grid>
-        <TabControl Grid.Row="2" x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged">
+        <TabControl Grid.Row="2" x:Name="tabControl">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <EventSetter Event="MouseUp" Handler="TabItem_MouseUp" />
                     <Setter Property="Visibility" Value="Collapsed" />
                 </Style>
             </TabControl.ItemContainerStyle>
-            <TabItem>
-                <WindowsFormsHost>
-                    <MicroLobby:StartPage />
-                </WindowsFormsHost>
-            </TabItem>
             <TabItem >
                 <WindowsFormsHost>
                     <MicroLobby:BattleListTab />
@@ -77,6 +72,11 @@
             </TabItem>
             <TabItem>
                 <MicroLobby:BrowserControl x:Name="browserControl"/>
+            </TabItem>
+            <TabItem>
+                <WindowsFormsHost>
+                    <MicroLobby:StartPage />
+                </WindowsFormsHost>
             </TabItem>
         </TabControl>
     </Grid>

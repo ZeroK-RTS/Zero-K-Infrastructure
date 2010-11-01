@@ -167,23 +167,6 @@ namespace ZeroKLobby
 			if (CanGoForward) GoForward();
 		}
 
-		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			if (e.AddedItems.Count == 0) return;
-			var missions = ((TabItem)e.AddedItems[0]).Content as BrowserControl;
-			if (missions != null)
-			{
-				// SelectionChanged appears to be fired before the browser is ready so wait a bit
-				var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
-				timer.Tick += delegate
-					{
-						timer.Stop();
-						Dispatcher.Invoke((Action)(missions.FocusWeb));
-					};
-				timer.Start();
-			}
-		}
-
 		class NavigationStep
 		{
 			public string[] Path { get; set; }
