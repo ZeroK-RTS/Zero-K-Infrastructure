@@ -63,7 +63,7 @@ namespace ZeroKLobby
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			var app = new System.Windows.Application();
+			var app = new App();
 
 			if (!Debugger.IsAttached)
 			{
@@ -171,9 +171,8 @@ namespace ZeroKLobby
 				if (Conf.ConnectOnStartup) ConnectBar.TryToConnectTasClient();
 				else NotifySection.AddBar(ConnectBar);
 
-				
 				app.Run(MainWindow);
-
+				
 				ToolTip.Dispose();
 				Downloader.Dispose();
 				SpringScanner.Dispose();

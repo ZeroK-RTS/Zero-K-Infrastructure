@@ -116,6 +116,9 @@
       <DependentUpon>AcceptAgreementForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ActionHandler.cs" />
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DesignDataProvider.cs" />
     <Compile Include="INavigatable.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -722,6 +725,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
