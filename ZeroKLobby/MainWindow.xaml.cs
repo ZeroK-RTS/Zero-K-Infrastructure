@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -110,12 +111,25 @@ namespace ZeroKLobby
 
 		public Control GetHoveredControl()
 		{
-			var host = navigationControl.GetWindowsFormsHostOfCurrentTab();
+			var c = GetHoveredControlOfWindowsFormsHost(navigationControl.GetWindowsFormsHostOfCurrentTab());
+			if (c != null) return c;
+			else 
+			foreach (var h in notifySection.Hosts)
+			{
+				var hovered = GetHoveredControlOfWindowsFormsHost(h);
+				if (hovered != null) return hovered;
+			}
+			return null;
+
+		}
+
+		Control GetHoveredControlOfWindowsFormsHost(WindowsFormsHost host) {
 			if (host != null)
 			{
 				var parentControl = host.Child;
 				var screenPoint = Control.MousePosition;
 				var parentPoint = parentControl.PointToClient(screenPoint);
+				if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
 				Control child;
 				while (
 					(child =
