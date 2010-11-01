@@ -11,7 +11,7 @@
         <UniformGrid Grid.Row="0" Rows="1">
             <Button Click="StartPage_Click">Start</Button>
             <Button Click="BattleListPage_Click">Battles</Button>
-            <Button Click="MissionsPage_Click">Missions (BETA)</Button>
+            <Button Click="MissionsPage_Click">Missions (ALPHA)</Button>
             <Button Click="ChatPage_Click">Chat</Button>
             <Button Click="HelpPage_Click">Help</Button>
             <Button Click="WidgetsPage_Click">Widgets</Button>
