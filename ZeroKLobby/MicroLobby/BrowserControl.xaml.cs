@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
 using ZeroKLobby.Notifications;
@@ -26,22 +27,18 @@ namespace ZeroKLobby.MicroLobby
 
 		void PerformAction(string actionString)
 		{
-			var parts = actionString.Split(':');
-			if (parts.Length == 2)
+			if (!string.IsNullOrEmpty(actionString))
 			{
-				if (parts[0] == "start_mission")
-				{
-					int missionID;
-					if (int.TryParse(parts[1], out missionID)) StartMission(missionID);
-				}
+				var idx = actionString.IndexOf(':');
+				if (idx > -1 && actionString.Substring(0, idx) == "start_mission") StartMission(Uri.UnescapeDataString(actionString.Substring(idx + 1)));
 			}
 		}
 
-		void StartMission(int missionID)
+		void StartMission(string name)
 		{
-			// client.GetMissionByIDAsync(missionID);
-			Program.MainWindow.NotifySection.AddBar(new System.Windows.Controls.Label{ Content = "Not Implemented"});
+			Program.NotifySection.AddBar(new MissionBar(name));
 		}
+
 
 		public string PathHead { get { return "http://zero-k.info/Missions.mvc"; } }
 
@@ -76,7 +73,7 @@ namespace ZeroKLobby.MicroLobby
 		void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-			if (firstTime)
+			if (!firstTime)
 			{
 				var parts = e.Uri.OriginalString.Split('@');
 				if (parts.Length < 2) return;
@@ -91,12 +88,12 @@ namespace ZeroKLobby.MicroLobby
 			}
 		}
 
-		private void webBrowser_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		private void webBrowser_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 		}
 
-		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 			WebBrowser.Source = new Uri("http://zero-k.info/Missions.mvc");
