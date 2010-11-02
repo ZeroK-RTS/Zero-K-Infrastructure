@@ -35,6 +35,7 @@
 									 }))
 		{%>
 	<%=Html.TextBox("search", Model.SearchString)%><input type="submit" id="submit" value="Search" />
+	
 	<%
 		}%>
 	<table>
@@ -45,7 +46,7 @@
 						Html.RenderPartial("TileList", Model.LastUpdated);%>
 				</div>
 			</td>
-			<td width="250" valign="top">
+			<td width="250" valign="top" align="left">
 				<h3>
 					Most popular</h3>
 				<ul>

@@ -2,6 +2,7 @@
 using System.Data.Linq.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.UI;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -29,14 +30,14 @@ namespace ZeroKWeb.Controllers
 					});
 		}
 
-		[OutputCache(VaryByParam = "name", Duration = int.MaxValue)]
+		[OutputCache(VaryByParam = "name", Duration = int.MaxValue, Location = OutputCacheLocation.Any)]
 		public ActionResult Img(string name)
 		{
 			var db = new ZkDataContext();
 			return File(db.Missions.Single(x => x.Name == name).Image.ToArray(), "image/png");
 		}
 
-		[OutputCache(VaryByParam = "name", Duration = int.MaxValue)]
+		[OutputCache(VaryByParam = "name", Duration = int.MaxValue, Location = OutputCacheLocation.Any)]
 		public ActionResult File(string name)
 		{
 			var m = new ZkDataContext().Missions.Single(x => x.Name == name);
