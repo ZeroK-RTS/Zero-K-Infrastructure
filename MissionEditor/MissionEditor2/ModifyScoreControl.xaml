@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="MissionEditor2.ModifyScoreControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:Actions="clr-namespace:CMissionLib.Actions;assembly=CMissionLib" mc:Ignorable="d" 
+             d:DesignHeight="311" d:DesignWidth="598" Loaded="UserControl_Loaded" >
+    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <GroupBox Header="Players" Grid.RowSpan="3">
+            <ListBox x:Name="playerList" ItemsSource="{Binding Mission.Players, ElementName=window}" SelectionMode="Multiple" />
+        </GroupBox>
+        <Label Grid.Row="0" Grid.Column="1">Action</Label>
+        <Label Grid.Row="1" Grid.Column="1">Value</Label>
+        <ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{x:Static Actions:ModifyScoreAction.Actions}" SelectedItem="{Binding Action}" />
+        <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2">Scores are only sent when the Send Score action is executed.</TextBlock>
+    </Grid>
+</UserControl>

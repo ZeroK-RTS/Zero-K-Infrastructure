@@ -28,7 +28,7 @@ namespace MissionEditor2
 		void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			condition = (UnitsAreInAreaCondition) MainWindow.Instance.CurrentLogic;
-			alliancesList.BindCollection(condition.Players);
+			playerList.BindCollection(condition.Players);
 			groupsList.BindCollection(condition.Groups);
 
 			foreach (var unit in MainWindow.Instance.Mission.AllUnits)

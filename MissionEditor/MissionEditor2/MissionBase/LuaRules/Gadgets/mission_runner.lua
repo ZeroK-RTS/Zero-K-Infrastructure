@@ -35,7 +35,7 @@ local unitGroups = {} -- key: unitID, value: group set
 local gaiaTeamID = Spring.GetGaiaTeamID()
 local cheatingWasEnabled = false
 local scoreSent = false
-local score = 0
+local scores = {}
 local gameStarted = false
 local events = {} -- key: frame, value: event array
 local counters = {} -- key: name, value: count
@@ -412,16 +412,21 @@ local function ExecuteTrigger(trigger, frame)
         end
       elseif action.logicType == "ModifyScoreAction" then
         Event = function()
-          if action.args.action == "Increase Score" then
-            score = score + action.args.value
-          elseif action.args.action == "Reduce Score" then
-            score = score - action.args.value
-          elseif action.args.action == "Set Score" then
-            score = action.args.value
-          elseif action.args.action == "Multiply Score" then
-            score = score * action.args.value
+          for _, playerIndex in ipairs(action.args.players) do
+            local _, _, _, teamID = Spring.GetPlayerInfo(playerIndex)
+            local score = scores[teamID] or 0
+            if action.args.action == "Increase Score" then
+              score = score + action.args.value
+            elseif action.args.action == "Reduce Score" then
+              score = score - action.args.value
+            elseif action.args.action == "Set Score" then
+              score = action.args.value
+            elseif action.args.action == "Multiply Score" then
+              score = score * action.args.value
+            end
+            scores[teamID] = score
+            Spring.SetTeamRulesParam(teamID, "score", score)
           end
-          Spring.SetGameRulesParam("score", score)
         end
       elseif action.logicType == "EnableTriggersAction" then
         Event = function()
@@ -616,7 +621,7 @@ local function ExecuteTrigger(trigger, frame)
       elseif action.logicType == "SendScoreAction" then
         Event = function()
           if not (cheatingWasEnabled or scoreSent) then
-            Spring.Echo("ID: "..GG.Base64Encode(tostring(math.floor(score))))
+            SendToUnsynced("ScoreEvent")
             scoreSent = true
           end
         end
@@ -631,7 +636,7 @@ local function ExecuteTrigger(trigger, frame)
                 logicType = "SetCameraPointTargetAction",
               }
               _G.missionEventArgs = args
-              SendToUnsynced"MissionEvent"
+              SendToUnsynced("MissionEvent")
               _G.missionEventArgs = nil
             end
           end
@@ -1044,12 +1049,22 @@ function gadget:UnitFinished(unitID, unitDefID, unitTeam)
   end
 end
 
+
+function ScoreEvent()
+  local teamID = Spring.GetLocalTeamID()
+  local score = Spring.GetTeamRulesParam(teamID, "score")
+  if score then
+    Spring.Echo("ID: "..GG.Base64Encode(tostring(math.floor(score))))
+  end
+end
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 function gadget:Initialize()
   gadgetHandler:AddSyncAction('MissionEvent', WrapToLuaUI)
   gadgetHandler:AddSyncAction('GhostEvent', GhostEvent)
+  gadgetHandler:AddSyncAction('ScoreEvent', ScoreEvent)
   for _,callIn in pairs(callInList) do
       local fun = gadget[callIn]
       gadgetHandler:AddSyncAction(callIn, fun)

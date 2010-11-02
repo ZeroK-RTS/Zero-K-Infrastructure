@@ -6,7 +6,7 @@ namespace CMissionLib.Actions
 	public class SendScoreAction : Action
 	{
 		public SendScoreAction()
-			: base("Send Score") {}
+			: base("Send Scores") {}
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{

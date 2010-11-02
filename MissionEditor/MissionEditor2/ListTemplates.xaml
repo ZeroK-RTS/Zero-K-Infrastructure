@@ -273,6 +273,10 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="ModifyScoreAction">
+            <local:ModifyScoreControl />
+        </DataTemplate>
+
         <DataTemplate x:Key="CancelCountdownAction">
             <DockPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Label>Countdown</Label>

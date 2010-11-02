@@ -124,7 +124,7 @@ namespace MissionEditor2
 			addAction("Play Sound", () => new SoundAction());
 			addAction("Point Camera at Map Position", () => new SetCameraPointTargetAction(centerMapX, centerMapY));
 			addAction("Point Camera at Unit", () => new SetCameraUnitTargetAction());
-			addAction("Send Score", () => new SendScoreAction());
+			addAction("Send Scores", () => new SendScoreAction());
 			addAction("Show Console Message", () => new ConsoleMessageAction("Hello!"));
 			addAction("Show GUI Message", () => new GuiMessageAction("Hello!"));
 			addAction("Show Marker Point", () => new MarkerPointAction(centerMapX, centerMapY));

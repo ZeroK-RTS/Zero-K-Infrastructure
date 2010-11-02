@@ -15,7 +15,7 @@
                         <Label>Groups</Label>
                         <ListBox x:Name="groupsList" ItemsSource="{Binding Mission.AllGroups, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" />
                         <Label>Players</Label>
-                        <ListBox x:Name="alliancesList" ItemsSource="{Binding Mission.Players, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" />
+                        <ListBox x:Name="playerList" ItemsSource="{Binding Mission.Players, ElementName=window}" SelectionMode="Multiple" MaxHeight="200" />
                         <DockPanel>
                             <Label>Minimum units</Label>
                             <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" />

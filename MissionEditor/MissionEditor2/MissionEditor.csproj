@@ -127,6 +127,9 @@
     <Compile Include="GiveOrdersPane.xaml.cs">
       <DependentUpon>GiveOrdersPane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ModifyScoreControl.xaml.cs">
+      <DependentUpon>ModifyScoreControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MyCol.cs" />
     <Compile Include="NoArea.xaml.cs" />
     <Compile Include="OrderIcon.xaml.cs">
@@ -258,6 +261,10 @@
     <Page Include="MissionSettingsDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ModifyScoreControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NewMissionDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

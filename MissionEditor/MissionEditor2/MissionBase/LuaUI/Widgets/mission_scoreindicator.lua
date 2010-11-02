@@ -16,25 +16,25 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local viewSizeX, viewSizeY
-local gl, GL, Spring = gl, GL, Spring
-local fontHandler = loadstring(VFS.LoadFile(LUAUI_DIRNAME.."modfonts.lua", VFS.ZIP_FIRST))()
-local font = "LuaUI/Fonts/FreeSansBold_16"
+local Spring, gl = Spring, gl
 
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
+local fontSize = 15
 
 function widget:DrawScreen()
   local viewSizeX, viewSizeY = gl.GetViewSizes()
-  local score = Spring.GetGameRulesParam"score"
-  if not score then return end
-  local text = string.format("Score: %d", score)
-  local width = fontHandler.GetTextWidth(text)
-  fontHandler.UseFont(font)
-  gl.Color(1, 1, 1, 1)
-  fontHandler.Draw(text, (viewSizeX-width)/2, 100)
+  local y = 150
+  for _, teamID in ipairs(Spring.GetTeamList()) do
+    local score = Spring.GetTeamRulesParam(teamID, "score")
+    if score then
+      local _, playerID = Spring.GetTeamInfo(teamID)
+      local playerName = Spring.GetPlayerInfo(playerID)
+      local text = string.format("Score (%s): %d", playerName, score)
+      local x = viewSizeX/2
+      y = y + fontSize + fontSize*0.2
+      gl.Color(1, 1, 1, 1)
+      gl.Text(text, x, y, fontSize, "co")
+    end
+  end
 end
 
 

@@ -31,7 +31,6 @@ namespace MissionEditor2
 			else if (item is SoundAction) resourceName = "soundTemplate";
 			else if (item is SunriseAction) resourceName = "sunriseTemplate";
 			else if (item is SunsetAction) resourceName = "sunsetTemplate";
-			else if (item is ModifyScoreAction) resourceName = "modifyScoreTemplate";
 			else if (item is SendScoreAction) resourceName = "sendScoreTemplate";
 			else if (item is WaitAction) resourceName = "waitActionTemplate";
 			else if (item is AllowUnitTransfersAction) resourceName = "allowUnitTransfersTemplate";

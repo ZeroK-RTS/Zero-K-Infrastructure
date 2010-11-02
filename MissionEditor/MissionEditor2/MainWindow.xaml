@@ -263,34 +263,11 @@
             </StackPanel>
         </DataTemplate>
 
-
-
-        <!-- ======== Modify Score Template ======== -->
-
-        <DataTemplate x:Key="modifyScoreTemplate">
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Label Grid.Row="0">Action</Label>
-                <Label Grid.Row="1">Value</Label>
-                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{x:Static Actions:ModifyScoreAction.Actions}" SelectedItem="{Binding Action}" />
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBlock Grid.Row="2" Grid.ColumnSpan="2">Scores are only sent when the Send Score action is executed.</TextBlock>
-            </Grid>
-        </DataTemplate>
-
         <!-- ======== Send Score Template ======== -->
 
         <DataTemplate x:Key="sendScoreTemplate">
             <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">
-        This action sends the player score to the central score server. Only the first score is sent.
+        This action sends the player score to the central score server. Scores can only be sent once.
             </TextBlock>
         </DataTemplate>
 
