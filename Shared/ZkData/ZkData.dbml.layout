@@ -14,10 +14,10 @@
         <elementListCompartment Id="c1a11d39-4e54-4e50-9bf8-58b5b0d11a32" absoluteBounds="0.515, 8.46, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="462f5372-b3be-4d91-b7cb-d7dfc664e257" absoluteBounds="2.5, 5.875, 2, 1.193992513020834">
+    <classShape Id="462f5372-b3be-4d91-b7cb-d7dfc664e257" absoluteBounds="3.125, 6.5, 2, 1.193992513020834">
       <DataClassMoniker Name="/ZkDataContext/BattleEvent" />
       <nestedChildShapes>
-        <elementListCompartment Id="2ff321be-f9f1-4011-9d78-fb590c8741d2" absoluteBounds="2.5150000000000006, 6.3350000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="2ff321be-f9f1-4011-9d78-fb590c8741d2" absoluteBounds="3.1400000000000006, 6.9600000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="519e29bd-a4cc-4e02-8f2f-d0933bdf94a1" absoluteBounds="3.5, 7.875, 2, 6.7707340494791666">
@@ -26,10 +26,10 @@
         <elementListCompartment Id="53360c29-6326-4f5f-bb26-6172916387ff" absoluteBounds="3.5150000000000006, 8.335, 1.9700000000000002, 6.2107340494791661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="8971e364-db34-49a8-b98c-9c871b773629" absoluteBounds="0.5, 6, 2, 1.1939925130208335">
+    <classShape Id="8971e364-db34-49a8-b98c-9c871b773629" absoluteBounds="0.5, 6.625, 2, 1.1939925130208335">
       <DataClassMoniker Name="/ZkDataContext/CelestialObjectEvent" />
       <nestedChildShapes>
-        <elementListCompartment Id="765f1e24-338b-47f8-9113-5b18bd640bc6" absoluteBounds="0.51499999999999968, 6.4600000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="765f1e24-338b-47f8-9113-5b18bd640bc6" absoluteBounds="0.51499999999999968, 7.0850000000000009, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="932b44db-9747-4609-b831-cd854b0e6862" absoluteBounds="8.375, 5.25, 2, 1.1939925130208335">
@@ -50,10 +50,10 @@
         <elementListCompartment Id="f8520850-f038-463a-805f-0d280695afa9" absoluteBounds="5.64, 10.71, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="a5c80668-0a57-424a-a42d-08b0479ac073" absoluteBounds="6.375, 7.125, 2, 1.1939925130208335">
+    <classShape Id="a5c80668-0a57-424a-a42d-08b0479ac073" absoluteBounds="5.875, 7.125, 2, 1.1939925130208335">
       <DataClassMoniker Name="/ZkDataContext/Coalition" />
       <nestedChildShapes>
-        <elementListCompartment Id="011451cc-9f94-4545-95f9-80ab44514040" absoluteBounds="6.3900000000000006, 7.585, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="011451cc-9f94-4545-95f9-80ab44514040" absoluteBounds="5.8900000000000006, 7.585, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="aeeae8de-2ec5-421e-ba86-13121037ed3d" absoluteBounds="8.375, 6.5, 2, 2.7324039713541666">
@@ -203,10 +203,10 @@
         <elementListCompartment Id="dd5dc9ca-9600-4b50-ac1b-a02105e4306c" absoluteBounds="5.265, 23.46, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="d58bd5e8-4efe-4018-903a-f831f308acd4" absoluteBounds="5.375, 4.5, 2, 2.1554996744791666">
+    <classShape Id="d58bd5e8-4efe-4018-903a-f831f308acd4" absoluteBounds="5.5, 3.375, 2, 2.1554996744791666">
       <DataClassMoniker Name="/ZkDataContext/ExceptionLog" />
       <nestedChildShapes>
-        <elementListCompartment Id="c650c1d2-81db-4d98-be60-1849460e08b9" absoluteBounds="5.3900000000000006, 4.96, 1.97, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="c650c1d2-81db-4d98-be60-1849460e08b9" absoluteBounds="5.5150000000000006, 3.835, 1.97, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="77a37a7a-1d3e-43f3-808d-bc95899c0c6a" absoluteBounds="10.375, 0.5, 2, 1.1939925130208331">
@@ -259,6 +259,26 @@
       <nodes>
         <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
         <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="9bc8f882-2d6f-4712-931a-6e2b9d867ebe" absoluteBounds="3, 4, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/ZkDataContext/MissionScore" />
+      <nestedChildShapes>
+        <elementListCompartment Id="69ce0f85-567f-4fb5-b190-18ba598ff24f" absoluteBounds="3.0150000000000006, 4.46, 1.97, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.5 : 4.77001057942708); (3 : 4.77001057942708)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/ZkDataContext/Mission/Mission_MissionScore" />
+      <nodes>
+        <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
+        <classShapeMoniker Id="9bc8f882-2d6f-4712-931a-6e2b9d867ebe" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(3.9375 : 3.6170068359375); (3.9375 : 4)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/ZkDataContext/Account/Account_MissionScore" />
+      <nodes>
+        <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
+        <classShapeMoniker Id="9bc8f882-2d6f-4712-931a-6e2b9d867ebe" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

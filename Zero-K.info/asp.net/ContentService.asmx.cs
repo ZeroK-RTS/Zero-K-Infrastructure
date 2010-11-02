@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Web;
 using System.Web.Services;
 using ZkData;
 
@@ -12,22 +11,43 @@ namespace ZeroKWeb
 	/// </summary>
 	[WebService(Namespace = "http://tempuri.org/")]
 	[WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-	[System.ComponentModel.ToolboxItem(false)]
+	[ToolboxItem(false)]
 	// To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
-	// [System.Web.Script.Services.ScriptService]
-	public class ContentService : System.Web.Services.WebService
+		// [System.Web.Script.Services.ScriptService]
+	public class ContentService: WebService
 	{
-		string GetUserIP()
+		[WebMethod]
+		public void SubmitMissionScore(string login, string passwordHash, string missionName, int score)
 		{
-			var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-			if (string.IsNullOrEmpty(ip) || ip.Equals("unknown", StringComparison.OrdinalIgnoreCase)) ip = Context.Request.ServerVariables["REMOTE_ADDR"];
-			return ip;
+			using (var db = new ZkDataContext())
+			{
+				var auth = new AuthServiceClient();
+				var acc = auth.VerifyAccount(login, passwordHash);
+				if (acc == null) throw new ApplicationException("Invalid login or password");
+
+				var mission = db.Missions.Single(x => x.Name == missionName);
+
+				var scoreEntry = mission.MissionScores.FirstOrDefault(x => x.AccountID == acc.AccountID);
+				if (scoreEntry == null)
+				{
+					scoreEntry = new MissionScore() { MissionID = mission.MissionID, AccountID = acc.AccountID, Score = int.MinValue };
+					mission.MissionScores.Add(scoreEntry);
+				}
+
+				if (score > scoreEntry.Score)
+				{
+					scoreEntry.Score = score;
+					scoreEntry.Time = DateTime.UtcNow;
+					scoreEntry.MissionRevision = mission.Revision;
+					db.SubmitChanges();
+				}
+			}
 		}
 
 		[WebMethod]
 		public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData)
 		{
-			using (var db = new ZkDataContext()) 
+			using (var db = new ZkDataContext())
 			{
 				var exceptionLog = new ExceptionLog
 				                   {
@@ -43,6 +63,11 @@ namespace ZeroKWeb
 			}
 		}
 
-
+		string GetUserIP()
+		{
+			var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+			if (string.IsNullOrEmpty(ip) || ip.Equals("unknown", StringComparison.OrdinalIgnoreCase)) ip = Context.Request.ServerVariables["REMOTE_ADDR"];
+			return ip;
+		}
 	}
 }

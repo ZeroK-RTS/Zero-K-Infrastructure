@@ -166,6 +166,7 @@
       <Column Name="MinHumans" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="MaxHumans" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
+      <Association Name="Mission_MissionScore" Member="MissionScores" ThisKey="MissionID" OtherKey="MissionID" Type="MissionScore" />
       <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
@@ -312,6 +313,7 @@
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
+      <Association Name="Account_MissionScore" Member="MissionScores" ThisKey="AccountID" OtherKey="AccountID" Type="MissionScore" />
     </Type>
   </Table>
   <Table Name="dbo.LobbyMessage" Member="LobbyMessages">
@@ -394,6 +396,17 @@
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
       <Association Name="Mission_Resource" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MissionScore" Member="MissionScores">
+    <Type Name="MissionScore">
+      <Column Name="MissionID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Score" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="MissionRevision" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Mission_MissionScore" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Account_MissionScore" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

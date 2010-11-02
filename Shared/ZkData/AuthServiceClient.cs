@@ -23,5 +23,11 @@ namespace ZkData
 		{
 			return channel.VerifyAccount(login, Utils.HashLobbyPassword(password));
 		}
+
+		public Account VerifyAccountHashed(string login, string passwordHash)
+		{
+			return channel.VerifyAccount(login, passwordHash);
+		}
+
 	}
 }
