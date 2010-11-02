@@ -222,9 +222,9 @@ namespace CMissionLib
 			                 	new UnitStartInfo(unitType, player2, 223, 142),
 			                 };
 			gameStartTrigger.Logic.Add(new CreateUnitsAction(startUnits));
-			var widgets = new string[] { };
+			var widgets = new string[] { "gui_pauseScreen.lua", "gui_center_n_select.lua", "gui_take_remind.lua", "gui_startup_info_selector.lua" };
 			foreach (var widget in widgets) DisabledWidgets.Add(widget);
-			var gadgets = new string[] { };
+			var gadgets = new string[] { "start_unit_setup.lua" };
 			foreach (var gadget in gadgets) DisabledGadgets.Add(gadget);
 		}
 
