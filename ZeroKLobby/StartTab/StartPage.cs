@@ -229,14 +229,14 @@ namespace ZeroKLobby.MicroLobby
 			return path.Length > 0 && path[0] == PathHead;
 		}
 
-		public void Hilite(HiliteLevel level, params string[] path)
+		public bool Hilite(HiliteLevel level, params string[] path)
 		{
-			throw new NotImplementedException();
+			return false;
 		}
 
 		public string GetTooltip(params string[] path)
 		{
-			throw new NotImplementedException();
+			return null;
 		}
 	}
 

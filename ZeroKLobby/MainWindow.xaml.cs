@@ -9,15 +9,12 @@ using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
-using MessageBox = System.Windows.MessageBox;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using Size = System.Drawing.Size;
 
 namespace ZeroKLobby
@@ -29,6 +26,8 @@ namespace ZeroKLobby
 	{
 		public delegate void Func();
 
+		string baloonTipPath = null;
+
 		readonly ToolStripMenuItem btnExit;
 
 		bool closeForReal;
@@ -39,14 +38,10 @@ namespace ZeroKLobby
 		readonly DispatcherTimer timer1 = new DispatcherTimer();
 		readonly ContextMenuStrip trayStrip;
 		public ChatTab ChatTab { get { return navigationControl.ChatTab; } }
+		public IntPtr Handle { get { return interopHelper.Handle; } }
 		public static MainWindow Instance { get; private set; }
 
 		public NotifySection NotifySection { get { return notifySection; } }
-
-		public IntPtr Handle
-		{
-			get { return interopHelper.Handle; }
-		}
 
 		public MainWindow()
 		{
@@ -79,11 +74,12 @@ namespace ZeroKLobby
 			systrayIcon.MouseDoubleClick += systrayIcon_MouseDoubleClick;
 			systrayIcon.MouseDown += systrayIcon_MouseDown;
 			systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
+			
 
 			if (Program.Downloader != null)
 			{
 				timer1.Interval = TimeSpan.FromMilliseconds(250);
-				timer1.Tick += new EventHandler(timer1_Tick);
+				timer1.Tick += timer1_Tick;
 
 				Program.Downloader.DownloadAdded += TorrentManager_DownloadAdded;
 				timer1.Start();
@@ -113,33 +109,13 @@ namespace ZeroKLobby
 		{
 			var c = GetHoveredControlOfWindowsFormsHost(navigationControl.GetWindowsFormsHostOfCurrentTab());
 			if (c != null) return c;
-			else 
-			foreach (var h in notifySection.Hosts)
+			else
 			{
-				var hovered = GetHoveredControlOfWindowsFormsHost(h);
-				if (hovered != null) return hovered;
-			}
-			return null;
-
-		}
-
-		Control GetHoveredControlOfWindowsFormsHost(WindowsFormsHost host) {
-			if (host != null)
-			{
-				var parentControl = host.Child;
-				var screenPoint = Control.MousePosition;
-				var parentPoint = parentControl.PointToClient(screenPoint);
-				if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
-				Control child;
-				while (
-					(child =
-					 parentControl.GetChildAtPoint(parentPoint, GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent)) !=
-					null)
+				foreach (var h in notifySection.Hosts)
 				{
-					parentControl = child;
-					parentPoint = parentControl.PointToClient(screenPoint);
+					var hovered = GetHoveredControlOfWindowsFormsHost(h);
+					if (hovered != null) return hovered;
 				}
-				return parentControl;
 			}
 			return null;
 		}
@@ -156,12 +132,25 @@ namespace ZeroKLobby
 			}
 		}
 
-		public void NotifyUser(string message, bool useSound = false, bool useFlashing = false)
+		/// <summary>
+		/// Alerts user
+		/// </summary>
+		/// <param name="navigationPath">navigation path of event - alert is set on this and disabled if users goes there</param>
+		/// <param name="message">bubble message - setting null means no bubble</param>
+		/// <param name="useSound">use sound notification</param>
+		/// <param name="useFlashing">use flashing</param>
+		public void NotifyUser(string navigationPath, string message, bool useSound = false, bool useFlashing = false)
 		{
 			var isHidden = WindowState == WindowState.Minimized || IsVisible == false || WindowsApi.GetForegroundWindow() != (int)interopHelper.Handle;
-			// todo use this when its easy to determine what is user looking at (flash when message not seen)
-			if (!string.IsNullOrEmpty(message)) systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+			var isPathDifferent = navigationControl.Path != navigationPath;
+
+			if (isHidden || isPathDifferent) if (!string.IsNullOrEmpty(message))
+			{
+				baloonTipPath = navigationPath;
+				systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+			}
 			if (isHidden && useFlashing) FlashWindow();
+			if (isPathDifferent) navigationControl.HilitePath(navigationPath, useFlashing ? HiliteLevel.Flash : HiliteLevel.Bold);
 			if (useSound) SystemSounds.Exclamation.Play();
 		}
 
@@ -193,6 +182,28 @@ namespace ZeroKLobby
 			}
 		}
 
+		Control GetHoveredControlOfWindowsFormsHost(WindowsFormsHost host)
+		{
+			if (host != null)
+			{
+				var parentControl = host.Child;
+				var screenPoint = Control.MousePosition;
+				var parentPoint = parentControl.PointToClient(screenPoint);
+				if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
+				Control child;
+				while (
+					(child =
+					 parentControl.GetChildAtPoint(parentPoint, GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent)) !=
+					null)
+				{
+					parentControl = child;
+					parentPoint = parentControl.PointToClient(screenPoint);
+				}
+				return parentControl;
+			}
+			return null;
+		}
+
 
 		void UpdateDownloads()
 		{
@@ -220,9 +231,8 @@ namespace ZeroKLobby
 			var bat = Program.TasClient.MyBattle;
 			if (bat != null)
 			{
-				// todo display unread PM messages count
-				sb.AppendFormat("Players: {0}\n", bat.NonSpectatorCount, bat.SpectatorCount);
-				sb.AppendFormat("Battle: {0}\n", bat.Founder);
+				sb.AppendFormat("Players:{0}+{1}\n", bat.NonSpectatorCount, bat.SpectatorCount);
+				sb.AppendFormat("Battle:{0}\n", bat.Founder);
 			}
 			else
 			{
@@ -261,7 +271,7 @@ namespace ZeroKLobby
 
 			Program.SpringScanner.Start();
 
-/*			// Bind Key  
+			/*			// Bind Key  
 			InputBinding ib = new InputBinding(MyAppCommands.SaveAll,
 					new KeyGesture(Key.S, ModifierKeys.Shift | ModifierKeys.Control));
 			this.InputBindings.Add(ib);
@@ -269,7 +279,7 @@ namespace ZeroKLobby
 			CommandBinding cb = new CommandBinding(MyAppCommands.SaveAll);
 			cb.Executed += new ExecutedRoutedEventHandler(HandlerThatSavesEverthing);
 			this.CommandBindings.Add(cb);*/
-			
+
 			if (Program.Conf.StartMinimized) WindowState = WindowState.Minimized;
 			else WindowState = Program.Conf.LastWindowState;
 		}
@@ -289,8 +299,10 @@ namespace ZeroKLobby
 
 		void systrayIcon_BalloonTipClicked(object sender, EventArgs e)
 		{
+			navigationControl.Path = baloonTipPath;
 			PopupSelf();
 		}
+
 
 
 		void systrayIcon_Click(object sender, EventArgs e)
@@ -315,6 +327,5 @@ namespace ZeroKLobby
 			UpdateDownloads();
 			UpdateSystrayToolTip();
 		}
-
 	}
 }

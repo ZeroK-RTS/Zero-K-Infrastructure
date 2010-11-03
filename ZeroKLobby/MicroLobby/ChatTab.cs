@@ -21,16 +21,7 @@ namespace ZeroKLobby.MicroLobby
         readonly ToolTabs toolTabs = new ToolTabs { Dock = DockStyle.Fill };
     	string focusWhenJoin;
 
-    	public bool Hilite(string channel)
-				{
-					return toolTabs.Hilite(channel);
-				}
-
-				public bool Flash(string channel)
-				{
-					return toolTabs.Flash(channel);
-				}
-
+  
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public ChatTab()
@@ -162,8 +153,8 @@ namespace ZeroKLobby.MicroLobby
                     return;
                 }
 
-								if (e.Place == TasSayEventArgs.Places.Battle && !e.IsEmote && !Program.TasClient.MyUser.IsInGame) toolTabs.Hilite("Battle");
-								if (e.Place == TasSayEventArgs.Places.Channel && !IsIgnoredChannel(e.Channel)) toolTabs.Hilite(e.Channel);
+								if (e.Place == TasSayEventArgs.Places.Battle && !e.IsEmote && !Program.TasClient.MyUser.IsInGame) Program.MainWindow.NotifyUser("chat/battle", null);
+								if (e.Place == TasSayEventArgs.Places.Channel && !IsIgnoredChannel(e.Channel)) Program.MainWindow.NotifyUser("chat/channel/" +e.Channel, null);
 								else if (e.Place == TasSayEventArgs.Places.Normal)
                 {
 									var otherUserName = e.Origin == TasSayEventArgs.Origins.Player ? e.Channel : e.UserName;									
@@ -186,14 +177,13 @@ namespace ZeroKLobby.MicroLobby
 												{
 													var pmControl = GetPrivateMessageControl(name) ?? CreatePrivateMessageControl(name);
 													pmControl.AddLine(new SaidLine(name, text, time));
-													toolTabs.Flash(name);
-													MainWindow.Instance.NotifyUser(string.Format("{0}: {1}", name, text), false, true);
+													MainWindow.Instance.NotifyUser("chat/user/" + name, string.Format("{0}: {1}", name, text), false, true);
 												}
 												else
 												{
 													var chatControl = GetChannelControl(chan) ?? CreateChannelControl(chan);
 													chatControl.AddLine(new SaidLine(name, text, time));
-													toolTabs.Hilite(chan);
+													Program.MainWindow.NotifyUser("chat/channel/" + chan, null);
 												}
 											}
 											else
@@ -219,8 +209,7 @@ namespace ZeroKLobby.MicroLobby
 										else pmControl.AddLine(new SaidExLine(e.UserName, e.Text));
 										if (e.UserName != Program.TasClient.MyUser.Name)
 										{
-											toolTabs.Hilite(otherUserName);
-											MainWindow.Instance.NotifyUser(string.Format("{0}: {1}", otherUserName, e.Text), false, true);
+											MainWindow.Instance.NotifyUser("chat/user/" + otherUserName, string.Format("{0}: {1}", otherUserName, e.Text), false, true);
 										}
 									}
                 
@@ -346,15 +335,21 @@ namespace ZeroKLobby.MicroLobby
 			return true;
     	}
 
-    	public void Hilite(HiliteLevel level, params string[] path)
+    	public bool Hilite(HiliteLevel level, params string[] path)
     	{
-				
-    		throw new NotImplementedException();
+				if (path.Length == 0) return false;
+				if (path[0] != PathHead) return false;
+				if (path.Length >= 2 && path[1] == "battle") return toolTabs.SetHilite("Battle", level);
+				else if (path.Length >= 3)
+				{
+					toolTabs.SetHilite(path[2], level);
+				}
+				return false;
     	}
 
     	public string GetTooltip(params string[] path)
     	{
-    		throw new NotImplementedException();
+    		return null;
     	}
     }
 }

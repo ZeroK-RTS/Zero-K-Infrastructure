@@ -109,8 +109,7 @@ namespace ZeroKLobby.Notifications
 					if (Automatic) AutoRespond();
 					else
 					{
-						MainWindow.Instance.NotifyUser("Someone demands your attention in battle room!", true, true);
-						MainWindow.Instance.ChatTab.Flash("Battle");
+						MainWindow.Instance.NotifyUser("chat/battle", "Someone demands your attention in battle room!", true, true);
 					}
 				};
 			client.Said += (s, e) =>
@@ -319,7 +318,7 @@ namespace ZeroKLobby.Notifications
 							client.ChangeMyBattleStatus(spectate:true);
 							
 							WarningBar.DisplayWarning("User was away for more than " + Program.Conf.IdleTime + " minutes: battle search changed to spectator.");
-							MainWindow.Instance.NotifyUser("Away From Keyboard - setting mode to spectator", true, true);
+							MainWindow.Instance.NotifyUser("chat/battle", "Away From Keyboard - setting mode to spectator", true, true);
 						}
 						else
 						{
@@ -572,7 +571,7 @@ namespace ZeroKLobby.Notifications
 						if (battle.NonSpectatorCount - idlerCount >= numMinValue.Value && !spring.IsRunning && !client.ExistingUsers[battle.Founder].IsInGame)
 						{
 							// even without idlers i can still play
-							MainWindow.Instance.NotifyUser("Battle has enough people to start!", true, false);
+							MainWindow.Instance.NotifyUser("chat/battle", "Battle has enough people to start!", true, false);
 							lastAlert = DateTime.Now;
 						}
 					}

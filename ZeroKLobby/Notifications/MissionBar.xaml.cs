@@ -20,7 +20,6 @@ namespace ZeroKLobby.Notifications
 			InitializeComponent();
 		}
 
-		void Grid_Loaded(object sender, RoutedEventArgs e) {}
 
 		void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -40,7 +39,9 @@ namespace ZeroKLobby.Notifications
 						Program.SpringScanner.MetaData.GetModAsync(missionName,
 						                                           mod =>
 						                                           	{
-						                                           		if (!mod.IsMission) Program.MainWindow.InvokeFunc(() => label1.Content = string.Format("{0} is not a valid mission", missionName));
+						                                           		if (!mod.IsMission)
+						                                           			Program.MainWindow.InvokeFunc(
+						                                           				() => label1.Content = string.Format("{0} is not a valid mission", missionName));
 
 						                                           		else modInfo = mod;
 
@@ -54,18 +55,15 @@ namespace ZeroKLobby.Notifications
 						                                           	});
 						WaitHandle.WaitAll(new WaitHandle[] { down.WaitHandle, metaWait });
 
-						if (down.IsComplete == false)
-						{
-							Program.MainWindow.InvokeFunc(() => label1.Content = string.Format("Download of {0} failed", missionName));
-						}
-						
+						if (down.IsComplete == false) Program.MainWindow.InvokeFunc(() => label1.Content = string.Format("Download of {0} failed", missionName));
+
 						if (modInfo != null && down.IsComplete == true)
 						{
 							var spring = new Spring(Program.SpringPaths);
 							var name = Program.Conf.LobbyPlayerName;
 							if (string.IsNullOrEmpty(name)) name = "Player";
 							spring.StartGame(null, null, null, modInfo.MissionScript);
-							// todo close this bar
+							Program.NotifySection.RemoveBar(this);
 						}
 					});
 			}

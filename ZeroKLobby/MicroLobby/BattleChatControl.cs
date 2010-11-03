@@ -288,8 +288,7 @@ namespace ZeroKLobby.MicroLobby
 			{
 				if (e.Text.Contains(Program.Conf.LobbyPlayerName) && !Program.TasClient.MyUser.IsInGame && !e.IsEmote && !e.Text.StartsWith(string.Format("[{0}]", Program.TasClient.UserName )))
 				{
-					if (MainWindow.Instance.ChatTab.Flash("Battle"))
-						MainWindow.Instance.NotifyUser(string.Format("{0}: {1}", e.UserName, e.Text), false, true);
+					Program.MainWindow.NotifyUser("chat/battle",string.Format("{0}: {1}", e.UserName, e.Text), false, true);
 				}
 				if (!e.IsEmote) AddLine(new SaidLine(e.UserName, e.Text));
 				else AddLine(new SaidExLine(e.UserName, e.Text));

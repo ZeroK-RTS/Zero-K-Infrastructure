@@ -28,6 +28,10 @@ namespace ZeroKLobby
 				_currentPage = value;
 				PropertyChanged(this, new PropertyChangedEventArgs("CurrentPage"));
 				PropertyChanged(this, new PropertyChangedEventArgs("Path"));
+
+				var steps = Path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries); // todo cleanup
+				var navigable = tabControl.Items.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && x.PathHead == steps[0]);
+				if (navigable != null) navigable.Hilite(HiliteLevel.None, steps);
 			}
 		}
 
@@ -86,7 +90,7 @@ namespace ZeroKLobby
 			GoToPage(CurrentPage.Path);
 		}
 
-		NavigationStep GoToPage(string[] path)
+		NavigationStep GoToPage(string[] path) // todo cleanup
 		{
 			foreach (var item in tabControl.Items)
 			{
@@ -180,6 +184,15 @@ namespace ZeroKLobby
 		public void NavigateBack()
 		{
 			if (CanGoBack) GoBack();
+		}
+
+		public bool HilitePath(string navigationPath, HiliteLevel hiliteLevel)
+		{
+			if (string.IsNullOrEmpty(navigationPath)) return false;
+			var steps = navigationPath.Split(new char[]{'/'}, StringSplitOptions.RemoveEmptyEntries);
+			var navigable = tabControl.Items.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && x.PathHead == steps[0]);
+			if (navigable != null) return navigable.Hilite(hiliteLevel, steps);
+			else return false;
 		}
 	}
 }

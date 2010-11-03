@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
+
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -9,7 +11,6 @@ namespace ZeroKLobby.MicroLobby
 	{
 		ToolStripButton activeButton;
 		readonly Dictionary<string, Control> controls = new Dictionary<string, Control>();
-		readonly List<string> flashList = new List<string>();
 		ToolStripItem lastHoverItem;
 		readonly Panel panel = new Panel { Dock = DockStyle.Fill };
 		readonly ToolStrip toolStrip = new ToolStrip
@@ -20,7 +21,7 @@ namespace ZeroKLobby.MicroLobby
 		                               	ShowItemToolTips = false,
 		                               	AutoSize = false,
 		                               	RenderMode = ToolStripRenderMode.System,
-		                               	Width = 155,
+		                               	Width = 155, Tag = HiliteLevel.None
 		                               };
 
 		public ToolStripButton ActiveButton
@@ -44,6 +45,18 @@ namespace ZeroKLobby.MicroLobby
 			toolStrip.BackColor = Color.White;
 			Controls.Add(panel);
 			Controls.Add(toolStrip);
+
+			var timer = new Timer { Interval = 1000 };
+
+			timer.Tick += (s, e) =>
+				{
+					foreach (var button in toolStrip.Items.OfType<ToolStripButton>())
+					{
+						if (button.Tag is HiliteLevel && ((HiliteLevel)button.Tag) == HiliteLevel.Flash) button.BackColor = button.BackColor == Color.SkyBlue ? Color.Empty : Color.SkyBlue;
+					}
+				};
+
+			timer.Start();
 		}
 
 
@@ -103,21 +116,21 @@ namespace ZeroKLobby.MicroLobby
 				{
 					try
 					{
+						if (control is BattleChatControl)
+						{
+							NavigationControl.Instance.Path = "chat/battle";
+						} else 
+						if (control is PrivateMessageControl)
+						{
+							var pmControl = (PrivateMessageControl)control;
+							var userName = pmControl.UserName;
+							NavigationControl.Instance.Path = "chat/user/" + userName;
+						} else 
 						if (control is ChatControl)
 						{
 							var chatControl = (ChatControl)control;
 							var channelName = chatControl.ChannelName;
 							NavigationControl.Instance.Path = "chat/channel/" + channelName;
-						}
-						else if (control is PrivateMessageControl)
-						{
-							var pmControl = (PrivateMessageControl)control;
-							var userName = pmControl.UserName;
-							NavigationControl.Instance.Path = "chat/user/" + userName;
-						}
-						else if (control is BattleChatControl)
-						{
-							NavigationControl.Instance.Path = "chat/battle";
 						}
 					} catch(Exception ex)
 					{
@@ -137,24 +150,33 @@ namespace ZeroKLobby.MicroLobby
 			panel.Controls.Clear();
 		}
 
-		public bool Flash(string tabName)
+
+		public bool SetHilite(string tabName, HiliteLevel level)
 		{
 			if (!toolStrip.Items.ContainsKey(tabName)) return false;
 			var button = (ToolStripButton)toolStrip.Items[tabName];
-			if (ActiveButton == button) return false;
-
-			if (flashList.Contains(tabName)) return false;
-			flashList.Add(tabName);
-			var timer = new Timer { Interval = 1000 };
-
-			timer.Tick += (s, e) => button.BackColor = button.BackColor == Color.SkyBlue ? Color.Empty : Color.SkyBlue;
-			timer.Start();
-			button.Click += (s, e) =>
-				{
-					timer.Stop();
-					flashList.Remove(tabName);
+			HiliteLevel? current = button.Tag as HiliteLevel?;
+			if (current != null && level == HiliteLevel.Bold && current.Value == HiliteLevel.Flash) return false; // dont change from flash to bold
+			button.Tag = level;
+			var oldFont = button.Font;
+			switch (level)
+			{
+					case HiliteLevel.None:
 					button.BackColor = Color.Empty;
-				};
+					button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Regular, oldFont.Unit);
+					oldFont.Dispose();
+					break;
+					case HiliteLevel.Bold:
+					button.BackColor = Color.Empty;
+					button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Bold | FontStyle.Italic, oldFont.Unit);
+					oldFont.Dispose();
+					break;
+					case HiliteLevel.Flash:
+					button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Bold, oldFont.Unit);
+					oldFont.Dispose();
+
+					break;
+			}
 			return true;
 		}
 
@@ -163,23 +185,6 @@ namespace ZeroKLobby.MicroLobby
 			Control control;
 			controls.TryGetValue(name, out control);
 			return control;
-		}
-
-		public bool Hilite(string tabName)
-		{
-			if (!toolStrip.Items.ContainsKey(tabName)) return false;
-			var button = (ToolStripButton)toolStrip.Items[tabName];
-			if (ActiveButton == button) return false;
-
-			var oldFont = button.Font;
-			button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Bold | FontStyle.Italic, oldFont.Unit);
-			// button.ForeColor = Color.Red;
-			button.Click += (s, e) =>
-				{
-					button.Font = button.Font = new Font(oldFont.FontFamily, oldFont.SizeInPoints, FontStyle.Regular, oldFont.Unit);
-					//button.ForeColor = Color.Empty;
-				};
-			return true;
 		}
 
 		public void RemoveTab(string key)
