@@ -439,7 +439,6 @@
     <Compile Include="MapDownloader\FormMapPicker.Designer.cs">
       <DependentUpon>FormMapPicker.cs</DependentUpon>
     </Compile>
-    <Compile Include="SpringInfologWatcher.cs" />
     <Compile Include="Notifications\NotifyBarContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>

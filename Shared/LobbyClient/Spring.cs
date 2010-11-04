@@ -4,9 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using PlasmaShared;
+using PlasmaShared.ContentService;
 
 #endregion
 
@@ -80,6 +83,8 @@ namespace LobbyClient
 
 		public ProcessPriorityClass ProcessPriority { set { if (IsRunning) process.PriorityClass = value; } }
 		public bool UseDedicatedServer;
+		string lobbyUserName;
+		string lobbyPasswordHash;
 
 		public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
 		public event LogLine LogLineAdded = delegate { };
@@ -153,6 +158,108 @@ namespace LobbyClient
 			if (IsRunning) talker.SendText(text);
 		}
 
+		void ParseInfolog(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+			{
+				Trace.TraceWarning("Infolog is empty");
+				return;
+			}
+			try
+			{
+				var modOk = false;
+#pragma warning disable 219
+				var hasError = false;
+#pragma warning restore 219
+				var rev = "";
+				string modName = null;
+				string mapName = null;
+				var isCheating = false;
+				string gameId = null;
+				var statsData = new List<string>();
+				foreach (var cycleline in text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
+				{
+					var line = cycleline;
+					var gameframe = 0;
+					if (line.StartsWith("["))
+					{
+						var idx = line.IndexOf("] ");
+						if (idx > 0)
+						{
+							int.TryParse(line.Substring(1, idx - 1), out gameframe);
+							if (idx >= 0) line = line.Substring(idx + 2);
+						}
+					}
+
+					if (!modOk && modName == null && line.StartsWith("Using mod"))
+					{
+						modName = line.Substring(10);
+						if (line.Contains("Complete Annihilation") && !line.Contains("$VERSION"))
+						{
+							modOk = true;
+							var m = Regex.Match(line, "(r[0-9]+)");
+							if (m.Success) rev = m.Groups[1].Value;
+						}
+					}
+
+					if (mapName == null && line.StartsWith("Using map") && modName == null) mapName = line.Substring(10);
+
+					if (line.StartsWith("Using demofile")) return; // do nothing if its demo
+
+					if (line.StartsWith("GameID: ") && gameId == null) gameId = line.Substring(8);
+
+					if (line.StartsWith("ID: ") && !isCheating && !string.IsNullOrEmpty(lobbyPasswordHash))
+					{
+						// game score
+						var data = line.Substring(4);
+						var score = Convert.ToInt32(Encoding.ASCII.GetString(Convert.FromBase64String(data)));
+						using (var service = new ContentService { Proxy = null })
+						{
+							service.SubmitMissionScoreCompleted += (s, e) =>
+								{
+									if (e.Error != null)
+									{
+										if (e.Error is WebException) Trace.TraceWarning("Error sending score: {0}",e.Error);
+										else Trace.TraceError("Error sending score: {0}", e.Error);
+									}
+
+								};
+							service.SubmitMissionScoreAsync(lobbyUserName,
+																							lobbyPasswordHash,
+																							modName,
+																							score,
+																							gameframe / 30);
+						}
+					}
+
+					if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
+
+					if (line.StartsWith("Cheating!")) isCheating = true;
+
+					if (line.StartsWith("Error") || line.StartsWith("LuaRules") || line.StartsWith("Internal error") || line.StartsWith("LuaCOB") ||
+							(line.StartsWith("Failed to load") && !line.Contains("duplicate name"))) hasError = true;
+				}
+				if (!isCheating && statsData.Count > 1)
+				{
+					// must be more than 1 line - 1 is player list
+					var service = new StatsCollector { Proxy = null };
+					try
+					{
+						service.SubmitGameEx(gameId, modName, mapName, statsData.ToArray());
+					}
+					catch (Exception ex)
+					{
+						Trace.TraceError("Error sending game stats: {0}", ex);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Trace.TraceError("Error processing spring log: {0}", ex);
+			}
+		}
+
+
 		/// <summary>
 		/// Starts spring game
 		/// </summary>
@@ -160,11 +267,16 @@ namespace LobbyClient
 		/// <param name="priority">spring process priority</param>
 		/// <param name="affinity">spring process cpu affinity</param>
 		/// <param name="scriptOverride">if set, overrides generated script with supplied one</param>
+		/// <param name="userName">lobby user name - used to submit score</param>
+		/// <param name="passwordHash">lobby password hash - used to submit score</param>
 		/// <returns>generates script</returns>
-		public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride)
+		public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, string userName = null, string passwordHash = null)
 		{
 			if (!IsRunning)
 			{
+				this.lobbyUserName =userName;
+				this.lobbyPasswordHash = passwordHash;
+
 				talker = new Talker();
 				readyPlayers.Clear();
 				talker.SpringEvent += talker_SpringEvent;
@@ -266,6 +378,18 @@ namespace LobbyClient
 			talker.Close();
 			talker = null;
 			gameEnded = DateTime.Now;
+
+			var logText = LogLines.ToString();
+			ParseInfolog(logText);
+			
+			try
+			{
+				File.WriteAllText(Path.Combine(paths.WritableDirectory, "infolog.txt"), logText);
+			}
+			catch (Exception ex)
+			{
+				Trace.TraceWarning("Error saving infolog: {0}", ex);
+			}
 
 			if (SpringExited != null) SpringExited(this, new EventArgs<bool>(isCrash));
 		}

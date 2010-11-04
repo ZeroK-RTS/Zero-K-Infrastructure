@@ -22,7 +22,7 @@ namespace ZeroKWeb
 			using (var db = new ZkDataContext())
 			{
 				var auth = new AuthServiceClient();
-				var acc = auth.VerifyAccount(login, passwordHash);
+				var acc = auth.VerifyAccountHashed(login, passwordHash);
 				if (acc == null) throw new ApplicationException("Invalid login or password");
 
 				var mission = db.Missions.Single(x => x.Name == missionName);

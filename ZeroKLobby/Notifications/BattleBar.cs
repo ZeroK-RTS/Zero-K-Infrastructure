@@ -77,22 +77,6 @@ namespace ZeroKLobby.Notifications
 				{
 					client.ChangeMyUserStatus(false, false);
 
-					var logText = spring.LogLines.ToString();
-					Program.InfologWatcher.ParseInfolog(logText);
-					;
-					try
-					{
-						Program.InfologWatcher.WatcherEnabled = false;
-						File.WriteAllText(Path.Combine(Program.SpringPaths.WritableDirectory, "infolog.txt"), logText);
-					}
-					catch (Exception ex)
-					{
-						Trace.TraceWarning("Error saving infolog: {0}", ex);
-					}
-					finally
-					{
-						Program.InfologWatcher.WatcherEnabled = true;
-					}
 
 					if (e.Data || IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 				};

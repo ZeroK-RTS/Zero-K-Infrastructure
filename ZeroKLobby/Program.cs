@@ -37,7 +37,6 @@ namespace ZeroKLobby
 		public static bool FirstRun { get; private set; }
 		public static MainWindow MainWindow { get; private set; }
 		public static FriendManager FriendManager;
-		public static SpringInfologWatcher InfologWatcher { get; private set; }
 		public static bool IsCrash;
 		public static ModStore ModStore { get; private set; }
 		public static NewSpringBar NewSpringBar { get; private set; }
@@ -116,7 +115,6 @@ namespace ZeroKLobby
 
 				SaveConfig();
 
-				InfologWatcher = new SpringInfologWatcher(Path.GetDirectoryName(SpringPaths.WritableDirectory));
 				SpringScanner = new SpringScanner(SpringPaths);
 				SpringScanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
 				SpringScanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
