@@ -95,9 +95,6 @@ namespace ZeroKLobby
 				//call this after load config
 				DetectSpringPathes();
 
-				var us = new UnitSync(SpringPaths.UnitSyncDirectory);
-				var mod = us.GetMod("Score Test");
-
 				try
 				{
 					if (!Debugger.IsAttached)
