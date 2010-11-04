@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Xml.Serialization;
 using ZkData;
 
 namespace PlasmaShared.UnitSyncLib
@@ -174,6 +175,7 @@ namespace PlasmaShared.UnitSyncLib
 			return FixAspectRatio(map, GetSquareMinimap(map.Name, 0));
 		}
 
+
 		public Mod GetMod(string modName)
 		{
 			if (disposed) throw new ObjectDisposedException("Unitsync has already been released.");
@@ -184,9 +186,6 @@ namespace PlasmaShared.UnitSyncLib
 			NativeMethods.AddAllArchives(archiveName);
 			var modIndex = NativeMethods.GetPrimaryModIndex(modName);
 			string[] sides;
-
-
-
 
 			var mod = new Mod
 			          {
@@ -204,17 +203,28 @@ namespace PlasmaShared.UnitSyncLib
 			          	Checksum = (int)NativeMethods.GetPrimaryModChecksumFromName(modName),
 			          	Options = GetModOptions(archiveName).ToArray(),
 			          	SideIcons = GetSideIcons(sides).ToArray(),
-			          	Dependencies = GetModDependencies(modIndex).Where(x=>x!= modName && !string.IsNullOrEmpty(x)).ToArray(),
-									AllAis = GetAis().ToArray(),
+			          	Dependencies = GetModDependencies(modIndex).Where(x => x != modName && !string.IsNullOrEmpty(x)).ToArray(),
+			          	AllAis = GetAis().ToArray(),
 			          	ModAis = GetAis().Where(ai => ai.IsLuaAi).ToArray()
 			          };
 
-			byte[] scriptData = new byte[65535];
-			int handle = NativeMethods.OpenFileVFS(GlobalConst.MissionScriptFileName);
-			var read = NativeMethods.ReadFileVFS(handle, scriptData, 65535);
-			NativeMethods.CloseFileVFS(handle);
-			if (read > 0) mod.MissionScript = Encoding.UTF8.GetString(scriptData, 0, read);
+			var buf = ReadVfsFile(GlobalConst.MissionScriptFileName);
+			if (buf != null && buf.Length > 0) mod.MissionScript = Encoding.UTF8.GetString(buf, 0, buf.Length);
 
+			if (!string.IsNullOrEmpty(mod.MissionScript))
+			{
+				try
+				{
+					buf = ReadVfsFile(GlobalConst.MissionSlotsFileName);
+					var slotString = Encoding.UTF8.GetString(buf, 0, buf.Length);
+					var ser = new XmlSerializer(typeof(List<MissionSlot>));
+					mod.MissionSlots = (List<MissionSlot>)ser.Deserialize(new StringReader(slotString));
+				}
+				catch (Exception ex)
+				{
+					Trace.TraceError("Error reading mission slots from mod {0}: {1}", mod.Name, ex);
+				}
+			}
 
 			if (mod.Sides.Length == 0) Trace.WriteLine("Mod has no faction");
 			if (mod.UnitDefs.Length == 0) Trace.WriteLine("No unit found.");

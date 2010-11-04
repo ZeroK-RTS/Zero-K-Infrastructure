@@ -69,6 +69,7 @@ namespace MissionEditor2
 					                  };
 					slots.Add(missionSlot);
 				}
+				
 
 				var image = File.ReadAllBytes(mission.ImagePath).ToImage(96, 96);
 				var pngEncoder = new PngBitmapEncoder();
