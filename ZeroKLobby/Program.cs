@@ -13,6 +13,7 @@ using System.Windows.Threading;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.UnitSyncLib;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZeroKLobby.ToolTips;
@@ -93,6 +94,9 @@ namespace ZeroKLobby
 
 				//call this after load config
 				DetectSpringPathes();
+
+				var us = new UnitSync(SpringPaths.UnitSyncDirectory);
+				var mod = us.GetMod("Score Test");
 
 				try
 				{

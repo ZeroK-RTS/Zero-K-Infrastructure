@@ -8,6 +8,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
+using ZkData;
 
 namespace PlasmaShared.UnitSyncLib
 {
@@ -183,6 +185,9 @@ namespace PlasmaShared.UnitSyncLib
 			var modIndex = NativeMethods.GetPrimaryModIndex(modName);
 			string[] sides;
 
+
+
+
 			var mod = new Mod
 			          {
 			          	Name = modName,
@@ -200,9 +205,16 @@ namespace PlasmaShared.UnitSyncLib
 			          	Options = GetModOptions(archiveName).ToArray(),
 			          	SideIcons = GetSideIcons(sides).ToArray(),
 			          	Dependencies = GetModDependencies(modIndex).Where(x=>x!= modName && !string.IsNullOrEmpty(x)).ToArray(),
-			          	AllAis = GetAis().ToArray(),
+									AllAis = GetAis().ToArray(),
 			          	ModAis = GetAis().Where(ai => ai.IsLuaAi).ToArray()
 			          };
+
+			byte[] scriptData = new byte[65535];
+			int handle = NativeMethods.OpenFileVFS(GlobalConst.MissionScriptFileName);
+			var read = NativeMethods.ReadFileVFS(handle, scriptData, 65535);
+			NativeMethods.CloseFileVFS(handle);
+			if (read > 0) mod.MissionScript = Encoding.UTF8.GetString(scriptData, 0, read);
+
 
 			if (mod.Sides.Length == 0) Trace.WriteLine("Mod has no faction");
 			if (mod.UnitDefs.Length == 0) Trace.WriteLine("No unit found.");
