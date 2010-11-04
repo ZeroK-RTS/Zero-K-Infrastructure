@@ -18,7 +18,6 @@ namespace ZeroKLobby
 	{
 		public const string BaseUrl = "http://zero-k.info/";
 		public const string ConfigFileName = "SpringDownloaderConfig.xml";
-		public const string ErrorsUploadSite = "http://files.caspring.org/caupdater/spring_errors/upload.php";
 		public const string LogFile = "ZeroKLobbyErrors.txt";
 		public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
 

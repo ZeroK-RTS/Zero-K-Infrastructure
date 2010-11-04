@@ -448,6 +448,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UrlSecurityZone.cs" />
     <Compile Include="WindowsApi.cs" />
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
