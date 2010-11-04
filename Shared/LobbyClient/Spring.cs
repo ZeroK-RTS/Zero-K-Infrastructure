@@ -211,8 +211,17 @@ namespace LobbyClient
 					if (line.StartsWith("ID: ") && !isCheating && !string.IsNullOrEmpty(lobbyPasswordHash))
 					{
 						// game score
-						var data = line.Substring(4);
-						var score = Convert.ToInt32(Encoding.ASCII.GetString(Convert.FromBase64String(data)));
+						var data = Encoding.ASCII.GetString(Convert.FromBase64String(line.Substring(4)));
+						var parts = data.Split('/');
+						int score = 0;
+						if (parts.Length > 1)
+						{
+							score = Convert.ToInt32(parts[1]);
+							gameframe = Convert.ToInt32(parts[0]);
+						}
+						else score = Convert.ToInt32(data);
+
+
 						using (var service = new ContentService { Proxy = null })
 						{
 							service.SubmitMissionScoreCompleted += (s, e) =>
