@@ -55,7 +55,6 @@ namespace ZeroKLobby.MicroLobby
 				}
 			}
 			else if (m.Msg == WM_XBUTTONDOWN) Program.MainWindow.navigationControl.NavigateBack();
-			else if (m.Msg == WM_RBUTTONDOWN) if (IsAboveBrowser(ref m)) return true;
 			return false;
 		}
 	}
