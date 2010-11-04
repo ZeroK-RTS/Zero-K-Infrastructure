@@ -21,6 +21,7 @@
 
 		window.onscroll = scrollEvent;
 	</script>
+	<%= Request["zk_login"] %>
 
 	<%
 		using (

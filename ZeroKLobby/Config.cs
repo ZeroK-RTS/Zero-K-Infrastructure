@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Design;
 using System.Windows;
-using System.Windows.Forms;
 using System.Xml.Serialization;
 using JetBrains.Annotations;
 using PlasmaDownloader;
@@ -16,16 +16,20 @@ namespace ZeroKLobby
 {
 	public class Config: ICloneable, IPlasmaDownloaderConfig
 	{
+		public const string BaseUrl = "http://zero-k.info/";
 		public const string ConfigFileName = "SpringDownloaderConfig.xml";
 		public const string ErrorsUploadSite = "http://files.caspring.org/caupdater/spring_errors/upload.php";
 		public const string LogFile = "ZeroKLobbyErrors.txt";
 		public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
+
 		StringCollection autoJoinChannels = new StringCollection();
 		bool connectOnStartup = true;
 		Color fadeColor = Color.Gray;
 		StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
 		int idleTime = 10;
 		StringCollection ignoredUsers = new StringCollection();
+		string lobbyPlayerName;
+		string lobbyPlayerPassword;
 		string manualSpringPath = @"C:\Program Files\Spring";
 		List<string> selectedGames = new List<string>();
 		bool showHourlyChimes = true;
@@ -139,6 +143,7 @@ namespace ZeroKLobby
 		public Color JoinColor { get { return Color.FromArgb(JoinColorInt); } set { JoinColorInt = value.ToArgb(); } }
 		[Browsable(false)]
 		public int JoinColorInt = Color.FromArgb(42, 140, 42).ToArgb();
+		public WindowState LastWindowState { get; set; }
 
 		[Category("Chat")]
 		[DisplayName("Color: Leaves")]
@@ -161,12 +166,43 @@ namespace ZeroKLobby
 		[Category("Account")]
 		[DisplayName("Lobby Player Name")]
 		[Description("Player name from lobby (tasclient), needed for many features")]
-		public string LobbyPlayerName { get; set; }
+		public string LobbyPlayerName
+		{
+			get { return lobbyPlayerName; }
+			set
+			{
+				lobbyPlayerName = value;
+				try
+				{
+					WindowsApi.InternetSetCookie(BaseUrl, "zk_login", value);
+				}
+				catch (Exception ex)
+				{
+					Trace.TraceError("Cannot set user cookie: {0}", ex);
+				}
+			}
+		}
+
 
 		[Category("Account")]
 		[DisplayName("Lobby Password")]
 		[Description("Player password from lobby (tasclient), needed for widget online profile")]
-		public string LobbyPlayerPassword { get; set; }
+		public string LobbyPlayerPassword
+		{
+			get { return lobbyPlayerPassword; }
+			set
+			{
+				lobbyPlayerPassword = value;
+				try
+				{
+					WindowsApi.InternetSetCookie(BaseUrl, "zk_passwordHash", PlasmaShared.Utils.HashLobbyPassword(value));
+				}
+				catch (Exception ex)
+				{
+					Trace.TraceError("Cannot set user cookie: {0}", ex);
+				}
+			}
+		}
 
 
 		[Category("General")]
@@ -238,9 +274,6 @@ namespace ZeroKLobby
 		/// Keeps datetime of last topic change for each channel
 		/// </summary>
 		public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
-
-
-		public WindowState LastWindowState { get; set; }
 
 
 		public void UpdateFadeColor()

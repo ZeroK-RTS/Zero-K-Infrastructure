@@ -5,6 +5,10 @@ namespace ZeroKLobby
 {
 	static class WindowsApi
 	{
+
+		[DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		public static extern bool InternetSetCookie(string url, string cookieName, string cookieData);
+
 		public const UInt32 FLASHW_ALL = 3;
 		public static TimeSpan IdleTime
 		{
