@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Linq;
 using System.Deployment.Application;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
@@ -80,11 +81,13 @@ namespace MissionEditor2
 			} 
 			catch(FaultException<ExceptionDetail> e)
 			{
+				if (Debugger.IsAttached) throw;
 				MessageBox.Show(e.Message);
 				return false;
 			}
 			catch(FaultException e)
 			{
+				if (Debugger.IsAttached) throw;
 				MessageBox.Show(e.Message);
 				return false;
 			}

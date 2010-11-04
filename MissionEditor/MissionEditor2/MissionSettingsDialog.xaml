@@ -61,7 +61,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
                         <DataGridTextColumn Header="Alliance" Binding="{Binding Alliance}" />
-                        <DataGridCheckBoxColumn Header="Is Human" Binding="{Binding IsHuman}" />
+                        <DataGridCheckBoxColumn Header="Human" Binding="{Binding IsHuman}" />
                         <DataGridTemplateColumn Header="Color">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -83,6 +83,7 @@
                                 </Style>
                             </DataGridComboBoxColumn.ElementStyle>
                         </DataGridComboBoxColumn>
+                        <DataGridCheckBoxColumn Header="Required" Binding="{Binding IsRequired}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </DockPanel>

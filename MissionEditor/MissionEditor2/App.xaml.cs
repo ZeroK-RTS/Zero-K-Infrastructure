@@ -22,7 +22,7 @@ namespace MissionEditor2
 
 		void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
-			
+			throw e.Exception;
 		}
 
 
