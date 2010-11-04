@@ -2,11 +2,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using PlasmaShared.ContentService;
 using ZeroKLobby.ModStats;
 
 #endregion
@@ -18,21 +18,15 @@ namespace ZeroKLobby
 		const string infologName = "infolog.txt";
 
 		readonly string infologPath;
-		FileSystemWatcher watch;
+		readonly FileSystemWatcher watch;
+
+		public bool WatcherEnabled { set { watch.EnableRaisingEvents = value; } }
 
 		public SpringInfologWatcher(string springPath)
 		{
 			infologPath = Path.Combine(springPath, infologName);
 			watch = new FileSystemWatcher(springPath, infologName) { EnableRaisingEvents = true };
 			watch.Changed += watch_Changed;
-		}
-
-		public bool WatcherEnabled
-		{
-			set
-			{
-				watch.EnableRaisingEvents = value;
-			}
 		}
 
 
@@ -91,7 +85,14 @@ namespace ZeroKLobby
 						// game score
 						var data = line.Substring(4);
 						var score = Convert.ToInt32(Encoding.ASCII.GetString(Convert.FromBase64String(data)));
-						using (var service = new EditorService { Proxy = null }) service.SubmitScoreAsync(modName, Program.Conf.LobbyPlayerName, score, gameframe/30);
+						using (var service = new ContentService { Proxy = null })
+						{
+							service.SubmitMissionScoreAsync(Program.Conf.LobbyPlayerName,
+							                                PlasmaShared.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword),
+							                                modName,
+							                                score,
+							                                gameframe/30);
+						}
 					}
 
 					if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));

@@ -17,7 +17,7 @@ namespace ZeroKWeb
 	public class ContentService: WebService
 	{
 		[WebMethod]
-		public void SubmitMissionScore(string login, string passwordHash, string missionName, int score)
+		public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds)
 		{
 			using (var db = new ZkDataContext())
 			{
@@ -39,6 +39,7 @@ namespace ZeroKWeb
 					scoreEntry.Score = score;
 					scoreEntry.Time = DateTime.UtcNow;
 					scoreEntry.MissionRevision = mission.Revision;
+					scoreEntry.GameSeconds = gameSeconds;
 					db.SubmitChanges();
 				}
 			}

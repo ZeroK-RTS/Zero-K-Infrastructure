@@ -10,5 +10,8 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k</Value>
     </Setting>
+    <Setting Name="PlasmaShared_ContentService_ContentService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://zero-k.info/ContentService.asmx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

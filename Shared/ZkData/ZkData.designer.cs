@@ -6855,6 +6855,8 @@ namespace ZkData
 		
 		private int _MissionRevision;
 		
+		private int _GameSeconds;
+		
 		private EntityRef<Mission> _Mission;
 		
 		private EntityRef<Account> _Account;
@@ -6873,6 +6875,8 @@ namespace ZkData
     partial void OnTimeChanged();
     partial void OnMissionRevisionChanging(int value);
     partial void OnMissionRevisionChanged();
+    partial void OnGameSecondsChanging(int value);
+    partial void OnGameSecondsChanged();
     #endregion
 		
 		public MissionScore()
@@ -6989,6 +6993,27 @@ namespace ZkData
 					this._MissionRevision = value;
 					this.SendPropertyChanged("MissionRevision");
 					this.OnMissionRevisionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GameSeconds", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public int GameSeconds
+		{
+			get
+			{
+				return this._GameSeconds;
+			}
+			set
+			{
+				if ((this._GameSeconds != value))
+				{
+					this.OnGameSecondsChanging(value);
+					this.SendPropertyChanging();
+					this._GameSeconds = value;
+					this.SendPropertyChanged("GameSeconds");
+					this.OnGameSecondsChanged();
 				}
 			}
 		}

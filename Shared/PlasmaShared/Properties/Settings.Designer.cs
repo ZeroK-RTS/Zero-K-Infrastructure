@@ -33,5 +33,15 @@ namespace PlasmaShared.Properties {
                 return ((string)(this["zero_kConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://zero-k.info/ContentService.asmx")]
+        public string PlasmaShared_ContentService_ContentService {
+            get {
+                return ((string)(this["PlasmaShared_ContentService_ContentService"]));
+            }
+        }
     }
 }

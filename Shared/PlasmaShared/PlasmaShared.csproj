@@ -97,6 +97,11 @@
     <Compile Include="Pool.cs" />
     <Compile Include="PoolFileInfo.cs" />
     <Compile Include="MapRegisteredEventArgs.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ResharperAttribs.cs" />
     <Compile Include="SdpArchive.cs" />
     <Compile Include="SerializableDictionary.cs" />
@@ -118,8 +123,10 @@
     <Compile Include="UnitSyncLib\UnitSync.cs" />
     <Compile Include="UnitSyncLib\UnitSyncException.cs" />
     <Compile Include="UnitSyncLib\VfsMode.cs" />
-    <Compile Include="WebReferences\EditorService.cs">
-      <SubType>Component</SubType>
+    <Compile Include="Web References\ContentService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
     </Compile>
     <Compile Include="WebReferences\PlasmaService.cs">
       <SubType>Component</SubType>
@@ -130,12 +137,23 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ContentService\ContentService.wsdl" />
+    <None Include="Web References\ContentService\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -159,5 +177,27 @@
       <Project>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</Project>
       <Name>MonoTorrent</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://zero-k.info/ContentService.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\ContentService\</RelPath>
+      <UpdateFromURL>http://zero-k.info/ContentService.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>PlasmaShared_ContentService_ContentService</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\ContentService\ContentService.disco" />
   </ItemGroup>
 </Project>

@@ -405,6 +405,7 @@
       <Column Name="Score" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="MissionRevision" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="GameSeconds" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Mission_MissionScore" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_MissionScore" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>

@@ -261,20 +261,20 @@
         <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
       </nodes>
     </associationConnector>
-    <classShape Id="9bc8f882-2d6f-4712-931a-6e2b9d867ebe" absoluteBounds="3, 4, 2, 1.7708968098958331">
+    <classShape Id="9bc8f882-2d6f-4712-931a-6e2b9d867ebe" absoluteBounds="3, 4, 2, 1.9631982421874996">
       <DataClassMoniker Name="/ZkDataContext/MissionScore" />
       <nestedChildShapes>
-        <elementListCompartment Id="69ce0f85-567f-4fb5-b190-18ba598ff24f" absoluteBounds="3.0150000000000006, 4.46, 1.97, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="69ce0f85-567f-4fb5-b190-18ba598ff24f" absoluteBounds="3.0150000000000006, 4.46, 1.97, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(2.5 : 4.77001057942708); (3 : 4.77001057942708)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(2.5 : 4.77001057942708); (3 : 4.77001057942708)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Mission/Mission_MissionScore" />
       <nodes>
         <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
         <classShapeMoniker Id="9bc8f882-2d6f-4712-931a-6e2b9d867ebe" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(3.9375 : 3.6170068359375); (3.9375 : 4)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(3.9375 : 3.6170068359375); (3.9375 : 4)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_MissionScore" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
