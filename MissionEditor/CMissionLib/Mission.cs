@@ -230,11 +230,11 @@ namespace CMissionLib
 
 
 
-		public void CreateArchive(string mutatorPath)
+		public void CreateArchive(string mutatorPath, bool hideFromModList = false)
 		{
 #if DEBUG
 			File.WriteAllText("startscript.txt", GetScript());
-			File.WriteAllText("modinfo.txt", GetModInfo());
+			File.WriteAllText("modinfo.txt", GetModInfo(hideFromModList));
 			File.WriteAllText("mission.lua", SerializeToLua());
 #endif
 			var textEncoding = Encoding.GetEncoding("iso-8859-1"); // ASCIIEncoding()
@@ -249,7 +249,7 @@ namespace CMissionLib
 				var basePath = Path.Combine(assemblyLocation, "MissionBase");
 				zip.SafeAddDirectory(basePath);
 
-				zip.SafeAddEntry("modinfo.lua", textEncoding.GetBytes(GetModInfo()));
+				zip.SafeAddEntry("modinfo.lua", textEncoding.GetBytes(GetModInfo(hideFromModList)));
 				zip.SafeAddEntry("mission.lua", textEncoding.GetBytes(SerializeToLua()));
 				zip.SafeAddEntry("script.txt", textEncoding.GetBytes(GetScript()));
 				zip.SafeAddEntry("dependencies.txt", String.Join(";", Mod.Dependencies)); // FIXME
@@ -443,13 +443,13 @@ namespace CMissionLib
 			return new LuaTable(luaMap);
 		}
 
-		string GetModInfo()
+		string GetModInfo(bool hideFromModList)
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("local modinfo = {");
 			sb.AppendFormat("  name		=	[[{0}]],\n", Name);
 			sb.AppendFormat("  description	=	[[{0}]],\n", Description);
-			sb.AppendLine("  modtype		=	[[0]],");
+			sb.AppendFormat("  modtype		=	[[{0}]],\n", hideFromModList ? 0 : 1);
 			sb.AppendLine("  depend = {");
 			sb.AppendFormat("    [[{0}]]\n", Mod.Name);
 			sb.AppendLine("  },");

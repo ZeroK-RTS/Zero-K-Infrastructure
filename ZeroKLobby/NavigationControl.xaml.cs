@@ -90,6 +90,14 @@ namespace ZeroKLobby
 			GoToPage(CurrentPage.Path);
 		}
 
+		INavigatable CurrentINavigatable
+		{
+			get
+			{
+				return GetINavigatableFromControl(tabControl.SelectedContent);
+			}
+		}
+
 		NavigationStep GoToPage(string[] path) // todo cleanup
 		{
 			foreach (var item in tabControl.Items)

@@ -287,7 +287,7 @@ namespace MissionEditor2
 				scriptFile = writeablePath + "\\script.txt";
 				Mission.Name = Mission.Name + " Test";
 				File.WriteAllText(scriptFile, Mission.GetScript());
-				Mission.CreateArchive(missionPath);
+				Mission.CreateArchive(missionPath, true);
 			}
 			finally
 			{
