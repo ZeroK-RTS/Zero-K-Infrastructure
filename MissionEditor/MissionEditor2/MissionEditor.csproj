@@ -33,7 +33,7 @@
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>33</ApplicationRevision>
+    <ApplicationRevision>35</ApplicationRevision>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -130,7 +130,6 @@
     <Compile Include="ModifyScoreControl.xaml.cs">
       <DependentUpon>ModifyScoreControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MyCol.cs" />
     <Compile Include="NoArea.xaml.cs" />
     <Compile Include="OrderIcon.xaml.cs">
       <DependentUpon>OrderIcon.xaml</DependentUpon>

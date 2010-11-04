@@ -66,6 +66,7 @@ namespace CMissionLib
 				string value;
 				if (kvp.Value is LuaTable) value = ((LuaTable)kvp.Value).ToString(indentLevel + 1);
 				else if (kvp.Value is int) value = kvp.Value.ToString();
+				else if (kvp.Value is Byte) value = kvp.Value.ToString();
 				else if (kvp.Value is float) value = ((float) kvp.Value).ToString(CultureInfo.InvariantCulture);
 				else if (kvp.Value is double) value = ((double) kvp.Value).ToString(CultureInfo.InvariantCulture);
 				else if (kvp.Value is bool) value = kvp.Value.ToString().ToLower();

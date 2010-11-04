@@ -118,6 +118,7 @@
     <Compile Include="Actions\SunsetAction.cs" />
     <Compile Include="Actions\SetCameraUnitTargetAction.cs" />
     <Compile Include="Conditions\UnitCreatedCondition.cs" />
+    <Compile Include="MyCol.cs" />
     <Compile Include="Orders\AttackOrder.cs" />
     <Compile Include="Orders\FightOrder.cs" />
     <Compile Include="Orders\MoveOrder.cs" />
@@ -159,7 +160,12 @@
     <Compile Include="UnitSyncLib\VfsMode.cs" />
     <Compile Include="VictoryAction.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\PlasmaShared\PlasmaShared.csproj">
+      <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
+      <Name>PlasmaShared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

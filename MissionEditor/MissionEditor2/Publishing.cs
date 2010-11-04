@@ -51,24 +51,7 @@ namespace MissionEditor2
 				           	ModRapidTag = mission.RapidTag,
 				           };
 
-				var alliances = mission.Players.Select(p => p.Alliance).Distinct().ToList();
-				var slots = new List<MissionSlot>();
-				foreach (var player in mission.Players)
-				{
-					var missionSlot = new MissionSlot
-					                  {
-					                  	AiShortName = player.AIDll,
-					                  	AiVersion = player.AIVersion,
-					                  	AllyID = alliances.IndexOf(player.Alliance),
-					                  	AllyName = player.Alliance,
-					                  	IsHuman = player.IsHuman,
-					                  	IsRequired = player.IsRequired,
-					                  	TeamID = mission.Players.IndexOf(player),
-					                  	TeamName = player.Name,
-					                  	Color = (int)(MyCol)player.Color
-					                  };
-					slots.Add(missionSlot);
-				}
+				var slots = mission.GetSlots();
 				
 
 				var image = File.ReadAllBytes(mission.ImagePath).ToImage(96, 96);

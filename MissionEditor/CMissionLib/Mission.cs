@@ -8,10 +8,15 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Media;
 using System.Xml;
+using System.Xml.Serialization;
 using CMissionLib.Actions;
 using CMissionLib.Conditions;
-using CMissionLib.UnitSyncLib;
 using Ionic.Zip;
+using MissionEditor2;
+using PlasmaShared.UnitSyncLib;
+using ZkData;
+using Map = CMissionLib.UnitSyncLib.Map;
+using Mod = CMissionLib.UnitSyncLib.Mod;
 
 namespace CMissionLib
 {
@@ -206,7 +211,7 @@ namespace CMissionLib
 			ModName = game.Name;
 			MapName = map.Name;
 			var testAI = game.AllAis.FirstOrDefault(ai => ai.ShortName.Contains("NullAI"));
-			var player1 = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "Alliance 1", IsHuman = true, };
+			var player1 = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "Alliance 1", IsHuman = true, IsRequired = true};
 			var player2 = new Player { Name = "Player 2", Color = Colors.Red, Alliance = "Alliance 2", IsHuman = false, };
 			StartingPlayer = player1;
 			Players.Add(player1);
@@ -228,14 +233,66 @@ namespace CMissionLib
 			foreach (var gadget in gadgets) DisabledGadgets.Add(gadget);
 		}
 
+		public List<MissionSlot> GetSlots()
+		{
+			var alliances = Players.Select(p => p.Alliance).Distinct().ToList();
+			var slots = new List<MissionSlot>();
+			foreach (var player in Players)
+			{
+				var missionSlot = new MissionSlot
+				{
+					AiShortName = player.AIDll,
+					AiVersion = player.AIVersion,
+					AllyID = alliances.IndexOf(player.Alliance),
+					AllyName = player.Alliance,
+					IsHuman = player.IsHuman,
+					IsRequired = player.IsRequired,
+					TeamID = Players.IndexOf(player),
+					TeamName = player.Name,
+					Color = (int)(MyCol)player.Color
+				};
+				slots.Add(missionSlot);
+			}
+			return slots;
+		}
+
+		public LuaTable GetLuaSlots()
+		{
+			var alliances = Players.Select(p => p.Alliance).Distinct().ToList();
+			var slots = new List<LuaTable>();
+			foreach (var player in Players)
+			{
+				var map = new Dictionary<object, object>
+				{
+					{"AllyID", alliances.IndexOf(player.Alliance)},
+					{"AllyName", player.Alliance},
+					{"IsHuman", player.IsHuman},
+					{"IsRequired", player.IsRequired},
+					{"TeamID", Players.IndexOf(player)},
+					{"TeamName", player.Name },
+					{"Color", (int)(MyCol)player.Color},
+					{"ColorR", player.Color.R},
+					{"ColorG", player.Color.G},
+					{"ColorB", player.Color.B},
+				};
+				if (player.AIDll != null) map.Add("AiShortName", player.AIDll);
+				if (player.AIVersion != null) map.Add("AiVersion", player.AIVersion);
+				slots.Add(new LuaTable(map));
+			}
+			return LuaTable.CreateArray(slots);
+		}
+
 
 
 		public void CreateArchive(string mutatorPath, bool hideFromModList = false)
 		{
+			var script = GetScript();
+			var modInfo = GetModInfo(hideFromModList);
+			var luaMissionData = SerializeToLua();
 #if DEBUG
-			File.WriteAllText("startscript.txt", GetScript());
-			File.WriteAllText("modinfo.txt", GetModInfo(hideFromModList));
-			File.WriteAllText("mission.lua", SerializeToLua());
+			File.WriteAllText("startscript.txt", script);
+			File.WriteAllText("modinfo.txt", modInfo);
+			File.WriteAllText("mission.lua", luaMissionData);
 #endif
 			var textEncoding = Encoding.GetEncoding("iso-8859-1"); // ASCIIEncoding()
 			using (var zip = new ZipFile())
@@ -249,15 +306,30 @@ namespace CMissionLib
 				var basePath = Path.Combine(assemblyLocation, "MissionBase");
 				zip.SafeAddDirectory(basePath);
 
-				zip.SafeAddEntry("modinfo.lua", textEncoding.GetBytes(GetModInfo(hideFromModList)));
-				zip.SafeAddEntry("mission.lua", textEncoding.GetBytes(SerializeToLua()));
-				zip.SafeAddEntry("script.txt", textEncoding.GetBytes(GetScript()));
+				zip.SafeAddEntry("modinfo.lua", textEncoding.GetBytes(modInfo));
+				zip.SafeAddEntry("mission.lua", textEncoding.GetBytes(luaMissionData));
+				zip.SafeAddEntry("script.txt", textEncoding.GetBytes(script));
+				zip.SafeAddEntry(GlobalConst.MissionScriptFileName, textEncoding.GetBytes(script));
+				zip.SafeAddEntry("slots.lua", textEncoding.GetBytes(GetLuaSlots().ToString()));
 				zip.SafeAddEntry("dependencies.txt", String.Join(";", Mod.Dependencies)); // FIXME
 
-				var stream = new MemoryStream();
-				using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Indent = true, CheckCharacters = true })) new NetDataContractSerializer().WriteObject(writer, this);
-				stream.Position = 0;
-				zip.SafeAddEntry("project.mission.xml", stream);
+				{
+					var stream = new MemoryStream();
+					using (var writer = XmlWriter.Create(stream, new XmlWriterSettings { Indent = true, CheckCharacters = true })) new NetDataContractSerializer().WriteObject(writer, this);
+					stream.Position = 0;
+					zip.SafeAddEntry("project.mission.xml", stream);
+				}
+
+
+				{
+					var serializer = new XmlSerializer(typeof(List<MissionSlot>));
+					var stream = new MemoryStream();
+					serializer.Serialize(stream, GetSlots());
+					stream.Position = 0;
+					zip.SafeAddEntry(GlobalConst.MissionSlotsFileName, stream);
+				}
+
+
 
 				// disable scripts by hiding them with a blank file
 				var blank = textEncoding.GetBytes("-- intentionally left blank --");
