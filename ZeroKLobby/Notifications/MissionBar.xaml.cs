@@ -23,7 +23,7 @@ namespace ZeroKLobby.Notifications
 
 		void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			label1.Content = string.Format("Downloading mission {0}", missionName);
+			label1.Content = string.Format("Starting mission {0} - please wait", missionName);
 			var down = Program.Downloader.GetResource(DownloadType.MOD, missionName);
 
 			PlasmaShared.Utils.StartAsync(() =>
@@ -34,8 +34,13 @@ namespace ZeroKLobby.Notifications
 					                                           mod =>
 					                                           	{
 					                                           		if (!mod.IsMission)
-					                                           			Program.MainWindow.InvokeFunc(
-					                                           				() => label1.Content = string.Format("{0} is not a valid mission", missionName));
+					                                           		{
+					                                           			Program.MainWindow.InvokeFunc(() =>
+					                                           				{
+					                                           					label1.Content = string.Format("{0} is not a valid mission", missionName);
+					                                           					btnCancel.IsEnabled = true;
+					                                           				});
+					                                           		}
 
 					                                           		else modInfo = mod;
 
@@ -43,22 +48,42 @@ namespace ZeroKLobby.Notifications
 					                                           	},
 					                                           error =>
 					                                           	{
-					                                           		Program.MainWindow.InvokeFunc(
-					                                           			() => label1.Content = string.Format("Download of metadata failed: {0}", error.Message));
+					                                           		Program.MainWindow.InvokeFunc(() =>
+					                                           			{
+					                                           				label1.Content = string.Format("Download of metadata failed: {0}", error.Message);
+					                                           				btnCancel.IsEnabled = true;
+					                                           			});
 					                                           		metaWait.Set();
 					                                           	});
 					if (down != null) WaitHandle.WaitAll(new WaitHandle[] { down.WaitHandle, metaWait });
 					else metaWait.WaitOne();
 
-					if (down != null && down.IsComplete == false) Program.MainWindow.InvokeFunc(() => label1.Content = string.Format("Download of {0} failed", missionName));
+					if (down != null && down.IsComplete == false)
+					{
+						Program.MainWindow.InvokeFunc(() =>
+							{
+								label1.Content = string.Format("Download of {0} failed", missionName);
+								btnCancel.IsEnabled = true;
+							});
+					}
 
 					if (modInfo != null && (down == null || down.IsComplete == true))
 					{
 						var spring = new Spring(Program.SpringPaths);
-						spring.StartGame(null, null, null, modInfo.MissionScript, Program.Conf.LobbyPlayerName, PlasmaShared.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword));
-						Program.NotifySection.RemoveBar(this);
+						spring.StartGame(null,
+						                 null,
+						                 null,
+						                 modInfo.MissionScript,
+						                 Program.Conf.LobbyPlayerName,
+						                 PlasmaShared.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword));
+						Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
 					}
 				});
+		}
+
+		void btnCancel_Click(object sender, RoutedEventArgs e)
+		{
+			Program.NotifySection.RemoveBar(this);
 		}
 	}
 }

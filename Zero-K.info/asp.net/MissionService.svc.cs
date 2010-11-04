@@ -83,29 +83,32 @@ namespace ZeroKWeb
 			if (mod == null) throw new ApplicationException("Mod name is unknown");
 			if (db.Resources.Any(x=>x.InternalName == mission.Name && x.MissionID != mission.MissionID)) throw new ApplicationException("Name already taken by other mod/map");
 
-			var prev = db.Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
+			var prev = new ZkDataContext().Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
 
 			if (prev != null)
 			{
 				if (prev.AccountID != acc.AccountID && !acc.IsLobbyAdministrator) throw new ApplicationException("Invalid author or password");
-
-				db.Missions.Attach(mission, prev);
-
+				db.Missions.Attach(mission);
+				db.Refresh(RefreshMode.KeepCurrentValues, mission);
+				
 				mission.Revision++;
 			}
 			else
 			{
-				mission.AccountID = acc.AccountID;
 				mission.CreatedTime = DateTime.UtcNow;
 				db.Missions.InsertOnSubmit(mission);
 			}
+			mission.AccountID = acc.AccountID;
 			mission.MinHumans = slots.Count(x => x.IsHuman && x.IsRequired);
 			mission.MaxHumans = slots.Count(x => x.IsHuman);
 			mission.ModifiedTime = DateTime.UtcNow;
 
 			db.SubmitChanges();
 
-			var resource = db.Resources.FirstOrDefault(x => x.InternalName == mission.Name);
+			db.Resources.DeleteAllOnSubmit(db.Resources.Where(x => x.MissionID == mission.MissionID));
+			db.SubmitChanges();
+
+			var resource = db.Resources.FirstOrDefault(x => x.InternalName == mission.Name); // todo delete full resource data
 			if (resource == null)
 			{
 				resource = new Resource() { InternalName = mission.Name, DownloadCount = 0, TypeID = ZkData.ResourceType.Mod };
@@ -152,7 +155,7 @@ namespace ZeroKWeb
 
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}_{1}.torrent", mission.Name.EscapePath(), md5), torrentStream.ToArray());
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}.metadata.xml.gz", mission.Name.EscapePath()),
-			                   MetaDataCache.SerializeAndCompressMetaData(modInfo));
+			MetaDataCache.SerializeAndCompressMetaData(modInfo));
 
 			db.SubmitChanges();
 		}
