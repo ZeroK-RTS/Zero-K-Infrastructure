@@ -67,7 +67,7 @@ namespace ZeroKWeb
 		}
 
 
-		public void SendMission(Mission mission, List<MissionSlot> slots, string author, string password)
+		public void SendMission(Mission mission, List<MissionSlot> slots, string author, string password, Mod modInfo)
 		{
 			Account acc = null;
 			var db = new ZkDataContext();
@@ -119,16 +119,8 @@ namespace ZeroKWeb
 			resource.ResourceDependencies.Add(new ResourceDependency() { NeedsInternalName = map.InternalName });
 			resource.ResourceDependencies.Add(new ResourceDependency() { NeedsInternalName = mod.InternalName });
 			resource.ResourceContentFiles.Clear();
-			var modInfo = new Mod()
-			              {
-			              	ArchiveName = mission.SanitizedFileName,
-			              	Name = mission.Name,
-			              	Desctiption = mission.Description,
-			              	Dependencies = new[] { mod.InternalName },
-			              	MissionScript = mission.Script,
-			              	MissionSlots = slots,
-			              	Sides = new string[] { "mission" }
-			              };
+
+			
 
 			// generate torrent
 			var tempFile = Path.Combine(Path.GetTempPath(), mission.SanitizedFileName);
@@ -152,6 +144,16 @@ namespace ZeroKWeb
 			                                  	Links = string.Format(MissionFileUrl, mission.Name),
 			                                  	Md5 = md5
 			                                  });
+
+			var sh = resource.ResourceSpringHashes.SingleOrDefault(x => x.SpringVersion == mission.SpringVersion);
+			if (sh == null)
+			{
+				sh = new ResourceSpringHash();
+				resource.ResourceSpringHashes.Add(sh);
+			}
+			sh.SpringVersion = mission.SpringVersion;
+			sh.SpringHash = modInfo.Checksum;
+
 
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}_{1}.torrent", mission.Name.EscapePath(), md5), torrentStream.ToArray());
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}.metadata.xml.gz", mission.Name.EscapePath()),

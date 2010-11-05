@@ -730,15 +730,6 @@ namespace Springie.autohost
 				SayBattle("If you say !notify, I will PM you when game ends.", false);
 			}
 
-			if (hostedMod.IsMission)
-			{
-				var slot = GetFreeSlots().FirstOrDefault();
-				if (slot != null)
-				{
-					tas.ForceAlly(name, slot.AllyID);
-					tas.ForceTeam(name, slot.TeamID);
-				} else tas.ForceSpectator(name);
-			}
 
 
 			HandleKickSpecServerLocking();
@@ -797,6 +788,19 @@ namespace Springie.autohost
 
 			if (b != null && b.ContainsUser(e.ServerParams[0], out u))
 			{
+				
+				/*if (hostedMod.IsMission)
+				{
+					var slot = GetFreeSlots().FirstOrDefault();
+					if (slot != null)
+					{
+						tas.ForceAlly(u.Name, slot.AllyID);
+						tas.ForceTeam(u.Name, slot.TeamID);
+					}
+					else tas.ForceSpectator(u.Name);
+				}*/
+
+
 				if (KickSpectators && u.IsSpectator && u.Name != tas.UserName)
 				{
 					SayBattle(config.KickSpectatorText);

@@ -213,7 +213,6 @@ namespace PlasmaShared.UnitSyncLib
 
 			if (!string.IsNullOrEmpty(mod.MissionScript))
 			{
-				mod.Sides = new string[] { "mission" };
 				try
 				{
 					buf = ReadVfsFile(GlobalConst.MissionSlotsFileName);

@@ -26,7 +26,7 @@ namespace ZeroKWeb
 		IEnumerable<Mission> ListMissionInfos();
 
 		[OperationContract]
-		void SendMission(Mission mission, List<MissionSlot> slots, string author, string password);
+		void SendMission(Mission mission, List<MissionSlot> slots, string author, string password, Mod modInfo);
 
 
 	}
