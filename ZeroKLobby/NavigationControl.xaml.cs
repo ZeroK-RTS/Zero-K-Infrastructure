@@ -47,6 +47,7 @@ namespace ZeroKLobby
 			get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
 			set
 			{
+				if (value.ToLower().StartsWith("spring://")) value = value.Substring(9);
 				var step = GoToPage(value.Split('/'));
 				if (step != null)
 				{
