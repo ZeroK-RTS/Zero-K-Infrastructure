@@ -32,7 +32,7 @@ namespace MissionEditor2
 				closeButton.IsEnabled = false;
 				var service = new ContentServiceSoapClient();
 				service.SubmitStackTraceCompleted += service_SubmitStackTraceCompleted;
-				service.SubmitStackTraceAsync(ProgramType.MissionEditor, nameBox.Text, errorText, descriptionBox.Text);
+				service.SubmitStackTraceAsync(ProgramType.MissionEditor, nameBox.Text, errorText, descriptionBox.Text, version);
 				progressBar.Visibility = Visibility.Visible;
 			}
 			else Close();
