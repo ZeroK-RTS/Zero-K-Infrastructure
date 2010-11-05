@@ -5,8 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms.Integration;
-using System.Windows.Input;
-using System.Windows.Threading;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 
@@ -20,6 +18,7 @@ namespace ZeroKLobby
 		bool CanGoBack { get { return backStack.Any(); } }
 
 		bool CanGoForward { get { return forwardStack.Any(); } }
+		INavigatable CurrentINavigatable { get { return GetINavigatableFromControl(tabControl.SelectedContent); } }
 
 		NavigationStep CurrentPage
 		{
@@ -37,12 +36,14 @@ namespace ZeroKLobby
 		}
 
 		NavigationStep _currentPage;
-		Stack<NavigationStep> backStack = new Stack<NavigationStep>();
-		Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
+		readonly Stack<NavigationStep> backStack = new Stack<NavigationStep>();
+		readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
+		readonly List<string> lastPaths = new List<string>();
 		public WebBrowser Browser { get { return browserControl.WebBrowser; } }
 		public ChatTab ChatTab { get { return chatTab; } }
 		public static NavigationControl Instance { get; private set; }
 		public bool IsBrowserTabSelected { get { return tabControl.SelectedContent is BrowserControl; } }
+
 		public string Path
 		{
 			get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
@@ -56,6 +57,8 @@ namespace ZeroKLobby
 					PerformAction(action);
 				}
 				value = parts[0];
+
+				lastPaths.Add(value);
 
 				var step = GoToPage(value.Split('/'));
 				if (step != null)
@@ -80,11 +83,32 @@ namespace ZeroKLobby
 			return tabControl.SelectedContent as WindowsFormsHost;
 		}
 
+		public bool HilitePath(string navigationPath, HiliteLevel hiliteLevel)
+		{
+			if (string.IsNullOrEmpty(navigationPath)) return false;
+			var steps = navigationPath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+			var navigable = tabControl.Items.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && x.PathHead == steps[0]);
+			if (navigable != null) return navigable.Hilite(hiliteLevel, steps);
+			else return false;
+		}
+
+		public void NavigateBack()
+		{
+			if (CanGoBack) GoBack();
+		}
+
 		INavigatable GetINavigatableFromControl(object obj)
 		{
 			if (obj is TabItem) obj = ((TabItem)obj).Content;
 			if (obj is WindowsFormsHost) obj = ((WindowsFormsHost)obj).Child;
 			return obj as INavigatable;
+		}
+
+		string GetLastPathStartingWith(string startString)
+		{
+			string path;
+			for (var i = lastPaths.Count - 1; i >= 0; i--) if (lastPaths[i].StartsWith(startString)) return lastPaths[i];
+			return startString;
 		}
 
 		void GoBack()
@@ -101,14 +125,6 @@ namespace ZeroKLobby
 			GoToPage(CurrentPage.Path);
 		}
 
-		INavigatable CurrentINavigatable
-		{
-			get
-			{
-				return GetINavigatableFromControl(tabControl.SelectedContent);
-			}
-		}
-
 		NavigationStep GoToPage(string[] path) // todo cleanup
 		{
 			foreach (var item in tabControl.Items)
@@ -121,28 +137,6 @@ namespace ZeroKLobby
 				}
 			}
 			return null;
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged = delegate { };
-
-		void BattleListPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "battles";
-		}
-
-		void ChatPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "chat";
-		}
-
-		void DownloaderPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "downloader";
-		}
-
-		void HelpPage_Click(object sender, RoutedEventArgs e)
-		{
-			Path = "help";
 		}
 
 		void PerformAction(string actionString)
@@ -159,22 +153,42 @@ namespace ZeroKLobby
 			Program.NotifySection.AddBar(new MissionBar(name));
 		}
 
+		public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
+		void BattleListPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = GetLastPathStartingWith("battles");
+		}
+
+		void ChatPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = GetLastPathStartingWith("chat");
+		}
+
+		void DownloaderPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = GetLastPathStartingWith("downloader");
+		}
+
+		void HelpPage_Click(object sender, RoutedEventArgs e)
+		{
+			Path = GetLastPathStartingWith("help");
+		}
 
 
 		void MissionsPage_Click(object sender, RoutedEventArgs e)
 		{
-			Path = "http://zero-k.info/Missions.mvc";
+			Path = GetLastPathStartingWith("http://zero-k.info/Missions.mvc");
 		}
 
 		void SettingsPage_Click(object sender, RoutedEventArgs e)
 		{
-			Path = "settings";
+			Path = GetLastPathStartingWith("settings");
 		}
 
 		void StartPage_Click(object sender, RoutedEventArgs e)
 		{
-			Path = "start";
+			Path = GetLastPathStartingWith("start");
 		}
 
 		void TabItem_MouseUp(object sender, RoutedEventArgs e)
@@ -194,7 +208,7 @@ namespace ZeroKLobby
 
 		void WidgetsPage_Click(object sender, RoutedEventArgs e)
 		{
-			Path = "widgets";
+			Path = GetLastPathStartingWith("widgets");
 		}
 
 		void backButton_Click(object sender, RoutedEventArgs e)
@@ -216,20 +230,5 @@ namespace ZeroKLobby
 				return string.Join("/", Path);
 			}
 		}
-
-		public void NavigateBack()
-		{
-			if (CanGoBack) GoBack();
-		}
-
-		public bool HilitePath(string navigationPath, HiliteLevel hiliteLevel)
-		{
-			if (string.IsNullOrEmpty(navigationPath)) return false;
-			var steps = navigationPath.Split(new char[]{'/'}, StringSplitOptions.RemoveEmptyEntries);
-			var navigable = tabControl.Items.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && x.PathHead == steps[0]);
-			if (navigable != null) return navigable.Hilite(hiliteLevel, steps);
-			else return false;
-		}
-
 	}
 }
