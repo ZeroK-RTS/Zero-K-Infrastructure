@@ -51,7 +51,7 @@ namespace MissionEditor2
 			else SaveMission();
 		}
 
-		void AddNewTrigger()
+		void CreateNewTrigger()
 		{
 			var trigger = new Trigger { Name = GetNewTriggerName() };
 			Mission.Triggers.Add(trigger);
@@ -180,6 +180,14 @@ namespace MissionEditor2
 			}
 		}
 
+		string GetNewRegionName()
+		{
+			for (var i = 1; ; i++)
+			{
+				var name = string.Format("Region {0}", i);
+				if (!Mission.Regions.Any(r => r.Name == name)) return name;
+			}
+		}
 		string GetNewTriggerName()
 		{
 			for (var i = 1;; i++)
@@ -234,7 +242,19 @@ namespace MissionEditor2
 			if (dialog.ShowDialog() == true) item.Name = dialog.TextBox.Text;
 		}
 
-		void Renametrigger(Trigger trigger)
+		void RenameRegion(Region region)
+		{
+			if (region == null) return;
+			var dialog = new StringRequest { Title = "Rename Region", TextBox = { Text = region.Name }, Owner = this };
+			if (dialog.ShowDialog() == true)
+			{
+				region.Name = dialog.TextBox.Text;
+				region.RaisePropertyChanged(String.Empty);
+				Mission.RaisePropertyChanged("Regions");
+			}
+		}
+
+		void RenameTrigger(Trigger trigger)
 		{
 			if (trigger == null) return;
 			var dialog = new StringRequest { Title = "Rename Trigger", TextBox = { Text = trigger.Name }, Owner =this };
@@ -335,22 +355,22 @@ namespace MissionEditor2
 			border.ContextMenu = menu;
 		}
 
-		void regionsMenu_GotFocus(object sender, RoutedEventArgs e)
-		{
-			regionsMenu.Items.Clear();
-			foreach (var region in Mission.Regions)
-			{
-				regionsMenu.AddAction(region.Name,
-				                      delegate
-				                      	{
-				                      		var window = new RegionWindow(region){Owner = this};
-				                      		window.ShowDialog();
-				                      	});
-			}
-			var newRegionItem = new MenuItem { Header = "Create Region" };
-			newRegionItem.Click += newRegionItem_Click;
-			regionsMenu.Items.Add(newRegionItem);
-		}
+		//void regionsMenu_GotFocus(object sender, RoutedEventArgs e)
+		//{
+		//    regionsMenu.Items.Clear();
+		//    foreach (var region in Mission.Regions)
+		//    {
+		//        regionsMenu.AddAction(region.Name,
+		//                              delegate
+		//                                {
+		//                                    var window = new RegionWindow(region){Owner = this};
+		//                                    window.ShowDialog();
+		//                                });
+		//    }
+		//    var newRegionItem = new MenuItem { Header = "Create Region" };
+		//    newRegionItem.Click += newRegionItem_Click;
+		//    regionsMenu.Items.Add(newRegionItem);
+		//}
 
 		void GuiMessageButtonLoaded(object sender, RoutedEventArgs e)
 		{
@@ -398,12 +418,10 @@ namespace MissionEditor2
 			logic_Loaded(sender, e);
 		}
 
-		void newRegionItem_Click(object sender, RoutedEventArgs e)
+		void CreateNewRegion()
 		{
-			var region = new Region { Name = "New Region" };
+			var region = new Region { Name = GetNewRegionName() };
 			Mission.Regions.Add(region);
-			var window = new RegionWindow(region){Owner = this};
-			window.ShowDialog();
 		}
 
 		void trigger_Loaded(object sender, RoutedEventArgs e)
@@ -411,13 +429,13 @@ namespace MissionEditor2
 			var border = (Border)e.Source;
 			var trigger = (Trigger)border.DataContext;
 			var menu = new ContextMenu();
-			menu.AddAction("New Trigger", AddNewTrigger);
+			menu.AddAction("New Trigger", CreateNewTrigger);
 			menu.Items.Add(GetNewActionMenu(trigger));
 			menu.Items.Add(GetNewConditionMenu(trigger));
 			menu.Items.Add(new Separator());
 			menu.AddAction("Move Up", () => MoveTrigger(MoveDirection.Up, trigger));
 			menu.AddAction("Move Down", () => MoveTrigger(MoveDirection.Down, trigger));
-			menu.AddAction("Rename", () => Renametrigger(trigger));
+			menu.AddAction("Rename", () => RenameTrigger(trigger));
 			menu.AddAction("Delete",
 			               delegate
 			               	{
@@ -470,8 +488,6 @@ namespace MissionEditor2
 			mission.AddAction("Publish", () => Publishing.Publish(Mission, null));
 			mission.AddAction("Manage Missions", ShowMissionManagement);
 			mission.AddAction("Settings", ShowMissionSettings);
-			// regionsMenu = MainMenu.AddContainer("Regions");
-			// regionsMenu.Click += new RoutedEventHandler(regionsMenu_GotFocus);
 
 			//var help = MainMenu.AddContainer("Help");
 			//help.AddAction("Basic Help", () => new Help().ShowDialog());
@@ -485,7 +501,8 @@ namespace MissionEditor2
 			}
 
 			var menu = new ContextMenu();
-			menu.AddAction("New Trigger", AddNewTrigger);
+			menu.AddAction("New Trigger", CreateNewTrigger);
+			menu.AddAction("New Region", CreateNewRegion);
 			logicGrid.ContextMenu = menu;
 		}
 
@@ -512,6 +529,23 @@ namespace MissionEditor2
 			var menu = new ContextMenu();
 			menu.Items.Add(GetNewActionMenu(folder.Trigger));
 			border.ContextMenu = menu;
+		}
+
+		private void region_Loaded(object sender, RoutedEventArgs e)
+		{
+			var border = (Border)e.Source;
+			var region = (Region)border.DataContext;
+			var menu = new ContextMenu();
+			menu.AddAction("New Region", CreateNewRegion);
+			menu.AddAction("Rename", () => RenameRegion(region));
+			menu.AddAction("Delete", () => DeleteRegion(region));
+			border.ContextMenu = menu;
+
+		}
+
+		void DeleteRegion(Region region)
+		{
+			Mission.Regions.Remove(region);
 		}
 	}
 }

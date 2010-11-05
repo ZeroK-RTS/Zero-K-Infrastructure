@@ -21,7 +21,7 @@ using Mod = CMissionLib.UnitSyncLib.Mod;
 namespace CMissionLib
 {
 	[DataContract]
-	public class Mission : PropertyChanged
+	public class Mission: PropertyChanged
 	{
 		string author = "Default Author";
 		string contentFolderPath;
@@ -32,6 +32,7 @@ namespace CMissionLib
 		ObservableCollection<string> disabledWidgets = new ObservableCollection<string>();
 		Dictionary<string, string> folders = new Dictionary<string, string>();
 		string imagePath;
+		CompositeObservableCollection<Trigger, Region> items;
 		Map map;
 		string mapName;
 		int maxUnits = 5000;
@@ -46,6 +47,7 @@ namespace CMissionLib
 		int startingMetal = 1000;
 		Player startingPlayer = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "1", IsHuman = true };
 		ObservableCollection<Trigger> triggers = new ObservableCollection<Trigger>();
+
 		public IEnumerable<string> AllGroups
 		{
 			get
@@ -54,6 +56,10 @@ namespace CMissionLib
 				groups.AddRange(AllUnits.SelectMany(u => u.Groups));
 				groups.AddRange(AllLogic.OfType<GiveFactoryOrdersAction>().SelectMany(a => a.BuiltUnitsGroups));
 				foreach (var player in players) groups.Add("Latest Factory Built Unit (" + player.Name + ")");
+				foreach (var region in Regions)
+				{
+					foreach (var player in players) groups.Add(string.Format("Units in {0} ({1})", region.Name, player.Name));
+				}
 				return groups.Distinct();
 			}
 		}
@@ -126,6 +132,15 @@ namespace CMissionLib
 			{
 				imagePath = value;
 				RaisePropertyChanged("ImagePath");
+			}
+		}
+		public CompositeObservableCollection<Trigger, Region> Items
+		{
+			get { return items; }
+			set
+			{
+				items = value;
+				RaisePropertyChanged("Items");
 			}
 		}
 
@@ -211,11 +226,12 @@ namespace CMissionLib
 			ModName = game.Name;
 			MapName = map.Name;
 			var testAI = game.AllAis.FirstOrDefault(ai => ai.ShortName.Contains("NullAI"));
-			var player1 = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "Alliance 1", IsHuman = true, IsRequired = true};
+			var player1 = new Player { Name = "Player 1", Color = Colors.Blue, Alliance = "Alliance 1", IsHuman = true, IsRequired = true };
 			var player2 = new Player { Name = "Player 2", Color = Colors.Red, Alliance = "Alliance 2", IsHuman = false, };
 			StartingPlayer = player1;
 			Players.Add(player1);
 			Players.Add(player2);
+			Regions.Add(new Region { Name = "Region 1" });
 			var gameStartTrigger = new Trigger();
 			Triggers.Add(gameStartTrigger);
 			gameStartTrigger.Logic.Add(new GameStartedCondition());
@@ -227,61 +243,13 @@ namespace CMissionLib
 			                 	new UnitStartInfo(unitType, player2, 223, 142),
 			                 };
 			gameStartTrigger.Logic.Add(new CreateUnitsAction(startUnits));
-			var widgets = new string[] { "gui_pauseScreen.lua", "gui_center_n_select.lua", "gui_take_remind.lua", "gui_startup_info_selector.lua" };
+			var widgets = new[] { "gui_pauseScreen.lua", "gui_center_n_select.lua", "gui_take_remind.lua", "gui_startup_info_selector.lua" };
 			foreach (var widget in widgets) DisabledWidgets.Add(widget);
-			var gadgets = new string[] { "start_unit_setup.lua" };
+			var gadgets = new[] { "start_unit_setup.lua" };
 			foreach (var gadget in gadgets) DisabledGadgets.Add(gadget);
+			if (game.Name.Contains("Complete")) RapidTag = "zk:stable";
+			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);
 		}
-
-		public List<MissionSlot> GetSlots()
-		{
-			var alliances = Players.Select(p => p.Alliance).Distinct().ToList();
-			var slots = new List<MissionSlot>();
-			foreach (var player in Players)
-			{
-				var missionSlot = new MissionSlot
-				{
-					AiShortName = player.AIDll,
-					AiVersion = player.AIVersion,
-					AllyID = alliances.IndexOf(player.Alliance),
-					AllyName = player.Alliance,
-					IsHuman = player.IsHuman,
-					IsRequired = player.IsRequired,
-					TeamID = Players.IndexOf(player),
-					TeamName = player.Name,
-					Color = (int)(MyCol)player.Color
-				};
-				slots.Add(missionSlot);
-			}
-			return slots;
-		}
-
-		public LuaTable GetLuaSlots()
-		{
-			var alliances = Players.Select(p => p.Alliance).Distinct().ToList();
-			var slots = new List<LuaTable>();
-			foreach (var player in Players)
-			{
-				var map = new Dictionary<object, object>
-				{
-					{"AllyID", alliances.IndexOf(player.Alliance)},
-					{"AllyName", player.Alliance},
-					{"IsHuman", player.IsHuman},
-					{"IsRequired", player.IsRequired},
-					{"TeamID", Players.IndexOf(player)},
-					{"TeamName", player.Name },
-					{"Color", (int)(MyCol)player.Color},
-					{"ColorR", player.Color.R},
-					{"ColorG", player.Color.G},
-					{"ColorB", player.Color.B},
-				};
-				if (player.AIDll != null) map.Add("AiShortName", player.AIDll);
-				if (player.AIVersion != null) map.Add("AiVersion", player.AIVersion);
-				slots.Add(new LuaTable(map));
-			}
-			return LuaTable.CreateArray(slots);
-		}
-
 
 
 		public void CreateArchive(string mutatorPath, bool hideFromModList = false)
@@ -297,10 +265,7 @@ namespace CMissionLib
 			var textEncoding = Encoding.GetEncoding("iso-8859-1"); // ASCIIEncoding()
 			using (var zip = new ZipFile())
 			{
-				if (!String.IsNullOrEmpty(ContentFolderPath) && Directory.Exists(ContentFolderPath))
-				{
-					zip.SafeAddDirectory(ContentFolderPath);
-				}
+				if (!String.IsNullOrEmpty(ContentFolderPath) && Directory.Exists(ContentFolderPath)) zip.SafeAddDirectory(ContentFolderPath);
 
 				var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 				var basePath = Path.Combine(assemblyLocation, "MissionBase");
@@ -320,7 +285,6 @@ namespace CMissionLib
 					zip.SafeAddEntry("project.mission.xml", stream);
 				}
 
-
 				{
 					var serializer = new XmlSerializer(typeof(List<MissionSlot>));
 					var stream = new MemoryStream();
@@ -328,8 +292,6 @@ namespace CMissionLib
 					stream.Position = 0;
 					zip.SafeAddEntry(GlobalConst.MissionSlotsFileName, stream);
 				}
-
-
 
 				// disable scripts by hiding them with a blank file
 				var blank = textEncoding.GetBytes("-- intentionally left blank --");
@@ -389,12 +351,38 @@ namespace CMissionLib
 
 		public double FromIngameX(double x)
 		{
-			return x * Map.Texture.Width / Map.Size.Width;
+			return x*Map.Texture.Width/Map.Size.Width;
 		}
 
 		public double FromIngameY(double y)
 		{
-			return y * Map.Texture.Height / Map.Size.Height;
+			return y*Map.Texture.Height/Map.Size.Height;
+		}
+
+		public LuaTable GetLuaSlots()
+		{
+			var alliances = Players.Select(p => p.Alliance).Distinct().ToList();
+			var slots = new List<LuaTable>();
+			foreach (var player in Players)
+			{
+				var map = new Dictionary<object, object>
+				          {
+				          	{ "AllyID", alliances.IndexOf(player.Alliance) },
+				          	{ "AllyName", player.Alliance },
+				          	{ "IsHuman", player.IsHuman },
+				          	{ "IsRequired", player.IsRequired },
+				          	{ "TeamID", Players.IndexOf(player) },
+				          	{ "TeamName", player.Name },
+				          	{ "Color", (int)(MyCol)player.Color },
+				          	{ "ColorR", player.Color.R },
+				          	{ "ColorG", player.Color.G },
+				          	{ "ColorB", player.Color.B },
+				          };
+				if (player.AIDll != null) map.Add("AiShortName", player.AIDll);
+				if (player.AIVersion != null) map.Add("AiVersion", player.AIVersion);
+				slots.Add(new LuaTable(map));
+			}
+			return LuaTable.CreateArray(slots);
 		}
 
 		public string GetScript()
@@ -432,6 +420,29 @@ namespace CMissionLib
 			return sb.ToString();
 		}
 
+		public List<MissionSlot> GetSlots()
+		{
+			var alliances = Players.Select(p => p.Alliance).Distinct().ToList();
+			var slots = new List<MissionSlot>();
+			foreach (var player in Players)
+			{
+				var missionSlot = new MissionSlot
+				                  {
+				                  	AiShortName = player.AIDll,
+				                  	AiVersion = player.AIVersion,
+				                  	AllyID = alliances.IndexOf(player.Alliance),
+				                  	AllyName = player.Alliance,
+				                  	IsHuman = player.IsHuman,
+				                  	IsRequired = player.IsRequired,
+				                  	TeamID = Players.IndexOf(player),
+				                  	TeamName = player.Name,
+				                  	Color = (int)(MyCol)player.Color
+				                  };
+				slots.Add(missionSlot);
+			}
+			return slots;
+		}
+
 		/// <summary>
 		/// Post-deserialization tasks
 		/// </summary>
@@ -462,6 +473,7 @@ namespace CMissionLib
 			if (folders == null) folders = new Dictionary<string, string>();
 			// get rid of legacy dummies
 			foreach (var trigger in triggers) foreach (var item in trigger.Logic.ToArray()) if (item is DummyAction || item is DummyCondition) trigger.Logic.Remove(item);
+			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);
 		}
 
 		public void SaveToXmlFile(string path)
@@ -477,12 +489,12 @@ namespace CMissionLib
 
 		public double ToIngameX(double x)
 		{
-			return x / Map.Texture.Width * Map.Size.Width;
+			return x/Map.Texture.Width*Map.Size.Width;
 		}
 
 		public double ToIngameY(double y)
 		{
-			return y / Map.Texture.Height * Map.Size.Height;
+			return y/Map.Texture.Height*Map.Size.Height;
 		}
 
 		public string VerifyCanPublish()
@@ -511,6 +523,7 @@ namespace CMissionLib
 			             	{ "disabledUnits", LuaTable.CreateArray(DisabledUnits) },
 			             	{ "scoringMethod", scoringMethod },
 			             	{ "counters", LuaTable.CreateArray(Counters) },
+							{ "regions", LuaTable.CreateArray(Regions.Select(r => r.GetLuaTable(this)))}
 			             };
 			return new LuaTable(luaMap);
 		}

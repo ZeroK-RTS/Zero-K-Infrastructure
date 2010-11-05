@@ -174,9 +174,37 @@ local function SetCount(set)
 end
 
 
+local function GetUnitsInRegion(region, teamID)
+  local regionUnits = {}
+  for _, area in ipairs(region.areas) do
+    local areaUnits
+    if area.category == "cylinder" then
+      areaUnits = Spring.GetUnitsInCylinder(area.x, area.y, area.r, teamID)
+    elseif area.category == "rectangle" then
+      areaUnits = Spring.GetUnitsInRectangle(area.x, area.y, area.x + area.width, area.y + area.height, teamID)
+    else
+      error "area category not supported"
+    end
+    for _, unitID in ipairs(areaUnits) do
+      regionUnits[unitID] = true
+    end
+  end
+  return regionUnits
+end
+
+
 local function FindUnitsInGroup(searchGroup)
   local results = {}
-  if StartsWith(searchGroup, "Latest Factory Built Unit (") then
+  if StartsWith(searchGroup, "Units in ") then
+    for _, region in ipairs(mission.regions) do
+      for playerIndex, playerName in ipairs(mission.players) do
+        if searchGroup == string.format("Units in %s (%s)", region.name, playerName) then
+          local _, _, _, teamID = Spring.GetPlayerInfo(playerIndex - 1)
+          return GetUnitsInRegion(region, teamID)          
+        end
+      end
+    end
+  elseif StartsWith(searchGroup, "Latest Factory Built Unit (") then
     for playerIndex, player in ipairs(mission.players) do
       if searchGroup == "Latest Factory Built Unit ("..player..")" then
         local _, _, _, teamID = Spring.GetPlayerInfo(playerIndex - 1)
@@ -185,7 +213,9 @@ local function FindUnitsInGroup(searchGroup)
         end
       end
     end
+    return results
   end
+  -- static group
   for unitID, groups in pairs(unitGroups) do
     if groups[searchGroup] then
       results[unitID] = true

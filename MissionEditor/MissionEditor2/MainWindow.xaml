@@ -8,6 +8,7 @@
         <local:LogicTemplateSelector x:Key="logicTemplateSelector" />
         <local:CsvConverter x:Key="csvConverter" />
         <local:LogicGroupHeaderSelector x:Key="logicGroupHeaderSelector" />
+        <local:MissionItemsConverter x:Key="missionItemsConverter" />
         <BooleanToVisibilityConverter x:Key="visibilityConverter" />
 
         <Style TargetType="GroupBox">
@@ -287,7 +288,7 @@
             <ad:ResizingPanel>
                 <ad:DockablePane>
                     <ad:DockableContent Title="Triggers" DockableStyle="Dockable">
-                        <TreeView x:Name="logicGrid" DockPanel.Dock="Left" ItemsSource="{Binding Mission.Triggers}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <TreeView x:Name="logicGrid" DockPanel.Dock="Left" ItemsSource="{Binding Mission.Items}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <TreeView.Style>
                                 <Style>
                                     <Style.Resources>
@@ -301,22 +302,12 @@
                             <TreeView.Resources>
                                 <Style TargetType="TreeViewItem">
                                     <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay, FallbackValue=true}" />
-                                    <!--<Style.Triggers>
-                                        <Trigger Property="IsSelected" Value="true">
-                                            <Setter Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect />
-                                                </Setter.Value>
-                                            </Setter>
-                                        </Trigger>
-                                    </Style.Triggers>-->
                                 </Style>
                                 <local:TriggerConverter x:Key="triggerConverter" />
                                 <HierarchicalDataTemplate ItemsSource="{Binding Converter={StaticResource triggerConverter}}" DataType="{x:Type CMissionLib:Trigger}">
                                     <Border Background="SteelBlue" Margin="3,5,-5,3" CornerRadius="5" Padding="3,3,7,3" Loaded="trigger_Loaded" Width="1000">
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" />
-                                            <!--<Ellipse Opacity="0.5" Fill="Red" Height="7" Width="7" Margin="5, 0, 0, 0" Visibility="{Binding Enabled, Converter={StaticResource visibilityConverter}}" />-->
+                                            <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" />                                           
                                         </StackPanel>
                                     </Border>
                                 </HierarchicalDataTemplate>
@@ -338,6 +329,11 @@
                                 <DataTemplate DataType="{x:Type CMissionLib:Action}">
                                     <Border Background="Pink" Margin="1,0,-5,1" CornerRadius="5" Padding="3,1,6,1" Loaded="action_Loaded" Width="1000">
                                         <TextBlock Text="{Binding Name}" Foreground="Black" VerticalAlignment="Center" />
+                                    </Border>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type CMissionLib:Region}">
+                                    <Border Background="Green" Margin="3,5,-5,3" Padding="3,1,6,1" CornerRadius="5" Loaded="region_Loaded" Width="1000">
+                                        <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center" />
                                     </Border>
                                 </DataTemplate>
                             </TreeView.Resources>

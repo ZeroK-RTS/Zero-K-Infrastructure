@@ -127,6 +127,7 @@
     <Compile Include="GiveOrdersPane.xaml.cs">
       <DependentUpon>GiveOrdersPane.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MissionItemsConverter.cs" />
     <Compile Include="ModifyScoreControl.xaml.cs">
       <DependentUpon>ModifyScoreControl.xaml</DependentUpon>
     </Compile>
@@ -140,6 +141,9 @@
     <Compile Include="PublishDialog.xaml.cs" />
     <Compile Include="Publishing.cs" />
     <Compile Include="RectangleDragInfo.xaml.cs" />
+    <Compile Include="RegionControl.xaml.cs">
+      <DependentUpon>RegionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RegionWindow.xaml.cs">
       <DependentUpon>RegionWindow.xaml</DependentUpon>
     </Compile>
@@ -280,6 +284,10 @@
     <Page Include="PublishDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="RegionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="RegionWindow.xaml">
       <SubType>Designer</SubType>

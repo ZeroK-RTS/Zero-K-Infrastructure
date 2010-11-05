@@ -82,6 +82,7 @@
     <Compile Include="Actions\UnlockUnitsAction.cs" />
     <Compile Include="Actions\WaitAction.cs" />
     <Compile Include="Area.cs" />
+    <Compile Include="CompositeObservableCollection.cs" />
     <Compile Include="Condition.cs" />
     <Compile Include="Conditions\CountdownTickCondition.cs" />
     <Compile Include="Actions\ConsoleMessageAction.cs" />

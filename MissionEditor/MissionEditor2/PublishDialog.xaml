@@ -1,5 +1,5 @@
 ﻿<Window x:Class="MissionEditor2.PublishDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Publish Mission" SizeToContent="Height" Width="300" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen">
+        Title="Publish Mission" SizeToContent="Height" Width="400" WindowStyle="ToolWindow" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -12,21 +12,26 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0">Name</Label>
         <Label Grid.Row="1">Spring Account</Label>
         <Label Grid.Row="2">Password</Label>
-        <Label Grid.Row="3" Visibility="Collapsed">I accept the terms of service</Label>
+        <Label Grid.Row="3">Rapid Tag (optional)</Label>
+        <TextBox Grid.Row="3" Grid.Column="1" Margin="2" Text="{Binding RapidTag}" />
+        <TextBlock Grid.Row="6"></TextBlock>
         <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="2" />
         <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Author}" Margin="2" />
         <PasswordBox Grid.Column="1" Grid.Row="2" Name="PasswordBox" x:FieldModifier="public" Margin="2" />
-        <CheckBox x:Name="termsBox" Visibility="Collapsed" Grid.Column="1" Grid.Row="3" VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <TextBlock Grid.Row="5" TextWrapping="WrapWithOverflow">
-      This will publish the mission <LineBreak /> to the Zero-K repository.
-        </TextBlock>
+        <CheckBox x:Name="termsBox" Grid.Column="0" Grid.ColumnSpan="2" Margin="3" Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Center">I release the mission under a
+            GPL-compatible license.</CheckBox>
+    	<TextBlock Grid.Row="5" Grid.ColumnSpan="2" TextWrapping="WrapWithOverflow">
+      This will publish the mission to the Zero-K repository. <LineBreak />
+       </TextBlock>
         <Button Grid.Row="4" Grid.ColumnSpan="2" Margin="2" Click="MissionSettingsButton_Click">Open Mission Settings</Button>
-        <UniformGrid Grid.ColumnSpan="2" Grid.Row="5" HorizontalAlignment="Right" Rows="1">
-            <Button Name="OKButton" x:FieldModifier="public" Margin="2">OK</Button>
+        <UniformGrid Grid.ColumnSpan="2" Grid.Row="7" HorizontalAlignment="Right" Rows="1">
+            <Button Name="OKButton" x:FieldModifier="public" Margin="2" IsEnabled="{Binding IsChecked, ElementName=termsBox}">OK</Button>
             <Button Margin="2" IsCancel="True">Cancel</Button>
         </UniformGrid>
     </Grid>

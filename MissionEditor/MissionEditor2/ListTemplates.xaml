@@ -21,6 +21,10 @@
                 </GroupBox>
             </Grid>
         </DataTemplate>
+        
+        <DataTemplate x:Key="Region">
+            <local:RegionControl />
+        </DataTemplate>
 
 
         <DataTemplate x:Key="EnableTriggersAction">

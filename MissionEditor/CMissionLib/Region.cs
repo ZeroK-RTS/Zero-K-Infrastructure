@@ -34,6 +34,16 @@ namespace CMissionLib
 				RaisePropertyChanged("Name");
 			}
 		}
+
+		public LuaTable GetLuaTable(Mission mission)
+		{
+			var map = new Dictionary<object, object>
+				{
+					{"areas", LuaTable.CreateArray(areas.Select(a => a.GetLuaMap(mission)))},
+					{"name", Name},
+				};
+			return new LuaTable(map);
+		}
 	}
 
 
