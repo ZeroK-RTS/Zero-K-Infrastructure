@@ -236,7 +236,9 @@ namespace LobbyClient
 						                    (userStatus.TeamColor & 255)/255.0,
 						                    ((userStatus.TeamColor >> 8) & 255)/255.0,
 						                    ((userStatus.TeamColor >> 16) & 255)/255.0);
-						script.AppendFormat("     Side={0};\n", mod.Sides[userStatus.Side]);
+						string side = "mission";
+						if (mod.Sides.Length > userStatus.Side) side = mod.Sides[userStatus.Side];
+						script.AppendFormat("     Side={0};\n", side);
 
 						script.AppendFormat("     Handicap={0};\n", 0);
 						StartPos? pos = null;

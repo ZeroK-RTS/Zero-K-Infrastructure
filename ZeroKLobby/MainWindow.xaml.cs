@@ -33,12 +33,12 @@ namespace ZeroKLobby
 
 		bool closeForReal;
 		readonly WindowInteropHelper interopHelper;
+		readonly FileSystemWatcher ipcFileWatcher;
 		WindowState lastState = WindowState.Normal;
 
 		readonly NotifyIcon systrayIcon;
 		readonly DispatcherTimer timer1 = new DispatcherTimer();
 		readonly ContextMenuStrip trayStrip;
-		FileSystemWatcher ipcFileWatcher;
 		public ChatTab ChatTab { get { return navigationControl.ChatTab; } }
 		public IntPtr Handle { get { return interopHelper.Handle; } }
 		public static MainWindow Instance { get; private set; }
@@ -76,7 +76,7 @@ namespace ZeroKLobby
 			systrayIcon.MouseDoubleClick += systrayIcon_MouseDoubleClick;
 			systrayIcon.MouseDown += systrayIcon_MouseDown;
 			systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
-			
+
 			ipcFileWatcher = new FileSystemWatcher(Program.SpringPaths.WritableDirectory, Config.IpcFileName);
 
 			if (Program.Downloader != null)
@@ -147,10 +147,13 @@ namespace ZeroKLobby
 			var isHidden = WindowState == WindowState.Minimized || IsVisible == false || WindowsApi.GetForegroundWindow() != (int)interopHelper.Handle;
 			var isPathDifferent = navigationControl.Path != navigationPath;
 
-			if (isHidden || isPathDifferent) if (!string.IsNullOrEmpty(message))
+			if (isHidden || isPathDifferent)
 			{
-				baloonTipPath = navigationPath;
-				systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+				if (!string.IsNullOrEmpty(message))
+				{
+					baloonTipPath = navigationPath;
+					systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+				}
 			}
 			if (isHidden && useFlashing) FlashWindow();
 			if (isPathDifferent) navigationControl.HilitePath(navigationPath, useFlashing ? HiliteLevel.Flash : HiliteLevel.Bold);
@@ -274,35 +277,32 @@ namespace ZeroKLobby
 
 			Program.SpringScanner.Start();
 
-			/*			// Bind Key  
-			InputBinding ib = new InputBinding(MyAppCommands.SaveAll,
-					new KeyGesture(Key.S, ModifierKeys.Shift | ModifierKeys.Control));
-			this.InputBindings.Add(ib);
-			// Bind handler
-			CommandBinding cb = new CommandBinding(MyAppCommands.SaveAll);
-			cb.Executed += new ExecutedRoutedEventHandler(HandlerThatSavesEverthing);
-			this.CommandBindings.Add(cb);*/
 
 			if (Program.Conf.StartMinimized) WindowState = WindowState.Minimized;
 			else WindowState = Program.Conf.LastWindowState;
 
 			ipcFileWatcher.Changed += (s, ex) =>
-			{
-				try
 				{
-					InvokeFunc(() => navigationControl.Path = File.ReadAllLines(ex.FullPath).First());
-					ipcFileWatcher.EnableRaisingEvents = false;
 					try
 					{
-						File.Delete(ex.FullPath);
+						InvokeFunc(() =>
+							{
+								navigationControl.Path = File.ReadAllLines(ex.FullPath).First();
+								PopupSelf();
+							});
+						ipcFileWatcher.EnableRaisingEvents = false;
+						try
+						{
+							File.Delete(ex.FullPath);
+						}
+						catch {}
+						ipcFileWatcher.EnableRaisingEvents = true;
 					}
-					catch {}
-					ipcFileWatcher.EnableRaisingEvents = true;
-				} catch (Exception x)
-				{
-					Trace.TraceError("Error watching ipc file: {0}", x);
-				}
-			};
+					catch (Exception x)
+					{
+						Trace.TraceError("Error watching ipc file: {0}", x);
+					}
+				};
 			ipcFileWatcher.EnableRaisingEvents = true;
 			if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
 		}
@@ -324,7 +324,6 @@ namespace ZeroKLobby
 			navigationControl.Path = baloonTipPath;
 			PopupSelf();
 		}
-
 
 
 		void systrayIcon_Click(object sender, EventArgs e)

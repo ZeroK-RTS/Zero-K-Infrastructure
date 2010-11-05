@@ -9,6 +9,7 @@ using Springie.autohost;
 using Timer = System.Timers.Timer;
 
 #endregion
+using System.Linq;
 
 namespace Springie.AutoHostNamespace
 {
@@ -53,6 +54,12 @@ namespace Springie.AutoHostNamespace
 			if (teams < 1) allyCount = 1;
 			if (teams > max) allyCount = max;
 			if (min == max && allyCount == 2 && min%2 == 1) allyCount = min; // this means its ffa game with unset ally count (probably)
+			if (ah.hostedMod.IsMission)
+			{
+				from = ah.hostedMod.MissionSlots.Count(x => x.IsHuman && x.IsRequired);
+				to = ah.hostedMod.MissionSlots.Count(x => x.IsHuman);
+				allyCount = ah.hostedMod.MissionSlots.Where(x => x.IsHuman).GroupBy(x => x.AllyID).Count();
+			}
 			timer.Start();
 			if (min == 0) ah.Respond(e, "managing disabled");
 			else ah.Respond(e, "auto managing for " + from + " to " + to + " players and " + allyCount + " teams");

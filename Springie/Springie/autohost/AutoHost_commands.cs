@@ -47,9 +47,38 @@ namespace Springie.autohost
 		{
 			try
 			{
-				var ranker = new List<UsRank>();
 				var b = tas.MyBattle;
+				
+				if (hostedMod.IsMission)
+				{
+					var freeSlots = GetFreeSlots();
+					foreach (var u in b.Users.Where(x => !x.IsSpectator && !tas.IsTeamSpec(x.Side)))
+					{
+						var curSlot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
+						if (curSlot != null && curSlot.IsRequired)
+						{
+							if (u.TeamColor != curSlot.Color) tas.ForceColor(u.Name, curSlot.Color);
+						}
+						else
+						{
+							var slot = freeSlots.FirstOrDefault();
+							if (slot == null) tas.ForceSpectator(u.Name);
+							else if (slot.IsRequired || curSlot == null)
+							{
+								tas.ForceAlly(u.Name, slot.AllyID);
+								tas.ForceTeam(u.Name, slot.TeamID);
+								tas.ForceColor(u.Name, slot.Color);
+								freeSlots = freeSlots.Skip(1);
+							}
+						}
+					}
+				
+					// remove extra bots 
+					foreach (var bot in b.Bots.Where(x=>x.owner != tas.UserName)) tas.RemoveBot(bot.Name);
+					return;
+				}
 
+				var ranker = new List<UsRank>();
 				foreach (var u in b.Users)
 				{
 					if (!u.IsSpectator && !tas.IsTeamSpec(u.Side))
@@ -201,6 +230,19 @@ namespace Springie.autohost
 
 		public bool BalancedTeams(out int allyno, out int alliances)
 		{
+			if (hostedMod.IsMission)
+			{
+				var slot = GetFreeSlots().FirstOrDefault();
+				alliances = 0;
+				allyno = 0;
+				if (slot == null || !slot.IsRequired) return true;
+				else
+				{
+					allyno = slot.AllyID;
+					return false;
+				}
+			}
+
 			var counts = new int[16];
 			allyno = 0;
 
@@ -434,9 +476,17 @@ namespace Springie.autohost
 
 		public void ComFixColors(TasSayEventArgs e, string[] words)
 		{
-			var cols = new List<MyCol>();
-			var b = tas.MyBattle;
 
+			var cols = new List<MyCol>();
+
+
+			if (hostedMod.IsMission)
+			{
+				ForceMissionColors();
+				return;
+			}
+
+			var b = tas.MyBattle;
 			foreach (var u in b.Users) if (!u.IsSpectator) cols.Add((MyCol)u.TeamColor);
 			var arcols = cols.ToArray();
 
@@ -457,6 +507,15 @@ namespace Springie.autohost
 				}
 			}
 			if (changed) SayBattle("colors fixed");
+		}
+
+		void ForceMissionColors() {
+			var b = tas.MyBattle;
+			foreach (var u in b.Users.Where(x => !x.IsSpectator))
+			{
+				var slot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
+				if (slot != null) tas.ForceColor(u.Name, slot.Color);
+			}
 		}
 
 		public void ComForce(TasSayEventArgs e, string[] words)
@@ -598,12 +657,11 @@ namespace Springie.autohost
 			{
 				if (oldg != null)
 				{
-
 					var t1entries = oldg.Select(x => Program.main.SpringieServer.GetEloEntry(x.Name));
 					var t1elo = t1entries.Sum(x => x.Elo*x.W)/t1entries.Sum(x => x.W);
 
 					var t2entries = g.Select(x => Program.main.SpringieServer.GetEloEntry(x.Name));
-					var t2elo = t2entries.Sum(x => x.Elo * x.W) / t2entries.Sum(x => x.W);
+					var t2elo = t2entries.Sum(x => x.Elo*x.W)/t2entries.Sum(x => x.W);
 					Respond(e, string.Format("team {0} has {1}% chance to win over team {2}", oldg.Key + 1, GetWinChancePercent(t1elo, t2elo), g.Key + 1));
 				}
 				oldg = g;
@@ -866,6 +924,12 @@ namespace Springie.autohost
 
 		public void ComTeamColors(TasSayEventArgs e, string[] words)
 		{
+			if (hostedMod.IsMission)
+			{
+				ForceMissionColors();
+				return;
+			}
+
 			var players = tas.MyBattle.Users.Where(u => !u.IsSpectator).ToArray();
 			var alliances = players.GroupBy(u => u.AllyNumber).ToArray();
 			var teamCounts = alliances.Select(g => g.Count()).ToArray();

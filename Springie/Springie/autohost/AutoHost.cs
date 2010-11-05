@@ -12,6 +12,7 @@ using System.Timers;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.UnitSyncLib;
 using Springie.AutoHostNamespace;
 using Springie.PlanetWars;
 using Springie.SpringNamespace;
@@ -402,6 +403,8 @@ namespace Springie.autohost
 			if (spring.IsRunning && ingame) spring.SayGame(text);
 		}
 
+		public Mod hostedMod;
+
 		public void Start(string modname, string mapname)
 		{
 			Stop();
@@ -441,6 +444,7 @@ namespace Springie.autohost
 			int mint, maxt;
 			var mapi = wrapper.GetMapInfo(mapname);
 			var modi = wrapper.GetModInfo(modname);
+			hostedMod = modi;
 			var b = new Battle(password,
 			                   hostingPort,
 			                   config.MaxPlayers,
@@ -671,6 +675,32 @@ namespace Springie.autohost
 		{
 			tas.DisableUnits(config.DisabledUnits.Select(x => x.Name).ToArray());
 			tas.ChangeMyBattleStatus(true, false, SyncStatuses.Synced);
+			if (hostedMod.IsMission)
+			{
+				foreach (var slot in hostedMod.MissionSlots.Where(x=>!x.IsHuman))
+				{
+					var ubs = new UserBattleStatus();
+					ubs.SyncStatus= SyncStatuses.Synced;
+					ubs.TeamColor = slot.Color;
+					ubs.AllyNumber = slot.AllyID;
+					ubs.TeamNumber = slot.TeamID;
+					ubs.IsReady = true;
+					ubs.IsSpectator = false;
+					ubs.Name = slot.AiShortName;
+					tas.AddBot(slot.TeamName, ubs, slot.Color, slot.AiShortName);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets free slots, first mandatory then optional
+		/// </summary>
+		/// <returns></returns>
+		private IEnumerable<MissionSlot> GetFreeSlots()
+		{
+			var b = tas.MyBattle;
+			return hostedMod.MissionSlots.Where(x => x.IsHuman).OrderByDescending(x => x.IsRequired).Where(
+				x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
 		}
 
 
@@ -700,10 +730,23 @@ namespace Springie.autohost
 				SayBattle("If you say !notify, I will PM you when game ends.", false);
 			}
 
+			if (hostedMod.IsMission)
+			{
+				var slot = GetFreeSlots().FirstOrDefault();
+				if (slot != null)
+				{
+					tas.ForceAlly(name, slot.AllyID);
+					tas.ForceTeam(name, slot.TeamID);
+				} else tas.ForceSpectator(name);
+			}
+
+
 			HandleKickSpecServerLocking();
 			HandleAutoLocking();
 			HandleMinRankKicking();
 
+
+			
 			if (minCpuSpeed > 0)
 			{
 				User u;

@@ -131,7 +131,7 @@ namespace Springie.SpringNamespace
 			lock (locker)
 			{
 				var mi = modList[name];
-				if (mi.Sides == null)
+				if (mi.Sides == null && !mi.IsMission)
 				{
 					var url = "";
 					try

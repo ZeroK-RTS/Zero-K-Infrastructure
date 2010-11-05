@@ -81,7 +81,7 @@ namespace ZeroKWeb
 			if (map == null) throw new ApplicationException("Map name is unknown");
 			var mod = db.Resources.SingleOrDefault(x => x.InternalName == mission.Mod && x.TypeID == ZkData.ResourceType.Mod);
 			if (mod == null) throw new ApplicationException("Mod name is unknown");
-			if (db.Resources.Any(x=>x.InternalName == mission.Name && x.MissionID != mission.MissionID)) throw new ApplicationException("Name already taken by other mod/map");
+			if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != mission.MissionID)) throw new ApplicationException("Name already taken by other mod/map");
 
 			var prev = new ZkDataContext().Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
 
@@ -126,7 +126,8 @@ namespace ZeroKWeb
 			              	Desctiption = mission.Description,
 			              	Dependencies = new[] { mod.InternalName },
 			              	MissionScript = mission.Script,
-			              	MissionSlots = slots
+			              	MissionSlots = slots,
+			              	Sides = new string[] { "mission" }
 			              };
 
 			// generate torrent
@@ -154,7 +155,7 @@ namespace ZeroKWeb
 
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}_{1}.torrent", mission.Name.EscapePath(), md5), torrentStream.ToArray());
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}.metadata.xml.gz", mission.Name.EscapePath()),
-			MetaDataCache.SerializeAndCompressMetaData(modInfo));
+			                   MetaDataCache.SerializeAndCompressMetaData(modInfo));
 
 			db.SubmitChanges();
 		}
