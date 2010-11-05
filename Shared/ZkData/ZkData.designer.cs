@@ -2191,6 +2191,10 @@ namespace ZkData
 		
 		private int _MaxHumans;
 		
+		private bool _IsScriptMission;
+		
+		private int _MissionRunCount;
+		
 		private EntityRef<Resource> _Resources;
 		
 		private EntitySet<MissionScore> _MissionScores;
@@ -2247,6 +2251,10 @@ namespace ZkData
     partial void OnMinHumansChanged();
     partial void OnMaxHumansChanging(int value);
     partial void OnMaxHumansChanged();
+    partial void OnIsScriptMissionChanging(bool value);
+    partial void OnIsScriptMissionChanged();
+    partial void OnMissionRunCountChanging(int value);
+    partial void OnMissionRunCountChanged();
     #endregion
 		
 		public Mission()
@@ -2720,8 +2728,50 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsScriptMission", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
+		public bool IsScriptMission
+		{
+			get
+			{
+				return this._IsScriptMission;
+			}
+			set
+			{
+				if ((this._IsScriptMission != value))
+				{
+					this.OnIsScriptMissionChanging(value);
+					this.SendPropertyChanging();
+					this._IsScriptMission = value;
+					this.SendPropertyChanged("IsScriptMission");
+					this.OnIsScriptMissionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionRunCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
+		public int MissionRunCount
+		{
+			get
+			{
+				return this._MissionRunCount;
+			}
+			set
+			{
+				if ((this._MissionRunCount != value))
+				{
+					this.OnMissionRunCountChanging(value);
+					this.SendPropertyChanging();
+					this._MissionRunCount = value;
+					this.SendPropertyChanged("MissionRunCount");
+					this.OnMissionRunCountChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
 		public Resource Resources
 		{
 			get
@@ -2756,7 +2806,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionScore", Storage="_MissionScores", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -4569,6 +4619,8 @@ namespace ZkData
 		
 		private int _LobbyTimeRank;
 		
+		private int _MissionRunCount;
+		
 		private EntitySet<Mission> _Missions;
 		
 		private EntitySet<LobbyMessage> _LobbyMessagesBySourceAccountID;
@@ -4607,6 +4659,8 @@ namespace ZkData
     partial void OnCountryChanged();
     partial void OnLobbyTimeRankChanging(int value);
     partial void OnLobbyTimeRankChanged();
+    partial void OnMissionRunCountChanging(int value);
+    partial void OnMissionRunCountChanged();
     #endregion
 		
 		public Account()
@@ -4866,8 +4920,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionRunCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public int MissionRunCount
+		{
+			get
+			{
+				return this._MissionRunCount;
+			}
+			set
+			{
+				if ((this._MissionRunCount != value))
+				{
+					this.OnMissionRunCountChanging(value);
+					this.SendPropertyChanging();
+					this._MissionRunCount = value;
+					this.SendPropertyChanged("MissionRunCount");
+					this.OnMissionRunCountChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Mission", Storage="_Missions", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<Mission> Missions
 		{
 			get
@@ -4886,7 +4961,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage", Storage="_LobbyMessagesBySourceAccountID", ThisKey="AccountID", OtherKey="SourceAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<LobbyMessage> LobbyMessagesBySourceAccountID
 		{
 			get
@@ -4905,7 +4980,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage1", Storage="_LobbyMessagesByTargetAccountID", ThisKey="AccountID", OtherKey="TargetAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<LobbyMessage> LobbyMessagesByTargetAccountID
 		{
 			get
@@ -4924,7 +4999,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MissionScore", Storage="_MissionScores", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get

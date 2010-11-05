@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Transactions;
 using System.Web.Services;
 using ZkData;
 
@@ -16,6 +17,22 @@ namespace ZeroKWeb
 		// [System.Web.Script.Services.ScriptService]
 	public class ContentService: WebService
 	{
+		[WebMethod]
+		public void NotifyMissionRun(string login, string missionName)
+		{
+			using (var db = new ZkDataContext())
+			{
+				using (var scope = new TransactionScope())
+				{
+					db.Missions.Single(x => x.Name == missionName).MissionRunCount++;
+					db.Accounts.Single(x => x.Name == login).MissionRunCount++;
+					db.SubmitChanges();
+					scope.Complete();
+				}
+			}
+
+		}
+		
 		[WebMethod]
 		public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds)
 		{

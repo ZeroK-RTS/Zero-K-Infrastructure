@@ -165,6 +165,8 @@
       <Column Name="ModRapidTag" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="MinHumans" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="MaxHumans" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="IsScriptMission" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
       <Association Name="Mission_MissionScore" Member="MissionScores" ThisKey="MissionID" OtherKey="MissionID" Type="MissionScore" />
       <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
@@ -310,6 +312,7 @@
       <Column Name="Password" Type="System.String" DbType="varchar(100) NOT NULL" CanBeNull="false" />
       <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" />
       <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
