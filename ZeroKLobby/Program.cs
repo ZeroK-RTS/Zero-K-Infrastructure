@@ -271,7 +271,7 @@ namespace ZeroKLobby
 			if (ConfigDirectory == null)
 			{
 				//detect configuration path once
-				if (ApplicationDeployment.IsNetworkDeployed)
+				if (ApplicationDeployment.IsNetworkDeployed || (StartupArgs != null && StartupArgs.Length > 0))
 				{
 					// clickonce data folder
 					ConfigDirectory = ApplicationDeployment.CurrentDeployment.DataDirectory;
