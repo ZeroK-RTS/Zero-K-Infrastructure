@@ -11,7 +11,6 @@ namespace ZeroKLobby
 	{
 		public static void HandleException(Exception e, bool isCrash)
 		{
-			if (isCrash) Program.IsCrash = true;
 			HandleException((isCrash ? "FATAL: " : "") + e, isCrash);
 		}
 

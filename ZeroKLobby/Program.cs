@@ -38,7 +38,6 @@ namespace ZeroKLobby
 		public static bool FirstRun { get; private set; }
 		public static MainWindow MainWindow { get; private set; }
 		public static FriendManager FriendManager;
-		public static bool IsCrash;
 		public static ModStore ModStore { get; private set; }
 		public static NewSpringBar NewSpringBar { get; private set; }
 		public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
@@ -196,8 +195,7 @@ namespace ZeroKLobby
 			if (ToolTip != null) ToolTip.Dispose();
 			if (Downloader != null) Downloader.Dispose();
 			if (SpringScanner!=null) SpringScanner.Dispose();
-			//Thread.Sleep(5000);
-			if (IsCrash) Application.Restart();
+			Thread.Sleep(5000);
 		}
 		/// <summary>
 		/// windows only: do we have admin token?

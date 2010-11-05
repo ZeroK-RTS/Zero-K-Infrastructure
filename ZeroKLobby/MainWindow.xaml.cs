@@ -315,7 +315,6 @@ namespace ZeroKLobby
 
 		void btnExit_Click(object sender, EventArgs e)
 		{
-			Program.IsCrash = false;
 			Exit();
 		}
 
