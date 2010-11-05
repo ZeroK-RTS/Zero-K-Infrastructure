@@ -60,7 +60,6 @@ namespace ZeroKLobby
 			Utils.RegisterProtocol();
 
 			StartupArgs = args;
-			if (args.Length > 0) MessageBox.Show(args[0]);
 			Trace.Listeners.Add(new ConsoleTraceListener());
 			Trace.Listeners.Add(new LogTraceListener());
 
@@ -103,7 +102,6 @@ namespace ZeroKLobby
 						mutex = new Mutex(false, "ZeroKLobby" + Conf.ManualSpringPath.GetHashCode());
 						if (!mutex.WaitOne(200, false))
 						{
-							MessageBox.Show("mutex fail");
 							if (args.Length > 0)
 							{
 								File.WriteAllLines(Utils.MakePath(SpringPaths.WritableDirectory, Config.IpcFileName), args);
@@ -122,7 +120,6 @@ namespace ZeroKLobby
 					}
 				}
 				catch (AbandonedMutexException) {}
-				MessageBox.Show("no mutex?");
 
 				FriendManager = new FriendManager();
 				AutoJoinManager = new AutoJoinManager();
