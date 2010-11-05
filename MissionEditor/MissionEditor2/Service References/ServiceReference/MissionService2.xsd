@@ -28,6 +28,7 @@
       <xs:element minOccurs="0" name="MaxHumans" type="xs:int" />
       <xs:element minOccurs="0" name="IsScriptMission" type="xs:boolean" />
       <xs:element minOccurs="0" name="MissionRunCount" type="xs:int" />
+      <xs:element minOccurs="0" name="IsDeleted" type="xs:boolean" />
       <xs:element minOccurs="0" name="Resources" nillable="true" type="tns:Resource">
         <xs:annotation>
           <xs:appinfo>

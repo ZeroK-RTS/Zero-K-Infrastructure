@@ -13,6 +13,7 @@ using MissionEditor2.Properties;
 using MissionEditor2.ServiceReference;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
+using Binary = System.Data.Linq.Binary;
 using Mission = CMissionLib.Mission;
 using UnitSync = CMissionLib.UnitSyncLib.UnitSync;
 
@@ -68,15 +69,35 @@ namespace MissionEditor2
 
 				if (missionId.HasValue) info.MissionID = missionId.Value;
 
-				var tempPath = Path.GetTempFileName();
-				mission.CreateArchive(tempPath);
-				info.Mutator = new Binary(File.ReadAllBytes(tempPath));
-				File.Delete(tempPath);
-				using (var client = new MissionServiceClient())
+				string tempPath = null;
+				var missionFileName = "publish_mission_temp.sdz";
+				try
 				{
-					client.SendMission(info, slots, mission.Author, password);
-					MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from the lobby.\r\nPlease make sure it works!");
-					return true;
+					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(Settings.Default.SpringPath))
+					{
+						var writeablePath = unitSync.WritableDataDirectory;
+						tempPath = Path.Combine(writeablePath, missionFileName);
+					}
+					if (File.Exists(tempPath)) File.Delete(tempPath);
+					mission.CreateArchive(tempPath);
+
+					PlasmaShared.UnitSyncLib.Mod mod;
+					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(Settings.Default.SpringPath))
+					{
+						mod = unitSync.GetModFromArchive(missionFileName);
+					}
+					info.Mutator = new Binary(File.ReadAllBytes(tempPath));
+					File.Delete(tempPath);
+					using (var client = new MissionServiceClient())
+					{
+						client.SendMission(info, slots, mission.Author, password, mod);
+						MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from the lobby.\r\nPlease make sure it works!");
+						return true;
+					}
+				} 
+				finally
+				{
+					if (tempPath != null && File.Exists(tempPath)) File.Delete(tempPath);
 				}
 			} 
 			catch(FaultException<ExceptionDetail> e)

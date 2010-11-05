@@ -63,6 +63,7 @@
         <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib" minOccurs="0" name="slots" nillable="true" type="q5:ArrayOfMissionSlot" />
         <xs:element minOccurs="0" name="author" nillable="true" type="xs:string" />
         <xs:element minOccurs="0" name="password" nillable="true" type="xs:string" />
+        <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib" minOccurs="0" name="modInfo" nillable="true" type="q6:Mod" />
       </xs:sequence>
     </xs:complexType>
   </xs:element>

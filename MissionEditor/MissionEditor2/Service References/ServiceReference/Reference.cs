@@ -9,51 +9,2501 @@
 //------------------------------------------------------------------------------
 
 namespace MissionEditor2.ServiceReference {
+    using System.Data;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.IMissionService")]
     public interface IMissionService {
         
+        // CODEGEN: Parameter 'author' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/DeleteMission", ReplyAction="http://tempuri.org/IMissionService/DeleteMissionResponse")]
-        void DeleteMission(int missionID, string author, string password);
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        MissionEditor2.ServiceReference.DeleteMissionResponse DeleteMission(MissionEditor2.ServiceReference.DeleteMissionRequest request);
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/DeleteMission", ReplyAction="http://tempuri.org/IMissionService/DeleteMissionResponse")]
-        System.IAsyncResult BeginDeleteMission(int missionID, string author, string password, System.AsyncCallback callback, object asyncState);
+        System.IAsyncResult BeginDeleteMission(MissionEditor2.ServiceReference.DeleteMissionRequest request, System.AsyncCallback callback, object asyncState);
         
-        void EndDeleteMission(System.IAsyncResult result);
+        MissionEditor2.ServiceReference.DeleteMissionResponse EndDeleteMission(System.IAsyncResult result);
         
+        // CODEGEN: Parameter 'GetMissionResult' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/GetMission", ReplyAction="http://tempuri.org/IMissionService/GetMissionResponse")]
-        ZkData.Mission GetMission(string missionName);
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        MissionEditor2.ServiceReference.GetMissionResponse GetMission(MissionEditor2.ServiceReference.GetMissionRequest request);
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/GetMission", ReplyAction="http://tempuri.org/IMissionService/GetMissionResponse")]
-        System.IAsyncResult BeginGetMission(string missionName, System.AsyncCallback callback, object asyncState);
+        System.IAsyncResult BeginGetMission(MissionEditor2.ServiceReference.GetMissionRequest request, System.AsyncCallback callback, object asyncState);
         
-        ZkData.Mission EndGetMission(System.IAsyncResult result);
+        MissionEditor2.ServiceReference.GetMissionResponse EndGetMission(System.IAsyncResult result);
         
+        // CODEGEN: Parameter 'GetMissionByIDResult' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/GetMissionByID", ReplyAction="http://tempuri.org/IMissionService/GetMissionByIDResponse")]
-        ZkData.Mission GetMissionByID(int missionID);
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        MissionEditor2.ServiceReference.GetMissionByIDResponse GetMissionByID(MissionEditor2.ServiceReference.GetMissionByIDRequest request);
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/GetMissionByID", ReplyAction="http://tempuri.org/IMissionService/GetMissionByIDResponse")]
-        System.IAsyncResult BeginGetMissionByID(int missionID, System.AsyncCallback callback, object asyncState);
+        System.IAsyncResult BeginGetMissionByID(MissionEditor2.ServiceReference.GetMissionByIDRequest request, System.AsyncCallback callback, object asyncState);
         
-        ZkData.Mission EndGetMissionByID(System.IAsyncResult result);
+        MissionEditor2.ServiceReference.GetMissionByIDResponse EndGetMissionByID(System.IAsyncResult result);
         
+        // CODEGEN: Parameter 'ListMissionInfosResult' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlArrayAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/ListMissionInfos", ReplyAction="http://tempuri.org/IMissionService/ListMissionInfosResponse")]
-        System.Collections.Generic.List<ZkData.Mission> ListMissionInfos();
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        MissionEditor2.ServiceReference.ListMissionInfosResponse ListMissionInfos(MissionEditor2.ServiceReference.ListMissionInfosRequest request);
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/ListMissionInfos", ReplyAction="http://tempuri.org/IMissionService/ListMissionInfosResponse")]
-        System.IAsyncResult BeginListMissionInfos(System.AsyncCallback callback, object asyncState);
+        System.IAsyncResult BeginListMissionInfos(MissionEditor2.ServiceReference.ListMissionInfosRequest request, System.AsyncCallback callback, object asyncState);
         
-        System.Collections.Generic.List<ZkData.Mission> EndListMissionInfos(System.IAsyncResult result);
+        MissionEditor2.ServiceReference.ListMissionInfosResponse EndListMissionInfos(System.IAsyncResult result);
         
+        // CODEGEN: Parameter 'mission' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/SendMission", ReplyAction="http://tempuri.org/IMissionService/SendMissionResponse")]
-        void SendMission(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password);
+        [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
+        MissionEditor2.ServiceReference.SendMissionResponse SendMission(MissionEditor2.ServiceReference.SendMissionRequest request);
         
         [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/SendMission", ReplyAction="http://tempuri.org/IMissionService/SendMissionResponse")]
-        System.IAsyncResult BeginSendMission(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password, System.AsyncCallback callback, object asyncState);
+        System.IAsyncResult BeginSendMission(MissionEditor2.ServiceReference.SendMissionRequest request, System.AsyncCallback callback, object asyncState);
         
-        void EndSendMission(System.IAsyncResult result);
+        MissionEditor2.ServiceReference.SendMissionResponse EndSendMission(System.IAsyncResult result);
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="DeleteMission", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class DeleteMissionRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        public int missionID;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=1)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string author;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string password;
+        
+        public DeleteMissionRequest() {
+        }
+        
+        public DeleteMissionRequest(int missionID, string author, string password) {
+            this.missionID = missionID;
+            this.author = author;
+            this.password = password;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="DeleteMissionResponse", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class DeleteMissionResponse {
+        
+        public DeleteMissionResponse() {
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/ZkData")]
+    public partial class Mission : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string authorNameField;
+        
+        private int missionIDField;
+        
+        private bool missionIDFieldSpecified;
+        
+        private string nameField;
+        
+        private string modField;
+        
+        private string mapField;
+        
+        private Binary mutatorField;
+        
+        private Binary imageField;
+        
+        private string descriptionField;
+        
+        private System.DateTime createdTimeField;
+        
+        private bool createdTimeFieldSpecified;
+        
+        private System.DateTime modifiedTimeField;
+        
+        private bool modifiedTimeFieldSpecified;
+        
+        private string scoringMethodField;
+        
+        private string topScoreLineField;
+        
+        private string missionEditorVersionField;
+        
+        private string springVersionField;
+        
+        private int revisionField;
+        
+        private bool revisionFieldSpecified;
+        
+        private string scriptField;
+        
+        private string tokenConditionField;
+        
+        private System.Nullable<int> campaignIDField;
+        
+        private bool campaignIDFieldSpecified;
+        
+        private int accountIDField;
+        
+        private bool accountIDFieldSpecified;
+        
+        private string modOptionsField;
+        
+        private string modRapidTagField;
+        
+        private int minHumansField;
+        
+        private bool minHumansFieldSpecified;
+        
+        private int maxHumansField;
+        
+        private bool maxHumansFieldSpecified;
+        
+        private bool isScriptMissionField;
+        
+        private bool isScriptMissionFieldSpecified;
+        
+        private int missionRunCountField;
+        
+        private bool missionRunCountFieldSpecified;
+        
+        private bool isDeletedField;
+        
+        private bool isDeletedFieldSpecified;
+        
+        private Resource resourcesField;
+        
+        private MissionScore[] missionScoresField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=0)]
+        public string AuthorName {
+            get {
+                return this.authorNameField;
+            }
+            set {
+                this.authorNameField = value;
+                this.RaisePropertyChanged("AuthorName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int MissionID {
+            get {
+                return this.missionIDField;
+            }
+            set {
+                this.missionIDField = value;
+                this.RaisePropertyChanged("MissionID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool MissionIDSpecified {
+            get {
+                return this.missionIDFieldSpecified;
+            }
+            set {
+                this.missionIDFieldSpecified = value;
+                this.RaisePropertyChanged("MissionIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=2)]
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+                this.RaisePropertyChanged("Name");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=3)]
+        public string Mod {
+            get {
+                return this.modField;
+            }
+            set {
+                this.modField = value;
+                this.RaisePropertyChanged("Mod");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=4)]
+        public string Map {
+            get {
+                return this.mapField;
+            }
+            set {
+                this.mapField = value;
+                this.RaisePropertyChanged("Map");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=5)]
+        public Binary Mutator {
+            get {
+                return this.mutatorField;
+            }
+            set {
+                this.mutatorField = value;
+                this.RaisePropertyChanged("Mutator");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=6)]
+        public Binary Image {
+            get {
+                return this.imageField;
+            }
+            set {
+                this.imageField = value;
+                this.RaisePropertyChanged("Image");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=7)]
+        public string Description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
+                this.RaisePropertyChanged("Description");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=8)]
+        public System.DateTime CreatedTime {
+            get {
+                return this.createdTimeField;
+            }
+            set {
+                this.createdTimeField = value;
+                this.RaisePropertyChanged("CreatedTime");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool CreatedTimeSpecified {
+            get {
+                return this.createdTimeFieldSpecified;
+            }
+            set {
+                this.createdTimeFieldSpecified = value;
+                this.RaisePropertyChanged("CreatedTimeSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=9)]
+        public System.DateTime ModifiedTime {
+            get {
+                return this.modifiedTimeField;
+            }
+            set {
+                this.modifiedTimeField = value;
+                this.RaisePropertyChanged("ModifiedTime");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ModifiedTimeSpecified {
+            get {
+                return this.modifiedTimeFieldSpecified;
+            }
+            set {
+                this.modifiedTimeFieldSpecified = value;
+                this.RaisePropertyChanged("ModifiedTimeSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=10)]
+        public string ScoringMethod {
+            get {
+                return this.scoringMethodField;
+            }
+            set {
+                this.scoringMethodField = value;
+                this.RaisePropertyChanged("ScoringMethod");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=11)]
+        public string TopScoreLine {
+            get {
+                return this.topScoreLineField;
+            }
+            set {
+                this.topScoreLineField = value;
+                this.RaisePropertyChanged("TopScoreLine");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=12)]
+        public string MissionEditorVersion {
+            get {
+                return this.missionEditorVersionField;
+            }
+            set {
+                this.missionEditorVersionField = value;
+                this.RaisePropertyChanged("MissionEditorVersion");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=13)]
+        public string SpringVersion {
+            get {
+                return this.springVersionField;
+            }
+            set {
+                this.springVersionField = value;
+                this.RaisePropertyChanged("SpringVersion");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=14)]
+        public int Revision {
+            get {
+                return this.revisionField;
+            }
+            set {
+                this.revisionField = value;
+                this.RaisePropertyChanged("Revision");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool RevisionSpecified {
+            get {
+                return this.revisionFieldSpecified;
+            }
+            set {
+                this.revisionFieldSpecified = value;
+                this.RaisePropertyChanged("RevisionSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=15)]
+        public string Script {
+            get {
+                return this.scriptField;
+            }
+            set {
+                this.scriptField = value;
+                this.RaisePropertyChanged("Script");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=16)]
+        public string TokenCondition {
+            get {
+                return this.tokenConditionField;
+            }
+            set {
+                this.tokenConditionField = value;
+                this.RaisePropertyChanged("TokenCondition");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=17)]
+        public System.Nullable<int> CampaignID {
+            get {
+                return this.campaignIDField;
+            }
+            set {
+                this.campaignIDField = value;
+                this.RaisePropertyChanged("CampaignID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool CampaignIDSpecified {
+            get {
+                return this.campaignIDFieldSpecified;
+            }
+            set {
+                this.campaignIDFieldSpecified = value;
+                this.RaisePropertyChanged("CampaignIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=18)]
+        public int AccountID {
+            get {
+                return this.accountIDField;
+            }
+            set {
+                this.accountIDField = value;
+                this.RaisePropertyChanged("AccountID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool AccountIDSpecified {
+            get {
+                return this.accountIDFieldSpecified;
+            }
+            set {
+                this.accountIDFieldSpecified = value;
+                this.RaisePropertyChanged("AccountIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=19)]
+        public string ModOptions {
+            get {
+                return this.modOptionsField;
+            }
+            set {
+                this.modOptionsField = value;
+                this.RaisePropertyChanged("ModOptions");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=20)]
+        public string ModRapidTag {
+            get {
+                return this.modRapidTagField;
+            }
+            set {
+                this.modRapidTagField = value;
+                this.RaisePropertyChanged("ModRapidTag");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=21)]
+        public int MinHumans {
+            get {
+                return this.minHumansField;
+            }
+            set {
+                this.minHumansField = value;
+                this.RaisePropertyChanged("MinHumans");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool MinHumansSpecified {
+            get {
+                return this.minHumansFieldSpecified;
+            }
+            set {
+                this.minHumansFieldSpecified = value;
+                this.RaisePropertyChanged("MinHumansSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=22)]
+        public int MaxHumans {
+            get {
+                return this.maxHumansField;
+            }
+            set {
+                this.maxHumansField = value;
+                this.RaisePropertyChanged("MaxHumans");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool MaxHumansSpecified {
+            get {
+                return this.maxHumansFieldSpecified;
+            }
+            set {
+                this.maxHumansFieldSpecified = value;
+                this.RaisePropertyChanged("MaxHumansSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=23)]
+        public bool IsScriptMission {
+            get {
+                return this.isScriptMissionField;
+            }
+            set {
+                this.isScriptMissionField = value;
+                this.RaisePropertyChanged("IsScriptMission");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool IsScriptMissionSpecified {
+            get {
+                return this.isScriptMissionFieldSpecified;
+            }
+            set {
+                this.isScriptMissionFieldSpecified = value;
+                this.RaisePropertyChanged("IsScriptMissionSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=24)]
+        public int MissionRunCount {
+            get {
+                return this.missionRunCountField;
+            }
+            set {
+                this.missionRunCountField = value;
+                this.RaisePropertyChanged("MissionRunCount");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool MissionRunCountSpecified {
+            get {
+                return this.missionRunCountFieldSpecified;
+            }
+            set {
+                this.missionRunCountFieldSpecified = value;
+                this.RaisePropertyChanged("MissionRunCountSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=25)]
+        public bool IsDeleted {
+            get {
+                return this.isDeletedField;
+            }
+            set {
+                this.isDeletedField = value;
+                this.RaisePropertyChanged("IsDeleted");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool IsDeletedSpecified {
+            get {
+                return this.isDeletedFieldSpecified;
+            }
+            set {
+                this.isDeletedFieldSpecified = value;
+                this.RaisePropertyChanged("IsDeletedSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=26)]
+        public Resource Resources {
+            get {
+                return this.resourcesField;
+            }
+            set {
+                this.resourcesField = value;
+                this.RaisePropertyChanged("Resources");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true, Order=27)]
+        public MissionScore[] MissionScores {
+            get {
+                return this.missionScoresField;
+            }
+            set {
+                this.missionScoresField = value;
+                this.RaisePropertyChanged("MissionScores");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/System.Data.Linq")]
+    public partial class Binary : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private byte[] bytesField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary", IsNullable=true, Order=0)]
+        public byte[] Bytes {
+            get {
+                return this.bytesField;
+            }
+            set {
+                this.bytesField = value;
+                this.RaisePropertyChanged("Bytes");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib")]
+    public partial class UnitInfo : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string fullNamek__BackingFieldField;
+        
+        private string namek__BackingFieldField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<FullName>k__BackingField", IsNullable=true, Order=0)]
+        public string FullNamek__BackingField {
+            get {
+                return this.fullNamek__BackingFieldField;
+            }
+            set {
+                this.fullNamek__BackingFieldField = value;
+                this.RaisePropertyChanged("FullNamek__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Name>k__BackingField", IsNullable=true, Order=1)]
+        public string Namek__BackingField {
+            get {
+                return this.namek__BackingFieldField;
+            }
+            set {
+                this.namek__BackingFieldField = value;
+                this.RaisePropertyChanged("Namek__BackingField");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib")]
+    public partial class ListOption : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string descriptionField;
+        
+        private string keyField;
+        
+        private string nameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=0)]
+        public string Description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
+                this.RaisePropertyChanged("Description");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
+        public string Key {
+            get {
+                return this.keyField;
+            }
+            set {
+                this.keyField = value;
+                this.RaisePropertyChanged("Key");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=2)]
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+                this.RaisePropertyChanged("Name");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib")]
+    public partial class Option : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string defaultk__BackingFieldField;
+        
+        private string descriptionk__BackingFieldField;
+        
+        private string keyk__BackingFieldField;
+        
+        private string namek__BackingFieldField;
+        
+        private string scopek__BackingFieldField;
+        
+        private string sectionk__BackingFieldField;
+        
+        private float stepk__BackingFieldField;
+        
+        private string stylek__BackingFieldField;
+        
+        private OptionType typek__BackingFieldField;
+        
+        private ListOption[] listOptionsField;
+        
+        private float maxField;
+        
+        private float minField;
+        
+        private float strMaxLenField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Default>k__BackingField", IsNullable=true, Order=0)]
+        public string Defaultk__BackingField {
+            get {
+                return this.defaultk__BackingFieldField;
+            }
+            set {
+                this.defaultk__BackingFieldField = value;
+                this.RaisePropertyChanged("Defaultk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Description>k__BackingField", IsNullable=true, Order=1)]
+        public string Descriptionk__BackingField {
+            get {
+                return this.descriptionk__BackingFieldField;
+            }
+            set {
+                this.descriptionk__BackingFieldField = value;
+                this.RaisePropertyChanged("Descriptionk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Key>k__BackingField", IsNullable=true, Order=2)]
+        public string Keyk__BackingField {
+            get {
+                return this.keyk__BackingFieldField;
+            }
+            set {
+                this.keyk__BackingFieldField = value;
+                this.RaisePropertyChanged("Keyk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Name>k__BackingField", IsNullable=true, Order=3)]
+        public string Namek__BackingField {
+            get {
+                return this.namek__BackingFieldField;
+            }
+            set {
+                this.namek__BackingFieldField = value;
+                this.RaisePropertyChanged("Namek__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Scope>k__BackingField", IsNullable=true, Order=4)]
+        public string Scopek__BackingField {
+            get {
+                return this.scopek__BackingFieldField;
+            }
+            set {
+                this.scopek__BackingFieldField = value;
+                this.RaisePropertyChanged("Scopek__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Section>k__BackingField", IsNullable=true, Order=5)]
+        public string Sectionk__BackingField {
+            get {
+                return this.sectionk__BackingFieldField;
+            }
+            set {
+                this.sectionk__BackingFieldField = value;
+                this.RaisePropertyChanged("Sectionk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Step>k__BackingField", Order=6)]
+        public float Stepk__BackingField {
+            get {
+                return this.stepk__BackingFieldField;
+            }
+            set {
+                this.stepk__BackingFieldField = value;
+                this.RaisePropertyChanged("Stepk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Style>k__BackingField", IsNullable=true, Order=7)]
+        public string Stylek__BackingField {
+            get {
+                return this.stylek__BackingFieldField;
+            }
+            set {
+                this.stylek__BackingFieldField = value;
+                this.RaisePropertyChanged("Stylek__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Type>k__BackingField", Order=8)]
+        public OptionType Typek__BackingField {
+            get {
+                return this.typek__BackingFieldField;
+            }
+            set {
+                this.typek__BackingFieldField = value;
+                this.RaisePropertyChanged("Typek__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true, Order=9)]
+        public ListOption[] listOptions {
+            get {
+                return this.listOptionsField;
+            }
+            set {
+                this.listOptionsField = value;
+                this.RaisePropertyChanged("listOptions");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=10)]
+        public float max {
+            get {
+                return this.maxField;
+            }
+            set {
+                this.maxField = value;
+                this.RaisePropertyChanged("max");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=11)]
+        public float min {
+            get {
+                return this.minField;
+            }
+            set {
+                this.minField = value;
+                this.RaisePropertyChanged("min");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=12)]
+        public float strMaxLen {
+            get {
+                return this.strMaxLenField;
+            }
+            set {
+                this.strMaxLenField = value;
+                this.RaisePropertyChanged("strMaxLen");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib")]
+    public enum OptionType {
+        
+        /// <remarks/>
+        Undefined,
+        
+        /// <remarks/>
+        Bool,
+        
+        /// <remarks/>
+        List,
+        
+        /// <remarks/>
+        Number,
+        
+        /// <remarks/>
+        String,
+        
+        /// <remarks/>
+        Section,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib")]
+    public partial class AiInfoPair : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string descriptionk__BackingFieldField;
+        
+        private string keyk__BackingFieldField;
+        
+        private string valuek__BackingFieldField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Description>k__BackingField", IsNullable=true, Order=0)]
+        public string Descriptionk__BackingField {
+            get {
+                return this.descriptionk__BackingFieldField;
+            }
+            set {
+                this.descriptionk__BackingFieldField = value;
+                this.RaisePropertyChanged("Descriptionk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Key>k__BackingField", IsNullable=true, Order=1)]
+        public string Keyk__BackingField {
+            get {
+                return this.keyk__BackingFieldField;
+            }
+            set {
+                this.keyk__BackingFieldField = value;
+                this.RaisePropertyChanged("Keyk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Value>k__BackingField", IsNullable=true, Order=2)]
+        public string Valuek__BackingField {
+            get {
+                return this.valuek__BackingFieldField;
+            }
+            set {
+                this.valuek__BackingFieldField = value;
+                this.RaisePropertyChanged("Valuek__BackingField");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib")]
+    public partial class Ai : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private AiInfoPair[] infok__BackingFieldField;
+        
+        private Option[] optionsk__BackingFieldField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute("<Info>k__BackingField", IsNullable=true, Order=0)]
+        public AiInfoPair[] Infok__BackingField {
+            get {
+                return this.infok__BackingFieldField;
+            }
+            set {
+                this.infok__BackingFieldField = value;
+                this.RaisePropertyChanged("Infok__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute("<Options>k__BackingField", IsNullable=true, Order=1)]
+        public Option[] Optionsk__BackingField {
+            get {
+                return this.optionsk__BackingFieldField;
+            }
+            set {
+                this.optionsk__BackingFieldField = value;
+                this.RaisePropertyChanged("Optionsk__BackingField");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib")]
+    public partial class Mod : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private MissionSlot[] missionSlotsField;
+        
+        private string archiveNamek__BackingFieldField;
+        
+        private int checksumk__BackingFieldField;
+        
+        private string[] dependenciesk__BackingFieldField;
+        
+        private string desctiptionk__BackingFieldField;
+        
+        private string gamek__BackingFieldField;
+        
+        private string missionScriptk__BackingFieldField;
+        
+        private Ai[] modAisk__BackingFieldField;
+        
+        private string mutatork__BackingFieldField;
+        
+        private Option[] optionsk__BackingFieldField;
+        
+        private string primaryModVersionk__BackingFieldField;
+        
+        private string shortGamek__BackingFieldField;
+        
+        private string shortNamek__BackingFieldField;
+        
+        private byte[][] sideIconsk__BackingFieldField;
+        
+        private string[] sidesk__BackingFieldField;
+        
+        private System.Data.DataSet startUnitsk__BackingFieldField;
+        
+        private UnitInfo[] unitDefsk__BackingFieldField;
+        
+        private string nameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true, Order=0)]
+        public MissionSlot[] MissionSlots {
+            get {
+                return this.missionSlotsField;
+            }
+            set {
+                this.missionSlotsField = value;
+                this.RaisePropertyChanged("MissionSlots");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<ArchiveName>k__BackingField", IsNullable=true, Order=1)]
+        public string ArchiveNamek__BackingField {
+            get {
+                return this.archiveNamek__BackingFieldField;
+            }
+            set {
+                this.archiveNamek__BackingFieldField = value;
+                this.RaisePropertyChanged("ArchiveNamek__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Checksum>k__BackingField", Order=2)]
+        public int Checksumk__BackingField {
+            get {
+                return this.checksumk__BackingFieldField;
+            }
+            set {
+                this.checksumk__BackingFieldField = value;
+                this.RaisePropertyChanged("Checksumk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute("<Dependencies>k__BackingField", IsNullable=true, Order=3)]
+        [System.Xml.Serialization.XmlArrayItemAttribute(Namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays")]
+        public string[] Dependenciesk__BackingField {
+            get {
+                return this.dependenciesk__BackingFieldField;
+            }
+            set {
+                this.dependenciesk__BackingFieldField = value;
+                this.RaisePropertyChanged("Dependenciesk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Desctiption>k__BackingField", IsNullable=true, Order=4)]
+        public string Desctiptionk__BackingField {
+            get {
+                return this.desctiptionk__BackingFieldField;
+            }
+            set {
+                this.desctiptionk__BackingFieldField = value;
+                this.RaisePropertyChanged("Desctiptionk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Game>k__BackingField", IsNullable=true, Order=5)]
+        public string Gamek__BackingField {
+            get {
+                return this.gamek__BackingFieldField;
+            }
+            set {
+                this.gamek__BackingFieldField = value;
+                this.RaisePropertyChanged("Gamek__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<MissionScript>k__BackingField", IsNullable=true, Order=6)]
+        public string MissionScriptk__BackingField {
+            get {
+                return this.missionScriptk__BackingFieldField;
+            }
+            set {
+                this.missionScriptk__BackingFieldField = value;
+                this.RaisePropertyChanged("MissionScriptk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute("<ModAis>k__BackingField", IsNullable=true, Order=7)]
+        public Ai[] ModAisk__BackingField {
+            get {
+                return this.modAisk__BackingFieldField;
+            }
+            set {
+                this.modAisk__BackingFieldField = value;
+                this.RaisePropertyChanged("ModAisk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<Mutator>k__BackingField", IsNullable=true, Order=8)]
+        public string Mutatork__BackingField {
+            get {
+                return this.mutatork__BackingFieldField;
+            }
+            set {
+                this.mutatork__BackingFieldField = value;
+                this.RaisePropertyChanged("Mutatork__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute("<Options>k__BackingField", IsNullable=true, Order=9)]
+        public Option[] Optionsk__BackingField {
+            get {
+                return this.optionsk__BackingFieldField;
+            }
+            set {
+                this.optionsk__BackingFieldField = value;
+                this.RaisePropertyChanged("Optionsk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<PrimaryModVersion>k__BackingField", IsNullable=true, Order=10)]
+        public string PrimaryModVersionk__BackingField {
+            get {
+                return this.primaryModVersionk__BackingFieldField;
+            }
+            set {
+                this.primaryModVersionk__BackingFieldField = value;
+                this.RaisePropertyChanged("PrimaryModVersionk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<ShortGame>k__BackingField", IsNullable=true, Order=11)]
+        public string ShortGamek__BackingField {
+            get {
+                return this.shortGamek__BackingFieldField;
+            }
+            set {
+                this.shortGamek__BackingFieldField = value;
+                this.RaisePropertyChanged("ShortGamek__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<ShortName>k__BackingField", IsNullable=true, Order=12)]
+        public string ShortNamek__BackingField {
+            get {
+                return this.shortNamek__BackingFieldField;
+            }
+            set {
+                this.shortNamek__BackingFieldField = value;
+                this.RaisePropertyChanged("ShortNamek__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute("<SideIcons>k__BackingField", IsNullable=true, Order=13)]
+        [System.Xml.Serialization.XmlArrayItemAttribute(Namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays", DataType="base64Binary")]
+        public byte[][] SideIconsk__BackingField {
+            get {
+                return this.sideIconsk__BackingFieldField;
+            }
+            set {
+                this.sideIconsk__BackingFieldField = value;
+                this.RaisePropertyChanged("SideIconsk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute("<Sides>k__BackingField", IsNullable=true, Order=14)]
+        [System.Xml.Serialization.XmlArrayItemAttribute(Namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays")]
+        public string[] Sidesk__BackingField {
+            get {
+                return this.sidesk__BackingFieldField;
+            }
+            set {
+                this.sidesk__BackingFieldField = value;
+                this.RaisePropertyChanged("Sidesk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("<StartUnits>k__BackingField", IsNullable=true, Order=15)]
+        public System.Data.DataSet StartUnitsk__BackingField {
+            get {
+                return this.startUnitsk__BackingFieldField;
+            }
+            set {
+                this.startUnitsk__BackingFieldField = value;
+                this.RaisePropertyChanged("StartUnitsk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute("<UnitDefs>k__BackingField", IsNullable=true, Order=16)]
+        public UnitInfo[] UnitDefsk__BackingField {
+            get {
+                return this.unitDefsk__BackingFieldField;
+            }
+            set {
+                this.unitDefsk__BackingFieldField = value;
+                this.RaisePropertyChanged("UnitDefsk__BackingField");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=17)]
+        public string name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+                this.RaisePropertyChanged("name");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib")]
+    public partial class MissionSlot : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private string aiShortNameField;
+        
+        private string aiVersionField;
+        
+        private int allyIDField;
+        
+        private bool allyIDFieldSpecified;
+        
+        private string allyNameField;
+        
+        private int colorField;
+        
+        private bool colorFieldSpecified;
+        
+        private bool isHumanField;
+        
+        private bool isHumanFieldSpecified;
+        
+        private bool isRequiredField;
+        
+        private bool isRequiredFieldSpecified;
+        
+        private int teamIDField;
+        
+        private bool teamIDFieldSpecified;
+        
+        private string teamNameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=0)]
+        public string AiShortName {
+            get {
+                return this.aiShortNameField;
+            }
+            set {
+                this.aiShortNameField = value;
+                this.RaisePropertyChanged("AiShortName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
+        public string AiVersion {
+            get {
+                return this.aiVersionField;
+            }
+            set {
+                this.aiVersionField = value;
+                this.RaisePropertyChanged("AiVersion");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public int AllyID {
+            get {
+                return this.allyIDField;
+            }
+            set {
+                this.allyIDField = value;
+                this.RaisePropertyChanged("AllyID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool AllyIDSpecified {
+            get {
+                return this.allyIDFieldSpecified;
+            }
+            set {
+                this.allyIDFieldSpecified = value;
+                this.RaisePropertyChanged("AllyIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=3)]
+        public string AllyName {
+            get {
+                return this.allyNameField;
+            }
+            set {
+                this.allyNameField = value;
+                this.RaisePropertyChanged("AllyName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public int Color {
+            get {
+                return this.colorField;
+            }
+            set {
+                this.colorField = value;
+                this.RaisePropertyChanged("Color");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ColorSpecified {
+            get {
+                return this.colorFieldSpecified;
+            }
+            set {
+                this.colorFieldSpecified = value;
+                this.RaisePropertyChanged("ColorSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public bool IsHuman {
+            get {
+                return this.isHumanField;
+            }
+            set {
+                this.isHumanField = value;
+                this.RaisePropertyChanged("IsHuman");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool IsHumanSpecified {
+            get {
+                return this.isHumanFieldSpecified;
+            }
+            set {
+                this.isHumanFieldSpecified = value;
+                this.RaisePropertyChanged("IsHumanSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=6)]
+        public bool IsRequired {
+            get {
+                return this.isRequiredField;
+            }
+            set {
+                this.isRequiredField = value;
+                this.RaisePropertyChanged("IsRequired");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool IsRequiredSpecified {
+            get {
+                return this.isRequiredFieldSpecified;
+            }
+            set {
+                this.isRequiredFieldSpecified = value;
+                this.RaisePropertyChanged("IsRequiredSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=7)]
+        public int TeamID {
+            get {
+                return this.teamIDField;
+            }
+            set {
+                this.teamIDField = value;
+                this.RaisePropertyChanged("TeamID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TeamIDSpecified {
+            get {
+                return this.teamIDFieldSpecified;
+            }
+            set {
+                this.teamIDFieldSpecified = value;
+                this.RaisePropertyChanged("TeamIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=8)]
+        public string TeamName {
+            get {
+                return this.teamNameField;
+            }
+            set {
+                this.teamNameField = value;
+                this.RaisePropertyChanged("TeamName");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/ZkData")]
+    public partial class MissionScore : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private int missionIDField;
+        
+        private bool missionIDFieldSpecified;
+        
+        private int accountIDField;
+        
+        private bool accountIDFieldSpecified;
+        
+        private int scoreField;
+        
+        private bool scoreFieldSpecified;
+        
+        private System.DateTime timeField;
+        
+        private bool timeFieldSpecified;
+        
+        private int missionRevisionField;
+        
+        private bool missionRevisionFieldSpecified;
+        
+        private int gameSecondsField;
+        
+        private bool gameSecondsFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public int MissionID {
+            get {
+                return this.missionIDField;
+            }
+            set {
+                this.missionIDField = value;
+                this.RaisePropertyChanged("MissionID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool MissionIDSpecified {
+            get {
+                return this.missionIDFieldSpecified;
+            }
+            set {
+                this.missionIDFieldSpecified = value;
+                this.RaisePropertyChanged("MissionIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=1)]
+        public int AccountID {
+            get {
+                return this.accountIDField;
+            }
+            set {
+                this.accountIDField = value;
+                this.RaisePropertyChanged("AccountID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool AccountIDSpecified {
+            get {
+                return this.accountIDFieldSpecified;
+            }
+            set {
+                this.accountIDFieldSpecified = value;
+                this.RaisePropertyChanged("AccountIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public int Score {
+            get {
+                return this.scoreField;
+            }
+            set {
+                this.scoreField = value;
+                this.RaisePropertyChanged("Score");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ScoreSpecified {
+            get {
+                return this.scoreFieldSpecified;
+            }
+            set {
+                this.scoreFieldSpecified = value;
+                this.RaisePropertyChanged("ScoreSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=3)]
+        public System.DateTime Time {
+            get {
+                return this.timeField;
+            }
+            set {
+                this.timeField = value;
+                this.RaisePropertyChanged("Time");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TimeSpecified {
+            get {
+                return this.timeFieldSpecified;
+            }
+            set {
+                this.timeFieldSpecified = value;
+                this.RaisePropertyChanged("TimeSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public int MissionRevision {
+            get {
+                return this.missionRevisionField;
+            }
+            set {
+                this.missionRevisionField = value;
+                this.RaisePropertyChanged("MissionRevision");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool MissionRevisionSpecified {
+            get {
+                return this.missionRevisionFieldSpecified;
+            }
+            set {
+                this.missionRevisionFieldSpecified = value;
+                this.RaisePropertyChanged("MissionRevisionSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public int GameSeconds {
+            get {
+                return this.gameSecondsField;
+            }
+            set {
+                this.gameSecondsField = value;
+                this.RaisePropertyChanged("GameSeconds");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool GameSecondsSpecified {
+            get {
+                return this.gameSecondsFieldSpecified;
+            }
+            set {
+                this.gameSecondsFieldSpecified = value;
+                this.RaisePropertyChanged("GameSecondsSpecified");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/ZkData")]
+    public partial class ResourceSpringHash : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private int resourceIDField;
+        
+        private bool resourceIDFieldSpecified;
+        
+        private string springVersionField;
+        
+        private int springHashField;
+        
+        private bool springHashFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public int ResourceID {
+            get {
+                return this.resourceIDField;
+            }
+            set {
+                this.resourceIDField = value;
+                this.RaisePropertyChanged("ResourceID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ResourceIDSpecified {
+            get {
+                return this.resourceIDFieldSpecified;
+            }
+            set {
+                this.resourceIDFieldSpecified = value;
+                this.RaisePropertyChanged("ResourceIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
+        public string SpringVersion {
+            get {
+                return this.springVersionField;
+            }
+            set {
+                this.springVersionField = value;
+                this.RaisePropertyChanged("SpringVersion");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public int SpringHash {
+            get {
+                return this.springHashField;
+            }
+            set {
+                this.springHashField = value;
+                this.RaisePropertyChanged("SpringHash");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool SpringHashSpecified {
+            get {
+                return this.springHashFieldSpecified;
+            }
+            set {
+                this.springHashFieldSpecified = value;
+                this.RaisePropertyChanged("SpringHashSpecified");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/ZkData")]
+    public partial class ResourceContentFile : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private int resourceIDField;
+        
+        private bool resourceIDFieldSpecified;
+        
+        private string md5Field;
+        
+        private int lengthField;
+        
+        private bool lengthFieldSpecified;
+        
+        private string fileNameField;
+        
+        private string linksField;
+        
+        private int linkCountField;
+        
+        private bool linkCountFieldSpecified;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public int ResourceID {
+            get {
+                return this.resourceIDField;
+            }
+            set {
+                this.resourceIDField = value;
+                this.RaisePropertyChanged("ResourceID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ResourceIDSpecified {
+            get {
+                return this.resourceIDFieldSpecified;
+            }
+            set {
+                this.resourceIDFieldSpecified = value;
+                this.RaisePropertyChanged("ResourceIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
+        public string Md5 {
+            get {
+                return this.md5Field;
+            }
+            set {
+                this.md5Field = value;
+                this.RaisePropertyChanged("Md5");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public int Length {
+            get {
+                return this.lengthField;
+            }
+            set {
+                this.lengthField = value;
+                this.RaisePropertyChanged("Length");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool LengthSpecified {
+            get {
+                return this.lengthFieldSpecified;
+            }
+            set {
+                this.lengthFieldSpecified = value;
+                this.RaisePropertyChanged("LengthSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=3)]
+        public string FileName {
+            get {
+                return this.fileNameField;
+            }
+            set {
+                this.fileNameField = value;
+                this.RaisePropertyChanged("FileName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=4)]
+        public string Links {
+            get {
+                return this.linksField;
+            }
+            set {
+                this.linksField = value;
+                this.RaisePropertyChanged("Links");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public int LinkCount {
+            get {
+                return this.linkCountField;
+            }
+            set {
+                this.linkCountField = value;
+                this.RaisePropertyChanged("LinkCount");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool LinkCountSpecified {
+            get {
+                return this.linkCountFieldSpecified;
+            }
+            set {
+                this.linkCountFieldSpecified = value;
+                this.RaisePropertyChanged("LinkCountSpecified");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/ZkData")]
+    public partial class ResourceDependency : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private int resourceIDField;
+        
+        private bool resourceIDFieldSpecified;
+        
+        private string needsInternalNameField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public int ResourceID {
+            get {
+                return this.resourceIDField;
+            }
+            set {
+                this.resourceIDField = value;
+                this.RaisePropertyChanged("ResourceID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ResourceIDSpecified {
+            get {
+                return this.resourceIDFieldSpecified;
+            }
+            set {
+                this.resourceIDFieldSpecified = value;
+                this.RaisePropertyChanged("ResourceIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
+        public string NeedsInternalName {
+            get {
+                return this.needsInternalNameField;
+            }
+            set {
+                this.needsInternalNameField = value;
+                this.RaisePropertyChanged("NeedsInternalName");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/ZkData")]
+    public partial class Resource : object, System.ComponentModel.INotifyPropertyChanged {
+        
+        private int resourceIDField;
+        
+        private bool resourceIDFieldSpecified;
+        
+        private string internalNameField;
+        
+        private ResourceType typeIDField;
+        
+        private bool typeIDFieldSpecified;
+        
+        private System.Nullable<System.DateTime> lastLinkCheckField;
+        
+        private bool lastLinkCheckFieldSpecified;
+        
+        private int downloadCountField;
+        
+        private bool downloadCountFieldSpecified;
+        
+        private int noLinkDownloadCountField;
+        
+        private bool noLinkDownloadCountFieldSpecified;
+        
+        private System.Nullable<int> missionIDField;
+        
+        private bool missionIDFieldSpecified;
+        
+        private ResourceDependency[] resourceDependenciesField;
+        
+        private ResourceContentFile[] resourceContentFilesField;
+        
+        private ResourceSpringHash[] resourceSpringHashesField;
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=0)]
+        public int ResourceID {
+            get {
+                return this.resourceIDField;
+            }
+            set {
+                this.resourceIDField = value;
+                this.RaisePropertyChanged("ResourceID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool ResourceIDSpecified {
+            get {
+                return this.resourceIDFieldSpecified;
+            }
+            set {
+                this.resourceIDFieldSpecified = value;
+                this.RaisePropertyChanged("ResourceIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=1)]
+        public string InternalName {
+            get {
+                return this.internalNameField;
+            }
+            set {
+                this.internalNameField = value;
+                this.RaisePropertyChanged("InternalName");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=2)]
+        public ResourceType TypeID {
+            get {
+                return this.typeIDField;
+            }
+            set {
+                this.typeIDField = value;
+                this.RaisePropertyChanged("TypeID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool TypeIDSpecified {
+            get {
+                return this.typeIDFieldSpecified;
+            }
+            set {
+                this.typeIDFieldSpecified = value;
+                this.RaisePropertyChanged("TypeIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=3)]
+        public System.Nullable<System.DateTime> LastLinkCheck {
+            get {
+                return this.lastLinkCheckField;
+            }
+            set {
+                this.lastLinkCheckField = value;
+                this.RaisePropertyChanged("LastLinkCheck");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool LastLinkCheckSpecified {
+            get {
+                return this.lastLinkCheckFieldSpecified;
+            }
+            set {
+                this.lastLinkCheckFieldSpecified = value;
+                this.RaisePropertyChanged("LastLinkCheckSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=4)]
+        public int DownloadCount {
+            get {
+                return this.downloadCountField;
+            }
+            set {
+                this.downloadCountField = value;
+                this.RaisePropertyChanged("DownloadCount");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool DownloadCountSpecified {
+            get {
+                return this.downloadCountFieldSpecified;
+            }
+            set {
+                this.downloadCountFieldSpecified = value;
+                this.RaisePropertyChanged("DownloadCountSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Order=5)]
+        public int NoLinkDownloadCount {
+            get {
+                return this.noLinkDownloadCountField;
+            }
+            set {
+                this.noLinkDownloadCountField = value;
+                this.RaisePropertyChanged("NoLinkDownloadCount");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool NoLinkDownloadCountSpecified {
+            get {
+                return this.noLinkDownloadCountFieldSpecified;
+            }
+            set {
+                this.noLinkDownloadCountFieldSpecified = value;
+                this.RaisePropertyChanged("NoLinkDownloadCountSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true, Order=6)]
+        public System.Nullable<int> MissionID {
+            get {
+                return this.missionIDField;
+            }
+            set {
+                this.missionIDField = value;
+                this.RaisePropertyChanged("MissionID");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool MissionIDSpecified {
+            get {
+                return this.missionIDFieldSpecified;
+            }
+            set {
+                this.missionIDFieldSpecified = value;
+                this.RaisePropertyChanged("MissionIDSpecified");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true, Order=7)]
+        public ResourceDependency[] ResourceDependencies {
+            get {
+                return this.resourceDependenciesField;
+            }
+            set {
+                this.resourceDependenciesField = value;
+                this.RaisePropertyChanged("ResourceDependencies");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true, Order=8)]
+        public ResourceContentFile[] ResourceContentFiles {
+            get {
+                return this.resourceContentFilesField;
+            }
+            set {
+                this.resourceContentFilesField = value;
+                this.RaisePropertyChanged("ResourceContentFiles");
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true, Order=9)]
+        public ResourceSpringHash[] ResourceSpringHashes {
+            get {
+                return this.resourceSpringHashesField;
+            }
+            set {
+                this.resourceSpringHashesField = value;
+                this.RaisePropertyChanged("ResourceSpringHashes");
+            }
+        }
+        
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        
+        protected void RaisePropertyChanged(string propertyName) {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            if ((propertyChanged != null)) {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://schemas.datacontract.org/2004/07/ZkData")]
+    public enum ResourceType {
+        
+        /// <remarks/>
+        Map,
+        
+        /// <remarks/>
+        Mod,
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetMission", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class GetMissionRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string missionName;
+        
+        public GetMissionRequest() {
+        }
+        
+        public GetMissionRequest(string missionName) {
+            this.missionName = missionName;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetMissionResponse", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class GetMissionResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public MissionEditor2.ServiceReference.Mission GetMissionResult;
+        
+        public GetMissionResponse() {
+        }
+        
+        public GetMissionResponse(MissionEditor2.ServiceReference.Mission GetMissionResult) {
+            this.GetMissionResult = GetMissionResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetMissionByID", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class GetMissionByIDRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        public int missionID;
+        
+        public GetMissionByIDRequest() {
+        }
+        
+        public GetMissionByIDRequest(int missionID) {
+            this.missionID = missionID;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="GetMissionByIDResponse", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class GetMissionByIDResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public MissionEditor2.ServiceReference.Mission GetMissionByIDResult;
+        
+        public GetMissionByIDResponse() {
+        }
+        
+        public GetMissionByIDResponse(MissionEditor2.ServiceReference.Mission GetMissionByIDResult) {
+            this.GetMissionByIDResult = GetMissionByIDResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="ListMissionInfos", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class ListMissionInfosRequest {
+        
+        public ListMissionInfosRequest() {
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="ListMissionInfosResponse", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class ListMissionInfosResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute(Namespace="http://schemas.datacontract.org/2004/07/ZkData")]
+        public Mission[] ListMissionInfosResult;
+        
+        public ListMissionInfosResponse() {
+        }
+        
+        public ListMissionInfosResponse(Mission[] ListMissionInfosResult) {
+            this.ListMissionInfosResult = ListMissionInfosResult;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="SendMission", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class SendMissionRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public MissionEditor2.ServiceReference.Mission mission;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=1)]
+        [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
+        [System.Xml.Serialization.XmlArrayItemAttribute(Namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib")]
+        public MissionSlot[] slots;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=2)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string author;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=3)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string password;
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=4)]
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public MissionEditor2.ServiceReference.Mod modInfo;
+        
+        public SendMissionRequest() {
+        }
+        
+        public SendMissionRequest(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo) {
+            this.mission = mission;
+            this.slots = slots;
+            this.author = author;
+            this.password = password;
+            this.modInfo = modInfo;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(WrapperName="SendMissionResponse", WrapperNamespace="http://tempuri.org/", IsWrapped=true)]
+    public partial class SendMissionResponse {
+        
+        public SendMissionResponse() {
+        }
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -71,10 +2521,10 @@ namespace MissionEditor2.ServiceReference {
             this.results = results;
         }
         
-        public ZkData.Mission Result {
+        public MissionEditor2.ServiceReference.Mission Result {
             get {
                 base.RaiseExceptionIfNecessary();
-                return ((ZkData.Mission)(this.results[0]));
+                return ((MissionEditor2.ServiceReference.Mission)(this.results[0]));
             }
         }
     }
@@ -90,10 +2540,10 @@ namespace MissionEditor2.ServiceReference {
             this.results = results;
         }
         
-        public ZkData.Mission Result {
+        public MissionEditor2.ServiceReference.Mission Result {
             get {
                 base.RaiseExceptionIfNecessary();
-                return ((ZkData.Mission)(this.results[0]));
+                return ((MissionEditor2.ServiceReference.Mission)(this.results[0]));
             }
         }
     }
@@ -109,10 +2559,10 @@ namespace MissionEditor2.ServiceReference {
             this.results = results;
         }
         
-        public System.Collections.Generic.List<ZkData.Mission> Result {
+        public Mission[] Result {
             get {
                 base.RaiseExceptionIfNecessary();
-                return ((System.Collections.Generic.List<ZkData.Mission>)(this.results[0]));
+                return ((Mission[])(this.results[0]));
             }
         }
     }
@@ -180,18 +2630,41 @@ namespace MissionEditor2.ServiceReference {
         
         public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> SendMissionCompleted;
         
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ServiceReference.DeleteMissionResponse MissionEditor2.ServiceReference.IMissionService.DeleteMission(MissionEditor2.ServiceReference.DeleteMissionRequest request) {
+            return base.Channel.DeleteMission(request);
+        }
+        
         public void DeleteMission(int missionID, string author, string password) {
-            base.Channel.DeleteMission(missionID, author, password);
+            MissionEditor2.ServiceReference.DeleteMissionRequest inValue = new MissionEditor2.ServiceReference.DeleteMissionRequest();
+            inValue.missionID = missionID;
+            inValue.author = author;
+            inValue.password = password;
+            MissionEditor2.ServiceReference.DeleteMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).DeleteMission(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginDeleteMission(MissionEditor2.ServiceReference.DeleteMissionRequest request, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginDeleteMission(request, callback, asyncState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public System.IAsyncResult BeginDeleteMission(int missionID, string author, string password, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginDeleteMission(missionID, author, password, callback, asyncState);
+            MissionEditor2.ServiceReference.DeleteMissionRequest inValue = new MissionEditor2.ServiceReference.DeleteMissionRequest();
+            inValue.missionID = missionID;
+            inValue.author = author;
+            inValue.password = password;
+            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginDeleteMission(inValue, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ServiceReference.DeleteMissionResponse MissionEditor2.ServiceReference.IMissionService.EndDeleteMission(System.IAsyncResult result) {
+            return base.Channel.EndDeleteMission(result);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public void EndDeleteMission(System.IAsyncResult result) {
-            base.Channel.EndDeleteMission(result);
+            MissionEditor2.ServiceReference.DeleteMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndDeleteMission(result);
         }
         
         private System.IAsyncResult OnBeginDeleteMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
@@ -233,18 +2706,39 @@ namespace MissionEditor2.ServiceReference {
                         password}, this.onEndDeleteMissionDelegate, this.onDeleteMissionCompletedDelegate, userState);
         }
         
-        public ZkData.Mission GetMission(string missionName) {
-            return base.Channel.GetMission(missionName);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ServiceReference.GetMissionResponse MissionEditor2.ServiceReference.IMissionService.GetMission(MissionEditor2.ServiceReference.GetMissionRequest request) {
+            return base.Channel.GetMission(request);
+        }
+        
+        public MissionEditor2.ServiceReference.Mission GetMission(string missionName) {
+            MissionEditor2.ServiceReference.GetMissionRequest inValue = new MissionEditor2.ServiceReference.GetMissionRequest();
+            inValue.missionName = missionName;
+            MissionEditor2.ServiceReference.GetMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).GetMission(inValue);
+            return retVal.GetMissionResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginGetMission(MissionEditor2.ServiceReference.GetMissionRequest request, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginGetMission(request, callback, asyncState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public System.IAsyncResult BeginGetMission(string missionName, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginGetMission(missionName, callback, asyncState);
+            MissionEditor2.ServiceReference.GetMissionRequest inValue = new MissionEditor2.ServiceReference.GetMissionRequest();
+            inValue.missionName = missionName;
+            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginGetMission(inValue, callback, asyncState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ZkData.Mission EndGetMission(System.IAsyncResult result) {
+        MissionEditor2.ServiceReference.GetMissionResponse MissionEditor2.ServiceReference.IMissionService.EndGetMission(System.IAsyncResult result) {
             return base.Channel.EndGetMission(result);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public MissionEditor2.ServiceReference.Mission EndGetMission(System.IAsyncResult result) {
+            MissionEditor2.ServiceReference.GetMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndGetMission(result);
+            return retVal.GetMissionResult;
         }
         
         private System.IAsyncResult OnBeginGetMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
@@ -253,7 +2747,7 @@ namespace MissionEditor2.ServiceReference {
         }
         
         private object[] OnEndGetMission(System.IAsyncResult result) {
-            ZkData.Mission retVal = this.EndGetMission(result);
+            MissionEditor2.ServiceReference.Mission retVal = this.EndGetMission(result);
             return new object[] {
                     retVal};
         }
@@ -283,18 +2777,39 @@ namespace MissionEditor2.ServiceReference {
                         missionName}, this.onEndGetMissionDelegate, this.onGetMissionCompletedDelegate, userState);
         }
         
-        public ZkData.Mission GetMissionByID(int missionID) {
-            return base.Channel.GetMissionByID(missionID);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ServiceReference.GetMissionByIDResponse MissionEditor2.ServiceReference.IMissionService.GetMissionByID(MissionEditor2.ServiceReference.GetMissionByIDRequest request) {
+            return base.Channel.GetMissionByID(request);
+        }
+        
+        public MissionEditor2.ServiceReference.Mission GetMissionByID(int missionID) {
+            MissionEditor2.ServiceReference.GetMissionByIDRequest inValue = new MissionEditor2.ServiceReference.GetMissionByIDRequest();
+            inValue.missionID = missionID;
+            MissionEditor2.ServiceReference.GetMissionByIDResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).GetMissionByID(inValue);
+            return retVal.GetMissionByIDResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginGetMissionByID(MissionEditor2.ServiceReference.GetMissionByIDRequest request, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginGetMissionByID(request, callback, asyncState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public System.IAsyncResult BeginGetMissionByID(int missionID, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginGetMissionByID(missionID, callback, asyncState);
+            MissionEditor2.ServiceReference.GetMissionByIDRequest inValue = new MissionEditor2.ServiceReference.GetMissionByIDRequest();
+            inValue.missionID = missionID;
+            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginGetMissionByID(inValue, callback, asyncState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public ZkData.Mission EndGetMissionByID(System.IAsyncResult result) {
+        MissionEditor2.ServiceReference.GetMissionByIDResponse MissionEditor2.ServiceReference.IMissionService.EndGetMissionByID(System.IAsyncResult result) {
             return base.Channel.EndGetMissionByID(result);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public MissionEditor2.ServiceReference.Mission EndGetMissionByID(System.IAsyncResult result) {
+            MissionEditor2.ServiceReference.GetMissionByIDResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndGetMissionByID(result);
+            return retVal.GetMissionByIDResult;
         }
         
         private System.IAsyncResult OnBeginGetMissionByID(object[] inValues, System.AsyncCallback callback, object asyncState) {
@@ -303,7 +2818,7 @@ namespace MissionEditor2.ServiceReference {
         }
         
         private object[] OnEndGetMissionByID(System.IAsyncResult result) {
-            ZkData.Mission retVal = this.EndGetMissionByID(result);
+            MissionEditor2.ServiceReference.Mission retVal = this.EndGetMissionByID(result);
             return new object[] {
                     retVal};
         }
@@ -333,18 +2848,37 @@ namespace MissionEditor2.ServiceReference {
                         missionID}, this.onEndGetMissionByIDDelegate, this.onGetMissionByIDCompletedDelegate, userState);
         }
         
-        public System.Collections.Generic.List<ZkData.Mission> ListMissionInfos() {
-            return base.Channel.ListMissionInfos();
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ServiceReference.ListMissionInfosResponse MissionEditor2.ServiceReference.IMissionService.ListMissionInfos(MissionEditor2.ServiceReference.ListMissionInfosRequest request) {
+            return base.Channel.ListMissionInfos(request);
+        }
+        
+        public Mission[] ListMissionInfos() {
+            MissionEditor2.ServiceReference.ListMissionInfosRequest inValue = new MissionEditor2.ServiceReference.ListMissionInfosRequest();
+            MissionEditor2.ServiceReference.ListMissionInfosResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).ListMissionInfos(inValue);
+            return retVal.ListMissionInfosResult;
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginListMissionInfos(MissionEditor2.ServiceReference.ListMissionInfosRequest request, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginListMissionInfos(request, callback, asyncState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public System.IAsyncResult BeginListMissionInfos(System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginListMissionInfos(callback, asyncState);
+            MissionEditor2.ServiceReference.ListMissionInfosRequest inValue = new MissionEditor2.ServiceReference.ListMissionInfosRequest();
+            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginListMissionInfos(inValue, callback, asyncState);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.Collections.Generic.List<ZkData.Mission> EndListMissionInfos(System.IAsyncResult result) {
+        MissionEditor2.ServiceReference.ListMissionInfosResponse MissionEditor2.ServiceReference.IMissionService.EndListMissionInfos(System.IAsyncResult result) {
             return base.Channel.EndListMissionInfos(result);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public Mission[] EndListMissionInfos(System.IAsyncResult result) {
+            MissionEditor2.ServiceReference.ListMissionInfosResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndListMissionInfos(result);
+            return retVal.ListMissionInfosResult;
         }
         
         private System.IAsyncResult OnBeginListMissionInfos(object[] inValues, System.AsyncCallback callback, object asyncState) {
@@ -352,7 +2886,7 @@ namespace MissionEditor2.ServiceReference {
         }
         
         private object[] OnEndListMissionInfos(System.IAsyncResult result) {
-            System.Collections.Generic.List<ZkData.Mission> retVal = this.EndListMissionInfos(result);
+            Mission[] retVal = this.EndListMissionInfos(result);
             return new object[] {
                     retVal};
         }
@@ -381,26 +2915,54 @@ namespace MissionEditor2.ServiceReference {
             base.InvokeAsync(this.onBeginListMissionInfosDelegate, null, this.onEndListMissionInfosDelegate, this.onListMissionInfosCompletedDelegate, userState);
         }
         
-        public void SendMission(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password) {
-            base.Channel.SendMission(mission, slots, author, password);
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ServiceReference.SendMissionResponse MissionEditor2.ServiceReference.IMissionService.SendMission(MissionEditor2.ServiceReference.SendMissionRequest request) {
+            return base.Channel.SendMission(request);
+        }
+        
+        public void SendMission(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo) {
+            MissionEditor2.ServiceReference.SendMissionRequest inValue = new MissionEditor2.ServiceReference.SendMissionRequest();
+            inValue.mission = mission;
+            inValue.slots = slots;
+            inValue.author = author;
+            inValue.password = password;
+            inValue.modInfo = modInfo;
+            MissionEditor2.ServiceReference.SendMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).SendMission(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSendMission(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginSendMission(mission, slots, author, password, callback, asyncState);
+        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginSendMission(MissionEditor2.ServiceReference.SendMissionRequest request, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginSendMission(request, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginSendMission(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo, System.AsyncCallback callback, object asyncState) {
+            MissionEditor2.ServiceReference.SendMissionRequest inValue = new MissionEditor2.ServiceReference.SendMissionRequest();
+            inValue.mission = mission;
+            inValue.slots = slots;
+            inValue.author = author;
+            inValue.password = password;
+            inValue.modInfo = modInfo;
+            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginSendMission(inValue, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ServiceReference.SendMissionResponse MissionEditor2.ServiceReference.IMissionService.EndSendMission(System.IAsyncResult result) {
+            return base.Channel.EndSendMission(result);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         public void EndSendMission(System.IAsyncResult result) {
-            base.Channel.EndSendMission(result);
+            MissionEditor2.ServiceReference.SendMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndSendMission(result);
         }
         
         private System.IAsyncResult OnBeginSendMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            ZkData.Mission mission = ((ZkData.Mission)(inValues[0]));
-            System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots = ((System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot>)(inValues[1]));
+            MissionEditor2.ServiceReference.Mission mission = ((MissionEditor2.ServiceReference.Mission)(inValues[0]));
+            MissionSlot[] slots = ((MissionSlot[])(inValues[1]));
             string author = ((string)(inValues[2]));
             string password = ((string)(inValues[3]));
-            return this.BeginSendMission(mission, slots, author, password, callback, asyncState);
+            MissionEditor2.ServiceReference.Mod modInfo = ((MissionEditor2.ServiceReference.Mod)(inValues[4]));
+            return this.BeginSendMission(mission, slots, author, password, modInfo, callback, asyncState);
         }
         
         private object[] OnEndSendMission(System.IAsyncResult result) {
@@ -415,11 +2977,11 @@ namespace MissionEditor2.ServiceReference {
             }
         }
         
-        public void SendMissionAsync(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password) {
-            this.SendMissionAsync(mission, slots, author, password, null);
+        public void SendMissionAsync(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo) {
+            this.SendMissionAsync(mission, slots, author, password, modInfo, null);
         }
         
-        public void SendMissionAsync(ZkData.Mission mission, System.Collections.Generic.List<PlasmaShared.UnitSyncLib.MissionSlot> slots, string author, string password, object userState) {
+        public void SendMissionAsync(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo, object userState) {
             if ((this.onBeginSendMissionDelegate == null)) {
                 this.onBeginSendMissionDelegate = new BeginOperationDelegate(this.OnBeginSendMission);
             }
@@ -433,7 +2995,8 @@ namespace MissionEditor2.ServiceReference {
                         mission,
                         slots,
                         author,
-                        password}, this.onEndSendMissionDelegate, this.onSendMissionCompletedDelegate, userState);
+                        password,
+                        modInfo}, this.onEndSendMissionDelegate, this.onSendMissionCompletedDelegate, userState);
         }
     }
 }

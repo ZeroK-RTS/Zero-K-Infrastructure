@@ -7,6 +7,9 @@
       <xsd:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ZkData" />
       <xsd:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd3" namespace="http://schemas.datacontract.org/2004/07/System.Data.Linq" />
       <xsd:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/PlasmaShared.UnitSyncLib" />
+      <xsd:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/PlasmaShared" />
+      <xsd:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd7" />
     </xsd:schema>
   </wsdl:types>
   <wsdl:message name="IMissionService_DeleteMission_InputMessage">
