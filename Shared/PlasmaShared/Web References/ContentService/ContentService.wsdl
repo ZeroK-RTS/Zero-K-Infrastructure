@@ -2,6 +2,17 @@
 <wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="NotifyMissionRun">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="missionName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="NotifyMissionRunResponse">
+        <s:complexType />
+      </s:element>
       <s:element name="SubmitMissionScore">
         <s:complexType>
           <s:sequence>
@@ -9,6 +20,7 @@
             <s:element minOccurs="0" maxOccurs="1" name="passwordHash" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="missionName" type="s:string" />
             <s:element minOccurs="1" maxOccurs="1" name="score" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="gameSeconds" type="s:int" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -35,6 +47,12 @@
       </s:element>
     </s:schema>
   </wsdl:types>
+  <wsdl:message name="NotifyMissionRunSoapIn">
+    <wsdl:part name="parameters" element="tns:NotifyMissionRun" />
+  </wsdl:message>
+  <wsdl:message name="NotifyMissionRunSoapOut">
+    <wsdl:part name="parameters" element="tns:NotifyMissionRunResponse" />
+  </wsdl:message>
   <wsdl:message name="SubmitMissionScoreSoapIn">
     <wsdl:part name="parameters" element="tns:SubmitMissionScore" />
   </wsdl:message>
@@ -48,6 +66,10 @@
     <wsdl:part name="parameters" element="tns:SubmitStackTraceResponse" />
   </wsdl:message>
   <wsdl:portType name="ContentServiceSoap">
+    <wsdl:operation name="NotifyMissionRun">
+      <wsdl:input message="tns:NotifyMissionRunSoapIn" />
+      <wsdl:output message="tns:NotifyMissionRunSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="SubmitMissionScore">
       <wsdl:input message="tns:SubmitMissionScoreSoapIn" />
       <wsdl:output message="tns:SubmitMissionScoreSoapOut" />
@@ -59,6 +81,15 @@
   </wsdl:portType>
   <wsdl:binding name="ContentServiceSoap" type="tns:ContentServiceSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="NotifyMissionRun">
+      <soap:operation soapAction="http://tempuri.org/NotifyMissionRun" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="SubmitMissionScore">
       <soap:operation soapAction="http://tempuri.org/SubmitMissionScore" style="document" />
       <wsdl:input>
@@ -80,6 +111,15 @@
   </wsdl:binding>
   <wsdl:binding name="ContentServiceSoap12" type="tns:ContentServiceSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="NotifyMissionRun">
+      <soap12:operation soapAction="http://tempuri.org/NotifyMissionRun" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="SubmitMissionScore">
       <soap12:operation soapAction="http://tempuri.org/SubmitMissionScore" style="document" />
       <wsdl:input>

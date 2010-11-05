@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using LobbyClient;
 using PlasmaDownloader;
+using PlasmaShared.ContentService;
 using PlasmaShared.UnitSyncLib;
 
 namespace ZeroKLobby.Notifications
@@ -76,6 +77,8 @@ namespace ZeroKLobby.Notifications
 						                 modInfo.MissionScript,
 						                 Program.Conf.LobbyPlayerName,
 						                 PlasmaShared.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword));
+						var cs = new ContentService() { Proxy = null };
+						cs.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, missionName);
 						Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
 					}
 				});

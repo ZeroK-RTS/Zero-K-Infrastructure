@@ -29,6 +29,8 @@ namespace PlasmaShared.ContentService {
     [System.Web.Services.WebServiceBindingAttribute(Name="ContentServiceSoap", Namespace="http://tempuri.org/")]
     public partial class ContentService : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
+        private System.Threading.SendOrPostCallback NotifyMissionRunOperationCompleted;
+        
         private System.Threading.SendOrPostCallback SubmitMissionScoreOperationCompleted;
         
         private System.Threading.SendOrPostCallback SubmitStackTraceOperationCompleted;
@@ -72,28 +74,62 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
+        public event NotifyMissionRunCompletedEventHandler NotifyMissionRunCompleted;
+        
+        /// <remarks/>
         public event SubmitMissionScoreCompletedEventHandler SubmitMissionScoreCompleted;
         
         /// <remarks/>
         public event SubmitStackTraceCompletedEventHandler SubmitStackTraceCompleted;
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/NotifyMissionRun", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void NotifyMissionRun(string login, string missionName) {
+            this.Invoke("NotifyMissionRun", new object[] {
+                        login,
+                        missionName});
+        }
+        
+        /// <remarks/>
+        public void NotifyMissionRunAsync(string login, string missionName) {
+            this.NotifyMissionRunAsync(login, missionName, null);
+        }
+        
+        /// <remarks/>
+        public void NotifyMissionRunAsync(string login, string missionName, object userState) {
+            if ((this.NotifyMissionRunOperationCompleted == null)) {
+                this.NotifyMissionRunOperationCompleted = new System.Threading.SendOrPostCallback(this.OnNotifyMissionRunOperationCompleted);
+            }
+            this.InvokeAsync("NotifyMissionRun", new object[] {
+                        login,
+                        missionName}, this.NotifyMissionRunOperationCompleted, userState);
+        }
+        
+        private void OnNotifyMissionRunOperationCompleted(object arg) {
+            if ((this.NotifyMissionRunCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.NotifyMissionRunCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitMissionScore", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SubmitMissionScore(string login, string passwordHash, string missionName, int score) {
+        public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds) {
             this.Invoke("SubmitMissionScore", new object[] {
                         login,
                         passwordHash,
                         missionName,
-                        score});
+                        score,
+                        gameSeconds});
         }
         
         /// <remarks/>
-        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score) {
-            this.SubmitMissionScoreAsync(login, passwordHash, missionName, score, null);
+        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, int gameSeconds) {
+            this.SubmitMissionScoreAsync(login, passwordHash, missionName, score, gameSeconds, null);
         }
         
         /// <remarks/>
-        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, object userState) {
+        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, int gameSeconds, object userState) {
             if ((this.SubmitMissionScoreOperationCompleted == null)) {
                 this.SubmitMissionScoreOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSubmitMissionScoreOperationCompleted);
             }
@@ -101,7 +137,8 @@ namespace PlasmaShared.ContentService {
                         login,
                         passwordHash,
                         missionName,
-                        score}, this.SubmitMissionScoreOperationCompleted, userState);
+                        score,
+                        gameSeconds}, this.SubmitMissionScoreOperationCompleted, userState);
         }
         
         private void OnSubmitMissionScoreOperationCompleted(object arg) {
@@ -173,6 +210,10 @@ namespace PlasmaShared.ContentService {
         /// <remarks/>
         MissionEditor,
     }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void NotifyMissionRunCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
