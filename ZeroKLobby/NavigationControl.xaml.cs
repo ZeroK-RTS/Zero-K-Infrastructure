@@ -161,7 +161,7 @@ namespace ZeroKLobby
 
 		void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			Path = "start";
+			if (string.IsNullOrEmpty(Path)) Path = "start";
 		}
 
 		void WidgetsPage_Click(object sender, RoutedEventArgs e)

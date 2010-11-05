@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Deployment.Application;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Media;
 using System.Runtime.InteropServices;
@@ -37,6 +38,7 @@ namespace ZeroKLobby
 		readonly NotifyIcon systrayIcon;
 		readonly DispatcherTimer timer1 = new DispatcherTimer();
 		readonly ContextMenuStrip trayStrip;
+		FileSystemWatcher ipcFileWatcher;
 		public ChatTab ChatTab { get { return navigationControl.ChatTab; } }
 		public IntPtr Handle { get { return interopHelper.Handle; } }
 		public static MainWindow Instance { get; private set; }
@@ -75,6 +77,7 @@ namespace ZeroKLobby
 			systrayIcon.MouseDown += systrayIcon_MouseDown;
 			systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
 			
+			ipcFileWatcher = new FileSystemWatcher(Program.SpringPaths.WritableDirectory, Config.IpcFileName);
 
 			if (Program.Downloader != null)
 			{
@@ -282,6 +285,26 @@ namespace ZeroKLobby
 
 			if (Program.Conf.StartMinimized) WindowState = WindowState.Minimized;
 			else WindowState = Program.Conf.LastWindowState;
+
+			ipcFileWatcher.Changed += (s, ex) =>
+			{
+				try
+				{
+					InvokeFunc(() => navigationControl.Path = File.ReadAllLines(ex.FullPath).First());
+					ipcFileWatcher.EnableRaisingEvents = false;
+					try
+					{
+						File.Delete(ex.FullPath);
+					}
+					catch {}
+					ipcFileWatcher.EnableRaisingEvents = true;
+				} catch (Exception x)
+				{
+					Trace.TraceError("Error watching ipc file: {0}", x);
+				}
+			};
+			ipcFileWatcher.EnableRaisingEvents = true;
+			if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
 		}
 
 		void Window_StateChanged(object sender, EventArgs e)

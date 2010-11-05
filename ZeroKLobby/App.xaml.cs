@@ -17,7 +17,7 @@ namespace ZeroKLobby
 
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			Program.Main(null); // todo some exception handlign (dont catch in main? )
+			Program.Main(e.Args); // todo some exception handlign (dont catch in main? )
 			MainWindow = Program.MainWindow;
 			MainWindow.Show();
 		}
@@ -32,7 +32,7 @@ namespace ZeroKLobby
 
 		private void Application_Exit(object sender, ExitEventArgs e)
 		{
-
+			Program.ShutDown();
 		}
 	}
 }

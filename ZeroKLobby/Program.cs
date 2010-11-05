@@ -50,12 +50,13 @@ namespace ZeroKLobby
 		public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
 		public static TasClient TasClient { get; private set; }
 		public static ToolTipHandler ToolTip;
+		public static string[] StartupArgs;
 
-		
 
 		[STAThread]
 		public static void Main(string[] args)
 		{
+			StartupArgs = args;
 			Trace.Listeners.Add(new ConsoleTraceListener());
 			Trace.Listeners.Add(new LogTraceListener());
 
@@ -88,33 +89,37 @@ namespace ZeroKLobby
 				ServicePointManager.Expect100Continue = false;
 
 				LoadConfig();
-
-				FriendManager = new FriendManager();
-				AutoJoinManager = new AutoJoinManager();
-
-				//call this after load config
-				DetectSpringPathes();
+				DetectSpringPathes(); // call this after load config
+				SaveConfig();
 
 				try
 				{
 					if (!Debugger.IsAttached)
 					{
 						mutex = new Mutex(false, "ZeroKLobby" + Conf.ManualSpringPath.GetHashCode());
-						if (!mutex.WaitOne(15000, false))
+						if (!mutex.WaitOne(200, false))
 						{
+							if (args.Length > 0)
+							{
+								File.WriteAllLines(Utils.MakePath(SpringPaths.WritableDirectory, Config.IpcFileName), args);
+								App.Current.Shutdown();
+							} else 
 							MessageBox.Show(
 								"Another copy of Zero-K lobby is still running for the spring at " + Conf.ManualSpringPath +
 								"\nMake sure the other lobby is closed (check task manager) before starting new one",
 								"There can be only one lobby running for each Spring engine copy",
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Stop);
-							return;
+							App.Current.Shutdown();
 						}
 					}
 				}
 				catch (AbandonedMutexException) {}
 
-				SaveConfig();
+				FriendManager = new FriendManager();
+				AutoJoinManager = new AutoJoinManager();
+
+				
 
 				SpringScanner = new SpringScanner(SpringPaths);
 				SpringScanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
@@ -151,7 +156,7 @@ namespace ZeroKLobby
 
 
 				MainWindow = new MainWindow();
-
+ 
 				Application.AddMessageFilter(new ScrollMessageFilter()); 
 
 				if (Conf.StartMinimized) MainWindow.WindowState = WindowState.Minimized;
@@ -186,11 +191,10 @@ namespace ZeroKLobby
 
 		public static void ShutDown()
 		{
-			ToolTip.Dispose();
-			Downloader.Dispose();
-			SpringScanner.Dispose();
-			Thread.Sleep(5000);
-
+			if (ToolTip != null) ToolTip.Dispose();
+			if (Downloader != null) Downloader.Dispose();
+			if (SpringScanner!=null) SpringScanner.Dispose();
+			//Thread.Sleep(5000);
 			if (IsCrash) Application.Restart();
 		}
 		/// <summary>

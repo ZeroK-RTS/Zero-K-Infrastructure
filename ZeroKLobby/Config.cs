@@ -273,6 +273,7 @@ namespace ZeroKLobby
 		/// Keeps datetime of last topic change for each channel
 		/// </summary>
 		public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
+		public const string IpcFileName = "zero-k_args.txt";
 
 
 		public void UpdateFadeColor()
