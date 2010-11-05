@@ -395,7 +395,7 @@ namespace CMissionLib
 			line("MapName", MapName);
 			line("StartMetal", StartingMetal);
 			line("StartEnergy", StartingEnergy);
-			line("StartposType", "1");
+			line("StartposType", "3");
 			line("GameMode", "0");
 			line("GameType", Name);
 			line("LimitDGun", "0");
@@ -570,7 +570,7 @@ namespace CMissionLib
 				sb.AppendLine("\t{");
 				sb.AppendFormat("\t\tName={0};\n", player.Name.Replace(' ', '_'));
 				sb.AppendFormat("\t\tShortName={0};\n", String.IsNullOrEmpty(player.AIDll) ? "NullAI" : player.AIDll);
-				sb.AppendFormat("\t\tVersion={0};\n", String.IsNullOrEmpty(player.AIVersion) ? "0.1" : player.AIVersion);
+				// sb.AppendFormat("\t\tVersion={0};\n", String.IsNullOrEmpty(player.AIVersion) ? "0.1" : player.AIVersion);
 				sb.AppendFormat("\t\tTeam={0};\n", index);
 				sb.AppendFormat("\t\tIsFromDemo=0;\n");
 				sb.AppendFormat("\t\tHost=1;\n");
@@ -590,6 +590,8 @@ namespace CMissionLib
 			sb.AppendFormat("\t\tRGBColor={0} {1} {2};\n", player.Color.ScR, player.Color.ScG, player.Color.ScB); // range: 0-1
 			sb.AppendFormat("\t\tSide={0};\n", Mod.Sides.First());
 			sb.AppendFormat("\t\tHandicap=0;\n");
+			sb.AppendFormat("\t\tStartPosX=0;\n");
+			sb.AppendFormat("\t\tStartPosZ=0;\n");
 			sb.AppendLine("\t}");
 		}
 	}
