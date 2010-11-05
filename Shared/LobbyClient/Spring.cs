@@ -208,10 +208,10 @@ namespace LobbyClient
 
 					if (line.StartsWith("GameID: ") && gameId == null) gameId = line.Substring(8);
 
-					if (line.StartsWith("ID: ") && !isCheating && !string.IsNullOrEmpty(lobbyPasswordHash))
+					if (line.StartsWith("LuaRules: >> ID: ") && !isCheating && !string.IsNullOrEmpty(lobbyPasswordHash))
 					{
 						// game score
-						var data = Encoding.ASCII.GetString(Convert.FromBase64String(line.Substring(4)));
+						var data = Encoding.ASCII.GetString(Convert.FromBase64String(line.Substring(17)));
 						var parts = data.Split('/');
 						int score = 0;
 						if (parts.Length > 1)
