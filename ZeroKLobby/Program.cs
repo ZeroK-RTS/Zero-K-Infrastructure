@@ -108,6 +108,7 @@ namespace ZeroKLobby
 							{
 								File.WriteAllLines(Utils.MakePath(SpringPaths.WritableDirectory, Config.IpcFileName), args);
 								App.Current.Shutdown();
+								return;
 							} else 
 							MessageBox.Show(
 								"Another copy of Zero-K lobby is still running for the spring at " + Conf.ManualSpringPath +
@@ -116,6 +117,7 @@ namespace ZeroKLobby
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Stop);
 							App.Current.Shutdown();
+							return;
 						}
 					}
 				}
@@ -184,19 +186,16 @@ namespace ZeroKLobby
 				ErrorHandling.HandleException(ex, true);
 				Trace.TraceError("Error in application:" + ex);
 			}
-			finally
-			{
-				try
-				{
-					if (!Debugger.IsAttached) mutex.ReleaseMutex();
-				}
-				catch {}
-			}
 		}
 
 
 		public static void ShutDown()
 		{
+			try
+			{
+				if (!Debugger.IsAttached) mutex.ReleaseMutex();
+			}
+			catch { }
 			if (ToolTip != null) ToolTip.Dispose();
 			if (Downloader != null) Downloader.Dispose();
 			if (SpringScanner!=null) SpringScanner.Dispose();
