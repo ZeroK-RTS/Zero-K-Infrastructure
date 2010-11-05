@@ -2195,6 +2195,8 @@ namespace ZkData
 		
 		private int _MissionRunCount;
 		
+		private bool _IsDeleted;
+		
 		private EntityRef<Resource> _Resources;
 		
 		private EntitySet<MissionScore> _MissionScores;
@@ -2255,6 +2257,8 @@ namespace ZkData
     partial void OnIsScriptMissionChanged();
     partial void OnMissionRunCountChanging(int value);
     partial void OnMissionRunCountChanged();
+    partial void OnIsDeletedChanging(bool value);
+    partial void OnIsDeletedChanged();
     #endregion
 		
 		public Mission()
@@ -2770,8 +2774,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDeleted", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
+		public bool IsDeleted
+		{
+			get
+			{
+				return this._IsDeleted;
+			}
+			set
+			{
+				if ((this._IsDeleted != value))
+				{
+					this.OnIsDeletedChanging(value);
+					this.SendPropertyChanging();
+					this._IsDeleted = value;
+					this.SendPropertyChanged("IsDeleted");
+					this.OnIsDeletedChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
 		public Resource Resources
 		{
 			get
@@ -2806,7 +2831,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionScore", Storage="_MissionScores", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get

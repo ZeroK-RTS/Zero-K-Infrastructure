@@ -57,6 +57,7 @@ namespace ZeroKWeb.Controllers
 
 		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, int? offset = null)
 		{
+			ret = ret.Where(x => !x.IsDeleted);
 			if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => SqlMethods.Like(x.Name, '%' + search + '%') || SqlMethods.Like(x.Account.Name, '%' + search + '%'));
 			ret = ret.OrderByDescending(x => x.ModifiedTime);
 			if (offset != null) ret = ret.Skip(offset.Value);

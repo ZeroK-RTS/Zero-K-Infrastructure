@@ -25,7 +25,7 @@ namespace ZeroKWeb
 				var acc = auth.VerifyAccount(author, password);
 				if (acc == null) throw new ApplicationException("Invalid login name or password");
 				if (acc.AccountID != prev.AccountID && !acc.IsLobbyAdministrator) throw new ApplicationException("You cannot delete a mission from another user");
-				db.Missions.DeleteOnSubmit(prev);
+				prev.IsDeleted = true;
 				db.SubmitChanges();
 			}
 			else throw new ApplicationException("No such mission found");
