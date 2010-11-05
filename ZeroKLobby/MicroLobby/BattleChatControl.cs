@@ -5,9 +5,11 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.UnitSyncLib;
 using ZeroKLobby.Lines;
 
 namespace ZeroKLobby.MicroLobby
@@ -17,6 +19,7 @@ namespace ZeroKLobby.MicroLobby
 		Image minimap;
 		PictureBox minimapBox;
 		Size minimapSize;
+		List<MissionSlot> missionSlots;
 		public static event EventHandler<EventArgs<IChatLine>> BattleLine = delegate { };
 
 		public BattleChatControl(): base("Battle") {}
@@ -52,6 +55,7 @@ namespace ZeroKLobby.MicroLobby
 			Program.TasClient.StartRectAdded += (s, e) => DrawMinimap();
 			Program.TasClient.StartRectRemoved += (s, e) => DrawMinimap();
 			Program.QuickMatchTracker.PlayerQuickMatchChanged += (s, e) => RefreshBattleUser(e.Data);
+			Program.ModStore.ModLoaded += ModStoreModLoaded; 
 
 			if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
 			ChatLine += (s, e) => { if (Program.TasClient.IsLoggedIn) Program.TasClient.Say(TasClient.SayPlace.Battle, null, e.Data, false); };
@@ -68,6 +72,22 @@ namespace ZeroKLobby.MicroLobby
 			mapPanel.Height = playerBox.Width;
 		}
 
+
+		// todo: check if this is called when joining twice the same mission
+		void ModStoreModLoaded(object sender, EventArgs<Mod> e)
+		{
+			if (InvokeRequired)
+			{
+				Invoke(new ThreadStart(() => ModStoreModLoaded(sender, e)));
+			} 
+			else
+			{
+				missionSlots = e.Data.MissionSlots;
+				SortByTeam();
+			}
+
+		}
+
 		protected override void OnResize(EventArgs e)
 		{
 			base.OnResize(e);
@@ -78,9 +98,19 @@ namespace ZeroKLobby.MicroLobby
 		public override void Reset()
 		{
 			base.Reset();
+			missionSlots = null;
 			minimapBox.Image = null;
 			minimap = null;
 			Program.ToolTip.Clear(minimapBox);
+		}
+
+		MissionSlot GetSlotByTeamID(int teamID)
+		{
+			if (missionSlots != null)
+			{
+				return missionSlots.SingleOrDefault(s => s.TeamID == teamID);
+			}
+			return null;
 		}
 
 		protected override void SortByTeam()
@@ -95,13 +125,23 @@ namespace ZeroKLobby.MicroLobby
 
 			foreach (var bot in Program.TasClient.MyBattle.Bots)
 			{
-				newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber*2 + 1, AllyTeam = bot.AllyNumber });
+				var missionSlot = GetSlotByTeamID(bot.TeamNumber);
+				newList.Add(new PlayerListItem { BotBattleStatus = bot, SortCategory = bot.AllyNumber*2 + 1, AllyTeam = bot.AllyNumber, MissionSlot = missionSlot});
 				existingTeams.Add(bot.AllyNumber);
 			}
 
 			// add section headers
-			if (PlayerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });
-			foreach (var team in existingTeams.Distinct()) newList.Add(new PlayerListItem { Button = "Team " + (team + 1), SortCategory = team*2, AllyTeam = team, Height = 25 });
+			if (PlayerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) {newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });}
+			foreach (var team in existingTeams.Distinct())
+			{
+				var allianceName = "Team " + (team + 1);
+				if (missionSlots != null)
+				{
+					var slot = missionSlots.FirstOrDefault(s => s.AllyID == team);
+					if (slot != null) allianceName = slot.AllyName;
+				}
+				newList.Add(new PlayerListItem { Button = allianceName, SortCategory = team * 2, AllyTeam = team, Height = 25 });
+			}
 
 			newList = newList.OrderBy(x => x.ToString()).ToList();
 
@@ -109,32 +149,7 @@ namespace ZeroKLobby.MicroLobby
 			playerBox.BeginUpdate();
 			
 			foreach (var item in newList) playerBox.Items.Add(item);
-			/*
-			var oldIndex = 0;
-			var newIndex = 0;
-			while (oldIndex < playerBox.Items.Count || newIndex < newList.Count)
-			{
-				if (oldIndex >= playerBox.Items.Count)
-				{
-					playerBox.Items.Add(newList[newIndex]);
-					newIndex++;
-				}
-				else if (newIndex >= newList.Count) playerBox.Items.RemoveAt(oldIndex);
-				else
-				{
-					var oldItem = (PlayerListItem)playerBox.Items[oldIndex];
-					var newItem = newList[newIndex];
-					int compVal = string.Compare(oldItem.ToString(), newItem.ToString());
-					if (compVal < 0)
-					{
-						playerBox.Items.RemoveAt(oldIndex);
-						playerBox.Items.Insert(oldIndex, newItem);
-					}
-					else if (compVal > 0) playerBox.Items.Insert(oldIndex, newItem);
-					oldIndex++;
-					newIndex++;
-				}
-			}*/
+
 			playerBox.EndUpdate();
 		}
 

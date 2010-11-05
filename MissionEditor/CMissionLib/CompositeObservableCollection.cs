@@ -24,7 +24,7 @@ namespace CMissionLib
 
 		void source_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (CollectionChanged != null) CollectionChanged(this, e);
+			if (CollectionChanged != null) CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
 		}
 
 

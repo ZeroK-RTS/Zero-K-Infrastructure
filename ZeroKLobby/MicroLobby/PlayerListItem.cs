@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 using LobbyClient;
+using PlasmaShared.UnitSyncLib;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -22,6 +23,7 @@ namespace ZeroKLobby.MicroLobby
 		public bool IsSpectatorsTitle { get; set; }
 		public int SortCategory { get; set; }
 		public string Title { get; set; }
+		public MissionSlot MissionSlot { get; set; }
 		public User User
 		{
 			get
@@ -99,7 +101,8 @@ namespace ZeroKLobby.MicroLobby
 					g.FillEllipse(brush, x, bounds.Top, bounds.Bottom - bounds.Top, bounds.Bottom - bounds.Top);
 				}
 				drawImage(Resources.robot);
-				drawText(bot.aiLib, foreColor, backColor);
+				var botDisplayName = MissionSlot == null ? bot.aiLib : MissionSlot.TeamName;
+				drawText(botDisplayName, foreColor, backColor);
 				return;
 			}
 
@@ -138,7 +141,9 @@ namespace ZeroKLobby.MicroLobby
 			x += 2; // margin
 			drawImage(Images.GetRank(user.Rank));
 
-			drawText(user.Name, foreColor, backColor);
+			var userDisplayName = user.Name;
+			if (MissionSlot != null) userDisplayName += String.Format(" ({0})", MissionSlot.TeamName);
+			drawText(userDisplayName, foreColor, backColor);
 			var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
 			if (top10 > 0)
 			{

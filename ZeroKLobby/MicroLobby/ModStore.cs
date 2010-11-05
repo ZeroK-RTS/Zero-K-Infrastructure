@@ -93,16 +93,20 @@ namespace ZeroKLobby.MicroLobby
 			}
 		}
 
+		public event EventHandler<EventArgs<Mod>> ModLoaded = delegate { };
+
 		public void HandleMod(Mod mod)
 		{
 			if (mod != null)
 			{
+				ModLoaded(this, new EventArgs<Mod>(mod));
 				lock (locker)
 				{
 					if (Program.TasClient.MyBattle.ModName == mod.Name)
 					{
 						this.mod = mod;
 						ChangedOptions = GetModOptionSummary(mod, Program.TasClient.MyBattle.ScriptTags, false);
+
 					}
 					else return;
 				}
