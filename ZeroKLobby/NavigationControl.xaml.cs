@@ -64,6 +64,7 @@ namespace ZeroKLobby
 					CurrentPage = step;
 					forwardStack.Clear();
 				}
+				if (Program.MainWindow.IsActive) Program.MainWindow.PopupSelf();
 			}
 		}
 

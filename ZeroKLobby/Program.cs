@@ -98,12 +98,11 @@ namespace ZeroKLobby
 				{
 					if (!Debugger.IsAttached)
 					{
-						mutex = new Mutex(false, "ZeroKLobby" + GetFullConfigPath().GetHashCode());
+						mutex = new Mutex(false, "ZeroKLobby");
 						if (!mutex.WaitOne(200, false))
 						{
 							if (args.Length > 0)
 							{
-								MessageBox.Show(SpringPaths.WritableDirectory);
 								File.WriteAllLines(Utils.MakePath(SpringPaths.WritableDirectory, Config.IpcFileName), args);
 								return false;
 							} else 
