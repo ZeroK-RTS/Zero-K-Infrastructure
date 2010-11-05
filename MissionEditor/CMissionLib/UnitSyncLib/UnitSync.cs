@@ -896,7 +896,7 @@ namespace CMissionLib.UnitSyncLib
 					if (NativeMethods.lpGetKeyExistsStr("yardmap")) unitInfo.IsFactory = true;
 					if (!NativeMethods.lpSubTableStr("buildoptions")) throw new UnitSyncException(); // push buildoptions
 					var unitList = new List<string>();
-					for (var buildOptionIndex = 1; buildOptionIndex < NativeMethods.lpGetIntKeyListCount(); buildOptionIndex++)
+					for (var buildOptionIndex = 0; buildOptionIndex < NativeMethods.lpGetIntKeyListCount(); buildOptionIndex++)
 					{
 						var key = NativeMethods.lpGetIntKeyListEntry(buildOptionIndex);
 						var buildOption = NativeMethods.lpGetIntKeyStrVal(key, String.Empty);
