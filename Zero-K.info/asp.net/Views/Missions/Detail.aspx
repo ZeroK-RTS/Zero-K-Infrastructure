@@ -31,7 +31,7 @@
 		<% foreach (var score in Model.TopScores)
      {
      	%>
-				<li><%= score.Score %>   <%=score.Account.Name %> in <%= score.GameSeconds > 0 ? Utils.PrintTimeRemaining(score.GameSeconds) : "" %></li>
+				<li><%= score.Score %>   <%=score.Account.Name %>  <%= score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "" %></li>
 				<%
 			 
      }

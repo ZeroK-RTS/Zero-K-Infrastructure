@@ -90,8 +90,7 @@ namespace ZeroKWeb
 				if (prev.AccountID != acc.AccountID && !acc.IsLobbyAdministrator) throw new ApplicationException("Invalid author or password");
 				db.Missions.Attach(mission);
 				db.Refresh(RefreshMode.KeepCurrentValues, mission);
-				
-				mission.Revision++;
+				mission.Revision = prev.Revision + 1;
 			}
 			else
 			{
