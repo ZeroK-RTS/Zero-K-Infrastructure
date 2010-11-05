@@ -8,6 +8,7 @@ using System.Windows.Forms.Integration;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ZeroKLobby.MicroLobby;
+using ZeroKLobby.Notifications;
 
 namespace ZeroKLobby
 {
@@ -48,6 +49,14 @@ namespace ZeroKLobby
 			set
 			{
 				if (value.ToLower().StartsWith("spring://")) value = value.Substring(9);
+				var parts = value.Split('@');
+				for (var i = 1; i < parts.Length; i++)
+				{
+					var action = parts[i];
+					PerformAction(action);
+				}
+				value = parts[0];
+
 				var step = GoToPage(value.Split('/'));
 				if (step != null)
 				{
@@ -134,6 +143,23 @@ namespace ZeroKLobby
 		{
 			Path = "help";
 		}
+
+		void PerformAction(string actionString)
+		{
+			if (!string.IsNullOrEmpty(actionString))
+			{
+				var idx = actionString.IndexOf(':');
+				if (idx > -1 && actionString.Substring(0, idx) == "start_mission") StartMission(Uri.UnescapeDataString(actionString.Substring(idx + 1)));
+			}
+		}
+
+		void StartMission(string name)
+		{
+			Program.NotifySection.AddBar(new MissionBar(name));
+		}
+
+
+
 
 		void MissionsPage_Click(object sender, RoutedEventArgs e)
 		{

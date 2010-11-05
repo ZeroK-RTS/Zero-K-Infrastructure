@@ -22,31 +22,17 @@ namespace ZeroKLobby.MicroLobby
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 		}
 
-		bool firstTime = true;
 
+		public string PathHead { get { return "http://"; } }
 
-		void PerformAction(string actionString)
-		{
-			if (!string.IsNullOrEmpty(actionString))
-			{
-				var idx = actionString.IndexOf(':');
-				if (idx > -1 && actionString.Substring(0, idx) == "start_mission") StartMission(Uri.UnescapeDataString(actionString.Substring(idx + 1)));
-			}
-		}
-
-		void StartMission(string name)
-		{
-			Program.NotifySection.AddBar(new MissionBar(name));
-		}
-
-
-		public string PathHead { get { return "http://zero-k.info/Missions.mvc"; } }
+		string navigatingTo = null;
 
 		public bool TryNavigate(params string[] path)
 		{
 			var pathString = String.Join("/", path);
 			if (!pathString.StartsWith(PathHead)) return false;
-			if (WebBrowser.Source != null && pathString == WebBrowser.Source.OriginalString) return true;
+			if (WebBrowser.Source != null && pathString == WebBrowser.Source.OriginalString && pathString == "http://zero-k.info/Missions.mvc") return true;
+			navigatingTo = pathString;
 			WebBrowser.Navigate(pathString);
 			return true;
 		}
@@ -64,28 +50,15 @@ namespace ZeroKLobby.MicroLobby
 		void WebBrowser_Navigated(object sender, NavigationEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-			if (firstTime)
-			{
-				firstTime = false;
-			}
-			else NavigationControl.Instance.Path = e.Uri.OriginalString;
 		}
 
 		void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-			if (!firstTime)
+			if (navigatingTo != e.Uri.ToString())
 			{
-				var parts = e.Uri.OriginalString.Split('@');
-				if (parts.Length < 2) return;
-				for (var i = 1; i < parts.Length; i++)
-				{
-					var action = parts[i];
-					PerformAction(action);
-				}
+				Program.MainWindow.navigationControl.Path = e.Uri.ToString();
 				e.Cancel = true;
-				var url = parts[0].Replace("zerok://", String.Empty);
-				WebBrowser.Navigate(url);
 			}
 		}
 
