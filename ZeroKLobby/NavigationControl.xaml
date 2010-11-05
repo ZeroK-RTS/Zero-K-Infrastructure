@@ -26,7 +26,7 @@
             </Grid.ColumnDefinitions>
             <Button x:Name="backButton" Grid.Column="0" Click="backButton_Click">Back</Button>
             <Button x:Name="forwardButton" Grid.Column="1" Click="forwardButton_Click">Forward</Button>
-            <ZeroKLobby:SubmitTextBox Grid.Column="2" Text="{Binding Path, ElementName=userControl}" />
+            <ZeroKLobby:SubmitTextBox Grid.Column="2" Text="{Binding Path, ElementName=userControl}"  />
         </Grid>
         <TabControl Grid.Row="2" x:Name="tabControl">
             <TabControl.ItemContainerStyle>

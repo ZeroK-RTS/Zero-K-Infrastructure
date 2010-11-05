@@ -8,6 +8,12 @@ namespace ZeroKLobby
 		public SubmitTextBox()
 		{
 			PreviewKeyDown += SubmitTextBox_PreviewKeyDown;
+			GotMouseCapture += SubmitTextBox_GotMouseCapture;
+		}
+
+		void SubmitTextBox_GotMouseCapture(object sender, MouseEventArgs e)
+		{
+			SelectAll();
 		}
 
 		void SubmitTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -16,6 +22,7 @@ namespace ZeroKLobby
 			{
 				var be = GetBindingExpression(TextProperty);
 				if (be != null) be.UpdateSource();
+				
 			}
 		}
 	}

@@ -230,5 +230,6 @@ namespace ZeroKLobby
 			if (navigable != null) return navigable.Hilite(hiliteLevel, steps);
 			else return false;
 		}
+
 	}
 }
