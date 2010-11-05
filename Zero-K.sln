@@ -30,8 +30,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Springie", "Springie\Spring
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoTorrent", "Shared\MonoTorrent\MonoTorrent.csproj", "{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZkData", "Shared\ZkData\ZkData.csproj", "{AA34952B-DF40-415A-9523-1D3BFEF69CF3}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CMissionLib", "MissionEditor\CMissionLib\CMissionLib.csproj", "{025DB717-770F-4A29-BC33-FFDC3088E25B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MissionEditor", "MissionEditor\MissionEditor2\MissionEditor.csproj", "{713275BF-2FAB-4F51-8766-1E8182BCDAA4}"
@@ -181,16 +179,6 @@ Global
 		{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}.Release|x86.ActiveCfg = Release|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{AA34952B-DF40-415A-9523-1D3BFEF69CF3}.Release|x86.ActiveCfg = Release|Any CPU
 		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{025DB717-770F-4A29-BC33-FFDC3088E25B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

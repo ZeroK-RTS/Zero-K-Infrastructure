@@ -88,10 +88,26 @@
   <ItemGroup>
     <Compile Include="ChangeEventArgs.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\AuthServiceClient.cs" />
+    <Compile Include="Data\IAuthService.cs" />
+    <Compile Include="Data\LobbyMessage.cs" />
+    <Compile Include="Data\Mission.cs" />
+    <Compile Include="Data\ProgramID.cs" />
+    <Compile Include="Data\ResourceType.cs" />
+    <Compile Include="Data\ZkData.cs">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="Data\ZkData.designer.cs">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
     <Compile Include="GlobalConst.cs" />
     <Compile Include="Hash.cs" />
+    <Compile Include="IMissionService.cs" />
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="MetaDataCache.cs" />
     <Compile Include="Pool.cs" />
@@ -138,13 +154,30 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Data\ZkData.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>ZkData.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Data\ZkData.dbml.namePrefs">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+    </None>
+    <None Include="Data\ZkData.dbml.syncPrefs">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+    </None>
+    <None Include="Data\ZkData.dbml.views">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -199,5 +232,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\ContentService\ContentService.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\ZkData.dbml.layout">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="7f555275-3567-4c0f-bfea-b02def6017a3" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings>
+      <CollectionMapping TypeName="System.Collections.Generic.List`1" Category="List" />
+    </CollectionMappings>
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://zero-k.info/MissionService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="MissionService.xsd" MetadataType="Schema" ID="f4d87be5-d945-40f5-a5d5-ddb8f6969683" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd7" />
+    <MetadataFile FileName="MissionService1.xsd" MetadataType="Schema" ID="ac66eb25-8753-46b2-8164-1fb225e6ee19" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd6" />
+    <MetadataFile FileName="MissionService2.xsd" MetadataType="Schema" ID="b794df52-cb68-4a2c-b929-95992ee14dd3" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd5" />
+    <MetadataFile FileName="MissionService3.xsd" MetadataType="Schema" ID="01b2e7b8-39a9-4f3b-9d86-c412c3939aa2" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd4" />
+    <MetadataFile FileName="MissionService.disco" MetadataType="Disco" ID="e5a5cd56-a54d-4e15-ba51-46f8fa13a51b" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?disco" />
+    <MetadataFile FileName="MissionService4.xsd" MetadataType="Schema" ID="70166cf9-5fef-463f-a083-9fca0ccd4284" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd1" />
+    <MetadataFile FileName="MissionService5.xsd" MetadataType="Schema" ID="fac0beac-9d75-4ecb-9a2d-626ffa72905e" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd3" />
+    <MetadataFile FileName="MissionService6.xsd" MetadataType="Schema" ID="4e966966-a57c-4d41-bb9a-b6ea0bac84d1" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd2" />
+    <MetadataFile FileName="MissionService.wsdl" MetadataType="Wsdl" ID="eabb887a-97a3-4eed-994f-2519d1ed098f" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?wsdl" />
+    <MetadataFile FileName="MissionService7.xsd" MetadataType="Schema" ID="7ccb6be5-c9a7-4b94-a8ab-f1664ddea735" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd0" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

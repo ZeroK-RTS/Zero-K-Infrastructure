@@ -9,8 +9,8 @@ using System.ServiceModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CMissionLib;
+using MissionEditor2.MissionServiceReference;
 using MissionEditor2.Properties;
-using MissionEditor2.ServiceReference;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
 using Binary = System.Data.Linq.Binary;
@@ -41,14 +41,13 @@ namespace MissionEditor2
 		{
 			try
 			{
-				var info = new ZkData.Mission
+				var info = new ZkData.Mission()
 				           {
 				           	Description = mission.Description,
 				           	Map = mission.Map.Name,
 				           	Mod = mission.Mod.Name,
 				           	Name = mission.Name,
 				           	ScoringMethod = mission.ScoringMethod,
-				           	Image = new byte[0],
 				           	Script = mission.GetScript(),
 				           	ModRapidTag = mission.RapidTag,
 				           };
@@ -62,7 +61,7 @@ namespace MissionEditor2
 				var imageStream = new MemoryStream();
 				pngEncoder.Save(imageStream);
 				imageStream.Position = 0;
-				info.Image = imageStream.ToArray();
+				info.Image = new Binary(imageStream.ToArray());
 
 				if (ApplicationDeployment.IsNetworkDeployed) info.MissionEditorVersion = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
 				using (var unitSync = new UnitSync(Settings.Default.SpringPath)) info.SpringVersion = unitSync.Version;

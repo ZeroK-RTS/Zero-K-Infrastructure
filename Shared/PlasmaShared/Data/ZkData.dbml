@@ -1,0 +1,419 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="PlasmaShared.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Battle" Member="Battles">
+    <Type Name="Battle">
+      <Column Name="BattleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CelestialObjectID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsDone" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Transit" Member="Transits">
+    <Type Name="Transit">
+      <Column Name="TransitID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FromObjectID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="ToObjectID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="FromX" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="FromY" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="ToX" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="ToY" Type="System.Single" DbType="Real NOT NULL" CanBeNull="false" />
+      <Column Name="StartBattleTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EndBattleTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Warp" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OrbitsObjectID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.BattleEvent" Member="BattleEvents">
+    <Type Name="BattleEvent">
+      <Column Name="BattleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObject" Member="CelestialObjects">
+    <Type Name="CelestialObject">
+      <Column Name="CelestialObjectID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CelestialObjectType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OrbitSpeed" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="OrbitDistance" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="OrbitInitialAngle" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="ParentObject" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="X" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="Y" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="MetalDensity" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="FoodDensity" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="QuantiumDensity" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMatterDensity" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="Size" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OwnerID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IsStargate" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Population" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="HitpointsDamaged" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="IsConnected" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="MaxPopulation" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MetalIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="FoodIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="QuantiumIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMatterIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="Efficiency" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="Buildpower" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="ResearchIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="BuildpowerUsed" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="CanBeRenamed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CanMapBeChanged" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="MapName" Type="System.String" DbType="VarChar(150)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObjectEvent" Member="CelestialObjectEvents">
+    <Type Name="CelestialObjectEvent">
+      <Column Name="ObjectID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObjectLink" Member="CelestialObjectLinks">
+    <Type Name="CelestialObjectLink">
+      <Column Name="FirstObjectID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SecondObjectID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObjectShip" Member="CelestialObjectShips">
+    <Type Name="CelestialObjectShip">
+      <Column Name="CelestialObjectID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ShipTypeID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Count" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CelestialObjectStructure" Member="CelestialObjectStructures">
+    <Type Name="CelestialObjectStructure">
+      <Column Name="CelestialObjectID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StructureTypeID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Count" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Coalition" Member="Coalitions">
+    <Type Name="Coalition">
+      <Column Name="CoalitionID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Config" Member="Configs">
+    <Type Name="Config">
+      <Column Name="Started" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CombatTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StartOn" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SecondsPerTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ResourceTick" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PopulationTick" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="WarpDistance" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DirtySecond" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TurnStarted" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Event" Member="Events">
+    <Type Name="Event">
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="EventType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Time" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="BattleTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Fleet" Member="Fleets">
+    <Type Name="Fleet">
+      <Column Name="FleetID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OwnerID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Tactics" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TransitID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CustomName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="CanPresidentControl" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FleetEvent" Member="FleetEvents">
+    <Type Name="FleetEvent">
+      <Column Name="FleetID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FleetShip" Member="FleetShips">
+    <Type Name="FleetShip">
+      <Column Name="FleetID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ShipTypeID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Count" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Mission" Member="Missions">
+    <Type Name="Mission">
+      <Column Name="MissionID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Mod" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Map" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Mutator" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" IsDelayLoaded="true" />
+      <Column Name="Image" Type="System.Data.Linq.Binary" DbType="varbinary(max) NOT NULL" CanBeNull="false" UpdateCheck="Never" IsDelayLoaded="true" />
+      <Column Name="Description" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="CreatedTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="ModifiedTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="ScoringMethod" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="TopScoreLine" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="MissionEditorVersion" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="SpringVersion" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="Revision" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Script" Type="System.String" DbType="nvarchar(max) NOT NULL" CanBeNull="false" IsDelayLoaded="true" />
+      <Column Name="TokenCondition" Type="System.String" DbType="varchar(500)" CanBeNull="true" />
+      <Column Name="CampaignID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ModOptions" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
+      <Column Name="ModRapidTag" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="MinHumans" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="MaxHumans" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="IsScriptMission" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
+      <Association Name="Mission_MissionScore" Member="MissionScores" ThisKey="MissionID" OtherKey="MissionID" Type="MissionScore" />
+      <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MothershipStructure" Member="MothershipStructures">
+    <Type Name="MothershipStructure">
+      <Column Name="PlayerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StructureTypeID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Count" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Player" Member="Players">
+    <Type Name="Player">
+      <Column Name="PlayerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SystemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SpringAccountID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="MothershipName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="TransitID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Credits" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="Metal" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="Food" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="MetalIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="FoodIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="Population" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PopulationCapacity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Quantium" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="QuantiumIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMatter" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMatterIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="XP" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ResearchIncome" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="ResearchPoints" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />
+      <Column Name="HomeworldID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="PresidentVote" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlayerEvent" Member="PlayerEvents">
+    <Type Name="PlayerEvent">
+      <Column Name="PlayerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlayerTechSpent" Member="PlayerTechSpents">
+    <Type Name="PlayerTechSpent">
+      <Column Name="PlayerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TechID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SpentResearch" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="SpentQuantium" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PopulationTransport" Member="PopulationTransports">
+    <Type Name="PopulationTransport">
+      <Column Name="PopulationTransportID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OwnerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TransitID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Count" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Score" Member="Scores">
+    <Type Name="Score">
+      <Column Name="MissionID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PlayerName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Score" Member="Score1" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TimeSeconds" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IP" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ShipType" Member="ShipTypes">
+    <Type Name="ShipType">
+      <Column Name="ShipTypeID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Class" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LaserDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MissileDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BombDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Shortcut" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="NeedsTechID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MetalCost" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Hitpoints" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="QuantiumCost" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DarkMetalCost" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsInterdictor" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsStealthy" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StarSystem" Member="StarSystems">
+    <Type Name="StarSystem">
+      <Column Name="SystemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="HomeStarID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="PresidentID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CoalitionID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StarSystemTech" Member="StarSystemTeches">
+    <Type Name="StarSystemTech">
+      <Column Name="StarSystemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TechID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.StructureType" Member="StructureTypes">
+    <Type Name="StructureType">
+      <Column Name="StructureTypeID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="CostMetal" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MakesMetal" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MakesFood" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="BuildsMetal" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MakesPeople" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NeedsPeople" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StoresPeople" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NeedsTechID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="HitPoints" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MakesResearch" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="LaserDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="MissileDamage" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Tech" Member="Teches">
+    <Type Name="Tech">
+      <Column Name="TechID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="NeedsTechID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CostResearch" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CostQuantium" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Account" Member="Accounts">
+    <Type Name="Account">
+      <Column Name="AccountID" Storage="_Id" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="varchar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="Aliases" Type="System.String" DbType="varchar(max)" CanBeNull="true" />
+      <Column Name="Elo" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" />
+      <Column Name="EloWeight" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" />
+      <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" />
+      <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" />
+      <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
+      <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
+      <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
+      <Association Name="Account_MissionScore" Member="MissionScores" ThisKey="AccountID" OtherKey="AccountID" Type="MissionScore" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LobbyMessage" Member="LobbyMessages">
+    <Type Name="LobbyMessage">
+      <Column Name="MessageID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="SourceName" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="TargetName" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="SourceAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="Message" Type="System.String" DbType="nvarchar(2000)" CanBeNull="true" />
+      <Column Name="Created" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="TargetAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="Channel" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Association Name="Account_LobbyMessage" Member="AccountBySourceAccountID" ThisKey="SourceAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_LobbyMessage1" Member="AccountByTargetAccountID" ThisKey="TargetAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.LobbyChannelSubscription" Member="LobbyChannelSubscriptions">
+    <Type Name="LobbyChannelSubscription">
+      <Column Name="Name" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Channel" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ForumThread" Member="ForumThreads">
+    <Type Name="ForumThread">
+      <Column Name="ForumThreadID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="nvarchar(300) NOT NULL" CanBeNull="false" />
+      <Column Name="ThumbsUp" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ThumbsDown" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Created" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="LastPost" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ExceptionLog" Member="ExceptionLogs">
+    <Type Name="ExceptionLog">
+      <Column Name="ExceptionLogID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ProgramID" Type="global::ZkData.ProgramType" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="[Exception]" Member="Exception" Type="System.String" DbType="nvarchar(max) NOT NULL" CanBeNull="false" />
+      <Column Name="ExtraData" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
+      <Column Name="RemoteIP" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="PlayerName" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="ProgramVersion" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="ExceptionHash" Type="System.String" DbType="char(32) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ResourceDependency" Member="ResourceDependencies">
+    <Type Name="ResourceDependency">
+      <Column Name="ResourceID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="NeedsInternalName" Type="System.String" DbType="varchar(250) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Resource_ResourceDependency" Member="Resource" ThisKey="ResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ResourceContentFile" Member="ResourceContentFiles">
+    <Type Name="ResourceContentFile">
+      <Column Name="ResourceID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Md5" Type="System.String" DbType="char(32) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Length" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="FileName" Type="System.String" DbType="nvarchar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Links" Type="System.String" DbType="text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="LinkCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Resource_ResourceContentFile" Member="Resource" ThisKey="ResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ResourceSpringHash" Member="ResourceSpringHashes">
+    <Type Name="ResourceSpringHash">
+      <Column Name="ResourceID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SpringVersion" Type="System.String" DbType="nvarchar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SpringHash" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Resource_ResourceSpringHash" Member="Resource" ThisKey="ResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Resource" Member="Resources">
+    <Type Name="Resource">
+      <Column Name="ResourceID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="InternalName" Type="System.String" DbType="nvarchar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="TypeID" Type="global::ZkData.ResourceType" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="LastLinkCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="DownloadCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="NoLinkDownloadCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="MissionID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
+      <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
+      <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
+      <Association Name="Mission_Resource" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" />
+    </Type>
+  </Table>
+  <Table Name="dbo.MissionScore" Member="MissionScores">
+    <Type Name="MissionScore">
+      <Column Name="MissionID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Score" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="MissionRevision" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="GameSeconds" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Mission_MissionScore" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Account_MissionScore" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>

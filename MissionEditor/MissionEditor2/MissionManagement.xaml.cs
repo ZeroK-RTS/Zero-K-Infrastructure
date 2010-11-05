@@ -6,7 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
-using MissionEditor2.ServiceReference;
+using MissionEditor2.MissionServiceReference;
 using ZkData;
 using Mission = ZkData.Mission;
 

@@ -84,7 +84,6 @@
       <DependentUpon>Global.asax</DependentUpon>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="IMissionService.cs" />
     <Compile Include="MissionService.svc.cs">
       <DependentUpon>MissionService.svc</DependentUpon>
     </Compile>
@@ -142,10 +141,6 @@
     <ProjectReference Include="..\..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Shared\ZkData\ZkData.csproj">
-      <Project>{AA34952B-DF40-415A-9523-1D3BFEF69CF3}</Project>
-      <Name>ZkData</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

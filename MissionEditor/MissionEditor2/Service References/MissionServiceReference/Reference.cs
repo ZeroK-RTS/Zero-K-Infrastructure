@@ -8,63 +8,38 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MissionEditor2.ServiceReference {
+namespace MissionEditor2.MissionServiceReference {
     using System.Data;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ServiceReference.IMissionService")]
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="MissionServiceReference.IMissionService")]
     public interface IMissionService {
         
         // CODEGEN: Parameter 'author' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/DeleteMission", ReplyAction="http://tempuri.org/IMissionService/DeleteMissionResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        MissionEditor2.ServiceReference.DeleteMissionResponse DeleteMission(MissionEditor2.ServiceReference.DeleteMissionRequest request);
-        
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/DeleteMission", ReplyAction="http://tempuri.org/IMissionService/DeleteMissionResponse")]
-        System.IAsyncResult BeginDeleteMission(MissionEditor2.ServiceReference.DeleteMissionRequest request, System.AsyncCallback callback, object asyncState);
-        
-        MissionEditor2.ServiceReference.DeleteMissionResponse EndDeleteMission(System.IAsyncResult result);
+        MissionEditor2.MissionServiceReference.DeleteMissionResponse DeleteMission(MissionEditor2.MissionServiceReference.DeleteMissionRequest request);
         
         // CODEGEN: Parameter 'GetMissionResult' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/GetMission", ReplyAction="http://tempuri.org/IMissionService/GetMissionResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        MissionEditor2.ServiceReference.GetMissionResponse GetMission(MissionEditor2.ServiceReference.GetMissionRequest request);
-        
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/GetMission", ReplyAction="http://tempuri.org/IMissionService/GetMissionResponse")]
-        System.IAsyncResult BeginGetMission(MissionEditor2.ServiceReference.GetMissionRequest request, System.AsyncCallback callback, object asyncState);
-        
-        MissionEditor2.ServiceReference.GetMissionResponse EndGetMission(System.IAsyncResult result);
+        MissionEditor2.MissionServiceReference.GetMissionResponse GetMission(MissionEditor2.MissionServiceReference.GetMissionRequest request);
         
         // CODEGEN: Parameter 'GetMissionByIDResult' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/GetMissionByID", ReplyAction="http://tempuri.org/IMissionService/GetMissionByIDResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        MissionEditor2.ServiceReference.GetMissionByIDResponse GetMissionByID(MissionEditor2.ServiceReference.GetMissionByIDRequest request);
-        
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/GetMissionByID", ReplyAction="http://tempuri.org/IMissionService/GetMissionByIDResponse")]
-        System.IAsyncResult BeginGetMissionByID(MissionEditor2.ServiceReference.GetMissionByIDRequest request, System.AsyncCallback callback, object asyncState);
-        
-        MissionEditor2.ServiceReference.GetMissionByIDResponse EndGetMissionByID(System.IAsyncResult result);
+        MissionEditor2.MissionServiceReference.GetMissionByIDResponse GetMissionByID(MissionEditor2.MissionServiceReference.GetMissionByIDRequest request);
         
         // CODEGEN: Parameter 'ListMissionInfosResult' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlArrayAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/ListMissionInfos", ReplyAction="http://tempuri.org/IMissionService/ListMissionInfosResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        MissionEditor2.ServiceReference.ListMissionInfosResponse ListMissionInfos(MissionEditor2.ServiceReference.ListMissionInfosRequest request);
-        
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/ListMissionInfos", ReplyAction="http://tempuri.org/IMissionService/ListMissionInfosResponse")]
-        System.IAsyncResult BeginListMissionInfos(MissionEditor2.ServiceReference.ListMissionInfosRequest request, System.AsyncCallback callback, object asyncState);
-        
-        MissionEditor2.ServiceReference.ListMissionInfosResponse EndListMissionInfos(System.IAsyncResult result);
+        MissionEditor2.MissionServiceReference.ListMissionInfosResponse ListMissionInfos(MissionEditor2.MissionServiceReference.ListMissionInfosRequest request);
         
         // CODEGEN: Parameter 'mission' requires additional schema information that cannot be captured using the parameter mode. The specific attribute is 'System.Xml.Serialization.XmlElementAttribute'.
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IMissionService/SendMission", ReplyAction="http://tempuri.org/IMissionService/SendMissionResponse")]
         [System.ServiceModel.XmlSerializerFormatAttribute(SupportFaults=true)]
-        MissionEditor2.ServiceReference.SendMissionResponse SendMission(MissionEditor2.ServiceReference.SendMissionRequest request);
-        
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/IMissionService/SendMission", ReplyAction="http://tempuri.org/IMissionService/SendMissionResponse")]
-        System.IAsyncResult BeginSendMission(MissionEditor2.ServiceReference.SendMissionRequest request, System.AsyncCallback callback, object asyncState);
-        
-        MissionEditor2.ServiceReference.SendMissionResponse EndSendMission(System.IAsyncResult result);
+        MissionEditor2.MissionServiceReference.SendMissionResponse SendMission(MissionEditor2.MissionServiceReference.SendMissionRequest request);
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -2383,12 +2358,12 @@ namespace MissionEditor2.ServiceReference {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public MissionEditor2.ServiceReference.Mission GetMissionResult;
+        public MissionEditor2.MissionServiceReference.Mission GetMissionResult;
         
         public GetMissionResponse() {
         }
         
-        public GetMissionResponse(MissionEditor2.ServiceReference.Mission GetMissionResult) {
+        public GetMissionResponse(MissionEditor2.MissionServiceReference.Mission GetMissionResult) {
             this.GetMissionResult = GetMissionResult;
         }
     }
@@ -2418,12 +2393,12 @@ namespace MissionEditor2.ServiceReference {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public MissionEditor2.ServiceReference.Mission GetMissionByIDResult;
+        public MissionEditor2.MissionServiceReference.Mission GetMissionByIDResult;
         
         public GetMissionByIDResponse() {
         }
         
-        public GetMissionByIDResponse(MissionEditor2.ServiceReference.Mission GetMissionByIDResult) {
+        public GetMissionByIDResponse(MissionEditor2.MissionServiceReference.Mission GetMissionByIDResult) {
             this.GetMissionByIDResult = GetMissionByIDResult;
         }
     }
@@ -2465,7 +2440,7 @@ namespace MissionEditor2.ServiceReference {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=0)]
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public MissionEditor2.ServiceReference.Mission mission;
+        public MissionEditor2.MissionServiceReference.Mission mission;
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=1)]
         [System.Xml.Serialization.XmlArrayAttribute(IsNullable=true)]
@@ -2482,12 +2457,12 @@ namespace MissionEditor2.ServiceReference {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://tempuri.org/", Order=4)]
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
-        public MissionEditor2.ServiceReference.Mod modInfo;
+        public MissionEditor2.MissionServiceReference.Mod modInfo;
         
         public SendMissionRequest() {
         }
         
-        public SendMissionRequest(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo) {
+        public SendMissionRequest(MissionEditor2.MissionServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.MissionServiceReference.Mod modInfo) {
             this.mission = mission;
             this.slots = slots;
             this.author = author;
@@ -2507,99 +2482,12 @@ namespace MissionEditor2.ServiceReference {
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface IMissionServiceChannel : MissionEditor2.ServiceReference.IMissionService, System.ServiceModel.IClientChannel {
+    public interface IMissionServiceChannel : MissionEditor2.MissionServiceReference.IMissionService, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class GetMissionCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public GetMissionCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public MissionEditor2.ServiceReference.Mission Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((MissionEditor2.ServiceReference.Mission)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class GetMissionByIDCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public GetMissionByIDCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public MissionEditor2.ServiceReference.Mission Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((MissionEditor2.ServiceReference.Mission)(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class ListMissionInfosCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public ListMissionInfosCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public Mission[] Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((Mission[])(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class MissionServiceClient : System.ServiceModel.ClientBase<MissionEditor2.ServiceReference.IMissionService>, MissionEditor2.ServiceReference.IMissionService {
-        
-        private BeginOperationDelegate onBeginDeleteMissionDelegate;
-        
-        private EndOperationDelegate onEndDeleteMissionDelegate;
-        
-        private System.Threading.SendOrPostCallback onDeleteMissionCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginGetMissionDelegate;
-        
-        private EndOperationDelegate onEndGetMissionDelegate;
-        
-        private System.Threading.SendOrPostCallback onGetMissionCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginGetMissionByIDDelegate;
-        
-        private EndOperationDelegate onEndGetMissionByIDDelegate;
-        
-        private System.Threading.SendOrPostCallback onGetMissionByIDCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginListMissionInfosDelegate;
-        
-        private EndOperationDelegate onEndListMissionInfosDelegate;
-        
-        private System.Threading.SendOrPostCallback onListMissionInfosCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginSendMissionDelegate;
-        
-        private EndOperationDelegate onEndSendMissionDelegate;
-        
-        private System.Threading.SendOrPostCallback onSendMissionCompletedDelegate;
+    public partial class MissionServiceClient : System.ServiceModel.ClientBase<MissionEditor2.MissionServiceReference.IMissionService>, MissionEditor2.MissionServiceReference.IMissionService {
         
         public MissionServiceClient() {
         }
@@ -2620,383 +2508,67 @@ namespace MissionEditor2.ServiceReference {
                 base(binding, remoteAddress) {
         }
         
-        public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> DeleteMissionCompleted;
-        
-        public event System.EventHandler<GetMissionCompletedEventArgs> GetMissionCompleted;
-        
-        public event System.EventHandler<GetMissionByIDCompletedEventArgs> GetMissionByIDCompleted;
-        
-        public event System.EventHandler<ListMissionInfosCompletedEventArgs> ListMissionInfosCompleted;
-        
-        public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> SendMissionCompleted;
-        
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.DeleteMissionResponse MissionEditor2.ServiceReference.IMissionService.DeleteMission(MissionEditor2.ServiceReference.DeleteMissionRequest request) {
+        MissionEditor2.MissionServiceReference.DeleteMissionResponse MissionEditor2.MissionServiceReference.IMissionService.DeleteMission(MissionEditor2.MissionServiceReference.DeleteMissionRequest request) {
             return base.Channel.DeleteMission(request);
         }
         
         public void DeleteMission(int missionID, string author, string password) {
-            MissionEditor2.ServiceReference.DeleteMissionRequest inValue = new MissionEditor2.ServiceReference.DeleteMissionRequest();
+            MissionEditor2.MissionServiceReference.DeleteMissionRequest inValue = new MissionEditor2.MissionServiceReference.DeleteMissionRequest();
             inValue.missionID = missionID;
             inValue.author = author;
             inValue.password = password;
-            MissionEditor2.ServiceReference.DeleteMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).DeleteMission(inValue);
+            MissionEditor2.MissionServiceReference.DeleteMissionResponse retVal = ((MissionEditor2.MissionServiceReference.IMissionService)(this)).DeleteMission(inValue);
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginDeleteMission(MissionEditor2.ServiceReference.DeleteMissionRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginDeleteMission(request, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginDeleteMission(int missionID, string author, string password, System.AsyncCallback callback, object asyncState) {
-            MissionEditor2.ServiceReference.DeleteMissionRequest inValue = new MissionEditor2.ServiceReference.DeleteMissionRequest();
-            inValue.missionID = missionID;
-            inValue.author = author;
-            inValue.password = password;
-            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginDeleteMission(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.DeleteMissionResponse MissionEditor2.ServiceReference.IMissionService.EndDeleteMission(System.IAsyncResult result) {
-            return base.Channel.EndDeleteMission(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public void EndDeleteMission(System.IAsyncResult result) {
-            MissionEditor2.ServiceReference.DeleteMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndDeleteMission(result);
-        }
-        
-        private System.IAsyncResult OnBeginDeleteMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            int missionID = ((int)(inValues[0]));
-            string author = ((string)(inValues[1]));
-            string password = ((string)(inValues[2]));
-            return this.BeginDeleteMission(missionID, author, password, callback, asyncState);
-        }
-        
-        private object[] OnEndDeleteMission(System.IAsyncResult result) {
-            this.EndDeleteMission(result);
-            return null;
-        }
-        
-        private void OnDeleteMissionCompleted(object state) {
-            if ((this.DeleteMissionCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.DeleteMissionCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void DeleteMissionAsync(int missionID, string author, string password) {
-            this.DeleteMissionAsync(missionID, author, password, null);
-        }
-        
-        public void DeleteMissionAsync(int missionID, string author, string password, object userState) {
-            if ((this.onBeginDeleteMissionDelegate == null)) {
-                this.onBeginDeleteMissionDelegate = new BeginOperationDelegate(this.OnBeginDeleteMission);
-            }
-            if ((this.onEndDeleteMissionDelegate == null)) {
-                this.onEndDeleteMissionDelegate = new EndOperationDelegate(this.OnEndDeleteMission);
-            }
-            if ((this.onDeleteMissionCompletedDelegate == null)) {
-                this.onDeleteMissionCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnDeleteMissionCompleted);
-            }
-            base.InvokeAsync(this.onBeginDeleteMissionDelegate, new object[] {
-                        missionID,
-                        author,
-                        password}, this.onEndDeleteMissionDelegate, this.onDeleteMissionCompletedDelegate, userState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.GetMissionResponse MissionEditor2.ServiceReference.IMissionService.GetMission(MissionEditor2.ServiceReference.GetMissionRequest request) {
+        MissionEditor2.MissionServiceReference.GetMissionResponse MissionEditor2.MissionServiceReference.IMissionService.GetMission(MissionEditor2.MissionServiceReference.GetMissionRequest request) {
             return base.Channel.GetMission(request);
         }
         
-        public MissionEditor2.ServiceReference.Mission GetMission(string missionName) {
-            MissionEditor2.ServiceReference.GetMissionRequest inValue = new MissionEditor2.ServiceReference.GetMissionRequest();
+        public MissionEditor2.MissionServiceReference.Mission GetMission(string missionName) {
+            MissionEditor2.MissionServiceReference.GetMissionRequest inValue = new MissionEditor2.MissionServiceReference.GetMissionRequest();
             inValue.missionName = missionName;
-            MissionEditor2.ServiceReference.GetMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).GetMission(inValue);
+            MissionEditor2.MissionServiceReference.GetMissionResponse retVal = ((MissionEditor2.MissionServiceReference.IMissionService)(this)).GetMission(inValue);
             return retVal.GetMissionResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginGetMission(MissionEditor2.ServiceReference.GetMissionRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginGetMission(request, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginGetMission(string missionName, System.AsyncCallback callback, object asyncState) {
-            MissionEditor2.ServiceReference.GetMissionRequest inValue = new MissionEditor2.ServiceReference.GetMissionRequest();
-            inValue.missionName = missionName;
-            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginGetMission(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.GetMissionResponse MissionEditor2.ServiceReference.IMissionService.EndGetMission(System.IAsyncResult result) {
-            return base.Channel.EndGetMission(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public MissionEditor2.ServiceReference.Mission EndGetMission(System.IAsyncResult result) {
-            MissionEditor2.ServiceReference.GetMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndGetMission(result);
-            return retVal.GetMissionResult;
-        }
-        
-        private System.IAsyncResult OnBeginGetMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            string missionName = ((string)(inValues[0]));
-            return this.BeginGetMission(missionName, callback, asyncState);
-        }
-        
-        private object[] OnEndGetMission(System.IAsyncResult result) {
-            MissionEditor2.ServiceReference.Mission retVal = this.EndGetMission(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnGetMissionCompleted(object state) {
-            if ((this.GetMissionCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.GetMissionCompleted(this, new GetMissionCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void GetMissionAsync(string missionName) {
-            this.GetMissionAsync(missionName, null);
-        }
-        
-        public void GetMissionAsync(string missionName, object userState) {
-            if ((this.onBeginGetMissionDelegate == null)) {
-                this.onBeginGetMissionDelegate = new BeginOperationDelegate(this.OnBeginGetMission);
-            }
-            if ((this.onEndGetMissionDelegate == null)) {
-                this.onEndGetMissionDelegate = new EndOperationDelegate(this.OnEndGetMission);
-            }
-            if ((this.onGetMissionCompletedDelegate == null)) {
-                this.onGetMissionCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetMissionCompleted);
-            }
-            base.InvokeAsync(this.onBeginGetMissionDelegate, new object[] {
-                        missionName}, this.onEndGetMissionDelegate, this.onGetMissionCompletedDelegate, userState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.GetMissionByIDResponse MissionEditor2.ServiceReference.IMissionService.GetMissionByID(MissionEditor2.ServiceReference.GetMissionByIDRequest request) {
+        MissionEditor2.MissionServiceReference.GetMissionByIDResponse MissionEditor2.MissionServiceReference.IMissionService.GetMissionByID(MissionEditor2.MissionServiceReference.GetMissionByIDRequest request) {
             return base.Channel.GetMissionByID(request);
         }
         
-        public MissionEditor2.ServiceReference.Mission GetMissionByID(int missionID) {
-            MissionEditor2.ServiceReference.GetMissionByIDRequest inValue = new MissionEditor2.ServiceReference.GetMissionByIDRequest();
+        public MissionEditor2.MissionServiceReference.Mission GetMissionByID(int missionID) {
+            MissionEditor2.MissionServiceReference.GetMissionByIDRequest inValue = new MissionEditor2.MissionServiceReference.GetMissionByIDRequest();
             inValue.missionID = missionID;
-            MissionEditor2.ServiceReference.GetMissionByIDResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).GetMissionByID(inValue);
+            MissionEditor2.MissionServiceReference.GetMissionByIDResponse retVal = ((MissionEditor2.MissionServiceReference.IMissionService)(this)).GetMissionByID(inValue);
             return retVal.GetMissionByIDResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginGetMissionByID(MissionEditor2.ServiceReference.GetMissionByIDRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginGetMissionByID(request, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginGetMissionByID(int missionID, System.AsyncCallback callback, object asyncState) {
-            MissionEditor2.ServiceReference.GetMissionByIDRequest inValue = new MissionEditor2.ServiceReference.GetMissionByIDRequest();
-            inValue.missionID = missionID;
-            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginGetMissionByID(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.GetMissionByIDResponse MissionEditor2.ServiceReference.IMissionService.EndGetMissionByID(System.IAsyncResult result) {
-            return base.Channel.EndGetMissionByID(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public MissionEditor2.ServiceReference.Mission EndGetMissionByID(System.IAsyncResult result) {
-            MissionEditor2.ServiceReference.GetMissionByIDResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndGetMissionByID(result);
-            return retVal.GetMissionByIDResult;
-        }
-        
-        private System.IAsyncResult OnBeginGetMissionByID(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            int missionID = ((int)(inValues[0]));
-            return this.BeginGetMissionByID(missionID, callback, asyncState);
-        }
-        
-        private object[] OnEndGetMissionByID(System.IAsyncResult result) {
-            MissionEditor2.ServiceReference.Mission retVal = this.EndGetMissionByID(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnGetMissionByIDCompleted(object state) {
-            if ((this.GetMissionByIDCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.GetMissionByIDCompleted(this, new GetMissionByIDCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void GetMissionByIDAsync(int missionID) {
-            this.GetMissionByIDAsync(missionID, null);
-        }
-        
-        public void GetMissionByIDAsync(int missionID, object userState) {
-            if ((this.onBeginGetMissionByIDDelegate == null)) {
-                this.onBeginGetMissionByIDDelegate = new BeginOperationDelegate(this.OnBeginGetMissionByID);
-            }
-            if ((this.onEndGetMissionByIDDelegate == null)) {
-                this.onEndGetMissionByIDDelegate = new EndOperationDelegate(this.OnEndGetMissionByID);
-            }
-            if ((this.onGetMissionByIDCompletedDelegate == null)) {
-                this.onGetMissionByIDCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetMissionByIDCompleted);
-            }
-            base.InvokeAsync(this.onBeginGetMissionByIDDelegate, new object[] {
-                        missionID}, this.onEndGetMissionByIDDelegate, this.onGetMissionByIDCompletedDelegate, userState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.ListMissionInfosResponse MissionEditor2.ServiceReference.IMissionService.ListMissionInfos(MissionEditor2.ServiceReference.ListMissionInfosRequest request) {
+        MissionEditor2.MissionServiceReference.ListMissionInfosResponse MissionEditor2.MissionServiceReference.IMissionService.ListMissionInfos(MissionEditor2.MissionServiceReference.ListMissionInfosRequest request) {
             return base.Channel.ListMissionInfos(request);
         }
         
         public Mission[] ListMissionInfos() {
-            MissionEditor2.ServiceReference.ListMissionInfosRequest inValue = new MissionEditor2.ServiceReference.ListMissionInfosRequest();
-            MissionEditor2.ServiceReference.ListMissionInfosResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).ListMissionInfos(inValue);
+            MissionEditor2.MissionServiceReference.ListMissionInfosRequest inValue = new MissionEditor2.MissionServiceReference.ListMissionInfosRequest();
+            MissionEditor2.MissionServiceReference.ListMissionInfosResponse retVal = ((MissionEditor2.MissionServiceReference.IMissionService)(this)).ListMissionInfos(inValue);
             return retVal.ListMissionInfosResult;
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginListMissionInfos(MissionEditor2.ServiceReference.ListMissionInfosRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginListMissionInfos(request, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginListMissionInfos(System.AsyncCallback callback, object asyncState) {
-            MissionEditor2.ServiceReference.ListMissionInfosRequest inValue = new MissionEditor2.ServiceReference.ListMissionInfosRequest();
-            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginListMissionInfos(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.ListMissionInfosResponse MissionEditor2.ServiceReference.IMissionService.EndListMissionInfos(System.IAsyncResult result) {
-            return base.Channel.EndListMissionInfos(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public Mission[] EndListMissionInfos(System.IAsyncResult result) {
-            MissionEditor2.ServiceReference.ListMissionInfosResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndListMissionInfos(result);
-            return retVal.ListMissionInfosResult;
-        }
-        
-        private System.IAsyncResult OnBeginListMissionInfos(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            return this.BeginListMissionInfos(callback, asyncState);
-        }
-        
-        private object[] OnEndListMissionInfos(System.IAsyncResult result) {
-            Mission[] retVal = this.EndListMissionInfos(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnListMissionInfosCompleted(object state) {
-            if ((this.ListMissionInfosCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.ListMissionInfosCompleted(this, new ListMissionInfosCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void ListMissionInfosAsync() {
-            this.ListMissionInfosAsync(null);
-        }
-        
-        public void ListMissionInfosAsync(object userState) {
-            if ((this.onBeginListMissionInfosDelegate == null)) {
-                this.onBeginListMissionInfosDelegate = new BeginOperationDelegate(this.OnBeginListMissionInfos);
-            }
-            if ((this.onEndListMissionInfosDelegate == null)) {
-                this.onEndListMissionInfosDelegate = new EndOperationDelegate(this.OnEndListMissionInfos);
-            }
-            if ((this.onListMissionInfosCompletedDelegate == null)) {
-                this.onListMissionInfosCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnListMissionInfosCompleted);
-            }
-            base.InvokeAsync(this.onBeginListMissionInfosDelegate, null, this.onEndListMissionInfosDelegate, this.onListMissionInfosCompletedDelegate, userState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.SendMissionResponse MissionEditor2.ServiceReference.IMissionService.SendMission(MissionEditor2.ServiceReference.SendMissionRequest request) {
+        MissionEditor2.MissionServiceReference.SendMissionResponse MissionEditor2.MissionServiceReference.IMissionService.SendMission(MissionEditor2.MissionServiceReference.SendMissionRequest request) {
             return base.Channel.SendMission(request);
         }
         
-        public void SendMission(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo) {
-            MissionEditor2.ServiceReference.SendMissionRequest inValue = new MissionEditor2.ServiceReference.SendMissionRequest();
+        public void SendMission(MissionEditor2.MissionServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.MissionServiceReference.Mod modInfo) {
+            MissionEditor2.MissionServiceReference.SendMissionRequest inValue = new MissionEditor2.MissionServiceReference.SendMissionRequest();
             inValue.mission = mission;
             inValue.slots = slots;
             inValue.author = author;
             inValue.password = password;
             inValue.modInfo = modInfo;
-            MissionEditor2.ServiceReference.SendMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).SendMission(inValue);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult MissionEditor2.ServiceReference.IMissionService.BeginSendMission(MissionEditor2.ServiceReference.SendMissionRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginSendMission(request, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSendMission(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo, System.AsyncCallback callback, object asyncState) {
-            MissionEditor2.ServiceReference.SendMissionRequest inValue = new MissionEditor2.ServiceReference.SendMissionRequest();
-            inValue.mission = mission;
-            inValue.slots = slots;
-            inValue.author = author;
-            inValue.password = password;
-            inValue.modInfo = modInfo;
-            return ((MissionEditor2.ServiceReference.IMissionService)(this)).BeginSendMission(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ServiceReference.SendMissionResponse MissionEditor2.ServiceReference.IMissionService.EndSendMission(System.IAsyncResult result) {
-            return base.Channel.EndSendMission(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public void EndSendMission(System.IAsyncResult result) {
-            MissionEditor2.ServiceReference.SendMissionResponse retVal = ((MissionEditor2.ServiceReference.IMissionService)(this)).EndSendMission(result);
-        }
-        
-        private System.IAsyncResult OnBeginSendMission(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            MissionEditor2.ServiceReference.Mission mission = ((MissionEditor2.ServiceReference.Mission)(inValues[0]));
-            MissionSlot[] slots = ((MissionSlot[])(inValues[1]));
-            string author = ((string)(inValues[2]));
-            string password = ((string)(inValues[3]));
-            MissionEditor2.ServiceReference.Mod modInfo = ((MissionEditor2.ServiceReference.Mod)(inValues[4]));
-            return this.BeginSendMission(mission, slots, author, password, modInfo, callback, asyncState);
-        }
-        
-        private object[] OnEndSendMission(System.IAsyncResult result) {
-            this.EndSendMission(result);
-            return null;
-        }
-        
-        private void OnSendMissionCompleted(object state) {
-            if ((this.SendMissionCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.SendMissionCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void SendMissionAsync(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo) {
-            this.SendMissionAsync(mission, slots, author, password, modInfo, null);
-        }
-        
-        public void SendMissionAsync(MissionEditor2.ServiceReference.Mission mission, MissionSlot[] slots, string author, string password, MissionEditor2.ServiceReference.Mod modInfo, object userState) {
-            if ((this.onBeginSendMissionDelegate == null)) {
-                this.onBeginSendMissionDelegate = new BeginOperationDelegate(this.OnBeginSendMission);
-            }
-            if ((this.onEndSendMissionDelegate == null)) {
-                this.onEndSendMissionDelegate = new EndOperationDelegate(this.OnEndSendMission);
-            }
-            if ((this.onSendMissionCompletedDelegate == null)) {
-                this.onSendMissionCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnSendMissionCompleted);
-            }
-            base.InvokeAsync(this.onBeginSendMissionDelegate, new object[] {
-                        mission,
-                        slots,
-                        author,
-                        password,
-                        modInfo}, this.onEndSendMissionDelegate, this.onSendMissionCompletedDelegate, userState);
+            MissionEditor2.MissionServiceReference.SendMissionResponse retVal = ((MissionEditor2.MissionServiceReference.IMissionService)(this)).SendMission(inValue);
         }
     }
 }

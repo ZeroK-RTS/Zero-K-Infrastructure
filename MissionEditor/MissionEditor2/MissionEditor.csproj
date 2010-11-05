@@ -94,6 +94,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -147,12 +148,7 @@
     <Compile Include="RegionWindow.xaml.cs">
       <DependentUpon>RegionWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Service References\ContentServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\ServiceReference\Reference.cs">
+    <Compile Include="Service References\MissionServiceReference\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
@@ -356,24 +352,16 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Service References\ServiceReference\MissionEditor2.ServiceReference.Mission.datasource">
+    <None Include="Service References\MissionServiceReference\MissionEditor2.MissionServiceReference.Mission.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\ServiceReference\Reference.svcmap">
+    <None Include="Service References\MissionServiceReference\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-    <None Include="Service References\ServiceReference\configuration.svcinfo" />
-    <None Include="Service References\ServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\ServiceReference\MissionService.disco" />
-    <None Include="Service References\ContentServiceReference\ContentService1.disco" />
-    <None Include="Service References\ContentServiceReference\ContentService1.wsdl" />
-    <None Include="Service References\ContentServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\ContentServiceReference\configuration.svcinfo" />
-    <None Include="Service References\ContentServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\MissionServiceReference\configuration.svcinfo" />
+    <None Include="Service References\MissionServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\MissionServiceReference\MissionService.disco" />
     <None Include="Properties\DataSources\ZkData.Mission.datasource" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -383,29 +371,29 @@
     <Content Include="FreeImage.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Service References\ServiceReference\MissionService.wsdl" />
-    <None Include="Service References\ServiceReference\MissionService.xsd">
+    <None Include="Service References\MissionServiceReference\MissionService.wsdl" />
+    <None Include="Service References\MissionServiceReference\MissionService.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\MissionService1.xsd">
+    <None Include="Service References\MissionServiceReference\MissionService1.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\MissionService2.xsd">
+    <None Include="Service References\MissionServiceReference\MissionService2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\MissionService3.xsd">
+    <None Include="Service References\MissionServiceReference\MissionService3.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\MissionService4.xsd">
+    <None Include="Service References\MissionServiceReference\MissionService4.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\MissionService5.xsd">
+    <None Include="Service References\MissionServiceReference\MissionService5.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\MissionService6.xsd">
+    <None Include="Service References\MissionServiceReference\MissionService6.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Service References\ServiceReference\MissionService7.xsd">
+    <None Include="Service References\MissionServiceReference\MissionService7.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Spring Mission Editor_TemporaryKey.pfx" />
@@ -454,10 +442,6 @@
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\ZkData\ZkData.csproj">
-      <Project>{AA34952B-DF40-415A-9523-1D3BFEF69CF3}</Project>
-      <Name>ZkData</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CMissionLib\CMissionLib.csproj">
       <Project>{025DB717-770F-4A29-BC33-FFDC3088E25B}</Project>
       <Name>CMissionLib</Name>
@@ -494,8 +478,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\ContentServiceReference\" />
-    <WCFMetadataStorage Include="Service References\ServiceReference\" />
+    <WCFMetadataStorage Include="Service References\MissionServiceReference\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

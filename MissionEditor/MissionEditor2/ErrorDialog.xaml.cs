@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
-using MissionEditor2.ContentServiceReference;
+using PlasmaShared.ContentService;
 
 namespace MissionEditor2
 {
@@ -30,7 +30,7 @@ namespace MissionEditor2
 			if (sendReportBox.IsChecked == true)
 			{
 				closeButton.IsEnabled = false;
-				var service = new ContentServiceSoapClient();
+				var service = new ContentService();
 				service.SubmitStackTraceCompleted += service_SubmitStackTraceCompleted;
 				service.SubmitStackTraceAsync(ProgramType.MissionEditor, nameBox.Text, errorText, descriptionBox.Text, version);
 				progressBar.Visibility = Visibility.Visible;
