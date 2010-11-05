@@ -1,27 +1,45 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<ZkData.Mission>" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<ZeroKWeb.Controllers.MissionDetailData>" %>
+<%@ Import Namespace="PlasmaShared" %>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<h1>
-		<%=Model.Name%></h1>
+	<%var m = Model.Mission; %>
+		<%=m.Name%></h1>
 		<h2>
 			By
-			<%=Model.Account.Name%></h2>
+			<%=m.Name%></h2>
 		<h2>
 			<a href='<%="zerok://" +
-			                  Html.Encode(Url.Action("Detail", "Missions", new { id = Model.MissionID }, Request.Url.Scheme) + "@start_mission:" + Model.Name)%>'>
+			                  Html.Encode(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@start_mission:" + m.Name)%>'>
 				PLAY NOW</a>
 		</h2>
 				<p class="border">
-			<%=Html.Encode(Model.Description)%>
+			<%=Html.Encode(Model.Mission.Description)%>
 		<br /><br />
 		
-		Players:	<%=Model.MinHumans%> - <%=Model.MaxHumans%><br/>
-		Map: <%=Model.Map%><br />
-		Game: <%=Model.Mod%><br />
-		Created: <%=Model.CreatedTime.ToLocalTime()%><br />
-		Changed: <%=Model.ModifiedTime.ToLocalTime()%> (revision<%=Model.Revision%>)<br />
-		Downloads: <%=Model.Resources.DownloadCount%><br />
+		Players:	<%=m.MinHumans%> - <%=m.MaxHumans%><br/>
+		Map: <%=m.Map%><br />
+		Game: <%=m.Mod%><br />
+		Created: <%=m.CreatedTime.ToLocalTime()%><br />
+		Changed: <%=m.ModifiedTime.ToLocalTime()%> (revision<%=m.Revision%>)<br />
+		Downloads: <%=m.Resources.DownloadCount%><br />
+		Runs: <%= m.MissionRunCount%> <br />
 	</p>
+	<h3>Top score</h3>
+	<p>
+	<ul>
+		<% foreach (var score in Model.TopScores)
+     {
+     	%>
+				<li><%= score.Score %>   <%=score.Account.Name %> in <%= score.GameSeconds > 0 ? Utils.PrintTimeRemaining(score.GameSeconds) : "" %></li>
+				<%
+			 
+     }
+  
+	 %>
+	 </ul>
+	</p>
+
 	<p>
 		<%:Html.ActionLink("Back to List", "Index")%>
 	</p>

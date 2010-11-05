@@ -46,8 +46,14 @@ namespace ZeroKWeb.Controllers
 
 		public ActionResult Detail(int id)
 		{
-			return View("Detail", new ZkDataContext().Missions.Single(x => x.MissionID == id));
+			var mission = new ZkDataContext().Missions.Single(x => x.MissionID == id);
+			return View("Detail", new MissionDetailData
+			                      {
+															Mission = mission,
+															TopScores = mission.MissionScores.OrderByDescending(x=>x.Score).Take(10).AsQueryable()
+			                      });
 		}
+
 
 		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, int? offset = null)
 		{
@@ -64,6 +70,12 @@ namespace ZeroKWeb.Controllers
 			if (mis.Any()) return PartialView("TileList", mis);
 			else return Content("");
 		}
+	}
+
+	public class MissionDetailData
+	{
+		public Mission Mission;
+		public IQueryable<MissionScore> TopScores;
 	}
 
 	public class MissionsIndexData
