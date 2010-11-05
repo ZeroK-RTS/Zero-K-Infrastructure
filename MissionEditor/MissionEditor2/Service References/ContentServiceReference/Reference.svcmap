@@ -18,11 +18,11 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="http://localhost:49576/ContentService.asmx" Protocol="http" SourceId="1" />
+    <MetadataSource Address="http://zero-k.info/ContentService.asmx" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="ContentService.wsdl" MetadataType="Wsdl" ID="ade584af-1c25-474b-8b87-06e7b5fcadc3" SourceId="1" SourceUrl="http://localhost:49576/ContentService.asmx?wsdl" />
-    <MetadataFile FileName="ContentService.disco" MetadataType="Disco" ID="2f38d5c7-15c0-4872-8b73-68693f68a400" SourceId="1" SourceUrl="http://localhost:49576/ContentService.asmx?disco" />
+    <MetadataFile FileName="ContentService1.disco" MetadataType="Disco" ID="bfb7fae2-ad19-4a7e-ade0-0de4e78530be" SourceId="1" SourceUrl="http://zero-k.info/ContentService.asmx?disco" />
+    <MetadataFile FileName="ContentService1.wsdl" MetadataType="Wsdl" ID="b0d7ba60-811b-486b-abe7-284574348877" SourceId="1" SourceUrl="http://zero-k.info/ContentService.asmx?wsdl" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

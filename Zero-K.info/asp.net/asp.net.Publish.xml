@@ -1,40 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
-  <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
-    <file relUrl="Scripts/MicrosoftAjax.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/05/2010 02:19:26" />
-    <file relUrl="Global.asax" publishTime="10/22/2010 17:42:44" />
-    <file relUrl="Styles/Site.css" publishTime="10/22/2010 19:20:36" />
-    <file relUrl="Scripts/jquery.validate-vsdoc.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="ErrorReports.aspx" publishTime="11/01/2010 01:25:49" />
-    <file relUrl="bin/ZkData.pdb" publishTime="11/05/2010 01:59:10" />
-    <file relUrl="Scripts/jquery-1.4.1.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Scripts/MicrosoftMvcAjax.debug.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Scripts/MicrosoftMvcValidation.debug.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Views/Missions/Index.aspx" publishTime="11/05/2010 01:55:21" />
-    <file relUrl="Scripts/jquery.validate.min.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Img/Loader.gif" publishTime="05/09/2009 14:54:21" />
-    <file relUrl="Styles/style.css" publishTime="11/02/2010 00:57:48" />
-    <file relUrl="Scripts/jquery.validate.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Scripts/jquery-1.4.1.min.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="bin/ZeroKWeb.pdb" publishTime="11/05/2010 02:19:35" />
-    <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="bin/Web.config" publishTime="11/05/2010 02:17:26" />
-    <file relUrl="bin/PlasmaShared.dll" publishTime="11/05/2010 01:59:08" />
-    <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="bin/ZeroKWeb.dll" publishTime="11/05/2010 02:19:35" />
-    <file relUrl="Views/Shared/Site.Master" publishTime="11/04/2010 02:11:45" />
-    <file relUrl="bin/ZkData.dll" publishTime="11/05/2010 01:59:10" />
-    <file relUrl="bin/Global.asax" publishTime="10/22/2010 17:42:44" />
-    <file relUrl="ContentService.asmx" publishTime="11/01/2010 01:25:49" />
-    <file relUrl="bin/Global.asax.cs" publishTime="10/28/2010 03:38:01" />
-    <file relUrl="Views/Missions/TileList.aspx" publishTime="11/02/2010 01:02:20" />
-    <file relUrl="MissionService.svc" publishTime="10/22/2010 23:53:24" />
-    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="11/05/2010 01:59:09" />
-    <file relUrl="Web.config" publishTime="11/05/2010 02:17:26" />
-    <file relUrl="Scripts/MicrosoftAjax.debug.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Views/Web.config" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="bin/MonoTorrent.dll" publishTime="10/18/2010 03:08:16" />
-    <file relUrl="Scripts/jquery-1.4.1-vsdoc.js" publishTime="10/22/2010 00:51:38" />
+  <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAABhC7AKus6EeNCO7jNCq3sAAAAAACAAAAAAAQZgAAAAEAACAAAACiBkhNSgvmeZgVoL7kGQ4yz1xxBkXmO/BtffaJTyk4hAAAAAAOgAAAAAIAACAAAABXmvWIS7+5Eq9lcIEYs0ce3M2YPUbiD1oEaoTokQ5hCyAAAAAVzLJYKBR6JWcLiz9Y0Y2TuNuwAUlns9j04A7MJSnSmEAAAAC+QU38Cqp9q/8hTot15nCykhoHf+zELt/riqdctqG7lpSq1k+sSI5FXt9/dsYRulUfj9ytOeNwcum/jG2b0yoD" SelectedForPublish="True">
+    <file relUrl="Scripts/MicrosoftAjax.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/05/2010 03:56:03" />
+    <file relUrl="Global.asax" publishTime="10/22/2010 19:34:42" />
+    <file relUrl="Styles/Site.css" publishTime="10/22/2010 19:35:39" />
+    <file relUrl="Scripts/jquery.validate-vsdoc.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="bin/ZkData.pdb" publishTime="11/05/2010 03:48:07" />
+    <file relUrl="Scripts/jquery-1.4.1.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="Scripts/MicrosoftMvcAjax.debug.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="Scripts/MicrosoftMvcValidation.debug.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="bin/MonoTorrent.pdb" publishTime="10/27/2010 19:23:55" />
+    <file relUrl="Scripts/MicrosoftAjax.debug.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="Views/Missions/Index.aspx" publishTime="11/05/2010 02:39:48" />
+    <file relUrl="Scripts/jquery.validate.min.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="Img/Loader.gif" publishTime="10/23/2010 01:27:59" />
+    <file relUrl="Styles/style.css" publishTime="11/02/2010 01:20:54" />
+    <file relUrl="bin/PlasmaShared.pdb" publishTime="11/05/2010 03:48:03" />
+    <file relUrl="Scripts/jquery.validate.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="Scripts/jquery-1.4.1.min.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="bin/ZeroKWeb.pdb" publishTime="11/05/2010 03:48:08" />
+    <file relUrl="bin/Web.config" publishTime="11/05/2010 03:56:43" />
+    <file relUrl="bin/PlasmaShared.dll" publishTime="11/05/2010 03:48:03" />
+    <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="bin/ZeroKWeb.dll" publishTime="11/05/2010 03:48:08" />
+    <file relUrl="Views/Shared/Site.Master" publishTime="11/04/2010 02:54:41" />
+    <file relUrl="bin/ZkData.dll" publishTime="11/05/2010 03:48:07" />
+    <file relUrl="bin/Global.asax" publishTime="10/22/2010 19:34:42" />
+    <file relUrl="ContentService.asmx" publishTime="10/30/2010 00:49:46" />
+    <file relUrl="bin/Global.asax.cs" publishTime="10/30/2010 00:41:57" />
+    <file relUrl="Views/Missions/TileList.aspx" publishTime="11/02/2010 01:20:40" />
+    <file relUrl="MissionService.svc" publishTime="10/23/2010 00:07:27" />
+    <file relUrl="Web.config" publishTime="11/05/2010 03:56:43" />
+    <file relUrl="ErrorReports.aspx" publishTime="10/30/2010 18:29:33" />
+    <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="10/22/2010 11:46:01" />
+    <file relUrl="bin/MonoTorrent.dll" publishTime="10/27/2010 19:23:55" />
+    <file relUrl="Views/Web.config" publishTime="10/22/2010 11:44:11" />
+    <file relUrl="Scripts/jquery-1.4.1-vsdoc.js" publishTime="10/22/2010 11:46:01" />
   </publishProfile>
 </publishData>

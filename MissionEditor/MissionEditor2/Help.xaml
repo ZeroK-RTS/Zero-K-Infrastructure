@@ -4,20 +4,7 @@
     Title="Help" SizeToContent="WidthAndHeight" WindowStyle="ToolWindow" ResizeMode="NoResize">
     <StackPanel>
         <TextBlock Padding="5" TextWrapping="WrapWithOverflow">
-            Triggers are containers that bind actions and conditions together. 
-            <LineBreak/> 
-            When any of the conditons are met, all actions in the trigger take place. 
-            <LineBreak/> 
-            Help for individual actions and conditions can be found in their configuration pages.
-            <LineBreak/>
-            You can access trigger settings by right-clicking on them.
-            <LineBreak />
-            Delete triggers, conditions or actions by right-clicking on them and selecting "Delete".
-            <LineBreak />
-            Drag dock panels by the header bar to dock them in other positions.
-            <LineBreak />
-            <LineBreak />
-            Join #sp for help!
+            
         </TextBlock>
         <Button IsCancel="True" HorizontalAlignment="Right" Width="50" Margin="3" >OK</Button>
     </StackPanel>

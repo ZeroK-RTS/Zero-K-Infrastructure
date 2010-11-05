@@ -58,7 +58,7 @@ namespace MissionEditor2
 			Mission.RaisePropertyChanged(String.Empty);
 		}
 
-		void BuildMission()
+		void BuildMission(bool hideFromModList = false)
 		{
 			var filter = "Spring Mod Archive (*.sdz)|*.sdz|All files (*.*)|*.*";
 			var saveFileDialog = new SaveFileDialog { DefaultExt = "sdz", Filter = filter, RestoreDirectory = true };
@@ -72,7 +72,7 @@ namespace MissionEditor2
 						var fileName = saveFileDialog.FileName;
 						Utils.InvokeInNewThread(delegate
 							{
-								mission.CreateArchive(fileName);
+								mission.CreateArchive(fileName, hideFromModList);
 								var scriptPath = String.Format("{0}\\{1}.txt", Path.GetDirectoryName(fileName), Path.GetFileNameWithoutExtension(fileName));
 								File.WriteAllText(scriptPath, mission.GetScript());
 								this.Invoke(loadingDialog.Close);
@@ -464,7 +464,8 @@ namespace MissionEditor2
 			project.AddAction("Save", QuickSave);
 			project.AddAction("Save As", SaveMission);
 			var mission = MainMenu.AddContainer("Mission");
-			mission.AddAction("Create Mutator", BuildMission);
+			mission.AddAction("Create Mutator", () => BuildMission());
+			mission.AddAction("Create Invisible Mutator", () => BuildMission(true));
 			mission.AddAction("Test Mission", TestMission);
 			mission.AddAction("Publish", () => Publishing.Publish(Mission, null));
 			mission.AddAction("Manage Missions", ShowMissionManagement);

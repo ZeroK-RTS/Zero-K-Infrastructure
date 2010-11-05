@@ -23,7 +23,7 @@
         <TextBox Name="springExeBox" VerticalContentAlignment="Center" x:FieldModifier="public">C:\Program Files\Spring\spring.exe</TextBox>
       </DockPanel>
     </GroupBox>
-    <GroupBox Header="Map Detail">
+    <GroupBox Header="Map Detail" Visibility="Collapsed">
       <DockPanel>
         <Label>High</Label>
         <Label DockPanel.Dock="Right">Low</Label>

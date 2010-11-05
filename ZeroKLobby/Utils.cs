@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -349,6 +350,35 @@ namespace ZeroKLobby
 			var sr = new StreamReader(s);
 
 			return sr.ReadToEnd();
+		}
+
+
+		public static void RegisterProtocol()
+		{
+			var executablePath = Assembly.GetExecutingAssembly().Location;
+			var protocolKey = Registry.ClassesRoot.CreateSubKey("spring");
+			protocolKey.SetValue("", "URL:Spring Action");
+			protocolKey.SetValue("URL Protocol","");
+			var defaultIconKey = protocolKey.CreateSubKey("DefaultIcon");
+			defaultIconKey.SetValue("", executablePath);
+			var shellKey = protocolKey.CreateSubKey("shell");
+			var openKey = shellKey.CreateSubKey("open");
+			var commandKey = openKey.CreateSubKey("command");
+			commandKey.SetValue("", "\"" + executablePath + "\" \"%1\"");
+
+		}
+
+		public static void UnregisterProtocol()
+		{
+			try
+			{
+				Registry.ClassesRoot.DeleteSubKeyTree("spring");
+			}
+			catch (Exception e)
+			{
+				Trace.TraceWarning("Unable to unregister spring protocol: " + e.Message);
+			}
+			return;
 		}
 	}
 }

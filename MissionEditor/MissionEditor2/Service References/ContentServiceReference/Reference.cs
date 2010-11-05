@@ -10,7 +10,6 @@
 
 namespace MissionEditor2.ContentServiceReference {
     using System.Runtime.Serialization;
-    using System;
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
@@ -21,147 +20,27 @@ namespace MissionEditor2.ContentServiceReference {
         MissionEditor = 0,
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="ExceptionLog", Namespace="http://tempuri.org/")]
-    [System.SerializableAttribute()]
-    public partial class ExceptionLog : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        private int ExceptionLogIDField;
-        
-        private MissionEditor2.ContentServiceReference.ProgramType ProgramIDField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ExceptionField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string ExtraDataField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string RemoteIPField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PlayerNameField;
-        
-        private System.DateTime TimeField;
-        
-        [global::System.ComponentModel.BrowsableAttribute(false)]
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
-            get {
-                return this.extensionDataField;
-            }
-            set {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public int ExceptionLogID {
-            get {
-                return this.ExceptionLogIDField;
-            }
-            set {
-                if ((this.ExceptionLogIDField.Equals(value) != true)) {
-                    this.ExceptionLogIDField = value;
-                    this.RaisePropertyChanged("ExceptionLogID");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public MissionEditor2.ContentServiceReference.ProgramType ProgramID {
-            get {
-                return this.ProgramIDField;
-            }
-            set {
-                if ((this.ProgramIDField.Equals(value) != true)) {
-                    this.ProgramIDField = value;
-                    this.RaisePropertyChanged("ProgramID");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
-        public string Exception {
-            get {
-                return this.ExceptionField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ExceptionField, value) != true)) {
-                    this.ExceptionField = value;
-                    this.RaisePropertyChanged("Exception");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
-        public string ExtraData {
-            get {
-                return this.ExtraDataField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.ExtraDataField, value) != true)) {
-                    this.ExtraDataField = value;
-                    this.RaisePropertyChanged("ExtraData");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=4)]
-        public string RemoteIP {
-            get {
-                return this.RemoteIPField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.RemoteIPField, value) != true)) {
-                    this.RemoteIPField = value;
-                    this.RaisePropertyChanged("RemoteIP");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=5)]
-        public string PlayerName {
-            get {
-                return this.PlayerNameField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.PlayerNameField, value) != true)) {
-                    this.PlayerNameField = value;
-                    this.RaisePropertyChanged("PlayerName");
-                }
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true, Order=6)]
-        public System.DateTime Time {
-            get {
-                return this.TimeField;
-            }
-            set {
-                if ((this.TimeField.Equals(value) != true)) {
-                    this.TimeField = value;
-                    this.RaisePropertyChanged("Time");
-                }
-            }
-        }
-        
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
-        
-        protected void RaisePropertyChanged(string propertyName) {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if ((propertyChanged != null)) {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
-        }
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ContentServiceReference.ContentServiceSoap")]
     public interface ContentServiceSoap {
+        
+        // CODEGEN: Generating message contract since element name login from namespace http://tempuri.org/ is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/NotifyMissionRun", ReplyAction="*")]
+        MissionEditor2.ContentServiceReference.NotifyMissionRunResponse NotifyMissionRun(MissionEditor2.ContentServiceReference.NotifyMissionRunRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/NotifyMissionRun", ReplyAction="*")]
+        System.IAsyncResult BeginNotifyMissionRun(MissionEditor2.ContentServiceReference.NotifyMissionRunRequest request, System.AsyncCallback callback, object asyncState);
+        
+        MissionEditor2.ContentServiceReference.NotifyMissionRunResponse EndNotifyMissionRun(System.IAsyncResult result);
+        
+        // CODEGEN: Generating message contract since element name login from namespace http://tempuri.org/ is not marked nillable
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/SubmitMissionScore", ReplyAction="*")]
+        MissionEditor2.ContentServiceReference.SubmitMissionScoreResponse SubmitMissionScore(MissionEditor2.ContentServiceReference.SubmitMissionScoreRequest request);
+        
+        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/SubmitMissionScore", ReplyAction="*")]
+        System.IAsyncResult BeginSubmitMissionScore(MissionEditor2.ContentServiceReference.SubmitMissionScoreRequest request, System.AsyncCallback callback, object asyncState);
+        
+        MissionEditor2.ContentServiceReference.SubmitMissionScoreResponse EndSubmitMissionScore(System.IAsyncResult result);
         
         // CODEGEN: Generating message contract since element name playerName from namespace http://tempuri.org/ is not marked nillable
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/SubmitStackTrace", ReplyAction="*")]
@@ -171,15 +50,148 @@ namespace MissionEditor2.ContentServiceReference {
         System.IAsyncResult BeginSubmitStackTrace(MissionEditor2.ContentServiceReference.SubmitStackTraceRequest request, System.AsyncCallback callback, object asyncState);
         
         MissionEditor2.ContentServiceReference.SubmitStackTraceResponse EndSubmitStackTrace(System.IAsyncResult result);
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class NotifyMissionRunRequest {
         
-        // CODEGEN: Generating message contract since element name GetStackTracesResult from namespace http://tempuri.org/ is not marked nillable
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/GetStackTraces", ReplyAction="*")]
-        MissionEditor2.ContentServiceReference.GetStackTracesResponse GetStackTraces(MissionEditor2.ContentServiceReference.GetStackTracesRequest request);
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="NotifyMissionRun", Namespace="http://tempuri.org/", Order=0)]
+        public MissionEditor2.ContentServiceReference.NotifyMissionRunRequestBody Body;
         
-        [System.ServiceModel.OperationContractAttribute(AsyncPattern=true, Action="http://tempuri.org/GetStackTraces", ReplyAction="*")]
-        System.IAsyncResult BeginGetStackTraces(MissionEditor2.ContentServiceReference.GetStackTracesRequest request, System.AsyncCallback callback, object asyncState);
+        public NotifyMissionRunRequest() {
+        }
         
-        MissionEditor2.ContentServiceReference.GetStackTracesResponse EndGetStackTraces(System.IAsyncResult result);
+        public NotifyMissionRunRequest(MissionEditor2.ContentServiceReference.NotifyMissionRunRequestBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class NotifyMissionRunRequestBody {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string login;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string missionName;
+        
+        public NotifyMissionRunRequestBody() {
+        }
+        
+        public NotifyMissionRunRequestBody(string login, string missionName) {
+            this.login = login;
+            this.missionName = missionName;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class NotifyMissionRunResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="NotifyMissionRunResponse", Namespace="http://tempuri.org/", Order=0)]
+        public MissionEditor2.ContentServiceReference.NotifyMissionRunResponseBody Body;
+        
+        public NotifyMissionRunResponse() {
+        }
+        
+        public NotifyMissionRunResponse(MissionEditor2.ContentServiceReference.NotifyMissionRunResponseBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute()]
+    public partial class NotifyMissionRunResponseBody {
+        
+        public NotifyMissionRunResponseBody() {
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class SubmitMissionScoreRequest {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="SubmitMissionScore", Namespace="http://tempuri.org/", Order=0)]
+        public MissionEditor2.ContentServiceReference.SubmitMissionScoreRequestBody Body;
+        
+        public SubmitMissionScoreRequest() {
+        }
+        
+        public SubmitMissionScoreRequest(MissionEditor2.ContentServiceReference.SubmitMissionScoreRequestBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
+    public partial class SubmitMissionScoreRequestBody {
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
+        public string login;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=1)]
+        public string passwordHash;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=2)]
+        public string missionName;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+        public int score;
+        
+        [System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+        public int gameSeconds;
+        
+        public SubmitMissionScoreRequestBody() {
+        }
+        
+        public SubmitMissionScoreRequestBody(string login, string passwordHash, string missionName, int score, int gameSeconds) {
+            this.login = login;
+            this.passwordHash = passwordHash;
+            this.missionName = missionName;
+            this.score = score;
+            this.gameSeconds = gameSeconds;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
+    public partial class SubmitMissionScoreResponse {
+        
+        [System.ServiceModel.MessageBodyMemberAttribute(Name="SubmitMissionScoreResponse", Namespace="http://tempuri.org/", Order=0)]
+        public MissionEditor2.ContentServiceReference.SubmitMissionScoreResponseBody Body;
+        
+        public SubmitMissionScoreResponse() {
+        }
+        
+        public SubmitMissionScoreResponse(MissionEditor2.ContentServiceReference.SubmitMissionScoreResponseBody Body) {
+            this.Body = Body;
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
+    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+    [System.Runtime.Serialization.DataContractAttribute()]
+    public partial class SubmitMissionScoreResponseBody {
+        
+        public SubmitMissionScoreResponseBody() {
+        }
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
@@ -255,105 +267,31 @@ namespace MissionEditor2.ContentServiceReference {
         }
     }
     
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
-    public partial class GetStackTracesRequest {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetStackTraces", Namespace="http://tempuri.org/", Order=0)]
-        public MissionEditor2.ContentServiceReference.GetStackTracesRequestBody Body;
-        
-        public GetStackTracesRequest() {
-        }
-        
-        public GetStackTracesRequest(MissionEditor2.ContentServiceReference.GetStackTracesRequestBody Body) {
-            this.Body = Body;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute()]
-    public partial class GetStackTracesRequestBody {
-        
-        public GetStackTracesRequestBody() {
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.ServiceModel.MessageContractAttribute(IsWrapped=false)]
-    public partial class GetStackTracesResponse {
-        
-        [System.ServiceModel.MessageBodyMemberAttribute(Name="GetStackTracesResponse", Namespace="http://tempuri.org/", Order=0)]
-        public MissionEditor2.ContentServiceReference.GetStackTracesResponseBody Body;
-        
-        public GetStackTracesResponse() {
-        }
-        
-        public GetStackTracesResponse(MissionEditor2.ContentServiceReference.GetStackTracesResponseBody Body) {
-            this.Body = Body;
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://tempuri.org/")]
-    public partial class GetStackTracesResponseBody {
-        
-        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=0)]
-        public MissionEditor2.ContentServiceReference.ExceptionLog[] GetStackTracesResult;
-        
-        public GetStackTracesResponseBody() {
-        }
-        
-        public GetStackTracesResponseBody(MissionEditor2.ContentServiceReference.ExceptionLog[] GetStackTracesResult) {
-            this.GetStackTracesResult = GetStackTracesResult;
-        }
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public interface ContentServiceSoapChannel : MissionEditor2.ContentServiceReference.ContentServiceSoap, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class GetStackTracesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        public GetStackTracesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        public MissionEditor2.ContentServiceReference.ExceptionLog[] Result {
-            get {
-                base.RaiseExceptionIfNecessary();
-                return ((MissionEditor2.ContentServiceReference.ExceptionLog[])(this.results[0]));
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
     public partial class ContentServiceSoapClient : System.ServiceModel.ClientBase<MissionEditor2.ContentServiceReference.ContentServiceSoap>, MissionEditor2.ContentServiceReference.ContentServiceSoap {
+        
+        private BeginOperationDelegate onBeginNotifyMissionRunDelegate;
+        
+        private EndOperationDelegate onEndNotifyMissionRunDelegate;
+        
+        private System.Threading.SendOrPostCallback onNotifyMissionRunCompletedDelegate;
+        
+        private BeginOperationDelegate onBeginSubmitMissionScoreDelegate;
+        
+        private EndOperationDelegate onEndSubmitMissionScoreDelegate;
+        
+        private System.Threading.SendOrPostCallback onSubmitMissionScoreCompletedDelegate;
         
         private BeginOperationDelegate onBeginSubmitStackTraceDelegate;
         
         private EndOperationDelegate onEndSubmitStackTraceDelegate;
         
         private System.Threading.SendOrPostCallback onSubmitStackTraceCompletedDelegate;
-        
-        private BeginOperationDelegate onBeginGetStackTracesDelegate;
-        
-        private EndOperationDelegate onEndGetStackTracesDelegate;
-        
-        private System.Threading.SendOrPostCallback onGetStackTracesCompletedDelegate;
         
         public ContentServiceSoapClient() {
         }
@@ -374,9 +312,171 @@ namespace MissionEditor2.ContentServiceReference {
                 base(binding, remoteAddress) {
         }
         
+        public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> NotifyMissionRunCompleted;
+        
+        public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> SubmitMissionScoreCompleted;
+        
         public event System.EventHandler<System.ComponentModel.AsyncCompletedEventArgs> SubmitStackTraceCompleted;
         
-        public event System.EventHandler<GetStackTracesCompletedEventArgs> GetStackTracesCompleted;
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ContentServiceReference.NotifyMissionRunResponse MissionEditor2.ContentServiceReference.ContentServiceSoap.NotifyMissionRun(MissionEditor2.ContentServiceReference.NotifyMissionRunRequest request) {
+            return base.Channel.NotifyMissionRun(request);
+        }
+        
+        public void NotifyMissionRun(string login, string missionName) {
+            MissionEditor2.ContentServiceReference.NotifyMissionRunRequest inValue = new MissionEditor2.ContentServiceReference.NotifyMissionRunRequest();
+            inValue.Body = new MissionEditor2.ContentServiceReference.NotifyMissionRunRequestBody();
+            inValue.Body.login = login;
+            inValue.Body.missionName = missionName;
+            MissionEditor2.ContentServiceReference.NotifyMissionRunResponse retVal = ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).NotifyMissionRun(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.IAsyncResult MissionEditor2.ContentServiceReference.ContentServiceSoap.BeginNotifyMissionRun(MissionEditor2.ContentServiceReference.NotifyMissionRunRequest request, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginNotifyMissionRun(request, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginNotifyMissionRun(string login, string missionName, System.AsyncCallback callback, object asyncState) {
+            MissionEditor2.ContentServiceReference.NotifyMissionRunRequest inValue = new MissionEditor2.ContentServiceReference.NotifyMissionRunRequest();
+            inValue.Body = new MissionEditor2.ContentServiceReference.NotifyMissionRunRequestBody();
+            inValue.Body.login = login;
+            inValue.Body.missionName = missionName;
+            return ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).BeginNotifyMissionRun(inValue, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ContentServiceReference.NotifyMissionRunResponse MissionEditor2.ContentServiceReference.ContentServiceSoap.EndNotifyMissionRun(System.IAsyncResult result) {
+            return base.Channel.EndNotifyMissionRun(result);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public void EndNotifyMissionRun(System.IAsyncResult result) {
+            MissionEditor2.ContentServiceReference.NotifyMissionRunResponse retVal = ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).EndNotifyMissionRun(result);
+        }
+        
+        private System.IAsyncResult OnBeginNotifyMissionRun(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            string login = ((string)(inValues[0]));
+            string missionName = ((string)(inValues[1]));
+            return this.BeginNotifyMissionRun(login, missionName, callback, asyncState);
+        }
+        
+        private object[] OnEndNotifyMissionRun(System.IAsyncResult result) {
+            this.EndNotifyMissionRun(result);
+            return null;
+        }
+        
+        private void OnNotifyMissionRunCompleted(object state) {
+            if ((this.NotifyMissionRunCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.NotifyMissionRunCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void NotifyMissionRunAsync(string login, string missionName) {
+            this.NotifyMissionRunAsync(login, missionName, null);
+        }
+        
+        public void NotifyMissionRunAsync(string login, string missionName, object userState) {
+            if ((this.onBeginNotifyMissionRunDelegate == null)) {
+                this.onBeginNotifyMissionRunDelegate = new BeginOperationDelegate(this.OnBeginNotifyMissionRun);
+            }
+            if ((this.onEndNotifyMissionRunDelegate == null)) {
+                this.onEndNotifyMissionRunDelegate = new EndOperationDelegate(this.OnEndNotifyMissionRun);
+            }
+            if ((this.onNotifyMissionRunCompletedDelegate == null)) {
+                this.onNotifyMissionRunCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnNotifyMissionRunCompleted);
+            }
+            base.InvokeAsync(this.onBeginNotifyMissionRunDelegate, new object[] {
+                        login,
+                        missionName}, this.onEndNotifyMissionRunDelegate, this.onNotifyMissionRunCompletedDelegate, userState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ContentServiceReference.SubmitMissionScoreResponse MissionEditor2.ContentServiceReference.ContentServiceSoap.SubmitMissionScore(MissionEditor2.ContentServiceReference.SubmitMissionScoreRequest request) {
+            return base.Channel.SubmitMissionScore(request);
+        }
+        
+        public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds) {
+            MissionEditor2.ContentServiceReference.SubmitMissionScoreRequest inValue = new MissionEditor2.ContentServiceReference.SubmitMissionScoreRequest();
+            inValue.Body = new MissionEditor2.ContentServiceReference.SubmitMissionScoreRequestBody();
+            inValue.Body.login = login;
+            inValue.Body.passwordHash = passwordHash;
+            inValue.Body.missionName = missionName;
+            inValue.Body.score = score;
+            inValue.Body.gameSeconds = gameSeconds;
+            MissionEditor2.ContentServiceReference.SubmitMissionScoreResponse retVal = ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).SubmitMissionScore(inValue);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        System.IAsyncResult MissionEditor2.ContentServiceReference.ContentServiceSoap.BeginSubmitMissionScore(MissionEditor2.ContentServiceReference.SubmitMissionScoreRequest request, System.AsyncCallback callback, object asyncState) {
+            return base.Channel.BeginSubmitMissionScore(request, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public System.IAsyncResult BeginSubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds, System.AsyncCallback callback, object asyncState) {
+            MissionEditor2.ContentServiceReference.SubmitMissionScoreRequest inValue = new MissionEditor2.ContentServiceReference.SubmitMissionScoreRequest();
+            inValue.Body = new MissionEditor2.ContentServiceReference.SubmitMissionScoreRequestBody();
+            inValue.Body.login = login;
+            inValue.Body.passwordHash = passwordHash;
+            inValue.Body.missionName = missionName;
+            inValue.Body.score = score;
+            inValue.Body.gameSeconds = gameSeconds;
+            return ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).BeginSubmitMissionScore(inValue, callback, asyncState);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        MissionEditor2.ContentServiceReference.SubmitMissionScoreResponse MissionEditor2.ContentServiceReference.ContentServiceSoap.EndSubmitMissionScore(System.IAsyncResult result) {
+            return base.Channel.EndSubmitMissionScore(result);
+        }
+        
+        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
+        public void EndSubmitMissionScore(System.IAsyncResult result) {
+            MissionEditor2.ContentServiceReference.SubmitMissionScoreResponse retVal = ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).EndSubmitMissionScore(result);
+        }
+        
+        private System.IAsyncResult OnBeginSubmitMissionScore(object[] inValues, System.AsyncCallback callback, object asyncState) {
+            string login = ((string)(inValues[0]));
+            string passwordHash = ((string)(inValues[1]));
+            string missionName = ((string)(inValues[2]));
+            int score = ((int)(inValues[3]));
+            int gameSeconds = ((int)(inValues[4]));
+            return this.BeginSubmitMissionScore(login, passwordHash, missionName, score, gameSeconds, callback, asyncState);
+        }
+        
+        private object[] OnEndSubmitMissionScore(System.IAsyncResult result) {
+            this.EndSubmitMissionScore(result);
+            return null;
+        }
+        
+        private void OnSubmitMissionScoreCompleted(object state) {
+            if ((this.SubmitMissionScoreCompleted != null)) {
+                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
+                this.SubmitMissionScoreCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(e.Error, e.Cancelled, e.UserState));
+            }
+        }
+        
+        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, int gameSeconds) {
+            this.SubmitMissionScoreAsync(login, passwordHash, missionName, score, gameSeconds, null);
+        }
+        
+        public void SubmitMissionScoreAsync(string login, string passwordHash, string missionName, int score, int gameSeconds, object userState) {
+            if ((this.onBeginSubmitMissionScoreDelegate == null)) {
+                this.onBeginSubmitMissionScoreDelegate = new BeginOperationDelegate(this.OnBeginSubmitMissionScore);
+            }
+            if ((this.onEndSubmitMissionScoreDelegate == null)) {
+                this.onEndSubmitMissionScoreDelegate = new EndOperationDelegate(this.OnEndSubmitMissionScore);
+            }
+            if ((this.onSubmitMissionScoreCompletedDelegate == null)) {
+                this.onSubmitMissionScoreCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnSubmitMissionScoreCompleted);
+            }
+            base.InvokeAsync(this.onBeginSubmitMissionScoreDelegate, new object[] {
+                        login,
+                        passwordHash,
+                        missionName,
+                        score,
+                        gameSeconds}, this.onEndSubmitMissionScoreDelegate, this.onSubmitMissionScoreCompletedDelegate, userState);
+        }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
         MissionEditor2.ContentServiceReference.SubmitStackTraceResponse MissionEditor2.ContentServiceReference.ContentServiceSoap.SubmitStackTrace(MissionEditor2.ContentServiceReference.SubmitStackTraceRequest request) {
@@ -458,75 +558,6 @@ namespace MissionEditor2.ContentServiceReference {
                         playerName,
                         exception,
                         extraData}, this.onEndSubmitStackTraceDelegate, this.onSubmitStackTraceCompletedDelegate, userState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ContentServiceReference.GetStackTracesResponse MissionEditor2.ContentServiceReference.ContentServiceSoap.GetStackTraces(MissionEditor2.ContentServiceReference.GetStackTracesRequest request) {
-            return base.Channel.GetStackTraces(request);
-        }
-        
-        public MissionEditor2.ContentServiceReference.ExceptionLog[] GetStackTraces() {
-            MissionEditor2.ContentServiceReference.GetStackTracesRequest inValue = new MissionEditor2.ContentServiceReference.GetStackTracesRequest();
-            inValue.Body = new MissionEditor2.ContentServiceReference.GetStackTracesRequestBody();
-            MissionEditor2.ContentServiceReference.GetStackTracesResponse retVal = ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).GetStackTraces(inValue);
-            return retVal.Body.GetStackTracesResult;
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        System.IAsyncResult MissionEditor2.ContentServiceReference.ContentServiceSoap.BeginGetStackTraces(MissionEditor2.ContentServiceReference.GetStackTracesRequest request, System.AsyncCallback callback, object asyncState) {
-            return base.Channel.BeginGetStackTraces(request, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginGetStackTraces(System.AsyncCallback callback, object asyncState) {
-            MissionEditor2.ContentServiceReference.GetStackTracesRequest inValue = new MissionEditor2.ContentServiceReference.GetStackTracesRequest();
-            inValue.Body = new MissionEditor2.ContentServiceReference.GetStackTracesRequestBody();
-            return ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).BeginGetStackTraces(inValue, callback, asyncState);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        MissionEditor2.ContentServiceReference.GetStackTracesResponse MissionEditor2.ContentServiceReference.ContentServiceSoap.EndGetStackTraces(System.IAsyncResult result) {
-            return base.Channel.EndGetStackTraces(result);
-        }
-        
-        [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public MissionEditor2.ContentServiceReference.ExceptionLog[] EndGetStackTraces(System.IAsyncResult result) {
-            MissionEditor2.ContentServiceReference.GetStackTracesResponse retVal = ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).EndGetStackTraces(result);
-            return retVal.Body.GetStackTracesResult;
-        }
-        
-        private System.IAsyncResult OnBeginGetStackTraces(object[] inValues, System.AsyncCallback callback, object asyncState) {
-            return this.BeginGetStackTraces(callback, asyncState);
-        }
-        
-        private object[] OnEndGetStackTraces(System.IAsyncResult result) {
-            MissionEditor2.ContentServiceReference.ExceptionLog[] retVal = this.EndGetStackTraces(result);
-            return new object[] {
-                    retVal};
-        }
-        
-        private void OnGetStackTracesCompleted(object state) {
-            if ((this.GetStackTracesCompleted != null)) {
-                InvokeAsyncCompletedEventArgs e = ((InvokeAsyncCompletedEventArgs)(state));
-                this.GetStackTracesCompleted(this, new GetStackTracesCompletedEventArgs(e.Results, e.Error, e.Cancelled, e.UserState));
-            }
-        }
-        
-        public void GetStackTracesAsync() {
-            this.GetStackTracesAsync(null);
-        }
-        
-        public void GetStackTracesAsync(object userState) {
-            if ((this.onBeginGetStackTracesDelegate == null)) {
-                this.onBeginGetStackTracesDelegate = new BeginOperationDelegate(this.OnBeginGetStackTraces);
-            }
-            if ((this.onEndGetStackTracesDelegate == null)) {
-                this.onEndGetStackTracesDelegate = new EndOperationDelegate(this.OnEndGetStackTraces);
-            }
-            if ((this.onGetStackTracesCompletedDelegate == null)) {
-                this.onGetStackTracesCompletedDelegate = new System.Threading.SendOrPostCallback(this.OnGetStackTracesCompleted);
-            }
-            base.InvokeAsync(this.onBeginGetStackTracesDelegate, null, this.onEndGetStackTracesDelegate, this.onGetStackTracesCompletedDelegate, userState);
         }
     }
 }

@@ -9,7 +9,7 @@
 			By
 			<%=m.Name%></h2>
 		<h2>
-			<a href='<%="zerok://" +
+			<a href='<%="spring://" +
 			                  Html.Encode(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@start_mission:" + m.Name)%>'>
 				PLAY NOW</a>
 		</h2>

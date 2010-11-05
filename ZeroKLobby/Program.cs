@@ -56,6 +56,9 @@ namespace ZeroKLobby
 		[STAThread]
 		public static void Main(string[] args)
 		{
+
+			Utils.RegisterProtocol();
+
 			StartupArgs = args;
 			Trace.Listeners.Add(new ConsoleTraceListener());
 			Trace.Listeners.Add(new LogTraceListener());

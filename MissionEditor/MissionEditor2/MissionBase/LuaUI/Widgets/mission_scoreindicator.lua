@@ -22,7 +22,7 @@ local fontSize = 15
 
 function widget:DrawScreen()
   local viewSizeX, viewSizeY = gl.GetViewSizes()
-  local y = 150
+  local y = 175
   for _, teamID in ipairs(Spring.GetTeamList()) do
     local score = Spring.GetTeamRulesParam(teamID, "score")
     if score then
