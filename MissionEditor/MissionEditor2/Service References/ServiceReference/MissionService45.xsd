@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import schemaLocation="http://zero-k.info/MissionService.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/PlasmaShared" />
-  <xs:element xmlns:q1="http://schemas.datacontract.org/2004/07/PlasmaShared" name="dictionary" nillable="true" type="q1:SerializableDictionaryOfstringstring" />
-</xs:schema>
