@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using Microsoft.Win32;
 using MissionEditor2.ServiceReference;
 using ZkData;
+using Mission = ZkData.Mission;
 
 namespace MissionEditor2
 {
@@ -96,7 +97,7 @@ namespace MissionEditor2
 								loadingDialog.Close();
 								var filter = "Spring Mod Archive (*.sdz)|*.sdz|All files (*.*)|*.*";
 								var saveFileDialog = new SaveFileDialog { DefaultExt = "sdz", Filter = filter, RestoreDirectory = true };
-								if (saveFileDialog.ShowDialog() == true) File.WriteAllBytes(saveFileDialog.FileName, missionData.Mutator.ToArray());
+								if (saveFileDialog.ShowDialog() == true) File.WriteAllBytes(saveFileDialog.FileName, missionData.Mutator.Bytes.ToArray());
 								WelcomeDialog.LoadExistingMission(saveFileDialog.FileName);
 							});
 					}

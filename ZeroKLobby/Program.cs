@@ -56,8 +56,6 @@ namespace ZeroKLobby
 		public static bool Main(string[] args)
 		{
 
-			Utils.RegisterProtocol();
-
 			StartupArgs = args;
 			Trace.Listeners.Add(new ConsoleTraceListener());
 			Trace.Listeners.Add(new LogTraceListener());
@@ -78,6 +76,7 @@ namespace ZeroKLobby
 			//HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 			try
 			{
+				Utils.RegisterProtocol();
 				if (ApplicationDeployment.IsNetworkDeployed) Trace.TraceInformation("Starting with version {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
 				else
 				{

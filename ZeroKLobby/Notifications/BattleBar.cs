@@ -186,6 +186,21 @@ namespace ZeroKLobby.Notifications
 
 					var alliance = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(allyTeam => !battle.Users.Any(user => user.AllyNumber == allyTeam));
 					var team = battle.GetFreeTeamID(client.UserName);
+
+	/*				if (battle)
+{
+ * 			var b = tas.MyBattle;
+return hostedMod.MissionSlots.Where(x => x.IsHuman).OrderByDescending(x => x.IsRequired).Where(
+x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
+
+	var slot = GetFreeSlots().FirstOrDefault();
+	if (slot != null)
+	{
+		tas.ForceAlly(u.Name, slot.AllyID);
+		tas.ForceTeam(u.Name, slot.TeamID);
+	}
+	else tas.ForceSpectator(u.Name);
+}*/
 					var status = new UserBattleStatus
 					             {
 					             	AllyNumber = alliance,

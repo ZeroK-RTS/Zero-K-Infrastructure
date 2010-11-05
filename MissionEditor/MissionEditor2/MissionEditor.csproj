@@ -364,6 +364,9 @@
     </None>
     <None Include="Service References\ContentServiceReference\configuration.svcinfo" />
     <None Include="Service References\ContentServiceReference\configuration91.svcinfo" />
+    <None Include="Service References\ServiceReference\MissionEditor2.ServiceReference.Mission.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
     <None Include="Service References\ServiceReference\MissionService.disco" />
     <None Include="Service References\ServiceReference\MissionService.wsdl" />
     <None Include="Service References\ServiceReference\MissionService.xsd">
@@ -394,6 +397,15 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServiceReference\MissionService44.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\MissionService45.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\MissionService46.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ServiceReference\MissionService47.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ServiceReference\Reference.svcmap">

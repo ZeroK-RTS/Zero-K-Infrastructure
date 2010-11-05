@@ -357,6 +357,8 @@ namespace ZeroKLobby
 		{
 			try
 			{
+				// todo fix for win7 uac on
+				// todo try to register shortcut instead of exe path
 				var executablePath = Assembly.GetExecutingAssembly().Location;
 				var protocolKey = Registry.ClassesRoot.CreateSubKey("spring");
 				protocolKey.SetValue("", "URL:Spring Action");

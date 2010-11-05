@@ -34,6 +34,7 @@
             <s:element minOccurs="0" maxOccurs="1" name="playerName" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="exception" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="extraData" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="programVersion" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>

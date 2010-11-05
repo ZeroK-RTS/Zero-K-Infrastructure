@@ -23,9 +23,9 @@
     <MetadataSource Address="http://zero-k.info/MissionService.svc" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="MissionService45.xsd" MetadataType="Schema" ID="e0d326f3-53b8-4e9b-9c59-5f6f7629f972" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd7" />
-    <MetadataFile FileName="MissionService46.xsd" MetadataType="Schema" ID="a07c3f4b-7269-4cfb-a9db-4e4170f832e2" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd6" />
-    <MetadataFile FileName="MissionService47.xsd" MetadataType="Schema" ID="647cc4f7-3e4c-457a-a1dc-10f125d26ff0" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd5" />
+    <MetadataFile FileName="MissionService45.xsd" MetadataType="Schema" ID="12b5fada-5683-4e97-9622-8b2d6f5f3dfe" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd7" />
+    <MetadataFile FileName="MissionService46.xsd" MetadataType="Schema" ID="5d0c503b-a1a7-40c2-90db-9fee7891a466" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd6" />
+    <MetadataFile FileName="MissionService47.xsd" MetadataType="Schema" ID="302fbf94-3c72-4d0a-bb25-adf4e7029558" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd5" />
     <MetadataFile FileName="MissionService44.xsd" MetadataType="Schema" ID="25d61fa3-b453-43e2-b7c6-50189f8da304" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd4" />
     <MetadataFile FileName="MissionService.disco" MetadataType="Disco" ID="9d61d811-ecfd-4935-87f7-43297ad848d9" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?disco" />
     <MetadataFile FileName="MissionService.xsd" MetadataType="Schema" ID="dbaf71b9-491f-41da-b783-a6e7a3118575" SourceId="1" SourceUrl="http://zero-k.info/MissionService.svc?xsd=xsd1" />

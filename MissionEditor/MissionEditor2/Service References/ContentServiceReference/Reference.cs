@@ -229,14 +229,18 @@ namespace MissionEditor2.ContentServiceReference {
         [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=3)]
         public string extraData;
         
+        [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue=false, Order=4)]
+        public string programVersion;
+        
         public SubmitStackTraceRequestBody() {
         }
         
-        public SubmitStackTraceRequestBody(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData) {
+        public SubmitStackTraceRequestBody(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData, string programVersion) {
             this.programType = programType;
             this.playerName = playerName;
             this.exception = exception;
             this.extraData = extraData;
+            this.programVersion = programVersion;
         }
     }
     
@@ -483,13 +487,14 @@ namespace MissionEditor2.ContentServiceReference {
             return base.Channel.SubmitStackTrace(request);
         }
         
-        public void SubmitStackTrace(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData) {
+        public void SubmitStackTrace(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData, string programVersion) {
             MissionEditor2.ContentServiceReference.SubmitStackTraceRequest inValue = new MissionEditor2.ContentServiceReference.SubmitStackTraceRequest();
             inValue.Body = new MissionEditor2.ContentServiceReference.SubmitStackTraceRequestBody();
             inValue.Body.programType = programType;
             inValue.Body.playerName = playerName;
             inValue.Body.exception = exception;
             inValue.Body.extraData = extraData;
+            inValue.Body.programVersion = programVersion;
             MissionEditor2.ContentServiceReference.SubmitStackTraceResponse retVal = ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).SubmitStackTrace(inValue);
         }
         
@@ -499,13 +504,14 @@ namespace MissionEditor2.ContentServiceReference {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        public System.IAsyncResult BeginSubmitStackTrace(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData, System.AsyncCallback callback, object asyncState) {
+        public System.IAsyncResult BeginSubmitStackTrace(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData, string programVersion, System.AsyncCallback callback, object asyncState) {
             MissionEditor2.ContentServiceReference.SubmitStackTraceRequest inValue = new MissionEditor2.ContentServiceReference.SubmitStackTraceRequest();
             inValue.Body = new MissionEditor2.ContentServiceReference.SubmitStackTraceRequestBody();
             inValue.Body.programType = programType;
             inValue.Body.playerName = playerName;
             inValue.Body.exception = exception;
             inValue.Body.extraData = extraData;
+            inValue.Body.programVersion = programVersion;
             return ((MissionEditor2.ContentServiceReference.ContentServiceSoap)(this)).BeginSubmitStackTrace(inValue, callback, asyncState);
         }
         
@@ -524,7 +530,8 @@ namespace MissionEditor2.ContentServiceReference {
             string playerName = ((string)(inValues[1]));
             string exception = ((string)(inValues[2]));
             string extraData = ((string)(inValues[3]));
-            return this.BeginSubmitStackTrace(programType, playerName, exception, extraData, callback, asyncState);
+            string programVersion = ((string)(inValues[4]));
+            return this.BeginSubmitStackTrace(programType, playerName, exception, extraData, programVersion, callback, asyncState);
         }
         
         private object[] OnEndSubmitStackTrace(System.IAsyncResult result) {
@@ -539,11 +546,11 @@ namespace MissionEditor2.ContentServiceReference {
             }
         }
         
-        public void SubmitStackTraceAsync(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData) {
-            this.SubmitStackTraceAsync(programType, playerName, exception, extraData, null);
+        public void SubmitStackTraceAsync(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData, string programVersion) {
+            this.SubmitStackTraceAsync(programType, playerName, exception, extraData, programVersion, null);
         }
         
-        public void SubmitStackTraceAsync(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData, object userState) {
+        public void SubmitStackTraceAsync(MissionEditor2.ContentServiceReference.ProgramType programType, string playerName, string exception, string extraData, string programVersion, object userState) {
             if ((this.onBeginSubmitStackTraceDelegate == null)) {
                 this.onBeginSubmitStackTraceDelegate = new BeginOperationDelegate(this.OnBeginSubmitStackTrace);
             }
@@ -557,7 +564,8 @@ namespace MissionEditor2.ContentServiceReference {
                         programType,
                         playerName,
                         exception,
-                        extraData}, this.onEndSubmitStackTraceDelegate, this.onSubmitStackTraceCompletedDelegate, userState);
+                        extraData,
+                        programVersion}, this.onEndSubmitStackTraceDelegate, this.onSubmitStackTraceCompletedDelegate, userState);
         }
     }
 }
