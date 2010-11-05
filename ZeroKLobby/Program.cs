@@ -53,7 +53,7 @@ namespace ZeroKLobby
 
 
 		[STAThread]
-		public static void Main(string[] args)
+		public static bool Main(string[] args)
 		{
 
 			Utils.RegisterProtocol();
@@ -98,14 +98,14 @@ namespace ZeroKLobby
 				{
 					if (!Debugger.IsAttached)
 					{
-						mutex = new Mutex(false, "ZeroKLobby" + Conf.ManualSpringPath.GetHashCode());
+						mutex = new Mutex(false, "ZeroKLobby" + GetFullConfigPath().GetHashCode());
 						if (!mutex.WaitOne(200, false))
 						{
 							if (args.Length > 0)
 							{
+								MessageBox.Show(SpringPaths.WritableDirectory);
 								File.WriteAllLines(Utils.MakePath(SpringPaths.WritableDirectory, Config.IpcFileName), args);
-								App.Current.Shutdown();
-								return;
+								return false;
 							} else 
 							MessageBox.Show(
 								"Another copy of Zero-K lobby is still running for the spring at " + Conf.ManualSpringPath +
@@ -113,8 +113,7 @@ namespace ZeroKLobby
 								"There can be only one lobby running for each Spring engine copy",
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Stop);
-							App.Current.Shutdown();
-							return;
+							return false;
 						}
 					}
 				}
@@ -175,13 +174,14 @@ namespace ZeroKLobby
 
 				if (Conf.ConnectOnStartup) ConnectBar.TryToConnectTasClient();
 				else NotifySection.AddBar(ConnectBar);
-
+				return true;
 			}
 			catch (Exception ex)
 			{
 				ErrorHandling.HandleException(ex, true);
 				Trace.TraceError("Error in application:" + ex);
 			}
+			return false;
 		}
 
 
@@ -207,17 +207,6 @@ namespace ZeroKLobby
 
 		internal static void LoadConfig()
 		{
-			try
-			{
-				// first run of clickonce, port old config
-				if (ApplicationDeployment.IsNetworkDeployed && ApplicationDeployment.CurrentDeployment.IsFirstRun)
-				{
-					var path = SpringPaths.IsDirectoryWritable(StartupPath) ? StartupPath : SpringPaths.GetMySpringDocPath();
-					File.Copy(Path.Combine(path, Config.ConfigFileName), Path.Combine(ApplicationDeployment.CurrentDeployment.DataDirectory, Config.ConfigFileName));
-				}
-			}
-			catch {}
-
 			var configFilename = GetFullConfigPath();
 			if (File.Exists(configFilename))
 			{
@@ -269,7 +258,7 @@ namespace ZeroKLobby
 			if (ConfigDirectory == null)
 			{
 				//detect configuration path once
-				if (ApplicationDeployment.IsNetworkDeployed || (StartupArgs != null && StartupArgs.Length > 0))
+				if (ApplicationDeployment.IsNetworkDeployed)
 				{
 					// clickonce data folder
 					ConfigDirectory = ApplicationDeployment.CurrentDeployment.DataDirectory;

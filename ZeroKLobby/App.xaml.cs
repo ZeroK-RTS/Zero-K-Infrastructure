@@ -17,9 +17,12 @@ namespace ZeroKLobby
 
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
-			Program.Main(e.Args); // todo some exception handlign (dont catch in main? )
-			MainWindow = Program.MainWindow;
-			MainWindow.Show();
+			if (Program.Main(e.Args))
+			{
+				// todo some exception handlign (dont catch in main? )
+				MainWindow = Program.MainWindow;
+				MainWindow.Show();
+			} else Shutdown();
 		}
 
 		private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
