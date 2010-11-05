@@ -510,7 +510,12 @@ local function ExecuteTrigger(trigger, frame)
                   cardinalHeading = "w"
                 end
               end
-              local unitID = Spring.CreateUnit(unit.unitDefName, unit.x, 0, unit.y, "n", unit.player)
+              local unitID
+              if GG.DropUnit then
+                unitID = GG.DropUnit(unit.unitDefName, unit.x, 0, unit.y, "n", unit.player)
+              else
+                unitID = Spring.CreateUnit(unit.unitDefName, unit.x, 0, unit.y, "n", unit.player)
+              end
               if unitID then
                 if not isBuilding then
                   Spring.SetUnitRotation(unitID, 0, (unit.heading - 180)/360 * 2 * math.pi, 0)
