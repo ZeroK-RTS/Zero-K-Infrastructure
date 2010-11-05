@@ -21,8 +21,6 @@
 
 		window.onscroll = scrollEvent;
 	</script>
-	<%= Request["zk_login"] %>
-
 	<%
 		using (
 		Ajax.BeginForm("TileList",
@@ -36,9 +34,13 @@
 									 }))
 		{%>
 	<%=Html.TextBox("search", Model.SearchString)%><input type="submit" id="submit" value="Search" />
-	
+
 	<%
 		}%>
+			<span>
+	Try making new missions with <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>Zero-K MissionEditor</a> :)
+	</span>
+
 	<table>
 		<tr>
 			<td>
