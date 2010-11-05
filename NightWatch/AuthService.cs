@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using System.Transactions;
 using LobbyClient;
 using ZkData;
 
@@ -38,6 +39,12 @@ namespace NightWatch
 					requests.TryRemove(client.MessageID, out entry);
 				};
 
+			this.client.UserStatusChanged += (s, e) =>
+				{
+					var user = client.ExistingUsers[e.ServerParams[0]];
+					UpdateUser(user.AccountID, user.Name, user, null);
+				};
+
 
 			this.client.TestLoginDenied += (s, e) =>
 				{
@@ -66,32 +73,41 @@ namespace NightWatch
 				if (info.AccountID == 0) return null; // not verified/invalid login or password
 				else
 				{
-					var db = new ZkDataContext();
-					var acc = db.Accounts.SingleOrDefault(x => x.AccountID == info.AccountID);
-					if (acc == null)
-					{
-						acc = new Account() { AccountID = info.AccountID, Name = info.CorrectName};
-						db.Accounts.InsertOnSubmit(acc);
-					}
-
-					acc.Name = info.CorrectName;
-					acc.Password = hashedPassword;
-					acc.LastLogin = DateTime.UtcNow;
-
-					if (info.User != null) // user was online, we can update his data
-					{
-						acc.IsBot = info.User.IsBot;
-						acc.IsLobbyAdministrator = info.User.IsAdmin;
-						acc.Country = info.User.Country;
-						acc.LobbyTimeRank = info.User.Rank;
-					}
-
-					db.SubmitChanges();
+					Account acc = UpdateUser(info.AccountID, info.CorrectName, info.User,  hashedPassword);
 					return acc;
 				}
 			}
 			else // looby timeout, use database
 				return new ZkDataContext().Accounts.SingleOrDefault(x => x.Name == login && x.Password == hashedPassword);
+		}
+
+		Account UpdateUser(int accountID, string name, User user, string hashedPassword) {
+			
+			Account acc = null;
+			using (var db = new ZkDataContext())
+			{
+				acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+				if (acc == null)
+				{
+					acc = new Account() { AccountID = accountID, Name = name };
+					db.Accounts.InsertOnSubmit(acc);
+				}
+
+				acc.Name = name;
+				if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
+				acc.LastLogin = DateTime.UtcNow;
+
+				if (user != null) // user was online, we can update his data
+				{
+					acc.IsBot = user.IsBot;
+					acc.IsLobbyAdministrator = user.IsAdmin;
+					acc.Country = user.Country;
+					acc.LobbyTimeRank = user.Rank;
+				}
+
+				db.SubmitChanges();
+			}
+			return acc;
 		}
 
 		class RequestInfo

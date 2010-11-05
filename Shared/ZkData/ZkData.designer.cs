@@ -4857,7 +4857,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="varchar(100) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="varchar(100)")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public string Password
 		{

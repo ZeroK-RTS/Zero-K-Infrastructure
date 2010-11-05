@@ -309,7 +309,7 @@
       <Column Name="EloWeight" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" />
       <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="Password" Type="System.String" DbType="varchar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" />
       <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" />
       <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
