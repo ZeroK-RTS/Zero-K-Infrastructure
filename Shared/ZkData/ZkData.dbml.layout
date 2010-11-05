@@ -203,10 +203,10 @@
         <elementListCompartment Id="dd5dc9ca-9600-4b50-ac1b-a02105e4306c" absoluteBounds="5.265, 23.46, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="d58bd5e8-4efe-4018-903a-f831f308acd4" absoluteBounds="5.5, 3.375, 2, 2.1554996744791666">
+    <classShape Id="d58bd5e8-4efe-4018-903a-f831f308acd4" absoluteBounds="5.5, 3.375, 2, 2.5401025390624996">
       <DataClassMoniker Name="/ZkDataContext/ExceptionLog" />
       <nestedChildShapes>
-        <elementListCompartment Id="c650c1d2-81db-4d98-be60-1849460e08b9" absoluteBounds="5.5150000000000006, 3.835, 1.97, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="c650c1d2-81db-4d98-be60-1849460e08b9" absoluteBounds="5.5150000000000006, 3.835, 1.97, 1.9801025390625" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="77a37a7a-1d3e-43f3-808d-bc95899c0c6a" absoluteBounds="10.375, 0.5, 2, 1.1939925130208331">

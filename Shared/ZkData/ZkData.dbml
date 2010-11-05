@@ -359,6 +359,8 @@
       <Column Name="RemoteIP" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="PlayerName" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="ProgramVersion" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="ExceptionHash" Type="System.String" DbType="char(32) NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
   <Table Name="dbo.ResourceDependency" Member="ResourceDependencies">

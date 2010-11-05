@@ -5797,6 +5797,10 @@ namespace ZkData
 		
 		private System.DateTime _Time;
 		
+		private string _ProgramVersion;
+		
+		private string _ExceptionHash;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -5815,6 +5819,10 @@ namespace ZkData
     partial void OnPlayerNameChanged();
     partial void OnTimeChanging(System.DateTime value);
     partial void OnTimeChanged();
+    partial void OnProgramVersionChanging(string value);
+    partial void OnProgramVersionChanged();
+    partial void OnExceptionHashChanging(string value);
+    partial void OnExceptionHashChanged();
     #endregion
 		
 		public ExceptionLog()
@@ -5965,6 +5973,48 @@ namespace ZkData
 					this._Time = value;
 					this.SendPropertyChanged("Time");
 					this.OnTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProgramVersion", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public string ProgramVersion
+		{
+			get
+			{
+				return this._ProgramVersion;
+			}
+			set
+			{
+				if ((this._ProgramVersion != value))
+				{
+					this.OnProgramVersionChanging(value);
+					this.SendPropertyChanging();
+					this._ProgramVersion = value;
+					this.SendPropertyChanged("ProgramVersion");
+					this.OnProgramVersionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExceptionHash", DbType="char(32) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public string ExceptionHash
+		{
+			get
+			{
+				return this._ExceptionHash;
+			}
+			set
+			{
+				if ((this._ExceptionHash != value))
+				{
+					this.OnExceptionHashChanging(value);
+					this.SendPropertyChanging();
+					this._ExceptionHash = value;
+					this.SendPropertyChanged("ExceptionHash");
+					this.OnExceptionHashChanged();
 				}
 			}
 		}

@@ -355,17 +355,22 @@ namespace ZeroKLobby
 
 		public static void RegisterProtocol()
 		{
-			var executablePath = Assembly.GetExecutingAssembly().Location;
-			var protocolKey = Registry.ClassesRoot.CreateSubKey("spring");
-			protocolKey.SetValue("", "URL:Spring Action");
-			protocolKey.SetValue("URL Protocol","");
-			var defaultIconKey = protocolKey.CreateSubKey("DefaultIcon");
-			defaultIconKey.SetValue("", executablePath);
-			var shellKey = protocolKey.CreateSubKey("shell");
-			var openKey = shellKey.CreateSubKey("open");
-			var commandKey = openKey.CreateSubKey("command");
-			commandKey.SetValue("", "\"" + executablePath + "\" \"%1\"");
-
+			try
+			{
+				var executablePath = Assembly.GetExecutingAssembly().Location;
+				var protocolKey = Registry.ClassesRoot.CreateSubKey("spring");
+				protocolKey.SetValue("", "URL:Spring Action");
+				protocolKey.SetValue("URL Protocol", "");
+				var defaultIconKey = protocolKey.CreateSubKey("DefaultIcon");
+				defaultIconKey.SetValue("", executablePath);
+				var shellKey = protocolKey.CreateSubKey("shell");
+				var openKey = shellKey.CreateSubKey("open");
+				var commandKey = openKey.CreateSubKey("command");
+				commandKey.SetValue("", "\"" + executablePath + "\" \"%1\"");
+			} catch (Exception ex)
+			{
+				Trace.TraceError("Error registering protocol: {0}",ex);
+			}
 		}
 
 		public static void UnregisterProtocol()

@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Transactions;
 using System.Web.Services;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb
@@ -63,7 +64,7 @@ namespace ZeroKWeb
 		}
 
 		[WebMethod]
-		public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData)
+		public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData, string programVersion)
 		{
 			using (var db = new ZkDataContext())
 			{
@@ -74,6 +75,8 @@ namespace ZeroKWeb
 				                   	PlayerName = playerName,
 				                   	ExtraData = extraData,
 				                   	Exception = exception,
+														ExceptionHash = new Hash(exception).ToString(),
+														ProgramVersion = programVersion,
 				                   	RemoteIP = GetUserIP()
 				                   };
 				db.ExceptionLogs.InsertOnSubmit(exceptionLog);
