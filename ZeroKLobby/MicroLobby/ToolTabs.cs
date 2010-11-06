@@ -91,11 +91,19 @@ namespace ZeroKLobby.MicroLobby
 						else if (control is PrivateMessageControl) ContextMenus.GetPrivateMessageContextMenu((PrivateMessageControl)control).Show(toolStrip, point);
 						Program.ToolTip.Visible = true;
 					}
-					else if (e.Button == MouseButtons.Middle && control is ChatControl)
-					{
-						var chatControl = (ChatControl)control;
-						if (chatControl.CanLeave) ActionHandler.CloseChannel(chatControl.ChannelName);
-					}
+                    else if (e.Button == MouseButtons.Middle)
+                    {
+                        if (control is ChatControl)
+                        {
+                            var chatControl = (ChatControl)control;
+                            if (chatControl.CanLeave) ActionHandler.CloseChannel(chatControl.ChannelName);
+                        }
+                        else if (control is PrivateMessageControl)
+                        {
+                            var chatControl = (PrivateMessageControl)control;
+                            Program.MainWindow.ChatTab.CloseTab(chatControl.UserName);
+                        }
+                    }
 				};
 
 			var added = false;
