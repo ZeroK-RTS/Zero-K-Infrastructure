@@ -45,11 +45,11 @@
     <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
     <ProductName>Zero-K</ProductName>
     <PublisherName>Zero-K</PublisherName>
-    <MinimumRequiredVersion>2.5.0.3</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.5.0.9</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>9</ApplicationRevision>
+    <ApplicationRevision>10</ApplicationRevision>
     <ApplicationVersion>2.5.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
