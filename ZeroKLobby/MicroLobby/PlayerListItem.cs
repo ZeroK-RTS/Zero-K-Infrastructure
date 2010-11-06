@@ -15,6 +15,7 @@ namespace ZeroKLobby.MicroLobby
 		readonly Font boldFont = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
 		Font font = new Font("Segoe UI", 9, FontStyle.Regular);
 		int height = 16;
+		public string SlotButton;
 		public int? AllyTeam { get; set; }
 		public BotBattleStatus BotBattleStatus { get; set; }
 		public string Button { get; set; }
@@ -86,6 +87,17 @@ namespace ZeroKLobby.MicroLobby
 			{
 				font = boldFont;
 				ButtonRenderer.DrawButton(g, bounds, Button, font, false, PushButtonState.Normal);
+				return;
+			}
+
+			// is player slot button
+			if (SlotButton != null)
+			{
+				var slotText = string.Format("Empty Slot: {0} {1}", MissionSlot.TeamName, MissionSlot.IsRequired ? "(Required)" : String.Empty);
+				var buttonBounds = new Rectangle(x, bounds.Y, bounds.Height, bounds.Height);
+				ButtonRenderer.DrawButton(g, buttonBounds, "", font, false, PushButtonState.Normal);
+				x += buttonBounds.Width + 2;
+				drawText(slotText, foreColor, backColor);
 				return;
 			}
 
@@ -179,7 +191,12 @@ namespace ZeroKLobby.MicroLobby
 		public override string ToString()
 		{
 			var name = string.Empty;
-			if (UserBattleStatus != null)
+			if (MissionSlot != null)
+			{
+				SortCategory = MissionSlot.TeamID;
+				name = MissionSlot.TeamName;
+			}
+			else if (UserBattleStatus != null)
 			{
 				name = UserBattleStatus.Name;
 				if (UserBattleStatus.IsSpectator) SortCategory = 101;

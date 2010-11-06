@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.UnitSyncLib;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 
@@ -97,6 +98,19 @@ namespace ZeroKLobby
 				var newStatus = Program.TasClient.MyBattleStatus.Clone();
 				newStatus.AllyNumber = allyTeam;
 				newStatus.TeamNumber = Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName);
+				newStatus.IsSpectator = false;
+				Program.TasClient.SendMyBattleStatus(newStatus);
+			}
+		}
+
+
+		public static void JoinSlot(MissionSlot slot)
+		{
+			if (ChangeDesiredSpectatorState(false))
+			{
+				var newStatus = Program.TasClient.MyBattleStatus.Clone();
+				newStatus.AllyNumber = slot.AllyID;
+				newStatus.TeamNumber = slot.TeamID;
 				newStatus.IsSpectator = false;
 				Program.TasClient.SendMyBattleStatus(newStatus);
 			}

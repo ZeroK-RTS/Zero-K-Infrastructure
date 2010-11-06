@@ -544,7 +544,10 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			// fix my id
 			var sharePlayer = battle.Users.FirstOrDefault(x => x.Name == CommShareWith);
 			if (sharePlayer != null) newStatus.TeamNumber = sharePlayer.TeamNumber;
-			else if (battle.Users.Count(x => x.TeamNumber == currentStatus.TeamNumber) > 1) newStatus.TeamNumber = battle.GetFreeTeamID(client.UserName);
+			else if (battle.Users.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1)
+			{
+				newStatus.TeamNumber = battle.GetFreeTeamID(client.UserName);
+			}
 
 			if (currentBattleMode == BattleMode.Follow) // ally followed player
 			{

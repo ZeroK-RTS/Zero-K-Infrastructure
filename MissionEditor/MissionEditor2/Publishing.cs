@@ -73,8 +73,8 @@ namespace MissionEditor2
 				{
 					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(Settings.Default.SpringPath))
 					{
-						var writeablePath = unitSync.WritableDataDirectory;
-						tempPath = Path.Combine(writeablePath, missionFileName);
+						var modPath = Path.Combine(unitSync.WritableDataDirectory, "mods");
+						tempPath = Path.Combine(modPath, missionFileName);
 					}
 					if (File.Exists(tempPath)) File.Delete(tempPath);
 					mission.CreateArchive(tempPath);
@@ -83,19 +83,20 @@ namespace MissionEditor2
 					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(Settings.Default.SpringPath))
 					{
 						mod = unitSync.GetModFromArchive(missionFileName);
+						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");
 					}
 					info.Mutator = new Binary(File.ReadAllBytes(tempPath));
-					File.Delete(tempPath);
 					var client = MissionServiceClientFactory.MakeClient();
-					
-						client.SendMission(info, slots, mission.Author, password, mod);
-						MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from the lobby.\r\nPlease make sure it works!");
-						return true;
-					
+					client.SendMission(info, slots, mission.Author, password, mod);
+					MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from the lobby.\r\nPlease make sure it works!");
+					return true;
 				} 
 				finally
 				{
-					if (tempPath != null && File.Exists(tempPath)) File.Delete(tempPath);
+					try
+					{
+						if (tempPath != null && File.Exists(tempPath)) File.Delete(tempPath);
+					} catch {}
 				}
 			} 
 			catch(FaultException<ExceptionDetail> e)

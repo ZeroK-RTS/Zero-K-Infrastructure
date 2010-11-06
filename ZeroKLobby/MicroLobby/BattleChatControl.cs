@@ -118,7 +118,24 @@ namespace ZeroKLobby.MicroLobby
 			if (filtering || Program.TasClient.MyBattle == null) return;
 
 			var newList = new List<PlayerListItem>();
+
 			foreach (var us in PlayerListItems) newList.Add(us);
+
+			if (missionSlots != null)
+			{
+				foreach (var slot in missionSlots.Where(s => s.IsHuman))
+				{
+					var playerListItem = newList.FirstOrDefault(p => p.UserBattleStatus != null && !p.UserBattleStatus.IsSpectator && p.UserBattleStatus.TeamNumber == slot.TeamID);
+					if (playerListItem == null)
+					{
+						newList.Add(new PlayerListItem { SlotButton = slot.TeamName, MissionSlot = slot});
+					}
+					else
+					{
+						playerListItem.MissionSlot = slot;
+					}
+				}
+			}
 
 			var nonSpecs = PlayerListItems.Where(p => p.UserBattleStatus != null && !p.UserBattleStatus.IsSpectator);
 			var existingTeams = nonSpecs.GroupBy(i => i.UserBattleStatus.AllyNumber).Select(team => team.Key).ToList();
@@ -131,8 +148,14 @@ namespace ZeroKLobby.MicroLobby
 			}
 
 			// add section headers
-			if (PlayerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator)) {newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });}
-			foreach (var team in existingTeams.Distinct())
+			if (PlayerListItems.Any(i => i.UserBattleStatus != null && i.UserBattleStatus.IsSpectator))
+			{
+				newList.Add(new PlayerListItem { Button = "Spectators", SortCategory = 100, IsSpectatorsTitle = true, Height = 25 });
+			}
+
+			var buttonTeams = existingTeams.Distinct();
+			if (missionSlots != null) buttonTeams = buttonTeams.Concat(missionSlots.Select(s => s.AllyID)).Distinct();
+			foreach (var team in buttonTeams)
 			{
 				var allianceName = "Team " + (team + 1);
 				if (missionSlots != null)
@@ -318,7 +341,12 @@ namespace ZeroKLobby.MicroLobby
 					if (playerBox.HoverItem != null)
 					{
 						if (playerBox.HoverItem.IsSpectatorsTitle) ActionHandler.Spectate();
+						else if (playerBox.HoverItem.SlotButton != null)
+						{
+							ActionHandler.JoinSlot(playerBox.HoverItem.MissionSlot);
+						}
 						else if (playerBox.HoverItem.AllyTeam.HasValue) ActionHandler.JoinAllyTeam(playerBox.HoverItem.AllyTeam.Value);
+						
 					}
 					break;
 				case MouseButtons.Right:

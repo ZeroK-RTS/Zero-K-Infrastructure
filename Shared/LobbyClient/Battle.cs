@@ -319,7 +319,7 @@ namespace LobbyClient
 		{
 			return
 				Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(
-					teamID => !Users.Any(user => user.Name != exceptUser && user.TeamNumber == teamID) && !Bots.Any(x => x.TeamNumber == teamID));
+					teamID => !Users.Where(u => !u.IsSpectator).Any(user => user.Name != exceptUser && user.TeamNumber == teamID) && !Bots.Any(x => x.TeamNumber == teamID));
 		}
 
 		public int GetState(User founder)
