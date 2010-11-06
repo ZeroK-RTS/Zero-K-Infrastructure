@@ -161,6 +161,7 @@ namespace ZeroKWeb
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}_{1}.torrent", mission.Name.EscapePath(), md5), torrentStream.ToArray());
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}.metadata.xml.gz", mission.Name.EscapePath()),
 			                   MetaDataCache.SerializeAndCompressMetaData(modInfo));
+			File.WriteAllBytes(string.Format(@"d:\zero-k.info\www\img\missions\{0}.png", mission.MissionID), mission.Image.ToArray());
 
 			mission.IsDeleted = false;
 			db.SubmitChanges();
