@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -11,28 +12,19 @@ namespace ZeroKWeb
 	{
 		public MvcApplication()
 		{
-			this.AuthenticateRequest += new System.EventHandler(MvcApplication_AuthenticateRequest);
-
-		}
-
-		void MvcApplication_AuthenticateRequest(object sender, System.EventArgs e)
-		{
-			
-
+			AuthenticateRequest += MvcApplication_AuthenticateRequest;
 		}
 
 
 		public static void RegisterRoutes(RouteCollection routes)
 		{
-
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
 			routes.MapRoute("MissionImage", "Missions.mvc/Img/{name}", new { controller = "Missions", action = "Img", name = UrlParameter.Optional });
 			routes.MapRoute("MissionFile", "Missions.mvc/File/{name}", new { controller = "Missions", action = "File", name = UrlParameter.Optional });
 
+			routes.MapRoute("Default", "{controller}.mvc/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional });
 
-			routes.MapRoute("Default", "{controller}.mvc/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional});
-			
 			//routes.MapRoute("Root", "", new { controller = "Home", action = "Index", id = "" });
 		}
 
@@ -42,5 +34,7 @@ namespace ZeroKWeb
 
 			RegisterRoutes(RouteTable.Routes);
 		}
+
+		void MvcApplication_AuthenticateRequest(object sender, EventArgs e) {}
 	}
 }

@@ -337,7 +337,7 @@ namespace ZeroKLobby.MicroLobby
 
 		        ActionHandler.StopBattle();
 
-		        SpawnAutohost(dialog.GameName,
+		        ActionHandler.SpawnAutohost(dialog.GameName,
 		                      dialog.BattleTitle,
 		                      dialog.Password,
 		                      dialog.IsManageEnabled,
@@ -352,47 +352,6 @@ namespace ZeroKLobby.MicroLobby
 		void Sort()
 		{
 			if (sortByPlayers) view = view.OrderByDescending(bi => bi.Battle.NonSpectatorCount).ToList();
-		}
-
-		void SpawnAutohost(string gameName,
-		                   string battleTitle,
-		                   string password,
-		                   bool useManage,
-		                   int minPlayers,
-		                   int maxPlayers,
-		                   int teams,
-		                   IEnumerable<string> springieCommands)
-		{
-			var hostSpawnerName = SpringieCommand.GetHostSpawnerName(gameName);
-
-			var spawnCommand = SpringieCommand.Spawn(gameName, battleTitle, password);
-
-			var waitingBar = WarningBar.DisplayWarning("Waiting for AutoHost to start");
-
-			EventHandler<CancelEventArgs<TasSayEventArgs>> joinGame = null;
-			joinGame = (s, e) =>
-				{
-					if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Origin == TasSayEventArgs.Origins.Player && (e.Data.Text == spawnCommand.Reply))
-					{
-						e.Cancel = true;
-						Program.NotifySection.RemoveBar(waitingBar);
-						Program.TasClient.PreviewSaidPrivate -= joinGame;
-						var myHostName = e.Data.UserName;
-						var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder == myHostName);
-						if (useManage) SpringieCommand.Manage(minPlayers, maxPlayers, teams).SilentlyExcecute(myHostName);
-						foreach (var command in springieCommands)
-						{
-							ActionHandler.HidePM(command);
-							Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
-						}
-						Program.TasClient.JoinBattle(battle.BattleID, password);
-						NavigationControl.Instance.Path = "chat/battle";
-					}
-				};
-
-			Program.TasClient.PreviewSaidPrivate += joinGame;
-			ActionHandler.HidePM(spawnCommand.Command);
-			Program.TasClient.Say(TasClient.SayPlace.User, hostSpawnerName, spawnCommand.Command, false);
 		}
 
 		void UpdateTooltip(Battle battle)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Linq.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Web.Mvc;
 using System.Web.UI;
 using ZkData;
@@ -70,6 +71,12 @@ namespace ZeroKWeb.Controllers
 			var mis = FilterMissions(db.Missions, search, offset).Take(FetchTileCount);
 			if (mis.Any()) return PartialView("TileList", mis);
 			else return Content("");
+		}
+
+		public ActionResult Script(int id)
+		{
+			var m = new ZkDataContext().Missions.Single(x => x.MissionID == id);
+			return File(Encoding.UTF8.GetBytes(m.Script), "application/octet-stream", "script.txt");
 		}
 	}
 

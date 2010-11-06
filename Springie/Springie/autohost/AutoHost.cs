@@ -438,13 +438,18 @@ namespace Springie.autohost
 			var version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
 			if (version != null) modname = version.InternalName;
 
-			if (!wrapper.HasMap(mapname)) mapname = wrapper.GetFirstMap();
+			
 			if (!wrapper.HasMod(modname)) modname = wrapper.GetFirstMod();
+			var modi = wrapper.GetModInfo(modname);
+			hostedMod = modi;
+			if (hostedMod.IsMission && !string.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;
+
+
+			if (!wrapper.HasMap(mapname)) mapname = wrapper.GetFirstMap();
 
 			int mint, maxt;
 			var mapi = wrapper.GetMapInfo(mapname);
-			var modi = wrapper.GetModInfo(modname);
-			hostedMod = modi;
+			
 			var b = new Battle(password,
 			                   hostingPort,
 			                   config.MaxPlayers,

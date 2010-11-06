@@ -144,7 +144,18 @@ namespace ZeroKLobby
 			if (!string.IsNullOrEmpty(actionString))
 			{
 				var idx = actionString.IndexOf(':');
-				if (idx > -1 && actionString.Substring(0, idx) == "start_mission") StartMission(Uri.UnescapeDataString(actionString.Substring(idx + 1)));
+				
+				if (idx > -1)
+				{
+					string command = actionString.Substring(0, idx);
+					string arg = actionString.Substring(idx + 1);
+					if (command == "start_mission") StartMission(Uri.UnescapeDataString(arg));
+					else if (command =="host_mission")
+					{
+						ActionHandler.SpawnAutohost(arg, string.Format("{0}'s {1}", Program.Conf.LobbyPlayerName, arg), null, false, 0,0,0, null);
+					}
+				} 
+
 			}
 		}
 

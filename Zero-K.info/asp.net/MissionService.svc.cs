@@ -155,6 +155,8 @@ namespace ZeroKWeb
 			sh.SpringVersion = mission.SpringVersion;
 			sh.SpringHash = modInfo.Checksum;
 
+			modInfo.MissionMap = mission.Map; // todo solve properly - it should be in mod and unitsync should be able to read it too
+
 
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}_{1}.torrent", mission.Name.EscapePath(), md5), torrentStream.ToArray());
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}.metadata.xml.gz", mission.Name.EscapePath()),

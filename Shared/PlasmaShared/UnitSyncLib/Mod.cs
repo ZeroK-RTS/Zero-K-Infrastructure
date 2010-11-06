@@ -25,6 +25,7 @@ namespace PlasmaShared.UnitSyncLib
 		public Ai[] ModAis { get; set; }
 		public string Mutator { get; set; }
 		public Option[] Options { get; set; }
+		public string MissionMap { get; set; }
 
 		/// <summary>
 		/// Mod version as unitsync reports it

@@ -54,7 +54,7 @@ namespace Springie.AutoHostNamespace
 			if (teams < 1) allyCount = 1;
 			if (teams > max) allyCount = max;
 			if (min == max && allyCount == 2 && min%2 == 1) allyCount = min; // this means its ffa game with unset ally count (probably)
-			if (ah.hostedMod.IsMission)
+			if (min > 0 && ah.hostedMod.IsMission)
 			{
 				from = ah.hostedMod.MissionSlots.Count(x => x.IsHuman && x.IsRequired);
 				to = ah.hostedMod.MissionSlots.Count(x => x.IsHuman);
