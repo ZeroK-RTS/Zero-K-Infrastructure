@@ -999,6 +999,11 @@ function gadget:RecvLuaMsg(msg, player)
 end
 
 
+-- function gadget:AllowResourceTransfer()
+  -- return false
+-- end
+
+
 function gadget:Initialize()
     -- Set up the forwarding calls to the unsynced part of the gadget.
     -- This does not overwrite the calls in the synced part.

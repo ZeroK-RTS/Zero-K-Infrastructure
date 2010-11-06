@@ -122,7 +122,42 @@ namespace LobbyClient
 				List<GrTeam> teams;
 				List<GrAlly> alliances;
 
-				GroupData(out players, out teams, out alliances);
+				if (!mod.IsMission)
+				{
+					GroupData(out players, out teams, out alliances);
+				}
+				else
+				{
+					players = Users.Select(u => new GrPlayer(u)).ToList();
+
+					var playerTeamNumbers = Users.Where(u => !u.IsSpectator).Select(u => u.TeamNumber).Distinct();
+					var aiTeamNumbers = Bots.Select(b => b.TeamNumber).Distinct();
+					var allTeamNumbers = playerTeamNumbers.Concat(aiTeamNumbers).Distinct();
+
+					var grTeams = new GrTeam[allTeamNumbers.Count()];
+					foreach (var teamNumber in allTeamNumbers)
+					{
+						if (players.Any(p => p.user.TeamNumber == teamNumber))
+						{
+							var playerLeader = players.FirstOrDefault(p => p.user.TeamNumber == teamNumber);
+							var leaderIndex = players.IndexOf(playerLeader);
+							grTeams[teamNumber] = new GrTeam(leaderIndex);
+						}
+						else
+						{
+							var bot = Bots.FirstOrDefault(p => p.TeamNumber == teamNumber);
+							var botOwner = players.First(p => p.user.Name == bot.owner);
+							grTeams[teamNumber] = new GrTeam(players.IndexOf(botOwner)); // team leader in bots is the player ID of the bot owner
+						}
+					}
+					teams = grTeams.ToList();
+
+
+					var playerAlliances = Users.Where(u => !u.IsSpectator).Select(u => u.AllyNumber).Distinct();
+					var botAlliances = Bots.Select(b => b.AllyNumber).Distinct();
+					var allAlliances = playerAlliances.Concat(botAlliances).Distinct();
+					alliances = allAlliances.Select(n => new GrAlly()).ToList();
+				}
 
 				var isHost = localUser.Name == Founder;
 				var myUbs = players.Single(x => x.user.Name == localUser.Name).user;
@@ -275,27 +310,32 @@ namespace LobbyClient
 					script.AppendLine();
 					script.AppendFormat("  NumRestrictions={0};\n", DisabledUnits.Count);
 					script.AppendLine();
-					script.AppendLine("  [RESTRICT]");
-					script.AppendLine("  {");
-					for (var i = 0; i < DisabledUnits.Count; ++i)
-					{
-						script.AppendFormat("    Unit{0}={1};\n", i, DisabledUnits[i]);
-						script.AppendFormat("    Limit{0}=0;\n", i);
-					}
-					script.AppendLine("  }");
 
-					script.AppendLine("  [MODOPTIONS]");
-					script.AppendLine("  {");
-					foreach (var o in mod.Options)
+					if (!mod.IsMission)
 					{
-						if (o.Type != OptionType.Section)
+						script.AppendLine("  [RESTRICT]");
+						script.AppendLine("  {");
+						for (var i = 0; i < DisabledUnits.Count; ++i)
 						{
-							var v = o.Default;
-							if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
-							script.AppendFormat("    {0}={1};\n", o.Key, v);
+							script.AppendFormat("    Unit{0}={1};\n", i, DisabledUnits[i]);
+							script.AppendFormat("    Limit{0}=0;\n", i);
 						}
+						script.AppendLine("  }");
+
+
+						script.AppendLine("  [MODOPTIONS]");
+						script.AppendLine("  {");
+						foreach (var o in mod.Options)
+						{
+							if (o.Type != OptionType.Section)
+							{
+								var v = o.Default;
+								if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
+								script.AppendFormat("    {0}={1};\n", o.Key, v);
+							}
+						}
+						script.AppendLine("  }");
 					}
-					script.AppendLine("  }");
 
 					script.AppendLine("}");
 

@@ -463,7 +463,7 @@ namespace Springie.autohost
 			for (var i = 0; i < config.DefaultRectangles.Count; ++i) b.Rectangles.Add(i, config.DefaultRectangles[i]);
 			tas.OpenBattle(b);
 
-			if (SpawnConfig != null) tas.Say(TasClient.SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to server you! Join me!", false);
+			if (SpawnConfig != null) tas.Say(TasClient.SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", false);
 		}
 
 
