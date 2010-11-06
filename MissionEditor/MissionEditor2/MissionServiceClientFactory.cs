@@ -18,6 +18,7 @@ namespace MissionEditor2
 			binding.ReceiveTimeout = TimeSpan.FromHours(1);
 			binding.OpenTimeout = TimeSpan.FromHours(1);
 			binding.CloseTimeout = TimeSpan.FromHours(1);
+			binding.SendTimeout = TimeSpan.FromHours(1);
 			binding.MaxBufferSize = 6553600;
 			binding.MaxBufferPoolSize = 6553600;
 			binding.MaxReceivedMessageSize = 6553600;
