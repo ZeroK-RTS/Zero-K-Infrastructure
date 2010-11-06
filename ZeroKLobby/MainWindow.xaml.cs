@@ -144,11 +144,9 @@ namespace ZeroKLobby
 		/// <param name="useFlashing">use flashing</param>
 		public void NotifyUser(string navigationPath, string message, bool useSound = false, bool useFlashing = false)
 		{
-            if(     ( Program.Conf.DisableChannelBubble && navigationPath.Contains("chat/channel/") )
-                    || ( Program.Conf.DisablePmBubble && navigationPath.Contains("chat/user/") )          )
-            {
-                return;
-            }
+            bool showBalloon = !((Program.Conf.DisableChannelBubble && navigationPath.Contains("chat/channel/"))
+                                    || (Program.Conf.DisablePmBubble && navigationPath.Contains("chat/user/")));
+            
 
 			var isHidden = WindowState == WindowState.Minimized || IsVisible == false || WindowsApi.GetForegroundWindow() != (int)interopHelper.Handle;
 			var isPathDifferent = navigationControl.Path != navigationPath;
@@ -158,7 +156,10 @@ namespace ZeroKLobby
 				if (!string.IsNullOrEmpty(message))
 				{
 					baloonTipPath = navigationPath;
-					systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+                    if(showBalloon)
+                    {
+					    systrayIcon.ShowBalloonTip(5000, "Zero-K", message, ToolTipIcon.Info);
+                    }
 				}
 			}
 			if (isHidden && useFlashing) FlashWindow();
