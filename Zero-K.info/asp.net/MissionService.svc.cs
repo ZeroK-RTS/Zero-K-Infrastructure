@@ -101,6 +101,7 @@ namespace ZeroKWeb
 			mission.MinHumans = slots.Count(x => x.IsHuman && x.IsRequired);
 			mission.MaxHumans = slots.Count(x => x.IsHuman);
 			mission.ModifiedTime = DateTime.UtcNow;
+			mission.IsDeleted = true;
 
 			db.SubmitChanges();
 
@@ -159,6 +160,7 @@ namespace ZeroKWeb
 			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}.metadata.xml.gz", mission.Name.EscapePath()),
 			                   MetaDataCache.SerializeAndCompressMetaData(modInfo));
 
+			mission.IsDeleted = false;
 			db.SubmitChanges();
 		}
 	}
