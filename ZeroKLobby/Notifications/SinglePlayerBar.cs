@@ -5,8 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
-using ZeroKLobby.MicroLobby;
-using ScriptMissionData = PlasmaShared.ContentService.ScriptMissionData;
+using PlasmaShared.ContentService;
 
 namespace ZeroKLobby.Notifications
 {
@@ -58,6 +57,8 @@ namespace ZeroKLobby.Notifications
 			if (string.IsNullOrEmpty(name)) name = "Player";
 
 			spring.StartGame(null, null, null, profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name));
+			var serv = new ContentService() { Proxy = null };
+			serv.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, name);
 		}
 
 		void CloseBar()
