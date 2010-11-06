@@ -9,8 +9,22 @@ namespace ZeroKWeb
 
 	public class MvcApplication: HttpApplication
 	{
+		public MvcApplication()
+		{
+			this.AuthenticateRequest += new System.EventHandler(MvcApplication_AuthenticateRequest);
+
+		}
+
+		void MvcApplication_AuthenticateRequest(object sender, System.EventArgs e)
+		{
+			
+
+		}
+
+
 		public static void RegisterRoutes(RouteCollection routes)
 		{
+
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
 			routes.MapRoute("MissionImage", "Missions.mvc/Img/{name}", new { controller = "Missions", action = "Img", name = UrlParameter.Optional });

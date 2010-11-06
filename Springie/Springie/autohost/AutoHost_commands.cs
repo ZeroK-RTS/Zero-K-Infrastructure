@@ -52,7 +52,7 @@ namespace Springie.autohost
 				if (hostedMod.IsMission)
 				{
 					var freeSlots = GetFreeSlots();
-					foreach (var u in b.Users.Where(x => !x.IsSpectator && !tas.IsTeamSpec(x.Side)))
+					foreach (var u in b.Users.Where(x => !x.IsSpectator && !tas.IsTeamSpec(x.Side)).ToList())
 					{
 						var curSlot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
 						if (curSlot != null && curSlot.IsRequired)
