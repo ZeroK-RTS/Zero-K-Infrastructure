@@ -6,9 +6,10 @@
             <TextBox x:Name="searchBox" TextChanged="searchBox_TextChanged" Margin="2"/>
         </DockPanel>
         <UniformGrid DockPanel.Dock="Bottom" Rows="1">
-            <Button Margin="2" Click="OpenButton_Click">Open Mission</Button>
-            <Button Margin="2" Click="UpdateButton_Click">Update Mission</Button>
-            <Button Margin="2" Click="DeleteButton_Click">Delete Mission</Button>
+            <Button Margin="2" Click="PublishButton_Click">Publish New Mission</Button>
+            <Button Margin="2" Click="UpdateButton_Click">Update Selected Mission</Button>
+            <Button Margin="2" Click="DeleteButton_Click">Delete Selected Mission</Button>
+            <Button Margin="2" Click="OpenButton_Click">Open Selected Mission</Button>
         </UniformGrid>
         <DataGrid x:Name="DataGrid" x:FieldModifier="public" AutoGenerateColumns="False" Background="White" IsReadOnly="True">
             <DataGrid.Columns>

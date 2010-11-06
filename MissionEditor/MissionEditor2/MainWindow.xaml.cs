@@ -485,8 +485,7 @@ namespace MissionEditor2
 			mission.AddAction("Create Mutator", () => BuildMission());
 			mission.AddAction("Create Invisible Mutator", () => BuildMission(true));
 			mission.AddAction("Test Mission", TestMission);
-			mission.AddAction("Publish", () => Publishing.Publish(Mission, null));
-			mission.AddAction("Manage Missions", ShowMissionManagement);
+			mission.AddAction("Publish", ShowMissionManagement);
 			mission.AddAction("Settings", ShowMissionSettings);
 
 			//var help = MainMenu.AddContainer("Help");

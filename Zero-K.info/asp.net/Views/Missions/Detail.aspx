@@ -16,7 +16,7 @@
 	<h2>
 		<a href='<%="spring://" +
 			                  Html.Encode(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.Name)%>'>
-			HOST COOP</a>
+			HOST IN MULTIPLAYER</a>
 	</h2>
 	
 	<p class="border">

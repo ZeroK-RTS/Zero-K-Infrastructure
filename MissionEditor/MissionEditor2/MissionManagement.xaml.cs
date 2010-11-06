@@ -43,7 +43,7 @@ namespace MissionEditor2
 						var list = client.ListMissionInfos();
 						this.Invoke(delegate
 							{
-								DataGrid.ItemsSource = list;
+								DataGrid.ItemsSource = list.Where(m => !m.IsDeleted);
 								loadingDialog.Close();
 							});
 					}
@@ -140,6 +140,12 @@ namespace MissionEditor2
 			DataGrid.SelectedItem = item;
 			DataGrid.ScrollIntoView(item);
 		}
-	}
 #pragma warning restore 612,618
+
+		private void PublishButton_Click(object sender, RoutedEventArgs e)
+		{
+			Publishing.Publish(MainWindow.Instance.Mission, null);
+		}
+	}
+
 }
