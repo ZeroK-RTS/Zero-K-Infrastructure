@@ -90,13 +90,20 @@ namespace ZeroKLobby.MicroLobby
 				return;
 			}
 
-			// is player slot button
+			// is player slot
 			if (SlotButton != null)
 			{
 				var slotText = string.Format("Empty Slot: {0} {1}", MissionSlot.TeamName, MissionSlot.IsRequired ? "(Required)" : String.Empty);
 				var buttonBounds = new Rectangle(x, bounds.Y, bounds.Height, bounds.Height);
 				ButtonRenderer.DrawButton(g, buttonBounds, "", font, false, PushButtonState.Normal);
 				x += buttonBounds.Width + 2;
+				var color = ((MyCol)MissionSlot.Color);
+				using (var brush = new SolidBrush(Color.FromArgb(color.R, color.G, color.B)))
+				{
+					g.SmoothingMode = SmoothingMode.AntiAlias;
+					g.FillEllipse(brush, x, bounds.Top, bounds.Bottom - bounds.Top, bounds.Bottom - bounds.Top);
+				}
+				x += bounds.Bottom - bounds.Top + 2;
 				drawText(slotText, foreColor, backColor);
 				return;
 			}
