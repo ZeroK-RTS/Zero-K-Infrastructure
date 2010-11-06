@@ -78,12 +78,32 @@ div#footer
 	clear: both;
 }
 
-.tile
+.mission
 {
-	width:250px; 
-	height:200px; 
-	margin: 10px;
 	display: block;
-	float: left;
-	border: 1px solid teal;
+	position: relative;
+	background: #111;
+	width:250px; 
+	padding: 10px;
+	margin: 10px;
+	border: 2px solid #444;
+	text-align: left;
 }
+
+.mission:hover
+{
+	background: #333;
+	cursor: pointer;
+}
+
+.mission_credit
+{
+	top: 2.5em;
+}
+
+.mission_title
+{
+	position: relative;
+	top: -.5em;
+}
+

@@ -116,10 +116,22 @@ ul.poll {list-style-type: none; text-indent: -3em;}
 	color: #f00;
 }
 
+/* needs tweaking */
 .cwhite {color: #fff;}
 .cblack {color: #000;}
 .clight {color: #ded;}
-.cdark   {color: #232;}
-.cred     {color: #f00;}
-.cblue   {color: #00f;}
-.cgray   {color: #888;}
+.cdark  {color: #232;}
+.cred   {color: #f00;}
+.cblue  {color: #00f;}
+.cgreen {color: #0f0;}
+.cgray  {color: #888;}
+
+.bwhite {background: #fff;}
+.bblack {background: #000;}
+.blight {background: #ddd;}
+.bdark  {background: #222;}
+.bred   {background: #f00;}
+.bblue  {background: #00f;}
+.bgreen {background: #0f0;}
+.bgray  {background: #888;}
+
