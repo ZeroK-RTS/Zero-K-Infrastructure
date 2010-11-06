@@ -29,6 +29,8 @@ namespace PlasmaShared.ContentService {
     [System.Web.Services.WebServiceBindingAttribute(Name="ContentServiceSoap", Namespace="http://tempuri.org/")]
     public partial class ContentService : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
+        private System.Threading.SendOrPostCallback GetScriptMissionDataOperationCompleted;
+        
         private System.Threading.SendOrPostCallback NotifyMissionRunOperationCompleted;
         
         private System.Threading.SendOrPostCallback SubmitMissionScoreOperationCompleted;
@@ -74,6 +76,9 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
+        public event GetScriptMissionDataCompletedEventHandler GetScriptMissionDataCompleted;
+        
+        /// <remarks/>
         public event NotifyMissionRunCompletedEventHandler NotifyMissionRunCompleted;
         
         /// <remarks/>
@@ -81,6 +86,35 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         public event SubmitStackTraceCompletedEventHandler SubmitStackTraceCompleted;
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetScriptMissionData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ScriptMissionData GetScriptMissionData(string name) {
+            object[] results = this.Invoke("GetScriptMissionData", new object[] {
+                        name});
+            return ((ScriptMissionData)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetScriptMissionDataAsync(string name) {
+            this.GetScriptMissionDataAsync(name, null);
+        }
+        
+        /// <remarks/>
+        public void GetScriptMissionDataAsync(string name, object userState) {
+            if ((this.GetScriptMissionDataOperationCompleted == null)) {
+                this.GetScriptMissionDataOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetScriptMissionDataOperationCompleted);
+            }
+            this.InvokeAsync("GetScriptMissionData", new object[] {
+                        name}, this.GetScriptMissionDataOperationCompleted, userState);
+        }
+        
+        private void OnGetScriptMissionDataOperationCompleted(object arg) {
+            if ((this.GetScriptMissionDataCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetScriptMissionDataCompleted(this, new GetScriptMissionDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/NotifyMissionRun", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -150,21 +184,22 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitStackTrace", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData) {
+        public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData, string programVersion) {
             this.Invoke("SubmitStackTrace", new object[] {
                         programType,
                         playerName,
                         exception,
-                        extraData});
+                        extraData,
+                        programVersion});
         }
         
         /// <remarks/>
-        public void SubmitStackTraceAsync(ProgramType programType, string playerName, string exception, string extraData) {
-            this.SubmitStackTraceAsync(programType, playerName, exception, extraData, null);
+        public void SubmitStackTraceAsync(ProgramType programType, string playerName, string exception, string extraData, string programVersion) {
+            this.SubmitStackTraceAsync(programType, playerName, exception, extraData, programVersion, null);
         }
         
         /// <remarks/>
-        public void SubmitStackTraceAsync(ProgramType programType, string playerName, string exception, string extraData, object userState) {
+        public void SubmitStackTraceAsync(ProgramType programType, string playerName, string exception, string extraData, string programVersion, object userState) {
             if ((this.SubmitStackTraceOperationCompleted == null)) {
                 this.SubmitStackTraceOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSubmitStackTraceOperationCompleted);
             }
@@ -172,7 +207,8 @@ namespace PlasmaShared.ContentService {
                         programType,
                         playerName,
                         exception,
-                        extraData}, this.SubmitStackTraceOperationCompleted, userState);
+                        extraData,
+                        programVersion}, this.SubmitStackTraceOperationCompleted, userState);
         }
         
         private void OnSubmitStackTraceOperationCompleted(object arg) {
@@ -204,11 +240,94 @@ namespace PlasmaShared.ContentService {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
     [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class ScriptMissionData {
+        
+        private string[] manualDependenciesField;
+        
+        private string mapNameField;
+        
+        private string modTagField;
+        
+        private string startScriptField;
+        
+        /// <remarks/>
+        public string[] ManualDependencies {
+            get {
+                return this.manualDependenciesField;
+            }
+            set {
+                this.manualDependenciesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string MapName {
+            get {
+                return this.mapNameField;
+            }
+            set {
+                this.mapNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ModTag {
+            get {
+                return this.modTagField;
+            }
+            set {
+                this.modTagField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string StartScript {
+            get {
+                return this.startScriptField;
+            }
+            set {
+                this.startScriptField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public enum ProgramType {
         
         /// <remarks/>
         MissionEditor,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetScriptMissionDataCompletedEventHandler(object sender, GetScriptMissionDataCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetScriptMissionDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetScriptMissionDataCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ScriptMissionData Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ScriptMissionData)(this.results[0]));
+            }
+        }
     }
     
     /// <remarks/>

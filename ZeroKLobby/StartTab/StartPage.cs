@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using ZeroKLobby.StartTab;
+using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -32,7 +34,7 @@ namespace ZeroKLobby.MicroLobby
 					Channel = "ca",
 					Regex = "Complete Annihilation.*",
 					Url = "http://www.caspring.org",
-					RapidTag = "ca:stable",
+					RapidTag = "zk:stable",
 					Tutorial = "http://trac.caspring.org/wiki/NewbieGuide",
 					Image = "/Resources/GameLogos/ca.jpg",
 					Description =
@@ -185,8 +187,10 @@ namespace ZeroKLobby.MicroLobby
 						{
 							new SinglePlayerProfile()
 							{
+								Name="Kernel Panic",
 								MapName = "Central Hub",
 								ModTag = "kp:latest",
+								Image = "kp.png",
 								StartScript = SinglePlayerStartScripts.kp_script,
 								ManualDependencies =
 									new List<string>()

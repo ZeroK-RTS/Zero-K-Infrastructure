@@ -2197,6 +2197,8 @@ namespace ZkData
 		
 		private bool _IsDeleted;
 		
+		private string _ManualDependencies;
+		
 		private EntityRef<Resource> _Resources;
 		
 		private EntitySet<MissionScore> _MissionScores;
@@ -2259,6 +2261,8 @@ namespace ZkData
     partial void OnMissionRunCountChanged();
     partial void OnIsDeletedChanging(bool value);
     partial void OnIsDeletedChanged();
+    partial void OnManualDependenciesChanging(string value);
+    partial void OnManualDependenciesChanged();
     #endregion
 		
 		public Mission()
@@ -2308,7 +2312,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mod", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mod", DbType="nvarchar(100)")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public string Mod
 		{
@@ -2329,7 +2333,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Map", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Map", DbType="nvarchar(100)")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public string Map
 		{
@@ -2350,7 +2354,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mutator", DbType="VarBinary(MAX) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mutator", DbType="varbinary(max)", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public System.Data.Linq.Binary Mutator
 		{
@@ -2795,8 +2799,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ManualDependencies", DbType="nvarchar(max)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
+		public string ManualDependencies
+		{
+			get
+			{
+				return this._ManualDependencies;
+			}
+			set
+			{
+				if ((this._ManualDependencies != value))
+				{
+					this.OnManualDependenciesChanging(value);
+					this.SendPropertyChanging();
+					this._ManualDependencies = value;
+					this.SendPropertyChanged("ManualDependencies");
+					this.OnManualDependenciesChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
 		public Resource Resources
 		{
 			get
@@ -2831,7 +2856,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionScore", Storage="_MissionScores", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Transactions;
@@ -19,21 +20,34 @@ namespace ZeroKWeb
 	public class ContentService: WebService
 	{
 		[WebMethod]
-		public void NotifyMissionRun(string login, string missionName)
+		public ScriptMissionData GetScriptMissionData(string name)
 		{
 			using (var db = new ZkDataContext())
 			{
-				using (var scope = new TransactionScope())
-				{
-					db.Missions.Single(x => x.Name == missionName).MissionRunCount++;
-					db.Accounts.Single(x => x.Name == login).MissionRunCount++;
-					db.SubmitChanges();
-					scope.Complete();
-				}
+				var m = db.Missions.Single(x => x.Name == name && x.IsScriptMission);
+				return new ScriptMissionData()
+				       {
+				       	MapName = m.Map,
+				       	ModTag = m.ModRapidTag,
+				       	StartScript = m.Script,
+				       	ManualDependencies = m.ManualDependencies != null ? new List<string>(m.ManualDependencies.Split('\n')) : null
+				       };
 			}
-
 		}
-		
+
+		[WebMethod]
+		public void NotifyMissionRun(string login, string missionName)
+		{
+			using (var db = new ZkDataContext())
+			using (var scope = new TransactionScope())
+			{
+				db.Missions.Single(x => x.Name == missionName).MissionRunCount++;
+				db.Accounts.Single(x => x.Name == login).MissionRunCount++;
+				db.SubmitChanges();
+				scope.Complete();
+			}
+		}
+
 		[WebMethod]
 		public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds)
 		{
@@ -75,8 +89,8 @@ namespace ZeroKWeb
 				                   	PlayerName = playerName,
 				                   	ExtraData = extraData,
 				                   	Exception = exception,
-														ExceptionHash = new Hash(exception).ToString(),
-														ProgramVersion = programVersion,
+				                   	ExceptionHash = new Hash(exception).ToString(),
+				                   	ProgramVersion = programVersion,
 				                   	RemoteIP = GetUserIP()
 				                   };
 				db.ExceptionLogs.InsertOnSubmit(exceptionLog);
@@ -90,5 +104,13 @@ namespace ZeroKWeb
 			if (string.IsNullOrEmpty(ip) || ip.Equals("unknown", StringComparison.OrdinalIgnoreCase)) ip = Context.Request.ServerVariables["REMOTE_ADDR"];
 			return ip;
 		}
+	}
+
+	public class ScriptMissionData
+	{
+		public List<string> ManualDependencies;
+		public string MapName;
+		public string ModTag;
+		public string StartScript;
 	}
 }

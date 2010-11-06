@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using LobbyClient;
 using PlasmaDownloader;
 using ZeroKLobby.MicroLobby;
+using ScriptMissionData = PlasmaShared.ContentService.ScriptMissionData;
 
 namespace ZeroKLobby.Notifications
 {
@@ -13,10 +14,10 @@ namespace ZeroKLobby.Notifications
 	{
 		readonly string modInternalName;
 		readonly List<Download> neededDownloads = new List<Download>();
-		readonly SinglePlayerProfile profile;
+		readonly ScriptMissionData profile;
 		readonly Timer timer = new Timer();
 
-		public SinglePlayerBar(List<Download> neededDownloads, SinglePlayerProfile profile, string modInternalName)
+		public SinglePlayerBar(List<Download> neededDownloads, ScriptMissionData profile, string modInternalName)
 		{
 			InitializeComponent();
 			this.neededDownloads = neededDownloads;
@@ -27,7 +28,7 @@ namespace ZeroKLobby.Notifications
 			this.modInternalName = modInternalName;
 		}
 
-		public static void DownloadAndStartMission(SinglePlayerProfile profile)
+		public static void DownloadAndStartMission(ScriptMissionData profile)
 		{
 			var modVer = Program.Downloader.PackageDownloader.GetByTag(profile.ModTag);
 			if (modVer == null)
@@ -44,13 +45,13 @@ namespace ZeroKLobby.Notifications
 
 			if (!Program.SpringScanner.HasResource(profile.MapName)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.MAP, profile.MapName));
 
-			foreach (var entry in profile.ManualDependencies) if (!Program.SpringScanner.HasResource(entry)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.UNKNOWN, entry));
+			if (profile.ManualDependencies != null) foreach (var entry in profile.ManualDependencies) if (!string.IsNullOrEmpty(entry) && !Program.SpringScanner.HasResource(entry)) neededDownloads.Add(Program.Downloader.GetResource(DownloadType.UNKNOWN, entry));
 
 			if (neededDownloads.Count > 0) Program.NotifySection.AddBar(new SinglePlayerBar(neededDownloads, profile, modName));
 			else StartDownloadedMission(profile, modName);
 		}
 
-		public static void StartDownloadedMission(SinglePlayerProfile profile, string modInternalName)
+		public static void StartDownloadedMission(ScriptMissionData profile, string modInternalName)
 		{
 			var spring = new Spring(Program.SpringPaths);
 			var name = Program.Conf.LobbyPlayerName;

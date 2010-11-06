@@ -145,9 +145,9 @@
     <Type Name="Mission">
       <Column Name="MissionID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
-      <Column Name="Mod" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Map" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Mutator" Type="System.Data.Linq.Binary" DbType="VarBinary(MAX) NOT NULL" CanBeNull="false" UpdateCheck="Never" IsDelayLoaded="true" />
+      <Column Name="Mod" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="Map" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="Mutator" Type="System.Data.Linq.Binary" DbType="varbinary(max)" CanBeNull="true" UpdateCheck="Never" IsDelayLoaded="true" />
       <Column Name="Image" Type="System.Data.Linq.Binary" DbType="varbinary(max) NOT NULL" CanBeNull="false" UpdateCheck="Never" IsDelayLoaded="true" />
       <Column Name="Description" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="CreatedTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
@@ -168,6 +168,7 @@
       <Column Name="IsScriptMission" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="ManualDependencies" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
       <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
       <Association Name="Mission_MissionScore" Member="MissionScores" ThisKey="MissionID" OtherKey="MissionID" Type="MissionScore" />
       <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />

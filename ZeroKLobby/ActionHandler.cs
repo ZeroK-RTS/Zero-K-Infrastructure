@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.ContentService;
 using PlasmaShared.UnitSyncLib;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
@@ -16,7 +19,6 @@ namespace ZeroKLobby
 	/// </summary>
 	public static class ActionHandler
 	{
-
 		/// <summary>
 		/// Changes user's desired spectator state of battle - does not actually send tasclient state change
 		/// </summary>
@@ -57,7 +59,7 @@ namespace ZeroKLobby
 		/// </summary>
 		public static void DeselectGame(string gameName)
 		{
-			if (Program.Conf.SelectedGames.Contains(gameName)) Program.Conf.SelectedGames.RemoveAll(x=>x == gameName);
+			if (Program.Conf.SelectedGames.Contains(gameName)) Program.Conf.SelectedGames.RemoveAll(x => x == gameName);
 			Program.SaveConfig();
 		}
 
@@ -104,19 +106,6 @@ namespace ZeroKLobby
 		}
 
 
-		public static void JoinSlot(MissionSlot slot)
-		{
-			if (ChangeDesiredSpectatorState(false))
-			{
-				var newStatus = Program.TasClient.MyBattleStatus.Clone();
-				newStatus.AllyNumber = slot.AllyID;
-				newStatus.TeamNumber = slot.TeamID;
-				newStatus.IsSpectator = false;
-				newStatus.TeamColor = slot.Color;
-				Program.TasClient.SendMyBattleStatus(newStatus);
-			}
-		}
-
 		/// <summary>
 		/// Joins battle manually
 		/// </summary>
@@ -161,6 +150,62 @@ namespace ZeroKLobby
 			}
 		}
 
+		public static void JoinSlot(MissionSlot slot)
+		{
+			if (ChangeDesiredSpectatorState(false))
+			{
+				var newStatus = Program.TasClient.MyBattleStatus.Clone();
+				newStatus.AllyNumber = slot.AllyID;
+				newStatus.TeamNumber = slot.TeamID;
+				newStatus.IsSpectator = false;
+				newStatus.TeamColor = slot.Color;
+				Program.TasClient.SendMyBattleStatus(newStatus);
+			}
+		}
+
+		/// <summary>
+		/// Selects Next Button
+		/// </summary>
+		public static void NextButton()
+		{
+			Program.MainWindow.navigationControl.Path = Program.MainWindow.ChatTab.GetNextTabPath();
+		}
+
+		public static void PerformAction(string actionString)
+		{
+			if (!String.IsNullOrEmpty(actionString))
+			{
+				var idx = actionString.IndexOf(':');
+
+				if (idx > -1)
+				{
+					var command = actionString.Substring(0, idx);
+					var arg = Uri.UnescapeDataString(actionString.Substring(idx + 1));
+					switch (command)
+					{
+						case "start_mission":
+							StartMission(arg);
+							break;
+
+						case "host_mission":
+							SpawnAutohost(arg, String.Format("{0}'s {1}", Program.Conf.LobbyPlayerName, arg), null, false, 0, 0, 0, null);
+							break;
+						case "start_script_mission":
+							StartScriptMission(arg);
+							break;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Selects Previous Button
+		/// </summary>
+		public static void PrevButton()
+		{
+			Program.MainWindow.navigationControl.Path = Program.MainWindow.ChatTab.GetPrevTabPath();
+		}
+
 		/// <summary>
 		/// Selects new game
 		/// </summary>
@@ -181,6 +226,50 @@ namespace ZeroKLobby
 			Program.MainWindow.DisplayLog();
 		}
 
+		public static void SpawnAutohost(string gameName,
+		                                 string battleTitle,
+		                                 string password,
+		                                 bool useManage,
+		                                 int minPlayers,
+		                                 int maxPlayers,
+		                                 int teams,
+		                                 IEnumerable<string> springieCommands)
+		{
+			var hostSpawnerName = SpringieCommand.GetHostSpawnerName(gameName);
+
+			var spawnCommand = SpringieCommand.Spawn(gameName, battleTitle, password);
+
+			var waitingBar = WarningBar.DisplayWarning("Waiting for AutoHost to start");
+
+			EventHandler<CancelEventArgs<TasSayEventArgs>> joinGame = null;
+			joinGame = (s, e) =>
+				{
+					if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Origin == TasSayEventArgs.Origins.Player && (e.Data.Text == spawnCommand.Reply))
+					{
+						e.Cancel = true;
+						Program.NotifySection.RemoveBar(waitingBar);
+						Program.TasClient.PreviewSaidPrivate -= joinGame;
+						var myHostName = e.Data.UserName;
+						var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder == myHostName);
+						if (useManage) SpringieCommand.Manage(minPlayers, maxPlayers, teams).SilentlyExcecute(myHostName);
+						if (springieCommands != null)
+						{
+							foreach (var command in springieCommands)
+							{
+								HidePM(command);
+								Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
+							}
+						}
+						Program.TasClient.JoinBattle(battle.BattleID, password);
+						NavigationControl.Instance.Path = "chat/battle";
+					}
+				};
+
+			Program.TasClient.PreviewSaidPrivate += joinGame;
+			HidePM(spawnCommand.Command);
+			Program.TasClient.Say(TasClient.SayPlace.User, hostSpawnerName, spawnCommand.Command, false);
+		}
+
 
 		/// <summary>
 		/// Set this client as spectator
@@ -195,15 +284,32 @@ namespace ZeroKLobby
 			}
 		}
 
+		public static void StartMission(string name)
+		{
+			Program.NotifySection.AddBar(new MissionBar(name));
+		}
+
 		public static void StartQuickMatching(IEnumerable<GameInfo> games)
 		{
 			Program.BattleBar.StartQuickMatch(games);
 			NavigationControl.Instance.Path = "chat/battle";
 		}
 
-		public static void StartSinglePlayer(SinglePlayerProfile profile)
+		public static void StartScriptMission(string name)
 		{
-			SinglePlayerBar.DownloadAndStartMission(profile);
+			try
+			{
+				var serv = new ContentService() { Proxy = null };
+				SinglePlayerBar.DownloadAndStartMission(serv.GetScriptMissionData(name));
+			}
+			catch (WebException ex)
+			{
+				Trace.TraceWarning("Problem starting script mission {0}: {1}", name, ex);
+			}
+			catch (Exception ex)
+			{
+				Trace.TraceError("Error starting mission {0}: {1}", name, ex);
+			}
 		}
 
 		public static void StopBattle()
@@ -239,62 +345,5 @@ namespace ZeroKLobby
 				Program.TasClient.SendMyBattleStatus(newStatus);
 			}
 		}
-
-		public static void SpawnAutohost(string gameName,
-		                          string battleTitle,
-		                          string password,
-		                          bool useManage,
-		                          int minPlayers,
-		                          int maxPlayers,
-		                          int teams,
-		                          IEnumerable<string> springieCommands)
-		{
-			var hostSpawnerName = SpringieCommand.GetHostSpawnerName(gameName);
-
-			var spawnCommand = SpringieCommand.Spawn(gameName, battleTitle, password);
-
-			var waitingBar = WarningBar.DisplayWarning("Waiting for AutoHost to start");
-
-			EventHandler<CancelEventArgs<TasSayEventArgs>> joinGame = null;
-			joinGame = (s, e) =>
-				{
-					if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Origin == TasSayEventArgs.Origins.Player && (e.Data.Text == spawnCommand.Reply))
-					{
-						e.Cancel = true;
-						Program.NotifySection.RemoveBar(waitingBar);
-						Program.TasClient.PreviewSaidPrivate -= joinGame;
-						var myHostName = e.Data.UserName;
-						var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder == myHostName);
-						if (useManage) SpringieCommand.Manage(minPlayers, maxPlayers, teams).SilentlyExcecute(myHostName);
-						if (springieCommands != null) foreach (var command in springieCommands)
-						{
-							HidePM(command);
-							Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
-						}
-						Program.TasClient.JoinBattle(battle.BattleID, password);
-						NavigationControl.Instance.Path = "chat/battle";
-					}
-				};
-
-			Program.TasClient.PreviewSaidPrivate += joinGame;
-			HidePM(spawnCommand.Command);
-			Program.TasClient.Say(TasClient.SayPlace.User, hostSpawnerName, spawnCommand.Command, false);
-		}
-
-        /// <summary>
-        /// Selects Next Button
-        /// </summary>
-        public static void NextButton()
-        {
-            Program.MainWindow.navigationControl.Path = Program.MainWindow.ChatTab.GetNextTabPath();
-        }
-        /// <summary>
-        /// Selects Previous Button
-        /// </summary>
-        public static void PrevButton()
-        {
-            Program.MainWindow.navigationControl.Path = Program.MainWindow.ChatTab.GetPrevTabPath();
-        }
-
 	}
 }

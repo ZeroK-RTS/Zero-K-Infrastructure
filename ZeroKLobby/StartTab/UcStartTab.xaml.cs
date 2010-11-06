@@ -60,9 +60,9 @@ namespace ZeroKLobby.StartTab
 					var spSel = new SinglePlayerSelectorWindow(game.Profiles);
 					spSel.ShowDialog();
 					var profile = spSel.LastClickedProfile;
-					if (profile != null) ActionHandler.StartSinglePlayer(profile);
+					if (profile != null) ActionHandler.StartScriptMission(profile.Name);
 				}
-				else ActionHandler.StartSinglePlayer(game.Profiles.First());
+				else ActionHandler.StartScriptMission(game.Profiles.First().Name);
 			}
 		}
 

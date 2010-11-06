@@ -54,7 +54,7 @@ namespace ZeroKLobby
 				for (var i = 1; i < parts.Length; i++)
 				{
 					var action = parts[i];
-					PerformAction(action);
+					ActionHandler.PerformAction(action);
 				}
 				value = parts[0];
 
@@ -137,31 +137,6 @@ namespace ZeroKLobby
 				}
 			}
 			return null;
-		}
-
-		void PerformAction(string actionString)
-		{
-			if (!string.IsNullOrEmpty(actionString))
-			{
-				var idx = actionString.IndexOf(':');
-				
-				if (idx > -1)
-				{
-					string command = actionString.Substring(0, idx);
-					string arg = actionString.Substring(idx + 1);
-					if (command == "start_mission") StartMission(Uri.UnescapeDataString(arg));
-					else if (command =="host_mission")
-					{
-						ActionHandler.SpawnAutohost(arg, string.Format("{0}'s {1}", Program.Conf.LobbyPlayerName, arg), null, false, 0,0,0, null);
-					}
-				} 
-
-			}
-		}
-
-		void StartMission(string name)
-		{
-			Program.NotifySection.AddBar(new MissionBar(name));
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged = delegate { };
