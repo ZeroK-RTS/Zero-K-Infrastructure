@@ -280,5 +280,21 @@ namespace ZeroKLobby
 			HidePM(spawnCommand.Command);
 			Program.TasClient.Say(TasClient.SayPlace.User, hostSpawnerName, spawnCommand.Command, false);
 		}
+
+        /// <summary>
+        /// Selects Next Button
+        /// </summary>
+        public static void NextButton()
+        {
+            Program.MainWindow.ChatTab.NextTab();
+        }
+        /// <summary>
+        /// Selects Previous Button
+        /// </summary>
+        public static void PrevButton()
+        {
+            Program.MainWindow.ChatTab.PrevTab();
+        }
+
 	}
 }

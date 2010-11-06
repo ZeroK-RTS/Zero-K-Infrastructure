@@ -56,17 +56,31 @@ namespace ZeroKLobby.MicroLobby
 		{
 			if (e.KeyCode == Keys.Up)
 			{
-				historyIndex--;
-				if (historyIndex < 0) historyIndex = 0;
-				
-				if (history.Count > historyIndex) Text = history[historyIndex];
+                if (e.Control)
+                {
+                    ActionHandler.PrevButton();
+                }
+                else
+                {
+                    historyIndex--;
+                    if (historyIndex < 0) historyIndex = 0;
+
+                    if (history.Count > historyIndex) Text = history[historyIndex];
+                }
 			}
 			else if (e.KeyCode == Keys.Down)
 			{
-				historyIndex++;
-				if (historyIndex >= history.Count) historyIndex = history.Count - 1;
-				if (historyIndex < 0) historyIndex = 0;
-				if (history.Count > historyIndex) Text = history[historyIndex];
+                if (e.Control)
+                {
+                    ActionHandler.NextButton();
+                }
+                else
+                {
+                    historyIndex++;
+                    if (historyIndex >= history.Count) historyIndex = history.Count - 1;
+                    if (historyIndex < 0) historyIndex = 0;
+                    if (history.Count > historyIndex) Text = history[historyIndex];
+                }
 			}
 			else historyIndex = history.Count;
 

@@ -206,6 +206,22 @@ namespace ZeroKLobby.MicroLobby
 		{
 			ActiveButton = (ToolStripButton)toolStrip.Items[name];
 		}
+        public void SelectNextTab()
+        {
+            this.SelectAdjTab(true);
+        }
+        public void SelectPrevTab()
+        {
+            this.SelectAdjTab(false);
+        }
+        private void SelectAdjTab(bool next)
+        {
+            //this.SelectNextControl(controls[activeButton.Name], true, true, false, true )
+            var nextButtonName = this.GetNextControl(controls[activeButton.Name], next).Name;
+            if (nextButtonName != "") SelectTab(nextButtonName);
+            SetHilite(nextButtonName, HiliteLevel.None); //kind of a workaround.
+        }
+        
 
 		public void SetIcon(string tabName, Image icon)
 		{

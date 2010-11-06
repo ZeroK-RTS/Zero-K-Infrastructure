@@ -101,6 +101,16 @@ namespace ZeroKLobby.MicroLobby
             toolTabs.SelectTab(userName);
         }
 
+        public void NextTab()
+        {
+            toolTabs.SelectNextTab();
+        }
+        public void PrevTab()
+        {
+            toolTabs.SelectPrevTab();
+        }
+
+        
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         void AddBattleControl()
