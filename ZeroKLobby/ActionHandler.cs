@@ -9,6 +9,7 @@ using LobbyClient;
 using PlasmaShared;
 using PlasmaShared.ContentService;
 using PlasmaShared.UnitSyncLib;
+using ZeroKLobby.Common;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 
@@ -343,6 +344,22 @@ namespace ZeroKLobby
 				newStatus.TeamNumber = Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName);
 				newStatus.IsSpectator = false;
 				Program.TasClient.SendMyBattleStatus(newStatus);
+			}
+		}
+
+		public static void PickGamesAndStartQuickMatching()
+		{
+			var shuffledGames = StartPage.GameList.Shuffle().ToList();
+			foreach (var game in shuffledGames) game.IsSelected = Program.Conf.SelectedGames.Contains(game.Shortcut);
+			var window = new GameSelectorWindow(StartPage.GameList.Shuffle(), true);
+			if (window.ShowDialog() == true)
+			{
+				foreach (var g in window.Games)
+				{
+					if (g.IsSelected) SelectGame(g.Shortcut);
+					else DeselectGame(g.Shortcut);
+				}
+				StartQuickMatching(window.Games.Where(x => x.IsSelected));
 			}
 		}
 	}

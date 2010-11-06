@@ -22,6 +22,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="MapName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ModTag" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="StartScript" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="ArrayOfString">

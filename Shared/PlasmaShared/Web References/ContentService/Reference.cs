@@ -253,6 +253,8 @@ namespace PlasmaShared.ContentService {
         
         private string startScriptField;
         
+        private string nameField;
+        
         /// <remarks/>
         public string[] ManualDependencies {
             get {
@@ -290,6 +292,16 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.startScriptField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
             }
         }
     }

@@ -30,7 +30,8 @@ namespace ZeroKWeb
 				       	MapName = m.Map,
 				       	ModTag = m.ModRapidTag,
 				       	StartScript = m.Script,
-				       	ManualDependencies = m.ManualDependencies != null ? new List<string>(m.ManualDependencies.Split('\n')) : null
+				       	ManualDependencies = m.ManualDependencies != null ? new List<string>(m.ManualDependencies.Split('\n')) : null,
+								Name = m.Name
 				       };
 			}
 		}
@@ -112,5 +113,6 @@ namespace ZeroKWeb
 		public string MapName;
 		public string ModTag;
 		public string StartScript;
+		public string Name;
 	}
 }

@@ -5,12 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
-using ZeroKLobby.StartTab;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby
 {
-	public partial class StartPage: UserControl, INavigatable
+	public partial class StartPage: UserControl
 	{
 		public static List<GameInfo> GameList =
 			new List<GameInfo>
@@ -35,68 +34,9 @@ namespace ZeroKLobby.MicroLobby
 					Regex = "Complete Annihilation.*",
 					Url = "http://www.caspring.org",
 					RapidTag = "zk:stable",
-					Tutorial = "http://trac.caspring.org/wiki/NewbieGuide",
 					Image = "/Resources/GameLogos/ca.jpg",
 					Description =
 						"Complete Annihilation is a regularly updated game that is often regarded as a showcase of what the Spring Engine can do. It's faster and has a focus on strategic decisions and unit tactics. Complete Annihilation is an open source project with democratic decision making.",
-					Profiles =
-						new List<SinglePlayerProfile>
-						{
-							new SinglePlayerProfile()
-							{
-								Name = "SandBox",
-								ModTag = "ca:stable",
-								MapName = "IsisDelta_v02",
-								Description = "Enter a big sandbox to play in! Take your time to mess about.",
-								Image = "/Resources/SinglePlayer/ca_sandbox.png",
-								StartScript = SinglePlayerStartScripts.ca_sandbox
-							},
-							new SinglePlayerProfile()
-							{
-								Name = "Very easy chickens",
-								ModTag = "ca:stable",
-								MapName = "Chicken_Nuggets_v4",
-								Description = "A small colony of chickens has set up and starts hatching. Take care of the plague!",
-								Image = "/Resources/SinglePlayer/ca_chickenveryeasy.png",
-								StartScript = SinglePlayerStartScripts.ca_chickenveryeasy
-							},
-							new SinglePlayerProfile()
-							{
-								Name = "Easy chickens",
-								ModTag = "ca:stable",
-								MapName = "Chicken_Farm_v02",
-								Description = "Scans revealed chicken presence. Chase them away!",
-								Image = "/Resources/SinglePlayer/ca_chickeneasy.png",
-								StartScript = SinglePlayerStartScripts.ca_chickeneasy
-							},
-							new SinglePlayerProfile()
-							{
-								ModTag = "ca:stable",
-								MapName = "Red Comet",
-								Name = "2v1",
-								Description = "Help your ally to defeat your common opponent, an enemy commander.",
-								Image = "/Resources/SinglePlayer/ca_2v1.png",
-								StartScript = SinglePlayerStartScripts.ca_2v1
-							},
-							new SinglePlayerProfile()
-							{
-								Name = "Normal chickens",
-								ModTag = "ca:stable",
-								MapName = "Chicken_Roast_v1",
-								Description = "A planet close to the chicken's homeworld. Brace yourself!",
-								Image = "/Resources/SinglePlayer/ca_chickennormal.png",
-								StartScript = SinglePlayerStartScripts.ca_chickennormal
-							},
-							new SinglePlayerProfile()
-							{
-								ModTag = "ca:stable",
-								MapName = "TitanDuel",
-								Name = "1v1",
-								Description = "Fight for your survival! Fair duel with enemy commander.",
-								Image = "/Resources/SinglePlayer/ca_1v1.png",
-								StartScript = SinglePlayerStartScripts.ca_1v1
-							},
-						}
 				},
 				new GameInfo
 				{
@@ -164,7 +104,6 @@ namespace ZeroKLobby.MicroLobby
 					Channel = "evolution",
 					Regex = "Evolution RTS.*",
 					Url = "http://www.evolutionrts.info/wordpress/",
-					Tutorial = "http://www.evolutionrts.info/game-manual",
 					Image = "/Resources/GameLogos/evo.png",
 					RapidTag = "evo:test",
 					Description =
@@ -178,39 +117,9 @@ namespace ZeroKLobby.MicroLobby
 					Regex = "Kernel.*Panic.*",
 					Url = "http://www.moddb.com/games/kernel-panic/",
 					RapidTag = "kp:stable",
-					Tutorial = "http://springrts.com/wiki/Kernel_Panic",
 					Image = "/Resources/GameLogos/kp.png",
 					Description =
 						"Kernel Panic is a game about computers. Systems, Hackers and Networks wage war in a matrix of DOOM! The only constraints are time and space; unlike other real time strategy games, no resource economy exists in KP.",
-					Profiles =
-						new List<SinglePlayerProfile>()
-						{
-							new SinglePlayerProfile()
-							{
-								Name="Kernel Panic",
-								MapName = "Central Hub",
-								ModTag = "kp:latest",
-								Image = "kp.png",
-								StartScript = SinglePlayerStartScripts.kp_script,
-								ManualDependencies =
-									new List<string>()
-									{
-										"Marble_Madness_Map",
-										"Major_Madness3.0",
-										"Direct Memory Access 0.5c (beta)",
-										"Direct Memory Access 0.5e (beta)",
-										"Spooler Buffer 0.5 (beta)",
-										"DigitalDivide_PT2",
-										"Data Cache L1",
-										"Speed_Balls_16_Way",
-										"Palladium 0.5 (beta)",
-										"Central Hub",
-										"Corrupted Core",
-										"Dual Core",
-										"Quad Core",
-									}
-							}
-						}
 				},
 			}.OrderBy(g => g.FullName).ToList();
 
@@ -218,40 +127,8 @@ namespace ZeroKLobby.MicroLobby
 		public StartPage()
 		{
 			InitializeComponent();
-			var isDesigner = Process.GetCurrentProcess().ProcessName == "devenv";
-			if (isDesigner) return;
-			var host = new ElementHost();
-			host.Child = new UcStartTab();
-			host.Dock = DockStyle.Fill;
-			Controls.Add(host);
 		}
 
-		public string PathHead { get { return "start"; } }
-
-		public bool TryNavigate(params string[] path)
-		{
-			return path.Length > 0 && path[0] == PathHead;
-		}
-
-		public bool Hilite(HiliteLevel level, params string[] path)
-		{
-			return false;
-		}
-
-		public string GetTooltip(params string[] path)
-		{
-			return null;
-		}
 	}
 
-	public class SinglePlayerProfile
-	{
-		public string Description { get; set; }
-		public string Image { get; set; }
-		public List<string> ManualDependencies = new List<string>();
-		public string MapName { get; set; }
-		public string ModTag { get; set; }
-		public string Name { get; set; }
-		public string StartScript { get; set; }
-	}
 }

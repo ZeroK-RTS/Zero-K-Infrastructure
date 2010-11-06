@@ -45,12 +45,12 @@
     <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
     <ProductName>Zero-K</ProductName>
     <PublisherName>Zero-K</PublisherName>
-    <MinimumRequiredVersion>2.5.0.9</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.6.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>10</ApplicationRevision>
-    <ApplicationVersion>2.5.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>2.6.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -120,7 +120,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DesignDataProvider.cs" />
     <Compile Include="INavigatable.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -151,14 +150,6 @@
     </Compile>
     <Compile Include="StartTab\GameSelectorWindow.xaml.cs">
       <DependentUpon>GameSelectorWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StartTab\SinglePlayerSelectorWindow.xaml.cs">
-      <DependentUpon>SinglePlayerSelectorWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StartTab\SinglePlayerStartScripts.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SinglePlayerStartScripts.resx</DependentUpon>
     </Compile>
     <Compile Include="StartTab\UcRedButton.xaml.cs">
       <DependentUpon>UcRedButton.xaml</DependentUpon>
@@ -231,9 +222,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Ranks.resx</DependentUpon>
-    </Compile>
-    <Compile Include="StartTab\UcStartTab.xaml.cs">
-      <DependentUpon>UcStartTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="SubmitTextBox.cs" />
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
@@ -659,11 +647,6 @@
       <DependentUpon>SettingsTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\TextWindow.resources" />
-    <EmbeddedResource Include="StartTab\SinglePlayerStartScripts.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SinglePlayerStartScripts.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="StartTab\StartPage.resx">
       <DependentUpon>StartPage.cs</DependentUpon>
     </EmbeddedResource>
@@ -754,15 +737,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="StartTab\SinglePlayerSelectorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="StartTab\UcRedButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="StartTab\UcStartTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

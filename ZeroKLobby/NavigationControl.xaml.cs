@@ -172,9 +172,10 @@ namespace ZeroKLobby
 			Path = GetLastPathStartingWith("settings");
 		}
 
-		void StartPage_Click(object sender, RoutedEventArgs e)
+		void QuickMatch_Click(object sender, RoutedEventArgs e)
 		{
-			Path = GetLastPathStartingWith("start");
+			ActionHandler.PickGamesAndStartQuickMatching();
+			//Path = GetLastPathStartingWith("start");
 		}
 
 		void TabItem_MouseUp(object sender, RoutedEventArgs e)
@@ -189,7 +190,7 @@ namespace ZeroKLobby
 
 		void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (string.IsNullOrEmpty(Path)) Path = "start";
+			if (string.IsNullOrEmpty(Path)) Path = "battles";
 		}
 
 		void WidgetsPage_Click(object sender, RoutedEventArgs e)
