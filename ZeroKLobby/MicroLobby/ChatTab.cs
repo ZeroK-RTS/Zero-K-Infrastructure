@@ -101,13 +101,13 @@ namespace ZeroKLobby.MicroLobby
             toolTabs.SelectTab(userName);
         }
 
-        public void NextTab()
+        public string GetNextTabPath()
         {
-            toolTabs.SelectNextTab();
+            return toolTabs.GetNextTabPath();
         }
-        public void PrevTab()
+        public string GetPrevTabPath()
         {
-            toolTabs.SelectPrevTab();
+            return toolTabs.GetPrevTabPath();
         }
 
         

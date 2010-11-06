@@ -286,14 +286,14 @@ namespace ZeroKLobby
         /// </summary>
         public static void NextButton()
         {
-            Program.MainWindow.ChatTab.NextTab();
+            Program.MainWindow.navigationControl.Path = Program.MainWindow.ChatTab.GetNextTabPath();
         }
         /// <summary>
         /// Selects Previous Button
         /// </summary>
         public static void PrevButton()
         {
-            Program.MainWindow.ChatTab.PrevTab();
+            Program.MainWindow.navigationControl.Path = Program.MainWindow.ChatTab.GetPrevTabPath();
         }
 
 	}

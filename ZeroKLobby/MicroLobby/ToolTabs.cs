@@ -206,22 +206,40 @@ namespace ZeroKLobby.MicroLobby
 		{
 			ActiveButton = (ToolStripButton)toolStrip.Items[name];
 		}
-        public void SelectNextTab()
-        {
-            this.SelectAdjTab(true);
-        }
-        public void SelectPrevTab()
-        {
-            this.SelectAdjTab(false);
-        }
-        private void SelectAdjTab(bool next)
-        {
-            //this.SelectNextControl(controls[activeButton.Name], true, true, false, true )
-            var nextButtonName = this.GetNextControl(controls[activeButton.Name], next).Name;
-            if (nextButtonName != "") SelectTab(nextButtonName);
-            SetHilite(nextButtonName, HiliteLevel.None); //kind of a workaround.
-        }
         
+        public string GetNextTabPath()
+        {
+            return this.GetAdjTabPath(true);
+        }
+        public string GetPrevTabPath()
+        {
+            return this.GetAdjTabPath(false);
+        }
+        private string GetAdjTabPath(bool next)
+        {
+            var path = "chat/";
+
+            var nextControl = this.GetNextControl(controls[activeButton.Name], next);
+            var nextButtonName = nextControl.Name;
+            if (nextButtonName != "")
+            {
+                if (nextControl is BattleChatControl)
+                {
+                    path += "battle";
+                }
+                else if (nextControl is PrivateMessageControl)
+                {
+                    path += "user/";
+                    path += nextButtonName;
+                }
+                else if (nextControl is ChatControl)
+                {
+                    path += "channel/";
+                    path += nextButtonName;
+                }
+            }
+            return path;
+        }
 
 		public void SetIcon(string tabName, Image icon)
 		{
