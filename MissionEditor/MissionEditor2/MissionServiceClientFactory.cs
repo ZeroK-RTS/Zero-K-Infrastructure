@@ -25,7 +25,7 @@ namespace MissionEditor2
 			binding.ReaderQuotas.MaxStringContentLength = 819200;
 			binding.ReaderQuotas.MaxBytesPerRead = 409600;
 			binding.Security.Mode = BasicHttpSecurityMode.None;
-			var factory = new ChannelFactory<IMissionService>(binding, "http://zero-k.info/MissionService.svc");
+			factory = new ChannelFactory<IMissionService>(binding, "http://zero-k.info/MissionService.svc");
 		}
 
 		public static IMissionService MakeClient()
