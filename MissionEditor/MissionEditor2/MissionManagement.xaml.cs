@@ -6,9 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Win32;
-using MissionEditor2.MissionServiceReference;
 using ZkData;
-using Mission = ZkData.Mission;
 
 namespace MissionEditor2
 {
@@ -40,15 +38,14 @@ namespace MissionEditor2
 				{
 					try
 					{
-						using (var client = new MissionServiceClient())
-						{
-							var list = client.ListMissionInfos();
-							this.Invoke(delegate
-								{
-									DataGrid.ItemsSource = list;
-									loadingDialog.Close();
-								});
-						}
+						var client = MissionServiceClient.MakeChannel();
+
+						var list = client.ListMissionInfos();
+						this.Invoke(delegate
+							{
+								DataGrid.ItemsSource = list;
+								loadingDialog.Close();
+							});
 					}
 					catch (Exception e)
 					{
@@ -69,7 +66,8 @@ namespace MissionEditor2
 					{
 						try
 						{
-							using (var client = new MissionServiceClient()) client.DeleteMission(selectedMission.MissionID, selectedMission.AuthorName, password);
+							var client = MissionServiceClient.MakeChannel();
+							client.DeleteMission(selectedMission.MissionID, selectedMission.AuthorName, password);
 							RefreshList();
 						}
 						catch (FaultException<ExceptionDetail> ex)
@@ -90,14 +88,14 @@ namespace MissionEditor2
 				{
 					try
 					{
-						var client = new MissionServiceClient();
+						var client = MissionServiceClient.MakeChannel();
 						var missionData = client.GetMission(selectedMission.Name);
 						loadingDialog.Invoke(delegate
 							{
 								loadingDialog.Close();
 								var filter = "Spring Mod Archive (*.sdz)|*.sdz|All files (*.*)|*.*";
 								var saveFileDialog = new SaveFileDialog { DefaultExt = "sdz", Filter = filter, RestoreDirectory = true };
-								if (saveFileDialog.ShowDialog() == true) File.WriteAllBytes(saveFileDialog.FileName, missionData.Mutator.Bytes.ToArray());
+								if (saveFileDialog.ShowDialog() == true) File.WriteAllBytes(saveFileDialog.FileName, missionData.Mutator.ToArray());
 								WelcomeDialog.LoadExistingMission(saveFileDialog.FileName);
 							});
 					}

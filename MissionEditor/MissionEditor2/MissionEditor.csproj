@@ -129,6 +129,7 @@
       <DependentUpon>GiveOrdersPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="MissionItemsConverter.cs" />
+    <Compile Include="MissionServiceClient.cs" />
     <Compile Include="ModifyScoreControl.xaml.cs">
       <DependentUpon>ModifyScoreControl.xaml</DependentUpon>
     </Compile>
@@ -147,11 +148,6 @@
     </Compile>
     <Compile Include="RegionWindow.xaml.cs">
       <DependentUpon>RegionWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\MissionServiceReference\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
     <Compile Include="StringRequest.xaml.cs" />
     <Compile Include="TranslateConverter.cs" />
@@ -352,16 +348,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Service References\MissionServiceReference\MissionEditor2.MissionServiceReference.Mission.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\MissionServiceReference\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\MissionServiceReference\configuration.svcinfo" />
-    <None Include="Service References\MissionServiceReference\configuration91.svcinfo" />
-    <None Include="Service References\MissionServiceReference\MissionService.disco" />
     <None Include="Properties\DataSources\ZkData.Mission.datasource" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -371,31 +357,6 @@
     <Content Include="FreeImage.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Service References\MissionServiceReference\MissionService.wsdl" />
-    <None Include="Service References\MissionServiceReference\MissionService.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\MissionServiceReference\MissionService1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\MissionServiceReference\MissionService2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\MissionServiceReference\MissionService3.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\MissionServiceReference\MissionService4.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\MissionServiceReference\MissionService5.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\MissionServiceReference\MissionService6.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\MissionServiceReference\MissionService7.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="Spring Mission Editor_TemporaryKey.pfx" />
     <Resource Include="me.ico" />
     <Content Include="MissionBase\LuaRules\Gadgets\mission_base64.lua">
@@ -476,9 +437,6 @@
     <Content Include="MissionBase\LuaUI\Fonts\FreeSansBold_16.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadataStorage Include="Service References\MissionServiceReference\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

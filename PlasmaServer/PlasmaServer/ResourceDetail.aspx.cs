@@ -53,7 +53,7 @@ namespace PlasmaServer
 
 				string name = res.InternalName.EscapePath();
 				var sb = new StringBuilder();
-				if (res.TypeID == ResourceType.Map) {
+				if (res.TypeID == ZkData.ResourceType.Map) {
 					sb.AppendFormat("<img src='Resources/{0}.minimap.jpg'><br/>", name);
 					sb.AppendFormat("<img src='Resources/{0}.heightmap.jpg'><br/>", name);
 					sb.AppendFormat("<img src='Resources/{0}.metalmap.jpg'><br/>", name);

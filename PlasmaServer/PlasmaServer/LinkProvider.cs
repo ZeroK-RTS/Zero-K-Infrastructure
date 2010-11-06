@@ -49,7 +49,7 @@ namespace PlasmaServer
 		                                      out List<string> links,
 		                                      out byte[] torrent,
 		                                      out List<string> dependencies,
-		                                      out ResourceType resourceType,
+		                                      out ZkData.ResourceType resourceType,
 		                                      out string torrentFileName)
 		{
 			var db = new ZkDataContext();
@@ -60,7 +60,7 @@ namespace PlasmaServer
 				torrent = null;
 				links = null;
 				dependencies = null;
-				resourceType = ResourceType.Map;
+				resourceType = ZkData.ResourceType.Map;
 				torrentFileName = null;
 				return false;
 			}
@@ -153,18 +153,18 @@ namespace PlasmaServer
 
 		#region Other methods
 
-		private static List<string> GetJobjolMirrorLinks(string fileName, ResourceType type)
+		private static List<string> GetJobjolMirrorLinks(string fileName, ZkData.ResourceType type)
 		{
 			var result = new List<string>();
 
 			result.Add(string.Format("http://www.springfiles.com/download.php?maincategory=1&subcategory={0}&file={1}",
-			                         type == ResourceType.Map ? 2 : 5,
+			                         type == ZkData.ResourceType.Map ? 2 : 5,
 			                         fileName));
 			try {
 				using (var wc = new WebClient()) {
 					var pom = string.Format("http://www.springfiles.com/checkmirror.php?q={0}&c={1}",
 					                        Uri.EscapeDataString(fileName),
-					                        type == ResourceType.Mod ? "mods" : "maps");
+					                        type == ZkData.ResourceType.Mod ? "mods" : "maps");
 
 					var ret = wc.DownloadString(pom);
 
@@ -218,7 +218,7 @@ namespace PlasmaServer
 
 			// combine with hardcoded mirrors
 			foreach (var url in Mirrors) {
-				var replaced = url.Replace("%t", content.Resource.TypeID == ResourceType.Mod ? "mods" : "maps").Replace("%f", content.FileName);
+				var replaced = url.Replace("%t", content.Resource.TypeID == ZkData.ResourceType.Mod ? "mods" : "maps").Replace("%f", content.FileName);
 				if (!valids.Contains(replaced)) valids.Add(replaced);
 			}
 

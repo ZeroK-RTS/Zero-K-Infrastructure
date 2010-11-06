@@ -30,7 +30,7 @@ namespace PlasmaServer
 			List<string> links;
 			byte[] tor;
 			List<string> dep;
-			ResourceType type;
+			ZkData.ResourceType type;
 			string tfn;
 			ps.DownloadFile("Complete Annihilation stable-6606", out links, out tor, out dep, out type, out tfn);
 			foreach (var link in links) {

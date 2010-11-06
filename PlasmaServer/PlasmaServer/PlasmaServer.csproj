@@ -104,6 +104,12 @@
   <ItemGroup>
     <Folder Include="Resources\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\PlasmaShared\PlasmaShared.csproj">
+      <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
+      <Name>PlasmaShared</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

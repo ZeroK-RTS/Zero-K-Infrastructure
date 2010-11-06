@@ -9,7 +9,6 @@ using System.ServiceModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CMissionLib;
-using MissionEditor2.MissionServiceReference;
 using MissionEditor2.Properties;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
@@ -87,12 +86,12 @@ namespace MissionEditor2
 					}
 					info.Mutator = new Binary(File.ReadAllBytes(tempPath));
 					File.Delete(tempPath);
-					using (var client = new MissionServiceClient())
-					{
+					var client = MissionServiceClient.MakeChannel();
+					
 						client.SendMission(info, slots, mission.Author, password, mod);
 						MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from the lobby.\r\nPlease make sure it works!");
 						return true;
-					}
+					
 				} 
 				finally
 				{

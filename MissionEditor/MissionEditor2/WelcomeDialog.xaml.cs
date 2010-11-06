@@ -11,7 +11,6 @@ using System.Windows.Media;
 using CMissionLib.UnitSyncLib;
 using Microsoft.Win32;
 using MissionEditor2.Properties;
-using MissionEditor2.ServiceReference;
 using ZkData;
 using Action = System.Action;
 using Mission = CMissionLib.Mission;

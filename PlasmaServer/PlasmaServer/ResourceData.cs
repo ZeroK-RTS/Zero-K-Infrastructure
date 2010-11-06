@@ -14,7 +14,7 @@ namespace PlasmaServer
 
         public List<string> Dependencies;
         public string InternalName;
-        public ResourceType ResourceType;
+        public ZkData.ResourceType ResourceType;
         public List<SpringHashEntry> SpringHashes;
 
         #endregion

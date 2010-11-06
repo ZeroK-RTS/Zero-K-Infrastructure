@@ -13,7 +13,6 @@ using System.Windows.Threading;
 using CMissionLib;
 using CMissionLib.UnitSyncLib;
 using MissionEditor2.Properties;
-using MissionEditor2.ServiceReference;
 using ZkData;
 using Action = System.Action;
 using Binary = System.Data.Linq.Binary;

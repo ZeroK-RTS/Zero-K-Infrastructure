@@ -40,7 +40,7 @@ namespace PlasmaServer
 		                         out List<string> links,
 		                         out byte[] torrent,
 		                         out List<string> dependencies,
-		                         out ResourceType resourceType,
+		                         out ZkData.ResourceType resourceType,
 		                         out string torrentFileName)
 		{
 			return LinkProvider.GetLinksAndTorrent(internalName, out links, out torrent, out dependencies, out resourceType, out torrentFileName);
@@ -79,7 +79,7 @@ namespace PlasmaServer
 		                                    string springVersion,
 		                                    string md5,
 		                                    int length,
-		                                    ResourceType resourceType,
+		                                    ZkData.ResourceType resourceType,
 		                                    string archiveName,
 		                                    string internalName,
 		                                    int springHash,
