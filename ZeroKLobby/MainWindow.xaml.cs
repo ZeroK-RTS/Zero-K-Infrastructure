@@ -144,6 +144,12 @@ namespace ZeroKLobby
 		/// <param name="useFlashing">use flashing</param>
 		public void NotifyUser(string navigationPath, string message, bool useSound = false, bool useFlashing = false)
 		{
+            if(     ( Program.Conf.DisableChannelBubble && navigationPath.Contains("chat/channel/") )
+                    || ( Program.Conf.DisablePmBubble && navigationPath.Contains("chat/user/") )          )
+            {
+                return;
+            }
+
 			var isHidden = WindowState == WindowState.Minimized || IsVisible == false || WindowsApi.GetForegroundWindow() != (int)interopHelper.Handle;
 			var isPathDifferent = navigationControl.Path != navigationPath;
 

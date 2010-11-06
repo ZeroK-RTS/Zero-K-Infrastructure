@@ -151,9 +151,20 @@ namespace ZeroKLobby
 		[Browsable(false)]
 		public int LeaveColorInt = Color.FromArgb(102, 54, 31).ToArgb();
 		[Category("Chat")]
-		[DisplayName("Left click on player in chat selects them")]
-		[Description("Left clicking on player in the chat selects them. Right clicking shows context menu.")]
+		[DisplayName("Disable Context Menu on Leftclick")]
+		[Description("Only right clicking shows context menu. Left clicking on a playername will select them in the player list.")]
 		public bool LeftClickSelectsPlayer { get; set; }
+
+        [Category("Chat")]
+        [DisplayName("Disable Bubble On Private Message")]
+        public bool DisablePmBubble { get; set; }
+
+        [Category("Chat")]
+        [DisplayName("Disable Bubble On Channel Highlight")]
+        [Description("Disable the system tray bubble when someone says your name in a public channel.")]
+        public bool DisableChannelBubble { get; set; }
+
+
 		[Category("Chat")]
 		[DisplayName("Color: Links")]
 		[XmlIgnore]
