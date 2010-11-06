@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Timers;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.ContentService;
 using PlasmaShared.UnitSyncLib;
 using Springie.AutoHostNamespace;
 using Springie.PlanetWars;
@@ -47,9 +47,9 @@ namespace Springie.autohost
 		int mapCycleIndex;
 
 
-
 		double minCpuSpeed;
 		Timer pollTimer;
+		readonly QuickMatchTracking quickMatchTracker;
 		readonly Spring spring;
 		readonly Stats stats;
 
@@ -66,6 +66,7 @@ namespace Springie.autohost
 		public SpawnConfig SpawnConfig { get; private set; }
 		public AutoHostConfig config = new AutoHostConfig();
 		public string configPath;
+		public Mod hostedMod;
 		public int hostingPort { get; private set; }
 		public Ladder ladder;
 		public List<Preset> presets = new List<Preset>();
@@ -73,8 +74,6 @@ namespace Springie.autohost
 		public SpringPaths springPaths;
 		public TasClient tas;
 		public UnitSyncWrapper wrapper { get; private set; }
-
-		QuickMatchTracking quickMatchTracker;
 
 		public AutoHost(SpringPaths paths, UnitSyncWrapper wrapper, string configPath, int hostingPort, SpawnConfig spawn)
 		{
@@ -251,8 +250,10 @@ namespace Springie.autohost
 							}
 							else
 							{
-								if (e.Place == TasSayEventArgs.Places.Battle && tas.MyBattle != null && tas.MyBattle.NonSpectatorCount == 1 && (!command.StartsWith("vote") && HasRights("vote" + command, e)))
-								{ // server only has 1 player and we have rights for vote variant - we might as well just do it
+								if (e.Place == TasSayEventArgs.Places.Battle && tas.MyBattle != null && tas.MyBattle.NonSpectatorCount == 1 &&
+								    (!command.StartsWith("vote") && HasRights("vote" + command, e)))
+								{
+									// server only has 1 player and we have rights for vote variant - we might as well just do it
 									return true;
 								}
 								else
@@ -403,8 +404,6 @@ namespace Springie.autohost
 			if (spring.IsRunning && ingame) spring.SayGame(text);
 		}
 
-		public Mod hostedMod;
-
 		public void Start(string modname, string mapname)
 		{
 			Stop();
@@ -438,18 +437,16 @@ namespace Springie.autohost
 			var version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
 			if (version != null) modname = version.InternalName;
 
-			
 			if (!wrapper.HasMod(modname)) modname = wrapper.GetFirstMod();
 			var modi = wrapper.GetModInfo(modname);
 			hostedMod = modi;
 			if (hostedMod.IsMission && !string.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;
 
-
 			if (!wrapper.HasMap(mapname)) mapname = wrapper.GetFirstMap();
 
 			int mint, maxt;
 			var mapi = wrapper.GetMapInfo(mapname);
-			
+
 			var b = new Battle(password,
 			                   hostingPort,
 			                   config.MaxPlayers,
@@ -532,6 +529,18 @@ namespace Springie.autohost
 			}
 		}
 
+		/// <summary>
+		/// Gets free slots, first mandatory then optional
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<MissionSlot> GetFreeSlots()
+		{
+			var b = tas.MyBattle;
+			return
+				hostedMod.MissionSlots.Where(x => x.IsHuman).OrderByDescending(x => x.IsRequired).Where(
+					x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
+		}
+
 		void HandleAutoLocking()
 		{
 			if (!manager.Enabled && autoLock > 0 && (!spring.IsRunning))
@@ -602,7 +611,7 @@ namespace Springie.autohost
 		void spring_GameOver(object sender, SpringLogEventArgs e)
 		{
 			SayBattle("Game over, exiting");
-			PlasmaShared.Utils.SafeThread(()=>
+			PlasmaShared.Utils.SafeThread(() =>
 				{
 					Thread.Sleep(3000); // wait for stats
 					spring.ExitGame();
@@ -668,6 +677,7 @@ namespace Springie.autohost
 		void spring_SpringStarted(object sender, EventArgs e)
 		{
 			tas.ChangeLock(false);
+			if (hostedMod.IsMission) using (var service = new ContentService() { Proxy = null }) foreach (var u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRunAsync(u.Name, hostedMod.Name);
 		}
 
 
@@ -682,10 +692,10 @@ namespace Springie.autohost
 			tas.ChangeMyBattleStatus(true, false, SyncStatuses.Synced);
 			if (hostedMod.IsMission)
 			{
-				foreach (var slot in hostedMod.MissionSlots.Where(x=>!x.IsHuman))
+				foreach (var slot in hostedMod.MissionSlots.Where(x => !x.IsHuman))
 				{
 					var ubs = new UserBattleStatus();
-					ubs.SyncStatus= SyncStatuses.Synced;
+					ubs.SyncStatus = SyncStatuses.Synced;
 					ubs.TeamColor = slot.Color;
 					ubs.AllyNumber = slot.AllyID;
 					ubs.TeamNumber = slot.TeamID;
@@ -695,17 +705,6 @@ namespace Springie.autohost
 					tas.AddBot(slot.TeamName, ubs, slot.Color, slot.AiShortName);
 				}
 			}
-		}
-
-		/// <summary>
-		/// Gets free slots, first mandatory then optional
-		/// </summary>
-		/// <returns></returns>
-		private IEnumerable<MissionSlot> GetFreeSlots()
-		{
-			var b = tas.MyBattle;
-			return hostedMod.MissionSlots.Where(x => x.IsHuman).OrderByDescending(x => x.IsRequired).Where(
-				x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
 		}
 
 
@@ -735,14 +734,10 @@ namespace Springie.autohost
 				SayBattle("If you say !notify, I will PM you when game ends.", false);
 			}
 
-
-
 			HandleKickSpecServerLocking();
 			HandleAutoLocking();
 			HandleMinRankKicking();
 
-
-			
 			if (minCpuSpeed > 0)
 			{
 				User u;
@@ -783,7 +778,6 @@ namespace Springie.autohost
 				// player left and only 2 remaining (springie itself + some noob) -> unlock
 				tas.ChangeLock(false);
 			}
-
 		}
 
 		void tas_BattleUserStatusChanged(object sender, TasEventArgs e)
@@ -793,7 +787,6 @@ namespace Springie.autohost
 
 			if (b != null && b.ContainsUser(e.ServerParams[0], out u))
 			{
-
 				if (KickSpectators && u.IsSpectator && u.Name != tas.UserName)
 				{
 					SayBattle(config.KickSpectatorText);
@@ -840,7 +833,6 @@ namespace Springie.autohost
 		}
 
 
-		
 		void tas_LoginAccepted(object sender, TasEventArgs e)
 		{
 			for (var i = 0; i < config.JoinChannels.Count; ++i) tas.JoinChannel(config.JoinChannels[i]);
@@ -913,14 +905,15 @@ namespace Springie.autohost
 					{
 						com = "vote" + com;
 
-						if (!config.Commands.Any(x=>x.Name == com) || !HasRights(com, e)) return;
+						if (!config.Commands.Any(x => x.Name == com) || !HasRights(com, e)) return;
 					}
 					else return;
 				}
 
 				if (e.Place == TasSayEventArgs.Places.Normal)
 				{
-					if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listpresets" && com != "listoptions" && com != "presetdetails" && com != "spawn" && com != "listbans" && com != "smurfs" && com != "stats" && com != "predict" && com != "notify") SayBattle(string.Format("{0} executed by {1}", com, e.UserName));
+					if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listpresets" && com != "listoptions" &&
+					    com != "presetdetails" && com != "spawn" && com != "listbans" && com != "smurfs" && com != "stats" && com != "predict" && com != "notify") SayBattle(string.Format("{0} executed by {1}", com, e.UserName));
 				}
 
 				switch (com)
@@ -1294,6 +1287,5 @@ namespace Springie.autohost
 				if (e.ServerParams[0] != tas.UserName && b.Users.Any(x => x.Name == e.ServerParams[0])) CheckForBattleExit();
 			}
 		}
-
 	}
 }
