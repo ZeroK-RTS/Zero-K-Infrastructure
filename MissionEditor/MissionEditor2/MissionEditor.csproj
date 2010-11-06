@@ -129,7 +129,7 @@
       <DependentUpon>GiveOrdersPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="MissionItemsConverter.cs" />
-    <Compile Include="MissionServiceClient.cs" />
+    <Compile Include="MissionServiceClientFactory.cs" />
     <Compile Include="ModifyScoreControl.xaml.cs">
       <DependentUpon>ModifyScoreControl.xaml</DependentUpon>
     </Compile>

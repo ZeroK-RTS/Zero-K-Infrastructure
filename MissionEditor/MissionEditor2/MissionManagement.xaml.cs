@@ -38,7 +38,7 @@ namespace MissionEditor2
 				{
 					try
 					{
-						var client = MissionServiceClient.MakeChannel();
+						var client = MissionServiceClientFactory.MakeClient();
 
 						var list = client.ListMissionInfos();
 						this.Invoke(delegate
@@ -66,7 +66,7 @@ namespace MissionEditor2
 					{
 						try
 						{
-							var client = MissionServiceClient.MakeChannel();
+							var client = MissionServiceClientFactory.MakeClient();
 							client.DeleteMission(selectedMission.MissionID, selectedMission.AuthorName, password);
 							RefreshList();
 						}
@@ -88,7 +88,7 @@ namespace MissionEditor2
 				{
 					try
 					{
-						var client = MissionServiceClient.MakeChannel();
+						var client = MissionServiceClientFactory.MakeClient();
 						var missionData = client.GetMission(selectedMission.Name);
 						loadingDialog.Invoke(delegate
 							{

@@ -25,22 +25,22 @@ namespace PlasmaShared.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;" +
-            "User ID=zero-k")]
-        public string zero_kConnectionString {
-            get {
-                return ((string)(this["zero_kConnectionString"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
         [global::System.Configuration.DefaultSettingValueAttribute("http://zero-k.info/ContentService.asmx")]
         public string PlasmaShared_ContentService_ContentService {
             get {
                 return ((string)(this["PlasmaShared_ContentService_ContentService"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;" +
+            "User ID=zero-k;Password=zkdevpass1")]
+        public string zero_kConnectionString {
+            get {
+                return ((string)(this["zero_kConnectionString"]));
             }
         }
     }

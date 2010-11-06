@@ -86,7 +86,7 @@ namespace MissionEditor2
 					}
 					info.Mutator = new Binary(File.ReadAllBytes(tempPath));
 					File.Delete(tempPath);
-					var client = MissionServiceClient.MakeChannel();
+					var client = MissionServiceClientFactory.MakeClient();
 					
 						client.SendMission(info, slots, mission.Author, password, mod);
 						MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from the lobby.\r\nPlease make sure it works!");
