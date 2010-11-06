@@ -416,6 +416,7 @@ namespace LobbyClient
 
 		public void JoinBattle(int battleID, string password = "*")
 		{
+			if (string.IsNullOrEmpty(password)) password = "*";
 			con.SendCommand("JOINBATTLE", battleID, password, random.Next());
 		}
 

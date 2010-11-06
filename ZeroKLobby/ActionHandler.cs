@@ -251,7 +251,7 @@ namespace ZeroKLobby
 						var myHostName = e.Data.UserName;
 						var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder == myHostName);
 						if (useManage) SpringieCommand.Manage(minPlayers, maxPlayers, teams).SilentlyExcecute(myHostName);
-						foreach (var command in springieCommands)
+						if (springieCommands != null) foreach (var command in springieCommands)
 						{
 							HidePM(command);
 							Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
