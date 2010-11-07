@@ -271,17 +271,20 @@ namespace LobbyClient
 					script.AppendLine();
 					for (var teamNumber = 0; teamNumber < teams.Count; ++teamNumber)
 					{
+						var grTeam = teams[teamNumber];
+						var grLeader = players[grTeam.leader];
+						var leaderStatus = grTeam.bot ?? grLeader.user;
+						var teamAlly = leaderStatus.AllyNumber;
 						script.AppendFormat("  [TEAM{0}]\n", teamNumber);
 						script.AppendLine("  {");
-						script.AppendFormat("     TeamLeader={0};\n", teams[teamNumber].leader);
-						var userStatus = teams[teamNumber].bot ?? players[teams[teamNumber].leader].user;
-						script.AppendFormat("     AllyTeam={0};\n", userStatus.AllyNumber);
+						script.AppendFormat("     TeamLeader={0};\n", grTeam.leader);
+						script.AppendFormat("     AllyTeam={0};\n", teamAlly);
 						script.AppendFormat("     RGBColor={0:F5} {1:F5} {2:F5};\n",
-											(userStatus.TeamColor & 255) / 255.0,
-											((userStatus.TeamColor >> 8) & 255) / 255.0,
-											((userStatus.TeamColor >> 16) & 255) / 255.0);
+											(leaderStatus.TeamColor & 255) / 255.0,
+											((leaderStatus.TeamColor >> 8) & 255) / 255.0,
+											((leaderStatus.TeamColor >> 16) & 255) / 255.0);
 						string side = "mission";
-						if (mod.Sides.Length > userStatus.Side) side = mod.Sides[userStatus.Side];
+						if (mod.Sides.Length > leaderStatus.Side) side = mod.Sides[leaderStatus.Side];
 						script.AppendFormat("     Side={0};\n", side);
 
 						script.AppendFormat("     Handicap={0};\n", 0);
@@ -303,8 +306,8 @@ namespace LobbyClient
 								script.AppendFormat("      StartPosX={0};\n", pos.Value.x);
 								script.AppendFormat("      StartPosZ={0};\n", pos.Value.z);
 							}
-							script.AppendLine("  }");
 						}
+						script.AppendLine("  }");
 					}
 
 
