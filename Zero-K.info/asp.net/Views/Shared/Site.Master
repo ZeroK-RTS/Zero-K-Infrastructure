@@ -1,7 +1,8 @@
 ﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Import Namespace="ZkData" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" <%= Request["zk_login"] != null ? "oncontextmenu = \"return false;\"" : "" %> >
+<html xmlns="http://www.w3.org/1999/xhtml" <%= Request[GlobalConst.LoginCookieName] != null ? "oncontextmenu = \"return false;\"" : "" %> >
 <head runat="server">
 	<title><asp:ContentPlaceHolder ID="TitleContent" runat="server">Zero-K</asp:ContentPlaceHolder></title>
 	<asp:ContentPlaceHolder ID="HeadContent" runat="server">
@@ -25,5 +26,15 @@
 		<asp:ContentPlaceHolder ID="MainContent" runat="server">
 		</asp:ContentPlaceHolder>
 	</div>
+	<% if (!(HttpContext.Current.User is Account))
+    {%>
+		<form method="post" action="<%= Url.Action("Logon","Home") %>" >
+		Name: <input type="text" name="login" />&nbsp;&nbsp;
+		Password: <input type="password" name="password" />&nbsp;&nbsp;
+		<input type="submit"  value="Login"/>
+		<input type="hidden" name="referer" value="<%= Html.Encode(Request.Url) %>" />
+		</form>
+	<%
+    }%>
 </body>
 </html>

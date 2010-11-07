@@ -22,15 +22,15 @@ namespace ZeroKWeb
 
 		void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
 		{
-			if (Request["zk_login"] != null)
+			if (Request[GlobalConst.LoginCookieName] != null)
 			{
-				var acc = AuthServiceClient.VerifyAccountHashed(Request["zk_login"], Request["zk_passwordHash"]);
+				var acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
 				if (acc != null) HttpContext.Current.User = acc;
 			}
 			if (Debugger.IsAttached)
 			{
-				var db = new ZkDataContext();
-				HttpContext.Current.User = db.Accounts.First(x => x.Name == "[0K]Licho");
+				//var db = new ZkDataContext();
+				//HttpContext.Current.User = db.Accounts.First(x => x.Name == "[0K]Licho");
 			} 
 		}
 

@@ -12,5 +12,7 @@ namespace ZkData
 		public const string NightwatchName = "Nightwatch";
 		public const string MissionScriptFileName = "_missionScript.txt";
 		public const string MissionSlotsFileName = "_missionSlots.xml";
+		public const string LoginCookieName = "zk_login";
+		public const string PasswordHashCookieName = "zk_passwordHash";
 	}
 }

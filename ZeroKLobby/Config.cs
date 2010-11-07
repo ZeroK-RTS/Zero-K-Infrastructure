@@ -10,6 +10,7 @@ using System.Xml.Serialization;
 using JetBrains.Annotations;
 using PlasmaDownloader;
 using PlasmaShared;
+using ZkData;
 using FontStyle = System.Drawing.FontStyle;
 
 namespace ZeroKLobby
@@ -184,7 +185,7 @@ namespace ZeroKLobby
 				lobbyPlayerName = value;
 				try
 				{
-					WindowsApi.InternetSetCookie(BaseUrl, "zk_login", value);
+					WindowsApi.InternetSetCookie(BaseUrl, GlobalConst.LoginCookieName, value);
 				}
 				catch (Exception ex)
 				{
@@ -205,7 +206,7 @@ namespace ZeroKLobby
 				lobbyPlayerPassword = value;
 				try
 				{
-					WindowsApi.InternetSetCookie(BaseUrl, "zk_passwordHash", PlasmaShared.Utils.HashLobbyPassword(value));
+					WindowsApi.InternetSetCookie(BaseUrl, GlobalConst.PasswordHashCookieName, PlasmaShared.Utils.HashLobbyPassword(value));
 				}
 				catch (Exception ex)
 				{
