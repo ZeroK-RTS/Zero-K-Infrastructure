@@ -235,12 +235,22 @@ namespace Springie.autohost
 		{
 			if (hostedMod.IsMission)
 			{
-				var slot = GetFreeSlots().FirstOrDefault();
 				alliances = 0;
 				allyno = 0;
+				var invalidUser =
+					tas.MyBattle.Users.FirstOrDefault(
+						x => !x.IsSpectator && !hostedMod.MissionSlots.Any(y => y.IsHuman && y.TeamID == x.TeamNumber && y.AllyID == x.AllyNumber));
+				if (invalidUser != null)
+				{
+					SayBattle(string.Format("User {0} is not in proper mission slot", invalidUser.Name));
+					return false;
+				}
+
+				var slot = GetFreeSlots().FirstOrDefault();
 				if (slot == null || !slot.IsRequired) return true;
 				else
 				{
+					SayBattle(string.Format("Mission slot {0}/{1} (team {2}, id {3}) needs player", slot.AllyName, slot.TeamName, slot.AllyID, slot.TeamID));
 					allyno = slot.AllyID;
 					return false;
 				}
@@ -566,6 +576,13 @@ namespace Springie.autohost
 
 		public void ComForceStart(TasSayEventArgs e, string[] words)
 		{
+			int allyno;
+			int alliances;
+			if (hostedMod.IsMission && !BalancedTeams(out allyno, out alliances))
+			{
+				SayBattle("Cannot start, mission slots are not correct");
+				return;
+			}
 			/*string usname;
       if (!AllReadyAndSynced(out usname)) {
         SayBattle("cannot start, " + usname + " not ready and synced");
