@@ -64,6 +64,9 @@ namespace ZkData
     partial void InsertMissionScore(MissionScore instance);
     partial void UpdateMissionScore(MissionScore instance);
     partial void DeleteMissionScore(MissionScore instance);
+    partial void InsertRating(Rating instance);
+    partial void UpdateRating(Rating instance);
+    partial void DeleteRating(Rating instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -381,6 +384,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<MissionScore>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Rating> Ratings
+		{
+			get
+			{
+				return this.GetTable<Rating>();
 			}
 		}
 	}
@@ -2199,9 +2210,17 @@ namespace ZkData
 		
 		private string _ManualDependencies;
 		
+		private System.Nullable<float> _Rating;
+		
+		private System.Nullable<float> _Difficulty;
+		
+		private string _TopTags;
+		
 		private EntityRef<Resource> _Resources;
 		
 		private EntitySet<MissionScore> _MissionScores;
+		
+		private EntitySet<Rating> _Ratings;
 		
 		private EntityRef<Account> _Account;
 		
@@ -2263,6 +2282,12 @@ namespace ZkData
     partial void OnIsDeletedChanged();
     partial void OnManualDependenciesChanging(string value);
     partial void OnManualDependenciesChanged();
+    partial void OnRatingChanging(System.Nullable<float> value);
+    partial void OnRatingChanged();
+    partial void OnDifficultyChanging(System.Nullable<float> value);
+    partial void OnDifficultyChanged();
+    partial void OnTopTagsChanging(string value);
+    partial void OnTopTagsChanged();
     #endregion
 		
 		public Mission()
@@ -2820,8 +2845,71 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rating", DbType="real")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
+		public System.Nullable<float> Rating
+		{
+			get
+			{
+				return this._Rating;
+			}
+			set
+			{
+				if ((this._Rating != value))
+				{
+					this.OnRatingChanging(value);
+					this.SendPropertyChanging();
+					this._Rating = value;
+					this.SendPropertyChanged("Rating");
+					this.OnRatingChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Difficulty", DbType="real")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
+		public System.Nullable<float> Difficulty
+		{
+			get
+			{
+				return this._Difficulty;
+			}
+			set
+			{
+				if ((this._Difficulty != value))
+				{
+					this.OnDifficultyChanging(value);
+					this.SendPropertyChanging();
+					this._Difficulty = value;
+					this.SendPropertyChanged("Difficulty");
+					this.OnDifficultyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TopTags", DbType="nvarchar(200)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
+		public string TopTags
+		{
+			get
+			{
+				return this._TopTags;
+			}
+			set
+			{
+				if ((this._TopTags != value))
+				{
+					this.OnTopTagsChanging(value);
+					this.SendPropertyChanging();
+					this._TopTags = value;
+					this.SendPropertyChanged("TopTags");
+					this.OnTopTagsChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
 		public Resource Resources
 		{
 			get
@@ -2856,7 +2944,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionScore", Storage="_MissionScores", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -2871,6 +2959,25 @@ namespace ZkData
 			set
 			{
 				this._MissionScores.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Rating", Storage="_Ratings", ThisKey="MissionID", OtherKey="MissionID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		public EntitySet<Rating> Ratings
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Ratings.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Ratings;
+			}
+			set
+			{
+				this._Ratings.Assign(value);
 			}
 		}
 		
@@ -2940,10 +3047,23 @@ namespace ZkData
 			entity.Mission = null;
 		}
 		
+		private void attach_Ratings(Rating entity)
+		{
+			this.SendPropertyChanging();
+			entity.Mission = this;
+		}
+		
+		private void detach_Ratings(Rating entity)
+		{
+			this.SendPropertyChanging();
+			entity.Mission = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Resources = default(EntityRef<Resource>);
 			this._MissionScores = new EntitySet<MissionScore>(new Action<MissionScore>(this.attach_MissionScores), new Action<MissionScore>(this.detach_MissionScores));
+			this._Ratings = new EntitySet<Rating>(new Action<Rating>(this.attach_Ratings), new Action<Rating>(this.detach_Ratings));
 			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
@@ -4679,6 +4799,8 @@ namespace ZkData
 		
 		private EntitySet<MissionScore> _MissionScores;
 		
+		private EntitySet<Rating> _Ratings;
+		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -5067,6 +5189,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Rating", Storage="_Ratings", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		public EntitySet<Rating> Ratings
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Ratings.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Ratings;
+			}
+			set
+			{
+				this._Ratings.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -5135,12 +5276,25 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_Ratings(Rating entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_Ratings(Rating entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
 			this._LobbyMessagesBySourceAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesBySourceAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesBySourceAccountID));
 			this._LobbyMessagesByTargetAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesByTargetAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesByTargetAccountID));
 			this._MissionScores = new EntitySet<MissionScore>(new Action<MissionScore>(this.attach_MissionScores), new Action<MissionScore>(this.detach_MissionScores));
+			this._Ratings = new EntitySet<Rating>(new Action<Rating>(this.attach_Ratings), new Action<Rating>(this.detach_Ratings));
 			OnCreated();
 		}
 		
@@ -7285,6 +7439,264 @@ namespace ZkData
 		{
 			this._Mission = default(EntityRef<Mission>);
 			this._Account = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Rating")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class Rating : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _RatingID;
+		
+		private int _AccountID;
+		
+		private System.Nullable<int> _MissionID;
+		
+		private System.Nullable<int> _Rating1;
+		
+		private System.Nullable<int> _Difficulty;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Mission> _Mission;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnRatingIDChanging(int value);
+    partial void OnRatingIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnMissionIDChanging(System.Nullable<int> value);
+    partial void OnMissionIDChanged();
+    partial void OnRating1Changing(System.Nullable<int> value);
+    partial void OnRating1Changed();
+    partial void OnDifficultyChanging(System.Nullable<int> value);
+    partial void OnDifficultyChanged();
+    #endregion
+		
+		public Rating()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RatingID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int RatingID
+		{
+			get
+			{
+				return this._RatingID;
+			}
+			set
+			{
+				if ((this._RatingID != value))
+				{
+					this.OnRatingIDChanging(value);
+					this.SendPropertyChanging();
+					this._RatingID = value;
+					this.SendPropertyChanged("RatingID");
+					this.OnRatingIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public System.Nullable<int> MissionID
+		{
+			get
+			{
+				return this._MissionID;
+			}
+			set
+			{
+				if ((this._MissionID != value))
+				{
+					if (this._Mission.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMissionIDChanging(value);
+					this.SendPropertyChanging();
+					this._MissionID = value;
+					this.SendPropertyChanged("MissionID");
+					this.OnMissionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="Rating", Storage="_Rating1", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<int> Rating1
+		{
+			get
+			{
+				return this._Rating1;
+			}
+			set
+			{
+				if ((this._Rating1 != value))
+				{
+					this.OnRating1Changing(value);
+					this.SendPropertyChanging();
+					this._Rating1 = value;
+					this.SendPropertyChanged("Rating1");
+					this.OnRating1Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Difficulty", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public System.Nullable<int> Difficulty
+		{
+			get
+			{
+				return this._Difficulty;
+			}
+			set
+			{
+				if ((this._Difficulty != value))
+				{
+					this.OnDifficultyChanging(value);
+					this.SendPropertyChanging();
+					this._Difficulty = value;
+					this.SendPropertyChanged("Difficulty");
+					this.OnDifficultyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Rating", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.Ratings.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.Ratings.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Rating", Storage="_Mission", ThisKey="MissionID", OtherKey="MissionID", IsForeignKey=true, DeleteRule="CASCADE")]
+		public Mission Mission
+		{
+			get
+			{
+				return this._Mission.Entity;
+			}
+			set
+			{
+				Mission previousValue = this._Mission.Entity;
+				if (((previousValue != value) 
+							|| (this._Mission.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Mission.Entity = null;
+						previousValue.Ratings.Remove(this);
+					}
+					this._Mission.Entity = value;
+					if ((value != null))
+					{
+						value.Ratings.Add(this);
+						this._MissionID = value.MissionID;
+					}
+					else
+					{
+						this._MissionID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Mission");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._Mission = default(EntityRef<Mission>);
 			OnCreated();
 		}
 		

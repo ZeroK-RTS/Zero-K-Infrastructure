@@ -2,7 +2,7 @@
 <publishData>
   <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/07/2010 03:05:57" />
+    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/07/2010 23:40:18" />
     <file relUrl="Global.asax" publishTime="10/22/2010 17:42:44" />
     <file relUrl="Scripts/jquery.validate-vsdoc.js" publishTime="10/22/2010 00:51:38" />
     <file relUrl="Scripts/jquery-1.4.1.js" publishTime="10/22/2010 00:51:38" />
@@ -10,10 +10,10 @@
     <file relUrl="Scripts/MicrosoftMvcValidation.debug.js" publishTime="10/22/2010 00:51:38" />
     <file relUrl="Styles/stars.css" publishTime="11/07/2010 23:24:57" />
     <file relUrl="Scripts/MicrosoftAjax.debug.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Views/Missions/Index.aspx" publishTime="11/07/2010 23:29:56" />
+    <file relUrl="Views/Missions/Index.aspx" publishTime="11/07/2010 23:43:52" />
     <file relUrl="Scripts/jquery.validate.min.js" publishTime="10/22/2010 00:51:38" />
     <file relUrl="Img/Loader.gif" publishTime="05/09/2009 14:54:21" />
-    <file relUrl="Styles/style.css" publishTime="11/07/2010 22:45:17" />
+    <file relUrl="Styles/style.css" publishTime="11/07/2010 23:40:30" />
     <file relUrl="Scripts/jquery.validate.js" publishTime="10/22/2010 00:51:38" />
     <file relUrl="Scripts/jquery-1.4.1.min.js" publishTime="10/22/2010 00:51:38" />
     <file relUrl="Styles/nicetitle.css" publishTime="11/07/2010 15:45:28" />
@@ -26,7 +26,7 @@
     <file relUrl="bin/Global.asax" publishTime="10/22/2010 17:42:44" />
     <file relUrl="ContentService.asmx" publishTime="11/01/2010 01:25:49" />
     <file relUrl="bin/Global.asax.cs" publishTime="11/07/2010 15:10:36" />
-    <file relUrl="Views/Missions/TileList.aspx" publishTime="11/07/2010 23:39:29" />
+    <file relUrl="Views/Missions/TileList.aspx" publishTime="11/07/2010 23:46:14" />
     <file relUrl="MissionService.svc" publishTime="10/22/2010 23:53:24" />
     <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="11/07/2010 23:34:08" />
     <file relUrl="Web.config" publishTime="11/06/2010 22:49:59" />
