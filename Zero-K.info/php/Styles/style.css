@@ -3,19 +3,6 @@
 @import url("nicetitle.css");
 @import url("stars.css");
 
-div#notice
-{
-	background: #f00;
-	color: #000;
-	font-size: 150%;
-	padding: 20px;
-	border: 12px double #000;
-	border-radius: 10px 10px 10px 10px ;
-	-moz-border-radius: 10px 10px 10px 10px ;
-	-webkit-border-radius: 10px 10px 10px 10px ;
-	text-align: center;
-}
-
 html, body
 {
 	/*scroll background is a lot faster, but requires a bigger image to fill page, fixed image makes ff (others?) really horrible for scrolling*/
@@ -48,32 +35,6 @@ div#wrapper
 	text-align: justify;
 }
 
-div#header
-{
-	margin-bottom: 10px;
-	text-align: center;
-}
-
-div#menu
-{
-	text-align: center;
-}
-
-div#content
-{
-	width: 70%;
-}
-
-div#sidebar
-{
-	width: 30%;
-}
-
-div#unit
-{
-	position: relative;
-}
-
 div#footer
 {
 	position: relative;
@@ -100,7 +61,10 @@ div#footer
 
 .mission_credit
 {
-	top: 2.5em;
+	position: absolute;
+	/* 2.5em in ff/ie but 1.5 seems to look right in my Zero-K lobby */
+	top: 1.5em;
+	float: left;
 }
 
 .mission_title

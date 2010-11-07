@@ -1,4 +1,4 @@
-<div id="unit" class="border">
+<div id="unit" class="border relative">
 	<h2><a>Spotlight: Unitname</a></h2>
 	<span class="absright abstop bold"> <a>&lt;&lt;</a> | <a>?</a> | <a>&gt;&gt;</a> </span>
 	<img src="img/zero-k_64.png" class="right border"></img>

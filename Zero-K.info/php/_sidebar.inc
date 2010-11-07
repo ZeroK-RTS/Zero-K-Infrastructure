@@ -1,4 +1,4 @@
-<div id="sidebar" class="right">
+<div id="sidebar" class="right width-30">
 <?php
 	include("incs_unit.inc");
 	include("incs_topten.inc");
