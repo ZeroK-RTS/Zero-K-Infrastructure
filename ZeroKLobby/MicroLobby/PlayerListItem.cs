@@ -176,6 +176,13 @@ namespace ZeroKLobby.MicroLobby
 
 			if (isBattle && !userStatus.IsSpectator)
 			{
+				if (MissionSlot != null)
+				{
+					if (userStatus.AllyNumber != MissionSlot.AllyID)
+					{
+						drawText(string.Format("Wrong alliance ({0} instead of {1}).", userStatus.AllyNumber, MissionSlot.AllyID), Color.Red, backColor);
+					}
+				}
 				var players = Program.TasClient.MyBattle.Users.Where(u => !u.IsSpectator && u.Name != userStatus.Name);
 				var bots = Program.TasClient.MyBattle.Bots;
 				var playerSharers = players.Where(p => p.TeamNumber == userStatus.TeamNumber).Select(p => p.Name);
