@@ -517,7 +517,7 @@ namespace Springie.autohost
 			foreach (var u in b.Users.Where(x => !x.IsSpectator))
 			{
 				var slot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
-				if (slot != null) tas.ForceColor(u.Name, slot.Color);
+				if (slot != null && slot.Color != u.TeamColor) tas.ForceColor(u.Name, slot.Color);
 			}
 		}
 

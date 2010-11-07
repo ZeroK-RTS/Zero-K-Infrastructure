@@ -24,7 +24,7 @@ namespace ZeroKWeb
 		{
 			if (Request["zk_login"] != null)
 			{
-				var acc = AuthServiceClient.VerifyAccountHashed(Request["zk_login"], Request["zk_password"]);
+				var acc = AuthServiceClient.VerifyAccountHashed(Request["zk_login"], Request["zk_passwordHash"]);
 				if (acc != null) HttpContext.Current.User = acc;
 			}
 			if (Debugger.IsAttached)

@@ -101,12 +101,12 @@ namespace Springie.AutoHostNamespace
 								}
 
 								var isReady = ah.AllReadyAndSynced(out notReady);
-								if (!isPlanetwars && plrCnt%allyCount == 0)
+								if ((!isPlanetwars && plrCnt%allyCount == 0) || ah.hostedMod.IsMission)
 								{
 									// should we expect teams can be balanced 
 									int allyno;
 									int alliances;
-									if (!ah.BalancedTeams(out allyno, out alliances) || alliances != allyCount)
+									if (!ah.BalancedTeams(out allyno, out alliances) || (alliances != allyCount && !ah.hostedMod.IsMission))
 									{
 										// teams are balancable but not balanced - fix colors and balance
 										ah.BalanceTeams(allyCount, byClans);
