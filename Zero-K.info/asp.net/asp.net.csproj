@@ -97,6 +97,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Img\Loader.gif" />
+    <Content Include="Img\ntbgw.png" />
     <Content Include="MissionService.svc" />
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Styles\nicetitle.css" />

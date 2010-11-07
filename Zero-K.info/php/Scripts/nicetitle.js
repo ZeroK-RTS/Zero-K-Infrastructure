@@ -9,6 +9,7 @@ var XHTMLNS = "http://www.w3.org/1999/xhtml";
 var CURRENT_NICE_TITLE;
 var browser = new Browser();
 
+
 function openDialog(e) {
 	if (window.event && window.event.srcElement) {
 		lnk = window.event.srcElement
@@ -34,6 +35,7 @@ function openDialog(e) {
 
 function makeNiceTitles() {
 	if (!document.createElement || !document.getElementsByTagName) return;
+	
 	// add namespace methods to HTML DOM; this makes the script work in both
 	// HTML and XML contexts.
 	if (!document.createElementNS) {
@@ -42,6 +44,7 @@ function makeNiceTitles() {
 		}
 	}
 
+	
 	var myelem = document.getElementsByTagName("span");
 	for (var ti = 0; ti < myelem.length; ti++) {
 		var lnk = myelem[ti];
@@ -166,7 +169,7 @@ function showNiceTitle(e) {
 	}
 
 	if (!lnk) return;
-	
+
 	while (!lnk.getAttribute("nicetitle") && lnk.parentNode) lnk = lnk.parentNode; // find correct node, event can be invoked on subnode
 	
 	if (lnk.nodeType == 3) {
@@ -176,6 +179,7 @@ function showNiceTitle(e) {
 	if (!lnk) lnk = getParent(lnk, "span");
 	if (!lnk) return;
 	nicetitle = lnk.getAttribute("nicetitle");
+
 	if (nicetitle == null || nicetitle == "") return;
 
 	var d = document.createElementNS(XHTMLNS, "div");
@@ -189,7 +193,7 @@ function showNiceTitle(e) {
 	document.body.appendChild(d);
 	CURRENT_NICE_TITLE = d;
 
-	var asyncMode = nicetitle[0] == '$';
+	var asyncMode = nicetitle.charAt(0) == '$';
 	if (!asyncMode) writeCode(nicetitle, d);
 	else  {
 		if (cachedTooltips[nicetitle] != null) {
@@ -199,13 +203,14 @@ function showNiceTitle(e) {
 			writeCode("....", d); // we write nothing in async mode - wait for data request
 
 			var context = CURRENT_NICE_TITLE;
+			
 			$.get('/Home.mvc/GetTooltip?key=' + nicetitle, function (ret) {
-					cachedTooltips[nicetitle] = ret;
-					if (context == CURRENT_NICE_TITLE) { // if tooltip still same, update it
-						CURRENT_NICE_TITLE.removeChild(CURRENT_NICE_TITLE.childNodes[0]); // remove previous
-						writeCode(ret, CURRENT_NICE_TITLE);
-					}
-				});
+				cachedTooltips[nicetitle] = ret;
+				if (context == CURRENT_NICE_TITLE) { // if tooltip still same, update it
+					CURRENT_NICE_TITLE.removeChild(CURRENT_NICE_TITLE.childNodes[0]); // remove previous
+					writeCode(ret, CURRENT_NICE_TITLE);
+				}
+			});
 		}
 	}
 }

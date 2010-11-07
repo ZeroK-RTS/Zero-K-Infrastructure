@@ -67,6 +67,7 @@ namespace ZeroKLobby.MicroLobby
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 			UrlSecurityZone.InternetSetFeatureEnabled(UrlSecurityZone.InternetFeaturelist.DISABLE_NAVIGATION_SOUNDS, UrlSecurityZone.SetFeatureOn.PROCESS, true);
 			UrlSecurityZone.InternetSetFeatureEnabled(UrlSecurityZone.InternetFeaturelist.OBJECT_CACHING, UrlSecurityZone.SetFeatureOn.PROCESS, false);
+			
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
