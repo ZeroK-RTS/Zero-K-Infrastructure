@@ -134,22 +134,26 @@ namespace LobbyClient
 					var playerTeamNumbers = Users.Where(u => !u.IsSpectator).Select(u => u.TeamNumber).Distinct();
 					var aiTeamNumbers = Bots.Select(b => b.TeamNumber).Distinct();
 					var allTeamNumbers = playerTeamNumbers.Concat(aiTeamNumbers).Distinct();
-
-					var grTeams = new GrTeam[allTeamNumbers.Count()];
+					var maxTeamNumber = allTeamNumbers.Max();
+					var grTeams = new GrTeam[maxTeamNumber + 1];
 					foreach (var teamNumber in allTeamNumbers)
 					{
-						if (players.Any(p => !p.user.IsSpectator && p.user.TeamNumber == teamNumber))
+						GrTeam grTeam;
+						var playerLeader = players.FirstOrDefault(p => !p.user.IsSpectator && p.user.TeamNumber == teamNumber);
+						if (playerLeader != null)
 						{
-							var playerLeader = players.FirstOrDefault(p => !p.user.IsSpectator && p.user.TeamNumber == teamNumber);
+							// is player
 							var leaderIndex = players.IndexOf(playerLeader);
-							grTeams[teamNumber] = new GrTeam(leaderIndex);
+							grTeam = new GrTeam(leaderIndex);
 						}
 						else
 						{
+							// is bot
 							var bot = Bots.FirstOrDefault(p => p.TeamNumber == teamNumber);
 							var botOwner = players.First(p => p.user.Name == bot.owner);
-							grTeams[teamNumber] = new GrTeam(players.IndexOf(botOwner)) { bot = bot }; // team leader in bots is the player ID of the bot owner
+							grTeam = new GrTeam(players.IndexOf(botOwner)) { bot = bot }; // team leader in bots is the player ID of the bot owner
 						}
+						grTeams[teamNumber] = grTeam;
 					}
 					teams = grTeams.ToList();
 
@@ -210,7 +214,7 @@ namespace LobbyClient
 					script.AppendFormat("  MyPlayerNum={0};\n", players.FindIndex(player => player.user.Name == localUser.Name));
 					script.AppendFormat("  MyPlayerName={0};\n", localUser.Name);
 
-					var bots = teams.Where(x => x.bot != null).Select(x => x.bot).ToList();
+					var bots = teams.Where(grTeam => grTeam != null && grTeam.bot != null).Select(team => team.bot).ToList();
 					script.AppendLine();
 					script.AppendFormat("  NumPlayers={0};\n", players.Count);
 					script.AppendFormat("  NumUsers={0};\n", players.Count + bots.Count);
@@ -272,6 +276,7 @@ namespace LobbyClient
 					for (var teamNumber = 0; teamNumber < teams.Count; ++teamNumber)
 					{
 						var grTeam = teams[teamNumber];
+						if (grTeam == null && mod.IsMission) continue; // skip unoccupied slot
 						var grLeader = players[grTeam.leader];
 						var leaderStatus = grTeam.bot ?? grLeader.user;
 						var teamAlly = leaderStatus.AllyNumber;
@@ -497,9 +502,12 @@ namespace LobbyClient
 		}
 
 
-		public struct GrAlly
+		public class GrAlly
 		{
 			public BattleRect rect;
+
+
+			public GrAlly() {}
 
 
 			public GrAlly(BattleRect r)
@@ -508,7 +516,7 @@ namespace LobbyClient
 			}
 		} ;
 
-		public struct GrPlayer
+		public class GrPlayer
 		{
 			public UserBattleStatus user;
 
@@ -518,7 +526,7 @@ namespace LobbyClient
 			}
 		} ;
 
-		public struct GrTeam
+		public class GrTeam
 		{
 			public BotBattleStatus bot;
 			public int leader;
