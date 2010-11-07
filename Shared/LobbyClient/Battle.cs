@@ -8,7 +8,7 @@ using PlasmaShared.UnitSyncLib;
 
 namespace LobbyClient
 {
-	public class Battle: ICloneable
+	public class Battle : ICloneable
 	{
 		public enum NatMode
 		{
@@ -83,7 +83,8 @@ namespace LobbyClient
 		}
 
 
-		public Battle(string password, int port, int maxplayers, int rank, Map map, string title, Mod mod, BattleDetails details): this()
+		public Battle(string password, int port, int maxplayers, int rank, Map map, string title, Mod mod, BattleDetails details)
+			: this()
 		{
 			if (!String.IsNullOrEmpty(password)) Password = password;
 			if (port == 0) HostPort = 8452;
@@ -137,9 +138,9 @@ namespace LobbyClient
 					var grTeams = new GrTeam[allTeamNumbers.Count()];
 					foreach (var teamNumber in allTeamNumbers)
 					{
-						if (players.Any(p => p.user.TeamNumber == teamNumber))
+						if (players.Any(p => !p.user.IsSpectator && p.user.TeamNumber == teamNumber))
 						{
-							var playerLeader = players.FirstOrDefault(p => p.user.TeamNumber == teamNumber);
+							var playerLeader = players.FirstOrDefault(p => !p.user.IsSpectator && p.user.TeamNumber == teamNumber);
 							var leaderIndex = players.IndexOf(playerLeader);
 							grTeams[teamNumber] = new GrTeam(leaderIndex);
 						}
@@ -147,7 +148,7 @@ namespace LobbyClient
 						{
 							var bot = Bots.FirstOrDefault(p => p.TeamNumber == teamNumber);
 							var botOwner = players.First(p => p.user.Name == bot.owner);
-							grTeams[teamNumber] = new GrTeam(players.IndexOf(botOwner)); // team leader in bots is the player ID of the bot owner
+							grTeams[teamNumber] = new GrTeam(players.IndexOf(botOwner)) { bot = bot }; // team leader in bots is the player ID of the bot owner
 						}
 					}
 					teams = grTeams.ToList();
@@ -182,11 +183,19 @@ namespace LobbyClient
 
 					script.AppendLine("[GAME]");
 					script.AppendLine("{");
-					script.AppendFormat("  Mapname={0};\n", MapName);
 
-					if (Details.StartPos == BattleStartPos.Choose) script.AppendFormat("  StartPosType=2;\n");
-					else script.AppendFormat("  StartPosType=3;\n"); // workaround for random/fixed
-					// script.AppendFormat("  StartPosType={0};\n", (int)Details.StartPos);
+					script.AppendFormat("  Mapname={0};\n", mod.IsMission ? MapName : mod.MissionMap);
+
+					if (mod.IsMission)
+					{
+						script.AppendFormat("  StartPosType=3;\n");
+					} 
+					else 
+					{
+						if (Details.StartPos == BattleStartPos.Choose) script.AppendFormat("  StartPosType=2;\n");
+						else script.AppendFormat("  StartPosType=3;\n"); // workaround for random/fixed
+						// script.AppendFormat("  StartPosType={0};\n", (int)Details.StartPos);
+					}
 
 					script.AppendFormat("  GameType={0};\n", ModName);
 					if (ModHash.HasValue) script.AppendFormat("  ModHash={0};\n", (uint)ModHash.Value);
@@ -268,28 +277,36 @@ namespace LobbyClient
 						var userStatus = teams[teamNumber].bot ?? players[teams[teamNumber].leader].user;
 						script.AppendFormat("     AllyTeam={0};\n", userStatus.AllyNumber);
 						script.AppendFormat("     RGBColor={0:F5} {1:F5} {2:F5};\n",
-						                    (userStatus.TeamColor & 255)/255.0,
-						                    ((userStatus.TeamColor >> 8) & 255)/255.0,
-						                    ((userStatus.TeamColor >> 16) & 255)/255.0);
+											(userStatus.TeamColor & 255) / 255.0,
+											((userStatus.TeamColor >> 8) & 255) / 255.0,
+											((userStatus.TeamColor >> 16) & 255) / 255.0);
 						string side = "mission";
 						if (mod.Sides.Length > userStatus.Side) side = mod.Sides[userStatus.Side];
 						script.AppendFormat("     Side={0};\n", side);
 
 						script.AppendFormat("     Handicap={0};\n", 0);
-						StartPos? pos = null;
-						if (Details.StartPos == BattleStartPos.Random)
+						if (mod.IsMission)
 						{
-							if (tpos != null && tpos.Count() > teamNumber) pos = tpos.Skip(teamNumber).First();
+							script.AppendFormat("      StartPosX={0};\n", 0);
+							script.AppendFormat("      StartPosZ={0};\n", 0);
 						}
-						else if (Details.StartPos == BattleStartPos.Fixed) if (positions != null && positions.Length > teamNumber) pos = positions[teamNumber];
-						if (pos != null)
+						else
 						{
-							script.AppendFormat("      StartPosX={0};\n", pos.Value.x);
-							script.AppendFormat("      StartPosZ={0};\n", pos.Value.z);
+							StartPos? pos = null;
+							if (Details.StartPos == BattleStartPos.Random)
+							{
+								if (tpos != null && tpos.Count() > teamNumber) pos = tpos.Skip(teamNumber).First();
+							}
+							else if (Details.StartPos == BattleStartPos.Fixed) if (positions != null && positions.Length > teamNumber) pos = positions[teamNumber];
+							if (pos != null)
+							{
+								script.AppendFormat("      StartPosX={0};\n", pos.Value.x);
+								script.AppendFormat("      StartPosZ={0};\n", pos.Value.z);
+							}
+							script.AppendLine("  }");
 						}
-
-						script.AppendLine("  }");
 					}
+
 
 					// ALLIANCES
 					script.AppendLine();

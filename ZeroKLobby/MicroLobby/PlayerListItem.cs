@@ -94,9 +94,6 @@ namespace ZeroKLobby.MicroLobby
 			if (SlotButton != null)
 			{
 				var slotText = string.Format("Empty Slot: {0} {1}", MissionSlot.TeamName, MissionSlot.IsRequired ? "(Required)" : String.Empty);
-				var buttonBounds = new Rectangle(x, bounds.Y, bounds.Height, bounds.Height);
-				ButtonRenderer.DrawButton(g, buttonBounds, "", font, false, PushButtonState.Normal);
-				x += buttonBounds.Width + 2;
 				var color = ((MyCol)MissionSlot.Color);
 				using (var brush = new SolidBrush(Color.FromArgb(color.R, color.G, color.B)))
 				{
@@ -137,6 +134,7 @@ namespace ZeroKLobby.MicroLobby
 
 			if (isBattle)
 			{
+
 				if (userStatus.IsSpectator) drawImage(Resources.spec);
 				else if (userStatus.IsReady && userStatus.SyncStatus == SyncStatuses.Synced) drawImage(Resources.ready);
 				else drawImage(Resources.unready);
@@ -152,6 +150,7 @@ namespace ZeroKLobby.MicroLobby
 				}
 			}
 
+
 			drawImage(TextImage.GetUserImage(user.Name));
 
 			Image flag;
@@ -160,8 +159,7 @@ namespace ZeroKLobby.MicroLobby
 			x += 2; // margin
 			drawImage(Images.GetRank(user.Rank));
 
-			var userDisplayName = user.Name;
-			if (MissionSlot != null) userDisplayName += String.Format(" ({0})", MissionSlot.TeamName);
+			var userDisplayName = MissionSlot == null ? user.Name : String.Format("{1}: {0}", MissionSlot.TeamName, user.Name);
 			drawText(userDisplayName, foreColor, backColor);
 			var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
 			if (top10 > 0)
