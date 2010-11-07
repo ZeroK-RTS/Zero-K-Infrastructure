@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Principal;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using ZkData;
 
 namespace ZeroKWeb
 {
@@ -12,7 +16,22 @@ namespace ZeroKWeb
 	{
 		public MvcApplication()
 		{
-			AuthenticateRequest += MvcApplication_AuthenticateRequest;
+			PostAuthenticateRequest += new EventHandler(MvcApplication_PostAuthenticateRequest);
+		}
+
+
+		void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
+		{
+			if (Request["zk_login"] != null)
+			{
+				var acc = AuthServiceClient.VerifyAccountHashed(Request["zk_login"], Request["zk_password"]);
+				if (acc != null) HttpContext.Current.User = acc;
+			}
+			if (Debugger.IsAttached)
+			{
+				var db = new ZkDataContext();
+				HttpContext.Current.User = db.Accounts.First(x => x.Name == "[0K]Licho");
+			} 
 		}
 
 
@@ -35,6 +54,6 @@ namespace ZeroKWeb
 			RegisterRoutes(RouteTable.Routes);
 		}
 
-		void MvcApplication_AuthenticateRequest(object sender, EventArgs e) {}
+		
 	}
 }

@@ -11,6 +11,14 @@
 		<script type="text/javascript" src='<%=Url.Content("~/Scripts/MicrosoftMvcAjax.js")%>' ></script>
 		<script type="text/javascript" src='<%=Url.Content("~/Scripts/jquery-1.4.1.js")%>' ></script>
 	</asp:ContentPlaceHolder>
+	<script language="javascript" type="text/javascript">
+		$(document).ready(function () {
+			$('a.delete').click(function () {
+				var answer = confirm('Really delete?');
+				return answer // answer is a boolean
+			});
+		});
+	</script>
 </head>
 <body>
 	<div>

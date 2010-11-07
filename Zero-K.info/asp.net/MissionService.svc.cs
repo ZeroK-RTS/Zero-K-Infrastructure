@@ -18,11 +18,10 @@ namespace ZeroKWeb
 		public void DeleteMission(int missionID, string author, string password)
 		{
 			var db = new ZkDataContext();
-			var auth = new AuthServiceClient();
 			var prev = db.Missions.Where(x => x.MissionID == missionID).SingleOrDefault();
 			if (prev != null)
 			{
-				var acc = auth.VerifyAccount(author, password);
+				var acc = AuthServiceClient.VerifyAccountPlain(author, password);
 				if (acc == null) throw new ApplicationException("Invalid login name or password");
 				if (acc.AccountID != prev.AccountID && !acc.IsLobbyAdministrator) throw new ApplicationException("You cannot delete a mission from another user");
 				prev.IsDeleted = true;
@@ -72,7 +71,7 @@ namespace ZeroKWeb
 			Account acc = null;
 			var db = new ZkDataContext();
 			if (Debugger.IsAttached) acc = db.Accounts.SingleOrDefault(x => x.Name == "Testor303");
-			else acc = new AuthServiceClient().VerifyAccount(author, password);
+			else acc = AuthServiceClient.VerifyAccountPlain(author, password);
 
 			if (acc == null) throw new ApplicationException("Cannot verify user account");
 

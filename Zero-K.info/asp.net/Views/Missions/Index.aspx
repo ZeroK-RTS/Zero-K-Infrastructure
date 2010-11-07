@@ -1,5 +1,6 @@
 <%@ Page Title="" Language="C#" Inherits="System.Web.Mvc.ViewPage<ZeroKWeb.Controllers.MissionsIndexData>"
 	MasterPageFile="~/Views/Shared/Site.Master" %>
+<%@ Import Namespace="ZkData" %>
 
 <asp:Content runat="server" ID="Main" ContentPlaceHolderID="MainContent">
 	<script type="text/javascript">
@@ -22,6 +23,7 @@
 		window.onscroll = scrollEvent;
 	</script>
 	<%
+	
 		using (
 		Ajax.BeginForm("TileList",
 									 new AjaxOptions()

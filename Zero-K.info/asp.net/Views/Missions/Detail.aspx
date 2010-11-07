@@ -1,5 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<ZeroKWeb.Controllers.MissionDetailData>" %>
+
 <%@ Import Namespace="PlasmaShared" %>
+<%@ Import Namespace="ZkData" %>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<h1>
 		<%
@@ -15,16 +17,15 @@
 			PLAY NOW</a>
 	</h2>
 	<%
-			if (!m.IsScriptMission)
-   {%>
+		if (!m.IsScriptMission)
+		{%>
 	<h2>
 		<a href='<%="spring://" +
    	                  Html.Encode(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.Name)%>'>
 			HOST IN MULTIPLAYER</a>
 	</h2>
 	<%
-   }%>
-
+		}%>
 	<p class="border">
 		<%=Html.Encode(Model.Mission.Description)%>
 		<br />
@@ -48,30 +49,40 @@
 		<%=m.MissionRunCount%>
 		<br />
 	</p>
-	Manual download: 
-	<% if (!m.IsScriptMission)
-    {%>
-	 <a href='<%=Url.Action("File", "Missions", new { name = m.Name })%>'>
-	 	<%=m.SanitizedFileName%></a> and 
-		<%
-    }%>
-		<a href='<%=Url.Action("Script", "Missions", new { id = m.MissionID })%>'>
-			script.txt</a>
+	<% if (!(User is Account))
+		{%>
+	Manual download:
+	<%
+		if (!m.IsScriptMission)
+		{%>
+	<a href='<%=Url.Action("File", "Missions", new { name = m.Name })%>'>
+		<%=m.SanitizedFileName%></a> and
+	<%
+		}%>
+	<a href='<%=Url.Action("Script", "Missions", new { id = m.MissionID })%>'>script.txt</a>
+	<%
+		}
+		else if (((Account)User).IsLobbyAdministrator)
+		{%>
+			<a href='<%=Url.Action("Delete","Missions", new {id = m.MissionID}) %>' class='delete'>Delete mission</a>
+	
+	<%
+		}%>
 	<h3>
 		Top score</h3>
 	<p>
 		<ul>
 			<%
-			foreach (var score in Model.TopScores)
-   {
-   	%>
+				foreach (var score in Model.TopScores)
+				{
+			%>
 			<li>
 				<%=score.Score%>
 				<%=score.Account.Name%>
 				<%=score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : ""%></li>
 			<%
-   }
-%>
+				}
+			%>
 		</ul>
 	</p>
 	<p>

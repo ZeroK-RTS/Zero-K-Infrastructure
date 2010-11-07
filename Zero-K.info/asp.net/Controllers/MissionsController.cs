@@ -78,6 +78,15 @@ namespace ZeroKWeb.Controllers
 			var m = new ZkDataContext().Missions.Single(x => x.MissionID == id);
 			return File(Encoding.UTF8.GetBytes(m.Script), "application/octet-stream", "script.txt");
 		}
+
+		[Authorize(Roles = "admin")]
+		public ActionResult Delete(int id)
+		{
+			var db = new ZkDataContext();
+			db.Missions.First(x => x.MissionID == id).IsDeleted = true;
+			db.SubmitChanges();
+			return Index(null);
+		}
 	}
 
 	public class MissionDetailData

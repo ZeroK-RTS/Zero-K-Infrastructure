@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Linq;
-using System.Linq;
-using System.Text;
+using System.Security.Principal;
 
 namespace ZkData
 {
-	partial class Account
+	partial class Account: IPrincipal, IIdentity
 	{
-	
 		partial void OnCreated()
 		{
 			FirstLogin = DateTime.UtcNow;
@@ -28,5 +25,16 @@ namespace ZkData
 				Aliases = string.Join(",", aliases.ToArray());
 			}
 		}
+
+		public string AuthenticationType { get { return "LobbyServer"; } }
+		public bool IsAuthenticated { get { return true; } }
+
+		public bool IsInRole(string role)
+		{
+			if (role == "admin" || role == "moderator") return IsLobbyAdministrator;
+			else return string.IsNullOrEmpty(role);
+		}
+
+		public IIdentity Identity { get { return this; } }
 	}
 }
