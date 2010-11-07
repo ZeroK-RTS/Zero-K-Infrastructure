@@ -2,18 +2,15 @@ using System;
 using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Threading;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
-using PlasmaShared.UnitSyncLib;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZeroKLobby.ToolTips;
@@ -36,8 +33,8 @@ namespace ZeroKLobby
 		public static ConnectBar ConnectBar { get; private set; }
 		public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
 		public static bool FirstRun { get; private set; }
-		public static MainWindow MainWindow { get; private set; }
 		public static FriendManager FriendManager;
+		public static MainWindow MainWindow { get; private set; }
 		public static ModStore ModStore { get; private set; }
 		public static NewSpringBar NewSpringBar { get; private set; }
 		public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
@@ -46,16 +43,43 @@ namespace ZeroKLobby
 		public static SpringPaths SpringPaths { get; private set; }
 		public static SpringScanner SpringScanner { get; private set; }
 		public static SpringieServer SpringieServer = new SpringieServer();
+		public static string[] StartupArgs;
 		public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
 		public static TasClient TasClient { get; private set; }
 		public static ToolTipHandler ToolTip;
-		public static string[] StartupArgs;
 
+		/// <summary>
+		/// windows only: do we have admin token?
+		/// </summary>
+		public static bool IsAdmin()
+		{
+			return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+		}
+
+		internal static void LoadConfig()
+		{
+			var configFilename = GetFullConfigPath();
+			if (File.Exists(configFilename))
+			{
+				var xs = new XmlSerializer(typeof(Config));
+				try
+				{
+					Conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(configFilename)));
+				}
+				catch (Exception ex)
+				{
+					Trace.TraceError("Error reading config file: {0}", ex);
+					Conf = new Config();
+				}
+			}
+			else FirstRun = true;
+
+			Conf.UpdateFadeColor();
+		}
 
 		[STAThread]
 		public static bool Main(string[] args)
 		{
-
 			StartupArgs = args;
 			Trace.Listeners.Add(new ConsoleTraceListener());
 			Trace.Listeners.Add(new LogTraceListener());
@@ -84,7 +108,6 @@ namespace ZeroKLobby
 					else Trace.TraceError("Starting undeployed version!");
 				}
 
-
 				WebRequest.DefaultWebProxy = null;
 				ThreadPool.SetMaxThreads(500, 2000);
 				ServicePointManager.Expect100Continue = false;
@@ -98,19 +121,22 @@ namespace ZeroKLobby
 					if (!Debugger.IsAttached)
 					{
 						mutex = new Mutex(false, "ZeroKLobby");
-						if (!mutex.WaitOne(200, false))
+						if (!mutex.WaitOne((StartupArgs != null && StartupArgs.Length > 0) ? 200 : 10000, false))
 						{
 							if (args.Length > 0)
 							{
 								File.WriteAllLines(Utils.MakePath(SpringPaths.WritableDirectory, Config.IpcFileName), args);
 								return false;
-							} else 
-							MessageBox.Show(
-								"Another copy of Zero-K lobby is still running for the spring at " + Conf.ManualSpringPath +
-								"\nMake sure the other lobby is closed (check task manager) before starting new one",
-								"There can be only one lobby running for each Spring engine copy",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Stop);
+							}
+							else
+							{
+								MessageBox.Show(
+									"Another copy of Zero-K lobby is still running for the spring at " + Conf.ManualSpringPath +
+									"\nMake sure the other lobby is closed (check task manager) before starting new one",
+									"There can be only one lobby running for each Spring engine copy",
+									MessageBoxButtons.OK,
+									MessageBoxIcon.Stop);
+							}
 							return false;
 						}
 					}
@@ -119,8 +145,6 @@ namespace ZeroKLobby
 
 				FriendManager = new FriendManager();
 				AutoJoinManager = new AutoJoinManager();
-
-				
 
 				SpringScanner = new SpringScanner(SpringPaths);
 				SpringScanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
@@ -154,16 +178,12 @@ namespace ZeroKLobby
 
 				Application.AddMessageFilter(ToolTip);
 
-
-
 				MainWindow = new MainWindow();
- 
-				Application.AddMessageFilter(new ScrollMessageFilter()); 
+
+				Application.AddMessageFilter(new ScrollMessageFilter());
 
 				if (Conf.StartMinimized) MainWindow.WindowState = WindowState.Minimized;
 				else MainWindow.WindowState = WindowState.Normal;
-
-
 
 				BattleIconManager = new BattleIconManager(MainWindow);
 				BattleBar = new BattleBar();
@@ -183,48 +203,6 @@ namespace ZeroKLobby
 		}
 
 
-		public static void ShutDown()
-		{
-			try
-			{
-				if (!Debugger.IsAttached) mutex.ReleaseMutex();
-			}
-			catch { }
-			if (ToolTip != null) ToolTip.Dispose();
-			if (Downloader != null) Downloader.Dispose();
-			if (SpringScanner!=null) SpringScanner.Dispose();
-			Thread.Sleep(5000);
-		}
-		/// <summary>
-		/// windows only: do we have admin token?
-		/// </summary>
-		public static bool IsAdmin()
-		{
-			return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-		}
-
-		internal static void LoadConfig()
-		{
-			var configFilename = GetFullConfigPath();
-			if (File.Exists(configFilename))
-			{
-				var xs = new XmlSerializer(typeof(Config));
-				try
-				{
-					Conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(configFilename)));
-				}
-				catch (Exception ex)
-				{
-					Trace.TraceError("Error reading config file: {0}", ex);
-					Conf = new Config();
-				}
-			}
-			else FirstRun = true;
-
-			Conf.UpdateFadeColor();
-		}
-
-
 		internal static void SaveConfig()
 		{
 			var configFilename = GetFullConfigPath();
@@ -235,6 +213,19 @@ namespace ZeroKLobby
 				using (var stringWriter = new StringWriter(sb)) xs.Serialize(stringWriter, Conf);
 				File.WriteAllText(configFilename, sb.ToString());
 			}
+		}
+
+		public static void ShutDown()
+		{
+			try
+			{
+				if (!Debugger.IsAttached) mutex.ReleaseMutex();
+			}
+			catch {}
+			if (ToolTip != null) ToolTip.Dispose();
+			if (Downloader != null) Downloader.Dispose();
+			if (SpringScanner != null) SpringScanner.Dispose();
+			Thread.Sleep(5000);
 		}
 
 
