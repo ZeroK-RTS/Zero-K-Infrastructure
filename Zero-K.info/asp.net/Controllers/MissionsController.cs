@@ -78,7 +78,7 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			db.Missions.First(x => x.MissionID == id).IsDeleted = true;
 			db.SubmitChanges();
-			return Index(null);
+			return RedirectToAction("Index");
 		}
 	}
 
