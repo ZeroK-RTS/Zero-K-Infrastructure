@@ -62,7 +62,10 @@ namespace Springie.autohost
 						else
 						{
 							var slot = freeSlots.FirstOrDefault();
-							if (slot == null) tas.ForceSpectator(u.Name);
+							if (slot == null)
+							{
+								if (curSlot == null) tas.ForceSpectator(u.Name);
+							}
 							else if (slot.IsRequired || curSlot == null)
 							{
 								tas.ForceAlly(u.Name, slot.AllyID);
