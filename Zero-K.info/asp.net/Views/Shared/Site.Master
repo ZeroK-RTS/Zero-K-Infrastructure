@@ -12,8 +12,6 @@
 		<script type="text/javascript" src='<%=Url.Content("~/Scripts/jquery-1.4.1.min.js")%>' ></script>
 		<script type="text/javascript" src='<%=Url.Content("~/Scripts/nicetitle.js")%>' ></script>
 	</asp:ContentPlaceHolder>
-	<% if (HttpContext.Current.User is Account)
-    {%>
 	<script language="javascript" type="text/javascript">
 		$(document).ready(function () {
 			$('a.delete').click(function () {
@@ -21,8 +19,6 @@
 				return answer // answer is a boolean
 			});
 		});
-		<%
-    }%>
 	</script>
 </head>
 <body>

@@ -101,6 +101,7 @@
     <Content Include="MissionService.svc" />
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Styles\nicetitle.css" />
+    <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
     <Content Include="Views\Missions\Detail.aspx" />
     <Content Include="Views\Missions\Index.aspx" />

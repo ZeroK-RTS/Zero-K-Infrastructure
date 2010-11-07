@@ -1,0 +1,12 @@
+ .greenStarSmall { 
+  height: 14px;
+  display: block;
+  background: url(../img/star_green_small.png) 0 0;
+ } 
+ 
+ .redStarSmall { 
+  height: 14px;
+  display: block;
+  background: url(../img/star_red_small.png) 0 0;
+ } 
+ 
