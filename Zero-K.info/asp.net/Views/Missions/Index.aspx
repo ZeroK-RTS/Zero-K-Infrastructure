@@ -35,25 +35,30 @@
 										 
 									 }))
 		{%>
-		
-	<%=Html.TextBox("search", Model.SearchString)%> <input type="submit" id="submit" value="Search" />
+	<%=Html.TextBox("search", Model.SearchString)%><input type="submit" id="submit" value="Search" />
 
-	<%}%>
-	<span>Try making new missions with <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>Zero-K MissionEditor</a> :)</span>
+	<%
+		}%>
+			<span>
+	Try making new missions with <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>Zero-K MissionEditor</a> :)
+	</span>
 
-	<div>
-		<div id="missions" class="right text-left width-20">
-			<h3>Most popular</h3>
+	<table>
+		<tr>
+			<td>
+				<div id='missions'>
+					<%
+						Html.RenderPartial("TileList", Model.LastUpdated);%>
+				</div>
+			</td>
+			<td width="250" valign="top" align="left">
+				<h3>
+					Most popular</h3>
 				<ul>
-					<%foreach (var mission in Model.MostPopular.Take(15)) Response.Write(string.Format("<li>{0}</li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })));%>
+					<%
+						foreach (var mission in Model.MostPopular.Take(15)) Response.Write(string.Format("<li>{0}</li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })));%>
 				</ul>
-		</div><!close side_pop>
-		
-		<div id="side" class="left width-80">
-			<%Html.RenderPartial("TileList", Model.LastUpdated);%>
-		</div><!close mission_list>
-	
-	<hr /><!needed for floating elements>
-	</div><!close >
-
+			</td>
+		</tr>
+	</table>
 </asp:Content>

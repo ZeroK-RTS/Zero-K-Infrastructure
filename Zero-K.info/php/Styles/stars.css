@@ -1,10 +1,10 @@
- .greenStarSmall { 
+ .GreenStarSmall { 
   height: 14px;
   display: block;
   background: url(../img/star_green_small.png) 0 0;
  } 
  
- .redStarSmall { 
+ .RedStarSmall { 
   height: 14px;
   display: block;
   background: url(../img/star_red_small.png) 0 0;

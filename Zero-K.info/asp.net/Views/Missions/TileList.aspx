@@ -5,23 +5,23 @@
 	{
 %>
 <div id='<%=mission.MissionID%>' class='mission right relative' onclick='window.location="<%= Url.Action("Detail", new {id= mission.MissionID}) %>"' title="$mission$<%= mission.MissionID%>" >
-	<span class="mission_credit">By <%=Html.Encode(mission.Account.Name)%></span>
 	<h3 class="mission_title"><%=Html.Encode(mission.Name)%></h3>
+	<span class="mission_credit">By <%=Html.Encode(mission.Account.Name)%></span>
 	<img width='96' height='96' border='1' src='<%=Url.Content(string.Format("~/img/missions/{0}.png", mission.MissionID)) %>' class='left' />
 <table>
 	<tr>
 	<td>Rating:</td>
-	<td><span class="greenStarSmall" style="width:70px;"></span></td>
+	<td><%= Html.Stars(StarType.GreenStarSmall, mission.Rating) %></td>
 	</tr>
 	<tr>
 	<td>Difficulty:</td>
-	<td><span class="redStarSmall" style="width:70px;"></span></td>
+	<td><%= Html.Stars(StarType.RedStarSmall, mission.Difficulty) %></td>
 	</tr>
 	<tr>
-	<td colspan='2'>short,chickens,coop</td>
+	<td colspan='2'><%= mission.TopTags %></td>
 	</tr>
 </table>
-<span style="float:left">Record: [LCC]Licho[MVC][0K][CA]</span>
+<span style="float:left;"><%= mission.TopScoreLine != null ? "Record:" + mission.TopScoreLine : "" %></span>
 </div>
 <%
 	}
