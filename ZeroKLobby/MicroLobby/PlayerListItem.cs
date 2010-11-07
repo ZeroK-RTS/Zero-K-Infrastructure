@@ -174,6 +174,10 @@ namespace ZeroKLobby.MicroLobby
 			if (user.IsInGame) drawImage(Resources.ingame);
 			else if (!isBattle && user.IsInBattleRoom) drawImage(Resources.Battle);
 
+
+			if (user.IsAway) drawImage(Resources.AwayImage);
+			
+
 			if (isBattle && !userStatus.IsSpectator)
 			{
 				if (MissionSlot != null)
@@ -198,6 +202,8 @@ namespace ZeroKLobby.MicroLobby
 				x += 12;
 				drawText(qmInfo.ToString(), foreColor, backColor);
 			}
+
+
 		}
 
 		public override string ToString()
