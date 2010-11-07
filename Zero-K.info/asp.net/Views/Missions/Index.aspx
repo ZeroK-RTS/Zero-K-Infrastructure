@@ -58,12 +58,6 @@
 					<%
 						foreach (var mission in Model.MostPopular.Take(15)) Response.Write(string.Format("<li>{0}</li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })));%>
 				</ul>
-				<h3>
-					Last comments</h3>
-				<ul>
-					<%
-						foreach (var mission in Model.LastCommented.Take(15)) Response.Write(string.Format("<li>{0}</li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })));%>
-				</ul>
 			</td>
 		</tr>
 	</table>

@@ -23,8 +23,8 @@ namespace ZeroKWeb.Controllers
 					new MissionsIndexData()
 					{
 						LastUpdated = FilterMissions(db.Missions, search).Take(FetchInitialCount),
-						MostPopular = db.Missions.OrderByDescending(x => x.Resources.DownloadCount),
-						LastCommented = db.Missions.OrderBy(x => x.Name),
+						MostPopular = db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.MissionRunCount),
+						LastCommented = null, //db.Missions.OrderBy(x => x.Name),
 						SearchString = search,
 						FetchInitialCount = FetchInitialCount,
 						FetchTileCount = FetchTileCount
