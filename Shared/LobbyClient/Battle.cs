@@ -123,7 +123,7 @@ namespace LobbyClient
 				List<GrTeam> teams;
 				List<GrAlly> alliances;
 
-				if (!mod.IsMission)
+				if (mod == null|| !mod.IsMission)
 				{
 					GroupData(out players, out teams, out alliances);
 				}

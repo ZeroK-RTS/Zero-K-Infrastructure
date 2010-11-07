@@ -49,7 +49,7 @@ namespace ZeroKLobby.MicroLobby
 		public static SpringieCommand Spawn(string modName, string title, string password)
 		{
 			var ret = new SpringieCommand
-			          { Command = String.Format("!spawn mod={0}", modName), Reply = String.Format("I'm here! Ready to server you! Join me!"), };
+			          { Command = String.Format("!spawn mod={0}", modName), Reply = "I'm here! Ready to serve you! Join me!", };
 			if (!String.IsNullOrEmpty(title)) ret.Command += ",title=" + title;
 			if (!String.IsNullOrEmpty(password)) ret.Command += ",password=" + password;
 			return ret;
