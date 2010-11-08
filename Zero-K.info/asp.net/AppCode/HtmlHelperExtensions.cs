@@ -26,7 +26,7 @@ namespace System.Web.Mvc
 	{
 		public static string Stars(this HtmlHelper helper, StarType type, double? rating)
 		{
-			if (rating.HasValue) return string.Format("<span class='{0}' style='width:{1}px'></span>", type, rating *14);
+			if (rating.HasValue) return string.Format("<span class='{0}' style='width:{1}px'></span>", type,(int)(rating *14.0));
 			else return string.Format("<span class='WhiteStarSmall' style='width:70px'></span>");
 		}
 

@@ -62,18 +62,34 @@
 			<%=m.MissionRunCount%>
 			<br />
 		</p>
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$("#rating").stars({
+					callback: function (ui, type, value) {
+						$.get('<%= Url.Action("Rate","Missions", new {id=m.MissionID}) %>?rating=' + value, function (ret) { if (ret != "") alert(ret); });
+					}
+				});
+
+				$("#difficulty").stars({
+					callback: function (ui, type, value) {
+						$.get('<%= Url.Action("Rate","Missions", new {id=m.MissionID}) %>?difficulty=' + value, function (ret) { if (ret != "") alert(ret); });
+					}
+				});
+
+			});
+
+		</script>
 		<div>
-			<form method="post" action="<%= Url.Action("Rate","Missions",new { id = m.MissionID}) %>">
 			<table>
 				<tr>
 					<td>
 						Rating:
 					</td>
-					<td>
+					<td width='80px'>
 						<%=Html.Stars(StarType.GreenStarSmall, m.Rating)%>
 					</td>
 					<td>
-						<div class='rating'>
+						<div id='rating'>
 							<%=Html.Select("rating", new List<SelectOption>()
                                                 {
                                                 new SelectOption(){ Value = "1", Name = "Poor"},	
@@ -96,7 +112,7 @@
 						<%=Html.Stars(StarType.RedStarSmall, m.Difficulty) %>
 					</td>
 					<td>
-						<div class='rating'>
+						<div id='difficulty'>
 							<%=Html.Select("difficulty", new List<SelectOption>()
                                                 {
                                                 new SelectOption(){ Value = "1", Name = "Trivial"},	
@@ -109,13 +125,7 @@
 						</div>
 					</td>
 				</tr>
-				<tr>
-					<td colspan='3'>
-						<input type="submit" value="Submit" />
-					</td>
-				</tr>
 			</table>
-			</form>
 		</div>
 		<%
 			if (!Global.IsAccountAuthorized && !m.IsScriptMission)

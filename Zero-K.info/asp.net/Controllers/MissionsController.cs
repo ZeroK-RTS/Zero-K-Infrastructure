@@ -96,26 +96,21 @@ namespace ZeroKWeb.Controllers
 				}
 				rat.MissionID = id;
 				rat.AccountID = Global.Account.AccountID;
-				rat.Difficulty = difficulty;
-				rat.Rating1 = rating;
+				if (difficulty.HasValue) rat.Difficulty = difficulty;
+				if (rating.HasValue) rat.Rating1 = rating;
 				db.SubmitChanges();
 
 				var mis = db.Missions.Single(x => x.MissionID == id);
-				var ratings = mis.Ratings.OrderBy(x => x.Rating1).Select(x=>x.Rating1);
+/*			var ratings = mis.Ratings.OrderBy(x => x.Rating1).Select(x=>x.Rating1);
 				var difficulties = mis.Ratings.OrderBy(x => x.Difficulty).Select(x => x.Difficulty);
 				mis.Rating = ratings.Skip(ratings.Count()/2).FirstOrDefault();
-				mis.Difficulty = difficulties.Skip(difficulties.Count() / 2).FirstOrDefault();
+				mis.Difficulty = difficulties.Skip(difficulties.Count() / 2).FirstOrDefault();*/
+
+				mis.Rating = (float?)mis.Ratings.Average(x => x.Rating1);
+				mis.Difficulty = (float?)mis.Ratings.Average(x => x.Difficulty);
 				db.SubmitChanges();
 				
-				var mission = new ZkDataContext().Missions.Single(x => x.MissionID == id);
-
-				return View("Detail", new MissionDetailData
-				{
-					Mission = mission,
-					TopScores = mission.MissionScores.OrderByDescending(x => x.Score).Take(10).AsQueryable(),
-					MyRating = mission.Ratings.SingleOrDefault(x=>x.AccountID == Global.AccountID) ?? new Rating()
-				});
-
+				return Content("");
 			}
 		}
 	}
