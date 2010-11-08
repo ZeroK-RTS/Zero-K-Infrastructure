@@ -33,8 +33,11 @@ namespace ZeroKLobby.MicroLobby
 			var pathString = String.Join("/", path);
 			if (!pathString.StartsWith(PathHead)) return false;
 			if (WebBrowser.Source != null && pathString == WebBrowser.Source.OriginalString && pathString == "http://zero-k.info/Missions.mvc") return true;
-			navigatingTo = pathString;
-			WebBrowser.Navigate(pathString);
+			if (navigatingTo != pathString)
+			{
+				navigatingTo = pathString;
+				WebBrowser.Navigate(pathString);
+			}
 			return true;
 		}
 
@@ -58,8 +61,9 @@ namespace ZeroKLobby.MicroLobby
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 			if (navigatingTo != e.Uri.ToString())
 			{
+				navigatingTo = e.Uri.ToString();
 				Program.MainWindow.navigationControl.Path = e.Uri.ToString();
-				e.Cancel = true;
+				//e.Cancel = true;
 			}
 		}
 

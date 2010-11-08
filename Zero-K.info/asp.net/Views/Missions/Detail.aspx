@@ -146,7 +146,7 @@
 					}%>
 			</ul>
 		</div>
-		<%:Html.ActionLink("Back to List", "Index")%>
+		<%= Html.ActionLink("Back to List", "Index")%>
 	</div>
 	<!close wrapper>
 </asp:Content>

@@ -2,9 +2,8 @@
 <publishData>
   <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="Scripts/jquery-1.4.2.min.js" publishTime="11/02/2010 12:50:24" />
-    <file relUrl="Scripts/jquery.ui.stars.min.css" publishTime="05/01/2010 13:25:50" />
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/08/2010 02:46:51" />
+    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/08/2010 04:00:06" />
     <file relUrl="Global.asax" publishTime="10/22/2010 17:42:44" />
     <file relUrl="Scripts/jquery-ui-1.8.6.custom.min.js" publishTime="11/07/2010 16:09:48" />
     <file relUrl="Styles/jquery.ui.stars.css" publishTime="11/08/2010 02:54:53" />
@@ -15,28 +14,28 @@
     <file relUrl="Img/Loader.gif" publishTime="05/09/2009 14:54:21" />
     <file relUrl="Styles/style.css" publishTime="11/08/2010 02:53:45" />
     <file relUrl="Styles/nicetitle.css" publishTime="11/07/2010 15:45:28" />
-    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="11/08/2010 02:52:00" />
-    <file relUrl="bin/Web.config" publishTime="11/06/2010 22:49:59" />
-    <file relUrl="bin/PlasmaShared.dll" publishTime="11/08/2010 02:51:59" />
+    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="11/08/2010 03:34:32" />
+    <file relUrl="bin/Web.config" publishTime="11/08/2010 03:35:11" />
+    <file relUrl="bin/PlasmaShared.dll" publishTime="11/08/2010 03:34:31" />
     <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="bin/ZeroKWeb.dll" publishTime="11/08/2010 02:55:07" />
-    <file relUrl="Scripts/jquery.ui.stars.js" publishTime="11/08/2010 01:24:37" />
-    <file relUrl="Views/Shared/Site.Master" publishTime="11/08/2010 02:36:02" />
-    <file relUrl="bin/ZeroKWeb.pdb" publishTime="11/08/2010 02:55:07" />
+    <file relUrl="bin/ZeroKWeb.dll" publishTime="11/08/2010 03:34:36" />
+    <file relUrl="Scripts/jquery.ui.stars.js" publishTime="11/08/2010 03:47:53" />
+    <file relUrl="Views/Shared/Site.Master" publishTime="11/08/2010 03:30:24" />
+    <file relUrl="bin/ZeroKWeb.pdb" publishTime="11/08/2010 03:34:36" />
     <file relUrl="bin/Global.asax" publishTime="10/22/2010 17:42:44" />
     <file relUrl="Styles/base.css" publishTime="11/08/2010 02:53:45" />
     <file relUrl="bin/Global.asax.cs" publishTime="11/07/2010 15:10:36" />
     <file relUrl="Views/Missions/TileList.aspx" publishTime="11/08/2010 02:30:40" />
-    <file relUrl="bin/MonoTorrent.dll" publishTime="11/07/2010 23:18:12" />
+    <file relUrl="bin/MonoTorrent.dll" publishTime="11/08/2010 03:34:31" />
     <file relUrl="MissionService.svc" publishTime="10/22/2010 23:53:24" />
-    <file relUrl="Web.config" publishTime="11/06/2010 22:49:59" />
+    <file relUrl="Web.config" publishTime="11/08/2010 03:35:11" />
     <file relUrl="Img/ntbgw.png" publishTime="10/15/2009 02:05:28" />
     <file relUrl="ErrorReports.aspx" publishTime="11/01/2010 01:25:49" />
     <file relUrl="Styles/menu.css" publishTime="11/08/2010 02:53:45" />
     <file relUrl="Scripts/jquery.ui.stars.min.js" publishTime="05/01/2010 13:25:50" />
     <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="10/22/2010 00:51:38" />
     <file relUrl="Scripts/nicetitle.js" publishTime="11/07/2010 16:35:35" />
-    <file relUrl="Scripts/site.js" publishTime="11/08/2010 02:21:47" />
+    <file relUrl="Scripts/site.js" publishTime="11/08/2010 03:44:46" />
     <file relUrl="Views/Web.config" publishTime="10/22/2010 00:51:38" />
   </publishProfile>
 </publishData>
