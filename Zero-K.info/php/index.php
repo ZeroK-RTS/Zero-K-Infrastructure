@@ -9,6 +9,7 @@
 <?php include("inc_rotate.inc"); ?>
 
 <body id="body">
+<center>
 	<div id="wrapper">
 <!-------------------------------------------------------------- -->
 <?php include("inc_header.inc"); ?>
@@ -22,5 +23,6 @@
 <?php include("inc_footer.inc"); ?>
 <!-------------------------------------------------------------- -->
 	</div><!close wrapper>
+</center>
 </body>
 </html>
