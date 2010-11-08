@@ -10,3 +10,9 @@
   background: url(../img/star_red_small.png) 0 0;
  } 
  
+ .WhiteStarSmall { 
+  height: 14px;
+  display: block;
+  background: url(../img/star_white_small.png) 0 0;
+ } 
+ 

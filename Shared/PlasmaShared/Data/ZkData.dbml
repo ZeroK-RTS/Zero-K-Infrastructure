@@ -153,7 +153,7 @@
       <Column Name="CreatedTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="ModifiedTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="ScoringMethod" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
-      <Column Name="TopScoreLine" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="TopScoreLine" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="MissionEditorVersion" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Column Name="SpringVersion" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
       <Column Name="Revision" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
@@ -169,9 +169,8 @@
       <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="ManualDependencies" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
-      <Column Name="Rating" Type="System.Single" DbType="real" CanBeNull="true" />
-      <Column Name="Difficulty" Type="System.Single" DbType="real" CanBeNull="true" />
-      <Column Name="TopTags" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="Rating" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="Difficulty" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="Never" />
       <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
       <Association Name="Mission_MissionScore" Member="MissionScores" ThisKey="MissionID" OtherKey="MissionID" Type="MissionScore" />
       <Association Name="Mission_Rating" Member="Ratings" ThisKey="MissionID" OtherKey="MissionID" Type="Rating" />

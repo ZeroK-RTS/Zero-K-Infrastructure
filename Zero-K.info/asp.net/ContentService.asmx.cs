@@ -58,7 +58,7 @@ namespace ZeroKWeb
 				if (acc == null) throw new ApplicationException("Invalid login or password");
 
 				var mission = db.Missions.Single(x => x.Name == missionName);
-
+				
 				var scoreEntry = mission.MissionScores.FirstOrDefault(x => x.AccountID == acc.AccountID);
 				if (scoreEntry == null)
 				{
@@ -72,6 +72,8 @@ namespace ZeroKWeb
 					scoreEntry.Time = DateTime.UtcNow;
 					scoreEntry.MissionRevision = mission.Revision;
 					scoreEntry.GameSeconds = gameSeconds;
+					var max = mission.MissionScores.Max(x => (int?)x.Score);
+					if (max == null || max < score) mission.TopScoreLine = login;
 					db.SubmitChanges();
 				}
 			}

@@ -2214,8 +2214,6 @@ namespace ZkData
 		
 		private System.Nullable<float> _Difficulty;
 		
-		private string _TopTags;
-		
 		private EntityRef<Resource> _Resources;
 		
 		private EntitySet<MissionScore> _MissionScores;
@@ -2286,8 +2284,6 @@ namespace ZkData
     partial void OnRatingChanged();
     partial void OnDifficultyChanging(System.Nullable<float> value);
     partial void OnDifficultyChanged();
-    partial void OnTopTagsChanging(string value);
-    partial void OnTopTagsChanged();
     #endregion
 		
 		public Mission()
@@ -2505,7 +2501,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TopScoreLine", DbType="NVarChar(100)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TopScoreLine", DbType="NVarChar(100)", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public string TopScoreLine
 		{
@@ -2845,7 +2841,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rating", DbType="real")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rating", DbType="real", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
 		public System.Nullable<float> Rating
 		{
@@ -2866,7 +2862,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Difficulty", DbType="real")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Difficulty", DbType="real", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
 		public System.Nullable<float> Difficulty
 		{
@@ -2887,29 +2883,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TopTags", DbType="nvarchar(200)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
-		public string TopTags
-		{
-			get
-			{
-				return this._TopTags;
-			}
-			set
-			{
-				if ((this._TopTags != value))
-				{
-					this.OnTopTagsChanging(value);
-					this.SendPropertyChanging();
-					this._TopTags = value;
-					this.SendPropertyChanged("TopTags");
-					this.OnTopTagsChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
 		public Resource Resources
 		{
 			get
@@ -2944,7 +2919,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionScore", Storage="_MissionScores", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -2963,7 +2938,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Rating", Storage="_Ratings", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<Rating> Ratings
 		{
 			get

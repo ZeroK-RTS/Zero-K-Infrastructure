@@ -80,6 +80,41 @@ namespace ZeroKWeb.Controllers
 			db.SubmitChanges();
 			return RedirectToAction("Index");
 		}
+
+		public ActionResult Rate(int id, int difficulty, int rating)
+		{
+			if (!Global.IsAccountAuthorized) return Content("Not logged in!");
+			else
+			{
+				var db = new ZkDataContext();
+				var rat = db.Ratings.SingleOrDefault(x => x.MissionID == id && x.AccountID == Global.Account.AccountID);
+				if (rat == null)
+				{
+					rat = new Rating();
+					db.Ratings.InsertOnSubmit(rat);
+				}
+				rat.MissionID = id;
+				rat.AccountID = Global.Account.AccountID;
+				rat.Difficulty = difficulty;
+				rat.Rating1 = rating;
+				db.SubmitChanges();
+
+				var mis = db.Missions.Single(x => x.MissionID == id);
+				var ratings = mis.Ratings.OrderBy(x => x.Rating1).Select(x=>x.Rating1);
+				var difficulties = mis.Ratings.OrderBy(x => x.Difficulty).Select(x => x.Difficulty);
+				mis.Rating = ratings.Skip(ratings.Count()/2).FirstOrDefault();
+				mis.Difficulty = difficulties.Skip(difficulties.Count() / 2).FirstOrDefault();
+				db.SubmitChanges();
+
+				var mission = new ZkDataContext().Missions.Single(x => x.MissionID == id);
+				return View("Detail", new MissionDetailData
+				{
+					Mission = mission,
+					TopScores = mission.MissionScores.OrderByDescending(x => x.Score).Take(10).AsQueryable()
+				});
+
+			}
+		}
 	}
 
 	public class MissionDetailData

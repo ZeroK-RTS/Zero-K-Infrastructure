@@ -19,22 +19,22 @@
 
 $.widget('ui.stars', {
 	options: {
-		inputType: 'radio', // [radio|select]
+		inputType: 'select', // [radio|select]
 		split: 0, // decrease number of stars by splitting each star into pieces [2|3|4|...]
 		disabled: false, // set to [true] to make the stars initially disabled
 		cancelTitle: 'Cancel Rating',
 		cancelValue: 0, // default value of Cancel btn.
-		cancelShow: true,
+		cancelShow: false,
 		disableValue: true, // set to [false] to not disable the hidden input when Cancel btn is clicked, so the value will present in POST data.
 		oneVoteOnly: false,
-		showTitles: false,
+		showTitles: true,
 		captionEl: null, // jQuery object - target for text captions 
 		callback: null, // function(ui, type, value, event)
 
 		/*
 		 * CSS classes
 		 */
-		starWidth: 16, // width of the star image
+		starWidth: 14, // width of the star image
 		cancelClass: 'ui-stars-cancel',
 		starClass: 'ui-stars-star',
 		starOnClass: 'ui-stars-star-on',

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Navigation;
 using ZeroKLobby.Notifications;
+using ZkData;
 using Control = System.Windows.Controls.Control;
 using UserControl = System.Windows.Controls.UserControl;
 using WebBrowser = System.Windows.Controls.WebBrowser;
@@ -65,8 +66,9 @@ namespace ZeroKLobby.MicroLobby
 		private void webBrowser_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
+			WindowsApi.InternetSetCookie(Config.BaseUrl, GlobalConst.LobbyAccessCookieName, "1");
 			UrlSecurityZone.InternetSetFeatureEnabled(UrlSecurityZone.InternetFeaturelist.DISABLE_NAVIGATION_SOUNDS, UrlSecurityZone.SetFeatureOn.PROCESS, true);
-			UrlSecurityZone.InternetSetFeatureEnabled(UrlSecurityZone.InternetFeaturelist.OBJECT_CACHING, UrlSecurityZone.SetFeatureOn.PROCESS, false);
+			//UrlSecurityZone.InternetSetFeatureEnabled(UrlSecurityZone.InternetFeaturelist.OBJECT_CACHING, UrlSecurityZone.SetFeatureOn.PROCESS, false);
 			
 		}
 

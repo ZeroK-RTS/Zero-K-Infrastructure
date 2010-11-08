@@ -17,11 +17,15 @@
 	<td>Difficulty:</td>
 	<td><%= Html.Stars(StarType.RedStarSmall, mission.Difficulty) %></td>
 	</tr>
+	<% if (mission.TopScoreLine != null)
+{%>
 	<tr>
-	<td colspan='2'><%= mission.TopTags %></td>
+	<td>Record</td>
+	<td><%=mission.TopScoreLine%></td>
 	</tr>
+	<%
+}%>
 </table>
-<span style="float:left;"><%= mission.TopScoreLine != null ? "Record:" + mission.TopScoreLine : "" %></span>
 </div>
 <%
 	}

@@ -2,6 +2,7 @@
 @import url("menu.css");
 @import url("nicetitle.css");
 @import url("stars.css");
+@import url("jquery.ui.stars.css");
 
 html, body
 {
