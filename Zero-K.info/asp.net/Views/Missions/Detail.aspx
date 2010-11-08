@@ -134,6 +134,7 @@
 		<h3>
 			Top scores</h3>
 		<div class="border">
+			<%= m.ScoringMethod %>
 			<ul>
 				<%
 					foreach (var score in Model.TopScores)

@@ -23,8 +23,8 @@ namespace ZeroKWeb.Controllers
 					new MissionsIndexData()
 					{
 						LastUpdated = FilterMissions(db.Missions, search).Take(FetchInitialCount),
-						MostPopular = db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.MissionRunCount),
-						LastCommented = null, //db.Missions.OrderBy(x => x.Name),
+						MostPlayed = db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.MissionRunCount),
+						MostRating =db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.Rating),
 						SearchString = search,
 						FetchInitialCount = FetchInitialCount,
 						FetchTileCount = FetchTileCount
@@ -130,8 +130,8 @@ namespace ZeroKWeb.Controllers
 	public class MissionsIndexData
 	{
 		public IQueryable<Mission> LastUpdated;
-		public IQueryable<Mission> MostPopular;
-		public IQueryable<Mission> LastCommented;
+		public IQueryable<Mission> MostPlayed;
+		public IQueryable<Mission> MostRating;
 		public string SearchString;
 		public int FetchInitialCount;
 		public int FetchTileCount;

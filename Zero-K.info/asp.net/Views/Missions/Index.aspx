@@ -1,7 +1,7 @@
 <%@ Page Title="" Language="C#" Inherits="System.Web.Mvc.ViewPage<ZeroKWeb.Controllers.MissionsIndexData>"
 	MasterPageFile="~/Views/Shared/Site.Master" %>
-<%@ Import Namespace="ZkData" %>
 
+<%@ Import Namespace="ZkData" %>
 <asp:Content runat="server" ID="Main" ContentPlaceHolderID="MainContent">
 	<script type="text/javascript">
 		var offset = <%=Model.FetchInitialCount%>;
@@ -32,17 +32,14 @@
 										 UpdateTargetId = "missions",
 										 OnBegin = string.Format("function(){{offset={0}; enabled=false;}}", Model.FetchInitialCount),
 										 OnComplete = "function(){enabled= true;}",
-										 
+
 									 }))
 		{%>
 	<%=Html.TextBox("search", Model.SearchString)%><input type="submit" id="submit" value="Search" />
-
 	<%
 		}%>
-			<span>
-	Try making new missions with <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>Zero-K MissionEditor</a> :)
-	</span>
-
+	<span>Try making new missions with <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>
+		Zero-K MissionEditor</a> :) </span>
 	<table>
 		<tr>
 			<td>
@@ -53,10 +50,16 @@
 			</td>
 			<td width="250" valign="top" align="left">
 				<h3>
-					Most popular</h3>
+					Most played</h3>
 				<ul>
 					<%
-						foreach (var mission in Model.MostPopular.Take(15)) Response.Write(string.Format("<li>{0}</li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })));%>
+						foreach (var mission in Model.MostPlayed.Take(15)) Response.Write(string.Format("<li>{0}</li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })));%>
+				</ul>
+				<h3>
+					Highest rated</h3>
+				<ul>
+					<%
+						foreach (var mission in Model.MostRating.Take(15)) Response.Write(string.Format("<li>{0}</li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })));%>
 				</ul>
 			</td>
 		</tr>
