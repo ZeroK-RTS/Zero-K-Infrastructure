@@ -40,7 +40,7 @@
 		}%>
 	<span>Try making new missions with <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>
 		Zero-K MissionEditor</a> :) </span>
-	<table>
+	<table width='100%'>
 		<tr>
 			<td>
 				<div id='missions'>
