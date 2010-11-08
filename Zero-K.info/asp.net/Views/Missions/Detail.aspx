@@ -70,17 +70,21 @@
 						Rating:
 					</td>
 					<td>
-						<%=Html.Stars(StarType.GreenStarSmall, m.Rating) %>
+						<%=Html.Stars(StarType.GreenStarSmall, m.Rating)%>
 					</td>
 					<td>
 						<div class='rating'>
-							<select name="rating">
-								<option value='1'>Poor</option>
-								<option value='2'>Below average</option>
-								<option value='3'>Average</option>
-								<option value='4'>Good</option>
-								<option value='5'>Awesome</option>
-							</select>
+							<%=Html.Select("rating", new List<SelectOption>()
+                                                {
+                                                new SelectOption(){ Value = "1", Name = "Poor"},	
+																								new SelectOption(){ Value = "2", Name = "Below average"},	
+																								new SelectOption(){ Value = "3", Name = "Average"},	
+																								new SelectOption(){ Value = "4", Name = "Good"},	
+																								new SelectOption(){ Value = "5", Name = "Awesome"}	
+                                                }
+                                                , Model.MyRating.Rating1.ToString())%>
+
+
 						</div>
 					</td>
 				</tr>
@@ -93,13 +97,15 @@
 					</td>
 					<td>
 						<div class='rating'>
-							<select name="difficulty">
-								<option value='1'>Trivial</option>
-								<option value='2'>Easy</option>
-								<option value='3'>Average</option>
-								<option value='4'>Hard</option>
-								<option value='5'>Impossible</option>
-							</select>
+							<%=Html.Select("difficulty", new List<SelectOption>()
+                                                {
+                                                new SelectOption(){ Value = "1", Name = "Trivial"},	
+																								new SelectOption(){ Value = "2", Name = "Easy"},	
+																								new SelectOption(){ Value = "3", Name = "Average"},	
+																								new SelectOption(){ Value = "4", Name = "Hard"},	
+																								new SelectOption(){ Value = "5", Name = "Impossible"}	
+                                                }
+                                                , Model.MyRating.Difficulty.ToString())%>
 						</div>
 					</td>
 				</tr>

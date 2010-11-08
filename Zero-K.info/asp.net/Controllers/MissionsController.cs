@@ -44,7 +44,8 @@ namespace ZeroKWeb.Controllers
 			return View("Detail", new MissionDetailData
 			                      {
 															Mission = mission,
-															TopScores = mission.MissionScores.OrderByDescending(x=>x.Score).Take(10).AsQueryable()
+															TopScores = mission.MissionScores.OrderByDescending(x=>x.Score).Take(10).AsQueryable(),
+															MyRating = mission.Ratings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new Rating()
 			                      });
 		}
 
@@ -81,7 +82,7 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Index");
 		}
 
-		public ActionResult Rate(int id, int difficulty, int rating)
+		public ActionResult Rate(int id, int? difficulty, int? rating)
 		{
 			if (!Global.IsAccountAuthorized) return Content("Not logged in!");
 			else
@@ -105,12 +106,14 @@ namespace ZeroKWeb.Controllers
 				mis.Rating = ratings.Skip(ratings.Count()/2).FirstOrDefault();
 				mis.Difficulty = difficulties.Skip(difficulties.Count() / 2).FirstOrDefault();
 				db.SubmitChanges();
-
+				
 				var mission = new ZkDataContext().Missions.Single(x => x.MissionID == id);
+
 				return View("Detail", new MissionDetailData
 				{
 					Mission = mission,
-					TopScores = mission.MissionScores.OrderByDescending(x => x.Score).Take(10).AsQueryable()
+					TopScores = mission.MissionScores.OrderByDescending(x => x.Score).Take(10).AsQueryable(),
+					MyRating = mission.Ratings.SingleOrDefault(x=>x.AccountID == Global.AccountID) ?? new Rating()
 				});
 
 			}
@@ -121,6 +124,7 @@ namespace ZeroKWeb.Controllers
 	{
 		public Mission Mission;
 		public IQueryable<MissionScore> TopScores;
+		public Rating MyRating;
 	}
 
 	public class MissionsIndexData
