@@ -1,18 +1,18 @@
  .GreenStarSmall { 
   height: 14px;
   display: block;
-  background: url(../img/star_green_small.png) 0 0;
+  background: url(../img/stars/star_green_small.png) 0 0;
  } 
  
  .RedStarSmall { 
   height: 14px;
   display: block;
-  background: url(../img/star_red_small.png) 0 0;
+  background: url(../img/stars/star_red_small.png) 0 0;
  } 
  
  .WhiteStarSmall { 
   height: 14px;
   display: block;
-  background: url(../img/star_white_small.png) 0 0;
+  background: url(../img/stars/star_white_small.png) 0 0;
  } 
  
