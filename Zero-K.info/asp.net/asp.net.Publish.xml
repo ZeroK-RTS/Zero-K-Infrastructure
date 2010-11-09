@@ -3,7 +3,7 @@
   <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="Scripts/jquery-1.4.2.min.js" publishTime="11/02/2010 12:50:24" />
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/09/2010 03:52:38" />
+    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/09/2010 03:59:25" />
     <file relUrl="Global.asax" publishTime="10/22/2010 17:42:44" />
     <file relUrl="bin/Global.asax.cs" publishTime="11/07/2010 15:10:36" />
     <file relUrl="Styles/jquery.ui.stars.css" publishTime="11/08/2010 02:54:53" />

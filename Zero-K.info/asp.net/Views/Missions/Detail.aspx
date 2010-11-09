@@ -105,6 +105,7 @@
 						<%=Html.Stars(StarType.GreenStarSmall, m.Rating)%>
 					</td>
 					<td>
+					Your vote: 
 						<div id='rating'>
 							<%=Html.Select("rating",
 			                              new List<SelectOption>()
@@ -118,7 +119,7 @@
 			                              Model.MyRating.Rating1.ToString())%>
 
 
-						</div>
+						</div> 
 					</td>
 				</tr>
 				<tr>
@@ -129,6 +130,7 @@
 						<%=Html.Stars(StarType.RedStarSmall, m.Difficulty)%>
 					</td>
 					<td>
+					Your vote: 
 						<div id='difficulty'>
 							<%=Html.Select("difficulty",
 			                              new List<SelectOption>()
