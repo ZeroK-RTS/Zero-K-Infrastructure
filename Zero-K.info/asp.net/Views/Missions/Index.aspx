@@ -50,16 +50,23 @@
 			</td>
 			<td width="250" valign="top" align="left">
 				<h3>
-					Most played</h3>
-				<ul>
-					<%
-						foreach (var mission in Model.MostPlayed.Take(15)) Response.Write(string.Format("<li>{0}</li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })));%>
-				</ul>
-				<h3>
 					Highest rated</h3>
 				<ul>
 					<%
-						foreach (var mission in Model.MostRating.Take(15)) Response.Write(string.Format("<li>{0}</li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })));%>
+						foreach (var mission in Model.MostRating.Take(15)) Response.Write(string.Format("<li><span title='$mission${1}'>{0}</span></li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID }), mission.MissionID));%>
+				</ul>
+				<h3>
+					Lost comments</h3>
+				<ul>
+					<%
+						foreach (var mission in Model.LastComments.Take(15)) Response.Write(string.Format("<li><span title='$mission${1}'>{0}</span></li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID }), mission.MissionID));%>
+				</ul>
+
+				<h3>
+					Most played</h3>
+				<ul>
+					<%
+						foreach (var mission in Model.MostPlayed.Take(15)) Response.Write(string.Format("<li><span title='$mission${1}'>{0}</span></li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID }), mission.MissionID));%>
 				</ul>
 			</td>
 		</tr>

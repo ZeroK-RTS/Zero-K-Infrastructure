@@ -187,8 +187,15 @@ function showNiceTitle(e) {
 
 
 	w = d.style.width;
-	d.style.left = (lnk.getBoundingClientRect().right +10) + document.documentElement.scrollLeft + "px";
-	d.style.top = (lnk.getBoundingClientRect().top + 10) + document.documentElement.scrollTop + "px";
+
+	if (lnk.getBoundingClientRect().right + 200 > document.body.clientWidth) {
+		d.style.left = (lnk.getBoundingClientRect().left - 200) + document.documentElement.scrollLeft + "px";
+		d.style.top = (lnk.getBoundingClientRect().bottom + 10) + document.documentElement.scrollTop + "px";
+	}
+	else {
+		d.style.left = (lnk.getBoundingClientRect().right + 10) + document.documentElement.scrollLeft + "px";
+		d.style.top = (lnk.getBoundingClientRect().top + 10) + document.documentElement.scrollTop + "px";
+	}
 
 	document.body.appendChild(d);
 	CURRENT_NICE_TITLE = d;

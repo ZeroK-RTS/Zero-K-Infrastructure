@@ -26,6 +26,7 @@ namespace ZeroKWeb.Controllers
 						LastUpdated = FilterMissions(db.Missions, search).Take(FetchInitialCount),
 						MostPlayed = db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.MissionRunCount),
 						MostRating =db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.Rating),
+						LastComments = db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x=>x.ForumThread.LastPost),
 						SearchString = search,
 						FetchInitialCount = FetchInitialCount,
 						FetchTileCount = FetchTileCount
@@ -153,5 +154,6 @@ namespace ZeroKWeb.Controllers
 		public string SearchString;
 		public int FetchInitialCount;
 		public int FetchTileCount;
+		public IQueryable<Mission> LastComments;
 	}
 }
