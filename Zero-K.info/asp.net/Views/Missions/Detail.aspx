@@ -167,7 +167,7 @@
 
 
 	<form method="post" action="<%=Url.Action("SubmitPost", "Forum", new { threadID = m.ForumThreadID })%>">
-		<textarea name="text" rows="5" cols="80"></textarea><br />
+		<textarea name="text" rows="4" cols="50"></textarea><br />
 		<input type="submit" value="Submit Comment"/>
 	</form>
 	<%
