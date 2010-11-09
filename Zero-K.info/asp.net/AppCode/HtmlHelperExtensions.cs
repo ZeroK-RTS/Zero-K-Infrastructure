@@ -45,5 +45,21 @@ namespace System.Web.Mvc
 			return sb.ToString();
 		}
 
+
+		public static string ToAgoString(this DateTime utcDate)
+		{
+			return ToAgoString(DateTime.UtcNow.Subtract(utcDate));
+		}
+
+		public static string ToAgoString(this TimeSpan timeSpan)
+		{
+			if (timeSpan.TotalMinutes < 2) return string.Format("{0} seconds ago", (int)timeSpan.TotalSeconds);
+			if (timeSpan.TotalHours < 2) return string.Format("{0} minutes ago", (int)timeSpan.TotalMinutes);
+			if (timeSpan.TotalDays < 2) return string.Format("{0} hours ago", (int)timeSpan.TotalHours);
+			if (timeSpan.TotalDays < 60) return string.Format("{0} days ago", (int)timeSpan.TotalDays);
+			return string.Format("{0} months ago", (int)(timeSpan.TotalDays / 30));
+		}
+
+
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using ZkData;
 
 namespace ZeroKWeb
@@ -9,5 +10,9 @@ namespace ZeroKWeb
 		public static Account Account { get { return HttpContext.Current.User as Account; } }
 		public static bool IsAccountAuthorized { get { return HttpContext.Current.User as Account != null; } }
 		public static bool IsLobbyAccess { get { return HttpContext.Current.Request.Cookies[GlobalConst.LobbyAccessCookieName] != null; } }
+
+
 	}
+
+
 }

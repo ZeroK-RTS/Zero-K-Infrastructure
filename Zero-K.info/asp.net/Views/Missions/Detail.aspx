@@ -43,12 +43,12 @@
 			<%=m.Map%><br />
 			Game:
 			<%=m.Mod ?? m.ModRapidTag%><br />
-			Created:<%=m.CreatedTime.ToLocalTime()%><br />
+			Created:<%=m.CreatedTime.ToAgoString()%><br />
 			<%
 				if (m.Revision > 0)
     {%>
 			Changed:
-			<%=m.ModifiedTime.ToLocalTime()%>
+			<%=m.ModifiedTime.ToAgoString()%>
 			(revision
 			<%=m.Revision%>)<br />
 			<%
@@ -133,7 +133,7 @@
 			</table>
 		</div>
 		<%
-				if (!Global.IsAccountAuthorized && !m.IsScriptMission)
+				if (!Global.IsLobbyAccess && !m.IsScriptMission)
     {%>
 		Manual download: <a href='<%=Url.Action("File", "Missions", new { name = m.Name })%>'>
 			<%=m.SanitizedFileName%></a> and <a href='<%=Url.Action("Script", "Missions", new { id = m.MissionID })%>'>
@@ -179,7 +179,7 @@
 				<b><%=p.Name%></b><br />
 				<%= Html.Stars(StarType.GreenStarSmall, p.Rating) %>
 				<%= Html.Stars(StarType.RedStarSmall, p.Difficulty) %>
-				<%=p.Created%>
+				<%=p.Created.ToAgoString()%>
 		</td>
 		<td valign="top">
 			<%= Html.Encode(p.Text)%>

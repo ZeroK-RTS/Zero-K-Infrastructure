@@ -56,7 +56,7 @@
 						foreach (var mission in Model.MostRating.Take(15)) Response.Write(string.Format("<li><span title='$mission${1}'>{0}</span></li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID }), mission.MissionID));%>
 				</ul>
 				<h3>
-					Lost comments</h3>
+					Last comments</h3>
 				<ul>
 					<%
 						foreach (var mission in Model.LastComments.Take(15)) Response.Write(string.Format("<li><span title='$mission${1}'>{0}</span></li>", Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID }), mission.MissionID));%>
