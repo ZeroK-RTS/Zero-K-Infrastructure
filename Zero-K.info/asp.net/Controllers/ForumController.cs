@@ -9,6 +9,7 @@ namespace ZeroKWeb.Controllers
 		public ActionResult SubmitPost(int threadID, string text)
 		{
 			if (!Global.IsAccountAuthorized) return Content("Not logged in");
+			if (string.IsNullOrEmpty(text)) return Content("Please type some text :)");
 
 			var db = new ZkDataContext();
 			var thread = db.ForumThreads.Single(x => x.ForumThreadID == threadID);

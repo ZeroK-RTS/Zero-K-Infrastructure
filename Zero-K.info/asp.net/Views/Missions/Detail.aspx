@@ -18,9 +18,12 @@
 			<a href='<%="spring://" +
     	                  Html.Encode(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) +
     	                              (m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.Name)%>'>
-				PLAY NOW</a></h2>
+				PLAY NOW</a>
+				</h2>
 		<%
     }%>
+		
+		
 		<%
 				if (!m.IsScriptMission)
     {%>
@@ -29,7 +32,17 @@
     	                  Html.Encode(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.Name)%>'>
 				HOST IN MULTIPLAYER</a></h2>
 		<%
-    }%>
+    }
+		if (!Global.IsLobbyAccess && !m.IsScriptMission)
+    {%>
+		Manual download: <a href='<%=Url.Action("File", "Missions", new { name = m.Name })%>'>
+			<%=m.SanitizedFileName%></a> and <a href='<%=Url.Action("Script", "Missions", new { id = m.MissionID })%>'>
+				script.txt</a>
+		<%
+    }
+				if (Global.IsAccountAuthorized && Global.Account.IsLobbyAdministrator)
+    {%>
+
 		<p class="border">
 			<%=Html.Encode(Model.Mission.Description)%>
 			<br />
@@ -132,16 +145,6 @@
 				</tr>
 			</table>
 		</div>
-		<%
-				if (!Global.IsLobbyAccess && !m.IsScriptMission)
-    {%>
-		Manual download: <a href='<%=Url.Action("File", "Missions", new { name = m.Name })%>'>
-			<%=m.SanitizedFileName%></a> and <a href='<%=Url.Action("Script", "Missions", new { id = m.MissionID })%>'>
-				script.txt</a>
-		<%
-    }
-				if (Global.IsAccountAuthorized && Global.Account.IsLobbyAdministrator)
-    {%>
 		<a href='<%=Url.Action("Delete", "Missions", new { id = m.MissionID })%>' class='delete'>
 			Delete mission</a>
 		<%
