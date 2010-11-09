@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Linq.SqlClient;
 using System.Linq;
 using System.Text;
@@ -38,16 +39,36 @@ namespace ZeroKWeb.Controllers
 			return File(m.Mutator.ToArray(), "application/octet-stream", m.SanitizedFileName);
 		}
 
+		public class MissionPost {
+			public DateTime Created { get; set; }
+			public string Name { get; set; }
+			public string Text { get; set; }
+			public int? Rating { get; set; }
+			public int? Difficulty { get; set; }
+		}
+
 		public ActionResult Detail(int id)
 		{
 			var mission = new ZkDataContext().Missions.Single(x => x.MissionID == id);
-			return View("Detail", new MissionDetailData
-			                      {
-															Mission = mission,
-															TopScores = mission.MissionScores.OrderByDescending(x=>x.Score).Take(10).AsQueryable(),
-															MyRating = mission.Ratings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new Rating(),
-															Posts = mission.ForumThread.ForumPosts.OrderByDescending(x=>x.Created)
-			                      });
+			return View("Detail",
+			            new MissionDetailData
+			            {
+			            	Mission = mission,
+			            	TopScores = mission.MissionScores.OrderByDescending(x => x.Score).Take(10).AsQueryable(),
+			            	MyRating = mission.Ratings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new Rating(),
+			            	Posts = (from p in mission.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
+			            	         let userRating = mission.Ratings.SingleOrDefault(x => x.AccountID == p.AuthorAccountID)
+			            	         select
+			            	         	new MissionPost
+			            	         	{
+			            	         		Created = p.Created,
+			            	         		Name = p.Account.Name,
+			            	         		Text = p.Text,
+			            	         		Rating = userRating != null ? userRating.Rating1 : null,
+			            	         		Difficulty = userRating != null ? userRating.Difficulty : null
+			            	         	})
+			            });
+
 		}
 
 
@@ -121,7 +142,7 @@ namespace ZeroKWeb.Controllers
 		public Mission Mission;
 		public IQueryable<MissionScore> TopScores;
 		public Rating MyRating;
-		public IOrderedEnumerable<ForumPost> Posts;
+		public IEnumerable<MissionsController.MissionPost> Posts;
 	}
 
 	public class MissionsIndexData

@@ -163,26 +163,33 @@
 			</ul>
 		</div>
 	</div>
+	<!close wrapper>
+
+
 	<form method="post" action="<%=Url.Action("SubmitPost", "Forum", new { threadID = m.ForumThreadID })%>">
 		<textarea name="text" rows="5" cols="80"></textarea><br />
-		<input type="submit" />
+		<input type="submit" value="Submit Comment"/>
 	</form>
 	<%
 				foreach (var p in Model.Posts )
     {%>
-		<span class="post">
-			<span class="post-header">
-				<%=p.Account.Name%><br />
+		<table>
+		<tr>
+		<td width='120px'>
+				<b><%=p.Name%></b><br />
+				<%= Html.Stars(StarType.GreenStarSmall, p.Rating) %>
+				<%= Html.Stars(StarType.RedStarSmall, p.Difficulty) %>
 				<%=p.Created%>
-			</span>
-			<span class="post-body"><%=p.Text%></span>
-		</span>
+		</td>
+		<td valign="top">
+			<%= Html.Encode(p.Text)%>
+		</td>
+		</tr>
+		</table>
+		
 
 	<%
     }%>
-		<br />
 
-
-	<!close wrapper>
 	<%=Html.ActionLink("Back to List", "Index")%>
 </asp:Content>
