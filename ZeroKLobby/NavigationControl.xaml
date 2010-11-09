@@ -9,7 +9,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <UniformGrid Grid.Row="0" Rows="1">
-						<Button Click="MissionsPage_Click">Missions (ALPHA)</Button>
+						<Button Click="MissionsPage_Click">Missions</Button>
 						<Button Click="QuickMatch_Click">QuickMatch</Button>
 						<Button Click="BattleListPage_Click">Battles</Button>
 					  <Button Click="ChatPage_Click">Chat</Button>

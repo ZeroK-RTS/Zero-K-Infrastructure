@@ -22,9 +22,10 @@
 		<asp:ContentPlaceHolder ID="MainContent" runat="server">
 		</asp:ContentPlaceHolder>
 	</div>
+	
 	<% if (!Global.IsLobbyAccess)
     {%>
-		WARNING: this site is meant to be viewed with <a href='http://zero-k.info/lobby/setup.exe'>Zero-K lobby</a>
+		<small>Warning: this site is meant to be viewed with <a href='http://zero-k.info/lobby/setup.exe'>Zero-K lobby</a></small>
 	<%
     }%>
 	<% if (!(Global.IsAccountAuthorized))
