@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -40,6 +41,14 @@ namespace ZkData
 			if (MaxHumans > 1 && IsCoop) tags.Add("Coop");
 			if (MaxHumans > 1 && !IsCoop) tags.Add("Adversarial");
 			return tags;
+		}
+
+		partial void OnValidate(System.Data.Linq.ChangeAction action)
+		{
+			if (action == ChangeAction.Insert)
+			{
+				if (ForumThread == null) ForumThread = new ForumThread() { Title = Name };
+			}
 		}
 
 		partial void OnCreated()

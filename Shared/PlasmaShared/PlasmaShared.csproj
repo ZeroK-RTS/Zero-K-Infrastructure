@@ -90,6 +90,8 @@
     <Compile Include="Connection.cs" />
     <Compile Include="Data\Account.cs" />
     <Compile Include="Data\AuthServiceClient.cs" />
+    <Compile Include="Data\ForumPost.cs" />
+    <Compile Include="Data\ForumThread.cs" />
     <Compile Include="Data\IAuthService.cs" />
     <Compile Include="Data\LobbyMessage.cs" />
     <Compile Include="Data\Mission.cs" />

@@ -74,6 +74,7 @@
       <DependentUpon>ContentService.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="ErrorReports.aspx.cs">

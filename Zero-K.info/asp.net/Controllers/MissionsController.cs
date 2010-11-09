@@ -45,7 +45,8 @@ namespace ZeroKWeb.Controllers
 			                      {
 															Mission = mission,
 															TopScores = mission.MissionScores.OrderByDescending(x=>x.Score).Take(10).AsQueryable(),
-															MyRating = mission.Ratings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new Rating()
+															MyRating = mission.Ratings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new Rating(),
+															Posts = mission.ForumThread.ForumPosts.OrderByDescending(x=>x.Created)
 			                      });
 		}
 
@@ -120,6 +121,7 @@ namespace ZeroKWeb.Controllers
 		public Mission Mission;
 		public IQueryable<MissionScore> TopScores;
 		public Rating MyRating;
+		public IOrderedEnumerable<ForumPost> Posts;
 	}
 
 	public class MissionsIndexData

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using PlasmaShared;
@@ -16,7 +17,14 @@ namespace ZeroKWeb.Controllers
 		public static string GetMissionTooltip(int id)
 		{
 			var db = new ZkDataContext();
-			return db.Missions.Single(x => x.MissionID == id).Description;
+			var sb = new StringBuilder();
+			var mis = db.Missions.Single(x => x.MissionID == id);
+
+			sb.AppendFormat("{0}<br/>---<br/>", HttpUtility.HtmlDecode(mis.Description));
+			sb.AppendFormat("Players: {0} - {1}<br/>", mis.MinHumans, mis.MaxHumans);
+			sb.AppendFormat("Comments: {0}<br/>", mis.ForumThread != null ? mis.ForumThread.ForumPosts.Count : 0);
+			sb.AppendFormat("Rated by: {0} players", mis.Ratings.Count);
+			return sb.ToString();
 		}
 
 		public ActionResult GetTooltip(string key)
