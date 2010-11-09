@@ -40,9 +40,7 @@
 				script.txt</a>
 		<%
     }
-				if (Global.IsAccountAuthorized && Global.Account.IsLobbyAdministrator)
-    {%>
-
+		%>
 		<p class="border">
 			<%=Html.Encode(Model.Mission.Description)%>
 			<br />
@@ -147,6 +145,10 @@
 				</tr>
 			</table>
 		</div>
+	<% 
+		if (Global.IsAccountAuthorized && Global.Account.IsLobbyAdministrator)
+    {%>
+
 		<a href='<%=Url.Action("Delete", "Missions", new { id = m.MissionID })%>' class='delete'>
 			Delete mission</a>
 		<%

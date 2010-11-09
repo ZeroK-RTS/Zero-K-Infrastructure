@@ -3,7 +3,7 @@
   <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="Scripts/jquery-1.4.2.min.js" publishTime="11/02/2010 12:50:24" />
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/09/2010 03:59:25" />
+    <file relUrl="Views/Missions/Detail.aspx" publishTime="11/09/2010 04:54:39" />
     <file relUrl="Global.asax" publishTime="10/22/2010 17:42:44" />
     <file relUrl="bin/Global.asax.cs" publishTime="11/07/2010 15:10:36" />
     <file relUrl="Styles/jquery.ui.stars.css" publishTime="11/08/2010 02:54:53" />
@@ -15,18 +15,18 @@
     <file relUrl="Styles/style.css" publishTime="11/08/2010 02:53:45" />
     <file relUrl="Styles/nicetitle.css" publishTime="11/07/2010 15:45:28" />
     <file relUrl="bin/Web.config" publishTime="11/08/2010 03:35:11" />
-    <file relUrl="bin/PlasmaShared.dll" publishTime="11/09/2010 02:06:11" />
+    <file relUrl="bin/PlasmaShared.dll" publishTime="11/09/2010 04:54:42" />
     <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="10/22/2010 00:51:38" />
-    <file relUrl="bin/ZeroKWeb.dll" publishTime="11/09/2010 03:54:16" />
+    <file relUrl="bin/ZeroKWeb.dll" publishTime="11/09/2010 04:54:50" />
     <file relUrl="Scripts/jquery.ui.stars.js" publishTime="11/09/2010 00:50:08" />
     <file relUrl="Views/Shared/Site.Master" publishTime="11/09/2010 03:50:29" />
-    <file relUrl="bin/ZeroKWeb.pdb" publishTime="11/09/2010 03:54:16" />
+    <file relUrl="bin/ZeroKWeb.pdb" publishTime="11/09/2010 04:54:50" />
     <file relUrl="bin/Global.asax" publishTime="10/22/2010 17:42:44" />
     <file relUrl="Styles/base.css" publishTime="11/08/2010 02:53:45" />
     <file relUrl="Scripts/jquery-ui-1.8.6.custom.min.js" publishTime="11/07/2010 16:09:48" />
     <file relUrl="Views/Missions/TileList.aspx" publishTime="11/09/2010 03:31:21" />
     <file relUrl="MissionService.svc" publishTime="10/22/2010 23:53:24" />
-    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="11/09/2010 02:06:12" />
+    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="11/09/2010 04:54:46" />
     <file relUrl="bin/MonoTorrent.dll" publishTime="11/08/2010 03:34:31" />
     <file relUrl="Img/ntbgw.png" publishTime="10/15/2009 02:05:28" />
     <file relUrl="ErrorReports.aspx" publishTime="11/01/2010 01:25:49" />
