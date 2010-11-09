@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -29,6 +30,16 @@ namespace ZkData
 				foreach (var character in Path.GetInvalidFileNameChars()) fileName = fileName.Replace(character, '_');
 				return fileName + ".sdz";
 			}
+		}
+
+		public List<string> GetPseudoTags()
+		{
+			var tags = new List<string>();
+			if (MinHumans < 2) tags.Add("SinglePlayer");
+			if (MaxHumans > 1) tags.Add("MultiPlayer");
+			if (MaxHumans > 1 && IsCoop) tags.Add("Coop");
+			if (MaxHumans > 1 && !IsCoop) tags.Add("Adversarial");
+			return tags;
 		}
 
 		partial void OnCreated()

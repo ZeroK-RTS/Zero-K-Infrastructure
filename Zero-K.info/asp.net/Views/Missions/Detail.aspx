@@ -37,6 +37,7 @@
 			<%=m.MinHumans%>
 			-
 			<%=m.MaxHumans%><br />
+			<small><%= string.Join("<br/>",m.GetPseudoTags()) %></small><br />
 			Map:
 			<%=m.Map%><br />
 			Game:

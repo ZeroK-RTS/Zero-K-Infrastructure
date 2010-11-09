@@ -18,7 +18,7 @@
 	<td><%= Html.Stars(StarType.RedStarSmall, mission.Difficulty) %></td>
 	</tr>
 	<tr>
-	<td colspan='2'></td>
+	<td colspan='2'><small><%= string.Join("<br/>",mission.GetPseudoTags()) %></small></td>
 	</tr>
 </table>
 <span style="float:left;"><%= mission.TopScoreLine != null ? "Record:" + mission.TopScoreLine : "" %></span>

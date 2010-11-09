@@ -171,10 +171,13 @@
       <Column Name="ManualDependencies" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
       <Column Name="Rating" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="Difficulty" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="IsCoop" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Association Name="Mission_Mission" Member="ChildMission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" Cardinality="One" />
       <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
       <Association Name="Mission_MissionScore" Member="MissionScores" ThisKey="MissionID" OtherKey="MissionID" Type="MissionScore" />
       <Association Name="Mission_Rating" Member="Ratings" ThisKey="MissionID" OtherKey="MissionID" Type="Rating" />
       <Association Name="Account_Mission" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Mission_Mission" Member="ParentMission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.MothershipStructure" Member="MothershipStructures">

@@ -68,12 +68,12 @@ namespace ZeroKWeb
 
 				if (score > scoreEntry.Score)
 				{
+					var max = mission.MissionScores.Max(x => (int?)x.Score);
+					if (max == null || max <= score) mission.TopScoreLine = login;
 					scoreEntry.Score = score;
 					scoreEntry.Time = DateTime.UtcNow;
 					scoreEntry.MissionRevision = mission.Revision;
 					scoreEntry.GameSeconds = gameSeconds;
-					var max = mission.MissionScores.Max(x => (int?)x.Score);
-					if (max == null || max < score) mission.TopScoreLine = login;
 					db.SubmitChanges();
 				}
 			}

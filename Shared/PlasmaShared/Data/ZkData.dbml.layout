@@ -86,10 +86,10 @@
         <elementListCompartment Id="ca3b8f29-c676-4473-bf3b-9283f8c3e180" absoluteBounds="11.265, 7.335, 1.9700000000000002, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" absoluteBounds="0.5, 0.5, 2, 6.1938297526041657">
+    <classShape Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" absoluteBounds="0.5, 0.5, 2, 6.3861311848958326">
       <DataClassMoniker Name="/ZkDataContext/Mission" />
       <nestedChildShapes>
-        <elementListCompartment Id="416f67b5-32f7-49c6-91aa-4c626f585d9d" absoluteBounds="0.51500000000000057, 0.96000000000000085, 1.9700000000000002, 5.6338297526041661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="416f67b5-32f7-49c6-91aa-4c626f585d9d" absoluteBounds="0.51500000000000057, 0.96000000000000085, 1.9700000000000002, 5.826131184895833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="25a9757a-6c00-4ee3-a369-882f749097aa" absoluteBounds="12.75, 8.75, 2, 1.3862939453124987">
@@ -233,7 +233,7 @@
         <elementListCompartment Id="224b6836-6200-4956-b766-b1c320a0a973" absoluteBounds="4.0150000000000006, 1.0850000000000009, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(6 : 1.15949625651042); (7 : 1.15949625651042)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(6 : 1.15949625651042); (7 : 1.15949625651042)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Resource/Resource_ResourceDependency" />
       <nodes>
         <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
@@ -247,7 +247,7 @@
         <classShapeMoniker Id="7f7e39e2-58a8-43cf-b1b7-1b9bdfa6d8da" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(6 : 2.23399733723959); (7 : 2.23399733723959)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(6 : 2.23399733723959); (7 : 2.23399733723959)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Resource/Resource_ResourceSpringHash" />
       <nodes>
         <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
@@ -299,6 +299,13 @@
       <nodes>
         <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
         <classShapeMoniker Id="a6e9088a-1b4d-4576-b5d9-bc08f3a196b1" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(0.5 : 2.75885411658654); (0.25 : 2.75885411658654); (0.25 : 4.86864336688702); (0.5 : 4.86864336688702)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Mission/Mission_Mission" />
+      <nodes>
+        <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
+        <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

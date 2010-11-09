@@ -2214,6 +2214,10 @@ namespace ZkData
 		
 		private System.Nullable<float> _Difficulty;
 		
+		private bool _IsCoop;
+		
+		private EntityRef<Mission> _ChildMission;
+		
 		private EntityRef<Resource> _Resources;
 		
 		private EntitySet<MissionScore> _MissionScores;
@@ -2221,6 +2225,8 @@ namespace ZkData
 		private EntitySet<Rating> _Ratings;
 		
 		private EntityRef<Account> _Account;
+		
+		private EntityRef<Mission> _ParentMission;
 		
 		private bool serializing;
 		
@@ -2284,6 +2290,8 @@ namespace ZkData
     partial void OnRatingChanged();
     partial void OnDifficultyChanging(System.Nullable<float> value);
     partial void OnDifficultyChanged();
+    partial void OnIsCoopChanging(bool value);
+    partial void OnIsCoopChanged();
     #endregion
 		
 		public Mission()
@@ -2303,6 +2311,10 @@ namespace ZkData
 			{
 				if ((this._MissionID != value))
 				{
+					if (this._ParentMission.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnMissionIDChanging(value);
 					this.SendPropertyChanging();
 					this._MissionID = value;
@@ -2883,8 +2895,64 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsCoop", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
+		public bool IsCoop
+		{
+			get
+			{
+				return this._IsCoop;
+			}
+			set
+			{
+				if ((this._IsCoop != value))
+				{
+					this.OnIsCoopChanging(value);
+					this.SendPropertyChanging();
+					this._IsCoop = value;
+					this.SendPropertyChanged("IsCoop");
+					this.OnIsCoopChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Mission", Storage="_ChildMission", ThisKey="MissionID", OtherKey="MissionID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		public Mission ChildMission
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ChildMission.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._ChildMission.Entity;
+			}
+			set
+			{
+				Mission previousValue = this._ChildMission.Entity;
+				if (((previousValue != value) 
+							|| (this._ChildMission.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ChildMission.Entity = null;
+						previousValue.ParentMission = null;
+					}
+					this._ChildMission.Entity = value;
+					if ((value != null))
+					{
+						value.ParentMission = this;
+					}
+					this.SendPropertyChanged("ChildMission");
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Resources", ThisKey="MissionID", OtherKey="MissionID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public Resource Resources
 		{
 			get
@@ -2919,7 +2987,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_MissionScore", Storage="_MissionScores", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -2938,7 +3006,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Rating", Storage="_Ratings", ThisKey="MissionID", OtherKey="MissionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
 		public EntitySet<Rating> Ratings
 		{
 			get
@@ -2990,6 +3058,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Mission", Storage="_ParentMission", ThisKey="MissionID", OtherKey="MissionID", IsForeignKey=true)]
+		public Mission ParentMission
+		{
+			get
+			{
+				return this._ParentMission.Entity;
+			}
+			set
+			{
+				Mission previousValue = this._ParentMission.Entity;
+				if (((previousValue != value) 
+							|| (this._ParentMission.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ParentMission.Entity = null;
+						previousValue.ChildMission = null;
+					}
+					this._ParentMission.Entity = value;
+					if ((value != null))
+					{
+						value.ChildMission = this;
+						this._MissionID = value.MissionID;
+					}
+					else
+					{
+						this._MissionID = default(int);
+					}
+					this.SendPropertyChanged("ParentMission");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -3036,10 +3138,12 @@ namespace ZkData
 		
 		private void Initialize()
 		{
+			this._ChildMission = default(EntityRef<Mission>);
 			this._Resources = default(EntityRef<Resource>);
 			this._MissionScores = new EntitySet<MissionScore>(new Action<MissionScore>(this.attach_MissionScores), new Action<MissionScore>(this.detach_MissionScores));
 			this._Ratings = new EntitySet<Rating>(new Action<Rating>(this.attach_Ratings), new Action<Rating>(this.detach_Ratings));
 			this._Account = default(EntityRef<Account>);
+			this._ParentMission = default(EntityRef<Mission>);
 			OnCreated();
 		}
 		
