@@ -13,10 +13,17 @@
   <script type="text/javascript" src='@Href("~/Scripts/site.js")' ></script>
 </head>
 <body style="margin:20px">
+
+  <div>
+    @RenderBody()
+  </div>
+  <br />@LinkShare.GetHtml(Page.Title, Request.Url.ToString())<br />
+
   @if (!Global.IsLobbyAccess) {
     <small>View this site with the <a href='http://zero-k.info/lobby/setup.exe'>Zero-K
-      lobby</a> to play missions</small>
+     lobby</a> to play missions</small>
   }
+    
   @if (!(Global.IsAccountAuthorized)) {
     <form method="post" action="@Url.Action("Logon", "Home")" >
       Name: <input type="text" name="login" /> &nbsp;&nbsp; 
@@ -26,9 +33,5 @@
     </form>
   }
 
-  <div>
-    @RenderBody()
-  </div>
-  <br />@LinkShare.GetHtml(Page.Title, Request.Url.ToString())
 </body>
 </html>

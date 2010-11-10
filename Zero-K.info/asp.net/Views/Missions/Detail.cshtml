@@ -7,29 +7,34 @@
 }
 @Html.ActionLink("Back to List", "Index")
 <div class="wrapper">
-  <h1>@m.Name</h1>
+  <h2>@m.Name</h2>
   By @Html.PrintAccount(m.Account)
   @if (m.MinHumans < 2) {
-    <h2>
+    <h3>
       <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "start_script_mission:" : "start_mission:") + m.Name)'>
         PLAY NOW</a>
-    </h2>
+    </h3>
   }
   @if (!m.IsScriptMission) {
-    <h2>
+    <h3>
       <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.Name)'>
-        HOST IN MULTIPLAYER</a></h2>
+        HOST IN MULTIPLAYER</a></h3>
   }
   @if (!Global.IsLobbyAccess && !m.IsScriptMission) {
-    @:Manual download: <a href='@Url.Action("File", "Missions", new { name = m.Name })'>@m.SanitizedFileName</a>     
-    @:and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>
+    <small>If you don't have Zero-K lobby, you can also play by sending this message to Springie in lobby: <br />
+    <b>!spawn mod=@m.Name</b><br />
+    and joining autohost it makes for you, do !balance and !start<br />
+    Alternative manual download: <a href='@Url.Action("File", "Missions", new { name = m.Name })'>@m.SanitizedFileName</a>     
+    and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>
+    </small><br />
+    <hr />
 		}
-  <p class="border">
+  <span class="border">
     @Html.PrintLines(Model.Mission.Description)
     <br />
     <br />
     Players: @m.MinToMaxHumansString<br />
-    <small>@Html.PrintLines(m.GetPseudoTags())</small><br />
+    <small>@Html.PrintLines(m.GetPseudoTags())</small>
     Map: @m.Map<br />
     Game:@(m.Mod ?? m.ModRapidTag)<br />
     Created:@m.CreatedTime.ToAgoString()<br />
@@ -40,7 +45,7 @@
     Played: @m.MissionRunCount times<br />
     Rated: @m.Ratings.Count times
     <br />
-  </p>
+  </span>
   <script type="text/javascript">
     $(document).ready(function () {
       $("#rating").stars({
