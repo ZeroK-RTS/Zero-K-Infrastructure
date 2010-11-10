@@ -11,7 +11,7 @@
 			var el = document.documentElement;
 			if (el.scrollHeight - (document.documentElement.scrollTop + document.documentElement.clientHeight) < 50) {
 				enabled = false;
-				$.get('<%= Url.Action("TileList") %>' + '?offset=' + offset + '&search='+ $('#search').val(), function (data) {
+				$.get('<%= Url.Action("TileList") %>' + '?offset=' + offset + '&search='+ $('#search').val()+ '&sp='+ $('#sp').val()+ '&coop='+ $('#coop').val()+ '&adversarial='+ $('#adversarial').val(), function (data) {
 					$('#missions').append(data);
 					offset = offset + <%=Model.FetchTileCount%>;
 					if (data == '') enabled= false;
@@ -35,6 +35,9 @@
 
 									 }))
 		{%>
+		<%= Html.CheckBox("sp",true) %>SinglePlayer
+		<%= Html.CheckBox("coop",true) %>Coop
+		<%= Html.CheckBox("adversarial",true) %>Adversarial
 	<%=Html.TextBox("search", Model.SearchString)%><input type="submit" id="submit" value="Search" />
 	<%
 		}%>

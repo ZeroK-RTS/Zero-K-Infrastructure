@@ -61,7 +61,7 @@
 				}%>
 			Played:
 			<%=m.MissionRunCount%>
-			times
+			times<br />
 			Rated: <%=m.Ratings.Count %> times
 			<br />
 		</p>
