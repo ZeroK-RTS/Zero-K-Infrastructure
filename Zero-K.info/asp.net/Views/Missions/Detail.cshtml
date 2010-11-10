@@ -113,12 +113,19 @@
     Top scores</h3>
   <div class="border">
     @m.ScoringMethod
-    <ol>
+    <table>
+      @{int cnt = 1;}
       @foreach (var score in Model.TopScores) {
-        <li>@score.Score &nbsp; @Html.PrintAccount(score.Account) @(score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "")
-        </li>
+        <tr>
+          <td>@(cnt++).</td>
+          <td>@Html.PrintAccount(score.Account)</td>
+          <td>@score.Score</td>
+          <td><small>@(score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "")</small></td>
+          <td> <small> (revision @score.MissionRevision)</small></td>
+        </tr>
       }
-    </ol>
+      
+    </table>
   </div>
 </div>
 <!close wrapper>
@@ -131,9 +138,9 @@
   <table>
     <tr>
       <td width='120px'>
-        <b>@p.Name</b><br />
+        @Html.PrintAccount(p.Author)<br />
         @Html.Stars(StarType.GreenStarSmall, p.Rating) @Html.Stars(StarType.RedStarSmall, p.Difficulty)
-        @p.Created.ToAgoString()
+        <small>@p.Created.ToAgoString()</small>
       </td>
       <td valign="top">
         @p.Text

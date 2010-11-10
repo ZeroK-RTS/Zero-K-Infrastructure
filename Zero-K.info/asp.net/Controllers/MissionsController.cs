@@ -42,7 +42,7 @@ namespace ZeroKWeb.Controllers
 
 		public class MissionPost {
 			public DateTime Created { get; set; }
-			public string Name { get; set; }
+			public Account Author { get; set; }
 			public string Text { get; set; }
 			public int? Rating { get; set; }
 			public int? Difficulty { get; set; }
@@ -63,7 +63,7 @@ namespace ZeroKWeb.Controllers
 			            	         	new MissionPost
 			            	         	{
 			            	         		Created = p.Created,
-			            	         		Name = p.Account.Name,
+			            	         		Author = p.Account,
 			            	         		Text = p.Text,
 			            	         		Rating = userRating != null ? userRating.Rating1 : null,
 			            	         		Difficulty = userRating != null ? userRating.Difficulty : null
