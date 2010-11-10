@@ -197,6 +197,8 @@ function showNiceTitle(e) {
 		d.style.top = (lnk.getBoundingClientRect().top + 10) + document.documentElement.scrollTop + "px";
 	}
 
+	d.style.width = '350px';
+
 	document.body.appendChild(d);
 	CURRENT_NICE_TITLE = d;
 
@@ -212,8 +214,8 @@ function showNiceTitle(e) {
 			var context = CURRENT_NICE_TITLE;
 			
 			$.get('/Home.mvc/GetTooltip?key=' + nicetitle, function (ret) {
-				cachedTooltips[nicetitle] = ret;
 				if (context == CURRENT_NICE_TITLE) { // if tooltip still same, update it
+					cachedTooltips[nicetitle] = ret;
 					CURRENT_NICE_TITLE.removeChild(CURRENT_NICE_TITLE.childNodes[0]); // remove previous
 					writeCode(ret, CURRENT_NICE_TITLE);
 				}

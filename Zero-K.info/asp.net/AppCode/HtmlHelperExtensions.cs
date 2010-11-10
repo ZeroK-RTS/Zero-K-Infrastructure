@@ -45,6 +45,10 @@ namespace System.Web.Mvc
 			return sb.ToString();
 		}
 
+		public static string PrintAccount(this HtmlHelper helper, Account account)
+		{
+			return string.Format("<img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}", account.Country, account.LobbyTimeRank, account.Name);
+		}
 
 		public static string ToAgoString(this DateTime utcDate)
 		{

@@ -6,7 +6,7 @@
 %>
 <div id='<%=mission.MissionID%>' class='mission left' onclick='window.location="<%= Url.Action("Detail", new {id= mission.MissionID}) %>"' title="$mission$<%= mission.MissionID%>" >
 	<b><%=Html.Encode(mission.Name)%></b><br/>
-	By <%=Html.Encode(mission.Account.Name)%><br/>
+	<%=Html.PrintAccount(mission.Account)%><br/>
 	<img width='96' height='96' border='1' src='<%=Url.Content(string.Format("~/img/missions/{0}.png", mission.MissionID)) %>' class='left' />
 <table>
 	<tr>
@@ -21,7 +21,7 @@
 	<td colspan='2'><small><%= string.Join("<br/>",mission.GetPseudoTags()) %></small></td>
 	</tr>
 </table>
-<span style="float:left;"><%= mission.TopScoreLine != null ? "Record:" + mission.TopScoreLine : "" %></span>
+<span><%= mission.TopScoreLine != null ? string.Format("<small><img src='/img/cup.png' class='icon16'>{0}</small>", mission.TopScoreLine) : ""%></span>
 </div>
 <%
 	}

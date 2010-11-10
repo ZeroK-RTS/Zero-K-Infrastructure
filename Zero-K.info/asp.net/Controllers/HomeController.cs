@@ -4,6 +4,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using PlasmaShared;
+using PlasmaShared.UnitSyncLib;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -20,10 +21,15 @@ namespace ZeroKWeb.Controllers
 			var sb = new StringBuilder();
 			var mis = db.Missions.Single(x => x.MissionID == id);
 
-			sb.AppendFormat("{0}<br/>---<br/>", HttpUtility.HtmlDecode(mis.Description));
-			sb.AppendFormat("Players: {0} - {1}<br/>", mis.MinHumans, mis.MaxHumans);
+			sb.AppendFormat("{0}<br/>---<br/>", HttpUtility.HtmlDecode(mis.Description).Replace("\n","<br/>"));
+			sb.AppendFormat("Players: {0}<br/>", mis.MinToMaxHumansString);
+			sb.AppendFormat("<small>{0}</small><br/>", string.Join(",", mis.GetPseudoTags()));
+			sb.AppendFormat("Map: {0}<br/>", mis.Map);
+			sb.AppendFormat("Game: {0}<br/>", mis.Mod ?? mis.ModRapidTag);
+			sb.AppendFormat("Played: {0} times<br/>", mis.MissionRunCount);
+			sb.AppendFormat("Rated: {0} times<br/>", mis.Ratings.Count);
 			sb.AppendFormat("Comments: {0}<br/>", mis.ForumThread != null ? mis.ForumThread.ForumPosts.Count : 0);
-			sb.AppendFormat("Rated by: {0} players", mis.Ratings.Count);
+
 			return sb.ToString();
 		}
 

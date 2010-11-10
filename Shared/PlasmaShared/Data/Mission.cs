@@ -33,6 +33,17 @@ namespace ZkData
 			}
 		}
 
+		public string MinToMaxHumansString
+		{
+			get
+			{
+				if (MinHumans != MaxHumans)
+				{
+					return string.Format("{0} to {1}", MinHumans, MaxHumans);
+				} else return MinHumans.ToString();
+			}
+		}
+
 		public List<string> GetPseudoTags()
 		{
 			var tags = new List<string>();
