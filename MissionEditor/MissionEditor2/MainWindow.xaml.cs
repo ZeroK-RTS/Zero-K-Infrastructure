@@ -22,7 +22,6 @@ namespace MissionEditor2
 	public partial class MainWindow: Window
 	{
 		public static readonly DependencyProperty MissionProperty;
-		MenuItem regionsMenu;
 		public TriggerLogic CurrentLogic { get { return logicGrid.SelectedItem as TriggerLogic; } }
 		public Trigger CurrentTrigger { get { return logicGrid.SelectedItem as Trigger; } }
 
@@ -159,6 +158,7 @@ namespace MissionEditor2
 			addAction("Player Died", () => new PlayerDiedCondition(Mission.Players.First()));
 			addAction("Player Joined", () => new PlayerJoinedCondition(Mission.Players.First()));
 			addAction("Time Left in Countdown", () => new TimeLeftInCountdownCondition(Mission.Countdowns.FirstOrDefault()));
+			addAction("Unit Built On Ghost", () => new UnitBuiltOnGhostCondition());
 			addAction("Unit Created", () => new UnitCreatedCondition());
 			addAction("Unit Damaged", () => new UnitDamagedCondition());
 			addAction("Unit Destroyed", () => new UnitDestroyedCondition());

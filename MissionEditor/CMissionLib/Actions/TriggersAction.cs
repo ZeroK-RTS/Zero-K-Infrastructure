@@ -25,6 +25,14 @@ namespace CMissionLib.Actions
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{
+
+			foreach (var trigger in Triggers.ToArray())
+			{
+				if (!mission.Triggers.Contains(trigger))
+				{
+					Triggers.Remove(trigger);
+				}
+			}
 			var triggerArray = triggers.Select(t => mission.Triggers.IndexOf((Trigger) t) + 1).Cast<object>().ToArray();
 			var map = new Dictionary<object, object>
 				{

@@ -72,7 +72,7 @@ namespace MissionEditor2
 		/// <summary>
 		/// Takes child coords
 		/// </summary>
-		public bool IsVisible(double left, double top)
+		public new bool IsVisible(double left, double top)
 		{
 			var topLeft = ParentToChild(0, 0);
 			var bottomRight = ParentToChild(ActualWidth, ActualWidth);
@@ -83,7 +83,7 @@ namespace MissionEditor2
 		/// <summary>
 		/// Checks if a box is visible (even partially). Takes child coords
 		/// </summary>
-		public bool IsVisible(double left, double right, double top, double bottom)
+		public new bool IsVisible(double left, double right, double top, double bottom)
 		{
 			var topLeft = ParentToChild(0, 0);
 			var bottomRight = ParentToChild(ActualWidth, ActualWidth);

@@ -96,6 +96,7 @@
     <Compile Include="Conditions\PlayerJoinedCondition.cs" />
     <Compile Include="Conditions\TimeCondition.cs" />
     <Compile Include="Conditions\TimeLeftInCountdownCondition.cs" />
+    <Compile Include="Conditions\UnitBuiltOnGhostCondition.cs" />
     <Compile Include="Conditions\UnitDamagedCondition.cs" />
     <Compile Include="Conditions\UnitDestroyedCondition.cs" />
     <Compile Include="Conditions\UnitFinishedCondition.cs" />

@@ -51,7 +51,7 @@ namespace CMissionLib
 		public static void SafeAddFile(this ZipFile zip, string fileName, string directoryPathInArchive)
 		{
 			if (!File.Exists(fileName)) throw new Exception("File does not exist: " + fileName);
-			var fileNameInArchive = directoryPathInArchive + Path.GetFileName(fileName);
+			var fileNameInArchive = Path.Combine(directoryPathInArchive, Path.GetFileName(fileName));
 			if (zip[fileNameInArchive] == null) zip.AddFile(fileName, directoryPathInArchive);
 		}
 

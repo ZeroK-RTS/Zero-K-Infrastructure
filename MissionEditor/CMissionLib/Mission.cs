@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +14,7 @@ using System.Xml.Serialization;
 using CMissionLib.Actions;
 using CMissionLib.Conditions;
 using Ionic.Zip;
+using Microsoft.SqlServer.Server;
 using MissionEditor2;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
@@ -243,9 +246,9 @@ namespace CMissionLib
 			                 	new UnitStartInfo(unitType, player2, 223, 142),
 			                 };
 			gameStartTrigger.Logic.Add(new CreateUnitsAction(startUnits));
-			var widgets = new[] { "gui_pauseScreen.lua", "gui_center_n_select.lua", "gui_take_remind.lua", "gui_startup_info_selector.lua", "gui_local_colors.lua", "spring_direct_launch.lua" };
+			var widgets = new[] { "gui_pauseScreen.lua", "cmd_unit_mover.lua", "gui_center_n_select.lua", "gui_take_remind.lua", "gui_startup_info_selector.lua", "gui_local_colors.lua", "spring_direct_launch.lua" };
 			foreach (var widget in widgets) DisabledWidgets.Add(widget);
-			var gadgets = new[] { "start_unit_setup.lua" };
+			var gadgets = new string[] { };
 			foreach (var gadget in gadgets) DisabledGadgets.Add(gadget);
 			if (game.Name.Contains("Complete")) RapidTag = "zk:stable";
 			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);
@@ -257,11 +260,12 @@ namespace CMissionLib
 			var script = GetScript();
 			var modInfo = GetModInfo(hideFromModList);
 			var luaMissionData = SerializeToLua();
-#if DEBUG
-			File.WriteAllText("startscript.txt", script);
-			File.WriteAllText("modinfo.txt", modInfo);
-			File.WriteAllText("mission.lua", luaMissionData);
-#endif
+			if (Debugger.IsAttached)
+			{
+				File.WriteAllText("startscript.txt", script);
+				File.WriteAllText("modinfo.txt", modInfo);
+				File.WriteAllText("mission.lua", luaMissionData);
+			}
 			var textEncoding = Encoding.GetEncoding("iso-8859-1"); // ASCIIEncoding()
 			using (var zip = new ZipFile())
 			{
@@ -415,7 +419,7 @@ namespace CMissionLib
 
 			foreach (var player in Players) WritePlayer(sb, player);
 			foreach (var player in Players) WriteTeam(sb, player);
-			for (var i = 0; i < allianceCount; i++) MakeAllyTeam(sb, i);
+			for (var i = 0; i < allianceCount; i++) WriteAllyTeam(sb, i);
 			sb.AppendLine("}");
 			return sb.ToString();
 		}
@@ -478,7 +482,10 @@ namespace CMissionLib
 
 		public void SaveToXmlFile(string path)
 		{
+			var backupPath = path + ".backup.mission.xml";
+			if (File.Exists(path)) File.Copy(path, backupPath, true);
 			using (var writer = XmlWriter.Create(path, new XmlWriterSettings { Indent = true, CheckCharacters = true })) new NetDataContractSerializer().WriteObject(writer, this);
+			File.Delete(backupPath);
 		}
 
 		public string SerializeToLua()
@@ -513,9 +520,6 @@ namespace CMissionLib
 		{
 			var luaMap = new Dictionary<object, object>
 			             {
-#if DEBUG
-			             	{ "debug", true },
-#endif
 			             	{ "map", Map.Name },
 			             	{ "players", LuaTable.CreateArray(players.Select(p => p.Name)) },
 			             	{ "triggers", LuaTable.CreateArray(triggers.Select(t => t.GetLuaMap(this))) },
@@ -525,6 +529,7 @@ namespace CMissionLib
 			             	{ "counters", LuaTable.CreateArray(Counters) },
 							{ "regions", LuaTable.CreateArray(Regions.Select(r => r.GetLuaTable(this)))}
 			             };
+			if (Debugger.IsAttached) luaMap["debug"] = true;
 			return new LuaTable(luaMap);
 		}
 
@@ -533,7 +538,7 @@ namespace CMissionLib
 			var sb = new StringBuilder();
 			sb.AppendLine("local modinfo = {");
 			sb.AppendFormat("  name		=	[[{0}]],\n", Name);
-			sb.AppendFormat("  description	=	[[{0}]],\n", Description);
+			sb.AppendFormat("  description	=	[[{0}]],\n", "Mission Mutator"); // the real description might break archivecache.lua
 			sb.AppendFormat("  modtype		=	[[{0}]],\n", hideFromModList ? 0 : 1);
 			sb.AppendLine("  depend = {");
 			sb.AppendFormat("    [[{0}]]\n", Mod.Name);
@@ -543,7 +548,7 @@ namespace CMissionLib
 			return sb.ToString();
 		}
 
-		void MakeAllyTeam(StringBuilder sb, int index)
+		void WriteAllyTeam(StringBuilder sb, int index)
 		{
 			sb.AppendFormat("\t[ALLYTEAM{0}]\n", index);
 			sb.AppendLine("\t{");
@@ -556,7 +561,7 @@ namespace CMissionLib
 			if (player.IsHuman)
 			{
 				var index = Players.IndexOf(player);
-				sb.AppendFormat("\t[PLAYER" + (index + 1) + "]\n");
+				sb.AppendFormat("\t[PLAYER" + index + "]\n");
 				sb.AppendLine("\t{");
 				sb.AppendFormat("\t\tName={0};\n", player.Name.Replace(' ', '_'));
 				sb.AppendFormat("\t\tSpectator=0;\n");
@@ -573,7 +578,7 @@ namespace CMissionLib
 				// sb.AppendFormat("\t\tVersion={0};\n", String.IsNullOrEmpty(player.AIVersion) ? "0.1" : player.AIVersion);
 				sb.AppendFormat("\t\tTeam={0};\n", index);
 				sb.AppendFormat("\t\tIsFromDemo=0;\n");
-				sb.AppendFormat("\t\tHost=1;\n");
+				sb.AppendFormat("\t\tHost=0;\n");
 				sb.AppendFormat("\t\t[Options] {{}}\n");
 				sb.AppendLine("\t}");
 			}
@@ -585,7 +590,7 @@ namespace CMissionLib
 			var alliances = Players.Select(p => p.Alliance).Distinct().ToList();
 			sb.AppendFormat("\t[TEAM{0}]\n", index);
 			sb.AppendLine("\t{");
-			sb.AppendFormat("\t\tTeamLeader={0};\n", 1); // todo: verify if correct
+			sb.AppendFormat("\t\tTeamLeader={0};\n", 0); // todo: verify if correct
 			sb.AppendFormat("\t\tAllyTeam={0};\n", alliances.IndexOf(player.Alliance));
 			sb.AppendFormat("\t\tRGBColor={0} {1} {2};\n", player.Color.ScR, player.Color.ScG, player.Color.ScB); // range: 0-1
 			sb.AppendFormat("\t\tSide={0};\n", Mod.Sides.First());

@@ -37,7 +37,11 @@ function MissionEvent(e)
         pause = e.pause,
       }
     else
-      WG.Message:Show{text = e.message, width = e.width, pause = e.pause}
+      if WG.ShowMessageBox then
+        WG.ShowMessageBox(e.message, e.width, e.pause)
+      else
+        WG.Message:Show{text = e.message, width = e.width, pause = e.pause}
+      end
     end
   elseif e.logicType == "PauseAction" then
     Spring.SendCommands"pause"

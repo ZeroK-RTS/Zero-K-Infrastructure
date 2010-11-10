@@ -17,6 +17,9 @@ namespace ZeroKWeb
 		void DeleteMission(int missionID, string author, string password);
 
 		[OperationContract]
+		void UndeleteMission(int missionID, string author, string password);
+
+		[OperationContract]
 		Mission GetMission(string missionName);
 
 		[OperationContract]

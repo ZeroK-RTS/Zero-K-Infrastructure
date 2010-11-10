@@ -38,7 +38,7 @@
 	<%=Html.TextBox("search", Model.SearchString)%><input type="submit" id="submit" value="Search" />
 	<%
 		}%>
-	<span>Design new missions with <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>
+	<span>Design new missions with the <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>
 		Zero-K Mission Editor</a> </span>
 	<table width='100%'>
 		<tr>

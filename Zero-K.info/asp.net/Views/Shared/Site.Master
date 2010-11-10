@@ -22,7 +22,7 @@
 		<asp:ContentPlaceHolder ID="MainContent" runat="server">
 		</asp:ContentPlaceHolder>
 	</div>
-	<% if (!Global.IsLobbyAccess) Response.Write("<small>View this site with <a href='http://zero-k.info/lobby/setup.exe'>Zero-K lobby</a> to play missions</small>");%>
+	<% if (!Global.IsLobbyAccess) Response.Write("<small>View this site with the <a href='http://zero-k.info/lobby/setup.exe'>Zero-K lobby</a> to play missions</small>");%>
 	<% if (!(Global.IsAccountAuthorized))
     {%>
 		<form method="post" action="<%= Url.Action("Logon","Home") %>" >

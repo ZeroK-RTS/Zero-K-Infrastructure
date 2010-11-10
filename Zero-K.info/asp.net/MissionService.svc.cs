@@ -23,8 +23,23 @@ namespace ZeroKWeb
 			{
 				var acc = AuthServiceClient.VerifyAccountPlain(author, password);
 				if (acc == null) throw new ApplicationException("Invalid login name or password");
-				if (acc.AccountID != prev.AccountID && !acc.IsLobbyAdministrator) throw new ApplicationException("You cannot delete a mission from another user");
+				if (acc.AccountID != prev.AccountID && !acc.IsLobbyAdministrator) throw new ApplicationException("You cannot delete a mission from an other user");
 				prev.IsDeleted = true;
+				db.SubmitChanges();
+			}
+			else throw new ApplicationException("No such mission found");
+		}
+
+		public void UndeleteMission(int missionID, string author, string password)
+		{
+			var db = new ZkDataContext();
+			var prev = db.Missions.Where(x => x.MissionID == missionID).SingleOrDefault();
+			if (prev != null)
+			{
+				var acc = AuthServiceClient.VerifyAccountPlain(author, password);
+				if (acc == null) throw new ApplicationException("Invalid login name or password");
+				if (acc.AccountID != prev.AccountID && !acc.IsLobbyAdministrator) throw new ApplicationException("You cannot undelete a mission from an other user");
+				prev.IsDeleted = false;
 				db.SubmitChanges();
 			}
 			else throw new ApplicationException("No such mission found");
@@ -81,15 +96,26 @@ namespace ZeroKWeb
 			var mod = db.Resources.SingleOrDefault(x => x.InternalName == mission.Mod && x.TypeID == ZkData.ResourceType.Mod);
 			if (mod == null) throw new ApplicationException("Mod name is unknown");
 			if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != mission.MissionID)) throw new ApplicationException("Name already taken by other mod/map");
-			
-			var prev = new ZkDataContext().Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
+
+			var prev = db.Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
 
 			if (prev != null)
 			{
 				if (prev.AccountID != acc.AccountID && !acc.IsLobbyAdministrator) throw new ApplicationException("Invalid author or password");
-				db.Missions.Attach(mission);
-				db.Refresh(RefreshMode.KeepCurrentValues, mission);
-				mission.Revision = prev.Revision + 1;
+				prev.Description = mission.Description;
+				prev.Mod = mission.Mod;
+				prev.Map = mission.Map;
+				prev.Name = mission.Name;
+				prev.ScoringMethod = mission.ScoringMethod;
+				prev.Script = mission.Script;
+				prev.ModRapidTag = mission.ModRapidTag;
+				prev.ModOptions = mission.ModOptions;
+				prev.Image = mission.Image;
+				prev.MissionEditorVersion = mission.MissionEditorVersion;
+				prev.SpringVersion = mission.SpringVersion;
+				prev.Revision = mission.Revision + 1;
+				prev.Mutator = mission.Mutator;
+				mission = prev;
 			}
 			else
 			{

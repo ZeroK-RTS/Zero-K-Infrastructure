@@ -22,6 +22,10 @@
             </Grid>
         </DataTemplate>
         
+        <DataTemplate x:Key="UnitBuiltOnGhostCondition">
+            <local:UnitBuiltOnGhostConditionControl />
+        </DataTemplate>
+        
         <DataTemplate x:Key="Region">
             <local:RegionControl />
         </DataTemplate>

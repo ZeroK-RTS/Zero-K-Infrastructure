@@ -90,7 +90,13 @@ namespace MissionEditor2
 					client.SendMission(info, slots, mission.Author, password, mod);
 					MessageBox.Show("Mission successfully uploaded.\n\rIt is now accessible from the lobby.\r\nPlease make sure it works!");
 					return true;
-				} 
+				}
+ 				catch(Exception e)
+ 				{
+					if (Debugger.IsAttached) throw;
+ 					MessageBox.Show(e.Message);
+ 					return false;
+ 				}
 				finally
 				{
 					try

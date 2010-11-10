@@ -214,7 +214,7 @@
                             </Grid.RowDefinitions>
                             <Label>Message</Label>
                             <TextBox Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
-                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="20" />
+                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="20" TextWrapping="Wrap"  />
                             <Label Grid.Row="1">Pause Game</Label>
                             <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding Pause}" VerticalAlignment="Center" />
                         </Grid>

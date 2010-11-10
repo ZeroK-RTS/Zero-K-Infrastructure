@@ -33,7 +33,7 @@
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>47</ApplicationRevision>
+    <ApplicationRevision>53</ApplicationRevision>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -156,6 +156,9 @@
       <DependentUpon>TriggerSettingsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="TriggersFolder.cs" />
+    <Compile Include="UnitBuiltOnGhostConditionControl.xaml.cs">
+      <DependentUpon>UnitBuiltOnGhostConditionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UnitDefsGrid.xaml.cs" />
     <Compile Include="UnitEnteredAreaControl.xaml.cs">
       <DependentUpon>UnitEnteredAreaControl.xaml</DependentUpon>
@@ -297,6 +300,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UnitBuiltOnGhostConditionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UnitDefsGrid.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -348,6 +355,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Content Include="MissionBase\savetable.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\DataSources\ZkData.Mission.datasource" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

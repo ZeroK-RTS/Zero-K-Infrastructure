@@ -19,6 +19,9 @@ local callInList = { -- events forwarded to unsynced
   "UnitFinished",
 }
 
+VFS.Include("savetable.lua")
+local magic = "--mt\r\n"
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 --
@@ -45,6 +48,14 @@ local lastFinishedUnits = {} -- key: teamID, value: unitID
 local allowTransfer = false
 local factoryExpectedUnits = {} -- key: factoryID, value: {unitDefID, groups: group set}
 local repeatFactoryGroups = {} -- key: factoryID, value: group set
+
+
+GG.mission = {
+  scores = scores,
+  counters = counters,
+  countdowns = countdowns,
+  unitGroups = unitGroups,
+}
 
 for _, counter in ipairs(mission.counters) do
   counters[counter] = 0
@@ -193,13 +204,19 @@ local function GetUnitsInRegion(region, teamID)
 end
 
 
+local function SetUnitGroup(unitID, group)
+  unitGroups[unitID] = unitGroups[unitID] or {}
+  unitGroups[unitID][group] = true
+end
+
+
 local function FindUnitsInGroup(searchGroup)
   local results = {}
   if StartsWith(searchGroup, "Units in ") then
     for _, region in ipairs(mission.regions) do
       for playerIndex, playerName in ipairs(mission.players) do
         if searchGroup == string.format("Units in %s (%s)", region.name, playerName) then
-          local _, _, _, teamID = Spring.GetPlayerInfo(playerIndex - 1)
+          local teamID = playerIndex - 1
           return GetUnitsInRegion(region, teamID)          
         end
       end
@@ -207,7 +224,7 @@ local function FindUnitsInGroup(searchGroup)
   elseif StartsWith(searchGroup, "Latest Factory Built Unit (") then
     for playerIndex, player in ipairs(mission.players) do
       if searchGroup == "Latest Factory Built Unit ("..player..")" then
-        local _, _, _, teamID = Spring.GetPlayerInfo(playerIndex - 1)
+        local teamID = playerIndex
         if lastFinishedUnits[teamID] then
           results[lastFinishedUnits[teamID]] = true
         end
@@ -347,6 +364,10 @@ end
 local function ExecuteTrigger(trigger, frame)
   if not trigger.enabled then return end
   if math.random() < trigger.probability then
+    if trigger.maxOccurrences == trigger.occurrences then
+      RemoveTrigger(trigger) -- the trigger is no longer needed
+      return
+    end
     local createdUnits = {}
     local frame = frame or (Spring.GetGameFrame() + 1) -- events will take place at this frame
     for _, action in ipairs(trigger.logic) do
@@ -443,7 +464,7 @@ local function ExecuteTrigger(trigger, frame)
       elseif action.logicType == "ModifyScoreAction" then
         Event = function()
           for _, playerIndex in ipairs(action.args.players) do
-            local _, _, _, teamID = Spring.GetPlayerInfo(playerIndex)
+            local teamID = playerIndex - 1
             local score = scores[teamID] or 0
             if action.args.action == "Increase Score" then
               score = score + action.args.value
@@ -524,11 +545,14 @@ local function ExecuteTrigger(trigger, frame)
         Event = function()
           for _, unit in ipairs(action.args.units) do
             if unit.isGhost then
+              for group in pairs(unit.groups) do
+                unit[#unit + 1] = group
+              end
               _G.ghostEventArgs = unit
               SendToUnsynced("GhostEvent")
               _G.ghostEventArgs = nil
             else
-              local ud =  UnitDefNames[unit.unitDefName]
+              local ud = UnitDefNames[unit.unitDefName]
               local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
               local cardinalHeading = "n"
               if isBuilding then
@@ -618,10 +642,16 @@ local function ExecuteTrigger(trigger, frame)
             orderedUnits = FindUnitsInGroups(action.args.groups)
           end
           for unitID in pairs(orderedUnits) do
-            for _, order in ipairs(action.args.orders) do
+            for i, order in ipairs(action.args.orders) do
               -- bug workaround: the table needs to be copied before it's used in GiveOrderToUnit
-              local x, y, z = order.args[1], order.args[2], order.args[3] 
-              Spring.GiveOrderToUnit(unitID, CMD[order.orderType], {x, y, z}, {"shift"})
+              local x, y, z = order.args[1], order.args[2], order.args[3]
+              local options
+              if i == 1 then
+                options = {}
+              else
+                options = {"shift"}
+              end
+              Spring.GiveOrderToUnit(unitID, CMD[order.orderType], {x, y, z}, options)
             end
           end
         end
@@ -779,7 +809,7 @@ function gadget:GameFrame(n)
     gameStarted = true
   end
   
-  
+ 
   if events[n] then -- list of events to run at this frame
     for _, Event in ipairs(events[n]) do
       Event(n) -- run event
@@ -967,11 +997,43 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpt
   return true
 end
 
+local function Deserialize(text)
+  local f, err = loadstring(text)
+  if not f then
+    Spring.Echo("error while desrializing (compiling): "..tostring(err))
+    return
+  end
+  setfenv(f, {}) -- sandbox for security and cheat prevention
+  local success, arg = pcall(f)
+  if not success then
+    Spring.Echo("error while desrializing (calling): "..tostring(arg))
+    return
+  end
+  return arg
+end
+
 
 function gadget:RecvLuaMsg(msg, player)
-  if StartsWith(msg, "notifyselect ") then
+  local _, _, _, teamID = Spring.GetPlayerInfo(player)
+  if StartsWith(msg, magic) then
+    local args = Deserialize(msg)
+    if args.type == "notifyGhostBuilt" then
+      for _, trigger in ipairs(triggers) do
+        for _, condition in ipairs(trigger.logic) do
+          if condition.logicType == "UnitBuiltOnGhostCondition" then
+            if teamID == args.teamID and not next(condition.args.groups) or DoSetsIntersect(condition.args.groups, args.groups) then
+              for group in pairs(args.groups) do  
+                AddUnitGroup(args.unitID, group)
+              end
+              ExecuteTrigger(trigger)
+              break
+            end
+          end
+        end
+      end
+    end
+  elseif StartsWith(msg, "notifyselect ") then
     local unitID = tonumber(string.match(msg, "%d+"))
-    local _, _, _, teamID = Spring.GetPlayerInfo(player)
     for _, trigger in ipairs(triggers) do
       for _, condition in ipairs(trigger.logic) do
         if condition.logicType == "UnitSelectedCondition" then
@@ -984,7 +1046,6 @@ function gadget:RecvLuaMsg(msg, player)
     end
   elseif StartsWith(msg, "notifyvisible ") then
     local unitID = tonumber(string.match(msg, "%d+"))
-    local _, _, _, teamID = Spring.GetPlayerInfo(player)
     for _, trigger in ipairs(triggers) do
       for _, condition in ipairs(trigger.logic) do
         if condition.logicType == "UnitIsVisibleCondition" then
@@ -1068,6 +1129,7 @@ function gadget:DrawWorld()
     local alpha = (math.sin(t*6)+1)/6+1/3 -- pulse
     gl.Color(0.7, 0.7, 1, alpha)
     gl.Translate(ghost.x, Spring.GetGroundHeight(ghost.x, ghost.y), ghost.y)
+    gl.DepthTest(true)
     gl.UnitShape(ghost.unitDefID, ghost.teamID)
     gl.PopMatrix()
   end
@@ -1084,7 +1146,19 @@ function gadget:UnitFinished(unitID, unitDefID, unitTeam)
   local x, y, z = Spring.GetUnitPosition(unitID)
   for ghost in pairs(ghosts) do
     if unitDefID == ghost.unitDefID and getDistance(x, z, ghost.x, ghost.y) < 100 then -- ghost.y is no typo
+      local groups = {}
+      for i=1, #ghost do
+        groups[ghost[i]] = true
+      end
+      local args = {
+        type = "notifyGhostBuilt",
+        unitID = unitID,
+        groups = groups,
+        teamID = ghost.teamID,
+      }
+      Spring.SendLuaRulesMsg(magic..table.show(args))
       ghosts[ghost] = nil
+      break
     end
   end
 end

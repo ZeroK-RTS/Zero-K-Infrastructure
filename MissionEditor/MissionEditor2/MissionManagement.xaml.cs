@@ -43,7 +43,7 @@ namespace MissionEditor2
 						var list = client.ListMissionInfos();
 						this.Invoke(delegate
 							{
-								DataGrid.ItemsSource = list.Where(m => !m.IsDeleted);
+								DataGrid.ItemsSource = showHiddenMissionsBox.IsChecked == true ? list : list.Where(m => !m.IsDeleted);
 								loadingDialog.Close();
 							});
 					}
@@ -145,6 +145,37 @@ namespace MissionEditor2
 		private void PublishButton_Click(object sender, RoutedEventArgs e)
 		{
 			Publishing.Publish(MainWindow.Instance.Mission, null);
+		}
+#pragma warning disable 612,618
+		private void UndeleteButton_Click(object sender, RoutedEventArgs e)
+		{
+			var selectedMission = (Mission)DataGrid.SelectedItem;
+			var dialog = new PasswordRequest { Owner = MainWindow.Instance };
+			if (dialog.ShowDialog() == true)
+			{
+				var password = dialog.PasswordBox.Password;
+				Utils.InvokeInNewThread(delegate
+				{
+					try
+					{
+						var client = MissionServiceClientFactory.MakeClient();
+
+						client.UndeleteMission(selectedMission.MissionID, selectedMission.AuthorName, password);
+
+						RefreshList();
+					}
+					catch (FaultException<ExceptionDetail> ex)
+					{
+						MessageBox.Show(ex.Message);
+					}
+				});
+			}
+		}
+#pragma warning restore 612,618
+
+		private void RefreshButton_Click(object sender, RoutedEventArgs e)
+		{
+			RefreshList();
 		}
 	}
 
