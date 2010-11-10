@@ -188,7 +188,7 @@ namespace LobbyClient
 					script.AppendLine("[GAME]");
 					script.AppendLine("{");
 
-          script.AppendFormat("  Mapname={0};\n", mod.IsMission ? mod.MissionMap : MapName);
+          script.AppendFormat("  Mapname={0};\n", MapName);
 
 					if (mod.IsMission)
 					{
