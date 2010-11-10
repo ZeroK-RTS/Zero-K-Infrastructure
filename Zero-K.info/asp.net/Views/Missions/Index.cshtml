@@ -18,22 +18,19 @@
 
 		window.onscroll = scrollEvent;
 </script>
-@Ajax.BeginForm("TileList",
+@using (Ajax.BeginForm("TileList",
                    new AjaxOptions() {
                      InsertionMode = InsertionMode.Replace,
                      UpdateTargetId = "missions",
                      OnBegin = string.Format("function(){{offset={0}; enabled=false;}}", Model.FetchInitialCount),
                      OnComplete = "function(){enabled= true;}",
-
-                   })) 
-                   
-  @Html.CheckBox("sp", true) SinglePlayer 
-  @Html.CheckBox("coop", true) Coop 
-  @Html.CheckBox("adversarial", true) Adversarial 
-  @Html.TextBox("search", Model.SearchString)
+                   })) { 
+                   @Html.CheckBox("sp", true) 
+  @: SinglePlayer   @Html.CheckBox("coop", true) 
+  @:Coop   @Html.CheckBox("adversarial", true) 
+  @:Adversarial  @Html.TextBox("search", Model.SearchString)
   <input type="submit" id="submit" value="Search" />
-</form> 
-
+  }
 <span>Design new missions with the <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>
   Zero-K Mission Editor</a> </span>
 <table width='100%'>
