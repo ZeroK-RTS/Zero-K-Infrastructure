@@ -1,7 +1,10 @@
 ﻿@model ZeroKWeb.Controllers.MissionDetailData
 @using PlasmaShared
 @using ZeroKWeb
-@{var m = Model.Mission;}
+@{
+  var m = Model.Mission;
+  Page.Title = "Zero-K mission " + m.Name;
+}
 @Html.ActionLink("Back to List", "Index")
 <div class="wrapper">
   <h1>@m.Name</h1>
@@ -103,6 +106,9 @@
           </div>
         </td>
       </tr>
+      <tr><td colspan='2'>
+      @* Facebook.LikeButton("Zero-K mission " + m.Name) *@
+      </td></tr>
     </table>
   </div>
   @if (Global.IsAccountAuthorized && Global.Account.IsLobbyAdministrator) {

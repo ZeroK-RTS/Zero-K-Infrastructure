@@ -13,9 +13,6 @@
   <script type="text/javascript" src='@Href("~/Scripts/site.js")' ></script>
 </head>
 <body style="margin:20px">
-  <div>
-    @RenderBody()
-  </div>
   @if (!Global.IsLobbyAccess) {
     <small>View this site with the <a href='http://zero-k.info/lobby/setup.exe'>Zero-K
       lobby</a> to play missions</small>
@@ -28,5 +25,10 @@
       <input type="hidden" name="referer" value="@Request.Url" />
     </form>
   }
+
+  <div>
+    @RenderBody()
+  </div>
+  <br />@LinkShare.GetHtml(Page.Title, Request.Url.ToString())
 </body>
 </html>
