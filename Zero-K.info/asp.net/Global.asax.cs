@@ -31,11 +31,6 @@ namespace ZeroKWeb
 				var acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
 				if (acc != null) HttpContext.Current.User = acc;
 			}
-			if (Debugger.IsAttached)
-			{
-				//var db = new ZkDataContext();
-				//HttpContext.Current.User = db.Accounts.First(x => x.Name == "[0K]Licho");
-			} 
 		}
 
 

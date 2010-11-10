@@ -33,6 +33,7 @@ namespace ZeroKWeb.Controllers
 			return sb.ToString();
 		}
 
+    [NoCache]
 		public ActionResult GetTooltip(string key)
 		{
 			var args = key.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
