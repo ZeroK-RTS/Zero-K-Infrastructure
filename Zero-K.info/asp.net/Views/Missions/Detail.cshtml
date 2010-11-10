@@ -140,13 +140,16 @@
   <textarea name="text" rows="4" cols="50"></textarea><br />
   <input type="submit" value="Submit Comment" />
 </form>
+
 @foreach (var p in Model.Posts) {
   <table>
     <tr>
       <td width='120px'>
         @Html.PrintAccount(p.Author)<br />
-        @Html.Stars(StarType.GreenStarSmall, p.Rating) @Html.Stars(StarType.RedStarSmall, p.Difficulty)
+        @Html.AccountAvatar(p.Author)
+        <br />
         <small>@p.Created.ToAgoString()</small>
+        @Html.Stars(StarType.GreenStarSmall, p.Rating) @Html.Stars(StarType.RedStarSmall, p.Difficulty)        
       </td>
       <td valign="top">
         @p.Text

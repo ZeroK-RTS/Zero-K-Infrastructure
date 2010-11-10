@@ -89,6 +89,12 @@ div#footer
 	vertical-align:middle;
 }
 
+.avatar 
+{
+ margin:0;
+ padding:0; 
+}
+
 
 /* Styles for validation helpers
 -----------------------------------------------------------*/

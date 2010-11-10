@@ -46,6 +46,10 @@ namespace PlasmaShared
             return (Hash)new MD5CryptoServiceProvider().ComputeHash(data);
         }
 
+        public static Hash HashString(string data)
+        {
+          return (Hash)new MD5CryptoServiceProvider().ComputeHash(Encoding.UTF8.GetBytes(data));
+        }
 
         public static Hash HashStream(Stream fs)
         {

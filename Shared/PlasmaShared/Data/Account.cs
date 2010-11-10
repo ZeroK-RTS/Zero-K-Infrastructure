@@ -32,7 +32,8 @@ namespace ZkData
 		public bool IsInRole(string role)
 		{
 			if (role == "admin" || role == "moderator") return IsLobbyAdministrator;
-			else return string.IsNullOrEmpty(role);
+      if (role == "user") return true;
+      else return string.IsNullOrEmpty(role);
 		}
 
 		public IIdentity Identity { get { return this; } }
