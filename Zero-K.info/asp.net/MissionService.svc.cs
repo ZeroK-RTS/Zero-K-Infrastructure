@@ -113,7 +113,7 @@ namespace ZeroKWeb
 				prev.Image = mission.Image;
 				prev.MissionEditorVersion = mission.MissionEditorVersion;
 				prev.SpringVersion = mission.SpringVersion;
-				prev.Revision = mission.Revision + 1;
+				prev.Revision++;
 				prev.Mutator = mission.Mutator;
 				mission = prev;
 			}
