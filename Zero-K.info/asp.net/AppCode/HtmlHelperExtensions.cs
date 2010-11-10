@@ -26,8 +26,8 @@ namespace System.Web.Mvc
 	{
 		public static MvcHtmlString Stars(this HtmlHelper helper, StarType type, double? rating)
 		{
-			if (rating.HasValue) return new MvcHtmlString(string.Format("<span class='{0}' style='width:{1}px'></span>", type,(int)(rating *14.0)));
-			else return new MvcHtmlString(string.Format("<span class='WhiteStarSmall' style='width:70px'></span>"));
+			if (rating.HasValue) return new MvcHtmlString(string.Format("<span class='{0}' style='width:{1}px' title='{2:F2}'></span>", type,(int)(rating *14.0), rating));
+			else return new MvcHtmlString(string.Format("<span class='WhiteStarSmall' style='width:70px' title='No votes'></span>"));
 		}
 
 		public static MvcHtmlString Select(this HtmlHelper helper, string name, IEnumerable<SelectOption> items, string selected)

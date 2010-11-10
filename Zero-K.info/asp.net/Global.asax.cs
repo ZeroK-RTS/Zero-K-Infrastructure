@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Security.Principal;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -22,6 +24,8 @@ namespace ZeroKWeb
 
 		void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
 		{
+      Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+      Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			if (Request[GlobalConst.LoginCookieName] != null)
 			{
 				var acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);

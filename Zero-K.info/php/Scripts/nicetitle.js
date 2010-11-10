@@ -188,7 +188,7 @@ function showNiceTitle(e) {
 
 	w = d.style.width;
 
-	if (lnk.getBoundingClientRect().right + 200 > document.body.clientWidth) {
+	if (lnk.getBoundingClientRect().right + 350 > document.body.clientWidth) {
 		d.style.left = (lnk.getBoundingClientRect().left - 200) + document.documentElement.scrollLeft + "px";
 		d.style.top = (lnk.getBoundingClientRect().bottom + 10) + document.documentElement.scrollTop + "px";
 	}
