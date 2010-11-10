@@ -108,9 +108,6 @@
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
-    <Content Include="Views\Missions\Detail.aspx" />
-    <Content Include="Views\Missions\Index.aspx" />
-    <Content Include="Views\Missions\TileList.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -133,6 +130,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Styles\SM.ttf" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_SiteLayout.cshtml" />
+    <Content Include="Views\Missions\Index.cshtml" />
+    <Content Include="Views\Missions\TileList.cshtml" />
+    <Content Include="Views\Missions\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\MonoTorrent\MonoTorrent.csproj">
@@ -143,9 +145,6 @@
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Shared\Site.Master" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

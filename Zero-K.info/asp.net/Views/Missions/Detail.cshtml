@@ -1,0 +1,144 @@
+﻿@model ZeroKWeb.Controllers.MissionDetailData
+@using PlasmaShared
+@using ZeroKWeb
+@{var m = Model.Mission;}
+@Html.ActionLink("Back to List", "Index")
+<div class="wrapper">
+  <h1>@m.Name</h1>
+  By @Html.PrintAccount(m.Account)
+  @if (m.MinHumans < 2) {
+    <h2>
+      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "start_script_mission:" : "start_mission:") + m.Name)'>
+        PLAY NOW</a>
+    </h2>
+  }
+  @if (!m.IsScriptMission) {
+    <h2>
+      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.Name)'>
+        HOST IN MULTIPLAYER</a></h2>
+  }
+  @if (!Global.IsLobbyAccess && !m.IsScriptMission) {
+    @:Manual download: <a href='@Url.Action("File", "Missions", new { name = m.Name })'>@m.SanitizedFileName</a>     
+    @:and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>
+		}
+  <p class="border">
+    @Html.PrintLines(Model.Mission.Description)
+    <br />
+    <br />
+    Players: @m.MinToMaxHumansString<br />
+    <small>@Html.PrintLines(m.GetPseudoTags())</small><br />
+    Map: @m.Map<br />
+    Game:@(m.Mod ?? m.ModRapidTag)<br />
+    Created:@m.CreatedTime.ToAgoString()<br />
+    @if (m.Revision > 0) {
+      @:Changed: @m.ModifiedTime.ToAgoString()      
+      @:(revision @m.Revision)<br />
+      }
+    Played: @m.MissionRunCount times<br />
+    Rated: @m.Ratings.Count times
+    <br />
+  </p>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#rating").stars({
+        callback: function (ui, type, value) {
+          $.get('@Url.Action("Rate", "Missions", new { id = m.MissionID })?rating=' + value, function (ret) { if (ret != "") alert(ret); });
+        }
+      });
+
+      $("#difficulty").stars({
+        callback: function (ui, type, value) {
+          $.get('@Url.Action("Rate", "Missions", new { id = m.MissionID })?difficulty=' + value, function (ret) { if (ret != "") alert(ret); });
+        }
+      });
+
+    });
+
+  </script>
+  <div>
+    <table>
+      <tr>
+        <td>
+          Rating:
+        </td>
+        <td width='80px'>
+          @Html.Stars(StarType.GreenStarSmall, m.Rating)
+        </td>
+        <td>
+          Your vote:
+          <div id='rating'>
+            @Html.Select("rating",
+                                    new List<SelectOption>()
+			                              {
+			                              	new SelectOption() { Value = "1", Name = "Poor" },
+			                              	new SelectOption() { Value = "2", Name = "Below average" },
+			                              	new SelectOption() { Value = "3", Name = "Average" },
+			                              	new SelectOption() { Value = "4", Name = "Good" },
+			                              	new SelectOption() { Value = "5", Name = "Awesome" }
+			                              },
+                                    Model.MyRating.Rating1.ToString())
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Difficulty:
+        </td>
+        <td>
+          @Html.Stars(StarType.RedStarSmall, m.Difficulty)
+        </td>
+        <td>
+          Your vote:
+          <div id='difficulty'>
+            @Html.Select("difficulty",
+                                    new List<SelectOption>()
+			                              {
+			                              	new SelectOption() { Value = "1", Name = "Trivial" },
+			                              	new SelectOption() { Value = "2", Name = "Easy" },
+			                              	new SelectOption() { Value = "3", Name = "Average" },
+			                              	new SelectOption() { Value = "4", Name = "Hard" },
+			                              	new SelectOption() { Value = "5", Name = "Impossible" }
+			                              },
+                                    Model.MyRating.Difficulty.ToString())
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  @if (Global.IsAccountAuthorized && Global.Account.IsLobbyAdministrator) {
+    <a href='@Url.Action("Delete", "Missions", new { id = m.MissionID })' class='delete'>
+      Delete mission</a>
+  }
+  <h3>
+    Top scores</h3>
+  <div class="border">
+    @m.ScoringMethod
+    <ol>
+      @foreach (var score in Model.TopScores) {
+        <li>@score.Score &nbsp; @Html.PrintAccount(score.Account) @(score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "")
+        </li>
+      }
+    </ol>
+  </div>
+</div>
+<!close wrapper>
+
+<form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = m.ForumThreadID })">
+  <textarea name="text" rows="4" cols="50"></textarea><br />
+  <input type="submit" value="Submit Comment" />
+</form>
+@foreach (var p in Model.Posts) {
+  <table>
+    <tr>
+      <td width='120px'>
+        <b>@p.Name</b><br />
+        @Html.Stars(StarType.GreenStarSmall, p.Rating) @Html.Stars(StarType.RedStarSmall, p.Difficulty)
+        @p.Created.ToAgoString()
+      </td>
+      <td valign="top">
+        @p.Text
+      </td>
+    </tr>
+  </table>
+}
+@Html.ActionLink("Back to List", "Index") 

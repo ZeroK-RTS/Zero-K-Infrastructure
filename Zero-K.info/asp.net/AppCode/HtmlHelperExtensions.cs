@@ -24,13 +24,13 @@ namespace System.Web.Mvc
 
 	public static class HtmlHelperExtensions
 	{
-		public static string Stars(this HtmlHelper helper, StarType type, double? rating)
+		public static MvcHtmlString Stars(this HtmlHelper helper, StarType type, double? rating)
 		{
-			if (rating.HasValue) return string.Format("<span class='{0}' style='width:{1}px'></span>", type,(int)(rating *14.0));
-			else return string.Format("<span class='WhiteStarSmall' style='width:70px'></span>");
+			if (rating.HasValue) return new MvcHtmlString(string.Format("<span class='{0}' style='width:{1}px'></span>", type,(int)(rating *14.0)));
+			else return new MvcHtmlString(string.Format("<span class='WhiteStarSmall' style='width:70px'></span>"));
 		}
 
-		public static string Select(this HtmlHelper helper, string name, IEnumerable<SelectOption> items, string selected)
+		public static MvcHtmlString Select(this HtmlHelper helper, string name, IEnumerable<SelectOption> items, string selected)
 		{
 			var sb = new StringBuilder();
 			sb.AppendFormat("<select name='{0}'>", helper.Encode(name));
@@ -42,13 +42,29 @@ namespace System.Web.Mvc
 				                selected == item.Value ? "selected" : "");
 			}
 			sb.Append("</select>");
-			return sb.ToString();
+		  return new MvcHtmlString(sb.ToString());
 		}
 
-		public static string PrintAccount(this HtmlHelper helper, Account account)
+		public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account)
 		{
-			return string.Format("<img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}", account.Country, account.LobbyTimeRank, account.Name);
+			return new MvcHtmlString(string.Format("<img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}", account.Country, account.LobbyTimeRank+1, account.Name));
 		}
+
+    public static MvcHtmlString PrintLines(this HtmlHelper helper, string text)
+    {
+      return new MvcHtmlString(helper.Encode(text).Replace("\n", "<br/>"));
+    }
+
+    public static MvcHtmlString PrintLines(this HtmlHelper helper, IEnumerable<object> lines)
+    {
+      var sb = new StringBuilder();
+      foreach (var line in lines)
+      {
+        sb.AppendFormat("{0}<br/>", line);
+      }
+      return new MvcHtmlString(sb.ToString());
+    }
+
 
 		public static string ToAgoString(this DateTime utcDate)
 		{
