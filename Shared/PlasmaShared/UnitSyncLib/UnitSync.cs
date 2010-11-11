@@ -186,7 +186,7 @@ namespace PlasmaShared.UnitSyncLib
 			NativeMethods.AddAllArchives(archiveName);
 			var modIndex = NativeMethods.GetPrimaryModIndex(modName);
 			string[] sides;
-
+      
 			var mod = new Mod
 			          {
 			          	Name = modName,
@@ -204,7 +204,6 @@ namespace PlasmaShared.UnitSyncLib
 			          	Options = GetModOptions(archiveName).ToArray(),
 			          	SideIcons = GetSideIcons(sides).ToArray(),
 			          	Dependencies = GetModDependencies(modIndex).Where(x => x != modName && !string.IsNullOrEmpty(x)).ToArray(),
-			          	AllAis = GetAis().ToArray(),
 			          	ModAis = GetAis().Where(ai => ai.IsLuaAi).ToArray()
 			          };
 
@@ -313,7 +312,7 @@ namespace PlasmaShared.UnitSyncLib
 			}
 		}
 
-		IEnumerable<Ai> GetAis()
+	  public IEnumerable<Ai> GetAis()
 		{
 			for (var i = 0; i < NativeMethods.GetSkirmishAICount(); i++) yield return new Ai { Info = GetAiInfo(i).ToArray(), Options = GetAiOptions(i).ToArray() };
 		}

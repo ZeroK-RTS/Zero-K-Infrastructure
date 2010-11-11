@@ -11,10 +11,6 @@ namespace PlasmaShared.UnitSyncLib
 	public class Mod: IResourceInfo
 	{
 		string name;
-		[XmlIgnore]
-		[NonSerialized]
-		public Ai[] AllAis;
-
 		public string[] Dependencies { get; set; }
 
 		public string Desctiption { get; set; }

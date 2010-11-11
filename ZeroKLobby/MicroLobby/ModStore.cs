@@ -33,8 +33,6 @@ namespace ZeroKLobby.MicroLobby
 					}
 					Program.SpringScanner.MetaData.GetModAsync(Program.TasClient.MyBattle.ModName, HandleMod, exception => { });
 				};
-			Program.Downloader.DownloadAdded += Downloader_DownloadAdded;
-			Program.SpringScanner.LocalResourceAdded += SpringScanner_LocalResourceAdded;
 		}
 
 		public static string GetModOptionSummary(Mod mod, IEnumerable<string> tags, bool useSectionHeaders)
@@ -99,6 +97,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			if (mod != null)
 			{
+			  Ais = mod.ModAis;
 				ModLoaded(this, new EventArgs<Mod>(mod));
 				lock (locker)
 				{
@@ -110,56 +109,12 @@ namespace ZeroKLobby.MicroLobby
 					}
 					else return;
 				}
-				ExtractAis();
 			}
 		}
 
 		public void SetScriptTags(IEnumerable<string> tags)
 		{
 			lock (locker) if (mod != null) ChangedOptions = GetModOptionSummary(mod, tags, false);
-		}
-
-		void ExtractAis()
-		{
-			var mod = this.mod;
-			if (mod == null) return;
-			try
-			{
-				using (var us = new UnitSync(Program.SpringPaths.UnitSyncDirectory))
-				{
-					if (us.GetModNames().Contains(mod.Name))
-					{
-						var usMod = us.GetMod(mod.Name);
-						lock (locker) if (Program.TasClient.MyBattle != null && Program.TasClient.MyBattle.ModName == mod.Name) Ais = usMod.AllAis;
-					}
-				}
-			}
-			catch (Exception e)
-			{
-				Trace.WriteLine("Error getting AIs: " + e);
-			}
-		}
-
-		void Downloader_DownloadAdded(object sender, EventArgs<Download> e)
-		{
-			PlasmaShared.Utils.SafeThread(() =>
-				{
-					if (Ais == null && mod != null && e.Data.Name == mod.Name)
-					{
-						var startTime = DateTime.Now;
-						while ((DateTime.Now - startTime).Hours < 1 && e.Data.IsComplete == null) Thread.Sleep(1000);
-						if (e.Data.IsComplete == true && mod != null && e.Data.Name == mod.Name) ExtractAis();
-					}
-				}).Start();
-		}
-
-		void SpringScanner_LocalResourceAdded(object sender, SpringScanner.ResourceChangedEventArgs e)
-		{
-			if (e.Item.ResourceType == ResourceType.Mod)
-			{
-				var modname = e.Item.InternalName;
-				PlasmaShared.Utils.SafeThread(() => { if (Ais == null && mod != null && modname == mod.Name) ExtractAis(); }).Start();
-			}
 		}
 	}
 }

@@ -332,12 +332,12 @@ namespace ZeroKLobby.MicroLobby
 		static MenuItem GetAddBotItem()
 		{
 			var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
-			var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)")) { Enabled = enabled };
+			var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)")) { Visible = enabled };
 			if (Program.ModStore.Ais != null)
 			{
 				foreach (var bot in Program.ModStore.Ais)
 				{
-					var item = new MenuItem(bot.Name);
+					var item = new MenuItem(string.Format("{0} ({1})", bot.ShortName, bot.Description));
 					var b = bot;
 					item.Click += (s, e) =>
 						{
