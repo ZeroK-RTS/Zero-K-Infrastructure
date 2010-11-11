@@ -47,8 +47,7 @@ namespace ZkData
 		public List<string> GetPseudoTags()
 		{
 			var tags = new List<string>();
-			if (MinHumans < 2) tags.Add("SinglePlayer");
-			if (MaxHumans > 1) tags.Add("MultiPlayer");
+			if (MinHumans < 2) tags.Add("Singleplayer");
 			if (MaxHumans > 1 && IsCoop) tags.Add("Coop");
 			if (MaxHumans > 1 && !IsCoop) tags.Add("Adversarial");
 			return tags;
