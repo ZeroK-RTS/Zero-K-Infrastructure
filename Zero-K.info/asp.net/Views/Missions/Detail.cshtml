@@ -11,7 +11,7 @@
   By @Html.PrintAccount(m.Account)
   @if (m.MinHumans < 2) {
     <h3>
-      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "start_script_mission:" : "start_mission:") + m.Name)'>
+      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.Name)'>
         PLAY NOW</a>
     </h3>
   }
