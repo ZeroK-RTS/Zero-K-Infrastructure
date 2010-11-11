@@ -15,8 +15,7 @@
 					  <Button Click="ChatPage_Click">Chat</Button>
             <Button Click="HelpPage_Click">Help</Button>
             <Button Click="WidgetsPage_Click">Widgets</Button>
-            <Button Click="DownloaderPage_Click">Downloader</Button>
-            <Button Click="SettingsPage_Click">Settings</Button>
+      <Button Click="SettingsPage_Click">Settings</Button>
         </UniformGrid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
