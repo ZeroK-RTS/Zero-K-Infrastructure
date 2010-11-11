@@ -26,8 +26,6 @@ namespace ZeroKWeb
 
 		void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
 		{
-      Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-      Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 			if (Request[GlobalConst.LoginCookieName] != null)
 			{
 				var acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);

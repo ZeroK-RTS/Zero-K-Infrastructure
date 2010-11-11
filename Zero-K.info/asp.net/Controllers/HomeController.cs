@@ -21,7 +21,7 @@ namespace ZeroKWeb.Controllers
 			var sb = new StringBuilder();
 			var mis = db.Missions.Single(x => x.MissionID == id);
 
-			sb.AppendFormat("{0}<br/>---<br/>", HttpUtility.HtmlDecode(mis.Description).Replace("\n","<br/>"));
+			sb.AppendFormat("{0}<br/>---<br/>", HttpUtility.HtmlEncode(mis.Description??"").Replace("\n","<br/>"));
 			sb.AppendFormat("Players: {0}<br/>", mis.MinToMaxHumansString);
 			sb.AppendFormat("<small>{0}</small><br/>", string.Join(",", mis.GetPseudoTags()));
 			sb.AppendFormat("Map: {0}<br/>", mis.Map);

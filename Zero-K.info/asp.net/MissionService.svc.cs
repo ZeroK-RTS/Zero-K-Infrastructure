@@ -120,6 +120,7 @@ namespace ZeroKWeb
 			else
 			{
 				mission.CreatedTime = DateTime.UtcNow;
+			  mission.ForumThread = new ForumThread() { Title = mission.Name };
 				db.Missions.InsertOnSubmit(mission);
 			}
 			mission.AccountID = acc.AccountID;
