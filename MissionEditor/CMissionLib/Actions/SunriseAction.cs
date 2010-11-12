@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
@@ -6,11 +7,16 @@ namespace CMissionLib.Actions
 	public class SunriseAction : Action
 	{
 		public SunriseAction()
-			: base("Sunrise") {}
+			: base() {}
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{
 			return new LuaTable();
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Sunrise";
 		}
 	}
 }

@@ -1,5 +1,8 @@
-﻿namespace PlasmaShared.UnitSyncLib
+﻿using System;
+
+namespace PlasmaShared.UnitSyncLib
 {
+	[Serializable]
 	public class MissionSlot
 	{
 		public string AiShortName;

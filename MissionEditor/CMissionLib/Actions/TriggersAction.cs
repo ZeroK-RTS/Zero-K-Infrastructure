@@ -10,8 +10,6 @@ namespace CMissionLib.Actions
 	{
 		ObservableCollection<INamed> triggers = new ObservableCollection<INamed>();
 
-		protected TriggersAction(string name) : base(name) {}
-
 		[DataMember]
 		public ObservableCollection<INamed> Triggers
 		{

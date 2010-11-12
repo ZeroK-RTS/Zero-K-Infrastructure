@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Media;
 using System.Windows.Media.Effects;
 using CMissionLib;
 using CMissionLib.UnitSyncLib;
@@ -69,21 +70,30 @@ namespace MissionEditor2
 		// adds a new simplified unit icon to a canvas
 		public static void PlaceSimplifiedUnit(Canvas canvas, UnitStartInfo unit, bool isBlurred = false)
 		{
-			var border = new Border
-				{BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(1), Height = 16, Width = 16};
-			if (isBlurred) border.Opacity = 0.5;
+			var border = new Border { BorderThickness = new Thickness(1), CornerRadius = new CornerRadius(1), Height = 16, Width = 16 };
+			if (isBlurred) border.Opacity = 0.2;
 			canvas.Children.Add(border);
 			border.Bind(Border.BorderBrushProperty, unit, "Player.ColorBrush", BindingMode.OneWay);
-			Canvas.SetLeft(border, unit.X - border.Width/2);
-			Canvas.SetTop(border, unit.Y - border.Height/2);
+			Canvas.SetLeft(border, unit.X - border.Width / 2);
+			Canvas.SetTop(border, unit.Y - border.Height / 2);
 			Panel.SetZIndex(border, -10);
-			var image = new Image {Source = unit.UnitDef.BuildPic};
+			var image = new Image { Source = unit.UnitDef.BuildPic };
+			// make the icons have the correct size
+			var mission = MainWindow.Instance.Mission;
+			border.RenderTransform = new ScaleTransform
+								 {
+									 CenterX = 8,
+									 CenterY = 8,
+									 ScaleX = 1 / 16.0 * mission.FromIngameX(unit.UnitDef.FootprintX * 16),
+									 ScaleY = 1 / 16.0 * mission.FromIngameY(unit.UnitDef.FootprintY * 16)
+								 };
 			border.Child = image;
+
 		}
 
 		void onRotateDelta(object sender, DragDeltaEventArgs e)
 		{
-			var unit = (UnitStartInfo) DataContext;
+			var unit = (UnitStartInfo)DataContext;
 			var newHeading = unit.Heading + e.HorizontalChange;
 			while (newHeading > 360) newHeading = newHeading - 360;
 			while (newHeading < 0) newHeading = newHeading + 360;
@@ -92,14 +102,14 @@ namespace MissionEditor2
 		}
 
 		public static readonly RoutedEvent UnitRequestedDeleteEvent = EventManager.RegisterRoutedEvent("UnitRequestedDelete",
-		                                                                                               RoutingStrategy.Direct,
-		                                                                                               typeof (
-		                                                                                               	UnitEventHandler),
-		                                                                                               typeof (UnitIcon));
+																									   RoutingStrategy.Direct,
+																									   typeof(
+																										UnitEventHandler),
+																									   typeof(UnitIcon));
 
 		public static readonly RoutedEvent UnitRequestedSetGroupsEvent =
-			EventManager.RegisterRoutedEvent("UnitRequestedSetGroups", RoutingStrategy.Direct, typeof (UnitEventHandler),
-			                                 typeof (UnitIcon));
+			EventManager.RegisterRoutedEvent("UnitRequestedSetGroups", RoutingStrategy.Direct, typeof(UnitEventHandler),
+											 typeof(UnitIcon));
 
 		public event UnitEventHandler UnitRequestedSetGroups
 		{
@@ -115,14 +125,14 @@ namespace MissionEditor2
 
 		void RaiseUnitRequestedDeleteEvent()
 		{
-			var unitInfo = (UnitStartInfo) DataContext;
+			var unitInfo = (UnitStartInfo)DataContext;
 			var newEventArgs = new UnitEventArgs(unitInfo, UnitRequestedDeleteEvent);
 			RaiseEvent(newEventArgs);
 		}
 
 		void RaiseUnitRequestedSetGroupsEvent()
 		{
-			var unitInfo = (UnitStartInfo) DataContext;
+			var unitInfo = (UnitStartInfo)DataContext;
 			var newEventArgs = new UnitEventArgs(unitInfo, UnitRequestedSetGroupsEvent);
 			RaiseEvent(newEventArgs);
 		}

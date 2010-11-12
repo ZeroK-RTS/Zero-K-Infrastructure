@@ -10,7 +10,7 @@ namespace CMissionLib.Conditions
 		TimeSpan time;
 
 		public TimeCondition()
-			: base("Metronome Clicks") {}
+			: base() {}
 
 		[DataMember]
 		public TimeSpan Time
@@ -58,9 +58,14 @@ namespace CMissionLib.Conditions
 		{
 			var map = new Dictionary<object, object>
 				{
-					{"frames", Frames},
+					{"frames", Math.Floor(Frames)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Timer (Reapeating)";
 		}
 
 		void RaiseTimeChanged()

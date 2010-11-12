@@ -24,8 +24,8 @@
         <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="2" />
         <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Author}" Margin="2" />
         <PasswordBox Grid.Column="1" Grid.Row="2" Name="PasswordBox" x:FieldModifier="public" Margin="2" />
-        <CheckBox x:Name="termsBox" Grid.Column="0" Grid.ColumnSpan="2" Margin="3" Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Center">I release the mission under a
-            GPL-compatible license.</CheckBox>
+        <CheckBox x:Name="termsBox" Grid.Column="0" Grid.ColumnSpan="2" Margin="3" Grid.Row="6" VerticalAlignment="Center" HorizontalAlignment="Center">I release the mission under the
+            GPLv3.</CheckBox>
     	<TextBlock Grid.Row="5" Grid.ColumnSpan="2" TextWrapping="WrapWithOverflow">
       This will publish the mission to the Zero-K repository. <LineBreak />
        </TextBlock>

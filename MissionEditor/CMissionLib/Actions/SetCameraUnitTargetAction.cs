@@ -8,7 +8,7 @@ namespace CMissionLib.Actions
 	public class SetCameraUnitTargetAction : Action
 	{
 		public SetCameraUnitTargetAction()
-			: base("Unit Camera")
+			: base()
 		{
 			Group = String.Empty;
 		}
@@ -24,6 +24,11 @@ namespace CMissionLib.Actions
 					{"group", Group},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Unit Camera";
 		}
 	}
 }

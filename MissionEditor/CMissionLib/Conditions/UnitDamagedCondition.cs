@@ -14,7 +14,7 @@ namespace CMissionLib.Conditions
 		string victimGroup = String.Empty;
 
 		public UnitDamagedCondition()
-			: base("Unit Damaged") {}
+			: base() {}
 
 
 		[DataMember]
@@ -83,6 +83,11 @@ namespace CMissionLib.Conditions
 					{"value", value},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Unit Damaged";
 		}
 	}
 }

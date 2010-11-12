@@ -13,7 +13,7 @@ namespace CMissionLib.Conditions
 
 		ObservableCollection<string> groups = new ObservableCollection<string>();
 
-		public UnitBuiltOnGhostCondition(): base("Unit Built On Ghost") {}
+		public UnitBuiltOnGhostCondition(): base() {}
 
 		[DataMember]
 		public ObservableCollection<string> Groups
@@ -33,6 +33,11 @@ namespace CMissionLib.Conditions
 					{"groups", LuaTable.CreateSet(groups)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Unit Built On Ghost";
 		}
 	}
 }

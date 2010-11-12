@@ -10,9 +10,6 @@ namespace CMissionLib.Actions
 		bool explode = true;
 		string group = String.Empty;
 
-		public DestroyUnitsAction()
-			: base("Destroy Units") {}
-
 		[DataMember]
 		public string Group
 		{
@@ -43,6 +40,11 @@ namespace CMissionLib.Actions
 					{"explode", explode},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Destroy Units";
 		}
 	}
 }

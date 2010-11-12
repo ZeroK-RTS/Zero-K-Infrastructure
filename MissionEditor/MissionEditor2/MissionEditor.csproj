@@ -33,7 +33,7 @@
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>53</ApplicationRevision>
+    <ApplicationRevision>57</ApplicationRevision>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -130,6 +130,9 @@
     </Compile>
     <Compile Include="MissionItemsConverter.cs" />
     <Compile Include="MissionServiceClientFactory.cs" />
+    <Compile Include="ModifyResourcesActionControl.xaml.cs">
+      <DependentUpon>ModifyResourcesActionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ModifyScoreControl.xaml.cs">
       <DependentUpon>ModifyScoreControl.xaml</DependentUpon>
     </Compile>
@@ -259,6 +262,10 @@
     <Page Include="MissionSettingsDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ModifyResourcesActionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ModifyScoreControl.xaml">
       <SubType>Designer</SubType>

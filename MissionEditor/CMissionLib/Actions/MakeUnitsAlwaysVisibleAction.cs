@@ -10,7 +10,7 @@ namespace CMissionLib.Actions
 		string group = String.Empty;
 
 		public MakeUnitsAlwaysVisibleAction()
-			: base("Make Units Always Visible") {}
+			: base() {}
 
 		[DataMember]
 		public string Group
@@ -30,6 +30,11 @@ namespace CMissionLib.Actions
 					{"group", group},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Make Units Always Visible";
 		}
 	}
 }

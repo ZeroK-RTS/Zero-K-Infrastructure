@@ -1,11 +1,14 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
 {
 	[DataContract]
 	public class ExecuteTriggersAction : TriggersAction
 	{
-		public ExecuteTriggersAction()
-			: base("Execute Triggers") {}
+		public override string GetDefaultName()
+		{
+			return "Execute Triggers";
+		}
 	}
 }

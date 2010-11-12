@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace CMissionLib.Conditions
 {
@@ -6,11 +7,16 @@ namespace CMissionLib.Conditions
 	public class GameStartedCondition : Condition
 	{
 		public GameStartedCondition()
-			: base("Game Starts") {}
+			: base() {}
 
 		public override LuaTable GetLuaTable(Mission mission)
 		{
 			return new LuaTable();
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Game Starts";
 		}
 	}
 }

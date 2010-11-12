@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using System.Windows.Media;
 using CMissionLib.UnitSyncLib;
 
@@ -36,7 +37,7 @@ namespace CMissionLib
 		[DataMember]
 		public string AIDll
 		{
-			get { return aiDll; }
+			get { return String.IsNullOrEmpty(aiDll) ? "NullAI" : aiDll; }
 			set
 			{
 				aiDll = value;
@@ -102,6 +103,10 @@ namespace CMissionLib
 			set
 			{
 				isHuman = value;
+				if (!value)
+				{
+					if (name != null) name = name.Replace(" ", "_");
+				}
 				RaisePropertyChanged("IsHuman");
 			}
 		}
@@ -122,7 +127,7 @@ namespace CMissionLib
 			get { return name; }
 			set
 			{
-				name = value;
+				name = IsHuman ? value : value.Replace(" ", "_");
 				RaisePropertyChanged("Name");
 			}
 		}

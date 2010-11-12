@@ -13,10 +13,12 @@ namespace CMissionLib
 
 		public abstract LuaTable GetLuaTable(Mission mission);
 
-		protected TriggerLogic(string name)
+		protected TriggerLogic()
 		{
-			this.name = name;
+			this.name = GetDefaultName();
 		}
+
+		public abstract string GetDefaultName();
 
 		[DataMember]
 		public string Name

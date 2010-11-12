@@ -10,7 +10,7 @@ namespace CMissionLib.Actions
 		TimeSpan time;
 
 		public WaitAction()
-			: base("Wait") {}
+			: base() {}
 
 		[DataMember]
 		public TimeSpan Time
@@ -61,9 +61,14 @@ namespace CMissionLib.Actions
 		{
 			var map = new Dictionary<object, object>
 				{
-					{"frames", Frames},
+					{"frames", Math.Floor(Frames)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Wait";
 		}
 
 		void RaiseTimeChanged()

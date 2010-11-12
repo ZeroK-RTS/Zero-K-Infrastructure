@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -9,7 +10,7 @@ namespace CMissionLib.Conditions
 	public class UnitFinishedCondition : Condition
 	{
 		public UnitFinishedCondition()
-			: base("Unit Finished")
+			: base()
 		{
 			Players = new ObservableCollection<Player>();
 			Units = new ObservableCollection<string>();
@@ -29,6 +30,11 @@ namespace CMissionLib.Conditions
 					{"players", LuaTable.CreateArray(Players.Select(p => mission.Players.IndexOf(p)))},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Unit Finished";
 		}
 	}
 }

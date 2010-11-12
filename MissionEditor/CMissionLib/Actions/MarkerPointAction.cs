@@ -8,7 +8,7 @@ namespace CMissionLib.Actions
 	public class MarkerPointAction : Action
 	{
 		public MarkerPointAction(double x, double y)
-			: base("Marker")
+			: base()
 		{
 			Text = String.Empty;
 			this.Y = y;
@@ -37,6 +37,11 @@ namespace CMissionLib.Actions
 					{"centerCamera", CenterCamera}
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Marker";
 		}
 	}
 }

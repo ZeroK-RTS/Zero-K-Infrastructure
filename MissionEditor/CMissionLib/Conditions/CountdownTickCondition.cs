@@ -11,7 +11,7 @@ namespace CMissionLib.Conditions
 		TimeSpan time;
 
 		public CountdownTickCondition(string countdown)
-			: base("Countdown Ticks")
+			: base()
 		{
 			this.countdown = countdown;
 		}
@@ -82,9 +82,14 @@ namespace CMissionLib.Conditions
 			var map = new Dictionary<object, object>
 				{
 					{"countdown",  Countdown??string.Empty},
-					{"frames", Frames},
+					{"frames", Math.Floor(Frames)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Countdown Ticks";
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace CMissionLib.Conditions
 		ObservableCollection<string> groups = new ObservableCollection<string>();
 		ObservableCollection<Player> players = new ObservableCollection<Player>();
 
-		public UnitSelectedCondition() : base("Unit Selected") {}
+		public UnitSelectedCondition() : base() {}
 
 		[DataMember]
 		public ObservableCollection<Player> Players
@@ -44,6 +44,11 @@ namespace CMissionLib.Conditions
 					{"groups", LuaTable.CreateSet(groups)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Unit Selected";
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace CMissionLib.Conditions
@@ -8,7 +9,7 @@ namespace CMissionLib.Conditions
 	{
 		Player player;
 
-		public PlayerDiedCondition(Player player) : base("Player Died")
+		public PlayerDiedCondition(Player player) : base()
 		{
 			Player = player;
 		}
@@ -32,6 +33,11 @@ namespace CMissionLib.Conditions
 					{"playerNumber", mission.Players.IndexOf(Player)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Player Died";
 		}
 	}
 }

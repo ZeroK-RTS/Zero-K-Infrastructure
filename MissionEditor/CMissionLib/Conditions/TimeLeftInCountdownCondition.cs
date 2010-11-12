@@ -11,7 +11,7 @@ namespace CMissionLib.Conditions
 		TimeSpan time;
 
 		public TimeLeftInCountdownCondition(string countdown)
-			: base("Time Left in Countdown")
+			: base()
 		{
 			this.countdown = countdown;
 		}
@@ -77,6 +77,11 @@ namespace CMissionLib.Conditions
 					{"farmes", Frames},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Time Left in Countdown";
 		}
 
 		void RaiseTimeChanged()

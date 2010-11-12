@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
@@ -12,7 +13,7 @@ namespace CMissionLib.Actions
 		Player player;
 
 		public ModifyResourcesAction(Player player)
-			: base("Modify Resources")
+			: base()
 		{
 			this.Player = player;
 		}
@@ -59,6 +60,11 @@ namespace CMissionLib.Actions
 					{"category", Category},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Modify Resources";
 		}
 	}
 }

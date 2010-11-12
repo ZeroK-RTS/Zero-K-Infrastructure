@@ -12,7 +12,6 @@ namespace CMissionLib.Actions
 		ObservableCollection<string> builtUnitsGroups = new ObservableCollection<string>();
 		ObservableCollection<string> factoryGroups = new ObservableCollection<string>();
 		bool repeat;
-		public GiveFactoryOrdersAction() : base("Give Factory Orders") {}
 
 		[DataMember]
 		public ObservableCollection<string> FactoryGroups
@@ -68,6 +67,11 @@ namespace CMissionLib.Actions
 					{"repeatOrders", repeat},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Give Factory Orders";
 		}
 	}
 }

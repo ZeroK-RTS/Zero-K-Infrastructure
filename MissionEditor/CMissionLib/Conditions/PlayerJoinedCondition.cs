@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace CMissionLib.Conditions
@@ -20,7 +21,7 @@ namespace CMissionLib.Conditions
 			}
 		}
 
-		public PlayerJoinedCondition(Player player): base("Player Joined")
+		public PlayerJoinedCondition(Player player): base()
 		{
 			Player = player;
 		}
@@ -29,6 +30,11 @@ namespace CMissionLib.Conditions
 		{
 			var map = new Dictionary<object, object> { { "playerNumber", mission.Players.IndexOf(Player) }, };
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Player Joined";
 		}
 	}
 }

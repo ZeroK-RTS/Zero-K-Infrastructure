@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -15,7 +16,6 @@ namespace CMissionLib.Actions
 			: this(new ObservableCollection<IOrder>()) {}
 
 		public GiveOrdersAction(IEnumerable<IOrder> orders)
-			: base("Give Orders")
 		{
 			this.orders = new ObservableCollection<IOrder>(orders);
 		}
@@ -50,6 +50,11 @@ namespace CMissionLib.Actions
 					{"groups", LuaTable.CreateSet(groups)}
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Give Orders";
 		}
 	}
 }

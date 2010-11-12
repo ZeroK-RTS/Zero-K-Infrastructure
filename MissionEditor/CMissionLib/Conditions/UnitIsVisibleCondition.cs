@@ -13,7 +13,7 @@ namespace CMissionLib.Conditions
 		ObservableCollection<string> groups = new ObservableCollection<string>();
 		ObservableCollection<Player> players = new ObservableCollection<Player>();
 
-		public UnitIsVisibleCondition() : base("Unit Is Visible") { }
+		public UnitIsVisibleCondition() : base() { }
 
 		[DataMember]
 		public ObservableCollection<Player> Players
@@ -45,6 +45,11 @@ namespace CMissionLib.Conditions
 					{"groups", LuaTable.CreateSet(groups)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Unit Is Visible";
 		}
 	}
 }

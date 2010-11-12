@@ -14,7 +14,6 @@ namespace CMissionLib.Actions
 		int width = 400;
 
 		public GuiMessageAction(string message)
-			: base("GUI Message")
 		{
 			this.message = message;
 			Pause = true;
@@ -81,6 +80,11 @@ namespace CMissionLib.Actions
 					};
 				return new LuaTable(map);
 			}
+		}
+
+		public override string GetDefaultName()
+		{
+			return "GUI Message";
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace CMissionLib.Actions
 		string group = String.Empty;
 
 		public ModifyUnitHealthAction()
-			: base("Modify Unit Health") {}
+			: base() {}
 
 		[DataMember]
 		public string Group
@@ -43,6 +43,11 @@ namespace CMissionLib.Actions
 					{"group", group},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Modify Unit Health";
 		}
 	}
 }

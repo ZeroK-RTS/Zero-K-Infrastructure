@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -15,7 +16,7 @@ namespace CMissionLib.Actions
 		ObservableCollection<Player> players = new ObservableCollection<Player>();
 
 		public ModifyScoreAction()
-			: base("Modify Score") {}
+			: base() {}
 
 		[DataMember]
 		public string Action
@@ -59,6 +60,11 @@ namespace CMissionLib.Actions
 					{"players", LuaTable.CreateArray(players.Select(p => mission.Players.IndexOf(p)))},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Modify Score";
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 
@@ -8,7 +9,6 @@ namespace CMissionLib.Actions
 	public class LockUnitsAction : Action
 	{
 		public LockUnitsAction()
-			: base("Lock Units")
 		{
 			Units = new ObservableCollection<string>();
 		}
@@ -23,6 +23,11 @@ namespace CMissionLib.Actions
 					{"units", LuaTable.CreateArray(Units)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Lock Units";
 		}
 	}
 }

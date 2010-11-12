@@ -11,7 +11,7 @@ namespace CMissionLib.Conditions
 	public class UnitFinishedInFactoryCondition : Condition
 	{
 		public UnitFinishedInFactoryCondition()
-			: base("Unit Finished In Factory")
+			: base()
 		{
 			Players = new ObservableCollection<Player>();
 			Units = new ObservableCollection<string>();
@@ -31,6 +31,11 @@ namespace CMissionLib.Conditions
 					{"players", LuaTable.CreateArray(Players.Select(p => mission.Players.IndexOf(p)))},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Unit Finished In Factory";
 		}
 	}
 }

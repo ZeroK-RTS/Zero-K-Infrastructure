@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 
@@ -10,7 +11,7 @@ namespace CMissionLib.Conditions
 		ObservableCollection<string> groups = new ObservableCollection<string>();
 
 		public UnitDestroyedCondition()
-			: base("Unit Destroyed") {}
+			: base() {}
 
 		[DataMember]
 		public ObservableCollection<string> Groups
@@ -31,6 +32,11 @@ namespace CMissionLib.Conditions
 					{"groups", LuaTable.CreateSet(groups)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Unit Destroyed";
 		}
 	}
 }

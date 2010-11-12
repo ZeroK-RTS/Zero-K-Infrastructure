@@ -9,7 +9,7 @@ namespace CMissionLib.Actions
 	{
 		string newName = "New Name";
 		ObservableCollection<INamed> triggers = new ObservableCollection<INamed>();
-		public RenameTriggersAction() : base("Rename Triggers") {}
+		public RenameTriggersAction() : base() {}
 
 		public ObservableCollection<INamed> Triggers
 		{
@@ -34,6 +34,11 @@ namespace CMissionLib.Actions
 		public override LuaTable GetLuaTable(Mission mission)
 		{
 			throw new NotImplementedException();
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Rename Triggers";
 		}
 	}
 }

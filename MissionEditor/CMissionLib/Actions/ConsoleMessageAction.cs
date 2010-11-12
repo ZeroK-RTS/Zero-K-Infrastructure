@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
@@ -9,9 +10,8 @@ namespace CMissionLib.Actions
 		string message;
 
 		public ConsoleMessageAction(string message)
-			: base("Console Message")
 		{
-			this.Message = message;
+			Message = message;
 		}
 
 		[DataMember]
@@ -32,6 +32,11 @@ namespace CMissionLib.Actions
 					{"message", Message},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Console Message";
 		}
 	}
 }

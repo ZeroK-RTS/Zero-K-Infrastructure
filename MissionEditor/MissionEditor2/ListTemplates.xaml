@@ -142,13 +142,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ModifyResourcesAction">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <Label>Send</Label>
-                <TextBox Text="{Binding Amount, UpdateSourceTrigger=PropertyChanged}" />
-                <ComboBox ItemsSource="{x:Static Actions:ModifyResourcesAction.Categories}" SelectedItem="{Binding Category}" />
-                <Label>to</Label>
-                <ComboBox ItemsSource="{Binding Mission.Players, ElementName=window}" SelectedItem="{Binding Player}" />
-            </StackPanel>
+            <local:ModifyResourcesActionControl />
         </DataTemplate>
 
         <DataTemplate x:Key="ModifyUnitHealthAction">

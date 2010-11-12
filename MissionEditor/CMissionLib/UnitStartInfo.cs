@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using CMissionLib.UnitSyncLib;
@@ -85,8 +86,8 @@ namespace CMissionLib
 			var map = new Dictionary<object, object>
 			          {
 			          	{ "unitDefName", UnitDef.Name },
-			          	{ "x", mission.ToIngameX(X) },
-			          	{ "y", mission.ToIngameY(Y) },
+			          	{ "x", Math.Floor(mission.ToIngameX(X)) },
+			          	{ "y", Math.Floor(mission.ToIngameY(Y)) },
 			          	{ "player", mission.Players.IndexOf(Player) },
 			          	{ "groups", LuaTable.CreateSet(Groups) },
 			          	{ "heading", Heading },

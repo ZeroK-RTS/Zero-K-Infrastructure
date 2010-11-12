@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace CMissionLib.Actions
@@ -9,7 +10,6 @@ namespace CMissionLib.Actions
 		string countdown;
 
 		public CancelCountdownAction(string countdown)
-			: base("Cancel Countdown")
 		{
 			this.Countdown = countdown;
 		}
@@ -32,6 +32,11 @@ namespace CMissionLib.Actions
 					{"countdown", Countdown??string.Empty},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Cancel Countdown";
 		}
 	}
 }

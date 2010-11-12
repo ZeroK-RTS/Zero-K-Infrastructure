@@ -485,7 +485,11 @@ namespace CMissionLib
 			var backupPath = path + ".backup.mission.xml";
 			if (File.Exists(path)) File.Copy(path, backupPath, true);
 			using (var writer = XmlWriter.Create(path, new XmlWriterSettings { Indent = true, CheckCharacters = true })) new NetDataContractSerializer().WriteObject(writer, this);
-			File.Delete(backupPath);
+			try
+			{
+				if (File.Exists(backupPath)) File.Delete(backupPath);
+			}
+			catch {}
 		}
 
 		public string SerializeToLua()
@@ -574,7 +578,7 @@ namespace CMissionLib
 				sb.AppendFormat("\t[AI" + index + "]\n");
 				sb.AppendLine("\t{");
 				sb.AppendFormat("\t\tName={0};\n", player.Name.Replace(' ', '_'));
-				sb.AppendFormat("\t\tShortName={0};\n", String.IsNullOrEmpty(player.AIDll) ? "NullAI" : player.AIDll);
+				sb.AppendFormat("\t\tShortName={0};\n", player.AIDll);
 				// sb.AppendFormat("\t\tVersion={0};\n", String.IsNullOrEmpty(player.AIVersion) ? "0.1" : player.AIVersion);
 				sb.AppendFormat("\t\tTeam={0};\n", index);
 				sb.AppendFormat("\t\tIsFromDemo=0;\n");

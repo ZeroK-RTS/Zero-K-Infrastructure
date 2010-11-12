@@ -11,7 +11,7 @@ namespace CMissionLib.Actions
 		Player player;
 
 		public TransferUnitsAction(Player player)
-			: base("Transfer Units")
+			: base()
 		{
 			this.player = player;
 		}
@@ -46,6 +46,11 @@ namespace CMissionLib.Actions
 					{"player", mission.Players.IndexOf(player)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Transfer Units";
 		}
 	}
 }

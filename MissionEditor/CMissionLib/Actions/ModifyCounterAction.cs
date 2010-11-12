@@ -15,7 +15,7 @@ namespace CMissionLib.Actions
 		double value;
 
 		public ModifyCounterAction()
-			: base("Modify Counter") {}
+			: base() {}
 
 		[DataMember]
 		public string Action
@@ -59,6 +59,11 @@ namespace CMissionLib.Actions
 					{"value", value},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Modify Counter";
 		}
 	}
 }

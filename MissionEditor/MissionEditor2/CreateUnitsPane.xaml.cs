@@ -181,7 +181,7 @@ namespace MissionEditor2
 				unitCanvas.ReleaseMouseCapture();
 				dragInfo = null;
 			}
-			if (unitDefGrid.Grid.SelectedItem != null && DateTime.Now - mouseDownDate < TimeSpan.FromMilliseconds(150) && e.ChangedButton == MouseButton.Left)
+			if (unitDefGrid.Grid.SelectedItem != null && DateTime.Now - mouseDownDate < TimeSpan.FromMilliseconds(150) && e.ChangedButton == MouseButton.Left && Keyboard.Modifiers == ModifierKeys.None)
 			{
 				var unitType = (UnitInfo)unitDefGrid.Grid.SelectedItem;
 				var mousePos = e.GetPosition(unitCanvas);

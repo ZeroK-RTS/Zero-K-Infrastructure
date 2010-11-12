@@ -9,7 +9,9 @@ namespace CMissionLib.Actions
 	[DataContract]
 	public class ExecuteRandomTriggerAction : TriggersAction
 	{
-		public ExecuteRandomTriggerAction()
-			: base("Execute Random Trigger") { }
+		public override string GetDefaultName()
+		{
+			return "Execute Random Trigger";
+		}
 	}
 }

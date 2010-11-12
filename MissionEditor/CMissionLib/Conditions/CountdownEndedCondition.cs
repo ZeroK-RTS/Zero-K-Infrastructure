@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace CMissionLib.Conditions
@@ -9,7 +10,7 @@ namespace CMissionLib.Conditions
 		string countdown;
 
 		public CountdownEndedCondition(string countdown)
-			: base("Countdown Ended")
+			: base()
 		{
 			this.countdown = countdown;
 		}
@@ -32,6 +33,11 @@ namespace CMissionLib.Conditions
 					{"countdown",  Countdown??string.Empty},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Countdown Ended";
 		}
 	}
 }

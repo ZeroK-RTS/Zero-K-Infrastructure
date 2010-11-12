@@ -408,7 +408,11 @@ local function ExecuteTrigger(trigger, frame)
       elseif action.logicType == "ModifyResourcesAction" then
         Event = function()
           local category = action.args.category == "metal" and "m" or "e"
-          Spring.AddTeamResource(action.args.player, category, action.args.amount)
+          if action.args.amount > 0 then
+            Spring.AddTeamResource(action.args.player, category, action.args.amount)
+          else
+            Spring.UseTeamResource(action.args.player, category, -action.args.amount)
+          end
         end
       elseif action.logicType == "ModifyUnitHealthAction" then
         Event = function()
@@ -888,6 +892,18 @@ function gadget:GameFrame(n)
             end
           end
         end
+      end
+    end
+  end
+end
+
+
+function gadget:GameOver()
+  for _, trigger in ipairs(triggers) do
+    for _, condition in ipairs(trigger.logic) do
+      if condition.logicType == "GameEndedCondition" then
+        ExecuteTrigger(trigger)
+        break
       end
     end
   end

@@ -12,7 +12,7 @@ namespace CMissionLib.Actions
 		TimeSpan time;
 
 		public StartCountdownAction(string countdown)
-			: base("Start Countdown")
+			: base()
 		{
 			this.countdown = countdown;
 		}
@@ -98,9 +98,14 @@ namespace CMissionLib.Actions
 				{
 					{"countdown", Countdown},
 					{"display", Display},
-					{"frames", Frames},
+					{"frames", Math.Floor(Frames)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Start Countdown";
 		}
 	}
 }

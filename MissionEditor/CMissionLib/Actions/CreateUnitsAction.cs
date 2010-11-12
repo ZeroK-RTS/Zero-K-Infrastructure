@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -14,7 +15,6 @@ namespace CMissionLib.Actions
 			: this(new ObservableCollection<UnitStartInfo>()) {}
 
 		public CreateUnitsAction(IEnumerable<UnitStartInfo> units)
-			: base("Create Units")
 		{
 			this.units = new ObservableCollection<UnitStartInfo>(units);
 		}
@@ -37,6 +37,11 @@ namespace CMissionLib.Actions
 					{"units", LuaTable.CreateArray(units.Select(u => u.GetLuaMap(mission)).ToArray())},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Create Units";
 		}
 	}
 }

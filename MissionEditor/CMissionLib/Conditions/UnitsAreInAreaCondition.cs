@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -14,7 +15,7 @@ namespace CMissionLib.Conditions
 		ObservableCollection<Player> players = new ObservableCollection<Player>();
 
 		public UnitsAreInAreaCondition()
-			: base("Units Are In Area") {}
+			: base() {}
 
 		[DataMember]
 		public ObservableCollection<Player> Players
@@ -70,6 +71,11 @@ namespace CMissionLib.Conditions
 					{"number", number}
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Units Are In Area";
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -10,7 +11,7 @@ namespace CMissionLib.Actions
 		string soundPath;
 
 		public SoundAction()
-			: base("Play Sound") {}
+			: base() {}
 
 		public string SoundPath
 		{
@@ -30,6 +31,11 @@ namespace CMissionLib.Actions
 					{"sound", Path.GetFileName(SoundPath)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Play Sound";
 		}
 	}
 }

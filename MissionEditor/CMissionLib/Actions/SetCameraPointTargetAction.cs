@@ -8,7 +8,6 @@ namespace CMissionLib.Actions
 	public class SetCameraPointTargetAction : Action
 	{
 		public SetCameraPointTargetAction(double x, double y)
-			: base("Map Camera")
 		{
 			Text = String.Empty;
 			this.Y = y;
@@ -33,6 +32,11 @@ namespace CMissionLib.Actions
 					{"y", mission.ToIngameY(Y)},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Point Camera at Map Location";
 		}
 	}
 }

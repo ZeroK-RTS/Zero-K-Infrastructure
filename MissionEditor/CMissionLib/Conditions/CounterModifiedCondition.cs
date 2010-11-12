@@ -14,7 +14,7 @@ namespace CMissionLib.Conditions
 		double value;
 
 		public CounterModifiedCondition()
-			: base("Counter Modified") {}
+			: base() {}
 
 		[DataMember]
 		public string Condition
@@ -58,6 +58,11 @@ namespace CMissionLib.Conditions
 					{"value", value},
 				};
 			return new LuaTable(map);
+		}
+
+		public override string GetDefaultName()
+		{
+			return "Counter Modified";
 		}
 	}
 }
