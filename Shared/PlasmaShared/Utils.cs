@@ -416,7 +416,7 @@ namespace PlasmaShared
 		{
 			var md5 = (MD5)HashAlgorithm.Create("MD5");
 			md5.Initialize();
-			var hashed = md5.ComputeHash(Encoding.ASCII.GetBytes(pass));
+			var hashed = md5.ComputeHash(Encoding.ASCII.GetBytes(pass??""));
 			return Convert.ToBase64String(hashed);
 		}
 	}
