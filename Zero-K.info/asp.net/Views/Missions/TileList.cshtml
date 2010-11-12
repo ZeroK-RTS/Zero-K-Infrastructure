@@ -1,4 +1,8 @@
 ﻿@model IQueryable<ZkData.Mission>
+@{
+  Layout = "";
+}
+<span id='misres' style='display:none'>@Model.Count()</span>
 
 @foreach (var mission in Model) {
   <div id='@mission.MissionID' class='mission left' onclick='window.location="@Url.Action("Detail", new { id = mission.MissionID })"' title="$mission$@mission.MissionID" >

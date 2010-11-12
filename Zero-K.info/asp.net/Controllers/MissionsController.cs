@@ -11,26 +11,28 @@ namespace ZeroKWeb.Controllers
 {
 	public class MissionsController: Controller
 	{
-
-		const int FetchTileCount = 20;
-		const int FetchInitialCount = 20;
 		//
 		// GET: /Missions/
-		public ActionResult Index(string search)
+    public ActionResult Index(string search, int? offset, bool? sp, bool? coop, bool? adversarial)
 		{
 			var db = new ZkDataContext();
-			return
+      if (!offset.HasValue) return
 				View(
 					new MissionsIndexData()
 					{
-						LastUpdated = FilterMissions(db.Missions, search).Take(FetchInitialCount),
+						LastUpdated = FilterMissions(db.Missions, search).Take(Global.AjaxScrollCount),
 						MostPlayed = db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.MissionRunCount),
 						MostRating =db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.Rating),
 						LastComments = db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x=>x.ForumThread.LastPost),
 						SearchString = search,
-						FetchInitialCount = FetchInitialCount,
-						FetchTileCount = FetchTileCount
 					});
+
+      else
+      {
+        var mis = FilterMissions(db.Missions, search, offset, sp, coop, adversarial).Take(Global.AjaxScrollCount);
+        if (mis.Any()) return View("TileList", mis);
+        else return Content("");
+      }
 		}
 
 		[OutputCache(VaryByParam = "name", Duration = int.MaxValue, Location = OutputCacheLocation.Any)]
@@ -81,16 +83,9 @@ namespace ZeroKWeb.Controllers
 			if (adversarial == false) ret = ret.Where(x => x.MinHumans == 1 || x.IsCoop);
 			if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => SqlMethods.Like(x.Name, '%' + search + '%') || SqlMethods.Like(x.Account.Name, '%' + search + '%'));
 			ret = ret.OrderByDescending(x => x.ModifiedTime);
-			if (offset != null) ret = ret.Skip(offset.Value);
-			return ret;
-		}
+      if (offset != null) ret = ret.Skip(offset.Value);
 
-		public ActionResult TileList(string search, int? offset, bool sp, bool coop, bool adversarial)
-		{
-			var db = new ZkDataContext();
-			var mis = FilterMissions(db.Missions, search, offset, sp, coop, adversarial).Take(FetchTileCount);
-			if (mis.Any()) return PartialView("TileList", mis);
-			else return Content("");
+			return ret;
 		}
 
 		public ActionResult Script(int id)
@@ -155,8 +150,6 @@ namespace ZeroKWeb.Controllers
 		public IQueryable<Mission> MostPlayed;
 		public IQueryable<Mission> MostRating;
 		public string SearchString;
-		public int FetchInitialCount;
-		public int FetchTileCount;
 		public IQueryable<Mission> LastComments;
 	}
 }
