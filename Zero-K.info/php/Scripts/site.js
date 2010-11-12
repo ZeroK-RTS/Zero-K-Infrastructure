@@ -1,5 +1,5 @@
-﻿var ajaxScrollCount = 20;
-var ajaxScrollOffset = 20;
+﻿var ajaxScrollCount = 40;
+var ajaxScrollOffset = 40;
 var ajaxScrollEnabled = true; 
 /* ajax form updater and scorll based loader
 It updates form on submit using ajax - sending offset 0 to it when user clicks

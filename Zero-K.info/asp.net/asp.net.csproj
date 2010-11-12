@@ -73,6 +73,7 @@
     </Compile>
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="ErrorReports.aspx.cs">
       <DependentUpon>ErrorReports.aspx</DependentUpon>
@@ -140,6 +141,8 @@
     <Content Include="Views\Missions\Index.cshtml" />
     <Content Include="Views\Missions\TileList.cshtml" />
     <Content Include="Views\Missions\Detail.cshtml" />
+    <Content Include="Views\Maps\Index.cshtml" />
+    <Content Include="Views\Maps\MapTileList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\MonoTorrent\MonoTorrent.csproj">

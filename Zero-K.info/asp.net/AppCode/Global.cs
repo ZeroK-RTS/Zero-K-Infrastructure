@@ -11,7 +11,7 @@ namespace ZeroKWeb
 		public static bool IsAccountAuthorized { get { return HttpContext.Current.User as Account != null; } }
 		public static bool IsLobbyAccess { get { return HttpContext.Current.Request.Cookies[GlobalConst.LobbyAccessCookieName] != null && IsAccountAuthorized; } }
 
-	  public const int AjaxScrollCount = 20;
+	  public const int AjaxScrollCount = 40;
 	}
 
 

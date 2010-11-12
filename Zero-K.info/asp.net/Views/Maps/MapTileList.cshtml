@@ -1,0 +1,12 @@
+﻿@model IQueryable<ZkData.Resource>
+
+@{
+  Layout = "";
+}
+
+@foreach (var resource in Model) {
+  <div class='mission left'>
+    <b>@resource.InternalName</b><br />
+    <img src='http://planet-wars.eu/PlasmaServer/Resources/@(PlasmaShared.Utils.EscapePath(resource.InternalName)).minimap.jpg' width='96' height='96'/>
+  </div>
+}

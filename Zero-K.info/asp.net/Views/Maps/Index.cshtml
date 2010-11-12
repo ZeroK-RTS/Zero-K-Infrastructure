@@ -1,0 +1,46 @@
+﻿@model IQueryable<ZkData.Resource>
+
+@{
+  Page.Title = "Zero-K maps";
+}
+
+
+<form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
+  @Html.TextBox("search")
+  <input type="submit" id="submit" value="Search" />
+</form>
+
+<table width='100%'>
+  <tr>
+    <td>
+      <div id='ajaxScrollTarget'>
+        @{Html.RenderPartial("MapTileList", Model);}
+      </div>
+    </td>
+@*    <td width="250" valign="top" align="left">
+      <h3>
+        Highest rated</h3>
+      <ul>
+        @foreach (var mission in Model.MostRating.Take(15)) {
+          <li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
+        }
+      </ul>
+      <h3>
+        Last comments</h3>
+      <ul>
+        @foreach (var mission in Model.LastComments.Take(15)) {
+          <li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
+        }
+      </ul>
+      <h3>
+        Most played</h3>
+      <ul>
+        @foreach (var mission in Model.MostPlayed.Take(15)) {
+          <li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
+        }
+      </ul>
+    </td>*@
+  </tr>
+</table>
+
+<span style="display:none" id='ajaxScrollProgress'>Loading ... </span>
