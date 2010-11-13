@@ -17,7 +17,7 @@
   <div>
     @RenderBody()
   </div>
-  <br />@(Page.Title != null ?LinkShare.GetHtml(Page.Title, Request.Url.ToString()): "")<br />
+  <br />
 
   @if (!Global.IsLobbyAccess) {
     <small>View this site with the <a href='http://zero-k.info/lobby/setup.exe'>Zero-K
