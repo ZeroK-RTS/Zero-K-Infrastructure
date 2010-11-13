@@ -422,12 +422,6 @@
     <Compile Include="MapDownloader\DownloaderTab.Designer.cs">
       <DependentUpon>DownloaderTab.cs</DependentUpon>
     </Compile>
-    <Compile Include="MapDownloader\FormMapPicker.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MapDownloader\FormMapPicker.Designer.cs">
-      <DependentUpon>FormMapPicker.cs</DependentUpon>
-    </Compile>
     <Compile Include="Notifications\NotifyBarContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -489,10 +483,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MapDownloader\DownloaderTab.resx">
       <DependentUpon>DownloaderTab.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MapDownloader\FormMapPicker.resx">
-      <DependentUpon>FormMapPicker.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\NewSpringBar.resx">

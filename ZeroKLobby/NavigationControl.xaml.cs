@@ -158,7 +158,7 @@ namespace ZeroKLobby
 
 		void DownloaderPage_Click(object sender, RoutedEventArgs e)
 		{
-			Path = GetLastPathStartingWith("downloader");
+			Path = GetLastPathStartingWith("rapid");
 		}
 
 		void HelpPage_Click(object sender, RoutedEventArgs e)
