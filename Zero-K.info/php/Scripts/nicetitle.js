@@ -185,19 +185,22 @@ function showNiceTitle(e) {
 	var d = document.createElementNS(XHTMLNS, "div");
 	d.className = "nicetitle";
 
+  var rect = lnk.getBoundingClientRect();
 
-	w = d.style.width;
+  d.style.width = '350px';
 
-	if (lnk.getBoundingClientRect().right + 350 > document.body.clientWidth) {
-		d.style.left = (lnk.getBoundingClientRect().left - 200) + document.documentElement.scrollLeft + "px";
-		d.style.top = (lnk.getBoundingClientRect().bottom + 10) + document.documentElement.scrollTop + "px";
+  var offsx = document.body.clientWidth - rect.right - 350 - document.documentElement.scrollLeft;
+  	
+  if (offsx < 0) {
+		d.style.left = (rect.left - 380) + document.documentElement.scrollLeft + "px";
+		d.style.top = (rect.top + 5) + document.documentElement.scrollTop + "px";
 	}
-	else {
-		d.style.left = (lnk.getBoundingClientRect().right + 10) + document.documentElement.scrollLeft + "px";
-		d.style.top = (lnk.getBoundingClientRect().top + 10) + document.documentElement.scrollTop + "px";
+	else  {
+		d.style.left = (rect.right + 10) + document.documentElement.scrollLeft + "px";
+		d.style.top = (rect.top + 5) + document.documentElement.scrollTop + "px";
 	}
 
-	d.style.width = '350px';
+
 
 	document.body.appendChild(d);
 	CURRENT_NICE_TITLE = d;

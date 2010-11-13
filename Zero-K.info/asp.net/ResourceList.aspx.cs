@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Linq.SqlClient;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
 using System.Web.UI.WebControls;
 using Licho.Utils.Web;
 using PlasmaShared;
-using ZeroKWeb;
 using ZkData;
 
-namespace PlasmaServer
+namespace ZeroKWeb
 {
-	public partial class Default : System.Web.UI.Page
+	public partial class ResourceList : System.Web.UI.Page
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
@@ -55,7 +51,7 @@ namespace PlasmaServer
 			if ((bool?)Session["login"] == true) {
 				var db = new ZkDataContext();
 				var todel = db.Resources.Single(x=>x.InternalName == ((Resource)e.OriginalObject).InternalName);
-				todel.RemoveResourceFiles();
+        PlasmaServer.RemoveResourceFiles(todel);
 
 				
 				db.Resources.DeleteOnSubmit(todel);

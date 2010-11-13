@@ -60,9 +60,9 @@ namespace ZeroKWeb
           (resource.LastLinkCheck != null && DateTime.Now.Subtract(resource.LastLinkCheck.Value).Days < 1))
       {
         // use cached values for missions or resources checked less than 1 day ago
-        links = bestOld.GetLinkArray();
-        torrent = bestOld.GetTorrentData();
-        torrentFileName = bestOld.GetTorrentFileName();
+        links = PlasmaServer.GetLinkArray(bestOld);
+        torrent = PlasmaServer.GetTorrentData(bestOld);
+        torrentFileName = PlasmaServer.GetTorrentFileName(bestOld);
         if (links.Count > 0) db.ExecuteCommand("UPDATE Resource SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
         else db.ExecuteCommand("UPDATE Resource SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
 
@@ -85,9 +85,9 @@ namespace ZeroKWeb
       {
         // request is ongoing, wait for completion
         data.WaitHandle.WaitOne();
-        torrentFileName = data.ContentFile.GetTorrentFileName();
-        links = data.ContentFile.GetLinkArray();
-        torrent = data.ContentFile.GetTorrentData();
+        torrentFileName = PlasmaServer.GetTorrentFileName(data.ContentFile);
+        links = PlasmaServer.GetLinkArray(data.ContentFile);
+        torrent = PlasmaServer.GetTorrentData(data.ContentFile);
         if (links.Count > 0) db.ExecuteCommand("UPDATE Resource SET DownloadCount = DownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
         else db.ExecuteCommand("UPDATE Resource SET NoLinkDownloadCount = NoLinkDownloadCount+1 WHERE ResourceID={0}", resource.ResourceID);
         return true;
@@ -115,9 +115,9 @@ namespace ZeroKWeb
           if (best != null) data.ContentFile = best;
           else data.ContentFile = resource.ResourceContentFiles.First(); // all content files sux, reurn any
 
-          links = data.ContentFile.GetLinkArray();
-          torrent = data.ContentFile.GetTorrentData();
-          torrentFileName = data.ContentFile.GetTorrentFileName();
+          links = PlasmaServer.GetLinkArray(data.ContentFile);
+          torrent = PlasmaServer.GetTorrentData(data.ContentFile);
+          torrentFileName = PlasmaServer.GetTorrentFileName(data.ContentFile);
           if (links.Count > 0) resource.DownloadCount++;
           else resource.NoLinkDownloadCount++;
           db.SubmitChanges();

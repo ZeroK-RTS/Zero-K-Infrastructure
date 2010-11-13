@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PlasmaServer {
+namespace ZeroKWeb {
     
     
-    public partial class Default {
+    public partial class ResourceList {
         
         /// <summary>
         /// form1 control.

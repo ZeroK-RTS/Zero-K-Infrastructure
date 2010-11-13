@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PlasmaServer {
+namespace ZeroKWeb {
     
     
     public partial class ResourceDetail {

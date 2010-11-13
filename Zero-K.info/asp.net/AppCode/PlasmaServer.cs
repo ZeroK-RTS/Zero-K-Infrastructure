@@ -8,7 +8,7 @@ using ZkData;
 
 namespace ZeroKWeb
 {
-  public static class PlasmaServer
+  public class PlasmaServer
   {
     public const int PlasmaServerApiVersion = 3;
 
@@ -27,7 +27,7 @@ namespace ZeroKWeb
       var db = new ZkDataContext();
       var todel = db.Resources.SingleOrDefault(x => x.InternalName == internalName);
       if (todel == null) return ReturnValue.ResourceNotFound;
-      todel.RemoveResourceFiles();
+      RemoveResourceFiles(todel);
 
       db.Resources.DeleteOnSubmit(todel);
       db.SubmitChanges();
@@ -45,7 +45,7 @@ namespace ZeroKWeb
       return ResourceLinkProvider.GetLinksAndTorrent(internalName, out links, out torrent, out dependencies, out resourceType, out torrentFileName);
     }
 
-    public static List<string> GetLinkArray(this ResourceContentFile cf)
+    public static List<string> GetLinkArray(ResourceContentFile cf)
     {
       if (cf.LinkCount == 0 || cf.Links == null) return new List<string>();
       else return new List<string>(cf.Links.Split('\n'));
@@ -66,9 +66,9 @@ namespace ZeroKWeb
     }
 
 
-    public static byte[] GetTorrentData(this ResourceContentFile cf)
+    public static byte[] GetTorrentData(ResourceContentFile cf)
     {
-      return File.ReadAllBytes(cf.GetTorrentPath());
+      return File.ReadAllBytes(GetTorrentPath(cf));
     }
 
     public static string GetTorrentFileName(string name, string md5)
@@ -76,7 +76,7 @@ namespace ZeroKWeb
       return String.Format("{0}_{1}.torrent", name.EscapePath(), md5);
     }
 
-    public static string GetTorrentFileName(this ResourceContentFile cf)
+    public static string GetTorrentFileName(ResourceContentFile cf)
     {
       return GetTorrentFileName(cf.Resource.InternalName, cf.Md5);
     }
@@ -86,7 +86,7 @@ namespace ZeroKWeb
       return HttpContext.Current.Server.MapPath(String.Format("~/Resources/{0}", (object)GetTorrentFileName(name, md5)));
     }
 
-    public static string GetTorrentPath(this ResourceContentFile cf)
+    public static string GetTorrentPath(ResourceContentFile cf)
     {
       return GetTorrentPath(cf.Resource.InternalName, cf.Md5);
     }
@@ -175,14 +175,14 @@ namespace ZeroKWeb
       return ReturnValue.Ok;
     }
 
-    public static void RemoveResourceFiles(this Resource resource)
+    public static void RemoveResourceFiles( Resource resource)
     {
       var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
       Utils.SafeDelete(String.Format("{0}.minimap.jpg", file));
       Utils.SafeDelete(String.Format("{0}.heightmap.jpg", file));
       Utils.SafeDelete(String.Format("{0}.metalmap.jpg", file));
       Utils.SafeDelete(String.Format("{0}.metadata.xml.gz", file));
-      foreach (var content in resource.ResourceContentFiles) Utils.SafeDelete(content.GetTorrentPath());
+      foreach (var content in resource.ResourceContentFiles) Utils.SafeDelete(GetTorrentPath(content));
     }
 
     static Resource FindResource(string md5, string internalName)
@@ -205,7 +205,7 @@ namespace ZeroKWeb
       public ZkData.ResourceType ResourceType;
       public List<SpringHashEntry> SpringHashes;
 
-      public ResourceData() {}
+      public ResourceData() { }
 
       public ResourceData(Resource r)
       {
@@ -221,5 +221,7 @@ namespace ZeroKWeb
       public int SpringHash;
       public string SpringVersion;
     }
+
   }
+
 }

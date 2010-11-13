@@ -2227,7 +2227,7 @@ namespace ZkData
 		
 		private bool _IsCoop;
 		
-		private System.Nullable<int> _ForumThreadID;
+		private int _ForumThreadID;
 		
 		private EntityRef<Mission> _ChildMission;
 		
@@ -2307,7 +2307,7 @@ namespace ZkData
     partial void OnDifficultyChanged();
     partial void OnIsCoopChanging(bool value);
     partial void OnIsCoopChanged();
-    partial void OnForumThreadIDChanging(System.Nullable<int> value);
+    partial void OnForumThreadIDChanging(int value);
     partial void OnForumThreadIDChanged();
     #endregion
 		
@@ -2933,9 +2933,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
-		public System.Nullable<int> ForumThreadID
+		public int ForumThreadID
 		{
 			get
 			{
@@ -3161,7 +3161,7 @@ namespace ZkData
 					}
 					else
 					{
-						this._ForumThreadID = default(Nullable<int>);
+						this._ForumThreadID = default(int);
 					}
 					this.SendPropertyChanged("ForumThread");
 				}
@@ -7027,6 +7027,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _MissionID;
 		
+		private System.Nullable<System.DateTime> _LastChange;
+		
 		private EntitySet<ResourceDependency> _ResourceDependencies;
 		
 		private EntitySet<ResourceContentFile> _ResourceContentFiles;
@@ -7055,6 +7057,8 @@ namespace ZkData
     partial void OnNoLinkDownloadCountChanged();
     partial void OnMissionIDChanging(System.Nullable<int> value);
     partial void OnMissionIDChanged();
+    partial void OnLastChangeChanging(System.Nullable<System.DateTime> value);
+    partial void OnLastChangeChanged();
     #endregion
 		
 		public Resource()
@@ -7213,8 +7217,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastChange", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<System.DateTime> LastChange
+		{
+			get
+			{
+				return this._LastChange;
+			}
+			set
+			{
+				if ((this._LastChange != value))
+				{
+					this.OnLastChangeChanging(value);
+					this.SendPropertyChanging();
+					this._LastChange = value;
+					this.SendPropertyChanged("LastChange");
+					this.OnLastChangeChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_ResourceDependencies", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public EntitySet<ResourceDependency> ResourceDependencies
 		{
 			get
@@ -7233,7 +7258,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_ResourceContentFiles", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<ResourceContentFile> ResourceContentFiles
 		{
 			get
@@ -7252,7 +7277,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_ResourceSpringHashes", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<ResourceSpringHash> ResourceSpringHashes
 		{
 			get

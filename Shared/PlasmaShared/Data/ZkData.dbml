@@ -172,7 +172,7 @@
       <Column Name="Rating" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="Difficulty" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="IsCoop" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="ForumThreadID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Mission_Mission" Member="ChildMission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" Cardinality="One" />
       <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
       <Association Name="Mission_MissionScore" Member="MissionScores" ThisKey="MissionID" OtherKey="MissionID" Type="MissionScore" />
@@ -409,6 +409,7 @@
       <Column Name="DownloadCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="NoLinkDownloadCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="MissionID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="LastChange" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />

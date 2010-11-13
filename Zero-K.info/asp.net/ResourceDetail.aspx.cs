@@ -8,7 +8,7 @@ using PlasmaShared;
 using ZeroKWeb;
 using ZkData;
 
-namespace PlasmaServer
+namespace ZeroKWeb
 {
 	public partial class ResourceDetail : Page
 	{
@@ -31,7 +31,7 @@ namespace PlasmaServer
 							x.FileName,
 							x.Md5,
 							x.Length,
-							TorrentFileName= x.GetTorrentFileName(),
+              TorrentFileName = PlasmaServer.GetTorrentFileName(x),
 							x.LinkCount,
 							x.ResourceID,
 							LinkText = x.Links != null ? string.Join("<br/>", x.Links.Split('\n').Select(y => string.Format("<a href='{0}'>{0}</a>", y)).ToArray()): null
@@ -74,7 +74,7 @@ namespace PlasmaServer
 			{
 				var db = new ZkDataContext();
 				var todel = db.ResourceContentFiles.Single(x => x.Md5 == ((ResourceContentFile)e.OriginalObject).Md5);
-				Utils.SafeDelete(todel.GetTorrentPath());
+				Utils.SafeDelete(PlasmaServer.GetTorrentPath(todel));
 
 				db.ResourceContentFiles.DeleteOnSubmit(todel);
 				db.SubmitChanges();
