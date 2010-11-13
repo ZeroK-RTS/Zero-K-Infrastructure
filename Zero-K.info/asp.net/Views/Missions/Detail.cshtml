@@ -93,7 +93,7 @@
           Difficulty:
         </td>
         <td>
-          @Html.Stars(StarType.RedStarSmall, m.Difficulty)
+          @Html.Stars(StarType.RedSkull, m.Difficulty)
         </td>
         <td>
           Your vote:
@@ -154,7 +154,7 @@
         @Html.AccountAvatar(p.Author)
         <br />
         <small>@p.Created.ToAgoString()</small>
-        @Html.Stars(StarType.GreenStarSmall, p.Rating) @Html.Stars(StarType.RedStarSmall, p.Difficulty)        
+        @Html.Stars(StarType.GreenStarSmall, p.Rating) @Html.Stars(StarType.RedSkull, p.Difficulty)        
       </td>
       <td valign="top">
         @p.Text

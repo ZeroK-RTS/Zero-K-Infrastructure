@@ -10,7 +10,8 @@ namespace System.Web.Mvc
   {
     RedStarSmall,
     GreenStarSmall,
-    WhiteStarSmall
+    WhiteStarSmall,
+    RedSkull
   }
 
   public class SelectOption

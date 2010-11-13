@@ -74,12 +74,12 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
-    <Compile Include="Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
+    <Compile Include="ResourceList.aspx.cs">
+      <DependentUpon>ResourceList.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
+    <Compile Include="ResourceList.aspx.designer.cs">
+      <DependentUpon>ResourceList.aspx</DependentUpon>
     </Compile>
     <Compile Include="ErrorReports.aspx.cs">
       <DependentUpon>ErrorReports.aspx</DependentUpon>
@@ -109,7 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
-    <Content Include="Default.aspx" />
+    <Content Include="ResourceList.aspx" />
     <Content Include="ErrorReports.aspx" />
     <Content Include="Global.asax">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

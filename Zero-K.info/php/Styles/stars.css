@@ -9,6 +9,12 @@
   display: block;
   background: url(../img/stars/star_red_small.png) 0 0;
  } 
+
+ .RedSkull { 
+  height: 14px;
+  display: block;
+  background: url(../img/stars/skull_red.png) 0 0;
+ } 
  
  .WhiteStarSmall { 
   height: 14px;
