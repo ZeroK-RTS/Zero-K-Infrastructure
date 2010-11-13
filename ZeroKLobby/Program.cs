@@ -88,7 +88,7 @@ namespace ZeroKLobby
 
         // if we started executable but clickonce link exists, runk through clickonce link
         if (!ApplicationDeployment.IsNetworkDeployed) {
-          //if (!Debugger.IsAttached)
+          if (!Debugger.IsAttached)
           {
             var shortcutName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "\\Zero-K\\Zero-K.appref-ms");
             if (File.Exists(shortcutName))
