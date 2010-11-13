@@ -419,5 +419,14 @@ namespace PlasmaShared
 			var hashed = md5.ComputeHash(Encoding.ASCII.GetBytes(pass??""));
 			return Convert.ToBase64String(hashed);
 		}
+
+	  public static void SafeDelete(string path)
+	  {
+      try {
+        if (File.Exists(path)) {
+          File.Delete(path);
+        }
+      } catch { }
+	  }
 	}
 }

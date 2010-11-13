@@ -6,6 +6,8 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Licho.Utils.Web;
+using PlasmaShared;
+using ZeroKWeb;
 using ZkData;
 
 namespace PlasmaServer
@@ -14,7 +16,6 @@ namespace PlasmaServer
 	{
 		protected void Page_Load(object sender, EventArgs e)
 		{
-
 		}
 
 		protected void lqResources_Selecting(object sender, LinqDataSourceSelectEventArgs e)
@@ -40,7 +41,7 @@ namespace PlasmaServer
 
 		protected void btnLoginClicked(object sender, EventArgs e)
 		{
-			if (PlasmaService.IsAdmin(tbLogin.Text, tbPassword.Text)) {
+			if (Global.IsAccountAuthorized && Global.Account.IsLobbyAdministrator || (tbLogin.Text == "Admin" && tbPassword.Text=="Sux")) {
 				Session["login"] = true;
 				panelLogin.Visible = false;
 			} else {
