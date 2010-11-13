@@ -54,7 +54,11 @@ namespace ZeroKLobby.MicroLobby
 					return true;
 				}
 			}
-			else if (m.Msg == WM_XBUTTONDOWN) Program.MainWindow.navigationControl.NavigateBack();
+			else if (m.Msg == WM_XBUTTONDOWN)
+			{
+			  if (((int)m.WParam & 131072)>0) Program.MainWindow.navigationControl.NavigateForward();
+        if (((int)m.WParam & 65536) > 0) Program.MainWindow.navigationControl.NavigateBack();
+			}
 			return false;
 		}
 	}

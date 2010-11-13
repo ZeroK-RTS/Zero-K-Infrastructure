@@ -44,9 +44,9 @@ namespace ZeroKWeb
 
 
     [WebMethod]
-    public List<PlasmaServer.ResourceData> GetResourceList()
+    public List<PlasmaServer.ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
     {
-      return PlasmaServer.GetResourceList();
+      return PlasmaServer.GetResourceList(lastChange, out currentTime);
     }
 
 

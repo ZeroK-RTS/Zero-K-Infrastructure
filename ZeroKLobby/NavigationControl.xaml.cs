@@ -118,6 +118,11 @@ namespace ZeroKLobby
 			GoToPage(CurrentPage.Path);
 		}
 
+    public void NavigateForward()
+    {
+      if (CanGoForward) GoForward();
+    }
+
 		void GoForward()
 		{
 			backStack.Push(CurrentPage);

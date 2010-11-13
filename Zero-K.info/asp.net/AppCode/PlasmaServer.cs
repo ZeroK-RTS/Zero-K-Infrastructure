@@ -58,8 +58,9 @@ namespace ZeroKWeb
       return new ResourceData(ret);
     }
 
-    public static List<ResourceData> GetResourceList()
+    public static List<ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
     {
+      currentTime = DateTime.UtcNow;
       var db = new ZkDataContext();
       return db.Resources.Select(r => new ResourceData(r)).ToList();
     }
