@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using ZkData;
 
 #endregion
@@ -102,25 +103,7 @@ namespace ZeroKWeb
                           group x by new { x.FileName, x.Length }
                           into g where !g.Key.FileName.EndsWith(".sdp") select g.First();
 
-            var waitHandles = new List<EventWaitHandle>();
-            foreach (var content in toCheck)
-            {
-              var handle = new EventWaitHandle(false, EventResetMode.ManualReset);
-              waitHandles.Add(handle);
-              var file = content;
-              new Action(() =>
-                {
-                  try
-                  {
-                    UpdateLinks(file);
-                  }
-                  finally
-                  {
-                    handle.Set();
-                  }
-                }).BeginInvoke(delegate { }, null);
-            }
-            WaitHandle.WaitAll(waitHandles.ToArray());
+            Task.WaitAll(toCheck.Select(x => Task.Factory.StartNew(() => UpdateLinks(x))).ToArray());
           }
           else foreach (var content in resource.ResourceContentFiles) UpdateLinks(content);
 
@@ -229,30 +212,17 @@ namespace ZeroKWeb
       }
 
       // check validity of all links at once
-      var checkTasks = new List<EventWaitHandle>();
-      foreach (var link in new List<string>(valids)) checkTasks.Add(ValidateLinkAsync(link, content.Length, valids));
-      WaitHandle.WaitAll(checkTasks.ToArray());
+
+      Task.WaitAll(new List<string>(valids).Select(link => Task.Factory.StartNew(() => ValidateLink(link, content.Length, valids))).ToArray());
 
       content.LinkCount = valids.Count;
       content.Resource.LastLinkCheck = DateTime.UtcNow;
       content.Links = string.Join("\n", valids.ToArray());
     }
 
-    static EventWaitHandle ValidateLinkAsync(string link, int length, List<string> valids)
+    static void ValidateLink(string link, int length, List<string> valids)
     {
-      var handle = new EventWaitHandle(false, EventResetMode.ManualReset);
-      new Action(() =>
-        {
-          try
-          {
-            if (GetLinkLength(link) != length) lock (valids) valids.Remove(link);
-          }
-          finally
-          {
-            handle.Set();
-          }
-        }).BeginInvoke(delegate { }, null);
-      return handle;
+      if (GetLinkLength(link) != length) lock (valids) valids.Remove(link);
     }
 
     class RequestData
