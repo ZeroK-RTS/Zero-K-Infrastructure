@@ -26,7 +26,7 @@ namespace ZeroKWeb.Controllers
 
         static IQueryable<Resource> FilterMaps(IQueryable<Resource> ret, string search, int? offset = null)
         {
-          ret = ret.AsQueryable();
+          ret = ret.Where(x=>x.ResourceContentFiles.Any(y=>y.LinkCount>0));
           if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => SqlMethods.Like(x.InternalName, '%' + search + '%'));
           ret = ret.OrderByDescending(x => x.ResourceID);
           if (offset != null) ret = ret.Skip(offset.Value);

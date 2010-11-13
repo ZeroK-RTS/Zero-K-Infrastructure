@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.UnitSyncLib;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZeroKLobby.ToolTips;

@@ -78,9 +78,9 @@ namespace ZeroKWeb.Controllers
 		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, int? offset = null, bool? sp = null, bool? coop= null, bool? adversarial= null)
 		{
 			ret = ret.Where(x => !x.IsDeleted);
-			if (sp == false) ret = ret.Where(x => x.MinHumans > 1);
-			if (coop == false) ret = ret.Where(x => x.MinHumans == 1 || x.IsCoop == false);
-			if (adversarial == false) ret = ret.Where(x => x.MinHumans == 1 || x.IsCoop);
+			if (sp == false) ret = ret.Where(x => x.MaxHumans > 1);
+			if (coop == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) ||  x.MaxHumans > 1 && !x.IsCoop);
+			if (adversarial == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) || (x.MaxHumans > 1 && x.IsCoop));
 			if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => SqlMethods.Like(x.Name, '%' + search + '%') || SqlMethods.Like(x.Account.Name, '%' + search + '%'));
 			ret = ret.OrderByDescending(x => x.ModifiedTime);
       if (offset != null) ret = ret.Skip(offset.Value);
