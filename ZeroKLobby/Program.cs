@@ -83,27 +83,34 @@ namespace ZeroKLobby
 		{
 			try
 			{
+        Trace.Listeners.Add(new ConsoleTraceListener());
+        Trace.Listeners.Add(new LogTraceListener());
+
         // if we started executable but clickonce link exists, runk through clickonce link
         if (!ApplicationDeployment.IsNetworkDeployed) {
-          if (!Debugger.IsAttached)
+          //if (!Debugger.IsAttached)
           {
             var shortcutName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "\\Zero-K\\Zero-K.appref-ms");
             if (File.Exists(shortcutName))
             {
-              Process.Start(shortcutName, String.Join(",", StartupArgs));
+              Process.Start(shortcutName, String.Join(",", args));
               return false;
             }
           }
         } else
         { // args to offline clickonce are passed in this special way
-          string[] activationData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
-          if (activationData.Length > 0) args = new string[] { activationData[0] };
+          try
+          {
+            string[] activationData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
+            if (activationData != null && activationData.Length > 0) args = activationData[0].Split(',');
+          } catch (Exception ex)
+          {
+            Trace.TraceWarning("Failed to process clickonce arguments:{0}", ex);
+          }
         }
 
         StartupArgs = args;
 
-        Trace.Listeners.Add(new ConsoleTraceListener());
-        Trace.Listeners.Add(new LogTraceListener());
 
         Directory.SetCurrentDirectory(StartupPath);
         Application.EnableVisualStyles();
