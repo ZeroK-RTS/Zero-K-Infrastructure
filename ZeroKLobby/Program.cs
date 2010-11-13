@@ -54,7 +54,7 @@ namespace ZeroKLobby
 		/// </summary>
 		public static bool IsAdmin()
 		{
-			return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+			return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator); 
 		}
 
 		internal static void LoadConfig()
@@ -81,26 +81,45 @@ namespace ZeroKLobby
 		[STAThread]
 		public static bool Main(string[] args)
 		{
-			StartupArgs = args;
-			Trace.Listeners.Add(new ConsoleTraceListener());
-			Trace.Listeners.Add(new LogTraceListener());
-
-			Directory.SetCurrentDirectory(StartupPath);
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
-
-			if (!Debugger.IsAttached)
-			{
-				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-				Thread.GetDomain().UnhandledException += UnhandledException;
-				Application.ThreadException += Application_ThreadException;
-				Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-			}
-
-			// this sets default caching policy - webbrowser will use local cache if possible -> for loading images from web resources in wpf
-			//HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 			try
 			{
+        // if we started executable but clickonce link exists, runk through clickonce link
+        if (!ApplicationDeployment.IsNetworkDeployed) {
+          if (!Debugger.IsAttached)
+          {
+            var shortcutName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "\\Zero-K\\Zero-K.appref-ms");
+            if (File.Exists(shortcutName))
+            {
+              Process.Start(shortcutName, String.Join(",", StartupArgs));
+              return false;
+            }
+          }
+        } else
+        { // args to offline clickonce are passed in this special way
+          string[] activationData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
+          if (activationData.Length > 0) args = new string[] { activationData[0] };
+        }
+
+        StartupArgs = args;
+
+        Trace.Listeners.Add(new ConsoleTraceListener());
+        Trace.Listeners.Add(new LogTraceListener());
+
+        Directory.SetCurrentDirectory(StartupPath);
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+
+        if (!Debugger.IsAttached) {
+          AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+          Thread.GetDomain().UnhandledException += UnhandledException;
+          Application.ThreadException += Application_ThreadException;
+          Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+        }
+
+        // this sets default caching policy - webbrowser will use local cache if possible -> for loading images from web resources in wpf
+        //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+
+
 				Utils.RegisterProtocol();
 				if (ApplicationDeployment.IsNetworkDeployed) Trace.TraceInformation("Starting with version {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
 				else

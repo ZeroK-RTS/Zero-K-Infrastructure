@@ -13,13 +13,13 @@ namespace ZeroKLobby
 	/// </summary>
 	public partial class App : Application
 	{
-
+    bool hasStarted = false;
 
 		private void Application_Startup(object sender, StartupEventArgs e)
 		{
 			if (Program.Main(e.Args))
 			{
-				// todo some exception handlign (dont catch in main? )
+        hasStarted = true;
 				MainWindow = Program.MainWindow;
 				MainWindow.Show();
 			} else Shutdown();
@@ -35,7 +35,7 @@ namespace ZeroKLobby
 
 		private void Application_Exit(object sender, ExitEventArgs e)
 		{
-			Program.ShutDown();
+      if (hasStarted) Program.ShutDown();
 		}
 	}
 }
