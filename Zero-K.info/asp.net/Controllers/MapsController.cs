@@ -16,9 +16,9 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(string search, int? offset)
         {
           var db = new ZkDataContext();
-          if (!offset.HasValue) return View(FilterMaps(db.Resources.Where(x=>x.TypeID== ZkData.ResourceType.Map).Take(Global.AjaxScrollCount), search, offset));
+          if (!offset.HasValue) return View(FilterMaps(db.Resources, search, offset));
           else {
-            var mis = FilterMaps(db.Resources.Where(x => x.TypeID == ZkData.ResourceType.Map), search, offset).Take(Global.AjaxScrollCount);
+            var mis = FilterMaps(db.Resources, search, offset);
             if (mis.Any()) return View("MapTileList", mis);
             else return Content("");
           }
@@ -26,11 +26,11 @@ namespace ZeroKWeb.Controllers
 
         static IQueryable<Resource> FilterMaps(IQueryable<Resource> ret, string search, int? offset = null)
         {
-          ret = ret.Where(x=>x.ResourceContentFiles.Any(y=>y.LinkCount>0));
+          ret = ret.Where(x => x.TypeID == ResourceType.Map && x.ResourceContentFiles.Any(y=>y.LinkCount>0));
           if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => SqlMethods.Like(x.InternalName, '%' + search + '%'));
           ret = ret.OrderByDescending(x => x.ResourceID);
           if (offset != null) ret = ret.Skip(offset.Value);
-          return ret;
+          return ret.Take(Global.AjaxScrollCount);
         }
 
 
