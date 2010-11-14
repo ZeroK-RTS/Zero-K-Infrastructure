@@ -24,7 +24,7 @@ namespace ZeroKLobby.Notifications
 
 			if (ApplicationDeployment.IsNetworkDeployed && (deployment = ApplicationDeployment.CurrentDeployment) != null)
 			{
-				deployment.UpdateCompleted += deployment_UpdateCompleted;
+        deployment.UpdateCompleted += deployment_UpdateCompleted;
 				deployment.UpdateProgressChanged += deployment_UpdateProgressChanged;
 				timer = new Timer(timer_Tick, null, TimeSpan.FromMinutes(20), TimeSpan.FromMinutes(20));
 			}
@@ -71,7 +71,8 @@ namespace ZeroKLobby.Notifications
 
 		public void DetailClicked(NotifyBarContainer container)
 		{
-			Application.Restart();
+      Application.Restart();
+      System.Windows.Application.Current.Shutdown();
 		}
 
 		public Control GetControl()

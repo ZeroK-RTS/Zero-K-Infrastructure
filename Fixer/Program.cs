@@ -23,6 +23,7 @@ namespace Fixer
         var db = new ZkDataContext();
         foreach (var r in db.Resources.Where(x=>x.LastChange == null)) r.LastChange = DateTime.UtcNow;
         db.SubmitChanges();
+        return;
 
         foreach (var resource in db.Resources.Where(x => x.TypeID == ResourceType.Map ))//&&x.MapSizeSquared == null))
         {

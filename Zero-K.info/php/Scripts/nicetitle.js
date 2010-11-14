@@ -206,7 +206,7 @@ function showNiceTitle(e) {
 	CURRENT_NICE_TITLE = d;
 
 	var asyncMode = nicetitle.charAt(0) == '$';
-	if (!asyncMode) $(nicetitle).appendTo(d);
+	if (!asyncMode) $("<span>" + nicetitle + "</span>").appendTo(d);
 	else  {
 		if (cachedTooltips[nicetitle] != null) {
 			$(cachedTooltips[nicetitle]).appendTo(d);

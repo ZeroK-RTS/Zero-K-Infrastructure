@@ -58,7 +58,7 @@ Download: <select name="isDownloadable">
     <option value='0'>Not verified</option>
   </select>
 <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)'>
-Needs tagging: <input type='checkbox' name='needsTagging' />
+Needs tagging: @Html.CheckBox("needsTagging")
 </span>
 <br />
 Name or author: @Html.TextBox("search")
