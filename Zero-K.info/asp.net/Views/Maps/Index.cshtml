@@ -1,4 +1,4 @@
-﻿@model IQueryable<ZkData.Resource>
+﻿@model ZeroKWeb.Controllers.MapsController.MapIndexData
 @{
   Page.Title = "Zero-K maps";
 }
@@ -53,9 +53,9 @@ Special:
   </select>
 </span>
 Download: <select name="isDownloadable">
-    <option>Any</option>
-    <option value='true' selected>Downloadable</option>
-    <option value='false'>Not verified</option>
+    <option value='-1'>Any</option>
+    <option value='1' selected>Downloadable</option>
+    <option value='0'>Not verified</option>
   </select>
 <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)'>
 Needs tagging: <input type='checkbox' name='needsTagging' />
@@ -69,28 +69,28 @@ Name or author: @Html.TextBox("search")
     <td>
       <div id='ajaxScrollTarget'>
         <b>Latest maps</b><br />
-        @{Html.RenderPartial("MapTileList", Model);}
+        @{Html.RenderPartial("MapTileList", Model.Latest);}
       </div>
     </td>
     <td width="250" valign="top" align="left">
       <h3>
-        Highest rated (TODO)</h3>
+        Highest rated</h3>
       <ul>
-        @foreach (var r in Model.Take(15)) {
+        @foreach (var r in Model.TopRated.Take(15)) {
           <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
         }
       </ul>
       <h3>
-        Popular this week (TODO)</h3>
+        Last comments</h3>
       <ul>
-        @foreach (var r in Model.Take(15)) {
+        @foreach (var r in Model.LastComments.Take(15)) {
           <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
         }
       </ul>
       <h3>
-        Most played (TODO)</h3>
+        Most downloads</h3>
       <ul>
-        @foreach (var r in Model.Take(15)) {
+        @foreach (var r in Model.MostDownloads.Take(15)) {
           <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
         }
       </ul>

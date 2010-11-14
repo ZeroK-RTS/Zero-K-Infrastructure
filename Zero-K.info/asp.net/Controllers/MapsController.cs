@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Xml.Serialization;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
+using ZeroKWeb;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -43,8 +44,8 @@ namespace ZeroKWeb.Controllers
                               int? hills,
                               int? size,
                               bool? elongated,
-                              bool? isDownloadable,
                               bool? needsTagging,
+                              int? isDownloadable = 1,
                               int? special = 0)
     {
       var db = new ZkDataContext();
@@ -68,8 +69,8 @@ namespace ZeroKWeb.Controllers
             x.MapWaterLevel == null);
       }
 
-      if (isDownloadable == true) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
-      else if (isDownloadable == false) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
+      if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
+      else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
       if (special != -1) ret = ret.Where(x => x.MapIsSpecial == (special == 1));
       if (ffa.HasValue) ret = ret.Where(x => x.MapIsFfa == ffa);
       if (sea.HasValue) ret = ret.Where(x => x.MapWaterLevel == sea);
@@ -85,7 +86,13 @@ namespace ZeroKWeb.Controllers
       if (offset != null) ret = ret.Skip(offset.Value);
       ret = ret.Take(Global.AjaxScrollCount);
 
-      if (!offset.HasValue) return View(ret);
+      if (!offset.HasValue) return View(new MapIndexData {
+        Latest = ret,
+        LastComments = db.Resources.Where(x=>x.TypeID == ResourceType.Map && x.ForumThreadID != null).OrderByDescending(x=>x.ForumThread.LastPost),
+        TopRated = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapRatingCount > 0).OrderByDescending(x => x.MapRatingSum / x.MapRatingCount),
+        MostDownloads = db.Resources.Where(x => x.TypeID == ResourceType.Map).OrderByDescending(x => x.DownloadCount)
+      });
+
       else
       {
         if (ret.Any()) return View("MapTileList", ret);
@@ -163,6 +170,16 @@ namespace ZeroKWeb.Controllers
 
       return data;
     }
+    
+
+    public class MapIndexData
+    {
+      public IQueryable<Resource> Latest;
+      public IQueryable<Resource> TopRated;
+      public IQueryable<Resource> LastComments;
+      public IQueryable<Resource> MostDownloads;
+    }
+
 
     public class MapDetailData
     {

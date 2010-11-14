@@ -222,5 +222,10 @@ namespace ZeroKLobby
 				return string.Join("/", Path);
 			}
 		}
+
+	  void MapPage_Click(object sender, RoutedEventArgs e)
+	  {
+	    Path = GetLastPathStartingWith("http://zero-k.info/Maps.mvc");
+	  }
 	}
 }

@@ -82,6 +82,12 @@ div#footer
 	width:16px;height:16px;vertical-align:middle;
 }
 
+.icon32 
+{
+  width:32px;
+  height: 32px; 
+}
+
 .flag
 {
 	margin:0;

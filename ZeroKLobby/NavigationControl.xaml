@@ -14,6 +14,7 @@
       <Button Click="BattleListPage_Click">Battles</Button>
       <Button Click="ChatPage_Click">Chat</Button>
       <Button Click="HelpPage_Click">Help</Button>
+      <Button Click="MapPage_Click">Maps</Button>
       <Button Click="WidgetsPage_Click">Widgets</Button>
       <Button Click="DownloaderPage_Click">Rapid</Button>
       <Button Click="SettingsPage_Click">Settings</Button>

@@ -6,6 +6,7 @@ using System.Windows.Navigation;
 using ZeroKLobby.Notifications;
 using ZkData;
 using Control = System.Windows.Controls.Control;
+using Cursors = System.Windows.Input.Cursors;
 using UserControl = System.Windows.Controls.UserControl;
 using WebBrowser = System.Windows.Controls.WebBrowser;
 
@@ -59,7 +60,8 @@ namespace ZeroKLobby.MicroLobby
 		void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-			if (navigatingTo != e.Uri.ToString())
+	  
+      if (navigatingTo != e.Uri.ToString())
 			{
 				navigatingTo = e.Uri.ToString();
 				if (navigatingTo.Contains("@")) e.Cancel = true;
