@@ -19,7 +19,7 @@ namespace ZeroKWeb.Controllers
                               int? size,
                               bool? elongated,
                               bool? isDownloadable,
-                              bool? special)
+                              int? special =0)
     {
       var db = new ZkDataContext();
 
@@ -35,7 +35,7 @@ namespace ZeroKWeb.Controllers
 
       if (isDownloadable == true) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
       else if (isDownloadable == false) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
-      if (special.HasValue) ret = ret.Where(x => x.MapIsSpecial == special);
+      if (special != -1) ret = ret.Where(x => x.MapIsSpecial == (special ==1));
       if (ffa.HasValue) ret = ret.Where(x => x.MapIsFfa == ffa);
       if (sea.HasValue) ret = ret.Where(x => x.MapWaterLevel == sea);
       if (hills.HasValue) ret = ret.Where(x => x.MapHills == hills);
