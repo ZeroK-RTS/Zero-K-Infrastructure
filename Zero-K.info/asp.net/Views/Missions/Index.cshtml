@@ -5,10 +5,10 @@
 }
 
 <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
-  @Html.CheckBox("sp", true) 
-  Singleplayer   @Html.CheckBox("coop", true) 
-  Coop   @Html.CheckBox("adversarial", true) 
-  Adversarial  @Html.TextBox("search", Model.SearchString)
+  <span title="Missions for one player">@Html.CheckBox("sp", true) Singleplayer</span>
+  <span title="Missions where players fight together versus computer">@Html.CheckBox("coop", true) Coop</span>
+  <span title="Missions where players fight each other">@Html.CheckBox("adversarial", true) Adversarial</span>
+  @Html.TextBox("search", Model.SearchString)
   <input type="submit" id="submit" value="Search" />
 </form>
 

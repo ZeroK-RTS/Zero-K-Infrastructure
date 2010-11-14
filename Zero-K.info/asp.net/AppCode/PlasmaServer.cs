@@ -183,6 +183,7 @@ namespace ZeroKWeb
     {
       var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
       Utils.SafeDelete(String.Format("{0}.minimap.jpg", file));
+      Utils.SafeDelete(String.Format("{0}.thumbnail.jpg", file));
       Utils.SafeDelete(String.Format("{0}.heightmap.jpg", file));
       Utils.SafeDelete(String.Format("{0}.metalmap.jpg", file));
       Utils.SafeDelete(String.Format("{0}.metadata.xml.gz", file));

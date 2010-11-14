@@ -7,6 +7,6 @@
 @foreach (var resource in Model) {
   <div class='mission left'>
     <b>@resource.InternalName</b><br />
-    <img src='/Resources/@(PlasmaShared.Utils.EscapePath(resource.InternalName)).minimap.jpg' width='96' height='96'/>
+    <span  <img src='http://zero-k.info/Resources/@resource.ThumbnailName'/>
   </div>
 }
