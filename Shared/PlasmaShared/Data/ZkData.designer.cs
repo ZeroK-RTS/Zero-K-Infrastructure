@@ -70,6 +70,9 @@ namespace ZkData
     partial void InsertForumPost(ForumPost instance);
     partial void UpdateForumPost(ForumPost instance);
     partial void DeleteForumPost(ForumPost instance);
+    partial void InsertResourceRating(ResourceRating instance);
+    partial void UpdateResourceRating(ResourceRating instance);
+    partial void DeleteResourceRating(ResourceRating instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -403,6 +406,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<ForumPost>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ResourceRating> ResourceRatings
+		{
+			get
+			{
+				return this.GetTable<ResourceRating>();
 			}
 		}
 	}
@@ -4959,6 +4970,8 @@ namespace ZkData
 		
 		private EntitySet<ForumPost> _ForumPosts;
 		
+		private EntitySet<ResourceRating> _ResourceRatings;
+		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -5385,6 +5398,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ResourceRating", Storage="_ResourceRatings", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		public EntitySet<ResourceRating> ResourceRatings
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ResourceRatings.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ResourceRatings;
+			}
+			set
+			{
+				this._ResourceRatings.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -5477,6 +5509,18 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_ResourceRatings(ResourceRating entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_ResourceRatings(ResourceRating entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -5485,6 +5529,7 @@ namespace ZkData
 			this._MissionScores = new EntitySet<MissionScore>(new Action<MissionScore>(this.attach_MissionScores), new Action<MissionScore>(this.detach_MissionScores));
 			this._Ratings = new EntitySet<Rating>(new Action<Rating>(this.attach_Ratings), new Action<Rating>(this.detach_Ratings));
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
+			this._ResourceRatings = new EntitySet<ResourceRating>(new Action<ResourceRating>(this.attach_ResourceRatings), new Action<ResourceRating>(this.detach_ResourceRatings));
 			OnCreated();
 		}
 		
@@ -7041,11 +7086,21 @@ namespace ZkData
 		
 		private System.Nullable<int> _MapHills;
 		
+		private string _AuthorName;
+		
+		private System.Nullable<int> _MapRatingCount;
+		
+		private System.Nullable<int> _MapRatingSum;
+		
+		private System.Nullable<bool> _MapIsAssymetrical;
+		
 		private EntitySet<ResourceDependency> _ResourceDependencies;
 		
 		private EntitySet<ResourceContentFile> _ResourceContentFiles;
 		
 		private EntitySet<ResourceSpringHash> _ResourceSpringHashes;
+		
+		private EntitySet<ResourceRating> _ResourceRatings;
 		
 		private EntityRef<Mission> _Mission;
 		
@@ -7083,6 +7138,14 @@ namespace ZkData
     partial void OnMapIsFfaChanged();
     partial void OnMapHillsChanging(System.Nullable<int> value);
     partial void OnMapHillsChanged();
+    partial void OnAuthorNameChanging(string value);
+    partial void OnAuthorNameChanged();
+    partial void OnMapRatingCountChanging(System.Nullable<int> value);
+    partial void OnMapRatingCountChanged();
+    partial void OnMapRatingSumChanging(System.Nullable<int> value);
+    partial void OnMapRatingSumChanged();
+    partial void OnMapIsAssymetricalChanging(System.Nullable<bool> value);
+    partial void OnMapIsAssymetricalChanged();
     #endregion
 		
 		public Resource()
@@ -7388,8 +7451,92 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AuthorName", DbType="nvarchar(200)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public string AuthorName
+		{
+			get
+			{
+				return this._AuthorName;
+			}
+			set
+			{
+				if ((this._AuthorName != value))
+				{
+					this.OnAuthorNameChanging(value);
+					this.SendPropertyChanging();
+					this._AuthorName = value;
+					this.SendPropertyChanged("AuthorName");
+					this.OnAuthorNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapRatingCount", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public System.Nullable<int> MapRatingCount
+		{
+			get
+			{
+				return this._MapRatingCount;
+			}
+			set
+			{
+				if ((this._MapRatingCount != value))
+				{
+					this.OnMapRatingCountChanging(value);
+					this.SendPropertyChanging();
+					this._MapRatingCount = value;
+					this.SendPropertyChanged("MapRatingCount");
+					this.OnMapRatingCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapRatingSum", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public System.Nullable<int> MapRatingSum
+		{
+			get
+			{
+				return this._MapRatingSum;
+			}
+			set
+			{
+				if ((this._MapRatingSum != value))
+				{
+					this.OnMapRatingSumChanging(value);
+					this.SendPropertyChanging();
+					this._MapRatingSum = value;
+					this.SendPropertyChanged("MapRatingSum");
+					this.OnMapRatingSumChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsAssymetrical", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		public System.Nullable<bool> MapIsAssymetrical
+		{
+			get
+			{
+				return this._MapIsAssymetrical;
+			}
+			set
+			{
+				if ((this._MapIsAssymetrical != value))
+				{
+					this.OnMapIsAssymetricalChanging(value);
+					this.SendPropertyChanging();
+					this._MapIsAssymetrical = value;
+					this.SendPropertyChanged("MapIsAssymetrical");
+					this.OnMapIsAssymetricalChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_ResourceDependencies", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<ResourceDependency> ResourceDependencies
 		{
 			get
@@ -7408,7 +7555,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_ResourceContentFiles", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<ResourceContentFile> ResourceContentFiles
 		{
 			get
@@ -7427,7 +7574,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_ResourceSpringHashes", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<ResourceSpringHash> ResourceSpringHashes
 		{
 			get
@@ -7442,6 +7589,25 @@ namespace ZkData
 			set
 			{
 				this._ResourceSpringHashes.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceRating", Storage="_ResourceRatings", ThisKey="ResourceID", OtherKey="ResourceID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		public EntitySet<ResourceRating> ResourceRatings
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ResourceRatings.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ResourceRatings;
+			}
+			set
+			{
+				this._ResourceRatings.Assign(value);
 			}
 		}
 		
@@ -7535,11 +7701,24 @@ namespace ZkData
 			entity.Resource = null;
 		}
 		
+		private void attach_ResourceRatings(ResourceRating entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource = this;
+		}
+		
+		private void detach_ResourceRatings(ResourceRating entity)
+		{
+			this.SendPropertyChanging();
+			entity.Resource = null;
+		}
+		
 		private void Initialize()
 		{
 			this._ResourceDependencies = new EntitySet<ResourceDependency>(new Action<ResourceDependency>(this.attach_ResourceDependencies), new Action<ResourceDependency>(this.detach_ResourceDependencies));
 			this._ResourceContentFiles = new EntitySet<ResourceContentFile>(new Action<ResourceContentFile>(this.attach_ResourceContentFiles), new Action<ResourceContentFile>(this.detach_ResourceContentFiles));
 			this._ResourceSpringHashes = new EntitySet<ResourceSpringHash>(new Action<ResourceSpringHash>(this.attach_ResourceSpringHashes), new Action<ResourceSpringHash>(this.detach_ResourceSpringHashes));
+			this._ResourceRatings = new EntitySet<ResourceRating>(new Action<ResourceRating>(this.attach_ResourceRatings), new Action<ResourceRating>(this.detach_ResourceRatings));
 			this._Mission = default(EntityRef<Mission>);
 			OnCreated();
 		}
@@ -8354,6 +8533,214 @@ namespace ZkData
 		{
 			this._Account = default(EntityRef<Account>);
 			this._ForumThread = default(EntityRef<ForumThread>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ResourceRating")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class ResourceRating : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ResourceID;
+		
+		private int _AccountID;
+		
+		private int _Rating;
+		
+		private EntityRef<Resource> _Resource;
+		
+		private EntityRef<Account> _Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnResourceIDChanging(int value);
+    partial void OnResourceIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnRatingChanging(int value);
+    partial void OnRatingChanged();
+    #endregion
+		
+		public ResourceRating()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResourceID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ResourceID
+		{
+			get
+			{
+				return this._ResourceID;
+			}
+			set
+			{
+				if ((this._ResourceID != value))
+				{
+					if (this._Resource.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnResourceIDChanging(value);
+					this.SendPropertyChanging();
+					this._ResourceID = value;
+					this.SendPropertyChanged("ResourceID");
+					this.OnResourceIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rating", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int Rating
+		{
+			get
+			{
+				return this._Rating;
+			}
+			set
+			{
+				if ((this._Rating != value))
+				{
+					this.OnRatingChanging(value);
+					this.SendPropertyChanging();
+					this._Rating = value;
+					this.SendPropertyChanged("Rating");
+					this.OnRatingChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceRating", Storage="_Resource", ThisKey="ResourceID", OtherKey="ResourceID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Resource Resource
+		{
+			get
+			{
+				return this._Resource.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._Resource.Entity;
+				if (((previousValue != value) 
+							|| (this._Resource.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resource.Entity = null;
+						previousValue.ResourceRatings.Remove(this);
+					}
+					this._Resource.Entity = value;
+					if ((value != null))
+					{
+						value.ResourceRatings.Add(this);
+						this._ResourceID = value.ResourceID;
+					}
+					else
+					{
+						this._ResourceID = default(int);
+					}
+					this.SendPropertyChanged("Resource");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ResourceRating", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.ResourceRatings.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.ResourceRatings.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Resource = default(EntityRef<Resource>);
+			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
 		

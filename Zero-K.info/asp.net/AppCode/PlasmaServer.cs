@@ -5,6 +5,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml.Serialization;
 using PlasmaShared;
@@ -223,6 +224,15 @@ namespace ZeroKWeb
         if (minimap != null)
         {
           var map = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(serializedData.Decompress()));
+
+          if (string.IsNullOrEmpty(resource.AuthorName)) {
+            if (!string.IsNullOrEmpty(map.Author)) resource.AuthorName = map.Author;
+            else {
+              var m = Regex.Match(map.Description, "by ([\\w]+)", RegexOptions.IgnoreCase);
+              if (m.Success) resource.AuthorName = m.Groups[1].Value;
+            }
+          }
+          
           if (resource.MapIsSpecial == null) resource.MapIsSpecial = map.ExtractorRadius > 120 || map.MaxWind > 40;
           resource.MapSizeSquared = (map.Size.Width/512)*(map.Size.Height/512);
           resource.MapSizeRatio = (float)map.Size.Width/map.Size.Height;

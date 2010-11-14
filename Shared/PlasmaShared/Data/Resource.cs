@@ -12,6 +12,14 @@ namespace ZkData
     {
       LastChange = DateTime.UtcNow;
     }
+    public double? MapRating
+    {
+      get
+      {
+        if (MapRatingCount > 0) return MapRatingSum/MapRatingCount;
+        else return null;
+      }
+    }
 
     public string ThumbnailName
     {

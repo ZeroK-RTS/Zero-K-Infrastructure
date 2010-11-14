@@ -1,12 +1,52 @@
 ﻿@model IQueryable<ZkData.Resource>
-
 @{
   Layout = "";
 }
-
-@foreach (var resource in Model) {
+@foreach (var m in Model) {
   <div class='mission left'>
-    <b>@resource.InternalName</b><br />
-    <span style="margin:0; padding:0; border:1px dashed gray; display:table-cell; text-align:center; vertical-align:middle; width:96px; height:96px;"><img src='http://zero-k.info/Resources/@resource.ThumbnailName' style="margin:0px;padding:0px;"/> </span>
+    <b>@m.InternalName</b><br />
+    @m.AuthorName<br />
+    <table>
+      <tr>
+        <td>
+          <span style="margin: 0; padding: 0; border: 1px dashed gray; display: table-cell;
+            text-align: center; vertical-align: middle; width: 96px; height: 96px;">
+            <img src='http://zero-k.info/Resources/@m.ThumbnailName' style="margin:0px;padding:0px;"/>
+          </span>
+        </td>
+        <td valign='top'>
+          <table>
+            <tr>
+              <td>
+                Rating:
+              </td>
+              <td>@Html.Stars(StarType.GreenStarSmall, m.MapRating)
+              </td>
+            </tr>
+            <tr>
+              <td colspan='2'>
+                <small>
+                  @if (m.MapIsFfa == true) {
+                    <img src='/img/map_tags/ffa.gif' style="width:32px; height: 32px" alt="FFA"/>
+                  }
+                  @if (m.MapWaterLevel > 0) {
+                    <img src='/img/map_tags/sea@(m.MapWaterLevel).gif' style="width:32px; height: 32px"/>
+                  }
+                  @if (m.MapHills > 0) {
+                    <img src='/img/map_tags/hill@(m.MapHills).gif' style="width:32px; height: 32px"/>
+                  }
+                  @if (m.MapIsSpecial == true) {
+                    <img src='/img/map_tags/special.gif' style="width:32px; height: 32px" alt="Special"/>
+                  }
+                  @if (m.MapIsAssymetrical == true) {
+                    <img src='/img/map_tags/assymetrical.gif' style="width:32px; height: 32px" alt="Assymetrical"/>
+                  }
+                </small>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </div>
 }

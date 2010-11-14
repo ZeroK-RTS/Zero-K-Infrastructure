@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="ftp://zero-k.info/PlasmaServer" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="bin/MonoTorrent.dll" publishTime="11/05/2010 01:48:18" />
+    <file relUrl="ResourceDetail.aspx" publishTime="11/14/2010 02:54:22" />
+    <file relUrl="Web.config" publishTime="11/14/2010 02:54:22" />
+    <file relUrl="Service.asmx" publishTime="11/14/2010 02:54:22" />
+    <file relUrl="bin/MonoTorrent.pdb" publishTime="11/05/2010 01:48:18" />
+    <file relUrl="bin/PlasmaServer.dll" publishTime="11/14/2010 03:33:09" />
+    <file relUrl="Default.aspx" publishTime="11/14/2010 02:54:22" />
+    <file relUrl="bin/PlasmaShared.dll" publishTime="11/14/2010 03:33:09" />
+    <file relUrl="bin/PlasmaServer.pdb" publishTime="11/14/2010 03:33:09" />
+    <file relUrl="bin/PlasmaShared.pdb" publishTime="11/14/2010 03:33:09" />
+    <file relUrl="Test.aspx" publishTime="11/14/2010 02:54:22" />
+  </publishProfile>
+</publishData>
