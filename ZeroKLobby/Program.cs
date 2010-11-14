@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Principal;
 using System.Text;
@@ -17,6 +18,7 @@ using PlasmaShared.UnitSyncLib;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZeroKLobby.ToolTips;
+using ZkData;
 using Application = System.Windows.Forms.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
 using Point = System.Windows.Point;
@@ -84,10 +86,6 @@ namespace ZeroKLobby
 		[STAThread]
 		public static bool Main(string[] args)
 		{
-      
-
-
-      
       try
 			{
         Trace.Listeners.Add(new ConsoleTraceListener());

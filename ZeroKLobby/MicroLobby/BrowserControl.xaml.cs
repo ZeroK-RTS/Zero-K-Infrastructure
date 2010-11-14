@@ -63,7 +63,7 @@ namespace ZeroKLobby.MicroLobby
 			{
 				navigatingTo = e.Uri.ToString();
 				if (navigatingTo.Contains("@")) e.Cancel = true;
-				Program.MainWindow.navigationControl.Path = e.Uri.ToString();
+				Program.MainWindow.navigationControl.Path = Uri.UnescapeDataString(e.Uri.ToString());
 			}
 		}
 

@@ -181,7 +181,7 @@ namespace ZeroKLobby
 				if (idx > -1)
 				{
 					var command = actionString.Substring(0, idx);
-					var arg = Uri.UnescapeDataString(actionString.Substring(idx + 1));
+					var arg = actionString.Substring(idx + 1);
 					switch (command)
 					{
 						case "start_mission":

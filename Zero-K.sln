@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MissionEditor", "MissionEdi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "asp.net", "Zero-K.info\asp.net\asp.net.csproj", "{06EE7D11-6403-4ABF-AD73-24F8394BA69B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlasmaServer", "PlasmaServer\PlasmaServer\PlasmaServer.csproj", "{7A16F1C2-7230-493F-A702-35BB0F6CEA53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -207,6 +209,16 @@ Global
 		{06EE7D11-6403-4ABF-AD73-24F8394BA69B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{06EE7D11-6403-4ABF-AD73-24F8394BA69B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{06EE7D11-6403-4ABF-AD73-24F8394BA69B}.Release|x86.ActiveCfg = Release|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7A16F1C2-7230-493F-A702-35BB0F6CEA53}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
