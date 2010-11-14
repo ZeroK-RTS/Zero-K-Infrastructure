@@ -16,18 +16,6 @@ namespace ZeroKLobby.MicroLobby
 			{
 				new GameInfo
 				{
-					Shortcut = "BA",
-					FullName = "Balanced Annihilation",
-					Channel = "ba",
-					Regex = "Balanced Annihilation.*",
-					Url = "http://springrts.com/phpbb/viewforum.php?f=44",
-					RapidTag = "ba:latest",
-					Image = "/Resources/GameLogos/ba.jpg",
-					Description =
-						"BA is the most popular game for the Spring engine and is designed for both 1v1 gameplay and large team games. BA is a mature mod and new versions feature only minor balance tweaks.",
-				},
-				new GameInfo
-				{
 					Shortcut = "CA",
 					FullName = "Complete Annihilation",
 					Channel = "ca",
@@ -38,6 +26,19 @@ namespace ZeroKLobby.MicroLobby
 					Description =
 						"Complete Annihilation is a regularly updated game that is often regarded as a showcase of what the Spring Engine can do. It's faster and has a focus on strategic decisions and unit tactics. Complete Annihilation is an open source project with democratic decision making.",
 				},
+				new GameInfo
+				{
+					Shortcut = "BA",
+					FullName = "Balanced Annihilation",
+					Channel = "ba",
+					Regex = "Balanced Annihilation.*",
+					Url = "http://springrts.com/phpbb/viewforum.php?f=44",
+					RapidTag = "ba:latest",
+					Image = "/Resources/GameLogos/ba.jpg",
+					Description =
+						"BA is the most popular game for the Spring engine and is designed for both 1v1 gameplay and large team games. BA is a mature mod and new versions feature only minor balance tweaks.",
+				},
+
 				new GameInfo
 				{
 					Shortcut = "NOTA",

@@ -194,6 +194,15 @@ namespace ZeroKLobby
 						case "start_script_mission":
 							StartScriptMission(arg);
 							break;
+
+            case "select_map":
+              if (Program.TasClient.MyBattle != null) Program.TasClient.Say(TasClient.SayPlace.Battle, null, "!map " + arg, false);
+              else
+              {
+                string name = String.Format("{0}'s game", Program.Conf.LobbyPlayerName);
+                SpawnAutohost(StartPage.GameList.First().RapidTag, name, null, false, 0, 0, 0, new List<string> { "!map " + arg });
+              }
+              break;
 					}
 				}
 			}
