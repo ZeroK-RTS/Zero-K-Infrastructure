@@ -10,7 +10,6 @@ namespace ZeroKWeb.Controllers
   {
     //
     // GET: /Maps/
-
     public ActionResult Index(string search,
                               int? offset,
                               bool? ffa,
@@ -20,7 +19,7 @@ namespace ZeroKWeb.Controllers
                               int? size,
                               bool? elongated,
                               bool? isDownloadable,
-                              bool? special = false)
+                              bool? special)
     {
       var db = new ZkDataContext();
 
