@@ -70,9 +70,9 @@ namespace ZkData
     partial void InsertForumPost(ForumPost instance);
     partial void UpdateForumPost(ForumPost instance);
     partial void DeleteForumPost(ForumPost instance);
-    partial void InsertResourceRating(ResourceRating instance);
-    partial void UpdateResourceRating(ResourceRating instance);
-    partial void DeleteResourceRating(ResourceRating instance);
+    partial void InsertMapRating(MapRating instance);
+    partial void UpdateMapRating(MapRating instance);
+    partial void DeleteMapRating(MapRating instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -409,11 +409,11 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<ResourceRating> ResourceRatings
+		public System.Data.Linq.Table<MapRating> MapRatings
 		{
 			get
 			{
-				return this.GetTable<ResourceRating>();
+				return this.GetTable<MapRating>();
 			}
 		}
 	}
@@ -4964,13 +4964,15 @@ namespace ZkData
 		
 		private EntitySet<LobbyMessage> _LobbyMessagesByTargetAccountID;
 		
+		private EntitySet<Resource> _Resources;
+		
 		private EntitySet<MissionScore> _MissionScores;
 		
 		private EntitySet<Rating> _Ratings;
 		
 		private EntitySet<ForumPost> _ForumPosts;
 		
-		private EntitySet<ResourceRating> _ResourceRatings;
+		private EntitySet<MapRating> _MapRatings;
 		
 		private bool serializing;
 		
@@ -5341,8 +5343,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MissionScore", Storage="_MissionScores", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Resource", Storage="_Resources", ThisKey="AccountID", OtherKey="TaggedByAccountID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		public EntitySet<Resource> Resources
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Resources.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Resources;
+			}
+			set
+			{
+				this._Resources.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MissionScore", Storage="_MissionScores", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -5361,7 +5382,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Rating", Storage="_Ratings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<Rating> Ratings
 		{
 			get
@@ -5380,7 +5401,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPost", Storage="_ForumPosts", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -5398,22 +5419,22 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ResourceRating", Storage="_ResourceRatings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
-		public EntitySet<ResourceRating> ResourceRatings
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MapRating", Storage="_MapRatings", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		public EntitySet<MapRating> MapRatings
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._ResourceRatings.HasLoadedOrAssignedValues == false)))
+							&& (this._MapRatings.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._ResourceRatings;
+				return this._MapRatings;
 			}
 			set
 			{
-				this._ResourceRatings.Assign(value);
+				this._MapRatings.Assign(value);
 			}
 		}
 		
@@ -5473,6 +5494,18 @@ namespace ZkData
 			entity.AccountByTargetAccountID = null;
 		}
 		
+		private void attach_Resources(Resource entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_Resources(Resource entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void attach_MissionScores(MissionScore entity)
 		{
 			this.SendPropertyChanging();
@@ -5509,13 +5542,13 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
-		private void attach_ResourceRatings(ResourceRating entity)
+		private void attach_MapRatings(MapRating entity)
 		{
 			this.SendPropertyChanging();
 			entity.Account = this;
 		}
 		
-		private void detach_ResourceRatings(ResourceRating entity)
+		private void detach_MapRatings(MapRating entity)
 		{
 			this.SendPropertyChanging();
 			entity.Account = null;
@@ -5526,10 +5559,11 @@ namespace ZkData
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
 			this._LobbyMessagesBySourceAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesBySourceAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesBySourceAccountID));
 			this._LobbyMessagesByTargetAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesByTargetAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesByTargetAccountID));
+			this._Resources = new EntitySet<Resource>(new Action<Resource>(this.attach_Resources), new Action<Resource>(this.detach_Resources));
 			this._MissionScores = new EntitySet<MissionScore>(new Action<MissionScore>(this.attach_MissionScores), new Action<MissionScore>(this.detach_MissionScores));
 			this._Ratings = new EntitySet<Rating>(new Action<Rating>(this.attach_Ratings), new Action<Rating>(this.detach_Ratings));
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
-			this._ResourceRatings = new EntitySet<ResourceRating>(new Action<ResourceRating>(this.attach_ResourceRatings), new Action<ResourceRating>(this.detach_ResourceRatings));
+			this._MapRatings = new EntitySet<MapRating>(new Action<MapRating>(this.attach_MapRatings), new Action<MapRating>(this.detach_MapRatings));
 			OnCreated();
 		}
 		
@@ -7094,15 +7128,23 @@ namespace ZkData
 		
 		private System.Nullable<bool> _MapIsAssymetrical;
 		
+		private System.Nullable<int> _TaggedByAccountID;
+		
+		private System.Nullable<int> _MapWidth;
+		
+		private System.Nullable<int> _MapHeight;
+		
 		private EntitySet<ResourceDependency> _ResourceDependencies;
 		
 		private EntitySet<ResourceContentFile> _ResourceContentFiles;
 		
 		private EntitySet<ResourceSpringHash> _ResourceSpringHashes;
 		
-		private EntitySet<ResourceRating> _ResourceRatings;
+		private EntitySet<MapRating> _MapRatings;
 		
 		private EntityRef<Mission> _Mission;
+		
+		private EntityRef<Account> _Account;
 		
 		private bool serializing;
 		
@@ -7146,6 +7188,12 @@ namespace ZkData
     partial void OnMapRatingSumChanged();
     partial void OnMapIsAssymetricalChanging(System.Nullable<bool> value);
     partial void OnMapIsAssymetricalChanged();
+    partial void OnTaggedByAccountIDChanging(System.Nullable<int> value);
+    partial void OnTaggedByAccountIDChanged();
+    partial void OnMapWidthChanging(System.Nullable<int> value);
+    partial void OnMapWidthChanged();
+    partial void OnMapHeightChanging(System.Nullable<int> value);
+    partial void OnMapHeightChanged();
     #endregion
 		
 		public Resource()
@@ -7535,8 +7583,75 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TaggedByAccountID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		public System.Nullable<int> TaggedByAccountID
+		{
+			get
+			{
+				return this._TaggedByAccountID;
+			}
+			set
+			{
+				if ((this._TaggedByAccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTaggedByAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._TaggedByAccountID = value;
+					this.SendPropertyChanged("TaggedByAccountID");
+					this.OnTaggedByAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapWidth", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		public System.Nullable<int> MapWidth
+		{
+			get
+			{
+				return this._MapWidth;
+			}
+			set
+			{
+				if ((this._MapWidth != value))
+				{
+					this.OnMapWidthChanging(value);
+					this.SendPropertyChanging();
+					this._MapWidth = value;
+					this.SendPropertyChanged("MapWidth");
+					this.OnMapWidthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapHeight", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		public System.Nullable<int> MapHeight
+		{
+			get
+			{
+				return this._MapHeight;
+			}
+			set
+			{
+				if ((this._MapHeight != value))
+				{
+					this.OnMapHeightChanging(value);
+					this.SendPropertyChanging();
+					this._MapHeight = value;
+					this.SendPropertyChanged("MapHeight");
+					this.OnMapHeightChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_ResourceDependencies", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public EntitySet<ResourceDependency> ResourceDependencies
 		{
 			get
@@ -7555,7 +7670,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_ResourceContentFiles", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<ResourceContentFile> ResourceContentFiles
 		{
 			get
@@ -7574,7 +7689,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_ResourceSpringHashes", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
 		public EntitySet<ResourceSpringHash> ResourceSpringHashes
 		{
 			get
@@ -7592,22 +7707,22 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceRating", Storage="_ResourceRatings", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
-		public EntitySet<ResourceRating> ResourceRatings
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_MapRating", Storage="_MapRatings", ThisKey="ResourceID", OtherKey="ResourceID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		public EntitySet<MapRating> MapRatings
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._ResourceRatings.HasLoadedOrAssignedValues == false)))
+							&& (this._MapRatings.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._ResourceRatings;
+				return this._MapRatings;
 			}
 			set
 			{
-				this._ResourceRatings.Assign(value);
+				this._MapRatings.Assign(value);
 			}
 		}
 		
@@ -7641,6 +7756,40 @@ namespace ZkData
 						this._MissionID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Mission");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Resource", Storage="_Account", ThisKey="TaggedByAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.Resources.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.Resources.Add(this);
+						this._TaggedByAccountID = value.AccountID;
+					}
+					else
+					{
+						this._TaggedByAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Account");
 				}
 			}
 		}
@@ -7701,13 +7850,13 @@ namespace ZkData
 			entity.Resource = null;
 		}
 		
-		private void attach_ResourceRatings(ResourceRating entity)
+		private void attach_MapRatings(MapRating entity)
 		{
 			this.SendPropertyChanging();
 			entity.Resource = this;
 		}
 		
-		private void detach_ResourceRatings(ResourceRating entity)
+		private void detach_MapRatings(MapRating entity)
 		{
 			this.SendPropertyChanging();
 			entity.Resource = null;
@@ -7718,8 +7867,9 @@ namespace ZkData
 			this._ResourceDependencies = new EntitySet<ResourceDependency>(new Action<ResourceDependency>(this.attach_ResourceDependencies), new Action<ResourceDependency>(this.detach_ResourceDependencies));
 			this._ResourceContentFiles = new EntitySet<ResourceContentFile>(new Action<ResourceContentFile>(this.attach_ResourceContentFiles), new Action<ResourceContentFile>(this.detach_ResourceContentFiles));
 			this._ResourceSpringHashes = new EntitySet<ResourceSpringHash>(new Action<ResourceSpringHash>(this.attach_ResourceSpringHashes), new Action<ResourceSpringHash>(this.detach_ResourceSpringHashes));
-			this._ResourceRatings = new EntitySet<ResourceRating>(new Action<ResourceRating>(this.attach_ResourceRatings), new Action<ResourceRating>(this.detach_ResourceRatings));
+			this._MapRatings = new EntitySet<MapRating>(new Action<MapRating>(this.attach_MapRatings), new Action<MapRating>(this.detach_MapRatings));
 			this._Mission = default(EntityRef<Mission>);
+			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
 		
@@ -8544,9 +8694,9 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ResourceRating")]
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MapRating")]
 	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class ResourceRating : INotifyPropertyChanging, INotifyPropertyChanged
+	public partial class MapRating : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
@@ -8573,7 +8723,7 @@ namespace ZkData
     partial void OnRatingChanged();
     #endregion
 		
-		public ResourceRating()
+		public MapRating()
 		{
 			this.Initialize();
 		}
@@ -8649,7 +8799,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceRating", Storage="_Resource", ThisKey="ResourceID", OtherKey="ResourceID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_MapRating", Storage="_Resource", ThisKey="ResourceID", OtherKey="ResourceID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
 		public Resource Resource
 		{
 			get
@@ -8666,12 +8816,12 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._Resource.Entity = null;
-						previousValue.ResourceRatings.Remove(this);
+						previousValue.MapRatings.Remove(this);
 					}
 					this._Resource.Entity = value;
 					if ((value != null))
 					{
-						value.ResourceRatings.Add(this);
+						value.MapRatings.Add(this);
 						this._ResourceID = value.ResourceID;
 					}
 					else
@@ -8683,7 +8833,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ResourceRating", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MapRating", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
 		public Account Account
 		{
 			get
@@ -8700,12 +8850,12 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._Account.Entity = null;
-						previousValue.ResourceRatings.Remove(this);
+						previousValue.MapRatings.Remove(this);
 					}
 					this._Account.Entity = value;
 					if ((value != null))
 					{
-						value.ResourceRatings.Add(this);
+						value.MapRatings.Add(this);
 						this._AccountID = value.AccountID;
 					}
 					else

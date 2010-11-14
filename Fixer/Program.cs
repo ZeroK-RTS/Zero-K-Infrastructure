@@ -26,6 +26,9 @@ namespace Fixer
           var file = String.Format("{0}/{1}.metadata.xml.gz", @"d:\zero-k.info\www\Resources", resource.InternalName.EscapePath());
           var map = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(File.ReadAllBytes(file).Decompress()));
 
+          resource.MapWidth = map.Size.Width/512;
+          resource.MapHeight = map.Size.Height/512;
+
           if (string.IsNullOrEmpty(resource.AuthorName))
           {
           

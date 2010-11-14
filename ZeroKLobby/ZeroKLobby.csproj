@@ -49,6 +49,7 @@
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>2.6.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>

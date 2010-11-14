@@ -3,51 +3,61 @@
   Page.Title = "Zero-K maps";
 }
 <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
-<span title='Maps with special features, speedmetal, duck, greenfields etc'>Special:
-  <select name="special">
-    <option>Don't care</option>
-    <option value='false' selected>Normal</option>
-    <option value='true'>Special</option>
-  </select>
-</span>Sea:
+Size:
+<select name="size">
+  <option>Any</option>
+  <option value='1'>Small</option>
+  <option value='2'>Medium</option>
+  <option value='3'>Big</option>
+</select>
+Sea:
 <select name="sea">
-  <option>Don't care</option>
+  <option>Any</option>
   <option value="1">Land</option>
   <option value="2">Mixed</option>
   <option value="3">Sea</option>
 </select>
 Hills:
 <select name="hills">
-  <option>Don't care</option>
+  <option>Any</option>
   <option value="1">Flat</option>
   <option value="2">Hills</option>
   <option value="3">Mountains</option>
 </select>
+<span title='Maps suitable for Free-For-All games - multiple teams'>
 FFA:
 <select name="ffa">
-  <option>Don't care</option>
+  <option>Any</option>
   <option value='false'>Normal</option>
   <option value='true'>FFA</option>
 </select>
-Size:
-<select name="size">
-  <option>Don't care</option>
-  <option value='1'>Small</option>
-  <option value='2'>Medium</option>
-  <option value='3'>Big</option>
-</select>
+</span>
 Dimensions:
 <select name="elongated">
-  <option>Don't care</option>
+  <option>Any</option>
   <option value='false'>Square-like</option>
   <option value='true'>Elongated</option>
 </select>
 Assymetrical:
 <select name="assymetrical">
-  <option>Don't care</option>
+  <option>Any</option>
   <option value="false">Symmetrical</option>
   <option value="true">Assymetrical</option>
-</select><br />
+</select>
+<span title='Maps with special features, speedmetal, duck, greenfields etc'>
+Special:
+  <select name="special">
+    <option>Don't care</option>
+    <option value='false' selected>Normal</option>
+    <option value='true'>Special</option>
+  </select>
+</span>
+Download: <select name="isDownloadable">
+    <option>Any</option>
+    <option value='true' selected>Downloadable</option>
+    <option value='false'>Not verified</option>
+  </select>
+<br />
 Name or author: @Html.TextBox("search")
 <input type="submit" id="submit" value="Search" />
 </form>

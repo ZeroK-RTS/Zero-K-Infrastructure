@@ -236,6 +236,9 @@ namespace ZeroKWeb
           if (resource.MapIsSpecial == null) resource.MapIsSpecial = map.ExtractorRadius > 120 || map.MaxWind > 40;
           resource.MapSizeSquared = (map.Size.Width/512)*(map.Size.Height/512);
           resource.MapSizeRatio = (float)map.Size.Width/map.Size.Height;
+          resource.MapWidth = map.Size.Width/512;
+          resource.MapHeight = map.Size.Height/512;
+
 
           using (var im = Image.FromStream(new MemoryStream(minimap)))
           {
