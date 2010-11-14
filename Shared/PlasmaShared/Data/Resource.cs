@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using PlasmaShared;
@@ -8,8 +9,23 @@ namespace ZkData
 {
   partial class Resource
   {
+    public enum WaterLevel
+    {
+      Land = 1,
+      Mixed = 2,
+      Sea = 3
+    }
+
+    public enum Hill
+    {
+      Flat = 1,
+      Hills = 2,
+      Mountains = 3
+    }
+
     partial void OnCreated()
     {
+      
       LastChange = DateTime.UtcNow;
     }
     public double? MapRating
@@ -19,6 +35,26 @@ namespace ZkData
         if (MapRatingCount > 0) return MapRatingSum/MapRatingCount;
         else return null;
       }
+    }
+
+    public Size ScaledImageSize(int maxSize)
+    {
+      var s = new Size();
+      if (MapSizeRatio > 1)
+      {
+        s.Width = maxSize;
+        s.Height = (int)(maxSize/MapSizeRatio);
+      } else if (MapSizeRatio < 1)
+      {
+        s.Height = maxSize;
+        s.Width = (int)(maxSize*MapSizeRatio);
+      }
+      else
+      {
+        s.Width = maxSize;
+        s.Height = maxSize;
+      }
+      return s;
     }
 
     public string ThumbnailName

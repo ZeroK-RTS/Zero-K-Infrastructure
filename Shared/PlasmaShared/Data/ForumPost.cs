@@ -13,13 +13,6 @@ namespace ZkData
 			Created = DateTime.UtcNow;
 		}
 
-		partial void OnValidate(ChangeAction action)
-		{
-			if (action == ChangeAction.Insert || action== ChangeAction.Update)
-			{
-				ForumThread.LastPost = DateTime.UtcNow;
-			}
-		}
 
 	}
 }

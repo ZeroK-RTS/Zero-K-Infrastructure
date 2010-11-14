@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Web.Mvc.Html;
 using ZkData;
 
 namespace System.Web.Mvc
@@ -25,14 +24,24 @@ namespace System.Web.Mvc
     public static MvcHtmlString AccountAvatar(this HtmlHelper helper, int accountID)
     {
       var picList = (string[])HttpContext.Current.Application["unitpics"];
-      return
-        new MvcHtmlString(string.Format("<img src='/img/unitpics/{0}' class='avatar'>",
-                                        Path.GetFileName(picList[accountID%picList.Length])));
+      return new MvcHtmlString(string.Format("<img src='/img/unitpics/{0}' class='avatar'>", Path.GetFileName(picList[accountID%picList.Length])));
     }
 
     public static MvcHtmlString AccountAvatar(this HtmlHelper helper, Account account)
     {
       return AccountAvatar(helper, account.AccountID);
+    }
+
+    public static MvcHtmlString BoolSelect(this HtmlHelper helper, string name, bool? selected, string anyItem)
+    {
+      var sb = new StringBuilder();
+      sb.AppendFormat("<select name='{0}'>", helper.Encode(name));
+      if (anyItem != null) sb.AppendFormat("<option {1}>{0}</option>", helper.Encode(anyItem), selected == null ? "selected" : "");
+      sb.AppendFormat("<option value='True' {0}>Yes</option>", selected == true ? "selected" : "");
+      sb.AppendFormat("<option value='False' {0}>No</option>", selected == false ? "selected" : "");
+
+      sb.Append("</select>");
+      return new MvcHtmlString(sb.ToString());
     }
 
     public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account)
@@ -55,6 +64,23 @@ namespace System.Web.Mvc
       foreach (var line in lines) sb.AppendFormat("{0}<br/>", line);
       return new MvcHtmlString(sb.ToString());
     }
+
+    public static MvcHtmlString Select(this HtmlHelper helper, string name, Type etype, int? selected, string anyItem)
+    {
+      var sb = new StringBuilder();
+      sb.AppendFormat("<select name='{0}'>", helper.Encode(name));
+      var names = Enum.GetNames(etype);
+      var values = (int[])Enum.GetValues(etype);
+      if (anyItem != null) sb.AppendFormat("<option {1}>{0}</option>", helper.Encode(anyItem), selected == null ? "selected" : "");
+      for (var i = 0; i < names.Length; i++)
+        sb.AppendFormat("<option value='{0}' {2}>{1}</option>",
+                        helper.Encode(values[i]),
+                        helper.Encode(names[i]),
+                        selected == values[i] ? "selected" : "");
+      sb.Append("</select>");
+      return new MvcHtmlString(sb.ToString());
+    }
+
 
     public static MvcHtmlString Select(this HtmlHelper helper, string name, IEnumerable<SelectOption> items, string selected)
     {

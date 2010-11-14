@@ -53,14 +53,6 @@ namespace ZkData
 			return tags;
 		}
 
-		partial void OnValidate(System.Data.Linq.ChangeAction action)
-		{
-			if (action == ChangeAction.Insert)
-			{
-				if (ForumThread == null) ForumThread = new ForumThread() { Title = Name };
-			}
-		}
-
 		partial void OnCreated()
 		{
 			ModifiedTime = DateTime.UtcNow;

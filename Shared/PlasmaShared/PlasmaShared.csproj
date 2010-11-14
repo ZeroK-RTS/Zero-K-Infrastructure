@@ -94,6 +94,7 @@
     <Compile Include="Data\ForumThread.cs" />
     <Compile Include="Data\IAuthService.cs" />
     <Compile Include="Data\LobbyMessage.cs" />
+    <Compile Include="Data\MapRating.cs" />
     <Compile Include="Data\Mission.cs" />
     <Compile Include="Data\ProgramID.cs" />
     <Compile Include="Data\Resource.cs" />
@@ -107,6 +108,7 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
+    <Compile Include="Data\ZkDataContext.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
     <Compile Include="GlobalConst.cs" />

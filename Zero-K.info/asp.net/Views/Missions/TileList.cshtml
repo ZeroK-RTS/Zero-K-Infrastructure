@@ -2,35 +2,37 @@
 @{
   Layout = "";
 }
-
 @foreach (var mission in Model) {
-  <div id='@mission.MissionID' class='mission left' onclick='window.location="@Url.Action("Detail", new { id = mission.MissionID })"' title="$mission$@mission.MissionID" >
-    <b>@mission.Name</b><br />
-    @Html.PrintAccount(mission.Account)<br />
-    <img width='96' height='96' border='1' src='@Href(string.Format("~/img/missions/{0}.png", mission.MissionID))' class='left' />
-    <table>
-      <tr>
-        <td>
-          Rating:
-        </td>
-        <td>@Html.Stars(StarType.GreenStarSmall, mission.Rating)
-        </td>
-      </tr>
-      <tr>
-        <td>
-          Difficulty:
-        </td>
-        <td>@Html.Stars(StarType.RedSkull, mission.Difficulty)
-        </td>
-      </tr>
-      <tr>
-        <td colspan='2'>
-          <small>@Html.PrintLines(mission.GetPseudoTags())</small>
-        </td>
-      </tr>
-    </table>
-    @if (mission.TopScoreLine != null) {
-      <small><img src='/img/cup.png' class='icon16'>@mission.TopScoreLine</small>
-    }
-  </div>
+  <a href='@Url.Action("Detail", new { id = mission.MissionID })' style='color: White;'>
+    <div id='@mission.MissionID' class='mission left' title="$mission$@mission.MissionID" >
+      <b>@mission.Name</b><br />
+      @Html.PrintAccount(mission.Account)<br />
+      <img width='96' height='96' border='1' src='@Href(string.Format("~/img/missions/{0}.png", mission.MissionID))' class='left' />
+      <table>
+        <tr>
+          <td>
+            Rating:
+          </td>
+          <td>@Html.Stars(StarType.GreenStarSmall, mission.Rating)
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Difficulty:
+          </td>
+          <td>@Html.Stars(StarType.RedSkull, mission.Difficulty)
+          </td>
+        </tr>
+        <tr>
+          <td colspan='2'>
+            <small>@Html.PrintLines(mission.GetPseudoTags())</small>
+          </td>
+        </tr>
+      </table>
+      @if (mission.TopScoreLine != null) {
+        <small>
+          <img src='/img/cup.png' class='icon16'>@mission.TopScoreLine</small>
+      }
+    </div>
+  </a>
 }
