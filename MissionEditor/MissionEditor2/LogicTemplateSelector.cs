@@ -20,7 +20,6 @@ namespace MissionEditor2
 			// older templates, in MainWindow.xaml
 			if (item is ConsoleMessageAction) resourceName = "showConsoleMessageTemplate";
 			else if (item is GameStartedCondition) resourceName = "gameStartedConditionTemplate";
-			else if (item is TimeCondition) resourceName = "timeConditionTemplate";
 			else if (item is GameEndedCondition) resourceName = "gameEndedConditionTemplate";
 			else if (item is PlayerDiedCondition) resourceName = "playerDiedConditionTemplate";
 			else if (item is VictoryAction) resourceName = "victoryActionTemplate";
@@ -28,7 +27,6 @@ namespace MissionEditor2
 			else if (item is GuiMessageAction) resourceName = "guiMessageTemplate";
 			else if (item is UnitDestroyedCondition) resourceName = "unitDestroyedTemplate";
 			else if (item is DummyCondition || item is DummyAction || item is ConditionsFolder || item is ActionsFolder) resourceName = "dummyTemplate";
-			else if (item is SoundAction) resourceName = "soundTemplate";
 			else if (item is SunriseAction) resourceName = "sunriseTemplate";
 			else if (item is SunsetAction) resourceName = "sunsetTemplate";
 			else if (item is SendScoreAction) resourceName = "sendScoreTemplate";

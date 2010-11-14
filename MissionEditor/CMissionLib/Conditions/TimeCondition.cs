@@ -65,7 +65,7 @@ namespace CMissionLib.Conditions
 
 		public override string GetDefaultName()
 		{
-			return "Timer (Reapeating)";
+			return "Metronome Ticks";
 		}
 
 		void RaiseTimeChanged()

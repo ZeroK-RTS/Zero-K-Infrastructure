@@ -154,9 +154,10 @@ namespace MissionEditor2
 			addAction("Custom Condition", () => new CustomCondition());
 			addAction("Game Ends", () => new GameEndedCondition());
 			addAction("Game Starts", () => new GameStartedCondition());
-			addAction("Metronome Clicks", () => new TimeCondition());
+			addAction("Metronome Ticks", () => new TimeCondition());
 			addAction("Player Died", () => new PlayerDiedCondition(Mission.Players.First()));
 			addAction("Player Joined", () => new PlayerJoinedCondition(Mission.Players.First()));
+			addAction("Time Elapsed", () => new TimerCondition());
 			addAction("Time Left in Countdown", () => new TimeLeftInCountdownCondition(Mission.Countdowns.FirstOrDefault()));
 			addAction("Unit Built On Ghost", () => new UnitBuiltOnGhostCondition());
 			addAction("Unit Created", () => new UnitCreatedCondition());
@@ -383,21 +384,6 @@ namespace MissionEditor2
 					{
 						var action = (GuiMessageAction)button.Tag;
 						action.ImagePath = dialog.FileName;
-					}
-				};
-		}
-
-		void SoundButtonLoaded(object sender, RoutedEventArgs e)
-		{
-			var button = (Button)e.Source;
-			button.Click += delegate
-				{
-					var filter = "Wave Files(*.WAV)|*.WAV";
-					var dialog = new OpenFileDialog { Filter = filter, RestoreDirectory = true };
-					if (dialog.ShowDialog() == true)
-					{
-						var action = (SoundAction)LogicGrid.SelectedItem;
-						action.SoundPath = dialog.FileName;
 					}
 				};
 		}

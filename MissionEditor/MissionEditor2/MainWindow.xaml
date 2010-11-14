@@ -78,28 +78,6 @@
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This condition is met when the game starts.</TextBlock>
         </DataTemplate>
 
-        <!-- ======== TimeCondition Template ======== -->
-
-        <DataTemplate x:Key="timeConditionTemplate">
-            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Label Grid.Column="0" Grid.Row="0">Minutes</Label>
-                <Label Grid.Column="0" Grid.Row="1">Seconds</Label>
-                <Label Grid.Column="0" Grid.Row="2">Frames</Label>
-                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
-                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
-            </Grid>
-        </DataTemplate>
-
         <!-- ======== WaitAction Template ======== -->
 
         <DataTemplate x:Key="waitActionTemplate">
@@ -179,18 +157,6 @@
                 <LineBreak />
                 This has no effect on the TransferUnits action.
             </TextBlock>
-        </DataTemplate>
-
-        <!-- ======== Sound Template ======== -->
-
-        <DataTemplate x:Key="soundTemplate">
-            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-                <DockPanel>
-                    <Label DockPanel.Dock="Left">Sound:</Label>
-                    <Button Loaded="SoundButtonLoaded" DockPanel.Dock="Right">Browse</Button>
-                    <TextBox Text="{Binding SoundPath}" />
-                </DockPanel>
-            </Grid>
         </DataTemplate>
 
         <!-- ======== GuiMessage Template ======== -->

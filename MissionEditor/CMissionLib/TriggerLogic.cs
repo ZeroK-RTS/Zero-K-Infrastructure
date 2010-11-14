@@ -18,7 +18,7 @@ namespace CMissionLib
 			this.name = GetDefaultName();
 		}
 
-		public abstract string GetDefaultName();
+		public abstract  string GetDefaultName();
 
 		[DataMember]
 		public string Name

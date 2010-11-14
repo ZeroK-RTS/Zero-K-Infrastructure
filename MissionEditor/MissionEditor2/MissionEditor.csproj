@@ -33,7 +33,7 @@
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>57</ApplicationRevision>
+    <ApplicationRevision>60</ApplicationRevision>
     <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -152,7 +152,16 @@
     <Compile Include="RegionWindow.xaml.cs">
       <DependentUpon>RegionWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SoundActionControl.xaml.cs">
+      <DependentUpon>SoundActionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StringRequest.xaml.cs" />
+    <Compile Include="TimeConditionControl.xaml.cs">
+      <DependentUpon>TimeConditionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TimerConditionControl.xaml.cs">
+      <DependentUpon>TimerConditionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TranslateConverter.cs" />
     <Compile Include="TriggerConverter.cs" />
     <Compile Include="TriggerSettingsControl.xaml.cs">
@@ -295,6 +304,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="SoundActionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StringRequest.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -302,6 +315,14 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TimeConditionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TimerConditionControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TriggerSettingsControl.xaml">
       <SubType>Designer</SubType>

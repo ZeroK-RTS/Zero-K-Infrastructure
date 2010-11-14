@@ -576,7 +576,8 @@ local function ExecuteTrigger(trigger, frame)
               end
               if unitID then
                 if not isBuilding then
-                  Spring.SetUnitRotation(unitID, 0, (unit.heading - 180)/360 * 2 * math.pi, 0)
+                  local heading = (unit.heading - 180)/360 * 2 * math.pi
+                  Spring.SetUnitRotation(unitID, 0, heading, 0)
                 end
                 createdUnits[unitID] = true
                 if unit.groups and next(unit.groups) then
@@ -779,6 +780,7 @@ end
 
 
 function gadget:GameFrame(n)
+
   if not gameStarted then
     -- start with a clean slate
     for _, unitID in ipairs(Spring.GetAllUnits()) do
@@ -859,6 +861,16 @@ function gadget:GameFrame(n)
       local args = condition.args
       if condition.logicType == "TimeCondition" and args.frames == n then 
         args.frames = n + args.period
+        ExecuteTrigger(trigger)
+        break
+      end
+    end
+  end
+  
+  for _, trigger in pairs(triggers) do
+    for _, condition in ipairs(trigger.logic) do
+      local args = condition.args
+      if condition.logicType == "TimerCondition" and args.frames == n then 
         ExecuteTrigger(trigger)
         break
       end

@@ -22,6 +22,18 @@
             </Grid>
         </DataTemplate>
         
+        <DataTemplate x:Key="TimeCondition">
+            <local:TimeConditionControl />
+        </DataTemplate>
+
+        <DataTemplate x:Key="TimerCondition">
+            <local:TimerConditionControl />
+        </DataTemplate>
+
+        <DataTemplate x:Key="SoundAction">
+            <local:SoundActionControl />
+        </DataTemplate>
+        
         <DataTemplate x:Key="UnitBuiltOnGhostCondition">
             <local:UnitBuiltOnGhostConditionControl />
         </DataTemplate>

@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="MissionEditor2.TimerConditionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Grid.Column="0" Grid.Row="0">Minutes</Label>
+        <Label Grid.Column="0" Grid.Row="1">Seconds</Label>
+        <Label Grid.Column="0" Grid.Row="2">Frames</Label>
+        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Minutes, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Seconds, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Frames, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Grid.Row="3" Grid.ColumnSpan="2">This timer will not repeat. The "Wait" action is useful as well for setting up time-based events.</TextBlock>
+    </Grid>
+</UserControl>
