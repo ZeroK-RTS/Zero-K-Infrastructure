@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Linq;
 using System.Diagnostics;
 using System.IO;
@@ -185,10 +186,11 @@ namespace ZeroKWeb
 			modInfo.MissionMap = mission.Map; // todo solve properly - it should be in mod and unitsync should be able to read it too
 
 
-			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}_{1}.torrent", mission.Name.EscapePath(), md5), torrentStream.ToArray());
-			File.WriteAllBytes(string.Format(@"d:\PlasmaServer\Resources\{0}.metadata.xml.gz", mission.Name.EscapePath()),
+		  var basePath = ConfigurationManager.AppSettings["ResourcePath"]  ?? @"d:\zero-k.info\www\resources\";
+      File.WriteAllBytes(string.Format(@"{2}\{0}_{1}.torrent", mission.Name.EscapePath(), md5, basePath), torrentStream.ToArray());
+			File.WriteAllBytes(string.Format(@"{1}\{0}.metadata.xml.gz", mission.Name.EscapePath(), basePath),
 			                   MetaDataCache.SerializeAndCompressMetaData(modInfo));
-			File.WriteAllBytes(string.Format(@"d:\zero-k.info\www\img\missions\{0}.png", mission.MissionID), mission.Image.ToArray());
+			File.WriteAllBytes(string.Format(@"{1}\{0}.png", mission.MissionID, basePath), mission.Image.ToArray());
 
 			mission.IsDeleted = false;
 			db.SubmitChanges();

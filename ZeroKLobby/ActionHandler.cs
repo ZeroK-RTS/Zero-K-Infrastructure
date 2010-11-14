@@ -251,7 +251,8 @@ namespace ZeroKLobby
 
 			var waitingBar = WarningBar.DisplayWarning("Waiting for AutoHost to start");
 
-			EventHandler<CancelEventArgs<TasSayEventArgs>> joinGame = null;
+
+      EventHandler<CancelEventArgs<TasSayEventArgs>> joinGame = null;
 			joinGame = (s, e) =>
 				{
 					if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Origin == TasSayEventArgs.Origins.Player && (e.Data.Text == spawnCommand.Reply))
@@ -261,17 +262,27 @@ namespace ZeroKLobby
 						Program.TasClient.PreviewSaidPrivate -= joinGame;
 						var myHostName = e.Data.UserName;
 						var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder == myHostName);
-						if (useManage) SpringieCommand.Manage(minPlayers, maxPlayers, teams).SilentlyExcecute(myHostName);
-						if (springieCommands != null)
-						{
-							foreach (var command in springieCommands)
-							{
-								HidePM(command);
-								Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
-							}
-						}
-						Program.TasClient.JoinBattle(battle.BattleID, password);
-						NavigationControl.Instance.Path = "chat/battle";
+
+            EventHandler<EventArgs<Battle>> battleJoined = null;
+            battleJoined = (s2, e2) => {
+              if (e2.Data.BattleID == battle.BattleID)
+              {
+                if (useManage) SpringieCommand.Manage(minPlayers, maxPlayers, teams).SilentlyExcecute(myHostName);
+                if (springieCommands != null)
+                {
+                  foreach (var command in springieCommands)
+                  {
+                    HidePM(command);
+                    Program.TasClient.Say(TasClient.SayPlace.User, myHostName, command, false);
+                  }
+                }
+                Program.TasClient.BattleJoined -= battleJoined;
+              }
+            };
+
+            Program.TasClient.BattleJoined += battleJoined;
+					  JoinBattle(battle.BattleID, password);
+            NavigationControl.Instance.Path = "chat/battle";
 					}
 				};
 

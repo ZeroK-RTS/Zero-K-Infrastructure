@@ -25,7 +25,6 @@ namespace ZkData
 
     partial void OnCreated()
     {
-      
       LastChange = DateTime.UtcNow;
     }
     public double? MapRating

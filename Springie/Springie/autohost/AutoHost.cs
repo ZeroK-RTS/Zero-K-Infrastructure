@@ -1257,7 +1257,7 @@ namespace Springie.autohost
 						var sc = new SpawnConfig(e.UserName, configKeys);
 						if (string.IsNullOrEmpty(sc.Mod))
 						{
-							Respond(e, "Please specify at least mod name: !spawn mod=ca:stable");
+							Respond(e, "Please specify at least mod name: !spawn mod=zk:stable");
 							return;
 						}
 						Program.main.SpawnAutoHost(configPath, sc);

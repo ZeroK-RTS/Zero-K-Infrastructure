@@ -41,6 +41,7 @@ namespace ZeroKWeb.Controllers
       var sb = new StringBuilder();
       var mis = db.Missions.Single(x => x.MissionID == id);
 
+      sb.Append("<span>");
       sb.AppendFormat("{0}<br/>---<br/>", HttpUtility.HtmlEncode(mis.Description ?? "").Replace("\n", "<br/>"));
       sb.AppendFormat("Players: {0}<br/>", mis.MinToMaxHumansString);
       sb.AppendFormat("<small>{0}</small><br/>", string.Join(",", mis.GetPseudoTags()));
@@ -49,6 +50,7 @@ namespace ZeroKWeb.Controllers
       sb.AppendFormat("Played: {0} times<br/>", mis.MissionRunCount);
       sb.AppendFormat("Rated: {0} times<br/>", mis.Ratings.Count);
       sb.AppendFormat("Comments: {0}<br/>", mis.ForumThread != null ? mis.ForumThread.ForumPosts.Count : 0);
+      sb.Append("</span>");
 
       return sb.ToString();
     }
