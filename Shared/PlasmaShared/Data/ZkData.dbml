@@ -359,7 +359,8 @@
       <Column Name="Title" Type="System.String" DbType="nvarchar(300) NOT NULL" CanBeNull="false" />
       <Column Name="Created" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="LastPost" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
-      <Association Name="ForumThread_Mission" Member="Missions" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Mission" />
+      <Association Name="ForumThread_Mission" Member="Missions" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Mission" Cardinality="One" />
+      <Association Name="ForumThread_Resource" Member="Resources" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Resource" Cardinality="One" />
       <Association Name="ForumThread_ForumPost" Member="ForumPosts" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumPost" />
     </Type>
   </Table>
@@ -425,12 +426,14 @@
       <Column Name="TaggedByAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MapWidth" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MapHeight" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
       <Association Name="Resource_MapRating" Member="MapRatings" ThisKey="ResourceID" OtherKey="ResourceID" Type="MapRating" />
       <Association Name="Mission_Resource" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" />
       <Association Name="Account_Resource" Member="Account" ThisKey="TaggedByAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="ForumThread_Resource" Member="ForumThread" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThread" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.MissionScore" Member="MissionScores">

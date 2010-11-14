@@ -1,7 +1,6 @@
 ﻿@model ZeroKWeb.Controllers.MapsController.MapDetailData
 @using ZkData;
 @using PlasmaShared;
-
 @{
   var m = Model.Resource;
   var mi = Model.MapInfo;
@@ -28,7 +27,7 @@
   @if (!ZeroKWeb.Global.IsLobbyAccess) {
     <small>Manual downloads:
       <br />
-      @foreach (var l in m.ResourceContentFiles.Where(x => x.LinkCount > 0).Select(x => x.Links).SelectMany(x=> x.Split('\n')).Shuffle()) {
+      @foreach (var l in m.ResourceContentFiles.Where(x => x.LinkCount > 0).Select(x => x.Links).SelectMany(x => x.Split('\n')).Shuffle()) {
         <a href='@l'>@l</a><br />
       }
     </small>
@@ -104,9 +103,10 @@
     </tr>
   </table>
   <div style='border: 1px dashed teal'>
-    <b>Tag this map</b>@if (m.TaggedByAccountID != null) {
-@: - Last tagged by @m.Account.Name
-      }
+    Tag this map
+    @if (m.TaggedByAccountID != null) {
+      @: - Last tagged by @m.Account.Name
+    }
     <form action="@Url.Action("Tag", new { id = m.ResourceID })" method="post">
     Sea: @Html.Select("sea", typeof(Resource.WaterLevel), m.MapWaterLevel, "?") &nbsp;&nbsp;
     Hills: @Html.Select("hills", typeof(Resource.Hill), m.MapHills, "?") &nbsp;&nbsp;
@@ -117,7 +117,7 @@
     <input type="submit" value="Update" />
     </form>
   </div>
-  <table style='height: 820px;'>
+  <table>
     <tr valign='top'>
       <td align="center">
         <a href='http://zero-k.info/Resources/@(m.MinimapName)'>
@@ -136,5 +136,30 @@
       </td>
     </tr>
   </table>
+
+
+<form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = m.ForumThreadID, resourceID = m.ResourceID })">
+  <textarea name="text" rows="4" cols="50"></textarea><br />
+  <input type="submit" value="Submit Comment" />
+</form>
+
+
+@foreach (var p in Model.Posts) {
+  <table>
+    <tr>
+      <td width='120px'>
+        @Html.PrintAccount(p.Author)<br />
+        @Html.AccountAvatar(p.Author)
+        <br />
+        <small>@p.Created.ToAgoString()</small>
+        @Html.Stars(StarType.GreenStarSmall, p.Rating)
+      </td>
+      <td valign="top">
+        @p.Text
+      </td>
+    </tr>
+  </table>
+}
+
 </div>
 @Html.ActionLink("Back to List", "Index") 

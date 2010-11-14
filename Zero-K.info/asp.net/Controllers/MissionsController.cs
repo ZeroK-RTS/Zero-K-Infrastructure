@@ -122,11 +122,6 @@ namespace ZeroKWeb.Controllers
 				db.SubmitChanges();
 
 				var mis = db.Missions.Single(x => x.MissionID == id);
-/*			var ratings = mis.Ratings.OrderBy(x => x.Rating1).Select(x=>x.Rating1);
-				var difficulties = mis.Ratings.OrderBy(x => x.Difficulty).Select(x => x.Difficulty);
-				mis.Rating = ratings.Skip(ratings.Count()/2).FirstOrDefault();
-				mis.Difficulty = difficulties.Skip(difficulties.Count() / 2).FirstOrDefault();*/
-
 				mis.Rating = (float?)mis.Ratings.Average(x => x.Rating1);
 				mis.Difficulty = (float?)mis.Ratings.Average(x => x.Difficulty);
 				db.SubmitChanges();

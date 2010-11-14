@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Linq.SqlClient;
 using System.IO;
 using System.Linq;
@@ -20,24 +21,19 @@ namespace ZeroKWeb.Controllers
       var db = new ZkDataContext();
       var res = db.Resources.Single(x => x.ResourceID == id);
 
-      var data = new MapDetailData
-                 { Resource = res, MyRating = res.MapRatings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new MapRating() };
-
-      // load map info from disk - or used cached copy if its in memory
-      var cachedEntry = HttpContext.Application["mapinfo_" + id] as Map;
-      if (cachedEntry != null) data.MapInfo = cachedEntry;
-      else
-      {
-        var path = Server.MapPath("~/Resources/") + res.MetadataName;
-        if (System.IO.File.Exists(path))
-        {
-          data.MapInfo = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(System.IO.File.ReadAllBytes(path).Decompress()));
-          HttpContext.Application["mapinfo_" + id] = data.MapInfo;
-        }
-      }
+      var data = GetMapDetailData(res);
 
       return View(data);
     }
+
+    public ActionResult DetailName(string name)
+    {
+      var db = new ZkDataContext();
+      var res = db.Resources.Single(x => x.InternalName == name);
+
+      return View("Detail", GetMapDetailData(res));
+    }
+
 
     public ActionResult Index(string search,
                               int? offset,
@@ -140,11 +136,48 @@ namespace ZeroKWeb.Controllers
       }
     }
 
+    MapDetailData GetMapDetailData(Resource res)
+    {
+      var data = new MapDetailData
+                 { Resource = res, MyRating = res.MapRatings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new MapRating() };
+
+      // load map info from disk - or used cached copy if its in memory
+      var cachedEntry = HttpContext.Application["mapinfo_" + res.ResourceID] as Map;
+      if (cachedEntry != null) data.MapInfo = cachedEntry;
+      else
+      {
+        var path = Server.MapPath("~/Resources/") + res.MetadataName;
+        if (System.IO.File.Exists(path))
+        {
+          data.MapInfo = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(System.IO.File.ReadAllBytes(path).Decompress()));
+          HttpContext.Application["mapinfo_" + res.ResourceID] = data.MapInfo;
+        }
+      }
+
+      if (res.ForumThread != null) {
+        data.Posts = (from p in res.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
+                      let userRating = res.MapRatings.SingleOrDefault(x => x.AccountID == p.AuthorAccountID)
+                      select
+                        new MapPost { Created = p.Created, Author = p.Account, Text = p.Text, Rating = userRating != null ? (int?)userRating.Rating : null });
+      } else data.Posts = new List<MapPost>();
+
+      return data;
+    }
+
     public class MapDetailData
     {
       public Map MapInfo;
       public MapRating MyRating;
+      public IEnumerable<MapPost> Posts;
       public Resource Resource;
+    }
+
+    public class MapPost
+    {
+      public Account Author;
+      public DateTime Created;
+      public int? Rating;
+      public string Text;
     }
   }
 }

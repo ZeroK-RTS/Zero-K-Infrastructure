@@ -3162,12 +3162,12 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._ForumThread.Entity = null;
-						previousValue.Missions.Remove(this);
+						previousValue.Missions = null;
 					}
 					this._ForumThread.Entity = value;
 					if ((value != null))
 					{
-						value.Missions.Add(this);
+						value.Missions = this;
 						this._ForumThreadID = value.ForumThreadID;
 					}
 					else
@@ -6038,7 +6038,9 @@ namespace ZkData
 		
 		private System.Nullable<System.DateTime> _LastPost;
 		
-		private EntitySet<Mission> _Missions;
+		private EntityRef<Mission> _Missions;
+		
+		private EntityRef<Resource> _Resources;
 		
 		private EntitySet<ForumPost> _ForumPosts;
 		
@@ -6147,27 +6149,78 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Mission", Storage="_Missions", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Mission", Storage="_Missions", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
-		public EntitySet<Mission> Missions
+		public Mission Missions
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._Missions.HasLoadedOrAssignedValues == false)))
+							&& (this._Missions.HasLoadedOrAssignedValue == false)))
 				{
 					return null;
 				}
-				return this._Missions;
+				return this._Missions.Entity;
 			}
 			set
 			{
-				this._Missions.Assign(value);
+				Mission previousValue = this._Missions.Entity;
+				if (((previousValue != value) 
+							|| (this._Missions.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Missions.Entity = null;
+						previousValue.ForumThread = null;
+					}
+					this._Missions.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThread = this;
+					}
+					this.SendPropertyChanged("Missions");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Resource", Storage="_Resources", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		public Resource Resources
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Resources.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._Resources.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._Resources.Entity;
+				if (((previousValue != value) 
+							|| (this._Resources.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Resources.Entity = null;
+						previousValue.ForumThread = null;
+					}
+					this._Resources.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThread = this;
+					}
+					this.SendPropertyChanged("Resources");
+				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_ForumPost", Storage="_ForumPosts", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -6205,18 +6258,6 @@ namespace ZkData
 			}
 		}
 		
-		private void attach_Missions(Mission entity)
-		{
-			this.SendPropertyChanging();
-			entity.ForumThread = this;
-		}
-		
-		private void detach_Missions(Mission entity)
-		{
-			this.SendPropertyChanging();
-			entity.ForumThread = null;
-		}
-		
 		private void attach_ForumPosts(ForumPost entity)
 		{
 			this.SendPropertyChanging();
@@ -6231,7 +6272,8 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
+			this._Missions = default(EntityRef<Mission>);
+			this._Resources = default(EntityRef<Resource>);
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
 			OnCreated();
 		}
@@ -7134,6 +7176,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _MapHeight;
 		
+		private System.Nullable<int> _ForumThreadID;
+		
 		private EntitySet<ResourceDependency> _ResourceDependencies;
 		
 		private EntitySet<ResourceContentFile> _ResourceContentFiles;
@@ -7145,6 +7189,8 @@ namespace ZkData
 		private EntityRef<Mission> _Mission;
 		
 		private EntityRef<Account> _Account;
+		
+		private EntityRef<ForumThread> _ForumThread;
 		
 		private bool serializing;
 		
@@ -7194,6 +7240,8 @@ namespace ZkData
     partial void OnMapWidthChanged();
     partial void OnMapHeightChanging(System.Nullable<int> value);
     partial void OnMapHeightChanged();
+    partial void OnForumThreadIDChanging(System.Nullable<int> value);
+    partial void OnForumThreadIDChanged();
     #endregion
 		
 		public Resource()
@@ -7650,8 +7698,33 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		public System.Nullable<int> ForumThreadID
+		{
+			get
+			{
+				return this._ForumThreadID;
+			}
+			set
+			{
+				if ((this._ForumThreadID != value))
+				{
+					if (this._ForumThread.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnForumThreadIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumThreadID = value;
+					this.SendPropertyChanged("ForumThreadID");
+					this.OnForumThreadIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_ResourceDependencies", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<ResourceDependency> ResourceDependencies
 		{
 			get
@@ -7670,7 +7743,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_ResourceContentFiles", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
 		public EntitySet<ResourceContentFile> ResourceContentFiles
 		{
 			get
@@ -7689,7 +7762,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_ResourceSpringHashes", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
 		public EntitySet<ResourceSpringHash> ResourceSpringHashes
 		{
 			get
@@ -7708,7 +7781,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_MapRating", Storage="_MapRatings", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
 		public EntitySet<MapRating> MapRatings
 		{
 			get
@@ -7794,6 +7867,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Resource", Storage="_ForumThread", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsForeignKey=true)]
+		public ForumThread ForumThread
+		{
+			get
+			{
+				return this._ForumThread.Entity;
+			}
+			set
+			{
+				ForumThread previousValue = this._ForumThread.Entity;
+				if (((previousValue != value) 
+							|| (this._ForumThread.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ForumThread.Entity = null;
+						previousValue.Resources = null;
+					}
+					this._ForumThread.Entity = value;
+					if ((value != null))
+					{
+						value.Resources = this;
+						this._ForumThreadID = value.ForumThreadID;
+					}
+					else
+					{
+						this._ForumThreadID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ForumThread");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -7870,6 +7977,7 @@ namespace ZkData
 			this._MapRatings = new EntitySet<MapRating>(new Action<MapRating>(this.attach_MapRatings), new Action<MapRating>(this.detach_MapRatings));
 			this._Mission = default(EntityRef<Mission>);
 			this._Account = default(EntityRef<Account>);
+			this._ForumThread = default(EntityRef<ForumThread>);
 			OnCreated();
 		}
 		
