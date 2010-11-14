@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -106,6 +107,13 @@
     <Compile Include="ResourceDetail.aspx.designer.cs">
       <DependentUpon>ResourceDetail.aspx</DependentUpon>
     </Compile>
+    <Compile Include="TempAnalyzer.aspx.cs">
+      <DependentUpon>TempAnalyzer.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="TempAnalyzer.aspx.designer.cs">
+      <DependentUpon>TempAnalyzer.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
@@ -131,6 +139,7 @@
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
+    <Content Include="TempAnalyzer.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

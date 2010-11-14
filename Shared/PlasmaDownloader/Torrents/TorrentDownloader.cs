@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using MonoTorrent.Common;
 using PlasmaShared;
+using PlasmaShared.ContentService;
 
 #endregion
 
@@ -14,7 +15,7 @@ namespace PlasmaDownloader.Torrents
     {
         readonly string incomingFolder;
         PlasmaDownloader plasmaDownloader;
-        readonly PlasmaService plasmaService = new PlasmaService() { Proxy = null };
+        readonly ContentService plasmaService = new ContentService() { Proxy = null };
 
         public TorrentDownloader(PlasmaDownloader plasmaDownloader)
         {

@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Web;
+using System.Xml.Serialization;
 using PlasmaShared;
+using PlasmaShared.UnitSyncLib;
 using ZkData;
 
 namespace ZeroKWeb
@@ -11,6 +16,7 @@ namespace ZeroKWeb
   public class PlasmaServer
   {
     public const int PlasmaServerApiVersion = 3;
+    const int ThumbnailSize = 96;
 
     public enum ReturnValue
     {
@@ -39,7 +45,7 @@ namespace ZeroKWeb
                                     out List<string> links,
                                     out byte[] torrent,
                                     out List<string> dependencies,
-                                    out ZkData.ResourceType resourceType,
+                                    out ResourceType resourceType,
                                     out string torrentFileName)
     {
       return ResourceLinkProvider.GetLinksAndTorrent(internalName, out links, out torrent, out dependencies, out resourceType, out torrentFileName);
@@ -95,7 +101,7 @@ namespace ZeroKWeb
                                                string springVersion,
                                                string md5,
                                                int length,
-                                               ZkData.ResourceType resourceType,
+                                               ResourceType resourceType,
                                                string archiveName,
                                                string internalName,
                                                int springHash,
@@ -129,6 +135,7 @@ namespace ZeroKWeb
 
         // new spring version we add its hash
         contentFile.Resource.ResourceSpringHashes.Add(new ResourceSpringHash { SpringVersion = springVersion, SpringHash = springHash });
+        StoreMetadata(md5, contentFile.Resource, serializedData, torrentData, minimap, metalMap, heightMap);
         db.SubmitChanges();
         return ReturnValue.Ok;
       }
@@ -139,14 +146,7 @@ namespace ZeroKWeb
       {
         resource = new Resource { InternalName = internalName, TypeID = resourceType };
         db.Resources.InsertOnSubmit(resource);
-
-        var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
-
-        if (minimap != null) File.WriteAllBytes(String.Format("{0}.minimap.jpg", file), minimap);
-        if (metalMap != null) File.WriteAllBytes(String.Format("{0}.metalmap.jpg", file), metalMap);
-        if (heightMap != null) File.WriteAllBytes(String.Format("{0}.heightmap.jpg", file), heightMap);
-        File.WriteAllBytes(GetTorrentPath(internalName, md5), torrentData);
-        File.WriteAllBytes(String.Format("{0}.metadata.xml.gz", file), serializedData);
+        StoreMetadata(md5, resource, serializedData, torrentData, minimap, metalMap, heightMap);
       }
 
       if (!resource.ResourceDependencies.Select(x => x.NeedsInternalName).Except(dependencies).Any())
@@ -168,14 +168,18 @@ namespace ZeroKWeb
 
       resource.ResourceContentFiles.Add(new ResourceContentFile { FileName = archiveName, Length = length, Md5 = md5 });
       File.WriteAllBytes(GetTorrentPath(internalName, md5), torrentData); // add new torrent file
-      if (!resource.ResourceSpringHashes.Any(x => x.SpringVersion == springVersion)) resource.ResourceSpringHashes.Add(new ResourceSpringHash { SpringVersion = springVersion, SpringHash = springHash });
+      if (!resource.ResourceSpringHashes.Any(x => x.SpringVersion == springVersion))
+      {
+        resource.ResourceSpringHashes.Add(new ResourceSpringHash { SpringVersion = springVersion, SpringHash = springHash });
+        StoreMetadata(md5, resource, serializedData, torrentData, minimap, metalMap, heightMap);
+      }
 
       db.SubmitChanges();
 
       return ReturnValue.Ok;
     }
 
-    public static void RemoveResourceFiles( Resource resource)
+    public static void RemoveResourceFiles(Resource resource)
     {
       var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
       Utils.SafeDelete(String.Format("{0}.minimap.jpg", file));
@@ -198,14 +202,74 @@ namespace ZeroKWeb
       return ret;
     }
 
+    static void StoreMetadata(string md5,
+                                     Resource resource,
+                                     byte[] serializedData,
+                                     byte[] torrentData,
+                                     byte[] minimap,
+                                     byte[] metalMap,
+                                     byte[] heightMap)
+    {
+      var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
+
+      if (minimap != null) File.WriteAllBytes(String.Format("{0}.minimap.jpg", file), minimap);
+      if (metalMap != null) File.WriteAllBytes(String.Format("{0}.metalmap.jpg", file), metalMap);
+      if (heightMap != null) File.WriteAllBytes(String.Format("{0}.heightmap.jpg", file), heightMap);
+      if (torrentData != null) File.WriteAllBytes(GetTorrentPath(resource.InternalName, md5), torrentData);
+      if (serializedData != null)
+      {
+        File.WriteAllBytes(String.Format("{0}.metadata.xml.gz", file), serializedData);
+        if (minimap != null)
+        {
+          var map = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(serializedData.Decompress()));
+          if (resource.MapIsSpecial == null) resource.MapIsSpecial = map.ExtractorRadius > 120 || map.MaxWind > 40;
+          resource.MapSizeSquared = (map.Size.Width/512)*(map.Size.Height/512);
+          resource.MapSizeRatio = (float)map.Size.Width/map.Size.Height;
+
+          using (var im = Image.FromStream(new MemoryStream(minimap)))
+          {
+            int w, h;
+            if (resource.MapSizeRatio > 1)
+            {
+              w = ThumbnailSize;
+              h = (int)(w/resource.MapSizeRatio);
+            }
+            else
+            {
+              h = ThumbnailSize;
+              w = (int)(h*resource.MapSizeRatio);
+            }
+
+            using (var correctMinimap = new Bitmap(w, h, PixelFormat.Format24bppRgb))
+            {
+              using (var graphics = Graphics.FromImage(correctMinimap))
+              {
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.DrawImage(im, 0, 0, w, h);
+              }
+
+              var jgpEncoder = ImageCodecInfo.GetImageEncoders().First(x => x.FormatID == ImageFormat.Jpeg.Guid);
+              var encoderParams = new EncoderParameters(1);
+              encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, 100L);
+
+              var target = String.Format("{0}/{1}.thumbnail.jpg",
+                                         HttpContext.Current.Server.MapPath("~/Resources"),
+                                         resource.InternalName.EscapePath());
+              correctMinimap.Save(target, jgpEncoder, encoderParams);
+            }
+          }
+        }
+      }
+    }
+
     public class ResourceData
     {
       public List<string> Dependencies;
       public string InternalName;
-      public ZkData.ResourceType ResourceType;
+      public ResourceType ResourceType;
       public List<SpringHashEntry> SpringHashes;
 
-      public ResourceData() { }
+      public ResourceData() {}
 
       public ResourceData(Resource r)
       {
@@ -221,7 +285,5 @@ namespace ZeroKWeb
       public int SpringHash;
       public string SpringVersion;
     }
-
   }
-
 }

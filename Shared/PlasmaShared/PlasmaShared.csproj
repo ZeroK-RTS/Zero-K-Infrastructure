@@ -96,6 +96,8 @@
     <Compile Include="Data\LobbyMessage.cs" />
     <Compile Include="Data\Mission.cs" />
     <Compile Include="Data\ProgramID.cs" />
+    <Compile Include="Data\Resource.cs" />
+    <Compile Include="Data\ResourceSpringHash.cs" />
     <Compile Include="Data\ResourceType.cs" />
     <Compile Include="Data\ZkData.cs">
       <DependentUpon>ZkData.dbml</DependentUpon>
@@ -146,9 +148,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
-    <Compile Include="WebReferences\PlasmaService.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="WebReferences\StatsCollector.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -190,6 +189,15 @@
     <None Include="Web References\ContentService\Reference.map">
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ContentService\ResourceData.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ContentService\ResourceType.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ContentService\ReturnValue.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\ContentService\ScriptMissionData.datasource">
       <DependentUpon>Reference.map</DependentUpon>

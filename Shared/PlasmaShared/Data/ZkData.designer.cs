@@ -6750,7 +6750,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LinkCount", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LinkCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public int LinkCount
 		{
@@ -7029,6 +7029,18 @@ namespace ZkData
 		
 		private System.Nullable<System.DateTime> _LastChange;
 		
+		private System.Nullable<bool> _MapIsSpecial;
+		
+		private System.Nullable<int> _MapSizeSquared;
+		
+		private System.Nullable<float> _MapSizeRatio;
+		
+		private System.Nullable<int> _MapWaterLevel;
+		
+		private System.Nullable<bool> _MapIsFfa;
+		
+		private System.Nullable<int> _MapHills;
+		
 		private EntitySet<ResourceDependency> _ResourceDependencies;
 		
 		private EntitySet<ResourceContentFile> _ResourceContentFiles;
@@ -7059,6 +7071,18 @@ namespace ZkData
     partial void OnMissionIDChanged();
     partial void OnLastChangeChanging(System.Nullable<System.DateTime> value);
     partial void OnLastChangeChanged();
+    partial void OnMapIsSpecialChanging(System.Nullable<bool> value);
+    partial void OnMapIsSpecialChanged();
+    partial void OnMapSizeSquaredChanging(System.Nullable<int> value);
+    partial void OnMapSizeSquaredChanged();
+    partial void OnMapSizeRatioChanging(System.Nullable<float> value);
+    partial void OnMapSizeRatioChanged();
+    partial void OnMapWaterLevelChanging(System.Nullable<int> value);
+    partial void OnMapWaterLevelChanged();
+    partial void OnMapIsFfaChanging(System.Nullable<bool> value);
+    partial void OnMapIsFfaChanged();
+    partial void OnMapHillsChanging(System.Nullable<int> value);
+    partial void OnMapHillsChanged();
     #endregion
 		
 		public Resource()
@@ -7129,7 +7153,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastLinkCheck", DbType="datetime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastLinkCheck", DbType="datetime", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public System.Nullable<System.DateTime> LastLinkCheck
 		{
@@ -7150,7 +7174,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DownloadCount", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DownloadCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public int DownloadCount
 		{
@@ -7171,7 +7195,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NoLinkDownloadCount", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NoLinkDownloadCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public int NoLinkDownloadCount
 		{
@@ -7217,7 +7241,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastChange", DbType="datetime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastChange", DbType="datetime", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public System.Nullable<System.DateTime> LastChange
 		{
@@ -7238,8 +7262,134 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsSpecial", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<bool> MapIsSpecial
+		{
+			get
+			{
+				return this._MapIsSpecial;
+			}
+			set
+			{
+				if ((this._MapIsSpecial != value))
+				{
+					this.OnMapIsSpecialChanging(value);
+					this.SendPropertyChanging();
+					this._MapIsSpecial = value;
+					this.SendPropertyChanged("MapIsSpecial");
+					this.OnMapIsSpecialChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapSizeSquared", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public System.Nullable<int> MapSizeSquared
+		{
+			get
+			{
+				return this._MapSizeSquared;
+			}
+			set
+			{
+				if ((this._MapSizeSquared != value))
+				{
+					this.OnMapSizeSquaredChanging(value);
+					this.SendPropertyChanging();
+					this._MapSizeSquared = value;
+					this.SendPropertyChanged("MapSizeSquared");
+					this.OnMapSizeSquaredChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapSizeRatio", DbType="real")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public System.Nullable<float> MapSizeRatio
+		{
+			get
+			{
+				return this._MapSizeRatio;
+			}
+			set
+			{
+				if ((this._MapSizeRatio != value))
+				{
+					this.OnMapSizeRatioChanging(value);
+					this.SendPropertyChanging();
+					this._MapSizeRatio = value;
+					this.SendPropertyChanged("MapSizeRatio");
+					this.OnMapSizeRatioChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapWaterLevel", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public System.Nullable<int> MapWaterLevel
+		{
+			get
+			{
+				return this._MapWaterLevel;
+			}
+			set
+			{
+				if ((this._MapWaterLevel != value))
+				{
+					this.OnMapWaterLevelChanging(value);
+					this.SendPropertyChanging();
+					this._MapWaterLevel = value;
+					this.SendPropertyChanged("MapWaterLevel");
+					this.OnMapWaterLevelChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIsFfa", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public System.Nullable<bool> MapIsFfa
+		{
+			get
+			{
+				return this._MapIsFfa;
+			}
+			set
+			{
+				if ((this._MapIsFfa != value))
+				{
+					this.OnMapIsFfaChanging(value);
+					this.SendPropertyChanging();
+					this._MapIsFfa = value;
+					this.SendPropertyChanged("MapIsFfa");
+					this.OnMapIsFfaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapHills", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public System.Nullable<int> MapHills
+		{
+			get
+			{
+				return this._MapHills;
+			}
+			set
+			{
+				if ((this._MapHills != value))
+				{
+					this.OnMapHillsChanging(value);
+					this.SendPropertyChanging();
+					this._MapHills = value;
+					this.SendPropertyChanged("MapHills");
+					this.OnMapHillsChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_ResourceDependencies", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<ResourceDependency> ResourceDependencies
 		{
 			get
@@ -7258,7 +7408,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_ResourceContentFiles", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<ResourceContentFile> ResourceContentFiles
 		{
 			get
@@ -7277,7 +7427,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_ResourceSpringHashes", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<ResourceSpringHash> ResourceSpringHashes
 		{
 			get

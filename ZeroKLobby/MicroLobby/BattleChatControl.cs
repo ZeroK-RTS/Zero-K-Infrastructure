@@ -65,7 +65,7 @@ namespace ZeroKLobby.MicroLobby
 			minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
 			minimapBox.Cursor = Cursors.Hand;
 			minimapBox.Click +=
-				(s, e) => { if (Program.TasClient.MyBattle != null) Utils.OpenWeb(string.Format("http://planet-wars.eu/PlasmaServer/ResourceDetail.aspx?name={0}", Program.TasClient.MyBattle.MapName)); };
+				(s, e) => { if (Program.TasClient.MyBattle != null) Utils.OpenWeb(string.Format("http://zero-k.info/ResourceDetail.aspx?name={0}", Program.TasClient.MyBattle.MapName)); };
 
 			mapPanel.Controls.Add(minimapBox);
 			mapPanel.Visible = true;

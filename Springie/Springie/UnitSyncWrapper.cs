@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Timers;
 using System.Xml.Serialization;
 using PlasmaShared;
+using PlasmaShared.ContentService;
 using PlasmaShared.UnitSyncLib;
 
 #endregion
@@ -17,7 +18,7 @@ namespace Springie.SpringNamespace
 {
 	public class UnitSyncWrapper: IDisposable
 	{
-		const string ServerResourceUrlBase = "http://planet-wars.eu/PlasmaServer/Resources";
+		const string ServerResourceUrlBase = "http://zero-k.info/Resources";
 		readonly object locker = new object();
 
 		readonly Dictionary<string, Map> mapList = new Dictionary<string, Map>();
@@ -62,17 +63,17 @@ namespace Springie.SpringNamespace
 
 			timer = new Timer(10*60*1000);
 			timer.Elapsed += (s, e) =>
-				{
-					var plasmaService = new PlasmaService();
+			  {
+			    var plasmaService = new ContentService() { Proxy = null };
 					plasmaService.GetResourceListCompleted += plasmaService_GetResourceListCompleted;
-					plasmaService.GetResourceListAsync();
+					plasmaService.GetResourceListAsync(null); // todo timer
 				};
 			timer.AutoReset = true;
 			timer.Start();
 
-			var ser = new PlasmaService();
+			var ser = new ContentService();
 			ser.GetResourceListCompleted += plasmaService_GetResourceListCompleted;
-			ser.GetResourceListAsync();
+			ser.GetResourceListAsync(null); //todo timer
 		}
 
 		public void Dispose()
@@ -214,7 +215,7 @@ namespace Springie.SpringNamespace
 		{
 			lock (locker)
 			{
-				var ser = sender as PlasmaService;
+				var ser = sender as ContentService;
 				if (ser != null) ser.GetResourceListCompleted -= plasmaService_GetResourceListCompleted;
 				var changed = false;
 				foreach (var x in e.Result)

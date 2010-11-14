@@ -29,9 +29,17 @@ namespace PlasmaShared.ContentService {
     [System.Web.Services.WebServiceBindingAttribute(Name="ContentServiceSoap", Namespace="http://tempuri.org/")]
     public partial class ContentService : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
+        private System.Threading.SendOrPostCallback DownloadFileOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetResourceDataOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetResourceListOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetScriptMissionDataOperationCompleted;
         
         private System.Threading.SendOrPostCallback NotifyMissionRunOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback RegisterResourceOperationCompleted;
         
         private System.Threading.SendOrPostCallback SubmitMissionScoreOperationCompleted;
         
@@ -76,16 +84,123 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
+        public event DownloadFileCompletedEventHandler DownloadFileCompleted;
+        
+        /// <remarks/>
+        public event GetResourceDataCompletedEventHandler GetResourceDataCompleted;
+        
+        /// <remarks/>
+        public event GetResourceListCompletedEventHandler GetResourceListCompleted;
+        
+        /// <remarks/>
         public event GetScriptMissionDataCompletedEventHandler GetScriptMissionDataCompleted;
         
         /// <remarks/>
         public event NotifyMissionRunCompletedEventHandler NotifyMissionRunCompleted;
         
         /// <remarks/>
+        public event RegisterResourceCompletedEventHandler RegisterResourceCompleted;
+        
+        /// <remarks/>
         public event SubmitMissionScoreCompletedEventHandler SubmitMissionScoreCompleted;
         
         /// <remarks/>
         public event SubmitStackTraceCompletedEventHandler SubmitStackTraceCompleted;
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DownloadFile", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool DownloadFile(string internalName, out string[] links, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] out byte[] torrent, out string[] dependencies, out ResourceType resourceType, out string torrentFileName) {
+            object[] results = this.Invoke("DownloadFile", new object[] {
+                        internalName});
+            links = ((string[])(results[1]));
+            torrent = ((byte[])(results[2]));
+            dependencies = ((string[])(results[3]));
+            resourceType = ((ResourceType)(results[4]));
+            torrentFileName = ((string)(results[5]));
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void DownloadFileAsync(string internalName) {
+            this.DownloadFileAsync(internalName, null);
+        }
+        
+        /// <remarks/>
+        public void DownloadFileAsync(string internalName, object userState) {
+            if ((this.DownloadFileOperationCompleted == null)) {
+                this.DownloadFileOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDownloadFileOperationCompleted);
+            }
+            this.InvokeAsync("DownloadFile", new object[] {
+                        internalName}, this.DownloadFileOperationCompleted, userState);
+        }
+        
+        private void OnDownloadFileOperationCompleted(object arg) {
+            if ((this.DownloadFileCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DownloadFileCompleted(this, new DownloadFileCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetResourceData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResourceData GetResourceData(string md5, string internalName) {
+            object[] results = this.Invoke("GetResourceData", new object[] {
+                        md5,
+                        internalName});
+            return ((ResourceData)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetResourceDataAsync(string md5, string internalName) {
+            this.GetResourceDataAsync(md5, internalName, null);
+        }
+        
+        /// <remarks/>
+        public void GetResourceDataAsync(string md5, string internalName, object userState) {
+            if ((this.GetResourceDataOperationCompleted == null)) {
+                this.GetResourceDataOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetResourceDataOperationCompleted);
+            }
+            this.InvokeAsync("GetResourceData", new object[] {
+                        md5,
+                        internalName}, this.GetResourceDataOperationCompleted, userState);
+        }
+        
+        private void OnGetResourceDataOperationCompleted(object arg) {
+            if ((this.GetResourceDataCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetResourceDataCompleted(this, new GetResourceDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetResourceList", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ResourceData[] GetResourceList([System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] System.Nullable<System.DateTime> lastChange, out System.DateTime currentTime) {
+            object[] results = this.Invoke("GetResourceList", new object[] {
+                        lastChange});
+            currentTime = ((System.DateTime)(results[1]));
+            return ((ResourceData[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetResourceListAsync(System.Nullable<System.DateTime> lastChange) {
+            this.GetResourceListAsync(lastChange, null);
+        }
+        
+        /// <remarks/>
+        public void GetResourceListAsync(System.Nullable<System.DateTime> lastChange, object userState) {
+            if ((this.GetResourceListOperationCompleted == null)) {
+                this.GetResourceListOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetResourceListOperationCompleted);
+            }
+            this.InvokeAsync("GetResourceList", new object[] {
+                        lastChange}, this.GetResourceListOperationCompleted, userState);
+        }
+        
+        private void OnGetResourceListOperationCompleted(object arg) {
+            if ((this.GetResourceListCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetResourceListCompleted(this, new GetResourceListCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetScriptMissionData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -143,6 +258,61 @@ namespace PlasmaShared.ContentService {
             if ((this.NotifyMissionRunCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.NotifyMissionRunCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/RegisterResource", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public ReturnValue RegisterResource(int apiVersion, string springVersion, string md5, int length, ResourceType resourceType, string archiveName, string internalName, int springHash, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] serializedData, string[] dependencies, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] minimap, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] metalMap, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] heightMap, [System.Xml.Serialization.XmlElementAttribute(DataType="base64Binary")] byte[] torrentData) {
+            object[] results = this.Invoke("RegisterResource", new object[] {
+                        apiVersion,
+                        springVersion,
+                        md5,
+                        length,
+                        resourceType,
+                        archiveName,
+                        internalName,
+                        springHash,
+                        serializedData,
+                        dependencies,
+                        minimap,
+                        metalMap,
+                        heightMap,
+                        torrentData});
+            return ((ReturnValue)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void RegisterResourceAsync(int apiVersion, string springVersion, string md5, int length, ResourceType resourceType, string archiveName, string internalName, int springHash, byte[] serializedData, string[] dependencies, byte[] minimap, byte[] metalMap, byte[] heightMap, byte[] torrentData) {
+            this.RegisterResourceAsync(apiVersion, springVersion, md5, length, resourceType, archiveName, internalName, springHash, serializedData, dependencies, minimap, metalMap, heightMap, torrentData, null);
+        }
+        
+        /// <remarks/>
+        public void RegisterResourceAsync(int apiVersion, string springVersion, string md5, int length, ResourceType resourceType, string archiveName, string internalName, int springHash, byte[] serializedData, string[] dependencies, byte[] minimap, byte[] metalMap, byte[] heightMap, byte[] torrentData, object userState) {
+            if ((this.RegisterResourceOperationCompleted == null)) {
+                this.RegisterResourceOperationCompleted = new System.Threading.SendOrPostCallback(this.OnRegisterResourceOperationCompleted);
+            }
+            this.InvokeAsync("RegisterResource", new object[] {
+                        apiVersion,
+                        springVersion,
+                        md5,
+                        length,
+                        resourceType,
+                        archiveName,
+                        internalName,
+                        springHash,
+                        serializedData,
+                        dependencies,
+                        minimap,
+                        metalMap,
+                        heightMap,
+                        torrentData}, this.RegisterResourceOperationCompleted, userState);
+        }
+        
+        private void OnRegisterResourceOperationCompleted(object arg) {
+            if ((this.RegisterResourceCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.RegisterResourceCompleted(this, new RegisterResourceCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -240,6 +410,109 @@ namespace PlasmaShared.ContentService {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
     [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public enum ResourceType {
+        
+        /// <remarks/>
+        Map,
+        
+        /// <remarks/>
+        Mod,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class ResourceData {
+        
+        private string[] dependenciesField;
+        
+        private string internalNameField;
+        
+        private ResourceType resourceTypeField;
+        
+        private SpringHashEntry[] springHashesField;
+        
+        /// <remarks/>
+        public string[] Dependencies {
+            get {
+                return this.dependenciesField;
+            }
+            set {
+                this.dependenciesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string InternalName {
+            get {
+                return this.internalNameField;
+            }
+            set {
+                this.internalNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ResourceType ResourceType {
+            get {
+                return this.resourceTypeField;
+            }
+            set {
+                this.resourceTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public SpringHashEntry[] SpringHashes {
+            get {
+                return this.springHashesField;
+            }
+            set {
+                this.springHashesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class SpringHashEntry {
+        
+        private int springHashField;
+        
+        private string springVersionField;
+        
+        /// <remarks/>
+        public int SpringHash {
+            get {
+                return this.springHashField;
+            }
+            set {
+                this.springHashField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string SpringVersion {
+            get {
+                return this.springVersionField;
+            }
+            set {
+                this.springVersionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
@@ -251,9 +524,9 @@ namespace PlasmaShared.ContentService {
         
         private string modTagField;
         
-        private string startScriptField;
-        
         private string nameField;
+        
+        private string startScriptField;
         
         /// <remarks/>
         public string[] ManualDependencies {
@@ -286,16 +559,6 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        public string StartScript {
-            get {
-                return this.startScriptField;
-            }
-            set {
-                this.startScriptField = value;
-            }
-        }
-        
-        /// <remarks/>
         public string Name {
             get {
                 return this.nameField;
@@ -304,6 +567,41 @@ namespace PlasmaShared.ContentService {
                 this.nameField = value;
             }
         }
+        
+        /// <remarks/>
+        public string StartScript {
+            get {
+                return this.startScriptField;
+            }
+            set {
+                this.startScriptField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public enum ReturnValue {
+        
+        /// <remarks/>
+        Ok,
+        
+        /// <remarks/>
+        InvalidLogin,
+        
+        /// <remarks/>
+        ResourceNotFound,
+        
+        /// <remarks/>
+        InternalNameAlreadyExistsWithDifferentSpringHash,
+        
+        /// <remarks/>
+        Md5AlreadyExists,
+        
+        /// <remarks/>
+        Md5AlreadyExistsWithDifferentName,
     }
     
     /// <remarks/>
@@ -314,6 +612,132 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         MissionEditor,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void DownloadFileCompletedEventHandler(object sender, DownloadFileCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class DownloadFileCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal DownloadFileCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+        
+        /// <remarks/>
+        public string[] links {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string[])(this.results[1]));
+            }
+        }
+        
+        /// <remarks/>
+        public byte[] torrent {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((byte[])(this.results[2]));
+            }
+        }
+        
+        /// <remarks/>
+        public string[] dependencies {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string[])(this.results[3]));
+            }
+        }
+        
+        /// <remarks/>
+        public ResourceType resourceType {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResourceType)(this.results[4]));
+            }
+        }
+        
+        /// <remarks/>
+        public string torrentFileName {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[5]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetResourceDataCompletedEventHandler(object sender, GetResourceDataCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetResourceDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetResourceDataCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResourceData Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResourceData)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetResourceListCompletedEventHandler(object sender, GetResourceListCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetResourceListCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetResourceListCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ResourceData[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ResourceData[])(this.results[0]));
+            }
+        }
+        
+        /// <remarks/>
+        public System.DateTime currentTime {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((System.DateTime)(this.results[1]));
+            }
+        }
     }
     
     /// <remarks/>
@@ -345,6 +769,32 @@ namespace PlasmaShared.ContentService {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void NotifyMissionRunCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void RegisterResourceCompletedEventHandler(object sender, RegisterResourceCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class RegisterResourceCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal RegisterResourceCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public ReturnValue Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((ReturnValue)(this.results[0]));
+            }
+        }
+    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]

@@ -14,7 +14,7 @@ namespace PlasmaShared
 {
 	public class MetaDataCache
 	{
-		const string ServerResourceUrlBase = "http://planet-wars.eu/PlasmaServer/Resources";
+		const string ServerResourceUrlBase = "http://zero-k.info/Resources";
 
 		public delegate void MapCallback(Map map, byte[] minimap, byte[] heightmap, byte[] metalmap);
 

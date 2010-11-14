@@ -1,6 +1,8 @@
 using System;
 using System.Deployment.Application;
 using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Security.Principal;
@@ -17,6 +19,7 @@ using ZeroKLobby.Notifications;
 using ZeroKLobby.ToolTips;
 using Application = System.Windows.Forms.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
+using Point = System.Windows.Point;
 
 namespace ZeroKLobby
 {
@@ -81,7 +84,11 @@ namespace ZeroKLobby
 		[STAThread]
 		public static bool Main(string[] args)
 		{
-			try
+      
+
+
+      
+      try
 			{
         Trace.Listeners.Add(new ConsoleTraceListener());
         Trace.Listeners.Add(new LogTraceListener());
