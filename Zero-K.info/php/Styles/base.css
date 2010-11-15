@@ -1,5 +1,5 @@
 p {text-indent: 2em;}
-b {font-size: 111%; font-weight: bold; color: #fff;}
+b {font-weight: bold; color: #fff;}
 i {}
 
 h1 {font-size: 170%; color: #fff;}
@@ -49,37 +49,46 @@ input
 	color: #f00;
 }
 
-ul.points {list-style-type: circle;}
+ul {list-style-type: circle;}
 
 ul.poll {list-style-type: none; text-indent: -3em;}
 
 .indent {text-indent: 2em;}
 
+.border
+{
+	background: #000;
+	border: 1px solid #00a;
+	padding: 10px;
+	margin: 10px;
+}
+
 .ie .border
 {
 	background: #000;
 	border: 2px solid white;
-	padding: 15px;
-	margin: 5px;
+	padding: 10px;
+	margin: 10px;
 }
 
 .gecko .border
 {
-	-moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
-	margin: 5px 5px 5px 5px;
+	-moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
+	margin: 10px 10px 10px 10px;
 }
 
 .webkit .border
 {
-	-webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
-	margin: 5px 5px 5px 5px;
+	-webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
+	margin: 10px 10px 10px 10px;
 }
 
 .opera .border
 {
-	-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 20px 20px 20px 20px ;
-	margin: 5px 5px 5px 5px;
+	-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
+	margin: 10px 10px 10px 10px;
 }
+
 .left
 {
 	float: left;
@@ -120,6 +129,16 @@ ul.poll {list-style-type: none; text-indent: -3em;}
 .relative
 {
 	position: relative;
+}
+
+.block
+{
+	display: block;
+}
+
+.hide
+{
+	display: none;
 }
 
 .abstop

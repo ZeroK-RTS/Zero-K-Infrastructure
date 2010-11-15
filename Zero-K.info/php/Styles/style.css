@@ -36,6 +36,11 @@ div#wrapper
 	text-align: justify;
 }
 
+.wrapper
+{
+	
+}
+
 div#footer
 {
 	position: relative;
@@ -61,44 +66,46 @@ div#footer
 	cursor: pointer;
 }
 
-.mission_credit
+.play
 {
+	display: none;
 	position: absolute;
-	/* 2.5em in ff/ie but 1.5 seems to look right in my Zero-K lobby */
-	top: 1.5em;
-	float: left;
+	top: 150px;
+	left: 0px;
+	z-index: 100;
 }
 
-.mission_title
+.mission:hover > .play
 {
-	position: relative;
-	top: -.5em;
+	display: block;
 }
 
 .icon16
 {
-	margin:0;
+	width:16px;
+	height:16px;
 	padding:0;
-	width:16px;height:16px;vertical-align:middle;
+	margin:0;
+	vertical-align:middle;
 }
 
 .icon32 
 {
-  width:32px;
-  height: 32px; 
+	width:32px;
+	height: 32px; 
 }
 
 .flag
 {
-	margin:0;
 	padding:0;
+	margin:0;
 	vertical-align:middle;
 }
 
 .avatar 
 {
- margin:0;
- padding:0; 
+	padding:0; 
+	margin:0;
 }
 
 
