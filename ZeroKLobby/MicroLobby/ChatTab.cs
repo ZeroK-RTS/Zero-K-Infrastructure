@@ -234,8 +234,8 @@ namespace ZeroKLobby.MicroLobby
         {
             var userName = e.Data;
             toolTabs.RemoveTab(userName);
-            CreatePrivateMessageControl(userName);
-            toolTabs.SelectTab(userName);
+            var pm = CreatePrivateMessageControl(userName);
+             toolTabs.SelectTab(userName);
         }
 
         void FriendManager_FriendRemoved(object sender, EventArgs<string> e)

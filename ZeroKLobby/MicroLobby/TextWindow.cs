@@ -42,7 +42,7 @@ namespace ZeroKLobby.MicroLobby
     public partial class TextWindow: UserControl
     {
         const int MaxTextLines = 500;
-        public const string WwwMatch = @"((https?|www\.|spring://)[^ \n\t\r]+)";
+        public const string WwwMatch = @"((https?|www\.|spring://)[^\s,]+)";
         int backColor;
         int curHighChar;
         int curHighLine;

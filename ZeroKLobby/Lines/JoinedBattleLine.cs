@@ -16,8 +16,7 @@ namespace ZeroKLobby.Lines
             UserName = userName;
             Date = DateTime.Now;
             var icon = TextImage.GetUserImageCode(userName);
-            Text = TextColor.Text + "[" + TextColor.Date + Date.ToShortTimeString() + TextColor.Text + "] " + icon + " " + TextColor.Emote + UserName +
-                   " has joined " + battle.Title + " (" + battle.ModName.Trim() + ").";
+            Text = string.Format("{0}[{1}{2}{3}] {4} {5}{6} has joined {7} ({8}) - spring://@join_battle:{9}", TextColor.Text, TextColor.Date, Date.ToShortTimeString(), TextColor.Text, icon, TextColor.Emote, UserName, battle.Title, battle.ModName.Trim(), battle.Founder);
         }
 
         public string Text { get; private set; }

@@ -91,6 +91,8 @@ namespace ZeroKLobby
         Trace.Listeners.Add(new ConsoleTraceListener());
         Trace.Listeners.Add(new LogTraceListener());
 
+        if (Process.GetProcesses().Any(x => x.ProcessName.StartsWith("spring_"))) return false; // dont start if started from installer
+
         // if we started executable but clickonce link exists, runk through clickonce link
         if (!ApplicationDeployment.IsNetworkDeployed) {
           if (!Debugger.IsAttached)

@@ -204,6 +204,10 @@ namespace ZeroKLobby
               }
               break;
 
+            case "add_friend":
+					    Program.FriendManager.AddFriend(arg);
+              break;
+
             case "join_battle":
 					    JoinPlayer(arg);
               break;
