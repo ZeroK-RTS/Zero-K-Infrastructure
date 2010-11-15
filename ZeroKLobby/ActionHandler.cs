@@ -203,6 +203,13 @@ namespace ZeroKLobby
                 SpawnAutohost(StartPage.GameList.First().RapidTag, name, null, false, 0, 0, 0, new List<string> { "!map " + arg });
               }
               break;
+
+            case "join_battle":
+					    JoinPlayer(arg);
+              break;
+            case "join_player":
+              JoinPlayer(arg);
+              break;
 					}
 				}
 			}
