@@ -47,7 +47,7 @@ namespace System.Web.Mvc
     public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account)
     {
       return
-        new MvcHtmlString(string.Format("<img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}",
+        new MvcHtmlString(string.Format("<a href='spring://chat/user/{2}'><img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}</a>",
                                         account.Country,
                                         account.LobbyTimeRank + 1,
                                         account.Name));
