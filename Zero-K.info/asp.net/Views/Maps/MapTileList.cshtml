@@ -3,8 +3,7 @@
   Layout = "";
 }
 @foreach (var m in Model) {
-  <a href='@Url.Action("Detail", new { id = m.ResourceID })' style='color: White;'>
-    <div class='mission left'>
+    <div class='mission left' onclick="window.location='@Url.Action("Detail", new { id = m.ResourceID })'">
       <b>@m.InternalName</b><br />
       @m.AuthorName<br />
       <table>
@@ -43,5 +42,4 @@
         </tr>
       </table>
     </div>
-  </a>
 }
