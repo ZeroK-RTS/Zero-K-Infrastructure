@@ -8,7 +8,8 @@ namespace ZeroKLobby.MicroLobby
 	public class GameInfo
 	{
 		string shortcut;
-		public string Channel { get; set; }
+    public bool IsPrimary { get; set; }
+	  public string Channel { get; set; }
 		public string Description { get; set; }
 		public string FullName { get; set; }
 		public string Image { get; set; }

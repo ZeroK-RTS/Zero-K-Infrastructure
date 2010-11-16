@@ -200,7 +200,7 @@ namespace ZeroKLobby
               else
               {
                 string name = String.Format("{0}'s game", Program.Conf.LobbyPlayerName);
-                SpawnAutohost(StartPage.GameList.First().RapidTag, name, null, false, 0, 0, 0, new List<string> { "!map " + arg });
+                SpawnAutohost(StartPage.GameList.First(x=>x.IsPrimary).RapidTag, name, null, false, 0, 0, 0, new List<string> { "!map " + arg });
               }
               break;
 

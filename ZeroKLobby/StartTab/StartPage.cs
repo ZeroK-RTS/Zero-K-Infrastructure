@@ -19,6 +19,7 @@ namespace ZeroKLobby.MicroLobby
 					Shortcut = "CA",
 					FullName = "Complete Annihilation",
 					Channel = "ca",
+          IsPrimary = true,
 					Regex = "Complete Annihilation.*",
 					Url = "http://www.caspring.org",
 					RapidTag = "zk:stable",
@@ -122,7 +123,7 @@ namespace ZeroKLobby.MicroLobby
 					Description =
 						"Kernel Panic is a game about computers. Systems, Hackers and Networks wage war in a matrix of DOOM! The only constraints are time and space; unlike other real time strategy games, no resource economy exists in KP.",
 				},
-			}.OrderBy(g => g.FullName).ToList();
+			}.ToList();
 
 
 		public StartPage()
