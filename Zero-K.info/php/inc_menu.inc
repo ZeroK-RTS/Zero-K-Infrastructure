@@ -30,7 +30,7 @@
 	<td><ul class="menu">
 	<li><a href="guide-newbie.php">Guide</a>
 		<ul class="border">
-			<li><a target="_new" href="http://trac.caspring.org/wiki/CaIntro">Introduction<span>Don't know where to begin? Click here.</span></a></li>
+			<li><a target="_new" href="/Wiki.mvc">Introduction<span>Don't know where to begin? Click here.</span></a></li>
 			<li><a href="guide-units.php">Units</a></li>
 			<li><a target="_new" href="http://springinfo.info/guides/?p=195">Economy</a></li>
 			<li><a href="guide-terraform.php">Terraforming<span>Let's go play in the dirt!</span></a></li>
@@ -38,7 +38,7 @@
 	</li>
 	</ul> </td> 
 	
-	<td><a target="_new" href="http://springrts.com/wiki/Complete_Annihilation">Wiki</a></td>
+	<td><a target="_new" href="/Wiki.mvc">Wiki</a></td>
 
 	<td><a target="_new" href="http://springrts.com/phpbb/viewforum.php?f=42">Forums</a></td> 
 	

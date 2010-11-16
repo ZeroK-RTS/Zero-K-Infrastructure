@@ -3,8 +3,17 @@
     Page.Title = "Zero-K wiki";
 }
 
+@Html.IncludeFile("inc_plainbg.inc")
+@Html.IncludeFile("inc_header.inc")
+@Html.IncludeFile("inc_menu.inc")
+@Html.IncludeFile("_sidebar.inc")
+@Html.IncludeFile("_content.inc")
+
 <table>
 <tr>
 <td>
 <div>
 @Model.Content
+
+
+@Html.IncludeFile("inc_footer.inc")

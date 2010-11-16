@@ -32,6 +32,19 @@ namespace System.Web.Mvc
       return AccountAvatar(helper, account.AccountID);
     }
 
+    public static MvcHtmlString IncludeFile(this HtmlHelper helper, string name)
+    {
+      try
+      {
+        var path = HttpContext.Current.Server.MapPath(name);
+
+        return new MvcHtmlString(File.ReadAllText(path));
+      } catch (Exception ex)
+      {
+        return new MvcHtmlString("");
+      }
+    }
+
     public static MvcHtmlString BoolSelect(this HtmlHelper helper, string name, bool? selected, string anyItem)
     {
       var sb = new StringBuilder();
