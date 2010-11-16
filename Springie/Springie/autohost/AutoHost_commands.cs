@@ -986,19 +986,18 @@ namespace Springie.autohost
 						return 1;
 					}
 				}
-
-				// search by direct word
-				var glued = Utils.Glue(words);
-				for (i = 0; i < source.Length; ++i)
-				{
-					if (source[i] == glued)
-					{
-						resultVals = new[] { source[i] };
-						resultIndexes = new[] { i };
-						return 1;
-					}
-				}
 			}
+
+      // search by direct word
+      var glued = Utils.Glue(words);
+      for (i = 0; i < source.Length; ++i) {
+        if (source[i] == glued) {
+          resultVals = new[] { source[i] };
+          resultIndexes = new[] { i };
+          return 1;
+        }
+      }
+
 
 			var res = new List<string>();
 			var resi = new List<int>();
