@@ -76,6 +76,7 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Compile Include="Download.cs" />
+    <Compile Include="EngineDownload.cs" />
     <Compile Include="IPlasmaDownloaderConfig.cs" />
     <Compile Include="Packages\BitArray.cs" />
     <Compile Include="Packages\StreamExtension.cs" />
