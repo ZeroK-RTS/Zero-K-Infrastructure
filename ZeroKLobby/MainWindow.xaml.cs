@@ -39,7 +39,7 @@ namespace ZeroKLobby
 		readonly NotifyIcon systrayIcon;
 		readonly DispatcherTimer timer1 = new DispatcherTimer();
 		readonly ContextMenuStrip trayStrip;
-		public ChatTab ChatTab { get { return navigationControl.ChatTab; } }
+		public ChatTab2 ChatTab { get { return navigationControl.ChatTab; } }
 		public IntPtr Handle { get { return interopHelper.Handle; } }
 		public static MainWindow Instance { get; private set; }
 

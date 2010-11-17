@@ -4,8 +4,12 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using LobbyClient;
+using ContextMenu = System.Windows.Forms.ContextMenu;
+using MenuItem = System.Windows.Forms.MenuItem;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -31,7 +35,8 @@ namespace ZeroKLobby.MicroLobby
 					item.Click += (s, e) =>
 						{
 							var botColor = botStatus.TeamColorRGB;
-							var colorDialog = new ColorDialog { Color = Color.FromArgb(botColor[0], botColor[1], botColor[2]), Site = Program.MainWindow.ChatTab.Site };
+							// fixme: set site
+							var colorDialog = new ColorDialog { Color = Color.FromArgb(botColor[0], botColor[1], botColor[2]) };
 							if (colorDialog.ShowDialog() == DialogResult.OK)
 							{
 								var newColor = (int)(MyCol)colorDialog.Color;
@@ -232,7 +237,8 @@ namespace ZeroKLobby.MicroLobby
 								if (Program.TasClient.MyBattle == null) return;
 								var myColor = Program.TasClient.MyBattleStatus.TeamColorRGB;
 								var colorDialog = new ColorDialog { Color = Color.FromArgb(myColor[0], myColor[1], myColor[2]) };
-								colorDialog.Site = Program.MainWindow.ChatTab.Site;
+								// fixme: set site
+								// colorDialog.Site = Program.MainWindow.ChatTab.Site;
 								if (colorDialog.ShowDialog() == DialogResult.OK)
 								{
 									var newColor = (int)(MyCol)colorDialog.Color;
@@ -261,7 +267,79 @@ namespace ZeroKLobby.MicroLobby
 			return contextMenu;
 		}
 
-		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+		// warning: a lot of duplication in GetPrivateMessageContextMenuWpf! change both at once! (temporary solution)
+		public static System.Windows.Controls.ContextMenu GetPrivateMessageContextMenuWpf(PrivateMessageControl control)
+		{
+			var contextMenu = new System.Windows.Controls.ContextMenu();
+			try
+			{
+				var headerItem = new System.Windows.Controls.MenuItem
+				                 {
+				                 	Header = "Private Channel - " + control.UserName, 
+									IsEnabled = false, 
+									FontWeight = FontWeights.Bold
+				                 };
+
+				contextMenu.Items.Add(headerItem);
+				contextMenu.Items.Add(new Separator());
+
+				if (Program.FriendManager.Friends.Contains(control.UserName))
+				{
+					var pinItem = new System.Windows.Controls.MenuItem { Header = "Unfriend" };
+					pinItem.Click += (s, e) => Program.FriendManager.RemoveFriend(control.UserName);
+					contextMenu.Items.Add(pinItem);
+				}
+				else
+				{
+					var pinItem = new System.Windows.Controls.MenuItem { Header = "Friend" };
+					pinItem.Click += (s, e) => Program.FriendManager.AddFriend(control.UserName);
+					contextMenu.Items.Add(pinItem);
+				}
+
+				var isUserOnline = Program.TasClient.ExistingUsers.ContainsKey(control.UserName);
+
+				var followItem = new System.Windows.Controls.MenuItem { Header = "Follow", IsEnabled = isUserOnline };
+				followItem.Click += (s, e) => ActionHandler.FollowPlayer(control.UserName);
+				contextMenu.Items.Add(followItem);
+
+				var joinItem = new System.Windows.Controls.MenuItem
+				               {
+				               	Header = "Join Same Battle", 
+								IsEnabled = isUserOnline && Program.TasClient.ExistingUsers[control.UserName].IsInBattleRoom
+				               };
+				joinItem.Click += (s, e) => ActionHandler.JoinPlayer(control.UserName);
+				contextMenu.Items.Add(joinItem);
+
+				contextMenu.Items.Add("-");
+
+				var showJoinLeaveLines = new System.Windows.Controls.MenuItem { Header = "Show Join/Leave Lines",  IsChecked = control.ChatBox.ShowJoinLeave };
+				showJoinLeaveLines.Click += (s, e) => control.ChatBox.ShowJoinLeave = !control.ChatBox.ShowJoinLeave;
+				contextMenu.Items.Add(showJoinLeaveLines);
+
+				var showHistoryLines = new System.Windows.Controls.MenuItem { Header = "Show Recent History",  IsChecked = control.ChatBox.ShowHistory };
+				showHistoryLines.Click += (s, e) => control.ChatBox.ShowHistory = !control.ChatBox.ShowHistory;
+				contextMenu.Items.Add(showHistoryLines);
+
+				var historyItem = new System.Windows.Controls.MenuItem { Header = "Open History" };
+				historyItem.Click += (s, e) => HistoryManager.OpenHistory(control.UserName);
+				contextMenu.Items.Add(historyItem);
+
+				if (control.CanClose)
+				{
+					var closeItem = new System.Windows.Controls.MenuItem { Header = "Close" };
+					closeItem.Click += (s, e) => ActionHandler.CloseChannel(control.UserName);
+					contextMenu.Items.Add(closeItem);
+				}
+			}
+			catch (Exception e)
+			{
+				Trace.WriteLine("Error generating channel context menu: " + e);
+			}
+
+			return contextMenu;
+		}
+
+		// warning: a lot of duplication in GetPrivateMessageContextMenuWpf! change both at once!  (temporary solution)
 		public static ContextMenu GetPrivateMessageContextMenu(PrivateMessageControl control)
 		{
 			var contextMenu = new ContextMenu();

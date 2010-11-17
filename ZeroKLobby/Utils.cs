@@ -266,6 +266,14 @@ namespace ZeroKLobby
       }
     }
 
+	  public static BitmapSource ToBitmapSource(this Image image)
+	  {
+	  	using (var bitmap = new Bitmap(image))
+	  	{
+	  		return bitmap.ToBitmapSource();
+	  	}
+	  }
+
     public static BitmapSource ToBitmapSource(this Bitmap bitmap)
     {
       var hBitmap = bitmap.GetHbitmap();

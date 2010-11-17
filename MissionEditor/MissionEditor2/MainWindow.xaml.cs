@@ -50,9 +50,23 @@ namespace MissionEditor2
 			else SaveMission();
 		}
 
+		void CreateNewRepeatingTrigger()
+		{
+			CreateNewTrigger(true);
+		}
+
 		void CreateNewTrigger()
 		{
+			CreateNewTrigger(false);
+		}
+
+		void CreateNewTrigger(bool repeating)
+		{
 			var trigger = new Trigger { Name = GetNewTriggerName() };
+			if (repeating)
+			{
+				trigger.MaxOccurrences = -1;
+			}
 			Mission.Triggers.Add(trigger);
 			Mission.RaisePropertyChanged(String.Empty);
 		}
@@ -416,6 +430,7 @@ namespace MissionEditor2
 			var trigger = (Trigger)border.DataContext;
 			var menu = new ContextMenu();
 			menu.AddAction("New Trigger", CreateNewTrigger);
+			menu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
 			menu.Items.Add(GetNewActionMenu(trigger));
 			menu.Items.Add(GetNewConditionMenu(trigger));
 			menu.Items.Add(new Separator());
@@ -434,6 +449,8 @@ namespace MissionEditor2
 			menu.AddAction("Collapse All But This", () => CollapseAllButThisTrigger(trigger));
 			border.ContextMenu = menu;
 		}
+
+
 
 
 		void CollapseAllButThisTrigger(Trigger thisTrigger)
@@ -487,6 +504,7 @@ namespace MissionEditor2
 
 			var menu = new ContextMenu();
 			menu.AddAction("New Trigger", CreateNewTrigger);
+			menu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
 			menu.AddAction("New Region", CreateNewRegion);
 			logicGrid.ContextMenu = menu;
 		}

@@ -50,7 +50,6 @@
                     </ControlTemplate>
                 </Thumb.Template>
             </Thumb>
-
             <TextBlock Text="{Binding Groups, Converter={StaticResource csvConverter}}" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="4">
       <TextBlock.RenderTransform>
         <TransformGroup>

@@ -127,6 +127,9 @@
     <Compile Include="MicroLobby\BrowserControl.xaml.cs">
       <DependentUpon>BrowserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MicroLobby\ChatTab2.xaml.cs">
+      <DependentUpon>ChatTab2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NavigationControl.xaml.cs">
       <DependentUpon>NavigationControl.xaml</DependentUpon>
     </Compile>
@@ -224,6 +227,7 @@
       <DependentUpon>Ranks.resx</DependentUpon>
     </Compile>
     <Compile Include="SubmitTextBox.cs" />
+    <Compile Include="TabItemHeaderSelector.cs" />
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
@@ -431,6 +435,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UrlSecurityZone.cs" />
+    <Compile Include="UserToIconConverter.cs" />
     <Compile Include="WindowsApi.cs" />
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -592,6 +597,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="LuaMgr\doc\changelog.txt" />
+    <Resource Include="Resources\battle.png" />
+    <Resource Include="Resources\chat.png" />
+    <Resource Include="Resources\game.png" />
     <None Include="Resources\ZK_logo_square.png" />
     <Resource Include="ZK_logo_square.ico" />
     <None Include="PixelShaders\BlackAndWhite.fx" />
@@ -708,6 +716,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MicroLobby\BrowserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MicroLobby\ChatTab2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

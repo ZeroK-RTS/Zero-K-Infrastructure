@@ -3,9 +3,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using CMissionLib.Actions;
 using CMissionLib.Conditions;
 using CMissionLib.UnitSyncLib;
+using Point = System.Windows.Point;
 
 namespace MissionEditor2
 {
@@ -106,16 +109,15 @@ namespace MissionEditor2
 			var currentLogic = MainWindow.Instance.CurrentLogic;
 			if (currentLogic is MarkerPointAction)
 			{
-				var poleBase = new Point(0, 0);
-				var flagPole = (Canvas) new Vectors().FindResource("flagPole");
+				var flagPole = new Ellipse { Height = 20, Width = 20, Stroke = Brushes.Red, StrokeThickness = 5 };
 				var action = (MarkerPointAction) currentLogic;
 				var markerCanvas = (Canvas) e.Source;
 				markerCanvas.Children.Add(flagPole);
 				foreach (var unit in MainWindow.Instance.Mission.AllUnits) UnitIcon.PlaceSimplifiedUnit(markerCanvas, unit);
 				Action refreshPosition = delegate
 					{
-						Canvas.SetLeft(flagPole, action.X - poleBase.X);
-						Canvas.SetTop(flagPole, action.Y - flagPole.Height + poleBase.Y);
+						Canvas.SetLeft(flagPole, action.X - flagPole.Width/2);
+						Canvas.SetTop(flagPole, action.Y - flagPole.Height/2);
 					};
 				refreshPosition();
 				markerCanvas.MouseDown += (s, ea) =>
@@ -129,7 +131,7 @@ namespace MissionEditor2
 			}
 			else if (currentLogic is SetCameraPointTargetAction)
 			{
-				var camera = (Viewbox) new Vectors().FindResource("camera");
+				var camera = new Ellipse { Height = 20, Width = 20, Stroke = Brushes.Red, StrokeThickness = 5 };
 				var action = (SetCameraPointTargetAction) currentLogic;
 				var markerCanvas = (Canvas) e.Source;
 				markerCanvas.Children.Add(camera);

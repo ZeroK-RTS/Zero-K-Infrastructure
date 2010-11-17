@@ -22,6 +22,7 @@ namespace ZeroKLobby.MicroLobby
 		public string ChannelName { get; set; }
 		public IEnumerable<PlayerListItem> PlayerListItems { get { return playerListItems; } }
 		public event EventHandler<EventArgs<string>> ChatLine { add { sendBox.LineEntered += value; } remove { sendBox.LineEntered -= value; } }
+		public GameInfo GameInfo { get; set; }
 
 
 		public ChatControl() {}

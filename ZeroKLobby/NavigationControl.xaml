@@ -42,9 +42,7 @@
         </WindowsFormsHost>
       </TabItem>
       <TabItem>
-        <WindowsFormsHost>
-          <MicroLobby:ChatTab x:Name="chatTab" />
-        </WindowsFormsHost>
+          <MicroLobby:ChatTab2 x:Name="chatTab" />
       </TabItem>
       <TabItem>
         <WindowsFormsHost>

@@ -40,7 +40,7 @@ namespace ZeroKLobby
 		readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
 		readonly List<string> lastPaths = new List<string>();
 		public WebBrowser Browser { get { return browserControl.WebBrowser; } }
-		public ChatTab ChatTab { get { return chatTab; } }
+		public ChatTab2 ChatTab { get { return chatTab; } }
 		public static NavigationControl Instance { get; private set; }
 		public bool IsBrowserTabSelected { get { return tabControl.SelectedContent is BrowserControl; } }
 
