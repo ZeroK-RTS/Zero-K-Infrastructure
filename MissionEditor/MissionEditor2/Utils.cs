@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Deployment.Application;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using CMissionLib;
-using CMissionLib.UnitSyncLib;
-using MissionEditor2.Properties;
-using ZkData;
-using Action = System.Action;
-using Binary = System.Data.Linq.Binary;
-using Mission = CMissionLib.Mission;
+using AvalonDock;
 
 namespace MissionEditor2
 {
@@ -99,13 +92,25 @@ namespace MissionEditor2
 			new Thread(new ThreadStart(action)).Start();
 		}
 
-
-		public static string ShowStringDialog(string title, string text)
+		public static void LayoutFromString(this DockingManager dockManager, string layoutXml)
 		{
-			var dialog = new StringRequest { Title = title, TextBox = { Text = text }, Owner = MainWindow.Instance};
-			return dialog.ShowDialog() == true ? dialog.TextBox.Text : null;
+			var sr = new StringReader(layoutXml);
+			dockManager.RestoreLayout(sr);
+		}
+
+		public static string LayoutToString(this DockingManager dockManager)
+		{
+			var sb = new StringBuilder();
+			var sw = new StringWriter(sb);
+			dockManager.SaveLayout(sw);
+			return sb.ToString();
 		}
 
 
+		public static string ShowStringDialog(string title, string text)
+		{
+			var dialog = new StringRequest { Title = title, TextBox = { Text = text }, Owner = MainWindow.Instance };
+			return dialog.ShowDialog() == true ? dialog.TextBox.Text : null;
+		}
 	}
 }

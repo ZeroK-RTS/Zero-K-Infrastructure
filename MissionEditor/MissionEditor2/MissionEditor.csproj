@@ -83,6 +83,9 @@
     <Reference Include="AvalonDock">
       <HintPath>..\Libraries\AvalonDock.dll</HintPath>
     </Reference>
+    <Reference Include="AvalonDock.Themes">
+      <HintPath>..\Libraries\AvalonDock.Themes.dll</HintPath>
+    </Reference>
     <Reference Include="ColorPicker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libraries\ColorPicker.dll</HintPath>
