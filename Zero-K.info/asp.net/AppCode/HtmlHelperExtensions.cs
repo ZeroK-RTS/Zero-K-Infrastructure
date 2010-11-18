@@ -10,7 +10,8 @@ namespace System.Web.Mvc
     RedStarSmall,
     GreenStarSmall,
     WhiteStarSmall,
-    RedSkull
+    RedSkull,
+    WhiteSkull
   }
 
   public class SelectOption
@@ -112,8 +113,12 @@ namespace System.Web.Mvc
 
     public static MvcHtmlString Stars(this HtmlHelper helper, StarType type, double? rating)
     {
-      if (rating.HasValue) return new MvcHtmlString(string.Format("<span class='{0}' style='width:{1}px' title='{2:F2}'></span>", type, (int)(rating*14.0), rating));
-      else return new MvcHtmlString(string.Format("<span class='WhiteStarSmall' style='width:70px' title='No votes'></span>"));
+      if (rating.HasValue)
+      {
+        var totalWidth = 5*14;
+        var starWidth = (int)(rating*14.0);
+        return new MvcHtmlString(string.Format("<span title='{2:F2}'><span class='{0}' style='width:{1}px'></span><span class='{5}' style='width:{3}px;background-position:-{4}px'></span></span>", type, starWidth, rating, totalWidth-starWidth, starWidth%14, type == StarType.RedSkull ? StarType.WhiteSkull : StarType.WhiteStarSmall));
+      } else return new MvcHtmlString(string.Format("<span class='{0}' style='width:70px' title='No votes'></span>", type == StarType.RedSkull ? StarType.WhiteSkull : StarType.WhiteStarSmall));
     }
 
 

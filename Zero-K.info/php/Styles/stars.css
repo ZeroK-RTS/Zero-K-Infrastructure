@@ -1,24 +1,30 @@
  .GreenStarSmall { 
   height: 14px;
-  display: block;
+  display: inline-block;
   background: url(../img/stars/star_green_small.png) 0 0;
  } 
  
  .RedStarSmall { 
   height: 14px;
-  display: block;
+  display: inline-block;
   background: url(../img/stars/star_red_small.png) 0 0;
  } 
 
  .RedSkull { 
   height: 14px;
-  display: block;
-  background: url(../img/stars/skull_red.png) 0 0;
+  display: inline-block;
+  background: url(../img/stars/skulls.png) 0 -56px;
+ } 
+
+ .WhiteSkull { 
+  height: 14px;
+  display: inline-block;
+  background: url(../img/stars/skulls.png) 0 -28px;
  } 
  
  .WhiteStarSmall { 
   height: 14px;
-  display: block;
+  display: inline-block;
   background: url(../img/stars/star_white_small.png) 0 0;
  } 
  
