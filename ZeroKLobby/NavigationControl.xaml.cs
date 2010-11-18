@@ -49,6 +49,8 @@ namespace ZeroKLobby
 			get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
 			set
 			{
+        if (value == "http://zero-k.info/lobby/Zero-K.application") return; // this URL happens if you start installer while another copy is running. In this case dont change to this path
+
 				if (value.ToLower().StartsWith("spring://")) value = value.Substring(9);
 				var parts = value.Split('@');
 				for (var i = 1; i < parts.Length; i++)
