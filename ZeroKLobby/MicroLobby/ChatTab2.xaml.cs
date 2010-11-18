@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Media;
@@ -407,15 +408,24 @@ namespace ZeroKLobby.MicroLobby
 			return null;
 		}
 
-		private void BattleTab_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		private void ChannelTab_PreviewMouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			// todo: show battle context menu?
+			var source = (FrameworkElement)e.Source;
+			var chatControl = (ChatControl)source.DataContext;
+			var contextMenu = ContextMenus.GetChannelContextMenuWpf(chatControl);
+			contextMenu.PlacementTarget = source;
+			contextMenu.Placement = PlacementMode.MousePoint;
+			contextMenu.IsOpen = true;
 		}
 
-		private void PrivateMessageTab_MouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		private void PrivateMessageTab_PreviewMouseRightButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			var element = (FrameworkElement)sender;
-			// ContextMenus.GetPrivateMessageContextMenuWpf((PrivateMessageControl)element.DataContext)
+			var source = (FrameworkElement)e.Source;
+			var pmControl = (PrivateMessageControl)source.DataContext;
+			var contextMenu = ContextMenus.GetPrivateMessageContextMenuWpf(pmControl);
+			contextMenu.PlacementTarget = source;
+			contextMenu.Placement = PlacementMode.MousePoint;
+			contextMenu.IsOpen = true;
 		}
 
 	}

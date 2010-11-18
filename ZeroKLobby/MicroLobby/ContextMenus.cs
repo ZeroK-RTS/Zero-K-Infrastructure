@@ -87,7 +87,70 @@ namespace ZeroKLobby.MicroLobby
 			return contextMenu;
 		}
 
-		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+		public static System.Windows.Controls.ContextMenu GetChannelContextMenuWpf(ChatControl chatControl)
+		{
+			var contextMenu = new System.Windows.Controls.ContextMenu();
+			try
+			{
+				var headerItem = new System.Windows.Controls.MenuItem { Header = "Channel - " + chatControl.ChannelName, IsEnabled = false, FontWeight = FontWeights.Bold };
+
+				contextMenu.Items.Add(headerItem);
+				contextMenu.Items.Add(new Separator());
+
+				var showTopic = new System.Windows.Controls.MenuItem() { Header = "Show Topic Header", IsChecked = chatControl.TopicBox.Visible };
+				showTopic.Click += (s, e) =>
+				{
+					chatControl.TopicPanel.Visible = !chatControl.TopicPanel.Visible;
+					showTopic.IsChecked = chatControl.TopicPanel.Visible;
+				};
+				contextMenu.Items.Add(showTopic);
+
+				if (!StartPage.GameList.Any(g => g.Channel == chatControl.ChannelName) && chatControl.ChannelName != "Battle")
+				{
+					var autoJoinItem = new System.Windows.Controls.MenuItem() { Header = "Automatically Join Channel", IsChecked = Program.AutoJoinManager.Channels.Contains(chatControl.ChannelName) };
+					autoJoinItem.Click += (s, e) =>
+					{
+						if (autoJoinItem.IsChecked) Program.AutoJoinManager.Remove(chatControl.ChannelName);
+						else Program.AutoJoinManager.Add(chatControl.ChannelName);
+						autoJoinItem.IsChecked = !autoJoinItem.IsChecked;
+					};
+					contextMenu.Items.Add(autoJoinItem);
+				}
+
+				var showJoinLeaveLines = new System.Windows.Controls.MenuItem() { Header = "Show Join/Leave Lines", IsChecked = chatControl.ChatBox.ShowJoinLeave };
+				showJoinLeaveLines.Click += (s, e) => chatControl.ChatBox.ShowJoinLeave = !chatControl.ChatBox.ShowJoinLeave;
+				contextMenu.Items.Add(showJoinLeaveLines);
+
+				var showHistoryLines = new System.Windows.Controls.MenuItem() { Header = "Show Recent History", IsChecked = chatControl.ChatBox.ShowHistory };
+				showHistoryLines.Click += (s, e) => chatControl.ChatBox.ShowHistory = !chatControl.ChatBox.ShowHistory;
+				contextMenu.Items.Add(showHistoryLines);
+
+				var historyItem = new System.Windows.Controls.MenuItem { Header = "Open History" };
+				historyItem.Click += (s, e) => HistoryManager.OpenHistory(chatControl.ChannelName);
+				contextMenu.Items.Add(historyItem);
+
+				if (chatControl.CanLeave)
+				{
+					var leaveItem = new System.Windows.Controls.MenuItem() { Header = "Leave Channel" };
+					leaveItem.Click += (s, e) => Program.TasClient.LeaveChannel(chatControl.ChannelName);
+					contextMenu.Items.Add(leaveItem);
+				}
+
+				contextMenu.Items.Add(new Separator());
+				if (chatControl is BattleChatControl)
+				{
+					contextMenu.Items.Add(GetShowOptionsWpf());
+					contextMenu.Items.Add(GetAddBotItemWpf());
+				}
+			}
+			catch (Exception e)
+			{
+				Trace.WriteLine("Error generating channel context menu: " + e);
+			}
+			return contextMenu;
+		}
+
+
 		public static ContextMenu GetChannelContextMenu(ChatControl chatControl)
 		{
 			var contextMenu = new ContextMenu();
@@ -310,7 +373,7 @@ namespace ZeroKLobby.MicroLobby
 				joinItem.Click += (s, e) => ActionHandler.JoinPlayer(control.UserName);
 				contextMenu.Items.Add(joinItem);
 
-				contextMenu.Items.Add("-");
+				contextMenu.Items.Add(new Separator());
 
 				var showJoinLeaveLines = new System.Windows.Controls.MenuItem { Header = "Show Join/Leave Lines",  IsChecked = control.ChatBox.ShowJoinLeave };
 				showJoinLeaveLines.Click += (s, e) => control.ChatBox.ShowJoinLeave = !control.ChatBox.ShowJoinLeave;
@@ -406,7 +469,35 @@ namespace ZeroKLobby.MicroLobby
 			return contextMenu;
 		}
 
-		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+		static System.Windows.Controls.MenuItem GetAddBotItemWpf()
+		{
+			var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
+			var addBotItem = new System.Windows.Controls.MenuItem{ Header = "Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)"), Visibility = enabled ? Visibility.Visible : Visibility.Collapsed };
+			if (Program.ModStore.Ais != null)
+			{
+				foreach (var bot in Program.ModStore.Ais)
+				{
+					var item = new System.Windows.Controls.MenuItem{Header = string.Format("{0} ({1})", bot.ShortName, bot.Description)};
+					var b = bot;
+					item.Click += (s, e) =>
+					{
+						var botNumber = Enumerable.Range(1, int.MaxValue).First(i => !Program.TasClient.MyBattle.Bots.Any(bt => bt.Name == "Bot_" + i));
+						var botStatus = Program.TasClient.MyBattleStatus.Clone();
+						// new team        	
+						botStatus.TeamNumber =
+							Enumerable.Range(0, TasClient.MaxTeams - 1).FirstOrDefault(x => !Program.TasClient.MyBattle.Users.Any(y => y.TeamNumber == x));
+						//different alliance than player
+						botStatus.AllyNumber = Enumerable.Range(0, TasClient.MaxAlliances - 1).FirstOrDefault(x => x != botStatus.AllyNumber);
+
+						Program.TasClient.AddBot("Bot_" + botNumber, botStatus, (int)(MyCol)Color.White, b.ShortName);
+					};
+					addBotItem.Items.Add(item);
+				}
+			}
+			return addBotItem;
+		}
+
+
 		static MenuItem GetAddBotItem()
 		{
 			var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
@@ -513,7 +604,26 @@ namespace ZeroKLobby.MicroLobby
 			return setTeamItem;
 		}
 
-		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+
+		static System.Windows.Controls.MenuItem GetShowOptionsWpf()
+		{
+			var modOptions = new System.Windows.Controls.MenuItem() { Header = "Show Game Options", IsEnabled = Program.TasClient.MyBattle != null };
+			modOptions.Click += (s, e) =>
+			{
+				var form = new Form { Width = 1000, Height = 300, Icon = Resources.ZkIcon, Text = "Game options (Non Changeable)" };
+				var optionsControl = new ModOptionsControl { Dock = DockStyle.Fill };
+				form.Controls.Add(optionsControl);
+				Program.TasClient.BattleClosed += (s2, e2) =>
+				{
+					form.Close();
+					form.Dispose();
+					optionsControl.Dispose();
+				};
+				form.Show();//hack show Program.FormMain
+			};
+			return modOptions;
+		}
+
 		static MenuItem GetShowOptions()
 		{
 			var modOptions = new MenuItem("Show Game Options") { Enabled = Program.TasClient.MyBattle != null };

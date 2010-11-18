@@ -4,26 +4,26 @@
     <UserControl.Resources>
         <ZeroKLobby:UserToIconConverter x:Key="userToIconConverter" />
         <DataTemplate x:Key="channelTabHeaderTemplate">
-            <StackPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem} }}" Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" PreviewMouseRightButtonUp="ChannelTab_PreviewMouseRightButtonUp">
                 <Image Width="16" Height="16" Source="pack://application:,,,/Zero-K;component/Resources/chat.png" />
-                <Label Content="{Binding Header.Name}" />
+                <Label Content="{Binding Name}" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="gameTabHeaderTemplate">
-            <StackPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem} }}" Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" PreviewMouseRightButtonUp="ChannelTab_PreviewMouseRightButtonUp">
                 <Image Width="16" Height="16" Source="pack://application:,,,/Zero-K;component/Resources/game.png" />
-                <Label Content="{Binding Header.GameInfo.FullName}" />
+                <Label Content="{Binding GameInfo.FullName}" />
             </StackPanel>
         </DataTemplate>
-        <DataTemplate x:Key="pmTabHeaderTemplate">
-            <StackPanel DataContext="{Binding RelativeSource={RelativeSource AncestorType={x:Type TabItem} }}" Orientation="Horizontal">
+        <DataTemplate x:Key="pmTabHeaderTemplate" >
+            <StackPanel Orientation="Horizontal" PreviewMouseRightButtonUp="PrivateMessageTab_PreviewMouseRightButtonUp">
                 <Image Width="16" Height="16"
-                        Source="{Binding Header.UserName, Converter={StaticResource userToIconConverter}}" />
-                <Label Content="{Binding Header.UserName}" />
+                        Source="{Binding UserName, Converter={StaticResource userToIconConverter}}" />
+                <Label Content="{Binding UserName}" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="battleTabHeaderTemplate">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" MouseRightButtonUp="BattleTab_MouseRightButtonUp">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" PreviewMouseRightButtonUp="ChannelTab_PreviewMouseRightButtonUp">
                 <Image Width="16" Height="16" Source="pack://application:,,,/Zero-K;component/Resources/battle.png" />
                 <Label>Battle</Label>
             </StackPanel>

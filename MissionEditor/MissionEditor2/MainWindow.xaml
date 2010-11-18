@@ -5,43 +5,13 @@
 
     <Window.Resources>
         <local:LogicTemplateSelector x:Key="logicTemplateSelector" />
-        <local:CsvConverter x:Key="csvConverter" />
-        <local:LogicGroupHeaderSelector x:Key="logicGroupHeaderSelector" />
         <local:MissionItemsConverter x:Key="missionItemsConverter" />
-        <BooleanToVisibilityConverter x:Key="visibilityConverter" />
 
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="5" />
             <Setter Property="Padding" Value="5" />
         </Style>
 
-        <Style TargetType="Image">
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-        </Style>
-
-        <Style TargetType="Border">
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-        </Style>
-
-        <Style TargetType="DataGrid">
-            <Setter Property="IsSynchronizedWithCurrentItem" Value="True" />
-            <Setter Property="Background" Value="White" />
-        </Style>
-
-        <Style TargetType="ad:DockableContent">
-            <Setter Property="Background" Value="White" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-        </Style>
-
-        <local:LogicGroupConverter x:Key="logicGroupConverter" />
-        <local:LogicCategoryConverter x:Key="logicCategoryConverter" />
-
-        <CollectionViewSource x:Key="logicView" Source="{Binding Mission.AllLogic}">
-            <CollectionViewSource.GroupDescriptions>
-                <PropertyGroupDescription PropertyName="This" Converter="{StaticResource logicGroupConverter}" />
-                <PropertyGroupDescription PropertyName="This" Converter="{StaticResource logicCategoryConverter}" />
-            </CollectionViewSource.GroupDescriptions>
-        </CollectionViewSource>
 
         <!-- ======== ShowConsoleMessage Template ======== -->
 
