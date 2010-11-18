@@ -223,7 +223,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 					{
 						if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced)
 						{
-							lastScript = spring.StartGame(client, null, null, null);
+              if (Utils.VerifySpringInstalled()) lastScript = spring.StartGame(client, null, null, null);
 						}
 						else if (IsQuickPlayActive) client.LeaveBattle(); // battle started without me, lets quit!
 					}
@@ -593,9 +593,12 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			               };
 			reconnectBar.DetailButtonClicked += (s2, e2) =>
 				{
-					if (client.MyBattle != null) spring.StartGame(client, null, null, null);
-					else spring.StartGame(client, null, null, lastScript);
-					Program.NotifySection.RemoveBar(reconnectBar);
+          if (Utils.VerifySpringInstalled())
+          {
+            if (client.MyBattle != null) spring.StartGame(client, null, null, null);
+            else spring.StartGame(client, null, null, lastScript);
+            Program.NotifySection.RemoveBar(reconnectBar);
+          }
 				};
 			Program.NotifySection.AddBar(reconnectBar);
 		}

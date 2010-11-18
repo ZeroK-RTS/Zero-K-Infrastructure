@@ -70,16 +70,20 @@ namespace ZeroKLobby.Notifications
 
 					if (modInfo != null && (down == null || down.IsComplete == true))
 					{
-						var spring = new Spring(Program.SpringPaths);
-						spring.StartGame(null,
-						                 null,
-						                 null,
-						                 modInfo.MissionScript,
-						                 Program.Conf.LobbyPlayerName,
-						                 PlasmaShared.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword));
-						var cs = new ContentService() { Proxy = null };
-						cs.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, missionName);
-						Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
+            if (Utils.VerifySpringInstalled())
+            {
+              var spring = new Spring(Program.SpringPaths);
+              spring.StartGame(null,
+                               null,
+                               null,
+                               modInfo.MissionScript,
+                               Program.Conf.LobbyPlayerName,
+                               PlasmaShared.Utils.HashLobbyPassword(Program.Conf.LobbyPlayerPassword));
+
+              var cs = new ContentService() { Proxy = null };
+              cs.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, missionName);
+            }
+					  Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
 					}
 				});
 		}

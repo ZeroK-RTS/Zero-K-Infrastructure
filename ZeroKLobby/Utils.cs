@@ -65,6 +65,15 @@ namespace ZeroKLobby
       return path;
     }
 
+    public static bool VerifySpringInstalled()
+    {
+      if (Program.SpringPaths.SpringVersion == null)
+      {
+        MessageBox.Show("Cannot start yet, please wait until engine downloads", "Engine not prepared yet", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        return false;
+      } else return true;
+    }
+
     public static void OpenWeb(String url)
     {
       try

@@ -56,9 +56,15 @@ namespace ZeroKLobby.Notifications
 			var name = Program.Conf.LobbyPlayerName;
 			if (string.IsNullOrEmpty(name)) name = "Player";
 
-			spring.StartGame(null, null, null, profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name));
-			var serv = new ContentService() { Proxy = null };
-			serv.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, profile.Name );
+      if (Utils.VerifySpringInstalled())
+      {
+        spring.StartGame(null,
+                         null,
+                         null,
+                         profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name));
+        var serv = new ContentService() { Proxy = null };
+        serv.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, profile.Name);
+      }
 		}
 
 		void CloseBar()
