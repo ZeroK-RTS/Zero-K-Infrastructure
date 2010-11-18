@@ -25,16 +25,21 @@ namespace ZeroKLobby.MicroLobby
 			                                     (o, x) =>
 			                                     Utils.SafeStart(Utils.MakePath(Path.GetDirectoryName(Program.SpringPaths.Executable), "springsettings.exe"))));
 
-			cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)", (o, x) => Utils.SafeStart(SpringPaths.GetSpringConfigPath())));
-			cmDisplay.MenuItems.Add(new MenuItem("Edit LUPS settings (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "lups.cfg"))));
+			cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)", (o, x) => Utils.SafeStart("notepad.exe", SpringPaths.GetSpringConfigPath())));
+			cmDisplay.MenuItems.Add(new MenuItem("Edit LUPS settings (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "lups.cfg"))));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit ctrlpanel settings (advanced)",
 			                                     (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "ctrlpanel.txt"))));
 
 			// keybindings
 			cmKeybinds = new ContextMenu();
-			cmKeybinds.MenuItems.Add(new MenuItem("Run SelectionEditor",
-			                                      (o, x) =>
-			                                      Utils.SafeStart(Utils.MakePath(Path.GetDirectoryName(Program.SpringPaths.Executable), "SelectionEditor.exe"))));
+		  cmKeybinds.MenuItems.Add(new MenuItem("Run SelectionEditor",
+		                                        (o, x) =>
+		                                          {
+		                                            var editor = Utils.MakePath(Path.GetDirectoryName(Program.SpringPaths.Executable), "SelectionEditor.exe");
+		                                            if (File.Exists(editor)) Utils.SafeStart(editor);
+		                                            else Utils.SafeStart(Utils.MakePath(Path.GetDirectoryName(Program.SpringPaths.Executable), "selectkeys.txt"));
+		                                          }));
+
 			cmKeybinds.MenuItems.Add(new MenuItem("Edit UI keys (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
 
 			cmKeybinds.MenuItems.Add(new MenuItem("Edit select keys (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "selectkeys.txt"))));

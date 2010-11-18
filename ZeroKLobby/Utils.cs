@@ -131,11 +131,11 @@ namespace ZeroKLobby
       catch {}
     }
 
-    public static void SafeStart(string path)
+    public static void SafeStart(string path, string args=null)
     {
       try
       {
-        var pi = new ProcessStartInfo(path);
+        var pi = new ProcessStartInfo(path, args);
         pi.WorkingDirectory = Path.GetDirectoryName(path);
         pi.UseShellExecute = true;
         Process.Start(pi);
