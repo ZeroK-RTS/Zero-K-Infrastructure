@@ -34,6 +34,7 @@ namespace ZeroKLobby
 		List<string> selectedGames = new List<string>();
 		bool showHourlyChimes = true;
 
+	  
 		string springServerHost = "springrts.com";
 		int springServerPort = 8200;
 
@@ -253,7 +254,6 @@ namespace ZeroKLobby
 		[DisplayName("Sort Battles by Players")]
 		[Description("Show battles with the most players first.")]
 		public bool SortBattlesByPlayers { get; set; }
-		public static string SpringName { get { return "spring.exe"; } }
 		[Category("Connection")]
 		[DisplayName("Spring Server Address")]
 		[Description("Hostname of spring server")]

@@ -18,7 +18,6 @@ namespace PlasmaDownloader
 		MAP,
 		MISSION,
 		GAME,
-		ENGINE,
 		UNKNOWN
 	}
 
@@ -59,6 +58,31 @@ namespace PlasmaDownloader
 			packageDownloader.Dispose();
 		}
 
+
+    public Download GetAndSwitchEngine(string version)
+    {
+      lock (downloads)
+      {
+        downloads.RemoveAll(x => x.IsAborted || x.IsComplete != null); // remove already completed downloads from list}
+        var existing = downloads.SingleOrDefault(x => x.Name == version);
+        if (existing != null) return existing;
+
+
+        if (SpringPaths.HasEngineVersion(version)) {
+          SpringPaths.SetEnginePath(SpringPaths.GetEngineFolderByVersion(version));
+          return null;
+        } else
+        {
+          var down = new EngineDownload(version, SpringPaths);
+          downloads.Add(down);
+          DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
+          down.Start();
+          return down;
+        }
+      }
+
+    }
+
 		[CanBeNull]
 		public Download GetResource(DownloadType type, string name)
 		{
@@ -68,7 +92,7 @@ namespace PlasmaDownloader
 				var existing = downloads.SingleOrDefault(x => x.Name == name);
 				if (existing != null) return existing;
 
-				if (scanner != null && scanner.HasResource(name)) return null;
+        if (scanner != null && scanner.HasResource(name)) return null;
 
 				if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
 				{
@@ -81,7 +105,7 @@ namespace PlasmaDownloader
 					}
 				}
 
-				if (type == DownloadType.MAP || type == DownloadType.MOD || type == DownloadType.UNKNOWN)
+				if (type == DownloadType.MAP || type == DownloadType.MOD || type == DownloadType.UNKNOWN || type== DownloadType.MISSION)
 				{
 					var down = torrentDownloader.DownloadTorrent(name);
 					if (down != null)
@@ -92,7 +116,7 @@ namespace PlasmaDownloader
 					}
 				}
 
-				if (type == DownloadType.MISSION || type == DownloadType.GAME || type == DownloadType.ENGINE) throw new ApplicationException(string.Format("{0} download not supported in this version", type));
+				if (type == DownloadType.GAME) throw new ApplicationException(string.Format("{0} download not supported in this version", type));
 
 				return null;
 			}

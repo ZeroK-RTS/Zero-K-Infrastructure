@@ -10,15 +10,14 @@ namespace PlasmaDownloader
   public class EngineDownload: Download
   {
     const string EngineDownloadPath = "http://springrts.com/dl/";
-    readonly string version;
     WebClient wc;
-    readonly string writableDataDirectory;
+    SpringPaths springPaths;
 
-    public EngineDownload(string version, string writableDataDirectory)
+
+    public EngineDownload(string version, SpringPaths springPaths)
     {
-      this.writableDataDirectory = writableDataDirectory;
-      this.version = version;
-      Name = "Spring " + version;
+      this.springPaths = springPaths;  
+      Name = version;
     }
 
     public void Start()
@@ -27,7 +26,7 @@ namespace PlasmaDownloader
         {
           for (var i = 9; i >= 0; i--)
           {
-            var source = string.Format("{0}spring_{1}.{2}.exe", EngineDownloadPath, version, i > 0 ? i.ToString() : "");
+            var source = string.Format("{0}spring_{1}.{2}.exe", EngineDownloadPath, Name, i > 0 ? i.ToString() : "");
             // if i==-1 we tested without version number
             IndividualProgress = 10 - i;
             if (VerifyFile(source))
@@ -56,7 +55,7 @@ namespace PlasmaDownloader
                     Trace.TraceInformation("Installing {0}", source);
                     var timer = new Timer((o) => { IndividualProgress += (100 - IndividualProgress)/10; }, null, 1000, 1000);
                     var p = new Process();
-                    p.StartInfo = new ProcessStartInfo(target, string.Format("/S /D={0}", Utils.MakePath(writableDataDirectory, "engine", version)));
+                    p.StartInfo = new ProcessStartInfo(target, string.Format("/S /D={0}", springPaths.GetEngineFolderByVersion(Name)));
                     p.Exited += (s2, e2) =>
                       {
                         timer.Dispose();
@@ -68,6 +67,7 @@ namespace PlasmaDownloader
                         else
                         {
                           Trace.TraceInformation("Install of {0} complete", Name);
+                          springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(Name));
                           Finish(true);
                         }
                       };

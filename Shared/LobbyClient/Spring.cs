@@ -103,7 +103,6 @@ namespace LobbyClient
 		public Spring(SpringPaths springPaths)
 		{
 			paths = springPaths;
-			if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException("Spring or dedicated server executable not found");
 		}
 
 		/// <summary>
@@ -281,6 +280,8 @@ namespace LobbyClient
 		/// <returns>generates script</returns>
 		public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, string userName = null, string passwordHash = null)
 		{
+      if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException("Spring or dedicated server executable not found");
+
 			if (!IsRunning)
 			{
 				this.lobbyUserName =userName;

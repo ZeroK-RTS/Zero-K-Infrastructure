@@ -136,12 +136,6 @@
     <Compile Include="Notifications\MissionBar.xaml.cs">
       <DependentUpon>MissionBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Notifications\NewSpringBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Notifications\NewSpringBar.Designer.cs">
-      <DependentUpon>NewSpringBar.cs</DependentUpon>
-    </Compile>
     <Compile Include="Notifications\NotifySection.xaml.cs">
       <DependentUpon>NotifySection.xaml</DependentUpon>
     </Compile>
@@ -489,9 +483,6 @@
     <EmbeddedResource Include="MapDownloader\DownloaderTab.resx">
       <DependentUpon>DownloaderTab.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Notifications\NewSpringBar.resx">
-      <DependentUpon>NewSpringBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\NotifyBarContainer.resx">
       <DependentUpon>NotifyBarContainer.cs</DependentUpon>

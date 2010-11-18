@@ -35,8 +35,7 @@ namespace Springie
 			RootWorkPath = path;
 			LoadConfig();
 			SaveConfig();
-			paths = new SpringPaths();
-			paths.SetWindowsPaths(Path.GetDirectoryName(Config.ExecutableName));
+      paths = new SpringPaths(Path.GetDirectoryName(Config.ExecutableName));
 			paths.DedicatedServer = Config.ExecutableName;
 			paths.Cache = path;
 			paths.MakeFolders();

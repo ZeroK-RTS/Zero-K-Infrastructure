@@ -39,27 +39,8 @@ namespace ZeroKLobby
     }
 
 
-    public static bool CanWrite(string filename)
-    {
-      if (!File.Exists(filename)) return true;
-      try
-      {
-        using (var f = File.Open(filename, FileMode.Open, FileAccess.Write)) {}
-        return true;
-      }
-      catch
-      {
-        return false;
-      }
-    }
-
-
-    public static void CheckPath(string path)
-    {
-      CheckPath(path, false);
-    }
-
-    public static void CheckPath(string path, bool delete)
+    
+    public static void CheckPath(string path, bool delete = false)
     {
       if (delete)
       {
@@ -72,88 +53,6 @@ namespace ZeroKLobby
       if (!Directory.Exists(path)) Directory.CreateDirectory(path);
     }
 
-    public static bool CheckSpringFolder(string path, out string fixedSpringPath)
-    {
-      fixedSpringPath = path;
-      try
-      {
-        if (IsCorrectPath(ref fixedSpringPath)) return true;
-
-        fixedSpringPath = Directory.GetCurrentDirectory();
-        if (IsCorrectPath(ref fixedSpringPath)) return true;
-
-        var regPath = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spring", "DisplayIcon", "");
-        fixedSpringPath = Path.GetDirectoryName(regPath);
-        if (IsCorrectPath(ref fixedSpringPath)) return true;
-      }
-      catch (Exception ex)
-      {
-        Trace.TraceError("Error detecting spring path: {0}", ex);
-      }
-
-      using (var od = new OpenFileDialog())
-      {
-        od.FileName = Config.SpringName;
-        od.DefaultExt = Path.GetExtension(Config.SpringName);
-        od.InitialDirectory = Program.Conf.ManualSpringPath;
-        od.Title = "Please select your spring installation folder";
-        od.RestoreDirectory = true;
-        od.CheckFileExists = true;
-        od.CheckPathExists = true;
-        od.AddExtension = true;
-        od.Filter = String.Format("Executable (*{0})|*{0}", od.DefaultExt);
-        var dr = od.ShowDialog();
-        if (dr == DialogResult.OK)
-        {
-          fixedSpringPath = Path.GetDirectoryName(od.FileName);
-          return true;
-        }
-        else
-        {
-          if (
-            MessageBox.Show("I cannot continue without valid path to spring.exe!\r\n Do you want to download Spring engine?",
-                            "Spring engine not found",
-                            MessageBoxButtons.YesNo,
-                            MessageBoxIcon.Warning) == DialogResult.Yes) OpenWeb(NewSpringBar.DownloadUrl);
-          return false;
-        }
-      }
-    }
-
-    public static string GetAlternativeFileName(string to)
-    {
-      if (File.Exists(to))
-      {
-        var ext = Path.GetExtension(to);
-        var name = Path.GetFileNameWithoutExtension(to);
-        var dir = Path.GetDirectoryName(to);
-        var i = 1;
-        do
-        {
-          to = MakePath(dir, name + "(" + i++ + ")" + ext);
-        } while (File.Exists(to));
-      }
-      return to;
-    }
-
-
-    public static Color Invert(this Color color)
-    {
-      return Color.FromArgb(color.A, 255 - color.R, 255 - color.G, 255 - color.B);
-    }
-
-    public static bool IsCorrectPath(ref string full)
-    {
-      try
-      {
-        full = Path.GetFullPath(full);
-        //File.Exists(Utils.MakePath(full, Program.SpringName)) && 
-        if (File.Exists(MakePath(full, Config.SpringName))) return true;
-      }
-      catch {}
-      return false;
-    }
-
     public static string MakePath(params string[] directories)
     {
       var s = Path.DirectorySeparatorChar.ToString();
@@ -164,34 +63,6 @@ namespace ZeroKLobby
       if (path.EndsWith(s)) path = path.Substring(0, path.Length - 1);
       // Console.WriteLine("===> " + path);
       return path;
-    }
-
-    public static string MyEscape(string input)
-    {
-      return input.Replace("|", "&divider&");
-    }
-
-    public static string MyFormat(string format, params object[] args)
-    {
-      if (args != null && args.Length > 0)
-      {
-        try
-        {
-          return String.Format(format, args);
-        }
-        catch
-        {
-          var ret = "Error format: " + format + " ";
-          foreach (var o in args) ret += "," + o;
-          return ret;
-        }
-      }
-      else return format;
-    }
-
-    public static string MyUnescape(string input)
-    {
-      return input.Replace("&divider&", "|");
     }
 
     public static void OpenWeb(String url)
