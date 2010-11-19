@@ -8,9 +8,7 @@ namespace ZeroKLobby.MicroLobby
 {
 	public partial class BattleListTab: UserControl, INavigatable
 	{
-		AllGameItem allGameItem;
 		BattleListControl battleListControl;
-		BattleGameList gameList;
 
 		public BattleListTab()
 		{
@@ -38,24 +36,7 @@ namespace ZeroKLobby.MicroLobby
 			// battle list
 			battleListControl = new BattleListControl(filterBox) { Dock = DockStyle.Fill };
 
-			// game list
-			gameList = new BattleGameList { Dock = DockStyle.Left };
-			allGameItem = new AllGameItem { IsSelected = true };
-			allGameItem.Click += (s, e) => NavigationControl.Instance.Path = "battles/all";
-			gameList.AddItem(allGameItem);
-			foreach (var gameInfo in StartPage.GameList)
-			{
-				var gameListItem = new BattleGameListItem(gameInfo);
-				gameListItem.Click += (s, e) =>
-					{
-						NavigationControl.Instance.Path = "battles/" + gameListItem.Game.Shortcut;
-						// battleListControl.GameFilter = gameListItem.Game;
-					};
-				gameList.AddItem(gameListItem);
-			}
-
 			Controls.Add(battleListControl);
-			Controls.Add(gameList);
 			Controls.Add(panel);
 
 			moreButton.MouseUp += (s, e) => battleListControl.GetContextMenu().Show(moreButton, e.Location);
@@ -71,22 +52,11 @@ namespace ZeroKLobby.MicroLobby
 			if (path.Length == 2 && !String.IsNullOrEmpty(path[1]))
 			{
 				var gameShortcut = path[1];
-				var game = StartPage.GameList.FirstOrDefault(g => g.Shortcut == gameShortcut);
-				if (game != null)
-				{
-					var gameListItem = gameList.Items.Cast<BattleGameListItem>().Single(i => i.Game == game);
-					gameList.SelectItem(gameListItem);
-					battleListControl.GameFilter = game;
-					return true;
-				}
-			}
-
-			if (gameList != null)
+			  battleListControl.FilterText = gameShortcut;
+			} else
 			{
-				gameList.SelectItem(allGameItem);
-				battleListControl.GameFilter = null;
+			  battleListControl.FilterText = "";
 			}
-
 			return true;
 		}
 
@@ -99,5 +69,10 @@ namespace ZeroKLobby.MicroLobby
 		{
 			return null;
 		}
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+      ActionHandler.StartQuickMatching(Program.Conf.BattleFilter);
+    }
 	}
 }

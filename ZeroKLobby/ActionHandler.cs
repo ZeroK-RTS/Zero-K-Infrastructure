@@ -9,7 +9,6 @@ using LobbyClient;
 using PlasmaShared;
 using PlasmaShared.ContentService;
 using PlasmaShared.UnitSyncLib;
-using ZeroKLobby.Common;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 
@@ -55,14 +54,6 @@ namespace ZeroKLobby
 		}
 
 
-		/// <summary>
-		/// Deselects game
-		/// </summary>
-		public static void DeselectGame(string gameName)
-		{
-			if (Program.Conf.SelectedGames.Contains(gameName)) Program.Conf.SelectedGames.RemoveAll(x => x == gameName);
-			Program.SaveConfig();
-		}
 
 		/// <summary>
 		/// Starts following a player
@@ -200,7 +191,7 @@ namespace ZeroKLobby
               else
               {
                 string name = String.Format("{0}'s game", Program.Conf.LobbyPlayerName);
-                SpawnAutohost(StartPage.GameList.First(x=>x.IsPrimary).RapidTag, name, null, false, 0, 0, 0, new List<string> { "!map " + arg });
+                SpawnAutohost(KnownGames.List.First(x=>x.IsPrimary).RapidTag, name, null, false, 0, 0, 0, new List<string> { "!map " + arg });
               }
               break;
 
@@ -227,17 +218,6 @@ namespace ZeroKLobby
 			Program.MainWindow.navigationControl.Path = Program.MainWindow.ChatTab.GetPrevTabPath();
 		}
 
-		/// <summary>
-		/// Selects new game
-		/// </summary>
-		public static void SelectGame(string gameName)
-		{
-			if (!Program.Conf.SelectedGames.Contains(gameName))
-			{
-				Program.Conf.SelectedGames.Add(gameName);
-				Program.SaveConfig();
-			}
-		}
 
 		/// <summary>
 		/// Displays a window with the debug log
@@ -321,9 +301,9 @@ namespace ZeroKLobby
 			Program.NotifySection.AddBar(new MissionBar(name));
 		}
 
-		public static void StartQuickMatching(IEnumerable<GameInfo> games)
+		public static void StartQuickMatching(string filter)
 		{
-			Program.BattleBar.StartQuickMatch(games);
+			Program.BattleBar.StartQuickMatch(filter);
 			NavigationControl.Instance.Path = "chat/battle";
 		}
 
@@ -375,22 +355,6 @@ namespace ZeroKLobby
 				newStatus.TeamNumber = Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName);
 				newStatus.IsSpectator = false;
 				Program.TasClient.SendMyBattleStatus(newStatus);
-			}
-		}
-
-		public static void PickGamesAndStartQuickMatching()
-		{
-			var shuffledGames = StartPage.GameList.Shuffle().ToList();
-			foreach (var game in shuffledGames) game.IsSelected = Program.Conf.SelectedGames.Contains(game.Shortcut);
-			var window = new GameSelectorWindow(StartPage.GameList.Shuffle(), true);
-			if (window.ShowDialog() == true)
-			{
-				foreach (var g in window.Games)
-				{
-					if (g.IsSelected) SelectGame(g.Shortcut);
-					else DeselectGame(g.Shortcut);
-				}
-				StartQuickMatching(window.Games.Where(x => x.IsSelected));
 			}
 		}
 	}

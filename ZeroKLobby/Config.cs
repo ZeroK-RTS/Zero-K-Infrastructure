@@ -231,13 +231,6 @@ namespace ZeroKLobby
 		public Color NoticeColor { get { return Color.FromArgb(NoticeColorInt); } set { NoticeColorInt = value.ToArgb(); } }
 		[Browsable(false)]
 		public int NoticeColorInt = Color.Red.ToArgb();
-		[Category("General")]
-		[DisplayName("Selected games")]
-		[Description("Games selected on the first tab")]
-		[Browsable(true)]
-		[Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-			typeof(UITypeEditor))]
-		public List<string> SelectedGames { get { return selectedGames; } set { selectedGames = value; } }
 
 		[Category("General")]
 		[DisplayName("Show Empty Battles")]

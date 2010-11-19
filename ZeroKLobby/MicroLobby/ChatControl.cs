@@ -18,7 +18,7 @@ namespace ZeroKLobby.MicroLobby
 		readonly PlayerListItem notResultsItem = new PlayerListItem { Title = "No match", SortCategory = 3 };
 		protected List<PlayerListItem> playerListItems = new List<PlayerListItem>();
 		readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = 1 };
-		public bool CanLeave { get { return !StartPage.GameList.Any(g => g.Channel == ChannelName) && ChannelName != "Battle"; } }
+		public bool CanLeave { get { return !KnownGames.List.Any(g => g.Channel == ChannelName) && ChannelName != "Battle"; } }
 		public string ChannelName { get; set; }
 		public IEnumerable<PlayerListItem> PlayerListItems { get { return playerListItems; } }
 		public event EventHandler<EventArgs<string>> ChatLine { add { sendBox.LineEntered += value; } remove { sendBox.LineEntered -= value; } }
@@ -309,9 +309,6 @@ namespace ZeroKLobby.MicroLobby
 					var topicLine = new TopicLine(channel.Topic, channel.TopicSetBy, channel.TopicSetDate);
 					TopicBox.Reset();
 					TopicBox.AddLine(topicLine);
-
-					var game = StartPage.GameList.FirstOrDefault(g => g.Channel == ChannelName);
-					if (game != null) TopicBox.BackgroundImage = game.Logo.AdjustBrightness(Color.FromArgb(25, 25, 25), Color.FromArgb(230, 230, 200));
 
 					float height = TopicBox.LineSize;
 					height *= TopicBox.TotalDisplayLines + 1;

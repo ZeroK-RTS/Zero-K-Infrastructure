@@ -29,10 +29,10 @@ namespace ZeroKLobby.MicroLobby
             battleTitleBox.Text = Program.TasClient.MyUser + "'s Battle";
             HideAdvanced();
             gameBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            gameBox.Items.AddRange(StartPage.GameList.Select(g => g.FullName).ToArray());
+            gameBox.Items.AddRange(KnownGames.List.Select(g => g.FullName).ToArray());
             if (defaultGame == null) gameBox.SelectedIndex = new Random().Next(0, gameBox.Items.Count);
             else gameBox.SelectedIndex = gameBox.Items.IndexOf(gameBox.Items.Cast<string>().Single(n => n == defaultGame.FullName));
-            rapidTagBox.Text = StartPage.GameList.Single(g => g.FullName == gameBox.Text).RapidTag;
+            rapidTagBox.Text = KnownGames.List.Single(g => g.FullName == gameBox.Text).RapidTag;
             if (Program.Conf.HasHosted)
             {
                 try
@@ -83,7 +83,7 @@ namespace ZeroKLobby.MicroLobby
 
         void gameBox_TextChanged(object sender, EventArgs e)
         {
-            rapidTagBox.Text = StartPage.GameList.Single(g => g.FullName == gameBox.Text).RapidTag;
+            rapidTagBox.Text = KnownGames.List.Single(g => g.FullName == gameBox.Text).RapidTag;
         }
 
         void maxPlayersSlider_ValueChanged(object sender, EventArgs e)

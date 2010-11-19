@@ -12,8 +12,6 @@ namespace ZeroKWeb.Controllers
   {
     //
     // GET: /Home/
-
-
     public static string GetMapTooltip(int id)
     {
       var db = new ZkDataContext();

@@ -164,7 +164,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			if (IsIgnoredChannel(channelName)) return null;
 			var chatControl = new ChatControl(channelName) { Dock = DockStyle.Fill };
-			var gameInfo = StartPage.GameList.FirstOrDefault(x => x.Channel == channelName);
+			var gameInfo = KnownGames.List.FirstOrDefault(x => x.Channel == channelName);
 			chatControl.GameInfo = gameInfo;
 			if (gameInfo != null) AddTab(channelName, gameInfo.FullName, chatControl, null, 2);
 			else AddTab(channelName, channelName, chatControl, null, 1);
@@ -308,7 +308,7 @@ namespace ZeroKLobby.MicroLobby
 		void TasClient_ChannelLeaving(object sender, CancelEventArgs<string> e)
 		{
 			var channelName = e.Data;
-			if (StartPage.GameList.Any(g => g.Channel == channelName)) e.Cancel = true;
+			if (KnownGames.List.Any(g => g.Channel == channelName)) e.Cancel = true;
 		}
 
 		void TasClient_ChannelLeft(object sender, TasEventArgs e)
@@ -331,7 +331,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			AddBattleControl();
 			foreach (var friendName in Program.FriendManager.Friends) CreatePrivateMessageControl(friendName);
-			foreach (var game in StartPage.GameList) Program.TasClient.JoinChannel(game.Channel);
+			foreach (var game in KnownGames.List) Program.TasClient.JoinChannel(game.Channel);
 			foreach (var channel in Program.AutoJoinManager.Channels) Program.TasClient.JoinChannel(channel, Program.AutoJoinManager.GetPassword(channel));
 		}
 

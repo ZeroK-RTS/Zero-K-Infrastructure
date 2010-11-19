@@ -63,7 +63,6 @@ namespace ZeroKLobby.MicroLobby
 		}
 		public static Font ModFont = new Font("Segoe UI", 8.25F, FontStyle.Regular);
 
-		public string ModShortcut { get; set; }
 		public static Brush TextBrush = new SolidBrush(Color.Black);
 		public static Font TitleFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
 

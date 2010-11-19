@@ -121,6 +121,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="INavigatable.cs" />
+    <Compile Include="KnownGames.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -145,12 +146,6 @@
     <Compile Include="Notifications\SinglePlayerBar.Designer.cs">
       <DependentUpon>SinglePlayerBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="StartTab\GameSelectorWindow.xaml.cs">
-      <DependentUpon>GameSelectorWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="StartTab\UcRedButton.xaml.cs">
-      <DependentUpon>UcRedButton.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Flags.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -161,12 +156,7 @@
     <Compile Include="Lines\ChimeLine.cs" />
     <Compile Include="Lines\JoinedBattleLine.cs" />
     <Compile Include="Lines\TopicLine.cs" />
-    <Compile Include="MicroLobby\AllGameItem.cs" />
     <Compile Include="MicroLobby\AutoJoinManager.cs" />
-    <Compile Include="MicroLobby\BattleGameList.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\BattleGameListItem.cs" />
     <Compile Include="MicroLobby\GdiListBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -214,7 +204,6 @@
     <Compile Include="Notifications\ScannerBar.Designer.cs">
       <DependentUpon>ScannerBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="PixelShaders\BlackAndWhite.cs" />
     <Compile Include="Ranks.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -231,10 +220,6 @@
     </Compile>
     <Compile Include="MicroLobby\ChatBox.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\GameIcon.cs" />
-    <Compile Include="MicroLobby\GameSelector.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="MicroLobby\HelpControl.cs">
       <SubType>UserControl</SubType>
@@ -274,12 +259,6 @@
     <Compile Include="MicroLobby\DudeRenderer.cs" />
     <Compile Include="MicroLobby\FriendManager.cs" />
     <Compile Include="MicroLobby\GameInfo.cs" />
-    <Compile Include="StartTab\StartPage.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="StartTab\StartPage.Designer.cs">
-      <DependentUpon>StartPage.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\TextColor.cs" />
     <Compile Include="MicroLobby\TextWindow.cs">
       <SubType>UserControl</SubType>
@@ -593,33 +572,9 @@
     <Resource Include="Resources\game.png" />
     <None Include="Resources\ZK_logo_square.png" />
     <Resource Include="ZK_logo_square.ico" />
-    <None Include="PixelShaders\BlackAndWhite.fx" />
-    <Resource Include="PixelShaders\BlackAndWhite.ps" />
-    <Resource Include="Resources\GameLogos\kp.png" />
-    <Resource Include="Resources\GameLogos\ba.jpg" />
-    <Resource Include="Resources\GameLogos\ca.jpg" />
-    <Resource Include="Resources\GameLogos\cursed.jpg" />
-    <Resource Include="Resources\GameLogos\evo.png" />
-    <Resource Include="Resources\GameLogos\nota.jpg" />
-    <Resource Include="Resources\GameLogos\s44.png" />
-    <Resource Include="Resources\GameLogos\sa.jpg" />
-    <Resource Include="Resources\GameLogos\xta.jpg" />
     <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Resources\SinglePlayer\ca_2v1.txt" />
-    <None Include="Resources\SinglePlayer\ca_chickenveryeasy.txt" />
-    <None Include="Resources\SinglePlayer\ca_sandbox.txt" />
-    <None Include="Resources\SinglePlayer\kp_script.txt" />
-    <Resource Include="Resources\SinglePlayer\ca_2v1.png" />
-    <Resource Include="Resources\SinglePlayer\ca_chickenveryeasy.png" />
-    <Resource Include="Resources\SinglePlayer\ca_sandbox.png" />
-    <Resource Include="Resources\SinglePlayer\ca_1v1.png" />
-    <None Include="Resources\SinglePlayer\ca_1v1.txt" />
-    <Resource Include="Resources\SinglePlayer\ca_chickeneasy.png" />
-    <None Include="Resources\SinglePlayer\ca_chickeneasy.txt" />
-    <Resource Include="Resources\SinglePlayer\ca_chickennormal.png" />
-    <None Include="Resources\SinglePlayer\ca_chickennormal.txt" />
     <EmbeddedResource Include="MicroLobby\HostDialog.resx">
       <DependentUpon>HostDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -636,9 +591,6 @@
       <DependentUpon>SettingsTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\TextWindow.resources" />
-    <EmbeddedResource Include="StartTab\StartPage.resx">
-      <DependentUpon>StartPage.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Notifications\WarningBar.resx">
       <DependentUpon>WarningBar.cs</DependentUpon>
     </EmbeddedResource>
@@ -726,14 +678,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="StartTab\GameSelectorWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="StartTab\UcRedButton.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="MSHTML">
@@ -746,6 +690,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

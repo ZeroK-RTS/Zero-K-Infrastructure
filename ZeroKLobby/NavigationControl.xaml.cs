@@ -179,12 +179,6 @@ namespace ZeroKLobby
 			Path = GetLastPathStartingWith("settings");
 		}
 
-		void QuickMatch_Click(object sender, RoutedEventArgs e)
-		{
-			ActionHandler.PickGamesAndStartQuickMatching();
-			//Path = GetLastPathStartingWith("start");
-		}
-
 		void TabItem_MouseUp(object sender, RoutedEventArgs e)
 		{
 			var navigatable = GetINavigatableFromControl(e.Source);

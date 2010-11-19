@@ -45,7 +45,7 @@ namespace ZeroKLobby.Notifications
 		string lastScript;
 		Battle previousBattle;
 		GenericBar quickMatchBar;
-		List<GameInfo> quickMatchGameInfos = new List<GameInfo>();
+    string quickMatchFilter = null;
 		readonly Random random = new Random();
 		GenericBar reconnectBar;
 
@@ -56,12 +56,11 @@ namespace ZeroKLobby.Notifications
 		public string CommShareWith { get; set; }
 
 
-		// singleton, dont use, internal for designer
-
-		public List<GameInfo> QuickMatchGameInfos { get { return quickMatchGameInfos; } }
-
-
-		internal BattleBar()
+	
+    /// <summary>
+    /// singleton, dont use, internal for designer
+    /// </summary>
+  	internal BattleBar()
 		{
 			InitializeComponent();
 			Program.ToolTip.SetText(numMinValue, "Choose the minimum number of players you want in your game.");
@@ -412,16 +411,11 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		}
 
 
-		public void StartQuickMatch(IEnumerable<GameInfo> games)
+		public void StartQuickMatch(string filter)
 		{
-			if (games == null || games.Count() == 0)
-			{
-				MessageBox.Show("Select some games first", "No game selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				return;
-			}
 			if (isVisible) Stop();
 			Trace.TraceInformation("Starting quickmatching");
-			quickMatchGameInfos = new List<GameInfo>(games);
+      this.quickMatchFilter = filter;
 
 			currentBattleMode = BattleMode.QuickMatch;
 			cbSpectate.Visible = true;
@@ -430,7 +424,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			lbMin.Visible = true;
 			Automatic = true;
 
-			gameInfosDisplayText = string.Join(",", QuickMatchGameInfos.Select(x => x.Shortcut).ToArray());
+			gameInfosDisplayText = filter;
 			cbSide.Items.Clear();
 
 			isVisible = true;
@@ -443,7 +437,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			quickMatchBar.BarContainer.btnDetail.Text = "QuickMatch";
 			Program.ToolTip.SetText(quickMatchBar.BarContainer.btnDetail, "Pick another battle");
 			Program.ToolTip.SetText(quickMatchBar.BarContainer.btnStop, "Stop QuickMatching");
-			quickMatchBar.DetailButtonClicked += (s, e) => StartQuickMatch(games);
+			quickMatchBar.DetailButtonClicked += (s, e) => StartQuickMatch(quickMatchFilter); // todo show textbox on quickmatch bar and allow change
 			quickMatchBar.CloseButtonClicked += (s, e) => StartManualBattle(client.MyBattleID, null);
 		}
 
@@ -693,13 +687,11 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				if (client.ExistingUsers.TryGetValue(client.MyBattle.Founder, out founder) && !founder.IsInGame) mv = client.MyBattle.NonSpectatorCount - GetQuickMatchIdlerCount(client.MyBattle, (int)numMinValue.Value);
 			}
 			Battle bat = null;
-			foreach (var b in client.ExistingBattles.Values)
+			foreach (var b in BattleListControl.BattleWordFilter(client.ExistingBattles.Values, quickMatchFilter))
 			{
 				var otherPlayerCount = b.NonSpectatorCount;
 				if (b == client.MyBattle && client.MyBattleStatus != null && !client.MyBattleStatus.IsSpectator) otherPlayerCount--; // if its my battle and im not ready dont count self
-				if (!ignoredBattles.ContainsKey(b.BattleID) && b.NonSpectatorCount < b.MaxPlayers && !b.IsLocked && !b.IsReplay &&
-				    QuickMatchGameInfos.Any(x => Regex.IsMatch(b.ModName, x.Regex)) && !client.ExistingUsers[b.Founder].IsInGame && b.Password == "*" &&
-				    b.MaxPlayers >= numMinValue.Value && otherPlayerCount >= mv &&
+				if (!ignoredBattles.ContainsKey(b.BattleID) && b.NonSpectatorCount < b.MaxPlayers && !b.IsLocked && !b.IsReplay && !client.ExistingUsers[b.Founder].IsInGame && b.Password == "*" && b.MaxPlayers >= numMinValue.Value && otherPlayerCount >= mv &&
 				    (Program.SpringScanner.HasResource(b.ModName) || Program.Downloader.PackageDownloader.GetByInternalName(b.ModName) != null))
 				{
 					mv = b.NonSpectatorCount;
