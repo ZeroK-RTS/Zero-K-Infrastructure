@@ -205,7 +205,7 @@ namespace ZeroKLobby.MicroLobby
       }
     }
 
-    static bool BattleWordFilter(Battle x, string[] words)
+    public static bool BattleWordFilter(Battle x, string[] words)
     {
       var hide = false;
       foreach (var wordIterated in words)

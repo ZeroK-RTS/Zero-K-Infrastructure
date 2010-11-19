@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -14,9 +15,9 @@ namespace ZeroKLobby.MicroLobby
 {
     class BattleIconManager
     {
-        readonly List<BattleIcon> battleIcons = new List<BattleIcon>();
+        readonly ObservableCollection<BattleIcon> battleIcons = new ObservableCollection<BattleIcon>();
         UIElement control;
-        public IEnumerable<BattleIcon> BattleIcons { get { return battleIcons; } }
+        public ObservableCollection<BattleIcon> BattleIcons { get { return battleIcons; } }
         public bool Running { get; set; }
         public event EventHandler<EventArgs<BattleIcon>> BattleAdded = delegate { };
         public event EventHandler<EventArgs<BattleIcon>> BattleChanged = delegate { };

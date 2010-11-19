@@ -36,9 +36,7 @@
         </Style>
       </TabControl.ItemContainerStyle>
       <TabItem >
-        <WindowsFormsHost>
-          <MicroLobby:BattleListTab />
-        </WindowsFormsHost>
+        <MicroLobby:BattleList x:Name="battleTab"/>
       </TabItem>
       <TabItem>
           <MicroLobby:ChatTab2 x:Name="chatTab" />
