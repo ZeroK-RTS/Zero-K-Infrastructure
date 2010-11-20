@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
 using mshtml;
@@ -40,11 +42,12 @@ namespace ZeroKLobby.MicroLobby
 		{
 			if (m.Msg == WM_MOUSEWHEEL)
 			{
-				var control = MainWindow.Instance.GetHoveredControl();
+        var delta = ((int)m.WParam >> 16);
+
+        var control = MainWindow.Instance.GetHoveredControl();
 				if (control == null && IsAboveBrowser(ref m))
 				{
 					var htmlDoc = Program.MainWindow.navigationControl.Browser.Document as HTMLDocument;
-					var delta = ((int)m.WParam >> 16);
 					if (htmlDoc != null) htmlDoc.parentWindow.scrollBy(0, -delta);
 					return false;
 				}
@@ -52,6 +55,28 @@ namespace ZeroKLobby.MicroLobby
 				{
 					SendMessage((int)control.Handle, m.Msg, (int)m.WParam, (int)m.LParam);
 					return true;
+				} else
+				{
+				  var elem = Mouse.DirectlyOver as FrameworkElement;
+          while (elem != null)
+          {
+            var scr = elem as ScrollViewer;
+            if (scr != null)
+            {
+              scr.ScrollToVerticalOffset(scr.VerticalOffset - delta);
+              return true;
+            }
+
+            var scroll = elem as IScrollInfo;
+            if (scroll != null)
+            {
+              scroll.SetVerticalOffset(scroll.VerticalOffset - delta); 
+              return true;
+            }
+
+            elem = elem.Parent as FrameworkElement;
+          }
+
 				}
 			}
 			else if (m.Msg == WM_XBUTTONDOWN)
