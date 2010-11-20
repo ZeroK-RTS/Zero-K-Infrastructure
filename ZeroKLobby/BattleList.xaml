@@ -3,11 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:view="clr-namespace:System.ComponentModel;assembly=WindowsBase" xmlns:ZeroKLobby="clr-namespace:ZeroKLobby" mc:Ignorable="d" 
-             d:DesignHeight="376" d:DesignWidth="621" Loaded="UserControl_Loaded">
+             d:DesignHeight="376" d:DesignWidth="621" Loaded="UserControl_Loaded" UseLayoutRounding="True">
 	<UserControl.Resources>
     <DataTemplate x:Key="itemsTemplate">
-      <Button Tag="{Binding}" Click="Button_Click" Cursor="Hand">
-      <Image Width="300" Height="75" Source="{Binding BitmapSource}" UseLayoutRounding="True"></Image>
+      <Button Tag="{Binding}" Click="Button_Click" Cursor="Hand" BorderThickness="0">
+      <Image Width="300px" Height="75px" Source="{Binding BitmapSource}" ></Image>
       </Button>
     </DataTemplate>
 
@@ -30,7 +30,7 @@
       <Button Name="btnOpenBattle" Click="btnOpenNewBattle_Click">Open new</Button>
       <Image Source="/Resources/search.png"></Image>
       <TextBlock>Search:</TextBlock>
-      <TextBox Name="tbFilter" Width="150" ToolTip="Search for battle, or user. You can use special values like -locked to hide locked, zk to filter only Zero-K etc" ></TextBox>
+      <TextBox Name="tbFilter" Width="150" ToolTip="Search for battle, or user. You can use special values like -locked to hide locked, zk to filter only Zero-K etc" Text="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= BattleFilter}" ></TextBox>
       <CheckBox Name="cbUnjoinable" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowNonJoinableBattles}" Checked="RefreshEvent" Unchecked="RefreshEvent" ToolTip="Filters our locked, passworded full and currently running games">Show unjoinable</CheckBox>
       <CheckBox Name="cbEmpty" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowEmptyBattles}" Unchecked="RefreshEvent" Checked="RefreshEvent">Show empty</CheckBox>
     </StackPanel>

@@ -296,8 +296,7 @@ namespace PlasmaShared
           foreach (var item in todel)
           {
             Trace.WriteLine(string.Format("{0} has outdated spring hash, updating", item.InternalName));
-            CacheItemRemove(item);
-            AddWork(item, WorkItem.OperationType.UnitSync, DateTime.Now, false);
+            AddWork(item, WorkItem.OperationType.ReAskServer, DateTime.Now, false);
           }
 
           cache.SpringVersion = springPaths.SpringVersion;
@@ -559,7 +558,7 @@ namespace PlasmaShared
               if (springPaths.UnitSyncDirectory != null) PerformUnitSyncOperation(workItem); // if there is no unitsync, retry later
               else AddWork(workItem.CacheItem, WorkItem.OperationType.UnitSync, DateTime.Now.AddSeconds(RescheduleServerQuery), false);
             }
-            if (workItem.Operation == WorkItem.OperationType.ReAskServer) if (!cache.HashIndex.ContainsKey(workItem.CacheItem.Md5)) GetResourceData(workItem);
+            if (workItem.Operation == WorkItem.OperationType.ReAskServer) GetResourceData(workItem);
           }
           if (isWorking)
           {

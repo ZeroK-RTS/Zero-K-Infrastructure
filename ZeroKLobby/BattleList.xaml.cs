@@ -149,12 +149,15 @@ namespace ZeroKLobby.MicroLobby
       if (path.Length == 0) return false;
       if (path[0] != PathHead) return false;
 
-      if (path.Length == 2 && !string.IsNullOrEmpty(path[1]))
+      if (path.Length == 2)
       {
-        var gameShortcut = path[1];
-        tbFilter.Text = gameShortcut;
+        if (!string.IsNullOrEmpty(path[1]))
+        {
+          var gameShortcut = path[1];
+          tbFilter.Text = gameShortcut;
+        }
+        else tbFilter.Text = "";
       }
-      else tbFilter.Text = "";
       return true;
     }
 
@@ -186,15 +189,20 @@ namespace ZeroKLobby.MicroLobby
       Refresh();
     }
 
+    bool isInitialized;
     void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
       if (Utils.IsDesignTime) return;
-      view = (CollectionViewSource)Resources["view"];
-      tbFilter.Text = Program.Conf.BattleFilter;
-      tbFilter.TextChanged += tbFilter_TextChanged; // this is needed after setting text
-      view.Filter += view_Filter;
-      view.Source = Program.BattleIconManager.BattleIcons;
-      Program.TasClient.BattleInfoChanged += (s2, e2) => Refresh();
+      if (!isInitialized)
+      {
+        isInitialized = true;
+        view = (CollectionViewSource)Resources["view"];
+        //tbFilter.Text = Program.Conf.BattleFilter;
+        tbFilter.TextChanged += tbFilter_TextChanged; // this is needed after setting text
+        view.Filter += view_Filter;
+        view.Source = Program.BattleIconManager.BattleIcons;
+        Program.TasClient.BattleInfoChanged += (s2, e2) => Refresh();
+      }
     }
 
     void btnOpenNewBattle_Click(object sender, RoutedEventArgs e)
