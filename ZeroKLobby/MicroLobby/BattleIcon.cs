@@ -4,10 +4,11 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using LobbyClient;
+using ZeroKLobby.ToolTips;
 
 namespace ZeroKLobby.MicroLobby
 {
-  public class BattleIcon: IDisposable
+  public class BattleIcon: IDisposable, ITooltipProvider
   {
     public const int Height = 75;
     public const int Width = 300;
@@ -24,10 +25,6 @@ namespace ZeroKLobby.MicroLobby
     static Size playersBoxSize = new Size(214, 32);
     Image resizedMinimap;
 
-    public int PlayerCount
-    {
-      get { return Battle.Users.Where(x => !x.IsSpectator).Count(); }
-    }
     public Battle Battle { get; private set; }
 
 
@@ -83,6 +80,7 @@ namespace ZeroKLobby.MicroLobby
       }
     }
     public static Font ModFont = new Font("Segoe UI", 8.25F, FontStyle.Regular);
+    public int PlayerCount { get { return Battle.NonSpectatorCount; } }
 
     public static Brush TextBrush = new SolidBrush(Color.Black);
     public static Font TitleFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
@@ -215,5 +213,7 @@ namespace ZeroKLobby.MicroLobby
       }
       cachedBitmapSource = image.ToBitmapSource();
     }
+
+    public string Tooltip { get { return ToolTipHandler.GetBattleToolTipString(Battle.BattleID); } }
   }
 }

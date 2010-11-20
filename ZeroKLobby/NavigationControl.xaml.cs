@@ -223,5 +223,6 @@ namespace ZeroKLobby
 	  {
 	    Path = GetLastPathStartingWith("http://zero-k.info/Maps.mvc");
 	  }
+
 	}
 }

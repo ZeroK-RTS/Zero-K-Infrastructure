@@ -247,18 +247,6 @@
     </Compile>
     <Compile Include="MicroLobby\BattleIcon.cs" />
     <Compile Include="MicroLobby\BattleIconManager.cs" />
-    <Compile Include="MicroLobby\BattleListTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\BattleListTab.Designer.cs">
-      <DependentUpon>BattleListTab.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MicroLobby\BattleListControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\BattleListControl.Designer.cs">
-      <DependentUpon>BattleListControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\DudeRenderer.cs" />
     <Compile Include="MicroLobby\FriendManager.cs" />
     <Compile Include="MicroLobby\GameInfo.cs" />
@@ -570,6 +558,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="LuaMgr\doc\changelog.txt" />
+    <Resource Include="Resources\search.png" />
     <Resource Include="Resources\battle.png" />
     <Resource Include="Resources\chat.png" />
     <Resource Include="Resources\game.png" />
@@ -586,9 +575,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\NewVersionBar.resx">
       <DependentUpon>NewVersionBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\BattleListTab.resx">
-      <DependentUpon>BattleListTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\SettingsTab.resx">
       <DependentUpon>SettingsTab.cs</DependentUpon>

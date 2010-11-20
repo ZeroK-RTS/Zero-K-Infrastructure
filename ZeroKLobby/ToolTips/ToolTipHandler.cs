@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using ZeroKLobby.MicroLobby;
 using Application = System.Windows.Forms.Application;
 using Point = System.Drawing.Point;
@@ -22,7 +23,7 @@ namespace ZeroKLobby.ToolTips
 
 
         ToolTipForm tooltip;
-        readonly Dictionary<Control, string> tooltips = new Dictionary<Control, string>();
+        readonly Dictionary<object, string> tooltips = new Dictionary<object, string>();
 
         bool visible = true;
         public bool Visible
@@ -49,7 +50,7 @@ namespace ZeroKLobby.ToolTips
             timer = null;
         }
 
-        public void Clear(Control control)
+        public void Clear(object control)
         {
             tooltips.Remove(control);
         }
@@ -72,23 +73,23 @@ namespace ZeroKLobby.ToolTips
         }
 
 
-        public void SetBattle(Control control, int id)
+        public void SetBattle(object control, int id)
         {
             UpdateTooltip(control, GetBattleToolTipString(id));
         }
 
-        public void SetMap(Control control, string name)
+        public void SetMap(object control, string name)
         {
             UpdateTooltip(control, GetMapToolTipString(name));
         }
 
 
-        public void SetText(Control target, string text)
+        public void SetText(object target, string text)
         {
             UpdateTooltip(target, text);
         }
 
-        public void SetUser(Control control, string name)
+        public void SetUser(object control, string name)
         {
             UpdateTooltip(control, GetUserToolTipString(name));
         }
@@ -98,11 +99,38 @@ namespace ZeroKLobby.ToolTips
             if (Program.MainWindow != null && Program.MainWindow.IsLoaded && !Program.CloseOnNext && Program.MainWindow.IsVisible &&
                 Program.MainWindow.WindowState != WindowState.Minimized)
             {
-                var control = MainWindow.Instance.GetHoveredControl();
-                string text = null;
-                if (control != null) tooltips.TryGetValue(control, out text);
+             var control = MainWindow.Instance.GetHoveredControl();
+             string text = null;
+             if (control != null) tooltips.TryGetValue(control, out text);
+             else
+             {
+               var wpfElement = Mouse.DirectlyOver as FrameworkElement;
+               while (wpfElement != null)
+               {
+                 if (wpfElement.ToolTip is string)
+                 {
+                   text = (string)wpfElement.ToolTip;
+                   break;
+                 }
+                 if (wpfElement.ToolTip is ITooltipProvider)
+                 {
+                   text = ((ITooltipProvider)wpfElement.ToolTip).Tooltip;
+                   break;
+                 }
+                 if (!tooltips.TryGetValue(wpfElement, out text)) {
+                   var tag = wpfElement.Tag as ITooltipProvider;
+                   if (tag != null) {
+                     text = tag.Tooltip;
+                     break;
+                   }
+                 } else break;
+                 wpfElement = wpfElement.Parent as FrameworkElement;
+               }
+             }
 
-                if (lastText != text || lastVisible != Visible || lastActive != isWindowActive)
+
+
+              if (lastText != text || lastVisible != Visible || lastActive != isWindowActive)
                 {
                     if (tooltip != null)
                     {
@@ -153,7 +181,7 @@ namespace ZeroKLobby.ToolTips
             }
         }
 
-        void UpdateTooltip(Control control, string s)
+        void UpdateTooltip(object control, string s)
         {
             tooltips[control] = s;
             RefreshToolTip(false, true);
@@ -179,4 +207,9 @@ namespace ZeroKLobby.ToolTips
             RefreshToolTip(true, true);
         }
     }
+
+  interface ITooltipProvider
+  {
+    string Tooltip { get; }
+  }
 }

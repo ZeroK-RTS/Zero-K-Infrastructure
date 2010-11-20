@@ -240,8 +240,13 @@ namespace ZeroKLobby
 		[DisplayName("Show Hourly Chat Message")]
 		[Description("Show a notification in chat channels every hour.")]
 		public bool ShowHourlyChimes { get { return showHourlyChimes; } set { showHourlyChimes = value; } }
-		[Browsable(true)]
-		public bool ShowNonJoinableBattles = true;
+	  [Browsable(true)]
+	  public bool ShowNonJoinableBattles
+	  {
+	    get { return showNonJoinableBattles; }
+      set { showNonJoinableBattles = value; }
+    }
+    bool showNonJoinableBattles = true;
 
 		[Category("General")]
 		[DisplayName("Sort Battles by Players")]

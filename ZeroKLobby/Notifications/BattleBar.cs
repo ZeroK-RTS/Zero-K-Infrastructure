@@ -687,7 +687,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				if (client.ExistingUsers.TryGetValue(client.MyBattle.Founder, out founder) && !founder.IsInGame) mv = client.MyBattle.NonSpectatorCount - GetQuickMatchIdlerCount(client.MyBattle, (int)numMinValue.Value);
 			}
 			Battle bat = null;
-			foreach (var b in BattleListControl.BattleWordFilter(client.ExistingBattles.Values, quickMatchFilter))
+			foreach (var b in BattleList.BattleWordFilter(client.ExistingBattles.Values, quickMatchFilter))
 			{
 				var otherPlayerCount = b.NonSpectatorCount;
 				if (b == client.MyBattle && client.MyBattleStatus != null && !client.MyBattleStatus.IsSpectator) otherPlayerCount--; // if its my battle and im not ready dont count self

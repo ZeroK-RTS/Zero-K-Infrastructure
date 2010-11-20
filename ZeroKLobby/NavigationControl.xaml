@@ -8,17 +8,7 @@
       <RowDefinition Height="Auto" />
       <RowDefinition />
     </Grid.RowDefinitions>
-    <UniformGrid Grid.Row="0" Rows="1">
-      <Button Click="MissionsPage_Click">Missions</Button>
-      <Button Click="BattleListPage_Click">Battles</Button>
-      <Button Click="ChatPage_Click">Chat</Button>
-      <Button Click="HelpPage_Click">Help</Button>
-      <Button Click="MapPage_Click">Maps</Button>
-      <Button Click="WidgetsPage_Click">Widgets</Button>
-      <Button Click="DownloaderPage_Click">Rapid</Button>
-      <Button Click="SettingsPage_Click">Settings</Button>
-    </UniformGrid>
-    <Grid Grid.Row="1">
+    <Grid Grid.Row="0">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
@@ -28,6 +18,16 @@
       <Button x:Name="forwardButton" Grid.Column="1" Click="forwardButton_Click">Forward</Button>
       <ZeroKLobby:SubmitTextBox Grid.Column="2" Text="{Binding Path, ElementName=userControl}"  />
     </Grid>
+    <UniformGrid Grid.Row="1" Rows="1">
+      <Button Click="MissionsPage_Click">Missions</Button>
+      <Button Click="BattleListPage_Click">Battles</Button>
+      <Button Click="ChatPage_Click">Chat</Button>
+      <Button Click="HelpPage_Click">Help</Button>
+      <Button Click="MapPage_Click">Maps</Button>
+      <Button Click="WidgetsPage_Click">Widgets</Button>
+      <Button Click="DownloaderPage_Click">Rapid</Button>
+      <Button Click="SettingsPage_Click">Settings</Button>
+    </UniformGrid>
     <TabControl Grid.Row="2" x:Name="tabControl">
       <TabControl.ItemContainerStyle>
         <Style TargetType="{x:Type TabItem}">
