@@ -150,8 +150,9 @@ Then in the battle lobby:
 					<table><tr>
 						<td>@Html.AccountAvatar(p.Author)</td>
 						<td valign='top'>
-						<small>@p.Created.ToAgoString()</small>
-						@Html.Stars(StarType.GreenStarSmall, p.Rating) @Html.Stars(StarType.RedSkull, p.Difficulty)
+						<small>@p.Created.ToAgoString()</small><br />
+						@Html.Stars(StarType.GreenStarSmall, p.Rating)<br />
+            @Html.Stars(StarType.RedSkull, p.Difficulty)
 						</td>
 					</tr></table>
 				</td>

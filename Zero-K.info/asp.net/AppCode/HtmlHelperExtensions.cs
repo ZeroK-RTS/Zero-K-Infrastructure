@@ -117,7 +117,7 @@ namespace System.Web.Mvc
       {
         var totalWidth = 5*14;
         var starWidth = (int)(rating*14.0);
-        return new MvcHtmlString(string.Format("<span title='{2:F2}'><span class='{0}' style='width:{1}px'></span><span class='{5}' style='width:{3}px;background-position:-{4}px'></span></span>", type, starWidth, rating, totalWidth-starWidth, starWidth%14, type == StarType.RedSkull ? StarType.WhiteSkull : StarType.WhiteStarSmall));
+        return new MvcHtmlString(string.Format("<span title='{2:F2}'><span class='{0}' style='width:{1}px'></span><span style='width:{3}px'></span></span>", type, starWidth, rating, totalWidth-starWidth));
       } else return new MvcHtmlString(string.Format("<span class='{0}' style='width:70px' title='No votes'></span>", type == StarType.RedSkull ? StarType.WhiteSkull : StarType.WhiteStarSmall));
     }
 
