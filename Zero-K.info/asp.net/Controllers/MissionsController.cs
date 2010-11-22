@@ -57,7 +57,7 @@ namespace ZeroKWeb.Controllers
 			            new MissionDetailData
 			            {
 			            	Mission = mission,
-			            	TopScores = mission.MissionScores.OrderByDescending(x => x.Score).Take(10).AsQueryable(),
+			            	TopScores = mission.MissionScores.OrderByDescending(x => x.Score).AsQueryable(),
 			            	MyRating = mission.Ratings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new Rating(),
 			            	Posts = (from p in mission.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
 			            	         let userRating = mission.Ratings.SingleOrDefault(x => x.AccountID == p.AuthorAccountID)
