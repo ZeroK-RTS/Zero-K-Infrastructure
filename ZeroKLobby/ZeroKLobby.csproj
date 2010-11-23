@@ -558,6 +558,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="LuaMgr\doc\changelog.txt" />
+    <None Include="Resources\Flags\in.png" />
     <Resource Include="Resources\search.png" />
     <Resource Include="Resources\battle.png" />
     <Resource Include="Resources\chat.png" />

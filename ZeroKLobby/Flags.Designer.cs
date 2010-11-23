@@ -39,7 +39,7 @@ namespace ZeroKLobby {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-									global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKLobby.Flags", typeof(Flags).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ZeroKLobby.Flags", typeof(Flags).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -62,28 +62,28 @@ namespace ZeroKLobby {
         
         internal static System.Drawing.Bitmap _as {
             get {
-                object obj = ResourceManager.GetObject("_as", resourceCulture);
+                object obj = ResourceManager.GetObject("as", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         internal static System.Drawing.Bitmap _do {
             get {
-                object obj = ResourceManager.GetObject("_do", resourceCulture);
+                object obj = ResourceManager.GetObject("do", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         internal static System.Drawing.Bitmap _in {
             get {
-                object obj = ResourceManager.GetObject("_in", resourceCulture);
+                object obj = ResourceManager.GetObject("in", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         internal static System.Drawing.Bitmap _is {
             get {
-                object obj = ResourceManager.GetObject("_is", resourceCulture);
+                object obj = ResourceManager.GetObject("is", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

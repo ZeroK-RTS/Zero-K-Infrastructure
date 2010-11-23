@@ -847,16 +847,16 @@
   <data name="zw" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\flags\zw.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_as" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="as" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\flags\as.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_do" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="do" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\flags\do.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_in" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="in" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\flags\in.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_is" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="is" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\flags\is.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
