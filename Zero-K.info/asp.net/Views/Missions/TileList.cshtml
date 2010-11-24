@@ -3,11 +3,11 @@
 	Layout = "";
 }
 @foreach (var mission in Model) {
-	<div id='@mission.MissionID' class='mission left relative' title="$mission$@mission.MissionID" onclick="window.location='@Url.Action("Detail", new { id = mission.MissionID })'" >
+	<div id='@mission.MissionID' class='mission fleft relative' title="$mission$@mission.MissionID" onclick="window.location='@Url.Action("Detail", new { id = mission.MissionID })'" >
 		<b>@mission.Name</b><br />
 		@Html.PrintAccount(mission.Account)
 		<br />
-		<img width='96' height='96' border='1' src='@Href(string.Format("~/img/missions/{0}.png", mission.MissionID))' class='left' />
+		<img width='96' height='96' border='1' src='@Href(string.Format("~/img/missions/{0}.png", mission.MissionID))' class='fleft' />
 		<table>
 		<tr>
 			<td>Rating:</td>
