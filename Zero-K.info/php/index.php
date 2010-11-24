@@ -8,7 +8,7 @@
 
 <?php include("inc_rotate.inc"); ?>
 
-<body id="body">
+<body id="body center">
 	<div id="wrapper">
 <!-------------------------------------------------------------- -->
 <?php include("inc_header.inc"); ?>

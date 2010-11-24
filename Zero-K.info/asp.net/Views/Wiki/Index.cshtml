@@ -2,18 +2,13 @@
 @{
     Page.Title = "Zero-K wiki";
 }
-
-@Html.IncludeFile("inc_plainbg.inc")
-@Html.IncludeFile("inc_header.inc")
-@Html.IncludeFile("inc_menu.inc")
+<!php doesn't render -- these should be different than main page anyway>
 @Html.IncludeFile("_sidebar.inc")
 @Html.IncludeFile("_content.inc")
 
-<table>
-<tr>
-<td>
+<!hacks, body should probably be cleaned instead>
+<div class=""><!wierd intro sentence>
 <div>
 @Model.Content
+<!need to remove ending break as well>
 
-
-@Html.IncludeFile("inc_footer.inc")

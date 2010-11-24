@@ -16,7 +16,6 @@ html, body
 	padding: 0;
 	margin: 0;
 	border: 0;
-	text-align: center; /*center tag acts just the same way*/
 	z-index: 0;
 }
 

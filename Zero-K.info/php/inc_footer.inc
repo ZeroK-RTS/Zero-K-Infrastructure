@@ -1,5 +1,4 @@
 <div id="footer" class="border">
-	
 	<span class="abs left cdark">Site by maackey</span> 
 	<div class="center">
 		<a href="#credlist" onclick="show('credits')" class="button">Credits</a> | 
@@ -7,9 +6,6 @@
 		<a>Terms of Use</a> | 
 		<a href="#copyright" onclick="show('copyright')" class="button">Copyright</a>
 	</div>
-	
-	<!-- Legal
-	-->
 </div><!close footer>
 
 	<script type="text/javascript">
@@ -25,8 +21,9 @@
 	</div><!close copyright>
 	
 	<div id="credits" class="hide blocker border">
-		<a id="credlist" target="_new" href="credits.txt">Full list of Credits</a>
+		<a id="credlist" target="_new" href="http://zero-k.info/credits.txt">Full list of Credits</a>
 		<marquee height="650px" direction="up" scrollamount="3">
+		<!fixme>
 		<pre class="credits"><?php include("credits.txt"); ?></pre>
 		</marquee>
 		<a onclick="hide('credits')" class="button">close</a>
@@ -39,4 +36,3 @@
 	<div id="contact" class="border hide">
 		contact us
 	</div><!close contact>
-</div><!close blocker>
