@@ -1,10 +1,12 @@
 p {text-indent: 2em;}
 b {font-weight: bold; color: #fff;}
 i {}
+.indent {text-indent: 2em;}
+.bold{font-weight: bold;}
 
-h1 {font-size: 170%; color: #fff;}
-h2 {font-size: 140%; color: #cee;}
-h3 {}
+h1 {font-size: 160%; color: #fff; padding: 0; margin: 0; }
+h2 {font-size: 140%; color: #cee; padding: 0; margin: 0; }
+h3 {font-size: 120%; color: #eec; padding: 0; margin: 0; }
 
 a {color: #38bfec; text-decoration: none;}
 a:visited {color: #4c90a6;}
@@ -28,6 +30,7 @@ input
 {
 	color: #cbd3d4; 
 	background: none;
+	border: 1px solid teal;
 	padding: 3px;
 }
 
@@ -53,8 +56,6 @@ ul {list-style-type: circle;}
 
 ul.poll {list-style-type: none; text-indent: -3em;}
 
-.indent {text-indent: 2em;}
-
 .border
 {
 	background: #000;
@@ -75,29 +76,25 @@ ul.poll {list-style-type: none; text-indent: -3em;}
 {
 	-moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
 	margin: 10px 10px 10px 10px;
+	opacity: .88;
 }
 
 .webkit .border
 {
 	-webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
 	margin: 10px 10px 10px 10px;
+	opacity: .88;
 }
 
 .opera .border
 {
 	-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
 	margin: 10px 10px 10px 10px;
+	opacity: .88;
 }
 
-.left
-{
-	float: left;
-}
-
-.right
-{
-	float: right;
-}
+.fleft{float: left;}
+.fright{float: right;}
 
 .center
 {
@@ -106,88 +103,39 @@ ul.poll {list-style-type: none; text-indent: -3em;}
 	text-align: center;
 }
 
-.text-left
-{
-	text-align: left;
-}
+.text-left{text-align: left;}
+.text-right{text-align: right;}
+.text-center{text-align: center;}
+.text-justify{text-align: justify;}
 
-.text-right
-{
-	text-align: right;
-}
+.block{display: block;}
+.hide{display: none;}
 
-.text-center
-{
-	text-align: center;
-}
+.relative{position: relative;}
+.abs {position: absolute;}
 
-.text-justify
-{
-	text-align: justify;
-}
+.top{top: 0;}
+.left{left: 0;}
+.right{right: 0;}
+.bottom{bottom: 0;}
 
-.relative
-{
-	position: relative;
-}
-
-.block
-{
-	display: block;
-}
-
-.hide
-{
-	display: none;
-}
-
-.abstop
-{
-	position: absolute;
-	top: 0;
-}
-
-.absleft
-{
-	position: absolute;
-	left: 0;
-}
-
-.absright
-{
-	position: absolute;
-	right: 0;
-}
-
-.absbottom
-{
-	position: absolute;
-	bottom: 0;
-}
-
-.bold
-{
-	font-weight: bold;
-}
-
-/* needs tweaking */
 .cwhite {color: #fff;}
-.cblack {color: #000;}
-.clight {color: #ded;}
-.cdark  {color: #232;}
-.cred   {color: #f00;}
-.cblue  {color: #00f;}
-.cgreen {color: #0f0;}
+.clight {color: #ddd;}
 .cgray  {color: #888;}
+.cdark  {color: #222;}
+.cblack {color: #000;}
+.cred   {color: #f00;}
+.cgreen {color: #0f0;}
+.cblue  {color: #00f;}
 
 .bwhite {background: #fff;}
-.bblack {background: #000;}
 .blight {background: #ddd;}
-.bdark  {background: #222;}
-.bred   {background: #f00;}
-.bblue  {background: #00f;}
-.bgreen {background: #0f0;}
 .bgray  {background: #888;}
+.bdark  {background: #222;}
+.bblack {background: #000;}
+.bred   {background: #f00;}
+.bgreen {background: #0f0;}
+.bblue  {background: #00f;}
 
 .width-10 {width: 10%;}
 .width-20 {width: 20%;}

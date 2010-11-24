@@ -17,6 +17,7 @@ html, body
 	margin: 0;
 	border: 0;
 	/*text-align: center; use center tag*/
+	z-index: 0;
 }
 
 body

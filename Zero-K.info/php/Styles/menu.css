@@ -45,5 +45,4 @@ ul.menu li:hover > ul
 	list-style-type: none; 
 	margin: -2px;
 	padding:3px;
-	z-index: 99;
 }

@@ -1,6 +1,26 @@
+<?php
+	$f = fopen("units.txt", "r");
+	$i = 0;
+	$unit = 2; //ideally changed from day to day; starts from 1, not 0
+	$replace = '/\\\n/'; //gah these make no sense! at least it works
+	while(!feof($f) and $i!=$unit)
+	{
+		$line = fgets($f);
+		$i++;
+	}
+	$line = preg_replace($replace, "<p>", $line);
+	fclose($f);
+	
+	$string = explode(" | ", $line);
+	$unitname = $string[0];
+	$unitpic = $string[1]; 
+	$unitdesc = $string[2];
+?>
+
 <div id="unit" class="border relative text-left">
-	<h2><a>Spotlight:</a> Metal Extractor</h2>
+	<h2><a>Spotlight: </a></h2>
+	<h3><?php echo $unitname; ?></h3>
 	<!-- <span class="absright abstop bold button"> <a>&lt;&lt;</a> <a>?</a> <a>&gt;&gt;</a> </span> -->
-	<img src="img/zero-k_64.png" class="right"></img>
-	<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).
+	<img src="img/unitpics/<?php echo $unitpic; ?>" class="right"></img>
+	<p><?php echo $unitdesc; ?>
 </div><!close unit>
