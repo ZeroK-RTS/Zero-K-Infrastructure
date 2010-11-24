@@ -16,13 +16,27 @@ html, body
 	padding: 0;
 	margin: 0;
 	border: 0;
-	/*text-align: center; use center tag*/
+	text-align: center; /*center tag acts just the same way*/
 	z-index: 0;
 }
 
 body
 {
 	background: url("../img/fade.png") repeat-y 50% 0;
+}
+
+.blocker
+{
+	position: absolute;
+	background: #000;
+	top: 0;
+	left: 0%;
+	right: 0%;
+	bottom: 0;
+	padding: 20px;
+	text-align: center;
+	z-index: 100;
+	opacity: .95;
 }
 
 div#wrapper
@@ -39,7 +53,14 @@ div#wrapper
 
 .wrapper
 {
-	
+	position: relative;
+	width: 1000px;
+	padding: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	border-top: 0;
+	border-bottom: 0;
+	text-align: justify;	
 }
 
 div#footer

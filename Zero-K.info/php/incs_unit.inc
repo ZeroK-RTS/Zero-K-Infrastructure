@@ -21,6 +21,6 @@
 	<h2><a>Spotlight: </a></h2>
 	<h3><?php echo $unitname; ?></h3>
 	<!-- <span class="absright abstop bold button"> <a>&lt;&lt;</a> <a>?</a> <a>&gt;&gt;</a> </span> -->
-	<img src="img/unitpics/<?php echo $unitpic; ?>" class="right"></img>
+	<img src="img/unitpics/<?php echo $unitpic; ?>" class="fright"></img>
 	<p><?php echo $unitdesc; ?>
 </div><!close unit>

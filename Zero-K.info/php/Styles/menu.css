@@ -1,5 +1,11 @@
 @font-face { font-family: sm; src: url("SM.ttf"); }
 
+div#menu
+{
+	position: relative;
+	z-index: 90;
+}
+
 div#menu a /*menu bar*/
 {
 	padding: 2px 10px;
@@ -45,4 +51,5 @@ ul.menu li:hover > ul
 	list-style-type: none; 
 	margin: -2px;
 	padding:3px;
+	z-index: 100;
 }
