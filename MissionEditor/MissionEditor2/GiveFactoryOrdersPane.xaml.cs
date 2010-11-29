@@ -42,6 +42,7 @@ namespace MissionEditor2
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
+			
 			unitDefs = MainWindow.Instance.Mission.Mod.UnitDefs;
 			factoryGrid.Tag = unitDefs.Where(u => u.IsFactory);
 			factoryGrid.Grid.SelectionChanged += FactoryGrid_SelectionChanged;
@@ -51,6 +52,7 @@ namespace MissionEditor2
 			PopulateQueueGrid();
 			setGroupsButton.Content= String.Join("\r\n", action.BuiltUnitsGroups);
 			action.BuiltUnitsGroups.CollectionChanged += (s, ea) => setGroupsButton.Content = String.Join("\r\n", action.BuiltUnitsGroups); // leak
+			factoryGroupsList.BindCollection(action.FactoryGroups);
 
 		}
 

@@ -216,7 +216,16 @@ namespace CMissionLib
 		public int StartingMetal { get { return startingMetal; } set { startingMetal = value; } }
 
 		[DataMember]
-		public Player StartingPlayer { get { return startingPlayer; } set { startingPlayer = value; } }
+		public Player StartingPlayer
+		{
+			get { return startingPlayer; } 
+			set
+			{
+				startingPlayer = value;
+				RaisePropertyChanged("StartingPlayer");
+			}
+		}
+
 		public IEnumerable<string> TriggerNames { get { return triggers.Cast<INamed>().Select(t => t.Name); } }
 		[DataMember]
 		public ObservableCollection<Trigger> Triggers { get { return triggers; } set { triggers = value; } }
@@ -541,9 +550,12 @@ namespace CMissionLib
 		{
 			var sb = new StringBuilder();
 			sb.AppendLine("local modinfo = {");
-			sb.AppendFormat("  name		=	[[{0}]],\n", Name);
-			sb.AppendFormat("  description	=	[[{0}]],\n", "Mission Mutator"); // the real description might break archivecache.lua
-			sb.AppendFormat("  modtype		=	[[{0}]],\n", hideFromModList ? 0 : 1);
+			sb.AppendFormat("  name          =	[[{0}]],\n", Name);
+			sb.AppendFormat("  description   =	[[{0}]],\n", "Mission Mutator"); // the real description might break archivecache.lua
+			sb.AppendFormat("  modtype       =	[[{0}]],\n", hideFromModList ? 0 : 1);
+			sb.AppendFormat("  shortname     =	[[{0}]],\n", mod.ShortName);
+			sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);
+			sb.AppendFormat("  shortbasename =	[[{0}]],\n", mod.ShortBaseName);
 			sb.AppendLine("  depend = {");
 			sb.AppendFormat("    [[{0}]]\n", Mod.Name);
 			sb.AppendLine("  },");
@@ -582,7 +594,7 @@ namespace CMissionLib
 				// sb.AppendFormat("\t\tVersion={0};\n", String.IsNullOrEmpty(player.AIVersion) ? "0.1" : player.AIVersion);
 				sb.AppendFormat("\t\tTeam={0};\n", index);
 				sb.AppendFormat("\t\tIsFromDemo=0;\n");
-				sb.AppendFormat("\t\tHost=0;\n");
+				sb.AppendFormat("\t\tHost={0};\n", Players.IndexOf(StartingPlayer));
 				sb.AppendFormat("\t\t[Options] {{}}\n");
 				sb.AppendLine("\t}");
 			}
@@ -594,7 +606,7 @@ namespace CMissionLib
 			var alliances = Players.Select(p => p.Alliance).Distinct().ToList();
 			sb.AppendFormat("\t[TEAM{0}]\n", index);
 			sb.AppendLine("\t{");
-			sb.AppendFormat("\t\tTeamLeader={0};\n", 0); // todo: verify if correct
+			sb.AppendFormat("\t\tTeamLeader={0};\n", Players.IndexOf(StartingPlayer)); // todo: verify if correct
 			sb.AppendFormat("\t\tAllyTeam={0};\n", alliances.IndexOf(player.Alliance));
 			sb.AppendFormat("\t\tRGBColor={0} {1} {2};\n", player.Color.ScR, player.Color.ScG, player.Color.ScB); // range: 0-1
 			sb.AppendFormat("\t\tSide={0};\n", Mod.Sides.First());

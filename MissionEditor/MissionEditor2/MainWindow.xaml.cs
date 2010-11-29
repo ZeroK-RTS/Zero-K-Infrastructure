@@ -24,6 +24,9 @@ namespace MissionEditor2
 		public static readonly DependencyProperty MissionProperty;
 		public TriggerLogic CurrentLogic { get { return logicGrid.SelectedItem as TriggerLogic; } }
 		public Trigger CurrentTrigger { get { return logicGrid.SelectedItem as Trigger; } }
+		public Region CurrentRegion { get { return logicGrid.SelectedItem as Region; } }
+		public ActionsFolder CurrentActionsFolder { get { return logicGrid.SelectedItem as ActionsFolder; } }
+		public ConditionsFolder CurrentConditionsFolder { get { return logicGrid.SelectedItem as ConditionsFolder; } }
 
 		public static MainWindow Instance { get; private set; }
 
@@ -97,6 +100,11 @@ namespace MissionEditor2
 
 		MenuItem GetNewActionMenu(Trigger trigger)
 		{
+			return GetNewActionMenu(() => trigger);
+		}
+
+		MenuItem GetNewActionMenu(Func<Trigger> getTrigger)
+		{
 			var menu = new MenuItem { Header = "New Action" };
 			Action<string, Func<TriggerLogic>> addAction = (name, makeItem) =>
 				{
@@ -104,12 +112,18 @@ namespace MissionEditor2
 					menu.Items.Add(item);
 					item.Click += (s, ea) =>
 						{
-							trigger.Logic.Add(makeItem());
-							Mission.RaisePropertyChanged(String.Empty);
+							var trigger = getTrigger();
+							if (trigger != null)
+							{
+								trigger.Logic.Add(makeItem());
+								Mission.RaisePropertyChanged(String.Empty);
+							}
+							else
+							{
+								MessageBox.Show("Select the trigger that will contain the new item.");
+							}
 						};
 				};
-			var centerMapX = Mission.Map.Texture.Width/2;
-			var centerMapY = Mission.Map.Texture.Height/2;
 			addAction("Allow Unit Transfers", () => new AllowUnitTransfersAction());
 			addAction("Cancel Countdown", () => new CancelCountdownAction(Mission.Countdowns.FirstOrDefault()));
 			addAction("Cause Defeat", () => new DefeatAction());
@@ -135,12 +149,12 @@ namespace MissionEditor2
 			addAction("Modify Unit Health", () => new ModifyUnitHealthAction());
 			addAction("Pause", () => new PauseAction());
 			addAction("Play Sound", () => new SoundAction());
-			addAction("Point Camera at Map Position", () => new SetCameraPointTargetAction(centerMapX, centerMapY));
+			addAction("Point Camera at Map Position", () => new SetCameraPointTargetAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
 			addAction("Point Camera at Unit", () => new SetCameraUnitTargetAction());
 			addAction("Send Scores", () => new SendScoreAction());
 			addAction("Show Console Message", () => new ConsoleMessageAction("Hello!"));
 			addAction("Show GUI Message", () => new GuiMessageAction("Hello!"));
-			addAction("Show Marker Point", () => new MarkerPointAction(centerMapX, centerMapY));
+			addAction("Show Marker Point", () => new MarkerPointAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
 			addAction("Start Countdown", () => new StartCountdownAction(GetNewCountdownName()));
 			addAction("Transfer Units", () => new TransferUnitsAction(Mission.Players.First()));
 			addAction("Unlock Units", () => new UnlockUnitsAction());
@@ -150,6 +164,11 @@ namespace MissionEditor2
 
 		MenuItem GetNewConditionMenu(Trigger trigger)
 		{
+			return GetNewConditionMenu(() => trigger);
+		}
+
+		MenuItem GetNewConditionMenu(Func<Trigger> getTrigger)
+		{
 			var menu = new MenuItem { Header = "New Condition" };
 			Action<string, Func<TriggerLogic>> addAction = (name, makeItem) =>
 				{
@@ -157,8 +176,16 @@ namespace MissionEditor2
 					menu.Items.Add(item);
 					item.Click += (s, ea) =>
 						{
-							trigger.Logic.Add(makeItem());
-							Mission.RaisePropertyChanged(String.Empty);
+							var trigger = getTrigger();
+							if (trigger != null)
+							{
+								trigger.Logic.Add(makeItem());
+								Mission.RaisePropertyChanged(String.Empty);
+							}
+							else
+							{
+								MessageBox.Show("Select the trigger that will contain the new item.");
+							}
 						};
 				};
 
@@ -210,6 +237,21 @@ namespace MissionEditor2
 				var name = string.Format("Trigger {0}", i);
 				if (!Mission.TriggerNames.Contains(name)) return name;
 			}
+		}
+
+
+		void MoveCurrentItem(MoveDirection direction)
+		{
+			if (logicGrid.SelectedItem is Trigger)
+			{
+				MoveTrigger(direction, CurrentTrigger);
+			}
+			else if (logicGrid.SelectedItem is TriggerLogic)
+			{
+				MoveItem(direction, CurrentLogic);
+			}
+			else if (logicGrid.SelectedItem == null) MessageBox.Show("No item selected.");
+			else MessageBox.Show("Moving the selected item is not supported.");
 		}
 
 		void MoveItem(MoveDirection direction, TriggerLogic item)
@@ -269,6 +311,42 @@ namespace MissionEditor2
 			}
 		}
 
+		void RenameCurrentItem()
+		{
+			if (logicGrid.SelectedItem is Trigger)
+			{
+				RenameTrigger(CurrentTrigger);
+			}
+			else if (logicGrid.SelectedItem is TriggerLogic)
+			{
+				RenameLogicItem(CurrentLogic);
+			}
+			else if (logicGrid.SelectedItem is Region)
+			{
+				RenameRegion(CurrentRegion);
+			}
+			else if (logicGrid.SelectedItem == null) MessageBox.Show("No item selected.");
+			else MessageBox.Show("Renaming the selected item is not supported.");
+		}
+
+		void DeleteCurrentItem()
+		{
+			if (logicGrid.SelectedItem is Trigger)
+			{
+				DeleteTrigger(CurrentTrigger);
+			}
+			else if (logicGrid.SelectedItem is TriggerLogic)
+			{
+				DeleteTriggerLogic(CurrentLogic);
+			}
+			else if (logicGrid.SelectedItem is Region)
+			{
+				DeleteRegion(CurrentRegion);
+			}
+			else if (logicGrid.SelectedItem == null) MessageBox.Show("No item selected.");
+			else MessageBox.Show("Deleting the selected item is not supported.");
+		}
+
 		void RenameTrigger(Trigger trigger)
 		{
 			if (trigger == null) return;
@@ -324,6 +402,11 @@ namespace MissionEditor2
 				File.WriteAllText(scriptFile, Mission.GetScript());
 				Mission.CreateArchive(missionPath, true);
 			}
+			catch(Exception e)
+			{
+				if (Debugger.IsAttached) throw;
+				MessageBox.Show(e.Message);
+			}
 			finally
 			{
 				unitSync.Dispose();
@@ -351,41 +434,25 @@ namespace MissionEditor2
 				});
 		}
 
+		void DeleteTriggerLogic(TriggerLogic item)
+		{
+			var trigger = Mission.FindLogicOwner(item);
+			trigger.Logic.Remove(item);
+			Mission.RaisePropertyChanged(String.Empty);
+		}
+
 		void logic_Loaded(object sender, RoutedEventArgs e)
 		{
 			var border = (Border)e.Source;
-			var action = (TriggerLogic)border.DataContext;
-			var trigger = Mission.FindLogicOwner(action);
+			var item = (TriggerLogic)border.DataContext;
 			var menu = new ContextMenu();
 			border.ContextMenu = menu;
-			menu.AddAction("Rename", () => RenameLogicItem(action));
-			menu.AddAction("Move Up", () => MoveItem(MoveDirection.Up, action));
-			menu.AddAction("Move Down", () => MoveItem(MoveDirection.Down, action));
-			menu.AddAction("Delete",
-			               delegate
-			               	{
-			               		trigger.Logic.Remove(action);
-			               		Mission.RaisePropertyChanged(String.Empty);
-			               	});
+			menu.AddAction("Rename", () => RenameLogicItem(item));
+			menu.AddAction("Move Up", () => MoveItem(MoveDirection.Up, item));
+			menu.AddAction("Move Down", () => MoveItem(MoveDirection.Down, item));
+			menu.AddAction("Delete", () => DeleteTriggerLogic(item));
 			border.ContextMenu = menu;
 		}
-
-		//void regionsMenu_GotFocus(object sender, RoutedEventArgs e)
-		//{
-		//    regionsMenu.Items.Clear();
-		//    foreach (var region in Mission.Regions)
-		//    {
-		//        regionsMenu.AddAction(region.Name,
-		//                              delegate
-		//                                {
-		//                                    var window = new RegionWindow(region){Owner = this};
-		//                                    window.ShowDialog();
-		//                                });
-		//    }
-		//    var newRegionItem = new MenuItem { Header = "Create Region" };
-		//    newRegionItem.Click += newRegionItem_Click;
-		//    regionsMenu.Items.Add(newRegionItem);
-		//}
 
 		void GuiMessageButtonLoaded(object sender, RoutedEventArgs e)
 		{
@@ -424,6 +491,12 @@ namespace MissionEditor2
 			Mission.Regions.Add(region);
 		}
 
+		void DeleteTrigger(Trigger trigger)
+		{
+			Mission.Triggers.Remove(trigger);
+			Mission.RaisePropertyChanged(String.Empty);
+		}
+
 		void trigger_Loaded(object sender, RoutedEventArgs e)
 		{
 			var border = (Border)e.Source;
@@ -437,12 +510,7 @@ namespace MissionEditor2
 			menu.AddAction("Move Up", () => MoveTrigger(MoveDirection.Up, trigger));
 			menu.AddAction("Move Down", () => MoveTrigger(MoveDirection.Down, trigger));
 			menu.AddAction("Rename", () => RenameTrigger(trigger));
-			menu.AddAction("Delete",
-			               delegate
-			               	{
-			               		Mission.Triggers.Remove(trigger);
-			               		Mission.RaisePropertyChanged(String.Empty);
-			               	});
+			menu.AddAction("Delete", () => DeleteTrigger(trigger));
 			menu.Items.Add(new Separator());
 			menu.AddAction("Expand All Triggers", ExpandAllTriggers);
 			menu.AddAction("Collapse All Triggers", CollapseAllTriggers);
@@ -491,8 +559,31 @@ namespace MissionEditor2
 			mission.AddAction("Publish", ShowMissionManagement);
 			mission.AddAction("Settings", ShowMissionSettings);
 
+
+			var editMenu = MainMenu.AddContainer("Edit");
+			editMenu.AddAction("Rename", RenameCurrentItem);
+			editMenu.AddAction("Delete", DeleteCurrentItem);
+			editMenu.AddAction("Move Up", () => MoveCurrentItem(MoveDirection.Up));
+			editMenu.AddAction("Move Down", () => MoveCurrentItem(MoveDirection.Down));
+			editMenu.AddAction("Expand All Triggers", ExpandAllTriggers);
+			editMenu.AddAction("Collapse All Triggers", CollapseAllTriggers);
+
 			//var help = MainMenu.AddContainer("Help");
 			//help.AddAction("Basic Help", () => new Help().ShowDialog());
+
+			var newMenu = MainMenu.AddContainer("New");
+			newMenu.AddAction("New Trigger", CreateNewTrigger);
+			newMenu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
+			newMenu.AddAction("New Region", CreateNewRegion);
+			newMenu.Items.Add(GetNewConditionMenu(delegate
+			{
+				if (logicGrid.SelectedItem is Trigger) return CurrentTrigger;
+				if (logicGrid.SelectedItem is ActionsFolder) return CurrentActionsFolder.Trigger;
+				if (logicGrid.SelectedItem is ConditionsFolder) return CurrentConditionsFolder.Trigger;
+				if (logicGrid.SelectedItem is TriggerLogic) return Mission.FindLogicOwner(CurrentLogic);
+				return null;
+			}));
+			newMenu.Items.Add(GetNewActionMenu(() => CurrentTrigger));
 
 			var welcomeScreen = new WelcomeDialog { ShowInTaskbar = true, Owner = this };
 			welcomeScreen.ShowDialog();
@@ -501,6 +592,8 @@ namespace MissionEditor2
 				MessageBox.Show("A mission needs to be selected");
 				Environment.Exit(0);
 			}
+
+
 
 			var menu = new ContextMenu();
 			menu.AddAction("New Trigger", CreateNewTrigger);

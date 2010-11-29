@@ -7,21 +7,16 @@
       <Setter Property="Border.BorderBrush" Value="Black" />
       <Setter Property="Border.BorderThickness" Value="2" />
       <Setter Property="Border.Margin" Value="2" />
-      <Setter Property="SnapsToDevicePixels" Value="True" />
       <Setter Property="Border.BorderBrush" Value="Black" />
     </Style>
-    <Style x:Key="smallBuildPicStyle" TargetType="Image">
-      <Setter Property="SnapsToDevicePixels" Value="True" />
-    </Style>
     <DataTemplate x:Key="unitDefBuildPic">
-      <Border Style="{StaticResource smallBuildPicBlackBorderStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"
-          SnapsToDevicePixels="True">
-        <Image Height="32" Width="32" Style="{StaticResource smallBuildPicStyle}" Source="{Binding BuildPic}" Stretch="Fill" SnapsToDevicePixels="True" />
+      <Border Style="{StaticResource smallBuildPicBlackBorderStyle}" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Image Height="32" Width="32" Source="{Binding BuildPic}" Stretch="Fill" />
       </Border>
     </DataTemplate>
   </UserControl.Resources>
   <DataGrid Name="Grid" x:FieldModifier="public" Background="White" ItemsSource="{Binding Tag, ElementName=control}" AutoGenerateColumns="False"
-      IsSynchronizedWithCurrentItem="{Binding SnapToDevicePixels, ElementName=control}" VirtualizingStackPanel.IsVirtualizing="True" IsReadOnly="True">
+      IsSynchronizedWithCurrentItem="True" VirtualizingStackPanel.IsVirtualizing="True" IsReadOnly="True">
     <DataGrid.Columns>
       <DataGridTemplateColumn Header="Image" CellTemplate="{StaticResource unitDefBuildPic}" IsReadOnly="True" />
       <DataGridTextColumn Binding="{Binding Name}" Header="Name" IsReadOnly="True" />

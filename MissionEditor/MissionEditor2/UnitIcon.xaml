@@ -1,5 +1,5 @@
 ﻿<UserControl x:Class="MissionEditor2.UnitIcon" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:MissionEditor2" Loaded="UserControl_Loaded">
+        xmlns:local="clr-namespace:MissionEditor2" Loaded="UserControl_Loaded" ContextMenuOpening="UserControl_ContextMenuOpening">
     <UserControl.Resources>
         <Style x:Key="borderStyle" TargetType="Border">
             <Setter Property="Border.CornerRadius" Value="1" />
@@ -21,6 +21,7 @@
         <ContextMenu>
             <MenuItem Header="Delete" Click="DeleteItem_Click" />
             <MenuItem Header="Edit Groups" Click="SetGroupsItem_Click" />
+            <MenuItem Header="Set Owner" x:Name="setOwnerItem" />
             <Separator />
         	<MenuItem Header="Tutorial Ghost" IsCheckable="True" IsChecked="{Binding IsGhost}" />
         </ContextMenu>

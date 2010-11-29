@@ -4,7 +4,7 @@ using CMissionLib;
 
 namespace MissionEditor2
 {
-	class ActionsFolder: PropertyChanged
+	public class ActionsFolder: PropertyChanged
 	{
 		public Trigger Trigger { get; private set; }
 

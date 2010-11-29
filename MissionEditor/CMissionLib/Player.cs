@@ -103,10 +103,7 @@ namespace CMissionLib
 			set
 			{
 				isHuman = value;
-				if (!value)
-				{
-					if (name != null) name = name.Replace(" ", "_");
-				}
+				if (!value) if (name != null) name = name.Replace(" ", "_");
 				RaisePropertyChanged("IsHuman");
 			}
 		}
@@ -121,6 +118,8 @@ namespace CMissionLib
 				RaisePropertyChanged("IsRequired");
 			}
 		}
+
+
 		[DataMember]
 		public string Name
 		{
@@ -131,6 +130,8 @@ namespace CMissionLib
 				RaisePropertyChanged("Name");
 			}
 		}
+
+
 		public Ai ai;
 
 		public override string ToString()

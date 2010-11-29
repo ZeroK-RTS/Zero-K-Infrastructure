@@ -187,17 +187,19 @@ end
 
 local function GetUnitsInRegion(region, teamID)
   local regionUnits = {}
-  for _, area in ipairs(region.areas) do
-    local areaUnits
-    if area.category == "cylinder" then
-      areaUnits = Spring.GetUnitsInCylinder(area.x, area.y, area.r, teamID)
-    elseif area.category == "rectangle" then
-      areaUnits = Spring.GetUnitsInRectangle(area.x, area.y, area.x + area.width, area.y + area.height, teamID)
-    else
-      error "area category not supported"
-    end
-    for _, unitID in ipairs(areaUnits) do
-      regionUnits[unitID] = true
+  if Spring.GetTeamInfo(teamID) then
+    for _, area in ipairs(region.areas) do
+      local areaUnits
+      if area.category == "cylinder" then
+        areaUnits = Spring.GetUnitsInCylinder(area.x, area.y, area.r, teamID)
+      elseif area.category == "rectangle" then
+        areaUnits = Spring.GetUnitsInRectangle(area.x, area.y, area.x + area.width, area.y + area.height, teamID)
+      else
+        error "area category not supported"
+      end
+      for _, unitID in ipairs(areaUnits) do
+        regionUnits[unitID] = true
+      end
     end
   end
   return regionUnits
@@ -406,12 +408,28 @@ local function ExecuteTrigger(trigger, frame)
           end
         end
       elseif action.logicType == "ModifyResourcesAction" then
-        Event = function()
-          local category = action.args.category == "metal" and "m" or "e"
-          if action.args.amount > 0 then
-            Spring.AddTeamResource(action.args.player, category, action.args.amount)
-          else
-            Spring.UseTeamResource(action.args.player, category, -action.args.amount)
+        Event = function()  
+          local teamID = action.args.player
+          if Spring.GetTeamInfo(teamID) then
+            if action.args.category == "metal" then
+              if action.args.amount > 0 then
+                Spring.AddTeamResource(teamID, "metal", action.args.amount)
+              else
+                Spring.UseTeamResource(teamID, "metal", -action.args.amount)
+              end
+            elseif action.args.category == "energy" then
+              if action.args.amount > 0 then
+                Spring.AddTeamResource(teamID, "energy", action.args.amount)
+              else
+                Spring.UseTeamResource(teamID, "energy", -action.args.amount)
+              end
+            elseif action.args.category == "energy storage" then
+              local _, currentStorage = Spring.GetTeamResources(teamID, "energy")
+              Spring.SetTeamResource(teamID, "es", currentStorage + action.args.amount)
+            elseif action.args.category == "metal storage" then
+              local _, currentStorage = Spring.GetTeamResources(teamID, "metal")
+              Spring.SetTeamResource(teamID, "ms", currentStorage + action.args.amount)
+            end
           end
         end
       elseif action.logicType == "ModifyUnitHealthAction" then
@@ -467,20 +485,21 @@ local function ExecuteTrigger(trigger, frame)
         end
       elseif action.logicType == "ModifyScoreAction" then
         Event = function()
-          for _, playerIndex in ipairs(action.args.players) do
-            local teamID = playerIndex - 1
-            local score = scores[teamID] or 0
-            if action.args.action == "Increase Score" then
-              score = score + action.args.value
-            elseif action.args.action == "Reduce Score" then
-              score = score - action.args.value
-            elseif action.args.action == "Set Score" then
-              score = action.args.value
-            elseif action.args.action == "Multiply Score" then
-              score = score * action.args.value
+          for _, teamID in ipairs(action.args.players) do
+            if Spring.GetTeamInfo(teamID) then
+              local score = scores[teamID] or 0
+              if action.args.action == "Increase Score" then
+                score = score + action.args.value
+              elseif action.args.action == "Reduce Score" then
+                score = score - action.args.value
+              elseif action.args.action == "Set Score" then
+                score = action.args.value
+              elseif action.args.action == "Multiply Score" then
+                score = score * action.args.value
+              end
+              scores[teamID] = score
+              Spring.SetTeamRulesParam(teamID, "score", score)
             end
-            scores[teamID] = score
-            Spring.SetTeamRulesParam(teamID, "score", score)
           end
         end
       elseif action.logicType == "EnableTriggersAction" then
@@ -548,40 +567,42 @@ local function ExecuteTrigger(trigger, frame)
       elseif action.logicType == "CreateUnitsAction" then
         Event = function()
           for _, unit in ipairs(action.args.units) do
-            if unit.isGhost then
-              for group in pairs(unit.groups) do
-                unit[#unit + 1] = group
-              end
-              _G.ghostEventArgs = unit
-              SendToUnsynced("GhostEvent")
-              _G.ghostEventArgs = nil
-            else
-              local ud = UnitDefNames[unit.unitDefName]
-              local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
-              local cardinalHeading = "n"
-              if isBuilding then
-                if unit.heading > 45 and unit.heading <= 135 then
-                  cardinalHeading = "e"
-                elseif unit.heading > 135 and unit.heading <= 225 then
-                  cardinalHeading = "s"
-                elseif unit.heading > 225 and unit.heading <- 315 then
-                  cardinalHeading = "w"
+            if Spring.GetTeamInfo(unit.player) then
+              if unit.isGhost then
+                for group in pairs(unit.groups) do
+                  unit[#unit + 1] = group
                 end
-              end
-              local unitID
-              if GG.DropUnit then
-                unitID = GG.DropUnit(unit.unitDefName, unit.x, 0, unit.y, "n", unit.player)
+                _G.ghostEventArgs = unit
+                SendToUnsynced("GhostEvent")
+                _G.ghostEventArgs = nil
               else
-                unitID = Spring.CreateUnit(unit.unitDefName, unit.x, 0, unit.y, "n", unit.player)
-              end
-              if unitID then
-                if not isBuilding then
-                  local heading = (unit.heading - 180)/360 * 2 * math.pi
-                  Spring.SetUnitRotation(unitID, 0, heading, 0)
+                local ud = UnitDefNames[unit.unitDefName]
+                local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
+                local cardinalHeading = "n"
+                if isBuilding then
+                  if unit.heading > 45 and unit.heading <= 135 then
+                    cardinalHeading = "e"
+                  elseif unit.heading > 135 and unit.heading <= 225 then
+                    cardinalHeading = "s"
+                  elseif unit.heading > 225 and unit.heading <= 315 then
+                    cardinalHeading = "w"
+                  end
                 end
-                createdUnits[unitID] = true
-                if unit.groups and next(unit.groups) then
-                  AddUnitGroups(unitID, unit.groups)
+                local unitID
+                if GG.DropUnit then
+                  unitID = GG.DropUnit(unit.unitDefName, unit.x, 0, unit.y, cardinalHeading, unit.player)
+                else
+                  unitID = Spring.CreateUnit(unit.unitDefName, unit.x, 0, unit.y, cardinalHeading, unit.player)
+                end
+                if unitID then
+                  if not isBuilding then
+                    local heading = (unit.heading - 180)/360 * 2 * math.pi
+                    Spring.SetUnitRotation(unitID, 0, heading, 0)
+                  end
+                  createdUnits[unitID] = true
+                  if unit.groups and next(unit.groups) then
+                    AddUnitGroups(unitID, unit.groups)
+                  end
                 end
               end
             end
@@ -593,14 +614,22 @@ local function ExecuteTrigger(trigger, frame)
         end
       elseif action.logicType == "DefeatAction" then
         Event = function()
-          for _, unitID in ipairs(Spring.GetTeamUnits(mission.startPlayer)) do
-            SpecialTransferUnit(unitID, gaiaTeamID, false)
+          -- kill all human players
+          for teamID in ipairs(mission.players) do
+            local _, _, _, isAI = Spring.GetTeamInfo(teamID)
+            if not isAI then
+              for _, unitID in ipairs(Spring.GetTeamUnits(teamID)) do
+                SpecialTransferUnit(unitID, gaiaTeamID, false)
+              end
+            end
           end
         end
       elseif action.logicType == "VictoryAction" then
         Event = function()
           for _, unitID in ipairs(Spring.GetAllUnits()) do
-            if Spring.GetUnitTeam(unitID) ~= mission.startPlayer then
+            local unitTeam = Spring.GetUnitTeam(unitID)
+            local _, _, _, isAI = Spring.GetTeamInfo(teamID)
+            if isAI then
               SpecialTransferUnit(unitID, gaiaTeamID, false)
             end
           end

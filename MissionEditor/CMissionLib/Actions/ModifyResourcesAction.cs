@@ -7,7 +7,7 @@ namespace CMissionLib.Actions
 	[DataContract]
 	public class ModifyResourcesAction : Action
 	{
-		public static string[] Categories = new[] {"metal", "energy"};
+		public static string[] Categories = new[] {"metal", "energy", "metal storage", "energy storage"};
 		double amount;
 		string category = Categories[0];
 		Player player;

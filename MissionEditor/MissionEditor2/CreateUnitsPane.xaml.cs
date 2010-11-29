@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using CMissionLib;
 using CMissionLib.Actions;
 using CMissionLib.UnitSyncLib;
@@ -21,12 +17,13 @@ namespace MissionEditor2
 	/// </summary>
 	/// 
 	/// 
-	public partial class CreateUnitsPane : UserControl
+	public partial class CreateUnitsPane: UserControl
 	{
 		CreateUnitsAction action;
 		DragInfo dragInfo;
-		ObservableCollection<UnitIcon> unitIcons = new ObservableCollection<UnitIcon>();
+		int gridSize = 16;
 		DateTime mouseDownDate;
+		ObservableCollection<UnitIcon> unitIcons = new ObservableCollection<UnitIcon>();
 
 		public CreateUnitsPane()
 		{
@@ -34,50 +31,7 @@ namespace MissionEditor2
 		}
 
 
-
-		void CreateUnitsPane_Loaded(object sender, RoutedEventArgs e)
-		{
-			action = (CreateUnitsAction) MainWindow.Instance.CurrentLogic;
-
-
-			var missionUnits = MainWindow.Instance.Mission.AllUnits.ToArray();
-			var triggerUnits = action.Units.ToArray();
-			foreach (var unit in missionUnits)
-			{
-				if (triggerUnits.Contains(unit))
-				{
-					PlaceUnitIcon(unit);
-				}
-				else
-				{
-					UnitIcon.PlaceSimplifiedUnit(unitCanvas, unit, true);
-				}
-			}
-		}
-
-		int gridSize = 16;
-
-		double SnapToGridX(double x)
-		{
-			var mission = MainWindow.Instance.Mission;
-			x = mission.ToIngameX(x);
-			x = ((int) x/gridSize) * gridSize;
-			x = mission.FromIngameX(x);
-			return x;
-		}
-
-		double SnapToGridY(double y)
-		{
-			var mission = MainWindow.Instance.Mission;
-			y = mission.ToIngameY(y);
-			y = ((int)y / gridSize) * gridSize;
-			y = mission.FromIngameY(y);
-			return y;
-		}
-
-
-
-		void PlaceUnitIcon(UnitStartInfo unit) 
+		void PlaceUnitIcon(UnitStartInfo unit)
 		{
 			var unitIcon = new UnitIcon();
 			unitIcon.DataContext = unit;
@@ -86,61 +40,96 @@ namespace MissionEditor2
 			unitIcon.MouseDown += unitIcon_MouseDown;
 			unitIcon.UnitRequestedDelete += unitIcon_UnitRequestedDelete;
 			unitIcon.UnitRequestedSetGroups += unitIcon_UnitRequestedSetGroups;
+			unitIcon.UnitRequestedSetOwner += unitIcon_UnitRequestedSetOwner;
 
 			unitCanvas.Children.Add(unitIcon);
 			unitIcons.Add(unitIcon);
 		}
 
-
-		void unitIcon_UnitRequestedSetGroups(object sender, UnitEventArgs e)
-		{
-			var selectedUnits = unitIcons.Where(i => i.IsSelected).ToArray();
-			if (!selectedUnits.Any())
-			{
-				selectedUnits = new []{(UnitIcon) e.Source};
-			}
-			var groupsString = selectedUnits.Count() == 1 ? String.Join(",", e.UnitInfo.Groups) : String.Empty;
-			groupsString = Utils.ShowStringDialog("Insert groups (separate multiple groups with commas).", groupsString);
-			if (groupsString != null)
-			{
-				foreach (var unit in selectedUnits)
-				{
-					var unitStartInfo = (UnitStartInfo) unit.DataContext;
-					unitStartInfo.Groups = new ObservableCollection<string>(groupsString.Split(','));
-				}
-			}
-		}
-
-		void unitIcon_UnitRequestedDelete(object sender, UnitEventArgs e)
-		{
-			var selectedUnits = unitIcons.Where(i => i.IsSelected).ToArray();
-			if (selectedUnits.Any())
-			{
-				foreach (var unitIcon in selectedUnits)
-				{
-					var unit = (UnitStartInfo) unitIcon.DataContext;
-					RemoveUnitIcon(unitIcon);
-					action.Units.Remove(unit);
-				}
-			} 
-			else
-			{
-				var unitIcon = (UnitIcon) e.Source;
-				var unit = (UnitStartInfo)unitIcon.DataContext;
-				RemoveUnitIcon(unitIcon);
-				action.Units.Remove(unit);
-			}
-		}
-
-		void RemoveUnitIcon(UnitIcon unitIcon) 
+		void RemoveUnitIcon(UnitIcon unitIcon)
 		{
 			BindingOperations.ClearBinding(unitIcon, Canvas.LeftProperty);
 			BindingOperations.ClearBinding(unitIcon, Canvas.TopProperty);
 			unitIcon.MouseDown -= unitIcon_MouseDown;
 			unitIcon.UnitRequestedDelete -= unitIcon_UnitRequestedDelete;
 			unitIcon.UnitRequestedSetGroups -= unitIcon_UnitRequestedSetGroups;
+			unitIcon.UnitRequestedSetOwner -= unitIcon_UnitRequestedSetOwner;
 			unitCanvas.Children.Remove(unitIcon);
 			unitIcons.Remove(unitIcon);
+		}
+
+		double SnapToGridX(double x)
+		{
+			var mission = MainWindow.Instance.Mission;
+			x = mission.ToIngameX(x);
+			x = ((int)x/gridSize)*gridSize;
+			x = mission.FromIngameX(x);
+			return x;
+		}
+
+		double SnapToGridY(double y)
+		{
+			var mission = MainWindow.Instance.Mission;
+			y = mission.ToIngameY(y);
+			y = ((int)y/gridSize)*gridSize;
+			y = mission.FromIngameY(y);
+			return y;
+		}
+
+		void CreateUnitsPane_Loaded(object sender, RoutedEventArgs e)
+		{
+			action = (CreateUnitsAction)MainWindow.Instance.CurrentLogic;
+
+			var missionUnits = MainWindow.Instance.Mission.AllUnits.ToArray();
+			var triggerUnits = action.Units.ToArray();
+			foreach (var unit in missionUnits)
+			{
+				if (triggerUnits.Contains(unit)) PlaceUnitIcon(unit);
+				else UnitIcon.PlaceSimplifiedUnit(unitCanvas, unit, true);
+			}
+		}
+
+		void searchBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			unitDefGrid.GoToText(searchBox.Text);
+		}
+
+		void unitCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+			mouseDownDate = DateTime.Now;
+		}
+
+		void unitCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
+		{
+			if (dragInfo != null && unitCanvas.IsMouseCaptured)
+			{
+				var currentPosition = e.GetPosition(unitCanvas);
+				var pos = (Positionable)dragInfo.Element.DataContext;
+				pos.X = SnapToGridX(currentPosition.X - dragInfo.MouseOrigin.X + dragInfo.ElementOrigin.X);
+				pos.Y = SnapToGridY(currentPosition.Y - dragInfo.MouseOrigin.Y + dragInfo.ElementOrigin.Y);
+			}
+		}
+
+		void unitCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			if (dragInfo != null)
+			{
+				e.Handled = true;
+				unitCanvas.ReleaseMouseCapture();
+				dragInfo = null;
+			}
+			if (unitDefGrid.Grid.SelectedItem != null && DateTime.Now - mouseDownDate < TimeSpan.FromMilliseconds(150) && e.ChangedButton == MouseButton.Left &&
+			    Keyboard.Modifiers == ModifierKeys.None)
+			{
+				var unitType = (UnitInfo)unitDefGrid.Grid.SelectedItem;
+				var mousePos = e.GetPosition(unitCanvas);
+				var player = (Player)playerListBox.SelectedItem;
+				var unitStartInfo = new UnitStartInfo(unitType, player, SnapToGridX(mousePos.X), SnapToGridY(mousePos.Y));
+				((INotifyPropertyChanged)unitStartInfo).PropertyChanged += (se, ea) => // fixme: leak
+					{ if (ea.PropertyName == "Groups") MainWindow.Instance.Mission.RaisePropertyChanged("AllGroups"); };
+				action.Units.Add(unitStartInfo);
+				PlaceUnitIcon(unitStartInfo);
+			}
 		}
 
 		void unitIcon_MouseDown(object sender, MouseButtonEventArgs e)
@@ -155,64 +144,54 @@ namespace MissionEditor2
 					var pos = (Positionable)element.DataContext;
 					var origin = new Point(pos.X, pos.Y);
 					var startPoint = e.GetPosition(unitCanvas);
-					if (unitCanvas.CaptureMouse())
-					{
-						dragInfo = new DragInfo { Element = element, ElementOrigin = origin, MouseOrigin = startPoint };
-					}
+					if (unitCanvas.CaptureMouse()) dragInfo = new DragInfo { Element = element, ElementOrigin = origin, MouseOrigin = startPoint };
 				}
-			} 
-			else if (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control)
-			{
-				unitIcon.IsSelected = !unitIcon.IsSelected;
 			}
-
+			else if (Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control) unitIcon.IsSelected = !unitIcon.IsSelected;
 		}
 
-		private void unitCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+		void unitIcon_UnitRequestedDelete(object sender, UnitEventArgs e)
 		{
-			mouseDownDate = DateTime.Now;
-		}
-
-		private void unitCanvas_PreviewMouseUp(object sender, MouseButtonEventArgs e)
-		{
-			if (dragInfo != null)
+			var selectedUnits = unitIcons.Where(i => i.IsSelected).ToArray();
+			if (selectedUnits.Any())
 			{
-				e.Handled = true;
-				unitCanvas.ReleaseMouseCapture();
-				dragInfo = null;
-			}
-			if (unitDefGrid.Grid.SelectedItem != null && DateTime.Now - mouseDownDate < TimeSpan.FromMilliseconds(150) && e.ChangedButton == MouseButton.Left && Keyboard.Modifiers == ModifierKeys.None)
-			{
-				var unitType = (UnitInfo)unitDefGrid.Grid.SelectedItem;
-				var mousePos = e.GetPosition(unitCanvas);
-				var player = (Player)playerListBox.SelectedItem;
-				var unitStartInfo = new UnitStartInfo(unitType, player, SnapToGridX(mousePos.X), SnapToGridY(mousePos.Y));
-				((INotifyPropertyChanged)unitStartInfo).PropertyChanged += (se, ea) => // fixme: leak
+				foreach (var unitIcon in selectedUnits)
 				{
-					if (ea.PropertyName == "Groups")
-					{
-						MainWindow.Instance.Mission.RaisePropertyChanged("AllGroups");
-					}
-				};
-				action.Units.Add(unitStartInfo);
-				PlaceUnitIcon(unitStartInfo);
+					var unit = (UnitStartInfo)unitIcon.DataContext;
+					RemoveUnitIcon(unitIcon);
+					action.Units.Remove(unit);
+				}
 			}
-		}
-
-		private void unitCanvas_PreviewMouseMove(object sender, MouseEventArgs e)
-		{
-			if (dragInfo != null && unitCanvas.IsMouseCaptured)
+			else
 			{
-				var currentPosition = e.GetPosition(unitCanvas);
-				var pos = (Positionable)dragInfo.Element.DataContext;
-				pos.X = SnapToGridX(currentPosition.X - dragInfo.MouseOrigin.X + dragInfo.ElementOrigin.X);
-				pos.Y = SnapToGridY(currentPosition.Y - dragInfo.MouseOrigin.Y + dragInfo.ElementOrigin.Y);
+				var unitIcon = (UnitIcon)e.Source;
+				var unit = (UnitStartInfo)unitIcon.DataContext;
+				RemoveUnitIcon(unitIcon);
+				action.Units.Remove(unit);
 			}
 		}
 
-		private void searchBox_TextChanged(object sender, TextChangedEventArgs e)
+		void unitIcon_UnitRequestedSetGroups(object sender, UnitEventArgs e)
 		{
-			unitDefGrid.GoToText(searchBox.Text);
+			var selectedUnits = unitIcons.Where(i => i.IsSelected).ToArray();
+			if (!selectedUnits.Any()) selectedUnits = new[] { (UnitIcon)e.Source };
+			var groupsString = selectedUnits.Count() == 1 ? String.Join(",", e.UnitInfo.Groups) : String.Empty;
+			groupsString = Utils.ShowStringDialog("Insert groups (separate multiple groups with commas).", groupsString);
+			if (groupsString != null)
+			{
+				foreach (var unit in selectedUnits)
+				{
+					var unitStartInfo = (UnitStartInfo)unit.DataContext;
+					unitStartInfo.Groups = new ObservableCollection<string>(groupsString.Split(','));
+				}
+			}
+		}
+
+		void unitIcon_UnitRequestedSetOwner(object sender, EventArgs<Player> e)
+		{
+			var selectedUnits = unitIcons.Where(i => i.IsSelected).ToArray();
+			if (!selectedUnits.Any()) selectedUnits = new[] { (UnitIcon)sender };
+			foreach (var unit in selectedUnits) unit.Unit.Player = e.Data;
 		}
 	}
 }

@@ -1,19 +1,17 @@
-﻿using System.Diagnostics;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using CMissionLib;
-using CMissionLib.UnitSyncLib;
 
 namespace MissionEditor2
 {
 	/// <summary>
 	/// Interaction logic for UnitIcon.xaml
 	/// </summary>
-	public partial class UnitIcon : UserControl
+	public partial class UnitIcon: UserControl
 	{
 		public UnitIcon()
 		{
@@ -74,21 +72,20 @@ namespace MissionEditor2
 			if (isBlurred) border.Opacity = 0.2;
 			canvas.Children.Add(border);
 			border.Bind(Border.BorderBrushProperty, unit, "Player.ColorBrush", BindingMode.OneWay);
-			Canvas.SetLeft(border, unit.X - border.Width / 2);
-			Canvas.SetTop(border, unit.Y - border.Height / 2);
+			Canvas.SetLeft(border, unit.X - border.Width/2);
+			Canvas.SetTop(border, unit.Y - border.Height/2);
 			Panel.SetZIndex(border, -10);
 			var image = new Image { Source = unit.UnitDef.BuildPic };
 			// make the icons have the correct size
 			var mission = MainWindow.Instance.Mission;
 			border.RenderTransform = new ScaleTransform
-								 {
-									 CenterX = 8,
-									 CenterY = 8,
-									 ScaleX = 1 / 16.0 * mission.FromIngameX(unit.UnitDef.FootprintX * 16),
-									 ScaleY = 1 / 16.0 * mission.FromIngameY(unit.UnitDef.FootprintY * 16)
-								 };
+			                         {
+			                         	CenterX = 8,
+			                         	CenterY = 8,
+			                         	ScaleX = 1/16.0*mission.FromIngameX(unit.UnitDef.FootprintX*16),
+			                         	ScaleY = 1/16.0*mission.FromIngameY(unit.UnitDef.FootprintY*16)
+			                         };
 			border.Child = image;
-
 		}
 
 		void onRotateDelta(object sender, DragDeltaEventArgs e)
@@ -102,26 +99,21 @@ namespace MissionEditor2
 		}
 
 		public static readonly RoutedEvent UnitRequestedDeleteEvent = EventManager.RegisterRoutedEvent("UnitRequestedDelete",
-																									   RoutingStrategy.Direct,
-																									   typeof(
-																										UnitEventHandler),
-																									   typeof(UnitIcon));
+		                                                                                               RoutingStrategy.Direct,
+		                                                                                               typeof(UnitEventHandler),
+		                                                                                               typeof(UnitIcon));
 
-		public static readonly RoutedEvent UnitRequestedSetGroupsEvent =
-			EventManager.RegisterRoutedEvent("UnitRequestedSetGroups", RoutingStrategy.Direct, typeof(UnitEventHandler),
-											 typeof(UnitIcon));
+		public static readonly RoutedEvent UnitRequestedSetGroupsEvent = EventManager.RegisterRoutedEvent("UnitRequestedSetGroups",
+		                                                                                                  RoutingStrategy.Direct,
+		                                                                                                  typeof(UnitEventHandler),
+		                                                                                                  typeof(UnitIcon));
 
-		public event UnitEventHandler UnitRequestedSetGroups
-		{
-			add { AddHandler(UnitRequestedSetGroupsEvent, value); }
-			remove { RemoveHandler(UnitRequestedSetGroupsEvent, value); }
-		}
+		public event UnitEventHandler UnitRequestedSetGroups { add { AddHandler(UnitRequestedSetGroupsEvent, value); } remove { RemoveHandler(UnitRequestedSetGroupsEvent, value); } }
 
-		public event UnitEventHandler UnitRequestedDelete
-		{
-			add { AddHandler(UnitRequestedDeleteEvent, value); }
-			remove { RemoveHandler(UnitRequestedDeleteEvent, value); }
-		}
+		public event UnitEventHandler UnitRequestedDelete { add { AddHandler(UnitRequestedDeleteEvent, value); } remove { RemoveHandler(UnitRequestedDeleteEvent, value); } }
+
+		public event EventHandler<EventArgs<Player>> UnitRequestedSetOwner = delegate { };
+
 
 		void RaiseUnitRequestedDeleteEvent()
 		{
@@ -142,18 +134,31 @@ namespace MissionEditor2
 			RaiseUnitRequestedDeleteEvent();
 		}
 
+		void UserControl_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+		{
+			setOwnerItem.Items.Clear();
+			foreach (var player in MainWindow.Instance.Mission.Players)
+			{
+				var playerItem = new MenuItem { Header = player.Name, IsChecked = player == Unit.Player };
+				var p = player;
+				playerItem.Click += (s, ea) => UnitRequestedSetOwner(this, new EventArgs<Player>(p));
+				setOwnerItem.Items.Add(playerItem);
+			}
+		}
+
 		void SetGroupsItem_Click(object sender, RoutedEventArgs e)
 		{
 			RaiseUnitRequestedSetGroupsEvent();
 		}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		public UnitStartInfo Unit { get { return (UnitStartInfo)DataContext; } }
+
+		void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			// make the icons have the correct size
 			var mission = MainWindow.Instance.Mission;
-			var unit = (UnitStartInfo)DataContext;
-			ScaleTransform.ScaleX = 1 / 16.0 * mission.FromIngameX(unit.UnitDef.FootprintX * 16);
-			ScaleTransform.ScaleY = 1 / 16.0 * mission.FromIngameY(unit.UnitDef.FootprintY * 16);
+			ScaleTransform.ScaleX = 1/16.0*mission.FromIngameX(Unit.UnitDef.FootprintX*16);
+			ScaleTransform.ScaleY = 1/16.0*mission.FromIngameY(Unit.UnitDef.FootprintY*16);
 		}
 	}
 }

@@ -18,25 +18,19 @@
 
         <DataTemplate x:Key="smallUnitBuildPic">
             <Border Style="{StaticResource smallBuildPicColoredBorderStyle}" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="True">
-                <Image Height="32" Width="32" Style="{StaticResource smallBuildPicStyle}" Source="{Binding UnitDef.BuildPic}" Stretch="Fill" SnapsToDevicePixels="True" />
+                <Image Height="32" Width="32" Style="{StaticResource smallBuildPicStyle}" Source="{Binding UnitDef.BuildPic}" Stretch="Fill" />
             </Border>
         </DataTemplate>
 
 
-        <DataGrid x:Key="unitGrid" ItemsSource="{Binding LogicGrid.SelectedItem.Units, Source={x:Static local:MainWindow.Instance}}" AutoGenerateColumns="False"
+        <DataGrid x:Key="unitGrid" ItemsSource="{Binding Units}" AutoGenerateColumns="False"
                 IsSynchronizedWithCurrentItem="True" Background="White" VirtualizingStackPanel.IsVirtualizing="True">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Image" CellTemplate="{StaticResource smallUnitBuildPic}" />
 
                 <DataGridTextColumn Binding="{Binding UnitDef.Name}" Header="Name" IsReadOnly="True" />
                 <DataGridTextColumn Binding="{Binding UnitDef.FullName}" Header="Full Name" IsReadOnly="True" />
-                <DataGridTemplateColumn Header="Owner">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ComboBox ItemsSource="{Binding Instance.Mission.Players, Source={x:Static local:MainWindow.Instance}}" SelectedItem="{Binding Player}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGridTextColumn Binding="{Binding Player}" Header="Full Name" IsReadOnly="True" />
                 <DataGridTextColumn Binding="{Binding X, StringFormat=#}" Header="X" />
                 <DataGridTextColumn Binding="{Binding Y, StringFormat=#}" Header="Y" />
                 <DataGridTextColumn Binding="{Binding Heading, StringFormat=#}" Header="Heading" />

@@ -3,7 +3,7 @@ using CMissionLib;
 
 namespace MissionEditor2
 {
-	class ConditionsFolder: PropertyChanged
+	public class ConditionsFolder: PropertyChanged
 	{
 		public Trigger Trigger { get; private set; }
 

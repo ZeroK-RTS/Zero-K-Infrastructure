@@ -1,5 +1,5 @@
 ﻿<Window x:Class="MissionEditor2.StringRequest" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="String Request" Height="94" WindowStyle="ToolWindow" Width="255"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="String Request" Height="91" WindowStyle="ToolWindow" Width="496"
     WindowStartupLocation="CenterScreen" FocusManager.FocusedElement="{Binding ElementName=TextBox}">
   <Grid>
     <Grid.RowDefinitions>
