@@ -5,6 +5,8 @@ div#menu
 	position: relative;
 	z-index: 90;
 }
+#menu table{width:100%;}
+#menu td {vertical-align: center;}
 
 div#menu a /*menu bar*/
 {
@@ -48,8 +50,29 @@ ul.menu li:hover > ul
 {
 	display:block;
 	position:absolute;
-	list-style-type: none; 
-	margin: -2px;
-	padding:3px;
+	background: #000 url("../img/border-side.png") no-repeat top left;
+	padding: 0;
+	padding-top: 3px;
+	margin: 0;
+	margin-top: -3px;
+	/*border-bottom: 1px solid #42bde8;*/
 	z-index: 100;
+	list-style-type: none; 
+}
+
+ul.menu li:hover > ul li
+{
+	margin: 0;
+	padding: 0;
+}
+
+ul.menu li:hover > ul li:hover
+{
+	/*background: #42bde8;*/
+	background: #386779;
+}
+
+.highlight
+{
+	
 }

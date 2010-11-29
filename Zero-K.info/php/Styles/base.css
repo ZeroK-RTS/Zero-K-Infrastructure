@@ -15,6 +15,7 @@ a:active {color: #cbd3d4;}
 
 img {border: none;}
 
+/*vertical floating div workaround*/
 hr {display: block; clear: both; visibility: hidden;}
 
 pre
@@ -42,6 +43,11 @@ input
 	padding: 3px;
 }
 
+input.radio
+{
+	border: none;
+}
+
 .button
 {
 	color: #38bfec;
@@ -62,28 +68,29 @@ input
 
 ul {list-style-type: circle;}
 
-ul.poll {list-style-type: none; text-indent: -3em;}
+ul.poll {list-style-type: none; padding: 0; margin: 0;}
 
 .border
 {
 	background: #000;
 	border: 1px solid #00a;
-	padding: 10px;
 	margin: 10px;
+	padding: 5px;
 }
 
 .ie .border
 {
 	background: #000;
-	border: 2px solid white;
-	padding: 10px;
+	border: 1px solid teal;
 	margin: 10px;
+	padding: 10px;
 }
 
 .gecko .border
 {
 	-moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
 	margin: 10px;
+	padding: 5px;
 	opacity: .88;
 }
 
@@ -91,6 +98,7 @@ ul.poll {list-style-type: none; text-indent: -3em;}
 {
 	-webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
 	margin: 10px;
+	padding: 5px;
 	opacity: .88;
 }
 
@@ -98,6 +106,7 @@ ul.poll {list-style-type: none; text-indent: -3em;}
 {
 	-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
 	margin: 10px;
+	padding: 5px;
 	opacity: .88;
 }
 

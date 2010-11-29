@@ -16,15 +16,19 @@
 
 <?php
 $images = scandir('img/screenshots');
-for ($i = 2; $i <= count($images); $i++)
+for ($i = 2; $i < count($images); $i++)
 {
 	$picname = $images[$i];
 	$picext = substr($picname, strlen($picname)-4);
 	$picpre = substr($picname, 0, 6);
-	if ( $picpre == "thumb_" ) continue;
-	if ( $picext == ".png" or $picext == ".jpg" )
+	if ( $picext == ".png" or $picext == ".jpg" or $picext == ".gif") //or other valid file extensions
 	{
-		echo "<a href='img/screenshots/$picname'><img src='img/screenshots/thumb_$picname' class='border' /></img></a>\n";
+		//assumes all thumbs are resized versions of bigger pics with "thumb_" appended to the front of the filename
+		if ( $picpre == "thumb_" ) 
+		{
+			$picname = substr($picname, 6, strlen($picname));
+			echo "<a href='img/screenshots/$picname'><img src='img/screenshots/thumb_$picname' class='border' /></img></a>\n";
+		}
 	}
 }
 ?>

@@ -1,4 +1,4 @@
-<div id="features" class="border">
+<div id="features" class="border textwall">
 	<p>Zero-K is a FREE, multiplatform, open-source RTS game, which aims to be a dynamic, action-packed, hassle-free game, full of clever strategies and constantly moving combat which usually lasts on average 20-30 minutes.</p>
 	<p>Some of the more prominent features:</p>
 	<ul class="points">

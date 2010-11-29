@@ -15,7 +15,9 @@
 <!-------------------------------------------------------------- -->
 <div id="windows" class="border">
 	<h1>Windows</h1>
-	<a href="http://zero-k.info/lobby/setup.exe" id="download" class="button border">Download</a><br /><br /><br />
+	<br /><br />
+	<a href="http://zero-k.info/lobby/setup.exe" id="download" class="button border">Download</a><br />
+	<br /><br />
 	<b>Start Playing!</b>
 </div><!close windows>
 <!-------------------------------------------------------------- -->
@@ -43,6 +45,12 @@ rapid clean-upgrade
 <!-------------------------------------------------------------- -->
 <?php include("inc_footer.inc"); ?>
 <!-------------------------------------------------------------- -->
+<div class="border">
+	<h1>From SVN</h1>
+	<b>1.)</b> get svn <pre>sudo apt-get install subversion</pre>
+	<b>2.)</b> checkout source from site <pre>svn co ---svn address--- ~where you want it</pre>
+	<b>3.)</b> make link to spring so you can play it any time <pre>ln -s ~/where you put it ~/.spring/mods</pre>
+</div><!close sources>
 </div><!close wrapper>
 </body>
 </html>

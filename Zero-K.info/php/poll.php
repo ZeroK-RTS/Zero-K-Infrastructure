@@ -12,8 +12,9 @@
 <?php include("inc_menu.inc"); ?>
 	<?php
 		$option = $_GET["option"];
-		if($option!="Wrong") echo "<h1>You chose ".$option."!!</h1> <p>Assume the party escort submission position to recieve your cake";
-		else echo "<h1>You're breaking my heart</h1>";
+		if($option!="Wrong") echo "<h1>You chose ".$option."!!</h1> <p>congratulations.";
+		else echo "yes. yes it is.";
+		echo "<h2>A real poll coming soon to a website near you!</h2>";
 	?>
 <!-------------------------------------------------------------- -->
 	</div><!close wrapper>

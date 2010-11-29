@@ -1,7 +1,8 @@
 <?php
 	$f = fopen("units.txt", "r");
 	$i = 0;
-	$unit = 2; //ideally changed from day to day; starts from 1, not 0
+	$unitmax = count(file("units.txt"));
+	$unit = rand(1, $unitmax); //ideally changed from day to day; starts from 1, not 0
 	$replace = '/\\\n/'; //gah these make no sense! at least it works
 	while(!feof($f) and $i!=$unit)
 	{
