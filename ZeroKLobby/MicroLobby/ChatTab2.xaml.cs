@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -10,15 +11,18 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using LobbyClient;
 using PlasmaShared;
 using ZeroKLobby.Lines;
 using ZeroKLobby.Notifications;
 using ZeroKLobby.ToolTips;
 using ZkData;
+using Color = System.Drawing.Color;
 using ContextMenu = System.Windows.Forms.ContextMenu;
 using Control = System.Windows.Forms.Control;
 using Image = System.Drawing.Image;
+using Label = System.Windows.Controls.Label;
 using MenuItem = System.Windows.Forms.MenuItem;
 using UserControl = System.Windows.Controls.UserControl;
 
@@ -31,6 +35,7 @@ namespace ZeroKLobby.MicroLobby
 	{
 		BattleChatControl battleChatControl;
 		string focusWhenJoin;
+		Dictionary<string, HiliteLevel> hiliteOnCreateList = new Dictionary<string, HiliteLevel>();
 
 		public ChatTab2()
 		{
@@ -387,7 +392,52 @@ namespace ZeroKLobby.MicroLobby
 
 		public bool SetHilite(string tabName, HiliteLevel level)
 		{
-			// fixme
+
+			Label label = null;
+			Storyboard flash = null;
+			var pmControl = GetPrivateMessageControl(tabName);
+			var chatControl = GetChannelControl(tabName);
+
+			if (tabName == "Battle")
+			{
+				label = battleChatControl.Label;
+			}
+			else if (pmControl != null)
+			{
+				label = pmControl.Label;
+				flash = pmControl.FlashAnimation;
+			}
+			else if (chatControl != null)
+			{
+				label = chatControl.Label;
+				flash = chatControl.FlashAnimation;
+			}
+
+			if (label != null && flash != null)
+			{
+				if (level == HiliteLevel.None)
+				{
+					label.FontWeight = FontWeights.Normal;
+					flash.Stop();
+				}
+				else if (level == HiliteLevel.Bold)
+				{
+					label.FontWeight = FontWeights.Bold;
+					flash.Stop();
+				}
+				else if (level == HiliteLevel.Flash)
+				{
+					if (label.FontWeight != FontWeights.Bold) // dont change from flash to bold
+					{
+						label.FontWeight = FontWeights.Bold;
+						flash.Begin();
+					}
+				}
+			}
+			else
+			{
+				if (!hiliteOnCreateList.ContainsKey(tabName)) hiliteOnCreateList.Add(tabName, level);
+			}
 			return false;
 		}
 
@@ -426,6 +476,51 @@ namespace ZeroKLobby.MicroLobby
 			contextMenu.PlacementTarget = source;
 			contextMenu.Placement = PlacementMode.MousePoint;
 			contextMenu.IsOpen = true;
+		}
+
+
+
+		private void Label_Loaded(object sender, RoutedEventArgs e)
+		{
+			var label = (Label)e.Source;
+			var colorAnimation = new ColorAnimationUsingKeyFrames
+			{
+				Duration = new Duration(TimeSpan.FromSeconds(3)),
+				RepeatBehavior = RepeatBehavior.Forever,
+			};
+			colorAnimation.KeyFrames.Add(new SplineColorKeyFrame(Colors.Black, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(1))));
+			colorAnimation.KeyFrames.Add(new SplineColorKeyFrame(Colors.Transparent, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(1))));
+			colorAnimation.KeyFrames.Add(new SplineColorKeyFrame(Colors.Black, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(1))));
+			Storyboard.SetTarget(colorAnimation, label);
+			Storyboard.SetTargetProperty(colorAnimation, new PropertyPath("Foreground.Color"));
+			var storyBoard = new Storyboard();
+			storyBoard.Children.Add(colorAnimation);
+			string name = null;
+			var chatControl = label.DataContext as ChatControl;
+			if (chatControl != null)
+			{
+				chatControl.Label = label;
+				chatControl.FlashAnimation = storyBoard;
+				name = chatControl.ChannelName;
+			}
+			var pmControl = label.DataContext as PrivateMessageControl;
+			if (pmControl != null)
+			{
+				pmControl.Label = label;
+				pmControl.FlashAnimation = storyBoard;
+				name = pmControl.UserName;
+			}
+			Debug.Assert(name != null);
+			if (hiliteOnCreateList.ContainsKey(name))
+			{
+				SetHilite(name, hiliteOnCreateList[name]);
+				hiliteOnCreateList.Remove(name);
+			}
+		}
+
+		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			
 		}
 
 	}

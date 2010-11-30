@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Linq;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using LobbyClient;
 using PlasmaShared;
 using ZeroKLobby.Lines;
+using Point = System.Drawing.Point;
 
 namespace ZeroKLobby.MicroLobby
 {
@@ -24,8 +27,22 @@ namespace ZeroKLobby.MicroLobby
 		public event EventHandler<EventArgs<string>> ChatLine { add { sendBox.LineEntered += value; } remove { sendBox.LineEntered -= value; } }
 		public GameInfo GameInfo { get; set; }
 
-
 		public ChatControl() {}
+
+		public Storyboard FlashAnimation { get; set; }
+
+		System.Windows.Controls.Label label;
+		public System.Windows.Controls.Label Label
+		{
+			get
+			{
+				return label;
+			}
+			set
+			{
+				label = value;
+			}
+		}
 
 		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		public ChatControl(string name)

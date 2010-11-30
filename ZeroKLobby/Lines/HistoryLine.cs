@@ -1,4 +1,5 @@
-﻿using ZeroKLobby.MicroLobby;
+﻿using System;
+using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby.Lines
 {
@@ -6,9 +7,11 @@ namespace ZeroKLobby.Lines
     {
         public HistoryLine(string text)
         {
+			Date = DateTime.Now;
             Text = TextColor.History + text.StripAllCodes();
         }
 
         public string Text { get; private set; }
+		public DateTime Date { get; set; }
     }
 }

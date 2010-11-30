@@ -131,9 +131,25 @@
     <Compile Include="MicroLobby\BrowserControl.xaml.cs">
       <DependentUpon>BrowserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MicroLobby\ChatControl2.xaml.cs">
+      <DependentUpon>ChatControl2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MicroLobby\ChatTab2.xaml.cs">
       <DependentUpon>ChatTab2.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MicroLobby\Floe\ChatBox.cs" />
+    <Compile Include="MicroLobby\Floe\ChatBoxBase.cs" />
+    <Compile Include="MicroLobby\Floe\ChatDecoration.cs" />
+    <Compile Include="MicroLobby\Floe\ChatFormatter.cs" />
+    <Compile Include="MicroLobby\Floe\ChatLine.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPalette.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter_Rendering.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter_Scrolling.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter_Searching.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter_Selecting.cs" />
+    <Compile Include="MicroLobby\Floe\Constants.cs" />
+    <Compile Include="MicroLobby\Floe\Enums.cs" />
     <Compile Include="NavigationControl.xaml.cs">
       <DependentUpon>NavigationControl.xaml</DependentUpon>
     </Compile>
@@ -653,6 +669,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MicroLobby\BrowserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MicroLobby\ChatControl2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

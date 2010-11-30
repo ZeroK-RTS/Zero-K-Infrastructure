@@ -1,15 +1,20 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
 using JetBrains.Annotations;
 using LobbyClient;
 using PlasmaShared;
 using ZeroKLobby;
 using ZeroKLobby.Lines;
+using Label = System.Windows.Controls.Label;
 
 namespace ZeroKLobby.MicroLobby
 {
-    public partial class PrivateMessageControl: UserControl
+    public partial class PrivateMessageControl: UserControl, INotifyPropertyChanged
     {
         DateTime lastAnsweringMessageTime;
         public bool CanClose { get { return !Program.FriendManager.Friends.Contains(UserName); } }
@@ -17,7 +22,22 @@ namespace ZeroKLobby.MicroLobby
         public string UserName { get; set; }
         public event EventHandler<EventArgs<string>> ChatLine { add { sendBox1.LineEntered += value; } remove { sendBox1.LineEntered -= value; } }
 
-        public PrivateMessageControl(string name)
+		public Storyboard FlashAnimation { get; set; }
+
+    	Label label;
+    	public System.Windows.Controls.Label Label
+    	{
+    		get
+    		{
+    			return label;
+    		} 
+			set
+    		{
+    			label = value;
+    		}
+    	}
+
+    	public PrivateMessageControl(string name)
         {
             InitializeComponent();
             ChatBox.Font = Program.Conf.ChatFont;
@@ -115,5 +135,7 @@ namespace ZeroKLobby.MicroLobby
             var battle = Program.TasClient.ExistingBattles[joinedBattleID];
             AddLine(new JoinedBattleLine(userName, battle));
         }
+
+    	public event PropertyChangedEventHandler PropertyChanged = delegate { };
     }
 }

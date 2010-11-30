@@ -6,20 +6,20 @@
         <DataTemplate x:Key="channelTabHeaderTemplate">
             <StackPanel Orientation="Horizontal" PreviewMouseRightButtonUp="ChannelTab_PreviewMouseRightButtonUp">
                 <Image Width="16" Height="16" Source="pack://application:,,,/Zero-K;component/Resources/chat.png" />
-                <Label Content="{Binding Name}" />
+                <Label Content="{Binding Name}" Loaded="Label_Loaded" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="gameTabHeaderTemplate">
             <StackPanel Orientation="Horizontal" PreviewMouseRightButtonUp="ChannelTab_PreviewMouseRightButtonUp">
                 <Image Width="16" Height="16" Source="pack://application:,,,/Zero-K;component/Resources/game.png" />
-                <Label Content="{Binding GameInfo.FullName}" />
+                <Label Content="{Binding GameInfo.FullName}" Loaded="Label_Loaded" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="pmTabHeaderTemplate" >
             <StackPanel Orientation="Horizontal" PreviewMouseRightButtonUp="PrivateMessageTab_PreviewMouseRightButtonUp">
                 <Image Width="16" Height="16"
                         Source="{Binding UserName, Converter={StaticResource userToIconConverter}}" />
-                <Label Content="{Binding UserName}" />
+                <Label Content="{Binding UserName}" Loaded="Label_Loaded"/>
             </StackPanel>
         </DataTemplate>
         <DataTemplate x:Key="battleTabHeaderTemplate">
@@ -30,7 +30,7 @@
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
-        <TabControl x:Name="tabControl" TabStripPlacement="Left">               
+        <TabControl x:Name="tabControl" TabStripPlacement="Left" SelectionChanged="tabControl_SelectionChanged">               
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="HeaderTemplateSelector">
