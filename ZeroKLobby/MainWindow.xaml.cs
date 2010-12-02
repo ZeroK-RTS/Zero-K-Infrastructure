@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
+using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using PlasmaDownloader;
@@ -18,6 +19,7 @@ using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using Control = System.Windows.Forms.Control;
+using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 using Size = System.Drawing.Size;
 
 namespace ZeroKLobby
@@ -203,7 +205,7 @@ namespace ZeroKLobby
 			if (host != null)
 			{
 				var parentControl = host.Child;
-				var screenPoint = Control.MousePosition;
+        var screenPoint = Control.MousePosition;
 				var parentPoint = parentControl.PointToClient(screenPoint);
 				if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
 				Control child;

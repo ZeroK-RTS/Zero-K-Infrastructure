@@ -82,6 +82,12 @@ namespace ZeroKLobby
 
 		public WindowsFormsHost GetWindowsFormsHostOfCurrentTab()
 		{
+      if (tabControl.SelectedContent is ChatTab2)
+      {
+        var ct = (ChatTab2)tabControl.SelectedContent;
+        return ct.winformsHost;
+      }
+
 			return tabControl.SelectedContent as WindowsFormsHost;
 		}
 

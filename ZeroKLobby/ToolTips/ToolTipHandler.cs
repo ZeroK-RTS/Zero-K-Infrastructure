@@ -142,8 +142,6 @@ namespace ZeroKLobby
           }
         }
 
-
-
         if (lastText != text || lastVisible != Visible || lastActive != isWindowActive)
         {
           if (tooltip != null)

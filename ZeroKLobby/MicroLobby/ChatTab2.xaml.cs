@@ -37,8 +37,9 @@ namespace ZeroKLobby.MicroLobby
 		BattleChatControl battleChatControl;
 		string focusWhenJoin;
 		Dictionary<string, HiliteLevel> hiliteOnCreateList = new Dictionary<string, HiliteLevel>();
+	  internal WindowsFormsHost winformsHost;
 
-		public ChatTab2()
+	  public ChatTab2()
 		{
 			InitializeComponent();
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return; // detect design mode
@@ -62,8 +63,8 @@ namespace ZeroKLobby.MicroLobby
 
 		public void AddTab(string name, string title, Control control)
 		{
-			var host = new WindowsFormsHost { Child = control };
-			var tabItem = new TabItem { Tag = name, Header = control, Content = host };
+			winformsHost = new WindowsFormsHost { Child = control };
+			var tabItem = new TabItem { Tag = name, Header = control, Content = winformsHost };
 			tabControl.Items.Add(tabItem);
 		}
 
@@ -513,11 +514,11 @@ namespace ZeroKLobby.MicroLobby
 				chatControl.Label = label;
 				chatControl.FlashAnimation = storyBoard;
 				name = chatControl.ChannelName;
-				var gameInfo = KnownGames.List.FirstOrDefault(x => x.Channel == name);
+/*				var gameInfo = KnownGames.List.FirstOrDefault(x => x.Channel == name);
 				if (gameInfo != null)
 				{
 				  Program.ToolTip.SetText(label, gameInfo.FullName);
-				}
+				}*/
 			}
 			var pmControl = label.DataContext as PrivateMessageControl;
 			if (pmControl != null)
