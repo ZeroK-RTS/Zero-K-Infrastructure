@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
 using mshtml;
 
 namespace ZeroKLobby.MicroLobby
@@ -74,7 +75,7 @@ namespace ZeroKLobby.MicroLobby
               return true;
             }
 
-            elem = elem.Parent as FrameworkElement;
+            elem = VisualTreeHelper.GetParent(elem) as FrameworkElement;
           }
 
 				}

@@ -9,7 +9,6 @@ using PlasmaShared;
 using ZeroKLobby;
 using ZeroKLobby.Lines;
 using ZeroKLobby.Notifications;
-using ZeroKLobby.ToolTips;
 using ZkData;
 
 namespace ZeroKLobby.MicroLobby

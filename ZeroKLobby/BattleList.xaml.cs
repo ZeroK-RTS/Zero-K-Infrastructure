@@ -8,10 +8,11 @@ using System.Windows.Data;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
+using ZeroKLobby.MicroLobby;
 using Button = System.Windows.Controls.Button;
 using UserControl = System.Windows.Controls.UserControl;
 
-namespace ZeroKLobby.MicroLobby
+namespace ZeroKLobby
 {
   /// <summary>
   /// Interaction logic for BattleList.xaml

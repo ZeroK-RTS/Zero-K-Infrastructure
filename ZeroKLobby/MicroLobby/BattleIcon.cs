@@ -4,11 +4,10 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using LobbyClient;
-using ZeroKLobby.ToolTips;
 
 namespace ZeroKLobby.MicroLobby
 {
-  public class BattleIcon: IDisposable, ITooltipProvider
+  public class BattleIcon: IDisposable, IToolTipProvider
   {
     public const int Height = 75;
     public const int Width = 300;
@@ -214,6 +213,6 @@ namespace ZeroKLobby.MicroLobby
       cachedBitmapSource = image.ToBitmapSource();
     }
 
-    public string Tooltip { get { return ToolTipHandler.GetBattleToolTipString(Battle.BattleID); } }
+    public string ToolTip { get { return ToolTipHandler.GetBattleToolTipString(Battle.BattleID); } }
   }
 }

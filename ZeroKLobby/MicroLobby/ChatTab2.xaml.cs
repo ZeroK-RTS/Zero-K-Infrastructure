@@ -17,7 +17,6 @@ using LobbyClient;
 using PlasmaShared;
 using ZeroKLobby.Lines;
 using ZeroKLobby.Notifications;
-using ZeroKLobby.ToolTips;
 using ZkData;
 using Color = System.Drawing.Color;
 using ContextMenu = System.Windows.Forms.ContextMenu;
@@ -517,7 +516,7 @@ namespace ZeroKLobby.MicroLobby
 				var gameInfo = KnownGames.List.FirstOrDefault(x => x.Channel == name);
 				if (gameInfo != null)
 				{
-					label.ToolTip = gameInfo.FullName;
+				  Program.ToolTip.SetText(label, gameInfo.FullName);
 				}
 			}
 			var pmControl = label.DataContext as PrivateMessageControl;
@@ -526,7 +525,7 @@ namespace ZeroKLobby.MicroLobby
 				pmControl.Label = label;
 				pmControl.FlashAnimation = storyBoard;
 				name = pmControl.UserName;
-				label.ToolTip = ToolTipHandler.GetUserToolTipString(pmControl.UserName);
+        Program.ToolTip.SetText(label, ToolTipHandler.GetUserToolTipString(pmControl.UserName));
 			}
 			Debug.Assert(name != null);
 			if (hiliteOnCreateList.ContainsKey(name))

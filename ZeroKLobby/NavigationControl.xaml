@@ -36,7 +36,7 @@
         </Style>
       </TabControl.ItemContainerStyle>
       <TabItem >
-        <MicroLobby:BattleList x:Name="battleTab"/>
+        <ZeroKLobby:BattleList x:Name="battleTab"/>
       </TabItem>
       <TabItem>
           <MicroLobby:ChatTab2 x:Name="chatTab" />

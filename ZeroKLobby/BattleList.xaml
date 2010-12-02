@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="ZeroKLobby.MicroLobby.BattleList"
+﻿<UserControl x:Class="ZeroKLobby.BattleList"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -30,8 +30,8 @@
       <Button Name="btnOpenBattle" Click="btnOpenNewBattle_Click">Open new</Button>
       <Image Source="/Resources/search.png"></Image>
       <TextBlock>Search:</TextBlock>
-      <TextBox Name="tbFilter" Width="150" ToolTip="Search for battle, or user. You can use special values like -locked to hide locked, zk to filter only Zero-K etc" Text="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= BattleFilter}" ></TextBox>
-      <CheckBox Name="cbUnjoinable" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowNonJoinableBattles}" Checked="RefreshEvent" Unchecked="RefreshEvent" ToolTip="Filters our locked, passworded full and currently running games">Show unjoinable</CheckBox>
+      <TextBox Name="tbFilter" Width="150" ZeroKLobby:ToolTipHandler.MyToolTip="Search for battle, or user. You can use special values like -locked to hide locked, zk to filter only Zero-K etc" Text="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= BattleFilter}" ></TextBox>
+      <CheckBox Name="cbUnjoinable" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowNonJoinableBattles}" Checked="RefreshEvent" Unchecked="RefreshEvent" ZeroKLobby:ToolTipHandler.MyToolTip="Filters our locked, passworded full and currently running games">Show unjoinable</CheckBox>
       <CheckBox Name="cbEmpty" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowEmptyBattles}" Unchecked="RefreshEvent" Checked="RefreshEvent">Show empty</CheckBox>
     </StackPanel>
     <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1">

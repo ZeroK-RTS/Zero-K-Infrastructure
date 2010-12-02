@@ -8,6 +8,7 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using System.Windows.Interop;
@@ -16,6 +17,7 @@ using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
+using Control = System.Windows.Forms.Control;
 using Size = System.Drawing.Size;
 
 namespace ZeroKLobby
@@ -48,8 +50,9 @@ namespace ZeroKLobby
 		public MainWindow()
 		{
 			InitializeComponent();
-
+      
 			if (Utils.IsDesignTime) return;
+
 
 			//Invalidate(true);
 

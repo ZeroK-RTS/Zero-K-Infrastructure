@@ -15,7 +15,6 @@ using Microsoft.Win32;
 using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
-using ZeroKLobby.ToolTips;
 using Application = System.Windows.Forms.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
 
