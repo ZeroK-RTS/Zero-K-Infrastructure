@@ -14,7 +14,9 @@ namespace ZeroKLobby
 
         public void Draw(Graphics g, Font font, Color foreColor)
         {
-            TextRenderer.DrawText(g, text, font, new Point(0, 0), foreColor, TextFormatFlags.WordBreak);
+          var size = (Size)GetSize(font);  
+          
+          TextRenderer.DrawText(g, text, font,new Rectangle(0,0, size.Width, size.Height), foreColor, TextFormatFlags.WordBreak);
         }
 
         public Size? GetSize(Font font)
