@@ -89,10 +89,15 @@ namespace NightWatch
 				acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
 				if (acc == null)
 				{
-					acc = new Account() { AccountID = accountID, Name = name };
-					db.Accounts.InsertOnSubmit(acc);
+          acc = db.Accounts.SingleOrDefault(x => x.Name == name && x.AccountID < 0); // some people dont have known account ID - accountID is < 0 - update those
+          if (acc == null)
+          {
+            acc = new Account() { AccountID = accountID, Name = name };
+            db.Accounts.InsertOnSubmit(acc);
+          }
 				}
 
+			  acc.AccountID = accountID;
 				acc.Name = name;
 				if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
 				acc.LastLogin = DateTime.UtcNow;

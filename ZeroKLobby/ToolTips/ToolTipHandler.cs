@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
 using ZeroKLobby.MicroLobby;
 using Application = System.Windows.Forms.Application;
 using Point = System.Drawing.Point;
@@ -124,7 +125,8 @@ namespace ZeroKLobby.ToolTips
                      break;
                    }
                  } else break;
-                 wpfElement = wpfElement.Parent as FrameworkElement;
+
+                 wpfElement = VisualTreeHelper.GetParent(wpfElement) as FrameworkElement;
                }
              }
 
