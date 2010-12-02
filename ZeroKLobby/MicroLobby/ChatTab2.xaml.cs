@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using LobbyClient;
@@ -24,6 +25,7 @@ using Control = System.Windows.Forms.Control;
 using Image = System.Drawing.Image;
 using Label = System.Windows.Controls.Label;
 using MenuItem = System.Windows.Forms.MenuItem;
+using MessageBox = System.Windows.Forms.MessageBox;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace ZeroKLobby.MicroLobby
@@ -117,13 +119,23 @@ namespace ZeroKLobby.MicroLobby
 
 		public string GetNextTabPath()
 		{
-			// fixme
+			var currentIndex = tabControl.SelectedIndex;
+			if (currentIndex != -1 && currentIndex + 1 < tabControl.Items.Count)
+			{
+				var nextTabItem = (TabItem)tabControl.Items[currentIndex + 1];
+				return GetTabItemPath(nextTabItem);
+			}
 			return PathHead;
 		}
 
 		public string GetPrevTabPath()
 		{
-			// fixme
+			var currentIndex = tabControl.SelectedIndex;
+			if (currentIndex > 0)
+			{
+				var previousTabItem = (TabItem)tabControl.Items[currentIndex - 1];
+				return GetTabItemPath(previousTabItem);
+			}
 			return PathHead;
 		}
 
@@ -520,8 +532,42 @@ namespace ZeroKLobby.MicroLobby
 
 		private void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			
+			if (e.RemovedItems.Count > 0)
+			{
+				var tabItem = (TabItem)e.RemovedItems[0];
+				SetHilite((string)tabItem.Tag, HiliteLevel.None);
+			}
 		}
 
+
+		string GetTabItemPath(TabItem tabItem)
+		{
+			var host = GetTabWindowsFormsHost((string)tabItem.Tag);
+			if (host != null)
+			{
+				if (host.Child is BattleChatControl)
+				{
+					return "chat/battle";
+				}
+				else if (host.Child is PrivateMessageControl)
+				{
+					var pmControl = (PrivateMessageControl)host.Child;
+					return "chat/user/" + pmControl.UserName;
+				}
+				else if (host.Child is ChatControl)
+				{
+					var chatControl = (ChatControl)host.Child;
+					return "chat/channel/" + chatControl.ChannelName;
+				}
+			}
+			throw new Exception("Can't get TabItem path");
+		}
+
+		void TabItem_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+		{
+			e.Handled = true;
+			var tabItem = (TabItem)e.Source;
+			NavigationControl.Instance.Path = GetTabItemPath(tabItem);
+		}
 	}
 }
