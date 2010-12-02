@@ -33,7 +33,7 @@ namespace ZeroKLobby.MicroLobby
 	/// <summary>
 	/// Interaction logic for ChatTab2.xaml
 	/// </summary>
-	public partial class ChatTab2: UserControl, INavigatable
+	public partial class ChatTab2 : UserControl, INavigatable
 	{
 		BattleChatControl battleChatControl;
 		string focusWhenJoin;
@@ -61,7 +61,7 @@ namespace ZeroKLobby.MicroLobby
 			foreach (var channel in Program.TasClient.JoinedChannels.Values.Where(c => !IsIgnoredChannel(c.Name))) CreateChannelControl(channel.Name);
 		}
 
-		public void AddTab(string name, string title, Control control, string toolTip, int sortImportance)
+		public void AddTab(string name, string title, Control control)
 		{
 			var host = new WindowsFormsHost { Child = control };
 			var tabItem = new TabItem { Tag = name, Header = control, Content = host };
@@ -96,17 +96,17 @@ namespace ZeroKLobby.MicroLobby
 				closeButton.Click += (s, e) => CloseTab(userName);
 				contextMenu.MenuItems.Add(closeButton);
 			}
-			AddTab(userName, userName, pmControl, ToolTipHandler.GetUserToolTipString(userName), 0);
+			AddTab(userName, userName, pmControl);
 			pmControl.ChatLine += (s, e) =>
+			{
+				if (Program.TasClient.IsLoggedIn)
 				{
-					if (Program.TasClient.IsLoggedIn)
-					{
-						if (Program.TasClient.ExistingUsers.ContainsKey(userName)) Program.TasClient.Say(TasClient.SayPlace.User, userName, e.Data, false);
-						else
-							Program.TasClient.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!pm {0} {1}", userName, e.Data), false);
-								// send using PM
-					}
-				};
+					if (Program.TasClient.ExistingUsers.ContainsKey(userName)) Program.TasClient.Say(TasClient.SayPlace.User, userName, e.Data, false);
+					else
+						Program.TasClient.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, string.Format("!pm {0} {1}", userName, e.Data), false);
+					// send using PM
+				}
+			};
 			return pmControl;
 		}
 
@@ -174,7 +174,7 @@ namespace ZeroKLobby.MicroLobby
 		void AddBattleControl()
 		{
 			if (battleChatControl == null || battleChatControl.IsDisposed) battleChatControl = new BattleChatControl { Dock = DockStyle.Fill };
-			if (GetTab("Battle") == null) AddTab("Battle", "Battle", battleChatControl, "Current battle room", 3);
+			if (GetTab("Battle") == null) AddTab("Battle", "Battle", battleChatControl);
 		}
 
 		ChatControl CreateChannelControl(string channelName)
@@ -183,8 +183,8 @@ namespace ZeroKLobby.MicroLobby
 			var chatControl = new ChatControl(channelName) { Dock = DockStyle.Fill };
 			var gameInfo = KnownGames.List.FirstOrDefault(x => x.Channel == channelName);
 			chatControl.GameInfo = gameInfo;
-			if (gameInfo != null) AddTab(channelName, gameInfo.FullName, chatControl, null, 2);
-			else AddTab(channelName, channelName, chatControl, null, 1);
+			if (gameInfo != null) AddTab(channelName, gameInfo.FullName, chatControl);
+			else AddTab(channelName, channelName, chatControl);
 			chatControl.ChatLine += (s, e) => Program.TasClient.Say(TasClient.SayPlace.Channel, channelName, e.Data, false);
 			return chatControl;
 		}
@@ -290,8 +290,8 @@ namespace ZeroKLobby.MicroLobby
 				}
 			}
 			else if (e.Origin == TasSayEventArgs.Origins.Server &&
-			         (e.Place == TasSayEventArgs.Places.Motd || e.Place == TasSayEventArgs.Places.MessageBox || e.Place == TasSayEventArgs.Places.Server ||
-			          e.Place == TasSayEventArgs.Places.Broadcast)) Trace.TraceInformation("TASC: {0}", e.Text);
+					 (e.Place == TasSayEventArgs.Places.Motd || e.Place == TasSayEventArgs.Places.MessageBox || e.Place == TasSayEventArgs.Places.Server ||
+					  e.Place == TasSayEventArgs.Places.Broadcast)) Trace.TraceInformation("TASC: {0}", e.Text);
 		}
 
 		void TasClient_BattleForceQuit(object sender, EventArgs e)
@@ -514,6 +514,11 @@ namespace ZeroKLobby.MicroLobby
 				chatControl.Label = label;
 				chatControl.FlashAnimation = storyBoard;
 				name = chatControl.ChannelName;
+				var gameInfo = KnownGames.List.FirstOrDefault(x => x.Channel == name);
+				if (gameInfo != null)
+				{
+					label.ToolTip = gameInfo.FullName;
+				}
 			}
 			var pmControl = label.DataContext as PrivateMessageControl;
 			if (pmControl != null)
@@ -521,6 +526,7 @@ namespace ZeroKLobby.MicroLobby
 				pmControl.Label = label;
 				pmControl.FlashAnimation = storyBoard;
 				name = pmControl.UserName;
+				label.ToolTip = ToolTipHandler.GetUserToolTipString(pmControl.UserName);
 			}
 			Debug.Assert(name != null);
 			if (hiliteOnCreateList.ContainsKey(name))
