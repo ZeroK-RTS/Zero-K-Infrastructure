@@ -2,10 +2,10 @@
 <publishData>
   <publishProfile publishUrl="ftp://zero-k.info/ModStats" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="UnitSelector.ascx" publishTime="03/31/2009 00:07:10" />
-    <file relUrl="bin/ModStats.dll" publishTime="10/14/2010 03:37:38" />
-    <file relUrl="StatsCollector.asmx" publishTime="03/29/2009 20:00:49" />
-    <file relUrl="bin/ModStats.pdb" publishTime="10/14/2010 03:37:38" />
     <file relUrl="Img/Loader.gif" publishTime="02/05/2009 14:40:37" />
+    <file relUrl="StatsCollector.asmx" publishTime="03/29/2009 20:00:49" />
+    <file relUrl="bin/ModStats.dll" publishTime="12/07/2010 15:57:08" />
+    <file relUrl="bin/ModStats.pdb" publishTime="12/07/2010 15:57:08" />
     <file relUrl="Default.aspx" publishTime="08/17/2010 14:25:46" />
     <file relUrl="App_Themes/Default/Stylesheet.css" publishTime="03/31/2009 19:52:10" />
   </publishProfile>

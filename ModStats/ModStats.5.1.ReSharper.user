@@ -9,8 +9,15 @@
   <RecentFiles>
     <RecentFiles>
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Web.config" caret="623" fromTop="9" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx" caret="4687" fromTop="41" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="2273" fromTop="45" />
     </RecentFiles>
-    <RecentEdits />
+    <RecentEdits>
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="11585" fromTop="29" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="11732" fromTop="35" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="1228" fromTop="29" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="2271" fromTop="45" />
+    </RecentEdits>
   </RecentFiles>
   <NAntValidationSettings>
     <NAntPath value="" />

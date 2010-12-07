@@ -64,7 +64,9 @@ namespace ModStats
 
 		private IQueryable<Game> GamesFilter(bool ignoreRestrict)
 		{
-			Table<Game> src = Global.Db.Games;
+      if (!IsPostBack) return new List<Game>().AsQueryable();
+
+      Table<Game> src = Global.Db.Games;
 
 			if (!ignoreRestrict && restrictGamesToID != 0) return src.Where(x => x.GameID == restrictGamesToID);
 
@@ -87,7 +89,7 @@ namespace ModStats
 
 			if (!string.IsNullOrEmpty(tbPlayer.Text)) ret = ret.Where(x => x.PlayerList.Contains(tbPlayer.Text));
 
-			return ret;
+			return ret.Take(500);
 		}
 
 		protected void gridUnits_RowCommand(object sender, GridViewCommandEventArgs e)
@@ -303,40 +305,12 @@ namespace ModStats
 		#region Event Handlers
 
 
-		private string GetCookie(string key, string defaultValue)
-		{
-			if (Request.Cookies[key] != null) return Request.Cookies[key].Value; else return defaultValue;
-		}
-
-		private void SetCookie(string key, string value)
-		{
-			Response.SetCookie(new System.Web.HttpCookie(key, value) {Expires = DateTime.Now.AddDays(7)});
-		}
 
 
 		private void Default_Load(object sender, EventArgs e)
 		{
 			if (!IsPostBack) {
 				GridView1.Sort("Created", SortDirection.Descending);
-				tbMapName.Text = GetCookie("map", "");
-				tbModName.Text = GetCookie("mod", "");
-				tbPlayer.Text = GetCookie("player", "");
-				tbPlayersMax.Text = GetCookie("playersMax", "16");
-				tbPlayersMin.Text = GetCookie("playersMin", "2");
-				tbTeamsMax.Text = GetCookie("teamsMax", "16");
-				tbTeamsMin.Text = GetCookie("teamsMin", "2");
-				tbVersionMax.Text = GetCookie("versionMax", "0");
-				tbVersionMin.Text = GetCookie("versionMin", "0");
-			} else {
-				SetCookie("map", tbMapName.Text);
-				SetCookie("mod", tbModName.Text);
-				SetCookie("player", tbPlayer.Text);
-				SetCookie("playersMax", tbPlayersMax.Text);
-				SetCookie("playersMin", tbPlayersMin.Text);
-				SetCookie("teamsMax", tbTeamsMax.Text);
-				SetCookie("teamsMin", tbTeamsMin.Text);
-				SetCookie("versionMax", tbVersionMax.Text);
-				SetCookie("versionMin", tbVersionMin.Text);
 			}
 		}
 
