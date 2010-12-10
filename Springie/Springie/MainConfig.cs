@@ -24,8 +24,9 @@ namespace Springie
         int springCoreAffinity = 1;
         public int HostingPortStart = 8452;
         public int MaxInstances = 100;
+        public string IpOverride;
 
-        public string ExecutableName { get { return executableName; } set { executableName = value; } }
+      public string ExecutableName { get { return executableName; } set { executableName = value; } }
 
         public bool GargamelMode { get { return gargamelMode; } set { gargamelMode = value; } }
 

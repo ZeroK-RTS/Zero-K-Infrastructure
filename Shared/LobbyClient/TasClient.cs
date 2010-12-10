@@ -67,7 +67,8 @@ namespace LobbyClient
 
 		// user info 
 		string username = "";
-		public bool ConnectionFailed { get; private set; }
+	  string localIp;
+	  public bool ConnectionFailed { get; private set; }
 
 		public Dictionary<int, Battle> ExistingBattles { get { return existingBattles; } set { existingBattles = value; } }
 
@@ -179,10 +180,23 @@ namespace LobbyClient
 		public event EventHandler<TasEventArgs> UserRemoved = delegate { };
 		public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
 
-		public TasClient(Invoker<Invoker> guiThreadInvoker, string appName)
+		public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, string ipOverride = null)
 		{
 			this.appName = appName;
 			this.guiThreadInvoker = guiThreadInvoker;
+
+      if (!string.IsNullOrEmpty(ipOverride)) localIp = ipOverride;
+      else {
+        var addresses = Dns.GetHostAddresses(Dns.GetHostName());
+        localIp = addresses[0].ToString();
+        foreach (var adr in addresses) {
+          if (adr.AddressFamily == AddressFamily.InterNetwork) {
+            localIp = adr.ToString();
+            break;
+          }
+        }
+      }
+
 			pingTimer = new Timer(pingInterval*1000) { AutoReset = true };
 			pingTimer.Elapsed += OnPingTimer;
 			pingTimer.Start();
@@ -474,18 +488,7 @@ namespace LobbyClient
 		{
 			if (con == null) throw new TasClientException("Not connected");
 
-			var addresses = Dns.GetHostAddresses(Dns.GetHostName());
-			var localIp = addresses[0].ToString();
-			foreach (var adr in addresses)
-			{
-				if (adr.AddressFamily == AddressFamily.InterNetwork)
-				{
-					localIp = adr.ToString();
-					break;
-				}
-			}
-
-			var mhz = "6666";
+		  var mhz = "6666";
 
 			var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
 			var h = "0";
@@ -517,6 +520,7 @@ namespace LobbyClient
 			              	'\t' + MyBattle.ModName
 			              };
 			MyBattle.Founder = username;
+		  MyBattle.Ip = localIp;
 
 			//battle.Details.AddToParamList(objList);
 			mapToChangeTo = MyBattle.MapName;
@@ -1057,6 +1061,9 @@ namespace LobbyClient
 						                	Password = args[7] != "1" ? "*" : "apassword",
 						                	Rank = Int32.Parse(args[8])
 						                };
+            
+            if (newBattle.Founder == username) newBattle.Ip = localIp; // lobby can send wahtever, betteroverride here
+
 						// NatType = Int32.Parse(args[2]); // todo: correctly add nattype
 						var mapHash = args[9];
 						var rest = Utils.Glue(args, 10).Split('\t');

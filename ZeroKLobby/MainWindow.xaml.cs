@@ -204,12 +204,13 @@ namespace ZeroKLobby
 		{
 			if (host != null)
 			{
-				var parentControl = host.Child;
+			  var parentControl = host.Child;
         var screenPoint = Control.MousePosition;
-				var parentPoint = parentControl.PointToClient(screenPoint);
+        var parentPoint = parentControl.PointToClient(screenPoint);
+        
 				if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
-				Control child;
-				while (
+        Control child; 
+        while (
 					(child =
 					 parentControl.GetChildAtPoint(parentPoint, GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent)) !=
 					null)

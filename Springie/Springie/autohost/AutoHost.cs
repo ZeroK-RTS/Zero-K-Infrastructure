@@ -82,7 +82,7 @@ namespace Springie.autohost
 			springPaths = paths;
 			this.hostingPort = hostingPort;
 			spring = new Spring(paths) { UseDedicatedServer = true };
-			tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion);
+			tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, Program.main.Config.IpOverride);
 			quickMatchTracker = new QuickMatchTracking(tas, null);
 
 			banList = new BanList(this, tas);
