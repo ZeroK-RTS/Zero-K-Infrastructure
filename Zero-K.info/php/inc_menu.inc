@@ -3,14 +3,13 @@
 	<tr>
 	<td><a href="index.php">Home</a></td>
 	<!link to a thank you page maybe?>
-	<td><ul class="menu">
+	<!--td><ul class="menu">
 	<li><a onclick="javascript:download();" class="menu-border button" style="color: white">Download</a>
 		<ul class="menu-border">
 			<li><a target="_new" href="missions.mvc">Missions</a>
 			<li><a target="_new" href="maps.mvc">Maps</a>
 		</ul>
-	</ul> </td>
-	<!-- 
+	</ul> </td-->
 	<td><ul class="menu">
 	<li><a href="download.php">Download</a>
 		<ul>
@@ -21,7 +20,6 @@
 		</ul>
 	</li>
 	</ul> </td> 
-	-->
 	<td><ul class="menu">
 	<li><a href="screen.php">Media</a>
 		<ul class="menu-border">
