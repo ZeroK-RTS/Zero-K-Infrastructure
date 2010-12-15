@@ -47,11 +47,11 @@
 	<td><a target="_new" href="http://springrts.com/phpbb/viewforum.php?f=42">Forums~</a></td> 
 	
 	<td><ul class="menu">
-	<li><a target="_new" href="http://trac.caspring.org/wiki">Contribute~</a>
+	<li><a target="_new" href="http://code.google.com/p/zero-k/">Contribute~</a>
 		<ul class="menu-border">
-			<li><a target="_new" href="http://trac.caspring.org/wiki">Artwork<span>We will take pretty much anything at the moment D:</span></a></li>
-			<li><a target="_new" href="http://trac.caspring.org/newticket">Bugs?<span>Let us know so we can <b>squash them!</b></span></a></li>
-			<li><a target="_new" href="http://trac.caspring.org/wiki">Code</a></li>
+			<li><a target="_new" href="http://planet-wars.eu/ModelBase">Artwork<span>We will take pretty much anything at the moment D:</span></a></li>
+			<li><a target="_new" href="http://code.google.com/p/zero-k/issues/entry">Bugs?<span>Let us know so we can <b>squash them!</b></span></a></li>
+			<li><a target="_new" href="http://code.google.com/p/zero-k/source/browse/trunk#trunk/mods/zk">Code</a></li>
 		</ul>
 	</li>
 	</ul> </td> 
