@@ -351,7 +351,8 @@ namespace ZeroKLobby.MicroLobby
 		{
 			AddBattleControl();
 			foreach (var friendName in Program.FriendManager.Friends) CreatePrivateMessageControl(friendName);
-			foreach (var game in KnownGames.List) Program.TasClient.JoinChannel(game.Channel);
+      if (Program.Conf.LimitedMode) Program.TasClient.JoinChannel(KnownGames.GetDefaultGame().Channel);
+      else foreach (var game in KnownGames.List) Program.TasClient.JoinChannel(game.Channel);
 			foreach (var channel in Program.AutoJoinManager.Channels) Program.TasClient.JoinChannel(channel, Program.AutoJoinManager.GetPassword(channel));
 		}
 

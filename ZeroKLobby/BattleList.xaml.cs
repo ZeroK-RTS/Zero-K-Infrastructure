@@ -91,7 +91,7 @@ namespace ZeroKLobby
       var knownGame = KnownGames.List.SingleOrDefault(x => x.Shortcut.ToUpper() == word);
       if (knownGame != null)
       {
-        isMatch = battle.ModName != null && Regex.IsMatch(battle.ModName, knownGame.Regex);
+        isMatch = battle.ModName != null && knownGame.Regex.IsMatch(battle.ModName);
         return true;
       }
       else

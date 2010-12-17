@@ -56,8 +56,8 @@ namespace ZeroKLobby.MicroLobby
         BattleIcon AddBattle(int battleID)
         {
             var battle = Program.TasClient.ExistingBattles[battleID];
-            string modName = null;
-            foreach (var game in KnownGames.List) if (Regex.IsMatch(battle.ModName, game.Regex)) modName = game.Shortcut;
+            //string modName = null;
+            //foreach (var game in KnownGames.List) if (game.Regex.IsMatch(battle.ModName)) modName = game.Shortcut;
             var founder = Program.TasClient.ExistingUsers[battle.Founder];
             var battleIcon = new BattleIcon(battle) { IsInGame = founder.IsInGame};
             try

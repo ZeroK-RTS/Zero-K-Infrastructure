@@ -318,6 +318,13 @@ namespace ZeroKLobby
 				};
 			ipcFileWatcher.EnableRaisingEvents = true;
 			if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
+
+      // download primary game 
+		  var defaultTag = KnownGames.GetDefaultGame().RapidTag;
+      if (Program.Conf.LimitedMode && !Program.Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag)) {
+        Program.Downloader.PackageDownloader.SelectPackage(defaultTag); 
+        Program.Downloader.GetResource(DownloadType.MOD, defaultTag);
+      }
 		}
 
 		void Window_StateChanged(object sender, EventArgs e)

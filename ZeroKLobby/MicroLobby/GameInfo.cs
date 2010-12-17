@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace ZeroKLobby.MicroLobby
@@ -12,7 +13,7 @@ namespace ZeroKLobby.MicroLobby
 	  public string Channel { get; set; }
 		public string FullName { get; set; }
 		public string RapidTag { get; set; }
-		public string Regex { get; set; }
+		public Regex Regex { get; set; }
 		public string Shortcut
 		{
 			get { return shortcut; }
