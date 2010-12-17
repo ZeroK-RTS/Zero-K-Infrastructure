@@ -37,7 +37,10 @@ namespace ZeroKLobby.MicroLobby
 		BattleChatControl battleChatControl;
 		string focusWhenJoin;
 		Dictionary<string, HiliteLevel> hiliteOnCreateList = new Dictionary<string, HiliteLevel>();
-	  internal WindowsFormsHost winformsHost;
+	  internal WindowsFormsHost winformsHost
+	{
+      get { return (WindowsFormsHost)tabControl.SelectedContent; }
+	}
 
 	  public ChatTab2()
 		{
@@ -63,8 +66,8 @@ namespace ZeroKLobby.MicroLobby
 
 		public void AddTab(string name, string title, Control control)
 		{
-			winformsHost = new WindowsFormsHost { Child = control };
-			var tabItem = new TabItem { Tag = name, Header = control, Content = winformsHost };
+			var wf = new WindowsFormsHost { Child = control };
+			var tabItem = new TabItem { Tag = name, Header = control, Content = wf };
 			tabControl.Items.Add(tabItem);
 		}
 
