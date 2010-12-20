@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Deployment.Application;
 using System.Diagnostics;
@@ -231,11 +232,10 @@ namespace ZeroKLobby
 				if (Program.Downloader != null && !Program.CloseOnNext)
 				{
 					// remove aborted
-					foreach (var pane in
-						Program.NotifySection.Bars.OfType<DownloadBar>().Where(x => x.Download.IsAborted || x.Download.IsComplete == true)) Program.NotifySection.RemoveBar(pane);
+					foreach (var pane in new List<INotifyBar>(Program.NotifySection.Bars).OfType<DownloadBar>().Where(x => x.Download.IsAborted || x.Download.IsComplete == true)) Program.NotifySection.RemoveBar(pane);
 
 					// update existing
-					foreach (var pane in Program.NotifySection.Bars.OfType<DownloadBar>()) pane.UpdateInfo();
+					foreach (var pane in new List<INotifyBar>(Program.NotifySection.Bars).OfType<DownloadBar>()) pane.UpdateInfo();
 				}
 			}
 			catch (Exception ex)

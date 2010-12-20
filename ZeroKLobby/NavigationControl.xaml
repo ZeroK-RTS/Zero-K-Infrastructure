@@ -19,8 +19,8 @@
       <ZeroKLobby:SubmitTextBox Grid.Column="2" Text="{Binding Path, ElementName=userControl}"  />
     </Grid>
     <UniformGrid Grid.Row="1" Rows="1">
-      <Button Click="MissionsPage_Click">Missions</Button>
-      <Button Click="BattleListPage_Click">Battles</Button>
+      <Button Click="MissionsPage_Click">Singleplayer</Button>
+      <Button Click="BattleListPage_Click">Multiplayer</Button>
       <Button Click="ChatPage_Click">Chat</Button>
       <Button Click="HelpPage_Click">Help</Button>
       <Button Click="MapPage_Click">Maps</Button>
