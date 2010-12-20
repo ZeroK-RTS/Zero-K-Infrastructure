@@ -158,7 +158,7 @@ namespace ZeroKLobby.MicroLobby
             this.playerBox.Name = "playerBox";
             this.playerBox.Size = new System.Drawing.Size(275, 667);
             this.playerBox.TabIndex = 1;
-            this.playerBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.playerBox_MouseUp);
+            this.playerBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.playerBox_MouseClick);
             this.playerBox.DoubleClick += new System.EventHandler(this.playerBox_DoubleClick);
             // 
             // panel1

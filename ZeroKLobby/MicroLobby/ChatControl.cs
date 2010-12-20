@@ -49,7 +49,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			InitializeComponent();
 
-			var isDesignMode = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working in constructor
+      var isDesignMode = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working in constructor
 			if (isDesignMode) return;
 
       var extras = new Button();
@@ -473,15 +473,15 @@ namespace ZeroKLobby.MicroLobby
 			if (playerListItem != null && playerListItem.User != null) NavigationControl.Instance.Path = "chat/user/" + playerListItem.User.Name;
 		}
 
-		void playerBox_MouseUp(object sender, MouseEventArgs e)
+		void playerBox_MouseClick(object sender, MouseEventArgs e)
 		{
-			if (e.Button != MouseButtons.Right) return;
 			var item = playerBox.HoverItem;
 			if (item != null && item.UserName != null)
 			{
 				playerBox.SelectedItem = item;
 				if (item.User != null) ShowPlayerContextMenu(item.User, playerBox, e.Location);
 			}
+		  playerBox.ClearSelected();
 		}
 
 		void playerSearchBox_TextChanged(object sender, EventArgs e)
