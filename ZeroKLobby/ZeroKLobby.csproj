@@ -122,6 +122,7 @@
     </Compile>
     <Compile Include="INavigatable.cs" />
     <Compile Include="KnownGames.cs" />
+    <Compile Include="Lines\SelfJoinedBattleLine.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -173,7 +174,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="MicroLobby\ContextMenus.cs" />
     <Compile Include="Lines\ChimeLine.cs" />
-    <Compile Include="Lines\JoinedBattleLine.cs" />
+    <Compile Include="Lines\FriendJoinedBattleLine.cs" />
     <Compile Include="Lines\TopicLine.cs" />
     <Compile Include="MicroLobby\AutoJoinManager.cs" />
     <Compile Include="MicroLobby\GdiListBox.cs">

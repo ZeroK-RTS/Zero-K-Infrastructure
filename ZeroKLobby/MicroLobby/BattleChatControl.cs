@@ -22,25 +22,8 @@ namespace ZeroKLobby.MicroLobby
     List<MissionSlot> missionSlots;
     public static event EventHandler<EventArgs<IChatLine>> BattleLine = delegate { };
 
-    public BattleChatControl(): base("Battle") {}
-
-    protected override void Dispose(bool disposing)
+    public BattleChatControl(): base("Battle")
     {
-      if (Program.TasClient != null) Program.TasClient.UnsubscribeEvents(this);
-      if (Program.QuickMatchTracker != null) Program.QuickMatchTracker.UnsubscribeEvents(this);
-      base.Dispose(disposing);
-    }
-
-    public override void AddLine(IChatLine line)
-    {
-      base.AddLine(line);
-      BattleLine(this, new EventArgs<IChatLine>(line));
-    }
-
-
-    protected override void OnLoad(EventArgs ea)
-    {
-      base.OnLoad(ea);
       Program.TasClient.Said += TasClient_Said;
       Program.TasClient.BattleJoined += TasClient_BattleJoined;
       Program.TasClient.BattleUserLeft += TasClient_BattleUserLeft;
@@ -65,16 +48,35 @@ namespace ZeroKLobby.MicroLobby
       minimapBox = new PictureBox { Dock = DockStyle.Fill, SizeMode = PictureBoxSizeMode.CenterImage };
       minimapBox.Cursor = Cursors.Hand;
       minimapBox.Click +=
-        (s, e) =>
-          {
-            if (Program.TasClient.MyBattle != null)
-              Program.MainWindow.navigationControl.Path = string.Format("http://zero-k.info/Maps.mvc/DetailName?name={0}",
-                                                                        Program.TasClient.MyBattle.MapName);
-          };
+        (s, e) => {
+          if (Program.TasClient.MyBattle != null)
+            Program.MainWindow.navigationControl.Path = string.Format("http://zero-k.info/Maps.mvc/DetailName?name={0}",
+                                                                      Program.TasClient.MyBattle.MapName);
+        };
 
       mapPanel.Controls.Add(minimapBox);
       mapPanel.Visible = true;
       mapPanel.Height = playerBox.Width;
+
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+      if (Program.TasClient != null) Program.TasClient.UnsubscribeEvents(this);
+      if (Program.QuickMatchTracker != null) Program.QuickMatchTracker.UnsubscribeEvents(this);
+      base.Dispose(disposing);
+    }
+
+    public override void AddLine(IChatLine line)
+    {
+      base.AddLine(line);
+      BattleLine(this, new EventArgs<IChatLine>(line));
+    }
+
+
+    protected override void OnLoad(EventArgs ea)
+    {
+      base.OnLoad(ea);
     }
 
 
@@ -229,7 +231,7 @@ namespace ZeroKLobby.MicroLobby
 
       // todo add check before calling invoke invokes!!!
       Program.SpringScanner.MetaData.GetMapAsync(mapName,
-                                                 (map, minimap, heightmap, metalmap) => Invoke(new Action(() =>
+                                                 (map, minimap, heightmap, metalmap) => Program.MainWindow.InvokeFunc(() =>
                                                    {
                                                      if (Program.TasClient.MyBattle == null) return;
                                                      if (map != null && map.Name != Program.TasClient.MyBattle.MapName) return;
@@ -244,12 +246,12 @@ namespace ZeroKLobby.MicroLobby
                                                        minimapSize = map.Size;
                                                        DrawMinimap();
                                                      }
-                                                   })),
-                                                 a => Invoke(new Action(() =>
+                                                   }),
+                                                 a => Program.MainWindow.InvokeFunc(() =>
                                                    {
                                                      minimapBox.Image = null;
                                                      minimap = null;
-                                                   })));
+                                                   }));
     }
 
     void ModStoreModLoaded(object sender, EventArgs<Mod> e)
@@ -268,6 +270,7 @@ namespace ZeroKLobby.MicroLobby
       Reset();
       SetMapImages(e.Data.MapName);
       foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
+      base.AddLine(new SelfJoinedBattleLine(e.Data));
     }
 
     void TasClient_BattleMapChanged(object sender, BattleInfoEventArgs e1)

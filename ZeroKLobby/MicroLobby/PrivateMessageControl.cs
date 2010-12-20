@@ -136,7 +136,7 @@ namespace ZeroKLobby.MicroLobby
             if (userName != UserName) return;
             var joinedBattleID = e1.BattleID;
             var battle = Program.TasClient.ExistingBattles[joinedBattleID];
-            AddLine(new JoinedBattleLine(userName, battle));
+            AddLine(new FriendJoinedBattleLine(userName, battle));
         }
 
     	public event PropertyChangedEventHandler PropertyChanged = delegate { };

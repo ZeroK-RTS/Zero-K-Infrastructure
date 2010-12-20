@@ -177,7 +177,7 @@ namespace ZeroKLobby.MicroLobby
 		void AddBattleControl()
 		{
 			if (battleChatControl == null || battleChatControl.IsDisposed) battleChatControl = new BattleChatControl { Dock = DockStyle.Fill };
-			if (GetTab("Battle") == null) AddTab("Battle", "Battle", battleChatControl);
+      if (GetTab("Battle") == null) AddTab("Battle", "Battle", battleChatControl);
 		}
 
 		ChatControl CreateChannelControl(string channelName)
