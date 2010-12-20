@@ -59,14 +59,15 @@ namespace ZeroKLobby
         }
         value = parts[0];
 
+        if (CurrentPage != null && CurrentPage.ToString() == value) return; // we are already there, no navigation needed
         lastPaths.Add(value);
 
         var step = GoToPage(value.Split('/'));
         if (step != null)
         {
-          if (CurrentPage != null) backStack.Push(CurrentPage);
+          if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
           CurrentPage = step;
-          forwardStack.Clear();
+          //forwardStack.Clear();
         }
       }
     }
@@ -124,14 +125,14 @@ namespace ZeroKLobby
 
     void GoBack()
     {
-      forwardStack.Push(CurrentPage);
+      if (forwardStack.Count == 0|| forwardStack.Peek().ToString() != CurrentPage.ToString()) forwardStack.Push(CurrentPage);
       CurrentPage = backStack.Pop();
       GoToPage(CurrentPage.Path);
     }
 
     void GoForward()
     {
-      backStack.Push(CurrentPage);
+      if (backStack.Count == 0 || backStack.Peek().ToString() != CurrentPage.ToString()) backStack.Push(CurrentPage);
       CurrentPage = forwardStack.Pop();
       GoToPage(CurrentPage.Path);
     }
@@ -192,10 +193,11 @@ namespace ZeroKLobby
     {
       var navigatable = GetINavigatableFromControl(e.Source);
       if (navigatable == null) return;
-      var step = new NavigationStep { Path = new[] { navigatable.PathHead } };
+      Path = navigatable.PathHead;
+      /*var step = new NavigationStep { Path = new[] { navigatable.PathHead } };
       if (CurrentPage != null) backStack.Push(CurrentPage);
       CurrentPage = step;
-      forwardStack.Clear();
+      forwardStack.Clear();*/
     }
 
     void UserControl_Loaded(object sender, RoutedEventArgs e)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Forms;
@@ -29,16 +30,29 @@ namespace ZeroKLobby.MicroLobby
 
 		string navigatingTo = null;
 
+	  List<string> navigatedPlaces = new List<string>();
+	  int navigatedIndex = 0;
+    bool navigating = false;
+
 		public bool TryNavigate(params string[] path)
 		{
-			var pathString = String.Join("/", path);
+
+      var pathString = String.Join("/", path);
 			if (!pathString.StartsWith(PathHead)) return false;
-			if (WebBrowser.Source != null && pathString == WebBrowser.Source.OriginalString && pathString == "http://zero-k.info/Missions.mvc") return true;
-			if (navigatingTo != pathString)
-			{
-				navigatingTo = pathString;
-				WebBrowser.Navigate(pathString);
-			}
+			if (WebBrowser.Source != null && pathString == WebBrowser.Source.OriginalString) return true;
+
+      if (navigatingTo == pathString) return true; // already navigating there
+
+      if (navigatedIndex > 1 && navigatedPlaces[navigatedIndex-2] == pathString)
+      {
+        navigatedIndex-=2;
+        WebBrowser.GoBack();
+        return true;
+      }
+      
+      //navigatingTo = pathString;
+			WebBrowser.Navigate(pathString);
+	
 			return true;
 		}
 
@@ -54,14 +68,16 @@ namespace ZeroKLobby.MicroLobby
 
 		void WebBrowser_Navigated(object sender, NavigationEventArgs e)
 		{
-			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
+      navigating = false;
+      if (navigatedIndex == navigatedPlaces.Count) navigatedPlaces.Add(e.Uri.ToString());
+      else navigatedPlaces[navigatedIndex] = e.Uri.ToString();
+		  navigatedIndex++;
 		}
 
 		void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
 		{
-			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-	  
-      if (navigatingTo != e.Uri.ToString())
+      navigating = true;
+	    if (navigatingTo != e.Uri.ToString())
 			{
 				navigatingTo = e.Uri.ToString();
 				if (navigatingTo.Contains("@")) e.Cancel = true;
