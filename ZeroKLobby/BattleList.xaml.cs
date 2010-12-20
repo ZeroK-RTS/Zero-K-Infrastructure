@@ -202,7 +202,7 @@ namespace ZeroKLobby
         tbFilter.TextChanged += tbFilter_TextChanged; // this is needed after setting text
         view.Filter += view_Filter;
         view.Source = Program.BattleIconManager.BattleIcons;
-        Program.TasClient.BattleInfoChanged += (s2, e2) => Refresh();
+        Program.BattleIconManager.BattleChanged += (s2, e2) => Refresh();
       }
     }
 

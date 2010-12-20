@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -7,18 +8,20 @@ using LobbyClient;
 
 namespace ZeroKLobby.MicroLobby
 {
-  public class BattleIcon: IDisposable, IToolTipProvider
+  public class BattleIcon : IDisposable, IToolTipProvider, INotifyPropertyChanged
   {
     public const int Height = 75;
     public const int Width = 300;
     const int minimapSize = 58;
     BitmapSource cachedBitmapSource;
     bool dirty;
+
     bool disposed;
     Bitmap finishedMinimap;
     Bitmap image;
     bool isInGame;
 
+    
 
     Bitmap playersBoxImage;
     static Size playersBoxSize = new Size(214, 32);
@@ -60,6 +63,7 @@ namespace ZeroKLobby.MicroLobby
         {
           isInGame = value;
           dirty = true;
+          OnPropertyChanged("BitmapSource"); // notify wpf about icon change
         }
       }
     }
@@ -76,6 +80,7 @@ namespace ZeroKLobby.MicroLobby
         }
         resizedMinimap = new Bitmap(value, minimapSize, minimapSize);
         dirty = true;
+        OnPropertyChanged("BitmapSource"); // notify wpf about icon change
       }
     }
     public static Font ModFont = new Font("Segoe UI", 8.25F, FontStyle.Regular);
@@ -105,6 +110,11 @@ namespace ZeroKLobby.MicroLobby
     public void SetPlayers()
     {
       dirty = true;
+      OnPropertyChanged("PlayerCount");
+      OnPropertyChanged("BitmapSource"); // notify wpf about icon change
+    }
+
+    void RenderPlayers() {
       var currentPlayers = Battle.NonSpectatorCount;
       var maxPlayers = Battle.MaxPlayers;
 
@@ -187,7 +197,7 @@ namespace ZeroKLobby.MicroLobby
     void UpdateImage()
     {
       MakeMinimap();
-      SetPlayers();
+      RenderPlayers();
       image = MakeSolidColorBitmap(Brushes.White, Width, Height);
       using (var g = Graphics.FromImage(image))
       {
@@ -214,5 +224,15 @@ namespace ZeroKLobby.MicroLobby
     }
 
     public string ToolTip { get { return ToolTipHandler.GetBattleToolTipString(Battle.BattleID); } }
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    
+    protected void OnPropertyChanged(string name)
+    {
+      PropertyChangedEventHandler handler = PropertyChanged;
+      if (handler != null) {
+        handler(this, new PropertyChangedEventArgs(name));
+      }
+    }
   }
 }

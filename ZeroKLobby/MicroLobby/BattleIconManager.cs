@@ -86,20 +86,20 @@ namespace ZeroKLobby.MicroLobby
 																													if (map != null && map.Name != battleIcon.Battle.MapName) return;
                                                        		Image image = null;
 																													if (minimap != null && minimap.Length != 0) image = Image.FromStream(new MemoryStream(minimap));
-                                                       		control.Dispatcher.Invoke(new Action(() =>
+                                                       		Program.MainWindow.InvokeFunc(() =>
                                                        			{
                                                        				battleIcon.MinimapImage = image;
                                                        				BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
-                                                       			}));
+                                                       			});
                                                        	},
-                                                       a => control.Dispatcher.Invoke(new Action(() =>
+                                                       a => Program.MainWindow.InvokeFunc(() =>
                                                            {
                                                                if (battleIcon != null)
                                                                {
                                                                    battleIcon.MinimapImage = null;
                                                                    BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
                                                                }
-                                                           })));
+                                                           }));
         }
 
 
