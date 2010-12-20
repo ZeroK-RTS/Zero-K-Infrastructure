@@ -70,6 +70,9 @@ namespace ZeroKLobby.MicroLobby
         public void AddLine([NotNull] IChatLine line)
         {
             if (line == null) throw new ArgumentNullException("line");
+            if ((line is SaidLine && Program.Conf.IgnoredUsers.Contains(((SaidLine)line).AuthorName)) ||
+            (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName))) return;
+
             ChatBox.AddLine(line);
             HistoryManager.LogLine(UserName, line);
             var saidLine = line as SaidLine;
