@@ -52,7 +52,13 @@ namespace ZeroKLobby.MicroLobby
 			var isDesignMode = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working in constructor
 			if (isDesignMode) return;
 
-			playerBox.DrawMode = DrawMode.OwnerDrawVariable;
+      var extras = new Button();
+      extras.Text = "Extras";
+      extras.Click += (s, e) => { ContextMenus.GetChannelContextMenu(this).Show(extras, new Point(0, 0)); };
+      ChatBox.Controls.Add(extras);
+
+
+      playerBox.DrawMode = DrawMode.OwnerDrawVariable;
 			playerBox.MeasureItem += (s, e) => { }; // needed for ListBox.OnMeasureItem
 			playerBox.BackColor = Program.Conf.BgColor;
 			playerBox.ForeColor = Program.Conf.TextColor;

@@ -57,7 +57,6 @@ namespace ZeroKLobby.MicroLobby
       mapPanel.Controls.Add(minimapBox);
       mapPanel.Visible = true;
       mapPanel.Height = playerBox.Width;
-
     }
 
     protected override void Dispose(bool disposing)

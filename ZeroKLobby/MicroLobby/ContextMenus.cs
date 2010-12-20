@@ -97,15 +97,18 @@ namespace ZeroKLobby.MicroLobby
 				contextMenu.Items.Add(headerItem);
 				contextMenu.Items.Add(new Separator());
 
-				var showTopic = new System.Windows.Controls.MenuItem() { Header = "Show Topic Header", IsChecked = chatControl.TopicBox.Visible };
-				showTopic.Click += (s, e) =>
-				{
-					chatControl.TopicPanel.Visible = !chatControl.TopicPanel.Visible;
-					showTopic.IsChecked = chatControl.TopicPanel.Visible;
-				};
-				contextMenu.Items.Add(showTopic);
+        if (!(chatControl is BattleChatControl))
+        {
+          var showTopic = new System.Windows.Controls.MenuItem() { Header = "Show Topic Header", IsChecked = chatControl.TopicBox.Visible };
+          showTopic.Click += (s, e) =>
+            {
+              chatControl.TopicPanel.Visible = !chatControl.TopicPanel.Visible;
+              showTopic.IsChecked = chatControl.TopicPanel.Visible;
+            };
+          contextMenu.Items.Add(showTopic);
+        }
 
-				if (!KnownGames.List.Any(g => g.Channel == chatControl.ChannelName) && chatControl.ChannelName != "Battle")
+			  if (!KnownGames.List.Any(g => g.Channel == chatControl.ChannelName) && chatControl.ChannelName != "Battle")
 				{
 					var autoJoinItem = new System.Windows.Controls.MenuItem() { Header = "Automatically Join Channel", IsChecked = Program.AutoJoinManager.Channels.Contains(chatControl.ChannelName) };
 					autoJoinItem.Click += (s, e) =>
@@ -161,15 +164,18 @@ namespace ZeroKLobby.MicroLobby
 				contextMenu.MenuItems.Add(headerItem);
 				contextMenu.MenuItems.Add("-");
 
-				var showTopic = new MenuItem("Show Topic Header") { Checked = chatControl.TopicBox.Visible };
-				showTopic.Click += (s, e) =>
-					{
-						chatControl.TopicPanel.Visible = !chatControl.TopicPanel.Visible;
-						showTopic.Checked = chatControl.TopicPanel.Visible;
-					};
-				contextMenu.MenuItems.Add(showTopic);
+        if (!(chatControl is BattleChatControl))
+        {
+          var showTopic = new MenuItem("Show Topic Header") { Checked = chatControl.TopicBox.Visible };
+          showTopic.Click += (s, e) =>
+            {
+              chatControl.TopicPanel.Visible = !chatControl.TopicPanel.Visible;
+              showTopic.Checked = chatControl.TopicPanel.Visible;
+            };
+          contextMenu.MenuItems.Add(showTopic);
+        }
 
-				if (!KnownGames.List.Any(g => g.Channel == chatControl.ChannelName) && chatControl.ChannelName != "Battle")
+			  if (!KnownGames.List.Any(g => g.Channel == chatControl.ChannelName) && chatControl.ChannelName != "Battle")
 				{
 					var autoJoinItem = new MenuItem("Automatically Join Channel") { Checked = Program.AutoJoinManager.Channels.Contains(chatControl.ChannelName) };
 					autoJoinItem.Click += (s, e) =>

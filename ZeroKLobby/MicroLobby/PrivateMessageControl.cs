@@ -50,6 +50,13 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.BattleUserJoined += TasClient_BattleUserJoined;
             Program.TasClient.UserAdded += TasClient_UserAdded;
             Program.TasClient.UserRemoved += TasClient_UserRemoved;
+
+
+        var extras = new Button();
+            extras.Text = "Extras";
+            extras.Click += (s, e) => { ContextMenus.GetPrivateMessageContextMenu(this).Show(extras, new System.Drawing.Point(0, 0)); };
+            ChatBox.Controls.Add(extras);
+
         }
 
         void TasClient_UserRemoved(object sender, TasEventArgs e)
