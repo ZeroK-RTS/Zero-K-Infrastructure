@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using System.Xml.Serialization;
 using LobbyClient;
 using Microsoft.Win32;
-using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
@@ -60,8 +59,16 @@ namespace ZeroKLobby
     internal static void LoadConfig()
     {
       var configFilename = GetFullConfigPath();
-      if (File.Exists(configFilename))
+      if (!File.Exists(configFilename))
       {
+        // port old config      
+        if (ApplicationDeployment.IsNetworkDeployed)
+        {
+          configFilename = Path.Combine(ApplicationDeployment.CurrentDeployment.DataDirectory,"SpringDownloaderConfig.xml");
+        }
+      }
+
+      if (File.Exists(configFilename)) {
         var xs = new XmlSerializer(typeof(Config));
         try
         {
@@ -150,7 +157,6 @@ namespace ZeroKLobby
                                 (string)
                                 Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spring", "DisplayIcon", "");
 
-
         SpringPaths = new SpringPaths(Conf.ManualSpringPath);
         if (Debugger.IsAttached) SpringPaths.Cache = Utils.MakePath(StartupPath, "cache");
         else SpringPaths.Cache = Utils.MakePath(SpringPaths.WritableDirectory, "cache", "SD");
@@ -203,7 +209,7 @@ namespace ZeroKLobby
 
         Downloader = new PlasmaDownloader.PlasmaDownloader(Conf, SpringScanner, SpringPaths);
         Downloader.DownloadAdded += (s, e) => Trace.TraceInformation("Download started: {0}", e.Data.Name);
-        
+
         TasClient = new TasClient(TasClientInvoker,
                                   string.Format("ZK {0}",
                                                 ApplicationDeployment.IsNetworkDeployed
@@ -224,11 +230,14 @@ namespace ZeroKLobby
         TasClient.ChannelJoined += (s, e) => Trace.TraceInformation("TASC channel joined: " + e.ServerParams[0]);
         TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
         // filter non-zk mods in limited mode
-        if (Conf.LimitedMode) TasClient.FilterBattleByMod += (s, e) => 
-          { 
-            var game = KnownGames.GetGame(e.Data);
-            if (game == null || !game.IsPrimary) e.Cancel = true;
-          };
+        if (Conf.LimitedMode)
+        {
+          TasClient.FilterBattleByMod += (s, e) =>
+            {
+              var game = KnownGames.GetGame(e.Data);
+              if (game == null || !game.IsPrimary) e.Cancel = true;
+            };
+        }
 
         QuickMatchTracker = new QuickMatchTracking(TasClient, () => BattleBar.GetQuickMatchInfo());
         ConnectBar = new ConnectBar(TasClient);
@@ -292,22 +301,21 @@ namespace ZeroKLobby
       if (ConfigDirectory == null)
       {
         //detect configuration path once
-        if (ApplicationDeployment.IsNetworkDeployed)
+        if (Debugger.IsAttached)
         {
-          // clickonce data folder
-          ConfigDirectory = ApplicationDeployment.CurrentDeployment.DataDirectory;
+          if (SpringPaths.IsDirectoryWritable(StartupPath))
+          {
+            //use startup path when on linux
+            //or if startup path is writable on windows
+            ConfigDirectory = StartupPath;
+          }
+          else
+          {
+            //if we are on windows and startup path isnt writable, use my documents/games/spring
+            ConfigDirectory = SpringPaths.GetMySpringDocPath();
+          }
         }
-        else if (SpringPaths.IsDirectoryWritable(StartupPath))
-        {
-          //use startup path when on linux
-          //or if startup path is writable on windows
-          ConfigDirectory = StartupPath;
-        }
-        else
-        {
-          //if we are on windows and startup path isnt writable, use my documents/games/spring
-          ConfigDirectory = SpringPaths.GetMySpringDocPath();
-        }
+        else ConfigDirectory = SpringPaths.GetMySpringDocPath();
       }
 
       return Path.Combine(ConfigDirectory, Config.ConfigFileName);

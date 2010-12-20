@@ -18,7 +18,7 @@ namespace ZeroKLobby
   public class Config: ICloneable, IPlasmaDownloaderConfig
   {
     public const string BaseUrl = "http://zero-k.info/";
-    public const string ConfigFileName = "SpringDownloaderConfig.xml";
+    public const string ConfigFileName = "ZeroKLobbyConfig.xml";
     public const string IpcFileName = "zero-k_args.txt";
     public const string LogFile = "ZeroKLobbyErrors.txt";
     public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
