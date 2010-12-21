@@ -75,6 +75,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
+    <Compile Include="Controllers\StaticController.cs" />
     <Compile Include="Controllers\WikiController.cs" />
     <Compile Include="ResourceList.aspx.cs">
       <DependentUpon>ResourceList.aspx</DependentUpon>
@@ -111,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
+    <Content Include="LobbyStart.inc" />
     <Content Include="ResourceList.aspx" />
     <Content Include="ErrorReports.aspx" />
     <Content Include="Global.asax">
@@ -165,6 +167,7 @@
     <Content Include="Views\Maps\Detail.cshtml" />
     <Content Include="Views\Maps\MapTags.cshtml" />
     <Content Include="Views\Wiki\Index.cshtml" />
+    <Content Include="Views\Static\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\MonoTorrent\MonoTorrent.csproj">
