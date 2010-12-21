@@ -43,23 +43,13 @@ body
 	opacity: .95;
 }
 
-div#wrapper
-{
-	position: relative;
-	width: 1000px;
-	padding: 10px;
-	margin-left: auto;
-	margin-right: auto;
-	border-top: 0;
-	border-bottom: 0;
-	text-align: justify;
-}
 
 .wrapper
 {
 	position: relative;
-	width: 1000px;
+	
 	padding: 10px;
+	width: 1000px;
 	margin-left: auto;
 	margin-right: auto;
 	border-top: 0;

@@ -11,7 +11,7 @@ namespace ZeroKWeb.Controllers
 {
 	public class MissionsController: Controller
 	{
-		//
+	  //
 		// GET: /Missions/
     public ActionResult Index(string search, int? offset, bool? sp, bool? coop, bool? adversarial)
 		{
@@ -21,9 +21,9 @@ namespace ZeroKWeb.Controllers
 					new MissionsIndexData()
 					{
 						LastUpdated = FilterMissions(db.Missions, search).Take(Global.AjaxScrollCount),
-						MostPlayed = db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.MissionRunCount),
-						MostRating =db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x => x.Rating),
-						LastComments = db.Missions.Where(x=>!x.IsDeleted).OrderByDescending(x=>x.ForumThread.LastPost),
+						MostPlayed = db.Missions.Where(x=>!x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.MissionRunCount),
+            MostRating = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.Rating),
+            LastComments = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.ForumThread.LastPost),
 						SearchString = search,
 					});
 
@@ -77,7 +77,7 @@ namespace ZeroKWeb.Controllers
 
 		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, int? offset = null, bool? sp = null, bool? coop= null, bool? adversarial= null)
 		{
-			ret = ret.Where(x => !x.IsDeleted);
+      ret = ret.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:")));
 			if (sp == false) ret = ret.Where(x => x.MaxHumans > 1);
 			if (coop == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) ||  x.MaxHumans > 1 && !x.IsCoop);
 			if (adversarial == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) || (x.MaxHumans > 1 && x.IsCoop));

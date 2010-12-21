@@ -29,6 +29,7 @@ namespace ZeroKLobby
     StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
     int idleTime = 10;
     StringCollection ignoredUsers = new StringCollection();
+    bool limitedMode = true;
     string lobbyPlayerName;
     string lobbyPlayerPassword;
     string manualSpringPath = @"C:\Program Files\Spring";
@@ -86,7 +87,6 @@ namespace ZeroKLobby
     public Font ChatFont { get { return ChatFontXML.ToFont(); } set { ChatFontXML = new XmlFont(value); } }
     [Browsable(false)]
     public XmlFont ChatFontXML = new XmlFont();
-    public bool LimitedMode = true;
     [Category("Connection")]
     [DisplayName("Connect on startup")]
     [Description("Connect and login player on program start?")]
@@ -166,6 +166,22 @@ namespace ZeroKLobby
     [DisplayName("Disable Context Menu on Leftclick")]
     [Description("Only right clicking shows context menu. Left clicking on a playername will select them in the player list.")]
     public bool LeftClickSelectsPlayer { get; set; }
+    public bool LimitedMode
+    {
+      get { return limitedMode; }
+      set
+      {
+        limitedMode = value;
+        try
+        {
+          WindowsApi.InternetSetCookie(BaseUrl, GlobalConst.LimitedModeCookieName, value ? "1" : "0");
+        }
+        catch (Exception ex)
+        {
+          Trace.TraceError("Cannot set user cookie: {0}", ex);
+        }
+      }
+    }
 
 
     [Category("Chat")]
