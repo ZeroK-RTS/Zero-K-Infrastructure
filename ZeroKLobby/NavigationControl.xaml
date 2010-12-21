@@ -23,9 +23,9 @@
       <Button Click="BattleListPage_Click">Multiplayer</Button>
       <Button Click="ChatPage_Click">Chat</Button>
       <Button Click="HelpPage_Click">Help</Button>
-      <Button Click="MapPage_Click">Maps</Button>
-      <Button Click="WidgetsPage_Click">Widgets</Button>
-      <Button Click="DownloaderPage_Click">Rapid</Button>
+      <Button Click="MapPage_Click" Name="btnMaps">Maps</Button>
+      <Button Click="WidgetsPage_Click" Name="btnWidgets">Widgets</Button>
+      <Button Click="DownloaderPage_Click" Name="btnRapid">Rapid</Button>
       <Button Click="SettingsPage_Click">Settings</Button>
     </UniformGrid>
     <TabControl Grid.Row="2" x:Name="tabControl">

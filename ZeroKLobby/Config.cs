@@ -29,7 +29,7 @@ namespace ZeroKLobby
     StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
     int idleTime = 10;
     StringCollection ignoredUsers = new StringCollection();
-    bool limitedMode = true;
+    bool limitedMode = false;
     string lobbyPlayerName;
     string lobbyPlayerPassword;
     string manualSpringPath = @"C:\Program Files\Spring";

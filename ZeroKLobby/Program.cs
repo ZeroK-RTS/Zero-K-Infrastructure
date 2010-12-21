@@ -153,6 +153,11 @@ namespace ZeroKLobby
 
         LoadConfig();
 
+        // if first started from web directly -> limited mode
+        if (ApplicationDeployment.IsNetworkDeployed && ApplicationDeployment.CurrentDeployment.IsFirstRun && StartupArgs.Length > 0 && StartupArgs[0] == "http://zero-k.info/lobby/Zero-K.application") {
+          Conf.LimitedMode = true;
+        }
+
         Conf.ManualSpringPath = Conf.ManualSpringPath ??
                                 (string)
                                 Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spring", "DisplayIcon", "");
@@ -161,7 +166,7 @@ namespace ZeroKLobby
         if (Debugger.IsAttached) SpringPaths.Cache = Utils.MakePath(StartupPath, "cache");
         else SpringPaths.Cache = Utils.MakePath(SpringPaths.WritableDirectory, "cache", "SD");
         SpringPaths.MakeFolders();
-
+        
         SaveConfig();
 
         SpringPaths.SpringVersionChanged += (s, e) =>
