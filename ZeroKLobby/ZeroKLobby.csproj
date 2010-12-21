@@ -241,12 +241,6 @@
     <Compile Include="MicroLobby\ChatBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MicroLobby\HelpControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\HelpControl.Designer.cs">
-      <DependentUpon>HelpControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="MicroLobby\HistoryManager.cs" />
     <Compile Include="Lines\BroadcastLine.cs" />
     <Compile Include="Lines\ChannelMessageLine.cs" />
@@ -606,9 +600,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\AskBattlePasswordForm.resx">
       <DependentUpon>AskBattlePasswordForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\HelpControl.resx">
-      <DependentUpon>HelpControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AcceptAgreementForm.resx">
       <DependentUpon>AcceptAgreementForm.cs</DependentUpon>

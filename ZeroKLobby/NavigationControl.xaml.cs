@@ -177,10 +177,6 @@ namespace ZeroKLobby
       Path = GetLastPathStartingWith("rapid");
     }
 
-    void HelpPage_Click(object sender, RoutedEventArgs e)
-    {
-      Path = GetLastPathStartingWith("help");
-    }
 
     void MapPage_Click(object sender, RoutedEventArgs e)
     {

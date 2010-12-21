@@ -22,7 +22,6 @@
       <Button Click="MissionsPage_Click">Singleplayer</Button>
       <Button Click="BattleListPage_Click">Multiplayer</Button>
       <Button Click="ChatPage_Click">Chat</Button>
-      <Button Click="HelpPage_Click">Help</Button>
       <Button Click="MapPage_Click" Name="btnMaps">Maps</Button>
       <Button Click="WidgetsPage_Click" Name="btnWidgets">Widgets</Button>
       <Button Click="DownloaderPage_Click" Name="btnRapid">Rapid</Button>
@@ -54,11 +53,6 @@
       <TabItem >
         <WindowsFormsHost>
           <MicroLobby:SettingsTab />
-        </WindowsFormsHost>
-      </TabItem>
-      <TabItem>
-        <WindowsFormsHost>
-          <MicroLobby:HelpControl />
         </WindowsFormsHost>
       </TabItem>
       <TabItem>

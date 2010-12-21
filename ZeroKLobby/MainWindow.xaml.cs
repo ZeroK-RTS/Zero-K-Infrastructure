@@ -319,6 +319,12 @@ namespace ZeroKLobby
 			ipcFileWatcher.EnableRaisingEvents = true;
 			if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
 
+      // if first run show lobby start
+      if (ApplicationDeployment.IsNetworkDeployed && ApplicationDeployment.CurrentDeployment.IsFirstRun)
+      {
+        navigationControl.Path = "http://zero-k.info/Static.mvc/LobbyStart";
+      }
+
       // download primary game 
 		  var defaultTag = KnownGames.GetDefaultGame().RapidTag;
       if (Program.Conf.LimitedMode && !Program.Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag)) {
