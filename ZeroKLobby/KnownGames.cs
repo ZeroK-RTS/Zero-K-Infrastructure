@@ -32,6 +32,8 @@ namespace ZeroKLobby
         new GameInfo { Shortcut = "CT", FullName = "Conflict Terra", Channel = "ct", Regex = new Regex("Conflict Terra.*"), RapidTag = "ct:stable", },
       }.ToList();
 
+    
+
 
     public static GameInfo GetDefaultGame()
     {

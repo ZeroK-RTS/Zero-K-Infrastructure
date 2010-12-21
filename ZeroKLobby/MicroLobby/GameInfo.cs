@@ -26,7 +26,7 @@ namespace ZeroKLobby.MicroLobby
 
 		public override string ToString()
 		{
-			return Shortcut;
+			return FullName;
 		}
 	}
 }
