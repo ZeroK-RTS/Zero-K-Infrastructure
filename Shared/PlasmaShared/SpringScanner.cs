@@ -511,7 +511,11 @@ namespace PlasmaShared
 
       // if spring version changed from last scan, check stored entries, if we dont have hash for current spring version delete entry
       CheckCacheEntriesSpringHash();
-      springPaths.SpringVersionChanged += (s, e) => CheckCacheEntriesSpringHash();
+      springPaths.SpringVersionChanged += (s, e) =>
+        {
+          CheckCacheEntriesSpringHash();
+          lock (workQueue) foreach (var i in workQueue) i.ExecuteOn = DateTime.Now;
+        };
 
 
       Trace.TraceInformation("Initial scan done");
@@ -819,7 +823,7 @@ namespace PlasmaShared
 
 
       public CacheItem CacheItem;
-      public readonly DateTime ExecuteOn;
+      public DateTime ExecuteOn;
       public readonly OperationType Operation;
 
 

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
+using Ionic.Zip;
 using PlasmaShared;
 
 namespace PlasmaDownloader
@@ -26,17 +27,28 @@ namespace PlasmaDownloader
         {
           for (var i = 9; i >= 0; i--)
           {
-            var source = string.Format("{0}spring_{1}.{2}.exe", EngineDownloadPath, Name, i > 0 ? i.ToString() : "");
+            // try to find zip - if does not exist, try exe
+            var source = string.Format("{0}spring_{1}.{2}.zip", EngineDownloadPath, Name, i > 0 ? i.ToString() : "");
+            string extension = ".zip";
+            bool ok = VerifyFile(source);
+            if (!ok)
+            {
+              source = string.Format("{0}spring_{1}.{2}.exe", EngineDownloadPath, Name, i > 0 ? i.ToString() : "");
+              extension = ".exe";
+              ok = VerifyFile(source);
+            }
+
             // if i==-1 we tested without version number
             IndividualProgress = 10 - i;
-            if (VerifyFile(source))
+            if (ok)
             {
               wc = new WebClient() { Proxy = null };
-              var target = Path.GetTempFileName() + ".exe";
+              var target = Path.GetTempFileName() + extension;
               wc.DownloadProgressChanged += (s, e) =>
                 {
                   Length = (int)(e.TotalBytesToReceive);
                   IndividualProgress = 10 + 0.8*e.ProgressPercentage;
+
                 };
               wc.DownloadFileCompleted += (s, e) =>
                 {
@@ -54,25 +66,48 @@ namespace PlasmaDownloader
                   {
                     Trace.TraceInformation("Installing {0}", source);
                     var timer = new Timer((o) => { IndividualProgress += (100 - IndividualProgress)/10; }, null, 1000, 1000);
-                    var p = new Process();
-                    p.StartInfo = new ProcessStartInfo(target, string.Format("/S /D={0}", springPaths.GetEngineFolderByVersion(Name)));
-                    p.Exited += (s2, e2) =>
+
+                    if (extension == ".exe")
+                    {
+                      var p = new Process();
+                      p.StartInfo = new ProcessStartInfo(target, string.Format("/S /D={0}", springPaths.GetEngineFolderByVersion(Name)));
+                      p.Exited += (s2, e2) =>
+                        {
+                          timer.Dispose();
+                          if (p.ExitCode != 0)
+                          {
+                            Trace.TraceWarning("Install of {0} failed: {1}", Name, p.ExitCode);
+                            Finish(false);
+                          }
+                          else
+                          {
+                            Trace.TraceInformation("Install of {0} complete", Name);
+                            springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(Name));
+                            Finish(true);
+                          }
+                        };
+
+                      p.EnableRaisingEvents = true;
+                      p.Start();
+                    } else
+                    {
+                      using (var zip = ZipFile.Read(target))
                       {
-                        timer.Dispose();
-                        if (p.ExitCode != 0)
+                        zip.ExtractProgress += (s3, e3) => { if (e3.EntriesTotal> 0) IndividualProgress = 90 + (10*e3.EntriesExtracted/e3.EntriesTotal); };
+                        try
                         {
-                          Trace.TraceInformation("Install of {0} failed: {1}", Name, p.ExitCode);
-                          Finish(false);
-                        }
-                        else
-                        {
+                          zip.ExtractAll(springPaths.GetEngineFolderByVersion(Name), ExtractExistingFileAction.OverwriteSilently);
                           Trace.TraceInformation("Install of {0} complete", Name);
                           springPaths.SetEnginePath(springPaths.GetEngineFolderByVersion(Name));
                           Finish(true);
+                        } catch (Exception ex)
+                        {
+                          Trace.TraceWarning("Install of {0} failed: {1}", Name, ex);
+                          Finish(false);
                         }
-                      };
-                    p.EnableRaisingEvents = true;
-                    p.Start();
+                      }
+
+                    }
                   }
                 };
               Trace.TraceInformation("Downloading {0}", source);
