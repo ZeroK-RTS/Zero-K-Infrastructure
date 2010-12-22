@@ -181,15 +181,22 @@ namespace LobbyClient
     public event EventHandler<TasEventArgs> UserRemoved = delegate { };
     public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
 
+    bool forcedLocalIP = false;
+
     public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, string ipOverride = null)
     {
       this.appName = appName;
       this.guiThreadInvoker = guiThreadInvoker;
 
-      if (!string.IsNullOrEmpty(ipOverride)) localIp = ipOverride;
+      if (!string.IsNullOrEmpty(ipOverride))
+      {
+        localIp = ipOverride;
+        forcedLocalIP = true;
+      }
       else
       {
         var addresses = Dns.GetHostAddresses(Dns.GetHostName());
+        
         localIp = addresses[0].ToString();
         foreach (var adr in addresses)
         {
@@ -319,7 +326,7 @@ namespace LobbyClient
         con.ConnectionClosed += OnConnectionClosed;
         con.CommandRecieved += OnCommandRecieved;
         con.CommandSent += (s, e) => Output(this, e);
-        con.Connect(host, port);
+        con.Connect(host, port, forcedLocalIP? localIp:null);
       }
       catch
       {

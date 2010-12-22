@@ -102,7 +102,10 @@ namespace PlasmaShared
       CreateFolder(Utils.MakePath(WritableDirectory, "packages"));
       CreateFolder(Utils.MakePath(WritableDirectory, "pool"));
       if (!string.IsNullOrEmpty(Cache)) CreateFolder(Cache);
+
     }
+
+
 
     public void SetEnginePath(string springPath)
     {

@@ -841,7 +841,7 @@ namespace Springie.autohost
 
 		void tas_LoginDenied(object sender, TasEventArgs e)
 		{
-			if (e.ServerParams[0] == "invalid username") tas.Register(GetAccountName(), config.AccountPassword);
+      if (e.ServerParams[0] == "Bad username/password") tas.Register(GetAccountName(), config.AccountPassword);
 			else
 			{
 				CloneNumber++;

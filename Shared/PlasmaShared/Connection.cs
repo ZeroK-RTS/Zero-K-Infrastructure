@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -99,10 +100,11 @@ namespace PlasmaShared
             }
         }
 
-        public void Connect(string host, int port)
+        public void Connect(string host, int port, string bindingIp = null)
         {
             readPosition = 0;
-            tcp = new TcpClient();
+          if (bindingIp == null )  tcp = new TcpClient();
+          else tcp = new TcpClient(new IPEndPoint(IPAddress.Parse(bindingIp),0));
             try
             {
                 isConnecting = true;
