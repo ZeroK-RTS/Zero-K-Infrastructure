@@ -22,7 +22,14 @@ namespace ZeroKLobby.MicroLobby
 		public BrowserControl()
 		{
 			InitializeComponent();
-			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
+      try
+      {
+        WindowsApi.InternetSetCookie(Config.BaseUrl, GlobalConst.LobbyAccessCookieName, "1");
+      } catch (Exception ex)
+      {
+        Trace.TraceWarning("Unable to set ZK cookie:{0}", ex);
+      }
+      if (Process.GetCurrentProcess().ProcessName == "devenv") return;
 		}
 
 
@@ -88,7 +95,6 @@ namespace ZeroKLobby.MicroLobby
 		private void webBrowser_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (Process.GetCurrentProcess().ProcessName == "devenv") return;
-			WindowsApi.InternetSetCookie(Config.BaseUrl, GlobalConst.LobbyAccessCookieName, "1");
 			UrlSecurityZone.InternetSetFeatureEnabled(UrlSecurityZone.InternetFeaturelist.DISABLE_NAVIGATION_SOUNDS, UrlSecurityZone.SetFeatureOn.PROCESS, true);
 			//UrlSecurityZone.InternetSetFeatureEnabled(UrlSecurityZone.InternetFeaturelist.OBJECT_CACHING, UrlSecurityZone.SetFeatureOn.PROCESS, false);
 			

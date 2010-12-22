@@ -207,7 +207,7 @@ namespace ZeroKLobby
 
     void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-      if (string.IsNullOrEmpty(Path)) Path = "battles";
+      if (string.IsNullOrEmpty(Path)) Path = "http://zero-k.info/Missions.mvc";
     }
 
     void WidgetsPage_Click(object sender, RoutedEventArgs e)
