@@ -30,7 +30,7 @@ namespace ZeroKLobby.MicroLobby
       gameBox.DropDownStyle = ComboBoxStyle.DropDownList;
 
       if (Program.Conf.LimitedMode) gameBox.Items.Add(KnownGames.GetDefaultGame());
-      else gameBox.Items.AddRange(KnownGames.List.Select(g => g.FullName).ToArray());
+      else gameBox.Items.AddRange(KnownGames.List.ToArray());
 
       if (defaultGame == null || gameBox.Items.Cast<GameInfo>().SingleOrDefault(n => n == defaultGame) == null) gameBox.SelectedIndex = new Random().Next(0, gameBox.Items.Count);
       else gameBox.SelectedIndex = gameBox.Items.IndexOf(gameBox.Items.Cast<GameInfo>().Single(n => n == defaultGame));
