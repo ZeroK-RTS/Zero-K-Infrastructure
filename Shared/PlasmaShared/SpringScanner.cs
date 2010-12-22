@@ -634,8 +634,8 @@ namespace PlasmaShared
       {
         workItem.CacheItem.InternalName = info.Name;
         workItem.CacheItem.ResourceType = info is Map ? ResourceType.Map : ResourceType.Mod;
-        var hashes =
-          new List<SpringHashEntry>(workItem.CacheItem.SpringHash);
+        var hashes = new List<SpringHashEntry>();
+        if (workItem.CacheItem.SpringHash != null) hashes.AddRange(workItem.CacheItem.SpringHash);
         hashes.Add(new SpringHashEntry(){ SpringHash = info.Checksum, SpringVersion = springPaths.SpringVersion });
         workItem.CacheItem.SpringHash = hashes.ToArray();
 
