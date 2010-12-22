@@ -479,9 +479,9 @@ namespace ZeroKLobby.MicroLobby
 			if (item != null && item.UserName != null)
 			{
 				playerBox.SelectedItem = item;
-				if (item.User != null) ShowPlayerContextMenu(item.User, playerBox, e.Location);
+                if (item.User != null && !Program.Conf.LeftClickSelectsPlayer) ShowPlayerContextMenu(item.User, playerBox, e.Location);
 			}
-		  playerBox.ClearSelected();
+		  //playerBox.ClearSelected();
 		}
 
 		void playerSearchBox_TextChanged(object sender, EventArgs e)
