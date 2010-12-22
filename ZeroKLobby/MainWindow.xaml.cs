@@ -320,7 +320,7 @@ namespace ZeroKLobby
 			if (Program.StartupArgs != null && Program.StartupArgs.Length > 0) navigationControl.Path = Program.StartupArgs[0];
 
       // if first run show lobby start
-      if (ApplicationDeployment.IsNetworkDeployed && ApplicationDeployment.CurrentDeployment.IsFirstRun)
+      if (Program.Conf.IsFirstRun)
       {
         navigationControl.Path = "http://zero-k.info/Static.mvc/LobbyStart";
       }

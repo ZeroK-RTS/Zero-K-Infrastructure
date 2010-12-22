@@ -73,11 +73,13 @@ namespace ZeroKLobby
         try
         {
           Conf = (Config)xs.Deserialize(new StringReader(File.ReadAllText(configFilename)));
+          Conf.IsFirstRun = false;
         }
         catch (Exception ex)
         {
           Trace.TraceError("Error reading config file: {0}", ex);
           Conf = new Config();
+          Conf.IsFirstRun = true;
         }
       }
       else FirstRun = true;
@@ -153,11 +155,6 @@ namespace ZeroKLobby
 
         LoadConfig();
 
-        // if first started from web directly -> limited mode
-        if (ApplicationDeployment.IsNetworkDeployed && ApplicationDeployment.CurrentDeployment.IsFirstRun && StartupArgs.Length > 0 && StartupArgs[0] == "http://zero-k.info/lobby/Zero-K.application") {
-          Conf.LimitedMode = true;
-        }
-
         Conf.ManualSpringPath = Conf.ManualSpringPath ??
                                 (string)
                                 Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spring", "DisplayIcon", "");
@@ -166,6 +163,13 @@ namespace ZeroKLobby
         if (Debugger.IsAttached) SpringPaths.Cache = Utils.MakePath(StartupPath, "cache");
         else SpringPaths.Cache = Utils.MakePath(SpringPaths.WritableDirectory, "cache", "SD");
         SpringPaths.MakeFolders();
+
+        // if first started from web directly and not spring preinstalled -> limited mode
+        if (ApplicationDeployment.IsNetworkDeployed && Conf.IsFirstRun && StartupArgs.Length > 0 && StartupArgs[0] == "http://zero-k.info/lobby/Zero-K.application" && string.IsNullOrEmpty(SpringPaths.SpringVersion)) {
+          Conf.LimitedMode = true;
+
+        }
+
         
         SaveConfig();
 
