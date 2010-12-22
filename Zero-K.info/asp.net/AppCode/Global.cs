@@ -20,7 +20,10 @@ namespace ZeroKWeb
     {
       get
       {
-        return HttpContext.Current.Request[GlobalConst.LimitedModeCookieName] != "0";
+        if (HttpContext.Current.Request[GlobalConst.LimitedModeCookieName] == "0") return false;
+        var cook = HttpContext.Current.Request.Cookies[GlobalConst.LimitedModeCookieName];
+        if (cook != null && cook.Value == "0") return false;
+        return true;
       }
     }
     public static bool IsLobbyAccess { get { return HttpContext.Current.Request.Cookies[GlobalConst.LobbyAccessCookieName] != null && IsAccountAuthorized; } }
