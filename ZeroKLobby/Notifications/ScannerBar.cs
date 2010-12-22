@@ -46,7 +46,7 @@ namespace ZeroKLobby.Notifications
 					{
 						Program.NotifySection.AddBar(this);
 						progressBar1.Maximum = e.WorkTotal;
-						progressBar1.Value = e.WorkDone;
+						progressBar1.Value = Math.Min(e.WorkDone, e.WorkTotal);
 						label1.Text = "Scanning existing maps and games";
 						label2.Text = string.Format("{0}/{1} - {2}", e.WorkDone, e.WorkTotal, e.WorkName);
 					}));

@@ -27,13 +27,18 @@ namespace PlasmaDownloader
         {
           for (var i = 9; i >= 0; i--)
           {
+            
+            string version;
+            if (i > 0) version = string.Format("{0}.{1}", Name, i);
+            else version = Name;
+
             // try to find zip - if does not exist, try exe
-            var source = string.Format("{0}spring_{1}.{2}.zip", EngineDownloadPath, Name, i > 0 ? i.ToString() : "");
+            var source = string.Format("{0}spring_{1}.zip", EngineDownloadPath, version);
             string extension = ".zip";
             bool ok = VerifyFile(source);
             if (!ok)
             {
-              source = string.Format("{0}spring_{1}.{2}.exe", EngineDownloadPath, Name, i > 0 ? i.ToString() : "");
+              source = string.Format("{0}buildbot/default/master/{1}/spring_{1}.exe", EngineDownloadPath, version);
               extension = ".exe";
               ok = VerifyFile(source);
             }
@@ -42,7 +47,7 @@ namespace PlasmaDownloader
             IndividualProgress = 10 - i;
             if (ok)
             {
-              wc = new WebClient() { Proxy = null };
+              var wc = new WebClient() { Proxy = null };
               var target = Path.GetTempFileName() + extension;
               wc.DownloadProgressChanged += (s, e) =>
                 {

@@ -169,6 +169,7 @@ namespace PlasmaShared
     }
 
     bool isDisposed;
+    int workTotal;
 
     public CacheItem FindCacheEntry(string name, int springHash)
     {
@@ -241,6 +242,7 @@ namespace PlasmaShared
 
     void AddWork(CacheItem item, WorkItem.OperationType operationType, DateTime executeOn, bool toFront)
     {
+      workTotal++;
       lock (workQueue)
       {
         var work = new WorkItem(item, operationType, executeOn);
@@ -529,7 +531,7 @@ namespace PlasmaShared
       try
       {
         var isWorking = false;
-        var workCost = 0;
+        var workDone = 0;
         while (!isDisposed)
         {
           Thread.Sleep(ScannerCycleTime);
@@ -545,17 +547,23 @@ namespace PlasmaShared
           while ((workItem = GetNextWorkItem()) != null)
           {
             if (isDisposed) return;
-
+            
             if (!isWorking)
             {
               isWorking = true;
-              workCost = GetWorkCost();
-              WorkStarted(this, new ProgressEventArgs(workCost, workCost, workItem.CacheItem.FileName));
+              workDone = 0;
+              workTotal = GetWorkCost();
+              WorkStarted(this, new ProgressEventArgs(workDone, workTotal, workItem.CacheItem.FileName));
+            } else
+            {
+              workDone++;
+              workTotal = Math.Max(GetWorkCost(), workTotal);
+              WorkProgressChanged(this,
+                    new ProgressEventArgs(workDone, workTotal,
+                                          string.Format("{0} {1}", workItem.Operation, workItem.CacheItem.FileName)));
             }
-            WorkProgressChanged(this,
-                                new ProgressEventArgs(workCost,
-                                                      GetWorkCost(),
-                                                      string.Format("{0} {1}", workItem.Operation, workItem.CacheItem.FileName)));
+
+
             if (workItem.Operation == WorkItem.OperationType.Hash) PerformHashOperation(workItem);
             if (workItem.Operation == WorkItem.OperationType.UnitSync)
             {
@@ -626,7 +634,10 @@ namespace PlasmaShared
       {
         workItem.CacheItem.InternalName = info.Name;
         workItem.CacheItem.ResourceType = info is Map ? ResourceType.Map : ResourceType.Mod;
-        workItem.CacheItem.SpringHash = new[] { new SpringHashEntry() { SpringHash = info.Checksum, SpringVersion = springPaths.SpringVersion } };
+        var hashes =
+          new List<SpringHashEntry>(workItem.CacheItem.SpringHash);
+        hashes.Add(new SpringHashEntry(){ SpringHash = info.Checksum, SpringVersion = springPaths.SpringVersion });
+        workItem.CacheItem.SpringHash = hashes.ToArray();
 
         CacheItemAdd(workItem.CacheItem);
 
@@ -842,11 +853,10 @@ namespace PlasmaShared
     public string WorkName { get; private set; }
     public int WorkTotal { get; private set; }
 
-    public ProgressEventArgs(int workTotal, int workRemaining, string workName)
+    public ProgressEventArgs(int workDone, int workTotal, string workName)
     {
       WorkTotal = workTotal;
-      if (workRemaining > WorkTotal) WorkTotal = workRemaining;
-      WorkDone = WorkTotal - workRemaining;
+      WorkDone = workDone;
       WorkName = workName;
     }
   }

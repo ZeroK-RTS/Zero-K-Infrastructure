@@ -53,7 +53,8 @@ namespace ZeroKLobby.Notifications
 		bool suppressSideChangeEvent;
 		readonly Timer timer = new Timer();
 		string lastBattleFounder;
-		public string CommShareWith { get; set; }
+	  string engineVersionNeeded;
+	  public string CommShareWith { get; set; }
 
 
 	
@@ -147,6 +148,17 @@ namespace ZeroKLobby.Notifications
 
 					Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
 					Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
+				  var match = Regex.Match(battle.Title, "\\[([^\\]]+)\\].*");
+          if (match.Success)
+          {
+            engineVersionNeeded = match.Groups[1].Value;
+          } else
+          {
+            engineVersionNeeded = client.ServerSpringVersion;
+          }
+          if (engineVersionNeeded != Program.SpringPaths.SpringVersion) {
+            Program.Downloader.GetAndSwitchEngine(engineVersionNeeded);
+          } else engineVersionNeeded = null;
 
 					if (battle != previousBattle)
 					{
@@ -515,7 +527,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
 			if (currentStatus.SyncStatus != SyncStatuses.Synced)
 			{
-				if (Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName))
+				if (Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) && (engineVersionNeeded == null || Program.SpringPaths.SpringVersion == engineVersionNeeded))
 				{
 					// if didnt have map and have now, set it
 					newStatus.SyncStatus = SyncStatuses.Synced;
