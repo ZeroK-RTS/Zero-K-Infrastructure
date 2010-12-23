@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -217,6 +218,11 @@ namespace Springie.SpringNamespace
 			{
 				var ser = sender as ContentService;
 				if (ser != null) ser.GetResourceListCompleted -= plasmaService_GetResourceListCompleted;
+        if (e.Cancelled || e.Error != null) {
+          Trace.TraceWarning("Error loading resource list: {0}", e.Error);
+          return;
+        }
+
 				var changed = false;
 				foreach (var x in e.Result)
 				{
