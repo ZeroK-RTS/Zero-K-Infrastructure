@@ -102,7 +102,7 @@ namespace PlasmaShared
     /// <summary>
     /// whether an attempt to load unitsync was performed
     /// </summary>
-    bool unitSyncAttempted;
+    string unitSyncAttemptedFolder;
 
     /// <summary>
     /// number of unitsync operations since the last unitsync initialization
@@ -203,6 +203,7 @@ namespace PlasmaShared
       return GetSpringHash(name, springPaths.SpringVersion);
     }
 
+
     public bool HasResource(string name)
     {
       if (mainThread != null)
@@ -212,15 +213,40 @@ namespace PlasmaShared
       }
       else
       {
-        if (unitSync == null)
-        {
-          if (unitSyncAttempted) return false;
-          unitSync = new UnitSync(springPaths.UnitSyncDirectory);
-        }
+        VerifyUnitSync();
 
-        if (unitSync.GetMapNames().Any(x => x == name)) return true;
-        if (unitSync.GetModNames().Any(x => x == name)) return true;
+        if (unitSync != null)
+        {
+          if (unitSync.GetMapNames().Any(x => x == name)) return true;
+          if (unitSync.GetModNames().Any(x => x == name)) return true;
+        }
         return false;
+      }
+    }
+
+    void VerifyUnitSync()
+    {
+      if (unitSyncAttemptedFolder != springPaths.UnitSyncDirectory)
+      {
+        if (unitSync !=null)
+        {
+          try
+          {
+            unitSync.Dispose();
+          } catch (Exception ex)
+          {
+            Trace.TraceWarning("Error disposing unitsync: {0}", ex);
+          }
+        }
+        unitSync = null;
+        unitSyncAttemptedFolder = springPaths.UnitSyncDirectory;
+        try
+        {
+          unitSync = new UnitSync(springPaths.UnitSyncDirectory);
+        } catch (Exception ex)
+        {
+          Trace.TraceWarning("Error initializing unitsync: {0}", ex);
+        }
       }
     }
 
@@ -395,10 +421,11 @@ namespace PlasmaShared
         unitSyncReInitCounter++;
         if (unitSyncReInitCounter >= UnitSyncReInitFrequency)
         {
-          unitSync.Dispose();
-          unitSync = new UnitSync(springPaths.UnitSyncDirectory);
+          unitSyncAttemptedFolder = null;
           unitSyncReInitCounter = 0;
         }
+        VerifyUnitSync();
+
         var map = unitSync.GetMapFromArchive(filename);
         if (map != null)
         {
@@ -608,18 +635,7 @@ namespace PlasmaShared
 
     void PerformUnitSyncOperation(WorkItem workItem)
     {
-      if (unitSync == null && !unitSyncAttempted)
-      {
-        unitSyncAttempted = true;
-        try
-        {
-          unitSync = new UnitSync(springPaths.UnitSyncDirectory);
-        }
-        catch (Exception ex)
-        {
-          Trace.TraceError("Error loading unitsync: {0}", ex);
-        }
-      }
+      VerifyUnitSync();
 
       if (unitSync == null)
       {
