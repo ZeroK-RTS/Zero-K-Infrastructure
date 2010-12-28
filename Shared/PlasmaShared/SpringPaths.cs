@@ -164,8 +164,8 @@ namespace PlasmaShared
         if (match.Success) return match.Groups[1].Value;
         else
         {
-          match = Regex.Match(data, "\\(([^\\)]+)\\)");
-          if (match.Success) return match.Groups[1].Value;
+          match = Regex.Match(data, "\\((\\{[^\\}]+\\})?([^\\)]+)\\)");
+          if (match.Success) return match.Groups[2].Value;
         }
       }
       catch (Exception ex)

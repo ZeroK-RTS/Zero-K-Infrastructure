@@ -165,9 +165,8 @@ namespace ZeroKLobby
         SpringPaths.MakeFolders();
 
         // if first started from web directly and not spring preinstalled -> limited mode
-        if (ApplicationDeployment.IsNetworkDeployed && Conf.IsFirstRun && StartupArgs.Length > 0 && StartupArgs[0] == "http://zero-k.info/lobby/Zero-K.application" && string.IsNullOrEmpty(SpringPaths.SpringVersion)) {
+        if (ApplicationDeployment.IsNetworkDeployed && Conf.IsFirstRun && StartupArgs.Length > 0 && StartupArgs[0] == "http://zero-k.info/lobby/Zero-K.application" && (string.IsNullOrEmpty(SpringPaths.SpringVersion) || SpringPaths.UnitSyncDirectory.Contains("engine"))) {
           Conf.LimitedMode = true;
-
         }
 
         // set default join channels
@@ -201,9 +200,9 @@ namespace ZeroKLobby
               else
               {
                 MessageBox.Show(
-                  "Another copy of Zero-K lobby is still running for the spring at " + Conf.ManualSpringPath +
+                  "Another copy of Zero-K lobby is still running"+
                   "\nMake sure the other lobby is closed (check task manager) before starting new one",
-                  "There can be only one lobby running for each Spring engine copy",
+                  "There can be only one lobby running",
                   MessageBoxButtons.OK,
                   MessageBoxIcon.Stop);
               }

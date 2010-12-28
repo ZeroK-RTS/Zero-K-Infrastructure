@@ -55,16 +55,15 @@ namespace ZeroKLobby.MicroLobby
         public static Image GetUserImage(string userName)
         {
             User user;
-            if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user))
-            {
-							if (userName == Program.TasClient.UserName) return Resources.jimi;
-							if (user.IsBot) return Resources.robot;
-							if (Program.FriendManager.Friends.Contains(user.Name)) return Resources.Friend;
-							if (user.IsAdmin) return Resources.police;
-							if (user.Rank > 5) return Resources.napoleon;
-							if (user.Rank > 3) return Resources.soldier;
-							if (user.Rank == 0) return Resources.smurf;
-            }
+            if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) {
+              if (userName == Program.TasClient.UserName) return Resources.jimi;
+              if (user.IsBot) return Resources.robot;
+              if (Program.FriendManager.Friends.Contains(user.Name)) return Resources.Friend;
+              if (user.IsAdmin) return Resources.police;
+              if (user.Rank > 5) return Resources.napoleon;
+              if (user.Rank > 3) return Resources.soldier;
+              if (user.Rank == 0) return Resources.smurf;
+            } else return Resources.Grayuser;
 						return Resources.user;
         }
 
