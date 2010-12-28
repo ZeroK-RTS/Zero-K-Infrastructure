@@ -50,7 +50,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationRevision>7</ApplicationRevision>
     <ApplicationVersion>2.8.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -320,12 +320,6 @@
     </Compile>
     <Compile Include="MicroLobby\ChatControl.Designer.cs">
       <DependentUpon>ChatControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MicroLobby\ChatTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MicroLobby\ChatTab.Designer.cs">
-      <DependentUpon>ChatTab.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\PopupNotify.cs">
       <SubType>Form</SubType>
@@ -609,9 +603,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MicroLobby\ChatTab.resx">
-      <DependentUpon>ChatTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\DownloadBar.resx">
     </EmbeddedResource>

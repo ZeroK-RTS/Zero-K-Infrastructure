@@ -170,7 +170,14 @@ namespace ZeroKLobby
 
         }
 
-        
+        // set default join channels
+        if (!Conf.JoinChannelsUpgradeDone)
+        {
+          if (Conf.LimitedMode) Conf.AutoJoinChannels.Add(KnownGames.GetDefaultGame().Channel);
+          else foreach (var game in KnownGames.List) Conf.AutoJoinChannels.Add(game.Channel);
+          Conf.JoinChannelsUpgradeDone = true;
+        }
+
         SaveConfig();
 
         SpringPaths.SpringVersionChanged += (s, e) =>

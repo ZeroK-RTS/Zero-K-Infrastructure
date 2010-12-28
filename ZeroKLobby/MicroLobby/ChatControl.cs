@@ -21,7 +21,7 @@ namespace ZeroKLobby.MicroLobby
 		readonly PlayerListItem notResultsItem = new PlayerListItem { Title = "No match", SortCategory = 3 };
 		protected List<PlayerListItem> playerListItems = new List<PlayerListItem>();
 		readonly PlayerListItem searchResultsItem = new PlayerListItem { Title = "Search results", SortCategory = 1 };
-		public bool CanLeave { get { return !KnownGames.List.Any(g => g.Channel == ChannelName) && ChannelName != "Battle"; } }
+		public bool CanLeave { get { return ChannelName != "Battle"; } }
 		public string ChannelName { get; set; }
 		public IEnumerable<PlayerListItem> PlayerListItems { get { return playerListItems; } }
 		public event EventHandler<EventArgs<string>> ChatLine { add { sendBox.LineEntered += value; } remove { sendBox.LineEntered -= value; } }

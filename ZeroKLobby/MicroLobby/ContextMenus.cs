@@ -108,7 +108,7 @@ namespace ZeroKLobby.MicroLobby
           contextMenu.Items.Add(showTopic);
         }
 
-			  if (!KnownGames.List.Any(g => g.Channel == chatControl.ChannelName) && chatControl.ChannelName != "Battle")
+			  if (chatControl.ChannelName != "Battle")
 				{
 					var autoJoinItem = new System.Windows.Controls.MenuItem() { Header = "Automatically Join Channel", IsChecked = Program.AutoJoinManager.Channels.Contains(chatControl.ChannelName) };
 					autoJoinItem.Click += (s, e) =>
@@ -175,7 +175,7 @@ namespace ZeroKLobby.MicroLobby
           contextMenu.MenuItems.Add(showTopic);
         }
 
-			  if (!KnownGames.List.Any(g => g.Channel == chatControl.ChannelName) && chatControl.ChannelName != "Battle")
+			  if (chatControl.ChannelName != "Battle")
 				{
 					var autoJoinItem = new MenuItem("Automatically Join Channel") { Checked = Program.AutoJoinManager.Channels.Contains(chatControl.ChannelName) };
 					autoJoinItem.Click += (s, e) =>

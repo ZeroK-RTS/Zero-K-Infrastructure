@@ -51,7 +51,6 @@ namespace ZeroKLobby.MicroLobby
       Program.FriendManager.FriendAdded += FriendManager_FriendAdded;
       Program.FriendManager.FriendRemoved += FriendManager_FriendRemoved;
       Program.TasClient.ChannelJoinFailed += TasClient_ChannelJoinFailed;
-      Program.TasClient.ChannelLeaving += TasClient_ChannelLeaving;
       Program.TasClient.ChannelForceLeave += TasClient_ChannelForceLeave;
       Program.TasClient.BattleForceQuit += TasClient_BattleForceQuit;
 
@@ -415,11 +414,6 @@ namespace ZeroKLobby.MicroLobby
       WarningBar.DisplayWarning("Channel Joining Error - " + e.ServerParams[0]);
     }
 
-    void TasClient_ChannelLeaving(object sender, CancelEventArgs<string> e)
-    {
-      var channelName = e.Data;
-      if (KnownGames.List.Any(g => g.Channel == channelName)) e.Cancel = true;
-    }
 
     void TasClient_ChannelLeft(object sender, TasEventArgs e)
     {
@@ -441,8 +435,6 @@ namespace ZeroKLobby.MicroLobby
     {
       AddBattleControl();
       foreach (var friendName in Program.FriendManager.Friends) CreatePrivateMessageControl(friendName);
-      if (Program.Conf.LimitedMode) Program.TasClient.JoinChannel(KnownGames.GetDefaultGame().Channel);
-      else foreach (var game in KnownGames.List) Program.TasClient.JoinChannel(game.Channel);
       foreach (var channel in Program.AutoJoinManager.Channels) Program.TasClient.JoinChannel(channel, Program.AutoJoinManager.GetPassword(channel));
     }
 
