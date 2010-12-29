@@ -18,6 +18,12 @@
 	<br /><br />
 	<a href="http://zero-k.info/lobby/setup.exe" id="download" class="button border">Download</a><br />
 	<br /><br />
+	<h3>Problems installing?</h3>
+	<ul>
+	<li>Try running installer again
+	<li>Try rebooting and then running installer again
+	<li>Download <a href='http://www.microsoft.com/downloads/en/details.aspx?displaylang=en&FamilyID=5765d7a8-7722-4888-a970-ac39b33fd8ab'>Microsoft .NET 4.0 CP</a> manually and then run installer again 
+	</ul>
 	<b>Start Playing!</b>
 </div><!close windows>
 <!-------------------------------------------------------------- -->
