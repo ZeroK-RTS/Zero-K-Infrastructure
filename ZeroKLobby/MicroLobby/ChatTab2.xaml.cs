@@ -380,11 +380,14 @@ namespace ZeroKLobby.MicroLobby
       contextMenu.IsOpen = true;
     }
 
-    void TabItem_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+    void TabItem_PreviewMouseDown(object sender, MouseButtonEventArgs e)
     {
-      e.Handled = true;
-      var tabItem = (TabItem)e.Source;
-      NavigationControl.Instance.Path = GetTabItemPath(tabItem);
+      if (e.LeftButton == MouseButtonState.Pressed)
+      {
+        e.Handled = true;
+        var tabItem = (TabItem)e.Source;
+        NavigationControl.Instance.Path = GetTabItemPath(tabItem);
+      }
     }
 
     void TasClient_BattleForceQuit(object sender, EventArgs e)

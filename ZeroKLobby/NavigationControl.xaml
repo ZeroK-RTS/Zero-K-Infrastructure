@@ -30,7 +30,6 @@
     <TabControl Grid.Row="2" x:Name="tabControl">
       <TabControl.ItemContainerStyle>
         <Style TargetType="{x:Type TabItem}">
-          <EventSetter Event="MouseUp" Handler="TabItem_MouseUp" />
           <Setter Property="Visibility" Value="Collapsed" />
         </Style>
       </TabControl.ItemContainerStyle>

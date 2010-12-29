@@ -32,7 +32,7 @@
         <TabControl x:Name="tabControl" TabStripPlacement="Left" SelectionChanged="tabControl_SelectionChanged">
             <TabControl.ItemContainerStyle>
                 <Style TargetType="{x:Type TabItem}">
-                    <EventSetter Event="MouseUp" Handler="TabItem_PreviewMouseUp" />
+                    <EventSetter Event="PreviewMouseDown" Handler="TabItem_PreviewMouseDown" />
                     <Setter Property="HeaderTemplateSelector">
                         <Setter.Value>
                             <ZeroKLobby:TabItemHeaderSelector />

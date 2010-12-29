@@ -194,16 +194,6 @@ namespace ZeroKLobby
       Path = GetLastPathStartingWith("settings");
     }
 
-    void TabItem_MouseUp(object sender, RoutedEventArgs e)
-    {
-      var navigatable = GetINavigatableFromControl(e.Source);
-      if (navigatable == null) return;
-      Path = navigatable.PathHead;
-      /*var step = new NavigationStep { Path = new[] { navigatable.PathHead } };
-      if (CurrentPage != null) backStack.Push(CurrentPage);
-      CurrentPage = step;
-      forwardStack.Clear();*/
-    }
 
     void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
