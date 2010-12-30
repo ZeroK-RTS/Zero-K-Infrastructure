@@ -6,12 +6,12 @@
 	<!--td><ul class="menu">
 	<li><a onclick="javascript:download();" class="menu-border button" style="color: white">Download</a>
 		<ul class="menu-border">
-			<li><a target="_new" href="missions.mvc">Missions</a>
-			<li><a target="_new" href="maps.mvc">Maps</a>
+			<li><a target="_new" href="/missions.mvc">Missions</a>
+			<li><a target="_new" href="/maps.mvc">Maps</a>
 		</ul>
 	</ul> </td-->
 	<td><ul class="menu">
-	<li><a href="download.php">Download</a>
+	<li><a href="/download.php">Download</a>
 		<ul>
 			<li><a href="download.php">Windows</a></li>
 			<li><a href="download.php">Linux<span>This will now be the only game you ever play</span></a></li>
@@ -21,7 +21,7 @@
 	</li>
 	</ul> </td> 
 	<td><ul class="menu">
-	<li><a href="screen.php">Media</a>
+	<li><a href="/screen.php">Media</a>
 		<ul class="menu-border">
 			<li><a href="screen.php">Screenshots<span>Take a picture, it lasts longer</span></a></li>
 			<li><a href="video.php">Video<span>A video says a thousand pictures</span></a></li>
@@ -32,12 +32,12 @@
 	</ul> </td>
 	
 	<td><ul class="menu">
-	<li><a href="guide-newbie.php">Guide</a>
+	<li><a href="/Wiki.mvc/Manual">Manual</a>
 		<ul class="menu-border">
 			<li><a href="/Wiki.mvc">Introduction<span>Don't know where to begin? Click here.</span></a></li>
-			<li><a href="guide-units.php">Units*</a></li>
-			<li><a target="_new" href="http://springinfo.info/guides/?p=195">Economy*</a></li>
-			<li><a href="guide-terraform.php">Terraforming<span>Let's go play in the dirt!</span></a></li>
+			<li><a href="/Static.mvc/UnitGuide">Units</a></li>
+			<li><a href="/Wiki.mvc/EconomyGuide">Economy</a></li>
+			<li><a href="/Wiki.mvc/Terraforming">Terraforming<span>Let's go play in the dirt!</span></a></li>
 		</ul>
 	</li>
 	</ul> </td> 
