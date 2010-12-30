@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
 using ZkData;
 
@@ -35,8 +36,14 @@ namespace System.Web.Mvc
 
     public static MvcHtmlString IncludeFile(this HtmlHelper helper, string name)
     {
+      if (name.StartsWith("http://")) {
+        var ret = new WebClient().DownloadString(name);
+        return new MvcHtmlString(ret);
+      } else
+      {
         var path = HttpContext.Current.Server.MapPath(name);
         return new MvcHtmlString(File.ReadAllText(path));
+      }
     }
 
     public static MvcHtmlString BoolSelect(this HtmlHelper helper, string name, bool? selected, string anyItem)
