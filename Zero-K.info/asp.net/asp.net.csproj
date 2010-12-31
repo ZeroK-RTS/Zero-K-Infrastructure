@@ -67,6 +67,7 @@
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\NoCache.cs" />
+    <Compile Include="AppCode\WikiHandler.cs" />
     <Compile Include="ContentService.asmx.cs">
       <DependentUpon>ContentService.asmx</DependentUpon>
       <SubType>Component</SubType>

@@ -1,7 +1,7 @@
 <div id="menu" class="border">
 <table>
 	<tr>
-	<td><a href="index.php">Home</a></td>
+	<td><a href="/">Home</a></td>
 	<!link to a thank you page maybe?>
 	<!--td><ul class="menu">
 	<li><a onclick="javascript:download();" class="menu-border button" style="color: white">Download</a>
