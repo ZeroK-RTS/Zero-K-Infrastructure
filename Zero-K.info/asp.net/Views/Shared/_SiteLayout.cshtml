@@ -26,8 +26,7 @@
       </div>
       @Html.IncludeFile("inc_footer.inc");
       <div class="border">
-        <!login> <small>View this site with the <a href='http://zero-k.info/lobby/setup.exe'>
-          Zero-K lobby</a> for all features (to play missions, start maps etc..)</small>
+        <!login> <small>You need Zero-K installed to use all site features</small>
         @if (!(Global.IsAccountAuthorized)) {
           <form method="post" action="@Url.Action("Logon", "Home")" >
           Name:

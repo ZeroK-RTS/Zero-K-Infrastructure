@@ -10,12 +10,16 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Static/
-
         public ActionResult Index(string name = "LobbyStart")
         {
-          if (name == "LobbyStart") return View("Index", (object)"LobbyStart.inc");
-          else if (name == "UnitGuide") return View("Index", (object)"http://packages.springrts.com/zkmanual/index.html");
-          else return Content("Invalid page");
+          if (name == "UnitGuide") return View("Index", (object)"http://packages.springrts.com/zkmanual/index.html");
+
+          if ((name.EndsWith(".inc") || name.EndsWith("html") || name.EndsWith("htm")) && System.IO.File.Exists(Server.MapPath(name)))
+          {
+            return View("Index", (object)name);
+          }
+          
+          return Content("Invalid page");
         }
 
     }

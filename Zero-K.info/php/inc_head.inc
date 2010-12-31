@@ -4,3 +4,5 @@
 	<link rel="icon" href="img/favicon.png" />
 	<script type="text/javascript" src="Scripts/base.js"></script>
 	<script type="text/javascript" src="Scripts/browser-css.js"></script>
+	<script type="text/javascript" src="Scripts/jquery-1.4.2.min.js"></script>
+	

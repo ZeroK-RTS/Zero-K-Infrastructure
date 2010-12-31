@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using ZeroKWeb;
 using ZkData;
 
 namespace System.Web.Mvc
@@ -45,6 +46,12 @@ namespace System.Web.Mvc
         return new MvcHtmlString(File.ReadAllText(path));
       }
     }
+
+    public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node)
+    {
+      return new MvcHtmlString(WikiHandler.LoadWiki(node));
+    }
+
 
     public static MvcHtmlString BoolSelect(this HtmlHelper helper, string name, bool? selected, string anyItem)
     {
