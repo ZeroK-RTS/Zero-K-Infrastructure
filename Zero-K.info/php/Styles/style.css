@@ -154,3 +154,9 @@ div#footer
     display: none;
 }
 
+/* google wiki */
+.section_anchor 
+{
+  display:none;
+  color: Black;
+}
