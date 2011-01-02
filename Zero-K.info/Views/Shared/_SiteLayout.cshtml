@@ -31,21 +31,19 @@
     <style type="text/css"> html { background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0; }</style>
     }
   }
+  <script type="text/javascript">
 
-<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-20510497-1']);
+    _gaq.push(['_trackPageview']);
 
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-20510497-1']);
-  _gaq.push(['_trackPageview']);
+    (function () {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
 
-  (function () {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
+  </script>
 </head>
 <body class="">
   @if (!Global.IsLobbyAccess) {
@@ -129,16 +127,31 @@
               </ul>
             </td>
             <td width="100%">
-              <form onsubmit='window.location="http://www.google.com/search?hl=en&safe=off&q=site%3Azero-k.info+" + $(search).val();return false;'>
-              <table>
-                <tr>
-                  <td width="100%" align="right">
-                    <input type="text" id="search" onclick="clearinput('search');" value="Search" class="" />
-                  </td>
-                  <td>
-                </tr>
-              </table>
-              </form>
+              <style type="text/css">
+ @@import url(http://www.google.com/cse/api/branding.css);
+</style>
+              <div style="background-color: #000000; color: #FFFFFF">
+                <div>
+                  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+                  <script type="text/javascript">
+                    google.load('search', '1');
+                    google.setOnLoadCallback(function () {
+                      google.search.CustomSearchControl.attachAutoCompletion(
+      '005922609343212335344:hhfjrwusr9u',
+      document.getElementById('q'),
+      'cse-search-box');
+                    });
+                  </script>
+                  <form action="http://www.google.com/cse" id="cse-search-box">
+                  <div>
+                    <input type="hidden" name="cx" value="005922609343212335344:hhfjrwusr9u" />
+                    <input type="hidden" name="ie" value="UTF-8" />
+                    <input type="text" name="q" id="q" autocomplete="off" size="11" />
+                    <input type="submit" name="sa" value="Search" />
+                  </div>
+                  </form>
+                </div>
+              </div>
             </td>
           </tr>
         </table>
