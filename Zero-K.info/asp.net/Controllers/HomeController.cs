@@ -10,6 +10,7 @@ namespace ZeroKWeb.Controllers
 {
   public class HomeController: Controller
   {
+
     //
     // GET: /Home/
     public static string GetMapTooltip(int id)
@@ -31,6 +32,11 @@ namespace ZeroKWeb.Controllers
 
       sb.Append("</span>");
       return sb.ToString();
+    }
+
+    public ActionResult Index()
+    {
+      return View();
     }
 
     public static string GetMissionTooltip(int id)

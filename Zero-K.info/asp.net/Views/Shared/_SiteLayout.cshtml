@@ -2,7 +2,10 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="description" content="Zero-K or zero k is a FREE, multiplatform, open-source RTS game, which aims to be a dynamic, action-packed, hassle-free game, full of clever strategies and constantly moving combat which usually lasts on average 20-30 minutes." />
+  <meta name="keywords" content="Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech, online, space, 4x" />
   <title>Zero-K</title>
+  <link rel="icon" href='@Href("~/img/favicon.png")'/>
   <link rel="Stylesheet" href='@Href("~/Styles/style.css")' type="text/css" />
   <script type="text/javascript" src='@Href("~/Scripts/MicrosoftAjax.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/MicrosoftMvcAjax.js")' ></script>
@@ -13,21 +16,124 @@
   <script type="text/javascript" src='@Href("~/Scripts/site.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/base.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' ></script>
+  @if (!Global.IsLobbyAccess) {
+    <style type="text/css">
+      html
+      {
+        background: #000 url("/img/bg_bluehex.gif") scroll 50% 0;
+      }
+    </style>
+  <!--style type="text/css" > html { background: #000 url("img/screenshots/'.$screenshot.'") no-repeat scroll 50% 0; }</style-->
+  }
 </head>
-@if (!Global.IsLobbyAccess) {
-@Html.IncludeFile("inc_plainbg.inc")
-}
 <body class="">
   @if (!Global.IsLobbyAccess) {
     <div class="wrapper">
-      @Html.IncludeFile("inc_header.inc"); @Html.IncludeFile("inc_menu.inc");
+      <div id="header" class="text-center">
+        <a href="/">
+          <img src="/img/zk_logo.png" height="150px" alt="Zero K" /></a>
+      </div>
+      <!close header>
+      <div id="menu" class="border">
+        <table>
+          <tr>
+            <td>
+              <a href="/">Home</a>
+            </td>
+            <!link to a thank you page maybe?>
+            <td>
+              <ul class="menu">
+                <li><a href="/Wiki.mvc/Download">Download</a>
+                  <ul>
+                    <li><a href="/Wiki.mvc/Download#Windows">Windows</a></li>
+                    <li><a href="/Wiki.mvc/Download#Linux">Linux<span>This will now be the only game you
+                      ever play</span></a></li>
+                    <li><a href="/Wiki.mvc/Download#Mac">Mac</a></li>
+                    <li><a href="http://code.google.com/p/zero-k/source/checkout">Sources<span>You awesome,
+                      intelligent man-beast, you...</span></a></li>
+                  </ul>
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul class="menu">
+                <li><a href="/Wiki.mvc/Media">Media</a>
+                  <ul class="menu-border">
+                    <li><a href="/Wiki.mvc/Media#Screenshots">Screenshots<span>Take a picture, it lasts
+                      longer</span></a></li>
+                    <li><a href="/Wiki.mvc/Media#Videos">Video<span>A video says a thousand pictures</span></a></li>
+                    <li><a target="_new" href="http://trac.caspring.org/wiki/ConceptArt">Concept Art</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul class="menu">
+                <li><a href="/Wiki.mvc/Manual">Manual</a>
+                  <ul class="menu-border">
+                    <li><a href="/Wiki.mvc">Introduction<span>Don't know where to begin? Click here.</span></a></li>
+                    <li><a href="/Static.mvc/UnitGuide">Units</a></li>
+                    <li><a href="/Wiki.mvc/EconomyGuide">Economy</a></li>
+                    <li><a href="/Wiki.mvc/Terraforming">Terraforming<span>Let's go play in the dirt!</span></a></li>
+                  </ul>
+                </li>
+              </ul>
+            </td>
+            <td>
+              <ul class="menu">
+                <li><a href="/Missions.mvc">Extras</a>
+                  <ul class="menu-border">
+                    <li><a target="_new" href="/Missions.mvc">Missions</a></li>
+                    <li><a target="_new" href="/Maps.mvc">Maps</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </td>
+            <td>
+              <a target="_new" href="http://springrts.com/phpbb/viewforum.php?f=42">Forums</a>
+            </td>
+            <td>
+              <ul class="menu">
+                <li><a target="_new" href="http://code.google.com/p/zero-k/">Contribute</a>
+                  <ul class="menu-border">
+                    <li><a target="_new" href="http://code.google.com/p/zero-k/issues/entry">Bugs?<span>Let
+                      us know so we can <b>squash them!</b></span></a></li>
+                    <li><a target="_new" href="http://code.google.com/p/zero-k/source/browse/trunk#trunk/mods/zk">
+                      Code</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </td>
+            <td width="100%">
+              <form onsubmit='window.location="http://www.google.com/search?hl=en&safe=off&q=%28+site%3A%2A.zero-k.info%2F%2A+%29+" + $(search).val();return false;'>
+              <table>
+                <tr>
+                  <td width="100%" align="right">
+                    <input type="text" id="search" onclick="clearinput('search');" value="Search" class="" />
+                  </td>
+                  <td>
+                </tr>
+              </table>
+              </form>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <!close navigation>
       <div class="border">
         @RenderBody()
       </div>
-      @Html.IncludeFile("inc_footer.inc");
-      <div class="border">
-        <!login> <small>You need Zero-K installed to use all site features</small>
-        @if (!(Global.IsAccountAuthorized)) {
+      <div id="footer" class="border">
+        <span class="abs left cdark">Design by maackey</span>
+        <div class="center">
+          <a href="/Wiki.mvc/Credits">Credits</a> | <a href="http://code.google.com/p/zero-k/issues/entry">
+            Contact</a> | <a href="/Wiki.mvc/Copyright">Copyright</a>
+        </div>
+      </div>
+      <!close footer>
+      @if (!(Global.IsAccountAuthorized)) {
+        <div class="border">
+          <!login> <small>You need Zero-K installed to use all site features</small>
           <form method="post" action="@Url.Action("Logon", "Home")" >
           Name:
           <input type="text" name="login" />
@@ -37,13 +143,15 @@
           <input type="submit" value="Login" />
           <input type="hidden" name="referer" value="@Request.Url" />
           </form>
-        }
-      </div>
+        </div>
       <!close login>
+
+      }
     </div>
+    
   <!close wrapper>
   } else {
-    <div style="margin:10px;">
+    <div style="margin: 10px;">
       @RenderBody()
     </div>
   }

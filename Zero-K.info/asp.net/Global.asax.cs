@@ -46,7 +46,7 @@ namespace ZeroKWeb
 
 			routes.MapRoute("Default", "{controller}.mvc/{action}/{id}", new { controller = "Home", action = "Index", id = UrlParameter.Optional });
       
-		  //routes.MapRoute("Root", "", new { controller = "Home", action = "Index", id = "" });
+		  routes.MapRoute("Root", "", new { controller = "Home", action = "Index", id = "" });
 		}
 
 		protected void Application_Start()
