@@ -299,7 +299,7 @@ namespace ZeroKLobby
     /// Keeps datetime of last topic change for each channel
     /// </summary>
     public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
-    public bool IsFirstRun;
+    public bool IsFirstRun = true;
     public Config() {}
 
 

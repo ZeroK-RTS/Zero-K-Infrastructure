@@ -33,7 +33,6 @@ namespace ZeroKLobby
     public static Config Conf = new Config();
     public static ConnectBar ConnectBar { get; private set; }
     public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
-    public static bool FirstRun { get; private set; }
     public static FriendManager FriendManager;
     public static MainWindow MainWindow { get; private set; }
     public static ModStore ModStore { get; private set; }
@@ -64,7 +63,9 @@ namespace ZeroKLobby
         // port old config      
         if (ApplicationDeployment.IsNetworkDeployed)
         {
-          configFilename = Path.Combine(ApplicationDeployment.CurrentDeployment.DataDirectory,"SpringDownloaderConfig.xml");
+          try {
+            File.Move(Path.Combine(ApplicationDeployment.CurrentDeployment.DataDirectory, "SpringDownloaderConfig.xml"), configFilename);
+          } catch { }
         }
       }
 
@@ -82,7 +83,7 @@ namespace ZeroKLobby
           Conf.IsFirstRun = true;
         }
       }
-      else FirstRun = true;
+      else Conf.IsFirstRun = true;
 
       Conf.UpdateFadeColor();
     }
@@ -164,8 +165,9 @@ namespace ZeroKLobby
         else SpringPaths.Cache = Utils.MakePath(SpringPaths.WritableDirectory, "cache", "SD");
         SpringPaths.MakeFolders();
 
+        //Conf.IsFirstRun = true;
         // if first started from web directly and not spring preinstalled -> limited mode
-        if (ApplicationDeployment.IsNetworkDeployed && Conf.IsFirstRun && StartupArgs.Length > 0 && StartupArgs[0] == "http://zero-k.info/lobby/Zero-K.application" && (string.IsNullOrEmpty(SpringPaths.SpringVersion) || SpringPaths.UnitSyncDirectory.Contains("engine"))) {
+        if (Conf.IsFirstRun && (string.IsNullOrEmpty(SpringPaths.SpringVersion) || SpringPaths.UnitSyncDirectory.Contains("engine"))) {
           Conf.LimitedMode = true;
         }
 

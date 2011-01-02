@@ -14,9 +14,9 @@ namespace ZeroKWeb.Controllers
         {
           if (name == "UnitGuide") return View("Index", (object)"http://packages.springrts.com/zkmanual/index.html");
 
-          if ((name.EndsWith(".inc") || name.EndsWith("html") || name.EndsWith("htm")) && System.IO.File.Exists(Server.MapPath(name)))
+          if (System.IO.File.Exists(Server.MapPath(name+".inc")))
           {
-            return View("Index", (object)name);
+            return View("Index", (object)(name+".inc"));
           }
           
           return Content("Invalid page");
