@@ -160,3 +160,26 @@ div#footer
   display:none;
   color: Black;
 }
+
+/* Styles for unitguide
+-----------------------------------------------------------*/
+
+.unitname {
+    font-weight:bold;
+}
+.unitdesc  {
+    font-style:oblique;
+}
+.helptext {
+	font-size:small;
+}
+
+.buildpic {
+    border: 1px solid white;
+}
+.statsnumval {
+	font-weight:bold;
+	color:DarkCyan;
+	font-family: monospace;
+	white-space:nowrap;
+}
