@@ -1,0 +1,42 @@
+﻿/*
+// nicetitle
+// super tooltipy
+
+div.nicetitle {
+    position: absolute;
+    padding: 4px;
+    top: 0px;
+    left: 0px;
+    color: black;
+    font-size: 0.7em;
+    font-family: Verdana;
+    font-weight: bold;
+    display: block;
+    overflow: auto;
+    white-space: pre-wrap;
+    background-color: #f4cecc;
+	border: 1px solid #780600;     
+}
+*/
+div.nicetitle 
+{
+	z-index:2;
+    position: absolute;
+    padding: 8px;
+    top: 0px;
+    left: 0px;
+    color: black;
+    font-size: 0.9em;
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-weight:normal;
+    background-image: url(../img/ntbgw.png);
+    border: 1px solid #780600;
+}
+div.nicetitle p {
+    margin: 0; padding: 0 3px;
+}
+div.nicetitle p.destination {
+    font-size: 9px;
+    text-align: left;
+    padding-top: 3px;
+}

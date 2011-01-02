@@ -1,0 +1,49 @@
+﻿@model ZeroKWeb.Controllers.MissionsIndexData
+
+@{
+	Page.Title = "Zero-K missions";
+}
+
+<form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
+	Name or author: @Html.TextBox("search", Model.SearchString)
+	<input type="submit" id="submit" value="Search" />
+	<br />
+	<span title="Missions for one player">Singleplayer: @Html.CheckBox("sp", true)</span>
+	<span title="Missions where players fight together versus computer">Coop: @Html.CheckBox("coop", true)</span>
+	<span title="Missions where players fight each other">Adversarial: @Html.CheckBox("adversarial", true)</span>
+</form>
+
+<span>Design new missions with the <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>
+	Zero-K Mission Editor</a> </span>
+<table width='100%'>
+	<tr>
+		<td valign='top'>
+			<div id='ajaxScrollTarget'>
+				<h3>Lastest missions</h3>
+				@{Html.RenderPartial("TileList", Model.LastUpdated);}
+			</div>
+		</td>
+		<td width="250" valign="top" align="left">
+			<h3>Highest rated</h3>
+			<ul>
+				@foreach (var mission in Model.MostRating.Take(15)) {
+					<li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
+				}
+			</ul>
+			<h3>Lastest comments</h3>
+			<ul>
+				@foreach (var mission in Model.LastComments.Take(15)) {
+					<li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
+				}
+			</ul>
+			<h3>Most played</h3>
+			<ul>
+				@foreach (var mission in Model.MostPlayed.Take(15)) {
+					<li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
+				}
+			</ul>
+		</td>
+	</tr>
+</table>
+
+<span style="display:none" id='ajaxScrollProgress'>Loading ... </span>

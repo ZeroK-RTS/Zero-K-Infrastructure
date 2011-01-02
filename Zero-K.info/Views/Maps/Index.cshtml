@@ -1,0 +1,100 @@
+﻿@model ZeroKWeb.Controllers.MapsController.MapIndexData
+@{
+  Page.Title = "Zero-K maps";
+}
+<form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
+Size:
+<select name="size">
+  <option>Any</option>
+  <option value='1'>Small</option>
+  <option value='2'>Medium</option>
+  <option value='3'>Big</option>
+</select>
+Sea:
+<select name="sea">
+  <option>Any</option>
+  <option value="1">Land</option>
+  <option value="2">Mixed</option>
+  <option value="3">Sea</option>
+</select>
+Hills:
+<select name="hills">
+  <option>Any</option>
+  <option value="1">Flat</option>
+  <option value="2">Hills</option>
+  <option value="3">Mountains</option>
+</select>
+<span title='Maps suitable for Free-For-All games - multiple teams' style='white-space:nowrap'>
+FFA:
+<select name="ffa">
+  <option>Any</option>
+  <option value='false'>Normal</option>
+  <option value='true'>FFA</option>
+</select>
+</span>
+Dimensions:
+<select name="elongated">
+  <option>Any</option>
+  <option value='false'>Square-like</option>
+  <option value='true'>Elongated</option>
+</select>
+Assymetrical:
+<select name="assymetrical">
+  <option>Any</option>
+  <option value="false">Symmetrical</option>
+  <option value="true">Assymetrical</option>
+</select>
+<span title='Maps with special features, speedmetal, duck, greenfields etc' style='white-space:nowrap'>
+Special:
+  <select name="special">
+    <option value="-1">Any</option>
+    <option value="0" selected>Normal</option>
+    <option value="1">Special</option>
+  </select>
+</span>
+Download: <select name="isDownloadable">
+    <option value='-1'>Any</option>
+    <option value='1' selected>Downloadable</option>
+    <option value='0'>Not verified</option>
+  </select>
+<span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)' style='white-space:nowrap'>
+Needs tagging: @Html.CheckBox("needsTagging")
+</span>
+<br />
+Name or author: @Html.TextBox("search")
+<input type="submit" id="submit" value="Search" />
+</form>
+<table width='100%'>
+  <tr>
+    <td>
+      <div id='ajaxScrollTarget'>
+        <b>Latest maps</b><br />
+        @{Html.RenderPartial("MapTileList", Model.Latest);}
+      </div>
+    </td>
+    <td width="250" valign="top" align="left">
+      <h3>
+        Highest rated</h3>
+      <ul>
+        @foreach (var r in Model.TopRated.Take(15)) {
+          <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
+        }
+      </ul>
+      <h3>
+        Last comments</h3>
+      <ul>
+        @foreach (var r in Model.LastComments.Take(15)) {
+          <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
+        }
+      </ul>
+      <h3>
+        Most downloads</h3>
+      <ul>
+        @foreach (var r in Model.MostDownloads.Take(15)) {
+          <li><span title='$map$@r.ResourceID'>@Html.ActionLink(r.InternalName, "Detail", new { id = r.ResourceID })</span></li>
+        }
+      </ul>
+    </td>
+  </tr>
+</table>
+<span style="display: none" id='ajaxScrollProgress'>Loading ... </span>

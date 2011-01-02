@@ -1,0 +1,21 @@
+﻿@model ZkData.Resource
+@{
+  var m = Model;
+  Layout = "";
+}
+
+@if (m.MapIsFfa == true) {
+  <img src='/img/map_tags/ffa.png' style="width: 32px; height: 32px" title="Free For All" />
+}
+@if (m.MapWaterLevel > 0) {
+  <img src='/img/map_tags/sea@(m.MapWaterLevel).png' style="width:32px; height: 32px" title="Sea coverage"/>
+}
+@if (m.MapHills > 0) {
+  <img src='/img/map_tags/hill@(m.MapHills).png' style="width:32px; height: 32px" title="Terrain"/>
+}
+@if (m.MapIsSpecial == true) {
+  <img src='/img/map_tags/special.png' style="width: 32px; height: 32px" title="Map has special features" />
+}
+@if (m.MapIsAssymetrical == true) {
+  <img src='/img/map_tags/assymetrical.png' style="width: 32px; height: 32px" title="Map layout is assymetrical" />
+}
