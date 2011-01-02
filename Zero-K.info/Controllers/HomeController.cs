@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using PlasmaShared;
@@ -10,6 +13,35 @@ namespace ZeroKWeb.Controllers
 {
   public class HomeController: Controller
   {
+    public ActionResult Sitemap()
+    {
+      var sb = new StringBuilder();
+      var db = new ZkDataContext();
+
+      foreach (var x in db.Missions)
+      {
+        sb.AppendLine(Url.Action("Detail", "Missions", new { id = x.MissionID },"http"));
+      }
+
+      foreach (var x in db.Resources) {
+        sb.AppendLine(Url.Action("Detail", "Maps", new { id = x.ResourceID }, "http"));
+      }
+
+      var wikiIndex = new WebClient().DownloadString("http://zero-k.googlecode.com/svn/wiki/");
+      var matches = Regex.Matches(wikiIndex, "\"([^\"]+)\"");
+      foreach (Match m in matches)
+      {
+        if (m.Groups[1].Value.EndsWith(".wiki"))
+        {
+          var name = m.Groups[1].Value;
+          name = name.Substring(0, name.Length - 5);
+
+          sb.AppendLine(Url.Action("Index", "Wiki", new { node = name }, "http"));
+        }
+      }
+
+      return Content(sb.ToString());
+    }
 
     //
     // GET: /Home/
