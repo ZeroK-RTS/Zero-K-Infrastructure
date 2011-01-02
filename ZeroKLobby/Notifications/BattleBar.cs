@@ -259,7 +259,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 							{
 								client.Say(TasClient.SayPlace.Battle,
 								           "",
-								           "QuickMatching ( http://zero-k.info/lobby ) - leaving because i was specced, I will rejoin later",
+								           "QuickMatching - leaving because i was specced, I will rejoin later",
 								           true);
 								client.LeaveBattle(); // we were specced, get out of there}
 							}
@@ -486,7 +486,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				client.Say(TasClient.SayPlace.Battle,
 				           "",
 				           string.Format(
-				           	"QuickMatching ( http://zero-k.info/lobby ), waiting for {0} players. Spec me with !specafk if you want to play with less.",
+				           	"QuickMatching, waiting for {0} players. Spec me with !specafk if you want to play with less.",
 				           	(int)numMinValue.Value),
 				           false);
 			}
@@ -495,7 +495,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				client.Say(TasClient.SayPlace.Battle,
 				           "",
 				           string.Format(
-				           	"Using Zero-K ( http://zero-k.info/lobby ), waiting for {0} players. Spec me with !specafk if you want to play with less.",
+				           	"Waiting for {0} players. Spec me with !specafk if you want to play with less.",
 				           	(int)numMinValue.Value),
 				           false);
 			}

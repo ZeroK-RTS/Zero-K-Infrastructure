@@ -19,9 +19,11 @@ using ZeroKLobby.Notifications;
 using ZkData;
 using ContextMenu = System.Windows.Forms.ContextMenu;
 using Control = System.Windows.Forms.Control;
+using FlowDirection = System.Windows.FlowDirection;
 using Image = System.Drawing.Image;
 using Label = System.Windows.Controls.Label;
 using MenuItem = System.Windows.Forms.MenuItem;
+using Orientation = System.Windows.Controls.Orientation;
 using UserControl = System.Windows.Controls.UserControl;
 
 namespace ZeroKLobby.MicroLobby

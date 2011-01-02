@@ -174,11 +174,11 @@
     <None Include="unit.php" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Shared\MonoTorrent\MonoTorrent.csproj">
+    <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
       <Project>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</Project>
       <Name>MonoTorrent</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Shared\PlasmaShared\PlasmaShared.csproj">
+    <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>
     </ProjectReference>

@@ -283,7 +283,7 @@ namespace ZeroKLobby
 		{
 			if (Debugger.IsAttached) Title = "==== DEBUGGING ===";
 			else if (ApplicationDeployment.IsNetworkDeployed) Title = "Zero-K lobby";
-			else Title += " not installed properly - update from http://zero-k.info/lobby";
+			else Title += " not installed properly - update from http://zero-k.info/";
 
 			Icon = ZeroKLobby.Resources.ZkIcon.ToBitmap().ToBitmapSource();
 			systrayIcon.Icon = ZeroKLobby.Resources.ZkIcon;

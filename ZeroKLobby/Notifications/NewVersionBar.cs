@@ -29,7 +29,7 @@ namespace ZeroKLobby.Notifications
 				timer = new Timer(timer_Tick, null, TimeSpan.FromMinutes(20), TimeSpan.FromMinutes(20));
 			}
 
-			else Trace.TraceError("Zero-K not installed propery - get latest version from http://zero-k.info/lobby");
+			else Trace.TraceError("Zero-K not installed propery - get latest version from http://zero-k.info/");
 		}
 
 
