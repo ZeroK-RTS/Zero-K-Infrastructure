@@ -136,7 +136,6 @@
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
-    <Content Include="units.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -171,7 +170,6 @@
     <Content Include="Views\Wiki\Index.cshtml" />
     <Content Include="Views\Static\Index.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <None Include="unit.php" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

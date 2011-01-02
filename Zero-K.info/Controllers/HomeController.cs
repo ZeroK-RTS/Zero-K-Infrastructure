@@ -77,7 +77,8 @@ namespace ZeroKWeb.Controllers
         var parts = line.Split('\t');
         spotlight.Unitname = parts[0];
         spotlight.Name = parts[1];
-        spotlight.Description = parts[2];
+        spotlight.Title = parts[2];
+        spotlight.Description = parts[3];
       } catch (Exception ex)
       {
         Trace.TraceError("Error generating unit spotlight: {0}", ex);
@@ -96,6 +97,7 @@ namespace ZeroKWeb.Controllers
     {
       public string Unitname;
       public string Name;
+      public string Title;
       public string Description;
     }
 
