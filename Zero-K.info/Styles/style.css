@@ -179,7 +179,15 @@ div#footer
 }
 .statsnumval {
 	font-weight:bold;
-	color:DarkCyan;
+	color:DeepSkyBlue;
 	font-family: monospace;
 	white-space:nowrap;
 }
+.statsfield {
+	font-size:small;
+}
+
+
+
+
+
