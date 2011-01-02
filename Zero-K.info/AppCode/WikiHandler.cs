@@ -10,7 +10,7 @@ namespace ZeroKWeb
   {
     public static string LoadWiki(string node) {
       var wc = new WebClient();
-      if (String.IsNullOrEmpty(node)) node = "Intro";
+      if (String.IsNullOrEmpty(node)) node = "Manual";
 
       var ret = wc.DownloadString("http://code.google.com/p/zero-k/wiki/" + node);
 

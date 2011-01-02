@@ -17,13 +17,19 @@
   <script type="text/javascript" src='@Href("~/Scripts/base.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' ></script>
   @if (!Global.IsLobbyAccess) {
+    if (PageData["StaticBackground"] == true) {
     <style type="text/css">
       html
       {
         background: #000 url("/img/bg_bluehex.gif") scroll 50% 0;
       }
     </style>
-  <!--style type="text/css" > html { background: #000 url("img/screenshots/'.$screenshot.'") no-repeat scroll 50% 0; }</style-->
+    } else {
+      var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
+      var random = new Random();
+      var file = Path.GetFileName(files[random.Next(files.Length)]);
+    <style type="text/css"> html { background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0; }</style>
+    }
   }
 </head>
 <body class="">
@@ -71,7 +77,9 @@
               <ul class="menu">
                 <li><a href="/Wiki.mvc/Manual">Manual</a>
                   <ul class="menu-border">
-                    <li><a href="/Wiki.mvc">Introduction<span>Don't know where to begin? Click here.</span></a></li>
+                    <li><a href="/Wiki.mvc/Manual">Index</a></li>
+                    <li><a href="/Wiki.mvc/NewbieGuide">Newbie guide<span>Don't know where to begin? Click
+                      here.</span></a></li>
                     <li><a href="/Static.mvc/UnitGuide">Units</a></li>
                     <li><a href="/Wiki.mvc/EconomyGuide">Economy</a></li>
                     <li><a href="/Wiki.mvc/Terraforming">Terraforming<span>Let's go play in the dirt!</span></a></li>
@@ -83,8 +91,8 @@
               <ul class="menu">
                 <li><a href="/Missions.mvc">Extras</a>
                   <ul class="menu-border">
-                    <li><a target="_new" href="/Missions.mvc">Missions</a></li>
-                    <li><a target="_new" href="/Maps.mvc">Maps</a></li>
+                    <li><a href="/Missions.mvc">Missions</a></li>
+                    <li><a href="/Maps.mvc">Maps</a></li>
                   </ul>
                 </li>
               </ul>
@@ -96,10 +104,11 @@
               <ul class="menu">
                 <li><a target="_new" href="http://code.google.com/p/zero-k/">Contribute</a>
                   <ul class="menu-border">
-                    <li><a target="_new" href="http://code.google.com/p/zero-k/issues/entry">Bugs?<span>Let
-                      us know so we can <b>squash them!</b></span></a></li>
-                    <li><a target="_new" href="http://code.google.com/p/zero-k/source/browse/trunk#trunk/mods/zk">
-                      Code</a></li>
+                    <li><a target="_new" href="http://code.google.com/p/zero-k/">Development site</a>
+                      <li><a target="_new" href="http://code.google.com/p/zero-k/issues/entry">Bugs?<span>Let
+                        us know so we can <b>squash them!</b></span></a></li>
+                      <li><a target="_new" href="http://code.google.com/p/zero-k/source/browse/trunk#trunk/mods/zk">
+                        Code</a></li>
                   </ul>
                 </li>
               </ul>
@@ -145,7 +154,6 @@
           </form>
         </div>
       <!close login>
-
       }
     </div>
     
