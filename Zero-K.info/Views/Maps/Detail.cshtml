@@ -118,7 +118,6 @@
     <input type="submit" value="Update" />
     </form>
   </div>
-  <!-- 
   <table>
     <tr valign='top'>
       <td align="center">
@@ -138,7 +137,6 @@
       </td>
     </tr>
   </table>
--->
 
 
 <form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = m.ForumThreadID, resourceID = m.ResourceID })">
@@ -166,7 +164,7 @@
 
 </div>
 <!needs to be outside wrapper because wrapper is relatively positioned>
-<div id="maps" class="abs top left">
+<!--div id="maps" class="abs top left">
 	<h2>Map Views:</h2>
 	<a href='http://zero-k.info/Resources/@(m.MinimapName)'>
           <img src='http://zero-k.info/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
@@ -179,6 +177,6 @@
          <a href='http://zero-k.info/Resources/@(m.MetalmapName)'>
           <img src='http://zero-k.info/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
         </a>
-</div><!close maps>
+</div--><!close maps>
 
 @Html.ActionLink("Back to List", "Index") 
