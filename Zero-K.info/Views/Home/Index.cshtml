@@ -1,5 +1,7 @@
-﻿@{
+﻿@model ZeroKWeb.Controllers.HomeController.IndexResult
+@{
   Page.Title = "Zero-K main site";
+  var s = Model.Spotlight;
 }
 <div id="content" class="fleft width-70">
   <div id="features" class="border textwall">
@@ -9,9 +11,17 @@
     @Html.IncludeWiki("News")
   </div>
 </div>
-
 <div id="sidebar" class="fright width-30">
-  @Html.IncludeFile("http://zero-k.info/unit.php")
+  <div id="unit" class="border relative text-left">
+    <h2>
+      <a>Spotlight: </a>
+    </h2>
+    <h3>@s.Name</h3>
+    <!-- <span class="absright abstop bold button"> <a>&lt;&lt;</a> <a>?</a> <a>&gt;&gt;</a> </span> -->
+    <img src="/img/unitpics/@(s.Unitname).png" class="fright"/>
+    <p>@s.Description</p>
+  </div>
+  <!close unit>
   <div id="topten" class="border">
     <h2>
       <a>Top Players</a></h2>

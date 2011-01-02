@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -11,16 +12,15 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-  public class HomeController: Controller
+  public class HomeController : Controller
   {
     public ActionResult Sitemap()
     {
       var sb = new StringBuilder();
       var db = new ZkDataContext();
 
-      foreach (var x in db.Missions)
-      {
-        sb.AppendLine(Url.Action("Detail", "Missions", new { id = x.MissionID },"http"));
+      foreach (var x in db.Missions) {
+        sb.AppendLine(Url.Action("Detail", "Missions", new { id = x.MissionID }, "http"));
       }
 
       foreach (var x in db.Resources) {
@@ -29,10 +29,8 @@ namespace ZeroKWeb.Controllers
 
       var wikiIndex = new WebClient().DownloadString("http://zero-k.googlecode.com/svn/wiki/");
       var matches = Regex.Matches(wikiIndex, "\"([^\"]+)\"");
-      foreach (Match m in matches)
-      {
-        if (m.Groups[1].Value.EndsWith(".wiki"))
-        {
+      foreach (Match m in matches) {
+        if (m.Groups[1].Value.EndsWith(".wiki")) {
           var name = m.Groups[1].Value;
           name = name.Substring(0, name.Length - 5);
 
@@ -68,7 +66,37 @@ namespace ZeroKWeb.Controllers
 
     public ActionResult Index()
     {
-      return View();
+      var spotlight = new UnitSpotlight { };
+
+      try
+      {
+        var unitData = new WebClient().DownloadString("http://packages.springrts.com/zkmanual/featured.txt");
+        var lines = unitData.Lines();
+        var r = new Random();
+        var line = lines[r.Next(lines.Length)];
+        var parts = line.Split('\t');
+        spotlight.Unitname = parts[0];
+        spotlight.Name = parts[1];
+        spotlight.Description = parts[2];
+      } catch (Exception ex)
+      {
+        Trace.TraceError("Error generating unit spotlight: {0}", ex);
+      }
+
+      return View(new IndexResult() { Spotlight = spotlight  });
+    }
+
+    public class IndexResult
+    {
+      public UnitSpotlight Spotlight;
+
+    }
+
+    public class UnitSpotlight
+    {
+      public string Unitname;
+      public string Name;
+      public string Description;
     }
 
     public static string GetMissionTooltip(int id)
@@ -96,8 +124,7 @@ namespace ZeroKWeb.Controllers
     {
       var args = key.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
       var ret = "";
-      switch (args[0])
-      {
+      switch (args[0]) {
         case "mission":
 
           ret = GetMissionTooltip(int.Parse(args[1]));
@@ -105,8 +132,7 @@ namespace ZeroKWeb.Controllers
         case "map":
           int id;
           if (int.TryParse(args[1], out id)) ret = GetMapTooltip(id);
-          else
-          {
+          else {
             var db = new ZkDataContext();
             ret = GetMapTooltip(db.Resources.Single(x => x.InternalName == args[1]).ResourceID);
           }
@@ -125,8 +151,7 @@ namespace ZeroKWeb.Controllers
       var hashed = Utils.HashLobbyPassword(password);
       acc = AuthServiceClient.VerifyAccountHashed(login, hashed);
       if (acc == null) return Content("Invalid password");
-      else
-      {
+      else {
         Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, login));
         Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, hashed));
 
