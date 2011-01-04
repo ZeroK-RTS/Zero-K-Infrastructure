@@ -24,7 +24,7 @@ namespace ZeroKWeb
 
       if (idx > -1 && idx2 > -1) ret = ret.Substring(idx, idx2-idx);
 
-      ret = ret.Replace("href=\"/p/zero-k/wiki/", "href=\"");
+      ret = ret.Replace("href=\"/p/zero-k/wiki/", "href =\"/Wiki.mvc/");
       ret = ret.Replace("href=\"/", "href=\"http://code.google.com/");
 
 

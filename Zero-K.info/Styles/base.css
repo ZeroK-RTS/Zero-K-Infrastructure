@@ -1,3 +1,9 @@
+@font-face {
+    src: url(../SM.eot);
+    font-family: sm;
+    src: local("sm"), url( ../SM.ttf ) format("truetype");
+}
+
 p {text-indent: 2em;}
 b {font-weight: bold; color: #fff;}
 i {}
