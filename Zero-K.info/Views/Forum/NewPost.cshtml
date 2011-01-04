@@ -1,0 +1,45 @@
+﻿@model ZeroKWeb.Controllers.ForumController.NewPostResult
+@{
+  Page.Title = "Zero-K new post";
+}
+
+@{Html.RenderPartial("ForumPath", Model.Path);}
+
+@if (Model.CurrentThread != null) {
+  <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
+} else {
+  <h3>Post new topic</h3>
+}
+
+
+<form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID })">
+@if (Model.CurrentThread == null) {
+  @:Title: <input type="text" name="title" cols="50"/><br/>
+}
+
+<textarea name="text" rows="4" cols="50"></textarea><br />
+<input type="submit" value="Submit Post" />
+</form>
+@if (Model.LastPosts != null) {
+  foreach (var p in Model.LastPosts) {
+    <table>
+      <tr>
+        <td width='222px' class="border-test">
+          @Html.PrintAccount(p.Account)<br />
+          <table>
+            <tr>
+              <td>@Html.AccountAvatar(p.Account)
+              </td>
+              <td valign='top'>
+                <small>@p.Created.ToAgoString()</small>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td valign="top">
+          @p.Text
+        </td>
+      </tr>
+    </table>
+  }
+}

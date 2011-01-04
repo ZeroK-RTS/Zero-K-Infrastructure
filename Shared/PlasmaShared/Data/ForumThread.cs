@@ -10,6 +10,7 @@ namespace ZkData
 		partial void OnCreated()
 		{
 			Created = DateTime.UtcNow;
+		  LastPost = DateTime.UtcNow;
 		}
 	}
 }

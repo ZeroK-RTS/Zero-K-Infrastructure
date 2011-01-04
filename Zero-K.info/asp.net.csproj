@@ -170,6 +170,10 @@
     <Content Include="Views\Wiki\Index.cshtml" />
     <Content Include="Views\Static\Index.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Forum\Index.cshtml" />
+    <Content Include="Views\Forum\Thread.cshtml" />
+    <Content Include="Views\Forum\NewPost.cshtml" />
+    <Content Include="Views\Forum\ForumPath.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

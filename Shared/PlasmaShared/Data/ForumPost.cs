@@ -13,6 +13,5 @@ namespace ZkData
 			Created = DateTime.UtcNow;
 		}
 
-
 	}
 }

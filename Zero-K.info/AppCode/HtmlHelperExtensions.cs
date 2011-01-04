@@ -67,7 +67,8 @@ namespace System.Web.Mvc
 
     public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account)
     {
-      return
+      if (account == null) return new MvcHtmlString("?");
+      else return
         new MvcHtmlString(string.Format("<a href='spring://chat/user/{2}'><img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}</a>",
                                         account.Country,
                                         account.LobbyTimeRank + 1,
@@ -128,6 +129,12 @@ namespace System.Web.Mvc
       } else return new MvcHtmlString(string.Format("<span class='{0}' style='width:70px' title='No votes'></span>", type == StarType.RedSkull ? StarType.WhiteSkull : StarType.WhiteStarSmall));
     }
 
+
+    public static string ToAgoString(this DateTime? utcDate)
+    {
+      if (utcDate.HasValue) return ToAgoString(DateTime.UtcNow.Subtract(utcDate.Value));
+      else return "";
+    }
 
     public static string ToAgoString(this DateTime utcDate)
     {

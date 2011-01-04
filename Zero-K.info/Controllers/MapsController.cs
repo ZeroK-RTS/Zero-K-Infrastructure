@@ -22,7 +22,7 @@ namespace ZeroKWeb.Controllers
       var db = new ZkDataContext();
       var res = db.Resources.Single(x => x.ResourceID == id);
 
-      var data = GetMapDetailData(res);
+      var data = GetMapDetailData(res,db);
 
       return View(data);
     }
@@ -32,7 +32,7 @@ namespace ZeroKWeb.Controllers
       var db = new ZkDataContext();
       var res = db.Resources.Single(x => x.InternalName == name);
 
-      return View("Detail", GetMapDetailData(res));
+      return View("Detail", GetMapDetailData(res, db));
     }
 
 
@@ -143,7 +143,7 @@ namespace ZeroKWeb.Controllers
       }
     }
 
-    MapDetailData GetMapDetailData(Resource res)
+    MapDetailData GetMapDetailData(Resource res, ZkDataContext db)
     {
       var data = new MapDetailData
                  { Resource = res, MyRating = res.MapRatings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new MapRating() };
@@ -161,8 +161,11 @@ namespace ZeroKWeb.Controllers
         }
       }
 
-      if (res.ForumThread != null) {
-        data.Posts = (from p in res.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
+      if (res.ForumThread != null)
+      {
+        res.ForumThread.ViewCount++;
+        db.SubmitChanges();
+       data.Posts = (from p in res.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
                       let userRating = res.MapRatings.SingleOrDefault(x => x.AccountID == p.AuthorAccountID)
                       select
                         new MapPost { Created = p.Created, Author = p.Account, Text = p.Text, Rating = userRating != null ? (int?)userRating.Rating : null });

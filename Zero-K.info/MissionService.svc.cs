@@ -121,7 +121,7 @@ namespace ZeroKWeb
 			else
 			{
 				mission.CreatedTime = DateTime.UtcNow;
-			  mission.ForumThread = new ForumThread() { Title = mission.Name };
+			  mission.ForumThread = new ForumThread() { Title = mission.Name, ForumCategory = db.ForumCategories.FirstOrDefault(x=>x.IsMissions), CreatedAccountID = acc.AccountID, LastPostAccountID= acc.AccountID };
 				db.Missions.InsertOnSubmit(mission);
 			}
 			mission.AccountID = acc.AccountID;

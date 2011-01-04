@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 12.375, 32.125" name="ZkData">
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 14.875, 32.125" name="ZkData">
   <DataContextMoniker Name="/ZkDataContext" />
   <nestedChildShapes>
     <classShape Id="a37d1f82-9b45-4686-8dbb-bb77d44d1dd6" absoluteBounds="8, 18.125, 2, 1.3862939453125">
@@ -158,13 +158,13 @@
         <elementListCompartment Id="1e12ad16-b30b-4472-8685-bb3224a602a1" absoluteBounds="0.765, 19.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="a1b09883-f64e-4bcf-a198-6df94f999988" absoluteBounds="3.875, 7.25, 2, 3.3093082682291666">
+    <classShape Id="a1b09883-f64e-4bcf-a198-6df94f999988" absoluteBounds="4.375, 7.25, 2, 3.3093082682291666">
       <DataClassMoniker Name="/ZkDataContext/Account" />
       <nestedChildShapes>
-        <elementListCompartment Id="429a36e9-3a5c-48e8-b996-ec7e325e72ed" absoluteBounds="3.8900000000000006, 7.71, 1.97, 2.7493082682291665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="429a36e9-3a5c-48e8-b996-ec7e325e72ed" absoluteBounds="4.3900000000000006, 7.71, 1.97, 2.7493082682291665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(3.875 : 9.23880126953125); (3.4375 : 9.23880126953125); (3.4375 : 7.4375); (1.546875 : 7.4375); (1.546875 : 7.2034326171875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(5.8125 : 7.25); (5.8125 : 5.63500278971354); (2.75 : 5.63500278971354)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_Mission" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
@@ -177,14 +177,14 @@
         <elementListCompartment Id="57e58130-0e91-45c0-a9ed-c7a3bc764853" absoluteBounds="4.14, 11.335, 1.9700000000000002, 1.7878011067708333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5 : 10.5593082682292); (5 : 10.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(5.25 : 10.5593082682292); (5.25 : 10.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_LobbyMessage" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
         <classShapeMoniker Id="30fc41f1-a1a2-49c2-8220-7e32c85b42c3" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.5 : 10.5593082682292); (5.5 : 10.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(5.75 : 10.5593082682292); (5.75 : 10.875)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_LobbyMessage1" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
@@ -197,10 +197,10 @@
         <elementListCompartment Id="23e55a58-764c-4a1e-a41e-05d7729fb05d" absoluteBounds="1.015, 21.71, 1.9700000000000002, 0.63399251302083326" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <classShape Id="c0277568-d871-42e9-904e-23100b221cee" absoluteBounds="9.875, 6.75, 2, 1.5785953776041701">
+    <classShape Id="c0277568-d871-42e9-904e-23100b221cee" absoluteBounds="10.5, 6.75, 2, 2.9247054036458326">
       <DataClassMoniker Name="/ZkDataContext/ForumThread" />
       <nestedChildShapes>
-        <elementListCompartment Id="dd5dc9ca-9600-4b50-ac1b-a02105e4306c" absoluteBounds="9.89, 7.2100000000000009, 1.9700000000000002, 1.0185953776041665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="dd5dc9ca-9600-4b50-ac1b-a02105e4306c" absoluteBounds="10.515, 7.2100000000000009, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
     <classShape Id="d58bd5e8-4efe-4018-903a-f831f308acd4" absoluteBounds="3, 17.625, 2, 2.5401025390624996">
@@ -274,7 +274,7 @@
         <classShapeMoniker Id="9bc8f882-2d6f-4712-931a-6e2b9d867ebe" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(3.875 : 10.0921541341146); (2.5 : 10.0921541341146)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.375 : 10.0921541341146); (2.5 : 10.0921541341146)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_MissionScore" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
@@ -287,7 +287,7 @@
         <elementListCompartment Id="3f514b36-8ae3-4264-8c35-8720c235373a" absoluteBounds="1.3900000000000006, 7.96, 1.97, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(3.875 : 8.38544840494792); (3.375 : 8.38544840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.375 : 8.38544840494792); (3.375 : 8.38544840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_Rating" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
@@ -308,65 +308,146 @@
         <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
       </nodes>
     </associationConnector>
-    <classShape Id="1f867b47-4124-43a8-94a3-324800fb6def" absoluteBounds="6.75, 7.5, 2, 1.7708968098958331">
+    <classShape Id="1f867b47-4124-43a8-94a3-324800fb6def" absoluteBounds="7.875, 7.625, 2, 1.7708968098958331">
       <DataClassMoniker Name="/ZkDataContext/ForumPost" />
       <nestedChildShapes>
-        <elementListCompartment Id="06f5b5f2-a738-486d-88e4-ed271aaf0b14" absoluteBounds="6.7650000000000006, 7.96, 1.97, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="06f5b5f2-a738-486d-88e4-ed271aaf0b14" absoluteBounds="7.8900000000000006, 8.085, 1.97, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(9.875 : 7.07611328125); (5.33333333333333 : 7.07611328125 : JumpStart); (5.16666666666667 : 7.07611328125 : JumpEnd); (4.30208333333333 : 7.07611328125 : JumpStart); (4.13541666666667 : 7.07611328125 : JumpEnd); (2.75 : 7.07611328125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(11.4375 : 6.75); (11.4375 : 5.66625528971354); (2.75 : 5.66625528971354)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/ForumThread/ForumThread_Mission" />
       <nodes>
         <classShapeMoniker Id="c0277568-d871-42e9-904e-23100b221cee" />
         <classShapeMoniker Id="c4c2666e-7fec-4a57-ade8-ae67b9e6d8cd" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.875 : 8.38544840494792); (6.75 : 8.38544840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(6.375 : 8.51044840494792); (7.875 : 8.51044840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_ForumPost" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
         <classShapeMoniker Id="1f867b47-4124-43a8-94a3-324800fb6def" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(9.875 : 7.91429768880209); (8.75 : 7.91429768880209)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(10.5 : 8.51044840494792); (9.875 : 8.51044840494792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/ForumThread/ForumThread_ForumPost" />
       <nodes>
         <classShapeMoniker Id="c0277568-d871-42e9-904e-23100b221cee" />
         <classShapeMoniker Id="1f867b47-4124-43a8-94a3-324800fb6def" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(4.21875 : 7.25); (4.21875 : 5.3477197265625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(5.40625 : 7.25); (5.40625 : 5.54002115885417)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_Resource" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
         <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
       </nodes>
     </associationConnector>
-    <classShape Id="f4b11918-f6df-4624-b4ff-211541337bb1" absoluteBounds="4.625, 5.5, 2, 1.3862939453125">
+    <classShape Id="f4b11918-f6df-4624-b4ff-211541337bb1" absoluteBounds="3.25, 5.75, 2, 1.3862939453125">
       <DataClassMoniker Name="/ZkDataContext/MapRating" />
       <nestedChildShapes>
-        <elementListCompartment Id="cf7468d1-c0f2-4b60-8035-99af3e3a2e94" absoluteBounds="4.6400000000000006, 5.96, 1.97, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+        <elementListCompartment Id="cf7468d1-c0f2-4b60-8035-99af3e3a2e94" absoluteBounds="3.2650000000000006, 6.2100000000000009, 1.97, 0.8262939453125" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
-    <associationConnector edgePoints="[(5.0625 : 5.3477197265625); (5.0625 : 5.5)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.375 : 5.54002115885417); (4.375 : 5.75)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Resource/Resource_MapRating" />
       <nodes>
         <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
         <classShapeMoniker Id="f4b11918-f6df-4624-b4ff-211541337bb1" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(5.25 : 7.25); (5.25 : 6.8862939453125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+    <associationConnector edgePoints="[(4.8125 : 7.25); (4.8125 : 7.1362939453125)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/Account/Account_MapRating" />
       <nodes>
         <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
         <classShapeMoniker Id="f4b11918-f6df-4624-b4ff-211541337bb1" />
       </nodes>
     </associationConnector>
-    <associationConnector edgePoints="[(10.875 : 6.75); (10.875 : 5.35659912109375); (5.5 : 5.35659912109375)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+    <associationConnector edgePoints="[(10.9374975 : 6.75); (10.9374975 : 5.40785970052083); (5.5 : 5.40785970052083)]" fixedFrom="NotFixed" fixedTo="NotFixed">
       <AssociationMoniker Name="/ZkDataContext/ForumThread/ForumThread_Resource" />
       <nodes>
         <classShapeMoniker Id="c0277568-d871-42e9-904e-23100b221cee" />
         <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
+      </nodes>
+    </associationConnector>
+    <classShape Id="4718fe01-9266-4580-8bdc-30510a3e076a" absoluteBounds="12.625, 1, 2, 2.9247054036458331">
+      <DataClassMoniker Name="/ZkDataContext/SpringBattle" />
+      <nestedChildShapes>
+        <elementListCompartment Id="dfddd974-d168-44ad-a537-b8c4c93d3bc0" absoluteBounds="12.64, 1.46, 1.97, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="b5039f5f-718d-4864-8af2-3702ea4c5a74" absoluteBounds="12.625, 5.5, 2, 2.9247054036458326">
+      <DataClassMoniker Name="/ZkDataContext/SpringBattlePlayer" />
+      <nestedChildShapes>
+        <elementListCompartment Id="12ca10f7-b991-42fa-984c-5881cc353d19" absoluteBounds="12.64, 5.96, 1.9700000000000002, 2.364705403645833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="d88a0bca-1a1d-413e-85fa-66d37fe4f5d3" absoluteBounds="9.875, 10.25, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/ZkDataContext/ForumCategory" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5f4e3637-dd3c-4f28-817f-50853cdc879b" absoluteBounds="9.89, 10.71, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(11.1875 : 10.25); (11.1875 : 9.67470540364583)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/ForumCategory/ForumCategory_ForumThread" />
+      <nodes>
+        <classShapeMoniker Id="d88a0bca-1a1d-413e-85fa-66d37fe4f5d3" />
+        <classShapeMoniker Id="c0277568-d871-42e9-904e-23100b221cee" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(6.375 : 7.40625); (10.5 : 7.40625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Account/Account_ForumThread" />
+      <nodes>
+        <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
+        <classShapeMoniker Id="c0277568-d871-42e9-904e-23100b221cee" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(6.375 : 9.56655110677083); (10.5 : 9.56655110677083)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Account/Account_ForumThread1" />
+      <nodes>
+        <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
+        <classShapeMoniker Id="c0277568-d871-42e9-904e-23100b221cee" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(6.375 : 7.95834920247396); (7.625 : 7.95834920247396); (7.625 : 6.5); (10.8541641666667 : 6.5 : JumpStart); (11.0208308333333 : 6.5 : JumpEnd); (11.3541666666667 : 6.5 : JumpStart); (11.5208333333333 : 6.5 : JumpEnd); (12.375 : 6.5); (12.375 : 5.25); (13.640624 : 5.25); (13.640624 : 3.92470540364583)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Account/Account_SpringBattle" />
+      <nodes>
+        <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
+        <classShapeMoniker Id="4718fe01-9266-4580-8bdc-30510a3e076a" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(5.5 : 2.89704756054687); (6.0625 : 2.89704756054687); (6.0625 : 3.1987939453125); (12.5625 : 3.1987939453125); (12.5625 : 3.98720540364583); (13.093748 : 3.98720540364583); (13.093748 : 3.92470540364583)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Resource/Resource_SpringBattle" />
+      <nodes>
+        <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
+        <classShapeMoniker Id="4718fe01-9266-4580-8bdc-30510a3e076a" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(4.5 : 0.5); (4.5 : 0.4375); (12.53125 : 0.4375); (12.53125 : 2.09939747265625); (12.625 : 2.09939747265625)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Resource/Resource_SpringBattle1" />
+      <nodes>
+        <classShapeMoniker Id="e29e29d1-36f0-4928-af43-257f6c89dc11" />
+        <classShapeMoniker Id="4718fe01-9266-4580-8bdc-30510a3e076a" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(14.1875 : 3.92470540364583); (14.1875 : 5.5)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/SpringBattle/SpringBattle_SpringBattlePlayer" />
+      <nodes>
+        <classShapeMoniker Id="4718fe01-9266-4580-8bdc-30510a3e076a" />
+        <classShapeMoniker Id="b5039f5f-718d-4864-8af2-3702ea4c5a74" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(6.375 : 9.96235270182292); (11.1041666666667 : 9.96235270182292 : JumpStart); (11.2708333333333 : 9.96235270182292 : JumpEnd); (13.625 : 9.96235270182292); (13.625 : 8.42470540364583)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/Account/Account_SpringBattlePlayer" />
+      <nodes>
+        <classShapeMoniker Id="a1b09883-f64e-4bcf-a198-6df94f999988" />
+        <classShapeMoniker Id="b5039f5f-718d-4864-8af2-3702ea4c5a74" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(10.5842307692308 : 12.4054996744792); (10.5842307692308 : 12.6554996744792); (11.1796153846154 : 12.6554996744792); (11.1796153846154 : 12.4054996744792)]" fixedFrom="NotFixed" fixedTo="NotFixed">
+      <AssociationMoniker Name="/ZkDataContext/ForumCategory/ForumCategory_ForumCategory" />
+      <nodes>
+        <classShapeMoniker Id="d88a0bca-1a1d-413e-85fa-66d37fe4f5d3" />
+        <classShapeMoniker Id="d88a0bca-1a1d-413e-85fa-66d37fe4f5d3" />
       </nodes>
     </associationConnector>
   </nestedChildShapes>

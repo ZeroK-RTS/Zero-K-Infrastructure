@@ -73,6 +73,15 @@ namespace ZkData
     partial void InsertMapRating(MapRating instance);
     partial void UpdateMapRating(MapRating instance);
     partial void DeleteMapRating(MapRating instance);
+    partial void InsertSpringBattle(SpringBattle instance);
+    partial void UpdateSpringBattle(SpringBattle instance);
+    partial void DeleteSpringBattle(SpringBattle instance);
+    partial void InsertSpringBattlePlayer(SpringBattlePlayer instance);
+    partial void UpdateSpringBattlePlayer(SpringBattlePlayer instance);
+    partial void DeleteSpringBattlePlayer(SpringBattlePlayer instance);
+    partial void InsertForumCategory(ForumCategory instance);
+    partial void UpdateForumCategory(ForumCategory instance);
+    partial void DeleteForumCategory(ForumCategory instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -414,6 +423,30 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<MapRating>();
+			}
+		}
+		
+		public System.Data.Linq.Table<SpringBattle> SpringBattles
+		{
+			get
+			{
+				return this.GetTable<SpringBattle>();
+			}
+		}
+		
+		public System.Data.Linq.Table<SpringBattlePlayer> SpringBattlePlayers
+		{
+			get
+			{
+				return this.GetTable<SpringBattlePlayer>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ForumCategory> ForumCategories
+		{
+			get
+			{
+				return this.GetTable<ForumCategory>();
 			}
 		}
 	}
@@ -4964,6 +4997,10 @@ namespace ZkData
 		
 		private EntitySet<LobbyMessage> _LobbyMessagesByTargetAccountID;
 		
+		private EntitySet<ForumThread> _ForumThreadsByCreatedAccountID;
+		
+		private EntitySet<ForumThread> _ForumThreadsByLastPostAccountID;
+		
 		private EntitySet<Resource> _Resources;
 		
 		private EntitySet<MissionScore> _MissionScores;
@@ -4973,6 +5010,10 @@ namespace ZkData
 		private EntitySet<ForumPost> _ForumPosts;
 		
 		private EntitySet<MapRating> _MapRatings;
+		
+		private EntitySet<SpringBattle> _SpringBattles;
+		
+		private EntitySet<SpringBattlePlayer> _SpringBattlePlayers;
 		
 		private bool serializing;
 		
@@ -5343,8 +5384,46 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Resource", Storage="_Resources", ThisKey="AccountID", OtherKey="TaggedByAccountID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread", Storage="_ForumThreadsByCreatedAccountID", ThisKey="AccountID", OtherKey="CreatedAccountID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		public EntitySet<ForumThread> ForumThreadsByCreatedAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ForumThreadsByCreatedAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ForumThreadsByCreatedAccountID;
+			}
+			set
+			{
+				this._ForumThreadsByCreatedAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread1", Storage="_ForumThreadsByLastPostAccountID", ThisKey="AccountID", OtherKey="LastPostAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		public EntitySet<ForumThread> ForumThreadsByLastPostAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ForumThreadsByLastPostAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ForumThreadsByLastPostAccountID;
+			}
+			set
+			{
+				this._ForumThreadsByLastPostAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Resource", Storage="_Resources", ThisKey="AccountID", OtherKey="TaggedByAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<Resource> Resources
 		{
 			get
@@ -5363,7 +5442,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MissionScore", Storage="_MissionScores", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -5382,7 +5461,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Rating", Storage="_Ratings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<Rating> Ratings
 		{
 			get
@@ -5401,7 +5480,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPost", Storage="_ForumPosts", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -5420,7 +5499,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MapRating", Storage="_MapRatings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<MapRating> MapRatings
 		{
 			get
@@ -5435,6 +5514,44 @@ namespace ZkData
 			set
 			{
 				this._MapRatings.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattle", Storage="_SpringBattles", ThisKey="AccountID", OtherKey="HostAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		public EntitySet<SpringBattle> SpringBattles
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._SpringBattles.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._SpringBattles;
+			}
+			set
+			{
+				this._SpringBattles.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._SpringBattlePlayers.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._SpringBattlePlayers;
+			}
+			set
+			{
+				this._SpringBattlePlayers.Assign(value);
 			}
 		}
 		
@@ -5492,6 +5609,30 @@ namespace ZkData
 		{
 			this.SendPropertyChanging();
 			entity.AccountByTargetAccountID = null;
+		}
+		
+		private void attach_ForumThreadsByCreatedAccountID(ForumThread entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByCreatedAccountID = this;
+		}
+		
+		private void detach_ForumThreadsByCreatedAccountID(ForumThread entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByCreatedAccountID = null;
+		}
+		
+		private void attach_ForumThreadsByLastPostAccountID(ForumThread entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByLastPostAccountID = this;
+		}
+		
+		private void detach_ForumThreadsByLastPostAccountID(ForumThread entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByLastPostAccountID = null;
 		}
 		
 		private void attach_Resources(Resource entity)
@@ -5554,16 +5695,44 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_SpringBattles(SpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_SpringBattles(SpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
+		private void attach_SpringBattlePlayers(SpringBattlePlayer entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_SpringBattlePlayers(SpringBattlePlayer entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
 			this._LobbyMessagesBySourceAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesBySourceAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesBySourceAccountID));
 			this._LobbyMessagesByTargetAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesByTargetAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesByTargetAccountID));
+			this._ForumThreadsByCreatedAccountID = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreadsByCreatedAccountID), new Action<ForumThread>(this.detach_ForumThreadsByCreatedAccountID));
+			this._ForumThreadsByLastPostAccountID = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreadsByLastPostAccountID), new Action<ForumThread>(this.detach_ForumThreadsByLastPostAccountID));
 			this._Resources = new EntitySet<Resource>(new Action<Resource>(this.attach_Resources), new Action<Resource>(this.detach_Resources));
 			this._MissionScores = new EntitySet<MissionScore>(new Action<MissionScore>(this.attach_MissionScores), new Action<MissionScore>(this.detach_MissionScores));
 			this._Ratings = new EntitySet<Rating>(new Action<Rating>(this.attach_Ratings), new Action<Rating>(this.detach_Ratings));
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
 			this._MapRatings = new EntitySet<MapRating>(new Action<MapRating>(this.attach_MapRatings), new Action<MapRating>(this.detach_MapRatings));
+			this._SpringBattles = new EntitySet<SpringBattle>(new Action<SpringBattle>(this.attach_SpringBattles), new Action<SpringBattle>(this.detach_SpringBattles));
+			this._SpringBattlePlayers = new EntitySet<SpringBattlePlayer>(new Action<SpringBattlePlayer>(this.attach_SpringBattlePlayers), new Action<SpringBattlePlayer>(this.detach_SpringBattlePlayers));
 			OnCreated();
 		}
 		
@@ -6036,13 +6205,33 @@ namespace ZkData
 		
 		private System.DateTime _Created;
 		
+		private System.Nullable<int> _CreatedAccountID;
+		
 		private System.Nullable<System.DateTime> _LastPost;
+		
+		private System.Nullable<int> _LastPostAccountID;
+		
+		private int _PostCount;
+		
+		private int _ViewCount;
+		
+		private bool _IsLocked;
+		
+		private System.Nullable<int> _ForumCategoryID;
+		
+		private bool _IsPinned;
 		
 		private EntityRef<Mission> _Missions;
 		
 		private EntityRef<Resource> _Resources;
 		
 		private EntitySet<ForumPost> _ForumPosts;
+		
+		private EntityRef<ForumCategory> _ForumCategory;
+		
+		private EntityRef<Account> _AccountByCreatedAccountID;
+		
+		private EntityRef<Account> _AccountByLastPostAccountID;
 		
 		private bool serializing;
 		
@@ -6056,8 +6245,22 @@ namespace ZkData
     partial void OnTitleChanged();
     partial void OnCreatedChanging(System.DateTime value);
     partial void OnCreatedChanged();
+    partial void OnCreatedAccountIDChanging(System.Nullable<int> value);
+    partial void OnCreatedAccountIDChanged();
     partial void OnLastPostChanging(System.Nullable<System.DateTime> value);
     partial void OnLastPostChanged();
+    partial void OnLastPostAccountIDChanging(System.Nullable<int> value);
+    partial void OnLastPostAccountIDChanged();
+    partial void OnPostCountChanging(int value);
+    partial void OnPostCountChanged();
+    partial void OnViewCountChanging(int value);
+    partial void OnViewCountChanged();
+    partial void OnIsLockedChanging(bool value);
+    partial void OnIsLockedChanged();
+    partial void OnForumCategoryIDChanging(System.Nullable<int> value);
+    partial void OnForumCategoryIDChanged();
+    partial void OnIsPinnedChanging(bool value);
+    partial void OnIsPinnedChanged();
     #endregion
 		
 		public ForumThread()
@@ -6128,8 +6331,33 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastPost", DbType="datetime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAccountID", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<int> CreatedAccountID
+		{
+			get
+			{
+				return this._CreatedAccountID;
+			}
+			set
+			{
+				if ((this._CreatedAccountID != value))
+				{
+					if (this._AccountByCreatedAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAccountID = value;
+					this.SendPropertyChanged("CreatedAccountID");
+					this.OnCreatedAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastPost", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public System.Nullable<System.DateTime> LastPost
 		{
 			get
@@ -6149,8 +6377,142 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastPostAccountID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public System.Nullable<int> LastPostAccountID
+		{
+			get
+			{
+				return this._LastPostAccountID;
+			}
+			set
+			{
+				if ((this._LastPostAccountID != value))
+				{
+					if (this._AccountByLastPostAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnLastPostAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._LastPostAccountID = value;
+					this.SendPropertyChanged("LastPostAccountID");
+					this.OnLastPostAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PostCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public int PostCount
+		{
+			get
+			{
+				return this._PostCount;
+			}
+			set
+			{
+				if ((this._PostCount != value))
+				{
+					this.OnPostCountChanging(value);
+					this.SendPropertyChanging();
+					this._PostCount = value;
+					this.SendPropertyChanged("PostCount");
+					this.OnPostCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ViewCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public int ViewCount
+		{
+			get
+			{
+				return this._ViewCount;
+			}
+			set
+			{
+				if ((this._ViewCount != value))
+				{
+					this.OnViewCountChanging(value);
+					this.SendPropertyChanging();
+					this._ViewCount = value;
+					this.SendPropertyChanged("ViewCount");
+					this.OnViewCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsLocked", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public bool IsLocked
+		{
+			get
+			{
+				return this._IsLocked;
+			}
+			set
+			{
+				if ((this._IsLocked != value))
+				{
+					this.OnIsLockedChanging(value);
+					this.SendPropertyChanging();
+					this._IsLocked = value;
+					this.SendPropertyChanged("IsLocked");
+					this.OnIsLockedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumCategoryID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public System.Nullable<int> ForumCategoryID
+		{
+			get
+			{
+				return this._ForumCategoryID;
+			}
+			set
+			{
+				if ((this._ForumCategoryID != value))
+				{
+					if (this._ForumCategory.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnForumCategoryIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumCategoryID = value;
+					this.SendPropertyChanged("ForumCategoryID");
+					this.OnForumCategoryIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsPinned", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public bool IsPinned
+		{
+			get
+			{
+				return this._IsPinned;
+			}
+			set
+			{
+				if ((this._IsPinned != value))
+				{
+					this.OnIsPinnedChanging(value);
+					this.SendPropertyChanging();
+					this._IsPinned = value;
+					this.SendPropertyChanged("IsPinned");
+					this.OnIsPinnedChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Mission", Storage="_Missions", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public Mission Missions
 		{
 			get
@@ -6185,7 +6547,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Resource", Storage="_Resources", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public Resource Resources
 		{
 			get
@@ -6220,7 +6582,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_ForumPost", Storage="_ForumPosts", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -6235,6 +6597,108 @@ namespace ZkData
 			set
 			{
 				this._ForumPosts.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumThread", Storage="_ForumCategory", ThisKey="ForumCategoryID", OtherKey="ForumCategoryID", IsForeignKey=true, DeleteRule="CASCADE")]
+		public ForumCategory ForumCategory
+		{
+			get
+			{
+				return this._ForumCategory.Entity;
+			}
+			set
+			{
+				ForumCategory previousValue = this._ForumCategory.Entity;
+				if (((previousValue != value) 
+							|| (this._ForumCategory.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ForumCategory.Entity = null;
+						previousValue.ForumThreads.Remove(this);
+					}
+					this._ForumCategory.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThreads.Add(this);
+						this._ForumCategoryID = value.ForumCategoryID;
+					}
+					else
+					{
+						this._ForumCategoryID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ForumCategory");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread", Storage="_AccountByCreatedAccountID", ThisKey="CreatedAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByCreatedAccountID
+		{
+			get
+			{
+				return this._AccountByCreatedAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByCreatedAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByCreatedAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByCreatedAccountID.Entity = null;
+						previousValue.ForumThreadsByCreatedAccountID.Remove(this);
+					}
+					this._AccountByCreatedAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThreadsByCreatedAccountID.Add(this);
+						this._CreatedAccountID = value.AccountID;
+					}
+					else
+					{
+						this._CreatedAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountByCreatedAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread1", Storage="_AccountByLastPostAccountID", ThisKey="LastPostAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByLastPostAccountID
+		{
+			get
+			{
+				return this._AccountByLastPostAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByLastPostAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByLastPostAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByLastPostAccountID.Entity = null;
+						previousValue.ForumThreadsByLastPostAccountID.Remove(this);
+					}
+					this._AccountByLastPostAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThreadsByLastPostAccountID.Add(this);
+						this._LastPostAccountID = value.AccountID;
+					}
+					else
+					{
+						this._LastPostAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountByLastPostAccountID");
+				}
 			}
 		}
 		
@@ -6275,6 +6739,9 @@ namespace ZkData
 			this._Missions = default(EntityRef<Mission>);
 			this._Resources = default(EntityRef<Resource>);
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
+			this._ForumCategory = default(EntityRef<ForumCategory>);
+			this._AccountByCreatedAccountID = default(EntityRef<Account>);
+			this._AccountByLastPostAccountID = default(EntityRef<Account>);
 			OnCreated();
 		}
 		
@@ -7186,6 +7653,10 @@ namespace ZkData
 		
 		private EntitySet<MapRating> _MapRatings;
 		
+		private EntitySet<SpringBattle> _SpringBattlesByMapResourceID;
+		
+		private EntitySet<SpringBattle> _SpringBattlesByModResourceID;
+		
 		private EntityRef<Mission> _Mission;
 		
 		private EntityRef<Account> _Account;
@@ -7799,6 +8270,44 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_SpringBattle", Storage="_SpringBattlesByMapResourceID", ThisKey="ResourceID", OtherKey="MapResourceID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
+		public EntitySet<SpringBattle> SpringBattlesByMapResourceID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._SpringBattlesByMapResourceID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._SpringBattlesByMapResourceID;
+			}
+			set
+			{
+				this._SpringBattlesByMapResourceID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_SpringBattle1", Storage="_SpringBattlesByModResourceID", ThisKey="ResourceID", OtherKey="ModResourceID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
+		public EntitySet<SpringBattle> SpringBattlesByModResourceID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._SpringBattlesByModResourceID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._SpringBattlesByModResourceID;
+			}
+			set
+			{
+				this._SpringBattlesByModResourceID.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Mission_Resource", Storage="_Mission", ThisKey="MissionID", OtherKey="MissionID", IsForeignKey=true, DeleteRule="CASCADE")]
 		public Mission Mission
 		{
@@ -7969,12 +8478,38 @@ namespace ZkData
 			entity.Resource = null;
 		}
 		
+		private void attach_SpringBattlesByMapResourceID(SpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.ResourceByMapResourceID = this;
+		}
+		
+		private void detach_SpringBattlesByMapResourceID(SpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.ResourceByMapResourceID = null;
+		}
+		
+		private void attach_SpringBattlesByModResourceID(SpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.ResourceByModResourceID = this;
+		}
+		
+		private void detach_SpringBattlesByModResourceID(SpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.ResourceByModResourceID = null;
+		}
+		
 		private void Initialize()
 		{
 			this._ResourceDependencies = new EntitySet<ResourceDependency>(new Action<ResourceDependency>(this.attach_ResourceDependencies), new Action<ResourceDependency>(this.detach_ResourceDependencies));
 			this._ResourceContentFiles = new EntitySet<ResourceContentFile>(new Action<ResourceContentFile>(this.attach_ResourceContentFiles), new Action<ResourceContentFile>(this.detach_ResourceContentFiles));
 			this._ResourceSpringHashes = new EntitySet<ResourceSpringHash>(new Action<ResourceSpringHash>(this.attach_ResourceSpringHashes), new Action<ResourceSpringHash>(this.detach_ResourceSpringHashes));
 			this._MapRatings = new EntitySet<MapRating>(new Action<MapRating>(this.attach_MapRatings), new Action<MapRating>(this.detach_MapRatings));
+			this._SpringBattlesByMapResourceID = new EntitySet<SpringBattle>(new Action<SpringBattle>(this.attach_SpringBattlesByMapResourceID), new Action<SpringBattle>(this.detach_SpringBattlesByMapResourceID));
+			this._SpringBattlesByModResourceID = new EntitySet<SpringBattle>(new Action<SpringBattle>(this.attach_SpringBattlesByModResourceID), new Action<SpringBattle>(this.detach_SpringBattlesByModResourceID));
 			this._Mission = default(EntityRef<Mission>);
 			this._Account = default(EntityRef<Account>);
 			this._ForumThread = default(EntityRef<ForumThread>);
@@ -9007,6 +9542,1264 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SpringBattle")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class SpringBattle : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _SpringBattleID;
+		
+		private string _EngineGameID;
+		
+		private int _HostAccountID;
+		
+		private string _Title;
+		
+		private int _MapResourceID;
+		
+		private int _ModResourceID;
+		
+		private System.DateTime _StartTime;
+		
+		private int _Duration;
+		
+		private int _PlayerCount;
+		
+		private bool _HasBots;
+		
+		private bool _IsMission;
+		
+		private EntitySet<SpringBattlePlayer> _SpringBattlePlayers;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Resource> _ResourceByMapResourceID;
+		
+		private EntityRef<Resource> _ResourceByModResourceID;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnSpringBattleIDChanging(int value);
+    partial void OnSpringBattleIDChanged();
+    partial void OnEngineGameIDChanging(string value);
+    partial void OnEngineGameIDChanged();
+    partial void OnHostAccountIDChanging(int value);
+    partial void OnHostAccountIDChanged();
+    partial void OnTitleChanging(string value);
+    partial void OnTitleChanged();
+    partial void OnMapResourceIDChanging(int value);
+    partial void OnMapResourceIDChanged();
+    partial void OnModResourceIDChanging(int value);
+    partial void OnModResourceIDChanged();
+    partial void OnStartTimeChanging(System.DateTime value);
+    partial void OnStartTimeChanged();
+    partial void OnDurationChanging(int value);
+    partial void OnDurationChanged();
+    partial void OnPlayerCountChanging(int value);
+    partial void OnPlayerCountChanged();
+    partial void OnHasBotsChanging(bool value);
+    partial void OnHasBotsChanged();
+    partial void OnIsMissionChanging(bool value);
+    partial void OnIsMissionChanged();
+    #endregion
+		
+		public SpringBattle()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int SpringBattleID
+		{
+			get
+			{
+				return this._SpringBattleID;
+			}
+			set
+			{
+				if ((this._SpringBattleID != value))
+				{
+					this.OnSpringBattleIDChanging(value);
+					this.SendPropertyChanging();
+					this._SpringBattleID = value;
+					this.SendPropertyChanged("SpringBattleID");
+					this.OnSpringBattleIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EngineGameID", DbType="varchar(64) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string EngineGameID
+		{
+			get
+			{
+				return this._EngineGameID;
+			}
+			set
+			{
+				if ((this._EngineGameID != value))
+				{
+					this.OnEngineGameIDChanging(value);
+					this.SendPropertyChanging();
+					this._EngineGameID = value;
+					this.SendPropertyChanged("EngineGameID");
+					this.OnEngineGameIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HostAccountID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int HostAccountID
+		{
+			get
+			{
+				return this._HostAccountID;
+			}
+			set
+			{
+				if ((this._HostAccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnHostAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._HostAccountID = value;
+					this.SendPropertyChanged("HostAccountID");
+					this.OnHostAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="nvarchar(200)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string Title
+		{
+			get
+			{
+				return this._Title;
+			}
+			set
+			{
+				if ((this._Title != value))
+				{
+					this.OnTitleChanging(value);
+					this.SendPropertyChanging();
+					this._Title = value;
+					this.SendPropertyChanged("Title");
+					this.OnTitleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapResourceID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public int MapResourceID
+		{
+			get
+			{
+				return this._MapResourceID;
+			}
+			set
+			{
+				if ((this._MapResourceID != value))
+				{
+					if (this._ResourceByMapResourceID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMapResourceIDChanging(value);
+					this.SendPropertyChanging();
+					this._MapResourceID = value;
+					this.SendPropertyChanged("MapResourceID");
+					this.OnMapResourceIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModResourceID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public int ModResourceID
+		{
+			get
+			{
+				return this._ModResourceID;
+			}
+			set
+			{
+				if ((this._ModResourceID != value))
+				{
+					if (this._ResourceByModResourceID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnModResourceIDChanging(value);
+					this.SendPropertyChanging();
+					this._ModResourceID = value;
+					this.SendPropertyChanged("ModResourceID");
+					this.OnModResourceIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartTime", DbType="datetime NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public System.DateTime StartTime
+		{
+			get
+			{
+				return this._StartTime;
+			}
+			set
+			{
+				if ((this._StartTime != value))
+				{
+					this.OnStartTimeChanging(value);
+					this.SendPropertyChanging();
+					this._StartTime = value;
+					this.SendPropertyChanged("StartTime");
+					this.OnStartTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Duration", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public int Duration
+		{
+			get
+			{
+				return this._Duration;
+			}
+			set
+			{
+				if ((this._Duration != value))
+				{
+					this.OnDurationChanging(value);
+					this.SendPropertyChanging();
+					this._Duration = value;
+					this.SendPropertyChanged("Duration");
+					this.OnDurationChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerCount", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public int PlayerCount
+		{
+			get
+			{
+				return this._PlayerCount;
+			}
+			set
+			{
+				if ((this._PlayerCount != value))
+				{
+					this.OnPlayerCountChanging(value);
+					this.SendPropertyChanging();
+					this._PlayerCount = value;
+					this.SendPropertyChanged("PlayerCount");
+					this.OnPlayerCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HasBots", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public bool HasBots
+		{
+			get
+			{
+				return this._HasBots;
+			}
+			set
+			{
+				if ((this._HasBots != value))
+				{
+					this.OnHasBotsChanging(value);
+					this.SendPropertyChanging();
+					this._HasBots = value;
+					this.SendPropertyChanged("HasBots");
+					this.OnHasBotsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsMission", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public bool IsMission
+		{
+			get
+			{
+				return this._IsMission;
+			}
+			set
+			{
+				if ((this._IsMission != value))
+				{
+					this.OnIsMissionChanging(value);
+					this.SendPropertyChanging();
+					this._IsMission = value;
+					this.SendPropertyChanged("IsMission");
+					this.OnIsMissionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._SpringBattlePlayers.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._SpringBattlePlayers;
+			}
+			set
+			{
+				this._SpringBattlePlayers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattle", Storage="_Account", ThisKey="HostAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.SpringBattles.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.SpringBattles.Add(this);
+						this._HostAccountID = value.AccountID;
+					}
+					else
+					{
+						this._HostAccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_SpringBattle", Storage="_ResourceByMapResourceID", ThisKey="MapResourceID", OtherKey="ResourceID", IsForeignKey=true)]
+		public Resource ResourceByMapResourceID
+		{
+			get
+			{
+				return this._ResourceByMapResourceID.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._ResourceByMapResourceID.Entity;
+				if (((previousValue != value) 
+							|| (this._ResourceByMapResourceID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ResourceByMapResourceID.Entity = null;
+						previousValue.SpringBattlesByMapResourceID.Remove(this);
+					}
+					this._ResourceByMapResourceID.Entity = value;
+					if ((value != null))
+					{
+						value.SpringBattlesByMapResourceID.Add(this);
+						this._MapResourceID = value.ResourceID;
+					}
+					else
+					{
+						this._MapResourceID = default(int);
+					}
+					this.SendPropertyChanged("ResourceByMapResourceID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_SpringBattle1", Storage="_ResourceByModResourceID", ThisKey="ModResourceID", OtherKey="ResourceID", IsForeignKey=true)]
+		public Resource ResourceByModResourceID
+		{
+			get
+			{
+				return this._ResourceByModResourceID.Entity;
+			}
+			set
+			{
+				Resource previousValue = this._ResourceByModResourceID.Entity;
+				if (((previousValue != value) 
+							|| (this._ResourceByModResourceID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ResourceByModResourceID.Entity = null;
+						previousValue.SpringBattlesByModResourceID.Remove(this);
+					}
+					this._ResourceByModResourceID.Entity = value;
+					if ((value != null))
+					{
+						value.SpringBattlesByModResourceID.Add(this);
+						this._ModResourceID = value.ResourceID;
+					}
+					else
+					{
+						this._ModResourceID = default(int);
+					}
+					this.SendPropertyChanged("ResourceByModResourceID");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_SpringBattlePlayers(SpringBattlePlayer entity)
+		{
+			this.SendPropertyChanging();
+			entity.SpringBattle = this;
+		}
+		
+		private void detach_SpringBattlePlayers(SpringBattlePlayer entity)
+		{
+			this.SendPropertyChanging();
+			entity.SpringBattle = null;
+		}
+		
+		private void Initialize()
+		{
+			this._SpringBattlePlayers = new EntitySet<SpringBattlePlayer>(new Action<SpringBattlePlayer>(this.attach_SpringBattlePlayers), new Action<SpringBattlePlayer>(this.detach_SpringBattlePlayers));
+			this._Account = default(EntityRef<Account>);
+			this._ResourceByMapResourceID = default(EntityRef<Resource>);
+			this._ResourceByModResourceID = default(EntityRef<Resource>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SpringBattlePlayer")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class SpringBattlePlayer : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _SpringBattleID;
+		
+		private int _AccountID;
+		
+		private bool _Spectator;
+		
+		private bool _InVictoryTeam;
+		
+		private bool _AliveTillEnd;
+		
+		private System.Nullable<int> _DropTime;
+		
+		private System.Nullable<int> _LeaveTime;
+		
+		private string _Side;
+		
+		private System.Nullable<int> _LoseTime;
+		
+		private int _AllyNumber;
+		
+		private int _Rank;
+		
+		private EntityRef<SpringBattle> _SpringBattle;
+		
+		private EntityRef<Account> _Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnSpringBattleIDChanging(int value);
+    partial void OnSpringBattleIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnSpectatorChanging(bool value);
+    partial void OnSpectatorChanged();
+    partial void OnInVictoryTeamChanging(bool value);
+    partial void OnInVictoryTeamChanged();
+    partial void OnAliveTillEndChanging(bool value);
+    partial void OnAliveTillEndChanged();
+    partial void OnDropTimeChanging(System.Nullable<int> value);
+    partial void OnDropTimeChanged();
+    partial void OnLeaveTimeChanging(System.Nullable<int> value);
+    partial void OnLeaveTimeChanged();
+    partial void OnSideChanging(string value);
+    partial void OnSideChanged();
+    partial void OnLoseTimeChanging(System.Nullable<int> value);
+    partial void OnLoseTimeChanged();
+    partial void OnAllyNumberChanging(int value);
+    partial void OnAllyNumberChanged();
+    partial void OnRankChanging(int value);
+    partial void OnRankChanged();
+    #endregion
+		
+		public SpringBattlePlayer()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int SpringBattleID
+		{
+			get
+			{
+				return this._SpringBattleID;
+			}
+			set
+			{
+				if ((this._SpringBattleID != value))
+				{
+					if (this._SpringBattle.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSpringBattleIDChanging(value);
+					this.SendPropertyChanging();
+					this._SpringBattleID = value;
+					this.SendPropertyChanged("SpringBattleID");
+					this.OnSpringBattleIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Spectator", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public bool Spectator
+		{
+			get
+			{
+				return this._Spectator;
+			}
+			set
+			{
+				if ((this._Spectator != value))
+				{
+					this.OnSpectatorChanging(value);
+					this.SendPropertyChanging();
+					this._Spectator = value;
+					this.SendPropertyChanged("Spectator");
+					this.OnSpectatorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InVictoryTeam", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool InVictoryTeam
+		{
+			get
+			{
+				return this._InVictoryTeam;
+			}
+			set
+			{
+				if ((this._InVictoryTeam != value))
+				{
+					this.OnInVictoryTeamChanging(value);
+					this.SendPropertyChanging();
+					this._InVictoryTeam = value;
+					this.SendPropertyChanged("InVictoryTeam");
+					this.OnInVictoryTeamChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AliveTillEnd", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public bool AliveTillEnd
+		{
+			get
+			{
+				return this._AliveTillEnd;
+			}
+			set
+			{
+				if ((this._AliveTillEnd != value))
+				{
+					this.OnAliveTillEndChanging(value);
+					this.SendPropertyChanging();
+					this._AliveTillEnd = value;
+					this.SendPropertyChanged("AliveTillEnd");
+					this.OnAliveTillEndChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropTime", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public System.Nullable<int> DropTime
+		{
+			get
+			{
+				return this._DropTime;
+			}
+			set
+			{
+				if ((this._DropTime != value))
+				{
+					this.OnDropTimeChanging(value);
+					this.SendPropertyChanging();
+					this._DropTime = value;
+					this.SendPropertyChanged("DropTime");
+					this.OnDropTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LeaveTime", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public System.Nullable<int> LeaveTime
+		{
+			get
+			{
+				return this._LeaveTime;
+			}
+			set
+			{
+				if ((this._LeaveTime != value))
+				{
+					this.OnLeaveTimeChanging(value);
+					this.SendPropertyChanging();
+					this._LeaveTime = value;
+					this.SendPropertyChanged("LeaveTime");
+					this.OnLeaveTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Side", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public string Side
+		{
+			get
+			{
+				return this._Side;
+			}
+			set
+			{
+				if ((this._Side != value))
+				{
+					this.OnSideChanging(value);
+					this.SendPropertyChanging();
+					this._Side = value;
+					this.SendPropertyChanged("Side");
+					this.OnSideChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoseTime", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<int> LoseTime
+		{
+			get
+			{
+				return this._LoseTime;
+			}
+			set
+			{
+				if ((this._LoseTime != value))
+				{
+					this.OnLoseTimeChanging(value);
+					this.SendPropertyChanging();
+					this._LoseTime = value;
+					this.SendPropertyChanged("LoseTime");
+					this.OnLoseTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyNumber", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public int AllyNumber
+		{
+			get
+			{
+				return this._AllyNumber;
+			}
+			set
+			{
+				if ((this._AllyNumber != value))
+				{
+					this.OnAllyNumberChanging(value);
+					this.SendPropertyChanging();
+					this._AllyNumber = value;
+					this.SendPropertyChanged("AllyNumber");
+					this.OnAllyNumberChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rank", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public int Rank
+		{
+			get
+			{
+				return this._Rank;
+			}
+			set
+			{
+				if ((this._Rank != value))
+				{
+					this.OnRankChanging(value);
+					this.SendPropertyChanging();
+					this._Rank = value;
+					this.SendPropertyChanged("Rank");
+					this.OnRankChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_SpringBattlePlayer", Storage="_SpringBattle", ThisKey="SpringBattleID", OtherKey="SpringBattleID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public SpringBattle SpringBattle
+		{
+			get
+			{
+				return this._SpringBattle.Entity;
+			}
+			set
+			{
+				SpringBattle previousValue = this._SpringBattle.Entity;
+				if (((previousValue != value) 
+							|| (this._SpringBattle.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SpringBattle.Entity = null;
+						previousValue.SpringBattlePlayers.Remove(this);
+					}
+					this._SpringBattle.Entity = value;
+					if ((value != null))
+					{
+						value.SpringBattlePlayers.Add(this);
+						this._SpringBattleID = value.SpringBattleID;
+					}
+					else
+					{
+						this._SpringBattleID = default(int);
+					}
+					this.SendPropertyChanged("SpringBattle");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattlePlayer", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.SpringBattlePlayers.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.SpringBattlePlayers.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._SpringBattle = default(EntityRef<SpringBattle>);
+			this._Account = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ForumCategory")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class ForumCategory : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ForumCategoryID;
+		
+		private string _Title;
+		
+		private System.Nullable<int> _ParentForumCategoryID;
+		
+		private bool _IsLocked;
+		
+		private bool _IsMissions;
+		
+		private bool _IsMaps;
+		
+		private int _SortOrder;
+		
+		private EntitySet<ForumThread> _ForumThreads;
+		
+		private EntitySet<ForumCategory> _ChildForumCategories;
+		
+		private EntityRef<ForumCategory> _ParentForumCategory;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnForumCategoryIDChanging(int value);
+    partial void OnForumCategoryIDChanged();
+    partial void OnTitleChanging(string value);
+    partial void OnTitleChanged();
+    partial void OnParentForumCategoryIDChanging(System.Nullable<int> value);
+    partial void OnParentForumCategoryIDChanged();
+    partial void OnIsLockedChanging(bool value);
+    partial void OnIsLockedChanged();
+    partial void OnIsMissionsChanging(bool value);
+    partial void OnIsMissionsChanged();
+    partial void OnIsMapsChanging(bool value);
+    partial void OnIsMapsChanged();
+    partial void OnSortOrderChanging(int value);
+    partial void OnSortOrderChanged();
+    #endregion
+		
+		public ForumCategory()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumCategoryID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ForumCategoryID
+		{
+			get
+			{
+				return this._ForumCategoryID;
+			}
+			set
+			{
+				if ((this._ForumCategoryID != value))
+				{
+					this.OnForumCategoryIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumCategoryID = value;
+					this.SendPropertyChanged("ForumCategoryID");
+					this.OnForumCategoryIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="nvarchar(500) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string Title
+		{
+			get
+			{
+				return this._Title;
+			}
+			set
+			{
+				if ((this._Title != value))
+				{
+					this.OnTitleChanging(value);
+					this.SendPropertyChanging();
+					this._Title = value;
+					this.SendPropertyChanged("Title");
+					this.OnTitleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentForumCategoryID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public System.Nullable<int> ParentForumCategoryID
+		{
+			get
+			{
+				return this._ParentForumCategoryID;
+			}
+			set
+			{
+				if ((this._ParentForumCategoryID != value))
+				{
+					if (this._ParentForumCategory.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnParentForumCategoryIDChanging(value);
+					this.SendPropertyChanging();
+					this._ParentForumCategoryID = value;
+					this.SendPropertyChanged("ParentForumCategoryID");
+					this.OnParentForumCategoryIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsLocked", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool IsLocked
+		{
+			get
+			{
+				return this._IsLocked;
+			}
+			set
+			{
+				if ((this._IsLocked != value))
+				{
+					this.OnIsLockedChanging(value);
+					this.SendPropertyChanging();
+					this._IsLocked = value;
+					this.SendPropertyChanged("IsLocked");
+					this.OnIsLockedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsMissions", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public bool IsMissions
+		{
+			get
+			{
+				return this._IsMissions;
+			}
+			set
+			{
+				if ((this._IsMissions != value))
+				{
+					this.OnIsMissionsChanging(value);
+					this.SendPropertyChanging();
+					this._IsMissions = value;
+					this.SendPropertyChanged("IsMissions");
+					this.OnIsMissionsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsMaps", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public bool IsMaps
+		{
+			get
+			{
+				return this._IsMaps;
+			}
+			set
+			{
+				if ((this._IsMaps != value))
+				{
+					this.OnIsMapsChanging(value);
+					this.SendPropertyChanging();
+					this._IsMaps = value;
+					this.SendPropertyChanged("IsMaps");
+					this.OnIsMapsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SortOrder", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public int SortOrder
+		{
+			get
+			{
+				return this._SortOrder;
+			}
+			set
+			{
+				if ((this._SortOrder != value))
+				{
+					this.OnSortOrderChanging(value);
+					this.SendPropertyChanging();
+					this._SortOrder = value;
+					this.SendPropertyChanged("SortOrder");
+					this.OnSortOrderChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumThread", Storage="_ForumThreads", ThisKey="ForumCategoryID", OtherKey="ForumCategoryID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		public EntitySet<ForumThread> ForumThreads
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ForumThreads.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ForumThreads;
+			}
+			set
+			{
+				this._ForumThreads.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumCategory", Storage="_ChildForumCategories", ThisKey="ForumCategoryID", OtherKey="ParentForumCategoryID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		public EntitySet<ForumCategory> ChildForumCategories
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ChildForumCategories.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ChildForumCategories;
+			}
+			set
+			{
+				this._ChildForumCategories.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumCategory", Storage="_ParentForumCategory", ThisKey="ParentForumCategoryID", OtherKey="ForumCategoryID", IsForeignKey=true)]
+		public ForumCategory ParentForumCategory
+		{
+			get
+			{
+				return this._ParentForumCategory.Entity;
+			}
+			set
+			{
+				ForumCategory previousValue = this._ParentForumCategory.Entity;
+				if (((previousValue != value) 
+							|| (this._ParentForumCategory.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ParentForumCategory.Entity = null;
+						previousValue.ChildForumCategories.Remove(this);
+					}
+					this._ParentForumCategory.Entity = value;
+					if ((value != null))
+					{
+						value.ChildForumCategories.Add(this);
+						this._ParentForumCategoryID = value.ForumCategoryID;
+					}
+					else
+					{
+						this._ParentForumCategoryID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ParentForumCategory");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_ForumThreads(ForumThread entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumCategory = this;
+		}
+		
+		private void detach_ForumThreads(ForumThread entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumCategory = null;
+		}
+		
+		private void attach_ChildForumCategories(ForumCategory entity)
+		{
+			this.SendPropertyChanging();
+			entity.ParentForumCategory = this;
+		}
+		
+		private void detach_ChildForumCategories(ForumCategory entity)
+		{
+			this.SendPropertyChanging();
+			entity.ParentForumCategory = null;
+		}
+		
+		private void Initialize()
+		{
+			this._ForumThreads = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreads), new Action<ForumThread>(this.detach_ForumThreads));
+			this._ChildForumCategories = new EntitySet<ForumCategory>(new Action<ForumCategory>(this.attach_ChildForumCategories), new Action<ForumCategory>(this.detach_ChildForumCategories));
+			this._ParentForumCategory = default(EntityRef<ForumCategory>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 }

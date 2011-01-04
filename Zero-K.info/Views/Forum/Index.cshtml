@@ -1,0 +1,39 @@
+﻿@model ZeroKWeb.Controllers.ForumController.IndexResult
+@{
+  Page.Title = "Zero-K forums";
+}
+
+@{Html.RenderPartial("ForumPath", Model.Path);}
+
+@if (Model.Categories.Any()) {
+  <table>
+  <tr><td>Forum</td><td>Threads</td></tr>
+    @foreach (var cat in Model.Categories) {
+      <tr>
+        <td><h3>@Html.ActionLink(cat.Title, "Index", new { categoryID = cat.ForumCategoryID })</h3></td>
+        <td>@cat.ForumThreads.Count()</td>
+      </tr>
+    }
+  </table>
+}
+
+@if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked) {
+  <h3>@Html.ActionLink("Post new topic", "NewPost", new {categoryID= Model.CurrentCategory.ForumCategoryID})</h3>
+}
+
+@if (Model.Threads.Any()) {
+  <table>
+  <tr><td>L</td><td>P</td><td>Thread</td><td>Author</td><td>Posts</td><td>Views</td><td>Last post</td></tr>
+    @foreach (var t in Model.Threads) {
+      <tr>
+        <td>@(t.IsLocked ? "Locked" : "")</td>
+        <td>@(t.IsPinned ? "Pinned" : "")</td>
+        <td>@Html.ActionLink(t.Title, "Thread", new { id = t.ForumThreadID })</td>
+        <td>@Html.PrintAccount(t.AccountByCreatedAccountID)</td>
+        <td>@t.PostCount</td>
+        <td>@t.ViewCount</td>
+        <td>@t.LastPost.ToAgoString()<br />@Html.PrintAccount(t.AccountByLastPostAccountID)</td>
+      </tr>
+    }
+  </table>
+}

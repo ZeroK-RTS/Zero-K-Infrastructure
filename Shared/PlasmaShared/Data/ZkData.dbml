@@ -326,11 +326,15 @@
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
+      <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
+      <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />
       <Association Name="Account_Resource" Member="Resources" ThisKey="AccountID" OtherKey="TaggedByAccountID" Type="Resource" />
       <Association Name="Account_MissionScore" Member="MissionScores" ThisKey="AccountID" OtherKey="AccountID" Type="MissionScore" />
       <Association Name="Account_Rating" Member="Ratings" ThisKey="AccountID" OtherKey="AccountID" Type="Rating" />
       <Association Name="Account_ForumPost" Member="ForumPosts" ThisKey="AccountID" OtherKey="AuthorAccountID" Type="ForumPost" />
       <Association Name="Account_MapRating" Member="MapRatings" ThisKey="AccountID" OtherKey="AccountID" Type="MapRating" />
+      <Association Name="Account_SpringBattle" Member="SpringBattles" ThisKey="AccountID" OtherKey="HostAccountID" Type="SpringBattle" />
+      <Association Name="Account_SpringBattlePlayer" Member="SpringBattlePlayers" ThisKey="AccountID" OtherKey="AccountID" Type="SpringBattlePlayer" />
     </Type>
   </Table>
   <Table Name="dbo.LobbyMessage" Member="LobbyMessages">
@@ -358,10 +362,20 @@
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Title" Type="System.String" DbType="nvarchar(300) NOT NULL" CanBeNull="false" />
       <Column Name="Created" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="CreatedAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="LastPost" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="LastPostAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="PostCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="ViewCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="IsLocked" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="ForumCategoryID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="IsPinned" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="ForumThread_Mission" Member="Missions" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Mission" Cardinality="One" />
       <Association Name="ForumThread_Resource" Member="Resources" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Resource" Cardinality="One" />
       <Association Name="ForumThread_ForumPost" Member="ForumPosts" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumPost" />
+      <Association Name="ForumCategory_ForumThread" Member="ForumCategory" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" DeleteRule="CASCADE" />
+      <Association Name="Account_ForumThread" Member="AccountByCreatedAccountID" ThisKey="CreatedAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_ForumThread1" Member="AccountByLastPostAccountID" ThisKey="LastPostAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.ExceptionLog" Member="ExceptionLogs">
@@ -431,6 +445,8 @@
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
       <Association Name="Resource_MapRating" Member="MapRatings" ThisKey="ResourceID" OtherKey="ResourceID" Type="MapRating" />
+      <Association Name="Resource_SpringBattle" Member="SpringBattlesByMapResourceID" ThisKey="ResourceID" OtherKey="MapResourceID" Type="SpringBattle" />
+      <Association Name="Resource_SpringBattle1" Member="SpringBattlesByModResourceID" ThisKey="ResourceID" OtherKey="ModResourceID" Type="SpringBattle" />
       <Association Name="Mission_Resource" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" />
       <Association Name="Account_Resource" Member="Account" ThisKey="TaggedByAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="ForumThread_Resource" Member="ForumThread" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThread" IsForeignKey="true" />
@@ -477,6 +493,56 @@
       <Column Name="Rating" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Resource_MapRating" Member="Resource" ThisKey="ResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_MapRating" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SpringBattle" Member="SpringBattles">
+    <Type Name="SpringBattle">
+      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="EngineGameID" Type="System.String" DbType="varchar(64) NOT NULL" CanBeNull="false" />
+      <Column Name="HostAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="MapResourceID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ModResourceID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="StartTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="Duration" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="PlayerCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="HasBots" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsMission" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Association Name="SpringBattle_SpringBattlePlayer" Member="SpringBattlePlayers" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattlePlayer" />
+      <Association Name="Account_SpringBattle" Member="Account" ThisKey="HostAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Resource_SpringBattle" Member="ResourceByMapResourceID" ThisKey="MapResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" />
+      <Association Name="Resource_SpringBattle1" Member="ResourceByModResourceID" ThisKey="ModResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.SpringBattlePlayer" Member="SpringBattlePlayers">
+    <Type Name="SpringBattlePlayer">
+      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Spectator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="InVictoryTeam" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="AliveTillEnd" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="DropTime" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="LeaveTime" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="Side" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="LoseTime" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="AllyNumber" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Rank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="SpringBattle_SpringBattlePlayer" Member="SpringBattle" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattle" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Account_SpringBattlePlayer" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ForumCategory" Member="ForumCategories">
+    <Type Name="ForumCategory">
+      <Column Name="ForumCategoryID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="nvarchar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="ParentForumCategoryID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="IsLocked" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsMissions" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsMaps" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="SortOrder" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="ForumCategory_ForumThread" Member="ForumThreads" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumThread" />
+      <Association Name="ForumCategory_ForumCategory" Member="ChildForumCategories" ThisKey="ForumCategoryID" OtherKey="ParentForumCategoryID" Type="ForumCategory" />
+      <Association Name="ForumCategory_ForumCategory" Member="ParentForumCategory" ThisKey="ParentForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

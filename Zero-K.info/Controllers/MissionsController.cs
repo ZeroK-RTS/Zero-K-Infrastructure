@@ -52,7 +52,11 @@ namespace ZeroKWeb.Controllers
 
 		public ActionResult Detail(int id)
 		{
-			var mission = new ZkDataContext().Missions.Single(x => x.MissionID == id);
+      var db = new ZkDataContext();
+      var mission = db.Missions.Single(x => x.MissionID == id);
+      mission.ForumThread.ViewCount++;
+      db.SubmitChanges();
+
 			return View("Detail",
 			            new MissionDetailData
 			            {

@@ -1,0 +1,45 @@
+﻿@model ZeroKWeb.Controllers.ForumController.ThreadResult
+
+@{
+  Page.Title = "Zero-K forum thread";
+}
+
+
+@{Html.RenderPartial("ForumPath", Model.Path);}
+
+<h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
+
+@if (!Model.CurrentThread.IsLocked) {
+  <h3>@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+}
+
+Pages: 
+@for (int i = 0; i < Model.PageCount; i++) {
+<b>@Html.ActionLink((i+1).ToString(), "Thread", new {threadID = Model.CurrentThread.ForumThreadID, page = i})</b>
+}
+
+@foreach (var p in Model.Posts) {
+  <table>
+    <tr>
+      <td width='222px' class="border-test">
+        @Html.PrintAccount(p.Account)<br />
+        <table>
+          <tr>
+            <td>@Html.AccountAvatar(p.Account)
+            </td>
+            <td valign='top'>
+              <small>@p.Created.ToAgoString()</small>
+            </td>
+          </tr>
+        </table>
+      </td>
+      <td valign="top">
+        @p.Text
+      </td>
+    </tr>
+  </table>
+}
+
+@if (!Model.CurrentThread.IsLocked) {
+  <h3>@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+}
