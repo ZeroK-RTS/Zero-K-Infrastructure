@@ -414,7 +414,7 @@ namespace CMissionLib
 			line("LimitDGun", "0");
 			line("DiminishingMMs", "0");
 			line("GhostedBuildings", "1");
-			line("HostIP", "localhost");
+			line("HostIP", "127.0.0.1");
 			line("HostPort", "8452");
 			line("IsHost", "1");
 			line("MyPlayerNum", Players.IndexOf(StartingPlayer));
