@@ -50,6 +50,15 @@ namespace ZeroKWeb.Controllers
 			public int? Difficulty { get; set; }
 		}
 
+    public ActionResult Touch(int id)
+    {
+      var db = new ZkDataContext();
+      var mis = db.Missions.SingleOrDefault(x => x.MissionID == id);
+      mis.ModifiedTime = DateTime.UtcNow;
+      db.SubmitChanges();
+      return RedirectToAction("Index");
+    }
+
 		public ActionResult Detail(int id)
 		{
       var db = new ZkDataContext();
