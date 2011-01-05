@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using ZeroKWeb;
 using ZkData;
 
@@ -35,23 +36,64 @@ namespace System.Web.Mvc
       return AccountAvatar(helper, account.AccountID);
     }
 
-    public static MvcHtmlString IncludeFile(this HtmlHelper helper, string name)
+    public static MvcHtmlString BBCode(this HtmlHelper helper, string str)
     {
-      if (name.StartsWith("http://")) {
-        var ret = new WebClient().DownloadString(name);
-        return new MvcHtmlString(ret);
-      } else
-      {
-        var path = HttpContext.Current.Server.MapPath(name);
-        return new MvcHtmlString(File.ReadAllText(path));
-      }
-    }
+      Regex exp;
+      // format the bold tags: [b][/b]
+      // becomes: <strong></strong>
+      exp = new Regex(@"\[b\](.+?)\[/b\]");
+      str = exp.Replace(str, "<strong>$1</strong>");
 
-    public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node)
-    {
-      return new MvcHtmlString(WikiHandler.LoadWiki(node));
-    }
+      // format the italic tags: [i][/i]
+      // becomes: <em></em>
+      exp = new Regex(@"\[i\](.+?)\[/i\]");
+      str = exp.Replace(str, "<em>$1</em>");
 
+      // format the underline tags: [u][/u]
+      // becomes: <u></u>
+      exp = new Regex(@"\[u\](.+?)\[/u\]");
+      str = exp.Replace(str, "<u>$1</u>");
+
+      // format the strike tags: [s][/s]
+      // becomes: <strike></strike>
+      exp = new Regex(@"\[s\](.+?)\[/s\]");
+      str = exp.Replace(str, "<strike>$1</strike>");
+
+      // format the url tags: [url=www.website.com]my site[/url]
+      // becomes: <a href="www.website.com">my site</a>
+      exp = new Regex(@"\[url\=([^\]]+)\]([^\]]+)\[/url\]");
+      str = exp.Replace(str, "<a href=\"$1\">$2</a>");
+
+      // format the img tags: [img]www.website.com/img/image.jpeg[/img]
+      // becomes: <img src="www.website.com/img/image.jpeg" />
+      exp = new Regex(@"\[img\]([^\]]+)\[/img\]");
+      str = exp.Replace(str, "<img src=\"$1\" />");
+
+      // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
+      // becomes: <img src="www.website.com/img/image.jpeg" alt="this is the alt text" />
+      exp = new Regex(@"\[img\=([^\]]+)\]([^\]]+)\[/img\]");
+      str = exp.Replace(str, "<img src=\"$1\" alt=\"$2\" />");
+
+      //format the colour tags: [color=red][/color]
+      // becomes: <font color="red"></font>
+      // supports UK English and US English spelling of colour/color
+      exp = new Regex(@"\[color\=([^\]]+)\]([^\]]+)\[/color\]");
+      str = exp.Replace(str, "<font color=\"$1\">$2</font>");
+      exp = new Regex(@"\[colour\=([^\]]+)\]([^\]]+)\[/colour\]");
+      str = exp.Replace(str, "<font color=\"$1\">$2</font>");
+
+      // format the size tags: [size=3][/size]
+      // becomes: <font size="+3"></font>
+      exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]");
+      str = exp.Replace(str, "<font size=\"+$1\">$2</font>");
+
+      str = Regex.Replace(str, @"\s((mailto|spring|http|https|ftp|ftps)\://\S+)\s", @"<a href='$1'>$1</a>");
+
+      // lastly, replace any new line characters with <br />
+      str = str.Replace("\r\n", "<br />\r\n");
+
+      return new MvcHtmlString(str);
+    }
 
     public static MvcHtmlString BoolSelect(this HtmlHelper helper, string name, bool? selected, string anyItem)
     {
@@ -65,14 +107,39 @@ namespace System.Web.Mvc
       return new MvcHtmlString(sb.ToString());
     }
 
+    public static MvcHtmlString IncludeFile(this HtmlHelper helper, string name)
+    {
+      if (name.StartsWith("http://"))
+      {
+        var ret = new WebClient().DownloadString(name);
+        return new MvcHtmlString(ret);
+      }
+      else
+      {
+        var path = HttpContext.Current.Server.MapPath(name);
+        return new MvcHtmlString(File.ReadAllText(path));
+      }
+    }
+
+    public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node)
+    {
+      return new MvcHtmlString(WikiHandler.LoadWiki(node));
+    }
+
+
     public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account)
     {
       if (account == null) return new MvcHtmlString("?");
-      else return
-        new MvcHtmlString(string.Format("<a href='spring://chat/user/{2}'><img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}</a>",
-                                        account.Country,
-                                        account.LobbyTimeRank + 1,
-                                        account.Name));
+      else
+      {
+        return
+          new MvcHtmlString(
+            string.Format(
+              "<a href='spring://chat/user/{2}'><img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}</a>",
+              account.Country,
+              account.LobbyTimeRank + 1,
+              account.Name));
+      }
     }
 
     public static MvcHtmlString PrintLines(this HtmlHelper helper, string text)
@@ -125,8 +192,20 @@ namespace System.Web.Mvc
       {
         var totalWidth = 5*14;
         var starWidth = (int)(rating*14.0);
-        return new MvcHtmlString(string.Format("<span title='{2:F2}'><span class='{0}' style='width:{1}px'></span><span style='width:{3}px'></span></span>", type, starWidth, rating, totalWidth-starWidth));
-      } else return new MvcHtmlString(string.Format("<span class='{0}' style='width:70px' title='No votes'></span>", type == StarType.RedSkull ? StarType.WhiteSkull : StarType.WhiteStarSmall));
+        return
+          new MvcHtmlString(string.Format(
+            "<span title='{2:F2}'><span class='{0}' style='width:{1}px'></span><span style='width:{3}px'></span></span>",
+            type,
+            starWidth,
+            rating,
+            totalWidth - starWidth));
+      }
+      else
+      {
+        return
+          new MvcHtmlString(string.Format("<span class='{0}' style='width:70px' title='No votes'></span>",
+                                          type == StarType.RedSkull ? StarType.WhiteSkull : StarType.WhiteStarSmall));
+      }
     }
 
 

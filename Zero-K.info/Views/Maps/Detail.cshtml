@@ -148,7 +148,7 @@
 @foreach (var p in Model.Posts) {
   <table>
     <tr>
-      <td width='120px'>
+      <td width='120px' valign="top">
         @Html.PrintAccount(p.Author)<br />
         @Html.AccountAvatar(p.Author)
         <br />
@@ -156,7 +156,7 @@
         @Html.Stars(StarType.GreenStarSmall, p.Rating)
       </td>
       <td valign="top">
-        @p.Text
+        @Html.BBCode(p.Text)
       </td>
     </tr>
   </table>

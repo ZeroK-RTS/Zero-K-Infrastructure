@@ -24,7 +24,7 @@
   foreach (var p in Model.LastPosts) {
     <table>
       <tr>
-        <td width='222px' class="border-test">
+        <td width='222px' class="border-test" valign="top">
           @Html.PrintAccount(p.Account)<br />
           <table>
             <tr>
@@ -37,7 +37,7 @@
           </table>
         </td>
         <td valign="top">
-          @p.Text
+          @Html.BBCode(p.Text)
         </td>
       </tr>
     </table>
