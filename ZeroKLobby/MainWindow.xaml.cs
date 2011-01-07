@@ -300,7 +300,7 @@ namespace ZeroKLobby
 					{
 						InvokeFunc(() =>
 							{
-								navigationControl.Path = Uri.UnescapeDataString(File.ReadAllLines(ex.FullPath).First());
+								navigationControl.Path = new Uri(File.ReadAllLines(ex.FullPath).First()).ToString();
 								PopupSelf();
 							});
 						ipcFileWatcher.EnableRaisingEvents = false;

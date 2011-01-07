@@ -76,6 +76,7 @@ namespace ZeroKLobby.MicroLobby
 		void WebBrowser_Navigated(object sender, NavigationEventArgs e)
 		{
       navigating = false;
+      navigatingTo = null;
       if (navigatedIndex == navigatedPlaces.Count) navigatedPlaces.Add(e.Uri.ToString());
       else navigatedPlaces[navigatedIndex] = e.Uri.ToString();
 		  navigatedIndex++;
@@ -87,7 +88,12 @@ namespace ZeroKLobby.MicroLobby
 	    if (navigatingTo != e.Uri.ToString())
 			{
 				navigatingTo = e.Uri.ToString();
-				if (navigatingTo.Contains("@")) e.Cancel = true;
+				if (navigatingTo.Contains("@"))
+				{
+				  e.Cancel = true;
+          navigatingTo = null;
+          navigating = false;
+				}
 				Program.MainWindow.navigationControl.Path = Uri.UnescapeDataString(e.Uri.ToString());
 			}
 		}
