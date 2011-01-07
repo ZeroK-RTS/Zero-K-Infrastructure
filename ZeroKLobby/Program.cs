@@ -274,8 +274,6 @@ namespace ZeroKLobby
         BattleBar = new BattleBar();
         NewVersionBar = new NewVersionBar();
 
-        if (Conf.ConnectOnStartup) ConnectBar.TryToConnectTasClient();
-        else NotifySection.AddBar(ConnectBar);
         return true;
       }
       catch (Exception ex)

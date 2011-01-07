@@ -331,6 +331,10 @@ namespace ZeroKLobby
         Program.Downloader.PackageDownloader.SelectPackage(defaultTag); 
         Program.Downloader.GetResource(DownloadType.MOD, defaultTag);
       }
+
+      if (Program.Conf.ConnectOnStartup) Program.ConnectBar.TryToConnectTasClient();
+      else NotifySection.AddBar(Program.ConnectBar);
+
 		}
 
 		void Window_StateChanged(object sender, EventArgs e)

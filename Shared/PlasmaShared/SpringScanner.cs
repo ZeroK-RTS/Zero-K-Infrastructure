@@ -191,7 +191,7 @@ namespace PlasmaShared
         {
           SpringHashEntry match;
           if (string.IsNullOrEmpty(springVersion)) match = item.SpringHash.LastOrDefault();
-          else match = item.SpringHash.SingleOrDefault(x => x.SpringVersion == springVersion);
+          else match = item.SpringHash.FirstOrDefault(x => x.SpringVersion == springVersion);
           if (match != null) return match.SpringHash;
         }
       }
@@ -395,7 +395,7 @@ namespace PlasmaShared
       work.CacheItem.InternalName = result.InternalName;
       work.CacheItem.ResourceType = result.ResourceType;
 
-      var match = result.SpringHashes.Where(x => x.SpringVersion == springPaths.SpringVersion).SingleOrDefault();
+      var match = result.SpringHashes.Where(x => x.SpringVersion == springPaths.SpringVersion).FirstOrDefault();
       if (match == null)
       {
         Trace.WriteLine(String.Format("No server resource data for {0} for this spring version, queing upload", work.CacheItem.ShortPath));
@@ -651,7 +651,7 @@ namespace PlasmaShared
         workItem.CacheItem.InternalName = info.Name;
         workItem.CacheItem.ResourceType = info is Map ? ResourceType.Map : ResourceType.Mod;
         var hashes = new List<SpringHashEntry>();
-        if (workItem.CacheItem.SpringHash != null) hashes.AddRange(workItem.CacheItem.SpringHash);
+        if (workItem.CacheItem.SpringHash != null) hashes.AddRange(workItem.CacheItem.SpringHash.Where(x => x.SpringVersion != springPaths.SpringVersion));
         hashes.Add(new SpringHashEntry(){ SpringHash = info.Checksum, SpringVersion = springPaths.SpringVersion });
         workItem.CacheItem.SpringHash = hashes.ToArray();
 

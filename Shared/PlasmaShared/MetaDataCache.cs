@@ -156,7 +156,7 @@ namespace PlasmaShared
 				}
 				catch (Exception e)
 				{
-					Trace.WriteLine("Unable to deserialize map " + mapName + " from disk: " + e.Message);
+					Trace.WriteLine("Unable to deserialize map " + mapName + " from disk: " + e);
 				}
 				if (map != null)
 				{
@@ -214,7 +214,7 @@ namespace PlasmaShared
 			}
 			catch (Exception e)
 			{
-				Trace.WriteLine("Unable to deserialize map " + mapName + " from the server: " + e.Message);
+				Trace.WriteLine("Unable to deserialize map " + mapName + " from the server: " + e);
 
 				try
 				{
@@ -247,7 +247,7 @@ namespace PlasmaShared
 				}
 				catch (Exception e)
 				{
-					Trace.WriteLine("Unable to deserialize mod " + modName + " from disk: " + e.Message);
+					Trace.WriteLine("Unable to deserialize mod " + modName + " from disk: " + e);
 				}
 				if (mod != null)
 				{
@@ -287,7 +287,7 @@ namespace PlasmaShared
 			}
 			catch (Exception e)
 			{
-				Trace.WriteLine("Unable to deserialize mod " + modName + " from the server: " + e.Message);
+				Trace.WriteLine("Unable to deserialize mod " + modName + " from the server: " + e);
 
 				try
 				{
