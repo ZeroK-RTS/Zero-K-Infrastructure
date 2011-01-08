@@ -35,6 +35,7 @@
               <Path.RenderTransform>
                 <TransformGroup>
                   <RotateTransform Angle="15"/>
+                  <TranslateTransform Y="1" />
                 </TransformGroup>
               </Path.RenderTransform>
             </Path>
@@ -61,6 +62,7 @@
                 <TransformGroup>
                   <ScaleTransform ScaleX="-1"/>
                   <RotateTransform Angle="-15"/>
+                  <TranslateTransform Y="-1" />
                 </TransformGroup>
               </Path.RenderTransform>
             </Path>
@@ -109,12 +111,12 @@
           <MicroLobby:ChatTab2 x:Name="chatTab" />
       </TabItem>
       <TabItem>
-        <WindowsFormsHost>
+        <WindowsFormsHost Background="{StaticResource {x:Static SystemColors.WindowBrushKey}}">
           <LuaMgr:LuaMgrTab />
         </WindowsFormsHost>
       </TabItem>
       <TabItem>
-        <WindowsFormsHost>
+        <WindowsFormsHost Background="{StaticResource {x:Static SystemColors.WindowBrushKey}}">
           <MapDownloader:DownloaderTab />
         </WindowsFormsHost>
       </TabItem>
