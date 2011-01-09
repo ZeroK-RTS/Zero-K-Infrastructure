@@ -2,12 +2,13 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:c="clr-namespace:ZeroKLobby.Controls"
                     mc:Ignorable="d">
-  <Style x:Key="SakButton" TargetType="{x:Type Button}">
+  <Style TargetType="{x:Type c:HeaderButton}">
     <Setter Property="Foreground" Value="White" />
     <Setter Property="Template">
       <Setter.Value>
-        <ControlTemplate TargetType="{x:Type Button}">
+        <ControlTemplate TargetType="{x:Type c:HeaderButton}">
           <ControlTemplate.Resources>
             <Storyboard x:Key="OnMouseEnter1">
               <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(GradientBrush.GradientStops)[0].(GradientStop.Color)" Storyboard.TargetName="backdrop">
@@ -77,18 +78,19 @@
                 <EasingColorKeyFrame KeyTime="0:0:0.2" Value="#000080FF"/>
               </ColorAnimationUsingKeyFrames>
             </Storyboard>
+            <Storyboard x:Key="Alerting">
+              <DoubleAnimationUsingKeyFrames Duration="0:0:1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="alertingBackdrop">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value=".7" />
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value=".3" />
+              </DoubleAnimationUsingKeyFrames>
+              <DoubleAnimationUsingKeyFrames BeginTime="0:0:1" RepeatBehavior="{x:Static RepeatBehavior.Forever}" Duration="0:0:1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="alertingBackdrop">
+                <EasingDoubleKeyFrame KeyTime="0:0:0" Value=".3" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.8" Value=".7" />
+                <EasingDoubleKeyFrame KeyTime="0:0:1" Value=".3" />
+              </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
           </ControlTemplate.Resources>
-          <ControlTemplate.Triggers>
-            <EventTrigger RoutedEvent="ButtonBase.Click">
-              <BeginStoryboard x:Name="OnClick1_BeginStoryboard" Storyboard="{StaticResource OnClick1}"/>
-            </EventTrigger>
-            <EventTrigger RoutedEvent="Mouse.MouseLeave">
-              <BeginStoryboard x:Name="OnMouseEnter1_BeginStoryboard2" Storyboard="{StaticResource OnMouseLeave}"/>
-            </EventTrigger>
-            <EventTrigger RoutedEvent="Mouse.MouseEnter">
-              <BeginStoryboard x:Name="OnMouseLeave_BeginStoryboard" Storyboard="{StaticResource OnMouseEnter1}"/>
-            </EventTrigger>
-          </ControlTemplate.Triggers>
           <Grid>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="10"/>
@@ -116,6 +118,24 @@
                   <GradientStop Offset="0.5" Color="#3200DFFF"/>
                   <GradientStop Offset="1" Color="#00B6E6FF"/>
                 </RadialGradientBrush>
+              </Path.Fill>
+            </Path>
+            <Path x:Name="selectedBackdrop" Data="M6,6 L6,54 59.1875,54 59.082834,6 z" HorizontalAlignment="Stretch" Height="Auto" Margin="-4,-4,-2.188,-2" Stretch="Fill" VerticalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.Column="1" Visibility="Hidden">
+              <Path.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                  <GradientStop Color="#88ff" Offset="0" />
+                  <GradientStop Color="#48ff" Offset=".5" />
+                  <GradientStop Color="#88ff" Offset="1" />
+                </LinearGradientBrush>
+              </Path.Fill>
+            </Path>
+            <Path x:Name="alertingBackdrop" Data="M6,6 L6,54 59.1875,54 59.082834,6 z" HorizontalAlignment="Stretch" Height="Auto" Margin="-4,-4,-2.188,-2" Stretch="Fill" VerticalAlignment="Stretch" Width="Auto" Grid.Row="1" Grid.Column="1" Opacity="0">
+              <Path.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                  <GradientStop Color="#4fc0" Offset="0" />
+                  <GradientStop Color="#ffc0" Offset=".5" />
+                  <GradientStop Color="#4fc0" Offset="1" />
+                </LinearGradientBrush>
               </Path.Fill>
             </Path>
             <Path x:Name="UpperLeft1" Data="M10,0 L0,10 -1.5291472E-13,36.000185 3.9962038,39.991208 6,38.000196 2,34.000175 2,12.00024 12,2.0000399 18,2.0000399 22,6.0001199 37.963934,5.9986812 36,4.0000799 24.166667,4.1667499 20,0 z" Height="40" Stretch="Fill" Width="38" Margin="0" VerticalAlignment="Top" HorizontalAlignment="Left" Fill="{StaticResource LightAccentBrush}" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Grid.RowSpan="2" />
@@ -148,6 +168,28 @@
               </Path.Fill>
             </Path>
           </Grid>
+          <ControlTemplate.Triggers>
+            <EventTrigger RoutedEvent="ButtonBase.Click">
+              <BeginStoryboard x:Name="OnClick1_BeginStoryboard" Storyboard="{StaticResource OnClick1}"/>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="Mouse.MouseLeave">
+              <BeginStoryboard x:Name="OnMouseEnter1_BeginStoryboard2" Storyboard="{StaticResource OnMouseLeave}"/>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="Mouse.MouseEnter">
+              <BeginStoryboard x:Name="OnMouseLeave_BeginStoryboard" Storyboard="{StaticResource OnMouseEnter1}"/>
+            </EventTrigger>
+            <Trigger Property="IsSelected" Value="True">
+              <Setter TargetName="selectedBackdrop" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsAlerting" Value="True">
+              <Trigger.EnterActions>
+                <BeginStoryboard x:Name="AlertingBegin" Storyboard="{StaticResource Alerting}" />
+              </Trigger.EnterActions>
+              <Trigger.ExitActions>
+                <StopStoryboard BeginStoryboardName="AlertingBegin" />
+              </Trigger.ExitActions>
+            </Trigger>
+          </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>

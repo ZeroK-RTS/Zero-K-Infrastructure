@@ -120,6 +120,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\HeaderButton.cs" />
+    <Compile Include="IsPrefixValueConverter.cs" />
     <Compile Include="INavigatable.cs" />
     <Compile Include="KnownGames.cs" />
     <Compile Include="Lines\SelfJoinedBattleLine.cs" />

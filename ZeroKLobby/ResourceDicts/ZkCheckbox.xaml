@@ -5,9 +5,9 @@
   <Style x:Key="{x:Type CheckBox}"
        TargetType="{x:Type CheckBox}">
     <Setter Property="SnapsToDevicePixels"
-          Value="true" />
+          Value="True" />
     <Setter Property="OverridesDefaultStyle"
-          Value="true" />
+          Value="True" />
     <Setter Property="FocusVisualStyle"
           Value="{DynamicResource CheckBoxFocusVisual}" />
     <Setter Property="Foreground" Value="White" />
@@ -29,9 +29,7 @@
                       Stroke="{StaticResource LightAccentBrush}"
                       Data="M 0.5,3.5 0.5,0.5 3.5,0.5 M 9.5,0.5 12.5,0.5 12.5,3.5 M 12.5,9.5 12.5,12.5 9.5,12.5 M 3.5,12.5 0.5,12.5 0.5,9.5" />
                   <Path Visibility="Collapsed"
-                      Width="10"
-                      Height="9"
-                      Margin="1,0,0,0"
+                      Margin="2"
                       x:Name="CheckMark"
                       StrokeThickness="3"
                       Stroke="{StaticResource LightAccentBrush}"

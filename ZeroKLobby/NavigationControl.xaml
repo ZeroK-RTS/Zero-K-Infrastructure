@@ -1,7 +1,8 @@
 ﻿<UserControl x:Class="ZeroKLobby.NavigationControl" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:MicroLobby="clr-namespace:ZeroKLobby.MicroLobby" xmlns:LuaMgr="clr-namespace:ZeroKLobby.LuaMgr" xmlns:MapDownloader="clr-namespace:ZeroKLobby.MapDownloader"
-        xmlns:ZeroKLobby="clr-namespace:ZeroKLobby" mc:Ignorable="d" d:DesignHeight="374" d:DesignWidth="773" Loaded="UserControl_Loaded" x:Name="userControl" Background="Black">
+        xmlns:ZeroKLobby="clr-namespace:ZeroKLobby" xmlns:c="clr-namespace:ZeroKLobby.Controls"
+        mc:Ignorable="d" d:DesignHeight="374" d:DesignWidth="773" Loaded="UserControl_Loaded" x:Name="userControl" Background="Black">
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
@@ -19,7 +20,16 @@
       <ZeroKLobby:SubmitTextBox Margin="1" Grid.Column="2" Text="{Binding Path, ElementName=userControl}"  />
     </Grid>
     <UniformGrid Grid.Row="1" Rows="1" Margin="3">
-      <Button Click="MissionsPage_Click" Style="{StaticResource SakButton}" Margin="3">
+      <UniformGrid.Resources>
+        <ZeroKLobby:IsPrefixValueConverter x:Key="IsSingleplayerVC" Prefix="http://zero-k.info/Missions.mvc" />
+        <ZeroKLobby:IsPrefixValueConverter x:Key="IsMultiplayerVC" Prefix="battles" />
+        <ZeroKLobby:IsPrefixValueConverter x:Key="IsChatVC" Prefix="chat" />
+        <ZeroKLobby:IsPrefixValueConverter x:Key="IsMapsVC" Prefix="http://zero-k.info/Maps.mvc" />
+        <ZeroKLobby:IsPrefixValueConverter x:Key="IsWidgetsVC" Prefix="widgets" />
+        <ZeroKLobby:IsPrefixValueConverter x:Key="IsRapidVC" Prefix="rapid" />
+        <ZeroKLobby:IsPrefixValueConverter x:Key="IsSettingsVC" Prefix="settings" />
+      </UniformGrid.Resources>
+      <c:HeaderButton Click="MissionsPage_Click" Margin="3" IsSelected="{Binding Path=Path, ElementName=userControl, Converter={StaticResource IsSingleplayerVC}}">
         <Grid>
           <Viewbox StretchDirection="DownOnly">
             <Path x:Name="head" Data="M271.13961,-53.587128 C274.27643,-55.25776 277.77634,-58.382759 271.31201,-63.911817 268.27092,-66.512913 267.66858,-67.92586 266.63929,-71.837007 265.85221,-74.827832 268.10327,-76.342261 267.26316,-84.211145 263.51314,-119.33538 231.31035,-113.21372 225.00002,-113.12479 207.24976,-112.87466 187.875,-94.999912 190,-74.999947 190.23479,-72.790163 190.01357,-58.170092 198.76365,-49.836763 207.48578,-41.530043 202.95198,-46.032998 215.01379,-42.586767 222.44628,-40.463199 234.60667,-28.823539&#xa;242.38903,-27.711774 246.94377,-27.061097 253.12171,-27.908243 257.63916,-27.086888 259.76465,-26.700437 266.51424,-27.656466 266.51424,-31.586806 266.51424,-34.336391 264.68198,-38.133247 266.26424,-39.837219 267.75726,-41.445086 268.26425,-39.837219 268.76426,-43.212196 268.91956,-44.260463 265.25509,-43.832607 267.26424,-44.837186 268.48985,-45.449986 268.76664,-44.613008 270.01427,-46.712173 270.38927,-49.17049 267.54589,-51.673154 271.13961,-53.587128 z" Stretch="Fill" RenderTransformOrigin="0.5,0.5" Width="33.945" Height="34.531" VerticalAlignment="Bottom" Margin="0,0,6,6">
@@ -44,8 +54,8 @@
             <TextBlock Style="{StaticResource SakTextBlock}">SINGLEPLAYER</TextBlock>
           </Viewbox>
         </Grid>
-      </Button>
-      <Button Click="BattleListPage_Click" Style="{StaticResource SakButton}" Margin="3">
+      </c:HeaderButton>
+      <c:HeaderButton Click="BattleListPage_Click" Margin="3" IsSelected="{Binding Path=Path, ElementName=userControl, Converter={StaticResource IsMultiplayerVC}}">
         <Grid>
           <Viewbox StretchDirection="DownOnly">
             <Path Data="M15.471735,7.472363 C19.601992,7.4830511 25.873234,8.713203 26.827475,17.651065 27.118577,20.37767 26.338578,20.902425 26.611304,21.93876 26.967955,23.293991 27.176667,23.783582 28.230412,24.684875 30.47032,26.600717 29.257592,27.683544 28.170676,28.262426 26.925442,28.925626 27.910681,29.79281 27.780743,30.644628 27.348435,31.371999 27.252528,31.081981 26.827849,31.294321 26.131674,31.642412 27.401423,31.494157 27.347611,31.857387 27.174355,33.026832 26.998682,32.469697&#xa;26.481347,33.026832 25.933091,33.617265 26.567973,34.932893 26.567973,35.885635 26.567973,37.247516 24.229222,37.578784 23.492735,37.444877 21.927426,37.160274 19.786754,37.453815 18.208525,37.228351 15.511917,36.84312 11.29831,32.809927 8.7229328,32.0741 4.5434848,30.879966 6.1144583,32.440259 3.0922177,29.561944 0.060292244,26.674407 0.13694572,21.608488 0.055590153,20.842786 -0.68072796,13.912709 6.0326768,7.7190278 12.183188,7.6323569 12.763989,7.6241713&#xa;13.97781,7.4684968 15.471735,7.472363 z M19.261351,3.7772121 C23.391623,3.7878995 29.662888,5.0180519 30.617127,13.955915 30.908232,16.682519 30.128228,17.207275 30.400954,18.24361 30.757609,19.598841 30.966328,20.088432 32.020072,20.989725 34.259984,22.905569 33.047253,23.988395 31.960335,24.567276 30.7151,25.230478 31.700343,26.097661 31.570405,26.94948 31.138089,27.676849 31.042178,27.386833 30.617508,27.59917 29.921328,27.947263 31.191077,27.799009 31.137263,28.162239 30.964013,29.331684 30.788338,28.774549&#xa;30.271004,29.331684 29.722741,29.922117 30.35763,31.237745 30.35763,32.190488 30.35763,33.424694 28.436829,33.812467 27.528517,33.77466 L27.461068,33.770614 27.461451,33.75773 C27.479538,33.53005 27.544489,33.331514 27.685532,33.17962 28.217886,32.606313 28.398657,33.17962 28.576943,31.976223 28.632317,31.602449 27.325709,31.755006 28.042094,31.39681 28.479098,31.178306 28.577792,31.476743 29.022646,30.728256 29.156359,29.851705 28.142519,28.959344 29.423901,28.276889 30.542368,27.681198 31.790301,26.566934 29.485371,24.595468 28.401036,23.668008 28.186266,23.164201 27.81926,21.769624 27.538619,20.703201 28.341259,20.163209&#xa;28.041708,17.357443 26.704596,4.8333787 15.202801,6.6698346 12.955935,6.7930419 10.626418,6.9207809 7.8104866,7.3763621 5.708988,8.8858323 L5.6576656,8.855989 C8.0292218,5.6227859 12.320915,3.9886676 15.972793,3.9372066 16.553595,3.9290209 17.767422,3.7733461 19.261351,3.7772121 z M22.972199,7.0810318E-05 C27.102471,0.0107584 33.373736,1.2409108 34.327975,10.178773 34.61908,12.905377 33.839076,13.430132 34.1118,14.466468 34.468457,15.821699 34.677176,16.311289 35.730919,17.212582 37.970829,19.128426 36.758101,20.211254 35.671183,20.790134 34.425948,21.453336 35.411191,22.32052 35.28125,23.172338 34.848937,23.899707 34.753026,23.609691 34.328356,23.822029 33.632176,24.17012 34.901925,24.021865 34.848111,24.385095 34.674859,25.55454 34.499186,24.997406&#xa;33.981852,25.55454 33.433587,26.144973 34.068478,27.460601 34.068478,28.413345 34.068478,29.64755 32.147677,30.035324 31.239365,29.997516 L31.171916,29.993471 31.172299,29.980587 C31.190384,29.752906 31.255337,29.55437 31.39638,29.402477 31.928734,28.82917 32.109505,29.402477 32.287789,28.199079 32.343163,27.825305 31.036555,27.977863 31.752942,27.619667 32.189946,27.401163 32.28864,27.6996 32.733494,26.951112 32.867205,26.074562 31.853367,25.182201 33.134749,24.499746 34.253216,23.904056 35.501149,22.789793 33.196219,20.818326 32.111884,19.890867 31.897114,19.38706 31.530108,17.992482 31.249465,16.926058 32.052107,16.386067&#xa;31.752554,13.580301 30.415444,1.0562375 18.913649,2.8926935 16.666782,3.0159003 14.337266,3.1436396 11.521335,3.5992206 9.419836,5.1086913 L9.3685136,5.0788476 C11.74007,1.8456447 16.031763,0.21152639 19.683641,0.16006541 20.264443,0.15187979 21.47827,-0.0037951469 22.972199,7.0810318E-05 z" RenderTransformOrigin="0.495491871889514,0.501094063474253" Stretch="Fill" Width="36.992" Height="37.472">
@@ -71,32 +81,32 @@
             <TextBlock Style="{StaticResource SakTextBlock}">MULTIPLAYER</TextBlock>
           </Viewbox>
         </Grid>
-      </Button>
-      <Button Click="ChatPage_Click" Style="{StaticResource SakButton}" Margin="3">
+      </c:HeaderButton>
+      <c:HeaderButton Click="ChatPage_Click" Margin="3" IsSelected="{Binding Path=Path, ElementName=userControl, Converter={StaticResource IsChatVC}}">
         <Viewbox StretchDirection="DownOnly">
           <TextBlock Style="{StaticResource SakTextBlock}">CHAT</TextBlock>
         </Viewbox>
-      </Button>
-      <Button Click="MapPage_Click" Name="btnMaps" Style="{StaticResource SakButton}" Margin="3">
+      </c:HeaderButton>
+      <c:HeaderButton Click="MapPage_Click" x:Name="btnMaps" Margin="3" IsSelected="{Binding Path=Path, ElementName=userControl, Converter={StaticResource IsMapsVC}}">
         <Viewbox StretchDirection="DownOnly">
           <TextBlock Style="{StaticResource SakTextBlock}">MAPS</TextBlock>
         </Viewbox>
-      </Button>
-      <Button Click="WidgetsPage_Click" Name="btnWidgets" Style="{StaticResource SakButton}" Margin="3">
+      </c:HeaderButton>
+      <c:HeaderButton Click="WidgetsPage_Click" x:Name="btnWidgets" Margin="3" IsSelected="{Binding Path=Path, ElementName=userControl, Converter={StaticResource IsWidgetsVC}}">
         <Viewbox StretchDirection="DownOnly">
           <TextBlock Style="{StaticResource SakTextBlock}">WIDGETS</TextBlock>
         </Viewbox>
-      </Button>
-      <Button Click="DownloaderPage_Click" Name="btnRapid" Style="{StaticResource SakButton}" Margin="3">
+      </c:HeaderButton>
+      <c:HeaderButton Click="DownloaderPage_Click" x:Name="btnRapid" Margin="3" IsSelected="{Binding Path=Path, ElementName=userControl, Converter={StaticResource IsRapidVC}}">
         <Viewbox StretchDirection="DownOnly">
           <TextBlock Style="{StaticResource SakTextBlock}">RAPID</TextBlock>
         </Viewbox>
-      </Button>
-      <Button Click="SettingsPage_Click" Style="{StaticResource SakButton}" Margin="3">
+      </c:HeaderButton>
+      <c:HeaderButton Click="SettingsPage_Click" Margin="3" IsSelected="{Binding Path=Path, ElementName=userControl, Converter={StaticResource IsSettingsVC}}">
         <Viewbox StretchDirection="DownOnly">
           <TextBlock Style="{StaticResource SakTextBlock}">SETTINGS</TextBlock>
         </Viewbox>
-      </Button>
+      </c:HeaderButton>
     </UniformGrid>
     <TabControl Grid.Row="2" x:Name="tabControl" Background="Black" BorderThickness="0">
       <TabControl.ItemContainerStyle>
