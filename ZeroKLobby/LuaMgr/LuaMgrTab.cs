@@ -78,7 +78,7 @@ namespace ZeroKLobby.LuaMgr
 
     	public bool TryNavigate(params string[] path)
     	{
-			return path.Length > 0 && path[0] == PathHead;
+			  return path.Length > 0 && path[0] == PathHead;
     	}
 
     	public bool Hilite(HiliteLevel level, params string[] path)

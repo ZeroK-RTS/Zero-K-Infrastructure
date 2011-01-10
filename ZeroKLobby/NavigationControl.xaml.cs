@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Deployment.Application;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms.Integration;
+using ZeroKLobby.Controls;
 using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby
@@ -28,6 +28,11 @@ namespace ZeroKLobby
         _currentPage = value;
         PropertyChanged(this, new PropertyChangedEventArgs("CurrentPage"));
         PropertyChanged(this, new PropertyChangedEventArgs("Path"));
+        foreach (var b in Buttons)
+        {
+          b.IsSelected = Path.StartsWith(b.TargetPath);
+          if (b.IsSelected) b.IsAlerting = false;
+        }
 
         var steps = Path.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries); // todo cleanup
         var navigable = tabControl.Items.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && x.PathHead == steps[0]);
@@ -40,6 +45,7 @@ namespace ZeroKLobby
     readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
     readonly List<string> lastPaths = new List<string>();
     public WebBrowser Browser { get { return browserControl.WebBrowser; } }
+    public List<ButtonInfo> Buttons { get; set; }
     public ChatTab2 ChatTab { get { return chatTab; } }
     public static NavigationControl Instance { get; private set; }
     public bool IsBrowserTabSelected { get { return tabControl.SelectedContent is BrowserControl; } }
@@ -49,12 +55,10 @@ namespace ZeroKLobby
       get { return CurrentPage != null ? CurrentPage.ToString() : string.Empty; }
       set
       {
-        if (value == "http://zero-k.info/lobby/Zero-K.application")
-        {
-          return; // this URL happens if you start installer while another copy is running. In this case dont change to this path
-        }
+        if (value == "http://zero-k.info/lobby/Zero-K.application") return; // this URL happens if you start installer while another copy is running. In this case dont change to this path
 
         if (value.ToLower().StartsWith("spring://")) value = value.Substring(9);
+
         var parts = value.Split('@');
         for (var i = 1; i < parts.Length; i++)
         {
@@ -64,11 +68,11 @@ namespace ZeroKLobby
         value = parts[0];
 
         if (CurrentPage != null && CurrentPage.ToString() == value) return; // we are already there, no navigation needed
-        lastPaths.Add(value);
 
         var step = GoToPage(value.Split('/'));
         if (step != null)
         {
+          lastPaths.Add(value);
           if (CurrentPage != null && CurrentPage.ToString() != value) backStack.Push(CurrentPage);
           CurrentPage = step;
           //forwardStack.Clear();
@@ -78,13 +82,21 @@ namespace ZeroKLobby
 
     public NavigationControl()
     {
+      Buttons = new List<ButtonInfo>()
+                {
+                  new ButtonInfo() { Label = "SINGLEPLAYER", TargetPath = "http://zero-k.info/Missions.mvc", },
+                  new ButtonInfo() { Label = "MULTIPLAYER", TargetPath = "battles" },
+                  new ButtonInfo() { Label = "CHAT", TargetPath = "chat" },
+                  new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps.mvc" },
+                  new ButtonInfo()
+                  { Label = "WIDGETS", TargetPath = "widgets", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
+                  new ButtonInfo()
+                  { Label = "RAPID", TargetPath = "rapid", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
+                  new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings" },
+                };
+
       Instance = this;
       InitializeComponent();
-      if (Program.Conf.LimitedMode)
-      {
-        btnWidgets.Visibility= Visibility.Collapsed;
-        btnRapid.Visibility = Visibility.Collapsed;
-      }
     }
 
 
@@ -102,6 +114,8 @@ namespace ZeroKLobby
     public bool HilitePath(string navigationPath, HiliteLevel hiliteLevel)
     {
       if (string.IsNullOrEmpty(navigationPath)) return false;
+      if (hiliteLevel != HiliteLevel.None) foreach (var b in Buttons) if (navigationPath.StartsWith(b.TargetPath)) b.IsAlerting = true;
+
       var steps = navigationPath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
       var navigable = tabControl.Items.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && x.PathHead == steps[0]);
       if (navigable != null) return navigable.Hilite(hiliteLevel, steps);
@@ -134,7 +148,7 @@ namespace ZeroKLobby
 
     void GoBack()
     {
-      if (forwardStack.Count == 0|| forwardStack.Peek().ToString() != CurrentPage.ToString()) forwardStack.Push(CurrentPage);
+      if (forwardStack.Count == 0 || forwardStack.Peek().ToString() != CurrentPage.ToString()) forwardStack.Push(CurrentPage);
       CurrentPage = backStack.Pop();
       GoToPage(CurrentPage.Path);
     }
@@ -162,36 +176,11 @@ namespace ZeroKLobby
 
     public event PropertyChangedEventHandler PropertyChanged = delegate { };
 
-    void BattleListPage_Click(object sender, RoutedEventArgs e)
+
+    void LocationButton_Click(object sender, RoutedEventArgs e)
     {
-      Path = GetLastPathStartingWith("battles");
-    }
-
-    void ChatPage_Click(object sender, RoutedEventArgs e)
-    {
-      Path = GetLastPathStartingWith("chat");
-    }
-
-    void DownloaderPage_Click(object sender, RoutedEventArgs e)
-    {
-      Path = GetLastPathStartingWith("rapid");
-    }
-
-
-    void MapPage_Click(object sender, RoutedEventArgs e)
-    {
-      Path = GetLastPathStartingWith("http://zero-k.info/Maps.mvc");
-    }
-
-
-    void MissionsPage_Click(object sender, RoutedEventArgs e)
-    {
-      Path = GetLastPathStartingWith("http://zero-k.info/Missions.mvc");
-    }
-
-    void SettingsPage_Click(object sender, RoutedEventArgs e)
-    {
-      Path = GetLastPathStartingWith("settings");
+      var buttonInfo = (ButtonInfo)((HeaderButton)sender).Tag;
+      Path = GetLastPathStartingWith(buttonInfo.TargetPath);
     }
 
 
@@ -200,10 +189,6 @@ namespace ZeroKLobby
       if (string.IsNullOrEmpty(Path)) Path = "http://zero-k.info/Missions.mvc";
     }
 
-    void WidgetsPage_Click(object sender, RoutedEventArgs e)
-    {
-      Path = GetLastPathStartingWith("widgets");
-    }
 
     void backButton_Click(object sender, RoutedEventArgs e)
     {
@@ -213,6 +198,48 @@ namespace ZeroKLobby
     void forwardButton_Click(object sender, RoutedEventArgs e)
     {
       if (CanGoForward) GoForward();
+    }
+
+    public class ButtonInfo: INotifyPropertyChanged
+    {
+      bool isAlerting;
+      bool isSelected;
+      public bool IsAlerting
+      {
+        get { return isAlerting; }
+        set
+        {
+          var changed = isAlerting != value;
+          isAlerting = value;
+          if (changed) InvokePropertyChanged("IsAlerting");
+        }
+      }
+      public bool IsSelected
+      {
+        get { return isSelected; }
+        set
+        {
+          var changed = isSelected != value;
+          isSelected = value;
+          if (changed) InvokePropertyChanged("IsSelected");
+        }
+      }
+      public string Label { get; set; }
+      public string TargetPath;
+      public Visibility Visible { get; set; }
+
+      public ButtonInfo()
+      {
+        Visible = Visibility.Visible;
+      }
+
+      void InvokePropertyChanged(string name)
+      {
+        var changed = PropertyChanged;
+        if (changed != null) changed(this, new PropertyChangedEventArgs(name));
+      }
+
+      public event PropertyChangedEventHandler PropertyChanged = delegate { };
     }
 
     class NavigationStep
