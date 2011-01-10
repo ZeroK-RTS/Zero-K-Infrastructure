@@ -114,7 +114,7 @@ namespace ZeroKLobby
     public bool HilitePath(string navigationPath, HiliteLevel hiliteLevel)
     {
       if (string.IsNullOrEmpty(navigationPath)) return false;
-      if (hiliteLevel != HiliteLevel.None) foreach (var b in Buttons) if (navigationPath.StartsWith(b.TargetPath)) b.IsAlerting = true;
+      if (hiliteLevel == HiliteLevel.Flash) foreach (var b in Buttons) if (navigationPath.StartsWith(b.TargetPath)) b.IsAlerting = true;
 
       var steps = navigationPath.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
       var navigable = tabControl.Items.OfType<Object>().Select(GetINavigatableFromControl).FirstOrDefault(x => x != null && x.PathHead == steps[0]);
