@@ -599,7 +599,7 @@
 			this.tabCtrlWidgetCategory.Location = new System.Drawing.Point(2, 1);
 			this.tabCtrlWidgetCategory.Name = "tabCtrlWidgetCategory";
 			this.tabCtrlWidgetCategory.SelectedIndex = 0;
-			this.tabCtrlWidgetCategory.Size = new System.Drawing.Size(164, 393);
+			this.tabCtrlWidgetCategory.Size = new System.Drawing.Size(164, 385);
 			this.tabCtrlWidgetCategory.TabIndex = 35;
 			this.tabCtrlWidgetCategory.SelectedIndexChanged += new System.EventHandler(this.tabCtrlWidgetCategory_SelectedIndexChanged);
 			// 

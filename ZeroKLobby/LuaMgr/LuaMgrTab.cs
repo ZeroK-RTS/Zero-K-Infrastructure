@@ -1497,6 +1497,14 @@ namespace ZeroKLobby.LuaMgr
                     tabCtrl.Size = new Size(panelWidget.Location.X + panelWidget.Size.Width - tabCtrl.Location.X, panelWidget.Size.Height + 5);
                     tabCtrl.Anchor = tabCtrl.Anchor | AnchorStyles.Right;
                     tabCtrl.Refresh();
+
+                    this.buttonClearFilter.Visible =
+                    this.labelWidgetCount.Visible =
+                    this.labelFilter.Visible =
+                    this.buttonRefresh.Visible =
+                    this.textBoxFilter.Visible = false;
+
+                    showWidgetEx(0, true);
                 }
                 else
                 {
@@ -1504,6 +1512,12 @@ namespace ZeroKLobby.LuaMgr
                     tabCtrl.Anchor = tabCtrlOriginalAnchor;
                     tabCtrl.Refresh();
                     updateWidgetCountDisplay();
+
+                    this.buttonClearFilter.Visible =
+                    this.labelWidgetCount.Visible =
+                    this.labelFilter.Visible =
+                    this.buttonRefresh.Visible =
+                    this.textBoxFilter.Visible = true;
 
                     showWidgetEx(0, true);
                 }
