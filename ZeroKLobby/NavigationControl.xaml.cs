@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Forms.Integration;
 using ZeroKLobby.Controls;
 using ZeroKLobby.MicroLobby;
+using System.Collections.ObjectModel;
 
 namespace ZeroKLobby
 {
@@ -45,7 +46,7 @@ namespace ZeroKLobby
     readonly Stack<NavigationStep> forwardStack = new Stack<NavigationStep>();
     readonly List<string> lastPaths = new List<string>();
     public WebBrowser Browser { get { return browserControl.WebBrowser; } }
-    public List<ButtonInfo> Buttons { get; set; }
+    public ObservableCollection<ButtonInfo> Buttons { get; set; }
     public ChatTab2 ChatTab { get { return chatTab; } }
     public static NavigationControl Instance { get; private set; }
     public bool IsBrowserTabSelected { get { return tabControl.SelectedContent is BrowserControl; } }
@@ -82,16 +83,14 @@ namespace ZeroKLobby
 
     public NavigationControl()
     {
-      Buttons = new List<ButtonInfo>()
+      Buttons = new ObservableCollection<ButtonInfo>()
                 {
-                  new ButtonInfo() { Label = "SINGLEPLAYER", TargetPath = "http://zero-k.info/Missions.mvc", },
-                  new ButtonInfo() { Label = "MULTIPLAYER", TargetPath = "battles" },
+                  new ButtonInfo() { Label = "SINGLEPLAYER", TargetPath = "http://zero-k.info/Missions.mvc", Icon = HeaderButton.ButtonIcon.Singleplayer },
+                  new ButtonInfo() { Label = "MULTIPLAYER", TargetPath = "battles", Icon = HeaderButton.ButtonIcon.Multiplayer },
                   new ButtonInfo() { Label = "CHAT", TargetPath = "chat" },
                   new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps.mvc" },
-                  new ButtonInfo()
-                  { Label = "WIDGETS", TargetPath = "widgets", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
-                  new ButtonInfo()
-                  { Label = "RAPID", TargetPath = "rapid", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
+                  new ButtonInfo() { Label = "WIDGETS", TargetPath = "widgets", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
+                  new ButtonInfo() { Label = "RAPID", TargetPath = "rapid", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
                   new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings" },
                 };
 
@@ -225,6 +224,7 @@ namespace ZeroKLobby
         }
       }
       public string Label { get; set; }
+      public HeaderButton.ButtonIcon Icon { get; set; }
       public string TargetPath;
       public Visibility Visible { get; set; }
 

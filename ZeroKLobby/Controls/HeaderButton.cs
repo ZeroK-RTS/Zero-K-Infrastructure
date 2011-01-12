@@ -56,5 +56,49 @@ namespace ZeroKLobby.Controls {
         }
 
         #endregion
+
+        #region Label
+
+        /// <summary>
+        /// Label Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty LabelProperty =
+            DependencyProperty.Register("Label", typeof(string), typeof(HeaderButton),
+                new PropertyMetadata((string)""));
+
+        /// <summary>
+        /// Gets or sets the Label property.
+        /// </summary>
+        public string Label {
+            get { return (string)GetValue(LabelProperty); }
+            set { SetValue(LabelProperty, value); }
+        }
+
+        #endregion
+
+        #region Icon
+
+        /// <summary>
+        /// Icon Dependency Property
+        /// </summary>
+        public static readonly DependencyProperty IconProperty =
+            DependencyProperty.Register("Icon", typeof(ButtonIcon), typeof(HeaderButton),
+                new PropertyMetadata((ButtonIcon)ButtonIcon.None));
+
+        /// <summary>
+        /// Gets or sets the Icon property.
+        /// </summary>
+        public ButtonIcon Icon {
+            get { return (ButtonIcon)GetValue(IconProperty); }
+            set { SetValue(IconProperty, value); }
+        }
+
+        #endregion
+
+        public enum ButtonIcon {
+            None,
+            Singleplayer,
+            Multiplayer
+        }
     }
 }
