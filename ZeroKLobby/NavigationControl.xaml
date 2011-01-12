@@ -17,7 +17,7 @@
       </Grid.ColumnDefinitions>
       <Button x:Name="backButton" Margin="1" Grid.Column="0" Click="backButton_Click">Back</Button>
       <Button x:Name="forwardButton" Margin="1" Grid.Column="1" Click="forwardButton_Click">Forward</Button>
-      <ZeroKLobby:SubmitTextBox Margin="1" Grid.Column="2" Text="{Binding Path, ElementName=userControl}"  />
+      <TextBox x:Name="urlBox" Margin="1" Grid.Column="2" Text="{Binding Path, ElementName=userControl}" GotFocus="urlBox_GotFocus" KeyDown="urlBox_KeyDown" />
     </Grid>
     <ItemsControl Grid.Row="1" Margin="3" ItemsSource="{Binding Path=Buttons, ElementName=userControl}">
       <ItemsControl.ItemsPanel>

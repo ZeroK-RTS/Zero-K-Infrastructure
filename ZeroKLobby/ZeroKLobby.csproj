@@ -230,7 +230,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Ranks.resx</DependentUpon>
     </Compile>
-    <Compile Include="SubmitTextBox.cs" />
     <Compile Include="TabItemHeaderSelector.cs" />
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
@@ -689,6 +688,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ResourceDicts\ZkCheckbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDicts\ZkTextbox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

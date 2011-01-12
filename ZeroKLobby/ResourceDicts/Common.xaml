@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
   <Color x:Key="LightAccentColor">#00CAFF</Color>
-  <Color x:Key="DarkAccentColor">#001E40</Color>
+  <Color x:Key="DarkAccentColor">#002840</Color>
   <Color x:Key="DisabledColor">#567</Color>
   <Color x:Key="DisabledTextColor">#BBB</Color>
 
@@ -11,7 +11,7 @@
   <SolidColorBrush x:Key="DisabledBrush" Color="{DynamicResource DisabledColor}"/>
   <SolidColorBrush x:Key="DisabledTextBrush" Color="{DynamicResource DisabledTextColor}"/>
 
-  <LinearGradientBrush x:Key="GradientDarkLightVertical" EndPoint="0.5,1" StartPoint="0.5,0">
+  <!--<LinearGradientBrush x:Key="GradientDarkLightVertical" EndPoint="0.5,1" StartPoint="0.5,0">
     <GradientStop Color="{DynamicResource LightAccentColor}" Offset="1"/>
     <GradientStop Color="{DynamicResource DarkAccentColor}"/>
   </LinearGradientBrush>
@@ -26,6 +26,23 @@
   <LinearGradientBrush x:Key="GradientDarkLightHorizontal" EndPoint="0,0.612" StartPoint="1,0.501">
     <GradientStop Color="{DynamicResource LightAccentColor}" Offset="0"/>
     <GradientStop Color="{DynamicResource DarkAccentColor}" Offset="1"/>
+  </LinearGradientBrush>-->
+
+  <LinearGradientBrush x:Key="GradientDarkLightVertical" EndPoint="0.5,1" StartPoint="0.5,0">
+    <GradientStop Color="{DynamicResource LightAccentColor}" Offset="1"/>
+    <GradientStop Color="#000"/>
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="GradientLightDarkVertical" EndPoint="0.323,0.012" StartPoint="0.293,0.988">
+    <GradientStop Color="{DynamicResource LightAccentColor}" Offset="1"/>
+    <GradientStop Color="#000"/>
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="GradientLightDarkHorizontal" EndPoint="0.159,0.938" StartPoint="1,0.939">
+    <GradientStop Color="{DynamicResource LightAccentColor}" Offset="1"/>
+    <GradientStop Color="#000"/>
+  </LinearGradientBrush>
+  <LinearGradientBrush x:Key="GradientDarkLightHorizontal" EndPoint="0,0.612" StartPoint="1,0.501">
+    <GradientStop Color="{DynamicResource LightAccentColor}" Offset="0"/>
+    <GradientStop Color="#000" Offset="1"/>
   </LinearGradientBrush>
 
 </ResourceDictionary>

@@ -199,7 +199,18 @@ namespace ZeroKLobby
       if (CanGoForward) GoForward();
     }
 
-    public class ButtonInfo: INotifyPropertyChanged
+    private void urlBox_GotFocus(object sender, RoutedEventArgs e) {
+      urlBox.SelectAll();
+    }
+
+    private void urlBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e) {
+      if (e.Key == System.Windows.Input.Key.Return) {
+        Path = urlBox.Text;
+        e.Handled = true;
+      }
+    }
+
+    public class ButtonInfo : INotifyPropertyChanged
     {
       bool isAlerting;
       bool isSelected;
@@ -251,5 +262,6 @@ namespace ZeroKLobby
         return string.Join("/", Path);
       }
     }
+
   }
 }
