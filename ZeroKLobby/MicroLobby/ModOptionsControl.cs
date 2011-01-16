@@ -229,6 +229,7 @@ namespace ZeroKLobby.MicroLobby
       // 
       // butApplyChanges
       // 
+      this.butApplyChanges.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.butApplyChanges.Location = new System.Drawing.Point(3, 231);
       this.butApplyChanges.Name = "butApplyChanges";
       this.butApplyChanges.Size = new System.Drawing.Size(89, 23);
