@@ -177,10 +177,16 @@ namespace ZeroKLobby
 		{
 			if (Dispatcher.CheckAccess())
 			{
-				if (WindowState == WindowState.Minimized) WindowState = lastState;
+			  var finalState = lastState;
+			  bool wasminimized = WindowState == WindowState.Minimized;
+        if (wasminimized)
+        {
+          WindowState = WindowState.Maximized;
+        }
 				Show();
 				Activate();
 				Focus();
+			  if (wasminimized) WindowState = finalState;
 			}
 			else InvokeFunc(PopupSelf);
 		}
