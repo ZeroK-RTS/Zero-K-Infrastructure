@@ -78,8 +78,6 @@ namespace ZeroKLobby
 			systrayIcon.ContextMenuStrip = trayStrip;
 			systrayIcon.Text = "Zero-K";
 			systrayIcon.Visible = true;
-			systrayIcon.Click += systrayIcon_Click;
-			systrayIcon.MouseDoubleClick += systrayIcon_MouseDoubleClick;
 			systrayIcon.MouseDown += systrayIcon_MouseDown;
 			systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
 
@@ -358,20 +356,12 @@ namespace ZeroKLobby
 
 		void systrayIcon_BalloonTipClicked(object sender, EventArgs e)
 		{
+      
 			navigationControl.Path = baloonTipPath;
 			PopupSelf();
 		}
 
 
-		void systrayIcon_Click(object sender, EventArgs e)
-		{
-			PopupSelf();
-		}
-
-		void systrayIcon_MouseDoubleClick(object sender, MouseEventArgs e)
-		{
-			PopupSelf();
-		}
 
 
 		void systrayIcon_MouseDown(object sender, MouseEventArgs e)
