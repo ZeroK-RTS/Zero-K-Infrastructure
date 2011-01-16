@@ -614,13 +614,13 @@ local function ExecuteTrigger(trigger, frame)
         end
       elseif action.logicType == "DefeatAction" then
         Event = function()
-          -- kill all human players
-          for teamID in ipairs(mission.players) do
-            local _, _, _, isAI = Spring.GetTeamInfo(teamID)
+          Spring.Echo("defeating")
+		  -- kill all human players
+          for _, unitID in ipairs(Spring.GetAllUnits()) do
+            local unitTeam = Spring.GetUnitTeam(unitID)
+            local _, _, _, isAI = Spring.GetTeamInfo(unitTeam)
             if not isAI then
-              for _, unitID in ipairs(Spring.GetTeamUnits(teamID)) do
-                SpecialTransferUnit(unitID, gaiaTeamID, false)
-              end
+              SpecialTransferUnit(unitID, gaiaTeamID, false)
             end
           end
         end
@@ -628,7 +628,7 @@ local function ExecuteTrigger(trigger, frame)
         Event = function()
           for _, unitID in ipairs(Spring.GetAllUnits()) do
             local unitTeam = Spring.GetUnitTeam(unitID)
-            local _, _, _, isAI = Spring.GetTeamInfo(teamID)
+            local _, _, _, isAI = Spring.GetTeamInfo(unitTeam)
             if isAI then
               SpecialTransferUnit(unitID, gaiaTeamID, false)
             end
