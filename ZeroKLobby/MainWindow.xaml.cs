@@ -108,9 +108,10 @@ namespace ZeroKLobby
 
 		public void Exit()
 		{
-			if (closeForReal) return;
+      if (closeForReal) return;
 			closeForReal = true;
 			Program.CloseOnNext = true;
+		  InvokeFunc(() => { systrayIcon.Visible = false;});
 			InvokeFunc(Close);
 		}
 
