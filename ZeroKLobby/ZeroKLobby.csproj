@@ -420,6 +420,9 @@
     <EmbeddedResource Include="MicroLobby\ChatControl.resx">
       <DependentUpon>ChatControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ModOptionsControl.resx">
+      <DependentUpon>ModOptionsControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\PopupNotify.resx">
       <DependentUpon>PopupNotify.cs</DependentUpon>
     </EmbeddedResource>

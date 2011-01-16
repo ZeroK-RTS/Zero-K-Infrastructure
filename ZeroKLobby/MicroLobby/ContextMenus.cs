@@ -613,10 +613,10 @@ namespace ZeroKLobby.MicroLobby
 
 		static System.Windows.Controls.MenuItem GetShowOptionsWpf()
 		{
-			var modOptions = new System.Windows.Controls.MenuItem() { Header = "Show Game Options", IsEnabled = Program.TasClient.MyBattle != null };
+			var modOptions = new System.Windows.Controls.MenuItem() { Header = "Change Game Options", IsEnabled = Program.TasClient.MyBattle != null };
 			modOptions.Click += (s, e) =>
 			{
-				var form = new Form { Width = 1000, Height = 300, Icon = Resources.ZkIcon, Text = "Game options (Non Changeable)" };
+				var form = new Form { Width = 1000, Height = 300, Icon = Resources.ZkIcon, Text = "Game options" };
 				var optionsControl = new ModOptionsControl { Dock = DockStyle.Fill };
 				form.Controls.Add(optionsControl);
 				Program.TasClient.BattleClosed += (s2, e2) =>
@@ -632,10 +632,10 @@ namespace ZeroKLobby.MicroLobby
 
 		static MenuItem GetShowOptions()
 		{
-			var modOptions = new MenuItem("Show Game Options") { Enabled = Program.TasClient.MyBattle != null };
+			var modOptions = new MenuItem("Change Game Options") { Enabled = Program.TasClient.MyBattle != null };
 			modOptions.Click += (s, e) =>
 				{
-					var form = new Form { Width = 1000, Height = 300, Icon = Resources.ZkIcon, Text = "Game options (Non Changeable)" };
+					var form = new Form { Width = 1000, Height = 300, Icon = Resources.ZkIcon, Text = "Game options" };
 					var optionsControl = new ModOptionsControl { Dock = DockStyle.Fill };
 					form.Controls.Add(optionsControl);
 					Program.TasClient.BattleClosed += (s2, e2) =>
