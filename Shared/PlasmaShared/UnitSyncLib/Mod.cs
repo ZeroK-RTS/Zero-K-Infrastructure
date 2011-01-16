@@ -55,7 +55,7 @@ namespace PlasmaShared.UnitSyncLib
 			const string modOptionPattern = @"^game/modoptions/(?<key>.+?)=(?<value>.+?)$";
 			foreach (var tag in scriptTags)
 			{
-				foreach (Match match in Regex.Matches(tag, modOptionPattern))
+				foreach (Match match in Regex.Matches(tag, modOptionPattern, RegexOptions.IgnoreCase))
 				{
 					var key = match.Groups["key"].Value;
 					var value = match.Groups["value"].Value;

@@ -472,6 +472,7 @@ namespace LobbyClient
       {
         con.SendCommand("LEAVEBATTLE");
         var bat = MyBattle;
+        bat.ScriptTags.Clear();
         MyBattle = null;
         MyBattleID = 0;
         BattleClosed(this, new EventArgs<Battle>(bat));
@@ -1016,6 +1017,7 @@ namespace LobbyClient
             Battle battle;
             if (!existingBattles.TryGetValue(battleID, out battle)) break;
             battle.RemoveUser(user);
+            battle.ScriptTags.Clear();
             var userName = args[1];
             ExistingUsers[userName].IsInBattleRoom = false;
 
@@ -1129,6 +1131,7 @@ namespace LobbyClient
             }
             if (battle == MyBattle)
             {
+              battle.ScriptTags.Clear();
               BattleClosed(this, new EventArgs<Battle>(battle));
               MyBattleEnded(this, new EventArgs<Battle>(battle));
             }
