@@ -84,7 +84,7 @@ namespace ZeroKLobby
 			systrayIcon.BalloonTipClicked += systrayIcon_BalloonTipClicked;
 
 			ipcFileWatcher = new FileSystemWatcher(Program.SpringPaths.WritableDirectory, Config.IpcFileName);
-
+      
 			if (Program.Downloader != null)
 			{
 				timer1.Interval = TimeSpan.FromMilliseconds(250);
@@ -282,7 +282,7 @@ namespace ZeroKLobby
 		void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (Debugger.IsAttached) Title = "==== DEBUGGING ===";
-			else if (ApplicationDeployment.IsNetworkDeployed) Title = "Zero-K lobby";
+			else if (ApplicationDeployment.IsNetworkDeployed) Title = "Zero-K lobby " + ApplicationDeployment.CurrentDeployment.CurrentVersion;
 			else Title += " not installed properly - update from http://zero-k.info/";
 
 			Icon = ZeroKLobby.Resources.ZkIcon.ToBitmap().ToBitmapSource();

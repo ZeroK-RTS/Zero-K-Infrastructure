@@ -86,7 +86,7 @@ namespace ZeroKLobby.MicroLobby
     public static Font ModFont = new Font("Segoe UI", 8.25F, FontStyle.Regular);
     public int PlayerCount { get { return Battle.NonSpectatorCount; } }
 
-    public static Brush TextBrush = new SolidBrush(Color.FromArgb(0, 255, 100));
+    public static Brush TextBrush = new SolidBrush(Color.Black);
     public static Font TitleFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
 
     public BattleIcon(Battle battle)
@@ -198,12 +198,12 @@ namespace ZeroKLobby.MicroLobby
     {
       MakeMinimap();
       RenderPlayers();
-      image = MakeSolidColorBitmap(Brushes.Black, Width, Height);
+      image = MakeSolidColorBitmap(Brushes.White, Width, Height);
       using (var g = Graphics.FromImage(image))
       {
         if (disposed)
         {
-          image = MakeSolidColorBitmap(Brushes.Green, Width, Height);
+          image = MakeSolidColorBitmap(Brushes.White, Width, Height);
           return;
         }
         if (finishedMinimap != null) g.DrawImageUnscaled(finishedMinimap, 3, 3);
