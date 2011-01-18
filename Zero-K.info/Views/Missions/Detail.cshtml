@@ -121,7 +121,7 @@ Then in the battle lobby:
   }
 	<div class="border-test abs top right">
 	<h3>Top scores</h3>
-		@Html.BBCode(m.ScoringMethod)
+		@Html.BBCode(m.ScoringMethod ?? "")
 		<table>
 			@{int cnt = 1;}
 			@foreach (var score in Model.TopScores) {
