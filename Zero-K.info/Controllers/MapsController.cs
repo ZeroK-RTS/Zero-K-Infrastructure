@@ -164,6 +164,7 @@ namespace ZeroKWeb.Controllers
       if (res.ForumThread != null)
       {
         res.ForumThread.ViewCount++;
+        res.ForumThread.UpdateLastRead(Global.AccountID, false);
         db.SubmitChanges();
        data.Posts = (from p in res.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
                       let userRating = res.MapRatings.SingleOrDefault(x => x.AccountID == p.AuthorAccountID)

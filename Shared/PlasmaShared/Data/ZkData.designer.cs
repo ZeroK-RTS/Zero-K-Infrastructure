@@ -82,6 +82,9 @@ namespace ZkData
     partial void InsertForumCategory(ForumCategory instance);
     partial void UpdateForumCategory(ForumCategory instance);
     partial void DeleteForumCategory(ForumCategory instance);
+    partial void InsertForumThreadLastRead(ForumThreadLastRead instance);
+    partial void UpdateForumThreadLastRead(ForumThreadLastRead instance);
+    partial void DeleteForumThreadLastRead(ForumThreadLastRead instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -447,6 +450,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<ForumCategory>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ForumThreadLastRead> ForumThreadLastReads
+		{
+			get
+			{
+				return this.GetTable<ForumThreadLastRead>();
 			}
 		}
 	}
@@ -5015,6 +5026,8 @@ namespace ZkData
 		
 		private EntitySet<SpringBattlePlayer> _SpringBattlePlayers;
 		
+		private EntitySet<ForumThreadLastRead> _ForumThreadLastReads;
+		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -5555,6 +5568,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		public EntitySet<ForumThreadLastRead> ForumThreadLastReads
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ForumThreadLastReads.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ForumThreadLastReads;
+			}
+			set
+			{
+				this._ForumThreadLastReads.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -5719,6 +5751,18 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_ForumThreadLastReads(ForumThreadLastRead entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_ForumThreadLastReads(ForumThreadLastRead entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -5733,6 +5777,7 @@ namespace ZkData
 			this._MapRatings = new EntitySet<MapRating>(new Action<MapRating>(this.attach_MapRatings), new Action<MapRating>(this.detach_MapRatings));
 			this._SpringBattles = new EntitySet<SpringBattle>(new Action<SpringBattle>(this.attach_SpringBattles), new Action<SpringBattle>(this.detach_SpringBattles));
 			this._SpringBattlePlayers = new EntitySet<SpringBattlePlayer>(new Action<SpringBattlePlayer>(this.attach_SpringBattlePlayers), new Action<SpringBattlePlayer>(this.detach_SpringBattlePlayers));
+			this._ForumThreadLastReads = new EntitySet<ForumThreadLastRead>(new Action<ForumThreadLastRead>(this.attach_ForumThreadLastReads), new Action<ForumThreadLastRead>(this.detach_ForumThreadLastReads));
 			OnCreated();
 		}
 		
@@ -6227,6 +6272,8 @@ namespace ZkData
 		
 		private EntitySet<ForumPost> _ForumPosts;
 		
+		private EntitySet<ForumThreadLastRead> _ForumThreadLastReads;
+		
 		private EntityRef<ForumCategory> _ForumCategory;
 		
 		private EntityRef<Account> _AccountByCreatedAccountID;
@@ -6600,6 +6647,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		public EntitySet<ForumThreadLastRead> ForumThreadLastReads
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ForumThreadLastReads.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ForumThreadLastReads;
+			}
+			set
+			{
+				this._ForumThreadLastReads.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumThread", Storage="_ForumCategory", ThisKey="ForumCategoryID", OtherKey="ForumCategoryID", IsForeignKey=true, DeleteRule="CASCADE")]
 		public ForumCategory ForumCategory
 		{
@@ -6734,11 +6800,24 @@ namespace ZkData
 			entity.ForumThread = null;
 		}
 		
+		private void attach_ForumThreadLastReads(ForumThreadLastRead entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumThread = this;
+		}
+		
+		private void detach_ForumThreadLastReads(ForumThreadLastRead entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumThread = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = default(EntityRef<Mission>);
 			this._Resources = default(EntityRef<Resource>);
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
+			this._ForumThreadLastReads = new EntitySet<ForumThreadLastRead>(new Action<ForumThreadLastRead>(this.attach_ForumThreadLastReads), new Action<ForumThreadLastRead>(this.detach_ForumThreadLastReads));
 			this._ForumCategory = default(EntityRef<ForumCategory>);
 			this._AccountByCreatedAccountID = default(EntityRef<Account>);
 			this._AccountByLastPostAccountID = default(EntityRef<Account>);
@@ -10800,6 +10879,239 @@ namespace ZkData
 		public void OnSerialized(StreamingContext context)
 		{
 			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ForumThreadLastRead")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class ForumThreadLastRead : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ForumThreadID;
+		
+		private int _AccountID;
+		
+		private System.Nullable<System.DateTime> _LastRead;
+		
+		private System.Nullable<System.DateTime> _LastPosted;
+		
+		private EntityRef<ForumThread> _ForumThread;
+		
+		private EntityRef<Account> _Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnForumThreadIDChanging(int value);
+    partial void OnForumThreadIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnLastReadChanging(System.Nullable<System.DateTime> value);
+    partial void OnLastReadChanged();
+    partial void OnLastPostedChanging(System.Nullable<System.DateTime> value);
+    partial void OnLastPostedChanged();
+    #endregion
+		
+		public ForumThreadLastRead()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ForumThreadID
+		{
+			get
+			{
+				return this._ForumThreadID;
+			}
+			set
+			{
+				if ((this._ForumThreadID != value))
+				{
+					if (this._ForumThread.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnForumThreadIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumThreadID = value;
+					this.SendPropertyChanged("ForumThreadID");
+					this.OnForumThreadIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastRead", DbType="datetime", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public System.Nullable<System.DateTime> LastRead
+		{
+			get
+			{
+				return this._LastRead;
+			}
+			set
+			{
+				if ((this._LastRead != value))
+				{
+					this.OnLastReadChanging(value);
+					this.SendPropertyChanging();
+					this._LastRead = value;
+					this.SendPropertyChanged("LastRead");
+					this.OnLastReadChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastPosted", DbType="datetime", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<System.DateTime> LastPosted
+		{
+			get
+			{
+				return this._LastPosted;
+			}
+			set
+			{
+				if ((this._LastPosted != value))
+				{
+					this.OnLastPostedChanging(value);
+					this.SendPropertyChanging();
+					this._LastPosted = value;
+					this.SendPropertyChanged("LastPosted");
+					this.OnLastPostedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_ForumThreadLastRead", Storage="_ForumThread", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public ForumThread ForumThread
+		{
+			get
+			{
+				return this._ForumThread.Entity;
+			}
+			set
+			{
+				ForumThread previousValue = this._ForumThread.Entity;
+				if (((previousValue != value) 
+							|| (this._ForumThread.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ForumThread.Entity = null;
+						previousValue.ForumThreadLastReads.Remove(this);
+					}
+					this._ForumThread.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThreadLastReads.Add(this);
+						this._ForumThreadID = value.ForumThreadID;
+					}
+					else
+					{
+						this._ForumThreadID = default(int);
+					}
+					this.SendPropertyChanged("ForumThread");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThreadLastRead", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.ForumThreadLastReads.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThreadLastReads.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._ForumThread = default(EntityRef<ForumThread>);
+			this._Account = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
 		}
 	}
 }

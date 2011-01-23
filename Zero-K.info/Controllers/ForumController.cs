@@ -80,6 +80,7 @@ namespace ZeroKWeb.Controllers
       thread.LastPost = DateTime.UtcNow;
       thread.LastPostAccountID = Global.AccountID;
       thread.PostCount = thread.ForumPosts.Count();
+      thread.UpdateLastRead(Global.AccountID, true, thread.LastPost);
 
       db.SubmitChanges();
 
@@ -101,6 +102,8 @@ namespace ZeroKWeb.Controllers
       }
 
       t.ViewCount++;
+      t.UpdateLastRead(Global.AccountID, false);
+
       db.SubmitChanges();
 
       var res = new ThreadResult();

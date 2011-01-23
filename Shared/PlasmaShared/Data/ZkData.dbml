@@ -335,6 +335,7 @@
       <Association Name="Account_MapRating" Member="MapRatings" ThisKey="AccountID" OtherKey="AccountID" Type="MapRating" />
       <Association Name="Account_SpringBattle" Member="SpringBattles" ThisKey="AccountID" OtherKey="HostAccountID" Type="SpringBattle" />
       <Association Name="Account_SpringBattlePlayer" Member="SpringBattlePlayers" ThisKey="AccountID" OtherKey="AccountID" Type="SpringBattlePlayer" />
+      <Association Name="Account_ForumThreadLastRead" Member="ForumThreadLastReads" ThisKey="AccountID" OtherKey="AccountID" Type="ForumThreadLastRead" />
     </Type>
   </Table>
   <Table Name="dbo.LobbyMessage" Member="LobbyMessages">
@@ -373,6 +374,7 @@
       <Association Name="ForumThread_Mission" Member="Missions" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Mission" Cardinality="One" />
       <Association Name="ForumThread_Resource" Member="Resources" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Resource" Cardinality="One" />
       <Association Name="ForumThread_ForumPost" Member="ForumPosts" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumPost" />
+      <Association Name="ForumThread_ForumThreadLastRead" Member="ForumThreadLastReads" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThreadLastRead" />
       <Association Name="ForumCategory_ForumThread" Member="ForumCategory" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" DeleteRule="CASCADE" />
       <Association Name="Account_ForumThread" Member="AccountByCreatedAccountID" ThisKey="CreatedAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="Account_ForumThread1" Member="AccountByLastPostAccountID" ThisKey="LastPostAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
@@ -543,6 +545,16 @@
       <Association Name="ForumCategory_ForumThread" Member="ForumThreads" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumThread" />
       <Association Name="ForumCategory_ForumCategory" Member="ChildForumCategories" ThisKey="ForumCategoryID" OtherKey="ParentForumCategoryID" Type="ForumCategory" />
       <Association Name="ForumCategory_ForumCategory" Member="ParentForumCategory" ThisKey="ParentForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ForumThreadLastRead" Member="ForumThreadLastReads">
+    <Type Name="ForumThreadLastRead">
+      <Column Name="ForumThreadID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="LastRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="LastPosted" Type="System.DateTime" DbType="datetime" CanBeNull="true" UpdateCheck="Never" />
+      <Association Name="ForumThread_ForumThreadLastRead" Member="ForumThread" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThread" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Account_ForumThreadLastRead" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

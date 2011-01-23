@@ -64,6 +64,7 @@ namespace ZeroKWeb.Controllers
       var db = new ZkDataContext();
       var mission = db.Missions.Single(x => x.MissionID == id);
       mission.ForumThread.ViewCount++;
+      mission.ForumThread.UpdateLastRead(Global.AccountID, false);
       db.SubmitChanges();
 
 			return View("Detail",
