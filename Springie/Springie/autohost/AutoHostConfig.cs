@@ -244,7 +244,15 @@ namespace Springie.autohost
             AddMissing(
                 new CommandConfig("votekick",
                                   0,
-                                  "[<mapname>..] - starts vote to kick a player, e.g. !votekick Licho",
+                                  "[<playerame>..] - starts vote to kick a player, e.g. !votekick Licho",
+                                  0,
+                                  new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }),
+                addedCommands);
+
+            AddMissing(
+                new CommandConfig("votespec",
+                                  0,
+                                  "[<playername>..] - starts vote to spectate player, e.g. !votespec Licho",
                                   0,
                                   new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }),
                 addedCommands);

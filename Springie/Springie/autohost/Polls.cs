@@ -240,6 +240,54 @@ namespace Springie.autohost
         }
     }
 
+
+    public class VoteSpec : AbstractPoll, IVotable
+    {
+      new const double ratio = 0.50;
+
+      string player;
+
+      public VoteSpec(TasClient tas, Spring spring, AutoHost ah) : base(tas, spring, ah) { }
+
+      public bool Init(TasSayEventArgs e, string[] words)
+      {
+        if (words.Length == 0) {
+          AutoHost.Respond(tas, spring, e, "You must specify player name");
+          return false;
+        }
+
+        string[] players;
+        int[] indexes;
+        if (AutoHost.FilterUsers(words, tas, spring, out players, out indexes) > 0) {
+          player = players[0];
+          ah.SayBattle("Do you want to spectate " + player + "? !vote 1 = yes, !vote 2 = no");
+          return true;
+        } else {
+          AutoHost.Respond(tas, spring, e, "Cannot find such player");
+          return false;
+        }
+      }
+
+      public bool Vote(TasSayEventArgs e, string[] words)
+      {
+        int vote;
+        if (!RegisterVote(e, words, out vote)) {
+          AutoHost.Respond(tas, spring, e, "You must vote valid option/not be a spectator");
+          return false;
+        }
+
+        int winVote;
+        if (CheckEnd(out winVote)) {
+          if (winVote == 1) {
+            ah.SayBattle("vote successful - speccing " + player);
+            ah.ComForceSpectator(TasSayEventArgs.Default, new[] { player });
+          } else ah.SayBattle("not enough votes, player stays");
+          return true;
+        } else return false;
+      }
+    }
+
+
     public class VoteForce: AbstractPoll, IVotable
     {
         new const double ratio = 0.50;
