@@ -43,6 +43,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "asp.net", "Zero-K.info\asp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpringAccountReader", "SpringAccountReader\SpringAccountReader.csproj", "{7FC52B83-AA36-484C-B930-6735ACD98F7B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extras", "Extras", "{C6E3A10A-6033-4AF7-A84B-D6EED7FC6AD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpringieDataImport", "SpringieDataImport\SpringieDataImport.csproj", "{4379F1C8-8A41-4881-A4E4-B856475BFFEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +235,16 @@ Global
 		{7FC52B83-AA36-484C-B930-6735ACD98F7B}.Release|Mixed Platforms.Build.0 = Release|x86
 		{7FC52B83-AA36-484C-B930-6735ACD98F7B}.Release|x86.ActiveCfg = Release|x86
 		{7FC52B83-AA36-484C-B930-6735ACD98F7B}.Release|x86.Build.0 = Release|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Debug|x86.ActiveCfg = Debug|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Debug|x86.Build.0 = Debug|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Release|Any CPU.ActiveCfg = Release|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Release|Mixed Platforms.Build.0 = Release|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Release|x86.ActiveCfg = Release|x86
+		{4379F1C8-8A41-4881-A4E4-B856475BFFEC}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -240,5 +254,7 @@ Global
 		{EA79A74E-0577-4F74-AE8D-6E259A594FBE} = {4E4B0528-9E3B-4617-8620-0705FDA6F185}
 		{C651A291-775F-46D6-A2D8-BEF573F97D1E} = {4E4B0528-9E3B-4617-8620-0705FDA6F185}
 		{76D7F266-456D-4A7C-916E-E35D057E5F98} = {4E4B0528-9E3B-4617-8620-0705FDA6F185}
+		{D6BB29E2-0559-4B7E-8535-9A15230ABA9A} = {C6E3A10A-6033-4AF7-A84B-D6EED7FC6AD7}
+		{7FC52B83-AA36-484C-B930-6735ACD98F7B} = {C6E3A10A-6033-4AF7-A84B-D6EED7FC6AD7}
 	EndGlobalSection
 EndGlobal

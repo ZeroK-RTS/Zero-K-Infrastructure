@@ -569,7 +569,7 @@ namespace Springie.autohost
 				foreach (var u in b.Users)
 				{
 					User u2;
-					if (u.Name != tas.UserName && !u.IsSpectator && !u.IsReady && tas.GetExistingUser(u.Name, out u2)) if (u2.IsAway) ComForceSpectator(e, new[] { u.Name });
+					if (u.Name != tas.UserName && !u.IsSpectator && (!u.IsReady || u.SyncStatus !=  SyncStatuses.Synced) && tas.GetExistingUser(u.Name, out u2)) if (u2.IsAway) ComForceSpectator(e, new[] { u.Name });
 				}
 			}
 		}
