@@ -998,6 +998,11 @@ namespace Springie.autohost
 						StartVote(new VoteKick(tas, spring, this), e, words);
 						break;
 
+          case "votespec":
+            StartVote(new VoteSpec(tas, spring, this), e, words);
+            break;
+
+
 					case "voteforcestart":
 						StartVote(new VoteForceStart(tas, spring, this), e, words);
 						break;

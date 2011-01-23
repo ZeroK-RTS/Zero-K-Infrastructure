@@ -991,7 +991,7 @@ namespace Springie.autohost
       // search by direct word
       var glued = Utils.Glue(words);
       for (i = 0; i < source.Length; ++i) {
-        if (source[i] == glued) {
+        if (string.Compare(source[i], glued, true) == 0) {
           resultVals = new[] { source[i] };
           resultIndexes = new[] { i };
           return 1;
