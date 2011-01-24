@@ -1,4 +1,4 @@
-﻿@using ZeroKWeb
+﻿@using ZeroKWeb;
 <!DOCTYPE html>
 <html>
 <head>
@@ -170,8 +170,9 @@
         </div>
       </div>
       <!close footer>
-      @if (!(Global.IsAccountAuthorized)) {
+      
         <div class="border">
+        @if (!(Global.IsAccountAuthorized)) {
           <!login> <small>You need Zero-K installed to use all site features</small>
           <form method="post" action="@Url.Action("Logon", "Home")" >
           Name:
@@ -182,9 +183,15 @@
           <input type="submit" value="Login" />
           <input type="hidden" name="referer" value="@Request.Url" />
           </form>
+        } else {
+          <form method="post" action="@Url.Action("Logout", "Home")" >
+          Logged as @Html.PrintAccount(Global.Account)
+          <input type="submit" value="Logout" />
+          <input type="hidden" name="referer" value="@Request.Url" />
+          </form>
+        }
         </div>
       <!close login>
-      }
     </div>
     
   <!close wrapper>

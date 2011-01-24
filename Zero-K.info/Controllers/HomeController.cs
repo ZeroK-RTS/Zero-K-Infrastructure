@@ -154,11 +154,21 @@ namespace ZeroKWeb.Controllers
       acc = AuthServiceClient.VerifyAccountHashed(login, hashed);
       if (acc == null) return Content("Invalid password");
       else {
-        Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, login));
-        Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, hashed));
+        Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, login) { Expires = DateTime.Now.AddMonths(12)});
+        Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, hashed) { Expires = DateTime.Now.AddMonths(12)});
 
         return Redirect(referer);
       }
+    }
+
+    public ActionResult Logout(string referer)
+    {
+      if (Global.IsAccountAuthorized)
+      {
+        Response.SetCookie(new HttpCookie(GlobalConst.LoginCookieName, "") { Expires = DateTime.Now.AddMinutes(2) });
+        Response.SetCookie(new HttpCookie(GlobalConst.PasswordHashCookieName, "") { Expires = DateTime.Now.AddMinutes(2) });
+      }
+      return Redirect(referer);
     }
   }
 }
