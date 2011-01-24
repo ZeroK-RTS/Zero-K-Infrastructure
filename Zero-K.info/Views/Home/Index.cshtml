@@ -44,7 +44,7 @@
   <div class="border">
   <h2><a>Last posts</a></h2>
   @foreach (var t in Model.NewThreads) {
-    var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new {id = t.ForumThread.ForumThreadID},null);
+    var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new {id = t.ForumThread.ForumThreadID},new {title="$thread$" + t.ForumThread.ForumThreadID});
     if (t.WasWritten) {
       <b>* @link</b><br />
     } else if (t.WasRead) { 

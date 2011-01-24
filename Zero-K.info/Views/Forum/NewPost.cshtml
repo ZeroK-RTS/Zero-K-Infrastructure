@@ -22,9 +22,9 @@
 </form>
 @if (Model.LastPosts != null) {
   foreach (var p in Model.LastPosts) {
-    <table>
-      <tr>
-        <td width='222px' class="border-test" valign="top">
+    <table width='100%'>
+      <tr class="forumRow">
+        <td class="forumPostHead" valign="top" >
           @Html.PrintAccount(p.Account)<br />
           <table>
             <tr>
@@ -36,7 +36,7 @@
             </tr>
           </table>
         </td>
-        <td valign="top">
+        <td class="forumPostText" valign="top">
           @Html.BBCode(p.Text)
         </td>
       </tr>

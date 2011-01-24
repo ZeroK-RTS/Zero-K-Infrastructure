@@ -187,7 +187,19 @@ div#footer
 	font-size:small;
 }
 
+.forumRow 
+{
+  width:100%;
+}
 
+.forumPostHead 
+{
+  width:222px;
+  border: 1px solid teal;  
+}
 
-
-
+.forumPostText
+{
+  background-color:#102020;
+  border: 1px solid teal;
+}

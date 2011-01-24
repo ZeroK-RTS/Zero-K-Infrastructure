@@ -28,7 +28,7 @@
       <tr>
         <td>@(t.IsLocked ? "Locked" : "")</td>
         <td>@(t.IsPinned ? "Pinned" : "")</td>
-        <td>@Html.ActionLink(t.Title, "Thread", new { id = t.ForumThreadID })</td>
+        <td>@Html.ActionLink(t.Title, "Thread", new { id = t.ForumThreadID }, new {title="$thread$" + t.ForumThreadID})</td>
         <td>@Html.PrintAccount(t.AccountByCreatedAccountID)</td>
         <td>@t.PostCount</td>
         <td>@t.ViewCount</td>

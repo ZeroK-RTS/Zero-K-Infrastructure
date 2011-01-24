@@ -150,21 +150,55 @@ namespace ZeroKWeb.Controllers
     {
       var args = key.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
       var ret = "";
+      int id;
       switch (args[0]) {
         case "mission":
 
           ret = GetMissionTooltip(int.Parse(args[1]));
           break;
         case "map":
-          int id;
           if (int.TryParse(args[1], out id)) ret = GetMapTooltip(id);
           else {
             var db = new ZkDataContext();
             ret = GetMapTooltip(db.Resources.Single(x => x.InternalName == args[1]).ResourceID);
           }
           break;
+        case "thread":
+          if (int.TryParse(args[1], out id))
+          {
+            ret = GetThreadTooltip(id);
+          }
+          break;
       }
       return Content(ret);
+    }
+
+    string GetThreadTooltip(int id) {
+      var db = new ZkDataContext();
+      var thread = db.ForumThreads.Single(x => x.ForumThreadID == id);
+      ForumPost post = null;
+      ForumThreadLastRead last;
+      string postTitle = "Starting post ";
+      if (Global.IsAccountAuthorized && (last = thread.ForumThreadLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)) != null)
+      {
+        if (last.LastRead < thread.LastPost) {
+          postTitle = "First unread post ";
+          post = thread.ForumPosts.Where(x => x.Created > last.LastRead).OrderBy(x => x.ForumPostID).FirstOrDefault();
+        } else
+        {
+          postTitle = "Last post ";
+          post = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
+        }
+
+      } else post = thread.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
+      var sb = new StringBuilder();
+      sb.AppendFormat("Thread by {0}, {1} <br/>", HtmlHelperExtensions.PrintAccount(null, thread.AccountByCreatedAccountID).ToHtmlString(), thread.Created.ToAgoString()) ;
+      if (post != null)
+      {
+        sb.AppendFormat("<b>{0} {1}, {2}</b>", postTitle, HtmlHelperExtensions.PrintAccount(null, post.Account).ToHtmlString(), post.Created.ToAgoString());
+        sb.AppendFormat("<br/><span>{0}</span><br/>", HtmlHelperExtensions.BBCode(null, post.Text).ToHtmlString());
+      }
+      return sb.ToString();
     }
 
 

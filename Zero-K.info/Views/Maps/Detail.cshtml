@@ -150,16 +150,16 @@
 
 
 @foreach (var p in Model.Posts) {
-  <table>
+  <table width='100%'>
     <tr>
-      <td width='120px' valign="top">
+      <td class="forumPostHead" valign="top">
         @Html.PrintAccount(p.Author)<br />
         @Html.AccountAvatar(p.Author)
         <br />
         <small>@p.Created.ToAgoString()</small><br />
         @Html.Stars(StarType.GreenStarSmall, p.Rating)
       </td>
-      <td valign="top">
+      <td class="forumPostText" valign="top">
         @Html.BBCode(p.Text)
       </td>
     </tr>

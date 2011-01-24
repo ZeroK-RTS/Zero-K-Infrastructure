@@ -19,9 +19,9 @@ Pages:
 }
 
 @foreach (var p in Model.Posts) {
-  <table>
-    <tr>
-      <td width='222px' class="border-test" valign="top">
+  <table width='100%'>
+    <tr class="forumRow">
+      <td width='222px' class="forumPostHead" valign="top" >
         @Html.PrintAccount(p.Account)<br />
         <table>
           <tr>
@@ -33,7 +33,7 @@ Pages:
           </tr>
         </table>
       </td>
-      <td valign="top">
+      <td valign="top" class="forumPostText">
         @Html.BBCode(p.Text)
       </td>
     </tr>

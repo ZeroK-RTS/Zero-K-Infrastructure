@@ -147,9 +147,9 @@ Then in the battle lobby:
 	</form>
 
 	@foreach (var p in Model.Posts) {
-		<table>
+		<table width='100%'>
 			<tr>
-				<td width='222px' class="border-test" valign="top">
+				<td class="forumPostHead" valign="top">
 					@Html.PrintAccount(p.Author)<br />
 					<table><tr>
 						<td>@Html.AccountAvatar(p.Author)</td>
@@ -160,7 +160,7 @@ Then in the battle lobby:
 						</td>
 					</tr></table>
 				</td>
-				<td valign="top">
+				<td class="forumPostText" valign="top">
 					@Html.BBCode(p.Text)
 				</td>
 			</tr>
