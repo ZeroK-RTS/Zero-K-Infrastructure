@@ -14,9 +14,14 @@ namespace ZeroKWeb.Controllers
       var res = new IndexResult();
 
       res.Categories = db.ForumCategories.Where(x => Equals(x.ParentForumCategoryID, categoryID)).OrderBy(x => x.SortOrder);
-      res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x => x.LastPost);
+      
+      
       res.Path = GetCategoryPath(categoryID, db);
       res.CurrentCategory = res.Path.LastOrDefault();
+
+      //if (res.CurrentCategory != null && res.CurrentCategory.IsMissions) res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID) && !Global.IsLimitedMode || x.Missions.ModRapidTag.StartsWith("zk:")).OrderByDescending(x => x.LastPost);
+      //else
+      res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x => x.LastPost);
 
       return View(res);
     }

@@ -173,6 +173,7 @@
       <Column Name="Difficulty" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="IsCoop" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="FeaturedOrder" Type="System.Single" DbType="real" CanBeNull="true" />
       <Association Name="Mission_Mission" Member="ChildMission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" Cardinality="One" />
       <Association Name="Mission_Resource" Member="Resources" ThisKey="MissionID" OtherKey="MissionID" Type="Resource" Cardinality="One" />
       <Association Name="Mission_MissionScore" Member="MissionScores" ThisKey="MissionID" OtherKey="MissionID" Type="MissionScore" />
@@ -323,6 +324,7 @@
       <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" />
       <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
@@ -443,6 +445,7 @@
       <Column Name="MapWidth" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MapHeight" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="FeaturedOrder" Type="System.Single" DbType="real" CanBeNull="true" />
       <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />

@@ -1,4 +1,5 @@
 ﻿@model ZeroKWeb.Controllers.MapsController.MapIndexData
+@using ZeroKWeb
 @{
   Page.Title = "Zero-K maps";
 }
@@ -57,8 +58,12 @@ Download: <select name="isDownloadable">
     <option value='1' selected>Downloadable</option>
     <option value='0'>Not verified</option>
   </select>
+  <br />
+<span title="Shows either featured maps or last changed maps">
+  Featured: @Html.CheckBox("featured", Global.ShowFeaturedByDefault)
+</span>
 <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)' style='white-space:nowrap'>
-Needs tagging: @Html.CheckBox("needsTagging")
+  Needs tagging: @Html.CheckBox("needsTagging")
 </span>
 <br />
 Name or author: @Html.TextBox("search")
@@ -66,9 +71,9 @@ Name or author: @Html.TextBox("search")
 </form>
 <table width='100%'>
   <tr>
-    <td>
+    <td valign="top">
       <div id='ajaxScrollTarget'>
-        <b>Latest maps</b><br />
+        <b>@Model.Title</b><br />
         @{Html.RenderPartial("MapTileList", Model.Latest);}
       </div>
     </td>

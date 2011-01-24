@@ -115,6 +115,10 @@
     &nbsp;&nbsp; <span title='Maps with special features, speedmetal, duck, greenfields etc'>
       Special: @Html.BoolSelect("special", m.MapIsSpecial, "?") &nbsp;&nbsp; </span>
     Author: @Html.TextBox("author", m.AuthorName)
+
+    @if (ZeroKWeb.Global.IsAccountAuthorized && ZeroKWeb.Global.Account.IsLobbyAdministrator) {
+      @:Featured order: @Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)
+    }
     <input type="submit" value="Update" />
     </form>
   </div>

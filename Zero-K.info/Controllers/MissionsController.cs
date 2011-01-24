@@ -13,14 +13,16 @@ namespace ZeroKWeb.Controllers
 	{
 	  //
 		// GET: /Missions/
-    public ActionResult Index(string search, int? offset, bool? sp, bool? coop, bool? adversarial)
+    public ActionResult Index(string search, int? offset, bool? sp, bool? coop, bool? adversarial, bool? featured)
 		{
 			var db = new ZkDataContext();
+      if (featured == null) featured = Global.ShowFeaturedByDefault;
       if (!offset.HasValue) return
 				View(
 					new MissionsIndexData()
 					{
-						LastUpdated = FilterMissions(db.Missions, search).Take(Global.AjaxScrollCount),
+            Title = featured == true ? "Featured missions" : "Latest missions",
+						LastUpdated = FilterMissions(db.Missions, search, featured.Value).Take(Global.AjaxScrollCount),
 						MostPlayed = db.Missions.Where(x=>!x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.MissionRunCount),
             MostRating = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.Rating),
             LastComments = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.ForumThread.LastPost),
@@ -29,7 +31,7 @@ namespace ZeroKWeb.Controllers
 
       else
       {
-        var mis = FilterMissions(db.Missions, search, offset, sp, coop, adversarial).Take(Global.AjaxScrollCount);
+        var mis = FilterMissions(db.Missions, search, featured.Value, offset, sp, coop, adversarial).Take(Global.AjaxScrollCount);
         if (mis.Any()) return View("TileList", mis);
         else return Content("");
       }
@@ -50,11 +52,12 @@ namespace ZeroKWeb.Controllers
 			public int? Difficulty { get; set; }
 		}
 
-    public ActionResult Touch(int id)
+    [Authorize(Roles = "admin")]
+    public ActionResult ChangeFeaturedOrder(int id, float? featuredOrder)
     {
       var db = new ZkDataContext();
       var mis = db.Missions.SingleOrDefault(x => x.MissionID == id);
-      mis.ModifiedTime = DateTime.UtcNow;
+      mis.FeaturedOrder = featuredOrder;
       db.SubmitChanges();
       return RedirectToAction("Index");
     }
@@ -89,14 +92,16 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, int? offset = null, bool? sp = null, bool? coop= null, bool? adversarial= null)
+		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, bool featured, int? offset = null, bool? sp = null, bool? coop= null, bool? adversarial= null)
 		{
       ret = ret.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:")));
+      if (featured) ret = ret.Where(x => x.FeaturedOrder > 0);
 			if (sp == false) ret = ret.Where(x => x.MaxHumans > 1);
 			if (coop == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) ||  x.MaxHumans > 1 && !x.IsCoop);
 			if (adversarial == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) || (x.MaxHumans > 1 && x.IsCoop));
 			if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => SqlMethods.Like(x.Name, '%' + search + '%') || SqlMethods.Like(x.Account.Name, '%' + search + '%'));
-			ret = ret.OrderByDescending(x => x.ModifiedTime);
+      if (featured) ret = ret.OrderBy(x => x.FeaturedOrder);
+      else ret = ret.OrderByDescending(x => x.ModifiedTime);
       if (offset != null) ret = ret.Skip(offset.Value);
 
 			return ret;
@@ -160,5 +165,6 @@ namespace ZeroKWeb.Controllers
 		public IQueryable<Mission> MostRating;
 		public string SearchString;
 		public IQueryable<Mission> LastComments;
+	  public string Title;
 	}
 }

@@ -13,6 +13,14 @@ namespace ZkData
 			EloWeight = 1;
 		}
 
+    /// <summary>
+    /// Aggregate admin rights - either lobby or ZK admin
+    /// </summary>
+	  public bool IsAdmin
+	  {
+      get { return IsLobbyAdministrator || IsZeroKAdmin; }
+    }
+
 		partial void OnNameChanging(string value)
 		{
 			if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value))
@@ -31,7 +39,7 @@ namespace ZkData
 
 		public bool IsInRole(string role)
 		{
-			if (role == "admin" || role == "moderator") return IsLobbyAdministrator;
+			if (role == "admin" || role == "moderator") return IsAdmin;
       if (role == "user") return true;
       else return string.IsNullOrEmpty(role);
 		}

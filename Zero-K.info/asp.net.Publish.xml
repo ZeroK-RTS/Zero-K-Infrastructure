@@ -1,57 +1,57 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
   <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
-    <file relUrl="Views/Forum/NewPost.cshtml" publishTime="01/05/2011 03:32:07" />
-    <file relUrl="Scripts/jquery-1.4.2.min.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Views/Forum/NewPost.cshtml" publishTime="01/05/2011 17:46:35" />
+    <file relUrl="Views/Forum/ForumPath.cshtml" publishTime="01/04/2011 19:24:41" />
+    <file relUrl="bin/Global.asax" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Global.asax" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Views/_ViewStart.cshtml" publishTime="01/02/2011 03:33:08" />
     <file relUrl="ResourceList.aspx" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="ErrorReports.aspx" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="MissionService.svc" publishTime="01/02/2011 03:33:31" />
+    <file relUrl="Scripts/jquery-ui-1.8.6.custom.min.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Styles/menu.css" publishTime="01/02/2011 14:01:01" />
+    <file relUrl="ResourceDetail.aspx" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Styles/jquery.ui.stars.css" publishTime="01/02/2011 03:33:30" />
     <file relUrl="ContentService.asmx" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="Scripts/site.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Styles/stars.css" publishTime="01/02/2011 03:33:30" />
     <file relUrl="LobbyStart.inc" publishTime="01/02/2011 03:33:31" />
+    <file relUrl="Web.config" publishTime="01/24/2011 01:53:10" />
     <file relUrl="Img/Loader.gif" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="Styles/style.css" publishTime="01/02/2011 13:54:07" />
-    <file relUrl="Views/Maps/Index.cshtml" publishTime="01/02/2011 03:33:08" />
-    <file relUrl="Views/Shared/_SiteLayout.cshtml" publishTime="01/04/2011 20:10:09" />
+    <file relUrl="Styles/style.css" publishTime="01/05/2011 17:46:37" />
+    <file relUrl="Views/Shared/_SiteLayout.cshtml" publishTime="01/05/2011 17:46:35" />
     <file relUrl="Views/Forum/Thread.cshtml" publishTime="01/05/2011 03:32:33" />
-    <file relUrl="Views/Missions/TileList.cshtml" publishTime="01/02/2011 03:33:08" />
-    <file relUrl="Views/Maps/Detail.cshtml" publishTime="01/05/2011 03:32:32" />
-    <file relUrl="Views/Missions/Detail.cshtml" publishTime="01/05/2011 03:32:33" />
-    <file relUrl="Views/Web.config" publishTime="01/02/2011 03:33:08" />
+    <file relUrl="bin/ZeroKWeb.pdb" publishTime="01/24/2011 01:56:40" />
+    <file relUrl="Scripts/jquery.ui.stars.min.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Views/Maps/Detail.cshtml" publishTime="01/24/2011 00:56:56" />
     <file relUrl="Views/Home/Index.cshtml" publishTime="01/04/2011 04:32:52" />
     <file relUrl="bin/Global.asax.cs" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Styles/nicetitle.css" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="bin/Web.config" publishTime="01/02/2011 03:38:12" />
-    <file relUrl="bin/PlasmaShared.dll" publishTime="01/05/2011 02:36:43" />
+    <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="bin/Web.config" publishTime="01/24/2011 01:53:10" />
+    <file relUrl="bin/PlasmaShared.dll" publishTime="01/24/2011 01:45:24" />
     <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Scripts/jquery.validate.min.js" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="bin/ZeroKWeb.dll" publishTime="01/05/2011 04:26:44" />
+    <file relUrl="bin/ZeroKWeb.dll" publishTime="01/24/2011 01:56:40" />
     <file relUrl="Views/Maps/MapTileList.cshtml" publishTime="01/02/2011 03:33:08" />
     <file relUrl="Views/Forum/Index.cshtml" publishTime="01/04/2011 19:55:27" />
-    <file relUrl="Views/Missions/Index.cshtml" publishTime="01/02/2011 03:33:08" />
+    <file relUrl="Views/Missions/Index.cshtml" publishTime="01/24/2011 01:56:32" />
     <file relUrl="Img/cup.png" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Views/Wiki/Index.cshtml" publishTime="01/02/2011 04:13:52" />
     <file relUrl="Styles/base.css" publishTime="01/04/2011 04:26:09" />
-    <file relUrl="Scripts/jquery-ui-1.8.6.custom.min.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Views/Missions/TileList.cshtml" publishTime="01/02/2011 03:33:08" />
     <file relUrl="Views/Static/Index.cshtml" publishTime="01/02/2011 04:34:47" />
     <file relUrl="Views/Maps/MapTags.cshtml" publishTime="01/02/2011 03:33:08" />
-    <file relUrl="Scripts/jquery.ui.stars.js" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="Scripts/nicetitle.js" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="01/05/2011 02:36:46" />
+    <file relUrl="MissionService.svc" publishTime="01/02/2011 03:33:31" />
+    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="01/24/2011 01:45:28" />
     <file relUrl="bin/MonoTorrent.dll" publishTime="12/23/2010 14:50:19" />
     <file relUrl="Img/ntbgw.png" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="bin/Global.asax" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="Styles/menu.css" publishTime="01/02/2011 14:01:01" />
-    <file relUrl="Scripts/jquery.ui.stars.min.js" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="ResourceDetail.aspx" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="Views/Forum/ForumPath.cshtml" publishTime="01/04/2011 19:24:41" />
-    <file relUrl="bin/ZeroKWeb.pdb" publishTime="01/05/2011 04:26:43" />
-    <file relUrl="Web.config" publishTime="01/02/2011 03:38:12" />
+    <file relUrl="ErrorReports.aspx" publishTime="01/02/2011 03:33:31" />
+    <file relUrl="Scripts/nicetitle.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Views/Maps/Index.cshtml" publishTime="01/24/2011 01:22:29" />
+    <file relUrl="Scripts/jquery.ui.stars.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Scripts/jquery-1.4.2.min.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Scripts/site.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Views/Web.config" publishTime="01/02/2011 03:33:08" />
+    <file relUrl="Views/Missions/Detail.cshtml" publishTime="01/24/2011 01:24:14" />
   </publishProfile>
 </publishData>

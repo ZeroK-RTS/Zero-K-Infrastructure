@@ -114,8 +114,10 @@ Then in the battle lobby:
 	</div><!close votes>
 	
 	@if (Global.IsAccountAuthorized && Global.Account.IsLobbyAdministrator) {
-     <a href='@Url.Action("Touch", "Missions", new { id = m.MissionID })'>
-			Touch mission (moves to top)</a><br />
+   <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })'>
+     Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
+     <input type="submit"/>
+    </form>  
    		<a href='@Url.Action("Delete", "Missions", new { id = m.MissionID })' class='delete'>
 			Delete mission</a>
   }

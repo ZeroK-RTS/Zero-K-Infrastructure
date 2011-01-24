@@ -7,7 +7,6 @@ using System.Web.Mvc;
 using System.Xml.Serialization;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
-using ZeroKWeb;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -22,7 +21,7 @@ namespace ZeroKWeb.Controllers
       var db = new ZkDataContext();
       var res = db.Resources.Single(x => x.ResourceID == id);
 
-      var data = GetMapDetailData(res,db);
+      var data = GetMapDetailData(res, db);
 
       return View(data);
     }
@@ -37,6 +36,7 @@ namespace ZeroKWeb.Controllers
 
 
     public ActionResult Index(string search,
+                              bool? featured,
                               int? offset,
                               bool? ffa,
                               bool? assymetrical,
@@ -46,9 +46,12 @@ namespace ZeroKWeb.Controllers
                               bool? elongated,
                               bool? needsTagging,
                               int? isDownloadable = 1,
-                              int? special = 0)
+                              int? special = 0
+                              )
     {
       var db = new ZkDataContext();
+
+      if (featured == null) featured = Global.ShowFeaturedByDefault;
 
       var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map);
       if (!string.IsNullOrEmpty(search))
@@ -69,6 +72,7 @@ namespace ZeroKWeb.Controllers
             x.MapWaterLevel == null);
       }
 
+      if (featured == true) ret = ret.Where(x => x.FeaturedOrder > 0);
       if (isDownloadable == 1) ret = ret.Where(x => x.ResourceContentFiles.Any(y => y.LinkCount > 0));
       else if (isDownloadable == 0) ret = ret.Where(x => x.ResourceContentFiles.All(y => y.LinkCount <= 0));
       if (special != -1) ret = ret.Where(x => x.MapIsSpecial == (special == 1));
@@ -82,16 +86,25 @@ namespace ZeroKWeb.Controllers
       else if (size == 2) ret = ret.Where(x => (x.MapWidth > 12 || x.MapHeight > 12) && (x.MapWidth <= 20 && x.MapHeight <= 20));
       else if (size == 3) ret = ret.Where(x => x.MapWidth > 20 || x.MapHeight > 20);
 
-      ret = ret.OrderByDescending(x => x.ResourceID);
+      if (featured == true) ret = ret.OrderBy(x => x.FeaturedOrder); else ret = ret.OrderByDescending(x => x.ResourceID);
       if (offset != null) ret = ret.Skip(offset.Value);
       ret = ret.Take(Global.AjaxScrollCount);
 
-      if (!offset.HasValue) return View(new MapIndexData {
-        Latest = ret,
-        LastComments = db.Resources.Where(x=>x.TypeID == ResourceType.Map && x.ForumThreadID != null).OrderByDescending(x=>x.ForumThread.LastPost),
-        TopRated = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapRatingCount > 0).OrderByDescending(x => x.MapRatingSum / x.MapRatingCount),
-        MostDownloads = db.Resources.Where(x => x.TypeID == ResourceType.Map).OrderByDescending(x => x.DownloadCount)
-      });
+      if (!offset.HasValue)
+      {
+        return
+          View(new MapIndexData
+               {
+                 Title = featured == true ? "Featured maps" : "Latest maps",
+                 Latest = ret,
+                 LastComments =
+                   db.Resources.Where(x => x.TypeID == ResourceType.Map && x.ForumThreadID != null).OrderByDescending(x => x.ForumThread.LastPost),
+                 TopRated =
+                   db.Resources.Where(x => x.TypeID == ResourceType.Map && x.MapRatingCount > 0).OrderByDescending(
+                     x => x.MapRatingSum/x.MapRatingCount),
+                 MostDownloads = db.Resources.Where(x => x.TypeID == ResourceType.Map).OrderByDescending(x => x.DownloadCount)
+               });
+      }
 
       else
       {
@@ -124,7 +137,7 @@ namespace ZeroKWeb.Controllers
       }
     }
 
-    public ActionResult Tag(int id, bool? special, int? sea, int? hills, bool? ffa, bool? assymetrical, string author)
+    public ActionResult Tag(int id, bool? special, int? sea, int? hills, bool? ffa, bool? assymetrical, string author, float? featuredOrder)
     {
       if (!Global.IsAccountAuthorized) return Content("Not logged in!");
       else
@@ -138,6 +151,7 @@ namespace ZeroKWeb.Controllers
         r.MapIsFfa = ffa;
         r.MapIsAssymetrical = assymetrical;
         r.AuthorName = author;
+        if (Global.Account.IsAdmin) r.FeaturedOrder = featuredOrder;
         db.SubmitChanges();
         return RedirectToAction("Detail", new { id = id });
       }
@@ -166,22 +180,15 @@ namespace ZeroKWeb.Controllers
         res.ForumThread.ViewCount++;
         res.ForumThread.UpdateLastRead(Global.AccountID, false);
         db.SubmitChanges();
-       data.Posts = (from p in res.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
+        data.Posts = (from p in res.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
                       let userRating = res.MapRatings.SingleOrDefault(x => x.AccountID == p.AuthorAccountID)
                       select
-                        new MapPost { Created = p.Created, Author = p.Account, Text = p.Text, Rating = userRating != null ? (int?)userRating.Rating : null });
-      } else data.Posts = new List<MapPost>();
+                        new MapPost
+                        { Created = p.Created, Author = p.Account, Text = p.Text, Rating = userRating != null ? (int?)userRating.Rating : null });
+      }
+      else data.Posts = new List<MapPost>();
 
       return data;
-    }
-    
-
-    public class MapIndexData
-    {
-      public IQueryable<Resource> Latest;
-      public IQueryable<Resource> TopRated;
-      public IQueryable<Resource> LastComments;
-      public IQueryable<Resource> MostDownloads;
     }
 
 
@@ -191,6 +198,15 @@ namespace ZeroKWeb.Controllers
       public MapRating MyRating;
       public IEnumerable<MapPost> Posts;
       public Resource Resource;
+    }
+
+    public class MapIndexData
+    {
+      public IQueryable<Resource> LastComments;
+      public IQueryable<Resource> Latest;
+      public IQueryable<Resource> MostDownloads;
+      public IQueryable<Resource> TopRated;
+      public string Title;
     }
 
     public class MapPost

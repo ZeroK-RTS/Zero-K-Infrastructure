@@ -1,25 +1,26 @@
 ﻿@model ZeroKWeb.Controllers.MissionsIndexData
-
+@using ZeroKWeb;
 @{
 	Page.Title = "Zero-K missions";
 }
+<span>Design new missions with the <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>
+	Zero-K Mission Editor</a> </span>
 
 <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
-	Name or author: @Html.TextBox("search", Model.SearchString)
-	<input type="submit" id="submit" value="Search" />
-	<br />
+  <span title="Shows either featured missions or last changed missions">
+    Featured: @Html.CheckBox("featured", Global.ShowFeaturedByDefault)
+  </span>
 	<span title="Missions for one player">Singleplayer: @Html.CheckBox("sp", true)</span>
 	<span title="Missions where players fight together versus computer">Coop: @Html.CheckBox("coop", true)</span>
 	<span title="Missions where players fight each other">Adversarial: @Html.CheckBox("adversarial", true)</span>
+ 	Name or author: @Html.TextBox("search", Model.SearchString)	<input type="submit" id="submit" value="Search" />
 </form>
 
-<span>Design new missions with the <a href='http://code.google.com/p/zero-k/wiki/MissionEditorStartPage'>
-	Zero-K Mission Editor</a> </span>
 <table width='100%'>
 	<tr>
 		<td valign='top'>
 			<div id='ajaxScrollTarget'>
-				<h3>Lastest missions</h3>
+        <b>@Model.Title</b></br>
 				@{Html.RenderPartial("TileList", Model.LastUpdated);}
 			</div>
 		</td>
