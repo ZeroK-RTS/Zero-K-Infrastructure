@@ -42,6 +42,20 @@
     <a href='http://springie.licho.eu/top50.php'>Click here for now :)</a>
   </div>
   <div class="border">
+  <h2><a>Last posts</a></h2>
+  @foreach (var t in Model.NewThreads) {
+    var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new {id = t.ForumThread.ForumThreadID},null);
+    if (t.WasWritten) {
+      <b>* @link</b><br />
+    } else if (t.WasRead) { 
+     <i>* @link</i><br />
+    } else { 
+     <span>* @link</span><br />
+    }
+  }
+
+  </div>
+  <div class="border">
     <h2><a>Seeking</a></h2>
     @Html.IncludeWiki("LookingFor")
   </div>

@@ -84,13 +84,37 @@ namespace ZeroKWeb.Controllers
         Trace.TraceError("Error generating unit spotlight: {0}", ex);
       }
 
-      return View(new IndexResult() { Spotlight = spotlight  });
+
+      var result = new IndexResult() { Spotlight = spotlight };
+
+
+      var db = new ZkDataContext();
+      if (!Global.IsAccountAuthorized)
+      {
+        result.NewThreads = db.ForumThreads.OrderByDescending(x => x.LastPost).Take(10).Select(x => new NewThreadEntry() { ForumThread = x });
+      } else
+      {
+        result.NewThreads = (from t in db.ForumThreads
+                            let read = t.ForumThreadLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)
+                            where read == null || t.LastPost > read.LastRead
+                            orderby t.LastPost descending 
+                            select new NewThreadEntry { ForumThread = t, WasRead = read != null, WasWritten = read != null && read.LastPosted!= null }).Take(10);
+      }
+
+      return View(result);
+    }
+
+    public class NewThreadEntry
+    {
+      public ForumThread ForumThread;
+      public bool WasRead;
+      public bool WasWritten;
     }
 
     public class IndexResult
     {
       public UnitSpotlight Spotlight;
-
+      public IQueryable<NewThreadEntry> NewThreads;
     }
 
     public class UnitSpotlight
