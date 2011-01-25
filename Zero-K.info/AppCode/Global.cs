@@ -24,7 +24,11 @@ namespace ZeroKWeb
     }
 
     public static bool IsAccountAuthorized { get { return HttpContext.Current.User as Account != null; } }
-    public static bool IsLimitedMode
+    public static bool IsAdmin
+    {
+      get { return Account != null && Account.IsAdmin; }
+    }
+      public static bool IsLimitedMode
     {
       get
       {

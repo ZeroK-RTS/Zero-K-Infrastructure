@@ -52,8 +52,6 @@ namespace ZeroKLobby
     [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
       typeof(UITypeEditor))]
     public StringCollection AutoJoinChannels { get { return autoJoinChannels; } set { autoJoinChannels = value; } }
-    [Browsable(false)]
-    public bool JoinChannelsUpgradeDone;
 
 
     [Category("Widgets")]
@@ -148,6 +146,9 @@ namespace ZeroKLobby
     [Editor("System.Windows.Forms.Design.StringCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
       typeof(UITypeEditor))]
     public StringCollection IgnoredUsers { get { return ignoredUsers; } set { ignoredUsers = value; } }
+    public bool IsFirstRun = true;
+    [Browsable(false)]
+    public bool JoinChannelsUpgradeDone;
 
 
     [Category("Chat")]
@@ -173,6 +174,8 @@ namespace ZeroKLobby
       get { return limitedMode; }
       set
       {
+        if (limitedMode != value) JoinChannelsUpgradeDone = false;
+
         limitedMode = value;
         try
         {
@@ -299,7 +302,6 @@ namespace ZeroKLobby
     /// Keeps datetime of last topic change for each channel
     /// </summary>
     public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
-    public bool IsFirstRun = true;
     public Config() {}
 
 

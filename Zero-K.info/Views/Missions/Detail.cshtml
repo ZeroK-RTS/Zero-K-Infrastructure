@@ -113,7 +113,7 @@ Then in the battle lobby:
 		</table>
 	</div><!close votes>
 	
-	@if (Global.IsAccountAuthorized && Global.Account.IsLobbyAdministrator) {
+	@if (Global.IsAdmin) {
    <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })'>
      Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
      <input type="submit"/>
