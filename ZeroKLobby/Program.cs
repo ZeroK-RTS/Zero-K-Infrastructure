@@ -156,9 +156,9 @@ namespace ZeroKLobby
 
         LoadConfig();
 
-        Conf.ManualSpringPath = Conf.ManualSpringPath ??
-                                (string)
-                                Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spring", "DisplayIcon", "");
+        Conf.ManualSpringPath = Conf.ManualSpringPath 
+                                 ?? (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\spring.exe", "@", null) ?? (string)
+                                Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spring", "DisplayIcon", null);
 
         SpringPaths = new SpringPaths(Conf.ManualSpringPath);
         if (Debugger.IsAttached) SpringPaths.Cache = Utils.MakePath(StartupPath, "cache");
