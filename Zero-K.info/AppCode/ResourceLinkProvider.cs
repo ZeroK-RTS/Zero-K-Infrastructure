@@ -6,9 +6,9 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using CookComputing.XmlRpc;
 using ZkData;
 
 #endregion
@@ -32,11 +32,59 @@ namespace ZeroKWeb
       Mirrors = newMirrors.ToArray();
     }
 
+
+    public static List<string> GetJobjolMirrorLinks(string fileName, string springName)
+    {
+      var ret = new List<string>();
+      try
+      {
+        var rpc = XmlRpcProxyGen.Create<ISpringFilesRpc>();
+        foreach (var res in rpc.Search(new SearchParams() { FileName = fileName, SpringName = springName })) ret.AddRange(res.mirrors);
+      }
+      catch (Exception ex)
+      {
+        Trace.TraceWarning("Error getting mirros from springfiles: {0}", ex);
+      }
+      return ret;
+
+      /*var result = new List<string>();
+
+      result.Add(string.Format("http://www.springfiles.com/download.php?maincategory=1&subcategory={0}&file={1}",
+                               type == ZkData.ResourceType.Map ? 2 : 5,
+                               fileName));
+      try
+      {
+        using (var wc = new WebClient())
+        {
+          var pom = string.Format("http://www.springfiles.com/checkmirror.php?q={0}&c={1}",
+                                  Uri.EscapeDataString(fileName),
+                                  type == ZkData.ResourceType.Mod ? "mods" : "maps");
+
+          var ret = wc.DownloadString(pom);
+
+          var matches = Regex.Matches(ret, "\\&mirror=([^\\&]+)");
+          foreach (Match match in matches)
+          {
+            if (match.Success && match.Groups.Count > 1)
+            {
+              var mirror = Uri.UnescapeDataString(match.Groups[1].Value);
+              result.Add(mirror);
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Console.Error.WriteLine("Error getting jobjol mirrors " + ex);
+      }
+      return result;*/
+    }
+
     public static bool GetLinksAndTorrent(string internalName,
                                           out List<string> links,
                                           out byte[] torrent,
                                           out List<string> dependencies,
-                                          out ZkData.ResourceType resourceType,
+                                          out ResourceType resourceType,
                                           out string torrentFileName)
     {
       var db = new ZkDataContext();
@@ -47,7 +95,7 @@ namespace ZeroKWeb
         torrent = null;
         links = null;
         dependencies = null;
-        resourceType = ZkData.ResourceType.Map;
+        resourceType = ResourceType.Map;
         torrentFileName = null;
         return false;
       }
@@ -131,41 +179,6 @@ namespace ZeroKWeb
       }
     }
 
-    static List<string> GetJobjolMirrorLinks(string fileName, ZkData.ResourceType type)
-    {
-      var result = new List<string>();
-
-      result.Add(string.Format("http://www.springfiles.com/download.php?maincategory=1&subcategory={0}&file={1}",
-                               type == ZkData.ResourceType.Map ? 2 : 5,
-                               fileName));
-      try
-      {
-        using (var wc = new WebClient())
-        {
-          var pom = string.Format("http://www.springfiles.com/checkmirror.php?q={0}&c={1}",
-                                  Uri.EscapeDataString(fileName),
-                                  type == ZkData.ResourceType.Mod ? "mods" : "maps");
-
-          var ret = wc.DownloadString(pom);
-
-          var matches = Regex.Matches(ret, "\\&mirror=([^\\&]+)");
-          foreach (Match match in matches)
-          {
-            if (match.Success && match.Groups.Count > 1)
-            {
-              var mirror = Uri.UnescapeDataString(match.Groups[1].Value);
-              result.Add(mirror);
-            }
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Console.Error.WriteLine("Error getting jobjol mirrors " + ex);
-      }
-      return result;
-    }
-
     static long GetLinkLength(string url)
     {
       try
@@ -202,12 +215,12 @@ namespace ZeroKWeb
       }
 
       // get mirror list from jobjol
-      foreach (var link in GetJobjolMirrorLinks(content.FileName, content.Resource.TypeID)) if (!valids.Contains(link)) valids.Add(link);
+      foreach (var link in GetJobjolMirrorLinks(content.FileName, content.Resource.InternalName)) if (!valids.Contains(link)) valids.Add(link);
 
       // combine with hardcoded mirrors
       foreach (var url in Mirrors)
       {
-        var replaced = url.Replace("%t", content.Resource.TypeID == ZkData.ResourceType.Mod ? "mods" : "maps").Replace("%f", content.FileName);
+        var replaced = url.Replace("%t", content.Resource.TypeID == ResourceType.Mod ? "mods" : "maps").Replace("%f", content.FileName);
         if (!valids.Contains(replaced)) valids.Add(replaced);
       }
 
@@ -225,6 +238,13 @@ namespace ZeroKWeb
       if (GetLinkLength(link) != length) lock (valids) valids.Remove(link);
     }
 
+    [XmlRpcUrl("http://springfiles.com/xmlrpc.php")]
+    public interface ISpringFilesRpc
+    {
+      [XmlRpcMethod("springfiles.search")]
+      SearchResult[] Search(SearchParams data);
+    }
+
     class RequestData
     {
       public ResourceContentFile ContentFile;
@@ -235,6 +255,26 @@ namespace ZeroKWeb
       {
         ResourceID = resourceID;
       }
+    }
+
+    public class SearchParams
+    {
+      [XmlRpcMember("filename")]
+      public string FileName;
+      [XmlRpcMember("logical")]
+      public string Logical = "or";
+
+      [XmlRpcMember("springname")]
+      public string SpringName;
+    }
+
+    public class SearchResult
+    {
+      public string category;
+      public string filename;
+      public string md5;
+      public string[] mirrors;
+      public string springname;
     }
   }
 }

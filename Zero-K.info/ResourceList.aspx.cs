@@ -2,6 +2,7 @@
 using System.Data.Linq.SqlClient;
 using System.Linq;
 using System.Web.UI.WebControls;
+using CookComputing.XmlRpc;
 using Licho.Utils.Web;
 using PlasmaShared;
 using ZkData;
