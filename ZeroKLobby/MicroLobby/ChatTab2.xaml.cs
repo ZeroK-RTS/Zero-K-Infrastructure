@@ -448,7 +448,7 @@ namespace ZeroKLobby.MicroLobby
     {
       var userName = e.Data.Name;
       var pmControl = GetPrivateMessageControl(userName);
-      if (pmControl != null) SetIcon(userName, Program.FriendManager.Friends.Contains(userName) ? ZeroKLobby.Resources.Friend : TextImage.GetUserImage(userName));
+      if (pmControl != null) SetIcon(userName, TextImage.GetUserImage(userName));
     }
 
     void TasClient_UserRemoved(object sender, TasEventArgs e)

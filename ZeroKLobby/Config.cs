@@ -148,7 +148,7 @@ namespace ZeroKLobby
     public StringCollection IgnoredUsers { get { return ignoredUsers; } set { ignoredUsers = value; } }
     public bool IsFirstRun = true;
     [Browsable(false)]
-    public bool JoinChannelsUpgradeDone;
+    public bool JoinChannelsSetupDone;
 
 
     [Category("Chat")]
@@ -174,7 +174,7 @@ namespace ZeroKLobby
       get { return limitedMode; }
       set
       {
-        if (limitedMode != value) JoinChannelsUpgradeDone = false;
+        if (limitedMode != value) JoinChannelsSetupDone = false;
 
         limitedMode = value;
         try

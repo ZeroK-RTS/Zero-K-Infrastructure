@@ -71,10 +71,9 @@ namespace PlasmaDownloader.Torrents
                 down.Length = 1;//workaround for progress bars
                 down.TypeOfResource = e.resourceType == ResourceType.Map ? DownloadType.MAP : DownloadType.MOD;
 
-                var seedList = e.links.Where(x => !x.Contains("www.springfiles.com")).Shuffle();
 
                 // just 1 link, use normal webdownload
-                if (e.links.Count() == 1 || seedList.Count == 1) // mirrors or mirros without jobjol = 1
+                if (e.links.Count() == 1 || e.links.Count(x=>!x.Contains("springfiles.com"))== 1) // mirrors or mirros without jobjol = 1
                 {
                     var wd = new WebFileDownload(e.links[0], GetDestPath(down.TypeOfResource, down.FileName), incomingFolder);
                     down.AddNeededDownload(wd);
@@ -83,7 +82,7 @@ namespace PlasmaDownloader.Torrents
                 }
                 else
                 {
-                    var wd = new WebMultiDownload(seedList, GetDestPath(down.TypeOfResource, down.FileName), incomingFolder, tor);
+                    var wd = new WebMultiDownload(e.links.Shuffle(), GetDestPath(down.TypeOfResource, down.FileName), incomingFolder, tor);
                     down.AddNeededDownload(wd);
                     down.Finish(true); // mark current torrent dl as complete - will wait for dependency
                     wd.Start(); // start dependent download

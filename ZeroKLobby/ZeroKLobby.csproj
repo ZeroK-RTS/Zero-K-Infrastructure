@@ -45,7 +45,7 @@
     <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
     <ProductName>Zero-K</ProductName>
     <PublisherName>Zero-K</PublisherName>
-    <MinimumRequiredVersion>2.8.0.4</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.9.0.3</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>

@@ -165,14 +165,14 @@ namespace ZeroKLobby
         else SpringPaths.Cache = Utils.MakePath(SpringPaths.WritableDirectory, "cache", "SD");
         SpringPaths.MakeFolders();
 
-        //Conf.IsFirstRun = true;
+
         // if first started from web directly and not spring preinstalled -> limited mode
         if (Conf.IsFirstRun && (string.IsNullOrEmpty(SpringPaths.SpringVersion) || SpringPaths.UnitSyncDirectory.Contains("engine"))) {
           Conf.LimitedMode = true;
         }
 
         // set default join channels
-        if (!Conf.JoinChannelsUpgradeDone)
+        if (!Conf.JoinChannelsSetupDone)
         {
           if (Conf.LimitedMode)
           {
@@ -181,8 +181,9 @@ namespace ZeroKLobby
           else
           {
             foreach (var game in KnownGames.List) Conf.AutoJoinChannels.Add(game.Channel);
+            Conf.AutoJoinChannels.Add("main");
           }
-          Conf.JoinChannelsUpgradeDone = true;
+          Conf.JoinChannelsSetupDone = true;
         }
 
         SaveConfig();
