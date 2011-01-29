@@ -42,6 +42,12 @@ namespace ZeroKWeb
       return PlasmaServer.GetResourceData(md5, internalName);
     }
 
+    [WebMethod]
+    public bool SubmitBattleResult(string accountName, string password, string springBattleID, string mod, string map, bool isMission, bool isBots, string replayName, DateTime startTime, TimeSpan duration, string title, List<BattlePlayerResult> players)
+    {
+      return true;  
+    }
+
 
     [WebMethod]
     public List<PlasmaServer.ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
@@ -181,5 +187,11 @@ namespace ZeroKWeb
       public string Name;
       public string StartScript;
     }
+  }
+
+  public class BattlePlayerResult
+  {
+    public int AccountID;
+
   }
 }

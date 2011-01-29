@@ -179,14 +179,16 @@ namespace ZeroKWeb
       }
     }
 
-    static long GetLinkLength(string url)
+    static long GetLinkLength(string url, out string redirectUrl)
     {
+      redirectUrl = url;
       try
       {
         var wr = (HttpWebRequest)WebRequest.Create(url);
         wr.Timeout = 3000;
         wr.Method = "GET";
         var res = wr.GetResponse();
+        redirectUrl = res.ResponseUri.ToString();
         var cl = res.ContentLength;
         wr.Abort();
         return cl;
@@ -233,9 +235,15 @@ namespace ZeroKWeb
       content.Links = string.Join("\n", valids.ToArray());
     }
 
-    static void ValidateLink(string link, int length, List<string> valids)
+    public static void ValidateLink(string link, int length, List<string> valids)
     {
-      if (GetLinkLength(link) != length) lock (valids) valids.Remove(link);
+      string realLink;
+      if (GetLinkLength(link, out realLink) != length) lock (valids) valids.Remove(link); // invalid length, remove
+      else if (link != realLink) lock(valids) // redirect, update url
+      {
+        valids.Remove(link);
+        valids.Add(realLink);
+      }
     }
 
     [XmlRpcUrl("http://springfiles.com/xmlrpc.php")]
