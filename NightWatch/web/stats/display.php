@@ -1,4 +1,4 @@
-<?
+<?php
 	$stamp = $_GET["stamp"];
 	$ext = $_GET["ext"];
 	if (!isset($stamp)) $stamp=time();
@@ -21,6 +21,7 @@
 				$args = split("\|", $lines[$j]);
 				$mod = $args[0];
 				if (strstr($mod, "Complete Annihilation")!="") $mod = "Complete Annihilation";
+				else if (strstr($mod, "Zero-K")!="") $mod = "Zero-K";
 				else if (strstr($mod, "Balanced Annihilation") != "") $mod = "Balanced Annihilation";
 				else if (strstr($mod, "1944") != "") $mod = "S:1944";
 				else if (strstr($mod, "XTA") != "") $mod = "XTA";
@@ -30,6 +31,7 @@
 				else if (strstr($mod, "Kernel Panic") != "") $mod = "Kernel Panic";
 				else if (strstr($mod, "Tired Annihilation") != "") $mod = "Tired Annihilation";
 				else if (strstr($mod, "Expand and Exterminate") != "") $mod = "Expand and Exterminate";
+				else if (strstr($mod, "Tech Annihilation") != "") $mod = "Tech Annihilation";
 				else if (strstr($mod, "LLTA") != "") $mod = "LLTA";
 				else if (strstr($mod, "Absolute Annihilation") != "") $mod = "Absolute Annihilation";
 				else if (strstr($mod, "Star Wars") != "") $mod = "Star Wars";
@@ -39,6 +41,7 @@
 				else if (strstr($mod, "Fibre") != "") $mod = "Fibre";
 				else if (strstr($mod, "Epic Legions") != "") $mod = "Epic Legions";
 				else if (strstr($mod, "Ultimate Annihilation") != "") $mod = "Ultimate Annihilation";
+				else if (strstr($mod, "BA Chicken Defense") != "") $mod = "BA Chicken Defense";
 
 				$cnt = $args[1];
 				
@@ -59,10 +62,20 @@ foreach ($sums as $modname => $count) {
 		if ($count > 0 && $modname!="") {
 		$vals[$cnt] = $count;
 		$vars[$cnt] = $modname."($count)";
+		if ($modname == "Zero-K") $cols[$cnt]="#00FFFF";
+		elseif ($modname == "Balanced Annihilation") $cols[$cnt]="#008F00";
+		elseif ($modname == "Tech Annihilation") $cols[$cnt]="#0070F0";
+		elseif ($modname == "XTA") $cols[$cnt]="#FF0000";
+		elseif ($modname == "NOTA") $cols[$cnt]="#FFFF00";
+		elseif ($modname == "S:1944") $cols[$cnt]="#207F40";
+		elseif ($modname == "BA Chicken Defense") $cols[$cnt]="#708F00";
+		elseif ($modname == "Gundam") $cols[$cnt]="#FFFFFF";
+		else $cols[$cnt] = "#000000";
 		$cnt++;
 		}
 }
 $pie = new PieGraph(400, 400, $vals);
+$pie->setColors($cols);
 $pie->setLegends($vars);
 $pie->set3dHeight(15);
 if ($fname != $today) $pie->display($fname.$ext.".png");
