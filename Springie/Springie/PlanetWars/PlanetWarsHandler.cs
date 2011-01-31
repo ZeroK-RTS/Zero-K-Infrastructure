@@ -18,13 +18,6 @@ namespace Springie.PlanetWars
 {
     public class PlanetWarsHandler: IDisposable
     {
-        public enum SpringMessageType
-        {
-            pwaward,
-            pwmorph,
-            pwpurchase,
-            pwdeath
-        }
 
         AutoHost autoHost;
         List<string> channelAllowedExceptions = new List<string>();
@@ -292,75 +285,8 @@ namespace Springie.PlanetWars
         }
 
 
-        public void SpringMessage(string text)
+        public static void SpringMessage(string text)
         {
-            string txtOrig = text;
-            SpringMessageType type = SpringMessageType.pwaward;
-            bool found = false;
-
-            foreach (SpringMessageType option in (SpringMessageType[])Enum.GetValues(typeof(SpringMessageType)))
-            {
-                string prefix = option + ":";
-                if (text.StartsWith(prefix))
-                {
-                    text = text.Substring(prefix.Length);
-                    type = option;
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-            {
-                autoHost.SayBattle("Unexpected message: " + text);
-                return;
-            }
-
-            string[] parts = text.Split(new[] { ',' });
-            try
-            {
-                switch (type)
-                {
-                    case SpringMessageType.pwaward:
-                        string[] partsSpace = text.Split(new[] { ' ' }, 3);
-                        string name = partsSpace[0];
-                        string awardType = partsSpace[1];
-                        string awardText = partsSpace[2];
-                        if (!IsMercenary(name))
-                        {
-                            // todo this should be stored when game start to avoid cheating
-                            autoHost.SayBattle(string.Format("Award for {0} - {1}", name, awardText));
-                            server.AddAward(account, name, awardType, awardText, tas.MyBattle.MapName);
-                        }
-                        break;
-
-                    case SpringMessageType.pwmorph:
-                        server.UnitDeployed(account,
-                                            tas.MyBattle.MapName,
-                                            parts[0],
-                                            parts[1],
-                                            (int)double.Parse(parts[2]),
-                                            (int)double.Parse(parts[3]),
-                                            parts[4]);
-                        break;
-
-                    case SpringMessageType.pwpurchase:
-                        server.UnitPurchased(account,
-                                             parts[0],
-                                             parts[1],
-                                             double.Parse(parts[2]),
-                                             (int)double.Parse(parts[3]),
-                                             (int)double.Parse(parts[4]));
-                        break;
-
-                    case SpringMessageType.pwdeath:
-                        server.UnitDied(account, parts[0], parts[1], (int)double.Parse(parts[3]), (int)double.Parse(parts[4]));
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-                autoHost.SayBattle(string.Format("Error while processing '{0}' :{1}", txtOrig, ex));
-            }
         }
 
         public bool StartGame(TasSayEventArgs e)

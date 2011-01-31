@@ -85,6 +85,12 @@ namespace ZkData
     partial void InsertForumThreadLastRead(ForumThreadLastRead instance);
     partial void UpdateForumThreadLastRead(ForumThreadLastRead instance);
     partial void DeleteForumThreadLastRead(ForumThreadLastRead instance);
+    partial void InsertAccountBattleAward(AccountBattleAward instance);
+    partial void UpdateAccountBattleAward(AccountBattleAward instance);
+    partial void DeleteAccountBattleAward(AccountBattleAward instance);
+    partial void InsertAccountBattleStat(AccountBattleStat instance);
+    partial void UpdateAccountBattleStat(AccountBattleStat instance);
+    partial void DeleteAccountBattleStat(AccountBattleStat instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -458,6 +464,22 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<ForumThreadLastRead>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AccountBattleAward> AccountBattleAwards
+		{
+			get
+			{
+				return this.GetTable<AccountBattleAward>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AccountBattleStat> AccountBattleStats
+		{
+			get
+			{
+				return this.GetTable<AccountBattleStat>();
 			}
 		}
 	}
@@ -5055,6 +5077,10 @@ namespace ZkData
 		
 		private EntitySet<ForumThreadLastRead> _ForumThreadLastReads;
 		
+		private EntitySet<AccountBattleAward> _AccountBattleAwards;
+		
+		private EntitySet<AccountBattleStat> _AccountBattleStats;
+		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -5637,6 +5663,44 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
+		public EntitySet<AccountBattleAward> AccountBattleAwards
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountBattleAwards.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountBattleAwards;
+			}
+			set
+			{
+				this._AccountBattleAwards.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleStat", Storage="_AccountBattleStats", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
+		public EntitySet<AccountBattleStat> AccountBattleStats
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountBattleStats.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountBattleStats;
+			}
+			set
+			{
+				this._AccountBattleStats.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -5813,6 +5877,30 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_AccountBattleAwards(AccountBattleAward entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountBattleAwards(AccountBattleAward entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
+		private void attach_AccountBattleStats(AccountBattleStat entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountBattleStats(AccountBattleStat entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -5828,6 +5916,8 @@ namespace ZkData
 			this._SpringBattles = new EntitySet<SpringBattle>(new Action<SpringBattle>(this.attach_SpringBattles), new Action<SpringBattle>(this.detach_SpringBattles));
 			this._SpringBattlePlayers = new EntitySet<SpringBattlePlayer>(new Action<SpringBattlePlayer>(this.attach_SpringBattlePlayers), new Action<SpringBattlePlayer>(this.detach_SpringBattlePlayers));
 			this._ForumThreadLastReads = new EntitySet<ForumThreadLastRead>(new Action<ForumThreadLastRead>(this.attach_ForumThreadLastReads), new Action<ForumThreadLastRead>(this.detach_ForumThreadLastReads));
+			this._AccountBattleAwards = new EntitySet<AccountBattleAward>(new Action<AccountBattleAward>(this.attach_AccountBattleAwards), new Action<AccountBattleAward>(this.detach_AccountBattleAwards));
+			this._AccountBattleStats = new EntitySet<AccountBattleStat>(new Action<AccountBattleStat>(this.attach_AccountBattleStats), new Action<AccountBattleStat>(this.detach_AccountBattleStats));
 			OnCreated();
 		}
 		
@@ -9728,7 +9818,15 @@ namespace ZkData
 		
 		private bool _IsMission;
 		
+		private string _ReplayFileName;
+		
+		private string _EngineVersion;
+		
 		private EntitySet<SpringBattlePlayer> _SpringBattlePlayers;
+		
+		private EntitySet<AccountBattleAward> _AccountBattleAwards;
+		
+		private EntitySet<AccountBattleStat> _AccountBattleStats;
 		
 		private EntityRef<Account> _Account;
 		
@@ -9764,6 +9862,10 @@ namespace ZkData
     partial void OnHasBotsChanged();
     partial void OnIsMissionChanging(bool value);
     partial void OnIsMissionChanged();
+    partial void OnReplayFileNameChanging(string value);
+    partial void OnReplayFileNameChanged();
+    partial void OnEngineVersionChanging(string value);
+    partial void OnEngineVersionChanged();
     #endregion
 		
 		public SpringBattle()
@@ -10014,8 +10116,50 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReplayFileName", DbType="nvarchar(500)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public string ReplayFileName
+		{
+			get
+			{
+				return this._ReplayFileName;
+			}
+			set
+			{
+				if ((this._ReplayFileName != value))
+				{
+					this.OnReplayFileNameChanging(value);
+					this.SendPropertyChanging();
+					this._ReplayFileName = value;
+					this.SendPropertyChanged("ReplayFileName");
+					this.OnReplayFileNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EngineVersion", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public string EngineVersion
+		{
+			get
+			{
+				return this._EngineVersion;
+			}
+			set
+			{
+				if ((this._EngineVersion != value))
+				{
+					this.OnEngineVersionChanging(value);
+					this.SendPropertyChanging();
+					this._EngineVersion = value;
+					this.SendPropertyChanged("EngineVersion");
+					this.OnEngineVersionChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -10030,6 +10174,44 @@ namespace ZkData
 			set
 			{
 				this._SpringBattlePlayers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		public EntitySet<AccountBattleAward> AccountBattleAwards
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountBattleAwards.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountBattleAwards;
+			}
+			set
+			{
+				this._AccountBattleAwards.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleStat", Storage="_AccountBattleStats", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		public EntitySet<AccountBattleStat> AccountBattleStats
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountBattleStats.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountBattleStats;
+			}
+			set
+			{
+				this._AccountBattleStats.Assign(value);
 			}
 		}
 		
@@ -10167,9 +10349,35 @@ namespace ZkData
 			entity.SpringBattle = null;
 		}
 		
+		private void attach_AccountBattleAwards(AccountBattleAward entity)
+		{
+			this.SendPropertyChanging();
+			entity.SpringBattle = this;
+		}
+		
+		private void detach_AccountBattleAwards(AccountBattleAward entity)
+		{
+			this.SendPropertyChanging();
+			entity.SpringBattle = null;
+		}
+		
+		private void attach_AccountBattleStats(AccountBattleStat entity)
+		{
+			this.SendPropertyChanging();
+			entity.SpringBattle = this;
+		}
+		
+		private void detach_AccountBattleStats(AccountBattleStat entity)
+		{
+			this.SendPropertyChanging();
+			entity.SpringBattle = null;
+		}
+		
 		private void Initialize()
 		{
 			this._SpringBattlePlayers = new EntitySet<SpringBattlePlayer>(new Action<SpringBattlePlayer>(this.attach_SpringBattlePlayers), new Action<SpringBattlePlayer>(this.detach_SpringBattlePlayers));
+			this._AccountBattleAwards = new EntitySet<AccountBattleAward>(new Action<AccountBattleAward>(this.attach_AccountBattleAwards), new Action<AccountBattleAward>(this.detach_AccountBattleAwards));
+			this._AccountBattleStats = new EntitySet<AccountBattleStat>(new Action<AccountBattleStat>(this.attach_AccountBattleStats), new Action<AccountBattleStat>(this.detach_AccountBattleStats));
 			this._Account = default(EntityRef<Account>);
 			this._ResourceByMapResourceID = default(EntityRef<Resource>);
 			this._ResourceByModResourceID = default(EntityRef<Resource>);
@@ -10209,17 +10417,11 @@ namespace ZkData
 		
 		private int _AccountID;
 		
-		private bool _Spectator;
+		private bool _IsSpectator;
 		
-		private bool _InVictoryTeam;
+		private bool _IsInVictoryTeam;
 		
-		private bool _AliveTillEnd;
-		
-		private System.Nullable<int> _DropTime;
-		
-		private System.Nullable<int> _LeaveTime;
-		
-		private string _Side;
+		private string _CommanderType;
 		
 		private System.Nullable<int> _LoseTime;
 		
@@ -10239,18 +10441,12 @@ namespace ZkData
     partial void OnSpringBattleIDChanged();
     partial void OnAccountIDChanging(int value);
     partial void OnAccountIDChanged();
-    partial void OnSpectatorChanging(bool value);
-    partial void OnSpectatorChanged();
-    partial void OnInVictoryTeamChanging(bool value);
-    partial void OnInVictoryTeamChanged();
-    partial void OnAliveTillEndChanging(bool value);
-    partial void OnAliveTillEndChanged();
-    partial void OnDropTimeChanging(System.Nullable<int> value);
-    partial void OnDropTimeChanged();
-    partial void OnLeaveTimeChanging(System.Nullable<int> value);
-    partial void OnLeaveTimeChanged();
-    partial void OnSideChanging(string value);
-    partial void OnSideChanged();
+    partial void OnIsSpectatorChanging(bool value);
+    partial void OnIsSpectatorChanged();
+    partial void OnIsInVictoryTeamChanging(bool value);
+    partial void OnIsInVictoryTeamChanged();
+    partial void OnCommanderTypeChanging(string value);
+    partial void OnCommanderTypeChanged();
     partial void OnLoseTimeChanging(System.Nullable<int> value);
     partial void OnLoseTimeChanged();
     partial void OnAllyNumberChanging(int value);
@@ -10314,134 +10510,71 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Spectator", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSpectator", DbType="bit NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public bool Spectator
+		public bool IsSpectator
 		{
 			get
 			{
-				return this._Spectator;
+				return this._IsSpectator;
 			}
 			set
 			{
-				if ((this._Spectator != value))
+				if ((this._IsSpectator != value))
 				{
-					this.OnSpectatorChanging(value);
+					this.OnIsSpectatorChanging(value);
 					this.SendPropertyChanging();
-					this._Spectator = value;
-					this.SendPropertyChanged("Spectator");
-					this.OnSpectatorChanged();
+					this._IsSpectator = value;
+					this.SendPropertyChanged("IsSpectator");
+					this.OnIsSpectatorChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InVictoryTeam", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsInVictoryTeam", DbType="bit NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public bool InVictoryTeam
+		public bool IsInVictoryTeam
 		{
 			get
 			{
-				return this._InVictoryTeam;
+				return this._IsInVictoryTeam;
 			}
 			set
 			{
-				if ((this._InVictoryTeam != value))
+				if ((this._IsInVictoryTeam != value))
 				{
-					this.OnInVictoryTeamChanging(value);
+					this.OnIsInVictoryTeamChanging(value);
 					this.SendPropertyChanging();
-					this._InVictoryTeam = value;
-					this.SendPropertyChanged("InVictoryTeam");
-					this.OnInVictoryTeamChanged();
+					this._IsInVictoryTeam = value;
+					this.SendPropertyChanged("IsInVictoryTeam");
+					this.OnIsInVictoryTeamChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AliveTillEnd", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommanderType", DbType="nvarchar(50)")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public bool AliveTillEnd
+		public string CommanderType
 		{
 			get
 			{
-				return this._AliveTillEnd;
+				return this._CommanderType;
 			}
 			set
 			{
-				if ((this._AliveTillEnd != value))
+				if ((this._CommanderType != value))
 				{
-					this.OnAliveTillEndChanging(value);
+					this.OnCommanderTypeChanging(value);
 					this.SendPropertyChanging();
-					this._AliveTillEnd = value;
-					this.SendPropertyChanged("AliveTillEnd");
-					this.OnAliveTillEndChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropTime", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public System.Nullable<int> DropTime
-		{
-			get
-			{
-				return this._DropTime;
-			}
-			set
-			{
-				if ((this._DropTime != value))
-				{
-					this.OnDropTimeChanging(value);
-					this.SendPropertyChanging();
-					this._DropTime = value;
-					this.SendPropertyChanged("DropTime");
-					this.OnDropTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LeaveTime", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public System.Nullable<int> LeaveTime
-		{
-			get
-			{
-				return this._LeaveTime;
-			}
-			set
-			{
-				if ((this._LeaveTime != value))
-				{
-					this.OnLeaveTimeChanging(value);
-					this.SendPropertyChanging();
-					this._LeaveTime = value;
-					this.SendPropertyChanged("LeaveTime");
-					this.OnLeaveTimeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Side", DbType="nvarchar(50)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public string Side
-		{
-			get
-			{
-				return this._Side;
-			}
-			set
-			{
-				if ((this._Side != value))
-				{
-					this.OnSideChanging(value);
-					this.SendPropertyChanging();
-					this._Side = value;
-					this.SendPropertyChanged("Side");
-					this.OnSideChanged();
+					this._CommanderType = value;
+					this.SendPropertyChanged("CommanderType");
+					this.OnCommanderTypeChanged();
 				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoseTime", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public System.Nullable<int> LoseTime
 		{
 			get
@@ -10462,7 +10595,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyNumber", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
 		public int AllyNumber
 		{
 			get
@@ -10483,7 +10616,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rank", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public int Rank
 		{
 			get
@@ -11179,6 +11312,472 @@ namespace ZkData
 		{
 			this._ForumThread = default(EntityRef<ForumThread>);
 			this._Account = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountBattleAward")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountBattleAward : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private int _SpringBattleID;
+		
+		private string _AwardKey;
+		
+		private string _AwardDescription;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<SpringBattle> _SpringBattle;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnSpringBattleIDChanging(int value);
+    partial void OnSpringBattleIDChanged();
+    partial void OnAwardKeyChanging(string value);
+    partial void OnAwardKeyChanged();
+    partial void OnAwardDescriptionChanging(string value);
+    partial void OnAwardDescriptionChanged();
+    #endregion
+		
+		public AccountBattleAward()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int SpringBattleID
+		{
+			get
+			{
+				return this._SpringBattleID;
+			}
+			set
+			{
+				if ((this._SpringBattleID != value))
+				{
+					if (this._SpringBattle.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSpringBattleIDChanging(value);
+					this.SendPropertyChanging();
+					this._SpringBattleID = value;
+					this.SendPropertyChanged("SpringBattleID");
+					this.OnSpringBattleIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AwardKey", DbType="varchar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public string AwardKey
+		{
+			get
+			{
+				return this._AwardKey;
+			}
+			set
+			{
+				if ((this._AwardKey != value))
+				{
+					this.OnAwardKeyChanging(value);
+					this.SendPropertyChanging();
+					this._AwardKey = value;
+					this.SendPropertyChanged("AwardKey");
+					this.OnAwardKeyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AwardDescription", DbType="nvarchar(500)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string AwardDescription
+		{
+			get
+			{
+				return this._AwardDescription;
+			}
+			set
+			{
+				if ((this._AwardDescription != value))
+				{
+					this.OnAwardDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._AwardDescription = value;
+					this.SendPropertyChanged("AwardDescription");
+					this.OnAwardDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleAward", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountBattleAwards.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountBattleAwards.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleAward", Storage="_SpringBattle", ThisKey="SpringBattleID", OtherKey="SpringBattleID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public SpringBattle SpringBattle
+		{
+			get
+			{
+				return this._SpringBattle.Entity;
+			}
+			set
+			{
+				SpringBattle previousValue = this._SpringBattle.Entity;
+				if (((previousValue != value) 
+							|| (this._SpringBattle.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SpringBattle.Entity = null;
+						previousValue.AccountBattleAwards.Remove(this);
+					}
+					this._SpringBattle.Entity = value;
+					if ((value != null))
+					{
+						value.AccountBattleAwards.Add(this);
+						this._SpringBattleID = value.SpringBattleID;
+					}
+					else
+					{
+						this._SpringBattleID = default(int);
+					}
+					this.SendPropertyChanged("SpringBattle");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._SpringBattle = default(EntityRef<SpringBattle>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountBattleStats")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountBattleStat : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private int _SpringBattleID;
+		
+		private string _StatsKey;
+		
+		private double _Value;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<SpringBattle> _SpringBattle;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnSpringBattleIDChanging(int value);
+    partial void OnSpringBattleIDChanged();
+    partial void OnStatsKeyChanging(string value);
+    partial void OnStatsKeyChanged();
+    partial void OnValueChanging(double value);
+    partial void OnValueChanged();
+    #endregion
+		
+		public AccountBattleStat()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int SpringBattleID
+		{
+			get
+			{
+				return this._SpringBattleID;
+			}
+			set
+			{
+				if ((this._SpringBattleID != value))
+				{
+					if (this._SpringBattle.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSpringBattleIDChanging(value);
+					this.SendPropertyChanging();
+					this._SpringBattleID = value;
+					this.SendPropertyChanged("SpringBattleID");
+					this.OnSpringBattleIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StatsKey", DbType="varchar(20) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public string StatsKey
+		{
+			get
+			{
+				return this._StatsKey;
+			}
+			set
+			{
+				if ((this._StatsKey != value))
+				{
+					this.OnStatsKeyChanging(value);
+					this.SendPropertyChanging();
+					this._StatsKey = value;
+					this.SendPropertyChanged("StatsKey");
+					this.OnStatsKeyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Value]", Storage="_Value", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public double Value
+		{
+			get
+			{
+				return this._Value;
+			}
+			set
+			{
+				if ((this._Value != value))
+				{
+					this.OnValueChanging(value);
+					this.SendPropertyChanging();
+					this._Value = value;
+					this.SendPropertyChanged("Value");
+					this.OnValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleStat", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountBattleStats.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountBattleStats.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleStat", Storage="_SpringBattle", ThisKey="SpringBattleID", OtherKey="SpringBattleID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public SpringBattle SpringBattle
+		{
+			get
+			{
+				return this._SpringBattle.Entity;
+			}
+			set
+			{
+				SpringBattle previousValue = this._SpringBattle.Entity;
+				if (((previousValue != value) 
+							|| (this._SpringBattle.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SpringBattle.Entity = null;
+						previousValue.AccountBattleStats.Remove(this);
+					}
+					this._SpringBattle.Entity = value;
+					if ((value != null))
+					{
+						value.AccountBattleStats.Add(this);
+						this._SpringBattleID = value.SpringBattleID;
+					}
+					else
+					{
+						this._SpringBattleID = default(int);
+					}
+					this.SendPropertyChanged("SpringBattle");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._SpringBattle = default(EntityRef<SpringBattle>);
 			OnCreated();
 		}
 		

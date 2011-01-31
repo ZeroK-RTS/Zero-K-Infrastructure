@@ -182,6 +182,7 @@ namespace LobbyClient
     public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
 
     bool forcedLocalIP = false;
+    public string UserPassword;
 
     public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, string ipOverride = null)
     {
@@ -501,8 +502,10 @@ namespace LobbyClient
     {
       if (con == null) throw new TasClientException("Not connected");
 
-      var mhz = "6666";
+      UserPassword = password;
 
+      var mhz = "6666";
+      
       var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
       var h = "0";
       if (nic != null) h = nic.GetPhysicalAddress().GetAddressBytes().GetHashCode().ToString("x").ToUpper();

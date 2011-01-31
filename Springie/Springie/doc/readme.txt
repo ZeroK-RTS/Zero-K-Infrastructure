@@ -153,7 +153,6 @@ Commands:
 --- STATISTICS ---
 !stats - lists various stats
 
-!smurfs - lists smurfs
 
 
 /////////////////////////////////////////////////

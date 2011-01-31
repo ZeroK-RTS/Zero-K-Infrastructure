@@ -42,9 +42,77 @@ namespace ZeroKWeb
       return PlasmaServer.GetResourceData(md5, internalName);
     }
 
+
+
     [WebMethod]
-    public bool SubmitBattleResult(string accountName, string password, string springBattleID, string mod, string map, bool isMission, bool isBots, string replayName, DateTime startTime, TimeSpan duration, string title, List<BattlePlayerResult> players)
+    public bool SubmitSpringBattleResult(string accountName, string password, string engineBattleID, string engineVersion, string mod, string map, bool isMission, bool isBots, string replayName, DateTime startTime, int duration, string title, List<BattlePlayerResult> players)
     {
+      var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
+      if (acc == null) throw new Exception("Account name or password not valid");
+
+      var db = new ZkDataContext();
+      var sb = new SpringBattle()
+               {
+                 HostAccountID = acc.AccountID,
+                 Duration = duration,
+                 EngineGameID = engineBattleID,
+                 MapResourceID = db.Resources.Single(x => x.InternalName == map).ResourceID,
+                 ModResourceID = db.Resources.Single(x => x.InternalName == mod).ResourceID,
+                 HasBots = isBots,
+                 IsMission = isMission,
+                 PlayerCount = players.Count(x => !x.IsSpectator),
+                 StartTime = startTime,
+                 Title = title,
+                 ReplayFileName = replayName,
+                 EngineVersion = engineVersion,
+               };
+      db.SpringBattles.InsertOnSubmit(sb);
+
+      foreach (var p in players)
+      {
+        sb.SpringBattlePlayers.Add(new SpringBattlePlayer()
+                                   {
+                                     AccountID = p.AccountID,
+                                     AllyNumber = p.AllyNumber,
+                                     CommanderType = p.CommanderType,
+                                     IsInVictoryTeam = p.IsVictoryTeam,
+                                     IsSpectator = p.IsSpectator,
+                                     Rank = p.Rank,
+                                     LoseTime = p.LoseTime
+                                   });
+      }
+      
+      db.SubmitChanges();
+      foreach (var p in players)
+      {
+        foreach (var a in p.Awards)
+        {
+          db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
+                                                {
+                                                  AccountID = p.AccountID,
+                                                  SpringBattleID = sb.SpringBattleID,
+                                                  AwardKey = a.Award,
+                                                  AwardDescription = a.Description
+                                                });
+
+          
+        }
+
+        foreach (var s in p.Stats)
+        {
+          db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat()
+                                               {
+                                                 AccountID = p.AccountID,
+                                                 SpringBattleID = sb.SpringBattleID,
+                                                 StatsKey = s.Key,
+                                                 Value = s.Value
+                                               });
+
+        }
+      }
+
+      db.SubmitChanges();
+
       return true;  
     }
 
@@ -187,11 +255,33 @@ namespace ZeroKWeb
       public string Name;
       public string StartScript;
     }
+
+    public class BattlePlayerResult
+    {
+      public int AccountID;
+      public bool IsSpectator;
+      public bool IsVictoryTeam;
+      public string CommanderType;
+      public int? LoseTime;
+      public int AllyNumber;
+      public int Rank;
+      public List<PlayerAward> Awards;
+      public List<PlayerStats> Stats;
+
+      public class PlayerStats
+      {
+        public string Key;
+        public double Value;
+      }
+
+      public class PlayerAward
+      {
+        public string Award;
+        public string Description;
+      }
+    }
+
   }
 
-  public class BattlePlayerResult
-  {
-    public int AccountID;
 
-  }
 }

@@ -33,6 +33,8 @@ namespace PlasmaShared.ContentService {
         
         private System.Threading.SendOrPostCallback GetResourceDataOperationCompleted;
         
+        private System.Threading.SendOrPostCallback SubmitSpringBattleResultOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetResourceListOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetScriptMissionDataOperationCompleted;
@@ -88,6 +90,9 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         public event GetResourceDataCompletedEventHandler GetResourceDataCompleted;
+        
+        /// <remarks/>
+        public event SubmitSpringBattleResultCompletedEventHandler SubmitSpringBattleResultCompleted;
         
         /// <remarks/>
         public event GetResourceListCompletedEventHandler GetResourceListCompleted;
@@ -169,6 +174,59 @@ namespace PlasmaShared.ContentService {
             if ((this.GetResourceDataCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetResourceDataCompleted(this, new GetResourceDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitSpringBattleResult", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool SubmitSpringBattleResult(string accountName, string password, string engineBattleID, string engineVersion, string mod, string map, bool isMission, bool isBots, string replayName, System.DateTime startTime, int duration, string title, BattlePlayerResult[] players) {
+            object[] results = this.Invoke("SubmitSpringBattleResult", new object[] {
+                        accountName,
+                        password,
+                        engineBattleID,
+                        engineVersion,
+                        mod,
+                        map,
+                        isMission,
+                        isBots,
+                        replayName,
+                        startTime,
+                        duration,
+                        title,
+                        players});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SubmitSpringBattleResultAsync(string accountName, string password, string engineBattleID, string engineVersion, string mod, string map, bool isMission, bool isBots, string replayName, System.DateTime startTime, int duration, string title, BattlePlayerResult[] players) {
+            this.SubmitSpringBattleResultAsync(accountName, password, engineBattleID, engineVersion, mod, map, isMission, isBots, replayName, startTime, duration, title, players, null);
+        }
+        
+        /// <remarks/>
+        public void SubmitSpringBattleResultAsync(string accountName, string password, string engineBattleID, string engineVersion, string mod, string map, bool isMission, bool isBots, string replayName, System.DateTime startTime, int duration, string title, BattlePlayerResult[] players, object userState) {
+            if ((this.SubmitSpringBattleResultOperationCompleted == null)) {
+                this.SubmitSpringBattleResultOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSubmitSpringBattleResultOperationCompleted);
+            }
+            this.InvokeAsync("SubmitSpringBattleResult", new object[] {
+                        accountName,
+                        password,
+                        engineBattleID,
+                        engineVersion,
+                        mod,
+                        map,
+                        isMission,
+                        isBots,
+                        replayName,
+                        startTime,
+                        duration,
+                        title,
+                        players}, this.SubmitSpringBattleResultOperationCompleted, userState);
+        }
+        
+        private void OnSubmitSpringBattleResultOperationCompleted(object arg) {
+            if ((this.SubmitSpringBattleResultCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SubmitSpringBattleResultCompleted(this, new SubmitSpringBattleResultCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -582,6 +640,190 @@ namespace PlasmaShared.ContentService {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
     [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class PlayerStats {
+        
+        private string keyField;
+        
+        private double valueField;
+        
+        /// <remarks/>
+        public string Key {
+            get {
+                return this.keyField;
+            }
+            set {
+                this.keyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public double Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class PlayerAward {
+        
+        private string awardField;
+        
+        private string descriptionField;
+        
+        /// <remarks/>
+        public string Award {
+            get {
+                return this.awardField;
+            }
+            set {
+                this.awardField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Description {
+            get {
+                return this.descriptionField;
+            }
+            set {
+                this.descriptionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class BattlePlayerResult {
+        
+        private int accountIDField;
+        
+        private bool isSpectatorField;
+        
+        private bool isVictoryTeamField;
+        
+        private string commanderTypeField;
+        
+        private System.Nullable<int> loseTimeField;
+        
+        private int allyNumberField;
+        
+        private int rankField;
+        
+        private PlayerAward[] awardsField;
+        
+        private PlayerStats[] statsField;
+        
+        /// <remarks/>
+        public int AccountID {
+            get {
+                return this.accountIDField;
+            }
+            set {
+                this.accountIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool IsSpectator {
+            get {
+                return this.isSpectatorField;
+            }
+            set {
+                this.isSpectatorField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool IsVictoryTeam {
+            get {
+                return this.isVictoryTeamField;
+            }
+            set {
+                this.isVictoryTeamField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string CommanderType {
+            get {
+                return this.commanderTypeField;
+            }
+            set {
+                this.commanderTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public System.Nullable<int> LoseTime {
+            get {
+                return this.loseTimeField;
+            }
+            set {
+                this.loseTimeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int AllyNumber {
+            get {
+                return this.allyNumberField;
+            }
+            set {
+                this.allyNumberField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Rank {
+            get {
+                return this.rankField;
+            }
+            set {
+                this.rankField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PlayerAward[] Awards {
+            get {
+                return this.awardsField;
+            }
+            set {
+                this.awardsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PlayerStats[] Stats {
+            get {
+                return this.statsField;
+            }
+            set {
+                this.statsField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public enum ReturnValue {
         
@@ -702,6 +944,32 @@ namespace PlasmaShared.ContentService {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((ResourceData)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void SubmitSpringBattleResultCompletedEventHandler(object sender, SubmitSpringBattleResultCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SubmitSpringBattleResultCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SubmitSpringBattleResultCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
             }
         }
     }

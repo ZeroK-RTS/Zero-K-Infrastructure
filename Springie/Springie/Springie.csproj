@@ -142,7 +142,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utils\MyCol.cs" />
     <Compile Include="utils\RGBHSV.cs" />
-    <Compile Include="utils\Stats.cs" />
     <Compile Include="utils\TeamColorMaker.cs" />
     <Compile Include="utils\Utils.cs" />
   </ItemGroup>

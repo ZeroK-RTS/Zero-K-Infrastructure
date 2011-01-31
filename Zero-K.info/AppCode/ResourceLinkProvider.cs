@@ -230,6 +230,8 @@ namespace ZeroKWeb
 
       Task.WaitAll(new List<string>(valids).Select(link => Task.Factory.StartNew(() => ValidateLink(link, content.Length, valids))).ToArray());
 
+      valids = valids.Distinct().ToList();
+
       content.LinkCount = valids.Count;
       content.Resource.LastLinkCheck = DateTime.UtcNow;
       content.Links = string.Join("\n", valids.ToArray());

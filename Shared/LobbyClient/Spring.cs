@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,11 +18,9 @@ namespace LobbyClient
 {
 	public class SpringLogEventArgs: EventArgs
 	{
-		readonly List<string> args = new List<string>();
 		readonly string line;
 		readonly string username;
 
-		public List<string> Args { get { return args; } }
 
 		public string Line { get { return line; } }
 
@@ -41,6 +40,19 @@ namespace LobbyClient
 	/// </summary>
 	public class Spring
 	{
+    public class MyStatsPlayer : BattlePlayerResult
+    {
+
+      public void AddAward(string award, string description)
+      {
+        awardList.Add(new PlayerAward() { Award = award, Description = description });
+        Awards = awardList.ToArray();
+      }
+      
+      // awards stored here because Awards is array and hard to modify
+      List<PlayerAward> awardList = new List<PlayerAward>();
+    }
+
 		public const int MaxAllies = 16;
 		public const int MaxTeams = 32;
 
@@ -52,7 +64,7 @@ namespace LobbyClient
 
 		DateTime gameStarted;
 		readonly SpringPaths paths;
-		//    const string PathDivider = "/";
+
 
 		Process process;
 		readonly List<string> readyPlayers = new List<string>();
@@ -84,7 +96,7 @@ namespace LobbyClient
 		public ProcessPriorityClass ProcessPriority { set { if (IsRunning) process.PriorityClass = value; } }
 		public bool UseDedicatedServer;
 		string lobbyUserName;
-		string lobbyPasswordHash;
+		string lobbyPassword;
 
 		public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
 		public event LogLine LogLineAdded = delegate { };
@@ -157,7 +169,7 @@ namespace LobbyClient
 			if (IsRunning) talker.SendText(text);
 		}
 
-		void ParseInfolog(string text)
+		void ParseInfolog(string text, bool isCrash)
 		{
 			if (string.IsNullOrEmpty(text))
 			{
@@ -167,14 +179,13 @@ namespace LobbyClient
 			try
 			{
 				var modOk = false;
-#pragma warning disable 219
 				var hasError = false;
-#pragma warning restore 219
 				var rev = "";
 				string modName = null;
 				string mapName = null;
 				var isCheating = false;
 				string gameId = null;
+        string demoFileName = null;
 				var statsData = new List<string>();
 				foreach (var cycleline in text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
 				{
@@ -193,7 +204,7 @@ namespace LobbyClient
 					if (!modOk && modName == null && line.StartsWith("Using mod"))
 					{
 						modName = line.Substring(10);
-						if (line.Contains("Complete Annihilation") && !line.Contains("$VERSION"))
+						if (line.Contains("Zero-K") && !line.Contains("$VERSION"))
 						{
 							modOk = true;
 							var m = Regex.Match(line, "(r[0-9]+)");
@@ -203,11 +214,16 @@ namespace LobbyClient
 
 					if (mapName == null && line.StartsWith("Using map") && modName == null) mapName = line.Substring(10);
 
-					if (line.StartsWith("Using demofile")) return; // do nothing if its demo
+          if (line.StartsWith("Recording demo "))
+          {
+            demoFileName = line.Substring(15);
+          }
+
+				  if (line.StartsWith("Using demofile")) return; // do nothing if its demo
 
 					if (line.StartsWith("GameID: ") && gameId == null) gameId = line.Substring(8);
 
-					if (line.StartsWith("LuaRules: >> ID: ") && !isCheating && !string.IsNullOrEmpty(lobbyPasswordHash))
+					if (line.StartsWith("LuaRules: >> ID: ") && !isCheating && !isMission)
 					{
 						// game score
 						var data = Encoding.ASCII.GetString(Convert.FromBase64String(line.Substring(17)));
@@ -233,7 +249,7 @@ namespace LobbyClient
 
 								};
 							service.SubmitMissionScoreAsync(lobbyUserName,
-																							lobbyPasswordHash,
+																							Utils.HashLobbyPassword(lobbyPassword),
 																							modName,
 																							score,
 																							gameframe / 30);
@@ -247,7 +263,36 @@ namespace LobbyClient
 					if (line.StartsWith("Error") || line.StartsWith("LuaRules") || line.StartsWith("Internal error") || line.StartsWith("LuaCOB") ||
 							(line.StartsWith("Failed to load") && !line.Contains("duplicate name"))) hasError = true;
 				}
-				if (!isCheating && statsData.Count > 1)
+
+
+        // submit main stats
+        if (!isCheating && !isCrash && modOk && isHosting)
+        {
+          var service = new ContentService() { Proxy = null };
+          try {
+            service.SubmitSpringBattleResult(lobbyUserName,
+                                             lobbyPassword,
+                                             gameId,
+                                             paths.SpringVersion,
+                                             modName,
+                                             mapName,
+                                             isMission,
+                                             isBots,
+                                             demoFileName,
+                                             gameStarted,
+                                             (int)gameEnded.Subtract(gameStarted).TotalSeconds,
+                                             title,
+                                             statsPlayers.Values.ToArray());
+
+          } catch (Exception ex)
+          {
+            Trace.TraceError("Error sending game stats: {0}", ex);
+          }
+        }
+
+
+			  // submit modstats
+				if (!isCheating && statsData.Count > 1 && modOk)
 				{
 					// must be more than 1 line - 1 is player list
 					var service = new StatsCollector { Proxy = null };
@@ -267,8 +312,14 @@ namespace LobbyClient
 			}
 		}
 
+    Dictionary<string,MyStatsPlayer> statsPlayers = new Dictionary<string, MyStatsPlayer>();
+	  bool isHosting;
+	  bool isMission;
+	  bool isBots;
+	  string title;
 
-		/// <summary>
+
+	  /// <summary>
 		/// Starts spring game
 		/// </summary>
 		/// <param name="client">tasclient to get current battle from</param>
@@ -278,29 +329,51 @@ namespace LobbyClient
 		/// <param name="userName">lobby user name - used to submit score</param>
 		/// <param name="passwordHash">lobby password hash - used to submit score</param>
 		/// <returns>generates script</returns>
-		public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, string userName = null, string passwordHash = null)
+		public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride)
 		{
       if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException("Spring or dedicated server executable not found");
 
 			if (!IsRunning)
 			{
-				this.lobbyUserName =userName;
-				this.lobbyPasswordHash = passwordHash;
+			  this.lobbyUserName = client.UserName;
+        this.lobbyPassword = client.UserPassword;
 
 				talker = new Talker();
 				readyPlayers.Clear();
 				talker.SpringEvent += talker_SpringEvent;
+			  isHosting = client != null && client.MyBattle != null && client.MyBattle.Founder == client.MyUser.Name;
 
-				if (client != null && client.MyBattle != null && client.MyBattle.Founder == client.MyUser.Name) scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + client.MyBattle.Founder + ".txt").Replace('\\', '/');
+				if (isHosting) scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + client.MyBattle.Founder + ".txt").Replace('\\', '/');
 				else scriptPath = Utils.MakePath(paths.WritableDirectory, "script.txt").Replace('\\', '/');
 
+			  statsPlayers.Clear();
+
 				string script;
-				if (!string.IsNullOrEmpty(scriptOverride)) script = scriptOverride;
+				if (!string.IsNullOrEmpty(scriptOverride))
+				{
+				  isMission = true;
+				  script = scriptOverride;
+				}
 				else
 				{
-					List<Battle.GrPlayer> players;
-					script = client.MyBattle.GenerateScript(out players, client.MyUser, talker.LoopbackPort);
-					talker.SetPlayers(players);
+					List<UserBattleStatus> players;
+          script = client.MyBattle.GenerateScript(out players, client.MyUser, talker.LoopbackPort);
+				  isMission = client.MyBattle.IsMission;
+				  isBots = client.MyBattle.Bots.Any();
+				  title = client.MyBattle.Title;
+          talker.SetPlayers(players);
+				  statsPlayers = players.ToDictionary(x => x.Name,
+				                                      x =>
+				                                      new MyStatsPlayer
+				                                      {
+				                                        AccountID = x.LobbyUser.AccountID,
+				                                        AllyNumber = x.AllyNumber,
+				                                        CommanderType = null,
+				                                        // todo commandertype
+				                                        IsSpectator = x.IsSpectator,
+				                                        IsVictoryTeam = false,
+				                                        Rank = x.LobbyUser.Rank,
+				                                      });
 				}
 
 				File.WriteAllText(scriptPath, script);
@@ -356,9 +429,28 @@ namespace LobbyClient
 			return null;
 		}
 
-		void HandlePlanetWarsMessages(Talker.SpringEventArgs e)
+
+    public enum SpringMessageType
+    {
+      pwaward,
+      pwmorph,
+      pwpurchase,
+      pwdeath
+    }
+
+    private void StatsMarkDead(string name, bool isDead)
+    {
+      MyStatsPlayer sp;
+      if (statsPlayers.TryGetValue(name, out sp))
+      {
+        sp.LoseTime = isDead ? (int)DateTime.Now.Subtract(gameStarted).TotalSeconds : (int?)null;
+      }
+    }
+
+    
+
+	  void HandleSpecialMessages(Talker.SpringEventArgs e)
 		{
-			/*if (!Program.main.config.PlanetWarsEnabled || Program.main.PlanetWars == null) return;
             if (e.Param >= Talker.TO_EVERYONE_LEGACY) return;
 
             int count;
@@ -367,7 +459,67 @@ namespace LobbyClient
             PlanetWarsMessages[e.Text] = count;
             if (count != 2) return; // only send if count matches 2 exactly
 
-            if (Program.main.PlanetWars != null) Program.main.PlanetWars.SpringMessage(e.Text);*/
+		      var text = e.Text;
+            string txtOrig = text;
+            SpringMessageType type = SpringMessageType.pwaward;
+            bool found = false;
+
+            foreach (SpringMessageType option in (SpringMessageType[])Enum.GetValues(typeof(SpringMessageType))) {
+              string prefix = option + ":";
+              if (text.StartsWith(prefix)) {
+                text = text.Substring(prefix.Length);
+                type = option;
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              Trace.TraceWarning("Unexpected message: " + text);
+              return;
+            }
+
+            string[] parts = text.Split(new[] { ',' });
+            try {
+              switch (type) {
+                case SpringMessageType.pwaward:
+                  string[] partsSpace = text.Split(new[] { ' ' }, 3);
+                  string name = partsSpace[0];
+                  string awardType = partsSpace[1];
+                  string awardText = partsSpace[2];
+                  MyStatsPlayer sp;
+                  if (statsPlayers.TryGetValue(name, out sp))
+                  {
+                    sp.AddAward(awardType, awardText);
+                  }
+                  break;
+
+                /*case SpringMessageType.pwmorph:
+                  server.UnitDeployed(account,
+                                      tas.MyBattle.MapName,
+                                      parts[0],
+                                      parts[1],
+                                      (int)double.Parse(parts[2]),
+                                      (int)double.Parse(parts[3]),
+                                      parts[4]);
+                  break;
+
+                case SpringMessageType.pwpurchase:
+                  server.UnitPurchased(account,
+                                       parts[0],
+                                       parts[1],
+                                       double.Parse(parts[2]),
+                                       (int)double.Parse(parts[3]),
+                                       (int)double.Parse(parts[4]));
+                  break;
+
+                case SpringMessageType.pwdeath:
+                  server.UnitDied(account, parts[0], parts[1], (int)double.Parse(parts[3]), (int)double.Parse(parts[4]));
+                  break;*/
+
+              }
+            } catch (Exception ex) {
+              Trace.TraceError("Error while processing '{0}' :{1}", txtOrig, ex);
+            }
 		}
 
 		void process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
@@ -390,7 +542,7 @@ namespace LobbyClient
 			gameEnded = DateTime.Now;
 
 			var logText = LogLines.ToString();
-			ParseInfolog(logText);
+			ParseInfolog(logText, isCrash);
 			
 			try
 			{
@@ -409,37 +561,36 @@ namespace LobbyClient
 			switch (e.EventType)
 			{
 				case Talker.SpringEventType.PLAYER_JOINED:
-					//Program.main.AutoHost.SayBattle("dbg joined " + e.PlayerName);
 					if (PlayerJoined != null) PlayerJoined(this, new SpringLogEventArgs(e.PlayerName));
 					break;
 
 				case Talker.SpringEventType.PLAYER_LEFT:
-					//Program.main.AutoHost.SayBattle("dbg left " + e.PlayerName);
-					if (e.Param == 0 && PlayerDisconnected != null) PlayerDisconnected(this, new SpringLogEventArgs(e.PlayerName));
+					if (e.Param == 0 && PlayerDisconnected != null)
+					{
+					  PlayerDisconnected(this, new SpringLogEventArgs(e.PlayerName));
+					}
 					if (PlayerLeft != null) PlayerLeft(this, new SpringLogEventArgs(e.PlayerName));
 
 					break;
 
 				case Talker.SpringEventType.PLAYER_CHAT:
 
-					HandlePlanetWarsMessages(e);
+					HandleSpecialMessages(e);
 
 					// only public chat
 					if (PlayerSaid != null && (e.Param == Talker.TO_EVERYONE || e.Param == Talker.TO_EVERYONE_LEGACY)) PlayerSaid(this, new SpringLogEventArgs(e.PlayerName, e.Text));
 					break;
 
 				case Talker.SpringEventType.PLAYER_DEFEATED:
-					//Program.main.AutoHost.SayBattle("dbg defeated " + e.PlayerName);
-					if (PlayerLost != null) PlayerLost(this, new SpringLogEventArgs(e.PlayerName));
+			    StatsMarkDead(e.PlayerName, true);
+  				if (PlayerLost != null) PlayerLost(this, new SpringLogEventArgs(e.PlayerName));
 					break;
 
 				case Talker.SpringEventType.SERVER_GAMEOVER:
-					//Program.main.AutoHost.SayBattle("dbg gameover " + e.PlayerName);
 					if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
 					break;
 
 				case Talker.SpringEventType.PLAYER_READY:
-					//Program.main.AutoHost.SayBattle("dbg ready " + e.PlayerName);
 					if (e.Param == 1) readyPlayers.Add(e.PlayerName);
 					break;
 

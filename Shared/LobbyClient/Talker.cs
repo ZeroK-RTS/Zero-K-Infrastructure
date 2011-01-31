@@ -54,7 +54,7 @@ namespace LobbyClient
 
 
         protected bool close;
-        List<Battle.GrPlayer> initialPlayers;
+        List<UserBattleStatus> initialPlayers;
 
         readonly int loopbackPort;
         int springTalkPort;
@@ -104,7 +104,7 @@ namespace LobbyClient
         }
 
 
-        public void SetPlayers(List<Battle.GrPlayer> players)
+        public void SetPlayers(List<UserBattleStatus> players)
         {
             initialPlayers = players;
         }
@@ -113,7 +113,7 @@ namespace LobbyClient
         public UserBattleStatus TranslateIdToPlayerName(int playerNumber)
         {
             if (playerNumber < 0 || initialPlayers == null || playerNumber >= initialPlayers.Count) return null;
-            return initialPlayers[playerNumber].user;
+            return initialPlayers[playerNumber];
         }
 
         void Listener()

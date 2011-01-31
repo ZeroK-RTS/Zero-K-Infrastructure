@@ -387,14 +387,6 @@ namespace Springie.autohost
             AddMissing(new CommandConfig("listbans", 0, "- lists currently banned users", 0), addedCommands);
 
             AddMissing(
-                new CommandConfig("smurfs",
-                                  0,
-                                  "- finds smurfs, use this command to get more help",
-                                  5,
-                                  new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Channel }),
-                addedCommands);
-
-            AddMissing(
                 new CommandConfig("stats",
                                   0,
                                   "- displays statistics, use this command to get more help",

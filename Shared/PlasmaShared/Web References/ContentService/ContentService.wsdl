@@ -66,6 +66,72 @@
           <s:element minOccurs="0" maxOccurs="1" name="SpringVersion" type="s:string" />
         </s:sequence>
       </s:complexType>
+      <s:element name="SubmitSpringBattleResult">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="accountName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="engineBattleID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="engineVersion" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="mod" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="map" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="isMission" type="s:boolean" />
+            <s:element minOccurs="1" maxOccurs="1" name="isBots" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="replayName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="startTime" type="s:dateTime" />
+            <s:element minOccurs="1" maxOccurs="1" name="duration" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="title" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="players" type="tns:ArrayOfBattlePlayerResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfBattlePlayerResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="BattlePlayerResult" nillable="true" type="tns:BattlePlayerResult" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="BattlePlayerResult">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="AccountID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsSpectator" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsVictoryTeam" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="CommanderType" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LoseTime" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="AllyNumber" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Rank" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Awards" type="tns:ArrayOfPlayerAward" />
+          <s:element minOccurs="0" maxOccurs="1" name="Stats" type="tns:ArrayOfPlayerStats" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPlayerAward">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PlayerAward" nillable="true" type="tns:PlayerAward" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PlayerAward">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Award" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPlayerStats">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PlayerStats" nillable="true" type="tns:PlayerStats" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PlayerStats">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Value" type="s:double" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SubmitSpringBattleResultResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SubmitSpringBattleResultResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="GetResourceList">
         <s:complexType>
           <s:sequence>
@@ -204,6 +270,12 @@
   <wsdl:message name="GetResourceDataSoapOut">
     <wsdl:part name="parameters" element="tns:GetResourceDataResponse" />
   </wsdl:message>
+  <wsdl:message name="SubmitSpringBattleResultSoapIn">
+    <wsdl:part name="parameters" element="tns:SubmitSpringBattleResult" />
+  </wsdl:message>
+  <wsdl:message name="SubmitSpringBattleResultSoapOut">
+    <wsdl:part name="parameters" element="tns:SubmitSpringBattleResultResponse" />
+  </wsdl:message>
   <wsdl:message name="GetResourceListSoapIn">
     <wsdl:part name="parameters" element="tns:GetResourceList" />
   </wsdl:message>
@@ -249,6 +321,10 @@
       <wsdl:input message="tns:GetResourceDataSoapIn" />
       <wsdl:output message="tns:GetResourceDataSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="SubmitSpringBattleResult">
+      <wsdl:input message="tns:SubmitSpringBattleResultSoapIn" />
+      <wsdl:output message="tns:SubmitSpringBattleResultSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="GetResourceList">
       <wsdl:input message="tns:GetResourceListSoapIn" />
       <wsdl:output message="tns:GetResourceListSoapOut" />
@@ -287,6 +363,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetResourceData">
       <soap:operation soapAction="http://tempuri.org/GetResourceData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitSpringBattleResult">
+      <soap:operation soapAction="http://tempuri.org/SubmitSpringBattleResult" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -362,6 +447,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetResourceData">
       <soap12:operation soapAction="http://tempuri.org/GetResourceData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SubmitSpringBattleResult">
+      <soap12:operation soapAction="http://tempuri.org/SubmitSpringBattleResult" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

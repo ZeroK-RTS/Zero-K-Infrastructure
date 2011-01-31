@@ -17,6 +17,7 @@ using Springie.AutoHostNamespace;
 using Springie.PlanetWars;
 using Springie.SpringNamespace;
 using Timer = System.Timers.Timer;
+using TimeSpan = System.TimeSpan;
 
 #endregion
 
@@ -51,7 +52,6 @@ namespace Springie.autohost
 		Timer pollTimer;
 		readonly QuickMatchTracking quickMatchTracker;
 		readonly Spring spring;
-		readonly Stats stats;
 
 		public string BossName { get { return bossName; } set { bossName = value; } }
 		public int CloneNumber { get; private set; }
@@ -144,8 +144,6 @@ namespace Springie.autohost
 
 			linkProvider = new ResourceLinkProvider(this);
 
-			if (config.StatsEnabled) stats = new Stats(tas, spring, this);
-
 			InitializePlanetWarsServer();
 
 			tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
@@ -157,11 +155,9 @@ namespace Springie.autohost
 			tas.UnsubscribeEvents(this);
 			tas.UnsubscribeEvents(manager);
 			tas.UnsubscribeEvents(banList);
-			tas.UnsubscribeEvents(stats);
 			tas.UnsubscribeEvents(PlanetWars);
 			spring.UnsubscribeEvents(this);
 			spring.UnsubscribeEvents(PlanetWars);
-			spring.UnsubscribeEvents(stats);
 			wrapper.UnsubscribeEvents(this);
 			tas.Disconnect();
 			if (PlanetWars != null) PlanetWars.Dispose();
@@ -457,7 +453,7 @@ namespace Springie.autohost
 			                   (ladder != null ? ladder.CheckBattleDetails(config.BattleDetails, out mint, out maxt) : config.BattleDetails));
 			// if hole punching enabled then we use it
 			if (config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
-			else if (Program.main.Config.GargamelMode && stats != null) b.Nat = Battle.NatMode.FixedPorts;
+			else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;
 			else b.Nat = Battle.NatMode.None; // else either no nat or fixed ports (for gargamel fake - to get client IPs)
 
 			for (var i = 0; i < config.DefaultRectangles.Count; ++i) b.Rectangles.Add(i, config.DefaultRectangles[i]);
@@ -913,7 +909,7 @@ namespace Springie.autohost
 				if (e.Place == TasSayEventArgs.Places.Normal)
 				{
 					if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listpresets" && com != "listoptions" &&
-					    com != "presetdetails" && com != "spawn" && com != "listbans" && com != "smurfs" && com != "stats" && com != "predict" && com != "notify") SayBattle(string.Format("{0} executed by {1}", com, e.UserName));
+					    com != "presetdetails" && com != "spawn" && com != "listbans"  && com != "stats" && com != "predict" && com != "notify") SayBattle(string.Format("{0} executed by {1}", com, e.UserName));
 				}
 
 				switch (com)
@@ -1120,12 +1116,10 @@ namespace Springie.autohost
 						banList.ComUnban(e, words);
 						break;
 
-					case "smurfs":
-						RemoteCommand(Stats.smurfScript, e, words);
-						break;
 
 					case "stats":
-						RemoteCommand(Stats.statsScript, e, words);
+						//RemoteCommand(Stats.StatsScript, e, words);
+            // todo new stats
 						break;
 
 					case "kickspec":

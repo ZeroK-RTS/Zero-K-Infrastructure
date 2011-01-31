@@ -1397,32 +1397,8 @@ namespace Springie.autohost
 			return "";
 		}
 
-		void RemoteCommand(string scriptName, TasSayEventArgs e, string[] words)
-		{
-			if (stats == null)
-			{
-				Respond(e, "Stats system is disabled on this autohost.");
-				return;
-			}
-			var b = tas.MyBattle;
-			if (b != null)
-			{
-				var query = string.Format("user={0}&map={1}&mod={2}&p={3}", e.UserName, b.MapName, b.ModName, Utils.Glue(words));
-				foreach (var u in b.Users) if (u.Name != tas.UserName) query += string.Format("&users[]={0}|{1}|{2}", u.Name, (u.IsSpectator ? "1" : "0"), u.AllyNumber);
-				var response = stats.SendCommand(scriptName, query, false, true).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-				if (response.Length == 0)
-				{
-					Respond(e, "error accessing stats server");
-					return;
-				}
-
-				if (response[0].StartsWith("RESPOND")) for (var i = 1; i < response.Length; ++i) Respond(e, response[i]);
-				else foreach (var line in response) tas.Say(TasClient.SayPlace.User, e.UserName, line, false);
-			}
-		}
-
-		void SayLines(TasSayEventArgs e, string what)
+    void SayLines(TasSayEventArgs e, string what)
 		{
 			foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.User, e.UserName, line, false);
 		}
