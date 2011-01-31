@@ -8,6 +8,11 @@ namespace ZkData
   {
     public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
 
+    public static int GetXpForLevel(int level)
+    {
+      return level * 40 + 20 * level * level;
+    }
+
     /// <summary>
     /// Aggregate admin rights - either lobby or ZK admin
     /// </summary>

@@ -15,8 +15,13 @@ namespace ZkData
 			var factory = new ChannelFactory<IAuthService>(new NetTcpBinding(SecurityMode.None),GlobalConst.AuthServiceUri);
 			channel = factory.CreateChannel();
 		}
-		
-		public static Account VerifyAccountPlain(string login, string password)
+
+    public static void SendLobbyMessage(Account account, string text)
+    {
+      channel.SendLobbyMessage(account, text);
+    }
+
+	  public static Account VerifyAccountPlain(string login, string password)
 		{
 			return VerifyAccountHashed(login, Utils.HashLobbyPassword(password));
 		}

@@ -180,7 +180,11 @@ namespace ZeroKWeb
         if (score > scoreEntry.Score)
         {
           var max = mission.MissionScores.Max(x => (int?)x.Score);
-          if (max == null || max <= score) mission.TopScoreLine = login;
+          if (max == null || max <= score)
+          {
+            mission.TopScoreLine = login;
+            acc.XP += 150; // 150 for getting top score
+          }
           scoreEntry.Score = score;
           scoreEntry.Time = DateTime.UtcNow;
           scoreEntry.MissionRevision = mission.Revision;

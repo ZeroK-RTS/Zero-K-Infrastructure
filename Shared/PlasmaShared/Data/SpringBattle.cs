@@ -64,6 +64,8 @@ namespace ZkData
       {
         r.Account.Elo += (float)(scoreWin*r.Account.EloInvWeight);
 
+        r.Account.XP += (int)(20 +9* scoreWin*winnerInvW /(2.0+winners.Count));
+        
         if (r.Account.EloWeight < GlobalConst.EloWeightMax)
         {
           r.Account.EloWeight = (float)(r.Account.EloWeight + ((sumW - r.Account.EloWeight)/(sumCount - 1))/GlobalConst.EloWeightLearnFactor);
@@ -75,6 +77,9 @@ namespace ZkData
       {
         r.Account.Elo += (float)(scoreLose*r.Account.EloInvWeight);
 
+        r.Account.XP += (int)(10 + (32+scoreLose * loserInvW) * 3.0 / (2.0 + losers.Count));
+
+        
         if (r.Account.EloWeight < GlobalConst.EloWeightMax)
         {
           r.Account.EloWeight = (float)(r.Account.EloWeight + ((sumW - r.Account.EloWeight)/(sumCount - 1))/GlobalConst.EloWeightLearnFactor);
@@ -82,7 +87,22 @@ namespace ZkData
         }
       }
 
+      // check for level ups
+      foreach (var a in losers.Union(winners).Select(x=>x.Account))
+      {
+        if (a.XP > Account.GetXpForLevel(a.Level + 1))
+        {
+          a.Level++;
+          AuthServiceClient.SendLobbyMessage(a,
+                                             string.Format("Congratulations! You just leveled up to level {0}. spring://http://zero-k.info/Users.mvc/{1}",
+                                                           a.Level,
+                                                           a.Name));
+        }
+      }
+
+
       IsEloProcessed = true;
     }
+
   }
 }

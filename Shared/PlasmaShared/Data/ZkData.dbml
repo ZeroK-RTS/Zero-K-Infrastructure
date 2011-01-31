@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="PlasmaShared.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Battle" Member="Battles">
     <Type Name="Battle">
@@ -325,6 +326,8 @@
       <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="Xp" Member="XP" Type="System.Int32" DbType="int NOT NULL" IsDbGenerated="false" CanBeNull="false" IsPrimaryKey="false" />
+      <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" IsDbGenerated="false" CanBeNull="false" IsPrimaryKey="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
