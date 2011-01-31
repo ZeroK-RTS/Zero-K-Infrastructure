@@ -11,6 +11,12 @@
 		public const string NightwatchName = "Nightwatch";
 		public const string PasswordHashCookieName = "zk_passwordHash";
 		public const string LobbyAccessCookieName = "zk_lobby";
+
+    public static bool IsZkMod(string name)
+    {
+      if (string.IsNullOrEmpty(name)) return false;
+      return name.Contains("Zero-K");
+    }
 	}
   
 }

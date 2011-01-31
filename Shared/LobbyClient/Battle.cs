@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using PlasmaShared.ContentService;
 using PlasmaShared.UnitSyncLib;
 
 namespace LobbyClient
@@ -68,7 +69,8 @@ namespace LobbyClient
 		public int Rank { get; set; }
 		public Dictionary<int, BattleRect> Rectangles { get; set; }
 		public List<string> ScriptTags = new List<string>();
-		public int SpectatorCount { get; set; }
+	  PlayerStartup playerSetup;
+	  public int SpectatorCount { get; set; }
 		public string Title { get; set; }
 
 		public List<UserBattleStatus> Users { get; set; }
@@ -116,7 +118,16 @@ namespace LobbyClient
 			return status != null;
 		}
 
-		public string GenerateScript(out List<UserBattleStatus> players, User localUser, int loopbackListenPort)
+		/// <summary>
+		/// Generates script
+		/// </summary>
+		/// <param name="players">list of players</param>
+		/// <param name="localUser">myself</param>
+		/// <param name="loopbackListenPort">listen port for autohost interface</param>
+		/// <param name="zkSearchTag">hackish search tag</param>
+		/// <param name="startSetup">structure with custom extra data</param>
+		/// <returns></returns>
+    public string GenerateScript(out List<UserBattleStatus> players, User localUser, int loopbackListenPort, string zkSearchTag, SpringBattleStartSetup startSetup)
 		{
 			var previousCulture = Thread.CurrentThread.CurrentCulture;
 			try
@@ -190,7 +201,8 @@ namespace LobbyClient
 
 					script.AppendLine("[GAME]");
 					script.AppendLine("{");
-
+				  
+          script.AppendFormat("   ZkSearchTag={0};\n", zkSearchTag);
           script.AppendFormat("  Mapname={0};\n", MapName);
 
 					if (mod.IsMission)
@@ -225,6 +237,7 @@ namespace LobbyClient
 					script.AppendFormat("  NumAllyTeams={0};\n", alliances.Count);
 					script.AppendLine();
 
+
 					// PLAYERS
 					for (var i = 0; i < players.Count; ++i)
 					{
@@ -240,7 +253,20 @@ namespace LobbyClient
 						script.AppendFormat("     CountryCode={0};\n", u.LobbyUser.Country);
 						if (u.ScriptPassword != null) script.AppendFormat("     Password={0};\n", u.ScriptPassword);
 
-						script.AppendLine("  }");
+            // start setup - custom player tags - like unlocks
+            if (!u.IsSpectator && startSetup != null)
+            {
+              playerSetup = startSetup.Players.FirstOrDefault(x => x.AccountID == u.LobbyUser.AccountID);
+              if (playerSetup != null && playerSetup.CustomScripKeys != null)
+              {
+                foreach (var entry in playerSetup.CustomScripKeys)
+                {
+                  script.AppendFormat("     {0}={1};\n", entry.Key, entry.Value);
+                }
+              }
+            }
+
+					  script.AppendLine("  }");
 					}
 
 					// AI's

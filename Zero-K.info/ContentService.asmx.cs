@@ -44,8 +44,51 @@ namespace ZeroKWeb
 
 
 
+    public class BattleResult
+    {
+      public string EngineBattleID;
+      public string EngineVersion;
+      public string Mod;
+      public string Map;
+      public bool IsMission;
+      public bool IsBots;
+      public string ReplayName;
+      public DateTime StartTime;
+      public int Duration;
+      public string Title;
+    }
+
+    public class SpringBattleStartSetup
+    {
+
+      public List<PlayerStartup> Players = new List<PlayerStartup>();
+      public class PlayerStartup
+      {
+        public int AccountID;
+        public List<ScriptKeyValuePair> CustomScripKeys;
+        public class ScriptKeyValuePair
+        {
+          public string Key;
+          public string Value;
+        }
+      }
+    }
+
     [WebMethod]
-    public bool SubmitSpringBattleResult(string accountName, string password, string engineBattleID, string engineVersion, string mod, string map, bool isMission, bool isBots, string replayName, DateTime startTime, int duration, string title, List<BattlePlayerResult> players)
+    public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<int> userAccountIDs)
+    {
+      var ret = new SpringBattleStartSetup();
+
+      var db = new ZkDataContext();
+      // todo implement
+
+      return ret;
+    }
+
+
+
+    [WebMethod]
+    public bool SubmitSpringBattleResult(string accountName, string password, BattleResult result, List<BattlePlayerResult> players)
     {
       var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
       if (acc == null) throw new Exception("Account name or password not valid");
@@ -54,17 +97,17 @@ namespace ZeroKWeb
       var sb = new SpringBattle()
                {
                  HostAccountID = acc.AccountID,
-                 Duration = duration,
-                 EngineGameID = engineBattleID,
-                 MapResourceID = db.Resources.Single(x => x.InternalName == map).ResourceID,
-                 ModResourceID = db.Resources.Single(x => x.InternalName == mod).ResourceID,
-                 HasBots = isBots,
-                 IsMission = isMission,
+                 Duration = result.Duration,
+                 EngineGameID = result.EngineBattleID,
+                 MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
+                 ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
+                 HasBots = result.IsBots,
+                 IsMission = result.IsMission,
                  PlayerCount = players.Count(x => !x.IsSpectator),
-                 StartTime = startTime,
-                 Title = title,
-                 ReplayFileName = replayName,
-                 EngineVersion = engineVersion,
+                 StartTime = result.StartTime,
+                 Title = result.Title,
+                 ReplayFileName = result.ReplayName,
+                 EngineVersion = result.EngineVersion,
                };
       db.SpringBattles.InsertOnSubmit(sb);
 

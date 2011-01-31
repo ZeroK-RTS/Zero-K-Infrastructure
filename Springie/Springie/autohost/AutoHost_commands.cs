@@ -1232,7 +1232,13 @@ namespace Springie.autohost
 				Respond(e, "You must specify a map name");
 				return;
 			}
-			string[] vals;
+      if (spring.IsRunning)
+      {
+        Respond(e, "Cannot change map while the game is running");
+        return;
+      }
+
+		  string[] vals;
 			int[] indexes;
 			if (FilterMaps(words, out vals, out indexes) > 0)
 			{

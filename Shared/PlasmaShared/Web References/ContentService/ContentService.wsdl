@@ -66,25 +66,79 @@
           <s:element minOccurs="0" maxOccurs="1" name="SpringVersion" type="s:string" />
         </s:sequence>
       </s:complexType>
+      <s:element name="GetSpringBattleStartSetup">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="hostName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="map" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="mod" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="userAccountIDs" type="tns:ArrayOfInt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfInt">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="int" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetSpringBattleStartSetupResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetSpringBattleStartSetupResult" type="tns:SpringBattleStartSetup" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="SpringBattleStartSetup">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Players" type="tns:ArrayOfPlayerStartup" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPlayerStartup">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PlayerStartup" nillable="true" type="tns:PlayerStartup" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PlayerStartup">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="AccountID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="CustomScripKeys" type="tns:ArrayOfScriptKeyValuePair" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfScriptKeyValuePair">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ScriptKeyValuePair" nillable="true" type="tns:ScriptKeyValuePair" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ScriptKeyValuePair">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="SubmitSpringBattleResult">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="accountName" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="engineBattleID" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="engineVersion" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="mod" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="map" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="isMission" type="s:boolean" />
-            <s:element minOccurs="1" maxOccurs="1" name="isBots" type="s:boolean" />
-            <s:element minOccurs="0" maxOccurs="1" name="replayName" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="startTime" type="s:dateTime" />
-            <s:element minOccurs="1" maxOccurs="1" name="duration" type="s:int" />
-            <s:element minOccurs="0" maxOccurs="1" name="title" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:BattleResult" />
             <s:element minOccurs="0" maxOccurs="1" name="players" type="tns:ArrayOfBattlePlayerResult" />
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:complexType name="BattleResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="EngineBattleID" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EngineVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Map" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsMission" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsBots" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="ReplayName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="StartTime" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Duration" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Title" type="s:string" />
+        </s:sequence>
+      </s:complexType>
       <s:complexType name="ArrayOfBattlePlayerResult">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="unbounded" name="BattlePlayerResult" nillable="true" type="tns:BattlePlayerResult" />
@@ -270,6 +324,12 @@
   <wsdl:message name="GetResourceDataSoapOut">
     <wsdl:part name="parameters" element="tns:GetResourceDataResponse" />
   </wsdl:message>
+  <wsdl:message name="GetSpringBattleStartSetupSoapIn">
+    <wsdl:part name="parameters" element="tns:GetSpringBattleStartSetup" />
+  </wsdl:message>
+  <wsdl:message name="GetSpringBattleStartSetupSoapOut">
+    <wsdl:part name="parameters" element="tns:GetSpringBattleStartSetupResponse" />
+  </wsdl:message>
   <wsdl:message name="SubmitSpringBattleResultSoapIn">
     <wsdl:part name="parameters" element="tns:SubmitSpringBattleResult" />
   </wsdl:message>
@@ -321,6 +381,10 @@
       <wsdl:input message="tns:GetResourceDataSoapIn" />
       <wsdl:output message="tns:GetResourceDataSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="GetSpringBattleStartSetup">
+      <wsdl:input message="tns:GetSpringBattleStartSetupSoapIn" />
+      <wsdl:output message="tns:GetSpringBattleStartSetupSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="SubmitSpringBattleResult">
       <wsdl:input message="tns:SubmitSpringBattleResultSoapIn" />
       <wsdl:output message="tns:SubmitSpringBattleResultSoapOut" />
@@ -363,6 +427,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetResourceData">
       <soap:operation soapAction="http://tempuri.org/GetResourceData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSpringBattleStartSetup">
+      <soap:operation soapAction="http://tempuri.org/GetSpringBattleStartSetup" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -447,6 +520,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetResourceData">
       <soap12:operation soapAction="http://tempuri.org/GetResourceData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetSpringBattleStartSetup">
+      <soap12:operation soapAction="http://tempuri.org/GetSpringBattleStartSetup" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
