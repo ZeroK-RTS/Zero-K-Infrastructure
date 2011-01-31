@@ -251,6 +251,9 @@ namespace ZeroKWeb
 
       db.SubmitChanges();
 
+      sb.CalculateElo();
+      db.SubmitChanges();
+
       return true;
     }
 

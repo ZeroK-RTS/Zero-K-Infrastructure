@@ -9822,6 +9822,8 @@ namespace ZkData
 		
 		private string _EngineVersion;
 		
+		private bool _IsEloProcessed;
+		
 		private EntitySet<SpringBattlePlayer> _SpringBattlePlayers;
 		
 		private EntitySet<AccountBattleAward> _AccountBattleAwards;
@@ -9866,6 +9868,8 @@ namespace ZkData
     partial void OnReplayFileNameChanged();
     partial void OnEngineVersionChanging(string value);
     partial void OnEngineVersionChanged();
+    partial void OnIsEloProcessedChanging(bool value);
+    partial void OnIsEloProcessedChanged();
     #endregion
 		
 		public SpringBattle()
@@ -10158,8 +10162,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsEloProcessed", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public bool IsEloProcessed
+		{
+			get
+			{
+				return this._IsEloProcessed;
+			}
+			set
+			{
+				if ((this._IsEloProcessed != value))
+				{
+					this.OnIsEloProcessedChanging(value);
+					this.SendPropertyChanging();
+					this._IsEloProcessed = value;
+					this.SendPropertyChanged("IsEloProcessed");
+					this.OnIsEloProcessedChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -10178,7 +10203,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleAward> AccountBattleAwards
 		{
 			get
@@ -10197,7 +10222,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleStat", Storage="_AccountBattleStats", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleStat> AccountBattleStats
 		{
 			get
