@@ -31,21 +31,27 @@ namespace PlasmaShared.ContentService {
         
         private System.Threading.SendOrPostCallback DownloadFileOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetEloByAccountIDOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetEloByNameOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetEloTop10OperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetResourceDataOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback GetSpringBattleStartSetupOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback SubmitSpringBattleResultOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetResourceListOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetScriptMissionDataOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetSpringBattleStartSetupOperationCompleted;
         
         private System.Threading.SendOrPostCallback NotifyMissionRunOperationCompleted;
         
         private System.Threading.SendOrPostCallback RegisterResourceOperationCompleted;
         
         private System.Threading.SendOrPostCallback SubmitMissionScoreOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SubmitSpringBattleResultOperationCompleted;
         
         private System.Threading.SendOrPostCallback SubmitStackTraceOperationCompleted;
         
@@ -91,19 +97,25 @@ namespace PlasmaShared.ContentService {
         public event DownloadFileCompletedEventHandler DownloadFileCompleted;
         
         /// <remarks/>
+        public event GetEloByAccountIDCompletedEventHandler GetEloByAccountIDCompleted;
+        
+        /// <remarks/>
+        public event GetEloByNameCompletedEventHandler GetEloByNameCompleted;
+        
+        /// <remarks/>
+        public event GetEloTop10CompletedEventHandler GetEloTop10Completed;
+        
+        /// <remarks/>
         public event GetResourceDataCompletedEventHandler GetResourceDataCompleted;
-        
-        /// <remarks/>
-        public event GetSpringBattleStartSetupCompletedEventHandler GetSpringBattleStartSetupCompleted;
-        
-        /// <remarks/>
-        public event SubmitSpringBattleResultCompletedEventHandler SubmitSpringBattleResultCompleted;
         
         /// <remarks/>
         public event GetResourceListCompletedEventHandler GetResourceListCompleted;
         
         /// <remarks/>
         public event GetScriptMissionDataCompletedEventHandler GetScriptMissionDataCompleted;
+        
+        /// <remarks/>
+        public event GetSpringBattleStartSetupCompletedEventHandler GetSpringBattleStartSetupCompleted;
         
         /// <remarks/>
         public event NotifyMissionRunCompletedEventHandler NotifyMissionRunCompleted;
@@ -113,6 +125,9 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         public event SubmitMissionScoreCompletedEventHandler SubmitMissionScoreCompleted;
+        
+        /// <remarks/>
+        public event SubmitSpringBattleResultCompletedEventHandler SubmitSpringBattleResultCompleted;
         
         /// <remarks/>
         public event SubmitStackTraceCompletedEventHandler SubmitStackTraceCompleted;
@@ -152,6 +167,91 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetEloByAccountID", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public EloInfo GetEloByAccountID(int accountID) {
+            object[] results = this.Invoke("GetEloByAccountID", new object[] {
+                        accountID});
+            return ((EloInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetEloByAccountIDAsync(int accountID) {
+            this.GetEloByAccountIDAsync(accountID, null);
+        }
+        
+        /// <remarks/>
+        public void GetEloByAccountIDAsync(int accountID, object userState) {
+            if ((this.GetEloByAccountIDOperationCompleted == null)) {
+                this.GetEloByAccountIDOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEloByAccountIDOperationCompleted);
+            }
+            this.InvokeAsync("GetEloByAccountID", new object[] {
+                        accountID}, this.GetEloByAccountIDOperationCompleted, userState);
+        }
+        
+        private void OnGetEloByAccountIDOperationCompleted(object arg) {
+            if ((this.GetEloByAccountIDCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetEloByAccountIDCompleted(this, new GetEloByAccountIDCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetEloByName", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public EloInfo GetEloByName(string name) {
+            object[] results = this.Invoke("GetEloByName", new object[] {
+                        name});
+            return ((EloInfo)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetEloByNameAsync(string name) {
+            this.GetEloByNameAsync(name, null);
+        }
+        
+        /// <remarks/>
+        public void GetEloByNameAsync(string name, object userState) {
+            if ((this.GetEloByNameOperationCompleted == null)) {
+                this.GetEloByNameOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEloByNameOperationCompleted);
+            }
+            this.InvokeAsync("GetEloByName", new object[] {
+                        name}, this.GetEloByNameOperationCompleted, userState);
+        }
+        
+        private void OnGetEloByNameOperationCompleted(object arg) {
+            if ((this.GetEloByNameCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetEloByNameCompleted(this, new GetEloByNameCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetEloTop10", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string[] GetEloTop10() {
+            object[] results = this.Invoke("GetEloTop10", new object[0]);
+            return ((string[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetEloTop10Async() {
+            this.GetEloTop10Async(null);
+        }
+        
+        /// <remarks/>
+        public void GetEloTop10Async(object userState) {
+            if ((this.GetEloTop10OperationCompleted == null)) {
+                this.GetEloTop10OperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEloTop10OperationCompleted);
+            }
+            this.InvokeAsync("GetEloTop10", new object[0], this.GetEloTop10OperationCompleted, userState);
+        }
+        
+        private void OnGetEloTop10OperationCompleted(object arg) {
+            if ((this.GetEloTop10Completed != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetEloTop10Completed(this, new GetEloTop10CompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetResourceData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public ResourceData GetResourceData(string md5, string internalName) {
             object[] results = this.Invoke("GetResourceData", new object[] {
@@ -179,76 +279,6 @@ namespace PlasmaShared.ContentService {
             if ((this.GetResourceDataCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetResourceDataCompleted(this, new GetResourceDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSpringBattleStartSetup", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, int[] userAccountIDs) {
-            object[] results = this.Invoke("GetSpringBattleStartSetup", new object[] {
-                        hostName,
-                        map,
-                        mod,
-                        userAccountIDs});
-            return ((SpringBattleStartSetup)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, int[] userAccountIDs) {
-            this.GetSpringBattleStartSetupAsync(hostName, map, mod, userAccountIDs, null);
-        }
-        
-        /// <remarks/>
-        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, int[] userAccountIDs, object userState) {
-            if ((this.GetSpringBattleStartSetupOperationCompleted == null)) {
-                this.GetSpringBattleStartSetupOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSpringBattleStartSetupOperationCompleted);
-            }
-            this.InvokeAsync("GetSpringBattleStartSetup", new object[] {
-                        hostName,
-                        map,
-                        mod,
-                        userAccountIDs}, this.GetSpringBattleStartSetupOperationCompleted, userState);
-        }
-        
-        private void OnGetSpringBattleStartSetupOperationCompleted(object arg) {
-            if ((this.GetSpringBattleStartSetupCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetSpringBattleStartSetupCompleted(this, new GetSpringBattleStartSetupCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitSpringBattleResult", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool SubmitSpringBattleResult(string accountName, string password, BattleResult result, BattlePlayerResult[] players) {
-            object[] results = this.Invoke("SubmitSpringBattleResult", new object[] {
-                        accountName,
-                        password,
-                        result,
-                        players});
-            return ((bool)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void SubmitSpringBattleResultAsync(string accountName, string password, BattleResult result, BattlePlayerResult[] players) {
-            this.SubmitSpringBattleResultAsync(accountName, password, result, players, null);
-        }
-        
-        /// <remarks/>
-        public void SubmitSpringBattleResultAsync(string accountName, string password, BattleResult result, BattlePlayerResult[] players, object userState) {
-            if ((this.SubmitSpringBattleResultOperationCompleted == null)) {
-                this.SubmitSpringBattleResultOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSubmitSpringBattleResultOperationCompleted);
-            }
-            this.InvokeAsync("SubmitSpringBattleResult", new object[] {
-                        accountName,
-                        password,
-                        result,
-                        players}, this.SubmitSpringBattleResultOperationCompleted, userState);
-        }
-        
-        private void OnSubmitSpringBattleResultOperationCompleted(object arg) {
-            if ((this.SubmitSpringBattleResultCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.SubmitSpringBattleResultCompleted(this, new SubmitSpringBattleResultCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -308,6 +338,41 @@ namespace PlasmaShared.ContentService {
             if ((this.GetScriptMissionDataCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetScriptMissionDataCompleted(this, new GetScriptMissionDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSpringBattleStartSetup", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, int[] userAccountIDs) {
+            object[] results = this.Invoke("GetSpringBattleStartSetup", new object[] {
+                        hostName,
+                        map,
+                        mod,
+                        userAccountIDs});
+            return ((SpringBattleStartSetup)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, int[] userAccountIDs) {
+            this.GetSpringBattleStartSetupAsync(hostName, map, mod, userAccountIDs, null);
+        }
+        
+        /// <remarks/>
+        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, int[] userAccountIDs, object userState) {
+            if ((this.GetSpringBattleStartSetupOperationCompleted == null)) {
+                this.GetSpringBattleStartSetupOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSpringBattleStartSetupOperationCompleted);
+            }
+            this.InvokeAsync("GetSpringBattleStartSetup", new object[] {
+                        hostName,
+                        map,
+                        mod,
+                        userAccountIDs}, this.GetSpringBattleStartSetupOperationCompleted, userState);
+        }
+        
+        private void OnGetSpringBattleStartSetupOperationCompleted(object arg) {
+            if ((this.GetSpringBattleStartSetupCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetSpringBattleStartSetupCompleted(this, new GetSpringBattleStartSetupCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -433,6 +498,41 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitSpringBattleResult", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool SubmitSpringBattleResult(string accountName, string password, BattleResult result, BattlePlayerResult[] players) {
+            object[] results = this.Invoke("SubmitSpringBattleResult", new object[] {
+                        accountName,
+                        password,
+                        result,
+                        players});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void SubmitSpringBattleResultAsync(string accountName, string password, BattleResult result, BattlePlayerResult[] players) {
+            this.SubmitSpringBattleResultAsync(accountName, password, result, players, null);
+        }
+        
+        /// <remarks/>
+        public void SubmitSpringBattleResultAsync(string accountName, string password, BattleResult result, BattlePlayerResult[] players, object userState) {
+            if ((this.SubmitSpringBattleResultOperationCompleted == null)) {
+                this.SubmitSpringBattleResultOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSubmitSpringBattleResultOperationCompleted);
+            }
+            this.InvokeAsync("SubmitSpringBattleResult", new object[] {
+                        accountName,
+                        password,
+                        result,
+                        players}, this.SubmitSpringBattleResultOperationCompleted, userState);
+        }
+        
+        private void OnSubmitSpringBattleResultOperationCompleted(object arg) {
+            if ((this.SubmitSpringBattleResultCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SubmitSpringBattleResultCompleted(this, new SubmitSpringBattleResultCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitStackTrace", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData, string programVersion) {
             this.Invoke("SubmitStackTrace", new object[] {
@@ -506,155 +606,29 @@ namespace PlasmaShared.ContentService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class ResourceData {
+    public partial class EloInfo {
         
-        private string[] dependenciesField;
+        private double eloField;
         
-        private string internalNameField;
-        
-        private ResourceType resourceTypeField;
-        
-        private SpringHashEntry[] springHashesField;
+        private double weightField;
         
         /// <remarks/>
-        public string[] Dependencies {
+        public double Elo {
             get {
-                return this.dependenciesField;
+                return this.eloField;
             }
             set {
-                this.dependenciesField = value;
+                this.eloField = value;
             }
         }
         
         /// <remarks/>
-        public string InternalName {
+        public double Weight {
             get {
-                return this.internalNameField;
+                return this.weightField;
             }
             set {
-                this.internalNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public ResourceType ResourceType {
-            get {
-                return this.resourceTypeField;
-            }
-            set {
-                this.resourceTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public SpringHashEntry[] SpringHashes {
-            get {
-                return this.springHashesField;
-            }
-            set {
-                this.springHashesField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class SpringHashEntry {
-        
-        private int springHashField;
-        
-        private string springVersionField;
-        
-        /// <remarks/>
-        public int SpringHash {
-            get {
-                return this.springHashField;
-            }
-            set {
-                this.springHashField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string SpringVersion {
-            get {
-                return this.springVersionField;
-            }
-            set {
-                this.springVersionField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class ScriptMissionData {
-        
-        private string[] manualDependenciesField;
-        
-        private string mapNameField;
-        
-        private string modTagField;
-        
-        private string nameField;
-        
-        private string startScriptField;
-        
-        /// <remarks/>
-        public string[] ManualDependencies {
-            get {
-                return this.manualDependenciesField;
-            }
-            set {
-                this.manualDependenciesField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string MapName {
-            get {
-                return this.mapNameField;
-            }
-            set {
-                this.mapNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string ModTag {
-            get {
-                return this.modTagField;
-            }
-            set {
-                this.modTagField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string StartScript {
-            get {
-                return this.startScriptField;
-            }
-            set {
-                this.startScriptField = value;
+                this.weightField = value;
             }
         }
     }
@@ -735,19 +709,19 @@ namespace PlasmaShared.ContentService {
         
         private int accountIDField;
         
+        private int allyNumberField;
+        
+        private PlayerAward[] awardsField;
+        
+        private string commanderTypeField;
+        
         private bool isSpectatorField;
         
         private bool isVictoryTeamField;
         
-        private string commanderTypeField;
-        
         private System.Nullable<int> loseTimeField;
         
-        private int allyNumberField;
-        
         private int rankField;
-        
-        private PlayerAward[] awardsField;
         
         private PlayerStats[] statsField;
         
@@ -758,6 +732,36 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.accountIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int AllyNumber {
+            get {
+                return this.allyNumberField;
+            }
+            set {
+                this.allyNumberField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PlayerAward[] Awards {
+            get {
+                return this.awardsField;
+            }
+            set {
+                this.awardsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string CommanderType {
+            get {
+                return this.commanderTypeField;
+            }
+            set {
+                this.commanderTypeField = value;
             }
         }
         
@@ -782,16 +786,6 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        public string CommanderType {
-            get {
-                return this.commanderTypeField;
-            }
-            set {
-                this.commanderTypeField = value;
-            }
-        }
-        
-        /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public System.Nullable<int> LoseTime {
             get {
@@ -803,32 +797,12 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        public int AllyNumber {
-            get {
-                return this.allyNumberField;
-            }
-            set {
-                this.allyNumberField = value;
-            }
-        }
-        
-        /// <remarks/>
         public int Rank {
             get {
                 return this.rankField;
             }
             set {
                 this.rankField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public PlayerAward[] Awards {
-            get {
-                return this.awardsField;
-            }
-            set {
-                this.awardsField = value;
             }
         }
         
@@ -851,25 +825,35 @@ namespace PlasmaShared.ContentService {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class BattleResult {
         
+        private int durationField;
+        
         private string engineBattleIDField;
         
         private string engineVersionField;
         
-        private string modField;
-        
-        private string mapField;
+        private bool isBotsField;
         
         private bool isMissionField;
         
-        private bool isBotsField;
+        private string mapField;
+        
+        private string modField;
         
         private string replayNameField;
         
         private System.DateTime startTimeField;
         
-        private int durationField;
-        
         private string titleField;
+        
+        /// <remarks/>
+        public int Duration {
+            get {
+                return this.durationField;
+            }
+            set {
+                this.durationField = value;
+            }
+        }
         
         /// <remarks/>
         public string EngineBattleID {
@@ -892,22 +876,12 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        public string Mod {
+        public bool IsBots {
             get {
-                return this.modField;
+                return this.isBotsField;
             }
             set {
-                this.modField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Map {
-            get {
-                return this.mapField;
-            }
-            set {
-                this.mapField = value;
+                this.isBotsField = value;
             }
         }
         
@@ -922,12 +896,22 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        public bool IsBots {
+        public string Map {
             get {
-                return this.isBotsField;
+                return this.mapField;
             }
             set {
-                this.isBotsField = value;
+                this.mapField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Mod {
+            get {
+                return this.modField;
+            }
+            set {
+                this.modField = value;
             }
         }
         
@@ -948,16 +932,6 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.startTimeField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public int Duration {
-            get {
-                return this.durationField;
-            }
-            set {
-                this.durationField = value;
             }
         }
         
@@ -1055,6 +1029,165 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.playersField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class ScriptMissionData {
+        
+        private string[] manualDependenciesField;
+        
+        private string mapNameField;
+        
+        private string modTagField;
+        
+        private string nameField;
+        
+        private string startScriptField;
+        
+        /// <remarks/>
+        public string[] ManualDependencies {
+            get {
+                return this.manualDependenciesField;
+            }
+            set {
+                this.manualDependenciesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string MapName {
+            get {
+                return this.mapNameField;
+            }
+            set {
+                this.mapNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ModTag {
+            get {
+                return this.modTagField;
+            }
+            set {
+                this.modTagField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string StartScript {
+            get {
+                return this.startScriptField;
+            }
+            set {
+                this.startScriptField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class SpringHashEntry {
+        
+        private int springHashField;
+        
+        private string springVersionField;
+        
+        /// <remarks/>
+        public int SpringHash {
+            get {
+                return this.springHashField;
+            }
+            set {
+                this.springHashField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string SpringVersion {
+            get {
+                return this.springVersionField;
+            }
+            set {
+                this.springVersionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class ResourceData {
+        
+        private string[] dependenciesField;
+        
+        private string internalNameField;
+        
+        private ResourceType resourceTypeField;
+        
+        private SpringHashEntry[] springHashesField;
+        
+        /// <remarks/>
+        public string[] Dependencies {
+            get {
+                return this.dependenciesField;
+            }
+            set {
+                this.dependenciesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string InternalName {
+            get {
+                return this.internalNameField;
+            }
+            set {
+                this.internalNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ResourceType ResourceType {
+            get {
+                return this.resourceTypeField;
+            }
+            set {
+                this.resourceTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public SpringHashEntry[] SpringHashes {
+            get {
+                return this.springHashesField;
+            }
+            set {
+                this.springHashesField = value;
             }
         }
     }
@@ -1162,6 +1295,84 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetEloByAccountIDCompletedEventHandler(object sender, GetEloByAccountIDCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetEloByAccountIDCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetEloByAccountIDCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public EloInfo Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((EloInfo)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetEloByNameCompletedEventHandler(object sender, GetEloByNameCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetEloByNameCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetEloByNameCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public EloInfo Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((EloInfo)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetEloTop10CompletedEventHandler(object sender, GetEloTop10CompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetEloTop10CompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetEloTop10CompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void GetResourceDataCompletedEventHandler(object sender, GetResourceDataCompletedEventArgs e);
     
     /// <remarks/>
@@ -1182,58 +1393,6 @@ namespace PlasmaShared.ContentService {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((ResourceData)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    public delegate void GetSpringBattleStartSetupCompletedEventHandler(object sender, GetSpringBattleStartSetupCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetSpringBattleStartSetupCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetSpringBattleStartSetupCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public SpringBattleStartSetup Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((SpringBattleStartSetup)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    public delegate void SubmitSpringBattleResultCompletedEventHandler(object sender, SubmitSpringBattleResultCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class SubmitSpringBattleResultCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal SubmitSpringBattleResultCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public bool Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((bool)(this.results[0]));
             }
         }
     }
@@ -1300,6 +1459,32 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetSpringBattleStartSetupCompletedEventHandler(object sender, GetSpringBattleStartSetupCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetSpringBattleStartSetupCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetSpringBattleStartSetupCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public SpringBattleStartSetup Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((SpringBattleStartSetup)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void NotifyMissionRunCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
     
     /// <remarks/>
@@ -1331,6 +1516,32 @@ namespace PlasmaShared.ContentService {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void SubmitMissionScoreCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void SubmitSpringBattleResultCompletedEventHandler(object sender, SubmitSpringBattleResultCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class SubmitSpringBattleResultCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal SubmitSpringBattleResultCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]

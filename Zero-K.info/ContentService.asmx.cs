@@ -24,10 +24,45 @@ namespace ZeroKWeb
                              out List<string> links,
                              out byte[] torrent,
                              out List<string> dependencies,
-                             out ZkData.ResourceType resourceType,
+                             out ResourceType resourceType,
                              out string torrentFileName)
     {
       return PlasmaServer.DownloadFile(internalName, out links, out torrent, out dependencies, out resourceType, out torrentFileName);
+    }
+
+    [WebMethod]
+    public EloInfo GetEloByAccountID(int accountID)
+    {
+      var db = new ZkDataContext();
+      var user = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
+      var ret = new EloInfo();
+      if (user != null)
+      {
+        ret.Elo = user.Elo;
+        ret.Weight = user.EloWeight;
+      }
+      return ret;
+    }
+
+    [WebMethod]
+    public EloInfo GetEloByName(string name)
+    {
+      var db = new ZkDataContext();
+      var user = db.Accounts.FirstOrDefault(x => x.Name == name);
+      var ret = new EloInfo();
+      if (user != null)
+      {
+        ret.Elo = user.Elo;
+        ret.Weight = user.EloWeight;
+      }
+      return ret;
+    }
+
+    [WebMethod]
+    public List<string> GetEloTop10()
+    {
+      var db = new ZkDataContext();
+      return db.Accounts.Where(x => x.LastLogin > DateTime.UtcNow.AddMonths(-1)).OrderByDescending(x => x.Elo).Take(10).Select(x => x.Name).ToList();
     }
 
     /// <summary>
@@ -40,123 +75,6 @@ namespace ZeroKWeb
     public PlasmaServer.ResourceData GetResourceData(string md5, string internalName)
     {
       return PlasmaServer.GetResourceData(md5, internalName);
-    }
-
-
-
-    public class BattleResult
-    {
-      public string EngineBattleID;
-      public string EngineVersion;
-      public string Mod;
-      public string Map;
-      public bool IsMission;
-      public bool IsBots;
-      public string ReplayName;
-      public DateTime StartTime;
-      public int Duration;
-      public string Title;
-    }
-
-    public class SpringBattleStartSetup
-    {
-
-      public List<PlayerStartup> Players = new List<PlayerStartup>();
-      public class PlayerStartup
-      {
-        public int AccountID;
-        public List<ScriptKeyValuePair> CustomScripKeys;
-        public class ScriptKeyValuePair
-        {
-          public string Key;
-          public string Value;
-        }
-      }
-    }
-
-    [WebMethod]
-    public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<int> userAccountIDs)
-    {
-      var ret = new SpringBattleStartSetup();
-
-      var db = new ZkDataContext();
-      // todo implement
-
-      return ret;
-    }
-
-
-
-    [WebMethod]
-    public bool SubmitSpringBattleResult(string accountName, string password, BattleResult result, List<BattlePlayerResult> players)
-    {
-      var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
-      if (acc == null) throw new Exception("Account name or password not valid");
-
-      var db = new ZkDataContext();
-      var sb = new SpringBattle()
-               {
-                 HostAccountID = acc.AccountID,
-                 Duration = result.Duration,
-                 EngineGameID = result.EngineBattleID,
-                 MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
-                 ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
-                 HasBots = result.IsBots,
-                 IsMission = result.IsMission,
-                 PlayerCount = players.Count(x => !x.IsSpectator),
-                 StartTime = result.StartTime,
-                 Title = result.Title,
-                 ReplayFileName = result.ReplayName,
-                 EngineVersion = result.EngineVersion,
-               };
-      db.SpringBattles.InsertOnSubmit(sb);
-
-      foreach (var p in players)
-      {
-        sb.SpringBattlePlayers.Add(new SpringBattlePlayer()
-                                   {
-                                     AccountID = p.AccountID,
-                                     AllyNumber = p.AllyNumber,
-                                     CommanderType = p.CommanderType,
-                                     IsInVictoryTeam = p.IsVictoryTeam,
-                                     IsSpectator = p.IsSpectator,
-                                     Rank = p.Rank,
-                                     LoseTime = p.LoseTime
-                                   });
-      }
-      
-      db.SubmitChanges();
-      foreach (var p in players)
-      {
-        foreach (var a in p.Awards)
-        {
-          db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
-                                                {
-                                                  AccountID = p.AccountID,
-                                                  SpringBattleID = sb.SpringBattleID,
-                                                  AwardKey = a.Award,
-                                                  AwardDescription = a.Description
-                                                });
-
-          
-        }
-
-        foreach (var s in p.Stats)
-        {
-          db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat()
-                                               {
-                                                 AccountID = p.AccountID,
-                                                 SpringBattleID = sb.SpringBattleID,
-                                                 StatsKey = s.Key,
-                                                 Value = s.Value
-                                               });
-
-        }
-      }
-
-      db.SubmitChanges();
-
-      return true;  
     }
 
 
@@ -184,6 +102,17 @@ namespace ZeroKWeb
       }
     }
 
+    [WebMethod]
+    public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<int> userAccountIDs)
+    {
+      var ret = new SpringBattleStartSetup();
+
+      var db = new ZkDataContext();
+      // todo implement
+
+      return ret;
+    }
+
 
     [WebMethod]
     public void NotifyMissionRun(string login, string missionName)
@@ -204,7 +133,7 @@ namespace ZeroKWeb
                                                      string springVersion,
                                                      string md5,
                                                      int length,
-                                                     ZkData.ResourceType resourceType,
+                                                     ResourceType resourceType,
                                                      string archiveName,
                                                      string internalName,
                                                      int springHash,
@@ -262,6 +191,70 @@ namespace ZeroKWeb
     }
 
     [WebMethod]
+    public bool SubmitSpringBattleResult(string accountName, string password, BattleResult result, List<BattlePlayerResult> players)
+    {
+      var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
+      if (acc == null) throw new Exception("Account name or password not valid");
+
+      var db = new ZkDataContext();
+      var sb = new SpringBattle()
+               {
+                 HostAccountID = acc.AccountID,
+                 Duration = result.Duration,
+                 EngineGameID = result.EngineBattleID,
+                 MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
+                 ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
+                 HasBots = result.IsBots,
+                 IsMission = result.IsMission,
+                 PlayerCount = players.Count(x => !x.IsSpectator),
+                 StartTime = result.StartTime,
+                 Title = result.Title,
+                 ReplayFileName = result.ReplayName,
+                 EngineVersion = result.EngineVersion,
+               };
+      db.SpringBattles.InsertOnSubmit(sb);
+
+      foreach (var p in players)
+      {
+        sb.SpringBattlePlayers.Add(new SpringBattlePlayer()
+                                   {
+                                     AccountID = p.AccountID,
+                                     AllyNumber = p.AllyNumber,
+                                     CommanderType = p.CommanderType,
+                                     IsInVictoryTeam = p.IsVictoryTeam,
+                                     IsSpectator = p.IsSpectator,
+                                     Rank = p.Rank,
+                                     LoseTime = p.LoseTime
+                                   });
+      }
+
+      db.SubmitChanges();
+      foreach (var p in players)
+      {
+        foreach (var a in p.Awards)
+        {
+          db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
+                                                {
+                                                  AccountID = p.AccountID,
+                                                  SpringBattleID = sb.SpringBattleID,
+                                                  AwardKey = a.Award,
+                                                  AwardDescription = a.Description
+                                                });
+        }
+
+        foreach (var s in p.Stats)
+        {
+          db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat()
+                                               { AccountID = p.AccountID, SpringBattleID = sb.SpringBattleID, StatsKey = s.Key, Value = s.Value });
+        }
+      }
+
+      db.SubmitChanges();
+
+      return true;
+    }
+
+    [WebMethod]
     public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData, string programVersion)
     {
       using (var db = new ZkDataContext())
@@ -290,6 +283,51 @@ namespace ZeroKWeb
       return ip;
     }
 
+    public class BattlePlayerResult
+    {
+      public int AccountID;
+      public int AllyNumber;
+      public List<PlayerAward> Awards;
+      public string CommanderType;
+      public bool IsSpectator;
+      public bool IsVictoryTeam;
+      public int? LoseTime;
+      public int Rank;
+      public List<PlayerStats> Stats;
+
+      public class PlayerAward
+      {
+        public string Award;
+        public string Description;
+      }
+
+      public class PlayerStats
+      {
+        public string Key;
+        public double Value;
+      }
+    }
+
+    public class BattleResult
+    {
+      public int Duration;
+      public string EngineBattleID;
+      public string EngineVersion;
+      public bool IsBots;
+      public bool IsMission;
+      public string Map;
+      public string Mod;
+      public string ReplayName;
+      public DateTime StartTime;
+      public string Title;
+    }
+
+    public class EloInfo
+    {
+      public double Elo = 1500;
+      public double Weight = 1;
+    }
+
     public class ScriptMissionData
     {
       public List<string> ManualDependencies;
@@ -299,32 +337,21 @@ namespace ZeroKWeb
       public string StartScript;
     }
 
-    public class BattlePlayerResult
+    public class SpringBattleStartSetup
     {
-      public int AccountID;
-      public bool IsSpectator;
-      public bool IsVictoryTeam;
-      public string CommanderType;
-      public int? LoseTime;
-      public int AllyNumber;
-      public int Rank;
-      public List<PlayerAward> Awards;
-      public List<PlayerStats> Stats;
+      public List<PlayerStartup> Players = new List<PlayerStartup>();
 
-      public class PlayerStats
+      public class PlayerStartup
       {
-        public string Key;
-        public double Value;
-      }
+        public int AccountID;
+        public List<ScriptKeyValuePair> CustomScripKeys;
 
-      public class PlayerAward
-      {
-        public string Award;
-        public string Description;
+        public class ScriptKeyValuePair
+        {
+          public string Key;
+          public string Value;
+        }
       }
     }
-
   }
-
-
 }

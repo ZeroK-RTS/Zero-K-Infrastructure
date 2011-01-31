@@ -11,7 +11,6 @@ namespace Springie
     public class MainConfig:IPlasmaDownloaderConfig
     {
         public const string SpringieVersion = "Springie 1.46";
-        public const string StatsUrlAddressReal = "http://springie.licho.eu/";
 
         string executableName = "spring-dedicated.exe";
         bool gargamelMode = true;
