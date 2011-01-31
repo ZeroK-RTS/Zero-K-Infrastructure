@@ -62,7 +62,7 @@ namespace ZkData
 
       foreach (var r in winners)
       {
-        r.Account.Elo = (float)(scoreWin*r.Account.EloInvWeight);
+        r.Account.Elo += (float)(scoreWin*r.Account.EloInvWeight);
 
         if (r.Account.EloWeight < GlobalConst.EloWeightMax)
         {
@@ -73,7 +73,7 @@ namespace ZkData
 
       foreach (var r in losers)
       {
-        r.Account.Elo = (float)(scoreLose*r.Account.EloInvWeight);
+        r.Account.Elo += (float)(scoreLose*r.Account.EloInvWeight);
 
         if (r.Account.EloWeight < GlobalConst.EloWeightMax)
         {

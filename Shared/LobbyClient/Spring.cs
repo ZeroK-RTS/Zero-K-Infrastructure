@@ -491,6 +491,12 @@ namespace LobbyClient
             if (string.IsNullOrEmpty(gameId) || string.IsNullOrEmpty(demoFileName)) FindAndExtractDemoInfo(out gameId, out demoFileName);
             battleResult.EngineBattleID = gameId;
             battleResult.ReplayName = demoFileName;
+            
+            // set victory team for all allied with currently alive
+            foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null)) foreach (var q in statsPlayers.Values.Where(x=>!x.IsSpectator && x.AllyNumber == p.AllyNumber))
+            {
+              q.IsVictoryTeam = true;
+            }
 
             service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray());
           }
