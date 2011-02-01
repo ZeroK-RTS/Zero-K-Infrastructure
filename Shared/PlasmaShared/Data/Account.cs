@@ -10,7 +10,7 @@ namespace ZkData
 
     public static int GetXpForLevel(int level)
     {
-      return level * 40 + 20 * level * level;
+      return level * 80 + 20 * level * level;
     }
 
     /// <summary>

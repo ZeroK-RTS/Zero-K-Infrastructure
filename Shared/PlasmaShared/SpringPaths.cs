@@ -26,8 +26,9 @@ namespace PlasmaShared
     public string WritableDirectory { get; private set; }
     public event EventHandler SpringVersionChanged;
 
-    public SpringPaths(string springPath)
+    public SpringPaths(string springPath, string version = null)
     {
+      if (version != null) springVersion = version;
       SetEnginePath(springPath);
     }
 
@@ -119,7 +120,7 @@ namespace PlasmaShared
       else Executable = null;
 
       var ov = springVersion;
-      springVersion = GetSpringVersion(Executable);
+      if (DedicatedServer != Executable) springVersion = GetSpringVersion(Executable); // get spring verison does not work for dedicated
       if (ov != springVersion && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
     }
 

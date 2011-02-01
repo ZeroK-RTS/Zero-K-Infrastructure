@@ -11544,9 +11544,9 @@ namespace ZkData
 		
 		private string _AwardDescription;
 		
-		private EntityRef<Account> _Account;
-		
 		private EntityRef<SpringBattle> _SpringBattle;
+		
+		private EntityRef<Account> _Account;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -11659,40 +11659,6 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleAward", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
-		public Account Account
-		{
-			get
-			{
-				return this._Account.Entity;
-			}
-			set
-			{
-				Account previousValue = this._Account.Entity;
-				if (((previousValue != value) 
-							|| (this._Account.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Account.Entity = null;
-						previousValue.AccountBattleAwards.Remove(this);
-					}
-					this._Account.Entity = value;
-					if ((value != null))
-					{
-						value.AccountBattleAwards.Add(this);
-						this._AccountID = value.AccountID;
-					}
-					else
-					{
-						this._AccountID = default(int);
-					}
-					this.SendPropertyChanged("Account");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleAward", Storage="_SpringBattle", ThisKey="SpringBattleID", OtherKey="SpringBattleID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
 		public SpringBattle SpringBattle
 		{
@@ -11727,6 +11693,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleAward", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountBattleAwards.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountBattleAwards.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -11749,8 +11749,8 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			this._Account = default(EntityRef<Account>);
 			this._SpringBattle = default(EntityRef<SpringBattle>);
+			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
 		
@@ -11777,9 +11777,9 @@ namespace ZkData
 		
 		private double _Value;
 		
-		private EntityRef<Account> _Account;
-		
 		private EntityRef<SpringBattle> _SpringBattle;
+		
+		private EntityRef<Account> _Account;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -11892,40 +11892,6 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleStat", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
-		public Account Account
-		{
-			get
-			{
-				return this._Account.Entity;
-			}
-			set
-			{
-				Account previousValue = this._Account.Entity;
-				if (((previousValue != value) 
-							|| (this._Account.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Account.Entity = null;
-						previousValue.AccountBattleStats.Remove(this);
-					}
-					this._Account.Entity = value;
-					if ((value != null))
-					{
-						value.AccountBattleStats.Add(this);
-						this._AccountID = value.AccountID;
-					}
-					else
-					{
-						this._AccountID = default(int);
-					}
-					this.SendPropertyChanged("Account");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleStat", Storage="_SpringBattle", ThisKey="SpringBattleID", OtherKey="SpringBattleID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
 		public SpringBattle SpringBattle
 		{
@@ -11960,6 +11926,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleStat", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountBattleStats.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountBattleStats.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -11982,8 +11982,8 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			this._Account = default(EntityRef<Account>);
 			this._SpringBattle = default(EntityRef<SpringBattle>);
+			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
 		
