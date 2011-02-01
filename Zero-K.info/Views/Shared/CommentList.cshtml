@@ -1,0 +1,31 @@
+﻿@model ZeroKWeb.Models.CommentList
+<div id="comments" class="border-test">
+  <form method="post" action="@Url.Action("SubmitPost", "Forum", Model.ActionData ?? new { threadID = Model.Thread.ForumThreadID })">
+  <textarea name="text" rows="8" cols="80"></textarea><br />
+  <input type="submit" value="Submit Comment" />
+  </form>
+  @if (Model.Thread != null) {
+    foreach (var p in Model.Thread.ForumPosts.OrderByDescending(x => x.ForumPostID)) {
+    <table width='100%'>
+      <tr>
+        <td class="forumPostHead" valign="top">
+          @Html.PrintAccount(p.Account)<br />
+          <table>
+            <tr>
+              <td>@Html.AccountAvatar(p.Account)
+              </td>
+              <td valign='top'>
+                <small>@p.Created.ToAgoString()</small><br />
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class="forumPostText" valign="top">
+          @Html.BBCode(p.Text)
+        </td>
+      </tr>
+    </table>
+    }
+  }
+</div>
+<!close comments> 

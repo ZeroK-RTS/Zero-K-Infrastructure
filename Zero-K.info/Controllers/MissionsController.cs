@@ -44,13 +44,6 @@ namespace ZeroKWeb.Controllers
 			return File(m.Mutator.ToArray(), "application/octet-stream", m.SanitizedFileName);
 		}
 
-		public class MissionPost {
-			public DateTime Created { get; set; }
-			public Account Author { get; set; }
-			public string Text { get; set; }
-			public int? Rating { get; set; }
-			public int? Difficulty { get; set; }
-		}
 
     [Authorize(Roles = "admin")]
     public ActionResult ChangeFeaturedOrder(int id, float? featuredOrder)
@@ -66,7 +59,6 @@ namespace ZeroKWeb.Controllers
 		{
       var db = new ZkDataContext();
       var mission = db.Missions.Single(x => x.MissionID == id);
-      mission.ForumThread.ViewCount++;
       mission.ForumThread.UpdateLastRead(Global.AccountID, false);
       db.SubmitChanges();
 
@@ -76,17 +68,6 @@ namespace ZeroKWeb.Controllers
 			            	Mission = mission,
 			            	TopScores = mission.MissionScores.OrderByDescending(x => x.Score).AsQueryable(),
 			            	MyRating = mission.Ratings.SingleOrDefault(x => x.AccountID == Global.AccountID) ?? new Rating(),
-			            	Posts = (from p in mission.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
-			            	         let userRating = mission.Ratings.SingleOrDefault(x => x.AccountID == p.AuthorAccountID)
-			            	         select
-			            	         	new MissionPost
-			            	         	{
-			            	         		Created = p.Created,
-			            	         		Author = p.Account,
-			            	         		Text = p.Text,
-			            	         		Rating = userRating != null ? userRating.Rating1 : null,
-			            	         		Difficulty = userRating != null ? userRating.Difficulty : null
-			            	         	})
 			            });
 
 		}
@@ -155,7 +136,6 @@ namespace ZeroKWeb.Controllers
 		public Mission Mission;
 		public IQueryable<MissionScore> TopScores;
 		public Rating MyRating;
-		public IEnumerable<MissionsController.MissionPost> Posts;
 	}
 
 	public class MissionsIndexData

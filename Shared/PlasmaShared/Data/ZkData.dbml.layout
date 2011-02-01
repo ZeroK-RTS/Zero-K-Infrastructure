@@ -510,5 +510,17 @@
         <classShapeMoniker Id="4fb8a0e1-2570-4cb1-8eb5-adf9e2249628" />
       </nodes>
     </associationConnector>
+    <classShape Id="fa2f029f-0d2b-44bd-b622-2ac86ce02d9f" absoluteBounds="21.875, 1, 2, 1.56">
+      <DataClassMoniker Name="/ZkDataContext/Unlock" />
+      <nestedChildShapes>
+        <elementListCompartment Id="79079aa0-dde9-4943-906d-b5577ddf0d12" absoluteBounds="21.890, 1.46, 1.97, 1.00" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="20a771f9-523d-4c4a-9850-4ea5afa56d3e" absoluteBounds="21.875, 4.06, 2, 1.16">
+      <DataClassMoniker Name="/ZkDataContext/AccountUnlock" />
+      <nestedChildShapes>
+        <elementListCompartment Id="ecc2647d-f410-4c80-a9d8-a50a8b0da944" absoluteBounds="21.890, 4.52, 1.97, 0.60" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>

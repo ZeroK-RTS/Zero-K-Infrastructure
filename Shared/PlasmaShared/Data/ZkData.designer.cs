@@ -91,6 +91,12 @@ namespace ZkData
     partial void InsertAccountBattleStat(AccountBattleStat instance);
     partial void UpdateAccountBattleStat(AccountBattleStat instance);
     partial void DeleteAccountBattleStat(AccountBattleStat instance);
+    partial void InsertUnlock(Unlock instance);
+    partial void UpdateUnlock(Unlock instance);
+    partial void DeleteUnlock(Unlock instance);
+    partial void InsertAccountUnlock(AccountUnlock instance);
+    partial void UpdateAccountUnlock(AccountUnlock instance);
+    partial void DeleteAccountUnlock(AccountUnlock instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -480,6 +486,22 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<AccountBattleStat>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Unlock> Unlocks
+		{
+			get
+			{
+				return this.GetTable<Unlock>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AccountUnlock> AccountUnlocks
+		{
+			get
+			{
+				return this.GetTable<AccountUnlock>();
 			}
 		}
 	}
@@ -5085,6 +5107,8 @@ namespace ZkData
 		
 		private EntitySet<AccountBattleStat> _AccountBattleStats;
 		
+		private EntitySet<AccountUnlock> _AccountUnlocks;
+		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -5751,6 +5775,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountUnlock", Storage="_AccountUnlocks", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		public EntitySet<AccountUnlock> AccountUnlocks
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountUnlocks.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountUnlocks;
+			}
+			set
+			{
+				this._AccountUnlocks.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -5951,6 +5994,18 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_AccountUnlocks(AccountUnlock entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountUnlocks(AccountUnlock entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -5968,6 +6023,7 @@ namespace ZkData
 			this._ForumThreadLastReads = new EntitySet<ForumThreadLastRead>(new Action<ForumThreadLastRead>(this.attach_ForumThreadLastReads), new Action<ForumThreadLastRead>(this.detach_ForumThreadLastReads));
 			this._AccountBattleAwards = new EntitySet<AccountBattleAward>(new Action<AccountBattleAward>(this.attach_AccountBattleAwards), new Action<AccountBattleAward>(this.detach_AccountBattleAwards));
 			this._AccountBattleStats = new EntitySet<AccountBattleStat>(new Action<AccountBattleStat>(this.attach_AccountBattleStats), new Action<AccountBattleStat>(this.detach_AccountBattleStats));
+			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
 			OnCreated();
 		}
 		
@@ -9874,6 +9930,10 @@ namespace ZkData
 		
 		private bool _IsEloProcessed;
 		
+		private System.Nullable<int> _WinnerTeamXpChange;
+		
+		private System.Nullable<int> _LoserTeamXpChange;
+		
 		private EntitySet<SpringBattlePlayer> _SpringBattlePlayers;
 		
 		private EntitySet<AccountBattleAward> _AccountBattleAwards;
@@ -9920,6 +9980,10 @@ namespace ZkData
     partial void OnEngineVersionChanged();
     partial void OnIsEloProcessedChanging(bool value);
     partial void OnIsEloProcessedChanged();
+    partial void OnWinnerTeamXpChangeChanging(System.Nullable<int> value);
+    partial void OnWinnerTeamXpChangeChanged();
+    partial void OnLoserTeamXpChangeChanging(System.Nullable<int> value);
+    partial void OnLoserTeamXpChangeChanged();
     #endregion
 		
 		public SpringBattle()
@@ -10233,8 +10297,50 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WinnerTeamXpChange", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public System.Nullable<int> WinnerTeamXpChange
+		{
+			get
+			{
+				return this._WinnerTeamXpChange;
+			}
+			set
+			{
+				if ((this._WinnerTeamXpChange != value))
+				{
+					this.OnWinnerTeamXpChangeChanging(value);
+					this.SendPropertyChanging();
+					this._WinnerTeamXpChange = value;
+					this.SendPropertyChanged("WinnerTeamXpChange");
+					this.OnWinnerTeamXpChangeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoserTeamXpChange", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public System.Nullable<int> LoserTeamXpChange
+		{
+			get
+			{
+				return this._LoserTeamXpChange;
+			}
+			set
+			{
+				if ((this._LoserTeamXpChange != value))
+				{
+					this.OnLoserTeamXpChangeChanging(value);
+					this.SendPropertyChanging();
+					this._LoserTeamXpChange = value;
+					this.SendPropertyChanged("LoserTeamXpChange");
+					this.OnLoserTeamXpChangeChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -10253,7 +10359,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleAward> AccountBattleAwards
 		{
 			get
@@ -10272,7 +10378,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleStat", Storage="_AccountBattleStats", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleStat> AccountBattleStats
 		{
 			get
@@ -10504,6 +10610,8 @@ namespace ZkData
 		
 		private int _Rank;
 		
+		private System.Nullable<float> _EloChange;
+		
 		private EntityRef<SpringBattle> _SpringBattle;
 		
 		private EntityRef<Account> _Account;
@@ -10528,6 +10636,8 @@ namespace ZkData
     partial void OnAllyNumberChanged();
     partial void OnRankChanging(int value);
     partial void OnRankChanged();
+    partial void OnEloChangeChanging(System.Nullable<float> value);
+    partial void OnEloChangeChanged();
     #endregion
 		
 		public SpringBattlePlayer()
@@ -10707,6 +10817,27 @@ namespace ZkData
 					this._Rank = value;
 					this.SendPropertyChanged("Rank");
 					this.OnRankChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EloChange", DbType="real")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<float> EloChange
+		{
+			get
+			{
+				return this._EloChange;
+			}
+			set
+			{
+				if ((this._EloChange != value))
+				{
+					this.OnEloChangeChanging(value);
+					this.SendPropertyChanging();
+					this._EloChange = value;
+					this.SendPropertyChanged("EloChange");
+					this.OnEloChangeChanged();
 				}
 			}
 		}
@@ -11853,6 +11984,390 @@ namespace ZkData
 		{
 			this._Account = default(EntityRef<Account>);
 			this._SpringBattle = default(EntityRef<SpringBattle>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Unlock")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class Unlock : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _UnlockID;
+		
+		private string _Name;
+		
+		private string _Description;
+		
+		private string _Prerequisites;
+		
+		private EntitySet<AccountUnlock> _AccountUnlocks;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnUnlockIDChanging(int value);
+    partial void OnUnlockIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnPrerequisitesChanging(string value);
+    partial void OnPrerequisitesChanged();
+    #endregion
+		
+		public Unlock()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int UnlockID
+		{
+			get
+			{
+				return this._UnlockID;
+			}
+			set
+			{
+				if ((this._UnlockID != value))
+				{
+					this.OnUnlockIDChanging(value);
+					this.SendPropertyChanging();
+					this._UnlockID = value;
+					this.SendPropertyChanged("UnlockID");
+					this.OnUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(100) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="nvarchar(1000)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Prerequisites", DbType="nvarchar(500)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string Prerequisites
+		{
+			get
+			{
+				return this._Prerequisites;
+			}
+			set
+			{
+				if ((this._Prerequisites != value))
+				{
+					this.OnPrerequisitesChanging(value);
+					this.SendPropertyChanging();
+					this._Prerequisites = value;
+					this.SendPropertyChanged("Prerequisites");
+					this.OnPrerequisitesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_AccountUnlock", Storage="_AccountUnlocks", ThisKey="UnlockID", OtherKey="UnlockID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
+		public EntitySet<AccountUnlock> AccountUnlocks
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountUnlocks.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountUnlocks;
+			}
+			set
+			{
+				this._AccountUnlocks.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_AccountUnlocks(AccountUnlock entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = this;
+		}
+		
+		private void detach_AccountUnlocks(AccountUnlock entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = null;
+		}
+		
+		private void Initialize()
+		{
+			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountUnlock")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountUnlock : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private int _UnlockID;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Unlock> _Unlock;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnUnlockIDChanging(int value);
+    partial void OnUnlockIDChanged();
+    #endregion
+		
+		public AccountUnlock()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int UnlockID
+		{
+			get
+			{
+				return this._UnlockID;
+			}
+			set
+			{
+				if ((this._UnlockID != value))
+				{
+					if (this._Unlock.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUnlockIDChanging(value);
+					this.SendPropertyChanging();
+					this._UnlockID = value;
+					this.SendPropertyChanged("UnlockID");
+					this.OnUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountUnlock", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountUnlocks.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountUnlocks.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_AccountUnlock", Storage="_Unlock", ThisKey="UnlockID", OtherKey="UnlockID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Unlock Unlock
+		{
+			get
+			{
+				return this._Unlock.Entity;
+			}
+			set
+			{
+				Unlock previousValue = this._Unlock.Entity;
+				if (((previousValue != value) 
+							|| (this._Unlock.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Unlock.Entity = null;
+						previousValue.AccountUnlocks.Remove(this);
+					}
+					this._Unlock.Entity = value;
+					if ((value != null))
+					{
+						value.AccountUnlocks.Add(this);
+						this._UnlockID = value.UnlockID;
+					}
+					else
+					{
+						this._UnlockID = default(int);
+					}
+					this.SendPropertyChanged("Unlock");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._Unlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
 		

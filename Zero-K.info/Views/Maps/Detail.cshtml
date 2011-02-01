@@ -19,7 +19,6 @@
   });
 </script>
 @Html.ActionLink("Back to List", "Index")
-
 <div class="wrapper">
   <h2>@m.InternalName</h2>
   By @m.AuthorName<br />
@@ -115,7 +114,6 @@
     &nbsp;&nbsp; <span title='Maps with special features, speedmetal, duck, greenfields etc'>
       Special: @Html.BoolSelect("special", m.MapIsSpecial, "?") &nbsp;&nbsp; </span>
     Author: @Html.TextBox("author", m.AuthorName)
-
     @if (ZeroKWeb.Global.IsAdmin) {
       @:Featured order: @Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)
     }
@@ -141,32 +139,11 @@
       </td>
     </tr>
   </table>
-
-
-<form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = m.ForumThreadID, resourceID = m.ResourceID })">
-  <textarea name="text" rows="4" cols="50"></textarea><br />
-  <input type="submit" value="Submit Comment" />
-</form>
-
-
-@foreach (var p in Model.Posts) {
-  <table width='100%'>
-    <tr>
-      <td class="forumPostHead" valign="top">
-        @Html.PrintAccount(p.Author)<br />
-        @Html.AccountAvatar(p.Author)
-        <br />
-        <small>@p.Created.ToAgoString()</small><br />
-        @Html.Stars(StarType.GreenStarSmall, p.Rating)
-      </td>
-      <td class="forumPostText" valign="top">
-        @Html.BBCode(p.Text)
-      </td>
-    </tr>
-  </table>
-}
-
 </div>
+
+@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.Resource.ForumThread, ActionData = new {resourceID = m.ResourceID, threadID = m.ForumThreadID} });}
+
+
 <!needs to be outside wrapper because wrapper is relatively positioned>
 <!--div id="maps" class="abs top left">
 	<h2>Map Views:</h2>
@@ -181,6 +158,5 @@
          <a href='http://zero-k.info/Resources/@(m.MetalmapName)'>
           <img src='http://zero-k.info/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
         </a>
-</div--><!close maps>
-
-@Html.ActionLink("Back to List", "Index") 
+</div-->
+<!close maps> @Html.ActionLink("Back to List", "Index") 

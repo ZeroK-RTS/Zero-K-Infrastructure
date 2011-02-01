@@ -8,7 +8,7 @@ namespace ZkData
     public void CalculateElo()
     {
       if (IsEloProcessed || IsMission || HasBots || PlayerCount < 2 || !SpringBattlePlayers.Any(x => !x.IsSpectator && x.IsInVictoryTeam) ||
-          !SpringBattlePlayers.Any(x => !x.IsSpectator && x.IsInVictoryTeam))
+          !SpringBattlePlayers.Any(x => !x.IsSpectator && x.IsInVictoryTeam)  || Duration < 120)
       {
         IsEloProcessed = true;
         return;

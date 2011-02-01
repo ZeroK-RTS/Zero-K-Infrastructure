@@ -177,17 +177,10 @@ namespace ZeroKWeb.Controllers
 
       if (res.ForumThread != null)
       {
-        res.ForumThread.ViewCount++;
         res.ForumThread.UpdateLastRead(Global.AccountID, false);
         db.SubmitChanges();
-        data.Posts = (from p in res.ForumThread.ForumPosts.OrderByDescending(x => x.Created)
-                      let userRating = res.MapRatings.SingleOrDefault(x => x.AccountID == p.AuthorAccountID)
-                      select
-                        new MapPost
-                        { Created = p.Created, Author = p.Account, Text = p.Text, Rating = userRating != null ? (int?)userRating.Rating : null });
       }
-      else data.Posts = new List<MapPost>();
-
+      
       return data;
     }
 
@@ -196,7 +189,6 @@ namespace ZeroKWeb.Controllers
     {
       public Map MapInfo;
       public MapRating MyRating;
-      public IEnumerable<MapPost> Posts;
       public Resource Resource;
     }
 
@@ -209,12 +201,5 @@ namespace ZeroKWeb.Controllers
       public string Title;
     }
 
-    public class MapPost
-    {
-      public Account Author;
-      public DateTime Created;
-      public int? Rating;
-      public string Text;
-    }
   }
 }

@@ -15,6 +15,7 @@ namespace ZkData
 
     public void UpdateLastRead(int accountID, bool isPost, DateTime? time = null)
     {
+      ViewCount++;
       if (accountID > 0)
       {
         if (time == null) time = DateTime.UtcNow;

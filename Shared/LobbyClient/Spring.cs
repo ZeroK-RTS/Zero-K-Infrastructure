@@ -184,6 +184,7 @@ namespace LobbyClient
 
       if (!IsRunning)
       {
+        gameEndedOk = false;
         lobbyUserName = client.UserName;
         lobbyPassword = client.UserPassword;
         battleResult = new BattleResult();
@@ -213,11 +214,16 @@ namespace LobbyClient
           SpringBattleStartSetup startSetup = null;
           if (GlobalConst.IsZkMod(client.MyBattle.ModName))
           {
-            startSetup = service.GetSpringBattleStartSetup(client.MyUser.Name,
-                                                           client.MyBattle.MapName,
-                                                           client.MyBattle.ModName,
-                                                           client.MyBattle.Users.Where(x => !x.IsSpectator).Select(x => x.LobbyUser.AccountID).ToArray
-                                                             ());
+            try {
+              startSetup = service.GetSpringBattleStartSetup(client.MyUser.Name,
+                                                             client.MyBattle.MapName,
+                                                             client.MyBattle.ModName,
+                                                             client.MyBattle.Users.Where(x => !x.IsSpectator).Select(x => x.LobbyUser.AccountID).
+                                                               ToArray());
+            } catch (Exception ex)
+            {
+              Trace.TraceError("Error getting start setup: {0}", ex);
+            }
           }
 
           script = client.MyBattle.GenerateScript(out players, client.MyUser, talker.LoopbackPort, battleGuid.ToString(), startSetup);
@@ -302,16 +308,18 @@ namespace LobbyClient
 
       List<FileInfo> candidates = new List<FileInfo>();
       var di = new DirectoryInfo(Path.Combine(paths.WritableDirectory, "demos"));
-      if (di.Exists) candidates.AddRange(di.GetFiles().Where(x => x.CreationTime > GameStarted.AddMinutes(-1) && x.CreationTime < GameStarted.AddMinutes(1)));
+      
+      if (di.Exists) candidates.AddRange(di.GetFiles().Where(x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-5) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(5)));
       di = new DirectoryInfo(Path.Combine(paths.UnitSyncDirectory, "demos"));
-      if (di.Exists) candidates.AddRange(di.GetFiles().Where(x => x.CreationTime > GameStarted.AddMinutes(-1) && x.CreationTime < GameStarted.AddMinutes(1)));
+      if (di.Exists) candidates.AddRange(di.GetFiles().Where(x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-5) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(5)));
+      //Console.WriteLine("Candidates: " + candidates.Count);
       foreach (var file in candidates)
       {
         var buf = new byte[65000];
         var read = file.OpenRead().Read(buf, 0, buf.Length);
         BinaryReader br;
 
-        var script = Encoding.UTF8.GetString(buf, 112, read - 112);
+        var script = Encoding.UTF8.GetString(buf, 112, read - 112 -1);
         if (script.Contains(battleGuid.ToString()))
         {
           // found correct 
@@ -483,7 +491,7 @@ namespace LobbyClient
         var modOk = GlobalConst.IsZkMod(battleResult.Mod);
 
         // submit main stats
-        if (!isCheating && !isCrash && modOk && isHosting)
+        if (!isCheating && !isCrash && modOk && isHosting && gameEndedOk)
         {
           var service = new ContentService() { Proxy = null };
           try
@@ -550,7 +558,6 @@ namespace LobbyClient
       process = null;
       talker.Close();
       talker = null;
-      battleResult.Duration = (int)DateTime.Now.Subtract(battleResult.StartTime).TotalSeconds;
 
       var logText = LogLines.ToString();
       ParseInfolog(logText, isCrash);
@@ -566,6 +573,9 @@ namespace LobbyClient
 
       if (SpringExited != null) SpringExited(this, new EventArgs<bool>(isCrash));
     }
+
+    bool gameEndedOk = false;
+
 
     void talker_SpringEvent(object sender, Talker.SpringEventArgs e)
     {
@@ -598,6 +608,8 @@ namespace LobbyClient
           break;
 
         case Talker.SpringEventType.SERVER_GAMEOVER:
+          gameEndedOk = true;
+          battleResult.Duration = (int)DateTime.Now.Subtract(battleResult.StartTime).TotalSeconds;
           if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
           break;
 

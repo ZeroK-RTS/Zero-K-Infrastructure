@@ -8,6 +8,7 @@ namespace ZeroKWeb.Controllers
 {
   public class ForumController: Controller
   {
+
     public ActionResult Index(int? categoryID)
     {
       var db = new ZkDataContext();
@@ -106,7 +107,6 @@ namespace ZeroKWeb.Controllers
         if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.ResourceID });
       }
 
-      t.ViewCount++;
       t.UpdateLastRead(Global.AccountID, false);
 
       db.SubmitChanges();

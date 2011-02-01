@@ -2,83 +2,90 @@
 @using PlasmaShared
 @using ZeroKWeb
 @{
-	var m = Model.Mission;
-	Page.Title = "Zero-K mission " + m.Name;
+  var m = Model.Mission;
+  Page.Title = "Zero-K mission " + m.Name;
 }
 @Html.ActionLink("Back to List", "Index")
 <div class="wrapper">
-	<div class="border-test width-50"><!info>
-		<h2>@m.Name</h2>
-		By @Html.PrintAccount(m.Account)
-		@if (m.MinHumans < 2) {
-			<br /><br /><a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.Name)'>
-				<img src="../../img/playnow.png" width="250" /></a>
-		}
-		<br />
-		@if (!m.IsScriptMission) {
-			<a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.Name)'>
-				<img src="../../img/hostmulti.png" width="300" /></a><br /><br />
-		}
-		@if (!Global.IsLobbyAccess && !m.IsScriptMission) {
-			<div class="border-test"><!non zk warning>
-				If you don't have Zero-K lobby, send a message to springie like so:
-<pre>/msg Springie !spawn mod=@m.Name</pre>
-Then in the battle lobby:
-<pre>
+  <div class="border-test width-50">
+    <!info>
+    <h2>@m.Name</h2>
+    By @Html.PrintAccount(m.Account)
+    @if (m.MinHumans < 2) {
+      <br />
+      <br />
+      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.Name)'>
+        <img src="../../img/playnow.png" width="250" /></a>
+    }
+    <br />
+    @if (!m.IsScriptMission) {
+      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.Name)'>
+        <img src="../../img/hostmulti.png" width="300" /></a><br />
+      <br />
+    }
+    @if (!Global.IsLobbyAccess && !m.IsScriptMission) {
+      <div class="border-test">
+        <!non zk warning> If you don't have Zero-K lobby, send a message to springie like
+        so:
+        <pre>/msg Springie !spawn mod=@m.Name</pre>
+        Then in the battle lobby:
+        <pre>
 !balance
 !start
 </pre>
-				Alternative manual download: <a href='@Url.Action("File", "Missions", new { name = m.Name })'>@m.SanitizedFileName</a>		 
-				and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>
-			</div><!close zk warning>
+        Alternative manual download: <a href='@Url.Action("File", "Missions", new { name = m.Name })'>@m.SanitizedFileName</a>
+        and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>
+      </div>
+      <!close zk warning>
 			<br />
-		}
-	
-		<span class="">
-			@Html.PrintLines(Model.Mission.Description)
-			<br />
-			<br />
-			Players: @m.MinToMaxHumansString<br />
-			<small>@Html.PrintLines(m.GetPseudoTags())</small>
-			Map: <a href='@Url.Action("DetailName","Maps", new {name = m.Map})' title='$map$@m.Map'>@m.Map</a><br />
-			Game:@(m.Mod ?? m.ModRapidTag)<br />
-			Created:@m.CreatedTime.ToAgoString()<br />
-			@if (m.Revision > 0) {
-				@:Changed: @m.ModifiedTime.ToAgoString()			
-				@:(revision @m.Revision)<br />
+    }
+    <span class="">@Html.PrintLines(Model.Mission.Description)
+      <br />
+      <br />
+      Players: @m.MinToMaxHumansString<br />
+      <small>@Html.PrintLines(m.GetPseudoTags())</small> Map: <a href='@Url.Action("DetailName", "Maps", new { name = m.Map })' title='$map$@m.Map'>@m.Map</a><br />
+      Game:@(m.Mod ?? m.ModRapidTag)<br />
+      Created:@m.CreatedTime.ToAgoString()<br />
+      @if (m.Revision > 0) {
+        @:Changed: @m.ModifiedTime.ToAgoString() 			
+        @:(revision @m.Revision)<br />
 			}
-			Played: @m.MissionRunCount times<br />
-			Rated: @m.Ratings.Count times
-			<br />
-		</span>
-	</div><!close info>
-	<!code for votes>
-	<script type="text/javascript">
-		$(document).ready(function () {
-			$("#rating").stars({
-				callback: function (ui, type, value) {
-					$.get('@Url.Action("Rate", "Missions", new { id = m.MissionID })?rating=' + value, function (ret) { if (ret != "") alert(ret); });
-				}
-			});
+      Played: @m.MissionRunCount times<br />
+      Rated: @m.Ratings.Count times
+      <br />
+    </span>
+  </div>
+  <!close info> <!code for votes>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#rating").stars({
+        callback: function (ui, type, value) {
+          $.get('@Url.Action("Rate", "Missions", new { id = m.MissionID })?rating=' + value, function (ret) { if (ret != "") alert(ret); });
+        }
+      });
 
-			$("#difficulty").stars({
-				callback: function (ui, type, value) {
-					$.get('@Url.Action("Rate", "Missions", new { id = m.MissionID })?difficulty=' + value, function (ret) { if (ret != "") alert(ret); });
-				}
-			});
+      $("#difficulty").stars({
+        callback: function (ui, type, value) {
+          $.get('@Url.Action("Rate", "Missions", new { id = m.MissionID })?difficulty=' + value, function (ret) { if (ret != "") alert(ret); });
+        }
+      });
 
-		});
-	</script>
-	
-	<div id="votes" class="border-test"><!votes>
-		<table>
-			<tr>
-				<td>Rating:</td>
-				<td width='80px'>@Html.Stars(StarType.GreenStarSmall, m.Rating)</td>
-				<td>Your vote:
-					<div id='rating'>
-						@Html.Select("rating",
-						new List<SelectOption>()
+    });
+  </script>
+  <div id="votes" class="border-test">
+    <!votes>
+    <table>
+      <tr>
+        <td>
+          Rating:
+        </td>
+        <td width='80px'>@Html.Stars(StarType.GreenStarSmall, m.Rating)
+        </td>
+        <td>
+          Your vote:
+          <div id='rating'>
+            @Html.Select("rating",
+            new List<SelectOption>()
 						{
 							new SelectOption() { Value = "1", Name = "Poor" },
 							new SelectOption() { Value = "2", Name = "Below average" },
@@ -86,16 +93,21 @@ Then in the battle lobby:
 							new SelectOption() { Value = "4", Name = "Good" },
 							new SelectOption() { Value = "5", Name = "Awesome" }
 						},
-						Model.MyRating.Rating1.ToString())
-					</div></td>
-			</tr>
-			<tr>
-				<td>Difficulty:</td>
-				<td>@Html.Stars(StarType.RedSkull, m.Difficulty)</td>
-				<td>Your vote:
-					<div id='difficulty'>
-						@Html.Select("difficulty",
-						new List<SelectOption>()
+            Model.MyRating.Rating1.ToString())
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Difficulty:
+        </td>
+        <td>@Html.Stars(StarType.RedSkull, m.Difficulty)
+        </td>
+        <td>
+          Your vote:
+          <div id='difficulty'>
+            @Html.Select("difficulty",
+            new List<SelectOption>()
 						{
 							new SelectOption() { Value = "1", Name = "Trivial" },
 							new SelectOption() { Value = "2", Name = "Easy" },
@@ -103,68 +115,48 @@ Then in the battle lobby:
 							new SelectOption() { Value = "4", Name = "Hard" },
 							new SelectOption() { Value = "5", Name = "Impossible" }
 						},
-						Model.MyRating.Difficulty.ToString())
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td colspan='2'>@* Facebook.LikeButton("Zero-K mission " + m.Name) *@</td>
-			</tr>
-		</table>
-	</div><!close votes>
-	
-	@if (Global.IsAdmin) {
-   <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })'>
-     Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
-     <input type="submit"/>
+            Model.MyRating.Difficulty.ToString())
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <!close votes>
+  @if (Global.IsAdmin) {
+    <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })'>
+    Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
+    <input type="submit" />
     </form>  
    		<a href='@Url.Action("Delete", "Missions", new { id = m.MissionID })' class='delete'>
-			Delete mission</a>
+         Delete mission</a>
   }
-	<div class="border-test abs top right">
-	<h3>Top scores</h3>
-		@Html.BBCode(m.ScoringMethod ?? "")
-		<table>
-			@{int cnt = 1;}
-			@foreach (var score in Model.TopScores) {
-				<tr>
-					<td>@(cnt++).</td>
-					<td>@Html.PrintAccount(score.Account)</td>
-					<td>@score.Score</td>
-					<td><small>@(score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "")</small></td>
-					<td><small> (revision @score.MissionRevision)</small></td>
-				</tr>
-   }
-			
-		</table>
-	</div><!close scores>
-</div><!close wrapper>
+  <div class="border-test abs top right">
+    <h3>
+      Top scores</h3>
+    @Html.BBCode(m.ScoringMethod ?? "")
+    <table>
+      @{int cnt = 1;}
+      @foreach (var score in Model.TopScores) {
+        <tr>
+          <td>@(cnt++).
+          </td>
+          <td>@Html.PrintAccount(score.Account)
+          </td>
+          <td>@score.Score
+          </td>
+          <td>
+            <small>@(score.GameSeconds > 0 ? "in " + Utils.PrintTimeRemaining(score.GameSeconds) : "")</small>
+          </td>
+          <td>
+            <small>(revision @score.MissionRevision)</small>
+          </td>
+        </tr>
+      }
+    </table>
+  </div>
+  <!close scores>
+</div>
+<!close wrapper>
+@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() {Thread = Model.Mission.ForumThread});}
 
-<div id="comments" class="border-test">
-	<form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = m.ForumThreadID })">
-		<textarea name="text" rows="4" cols="50"></textarea><br />
-		<input type="submit" value="Submit Comment" />
-	</form>
-
-	@foreach (var p in Model.Posts) {
-		<table width='100%'>
-			<tr>
-				<td class="forumPostHead" valign="top">
-					@Html.PrintAccount(p.Author)<br />
-					<table><tr>
-						<td>@Html.AccountAvatar(p.Author)</td>
-						<td valign='top'>
-						<small>@p.Created.ToAgoString()</small><br />
-						@Html.Stars(StarType.GreenStarSmall, p.Rating)<br />
-            @Html.Stars(StarType.RedSkull, p.Difficulty)
-						</td>
-					</tr></table>
-				</td>
-				<td class="forumPostText" valign="top">
-					@Html.BBCode(p.Text)
-				</td>
-			</tr>
-		</table>
- }
-</div><!close comments>
 @Html.ActionLink("Back to List", "Index") 
