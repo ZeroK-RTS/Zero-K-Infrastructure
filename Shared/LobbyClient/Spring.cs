@@ -8,7 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Xml.Serialization;
 using PlasmaShared;
 using PlasmaShared.ContentService;
 using ZkData;
@@ -57,6 +56,7 @@ namespace LobbyClient
     Dictionary<string, int> PlanetWarsMessages = new Dictionary<string, int>();
     Guid battleGuid;
     BattleResult battleResult = new BattleResult();
+    bool gameEndedOk = false;
     bool isHosting;
     string lobbyPassword;
     string lobbyUserName;
@@ -214,13 +214,15 @@ namespace LobbyClient
           SpringBattleStartSetup startSetup = null;
           if (GlobalConst.IsZkMod(client.MyBattle.ModName))
           {
-            try {
+            try
+            {
               startSetup = service.GetSpringBattleStartSetup(client.MyUser.Name,
                                                              client.MyBattle.MapName,
                                                              client.MyBattle.ModName,
                                                              client.MyBattle.Users.Where(x => !x.IsSpectator).Select(x => x.LobbyUser.AccountID).
                                                                ToArray());
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
               Trace.TraceError("Error getting start setup: {0}", ex);
             }
@@ -306,27 +308,40 @@ namespace LobbyClient
       gameId = null;
       demoFileName = null;
 
-      List<FileInfo> candidates = new List<FileInfo>();
+      var candidates = new List<FileInfo>();
       var di = new DirectoryInfo(Path.Combine(paths.WritableDirectory, "demos"));
-      
-      if (di.Exists) candidates.AddRange(di.GetFiles().Where(x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-5) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(5)));
+
+      if (di.Exists)
+      {
+        candidates.AddRange(
+          di.GetFiles().Where(
+            x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-5) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(5)));
+      }
       di = new DirectoryInfo(Path.Combine(paths.UnitSyncDirectory, "demos"));
-      if (di.Exists) candidates.AddRange(di.GetFiles().Where(x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-5) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(5)));
+      if (di.Exists)
+      {
+        candidates.AddRange(
+          di.GetFiles().Where(
+            x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-5) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(5)));
+      }
       //Console.WriteLine("Candidates: " + candidates.Count);
       foreach (var file in candidates)
       {
         var buf = new byte[65000];
-        var read = file.OpenRead().Read(buf, 0, buf.Length);
-        BinaryReader br;
+        var read = 0;
+        using (var stream = file.OpenRead()) read = stream.Read(buf, 0, buf.Length);
 
-        var script = Encoding.UTF8.GetString(buf, 112, read - 112 -1);
-        if (script.Contains(battleGuid.ToString()))
+        if (read > 113)
         {
-          // found correct 
-          var hash = new Hash(buf, 40);
-          gameId = hash.ToString();
-          demoFileName = file.Name;
-          return true;
+          var script = Encoding.ASCII.GetString(buf, 112, read - 112 - 1);
+          if (script.Contains(battleGuid.ToString()))
+          {
+            // found correct 
+            var hash = new Hash(buf, 40);
+            gameId = hash.ToString();
+            demoFileName = file.Name;
+            return true;
+          }
         }
       }
       return false;
@@ -378,7 +393,7 @@ namespace LobbyClient
             BattlePlayerResult sp;
             if (statsPlayers.TryGetValue(name, out sp))
             {
-              List<PlayerAward> awards = new List<PlayerAward>();
+              var awards = new List<PlayerAward>();
               if (sp.Awards != null) awards.AddRange(sp.Awards);
               awards.Add(new PlayerAward { Award = awardType, Description = awardText });
               sp.Awards = awards.ToArray();
@@ -499,12 +514,9 @@ namespace LobbyClient
             if (string.IsNullOrEmpty(gameId) || string.IsNullOrEmpty(demoFileName)) FindAndExtractDemoInfo(out gameId, out demoFileName);
             battleResult.EngineBattleID = gameId;
             battleResult.ReplayName = demoFileName;
-            
+
             // set victory team for all allied with currently alive
-            foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null)) foreach (var q in statsPlayers.Values.Where(x=>!x.IsSpectator && x.AllyNumber == p.AllyNumber))
-            {
-              q.IsVictoryTeam = true;
-            }
+            foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null)) foreach (var q in statsPlayers.Values.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber)) q.IsVictoryTeam = true;
 
             service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray());
           }
@@ -574,8 +586,6 @@ namespace LobbyClient
       if (SpringExited != null) SpringExited(this, new EventArgs<bool>(isCrash));
     }
 
-    bool gameEndedOk = false;
-
 
     void talker_SpringEvent(object sender, Talker.SpringEventArgs e)
     {
@@ -623,6 +633,5 @@ namespace LobbyClient
           break;
       }
     }
-
   }
 }
