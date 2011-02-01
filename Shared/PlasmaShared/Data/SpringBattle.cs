@@ -60,11 +60,15 @@ namespace ZkData
 
       var sumW = winnerW + loserW;
 
+      WinnerTeamXpChange = (int)(20 +9* scoreWin*winnerInvW /(2.0+winners.Count));
+      
       foreach (var r in winners)
       {
-        r.Account.Elo += (float)(scoreWin*r.Account.EloInvWeight);
+        var change = (float)(scoreWin*r.Account.EloInvWeight);
+        r.Player.EloChange = change;
+        r.Account.Elo += change;
 
-        r.Account.XP += (int)(20 +9* scoreWin*winnerInvW /(2.0+winners.Count));
+        r.Account.XP += WinnerTeamXpChange.Value;
         
         if (r.Account.EloWeight < GlobalConst.EloWeightMax)
         {
@@ -73,11 +77,14 @@ namespace ZkData
         }
       }
 
+      LoserTeamXpChange = (int)(10 + (32 + scoreLose*loserInvW)*3.0/(2.0 + losers.Count));
       foreach (var r in losers)
       {
-        r.Account.Elo += (float)(scoreLose*r.Account.EloInvWeight);
+        var change = (float)(scoreLose * r.Account.EloInvWeight);
+        r.Player.EloChange = change;
+        r.Account.Elo += change;
 
-        r.Account.XP += (int)(10 + (32+scoreLose * loserInvW) * 3.0 / (2.0 + losers.Count));
+        r.Account.XP += LoserTeamXpChange.Value;
 
         
         if (r.Account.EloWeight < GlobalConst.EloWeightMax)
