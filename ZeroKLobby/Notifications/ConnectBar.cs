@@ -145,8 +145,16 @@ namespace ZeroKLobby.Notifications
 				if (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword)) MessageBox.Show("Please fill player name and password", "Missing information", MessageBoxButtons.OK, MessageBoxIcon.Information); // hack dialog Program.MainWindow
 			} while (string.IsNullOrEmpty(Program.Conf.LobbyPlayerName) || string.IsNullOrEmpty(Program.Conf.LobbyPlayerPassword));
 			Program.SaveConfig();
-			if (canRegister) client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
-			else client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
+			if (canRegister)
+			{
+			  client.Register(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
+        Program.MainWindow.navigationControl.Path = "http://zero-k.info/?";
+			}
+			else
+			{
+			  client.Login(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword);
+			  Program.MainWindow.navigationControl.Path = "http://zero-k.info/?";
+			}
 		}
 
 		public void AddedToContainer(NotifyBarContainer container)
