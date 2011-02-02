@@ -89,7 +89,8 @@ namespace ZeroKWeb.Controllers
 
       var db = new ZkDataContext();
 
-      var result = new IndexResult() { Spotlight = spotlight, Top10Players = db.Accounts.Where(x=>x.LastLogin > DateTime.UtcNow.AddMonths(-1)).OrderByDescending(x=>x.Elo).Take(10) };
+      var result = new IndexResult() { Spotlight = spotlight, Top10Players = db.Accounts.Where(x=>x.SpringBattlePlayers.Any(y=> y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x=>x.Elo).Take(10) };
+      
       if (!Global.IsAccountAuthorized)
       {
         result.NewThreads = db.ForumThreads.OrderByDescending(x => x.LastPost).Take(10).Select(x => new NewThreadEntry() { ForumThread = x });
