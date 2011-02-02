@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -85,10 +86,10 @@ namespace ZeroKWeb.Controllers
       }
 
 
-      var result = new IndexResult() { Spotlight = spotlight };
-
 
       var db = new ZkDataContext();
+
+      var result = new IndexResult() { Spotlight = spotlight, Top10Players = db.Accounts.Where(x=>x.LastLogin > DateTime.UtcNow.AddMonths(-1)).OrderByDescending(x=>x.Elo).Take(10) };
       if (!Global.IsAccountAuthorized)
       {
         result.NewThreads = db.ForumThreads.OrderByDescending(x => x.LastPost).Take(10).Select(x => new NewThreadEntry() { ForumThread = x });
@@ -115,6 +116,7 @@ namespace ZeroKWeb.Controllers
     {
       public UnitSpotlight Spotlight;
       public IQueryable<NewThreadEntry> NewThreads;
+      public IEnumerable<Account> Top10Players;
     }
 
     public class UnitSpotlight
@@ -178,6 +180,7 @@ namespace ZeroKWeb.Controllers
       var thread = db.ForumThreads.Single(x => x.ForumThreadID == id);
       ForumPost post = null;
       ForumThreadLastRead last;
+      
       string postTitle = "Starting post ";
       if (Global.IsAccountAuthorized && (last = thread.ForumThreadLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)) != null)
       {
@@ -192,12 +195,13 @@ namespace ZeroKWeb.Controllers
 
       } else post = thread.ForumPosts.OrderBy(x => x.ForumPostID).FirstOrDefault();
       var sb = new StringBuilder();
-      sb.AppendFormat("Thread by {0}, {1} <br/>", HtmlHelperExtensions.PrintAccount(null, thread.AccountByCreatedAccountID).ToHtmlString(), thread.Created.ToAgoString()) ;
+      
       if (post != null)
       {
-        sb.AppendFormat("<b>{0} {1}, {2}</b>", postTitle, HtmlHelperExtensions.PrintAccount(null, post.Account).ToHtmlString(), post.Created.ToAgoString());
+        sb.AppendFormat("{0} {1}, {2}", postTitle, HtmlHelperExtensions.PrintAccount(null, post.Account).ToHtmlString(), post.Created.ToAgoString());
         sb.AppendFormat("<br/><span>{0}</span><br/>", HtmlHelperExtensions.BBCode(null, post.Text).ToHtmlString());
       }
+      sb.AppendFormat("<small>Thread by {0}, {1}</small>", HtmlHelperExtensions.PrintAccount(null, thread.AccountByCreatedAccountID).ToHtmlString(), thread.Created.ToAgoString());
       return sb.ToString();
     }
 

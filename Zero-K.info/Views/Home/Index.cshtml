@@ -26,7 +26,8 @@
   <div id="topten" class="border">
     <h2>
       <a>Top Players</a></h2>
-    <table>
+    <table cellpadding='0' cellspacing='0'>
+
       <tr>
         <th width="30" align="left">
           #
@@ -38,8 +39,16 @@
           ELO
         </th>
       </tr>
+
+      @{var cnt = 1;}
+      @foreach (var a in Model.Top10Players) {
+        <tr>
+        <td>@(cnt++)</td>
+        <td><small>@Html.PrintAccount(a)</small></td>
+        <td>@Math.Round(a.Elo)</td>
+        </tr>      
+      }
     </table>
-    <a href='http://springie.licho.eu/top50.php'>Click here for now :)</a>
   </div>
   <div class="border">
   <h2><a>Last posts</a></h2>

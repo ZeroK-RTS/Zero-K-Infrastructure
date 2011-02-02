@@ -27,7 +27,7 @@ namespace ZkData
         try {
           AuthServiceClient.SendLobbyMessage(this,
                                              string.Format(
-                                               "Congratulations! You just leveled up to level {0}. spring://http://zero-k.info/Users.mvc/Detail/{1}",
+                                               "Congratulations! You just leveled up to level {0}. spring://http://zero-k.info/Users.mvc/{1}",
                                                Level,
                                                Name));
         } catch (Exception ex)

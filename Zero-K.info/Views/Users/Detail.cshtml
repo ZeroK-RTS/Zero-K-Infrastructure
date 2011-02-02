@@ -1,0 +1,27 @@
+﻿@model ZkData.Account
+@using ZkData;
+
+@{
+  Page.Title = Model.Name;
+}
+
+<h2>@Html.PrintAccount(Model)</h2>
+
+<table>
+<tr><td>Level: </td><td>@Model.Level</td></tr>
+<tr><td>XP: </td><td>@Model.XP</td></tr>
+<tr><td>XP for next level: </td><td>@Account.GetXpForLevel(Model.Level+1)</td></tr>
+<tr><td>Aliases:</td><td>@Model.Aliases</td></tr>
+<tr><td>Elo:</td><td>@Model.Elo</td></tr>
+@if (Model.IsAdmin) {
+<tr><td>Administrator:</td><td>@(Model.IsLobbyAdministrator ? "Lobby": "Zero-K")</td></tr>
+}
+
+<tr><td>First login:</td><td>@Model.FirstLogin.ToAgoString()</td></tr>
+<tr><td>Last login:</td><td>@Model.LastLogin.ToAgoString()</td></tr>
+<tr><td>Games played:</td><td>@Model.SpringBattlePlayers.Count()</td></tr>
+<tr><td>Missions played:</td><td>@Model.MissionRunCount</td></tr>
+<tr><td>Post count:</td><td>@Model.ForumPosts.Count()</td></tr>
+</table>
+
+<a href='spring://chat/user/@Model.Name'>Send private message to @Model.Name</a>
