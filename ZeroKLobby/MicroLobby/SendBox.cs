@@ -22,6 +22,7 @@ namespace ZeroKLobby.MicroLobby
 		public SendBox()
 		{
 			Multiline = true;
+            this.Font = Program.Conf.ChatFont;
 		}
 
 		protected override void OnKeyPress(KeyPressEventArgs e)

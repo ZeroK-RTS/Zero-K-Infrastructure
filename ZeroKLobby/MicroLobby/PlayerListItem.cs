@@ -12,8 +12,12 @@ namespace ZeroKLobby.MicroLobby
 {
 	public class PlayerListItem: IDisposable
 	{
-		readonly Font boldFont = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
-		Font font = new Font("Segoe UI", 9, FontStyle.Regular);
+		//readonly Font boldFont = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
+        readonly Font boldFont = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size, FontStyle.Bold);
+
+		//Font font = new Font("Segoe UI", 9, FontStyle.Regular);
+        Font font = Program.Conf.ChatFont;
+
 		int height = 16;
 		public string SlotButton;
 		public int? AllyTeam { get; set; }
