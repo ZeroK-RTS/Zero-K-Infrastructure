@@ -18,10 +18,11 @@ namespace ZkData
       if (IsMission || HasBots || PlayerCount < 2)
       {
         LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
-        WinnerTeamXpChange = GlobalConst.XpForMissionOrBots; 
+        WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory; 
         foreach (var a in SpringBattlePlayers.Where(x=>!x.IsSpectator))
         {
-          a.Account.XP += GlobalConst.XpForMissionOrBots;
+          if (a.IsInVictoryTeam) a.Account.XP += GlobalConst.XpForMissionOrBotsVictory;
+          else a.Account.XP += GlobalConst.XpForMissionOrBots;
         }
         
         IsEloProcessed = true;
