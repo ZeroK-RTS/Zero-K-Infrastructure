@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,39 @@ namespace Fixer
   class Program
   {
     static void Main(string[] args)
+    {
+      ImportSpringiePlayers();
+      //FixMaps();
+    }
+
+    static void ImportSpringiePlayers()
+    {
+      var db = new ZkDataContext();
+      foreach (var line in File.ReadLines("springie.csv").AsParallel())
+      {
+        var m = Regex.Match(line, "\"[0-9]+\";\"([^\"]+)\";\"[0-9]+\";\"[0-9]+\";\"([^\"]+)\";\"([^\"]+)\"");
+        if (m.Success)
+        {
+          string name = m.Groups[1].Value;
+          double elo = double.Parse(m.Groups[2].Value,CultureInfo.InvariantCulture);
+          double w = double.Parse(m.Groups[3].Value,CultureInfo.InvariantCulture);
+          if (elo != 1500 || w != 1)
+          {
+            foreach (var a in db.Accounts.Where(x => x.Name == name))
+            {
+              a.Elo = (float)elo;
+              a.EloWeight = (float)w;
+            }
+            Console.WriteLine(name);
+          }
+        }
+
+      }
+      db.SubmitChanges();
+
+    }
+
+    static void FixMaps()
     {
       try
       {
