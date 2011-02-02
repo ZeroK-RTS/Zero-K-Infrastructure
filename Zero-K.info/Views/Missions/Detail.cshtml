@@ -43,7 +43,7 @@
       <br />
       <br />
       Players: @m.MinToMaxHumansString<br />
-      <small>@Html.PrintLines(m.GetPseudoTags())</small> Map: <a href='@Url.Action("DetailName", "Maps", new { name = m.Map })' title='$map$@m.Map'>@m.Map</a><br />
+      <small>@Html.PrintLines(m.GetPseudoTags())</small> Map: @Html.PrintMap(m.Map)<br />
       Game:@(m.Mod ?? m.ModRapidTag)<br />
       Created:@m.CreatedTime.ToAgoString()<br />
       @if (m.Revision > 0) {

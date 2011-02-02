@@ -5,6 +5,8 @@ namespace ZkData
 {
   partial class SpringBattle
   {
+    
+    
     public void CalculateElo()
     {
       if (IsEloProcessed || !SpringBattlePlayers.Any(x => !x.IsSpectator && x.IsInVictoryTeam) ||

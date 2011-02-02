@@ -143,7 +143,6 @@
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
-    <Content Include="Views\Users\Index.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -185,6 +184,8 @@
     <Content Include="Views\Battles\Index.cshtml" />
     <Content Include="Views\Shared\CommentList.cshtml" />
     <Content Include="Views\Users\Detail.cshtml" />
+    <Content Include="Views\Users\UserList.cshtml.cshtml" />
+    <Content Include="Views\Battles\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

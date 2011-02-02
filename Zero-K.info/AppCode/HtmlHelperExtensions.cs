@@ -126,6 +126,26 @@ namespace System.Web.Mvc
       return new MvcHtmlString(WikiHandler.LoadWiki(node));
     }
 
+    public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattle battle)
+    {
+      var url = new UrlHelper(helper.ViewContext.RequestContext);
+      
+      var type = "Multiplayer";
+      if (battle.PlayerCount <= 1) type = "Singleplayer";
+      if (battle.HasBots) type = "Bots";
+      if (battle.IsMission) type = "Mission";
+      
+
+      return new MvcHtmlString(string.Format("<a href='{0}' title='$battle${1}'>B{1}</a> {2} on {3} ({4})", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), type));
+    }
+
+
+    public static MvcHtmlString PrintMap(this HtmlHelper helper, string name)
+    {
+      var url = new UrlHelper(helper.ViewContext.RequestContext);
+      return new MvcHtmlString(string.Format("<a href='{0}' title='$map${1}'>{1}</a>", url.Action("DetailName", "Maps", new { name }), name));
+    }
+
 
     public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account)
     {
