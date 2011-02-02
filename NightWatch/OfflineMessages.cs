@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
 using PlasmaShared;
@@ -13,6 +14,8 @@ namespace NightWatch
 	class OfflineMessages
 	{
 		readonly TasClient client;
+
+	  const int MessageDelay = 66;
 
 		public OfflineMessages(TasClient client)
 		{
@@ -40,6 +43,7 @@ namespace NightWatch
 						{
 							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
 							client.Say(TasClient.SayPlace.User, name, text, false);
+              Thread.Sleep(MessageDelay);
 						}
 						db.LobbyMessages.DeleteAllOnSubmit(messages);
 						db.SubmitChanges();
@@ -159,6 +163,7 @@ namespace NightWatch
 						{
 							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
 							client.Say(TasClient.SayPlace.User, e.Data.Name, text, false);
+						  Thread.Sleep(MessageDelay);
 						}
 						db.LobbyMessages.DeleteAllOnSubmit(messages);
 						db.SubmitChanges();
