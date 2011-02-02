@@ -7,7 +7,7 @@
 
 <h2>@Html.PrintAccount(Model)</h2>
 <table>
-<tr><td>
+<tr><td valign="top">
 <table>
 <tr><td>Level: </td><td>@Model.Level</td></tr>
 <tr><td>XP: </td><td>@Model.XP</td></tr>
@@ -26,25 +26,23 @@
 </table>
 <a href='spring://chat/user/@Model.Name'>Send private message to @Model.Name</a>
 </td>
-<td>
-<h3>Unread posts</h3>
-under construction
-<h3>My posts</h3>
-@foreach (var t in Model.ForumPosts.Select(x=>x.ForumThread).OrderByDescending(x => x.ForumThreadID).Take(10)) { 
- <a href='@Url.Action("Thread","Forum", new{id=t.ForumThreadID})' title='$thread$@t.ForumThreadID'>@t.Title</a><br />
+<td width="40%" valign="top">
+<h3>Posted threads</h3>
+@foreach (var t in Model.ForumPosts.Select(x=>x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10)) { 
+  <small>* <a href='@Url.Action("Thread","Forum", new{id=t.ForumThreadID})' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
 }
   
-
 <h3>Last battles</h3>
-@foreach (var b in Model.SpringBattlePlayers.Select(x => x.SpringBattle).Take(10)) {
- @Html.PrintBattle(b)<br />
+@foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x=>x.SpringBattleID).Select(x => x.SpringBattle).Take(10)) {
+ <small>@Html.PrintBattle(b)</small><br />
 }
+</span>
 </td>
 </tr>
 <tr>
 <td colspan='2'>
-<h3>Unlocked:</h3>
-<h3>Available unlocks:</h3>
+<h3>Unlocked:</h3>under construction..
+<h3>Available unlocks:</h3>under construction..
 </td>
 
 </tr>

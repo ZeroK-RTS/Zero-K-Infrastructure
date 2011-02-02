@@ -183,7 +183,7 @@
     <Content Include="Views\Forum\ForumPath.cshtml" />
     <Content Include="Views\Battles\Index.cshtml" />
     <Content Include="Views\Shared\CommentList.cshtml" />
-    <Content Include="Views\Users\Detail.cshtml" />
+    <Content Include="Views\Shared\UserDetail.cshtml" />
     <Content Include="Views\Users\UserList.cshtml.cshtml" />
     <Content Include="Views\Battles\Detail.cshtml" />
   </ItemGroup>

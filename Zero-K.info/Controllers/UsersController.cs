@@ -23,7 +23,7 @@ namespace ZeroKWeb.Controllers
 
           if (!string.IsNullOrEmpty(name))
           {
-            return View("Detail", acc);
+            return View("UserDetail", acc);
 
 
           }
