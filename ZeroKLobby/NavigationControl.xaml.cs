@@ -85,10 +85,11 @@ namespace ZeroKLobby
     {
       Buttons = new ObservableCollection<ButtonInfo>()
                 {
-                  new ButtonInfo() { Label = "SINGLEPLAYER", TargetPath = "http://zero-k.info/Missions.mvc", Icon = HeaderButton.ButtonIcon.Singleplayer },
+                  new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", LinkBehavior = true},
+                  new ButtonInfo() { Label = "SINGLEPLAYER", TargetPath = "http://zero-k.info/Missions.mvc", Icon = HeaderButton.ButtonIcon.Singleplayer, LinkBehavior =true },
                   new ButtonInfo() { Label = "MULTIPLAYER", TargetPath = "battles", Icon = HeaderButton.ButtonIcon.Multiplayer },
                   new ButtonInfo() { Label = "CHAT", TargetPath = "chat" },
-                  new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps.mvc" },
+                  new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps.mvc", LinkBehavior = true },
                   new ButtonInfo() { Label = "WIDGETS", TargetPath = "widgets", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
                   new ButtonInfo() { Label = "RAPID", TargetPath = "rapid", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
                   new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings" },
@@ -179,13 +180,14 @@ namespace ZeroKLobby
     void LocationButton_Click(object sender, RoutedEventArgs e)
     {
       var buttonInfo = (ButtonInfo)((HeaderButton)sender).Tag;
-      Path = GetLastPathStartingWith(buttonInfo.TargetPath);
+      if (!buttonInfo.LinkBehavior) Path = GetLastPathStartingWith(buttonInfo.TargetPath);
+      else Path = buttonInfo.TargetPath;
     }
 
 
     void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-      if (string.IsNullOrEmpty(Path)) Path = "http://zero-k.info/Missions.mvc";
+      if (string.IsNullOrEmpty(Path)) Path = "http://zero-k.info/";
     }
 
 
@@ -237,6 +239,10 @@ namespace ZeroKLobby
       public string Label { get; set; }
       public HeaderButton.ButtonIcon Icon { get; set; }
       public string TargetPath;
+      /// <summary>
+      /// If true, lobby wont remember subpath for this button and instead go directly to target location
+      /// </summary>
+      public bool LinkBehavior; 
       public Visibility Visible { get; set; }
 
       public ButtonInfo()

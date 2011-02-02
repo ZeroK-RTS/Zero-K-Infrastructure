@@ -76,6 +76,11 @@ namespace ZeroKLobby
 
     public static void OpenWeb(String url)
     {
+      if (url.StartsWith("http://zero-k.info"))
+      {
+        Program.MainWindow.navigationControl.Path = url;
+        return;
+      }
       try
       {
         Process.Start(url);

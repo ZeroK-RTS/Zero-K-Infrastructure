@@ -21,15 +21,13 @@ namespace ZeroKLobby.MicroLobby
 		
 		public BrowserControl()
 		{
-			InitializeComponent();
-      try
-      {
+      try {
         WindowsApi.InternetSetCookie(Config.BaseUrl, GlobalConst.LobbyAccessCookieName, "1");
-      } catch (Exception ex)
-      {
+      } catch (Exception ex) {
         Trace.TraceWarning("Unable to set ZK cookie:{0}", ex);
       }
       if (Process.GetCurrentProcess().ProcessName == "devenv") return;
+      InitializeComponent();
 		}
 
 

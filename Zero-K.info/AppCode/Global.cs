@@ -38,6 +38,6 @@ namespace ZeroKWeb
         return true;
       }
     }
-    public static bool IsLobbyAccess { get { return HttpContext.Current.Request.Cookies[GlobalConst.LobbyAccessCookieName] != null && IsAccountAuthorized; } }
+    public static bool IsLobbyAccess { get { return HttpContext.Current.Request.Cookies[GlobalConst.LobbyAccessCookieName] != null; } }
   }
 }

@@ -248,6 +248,7 @@ namespace ZeroKLobby
           {
             Trace.TraceInformation("TASC login accepted");
             if (SpringPaths.SpringVersion != TasClient.ServerSpringVersion) Downloader.GetAndSwitchEngine(TasClient.ServerSpringVersion);
+            Program.MainWindow.navigationControl.Path = "http://zero-k.info/?"; // go to home after login again - to display new user page
           };
 
         TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
