@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11.125, 8.5" name="ModStatsLinq">
+  <DataContextMoniker Name="/ModStatsLinqDataContext" />
+  <nestedChildShapes>
+    <classShape Id="bfd8b255-d571-493d-b42b-a6cf858b45b1" absoluteBounds="2.125, 4.75, 2, 1.533190275331338">
+      <DataClassMoniker Name="/ModStatsLinqDataContext/Damage" />
+      <nestedChildShapes>
+        <elementListCompartment Id="1d649d9c-115d-4bfb-88a7-7baa2b6cf575" absoluteBounds="2.14, 5.21, 1.9700000000000002, 0.97319027533133817" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="9d1f657b-be6d-451c-9ee6-8bbea96de0e5" absoluteBounds="8.875, 5.25, 2, 1.6889214715361596">
+      <DataClassMoniker Name="/ModStatsLinqDataContext/Unit" />
+      <nestedChildShapes>
+        <elementListCompartment Id="afe756ae-4ec2-4f17-9818-dfa078a6d8f5" absoluteBounds="8.89, 5.71, 1.9700000000000002, 1.1289214715361595" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="4f5e74c7-0ed2-448e-8c08-0fc61db0edc6" absoluteBounds="6.125, 3.25, 2, 2.3118462563554445">
+      <DataClassMoniker Name="/ModStatsLinqDataContext/Game" />
+      <nestedChildShapes>
+        <elementListCompartment Id="2953d387-3078-4f7d-a21c-23c7bc89624a" absoluteBounds="6.14, 3.71, 1.9700000000000002, 1.7518462563554444" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(6.125 : 5.15592312817772); (4.125 : 5.15592312817772)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/ModStatsLinqDataContext/Game/Game_Damage" />
+      <nodes>
+        <classShapeMoniker Id="4f5e74c7-0ed2-448e-8c08-0fc61db0edc6" />
+        <classShapeMoniker Id="bfd8b255-d571-493d-b42b-a6cf858b45b1" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(8.125 : 4.2499995); (9.875 : 4.2499995); (9.875 : 5.25)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/ModStatsLinqDataContext/Game/Game_Unit" />
+      <nodes>
+        <classShapeMoniker Id="4f5e74c7-0ed2-448e-8c08-0fc61db0edc6" />
+        <classShapeMoniker Id="9d1f657b-be6d-451c-9ee6-8bbea96de0e5" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

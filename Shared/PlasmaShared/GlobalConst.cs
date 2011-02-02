@@ -2,6 +2,7 @@
 {
 	public static class GlobalConst
 	{
+	  public const int XpForMissionOrBots = 20;
 	  public const double EloWeightMax = 6;
     public const double EloWeightLearnFactor = 20;
 	  public const string AuthServiceUri = "net.tcp://localhost:8202";

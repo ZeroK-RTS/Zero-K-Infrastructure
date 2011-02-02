@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Security.Principal;
 
 namespace ZkData
@@ -7,16 +8,39 @@ namespace ZkData
   partial class Account: IPrincipal, IIdentity
   {
     public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
-
-    public static int GetXpForLevel(int level)
-    {
-      return level * 80 + 20 * level * level;
-    }
-
     /// <summary>
     /// Aggregate admin rights - either lobby or ZK admin
     /// </summary>
     public bool IsAdmin { get { return IsLobbyAdministrator || IsZeroKAdmin; } }
+
+    partial void OnXPChanged()
+    {
+      CheckLevelUp();
+    }
+
+
+    public void CheckLevelUp()
+    {
+      if (XP > GetXpForLevel(Level + 1))
+      {
+        Level++;
+        try {
+          AuthServiceClient.SendLobbyMessage(this,
+                                             string.Format(
+                                               "Congratulations! You just leveled up to level {0}. spring://http://zero-k.info/Users.mvc/Detail/{1}",
+                                               Level,
+                                               Name));
+        } catch (Exception ex)
+        {
+          Trace.TraceError("Error sending level up lobby message: {0}", ex);
+        }
+      }
+    }
+
+    public static int GetXpForLevel(int level)
+    {
+      return level*80 + 20*level*level;
+    }
 
     partial void OnCreated()
     {

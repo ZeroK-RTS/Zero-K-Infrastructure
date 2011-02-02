@@ -7,9 +7,23 @@ namespace ZkData
   {
     public void CalculateElo()
     {
-      if (IsEloProcessed || IsMission || HasBots || PlayerCount < 2 || !SpringBattlePlayers.Any(x => !x.IsSpectator && x.IsInVictoryTeam) ||
+      if (IsEloProcessed || !SpringBattlePlayers.Any(x => !x.IsSpectator && x.IsInVictoryTeam) ||
           !SpringBattlePlayers.Any(x => !x.IsSpectator && x.IsInVictoryTeam)  || Duration < 120)
       {
+        IsEloProcessed = true;
+        return;
+      }
+
+
+      if (IsMission || HasBots || PlayerCount < 2)
+      {
+        LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
+        WinnerTeamXpChange = GlobalConst.XpForMissionOrBots; 
+        foreach (var a in SpringBattlePlayers.Where(x=>!x.IsSpectator))
+        {
+          a.Account.XP += GlobalConst.XpForMissionOrBots;
+        }
+        
         IsEloProcessed = true;
         return;
       }
@@ -60,7 +74,7 @@ namespace ZkData
 
       var sumW = winnerW + loserW;
 
-      WinnerTeamXpChange = (int)(20 +9* scoreWin*winnerInvW /(2.0+winners.Count));
+      WinnerTeamXpChange = (int)(25 +9* 32 * (1-eWin) /(2.0+winners.Count));
       
       foreach (var r in winners)
       {
@@ -77,7 +91,7 @@ namespace ZkData
         }
       }
 
-      LoserTeamXpChange = (int)(10 + (32 + scoreLose*loserInvW)*3.0/(2.0 + losers.Count));
+      LoserTeamXpChange = (int)(10 + (32 - 32 * eLose)*3.0/(2.0 + losers.Count));
       foreach (var r in losers)
       {
         var change = (float)(scoreLose * r.Account.EloInvWeight);
@@ -91,19 +105,6 @@ namespace ZkData
         {
           r.Account.EloWeight = (float)(r.Account.EloWeight + ((sumW - r.Account.EloWeight)/(sumCount - 1))/GlobalConst.EloWeightLearnFactor);
           if (r.Account.EloWeight > GlobalConst.EloWeightMax) r.Account.EloWeight = (float)GlobalConst.EloWeightMax;
-        }
-      }
-
-      // check for level ups
-      foreach (var a in losers.Union(winners).Select(x=>x.Account))
-      {
-        if (a.XP > Account.GetXpForLevel(a.Level + 1))
-        {
-          a.Level++;
-          AuthServiceClient.SendLobbyMessage(a,
-                                             string.Format("Congratulations! You just leveled up to level {0}. spring://http://zero-k.info/Users.mvc/{1}",
-                                                           a.Level,
-                                                           a.Name));
         }
       }
 

@@ -167,6 +167,8 @@ namespace ZeroKWeb
       {
         var acc = AuthServiceClient.VerifyAccountHashed(login, passwordHash);
         if (acc == null) throw new ApplicationException("Invalid login or password");
+        
+        acc.XP += GlobalConst.XpForMissionOrBots;
 
         var mission = db.Missions.Single(x => x.Name == missionName);
 

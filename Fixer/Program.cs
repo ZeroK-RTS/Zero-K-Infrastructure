@@ -19,8 +19,19 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
-      ImportSpringiePlayers();
+      //ImportSpringiePlayers();
+      RecalculateBattleElo();
       //FixMaps();
+    }
+
+    static void RecalculateBattleElo()
+    {
+      var db = new ZkDataContext();
+      foreach (var b in db.SpringBattles)
+      {
+        b.CalculateElo();
+        db.SubmitChanges();
+      }
     }
 
     static void ImportSpringiePlayers()
