@@ -343,22 +343,22 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSpringBattleStartSetup", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, int[] userAccountIDs) {
+        public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, BattleStartSetupPlayer[] players) {
             object[] results = this.Invoke("GetSpringBattleStartSetup", new object[] {
                         hostName,
                         map,
                         mod,
-                        userAccountIDs});
+                        players});
             return ((SpringBattleStartSetup)(results[0]));
         }
         
         /// <remarks/>
-        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, int[] userAccountIDs) {
-            this.GetSpringBattleStartSetupAsync(hostName, map, mod, userAccountIDs, null);
+        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, BattleStartSetupPlayer[] players) {
+            this.GetSpringBattleStartSetupAsync(hostName, map, mod, players, null);
         }
         
         /// <remarks/>
-        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, int[] userAccountIDs, object userState) {
+        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, BattleStartSetupPlayer[] players, object userState) {
             if ((this.GetSpringBattleStartSetupOperationCompleted == null)) {
                 this.GetSpringBattleStartSetupOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSpringBattleStartSetupOperationCompleted);
             }
@@ -366,7 +366,7 @@ namespace PlasmaShared.ContentService {
                         hostName,
                         map,
                         mod,
-                        userAccountIDs}, this.GetSpringBattleStartSetupOperationCompleted, userState);
+                        players}, this.GetSpringBattleStartSetupOperationCompleted, userState);
         }
         
         private void OnGetSpringBattleStartSetupOperationCompleted(object arg) {
@@ -985,11 +985,34 @@ namespace PlasmaShared.ContentService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class PlayerStartup {
+    public partial class SpringBattleStartSetup {
+        
+        private ScriptKeyValuePair[] modOptionsField;
+        
+        /// <remarks/>
+        public ScriptKeyValuePair[] ModOptions {
+            get {
+                return this.modOptionsField;
+            }
+            set {
+                this.modOptionsField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class BattleStartSetupPlayer {
         
         private int accountIDField;
         
-        private ScriptKeyValuePair[] customScripKeysField;
+        private int allyTeamField;
+        
+        private bool isSpectatorField;
         
         /// <remarks/>
         public int AccountID {
@@ -1002,33 +1025,22 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        public ScriptKeyValuePair[] CustomScripKeys {
+        public int AllyTeam {
             get {
-                return this.customScripKeysField;
+                return this.allyTeamField;
             }
             set {
-                this.customScripKeysField = value;
+                this.allyTeamField = value;
             }
         }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class SpringBattleStartSetup {
-        
-        private PlayerStartup[] playersField;
         
         /// <remarks/>
-        public PlayerStartup[] Players {
+        public bool IsSpectator {
             get {
-                return this.playersField;
+                return this.isSpectatorField;
             }
             set {
-                this.playersField = value;
+                this.isSpectatorField = value;
             }
         }
     }

@@ -27,9 +27,8 @@ namespace ZkData
         try {
           AuthServiceClient.SendLobbyMessage(this,
                                              string.Format(
-                                               "Congratulations! You just leveled up to level {0}. http://zero-k.info/Users.mvc/{1}",
-                                               Level,
-                                               Name));
+                                               "Congratulations! You just leveled up to level {0}. http://zero-k.info/Users.mvc/{1} ",
+                                               Level,Name));
         } catch (Exception ex)
         {
           Trace.TraceError("Error sending level up lobby message: {0}", ex);

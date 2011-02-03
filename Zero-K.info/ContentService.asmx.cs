@@ -102,8 +102,15 @@ namespace ZeroKWeb
       }
     }
 
+    public class BattleStartSetupPlayer
+    {
+      public int AccountID;
+      public int AllyTeam;
+      public bool IsSpectator;
+    }
+
     [WebMethod]
-    public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<int> userAccountIDs)
+    public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<BattleStartSetupPlayer> players)
     {
       var ret = new SpringBattleStartSetup();
 
@@ -348,19 +355,13 @@ namespace ZeroKWeb
 
     public class SpringBattleStartSetup
     {
-      public List<PlayerStartup> Players = new List<PlayerStartup>();
-
-      public class PlayerStartup
+      public List<ScriptKeyValuePair> ModOptions = new List<ScriptKeyValuePair>();
+      public class ScriptKeyValuePair
       {
-        public int AccountID;
-        public List<ScriptKeyValuePair> CustomScripKeys;
-
-        public class ScriptKeyValuePair
-        {
-          public string Key;
-          public string Value;
-        }
+        public string Key;
+        public string Value;
       }
+
     }
   }
 }

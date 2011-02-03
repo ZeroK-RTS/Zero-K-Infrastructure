@@ -71,9 +71,9 @@ namespace LobbyClient
     Dictionary<string, BattlePlayerResult> statsPlayers = new Dictionary<string, BattlePlayerResult>();
     Talker talker;
 
-    public DateTime GameEnded { get { return battleResult.StartTime.AddSeconds(battleResult.Duration); } }
+    public DateTime GameEnded { get { return battleResult.StartTime.AddSeconds(battleResult.Duration).ToLocalTime(); } }
 
-    public DateTime GameStarted { get { return battleResult.StartTime; } }
+    public DateTime GameStarted { get { return battleResult.StartTime.ToLocalTime(); } }
 
     public bool IsRunning
     {
@@ -193,7 +193,7 @@ namespace LobbyClient
         readyPlayers.Clear();
         talker.SpringEvent += talker_SpringEvent;
         isHosting = client != null && client.MyBattle != null && client.MyBattle.Founder == client.MyUser.Name;
-
+        
         if (isHosting) scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + client.MyBattle.Founder + ".txt").Replace('\\', '/');
         else scriptPath = Utils.MakePath(paths.WritableDirectory, "script.txt").Replace('\\', '/');
 
@@ -219,8 +219,7 @@ namespace LobbyClient
               startSetup = service.GetSpringBattleStartSetup(client.MyUser.Name,
                                                              client.MyBattle.MapName,
                                                              client.MyBattle.ModName,
-                                                             client.MyBattle.Users.Where(x => !x.IsSpectator).Select(x => x.LobbyUser.AccountID).
-                                                               ToArray());
+                                                             client.MyBattle.Users.Where(x => !x.IsSpectator).Select(x => new BattleStartSetupPlayer() { AccountID = x.LobbyUser.AccountID, AllyTeam = x.AllyNumber, IsSpectator = x.IsSpectator }).ToArray());
             }
             catch (Exception ex)
             {
@@ -277,7 +276,7 @@ namespace LobbyClient
         process.EnableRaisingEvents = true;
 
         PlanetWarsMessages = new Dictionary<string, int>();
-        battleResult.StartTime = DateTime.Now;
+        battleResult.StartTime = DateTime.UtcNow;
         process.Start();
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();

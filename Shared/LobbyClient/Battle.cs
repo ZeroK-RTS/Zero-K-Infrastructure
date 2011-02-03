@@ -69,7 +69,6 @@ namespace LobbyClient
 		public int Rank { get; set; }
 		public Dictionary<int, BattleRect> Rectangles { get; set; }
 		public List<string> ScriptTags = new List<string>();
-	  PlayerStartup playerSetup;
 	  public int SpectatorCount { get; set; }
 		public string Title { get; set; }
 
@@ -252,20 +251,6 @@ namespace LobbyClient
 						script.AppendFormat("     Rank={0};\n", u.LobbyUser.Rank);
 						script.AppendFormat("     CountryCode={0};\n", u.LobbyUser.Country);
 						if (u.ScriptPassword != null) script.AppendFormat("     Password={0};\n", u.ScriptPassword);
-
-            // start setup - custom player tags - like unlocks
-            if (!u.IsSpectator && startSetup != null)
-            {
-              playerSetup = startSetup.Players.FirstOrDefault(x => x.AccountID == u.LobbyUser.AccountID);
-              if (playerSetup != null && playerSetup.CustomScripKeys != null)
-              {
-                foreach (var entry in playerSetup.CustomScripKeys)
-                {
-                  script.AppendFormat("     {0}={1};\n", entry.Key, entry.Value);
-                }
-              }
-            }
-
 					  script.AppendLine("  }");
 					}
 
@@ -379,15 +364,26 @@ namespace LobbyClient
 
 						script.AppendLine("  [MODOPTIONS]");
 						script.AppendLine("  {");
-						foreach (var o in mod.Options)
+
+            
+					  Dictionary<string, string> options = new Dictionary<string, string>();
+
+            // put standard modoptions to options dictionary
+						foreach (var o in mod.Options.Where(x=>x.Type!= OptionType.Section))
 						{
-							if (o.Type != OptionType.Section)
-							{
-								var v = o.Default;
-								if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
-								script.AppendFormat("    {0}={1};\n", o.Key, v);
-							}
+  						var v = o.Default;
+	  					if (ModOptions.ContainsKey(o.Key)) v = ModOptions[o.Key];
+              options[o.Key] = v;
 						}
+
+            // replace/add custom modoptions from startsetup (if they exist)
+            if (startSetup != null && startSetup.ModOptions != null) {
+              foreach (var entry in startSetup.ModOptions) options[entry.Key] = entry.Value;
+            }
+
+            // write final options to script
+            foreach (var kvp in options) script.AppendFormat("    {0}={1};\n", kvp.Key, kvp.Value);
+            
 						script.AppendLine("  }");
 					}
 
