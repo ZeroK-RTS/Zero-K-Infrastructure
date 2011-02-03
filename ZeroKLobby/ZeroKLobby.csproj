@@ -45,13 +45,13 @@
     <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
     <ProductName>Zero-K</ProductName>
     <PublisherName>Zero-K</PublisherName>
-    <MinimumRequiredVersion>2.10.0.0</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.10.1.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>3</ApplicationRevision>
-    <ApplicationVersion>2.10.0.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>2.10.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -154,6 +154,9 @@
     <Compile Include="MicroLobby\Floe\Enums.cs" />
     <Compile Include="NavigationControl.xaml.cs">
       <DependentUpon>NavigationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\ReplayBar.xaml.cs">
+      <DependentUpon>ReplayBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Notifications\MissionBar.xaml.cs">
       <DependentUpon>MissionBar.xaml</DependentUpon>
@@ -669,6 +672,10 @@
     <Page Include="NavigationControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Notifications\ReplayBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Notifications\MissionBar.xaml">
       <Generator>MSBuild:Compile</Generator>

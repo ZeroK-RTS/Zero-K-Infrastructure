@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using JetBrains.Annotations;
 using PlasmaDownloader.Packages;
@@ -18,7 +19,8 @@ namespace PlasmaDownloader
 		MAP,
 		MISSION,
 		GAME,
-		UNKNOWN
+		UNKNOWN,
+    DEMO
 	}
 
 
@@ -83,6 +85,8 @@ namespace PlasmaDownloader
 
     }
 
+
+    
 		[CanBeNull]
 		public Download GetResource(DownloadType type, string name)
 		{
@@ -94,7 +98,27 @@ namespace PlasmaDownloader
 
         if (scanner != null && scanner.HasResource(name)) return null;
 
-				if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
+
+        if (type == DownloadType.DEMO)
+        {
+          Uri target = new Uri(name);
+          var targetName = target.Segments.Last();
+          var filePath = Utils.MakePath(SpringPaths.WritableDirectory, "demos", targetName);
+          if (File.Exists(filePath)) return null;
+          try
+          {
+            Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+          } catch {}
+          var down = new WebFileDownload(name, filePath,  null);
+          downloads.Add(down);
+          DownloadAdded.RaiseAsyncEvent(this, new EventArgs<Download>(down));
+          down.Start();
+          return down;
+        }
+
+
+
+			  if (type == DownloadType.MOD || type == DownloadType.UNKNOWN)
 				{
 					var down = packageDownloader.GetPackageDownload(name);
 					if (down != null)

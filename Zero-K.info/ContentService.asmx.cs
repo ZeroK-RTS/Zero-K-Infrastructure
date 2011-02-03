@@ -223,7 +223,7 @@ namespace ZeroKWeb
                  StartTime = result.StartTime,
                  Title = result.Title,
                  ReplayFileName = result.ReplayName,
-                 EngineVersion = result.EngineVersion,
+                 EngineVersion = result.EngineVersion ?? "0.82.7", // hack remove when fixed
                };
       db.SpringBattles.InsertOnSubmit(sb);
 
