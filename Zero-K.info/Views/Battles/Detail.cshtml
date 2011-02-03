@@ -21,8 +21,7 @@ IsMisison: @Model.IsMission<br />
 Winners XP: @Model.WinnerTeamXpChange<br />
 Losers XP: @Model.LoserTeamXpChange<br />
 
-
-  <a href="@Uri.EscapeUriString(string.Format("spring://http://zero-k.info/Battles.mvc/Detail/{4}@start_replay:{0},{1},{2},{3}", "http://springdemos.licho.eu/" + Model.ReplayFileName, Model.ResourceByModResourceID.InternalName, Model.ResourceByMapResourceID.InternalName, Model.EngineVersion, Model.SpringBattleID))">  <img src="../../img/playnow.png" width="250" alt="Play now"/></a><br />
+REPLAY: <a href="@Uri.EscapeUriString(string.Format("spring://http://zero-k.info/Battles.mvc/Detail/{4}@start_replay:{0},{1},{2},{3}", "http://springdemos.licho.eu/" + Model.ReplayFileName, Model.ResourceByModResourceID.InternalName, Model.ResourceByMapResourceID.InternalName, Model.EngineVersion, Model.SpringBattleID))">  <img src="../../img/playnow.png" width="250" alt="Play now"/></a><br />
 
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
   <a href='http://springdemos.licho.eu/@Model.ReplayFileName'>Manual download</a> <br />
