@@ -51,7 +51,6 @@ namespace ZeroKWeb.Controllers
     {
       var db = new ZkDataContext();
 
-      if (featured == null) featured = Global.ShowFeaturedByDefault;
 
       var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map);
       if (!string.IsNullOrEmpty(search))
@@ -86,7 +85,7 @@ namespace ZeroKWeb.Controllers
       else if (size == 2) ret = ret.Where(x => (x.MapWidth > 12 || x.MapHeight > 12) && (x.MapWidth <= 20 && x.MapHeight <= 20));
       else if (size == 3) ret = ret.Where(x => x.MapWidth > 20 || x.MapHeight > 20);
 
-      if (featured == true) ret = ret.OrderBy(x => x.FeaturedOrder); else ret = ret.OrderByDescending(x => x.ResourceID);
+      if (!Global.IsAccountAuthorized || Global.Account.LobbyTimeRank <=3) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x=>x.ResourceID); else ret = ret.OrderByDescending(x => x.ResourceID);
       if (offset != null) ret = ret.Skip(offset.Value);
       ret = ret.Take(Global.AjaxScrollCount);
 
@@ -95,7 +94,7 @@ namespace ZeroKWeb.Controllers
         return
           View(new MapIndexData
                {
-                 Title = featured == true ? "Featured maps" : "Latest maps",
+                 Title = "Latest maps",
                  Latest = ret,
                  LastComments =
                    db.Resources.Where(x => x.TypeID == ResourceType.Map && x.ForumThreadID != null).OrderByDescending(x => x.ForumThread.LastPost),

@@ -4,7 +4,12 @@
 }
 @foreach (var mission in Model) {
 	<div id='@mission.MissionID' class='mission fleft relative' title="$mission$@mission.MissionID" onclick="window.location='@Url.Action("Detail", new { id = mission.MissionID })'" >
-		<b>@mission.Name</b><br />
+		<b>@mission.Name</b>
+    @if (mission.FeaturedOrder.HasValue) { 
+      <img src="@Url.Content("~/img/star_40.png")" alt="Featured" style='float:right' />
+    }
+
+    <br />
 		@Html.PrintAccount(mission.Account)
 		<br />
 		<img width='96' height='96' border='1' src='@Href(string.Format("~/img/missions/{0}.png", mission.MissionID))' class='fleft' />
@@ -28,5 +33,6 @@
 		<span class="play"><a href='spring://@(Url.Action("Detail", "Missions", new { id = mission.MissionID }, Request.Url.Scheme) + (mission.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + mission.Name)'>
 				<img src="../../img/playnow.png" width="220" /></a>
 		</span>
+    
 	</div>
 }

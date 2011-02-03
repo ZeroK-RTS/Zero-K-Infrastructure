@@ -16,13 +16,12 @@ namespace ZeroKWeb.Controllers
     public ActionResult Index(string search, int? offset, bool? sp, bool? coop, bool? adversarial, bool? featured)
 		{
 			var db = new ZkDataContext();
-      if (featured == null) featured = Global.ShowFeaturedByDefault;
       if (!offset.HasValue) return
 				View(
 					new MissionsIndexData()
 					{
-            Title = featured == true ? "Featured missions" : "Latest missions",
-						LastUpdated = FilterMissions(db.Missions, search, featured.Value).Take(Global.AjaxScrollCount),
+            Title = "Latest missions",
+						LastUpdated = FilterMissions(db.Missions, search, featured).Take(Global.AjaxScrollCount),
 						MostPlayed = db.Missions.Where(x=>!x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.MissionRunCount),
             MostRating = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.Rating),
             LastComments = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.ForumThread.LastPost),
@@ -73,15 +72,17 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, bool featured, int? offset = null, bool? sp = null, bool? coop= null, bool? adversarial= null)
+		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, bool? featured, int? offset = null, bool? sp = null, bool? coop= null, bool? adversarial= null)
 		{
       ret = ret.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:")));
-      if (featured) ret = ret.Where(x => x.FeaturedOrder > 0);
+      if (featured == true) ret = ret.Where(x => x.FeaturedOrder > 0);
 			if (sp == false) ret = ret.Where(x => x.MaxHumans > 1);
 			if (coop == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) ||  x.MaxHumans > 1 && !x.IsCoop);
 			if (adversarial == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) || (x.MaxHumans > 1 && x.IsCoop));
 			if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => SqlMethods.Like(x.Name, '%' + search + '%') || SqlMethods.Like(x.Account.Name, '%' + search + '%'));
-      if (featured) ret = ret.OrderBy(x => x.FeaturedOrder);
+
+
+      if (!Global.IsAccountAuthorized || Global.Account.LobbyTimeRank <= 3) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ModifiedTime);
       else ret = ret.OrderByDescending(x => x.ModifiedTime);
       if (offset != null) ret = ret.Skip(offset.Value);
 

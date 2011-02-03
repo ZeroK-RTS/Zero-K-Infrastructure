@@ -59,8 +59,8 @@ Download: <select name="isDownloadable">
     <option value='0'>Not verified</option>
   </select>
   <br />
-<span title="Shows either featured maps or last changed maps">
-  Featured: @Html.CheckBox("featured", Global.ShowFeaturedByDefault)
+<span title="Search for featured maps">
+  Featured: @Html.CheckBox("featured")
 </span>
 <span title='Show maps that need to be manually tagged (sea, terrain, FFA etc diagnosed)' style='white-space:nowrap'>
   Needs tagging: @Html.CheckBox("needsTagging")

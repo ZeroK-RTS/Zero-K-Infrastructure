@@ -7,8 +7,8 @@
 	Zero-K Mission Editor</a> </span>
 
 <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
-  <span title="Shows either featured missions or last changed missions">
-    Featured: @Html.CheckBox("featured", Global.ShowFeaturedByDefault)
+  <span title="List only featured missions">
+    Featured: @Html.CheckBox("featured")
   </span>
 	<span title="Missions for one player">Singleplayer: @Html.CheckBox("sp", true)</span>
 	<span title="Missions where players fight together versus computer">Coop: @Html.CheckBox("coop", true)</span>

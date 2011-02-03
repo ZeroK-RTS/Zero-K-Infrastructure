@@ -15,13 +15,6 @@ namespace ZeroKWeb
         else return 0;
       }
     }
-    public static bool ShowFeaturedByDefault
-    {
-      get
-      {
-        return Account == null || Account.LobbyTimeRank <= 3;
-      }
-    }
 
     public static bool IsAccountAuthorized { get { return HttpContext.Current.User as Account != null; } }
     public static bool IsAdmin
