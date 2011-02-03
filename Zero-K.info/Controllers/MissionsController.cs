@@ -82,7 +82,7 @@ namespace ZeroKWeb.Controllers
 			if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => SqlMethods.Like(x.Name, '%' + search + '%') || SqlMethods.Like(x.Account.Name, '%' + search + '%'));
 
 
-      if (!Global.IsAccountAuthorized || Global.Account.LobbyTimeRank <= 3) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ModifiedTime);
+      if (!Global.IsAccountAuthorized || Global.Account.LobbyTimeRank <= 3 || featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ModifiedTime);
       else ret = ret.OrderByDescending(x => x.ModifiedTime);
       if (offset != null) ret = ret.Skip(offset.Value);
 

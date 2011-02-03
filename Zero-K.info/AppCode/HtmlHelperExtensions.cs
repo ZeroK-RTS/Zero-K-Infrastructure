@@ -242,10 +242,15 @@ namespace System.Web.Mvc
 
     public static string ToAgoString(this TimeSpan timeSpan)
     {
-      if (timeSpan.TotalMinutes < 2) return string.Format("{0} seconds ago", (int)timeSpan.TotalSeconds);
-      if (timeSpan.TotalHours < 2) return string.Format("{0} minutes ago", (int)timeSpan.TotalMinutes);
-      if (timeSpan.TotalDays < 2) return string.Format("{0} hours ago", (int)timeSpan.TotalHours);
-      if (timeSpan.TotalDays < 60) return string.Format("{0} days ago", (int)timeSpan.TotalDays);
+      return string.Format("{0} ago", timeSpan.ToNiceString());
+    }
+
+    public static string ToNiceString(this TimeSpan timeSpan)
+    {
+      if (timeSpan.TotalMinutes < 2) return string.Format("{0} seconds", (int)timeSpan.TotalSeconds);
+      if (timeSpan.TotalHours < 2) return string.Format("{0} minutes", (int)timeSpan.TotalMinutes);
+      if (timeSpan.TotalDays < 2) return string.Format("{0} hours", (int)timeSpan.TotalHours);
+      if (timeSpan.TotalDays < 60) return string.Format("{0} days", (int)timeSpan.TotalDays);
       return string.Format("{0} months ago", (int)(timeSpan.TotalDays/30));
     }
   }

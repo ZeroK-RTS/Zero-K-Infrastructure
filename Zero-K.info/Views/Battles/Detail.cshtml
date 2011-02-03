@@ -6,7 +6,7 @@
 Title: @Model.Title<br />
 Host: @Model.Account.Name <br />
 Started: @Model.StartTime.ToAgoString() <br />
-Duration: @TimeSpan.FromSeconds(Model.Duration).ToAgoString() <br />
+Duration: @TimeSpan.FromSeconds(Model.Duration).ToNiceString() <br />
 Players: @Model.PlayerCount <br />
 Bots: @Model.HasBots<br />
 IsMisison: @Model.IsMission<br />
@@ -16,18 +16,24 @@ Losers XP: @Model.LoserTeamXpChange<br />
 
 <div>
 @foreach (var grp in Model.SpringBattlePlayers.Where(x=>!x.IsSpectator).GroupBy(x=>x.AllyNumber)) {
-<span style='display:inline-block; @(grp.First().IsInVictoryTeam ? "background-color: green;":"")'>
+<span style='display:inline-block; @(grp.First().IsInVictoryTeam ? "background-color: #207020;":"background-color: #702020;")'>
 <h3>Team @(grp.Key+1)</h3>
 @foreach (var u in grp) {
   <span>@Html.PrintAccount(u.Account)
-    @(u.LoseTime.HasValue ? "died in " + u.LoseTime : "")  
-    Elo: @u.EloChange
+    @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")  
+    @if (u.EloChange.HasValue) {
+      @:Elo: @u.EloChange.Value.ToString("F1")
+    }
+    @foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID)) {
+      <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
+      
+    }
   </span><br />
 }
 </span>
- }
+}
 
- <span style='display:inline-block; background-color: Gray;'>
+ <span style='display:inline-block; background-color: #202020;'>
  <h4>Spectators</h4>
  @foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator)) {
  <small>@Html.PrintAccount(u.Account)</small><br />

@@ -85,7 +85,7 @@ namespace ZeroKWeb.Controllers
       else if (size == 2) ret = ret.Where(x => (x.MapWidth > 12 || x.MapHeight > 12) && (x.MapWidth <= 20 && x.MapHeight <= 20));
       else if (size == 3) ret = ret.Where(x => x.MapWidth > 20 || x.MapHeight > 20);
 
-      if (!Global.IsAccountAuthorized || Global.Account.LobbyTimeRank <=3) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x=>x.ResourceID); else ret = ret.OrderByDescending(x => x.ResourceID);
+      if (!Global.IsAccountAuthorized || Global.Account.LobbyTimeRank <=3 || featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x=>x.ResourceID); else ret = ret.OrderByDescending(x => x.ResourceID);
       if (offset != null) ret = ret.Skip(offset.Value);
       ret = ret.Take(Global.AjaxScrollCount);
 

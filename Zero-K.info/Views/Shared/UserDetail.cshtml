@@ -23,17 +23,23 @@
 <tr><td>Games played:</td><td>@Model.SpringBattlePlayers.Count()</td></tr>
 <tr><td>Missions played:</td><td>@Model.MissionRunCount</td></tr>
 <tr><td>Post count:</td><td>@Model.ForumPosts.Count()</td></tr>
+@foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x=>x.Count())) {
+  <tr><td><img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/></td>
+    <td>@award.Count()</td>
+  </tr>    
+}
+
 </table>
 <a href='spring://chat/user/@Model.Name'>Send private message to @Model.Name</a>
 </td>
 <td width="40%" valign="top">
 <h3>Posted threads</h3>
-@foreach (var t in Model.ForumPosts.Select(x=>x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10)) { 
-  <small>* <a href='@Url.Action("Thread","Forum", new{id=t.ForumThreadID})' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
+@foreach (var t in Model.ForumPosts.Select(x => x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10)) { 
+  <small>* <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
 }
   
 <h3>Last battles</h3>
-@foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x=>x.SpringBattleID).Select(x => x.SpringBattle).Take(10)) {
+@foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Select(x => x.SpringBattle).Take(10)) {
  <small>@Html.PrintBattle(b)</small><br />
 }
 </span>

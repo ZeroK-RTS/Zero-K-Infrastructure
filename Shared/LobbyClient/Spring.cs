@@ -549,7 +549,7 @@ namespace LobbyClient
     void StatsMarkDead(string name, bool isDead)
     {
       BattlePlayerResult sp;
-      if (statsPlayers.TryGetValue(name, out sp)) sp.LoseTime = isDead ? (int)DateTime.Now.Subtract(battleResult.StartTime).TotalSeconds : (int?)null;
+      if (statsPlayers.TryGetValue(name, out sp)) sp.LoseTime = isDead ? (int)DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds : (int?)null;
     }
 
     void process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
@@ -618,7 +618,7 @@ namespace LobbyClient
 
         case Talker.SpringEventType.SERVER_GAMEOVER:
           gameEndedOk = true;
-          battleResult.Duration = (int)DateTime.Now.Subtract(battleResult.StartTime).TotalSeconds;
+          battleResult.Duration = (int)DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds;
           if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
           break;
 
