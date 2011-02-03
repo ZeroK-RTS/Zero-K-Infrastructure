@@ -62,7 +62,7 @@ namespace ZeroKWeb
     public List<string> GetEloTop10()
     {
       var db = new ZkDataContext();
-      return db.Accounts.Where(x=>x.SpringBattlePlayers.Any(y=> y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x=>x.Elo).Select(x=>x.Name).ToList();
+      return db.Accounts.Where(x=>x.SpringBattlePlayers.Any(y=> y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x=>x.Elo).Select(x=>x.Name).Take(10).ToList();
     }
 
     /// <summary>
