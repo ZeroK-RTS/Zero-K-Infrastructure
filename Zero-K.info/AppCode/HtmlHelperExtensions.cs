@@ -130,13 +130,9 @@ namespace System.Web.Mvc
     {
       var url = new UrlHelper(helper.ViewContext.RequestContext);
       
-      var type = "Multiplayer";
-      if (battle.PlayerCount <= 1) type = "Singleplayer";
-      if (battle.HasBots) type = "Bots";
-      if (battle.IsMission) type = "Mission";
-      
+     
 
-      return new MvcHtmlString(string.Format("<a href='{0}' title='$battle${1}'>B{1}</a> {2} on {3} ({4})", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), type));
+      return new MvcHtmlString(string.Format("<a href='{0}' title='$battle${1}'>B{1}</a> {2} on {3} ({4})", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), battle.BattleType));
     }
 
 

@@ -5,12 +5,27 @@ namespace ZkData
 {
   partial class SpringBattle
   {
-    
+    public string FullTitle
+    {
+      get { return string.Format("B{0} {1} on {2} ({3})", SpringBattleID, PlayerCount, ResourceByMapResourceID.InternalName, BattleType); }
+    }
+
+    public string BattleType
+    {
+      get
+      {
+        string type = "Multiplayer";
+        if (PlayerCount <= 1) type = "Singleplayer";
+        if (HasBots) type = "Bots";
+        if (IsMission) type = "Mission";
+        return type;
+      }
+    }
+
     
     public void CalculateElo()
     {
-      if (IsEloProcessed || !SpringBattlePlayers.Any(x => !x.IsSpectator && x.IsInVictoryTeam) ||
-          !SpringBattlePlayers.Any(x => !x.IsSpectator && x.IsInVictoryTeam)  || Duration < 120)
+      if (IsEloProcessed || Duration < 120)
       {
         IsEloProcessed = true;
         return;
@@ -19,12 +34,18 @@ namespace ZkData
 
       if (IsMission || HasBots || PlayerCount < 2)
       {
-        LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
-        WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory; 
         foreach (var a in SpringBattlePlayers.Where(x=>!x.IsSpectator))
         {
-          if (a.IsInVictoryTeam) a.Account.XP += GlobalConst.XpForMissionOrBotsVictory;
-          else a.Account.XP += GlobalConst.XpForMissionOrBots;
+          if (a.IsInVictoryTeam)
+          {
+            a.Account.XP += GlobalConst.XpForMissionOrBotsVictory;
+            a.XpChange = GlobalConst.XpForMissionOrBotsVictory;
+          }
+          else
+          {
+            a.Account.XP += GlobalConst.XpForMissionOrBots;
+            a.XpChange = GlobalConst.XpForMissionOrBots;
+          }
         }
         
         IsEloProcessed = true;
@@ -86,6 +107,7 @@ namespace ZkData
         r.Account.Elo += change;
 
         r.Account.XP += WinnerTeamXpChange.Value;
+        r.Player.XpChange = WinnerTeamXpChange;
         
         if (r.Account.EloWeight < GlobalConst.EloWeightMax)
         {
@@ -102,7 +124,7 @@ namespace ZkData
         r.Account.Elo += change;
 
         r.Account.XP += LoserTeamXpChange.Value;
-
+        r.Player.XpChange = LoserTeamXpChange.Value;
         
         if (r.Account.EloWeight < GlobalConst.EloWeightMax)
         {

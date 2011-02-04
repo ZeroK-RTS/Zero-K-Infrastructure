@@ -5,12 +5,8 @@
 }
 Title: @Model.Title<br />
 
-<span style='float: right;'>
-<a href="@Url.Action("Detail","Maps",new {id= @Model.MapResourceID})"><img src='http://zero-k.info/Resources/@Model.ResourceByMapResourceID.ThumbnailName' style="margin:0px;padding:0px;" alt="@Model.ResourceByMapResourceID.InternalName"/></a>
-</span>
-
-
-Host: @Model.Account.Name <br />
+Host: @Html.PrintAccount(Model.Account) <br />
+Map: <a href="@Url.Action("Detail","Maps",new {id= @Model.MapResourceID})" title="$map$@Model.ResourceByMapResourceID.InternalName"><img src='http://zero-k.info/Resources/@Model.ResourceByMapResourceID.ThumbnailName' style="margin:0px;padding:0px;" alt="@Model.ResourceByMapResourceID.InternalName" /><br />@Model.ResourceByMapResourceID.InternalName<br /></a>
 Game version: @Model.ResourceByModResourceID.InternalName<br />
 Engine version: @Model.EngineVersion<br />
 Started: @Model.StartTime.ToAgoString() <br />
@@ -53,6 +49,9 @@ REPLAY: <a href="@Uri.EscapeUriString(string.Format("spring://http://zero-k.info
  }
  </span>
 </div>
+<br />
+
+@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() {Thread = Model.ForumThread,ActionData = new {springBattleID = Model.SpringBattleID, threadID = Model.ForumThreadID} });}
 
 
 

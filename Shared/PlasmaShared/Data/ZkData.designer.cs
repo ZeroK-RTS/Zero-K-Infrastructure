@@ -504,6 +504,14 @@ namespace ZkData
 				return this.GetTable<AccountUnlock>();
 			}
 		}
+		
+		public System.Data.Linq.Table<SpringBattleRating> SpringBattleRatings
+		{
+			get
+			{
+				return this.GetTable<SpringBattleRating>();
+			}
+		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Battle")]
@@ -6518,6 +6526,8 @@ namespace ZkData
 		
 		private EntitySet<ForumPost> _ForumPosts;
 		
+		private EntitySet<SpringBattle> _SpringBattles;
+		
 		private EntitySet<ForumThreadLastRead> _ForumThreadLastReads;
 		
 		private EntityRef<ForumCategory> _ForumCategory;
@@ -6893,8 +6903,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_SpringBattle", Storage="_SpringBattles", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		public EntitySet<SpringBattle> SpringBattles
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._SpringBattles.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._SpringBattles;
+			}
+			set
+			{
+				this._SpringBattles.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<ForumThreadLastRead> ForumThreadLastReads
 		{
 			get
@@ -7046,6 +7075,18 @@ namespace ZkData
 			entity.ForumThread = null;
 		}
 		
+		private void attach_SpringBattles(SpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumThread = this;
+		}
+		
+		private void detach_SpringBattles(SpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumThread = null;
+		}
+		
 		private void attach_ForumThreadLastReads(ForumThreadLastRead entity)
 		{
 			this.SendPropertyChanging();
@@ -7063,6 +7104,7 @@ namespace ZkData
 			this._Missions = default(EntityRef<Mission>);
 			this._Resources = default(EntityRef<Resource>);
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
+			this._SpringBattles = new EntitySet<SpringBattle>(new Action<SpringBattle>(this.attach_SpringBattles), new Action<SpringBattle>(this.detach_SpringBattles));
 			this._ForumThreadLastReads = new EntitySet<ForumThreadLastRead>(new Action<ForumThreadLastRead>(this.attach_ForumThreadLastReads), new Action<ForumThreadLastRead>(this.detach_ForumThreadLastReads));
 			this._ForumCategory = default(EntityRef<ForumCategory>);
 			this._AccountByCreatedAccountID = default(EntityRef<Account>);
@@ -9934,6 +9976,12 @@ namespace ZkData
 		
 		private System.Nullable<int> _LoserTeamXpChange;
 		
+		private System.Nullable<int> _RatingSum;
+		
+		private System.Nullable<int> _RatingCount;
+		
+		private System.Nullable<int> _ForumThreadID;
+		
 		private EntitySet<SpringBattlePlayer> _SpringBattlePlayers;
 		
 		private EntitySet<AccountBattleAward> _AccountBattleAwards;
@@ -9945,6 +9993,8 @@ namespace ZkData
 		private EntityRef<Resource> _ResourceByMapResourceID;
 		
 		private EntityRef<Resource> _ResourceByModResourceID;
+		
+		private EntityRef<ForumThread> _ForumThread;
 		
 		private bool serializing;
 		
@@ -9984,6 +10034,12 @@ namespace ZkData
     partial void OnWinnerTeamXpChangeChanged();
     partial void OnLoserTeamXpChangeChanging(System.Nullable<int> value);
     partial void OnLoserTeamXpChangeChanged();
+    partial void OnRatingSumChanging(System.Nullable<int> value);
+    partial void OnRatingSumChanged();
+    partial void OnRatingCountChanging(System.Nullable<int> value);
+    partial void OnRatingCountChanged();
+    partial void OnForumThreadIDChanging(System.Nullable<int> value);
+    partial void OnForumThreadIDChanged();
     #endregion
 		
 		public SpringBattle()
@@ -10339,8 +10395,75 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RatingSum", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public System.Nullable<int> RatingSum
+		{
+			get
+			{
+				return this._RatingSum;
+			}
+			set
+			{
+				if ((this._RatingSum != value))
+				{
+					this.OnRatingSumChanging(value);
+					this.SendPropertyChanging();
+					this._RatingSum = value;
+					this.SendPropertyChanged("RatingSum");
+					this.OnRatingSumChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RatingCount", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		public System.Nullable<int> RatingCount
+		{
+			get
+			{
+				return this._RatingCount;
+			}
+			set
+			{
+				if ((this._RatingCount != value))
+				{
+					this.OnRatingCountChanging(value);
+					this.SendPropertyChanging();
+					this._RatingCount = value;
+					this.SendPropertyChanged("RatingCount");
+					this.OnRatingCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		public System.Nullable<int> ForumThreadID
+		{
+			get
+			{
+				return this._ForumThreadID;
+			}
+			set
+			{
+				if ((this._ForumThreadID != value))
+				{
+					if (this._ForumThread.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnForumThreadIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumThreadID = value;
+					this.SendPropertyChanged("ForumThreadID");
+					this.OnForumThreadIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -10359,7 +10482,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleAward> AccountBattleAwards
 		{
 			get
@@ -10378,7 +10501,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleStat", Storage="_AccountBattleStats", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleStat> AccountBattleStats
 		{
 			get
@@ -10498,6 +10621,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_SpringBattle", Storage="_ForumThread", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsForeignKey=true)]
+		public ForumThread ForumThread
+		{
+			get
+			{
+				return this._ForumThread.Entity;
+			}
+			set
+			{
+				ForumThread previousValue = this._ForumThread.Entity;
+				if (((previousValue != value) 
+							|| (this._ForumThread.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ForumThread.Entity = null;
+						previousValue.SpringBattles.Remove(this);
+					}
+					this._ForumThread.Entity = value;
+					if ((value != null))
+					{
+						value.SpringBattles.Add(this);
+						this._ForumThreadID = value.ForumThreadID;
+					}
+					else
+					{
+						this._ForumThreadID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ForumThread");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -10562,6 +10719,7 @@ namespace ZkData
 			this._Account = default(EntityRef<Account>);
 			this._ResourceByMapResourceID = default(EntityRef<Resource>);
 			this._ResourceByModResourceID = default(EntityRef<Resource>);
+			this._ForumThread = default(EntityRef<ForumThread>);
 			OnCreated();
 		}
 		
@@ -10612,6 +10770,8 @@ namespace ZkData
 		
 		private System.Nullable<float> _EloChange;
 		
+		private System.Nullable<int> _XpChange;
+		
 		private EntityRef<SpringBattle> _SpringBattle;
 		
 		private EntityRef<Account> _Account;
@@ -10638,6 +10798,8 @@ namespace ZkData
     partial void OnRankChanged();
     partial void OnEloChangeChanging(System.Nullable<float> value);
     partial void OnEloChangeChanged();
+    partial void OnXpChangeChanging(System.Nullable<int> value);
+    partial void OnXpChangeChanged();
     #endregion
 		
 		public SpringBattlePlayer()
@@ -10842,6 +11004,27 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_XpChange", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public System.Nullable<int> XpChange
+		{
+			get
+			{
+				return this._XpChange;
+			}
+			set
+			{
+				if ((this._XpChange != value))
+				{
+					this.OnXpChangeChanging(value);
+					this.SendPropertyChanging();
+					this._XpChange = value;
+					this.SendPropertyChanged("XpChange");
+					this.OnXpChangeChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_SpringBattlePlayer", Storage="_SpringBattle", ThisKey="SpringBattleID", OtherKey="SpringBattleID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
 		public SpringBattle SpringBattle
 		{
@@ -10966,6 +11149,8 @@ namespace ZkData
 		
 		private int _SortOrder;
 		
+		private bool _IsSpringBattles;
+		
 		private EntitySet<ForumThread> _ForumThreads;
 		
 		private EntitySet<ForumCategory> _ChildForumCategories;
@@ -10992,6 +11177,8 @@ namespace ZkData
     partial void OnIsMapsChanged();
     partial void OnSortOrderChanging(int value);
     partial void OnSortOrderChanged();
+    partial void OnIsSpringBattlesChanging(bool value);
+    partial void OnIsSpringBattlesChanged();
     #endregion
 		
 		public ForumCategory()
@@ -11150,8 +11337,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSpringBattles", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public bool IsSpringBattles
+		{
+			get
+			{
+				return this._IsSpringBattles;
+			}
+			set
+			{
+				if ((this._IsSpringBattles != value))
+				{
+					this.OnIsSpringBattlesChanging(value);
+					this.SendPropertyChanging();
+					this._IsSpringBattles = value;
+					this.SendPropertyChanged("IsSpringBattles");
+					this.OnIsSpringBattlesChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumThread", Storage="_ForumThreads", ThisKey="ForumCategoryID", OtherKey="ForumCategoryID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreads
 		{
 			get
@@ -11170,7 +11378,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumCategory", Storage="_ChildForumCategories", ThisKey="ForumCategoryID", OtherKey="ParentForumCategoryID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<ForumCategory> ChildForumCategories
 		{
 			get
@@ -12376,6 +12584,73 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SpringBattleRating")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class SpringBattleRating
+	{
+		
+		private int _SpringBattleID;
+		
+		private int _AccountID;
+		
+		private int _Rating;
+		
+		public SpringBattleRating()
+		{
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int SpringBattleID
+		{
+			get
+			{
+				return this._SpringBattleID;
+			}
+			set
+			{
+				if ((this._SpringBattleID != value))
+				{
+					this._SpringBattleID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					this._AccountID = value;
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rating", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int Rating
+		{
+			get
+			{
+				return this._Rating;
+			}
+			set
+			{
+				if ((this._Rating != value))
+				{
+					this._Rating = value;
+				}
+			}
 		}
 	}
 }

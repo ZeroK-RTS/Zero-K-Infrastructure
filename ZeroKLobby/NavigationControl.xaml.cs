@@ -141,7 +141,6 @@ namespace ZeroKLobby
 
     string GetLastPathStartingWith(string startString)
     {
-      string path;
       for (var i = lastPaths.Count - 1; i >= 0; i--) if (lastPaths[i].StartsWith(startString)) return lastPaths[i];
       return startString;
     }

@@ -46,7 +46,7 @@ namespace ZeroKWeb.Controllers
       return View(res);
     }
 
-    public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, string text, string title)
+    public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, string text, string title)
     {
       if (!Global.IsAccountAuthorized) return Content("Not logged in");
       if (string.IsNullOrEmpty(text)) return Content("Please type some text :)");
@@ -79,6 +79,16 @@ namespace ZeroKWeb.Controllers
         db.ForumThreads.InsertOnSubmit(thread);
       }
 
+      if (thread == null && springBattleID != null) // non existing thread, we posted new post on battle
+      {
+        var bat = db.SpringBattles.Single(x => x.SpringBattleID == springBattleID);
+        thread = new ForumThread() { Title = bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+        thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsSpringBattles);
+        bat.ForumThread = thread;
+        db.ForumThreads.InsertOnSubmit(thread);
+      }
+
+
       if (thread == null) return Content("Thread not found");
       if (thread.IsLocked) return Content("Thread is locked");
 
@@ -92,6 +102,7 @@ namespace ZeroKWeb.Controllers
 
       if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
       else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
+      else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
       else return RedirectToAction("Thread", new { id = thread.ForumThreadID });
     }
 
