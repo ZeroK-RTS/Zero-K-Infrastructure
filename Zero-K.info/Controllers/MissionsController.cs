@@ -45,11 +45,12 @@ namespace ZeroKWeb.Controllers
 
 
     [Authorize(Roles = "admin")]
-    public ActionResult ChangeFeaturedOrder(int id, float? featuredOrder)
+    public ActionResult ChangeFeaturedOrder(int id, float? featuredOrder, string script)
     {
       var db = new ZkDataContext();
       var mis = db.Missions.SingleOrDefault(x => x.MissionID == id);
       mis.FeaturedOrder = featuredOrder;
+      if (mis.IsScriptMission && !string.IsNullOrEmpty(script)) mis.Script = script;
       db.SubmitChanges();
       return RedirectToAction("Index");
     }
@@ -94,6 +95,16 @@ namespace ZeroKWeb.Controllers
 			var m = new ZkDataContext().Missions.Single(x => x.MissionID == id);
 			return File(Encoding.UTF8.GetBytes(m.Script), "application/octet-stream", "script.txt");
 		}
+
+    [Authorize(Roles = "admin")]
+    public ActionResult Undelete(int id)
+    {
+      var db = new ZkDataContext();
+      db.Missions.First(x => x.MissionID == id).IsDeleted = false;
+      db.SubmitChanges();
+      return RedirectToAction("Index");
+    }
+
 
 		[Authorize(Roles = "admin")]
 		public ActionResult Delete(int id)

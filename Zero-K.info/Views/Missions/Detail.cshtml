@@ -125,10 +125,16 @@
   @if (Global.IsAdmin) {
     <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })'>
     Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
+    @if (m.IsScriptMission) {
+      @:Script:  @Html.TextArea("script", m.Script,8,40,null)
+    }
     <input type="submit" />
     </form>  
-   		<a href='@Url.Action("Delete", "Missions", new { id = m.MissionID })' class='delete'>
-         Delete mission</a>
+   	if (!m.IsDeleted) {
+      <a href='@Url.Action("Delete", "Missions", new { id = m.MissionID })' class='delete'>Delete mission</a>
+    } else {
+      <a href='@Url.Action("Undelete", "Missions", new { id = m.MissionID })' >Undelete</a>
+    }
   }
   <div class="border-test abs top right">
     <h3>
@@ -157,6 +163,6 @@
   <!close scores>
 </div>
 <!close wrapper>
-@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() {Thread = Model.Mission.ForumThread});}
+@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.Mission.ForumThread });}
 
 @Html.ActionLink("Back to List", "Index") 
