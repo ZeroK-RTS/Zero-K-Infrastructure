@@ -116,6 +116,7 @@ namespace ZeroKWeb.Controllers
       {
         if (cat.IsMissions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.MissionID });
         if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.ResourceID });
+        if (cat.IsSpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.SpringBattleID});
       }
 
       t.UpdateLastRead(Global.AccountID, false);

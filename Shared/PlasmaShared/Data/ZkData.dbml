@@ -381,7 +381,7 @@
       <Association Name="ForumThread_Mission" Member="Missions" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Mission" Cardinality="One" />
       <Association Name="ForumThread_Resource" Member="Resources" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Resource" Cardinality="One" />
       <Association Name="ForumThread_ForumPost" Member="ForumPosts" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumPost" />
-      <Association Name="ForumThread_SpringBattle" Member="SpringBattles" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="SpringBattle" />
+      <Association Name="ForumThread_SpringBattle" Member="SpringBattles" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="SpringBattle" Cardinality="One" />
       <Association Name="ForumThread_ForumThreadLastRead" Member="ForumThreadLastReads" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThreadLastRead" />
       <Association Name="ForumCategory_ForumThread" Member="ForumCategory" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" DeleteRule="CASCADE" />
       <Association Name="Account_ForumThread" Member="AccountByCreatedAccountID" ThisKey="CreatedAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />

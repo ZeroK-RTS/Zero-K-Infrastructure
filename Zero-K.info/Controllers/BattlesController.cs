@@ -19,7 +19,14 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Detail(int id)
         {
-          return View(new ZkDataContext().SpringBattles.Single(x => x.SpringBattleID == id));
+          var db = new ZkDataContext();
+          var bat = db.SpringBattles.Single(x => x.SpringBattleID == id);
+          if (bat.ForumThread != null)
+          {
+            bat.ForumThread.UpdateLastRead(Global.AccountID, false);
+            db.SubmitChanges();
+          }
+          return View(bat);
 
         }
 

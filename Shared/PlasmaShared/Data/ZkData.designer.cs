@@ -6526,7 +6526,7 @@ namespace ZkData
 		
 		private EntitySet<ForumPost> _ForumPosts;
 		
-		private EntitySet<SpringBattle> _SpringBattles;
+		private EntityRef<SpringBattle> _SpringBattles;
 		
 		private EntitySet<ForumThreadLastRead> _ForumThreadLastReads;
 		
@@ -6903,22 +6903,38 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_SpringBattle", Storage="_SpringBattles", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_SpringBattle", Storage="_SpringBattles", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
-		public EntitySet<SpringBattle> SpringBattles
+		public SpringBattle SpringBattles
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._SpringBattles.HasLoadedOrAssignedValues == false)))
+							&& (this._SpringBattles.HasLoadedOrAssignedValue == false)))
 				{
 					return null;
 				}
-				return this._SpringBattles;
+				return this._SpringBattles.Entity;
 			}
 			set
 			{
-				this._SpringBattles.Assign(value);
+				SpringBattle previousValue = this._SpringBattles.Entity;
+				if (((previousValue != value) 
+							|| (this._SpringBattles.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SpringBattles.Entity = null;
+						previousValue.ForumThread = null;
+					}
+					this._SpringBattles.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThread = this;
+					}
+					this.SendPropertyChanged("SpringBattles");
+				}
 			}
 		}
 		
@@ -7075,18 +7091,6 @@ namespace ZkData
 			entity.ForumThread = null;
 		}
 		
-		private void attach_SpringBattles(SpringBattle entity)
-		{
-			this.SendPropertyChanging();
-			entity.ForumThread = this;
-		}
-		
-		private void detach_SpringBattles(SpringBattle entity)
-		{
-			this.SendPropertyChanging();
-			entity.ForumThread = null;
-		}
-		
 		private void attach_ForumThreadLastReads(ForumThreadLastRead entity)
 		{
 			this.SendPropertyChanging();
@@ -7104,7 +7108,7 @@ namespace ZkData
 			this._Missions = default(EntityRef<Mission>);
 			this._Resources = default(EntityRef<Resource>);
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
-			this._SpringBattles = new EntitySet<SpringBattle>(new Action<SpringBattle>(this.attach_SpringBattles), new Action<SpringBattle>(this.detach_SpringBattles));
+			this._SpringBattles = default(EntityRef<SpringBattle>);
 			this._ForumThreadLastReads = new EntitySet<ForumThreadLastRead>(new Action<ForumThreadLastRead>(this.attach_ForumThreadLastReads), new Action<ForumThreadLastRead>(this.detach_ForumThreadLastReads));
 			this._ForumCategory = default(EntityRef<ForumCategory>);
 			this._AccountByCreatedAccountID = default(EntityRef<Account>);
@@ -10638,12 +10642,12 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._ForumThread.Entity = null;
-						previousValue.SpringBattles.Remove(this);
+						previousValue.SpringBattles = null;
 					}
 					this._ForumThread.Entity = value;
 					if ((value != null))
 					{
-						value.SpringBattles.Add(this);
+						value.SpringBattles = this;
 						this._ForumThreadID = value.ForumThreadID;
 					}
 					else

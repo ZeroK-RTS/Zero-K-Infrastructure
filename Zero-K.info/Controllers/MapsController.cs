@@ -20,7 +20,6 @@ namespace ZeroKWeb.Controllers
     {
       var db = new ZkDataContext();
       var res = db.Resources.Single(x => x.ResourceID == id);
-
       var data = GetMapDetailData(res, db);
 
       return View(data);
