@@ -13,10 +13,10 @@ namespace ZeroKLobby.MicroLobby
 	public class PlayerListItem: IDisposable
 	{
 		//readonly Font boldFont = new Font("Microsoft Sans Serif", 9, FontStyle.Bold);
-        readonly Font boldFont = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size, FontStyle.Bold);
+        readonly Font boldFont = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size-2, FontStyle.Bold);
 
 		//Font font = new Font("Segoe UI", 9, FontStyle.Regular);
-        Font font = Program.Conf.ChatFont;
+        Font font = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size-2, FontStyle.Regular );
 
 		int height = 16;
 		public string SlotButton;
@@ -49,6 +49,11 @@ namespace ZeroKLobby.MicroLobby
 			Dispose();
 			GC.SuppressFinalize(this);
 		}
+        public PlayerListItem()
+        {
+            height = (int)font.Size *2;
+        }
+
 
 		public void Dispose()
 		{
