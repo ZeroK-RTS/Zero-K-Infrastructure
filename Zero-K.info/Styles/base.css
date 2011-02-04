@@ -97,7 +97,7 @@ ul.poll {list-style-type: none; padding: 0; margin: 0;}
 	margin: 10px;
 	padding: 5px;
 	opacity: .88;
-   height: 650px;
+   height: 480px;
   -moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
   -webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
   -border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
