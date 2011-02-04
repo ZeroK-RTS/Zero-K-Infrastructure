@@ -106,7 +106,7 @@ namespace ZeroKLobby
             var shortcutName = string.Concat(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "\\Zero-K\\Zero-K.appref-ms");
             if (File.Exists(shortcutName))
             {
-              Process.Start(shortcutName, String.Join(",", args));
+              Process.Start(shortcutName, String.Join("_divider_", args));
               return false;
             }
           }
@@ -117,7 +117,7 @@ namespace ZeroKLobby
           try
           {
             var activationData = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
-            if (activationData != null && activationData.Length > 0) args = activationData[0].Split(',');
+            if (activationData != null && activationData.Length > 0) args = activationData[0].Split( new[] {"_divider_"}, StringSplitOptions.None);
           }
           catch (Exception ex)
           {
