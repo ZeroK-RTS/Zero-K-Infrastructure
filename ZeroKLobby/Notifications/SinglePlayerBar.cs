@@ -58,7 +58,7 @@ namespace ZeroKLobby.Notifications
 
       if (Utils.VerifySpringInstalled())
       {
-        spring.StartGame(null,
+        spring.StartGame(Program.TasClient,
                          null,
                          null,
                          profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name));

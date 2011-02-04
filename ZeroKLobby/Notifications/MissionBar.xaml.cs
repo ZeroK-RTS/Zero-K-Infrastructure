@@ -73,7 +73,7 @@ namespace ZeroKLobby.Notifications
             if (Utils.VerifySpringInstalled())
             {
               var spring = new Spring(Program.SpringPaths);
-              spring.StartGame(null,
+              spring.StartGame(Program.TasClient,
                                null,
                                null,
                                modInfo.MissionScript);

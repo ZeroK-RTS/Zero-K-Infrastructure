@@ -203,7 +203,7 @@ namespace ZeroKLobby
             {
               if (args.Length > 0)
               {
-                File.WriteAllLines(Utils.MakePath(SpringPaths.WritableDirectory, Config.IpcFileName), args);
+                File.WriteAllLines(Utils.MakePath(SpringPaths.WritableDirectory, Config.IpcFileName), new string[] { string.Join(" ",args) });
                 return false;
               }
               else
