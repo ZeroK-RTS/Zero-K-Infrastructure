@@ -170,6 +170,7 @@
       </s:complexType>
       <s:complexType name="BattleStartSetupPlayer">
         <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="SpringPlayerID" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="AccountID" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="AllyTeam" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="IsSpectator" type="s:boolean" />
@@ -184,7 +185,19 @@
       </s:element>
       <s:complexType name="SpringBattleStartSetup">
         <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="UserParameters" type="tns:ArrayOfUserCustomParameters" />
           <s:element minOccurs="0" maxOccurs="1" name="ModOptions" type="tns:ArrayOfScriptKeyValuePair" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfUserCustomParameters">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="UserCustomParameters" nillable="true" type="tns:UserCustomParameters" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UserCustomParameters">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="AccountID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="tns:ArrayOfScriptKeyValuePair" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="ArrayOfScriptKeyValuePair">

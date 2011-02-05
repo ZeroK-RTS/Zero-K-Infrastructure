@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Transactions;
 using System.Web.Services;
 using PlasmaShared;
@@ -16,8 +17,8 @@ namespace ZeroKWeb
   [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
   [ToolboxItem(false)]
   // To allow this Web Service to be called from script, using ASP.NET AJAX, uncomment the following line. 
-    // [System.Web.Script.Services.ScriptService]
-  public class ContentService: WebService
+  // [System.Web.Script.Services.ScriptService]
+  public class ContentService : WebService
   {
     [WebMethod]
     public bool DownloadFile(string internalName,
@@ -36,8 +37,7 @@ namespace ZeroKWeb
       var db = new ZkDataContext();
       var user = db.Accounts.FirstOrDefault(x => x.AccountID == accountID);
       var ret = new EloInfo();
-      if (user != null)
-      {
+      if (user != null) {
         ret.Elo = user.Elo;
         ret.Weight = user.EloWeight;
       }
@@ -50,8 +50,7 @@ namespace ZeroKWeb
       var db = new ZkDataContext();
       var user = db.Accounts.FirstOrDefault(x => x.Name == name);
       var ret = new EloInfo();
-      if (user != null)
-      {
+      if (user != null) {
         ret.Elo = user.Elo;
         ret.Weight = user.EloWeight;
       }
@@ -62,7 +61,7 @@ namespace ZeroKWeb
     public List<string> GetEloTop10()
     {
       var db = new ZkDataContext();
-      return db.Accounts.Where(x=>x.SpringBattlePlayers.Any(y=> y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x=>x.Elo).Select(x=>x.Name).Take(10).ToList();
+      return db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo).Select(x => x.Name).Take(10).ToList();
     }
 
     /// <summary>
@@ -88,22 +87,21 @@ namespace ZeroKWeb
     [WebMethod]
     public ScriptMissionData GetScriptMissionData(string name)
     {
-      using (var db = new ZkDataContext())
-      {
+      using (var db = new ZkDataContext()) {
         var m = db.Missions.Single(x => x.Name == name && x.IsScriptMission);
-        return new ScriptMissionData()
-               {
-                 MapName = m.Map,
-                 ModTag = m.ModRapidTag,
-                 StartScript = m.Script,
-                 ManualDependencies = m.ManualDependencies != null ? new List<string>(m.ManualDependencies.Split('\n')) : null,
-                 Name = m.Name
-               };
+        return new ScriptMissionData() {
+          MapName = m.Map,
+          ModTag = m.ModRapidTag,
+          StartScript = m.Script,
+          ManualDependencies = m.ManualDependencies != null ? new List<string>(m.ManualDependencies.Split('\n')) : null,
+          Name = m.Name
+        };
       }
     }
 
     public class BattleStartSetupPlayer
     {
+      public int SpringPlayerID;
       public int AccountID;
       public int AllyTeam;
       public bool IsSpectator;
@@ -113,9 +111,58 @@ namespace ZeroKWeb
     public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<BattleStartSetupPlayer> players)
     {
       var ret = new SpringBattleStartSetup();
-
+      var commanderTypes = new LuaTable();
       var db = new ZkDataContext();
-      // todo implement
+      foreach (var p in players.Where(x => !x.IsSpectator)) {
+        var user = db.Accounts.SingleOrDefault(x => x.AccountID == p.AccountID);
+        if (user != null) {
+
+          var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
+          ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID, Parameters = userParams });
+
+
+          var pu = new LuaTable();
+          pu.Add("spherepole");
+          pu.Add("armmerl");
+          pu.Add("blackdawn");
+          pu.Add("corgrav");
+          userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
+
+
+          var pc = new LuaTable();
+          var strike = new LuaTable();
+          var battle = new LuaTable();
+          pc.Add("StrikeOne", strike);
+          pc.Add("My battle", battle);
+          strike.Add("strike", "advstrike");
+          battle.Add("battle", "advbattle");
+          userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "commanders", Value = pc.ToBase64String() });
+
+          var strikeDef = new LuaTable();
+          var advStrikeDef = new LuaTable();
+          var battleDef = new LuaTable();
+          var advBattleDef = new LuaTable();
+          commanderTypes["strike"] = strikeDef;
+          commanderTypes["advstrike"] = advStrikeDef;
+          commanderTypes["battle"] = battleDef;
+          commanderTypes["battle"] = advBattleDef;
+
+          strikeDef["chassis"] = "armcom";
+          advStrikeDef["chassis"] = "armcom";
+          battleDef["chassis"] = "corcom";
+          advBattleDef["chassis"] = "corcom";
+
+          var modules = new LuaTable();
+          modules.Add("radarmodule", "high_power_servos");
+          advBattleDef.Add("modules", modules);
+
+          var smodules = new LuaTable();
+          smodules.Add("focusing_prism", "light_particle_sheath");
+          advStrikeDef.Add("modules", modules);
+        }
+      }
+
+      ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commanderTypes.ToBase64String() });
 
       return ret;
     }
@@ -125,8 +172,7 @@ namespace ZeroKWeb
     public void NotifyMissionRun(string login, string missionName)
     {
       using (var db = new ZkDataContext())
-      using (var scope = new TransactionScope())
-      {
+      using (var scope = new TransactionScope()) {
         db.Missions.Single(x => x.Name == missionName).MissionRunCount++;
         db.Accounts.Single(x => x.Name == login).MissionRunCount++;
         db.SubmitChanges();
@@ -170,27 +216,23 @@ namespace ZeroKWeb
     [WebMethod]
     public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds)
     {
-      using (var db = new ZkDataContext())
-      {
+      using (var db = new ZkDataContext()) {
         var acc = AuthServiceClient.VerifyAccountHashed(login, passwordHash);
         if (acc == null) throw new ApplicationException("Invalid login or password");
-        
+
         acc.XP += GlobalConst.XpForMissionOrBots;
 
         var mission = db.Missions.Single(x => x.Name == missionName);
 
         var scoreEntry = mission.MissionScores.FirstOrDefault(x => x.AccountID == acc.AccountID);
-        if (scoreEntry == null)
-        {
+        if (scoreEntry == null) {
           scoreEntry = new MissionScore() { MissionID = mission.MissionID, AccountID = acc.AccountID, Score = int.MinValue };
           mission.MissionScores.Add(scoreEntry);
         }
 
-        if (score > scoreEntry.Score)
-        {
+        if (score > scoreEntry.Score) {
           var max = mission.MissionScores.Max(x => (int?)x.Score);
-          if (max == null || max <= score)
-          {
+          if (max == null || max <= score) {
             mission.TopScoreLine = login;
             acc.XP += 150; // 150 for getting top score
           }
@@ -210,55 +252,47 @@ namespace ZeroKWeb
       if (acc == null) throw new Exception("Account name or password not valid");
 
       var db = new ZkDataContext();
-      var sb = new SpringBattle()
-               {
-                 HostAccountID = acc.AccountID,
-                 Duration = result.Duration,
-                 EngineGameID = result.EngineBattleID,
-                 MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
-                 ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
-                 HasBots = result.IsBots,
-                 IsMission = result.IsMission,
-                 PlayerCount = players.Count(x => !x.IsSpectator),
-                 StartTime = result.StartTime,
-                 Title = result.Title,
-                 ReplayFileName = result.ReplayName,
-                 EngineVersion = result.EngineVersion ?? "0.82.7", // hack remove when fixed
-               };
+      var sb = new SpringBattle() {
+        HostAccountID = acc.AccountID,
+        Duration = result.Duration,
+        EngineGameID = result.EngineBattleID,
+        MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
+        ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
+        HasBots = result.IsBots,
+        IsMission = result.IsMission,
+        PlayerCount = players.Count(x => !x.IsSpectator),
+        StartTime = result.StartTime,
+        Title = result.Title,
+        ReplayFileName = result.ReplayName,
+        EngineVersion = result.EngineVersion ?? "0.82.7", // hack remove when fixed
+      };
       db.SpringBattles.InsertOnSubmit(sb);
 
-      foreach (var p in players)
-      {
-        sb.SpringBattlePlayers.Add(new SpringBattlePlayer()
-                                   {
-                                     AccountID = p.AccountID,
-                                     AllyNumber = p.AllyNumber,
-                                     CommanderType = p.CommanderType,
-                                     IsInVictoryTeam = p.IsVictoryTeam,
-                                     IsSpectator = p.IsSpectator,
-                                     Rank = p.Rank,
-                                     LoseTime = p.LoseTime
-                                   });
+      foreach (var p in players) {
+        sb.SpringBattlePlayers.Add(new SpringBattlePlayer() {
+          AccountID = p.AccountID,
+          AllyNumber = p.AllyNumber,
+          CommanderType = p.CommanderType,
+          IsInVictoryTeam = p.IsVictoryTeam,
+          IsSpectator = p.IsSpectator,
+          Rank = p.Rank,
+          LoseTime = p.LoseTime
+        });
       }
 
       db.SubmitChanges();
-      foreach (var p in players)
-      {
-        foreach (var a in p.Awards)
-        {
-          db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
-                                                {
-                                                  AccountID = p.AccountID,
-                                                  SpringBattleID = sb.SpringBattleID,
-                                                  AwardKey = a.Award,
-                                                  AwardDescription = a.Description
-                                                });
+      foreach (var p in players) {
+        foreach (var a in p.Awards) {
+          db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward() {
+            AccountID = p.AccountID,
+            SpringBattleID = sb.SpringBattleID,
+            AwardKey = a.Award,
+            AwardDescription = a.Description
+          });
         }
 
-        foreach (var s in p.Stats)
-        {
-          db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat()
-                                               { AccountID = p.AccountID, SpringBattleID = sb.SpringBattleID, StatsKey = s.Key, Value = s.Value });
+        foreach (var s in p.Stats) {
+          db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat() { AccountID = p.AccountID, SpringBattleID = sb.SpringBattleID, StatsKey = s.Key, Value = s.Value });
         }
       }
 
@@ -273,19 +307,17 @@ namespace ZeroKWeb
     [WebMethod]
     public void SubmitStackTrace(ProgramType programType, string playerName, string exception, string extraData, string programVersion)
     {
-      using (var db = new ZkDataContext())
-      {
-        var exceptionLog = new ExceptionLog
-                           {
-                             ProgramID = programType,
-                             Time = DateTime.UtcNow,
-                             PlayerName = playerName,
-                             ExtraData = extraData,
-                             Exception = exception,
-                             ExceptionHash = new Hash(exception).ToString(),
-                             ProgramVersion = programVersion,
-                             RemoteIP = GetUserIP()
-                           };
+      using (var db = new ZkDataContext()) {
+        var exceptionLog = new ExceptionLog {
+          ProgramID = programType,
+          Time = DateTime.UtcNow,
+          PlayerName = playerName,
+          ExtraData = extraData,
+          Exception = exception,
+          ExceptionHash = new Hash(exception).ToString(),
+          ProgramVersion = programVersion,
+          RemoteIP = GetUserIP()
+        };
         db.ExceptionLogs.InsertOnSubmit(exceptionLog);
         db.SubmitChanges();
       }
@@ -355,13 +387,21 @@ namespace ZeroKWeb
 
     public class SpringBattleStartSetup
     {
+      public List<UserCustomParameters> UserParameters = new List<UserCustomParameters>();
       public List<ScriptKeyValuePair> ModOptions = new List<ScriptKeyValuePair>();
       public class ScriptKeyValuePair
       {
         public string Key;
         public string Value;
       }
+      public class UserCustomParameters
+      {
+        public int AccountID;
+        public List<ScriptKeyValuePair> Parameters = new List<ScriptKeyValuePair>();
+      }
 
     }
   }
+
+
 }

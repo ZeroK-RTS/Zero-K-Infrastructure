@@ -985,9 +985,54 @@ namespace PlasmaShared.ContentService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class UserCustomParameters {
+        
+        private int accountIDField;
+        
+        private ScriptKeyValuePair[] parametersField;
+        
+        /// <remarks/>
+        public int AccountID {
+            get {
+                return this.accountIDField;
+            }
+            set {
+                this.accountIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public ScriptKeyValuePair[] Parameters {
+            get {
+                return this.parametersField;
+            }
+            set {
+                this.parametersField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class SpringBattleStartSetup {
         
+        private UserCustomParameters[] userParametersField;
+        
         private ScriptKeyValuePair[] modOptionsField;
+        
+        /// <remarks/>
+        public UserCustomParameters[] UserParameters {
+            get {
+                return this.userParametersField;
+            }
+            set {
+                this.userParametersField = value;
+            }
+        }
         
         /// <remarks/>
         public ScriptKeyValuePair[] ModOptions {
@@ -1008,11 +1053,23 @@ namespace PlasmaShared.ContentService {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class BattleStartSetupPlayer {
         
+        private int springPlayerIDField;
+        
         private int accountIDField;
         
         private int allyTeamField;
         
         private bool isSpectatorField;
+        
+        /// <remarks/>
+        public int SpringPlayerID {
+            get {
+                return this.springPlayerIDField;
+            }
+            set {
+                this.springPlayerIDField = value;
+            }
+        }
         
         /// <remarks/>
         public int AccountID {

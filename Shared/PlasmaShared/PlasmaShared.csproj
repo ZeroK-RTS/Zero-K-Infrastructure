@@ -116,6 +116,7 @@
     <Compile Include="Hash.cs" />
     <Compile Include="IMissionService.cs" />
     <Compile Include="IResourceInfo.cs" />
+    <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="PoolFileInfo.cs" />
