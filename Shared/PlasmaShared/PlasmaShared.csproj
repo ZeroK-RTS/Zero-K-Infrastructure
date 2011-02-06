@@ -101,6 +101,7 @@
     <Compile Include="Data\ResourceSpringHash.cs" />
     <Compile Include="Data\ResourceType.cs" />
     <Compile Include="Data\SpringBattle.cs" />
+    <Compile Include="Data\Unlock.cs" />
     <Compile Include="Data\UnlockType.cs" />
     <Compile Include="Data\ZkData.cs">
       <DependentUpon>ZkData.dbml</DependentUpon>

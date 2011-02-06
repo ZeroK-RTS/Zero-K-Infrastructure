@@ -607,7 +607,10 @@
       <Column Name="NeededLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="LimitForChassis" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
       <Column Name="UnlockType" Type="UnlockTypes" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="RequiredUnlockID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Association Name="Unlock_Unlock" Member="ChildUnlocks" ThisKey="UnlockID" OtherKey="RequiredUnlockID" Type="Unlock" />
       <Association Name="Unlock_AccountUnlock" Member="AccountUnlocks" ThisKey="UnlockID" OtherKey="UnlockID" Type="AccountUnlock" />
+      <Association Name="Unlock_Unlock" Member="ParentUnlock" ThisKey="RequiredUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.AccountUnlock" Member="AccountUnlocks">

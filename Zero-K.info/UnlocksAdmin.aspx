@@ -15,6 +15,8 @@
         AutoGenerateEditButton="True" DataKeyNames="UnlockID" 
         DataSourceID="LinqDataSource1">
         <Columns>
+        <asp:BoundField DataField="UnlockID" HeaderText="UnlockID" 
+            SortExpression="UnlockID" />
         <asp:BoundField DataField="Code" HeaderText="Code" 
             SortExpression="Code" />
           <asp:BoundField DataField="Name" HeaderText="Name" 
@@ -23,8 +25,8 @@
              SortExpression="Description" />
           <asp:BoundField DataField="NeededLevel" HeaderText="NeededLevel" 
              SortExpression="NeededLevel" />
-          <asp:BoundField DataField="Prerequisites" HeaderText="Prerequisites" 
-             SortExpression="Prerequisites" />
+          <asp:BoundField DataField="RequiredUnlockID" HeaderText="RequiredUnlockID" 
+             SortExpression="RequiredUnlockID" />
           <asp:BoundField DataField="UnlockType" HeaderText="UnlockType" 
             SortExpression="UnlockType" />
           <asp:BoundField DataField="LimitForChassis" HeaderText="LimitForChassis" 
@@ -43,7 +45,7 @@
     Name: <asp:TextBox ID="tbName" runat="server"></asp:TextBox><br />
     Description: <asp:TextBox ID="tbDescription" runat="server" Rows="4" Columns="40"></asp:TextBox><br />
     Needed level: <asp:TextBox ID="tbMinLevel" runat="server" Text="0"></asp:TextBox><br />
-    Prerequisites (comma list): <asp:TextBox ID="tbPreq" runat="server"></asp:TextBox><br />
+    Prerequisite (ID): <asp:TextBox ID="tbPreq" runat="server"></asp:TextBox><br />
     Unlock type: <asp:DropDownList ID="ddType" runat="server">
     </asp:DropDownList><br />
     For chassis (comma list): <asp:TextBox ID="tbChassisLimit" runat="server"></asp:TextBox><br />

@@ -81,6 +81,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
+    <Compile Include="Controllers\MyController.cs" />
     <Compile Include="Controllers\StaticController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\WikiController.cs" />
@@ -151,7 +152,6 @@
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
     <Content Include="UnlocksAdmin.aspx" />
-    <Content Include="Views\Users\Index.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -193,8 +193,10 @@
     <Content Include="Views\Battles\Index.cshtml" />
     <Content Include="Views\Shared\CommentList.cshtml" />
     <Content Include="Views\Shared\UserDetail.cshtml" />
-    <Content Include="Views\Users\UserList.cshtml.cshtml" />
     <Content Include="Views\Battles\Detail.cshtml" />
+    <Content Include="Views\My\UnlockList.cshtml" />
+    <Content Include="Views\Users\UserList.cshtml" />
+    <Content Include="Views\Shared\UnlockedTechnologies.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

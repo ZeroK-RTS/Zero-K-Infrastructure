@@ -12230,7 +12230,13 @@ namespace ZkData
 		
 		private UnlockTypes _UnlockType;
 		
+		private System.Nullable<int> _RequiredUnlockID;
+		
+		private EntitySet<Unlock> _ChildUnlocks;
+		
 		private EntitySet<AccountUnlock> _AccountUnlocks;
+		
+		private EntityRef<Unlock> _ParentUnlock;
 		
 		private bool serializing;
 		
@@ -12254,6 +12260,8 @@ namespace ZkData
     partial void OnLimitForChassisChanged();
     partial void OnUnlockTypeChanging(UnlockTypes value);
     partial void OnUnlockTypeChanged();
+    partial void OnRequiredUnlockIDChanging(System.Nullable<int> value);
+    partial void OnRequiredUnlockIDChanged();
     #endregion
 		
 		public Unlock()
@@ -12429,8 +12437,52 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiredUnlockID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<int> RequiredUnlockID
+		{
+			get
+			{
+				return this._RequiredUnlockID;
+			}
+			set
+			{
+				if ((this._RequiredUnlockID != value))
+				{
+					if (this._ParentUnlock.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRequiredUnlockIDChanging(value);
+					this.SendPropertyChanging();
+					this._RequiredUnlockID = value;
+					this.SendPropertyChanged("RequiredUnlockID");
+					this.OnRequiredUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ChildUnlocks", ThisKey="UnlockID", OtherKey="RequiredUnlockID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		public EntitySet<Unlock> ChildUnlocks
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ChildUnlocks.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ChildUnlocks;
+			}
+			set
+			{
+				this._ChildUnlocks.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_AccountUnlock", Storage="_AccountUnlocks", ThisKey="UnlockID", OtherKey="UnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -12445,6 +12497,40 @@ namespace ZkData
 			set
 			{
 				this._AccountUnlocks.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ParentUnlock", ThisKey="RequiredUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
+		public Unlock ParentUnlock
+		{
+			get
+			{
+				return this._ParentUnlock.Entity;
+			}
+			set
+			{
+				Unlock previousValue = this._ParentUnlock.Entity;
+				if (((previousValue != value) 
+							|| (this._ParentUnlock.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ParentUnlock.Entity = null;
+						previousValue.ChildUnlocks.Remove(this);
+					}
+					this._ParentUnlock.Entity = value;
+					if ((value != null))
+					{
+						value.ChildUnlocks.Add(this);
+						this._RequiredUnlockID = value.UnlockID;
+					}
+					else
+					{
+						this._RequiredUnlockID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ParentUnlock");
+				}
 			}
 		}
 		
@@ -12468,6 +12554,18 @@ namespace ZkData
 			}
 		}
 		
+		private void attach_ChildUnlocks(Unlock entity)
+		{
+			this.SendPropertyChanging();
+			entity.ParentUnlock = this;
+		}
+		
+		private void detach_ChildUnlocks(Unlock entity)
+		{
+			this.SendPropertyChanging();
+			entity.ParentUnlock = null;
+		}
+		
 		private void attach_AccountUnlocks(AccountUnlock entity)
 		{
 			this.SendPropertyChanging();
@@ -12482,7 +12580,9 @@ namespace ZkData
 		
 		private void Initialize()
 		{
+			this._ChildUnlocks = new EntitySet<Unlock>(new Action<Unlock>(this.attach_ChildUnlocks), new Action<Unlock>(this.detach_ChildUnlocks));
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
+			this._ParentUnlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
 		

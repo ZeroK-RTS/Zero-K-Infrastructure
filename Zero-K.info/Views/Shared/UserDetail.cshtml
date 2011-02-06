@@ -115,18 +115,18 @@
   </tr>
   <tr>
     <td colspan='2'>
-        @if (ZeroKWeb.Global.IsAdmin) {
-      <h3>Admin extras</h3>
-      <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
-      <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
-    }
-
+      @if (ZeroKWeb.Global.IsAdmin) {
+        <h3>
+          Admin extras</h3>
+        <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
+        <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
+      }
       <h3>
-        Unlocked:</h3>
-      under construction..
-      <h3>
-        Available unlocks:</h3>
-      under construction..
+        Technologies (UNDER CONSTRUCTION):</h3>
+        @{Html.RenderPartial("UnlockedTechnologies",Model);}
+        <br />
+        <a href='@Url.Action("UnlockList", "My")'>You can unlock @(Model.Level - Model.AccountUnlocks.Count)
+  technologies</a> 
     </td>
   </tr>
 </table>

@@ -172,8 +172,28 @@ namespace ZeroKWeb.Controllers
             ret = GetThreadTooltip(id);
           }
           break;
+        case "unlock":
+          ret = GetUnlockTooltip(int.Parse(args[1]));
+          
+          break;
       }
       return Content(ret);
+    }
+
+    string GetUnlockTooltip(int id)
+    {
+      var db = new ZkDataContext();
+      var sb = new StringBuilder();
+      var u = db.Unlocks.Single(x => x.UnlockID == id);
+      sb.AppendLine("<span>");
+      sb.AppendFormat("<h3>{0}</h3>", u.Name);
+      sb.AppendFormat("<img src='{0}'/><br/>", u.ImageUrl);
+      sb.AppendFormat("Type: <span style='color:{1};'>{0}</span><br/>", u.UnlockType, u.LabelColor);
+      sb.AppendFormat("Required level: {0}<br/>", u.NeededLevel);
+      sb.AppendFormat("Required unit: {0}<br/>", u.ParentUnlock != null ? u.ParentUnlock.Name : null);
+      sb.AppendFormat("<small>{0}</small>", HtmlHelperExtensions.BBCode(null, u.Description));
+      sb.AppendLine("</span>");
+      return sb.ToString();
     }
 
     string GetThreadTooltip(int id) {

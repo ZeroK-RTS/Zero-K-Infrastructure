@@ -18,9 +18,7 @@ namespace ZeroKWeb
         foreach (int kvp in Enum.GetValues(typeof(UnlockTypes)))
         {
           ddType.Items.Add(new ListItem(Enum.GetName(typeof(UnlockTypes), kvp), kvp.ToString()));
-
         }
-
       }
     }
 
@@ -34,9 +32,9 @@ namespace ZeroKWeb
                      Name = tbName.Text,
                      Description = tbDescription.Text,
                      NeededLevel = int.Parse(tbMinLevel.Text),
+                     RequiredUnlockID = string.IsNullOrEmpty(tbPreq.Text)?null: (int?)int.Parse(tbPreq.Text),
                      UnlockType = (UnlockTypes)int.Parse(ddType.SelectedValue),
                      LimitForChassis = tbChassisLimit.Text,
-                     Prerequisites = tbPreq.Text
                    };
       db.Unlocks.InsertOnSubmit(unlock);
       db.SubmitChanges();

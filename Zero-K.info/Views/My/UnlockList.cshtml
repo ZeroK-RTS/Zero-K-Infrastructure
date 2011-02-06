@@ -1,0 +1,31 @@
+﻿@model ZeroKWeb.Controllers.MyController.UnlockListResult
+@{
+  Page.Title = "Technology unlocks";
+}
+<h2>
+  Owned technologies</h2>
+@{Html.RenderPartial("UnlockedTechnologies", Model.Account);}
+<h2>
+  Available technologies</h2>
+<h3>@(Model.Account.Level - Model.Account.AccountUnlocks.Count)
+  unlocks available</h3>
+@foreach (var unlock in Model.Unlocks) {
+  <span title="$unlock$@unlock.UnlockID">
+    <img src="@unlock.ImageUrl" style="float:left;"/><br />
+    <span style="color: @unlock.LabelColor; font-weight:bold">@unlock.Name</span> <span>@Html.BBCode(unlock.Description)</span>
+    <br />
+    <a href="@Url.Action("Unlock", "My", new { id = unlock.UnlockID })" >Buy</a><br />
+  </span>
+  <br />
+}
+<h3>
+  Unavailable technologies</h3>
+@foreach (var unlock in Model.FutureUnlocks) {
+  <span title="$unlock$@unlock.UnlockID" style="display:inline-block; width:250px;height:120px;">
+    <img src="@unlock.ImageUrl"/><span style="color: @unlock.LabelColor;">@unlock.Name</span><br />
+    <span>Needs level: @unlock.NeededLevel
+      @if (unlock.ParentUnlock != null) {
+        @:, technology: @unlock.ParentUnlock.Name <img src="@unlock.ParentUnlock.ImageUrl"height="16"width="16"/>
+       }
+    </span></span>
+}

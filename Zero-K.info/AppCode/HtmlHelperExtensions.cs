@@ -247,7 +247,7 @@ namespace System.Web.Mvc
       if (timeSpan.TotalHours < 2) return string.Format("{0} minutes", (int)timeSpan.TotalMinutes);
       if (timeSpan.TotalDays < 2) return string.Format("{0} hours", (int)timeSpan.TotalHours);
       if (timeSpan.TotalDays < 60) return string.Format("{0} days", (int)timeSpan.TotalDays);
-      return string.Format("{0} months ago", (int)(timeSpan.TotalDays/30));
+      return string.Format("{0} months", (int)(timeSpan.TotalDays/30));
     }
   }
 }
