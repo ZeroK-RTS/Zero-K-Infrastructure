@@ -122,13 +122,9 @@ namespace ZeroKWeb
 
 
           var pu = new LuaTable();
-          pu.Add("spherepole");
-          pu.Add("armmerl");
-          pu.Add("blackdawn");
-          pu.Add("corgrav");
+          foreach (var unlock in user.AccountUnlocks.Select(x=>x.Unlock)) pu.Add(unlock.Code);
           userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
-
-
+          
           var pc = new LuaTable();
           var strike = new LuaTable();
           var battle = new LuaTable();

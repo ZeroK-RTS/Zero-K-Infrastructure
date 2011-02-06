@@ -16,6 +16,14 @@ namespace ZeroKWeb.Controllers
     }
 
 
+    public ActionResult Reset()
+    {
+      var db = new ZkDataContext();
+      db.AccountUnlocks.DeleteAllOnSubmit(db.AccountUnlocks.Where(x=>x.AccountID == Global.AccountID));
+      db.SubmitChanges();
+      return RedirectToAction("UnlockList");
+    }
+
     public ActionResult Unlock(int id)
     {
       if (!Global.IsAccountAuthorized) return Content("Not logged in");

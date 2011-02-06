@@ -186,7 +186,7 @@ namespace ZeroKWeb.Controllers
       var sb = new StringBuilder();
       var u = db.Unlocks.Single(x => x.UnlockID == id);
       sb.AppendLine("<span>");
-      sb.AppendFormat("<h3>{0}</h3>", u.Name);
+      sb.AppendFormat("<h2>{0}</h2>", u.Name);
       sb.AppendFormat("<img src='{0}'/><br/>", u.ImageUrl);
       sb.AppendFormat("Type: <span style='color:{1};'>{0}</span><br/>", u.UnlockType, u.LabelColor);
       sb.AppendFormat("Required level: {0}<br/>", u.NeededLevel);
