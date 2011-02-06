@@ -117,6 +117,13 @@
     <Compile Include="ResourceDetail.aspx.designer.cs">
       <DependentUpon>ResourceDetail.aspx</DependentUpon>
     </Compile>
+    <Compile Include="UnlocksAdmin.aspx.cs">
+      <DependentUpon>UnlocksAdmin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="UnlocksAdmin.aspx.designer.cs">
+      <DependentUpon>UnlocksAdmin.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
@@ -143,6 +150,7 @@
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
     <Content Include="Styles\style.css" />
+    <Content Include="UnlocksAdmin.aspx" />
     <Content Include="Views\Users\Index.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

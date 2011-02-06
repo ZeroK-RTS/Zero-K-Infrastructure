@@ -12216,11 +12216,19 @@ namespace ZkData
 		
 		private int _UnlockID;
 		
+		private string _Code;
+		
 		private string _Name;
 		
 		private string _Description;
 		
 		private string _Prerequisites;
+		
+		private int _NeededLevel;
+		
+		private string _LimitForChassis;
+		
+		private UnlockTypes _UnlockType;
 		
 		private EntitySet<AccountUnlock> _AccountUnlocks;
 		
@@ -12232,12 +12240,20 @@ namespace ZkData
     partial void OnCreated();
     partial void OnUnlockIDChanging(int value);
     partial void OnUnlockIDChanged();
+    partial void OnCodeChanging(string value);
+    partial void OnCodeChanged();
     partial void OnNameChanging(string value);
     partial void OnNameChanged();
     partial void OnDescriptionChanging(string value);
     partial void OnDescriptionChanged();
     partial void OnPrerequisitesChanging(string value);
     partial void OnPrerequisitesChanged();
+    partial void OnNeededLevelChanging(int value);
+    partial void OnNeededLevelChanged();
+    partial void OnLimitForChassisChanging(string value);
+    partial void OnLimitForChassisChanged();
+    partial void OnUnlockTypeChanging(UnlockTypes value);
+    partial void OnUnlockTypeChanged();
     #endregion
 		
 		public Unlock()
@@ -12266,8 +12282,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(100) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Code", DbType="nvarchar(100) NOT NULL", CanBeNull=false)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string Code
+		{
+			get
+			{
+				return this._Code;
+			}
+			set
+			{
+				if ((this._Code != value))
+				{
+					this.OnCodeChanging(value);
+					this.SendPropertyChanging();
+					this._Code = value;
+					this.SendPropertyChanged("Code");
+					this.OnCodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(200)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public string Name
 		{
 			get
@@ -12288,7 +12325,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="nvarchar(1000)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public string Description
 		{
 			get
@@ -12309,7 +12346,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Prerequisites", DbType="nvarchar(500)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public string Prerequisites
 		{
 			get
@@ -12329,8 +12366,71 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NeededLevel", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public int NeededLevel
+		{
+			get
+			{
+				return this._NeededLevel;
+			}
+			set
+			{
+				if ((this._NeededLevel != value))
+				{
+					this.OnNeededLevelChanging(value);
+					this.SendPropertyChanging();
+					this._NeededLevel = value;
+					this.SendPropertyChanged("NeededLevel");
+					this.OnNeededLevelChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LimitForChassis", DbType="nvarchar(500)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public string LimitForChassis
+		{
+			get
+			{
+				return this._LimitForChassis;
+			}
+			set
+			{
+				if ((this._LimitForChassis != value))
+				{
+					this.OnLimitForChassisChanging(value);
+					this.SendPropertyChanging();
+					this._LimitForChassis = value;
+					this.SendPropertyChanged("LimitForChassis");
+					this.OnLimitForChassisChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockType", DbType="int NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public UnlockTypes UnlockType
+		{
+			get
+			{
+				return this._UnlockType;
+			}
+			set
+			{
+				if ((this._UnlockType != value))
+				{
+					this.OnUnlockTypeChanging(value);
+					this.SendPropertyChanging();
+					this._UnlockType = value;
+					this.SendPropertyChanged("UnlockType");
+					this.OnUnlockTypeChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_AccountUnlock", Storage="_AccountUnlocks", ThisKey="UnlockID", OtherKey="UnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get

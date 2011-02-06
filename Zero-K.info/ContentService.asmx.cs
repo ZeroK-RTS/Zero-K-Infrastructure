@@ -133,9 +133,11 @@ namespace ZeroKWeb
           var strike = new LuaTable();
           var battle = new LuaTable();
           pc.Add("StrikeOne", strike);
-          pc.Add("My battle", battle);
-          strike.Add("strike", "advstrike");
-          battle.Add("battle", "advbattle");
+          pc.Add("My_Own_Super_Battle", battle);
+          strike.Add("strike");
+          strike.Add("advstrike");
+          battle.Add("battle");
+          battle.Add("advbattle");
           userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "commanders", Value = pc.ToBase64String() });
 
           var strikeDef = new LuaTable();
@@ -145,7 +147,7 @@ namespace ZeroKWeb
           commanderTypes["strike"] = strikeDef;
           commanderTypes["advstrike"] = advStrikeDef;
           commanderTypes["battle"] = battleDef;
-          commanderTypes["battle"] = advBattleDef;
+          commanderTypes["advbattle"] = advBattleDef;
 
           strikeDef["chassis"] = "armcom";
           advStrikeDef["chassis"] = "armcom";
@@ -153,12 +155,14 @@ namespace ZeroKWeb
           advBattleDef["chassis"] = "corcom";
 
           var modules = new LuaTable();
-          modules.Add("radarmodule", "high_power_servos");
+          modules.Add("radarmodule");
+          modules.Add("high_power_servos");
           advBattleDef.Add("modules", modules);
 
           var smodules = new LuaTable();
-          smodules.Add("focusing_prism", "light_particle_sheath");
-          advStrikeDef.Add("modules", modules);
+          smodules.Add("focusing_prism");
+          smodules.Add("light_particle_sheath");
+          advStrikeDef.Add("modules", smodules);
         }
       }
 

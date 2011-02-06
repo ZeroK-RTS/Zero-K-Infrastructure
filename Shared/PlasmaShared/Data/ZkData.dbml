@@ -600,9 +600,13 @@
   <Table Name="dbo.Unlock" Member="Unlocks">
     <Type Name="Unlock">
       <Column Name="UnlockID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Name" Type="System.String" DbType="nvarchar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="nvarchar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="Description" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
       <Column Name="Prerequisites" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
+      <Column Name="NeededLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="LimitForChassis" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
+      <Column Name="UnlockType" Type="UnlockTypes" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Unlock_AccountUnlock" Member="AccountUnlocks" ThisKey="UnlockID" OtherKey="UnlockID" Type="AccountUnlock" />
     </Type>
   </Table>
