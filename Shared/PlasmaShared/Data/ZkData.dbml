@@ -343,7 +343,7 @@
       <Association Name="Account_AccountBattleAward" Member="AccountBattleAwards" ThisKey="AccountID" OtherKey="AccountID" Type="AccountBattleAward" />
       <Association Name="Account_AccountBattleStat" Member="AccountBattleStats" ThisKey="AccountID" OtherKey="AccountID" Type="AccountBattleStat" />
       <Association Name="Account_AccountUnlock" Member="AccountUnlocks" ThisKey="AccountID" OtherKey="AccountID" Type="AccountUnlock" />
-      <Association Name="Account_Commander" Member="Commander" ThisKey="AccountID" OtherKey="CommanderID" Type="Commander" Cardinality="One" />
+      <Association Name="Account_Commander" Member="Commanders" ThisKey="AccountID" OtherKey="AccountID" Type="Commander" />
     </Type>
   </Table>
   <Table Name="dbo.LobbyMessage" Member="LobbyMessages">
@@ -639,8 +639,8 @@
       <Column Name="Name" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="ChassisUnlockID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Commander_CommanderModule" Member="CommanderModules" ThisKey="CommanderID" OtherKey="CommanderID" Type="CommanderModule" />
-      <Association Name="Account_Commander" Member="Account" ThisKey="CommanderID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="Unlock_Commander" Member="Unlock" ThisKey="ChassisUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Account_Commander" Member="AccountByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.CommanderModule" Member="CommanderModules">

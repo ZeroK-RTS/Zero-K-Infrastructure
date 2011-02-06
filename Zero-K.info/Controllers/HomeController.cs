@@ -176,8 +176,36 @@ namespace ZeroKWeb.Controllers
           ret = GetUnlockTooltip(int.Parse(args[1]));
           
           break;
+
+        case "commander":
+          ret = GetCommanderTooltip(int.Parse(args[1]));
+
+          break;
+
       }
       return Content(ret);
+    }
+
+    string GetCommanderTooltip(int commanderID)
+    {
+      var db = new ZkDataContext();
+      var sb = new StringBuilder();
+      var c = db.Commanders.Single(x=>x.CommanderID==commanderID);
+      sb.AppendLine("<span>");
+      sb.AppendFormat("<h3>{0}</h3>", c.Name);
+      sb.AppendFormat("<img src='{0}'/><br/>", c.Unlock.ImageUrl);
+      foreach (var slots in c.CommanderModules.GroupBy(x => x.CommanderSlot.MorphLevel).OrderBy(x => x.Key))
+      {
+        sb.AppendFormat("<b>Level {0}:</b><br/>", slots.Key);
+        foreach (var module in slots.OrderBy(x=>x.SlotID))
+        {
+          sb.AppendFormat("<img src='{0}' width='20' height='20'><span style='color:{2};'>{1}</span><br/>",
+                          module.Unlock.Name,
+                          module.Unlock.Name,
+                          module.Unlock.LabelColor);
+        }
+      }
+      return sb.ToString();
     }
 
     string GetUnlockTooltip(int id)

@@ -5150,7 +5150,7 @@ namespace ZkData
 		
 		private EntitySet<AccountUnlock> _AccountUnlocks;
 		
-		private EntityRef<Commander> _Commander;
+		private EntitySet<Commander> _Commanders;
 		
 		private bool serializing;
 		
@@ -5837,38 +5837,22 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Commander", ThisKey="AccountID", OtherKey="CommanderID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Commanders", ThisKey="AccountID", OtherKey="AccountID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
-		public Commander Commander
+		public EntitySet<Commander> Commanders
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._Commander.HasLoadedOrAssignedValue == false)))
+							&& (this._Commanders.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._Commander.Entity;
+				return this._Commanders;
 			}
 			set
 			{
-				Commander previousValue = this._Commander.Entity;
-				if (((previousValue != value) 
-							|| (this._Commander.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Commander.Entity = null;
-						previousValue.Account = null;
-					}
-					this._Commander.Entity = value;
-					if ((value != null))
-					{
-						value.Account = this;
-					}
-					this.SendPropertyChanged("Commander");
-				}
+				this._Commanders.Assign(value);
 			}
 		}
 		
@@ -6084,6 +6068,18 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_Commanders(Commander entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAccountID = this;
+		}
+		
+		private void detach_Commanders(Commander entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAccountID = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -6102,7 +6098,7 @@ namespace ZkData
 			this._AccountBattleAwards = new EntitySet<AccountBattleAward>(new Action<AccountBattleAward>(this.attach_AccountBattleAwards), new Action<AccountBattleAward>(this.detach_AccountBattleAwards));
 			this._AccountBattleStats = new EntitySet<AccountBattleStat>(new Action<AccountBattleStat>(this.attach_AccountBattleStats), new Action<AccountBattleStat>(this.detach_AccountBattleStats));
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
-			this._Commander = default(EntityRef<Commander>);
+			this._Commanders = new EntitySet<Commander>(new Action<Commander>(this.attach_Commanders), new Action<Commander>(this.detach_Commanders));
 			OnCreated();
 		}
 		
@@ -13016,9 +13012,9 @@ namespace ZkData
 		
 		private EntitySet<CommanderModule> _CommanderModules;
 		
-		private EntityRef<Account> _Account;
-		
 		private EntityRef<Unlock> _Unlock;
+		
+		private EntityRef<Account> _AccountByAccountID;
 		
 		private bool serializing;
 		
@@ -13055,10 +13051,6 @@ namespace ZkData
 			{
 				if ((this._CommanderID != value))
 				{
-					if (this._Account.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnCommanderIDChanging(value);
 					this.SendPropertyChanging();
 					this._CommanderID = value;
@@ -13080,6 +13072,10 @@ namespace ZkData
 			{
 				if ((this._AccountID != value))
 				{
+					if (this._AccountByAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnAccountIDChanging(value);
 					this.SendPropertyChanging();
 					this._AccountID = value;
@@ -13175,40 +13171,6 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Account", ThisKey="CommanderID", OtherKey="AccountID", IsForeignKey=true)]
-		public Account Account
-		{
-			get
-			{
-				return this._Account.Entity;
-			}
-			set
-			{
-				Account previousValue = this._Account.Entity;
-				if (((previousValue != value) 
-							|| (this._Account.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Account.Entity = null;
-						previousValue.Commander = null;
-					}
-					this._Account.Entity = value;
-					if ((value != null))
-					{
-						value.Commander = this;
-						this._CommanderID = value.AccountID;
-					}
-					else
-					{
-						this._CommanderID = default(int);
-					}
-					this.SendPropertyChanged("Account");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Commander", Storage="_Unlock", ThisKey="ChassisUnlockID", OtherKey="UnlockID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
 		public Unlock Unlock
 		{
@@ -13239,6 +13201,40 @@ namespace ZkData
 						this._ChassisUnlockID = default(int);
 					}
 					this.SendPropertyChanged("Unlock");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_AccountByAccountID", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByAccountID
+		{
+			get
+			{
+				return this._AccountByAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByAccountID.Entity = null;
+						previousValue.Commanders.Remove(this);
+					}
+					this._AccountByAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.Commanders.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("AccountByAccountID");
 				}
 			}
 		}
@@ -13278,8 +13274,8 @@ namespace ZkData
 		private void Initialize()
 		{
 			this._CommanderModules = new EntitySet<CommanderModule>(new Action<CommanderModule>(this.attach_CommanderModules), new Action<CommanderModule>(this.detach_CommanderModules));
-			this._Account = default(EntityRef<Account>);
 			this._Unlock = default(EntityRef<Unlock>);
+			this._AccountByAccountID = default(EntityRef<Account>);
 			OnCreated();
 		}
 		
