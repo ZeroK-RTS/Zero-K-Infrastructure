@@ -115,7 +115,7 @@
   </tr>
   <tr>
     <td colspan='2'>
-      @if (ZeroKWeb.Global.IsAdmin) {
+      @if (ZeroKWeb.Global.IsAdmin && ZeroKWeb.Global.AccountID == Model.AccountID) {
         <h3>
           Admin extras</h3>
         <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
