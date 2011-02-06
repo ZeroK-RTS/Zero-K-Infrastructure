@@ -29,6 +29,8 @@
              SortExpression="RequiredUnlockID" />
           <asp:BoundField DataField="UnlockType" HeaderText="UnlockType" 
             SortExpression="UnlockType" />
+            <asp:BoundField DataField="MorphLevel" HeaderText="MorphLevel" 
+             SortExpression="MorphLevel" />
           <asp:BoundField DataField="LimitForChassis" HeaderText="LimitForChassis" 
              SortExpression="LimitForChassis" />
         </Columns>
@@ -48,6 +50,7 @@
     Prerequisite (ID): <asp:TextBox ID="tbPreq" runat="server"></asp:TextBox><br />
     Unlock type: <asp:DropDownList ID="ddType" runat="server">
     </asp:DropDownList><br />
+    Morph level (when module/weapon is available): <asp:TextBox ID="tbMorphLevel" runat="server"></asp:TextBox><br />
     For chassis (comma list): <asp:TextBox ID="tbChassisLimit" runat="server"></asp:TextBox><br />
     <asp:Button ID="btnAdd" runat="server" Text="Add new" onclick="btnAdd_Click" />
     </form>

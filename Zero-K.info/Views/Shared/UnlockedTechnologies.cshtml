@@ -1,5 +1,5 @@
-﻿@model ZkData.Account
-@foreach (var unlock in Model.AccountUnlocks.Select(x => x.Unlock)) {
+﻿@model IEnumerable<ZkData.Unlock>
+@foreach (var unlock in Model) {
   <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:110px;height:90px" title="$unlock$@unlock.UnlockID"  >
     <img src="@unlock.ImageUrl"/><br />
     @unlock.Name

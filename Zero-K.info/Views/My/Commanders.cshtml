@@ -1,0 +1,26 @@
+﻿@using ZeroKWeb.Controllers
+@model ZeroKWeb.Controllers.MyController.CommandersModel
+<h2>
+  Unlocked technologies</h2>
+@{Html.RenderPartial("UnlockedTechnologies", Model.Unlocks);}
+<div>You can prepare four different commanders using technologies you own. <br />
+At the start of each battle, you can pick one of them. <br />
+Each commander starts on level 1 in battle, but can morph up to level 4</div><br />
+@for (int i = 1; i <= 4; i++) {
+  var c = Model.Commanders.SingleOrDefault(x=>x.ProfileNumber == i);
+  <h2>@(c!= null ? c.Name : "Commander " + i)</h2>
+  <form action="@Url.Action("SubmitCommander", new { commanderID = c != null ? (int?)c.CommanderID : null, profileNumber = i })" method="post">
+Commander name: @Html.TextBox("name", c != null ? c.Name : null) <input type="submit" value="Update"/><br />
+  Chassis: @Html.DropDownList("chassis", Model.Unlocks.Where(x => x.UnlockType == ZkData.UnlockTypes.Chassis).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = (c != null ? c.ChassisUnlockID == x.UnlockID : false) }))
+  @foreach (var slots in Model.Slots.GroupBy(x => x.MorphLevel).OrderBy(x => x.Key)) {
+    <h3>Level @slots.Key:</h3>  
+       foreach (var slot in slots) {
+    <span>Slot@(slot.CommanderSlotID) (@slot.UnlockType): @Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => x.UnlockType == slot.UnlockType && x.MorphLevel <= slot.MorphLevel).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.UnlockID && y.SlotID == slot.CommanderSlotID) : false }))
+      <br />
+    </span>
+       }
+  }
+  
+  </form>
+  <br />
+}

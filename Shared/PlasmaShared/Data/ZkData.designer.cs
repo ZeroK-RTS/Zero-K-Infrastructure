@@ -97,6 +97,15 @@ namespace ZkData
     partial void InsertAccountUnlock(AccountUnlock instance);
     partial void UpdateAccountUnlock(AccountUnlock instance);
     partial void DeleteAccountUnlock(AccountUnlock instance);
+    partial void InsertCommander(Commander instance);
+    partial void UpdateCommander(Commander instance);
+    partial void DeleteCommander(Commander instance);
+    partial void InsertCommanderModule(CommanderModule instance);
+    partial void UpdateCommanderModule(CommanderModule instance);
+    partial void DeleteCommanderModule(CommanderModule instance);
+    partial void InsertCommanderSlot(CommanderSlot instance);
+    partial void UpdateCommanderSlot(CommanderSlot instance);
+    partial void DeleteCommanderSlot(CommanderSlot instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -510,6 +519,30 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<SpringBattleRating>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Commander> Commanders
+		{
+			get
+			{
+				return this.GetTable<Commander>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CommanderModule> CommanderModules
+		{
+			get
+			{
+				return this.GetTable<CommanderModule>();
+			}
+		}
+		
+		public System.Data.Linq.Table<CommanderSlot> CommanderSlots
+		{
+			get
+			{
+				return this.GetTable<CommanderSlot>();
 			}
 		}
 	}
@@ -5117,6 +5150,8 @@ namespace ZkData
 		
 		private EntitySet<AccountUnlock> _AccountUnlocks;
 		
+		private EntityRef<Commander> _Commander;
+		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -5802,6 +5837,41 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Commander", ThisKey="AccountID", OtherKey="CommanderID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
+		public Commander Commander
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Commander.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._Commander.Entity;
+			}
+			set
+			{
+				Commander previousValue = this._Commander.Entity;
+				if (((previousValue != value) 
+							|| (this._Commander.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Commander.Entity = null;
+						previousValue.Account = null;
+					}
+					this._Commander.Entity = value;
+					if ((value != null))
+					{
+						value.Account = this;
+					}
+					this.SendPropertyChanged("Commander");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -6032,6 +6102,7 @@ namespace ZkData
 			this._AccountBattleAwards = new EntitySet<AccountBattleAward>(new Action<AccountBattleAward>(this.attach_AccountBattleAwards), new Action<AccountBattleAward>(this.detach_AccountBattleAwards));
 			this._AccountBattleStats = new EntitySet<AccountBattleStat>(new Action<AccountBattleStat>(this.attach_AccountBattleStats), new Action<AccountBattleStat>(this.detach_AccountBattleStats));
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
+			this._Commander = default(EntityRef<Commander>);
 			OnCreated();
 		}
 		
@@ -12222,8 +12293,6 @@ namespace ZkData
 		
 		private string _Description;
 		
-		private string _Prerequisites;
-		
 		private int _NeededLevel;
 		
 		private string _LimitForChassis;
@@ -12232,9 +12301,15 @@ namespace ZkData
 		
 		private System.Nullable<int> _RequiredUnlockID;
 		
+		private int _MorphLevel;
+		
 		private EntitySet<Unlock> _ChildUnlocks;
 		
 		private EntitySet<AccountUnlock> _AccountUnlocks;
+		
+		private EntitySet<Commander> _Commanders;
+		
+		private EntitySet<CommanderModule> _CommanderModules;
 		
 		private EntityRef<Unlock> _ParentUnlock;
 		
@@ -12252,8 +12327,6 @@ namespace ZkData
     partial void OnNameChanged();
     partial void OnDescriptionChanging(string value);
     partial void OnDescriptionChanged();
-    partial void OnPrerequisitesChanging(string value);
-    partial void OnPrerequisitesChanged();
     partial void OnNeededLevelChanging(int value);
     partial void OnNeededLevelChanged();
     partial void OnLimitForChassisChanging(string value);
@@ -12262,6 +12335,8 @@ namespace ZkData
     partial void OnUnlockTypeChanged();
     partial void OnRequiredUnlockIDChanging(System.Nullable<int> value);
     partial void OnRequiredUnlockIDChanged();
+    partial void OnMorphLevelChanging(int value);
+    partial void OnMorphLevelChanged();
     #endregion
 		
 		public Unlock()
@@ -12353,29 +12428,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Prerequisites", DbType="nvarchar(500)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public string Prerequisites
-		{
-			get
-			{
-				return this._Prerequisites;
-			}
-			set
-			{
-				if ((this._Prerequisites != value))
-				{
-					this.OnPrerequisitesChanging(value);
-					this.SendPropertyChanging();
-					this._Prerequisites = value;
-					this.SendPropertyChanged("Prerequisites");
-					this.OnPrerequisitesChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NeededLevel", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public int NeededLevel
 		{
 			get
@@ -12396,7 +12450,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LimitForChassis", DbType="nvarchar(500)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public string LimitForChassis
 		{
 			get
@@ -12417,7 +12471,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockType", DbType="int NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
 		public UnlockTypes UnlockType
 		{
 			get
@@ -12438,7 +12492,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiredUnlockID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public System.Nullable<int> RequiredUnlockID
 		{
 			get
@@ -12458,6 +12512,27 @@ namespace ZkData
 					this._RequiredUnlockID = value;
 					this.SendPropertyChanged("RequiredUnlockID");
 					this.OnRequiredUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MorphLevel", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public int MorphLevel
+		{
+			get
+			{
+				return this._MorphLevel;
+			}
+			set
+			{
+				if ((this._MorphLevel != value))
+				{
+					this.OnMorphLevelChanging(value);
+					this.SendPropertyChanging();
+					this._MorphLevel = value;
+					this.SendPropertyChanged("MorphLevel");
+					this.OnMorphLevelChanged();
 				}
 			}
 		}
@@ -12497,6 +12572,44 @@ namespace ZkData
 			set
 			{
 				this._AccountUnlocks.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Commander", Storage="_Commanders", ThisKey="UnlockID", OtherKey="ChassisUnlockID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		public EntitySet<Commander> Commanders
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Commanders.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Commanders;
+			}
+			set
+			{
+				this._Commanders.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_CommanderModules", ThisKey="UnlockID", OtherKey="ModuleUnlockID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		public EntitySet<CommanderModule> CommanderModules
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CommanderModules.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CommanderModules;
+			}
+			set
+			{
+				this._CommanderModules.Assign(value);
 			}
 		}
 		
@@ -12578,10 +12691,36 @@ namespace ZkData
 			entity.Unlock = null;
 		}
 		
+		private void attach_Commanders(Commander entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = this;
+		}
+		
+		private void detach_Commanders(Commander entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = null;
+		}
+		
+		private void attach_CommanderModules(CommanderModule entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = this;
+		}
+		
+		private void detach_CommanderModules(CommanderModule entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = null;
+		}
+		
 		private void Initialize()
 		{
 			this._ChildUnlocks = new EntitySet<Unlock>(new Action<Unlock>(this.attach_ChildUnlocks), new Action<Unlock>(this.detach_ChildUnlocks));
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
+			this._Commanders = new EntitySet<Commander>(new Action<Commander>(this.attach_Commanders), new Action<Commander>(this.detach_Commanders));
+			this._CommanderModules = new EntitySet<CommanderModule>(new Action<CommanderModule>(this.attach_CommanderModules), new Action<CommanderModule>(this.detach_CommanderModules));
 			this._ParentUnlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
@@ -12855,6 +12994,739 @@ namespace ZkData
 					this._Rating = value;
 				}
 			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Commander")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class Commander : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CommanderID;
+		
+		private int _AccountID;
+		
+		private int _ProfileNumber;
+		
+		private string _Name;
+		
+		private int _ChassisUnlockID;
+		
+		private EntitySet<CommanderModule> _CommanderModules;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Unlock> _Unlock;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCommanderIDChanging(int value);
+    partial void OnCommanderIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnProfileNumberChanging(int value);
+    partial void OnProfileNumberChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnChassisUnlockIDChanging(int value);
+    partial void OnChassisUnlockIDChanged();
+    #endregion
+		
+		public Commander()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommanderID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int CommanderID
+		{
+			get
+			{
+				return this._CommanderID;
+			}
+			set
+			{
+				if ((this._CommanderID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCommanderIDChanging(value);
+					this.SendPropertyChanging();
+					this._CommanderID = value;
+					this.SendPropertyChanged("CommanderID");
+					this.OnCommanderIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ProfileNumber", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int ProfileNumber
+		{
+			get
+			{
+				return this._ProfileNumber;
+			}
+			set
+			{
+				if ((this._ProfileNumber != value))
+				{
+					this.OnProfileNumberChanging(value);
+					this.SendPropertyChanging();
+					this._ProfileNumber = value;
+					this.SendPropertyChanged("ProfileNumber");
+					this.OnProfileNumberChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(200)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ChassisUnlockID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public int ChassisUnlockID
+		{
+			get
+			{
+				return this._ChassisUnlockID;
+			}
+			set
+			{
+				if ((this._ChassisUnlockID != value))
+				{
+					if (this._Unlock.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnChassisUnlockIDChanging(value);
+					this.SendPropertyChanging();
+					this._ChassisUnlockID = value;
+					this.SendPropertyChanged("ChassisUnlockID");
+					this.OnChassisUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commander_CommanderModule", Storage="_CommanderModules", ThisKey="CommanderID", OtherKey="CommanderID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		public EntitySet<CommanderModule> CommanderModules
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CommanderModules.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CommanderModules;
+			}
+			set
+			{
+				this._CommanderModules.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Account", ThisKey="CommanderID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.Commander = null;
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.Commander = this;
+						this._CommanderID = value.AccountID;
+					}
+					else
+					{
+						this._CommanderID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Commander", Storage="_Unlock", ThisKey="ChassisUnlockID", OtherKey="UnlockID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Unlock Unlock
+		{
+			get
+			{
+				return this._Unlock.Entity;
+			}
+			set
+			{
+				Unlock previousValue = this._Unlock.Entity;
+				if (((previousValue != value) 
+							|| (this._Unlock.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Unlock.Entity = null;
+						previousValue.Commanders.Remove(this);
+					}
+					this._Unlock.Entity = value;
+					if ((value != null))
+					{
+						value.Commanders.Add(this);
+						this._ChassisUnlockID = value.UnlockID;
+					}
+					else
+					{
+						this._ChassisUnlockID = default(int);
+					}
+					this.SendPropertyChanged("Unlock");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CommanderModules(CommanderModule entity)
+		{
+			this.SendPropertyChanging();
+			entity.Commander = this;
+		}
+		
+		private void detach_CommanderModules(CommanderModule entity)
+		{
+			this.SendPropertyChanging();
+			entity.Commander = null;
+		}
+		
+		private void Initialize()
+		{
+			this._CommanderModules = new EntitySet<CommanderModule>(new Action<CommanderModule>(this.attach_CommanderModules), new Action<CommanderModule>(this.detach_CommanderModules));
+			this._Account = default(EntityRef<Account>);
+			this._Unlock = default(EntityRef<Unlock>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CommanderModule")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class CommanderModule : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CommanderID;
+		
+		private int _ModuleUnlockID;
+		
+		private int _SlotID;
+		
+		private EntityRef<Unlock> _Unlock;
+		
+		private EntityRef<Commander> _Commander;
+		
+		private EntityRef<CommanderSlot> _CommanderSlot;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCommanderIDChanging(int value);
+    partial void OnCommanderIDChanged();
+    partial void OnModuleUnlockIDChanging(int value);
+    partial void OnModuleUnlockIDChanged();
+    partial void OnSlotIDChanging(int value);
+    partial void OnSlotIDChanged();
+    #endregion
+		
+		public CommanderModule()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommanderID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int CommanderID
+		{
+			get
+			{
+				return this._CommanderID;
+			}
+			set
+			{
+				if ((this._CommanderID != value))
+				{
+					if (this._Commander.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCommanderIDChanging(value);
+					this.SendPropertyChanging();
+					this._CommanderID = value;
+					this.SendPropertyChanged("CommanderID");
+					this.OnCommanderIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModuleUnlockID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int ModuleUnlockID
+		{
+			get
+			{
+				return this._ModuleUnlockID;
+			}
+			set
+			{
+				if ((this._ModuleUnlockID != value))
+				{
+					if (this._Unlock.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnModuleUnlockIDChanging(value);
+					this.SendPropertyChanging();
+					this._ModuleUnlockID = value;
+					this.SendPropertyChanged("ModuleUnlockID");
+					this.OnModuleUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SlotID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int SlotID
+		{
+			get
+			{
+				return this._SlotID;
+			}
+			set
+			{
+				if ((this._SlotID != value))
+				{
+					if (this._CommanderSlot.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSlotIDChanging(value);
+					this.SendPropertyChanging();
+					this._SlotID = value;
+					this.SendPropertyChanged("SlotID");
+					this.OnSlotIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_Unlock", ThisKey="ModuleUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
+		public Unlock Unlock
+		{
+			get
+			{
+				return this._Unlock.Entity;
+			}
+			set
+			{
+				Unlock previousValue = this._Unlock.Entity;
+				if (((previousValue != value) 
+							|| (this._Unlock.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Unlock.Entity = null;
+						previousValue.CommanderModules.Remove(this);
+					}
+					this._Unlock.Entity = value;
+					if ((value != null))
+					{
+						value.CommanderModules.Add(this);
+						this._ModuleUnlockID = value.UnlockID;
+					}
+					else
+					{
+						this._ModuleUnlockID = default(int);
+					}
+					this.SendPropertyChanged("Unlock");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Commander_CommanderModule", Storage="_Commander", ThisKey="CommanderID", OtherKey="CommanderID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Commander Commander
+		{
+			get
+			{
+				return this._Commander.Entity;
+			}
+			set
+			{
+				Commander previousValue = this._Commander.Entity;
+				if (((previousValue != value) 
+							|| (this._Commander.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Commander.Entity = null;
+						previousValue.CommanderModules.Remove(this);
+					}
+					this._Commander.Entity = value;
+					if ((value != null))
+					{
+						value.CommanderModules.Add(this);
+						this._CommanderID = value.CommanderID;
+					}
+					else
+					{
+						this._CommanderID = default(int);
+					}
+					this.SendPropertyChanged("Commander");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommanderSlot_CommanderModule", Storage="_CommanderSlot", ThisKey="SlotID", OtherKey="CommanderSlotID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public CommanderSlot CommanderSlot
+		{
+			get
+			{
+				return this._CommanderSlot.Entity;
+			}
+			set
+			{
+				CommanderSlot previousValue = this._CommanderSlot.Entity;
+				if (((previousValue != value) 
+							|| (this._CommanderSlot.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._CommanderSlot.Entity = null;
+						previousValue.CommanderModules.Remove(this);
+					}
+					this._CommanderSlot.Entity = value;
+					if ((value != null))
+					{
+						value.CommanderModules.Add(this);
+						this._SlotID = value.CommanderSlotID;
+					}
+					else
+					{
+						this._SlotID = default(int);
+					}
+					this.SendPropertyChanged("CommanderSlot");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Unlock = default(EntityRef<Unlock>);
+			this._Commander = default(EntityRef<Commander>);
+			this._CommanderSlot = default(EntityRef<CommanderSlot>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CommanderSlot")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class CommanderSlot : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _CommanderSlotID;
+		
+		private int _MorphLevel;
+		
+		private UnlockTypes _UnlockType;
+		
+		private EntitySet<CommanderModule> _CommanderModules;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnCommanderSlotIDChanging(int value);
+    partial void OnCommanderSlotIDChanged();
+    partial void OnMorphLevelChanging(int value);
+    partial void OnMorphLevelChanged();
+    partial void OnUnlockTypeChanging(UnlockTypes value);
+    partial void OnUnlockTypeChanged();
+    #endregion
+		
+		public CommanderSlot()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommanderSlotID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int CommanderSlotID
+		{
+			get
+			{
+				return this._CommanderSlotID;
+			}
+			set
+			{
+				if ((this._CommanderSlotID != value))
+				{
+					this.OnCommanderSlotIDChanging(value);
+					this.SendPropertyChanging();
+					this._CommanderSlotID = value;
+					this.SendPropertyChanged("CommanderSlotID");
+					this.OnCommanderSlotIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MorphLevel", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int MorphLevel
+		{
+			get
+			{
+				return this._MorphLevel;
+			}
+			set
+			{
+				if ((this._MorphLevel != value))
+				{
+					this.OnMorphLevelChanging(value);
+					this.SendPropertyChanging();
+					this._MorphLevel = value;
+					this.SendPropertyChanged("MorphLevel");
+					this.OnMorphLevelChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockType", DbType="int NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public UnlockTypes UnlockType
+		{
+			get
+			{
+				return this._UnlockType;
+			}
+			set
+			{
+				if ((this._UnlockType != value))
+				{
+					this.OnUnlockTypeChanging(value);
+					this.SendPropertyChanging();
+					this._UnlockType = value;
+					this.SendPropertyChanged("UnlockType");
+					this.OnUnlockTypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CommanderSlot_CommanderModule", Storage="_CommanderModules", ThisKey="CommanderSlotID", OtherKey="SlotID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4, EmitDefaultValue=false)]
+		public EntitySet<CommanderModule> CommanderModules
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CommanderModules.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CommanderModules;
+			}
+			set
+			{
+				this._CommanderModules.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_CommanderModules(CommanderModule entity)
+		{
+			this.SendPropertyChanging();
+			entity.CommanderSlot = this;
+		}
+		
+		private void detach_CommanderModules(CommanderModule entity)
+		{
+			this.SendPropertyChanging();
+			entity.CommanderSlot = null;
+		}
+		
+		private void Initialize()
+		{
+			this._CommanderModules = new EntitySet<CommanderModule>(new Action<CommanderModule>(this.attach_CommanderModules), new Action<CommanderModule>(this.detach_CommanderModules));
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 }

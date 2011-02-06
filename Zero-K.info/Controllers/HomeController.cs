@@ -186,11 +186,13 @@ namespace ZeroKWeb.Controllers
       var sb = new StringBuilder();
       var u = db.Unlocks.Single(x => x.UnlockID == id);
       sb.AppendLine("<span>");
-      sb.AppendFormat("<h2>{0}</h2>", u.Name);
+      sb.AppendFormat("<h3>{0}</h3>", u.Name);
       sb.AppendFormat("<img src='{0}'/><br/>", u.ImageUrl);
       sb.AppendFormat("Type: <span style='color:{1};'>{0}</span><br/>", u.UnlockType, u.LabelColor);
       sb.AppendFormat("Required level: {0}<br/>", u.NeededLevel);
-      sb.AppendFormat("Required unit: {0}<br/>", u.ParentUnlock != null ? u.ParentUnlock.Name : null);
+      if (u.ParentUnlock!=null) sb.AppendFormat("Required unit: {0}<br/>", u.ParentUnlock.Name);
+      if (!string.IsNullOrEmpty(u.LimitForChassis)) sb.AppendFormat("For chassis: {0}<br/>", u.LimitForChassis);
+      if (u.MorphLevel > 0) sb.AppendFormat("Commander morph level: {0}<br/>", u.MorphLevel);
       sb.AppendFormat("<small>{0}</small>", HtmlHelperExtensions.BBCode(null, u.Description));
       sb.AppendLine("</span>");
       return sb.ToString();

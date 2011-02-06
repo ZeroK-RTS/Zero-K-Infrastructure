@@ -123,7 +123,7 @@
       }
       <h3>
         Technologies (UNDER CONSTRUCTION):</h3>
-        @{Html.RenderPartial("UnlockedTechnologies",Model);}
+        @{Html.RenderPartial("UnlockedTechnologies",Model.AccountUnlocks.Select(x=>x.Unlock));}
         <br />
         @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
           <a href='@Url.Action("UnlockList", "My")'>You can unlock @(Model.Level - Model.AccountUnlocks.Count) technologies</a>
