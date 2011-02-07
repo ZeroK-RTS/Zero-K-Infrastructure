@@ -2,7 +2,13 @@
 @{
   Page.Title = "Zero-K main site";
   var s = Model.Spotlight;
+  var stat = @Model.LobbyStats;
 }
+
+@if (!ZeroKWeb.Global.IsLobbyAccess) {
+  @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) @:players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat
+}
+
 <div id="content" class="fleft width-70">
   <div id="features" class="border textwall">
     

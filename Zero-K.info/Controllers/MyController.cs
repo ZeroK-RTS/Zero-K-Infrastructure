@@ -133,7 +133,7 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(unlock.LimitForChassis))
             {
               var validChassis = unlock.LimitForChassis.Split(',');
-              if (!validChassis.Contains(comm.Unlock.Name)) return Content(string.Format("{0} cannot be used in commander {1}", unlock.Name, comm.Unlock.Name));
+              if (!validChassis.Contains(comm.Unlock.Code)) return Content(string.Format("{0} cannot be used in commander {1}", unlock.Name, comm.Unlock.Name));
             }
 
             var comSlot = comm.CommanderModules.SingleOrDefault(x => x.SlotID == slotId);

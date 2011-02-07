@@ -90,6 +90,8 @@ namespace ZeroKWeb.Controllers
       var db = new ZkDataContext();
 
       var result = new IndexResult() { Spotlight = spotlight, Top10Players = db.Accounts.Where(x=>x.SpringBattlePlayers.Any(y=> y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x=>x.Elo).Take(10) };
+
+      result.LobbyStats = AuthServiceClient.GetLobbyStats();
       
       if (!Global.IsAccountAuthorized)
       {
@@ -118,6 +120,7 @@ namespace ZeroKWeb.Controllers
       public UnitSpotlight Spotlight;
       public IQueryable<NewThreadEntry> NewThreads;
       public IEnumerable<Account> Top10Players;
+      public CurrentLobbyStats LobbyStats;
     }
 
     public class UnitSpotlight

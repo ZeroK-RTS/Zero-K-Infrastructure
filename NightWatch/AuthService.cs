@@ -134,6 +134,29 @@ namespace NightWatch
         return new ZkDataContext().Accounts.SingleOrDefault(x => x.Name == login && x.Password == hashedPassword);
     }
 
+    public CurrentLobbyStats GetCurrentStats()
+    {
+      var ret = new CurrentLobbyStats();
+      foreach (var u in client.ExistingUsers.Values)
+      {
+        if (!u.IsBot && !u.IsInGame && !u.IsInBattleRoom) ret.UsersIdle++;
+      }
+
+      foreach (var b in client.ExistingBattles.Values)
+      {
+        if (!GlobalConst.IsZkMod(b.ModName)) continue;
+        foreach (var u in b.Users.Select(x => x.LobbyUser))
+        {
+          if (u.IsBot) continue;
+          if (u.IsInGame) ret.UsersFighting++;
+          else if (u.IsInBattleRoom) ret.UsersWaiting++;
+      }
+        if (client.ExistingUsers[b.Founder].IsInGame) ret.BattlesRunning++;
+        else ret.BattlesWaiting++;
+      }
+      return ret;
+    }
+
     class RequestInfo
     {
       public int AccountID;
