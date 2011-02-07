@@ -136,8 +136,7 @@ namespace ZeroKWeb
               var comdef = new LuaTable();
               commanderTypes[key] = comdef;
 
-              if (i == 1) comdef["chassis"] = c.Unlock.Code;
-              else comdef["chassis"] = c.Unlock.Code + i;
+              comdef["chassis"] = c.Unlock.Code + i;
 
               var modules = new LuaTable();
               comdef["modules"] = modules;

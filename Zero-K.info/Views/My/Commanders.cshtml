@@ -15,7 +15,7 @@ Commander name: @Html.TextBox("name", c != null ? c.Name : null) <input type="su
   @foreach (var slots in Model.Slots.GroupBy(x => x.MorphLevel).OrderBy(x => x.Key)) {
     <h3>Level @slots.Key:</h3>  
        foreach (var slot in slots) {
-    <span>Slot@(slot.CommanderSlotID) (@slot.UnlockType): @Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => x.UnlockType == slot.UnlockType && x.MorphLevel <= slot.MorphLevel).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.UnlockID && y.SlotID == slot.CommanderSlotID) : false }))
+    <span>Slot@(slot.CommanderSlotID) (@slot.UnlockType): @Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => x.UnlockType == slot.UnlockType && x.MorphLevel <= slot.MorphLevel).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.UnlockID && y.SlotID == slot.CommanderSlotID) : false }).Union(new SelectListItem[] { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderModules.Any(y => y.SlotID == slot.CommanderSlotID) : true } }))
       <br />
     </span>
        }

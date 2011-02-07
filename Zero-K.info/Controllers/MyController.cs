@@ -123,26 +123,27 @@ namespace ZeroKWeb.Controllers
           int unlockId;
           int.TryParse(Request.Form[key], out unlockId);
 
-          if (unlockId > 0)
-          {
+          if (unlockId > 0) {
             var slot = db.CommanderSlots.Single(x => x.CommanderSlotID == slotId);
             var unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
 
             if (!unlocks.Any(x => x.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
             if (slot.MorphLevel < unlock.MorphLevel) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
-            if (!string.IsNullOrEmpty(unlock.LimitForChassis))
-            {
+            if (!string.IsNullOrEmpty(unlock.LimitForChassis)) {
               var validChassis = unlock.LimitForChassis.Split(',');
               if (!validChassis.Contains(comm.Unlock.Code)) return Content(string.Format("{0} cannot be used in commander {1}", unlock.Name, comm.Unlock.Name));
             }
 
             var comSlot = comm.CommanderModules.SingleOrDefault(x => x.SlotID == slotId);
-            if (comSlot == null)
-            {
+            if (comSlot == null) {
               comSlot = new CommanderModule() { SlotID = slotId };
               comm.CommanderModules.Add(comSlot);
             }
             comSlot.ModuleUnlockID = unlockId;
+          } else
+          {
+            var oldModule = comm.CommanderModules.FirstOrDefault(x => x.SlotID == slotId);
+            if (oldModule != null) comm.CommanderModules.Remove(oldModule);
           }
         }
       }

@@ -198,7 +198,6 @@
     <Content Include="Views\Users\UserList.cshtml" />
     <Content Include="Views\Shared\UnlockedTechnologies.cshtml" />
     <Content Include="Views\My\Commanders.cshtml" />
-    <Content Include="Views\My\ModuleSlot.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
