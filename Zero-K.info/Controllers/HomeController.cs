@@ -222,9 +222,20 @@ namespace ZeroKWeb.Controllers
       sb.AppendFormat("Type: <span style='color:{1};'>{0}</span><br/>", u.UnlockType, u.LabelColor);
       sb.AppendFormat("Required level: {0}<br/>", u.NeededLevel);
       if (u.ParentUnlock!=null) sb.AppendFormat("Required unit: {0}<br/>", u.ParentUnlock.Name);
-      if (!string.IsNullOrEmpty(u.LimitForChassis)) sb.AppendFormat("For chassis: {0}<br/>", u.LimitForChassis);
+      if (!string.IsNullOrEmpty(u.LimitForChassis))
+      {
+        var codes = u.LimitForChassis.Split(',');
+        var text = string.Join(",",
+                    codes.Select(x =>
+                      {
+                        var req = db.Unlocks.SingleOrDefault(y => y.Code == x);
+                        if (req != null) return req.Name;
+                        else return "";
+                      }).ToArray());
+        sb.AppendFormat("For chassis: {0}<br/>", text);
+      }
       if (u.MorphLevel > 0) sb.AppendFormat("Commander morph level: {0}<br/>", u.MorphLevel);
-      if (u.MaxModuleCount != null) sb.AppendFormat("Max. in one commander: {0}<br/>", u.MaxModuleCount);
+      if (u.MaxModuleCount != null) sb.AppendFormat("Max in one commander: {0}<br/>", u.MaxModuleCount);
       sb.AppendFormat("<small>{0}</small>", HtmlHelperExtensions.BBCode(null, u.Description));
       sb.AppendLine("</span>");
       return sb.ToString();
