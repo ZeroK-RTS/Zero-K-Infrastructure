@@ -31,6 +31,8 @@
             SortExpression="UnlockType" />
             <asp:BoundField DataField="MorphLevel" HeaderText="MorphLevel" 
              SortExpression="MorphLevel" />
+             <asp:BoundField DataField="MaxModuleCount" HeaderText="MaxModuleCount" 
+             SortExpression="MaxModuleCount" />
           <asp:BoundField DataField="LimitForChassis" HeaderText="LimitForChassis" 
              SortExpression="LimitForChassis" />
         </Columns>
@@ -51,6 +53,7 @@
     Unlock type: <asp:DropDownList ID="ddType" runat="server">
     </asp:DropDownList><br />
     Morph level (when module/weapon is available): <asp:TextBox ID="tbMorphLevel" runat="server"></asp:TextBox><br />
+    Max module count (in one commander): <asp:TextBox ID="tbMaxCount" runat="server"></asp:TextBox><br />
     For chassis (comma list): <asp:TextBox ID="tbChassisLimit" runat="server"></asp:TextBox><br />
     <asp:Button ID="btnAdd" runat="server" Text="Add new" onclick="btnAdd_Click" />
     </form>

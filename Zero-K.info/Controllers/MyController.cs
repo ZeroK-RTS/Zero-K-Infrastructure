@@ -147,6 +147,25 @@ namespace ZeroKWeb.Controllers
           }
         }
       }
+
+      foreach (var unlock in comm.CommanderModules.GroupBy(x=>x.Unlock))
+      {
+        if (unlock.Key == null) continue;
+        if (unlock.Key.MaxModuleCount != null && unlock.Key.MaxModuleCount.Value < unlock.Count())
+        {
+          var toRemove = unlock.Count() - unlock.Key.MaxModuleCount.Value;
+          
+          foreach (var m in unlock.OrderByDescending(x=>x.SlotID))
+          {
+            comm.CommanderModules.Remove(m);
+            toRemove--;
+            if (toRemove <= 0) break;
+          }
+
+        }
+
+      }
+
       db.SubmitChanges();
 
 

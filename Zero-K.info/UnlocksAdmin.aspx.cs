@@ -35,6 +35,7 @@ namespace ZeroKWeb
                      RequiredUnlockID = string.IsNullOrEmpty(tbPreq.Text) ? null : (int?)int.Parse(tbPreq.Text),
                      UnlockType = (UnlockTypes)int.Parse(ddType.SelectedValue),
                      MorphLevel = string.IsNullOrEmpty(tbMorphLevel.Text) ? 0 : int.Parse(tbMorphLevel.Text),
+                     MaxModuleCount = string.IsNullOrEmpty(tbMaxCount.Text) ? null : (int?)int.Parse(tbMaxCount.Text),
                      LimitForChassis = tbChassisLimit.Text,
                    };
       db.Unlocks.InsertOnSubmit(unlock);

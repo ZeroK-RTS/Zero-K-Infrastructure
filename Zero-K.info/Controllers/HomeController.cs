@@ -224,6 +224,7 @@ namespace ZeroKWeb.Controllers
       if (u.ParentUnlock!=null) sb.AppendFormat("Required unit: {0}<br/>", u.ParentUnlock.Name);
       if (!string.IsNullOrEmpty(u.LimitForChassis)) sb.AppendFormat("For chassis: {0}<br/>", u.LimitForChassis);
       if (u.MorphLevel > 0) sb.AppendFormat("Commander morph level: {0}<br/>", u.MorphLevel);
+      if (u.MaxModuleCount != null) sb.AppendFormat("Max. in one commander: ", u.MaxModuleCount);
       sb.AppendFormat("<small>{0}</small>", HtmlHelperExtensions.BBCode(null, u.Description));
       sb.AppendLine("</span>");
       return sb.ToString();

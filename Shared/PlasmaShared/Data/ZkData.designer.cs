@@ -12299,6 +12299,8 @@ namespace ZkData
 		
 		private int _MorphLevel;
 		
+		private System.Nullable<int> _MaxModuleCount;
+		
 		private EntitySet<Unlock> _ChildUnlocks;
 		
 		private EntitySet<AccountUnlock> _AccountUnlocks;
@@ -12333,6 +12335,8 @@ namespace ZkData
     partial void OnRequiredUnlockIDChanged();
     partial void OnMorphLevelChanging(int value);
     partial void OnMorphLevelChanged();
+    partial void OnMaxModuleCountChanging(System.Nullable<int> value);
+    partial void OnMaxModuleCountChanged();
     #endregion
 		
 		public Unlock()
@@ -12533,8 +12537,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxModuleCount", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public System.Nullable<int> MaxModuleCount
+		{
+			get
+			{
+				return this._MaxModuleCount;
+			}
+			set
+			{
+				if ((this._MaxModuleCount != value))
+				{
+					this.OnMaxModuleCountChanging(value);
+					this.SendPropertyChanging();
+					this._MaxModuleCount = value;
+					this.SendPropertyChanged("MaxModuleCount");
+					this.OnMaxModuleCountChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ChildUnlocks", ThisKey="UnlockID", OtherKey="RequiredUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<Unlock> ChildUnlocks
 		{
 			get
@@ -12553,7 +12578,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_AccountUnlock", Storage="_AccountUnlocks", ThisKey="UnlockID", OtherKey="UnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -12572,7 +12597,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Commander", Storage="_Commanders", ThisKey="UnlockID", OtherKey="ChassisUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<Commander> Commanders
 		{
 			get
@@ -12591,7 +12616,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_CommanderModules", ThisKey="UnlockID", OtherKey="ModuleUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<CommanderModule> CommanderModules
 		{
 			get
