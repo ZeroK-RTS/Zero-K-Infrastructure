@@ -222,6 +222,7 @@ namespace ZeroKLobby
       Refresh();
     }
 
+    private readonly Regex filterOrSplit = new Regex(@"\||\bOR\b");
     void view_Filter(object sender, FilterEventArgs e)
     {
       var battle = ((BattleIcon)e.Item).Battle;
@@ -238,7 +239,12 @@ namespace ZeroKLobby
         return;
       }
 
-      e.Accepted = BattleWordFilter(battle, tbFilter.Text.ToUpper().Split(' '));
+      e.Accepted = // Isn't this just GORGEOUS?!
+          filterOrSplit.Split(tbFilter.Text.ToUpper())
+          .Where(f => f.Trim().Length > 0)
+          .Select(f => f.Split(' '))
+          .DefaultIfEmpty(new string[0])
+          .Any(f => BattleWordFilter(battle, f));
     }
 
 
