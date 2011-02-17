@@ -203,7 +203,7 @@ namespace ZeroKWeb.Controllers
         foreach (var module in slots.OrderBy(x=>x.SlotID))
         {
           sb.AppendFormat("<img src='{0}' width='20' height='20'><span style='color:{2};'>{1}</span><br/>",
-                          module.Unlock.Name,
+                          module.Unlock.ImageUrl,
                           module.Unlock.Name,
                           module.Unlock.LabelColor);
         }

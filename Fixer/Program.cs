@@ -27,7 +27,7 @@ namespace Fixer
     static void RecalculateBattleElo()
     {
       var db = new ZkDataContext();
-      foreach (var b in db.SpringBattles)
+      foreach (var b in db.SpringBattles.Where(x=>!x.IsEloProcessed).ToList())
       {
         b.CalculateElo();
         db.SubmitChanges();
