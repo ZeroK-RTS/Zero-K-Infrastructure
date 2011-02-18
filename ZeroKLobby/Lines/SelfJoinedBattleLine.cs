@@ -12,7 +12,7 @@ namespace ZeroKLobby.Lines
     {
       Battle = battle;
       Date = DateTime.Now;
-      Text = string.Format("{0}[{1}{2}{3}] ==== YOU HAVE JOINED BATLE ROOM: {4} - {5} ====",
+      Text = string.Format("{0}[{1}{2}{3}] ==== YOU HAVE JOINED BATTLE ROOM: {4} - {5} ====",
                            TextColor.Join,
                            TextColor.Date,
                            Date.ToShortTimeString(),
