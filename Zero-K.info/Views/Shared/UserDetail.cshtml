@@ -1,8 +1,11 @@
-﻿@model ZkData.Account
+ @model ZkData.Account
 @using ZkData;
 @{
   Page.Title = Model.Name;
 }
+
+@* User Profile Page! *@
+@* First column starts here *@
 <h2>@Html.PrintAccount(Model)</h2>
 <table>
   <tr>
@@ -99,20 +102,31 @@
       </table>
       <a href='spring://chat/user/@Model.Name'>Send private message to @Model.Name</a>
     </td>
+
+    @* Second column starts here *@
     <td width="40%" valign="top">
-      <h3>
-        Posted threads</h3>
-      @foreach (var t in Model.ForumPosts.Select(x => x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10)) { 
-        <small>* <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
+      @if (Model.ForumPosts.Any()) {
+        <h3>
+          Posted threads</h3>
+        @foreach (var t in Model.ForumPosts.Select(x => x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10)) {
+          <small>* <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
+        }
+      } @else {
+        <h3>
+          No posted threads</h3>
       }
-      <h3>
-        Last battles</h3>
-      @foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Select(x => x.SpringBattle).Take(10)) {
-        <small>@Html.PrintBattle(b)</small><br />
+      @if (Model.SpringBattlePlayers.Any()) {
+        <h3>
+          Last battles</h3>
+        @foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Select(x => x.SpringBattle).Take(10)) {
+          <small>@Html.PrintBattle(b)</small><br />
+        }
       }
       </span>
     </td>
   </tr>
+
+  @@* Bottom cell starts here *@
   <tr>
     <td colspan='2'>
       @if (ZeroKWeb.Global.IsAdmin && ZeroKWeb.Global.AccountID == Model.AccountID) {
@@ -131,7 +145,7 @@
           @Model.Name @:can unlock @(Model.Level - Model.AccountUnlocks.Count) technologies
         }
       <h3>Commanders (UNDER CONSTRUCTION):</h3>
-      @foreach (var comm in Model.Commanders) { 
+      @foreach (var comm in Model.Commanders) {
         <span style='display:inline-block; width:110px;height:80px' title='$commander$@comm.CommanderID'>
           <img src='@comm.Unlock.ImageUrl'/><br />@comm.Name
         </span>
