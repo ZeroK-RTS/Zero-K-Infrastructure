@@ -26,7 +26,7 @@
     </style>
     } else {
       var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
-      @* What we're doing here is generating a number unique-ish to each date (1 or 2 collisions per year) *@
+      @* What we're doing here is generating a number unique to each date *@
       @* We use this to seed the RNG so that it picks a new background once per day *@
       int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
       var random = new Random(date);
