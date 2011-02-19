@@ -132,7 +132,7 @@ namespace System.Web.Mvc
       
      
 
-      return new MvcHtmlString(string.Format("<a href='{0}' title='$battle${1}'>B{1}</a> {2} on {3} ({4})", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), battle.BattleType));
+      return new MvcHtmlString(string.Format("<a href='{0}'>B{1}</a> {2} on {3} ({4})", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), battle.BattleType));
     }
 
 

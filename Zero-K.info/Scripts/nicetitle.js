@@ -212,7 +212,7 @@ function showNiceTitle(e) {
 			$(cachedTooltips[nicetitle]).appendTo(d);
 		} else {
 
-	    $("<span>....</span>").appendTo(d); // we write nothing in async mode - wait for data request
+	    $("<span>Loading....<img src='/img/Loader.gif'></span>").appendTo(d); // we write nothing in async mode - wait for data request
       
 
 			var context = CURRENT_NICE_TITLE;

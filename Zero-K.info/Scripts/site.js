@@ -1,7 +1,8 @@
 ﻿var ajaxScrollCount = 40;
 var ajaxScrollOffset = 40;
-var ajaxScrollEnabled = true; 
+var ajaxScrollEnabled = true;
 
+/* confirm dialog when class is delete */
 $(document).ready(function () {
   // delete confirm dialog
   $('a.delete').click(function () {
@@ -9,14 +10,21 @@ $(document).ready(function () {
     return answer;
   });
 
+  /* auto submit form when data-autpostback=true */
+  $(document).ready(function () {
+    $("select:[autopostback=True]").change(function () {
+      $(this).closest("form").submit();
+    });
+  });
 
-/* ajax form updater and scorll based loader
-It updates form on submit using ajax - sending offset 0 to it when user clicks
 
-It also updates form when user scrolls to bottom - sending current offset to it, this continues until controller returns data.
+  /* ajax form updater and scorll based loader
+  It updates form on submit using ajax - sending offset 0 to it when user clicks
 
-AjaxScrollProgress element is made visible to display loading progress
-*/
+  It also updates form when user scrolls to bottom - sending current offset to it, this continues until controller returns data.
+
+  AjaxScrollProgress element is made visible to display loading progress
+  */
   var frm = $("#ajaxScrollForm");
   var prg = $("#ajaxScrollProgress");
   var target = $("#ajaxScrollTarget");

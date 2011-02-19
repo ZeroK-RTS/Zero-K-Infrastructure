@@ -221,7 +221,7 @@ namespace ZeroKWeb.Controllers
       sb.AppendFormat("<img src='{0}'/><br/>", u.ImageUrl);
       sb.AppendFormat("Type: <span style='color:{1};'>{0}</span><br/>", u.UnlockType, u.LabelColor);
       sb.AppendFormat("Required level: {0}<br/>", u.NeededLevel);
-      if (u.ParentUnlock!=null) sb.AppendFormat("Required unit: {0}<br/>", u.ParentUnlock.Name);
+      if (u.ParentUnlock!=null) sb.AppendFormat("Required unit: <img src='{0}' height='20' width='20'/> {1}<br/>", u.ParentUnlock.ImageUrl, u.ParentUnlock.Name);
       if (!string.IsNullOrEmpty(u.LimitForChassis))
       {
         var codes = u.LimitForChassis.Split(',');
@@ -229,7 +229,7 @@ namespace ZeroKWeb.Controllers
                     codes.Select(x =>
                       {
                         var req = db.Unlocks.SingleOrDefault(y => y.Code == x);
-                        if (req != null) return req.Name;
+                        if (req != null) return string.Format("<img src='{0}'/>", req.ImageUrl);
                         else return "";
                       }).ToArray());
         sb.AppendFormat("For chassis: {0}<br/>", text);
