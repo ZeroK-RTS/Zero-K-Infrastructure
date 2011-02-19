@@ -34,7 +34,6 @@ namespace ZeroKWeb.Controllers
         comm = new Commander() { AccountID = Global.AccountID, ProfileNumber = profileNumber };
         db.Commanders.InsertOnSubmit(comm);
       }
-      comm.Name = name;
 
       if (comm.Unlock == null)
       {
@@ -46,6 +45,8 @@ namespace ZeroKWeb.Controllers
           comm.Unlock = chassisUnlock;
         }
       }
+
+      if (!string.IsNullOrEmpty(name)) comm.Name = name;
 
       foreach (var key in Request.Form.AllKeys.Where(x=>!string.IsNullOrEmpty(x)))
       {

@@ -2,7 +2,7 @@
 <publishData>
   <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="Views/Shared/UserDetail.cshtml" publishTime="02/19/2011 13:43:46" />
-    <file relUrl="Views/My/CommanderProfile.cshtml" publishTime="02/19/2011 20:01:45" />
+    <file relUrl="Views/My/CommanderProfile.cshtml" publishTime="02/19/2011 20:27:12" />
     <file relUrl="ContentService.asmx" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Views/Wiki/Index.cshtml" publishTime="01/02/2011 04:13:52" />
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="01/02/2011 03:33:30" />
@@ -17,12 +17,12 @@
     <file relUrl="Views/Missions/Detail.cshtml" publishTime="02/19/2011 15:04:57" />
     <file relUrl="Styles/base.css" publishTime="02/05/2011 13:25:09" />
     <file relUrl="Global.asax" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="bin/ZeroKWeb.pdb" publishTime="02/19/2011 20:20:17" />
+    <file relUrl="bin/ZeroKWeb.pdb" publishTime="02/19/2011 20:28:02" />
     <file relUrl="Scripts/jquery-1.4.2.min.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Views/Maps/MapTileList.cshtml" publishTime="02/03/2011 17:16:47" />
     <file relUrl="UnlocksAdmin.aspx" publishTime="02/07/2011 16:00:44" />
     <file relUrl="LobbyStart.inc" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="bin/ZeroKWeb.dll" publishTime="02/19/2011 20:20:17" />
+    <file relUrl="bin/ZeroKWeb.dll" publishTime="02/19/2011 20:28:02" />
     <file relUrl="Views/Shared/_SiteLayout.cshtml" publishTime="02/19/2011 20:14:19" />
     <file relUrl="Styles/nicetitle.css" publishTime="02/19/2011 14:07:12" />
     <file relUrl="Scripts/nicetitle.js" publishTime="02/19/2011 13:54:09" />
