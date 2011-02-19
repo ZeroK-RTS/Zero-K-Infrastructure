@@ -2,6 +2,7 @@
 <publishData>
   <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="Views/Shared/UserDetail.cshtml" publishTime="02/19/2011 13:43:46" />
+    <file relUrl="Views/My/CommanderProfile.cshtml" publishTime="02/19/2011 20:01:45" />
     <file relUrl="ContentService.asmx" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Views/Wiki/Index.cshtml" publishTime="01/02/2011 04:13:52" />
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="01/02/2011 03:33:30" />
@@ -9,56 +10,43 @@
     <file relUrl="Views/Users/UserList.cshtml" publishTime="02/06/2011 15:25:20" />
     <file relUrl="bin/Global.asax" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Views/Forum/NewPost.cshtml" publishTime="02/01/2011 02:33:16" />
-    <file relUrl="Facebook/Docs/content/images/webx-bkg.png" publishTime="02/19/2011 11:38:39" />
-    <file relUrl="Views/Missions/TileList.cshtml" publishTime="02/03/2011 17:16:46" />
+    <file relUrl="Views/Missions/TileList.cshtml" publishTime="02/19/2011 15:03:51" />
     <file relUrl="Views/My/UnlockList.cshtml" publishTime="02/07/2011 16:14:13" />
     <file relUrl="Web.config" publishTime="02/07/2011 04:13:53" />
-    <file relUrl="Facebook/Docs/content/images/wm-mysite-settings.png" publishTime="02/19/2011 11:38:39" />
     <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="Views/Missions/Detail.cshtml" publishTime="02/04/2011 15:53:19" />
+    <file relUrl="Views/Missions/Detail.cshtml" publishTime="02/19/2011 15:04:57" />
     <file relUrl="Styles/base.css" publishTime="02/05/2011 13:25:09" />
     <file relUrl="Global.asax" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="bin/ZeroKWeb.pdb" publishTime="02/19/2011 14:46:05" />
+    <file relUrl="bin/ZeroKWeb.pdb" publishTime="02/19/2011 20:20:17" />
     <file relUrl="Scripts/jquery-1.4.2.min.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Views/Maps/MapTileList.cshtml" publishTime="02/03/2011 17:16:47" />
     <file relUrl="UnlocksAdmin.aspx" publishTime="02/07/2011 16:00:44" />
-    <file relUrl="Facebook/Docs/content/images/wm-site-settings.png" publishTime="02/19/2011 11:38:39" />
     <file relUrl="LobbyStart.inc" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="bin/ZeroKWeb.dll" publishTime="02/19/2011 14:46:05" />
-    <file relUrl="Views/Shared/_SiteLayout.cshtml" publishTime="02/19/2011 11:50:01" />
+    <file relUrl="bin/ZeroKWeb.dll" publishTime="02/19/2011 20:20:17" />
+    <file relUrl="Views/Shared/_SiteLayout.cshtml" publishTime="02/19/2011 20:14:19" />
     <file relUrl="Styles/nicetitle.css" publishTime="02/19/2011 14:07:12" />
     <file relUrl="Scripts/nicetitle.js" publishTime="02/19/2011 13:54:09" />
     <file relUrl="Views/Shared/UnlockedTechnologies.cshtml" publishTime="02/06/2011 20:35:19" />
-    <file relUrl="Facebook/Docs/reference.htm" publishTime="02/19/2011 11:38:39" />
     <file relUrl="Views/Battles/Index.cshtml" publishTime="02/01/2011 02:16:33" />
     <file relUrl="Scripts/jquery-ui-1.8.6.custom.min.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Scripts/jquery.ui.stars.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Img/Loader.gif" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Views/Shared/CommentList.cshtml" publishTime="02/01/2011 02:56:14" />
-    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="02/17/2011 04:43:19" />
-    <file relUrl="Views/My/Commanders.cshtml" publishTime="02/19/2011 14:43:02" />
-    <file relUrl="bin/Microsoft.Web.Helpers.dll" publishTime="02/19/2011 11:38:35" />
-    <file relUrl="Facebook/Docs/content/Site.css" publishTime="02/19/2011 11:38:39" />
+    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="02/19/2011 20:20:15" />
+    <file relUrl="Views/My/Commanders.cshtml" publishTime="02/19/2011 20:12:27" />
     <file relUrl="bin/MonoTorrent.dll" publishTime="02/07/2011 04:13:42" />
-    <file relUrl="bin/PlasmaShared.dll" publishTime="02/17/2011 04:43:16" />
-    <file relUrl="packages.config" publishTime="02/19/2011 11:38:41" />
+    <file relUrl="bin/PlasmaShared.dll" publishTime="02/19/2011 20:20:14" />
     <file relUrl="Views/Maps/Detail.cshtml" publishTime="02/03/2011 21:59:19" />
-    <file relUrl="Facebook/Docs/content/images/FBCoreSettings.png" publishTime="02/19/2011 11:38:38" />
-    <file relUrl="Facebook/Docs/content/images/webx-content-bkg.jpg" publishTime="02/19/2011 11:38:39" />
-    <file relUrl="Facebook/Login.cshtml" publishTime="02/19/2011 11:38:39" />
-    <file relUrl="Facebook/Docs/content/images/FBCreateApplication.png" publishTime="02/19/2011 11:38:39" />
     <file relUrl="Views/Forum/Index.cshtml" publishTime="01/24/2011 14:34:25" />
     <file relUrl="Scripts/jquery.validate.min.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="bin/Global.asax.cs" publishTime="02/06/2011 17:17:02" />
     <file relUrl="bin/CookComputing.XmlRpcV2.dll" publishTime="09/05/2010 19:47:56" />
-    <file relUrl="Scripts/site.js" publishTime="02/19/2011 14:27:13" />
+    <file relUrl="Scripts/site.js" publishTime="02/19/2011 19:50:54" />
     <file relUrl="Styles/stars.css" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Img/cup.png" publishTime="01/02/2011 03:33:30" />
     <file relUrl="bin/Web.config" publishTime="02/07/2011 04:13:53" />
-    <file relUrl="Facebook/Docs/startHere.htm" publishTime="02/19/2011 11:38:39" />
     <file relUrl="Views/Battles/Detail.cshtml" publishTime="02/04/2011 03:19:15" />
-    <file relUrl="Views/Maps/Index.cshtml" publishTime="02/19/2011 13:56:11" />
-    <file relUrl="Facebook/Docs/content/images/webx-icon.png" publishTime="02/19/2011 11:38:39" />
+    <file relUrl="Views/Maps/Index.cshtml" publishTime="02/19/2011 20:12:29" />
     <file relUrl="Views/Web.config" publishTime="01/02/2011 03:33:08" />
     <file relUrl="ResourceList.aspx" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="01/02/2011 03:33:30" />
@@ -70,7 +58,7 @@
     <file relUrl="Views/Forum/ForumPath.cshtml" publishTime="01/04/2011 19:24:41" />
     <file relUrl="Styles/style.css" publishTime="01/24/2011 14:22:11" />
     <file relUrl="Scripts/jquery.ui.stars.min.js" publishTime="01/02/2011 03:33:30" />
-    <file relUrl="Views/Missions/Index.cshtml" publishTime="02/19/2011 13:56:19" />
+    <file relUrl="Views/Missions/Index.cshtml" publishTime="02/19/2011 20:12:29" />
     <file relUrl="Views/Static/Index.cshtml" publishTime="01/02/2011 04:34:47" />
     <file relUrl="Views/Home/Index.cshtml" publishTime="02/17/2011 04:32:12" />
     <file relUrl="Views/Forum/Thread.cshtml" publishTime="01/24/2011 14:15:06" />

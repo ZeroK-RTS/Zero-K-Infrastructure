@@ -10,14 +10,6 @@ $(document).ready(function () {
     return answer;
   });
 
-  /* auto submit form when data-autpostback=true */
-  $(document).ready(function () {
-    $("select:[autopostback=True]").change(function () {
-      $(this).closest("form").submit();
-    });
-  });
-
-
   /* ajax form updater and scorll based loader
   It updates form on submit using ajax - sending offset 0 to it when user clicks
 
@@ -28,7 +20,7 @@ $(document).ready(function () {
   var frm = $("#ajaxScrollForm");
   var prg = $("#ajaxScrollProgress");
   var target = $("#ajaxScrollTarget");
-  if (frm) {
+  if (frm && frm.attr("id") != undefined) {
     window.onscroll = function () {
       if (!ajaxScrollEnabled) return;
       var el = document.documentElement;
@@ -44,21 +36,21 @@ $(document).ready(function () {
         });
       }
     };
-  }
 
-  frm.submit(function () {
-    ajaxScrollEnabled = false;
-    ajaxScrollOffset = 0;
-    prg.show();
-    $.post(frm.attr("action"), frm.serialize() + "&offset=" + ajaxScrollOffset, function (ret) {
-      target.html(ret);
-      ajaxScrollOffset = ajaxScrollCount;
-      ajaxScrollEnabled = true;
-      prg.hide();
+
+    frm.submit(function () {
+      ajaxScrollEnabled = false;
+      ajaxScrollOffset = 0;
+      prg.show();
+      $.post(frm.attr("action"), frm.serialize() + "&offset=" + ajaxScrollOffset, function (ret) {
+        target.html(ret);
+        ajaxScrollOffset = ajaxScrollCount;
+        ajaxScrollEnabled = true;
+        prg.hide();
+      });
+      return false;
     });
-    return false;
-  });
-
+  }
 });
 
 

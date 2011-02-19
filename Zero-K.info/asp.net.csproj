@@ -39,9 +39,6 @@
       <HintPath>..\Libs\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Web.Helpers">
-      <HintPath>..\packages\microsoft-web-helpers.1.1\lib\Microsoft.Web.Helpers.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -176,7 +173,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
     <None Include="Styles\SM.ttf" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_SiteLayout.cshtml" />
@@ -202,6 +198,7 @@
     <Content Include="Views\Users\UserList.cshtml" />
     <Content Include="Views\Shared\UnlockedTechnologies.cshtml" />
     <Content Include="Views\My\Commanders.cshtml" />
+    <Content Include="Views\My\CommanderProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

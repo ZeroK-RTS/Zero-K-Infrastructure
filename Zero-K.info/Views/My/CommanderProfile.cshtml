@@ -1,0 +1,39 @@
+﻿@model ZeroKWeb.Controllers.MyController.CommanderProfileModel
+@using ZeroKWeb.Controllers
+@using ZkData
+
+@{var c = Model.Commander;
+  Layout = null;
+  }
+
+<h2>@(c != null ? c.Name : "Commander " + Model.ProfileID)</h2>
+
+Commander name: @Html.TextBox("name", c != null ? c.Name : "Commander " + Model.ProfileID)
+<input type="submit" value="@(c != null ? "Update" : "Create")" id="commanderUpdate@(Model.ProfileID)" /><br />
+@if (c != null) {
+  <span style='color:@c.Unlock.LabelColor' title='$unlock$@c.ChassisUnlockID'>
+    <img src='@c.Unlock.ImageUrl' />@c.Unlock.Name</span>
+  <input type="submit" name="deleteCommander" value="Delete commander" />
+                               foreach (var slots in Model.Slots.GroupBy(x => x.MorphLevel).OrderBy(x => x.Key)) {
+  <h3>
+    Level @slots.Key:</h3>  
+     foreach (var slot in slots) {
+       CommanderModule selected = c.CommanderModules.SingleOrDefault(y => y.SlotID == slot.CommanderSlotID);
+  <span>Slot@(slot.CommanderSlotID)
+    (@slot.UnlockType):
+    @if (selected != null) {
+      <span style='color:@selected.Unlock.LabelColor' title='$unlock$@selected.ModuleUnlockID'>
+        <img src='@selected.Unlock.ImageUrl' width='20' height='20' />@selected.Unlock.Name</span>
+      <input type="image" name="deleteSlot@(slot.CommanderSlotID)" src='/img/delete_icon.png' />
+    } else {
+        
+      @Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => x.UnlockType == slot.UnlockType && x.MorphLevel <= slot.MorphLevel && (x.LimitForChassis == null || x.LimitForChassis.Contains(c.Unlock.Code)) && (x.MaxModuleCount == null || x.MaxModuleCount.Value > c.CommanderModules.Count(y => y.ModuleUnlockID == x.UnlockID))).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.UnlockID && y.SlotID == slot.CommanderSlotID) : false }).Union(new SelectListItem[] { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderModules.Any(y => y.SlotID == slot.CommanderSlotID) : true } }), new { onchange = "document.getElementById(\"commanderUpdate" +  Model.ProfileID + "\").click()"})
+    }
+    <br />
+  </span>
+     }
+                               }
+} else { 
+  
+  @:Chassis: @Html.DropDownList("chassis", Model.Unlocks.Where(x => x.UnlockType == ZkData.UnlockTypes.Chassis).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = (c != null ? c.ChassisUnlockID == x.UnlockID : false) }))
+        }

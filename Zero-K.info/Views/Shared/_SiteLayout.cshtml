@@ -21,7 +21,7 @@
     <style type="text/css">
       html
       {
-        background: #000 url("/img/bg_bluehex.gif") scroll 50% 0;
+        background: #000 url("/img/bg_bluehex.gif") scroll 50% 0; background-attachment: fixed;
       }
     </style>
     } else {
@@ -31,7 +31,7 @@
       int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
       var random = new Random(date);
       var file = Path.GetFileName(files[random.Next(files.Length)]);
-    <style type="text/css"> html { background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0; }</style>
+    <style type="text/css"> html { background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0; background-attachment: fixed; }</style>
     }
   }
   <script type="text/javascript">
@@ -49,6 +49,8 @@
   </script>
 </head>
 <body class="">
+  <span style="display:none; position:fixed; left: 300px; top: 200px; z-index: 10; width:300px; height: 50px; background-color: Black; border: 1px solid Red; font-size: x-large; text-align:center; vertical-align:   middle;" id='ajaxScrollProgress'>Loading....<img src='/img/Loader.gif'/></span>
+
   @if (!Global.IsLobbyAccess) {
     <div class="wrapper">
       <div id="header" class="text-center">

@@ -49,7 +49,7 @@ namespace ZeroKWeb.Controllers
       var db = new ZkDataContext();
       var sb = new StringBuilder();
       var r = db.Resources.Single(x => x.ResourceID == id);
-      sb.Append("<span style='color:black;'>");
+      sb.Append("<span>");
       sb.AppendFormat("{0}<br/>", r.InternalName);
       sb.AppendFormat("by {0}<br/>", r.AuthorName);
       if (r.MapIsFfa == true) sb.AppendFormat("<img src='/img/map_tags/ffa.png' class='icon32'  />");

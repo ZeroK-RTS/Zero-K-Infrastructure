@@ -36,6 +36,9 @@ namespace ZkData
       {
         foreach (var a in SpringBattlePlayers.Where(x=>!x.IsSpectator))
         {
+          WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
+          LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
+
           if (a.IsInVictoryTeam)
           {
             a.Account.XP += GlobalConst.XpForMissionOrBotsVictory;
