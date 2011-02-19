@@ -1,4 +1,4 @@
-﻿@using ZeroKWeb;
+@using ZeroKWeb;
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,7 +26,10 @@
     </style>
     } else {
       var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
-      var random = new Random();
+      @* What we're doing here is generating a number unique-ish to each date (1 or 2 collisions per year) *@
+      @* We use this to seed the RNG so that it picks a new background once per day *@
+      int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
+      var random = new Random(date);
       var file = Path.GetFileName(files[random.Next(files.Length)]);
     <style type="text/css"> html { background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0; }</style>
     }
