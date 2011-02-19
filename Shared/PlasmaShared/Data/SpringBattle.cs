@@ -98,7 +98,7 @@ namespace ZkData
 
       var sumW = winnerW + loserW;
 
-      WinnerTeamXpChange = (int)(25 +9* 32 * (1-eWin) /(2.0+winners.Count));
+      WinnerTeamXpChange = (int)(20 + (300 + 600 * (1 - eWin))/ (2.0+winners.Count));
       
       foreach (var r in winners)
       {
@@ -116,7 +116,7 @@ namespace ZkData
         }
       }
 
-      LoserTeamXpChange = (int)(10 + (32 - 32 * eLose)*3.0/(2.0 + losers.Count));
+      LoserTeamXpChange = (int)( 20 + (200 + 400 * (1 - eLose))/(2.0 + losers.Count));
       foreach (var r in losers)
       {
         var change = (float)(scoreLose * r.Account.EloInvWeight);
