@@ -10,7 +10,7 @@ namespace ZkData
   {
     public int AvailableXP
     {
-      get { return this.XP - this.AccountUnlocks.Sum(x => x.Unlock.XpCost*x.Count); } }
+      get { return GetXpForLevel(Level) - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
 
     public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
     /// <summary>
