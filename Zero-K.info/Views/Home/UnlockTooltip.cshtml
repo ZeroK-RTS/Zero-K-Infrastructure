@@ -1,0 +1,56 @@
+﻿@model ZkData.Unlock
+@using ZkData
+@{
+  Layout = null;
+  var u = Model;
+}
+
+<span>
+<h3>@u.Name</h3>
+<img src='@u.ImageUrl' alt='@u.Name'/><br/>
+Type: <span style='color:@u.LabelColor;'>@u.UnlockType</span><br/>
+Cost (XP points): @u.XpCost<br/>
+Required level: @u.NeededLevel<br/>
+@if (u.ParentUnlock != null) {
+  @:Required unit: <img src='@u.ParentUnlock.ImageUrl' height='20' width='20'/> @u.ParentUnlock.Name<br/>
+}
+
+@if (!string.IsNullOrEmpty(u.LimitForChassis)) {
+  @:For chassis: 
+  var db = new ZkDataContext();
+  foreach (var code in u.LimitForChassis.Split(',')) {
+    var req = db.Unlocks.SingleOrDefault(y => y.Code == code);
+    if (req != null) {
+      <img src='@req.ImageUrl'/>
+    }
+  }
+  <br />
+}
+
+@if (u.MetalCost.HasValue) {
+  @:Metal cost: @Html.PrintMetalCost(u.MetalCost)<br/>
+}
+
+@if (u.MetalCostMorph2.HasValue) {
+  @:Morph 2 cost: @Html.PrintMetalCost(u.MetalCostMorph2)<br/>
+}
+
+@if (u.MetalCostMorph3.HasValue) {
+  @:Morph 3 cost: @Html.PrintMetalCost(u.MetalCostMorph3)<br/>
+}
+
+@if (u.MetalCostMorph4.HasValue) {
+  @:Morph 4 cost: @Html.PrintMetalCost(u.MetalCostMorph4)<br/>
+}
+
+@if (u.MorphLevel > 0) {
+  @:Commander morph: @u.MorphLevel<br/>
+}
+
+@if (u.MaxModuleCount != null) {
+  @:Max in one commander: @u.MaxModuleCount<br/>
+}
+
+<small>@Html.BBCode(u.Description)</small>
+
+</span>

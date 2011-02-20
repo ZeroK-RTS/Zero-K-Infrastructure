@@ -157,6 +157,7 @@ namespace ZeroKWeb.Controllers
       var args = key.Split(new char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
       var ret = "";
       int id;
+      var db = new ZkDataContext();
       switch (args[0]) {
         case "mission":
 
@@ -165,7 +166,6 @@ namespace ZeroKWeb.Controllers
         case "map":
           if (int.TryParse(args[1], out id)) ret = GetMapTooltip(id);
           else {
-            var db = new ZkDataContext();
             ret = GetMapTooltip(db.Resources.Single(x => x.InternalName == args[1]).ResourceID);
           }
           break;
@@ -176,9 +176,7 @@ namespace ZeroKWeb.Controllers
           }
           break;
         case "unlock":
-          ret = GetUnlockTooltip(int.Parse(args[1]));
-          
-          break;
+          return PartialView("UnlockTooltip", db.Unlocks.Single(x => x.UnlockID == int.Parse(args[1])));
 
         case "commander":
           ret = GetCommanderTooltip(int.Parse(args[1]));
@@ -211,35 +209,6 @@ namespace ZeroKWeb.Controllers
       return sb.ToString();
     }
 
-    string GetUnlockTooltip(int id)
-    {
-      var db = new ZkDataContext();
-      var sb = new StringBuilder();
-      var u = db.Unlocks.Single(x => x.UnlockID == id);
-      sb.AppendLine("<span>");
-      sb.AppendFormat("<h3>{0}</h3>", u.Name);
-      sb.AppendFormat("<img src='{0}'/><br/>", u.ImageUrl);
-      sb.AppendFormat("Type: <span style='color:{1};'>{0}</span><br/>", u.UnlockType, u.LabelColor);
-      sb.AppendFormat("Required level: {0}<br/>", u.NeededLevel);
-      if (u.ParentUnlock!=null) sb.AppendFormat("Required unit: <img src='{0}' height='20' width='20'/> {1}<br/>", u.ParentUnlock.ImageUrl, u.ParentUnlock.Name);
-      if (!string.IsNullOrEmpty(u.LimitForChassis))
-      {
-        var codes = u.LimitForChassis.Split(',');
-        var text = string.Join(",",
-                    codes.Select(x =>
-                      {
-                        var req = db.Unlocks.SingleOrDefault(y => y.Code == x);
-                        if (req != null) return string.Format("<img src='{0}'/>", req.ImageUrl);
-                        else return "";
-                      }).ToArray());
-        sb.AppendFormat("For chassis: {0}<br/>", text);
-      }
-      if (u.MorphLevel > 0) sb.AppendFormat("Commander morph level: {0}<br/>", u.MorphLevel);
-      if (u.MaxModuleCount != null) sb.AppendFormat("Max in one commander: {0}<br/>", u.MaxModuleCount);
-      sb.AppendFormat("<small>{0}</small>", HtmlHelperExtensions.BBCode(null, u.Description));
-      sb.AppendLine("</span>");
-      return sb.ToString();
-    }
 
     string GetThreadTooltip(int id) {
       var db = new ZkDataContext();

@@ -177,9 +177,9 @@ namespace ZeroKWeb.Controllers
       return View("UnlockList", new UnlockListResult() { Account = Global.Account, Unlocks = unlocks, FutureUnlocks = future });
     }
 
-    ViewResult GetCommanderProfileView(ZkDataContext db, int profile)
+    PartialViewResult GetCommanderProfileView(ZkDataContext db, int profile)
     {
-      return View("CommanderProfile",
+      return PartialView("CommanderProfile",
                   new CommanderProfileModel
                   {
                     ProfileID = profile,

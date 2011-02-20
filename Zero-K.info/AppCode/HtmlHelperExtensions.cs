@@ -23,8 +23,16 @@ namespace System.Web.Mvc
     public string Value;
   }
 
+  
   public static class HtmlHelperExtensions
   {
+    public static MvcHtmlString PrintMetalCost(this HtmlHelper helper, int? cost)
+    {
+      const string metalIcon = "http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaUI/Images/ibeam.png";
+      return new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' width='20' height='20'/></span>", cost, metalIcon));
+    }
+
+
     public static MvcHtmlString AccountAvatar(this HtmlHelper helper, int accountID)
     {
       var picList = (string[])HttpContext.Current.Application["unitpics"];

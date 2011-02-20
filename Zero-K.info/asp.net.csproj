@@ -199,6 +199,7 @@
     <Content Include="Views\Shared\UnlockedTechnologies.cshtml" />
     <Content Include="Views\My\Commanders.cshtml" />
     <Content Include="Views\My\CommanderProfile.cshtml" />
+    <Content Include="Views\Home\UnlockTooltip.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
