@@ -141,6 +141,8 @@ namespace ZeroKWeb
               var modules = new LuaTable();
               comdef["modules"] = modules;
 
+              comdef["cost"] = c.GetTotalMorphLevelCost(i);
+
               foreach (
                 var m in
                   c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i).OrderBy(x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(

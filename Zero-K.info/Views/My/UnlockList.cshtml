@@ -28,8 +28,8 @@
   <span title="$unlock$@unlock.UnlockID" style="display:inline-block; width:250px;height:120px;">
     <img src="@unlock.ImageUrl"/><span style="color: @unlock.LabelColor;">@unlock.Name</span><br />
     <span>
-      XP cost: @unlock.XpCost, <br />
-      Needs level: @unlock.NeededLevel
+      Needs level: @unlock.NeededLevel, <br />
+      XP cost: @unlock.XpCost
       @if (unlock.ParentUnlock != null) {
         @:,<br /> technology: <span title='$unlock$@unlock.RequiredUnlockID'><img src="@unlock.ParentUnlock.ImageUrl" height="20"width="20"/></span>
        }
