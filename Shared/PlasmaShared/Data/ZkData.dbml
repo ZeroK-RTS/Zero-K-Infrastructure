@@ -609,7 +609,7 @@
       <Column Name="UnlockType" Type="UnlockTypes" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="RequiredUnlockID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MorphLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="MaxModuleCount" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MaxModuleCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="MetalCost" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="XpCost" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="MetalCostMorph2" Type="System.Int32" DbType="int" CanBeNull="true" />

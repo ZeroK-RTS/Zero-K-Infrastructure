@@ -44,7 +44,7 @@ namespace ZeroKWeb
                      RequiredUnlockID = GetInt(tbPreq.Text),
                      UnlockType = (UnlockTypes)int.Parse(ddType.SelectedValue),
                      MorphLevel = GetInt(tbMorphLevel.Text) ?? 0,
-                     MaxModuleCount = string.IsNullOrEmpty(tbMaxCount.Text) ? null : (int?)int.Parse(tbMaxCount.Text),
+                     MaxModuleCount =GetInt(tbMaxCount.Text) ?? 1,
                      LimitForChassis = tbChassisLimit.Text,
                      MetalCost = GetInt(tbMetalCost.Text),
                      MetalCostMorph2 = GetInt(tbMorph2.Text),

@@ -47,8 +47,8 @@ Required level: @u.NeededLevel<br/>
   @:Commander morph: @u.MorphLevel<br/>
 }
 
-@if (u.MaxModuleCount != null) {
-  @:Max in one commander: @u.MaxModuleCount<br/>
+@if (u.MaxModuleCount != null && (u.UnlockType == UnlockTypes.Module || u.UnlockType == UnlockTypes.Weapon)) {
+  @:Max purchases: @u.MaxModuleCount<br/>
 }
 
 <small>@Html.BBCode(u.Description)</small>

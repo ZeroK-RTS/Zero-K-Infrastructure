@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Security.Principal;
 
 namespace ZkData
 {
   partial class Account: IPrincipal, IIdentity
   {
+    public int AvailableXP
+    {
+      get { return this.XP - this.AccountUnlocks.Sum(x => x.Unlock.XpCost*x.Count); } }
+
     public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
     /// <summary>
     /// Aggregate admin rights - either lobby or ZK admin

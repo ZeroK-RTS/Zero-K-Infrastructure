@@ -12299,7 +12299,7 @@ namespace ZkData
 		
 		private int _MorphLevel;
 		
-		private System.Nullable<int> _MaxModuleCount;
+		private int _MaxModuleCount;
 		
 		private System.Nullable<int> _MetalCost;
 		
@@ -12345,7 +12345,7 @@ namespace ZkData
     partial void OnRequiredUnlockIDChanged();
     partial void OnMorphLevelChanging(int value);
     partial void OnMorphLevelChanged();
-    partial void OnMaxModuleCountChanging(System.Nullable<int> value);
+    partial void OnMaxModuleCountChanging(int value);
     partial void OnMaxModuleCountChanged();
     partial void OnMetalCostChanging(System.Nullable<int> value);
     partial void OnMetalCostChanged();
@@ -12557,9 +12557,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxModuleCount", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxModuleCount", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public System.Nullable<int> MaxModuleCount
+		public int MaxModuleCount
 		{
 			get
 			{

@@ -17,9 +17,9 @@ namespace ZeroKWeb.Controllers
 
       var db = new ZkDataContext();
 
-      var unlocks = db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID).Select(x => x.Unlock).ToList();
+      var unlocks = db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID);
 
-      Commander comm = db.Commanders.SingleOrDefault(x => x.ProfileNumber == profileNumber && x.AccountID == Global.AccountID);
+      var comm = db.Commanders.SingleOrDefault(x => x.ProfileNumber == profileNumber && x.AccountID == Global.AccountID);
       if (comm != null)
       {
         if (!string.IsNullOrEmpty(deleteCommander)) // delete commander
@@ -42,13 +42,13 @@ namespace ZeroKWeb.Controllers
         else
         {
           comm.ChassisUnlockID = chassis.Value;
-          comm.Unlock = chassisUnlock;
+          comm.Unlock = chassisUnlock.Unlock;
         }
       }
 
       if (!string.IsNullOrEmpty(name)) comm.Name = name;
 
-      foreach (var key in Request.Form.AllKeys.Where(x=>!string.IsNullOrEmpty(x)))
+      foreach (var key in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
       {
         var m = Regex.Match(key, "m([0-9]+)");
         if (m.Success)
@@ -86,7 +86,7 @@ namespace ZeroKWeb.Controllers
         }
       }
 
-      foreach (var toDel in Request.Form.AllKeys.Where(x=>!string.IsNullOrEmpty(x)))
+      foreach (var toDel in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
       {
         var m = Regex.Match(toDel, "deleteSlot([0-9]+)");
         if (m.Success)
@@ -100,9 +100,10 @@ namespace ZeroKWeb.Controllers
       foreach (var unlock in comm.CommanderModules.GroupBy(x => x.Unlock))
       {
         if (unlock.Key == null) continue;
-        if (unlock.Key.MaxModuleCount != null && unlock.Key.MaxModuleCount.Value < unlock.Count())
+        var owned = unlocks.Where(x => x.UnlockID == unlock.Key.UnlockID).Sum(x => (int?)x.Count) ?? 0;
+        if (owned < unlock.Count())
         {
-          var toRemove = unlock.Count() - unlock.Key.MaxModuleCount.Value;
+          var toRemove = unlock.Count() - owned;
 
           foreach (var m in unlock.OrderByDescending(x => x.SlotID))
           {
@@ -126,8 +127,9 @@ namespace ZeroKWeb.Controllers
 
       var ret = new CommandersModel();
       ret.Unlocks =
-        Global.Account.AccountUnlocks.Select(x => x.Unlock).Where(
-          x => x.UnlockType == UnlockTypes.Module || x.UnlockType == UnlockTypes.Weapon || x.UnlockType == UnlockTypes.Chassis).ToList();
+        Global.Account.AccountUnlocks.Where(
+          x => x.Unlock.UnlockType == UnlockTypes.Module || x.Unlock.UnlockType == UnlockTypes.Weapon || x.Unlock.UnlockType == UnlockTypes.Chassis).
+          ToList();
       return View(ret);
     }
 
@@ -157,12 +159,14 @@ namespace ZeroKWeb.Controllers
 
       if (Global.Account.Level > Global.Account.AccountUnlocks.Count && unlocks.Any(x => x.UnlockID == id))
       {
-        if (!db.AccountUnlocks.Any(x => x.AccountID == Global.AccountID && x.UnlockID == id))
+        var au = db.AccountUnlocks.SingleOrDefault(x => x.AccountID == Global.AccountID && x.UnlockID == id);
+        if (au == null)
         {
-          var entry = new AccountUnlock() { AccountID = Global.AccountID, UnlockID = id };
-          db.AccountUnlocks.InsertOnSubmit(entry);
-          db.SubmitChanges();
+          au = new AccountUnlock() { AccountID = Global.AccountID, UnlockID = id, Count = 1 };
+          db.AccountUnlocks.InsertOnSubmit(au);
         }
+        else au.Count++;
+        db.SubmitChanges();
       }
       return RedirectToAction("UnlockList");
     }
@@ -179,49 +183,60 @@ namespace ZeroKWeb.Controllers
 
     PartialViewResult GetCommanderProfileView(ZkDataContext db, int profile)
     {
+      var com = db.Commanders.SingleOrDefault(x => x.AccountID == Global.AccountID && x.ProfileNumber == profile);
+      
       return PartialView("CommanderProfile",
-                  new CommanderProfileModel
-                  {
-                    ProfileID = profile,
-                    Commander = db.Commanders.SingleOrDefault(x => x.AccountID == Global.AccountID && x.ProfileNumber == profile),
-                    Slots = db.CommanderSlots.ToList(),
-                    Unlocks =
-                      Global.Account.AccountUnlocks.Select(x => x.Unlock).Where(
-                        x => x.UnlockType == UnlockTypes.Module || x.UnlockType == UnlockTypes.Weapon || x.UnlockType == UnlockTypes.Chassis).ToList()
-                  });
+                         new CommanderProfileModel
+                         {
+                           ProfileID = profile,
+                           Commander = com,
+                           Slots = db.CommanderSlots.ToList(),
+                           Unlocks =
+                             db.AccountUnlocks.Where(
+                               x =>
+                               x.AccountID == Global.AccountID &&
+                               (x.Unlock.UnlockType == UnlockTypes.Module || x.Unlock.UnlockType == UnlockTypes.Weapon ||
+                                x.Unlock.UnlockType == UnlockTypes.Chassis)
+                               ).ToList().Where(
+                                 x => 
+                                   (com == null || x.Unlock.LimitForChassis == null || x.Unlock.LimitForChassis.Contains(com.Unlock.Code)) && 
+                                   (com == null || x.Count > com.CommanderModules.Count(y => y.ModuleUnlockID == x.UnlockID))).Select(x => x.Unlock)
+                             .ToList()
+                         });
     }
 
     void GetUnlockLists(out List<Unlock> unlocks, out List<Unlock> future)
     {
       var db = new ZkDataContext();
 
-      var myUnlockList = Global.Account.AccountUnlocks.Select(x => x.UnlockID).ToList();
+      var maxedUnlockList =
+        db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID && x.Count >= x.Unlock.MaxModuleCount).Select(x => x.UnlockID).ToList();
 
       var temp =
         db.Unlocks.Where(
           x =>
-          x.NeededLevel <= Global.Account.Level && !myUnlockList.Contains(x.UnlockID) &&
-          (x.RequiredUnlockID == null || myUnlockList.Contains(x.RequiredUnlockID ?? 0))).OrderBy(x => x.NeededLevel).ThenBy(x => x.UnlockType).ToList
-          ();
+          x.NeededLevel <= Global.Account.Level && x.XpCost <= Global.Account.AvailableXP && !maxedUnlockList.Contains(x.UnlockID) &&
+          (x.RequiredUnlockID == null || maxedUnlockList.Contains(x.RequiredUnlockID ?? 0))).OrderBy(x => x.NeededLevel).ThenBy(x => x.XpCost).ThenBy(
+            x => x.UnlockType).ToList();
       unlocks = temp;
 
       future =
-        db.Unlocks.Where(x => !myUnlockList.Contains(x.UnlockID) && !temp.Select(y => y.UnlockID).Contains(x.UnlockID)).OrderBy(x => x.NeededLevel).
-          ToList();
+        db.Unlocks.Where(x => !maxedUnlockList.Contains(x.UnlockID) && !temp.Select(y => y.UnlockID).Contains(x.UnlockID)).OrderBy(x => x.NeededLevel)
+          .ToList();
     }
 
 
     public class CommanderProfileModel
     {
-      public int ProfileID;
       public Commander Commander;
+      public int ProfileID;
       public List<CommanderSlot> Slots;
       public List<Unlock> Unlocks;
     }
 
     public class CommandersModel
     {
-      public List<Unlock> Unlocks;
+      public List<AccountUnlock> Unlocks;
     }
 
 

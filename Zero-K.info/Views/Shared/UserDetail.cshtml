@@ -134,12 +134,12 @@
       }
       <h3>
         Technologies (UNDER CONSTRUCTION):</h3>
-        @{Html.RenderPartial("UnlockedTechnologies",Model.AccountUnlocks.Select(x=>x.Unlock));}
+        @{Html.RenderPartial("UnlockedTechnologies",Model.AccountUnlocks);}
         <br />
         @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
-          <a href='@Url.Action("UnlockList", "My")'>You can unlock @(Model.Level - Model.AccountUnlocks.Count) technologies</a>
+          <a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP XP</a>
         } else {
-          @Model.Name @:can unlock @(Model.Level - Model.AccountUnlocks.Count) technologies
+          @Model.Name @:Can unlock technologies worth @Model.AvailableXP XP
         }
       <h3>Commanders (UNDER CONSTRUCTION):</h3>
       @foreach (var comm in Model.Commanders) {

@@ -58,7 +58,7 @@
     Unlock type: <asp:DropDownList ID="ddType" runat="server">
     </asp:DropDownList><br />
     Morph level (when module/weapon is available): <asp:TextBox ID="tbMorphLevel" runat="server"></asp:TextBox><br />
-    Max module count (in one commander): <asp:TextBox ID="tbMaxCount" runat="server"></asp:TextBox><br />
+    Max module count (in one commander): <asp:TextBox ID="tbMaxCount" runat="server">1</asp:TextBox><br />
     For chassis (comma list): <asp:TextBox ID="tbChassisLimit" runat="server"></asp:TextBox><br />
     Metal cost (ingame): <asp:TextBox ID="tbMetalCost" runat="server"></asp:TextBox><br />
     Morph2 metal cost(chassis): <asp:TextBox ID="tbMorph2" runat="server"></asp:TextBox><br />

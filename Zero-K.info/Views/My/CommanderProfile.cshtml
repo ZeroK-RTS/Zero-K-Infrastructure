@@ -27,7 +27,7 @@ Commander name: @Html.TextBox("name", c != null ? c.Name : "Commander " + Model.
       <input type="image" name="deleteSlot@(slot.CommanderSlotID)" src='/img/delete_icon.png' />
     } else {
         
-      @Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => x.UnlockType == slot.UnlockType && x.MorphLevel <= slot.MorphLevel && (x.LimitForChassis == null || x.LimitForChassis.Contains(c.Unlock.Code)) && (x.MaxModuleCount == null || x.MaxModuleCount.Value > c.CommanderModules.Count(y => y.ModuleUnlockID == x.UnlockID))).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.UnlockID && y.SlotID == slot.CommanderSlotID) : false }).Union(new SelectListItem[] { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderModules.Any(y => y.SlotID == slot.CommanderSlotID) : true } }), new { onchange = "document.getElementById(\"commanderUpdate" +  Model.ProfileID + "\").click()"})
+      @Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => x.UnlockType == slot.UnlockType && x.MorphLevel <= slot.MorphLevel).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.UnlockID && y.SlotID == slot.CommanderSlotID) : false }).Union(new SelectListItem[] { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderModules.Any(y => y.SlotID == slot.CommanderSlotID) : true } }), new { onchange = "document.getElementById(\"commanderUpdate" +  Model.ProfileID + "\").click()"})
     }
     <br />
   </span>

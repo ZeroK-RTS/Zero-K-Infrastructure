@@ -79,6 +79,7 @@
         <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="Other" />
         <Abbreviation Text="ID" />
         <Abbreviation Text="IP" />
+        <Abbreviation Text="XP" />
       </Naming2>
       <CustomMemberReorderingPatterns><![CDATA[<?xml version="1.0" encoding="utf-8" ?>
 

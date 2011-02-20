@@ -1,7 +1,11 @@
-﻿@model IEnumerable<ZkData.Unlock>
-@foreach (var unlock in Model) {
+﻿@model IEnumerable<ZkData.AccountUnlock>
+@foreach (var au in Model) {
+  var unlock = au.Unlock;
   <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:110px;height:90px" title="$unlock$@unlock.UnlockID"  >
     <img src="@unlock.ImageUrl"/><br />
+    @if (au.Count > 1) { 
+      <big>@au.Count x</big>
+    }
     @unlock.Name
   </span>
 }
