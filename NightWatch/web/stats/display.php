@@ -42,6 +42,7 @@
 				else if (strstr($mod, "Epic Legions") != "") $mod = "Epic Legions";
 				else if (strstr($mod, "Ultimate Annihilation") != "") $mod = "Ultimate Annihilation";
 				else if (strstr($mod, "BA Chicken Defense") != "") $mod = "BA Chicken Defense";
+            else if (strstr($mod, "Spring Tanks") != "") $mod = "Spring Tanks";
 
 				$cnt = $args[1];
 				
@@ -70,7 +71,8 @@ foreach ($sums as $modname => $count) {
 		elseif ($modname == "S:1944") $cols[$cnt]="#207F40";
 		elseif ($modname == "BA Chicken Defense") $cols[$cnt]="#708F00";
 		elseif ($modname == "Gundam") $cols[$cnt]="#FFFFFF";
-		else $cols[$cnt] = "#000000";
+		elseif ($modname == "Spring Tanks") $cols[$cnt]="#FF00FF";
+      else $cols[$cnt] = "#000000";      
 		$cnt++;
 		}
 }
