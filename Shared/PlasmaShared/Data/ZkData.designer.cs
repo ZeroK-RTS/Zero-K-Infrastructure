@@ -12301,6 +12301,16 @@ namespace ZkData
 		
 		private System.Nullable<int> _MaxModuleCount;
 		
+		private System.Nullable<int> _MetalCost;
+		
+		private int _XpCost;
+		
+		private System.Nullable<int> _MetalCostMorph2;
+		
+		private System.Nullable<int> _MetalCostMorph3;
+		
+		private System.Nullable<int> _MetalCostMorph4;
+		
 		private EntitySet<Unlock> _ChildUnlocks;
 		
 		private EntitySet<AccountUnlock> _AccountUnlocks;
@@ -12337,6 +12347,16 @@ namespace ZkData
     partial void OnMorphLevelChanged();
     partial void OnMaxModuleCountChanging(System.Nullable<int> value);
     partial void OnMaxModuleCountChanged();
+    partial void OnMetalCostChanging(System.Nullable<int> value);
+    partial void OnMetalCostChanged();
+    partial void OnXpCostChanging(int value);
+    partial void OnXpCostChanged();
+    partial void OnMetalCostMorph2Changing(System.Nullable<int> value);
+    partial void OnMetalCostMorph2Changed();
+    partial void OnMetalCostMorph3Changing(System.Nullable<int> value);
+    partial void OnMetalCostMorph3Changed();
+    partial void OnMetalCostMorph4Changing(System.Nullable<int> value);
+    partial void OnMetalCostMorph4Changed();
     #endregion
 		
 		public Unlock()
@@ -12558,8 +12578,113 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MetalCost", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public System.Nullable<int> MetalCost
+		{
+			get
+			{
+				return this._MetalCost;
+			}
+			set
+			{
+				if ((this._MetalCost != value))
+				{
+					this.OnMetalCostChanging(value);
+					this.SendPropertyChanging();
+					this._MetalCost = value;
+					this.SendPropertyChanged("MetalCost");
+					this.OnMetalCostChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_XpCost", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public int XpCost
+		{
+			get
+			{
+				return this._XpCost;
+			}
+			set
+			{
+				if ((this._XpCost != value))
+				{
+					this.OnXpCostChanging(value);
+					this.SendPropertyChanging();
+					this._XpCost = value;
+					this.SendPropertyChanged("XpCost");
+					this.OnXpCostChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MetalCostMorph2", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public System.Nullable<int> MetalCostMorph2
+		{
+			get
+			{
+				return this._MetalCostMorph2;
+			}
+			set
+			{
+				if ((this._MetalCostMorph2 != value))
+				{
+					this.OnMetalCostMorph2Changing(value);
+					this.SendPropertyChanging();
+					this._MetalCostMorph2 = value;
+					this.SendPropertyChanged("MetalCostMorph2");
+					this.OnMetalCostMorph2Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MetalCostMorph3", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public System.Nullable<int> MetalCostMorph3
+		{
+			get
+			{
+				return this._MetalCostMorph3;
+			}
+			set
+			{
+				if ((this._MetalCostMorph3 != value))
+				{
+					this.OnMetalCostMorph3Changing(value);
+					this.SendPropertyChanging();
+					this._MetalCostMorph3 = value;
+					this.SendPropertyChanged("MetalCostMorph3");
+					this.OnMetalCostMorph3Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MetalCostMorph4", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public System.Nullable<int> MetalCostMorph4
+		{
+			get
+			{
+				return this._MetalCostMorph4;
+			}
+			set
+			{
+				if ((this._MetalCostMorph4 != value))
+				{
+					this.OnMetalCostMorph4Changing(value);
+					this.SendPropertyChanging();
+					this._MetalCostMorph4 = value;
+					this.SendPropertyChanged("MetalCostMorph4");
+					this.OnMetalCostMorph4Changed();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ChildUnlocks", ThisKey="UnlockID", OtherKey="RequiredUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<Unlock> ChildUnlocks
 		{
 			get
@@ -12578,7 +12703,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_AccountUnlock", Storage="_AccountUnlocks", ThisKey="UnlockID", OtherKey="UnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -12597,7 +12722,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Commander", Storage="_Commanders", ThisKey="UnlockID", OtherKey="ChassisUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<Commander> Commanders
 		{
 			get
@@ -12616,7 +12741,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_CommanderModules", ThisKey="UnlockID", OtherKey="ModuleUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<CommanderModule> CommanderModules
 		{
 			get
@@ -12779,6 +12904,8 @@ namespace ZkData
 		
 		private int _UnlockID;
 		
+		private int _Count;
+		
 		private EntityRef<Account> _Account;
 		
 		private EntityRef<Unlock> _Unlock;
@@ -12791,6 +12918,8 @@ namespace ZkData
     partial void OnAccountIDChanged();
     partial void OnUnlockIDChanging(int value);
     partial void OnUnlockIDChanged();
+    partial void OnCountChanging(int value);
+    partial void OnCountChanged();
     #endregion
 		
 		public AccountUnlock()
@@ -12844,6 +12973,27 @@ namespace ZkData
 					this._UnlockID = value;
 					this.SendPropertyChanged("UnlockID");
 					this.OnUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Count]", Storage="_Count", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int Count
+		{
+			get
+			{
+				return this._Count;
+			}
+			set
+			{
+				if ((this._Count != value))
+				{
+					this.OnCountChanging(value);
+					this.SendPropertyChanging();
+					this._Count = value;
+					this.SendPropertyChanged("Count");
+					this.OnCountChanged();
 				}
 			}
 		}

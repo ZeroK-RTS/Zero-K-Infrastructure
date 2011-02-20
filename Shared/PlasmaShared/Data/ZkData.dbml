@@ -610,6 +610,11 @@
       <Column Name="RequiredUnlockID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MorphLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="MaxModuleCount" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MetalCost" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="XpCost" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="MetalCostMorph2" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MetalCostMorph3" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MetalCostMorph4" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Unlock_Unlock" Member="ChildUnlocks" ThisKey="UnlockID" OtherKey="RequiredUnlockID" Type="Unlock" />
       <Association Name="Unlock_AccountUnlock" Member="AccountUnlocks" ThisKey="UnlockID" OtherKey="UnlockID" Type="AccountUnlock" />
       <Association Name="Unlock_Commander" Member="Commanders" ThisKey="UnlockID" OtherKey="ChassisUnlockID" Type="Commander" />
@@ -621,6 +626,7 @@
     <Type Name="AccountUnlock">
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="UnlockID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="[Count]" Member="Count" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Account_AccountUnlock" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="Unlock_AccountUnlock" Member="Unlock" ThisKey="UnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>

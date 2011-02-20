@@ -15,26 +15,31 @@
         AutoGenerateEditButton="True" DataKeyNames="UnlockID" PageSize="40"
         DataSourceID="LinqDataSource1">
         <Columns>
-        <asp:BoundField DataField="UnlockID" HeaderText="UnlockID" 
+        <asp:BoundField DataField="UnlockID" HeaderText="ID" 
             SortExpression="UnlockID" />
         <asp:BoundField DataField="Code" HeaderText="Code" 
             SortExpression="Code" />
           <asp:BoundField DataField="Name" HeaderText="Name" 
             SortExpression="Name" />
+          <asp:BoundField DataField="XpCost" HeaderText="XpCost" SortExpression="XpCost" />
+          <asp:BoundField DataField="NeededLevel" HeaderText="Level" 
+             SortExpression="NeededLevel" />
+          <asp:BoundField DataField="RequiredUnlockID" HeaderText="RequiredID" 
+             SortExpression="RequiredUnlockID" />
+          <asp:BoundField DataField="UnlockType" HeaderText="Type" 
+            SortExpression="UnlockType" />
+            <asp:BoundField DataField="MorphLevel" HeaderText="Morph" 
+             SortExpression="MorphLevel" />
+             <asp:BoundField DataField="MaxModuleCount" HeaderText="MaxCount" 
+             SortExpression="MaxModuleCount" />
+          <asp:BoundField DataField="LimitForChassis" HeaderText="LimitChassis" 
+             SortExpression="LimitForChassis" />
+          <asp:BoundField DataField="MetalCost" HeaderText="Metal" SortExpression="MetalCost" />
+          <asp:BoundField DataField="MetalCostMorph2" HeaderText="Metal2" SortExpression="MetalCostMorph2" />
+          <asp:BoundField DataField="MetalCostMorph3" HeaderText="Metal3" SortExpression="MetalCostMorph3" />
+          <asp:BoundField DataField="MetalCostMorph4" HeaderText="Metal4" SortExpression="MetalCostMorph4" />
           <asp:BoundField DataField="Description" HeaderText="Description" 
              SortExpression="Description" />
-          <asp:BoundField DataField="NeededLevel" HeaderText="NeededLevel" 
-             SortExpression="NeededLevel" />
-          <asp:BoundField DataField="RequiredUnlockID" HeaderText="RequiredUnlockID" 
-             SortExpression="RequiredUnlockID" />
-          <asp:BoundField DataField="UnlockType" HeaderText="UnlockType" 
-            SortExpression="UnlockType" />
-            <asp:BoundField DataField="MorphLevel" HeaderText="MorphLevel" 
-             SortExpression="MorphLevel" />
-             <asp:BoundField DataField="MaxModuleCount" HeaderText="MaxModuleCount" 
-             SortExpression="MaxModuleCount" />
-          <asp:BoundField DataField="LimitForChassis" HeaderText="LimitForChassis" 
-             SortExpression="LimitForChassis" />
         </Columns>
       </asp:GridView>
       <asp:LinqDataSource ID="LinqDataSource1" runat="server" 
@@ -47,7 +52,7 @@
     <h3>Insert new</h3>
     Code: <asp:TextBox ID="tbCode" runat="server"></asp:TextBox><br />
     Name: <asp:TextBox ID="tbName" runat="server"></asp:TextBox><br />
-    Description: <asp:TextBox ID="tbDescription" runat="server" Rows="4" Columns="40"></asp:TextBox><br />
+    XpCost: <asp:TextBox ID="tbXpCost" runat="server" Text="200"></asp:TextBox><br />
     Needed level: <asp:TextBox ID="tbMinLevel" runat="server" Text="0"></asp:TextBox><br />
     Prerequisite (ID): <asp:TextBox ID="tbPreq" runat="server"></asp:TextBox><br />
     Unlock type: <asp:DropDownList ID="ddType" runat="server">
@@ -55,6 +60,11 @@
     Morph level (when module/weapon is available): <asp:TextBox ID="tbMorphLevel" runat="server"></asp:TextBox><br />
     Max module count (in one commander): <asp:TextBox ID="tbMaxCount" runat="server"></asp:TextBox><br />
     For chassis (comma list): <asp:TextBox ID="tbChassisLimit" runat="server"></asp:TextBox><br />
+    Metal cost (ingame): <asp:TextBox ID="tbMetalCost" runat="server"></asp:TextBox><br />
+    Morph2 metal cost(chassis): <asp:TextBox ID="tbMorph2" runat="server"></asp:TextBox><br />
+    Morph3 metal cost(chassis): <asp:TextBox ID="tbMorph3" runat="server"></asp:TextBox><br />
+    Morph4 metal cost(chassis): <asp:TextBox ID="tbMorph4" runat="server"></asp:TextBox><br />
+    Description: <asp:TextBox ID="tbDescription" runat="server" Rows="4" Columns="40"></asp:TextBox><br />
     <asp:Button ID="btnAdd" runat="server" Text="Add new" onclick="btnAdd_Click" />
     </form>
 </body>

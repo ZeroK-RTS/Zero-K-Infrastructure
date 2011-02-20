@@ -22,21 +22,34 @@ namespace ZeroKWeb
       }
     }
 
+    private int? GetInt(string text)
+    {
+      if (string.IsNullOrEmpty(text)) return null;
+      else return int.Parse(text);
+    }
+
+
     protected void btnAdd_Click(object sender, EventArgs e)
     {
+      
       if (!Global.IsAdmin) throw new ApplicationException("You are not an admin!");
       var db = new ZkDataContext();
       var unlock = new Unlock()
                    {
                      Code = tbCode.Text,
                      Name = tbName.Text,
+                     XpCost =  int.Parse(tbXpCost.Text),
                      Description = tbDescription.Text,
                      NeededLevel = int.Parse(tbMinLevel.Text),
-                     RequiredUnlockID = string.IsNullOrEmpty(tbPreq.Text) ? null : (int?)int.Parse(tbPreq.Text),
+                     RequiredUnlockID = GetInt(tbPreq.Text),
                      UnlockType = (UnlockTypes)int.Parse(ddType.SelectedValue),
-                     MorphLevel = string.IsNullOrEmpty(tbMorphLevel.Text) ? 0 : int.Parse(tbMorphLevel.Text),
+                     MorphLevel = GetInt(tbMorphLevel.Text) ?? 0,
                      MaxModuleCount = string.IsNullOrEmpty(tbMaxCount.Text) ? null : (int?)int.Parse(tbMaxCount.Text),
                      LimitForChassis = tbChassisLimit.Text,
+                     MetalCost = GetInt(tbMetalCost.Text),
+                     MetalCostMorph2 = GetInt(tbMorph2.Text),
+                     MetalCostMorph3 = GetInt(tbMorph3.Text),
+                     MetalCostMorph4 = GetInt(tbMorph4.Text)
                    };
       db.Unlocks.InsertOnSubmit(unlock);
       db.SubmitChanges();
