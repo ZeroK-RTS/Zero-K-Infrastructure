@@ -303,7 +303,9 @@ namespace ZeroKWeb
       }
 
       db.SubmitChanges();
-
+      
+      db = new ZkDataContext();
+      sb = db.SpringBattles.Single(x => x.SpringBattleID == sb.SpringBattleID); // reselect it 
       sb.CalculateElo();
       db.SubmitChanges();
 
