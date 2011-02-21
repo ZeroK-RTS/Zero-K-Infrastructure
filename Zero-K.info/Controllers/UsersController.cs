@@ -15,9 +15,9 @@ namespace ZeroKWeb.Controllers
       Account acc;
 
       int id;
-      if (int.TryParse(name, out id)) acc = db.Accounts.Single(x => x.AccountID == id);
-      else acc = db.Accounts.First(x => x.Name == name);
-
+      acc = db.Accounts.FirstOrDefault(x => x.Name == name);
+      if (acc == null && int.TryParse(name, out id)) acc = db.Accounts.Single(x => x.AccountID == id);
+      
       if (!string.IsNullOrEmpty(name)) return View("UserDetail", acc);
       return View("UserList");
     }

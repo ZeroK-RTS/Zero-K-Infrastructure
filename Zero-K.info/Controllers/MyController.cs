@@ -157,7 +157,7 @@ namespace ZeroKWeb.Controllers
 
       GetUnlockLists(out unlocks, out future);
 
-      if (Global.Account.Level > Global.Account.AccountUnlocks.Count && unlocks.Any(x => x.UnlockID == id))
+      if (unlocks.Any(x => x.UnlockID == id))
       {
         var au = db.AccountUnlocks.SingleOrDefault(x => x.AccountID == Global.AccountID && x.UnlockID == id);
         if (au == null)
