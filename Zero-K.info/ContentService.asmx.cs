@@ -304,10 +304,15 @@ namespace ZeroKWeb
 
       db.SubmitChanges();
       
-      db = new ZkDataContext();
-      sb = db.SpringBattles.Single(x => x.SpringBattleID == sb.SpringBattleID); // reselect it 
-      sb.CalculateElo();
-      db.SubmitChanges();
+      
+      using (var scope = new TransactionScope())
+      {
+        db = new ZkDataContext();
+        sb = db.SpringBattles.Single(x => x.SpringBattleID == sb.SpringBattleID); // reselect it 
+        sb.CalculateElo();
+        db.SubmitChanges();
+        scope.Complete();
+      }
 
       return true;
     }
