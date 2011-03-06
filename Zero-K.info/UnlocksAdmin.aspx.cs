@@ -55,5 +55,14 @@ namespace ZeroKWeb
       db.SubmitChanges();
       GridView1.DataBind();
     }
+
+    protected void LinqDataSource1_Deleting(object sender, LinqDataSourceDeleteEventArgs e)
+    {
+      var db = new ZkDataContext();
+      var unlock = db.Unlocks.Single(x => x.UnlockID == ((Unlock)e.OriginalObject).UnlockID);
+      unlock.CommanderModules.Clear();
+      db.Unlocks.DeleteOnSubmit(unlock);
+      db.SubmitChanges();
+    }
   }
 }

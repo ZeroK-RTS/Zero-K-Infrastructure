@@ -45,7 +45,7 @@
       <asp:LinqDataSource ID="LinqDataSource1" runat="server" 
         ContextTypeName="ZkData.ZkDataContext" EnableDelete="True" EnableInsert="True" 
         EnableUpdate="True" EntityTypeName="" 
-        TableName="Unlocks">
+        TableName="Unlocks" ondeleting="LinqDataSource1_Deleting">
       </asp:LinqDataSource>
     </div>
 
