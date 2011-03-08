@@ -55,12 +55,12 @@ namespace ZkData
           if (a.IsInVictoryTeam)
           {
             a.Account.XP += WinnerTeamXpChange.Value;
-            a.XpChange = GlobalConst.XpForMissionOrBotsVictory;
+            a.XpChange = WinnerTeamXpChange.Value;
           }
           else
           {
             a.Account.XP += LoserTeamXpChange.Value;
-            a.XpChange = GlobalConst.XpForMissionOrBots;
+            a.XpChange = LoserTeamXpChange.Value;
           }
         }
         
