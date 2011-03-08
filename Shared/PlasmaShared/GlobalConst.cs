@@ -1,9 +1,9 @@
-﻿namespace ZkData
+ namespace ZkData
 {
 	public static class GlobalConst
 	{
-		public const int XpForMissionOrBots = 50;
-		public const int XpForMissionOrBotsVictory = 100;
+		public const int XpForMissionOrBots = 25;
+		public const int XpForMissionOrBotsVictory = 50;
 		public const double EloWeightMax = 6;
 		public const double EloWeightLearnFactor = 20;
 		public const string AuthServiceUri = "net.tcp://localhost:8202";
