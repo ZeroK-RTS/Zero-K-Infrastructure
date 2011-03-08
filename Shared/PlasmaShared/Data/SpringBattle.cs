@@ -34,19 +34,32 @@ namespace ZkData
 
       if (IsMission || HasBots || PlayerCount < 2)
       {
-        foreach (var a in SpringBattlePlayers.Where(x=>!x.IsSpectator))
-        {
-          WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
-          LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
+        
+		WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
+		LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
 
+		if (Duration < 480)
+		{
+		  WinnerTeamXpChange = 0;
+		  LoserTeamXpChange = 0;
+		}
+		else if (Duration < 720)
+		{
+		  WinnerTeamXpChange = (int)(WinnerTeamXpChange*(Duration-720)/240.0);
+		  LoserTeamXpChange = (int)(LoserTeamXpChange*(Duration-720)/240.0);
+		}
+		
+		foreach (var a in SpringBattlePlayers.Where(x=>!x.IsSpectator))
+        {
+          
           if (a.IsInVictoryTeam)
           {
-            a.Account.XP += GlobalConst.XpForMissionOrBotsVictory;
+            a.Account.XP += WinnerTeamXpChange.Value;
             a.XpChange = GlobalConst.XpForMissionOrBotsVictory;
           }
           else
           {
-            a.Account.XP += GlobalConst.XpForMissionOrBots;
+            a.Account.XP += LoserTeamXpChange.Value;
             a.XpChange = GlobalConst.XpForMissionOrBots;
           }
         }
@@ -102,7 +115,16 @@ namespace ZkData
       var sumW = winnerW + loserW;
 
       WinnerTeamXpChange = (int)(20 + (300 + 600 * (1 - eWin))/ (2.0+winners.Count));
-      
+	  
+	  if (Duration < 480)
+	  {
+		WinnerTeamXpChange = 0;
+	  }
+	  else if (Duration < 720)
+	  {
+		WinnerTeamXpChange = (int)(WinnerTeamXpChange*(Duration-720)/240.0);
+	  }
+	  
       foreach (var r in winners)
       {
         var change = (float)(scoreWin*r.Account.EloInvWeight);
@@ -118,8 +140,18 @@ namespace ZkData
           if (r.Account.EloWeight > GlobalConst.EloWeightMax) r.Account.EloWeight = (float)GlobalConst.EloWeightMax;
         }
       }
+	  
+	   LoserTeamXpChange = (int)( 20 + (200 + 400 * (1 - eLose))/(2.0 + losers.Count));
+	  
+	  if (Duration < 480)
+	  {
+		LoserTeamXpChange = 0;
+	  }
+	  else if (Duration < 720)
+	  {
+		LoserTeamXpChange = (int)(LoserTeamXpChange*(Duration-720)/240.0);
+	  }
 
-      LoserTeamXpChange = (int)( 20 + (200 + 400 * (1 - eLose))/(2.0 + losers.Count));
       foreach (var r in losers)
       {
         var change = (float)(scoreLose * r.Account.EloInvWeight);
