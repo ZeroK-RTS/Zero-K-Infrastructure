@@ -73,7 +73,14 @@
           <td>
             Games played:
           </td>
-          <td>@Model.SpringBattlePlayers.Count()
+          <td>@Model.SpringBattlePlayers.Count(x=>!x.IsSpectator)
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Games watched:
+          </td>
+          <td>@Model.SpringBattlePlayers.Count(x=>x.IsSpectator)
           </td>
         </tr>
         <tr>
@@ -133,7 +140,7 @@
         <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
       }
       <h3>
-        Technologies (UNDER CONSTRUCTION):</h3>
+        Technologies:</h3>
         @{Html.RenderPartial("UnlockedTechnologies",Model.AccountUnlocks);}
         <br />
         @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
@@ -141,7 +148,7 @@
         } else {
           @Model.Name @:Can unlock technologies worth @Model.AvailableXP XP
         }
-      <h3>Commanders (UNDER CONSTRUCTION):</h3>
+      <h3>Commanders:</h3>
       @foreach (var comm in Model.Commanders) {
         <span style='display:inline-block; width:110px;height:80px' title='$commander$@comm.CommanderID'>
           <img src='@comm.Unlock.ImageUrl'/><br />@comm.Name
