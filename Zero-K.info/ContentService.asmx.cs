@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Linq;
 using System.Linq;
 using System.Transactions;
 using System.Web.Services;
@@ -303,18 +304,18 @@ namespace ZeroKWeb
       }
 
       db.SubmitChanges();
-      
-      
-      using (var scope = new TransactionScope())
-      {
-        db = new ZkDataContext();
-        sb = db.SpringBattles.Single(x => x.SpringBattleID == sb.SpringBattleID); // reselect it 
-        sb.CalculateElo();
-        db.SubmitChanges();
-        scope.Complete();
-      }
 
-      return true;
+
+      sb.CalculateElo();
+			try {
+				db.SubmitChanges();
+			} catch (ChangeConflictException e)
+			{
+				db.ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
+				db.SubmitChanges();
+			}
+
+    	return true;
     }
 
     [WebMethod]

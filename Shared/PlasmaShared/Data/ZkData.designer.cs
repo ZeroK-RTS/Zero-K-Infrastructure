@@ -5197,7 +5197,7 @@ namespace ZkData
 			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="int NOT NULL", IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
 		public int AccountID
 		{
@@ -5218,7 +5218,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="varchar(200) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="varchar(200) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
 		public string Name
 		{
@@ -5239,7 +5239,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstLogin", DbType="datetime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstLogin", DbType="datetime NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public System.DateTime FirstLogin
 		{
@@ -5260,7 +5260,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastLogin", DbType="datetime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastLogin", DbType="datetime NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public System.DateTime LastLogin
 		{
@@ -5281,7 +5281,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Aliases", DbType="varchar(max)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Aliases", DbType="varchar(max)", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public string Aliases
 		{
@@ -5302,7 +5302,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Elo", DbType="real NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Elo", DbType="real NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public float Elo
 		{
@@ -5323,7 +5323,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EloWeight", DbType="real NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EloWeight", DbType="real NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
 		public float EloWeight
 		{
@@ -5344,7 +5344,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsLobbyAdministrator", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsLobbyAdministrator", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public bool IsLobbyAdministrator
 		{
@@ -5365,7 +5365,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBot", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBot", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public bool IsBot
 		{
@@ -5386,7 +5386,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="varchar(100)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="varchar(100)", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public string Password
 		{
@@ -5407,7 +5407,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Country", DbType="varchar(5)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Country", DbType="varchar(5)", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public string Country
 		{
@@ -5428,7 +5428,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LobbyTimeRank", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LobbyTimeRank", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
 		public int LobbyTimeRank
 		{
@@ -5449,7 +5449,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionRunCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionRunCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
 		public int MissionRunCount
 		{
@@ -5470,7 +5470,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsZeroKAdmin", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsZeroKAdmin", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
 		public bool IsZeroKAdmin
 		{
@@ -5491,7 +5491,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="Xp", Storage="_XP", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="Xp", Storage="_XP", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public int XP
 		{
@@ -5512,7 +5512,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Level]", Storage="_Level", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Level]", Storage="_Level", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
 		public int Level
 		{
@@ -10118,7 +10118,7 @@ namespace ZkData
 			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
 		public int SpringBattleID
 		{
@@ -10139,7 +10139,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EngineGameID", DbType="varchar(64) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EngineGameID", DbType="varchar(64) NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
 		public string EngineGameID
 		{
@@ -10160,7 +10160,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HostAccountID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HostAccountID", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public int HostAccountID
 		{
@@ -10185,7 +10185,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="nvarchar(200)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="nvarchar(200)", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public string Title
 		{
@@ -10206,7 +10206,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapResourceID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapResourceID", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public int MapResourceID
 		{
@@ -10231,7 +10231,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModResourceID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ModResourceID", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public int ModResourceID
 		{
@@ -10256,7 +10256,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartTime", DbType="datetime NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartTime", DbType="datetime NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
 		public System.DateTime StartTime
 		{
@@ -10277,7 +10277,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Duration", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Duration", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public int Duration
 		{
@@ -10298,7 +10298,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerCount", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public int PlayerCount
 		{
@@ -10319,7 +10319,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HasBots", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HasBots", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public bool HasBots
 		{
@@ -10340,7 +10340,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsMission", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsMission", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public bool IsMission
 		{
@@ -10361,7 +10361,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReplayFileName", DbType="nvarchar(500)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReplayFileName", DbType="nvarchar(500)", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
 		public string ReplayFileName
 		{
@@ -10382,7 +10382,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EngineVersion", DbType="nvarchar(100)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EngineVersion", DbType="nvarchar(100)", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
 		public string EngineVersion
 		{
@@ -10403,7 +10403,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsEloProcessed", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsEloProcessed", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
 		public bool IsEloProcessed
 		{
@@ -10424,7 +10424,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WinnerTeamXpChange", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WinnerTeamXpChange", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public System.Nullable<int> WinnerTeamXpChange
 		{
@@ -10445,7 +10445,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoserTeamXpChange", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoserTeamXpChange", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
 		public System.Nullable<int> LoserTeamXpChange
 		{
@@ -10466,7 +10466,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RatingSum", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RatingSum", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
 		public System.Nullable<int> RatingSum
 		{
@@ -10487,7 +10487,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RatingCount", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RatingCount", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
 		public System.Nullable<int> RatingCount
 		{
@@ -10508,7 +10508,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
 		public System.Nullable<int> ForumThreadID
 		{
@@ -10878,7 +10878,7 @@ namespace ZkData
 			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
 		public int SpringBattleID
 		{
@@ -10903,7 +10903,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
 		public int AccountID
 		{
@@ -10928,7 +10928,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSpectator", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSpectator", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public bool IsSpectator
 		{
@@ -10949,7 +10949,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsInVictoryTeam", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsInVictoryTeam", DbType="bit NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public bool IsInVictoryTeam
 		{
@@ -10970,7 +10970,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommanderType", DbType="nvarchar(50)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommanderType", DbType="nvarchar(50)", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public string CommanderType
 		{
@@ -10991,7 +10991,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoseTime", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoseTime", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public System.Nullable<int> LoseTime
 		{
@@ -11012,7 +11012,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyNumber", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyNumber", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
 		public int AllyNumber
 		{
@@ -11033,7 +11033,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rank", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rank", DbType="int NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public int Rank
 		{
@@ -11054,7 +11054,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EloChange", DbType="real")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EloChange", DbType="real", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public System.Nullable<float> EloChange
 		{
@@ -11075,7 +11075,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_XpChange", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_XpChange", DbType="int", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public System.Nullable<int> XpChange
 		{
@@ -11846,7 +11846,7 @@ namespace ZkData
 			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
 		public int AccountID
 		{
@@ -11871,7 +11871,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
 		public int SpringBattleID
 		{
@@ -11896,7 +11896,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AwardKey", DbType="varchar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AwardKey", DbType="varchar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public string AwardKey
 		{
@@ -11917,7 +11917,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AwardDescription", DbType="nvarchar(500)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AwardDescription", DbType="nvarchar(500)", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public string AwardDescription
 		{
@@ -12079,7 +12079,7 @@ namespace ZkData
 			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
 		public int AccountID
 		{
@@ -12104,7 +12104,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
 		public int SpringBattleID
 		{
@@ -12129,7 +12129,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StatsKey", DbType="varchar(20) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StatsKey", DbType="varchar(20) NOT NULL", CanBeNull=false, IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public string StatsKey
 		{
@@ -12150,7 +12150,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Value]", Storage="_Value", DbType="float NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Value]", Storage="_Value", DbType="float NOT NULL", UpdateCheck=UpdateCheck.WhenChanged)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public double Value
 		{

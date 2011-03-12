@@ -311,22 +311,22 @@
   </Table>
   <Table Name="dbo.Account" Member="Accounts">
     <Type Name="Account">
-      <Column Name="AccountID" Storage="_Id" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="Name" Type="System.String" DbType="varchar(200) NOT NULL" CanBeNull="false" />
-      <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
-      <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
-      <Column Name="Aliases" Type="System.String" DbType="varchar(max)" CanBeNull="true" />
-      <Column Name="Elo" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" />
-      <Column Name="EloWeight" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" />
-      <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" />
-      <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" />
-      <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="Never" />
-      <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="Xp" Member="XP" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="AccountID" Storage="_Id" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Name" Type="System.String" DbType="varchar(200) NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Aliases" Type="System.String" DbType="varchar(max)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="Elo" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="EloWeight" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="Country" Type="System.String" DbType="varchar(5)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="LobbyTimeRank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="MissionRunCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Xp" Member="XP" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
@@ -509,25 +509,25 @@
   </Table>
   <Table Name="dbo.SpringBattle" Member="SpringBattles">
     <Type Name="SpringBattle">
-      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="EngineGameID" Type="System.String" DbType="varchar(64) NOT NULL" CanBeNull="false" />
-      <Column Name="HostAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="Title" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
-      <Column Name="MapResourceID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="ModResourceID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="StartTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
-      <Column Name="Duration" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="PlayerCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="HasBots" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="IsMission" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="ReplayFileName" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
-      <Column Name="EngineVersion" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
-      <Column Name="IsEloProcessed" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="WinnerTeamXpChange" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="LoserTeamXpChange" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="RatingSum" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="RatingCount" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="EngineGameID" Type="System.String" DbType="varchar(64) NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="HostAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Title" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="MapResourceID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="ModResourceID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="StartTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Duration" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="PlayerCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="HasBots" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="IsMission" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="ReplayFileName" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="EngineVersion" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="IsEloProcessed" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="WinnerTeamXpChange" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="LoserTeamXpChange" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="RatingSum" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="RatingCount" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Association Name="SpringBattle_SpringBattlePlayer" Member="SpringBattlePlayers" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattlePlayer" />
       <Association Name="SpringBattle_AccountBattleAward" Member="AccountBattleAwards" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="AccountBattleAward" />
       <Association Name="SpringBattle_AccountBattleStat" Member="AccountBattleStats" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="AccountBattleStat" />
@@ -539,16 +539,16 @@
   </Table>
   <Table Name="dbo.SpringBattlePlayer" Member="SpringBattlePlayers">
     <Type Name="SpringBattlePlayer">
-      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="IsSpectator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="IsInVictoryTeam" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="CommanderType" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
-      <Column Name="LoseTime" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="AllyNumber" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="Rank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="EloChange" Type="System.Single" DbType="real" CanBeNull="true" />
-      <Column Name="XpChange" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="IsSpectator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="IsInVictoryTeam" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="CommanderType" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="LoseTime" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="AllyNumber" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Rank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="EloChange" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="XpChange" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Association Name="SpringBattle_SpringBattlePlayer" Member="SpringBattle" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattle" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_SpringBattlePlayer" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
@@ -580,20 +580,20 @@
   </Table>
   <Table Name="dbo.AccountBattleAward" Member="AccountBattleAwards">
     <Type Name="AccountBattleAward">
-      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="AwardKey" Type="System.String" DbType="varchar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="AwardDescription" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="AwardKey" Type="System.String" DbType="varchar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="AwardDescription" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Association Name="SpringBattle_AccountBattleAward" Member="SpringBattle" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattle" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_AccountBattleAward" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.AccountBattleStats" Member="AccountBattleStats">
     <Type Name="AccountBattleStat">
-      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="StatsKey" Type="System.String" DbType="varchar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="[Value]" Member="Value" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="StatsKey" Type="System.String" DbType="varchar(20) NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="[Value]" Member="Value" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Association Name="SpringBattle_AccountBattleStat" Member="SpringBattle" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattle" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_AccountBattleStat" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
