@@ -141,7 +141,7 @@ namespace ZkData
 		{
 			xp = xp ?? 0;
 			if (duration < 480) return 0;
-			else if (duration < 720) return (int)(xp*(duration - 720)/240.0);
+			else if (duration < 720) return (int)(xp*(720 - duration)/240.0);
 			else return xp.Value;
 		}
 	}
