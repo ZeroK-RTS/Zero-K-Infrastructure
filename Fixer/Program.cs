@@ -26,18 +26,21 @@ namespace Fixer
 
     static void RecalculateBattleElo()
     {
-      var db = new ZkDataContext();
-      foreach (var b in db.SpringBattles.Where(x=>!x.IsEloProcessed).ToList())
-      {
-        b.CalculateElo();
-        db.SubmitChanges();
-      }
+			using (var db = new ZkDataContext())
+			{
+				foreach (var b in db.SpringBattles.Where(x => !x.IsEloProcessed).ToList())
+				{
+					Console.WriteLine(b.SpringBattleID);
+					b.CalculateElo();
+				}
+				db.SubmitChanges();
+			}
     }
 
     static void ImportSpringiePlayers()
     {
       var db = new ZkDataContext();
-      foreach (var line in File.ReadLines("springie.csv").AsParallel())
+    	foreach (var line in File.ReadLines("springie.csv").AsParallel())
       {
         var m = Regex.Match(line, "\"[0-9]+\";\"([^\"]+)\";\"[0-9]+\";\"[0-9]+\";\"([^\"]+)\";\"([^\"]+)\"");
         if (m.Success)
