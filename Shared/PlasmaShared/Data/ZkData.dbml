@@ -344,6 +344,7 @@
       <Association Name="Account_AccountBattleStat" Member="AccountBattleStats" ThisKey="AccountID" OtherKey="AccountID" Type="AccountBattleStat" />
       <Association Name="Account_AccountUnlock" Member="AccountUnlocks" ThisKey="AccountID" OtherKey="AccountID" Type="AccountUnlock" />
       <Association Name="Account_Commander" Member="Commanders" ThisKey="AccountID" OtherKey="AccountID" Type="Commander" />
+      <Association Name="Account_PollVote" Member="PollVotes" ThisKey="AccountID" OtherKey="AccountID" Type="PollVote" />
     </Type>
   </Table>
   <Table Name="dbo.LobbyMessage" Member="LobbyMessages">
@@ -666,6 +667,34 @@
       <Column Name="MorphLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="UnlockType" Type="UnlockTypes" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="CommanderSlot_CommanderModule" Member="CommanderModules" ThisKey="CommanderSlotID" OtherKey="SlotID" Type="CommanderModule" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Poll" Member="Polls">
+    <Type Name="Poll">
+      <Column Name="PollID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="QuestionText" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Association Name="Poll_PollVote" Member="PollVotes" ThisKey="PollID" OtherKey="PollID" Type="PollVote" />
+      <Association Name="Poll_PollOption" Member="PollOptions" ThisKey="PollID" OtherKey="PollID" Type="PollOption" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PollVote" Member="PollVotes">
+    <Type Name="PollVote">
+      <Column Name="AccountID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PollID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="OptionID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Account_PollVote" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Poll_PollVote" Member="Poll" ThisKey="PollID" OtherKey="PollID" Type="Poll" IsForeignKey="true" />
+      <Association Name="PollOption_PollVote" Member="PollOption" ThisKey="OptionID" OtherKey="OptionID" Type="PollOption" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PollOption" Member="PollOptions">
+    <Type Name="PollOption">
+      <Column Name="OptionID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PollID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="OptionText" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Votes" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="PollOption_PollVote" Member="PollVotes" ThisKey="OptionID" OtherKey="OptionID" Type="PollVote" />
+      <Association Name="Poll_PollOption" Member="Poll" ThisKey="PollID" OtherKey="PollID" Type="Poll" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

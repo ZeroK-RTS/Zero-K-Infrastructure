@@ -204,6 +204,7 @@
     <Content Include="Views\My\CommanderProfile.cshtml" />
     <Content Include="Views\Home\UnlockTooltip.cshtml" />
     <Content Include="Views\Poll\PollView.cshtml" />
+    <Content Include="Views\Poll\PollVoteList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

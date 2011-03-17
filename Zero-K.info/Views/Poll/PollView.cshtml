@@ -13,7 +13,7 @@
       @foreach (var option in p.PollOptions) { 
         <tr>
           <td>
-            <input type="submit" name="option@(option.OptionID)" value="Vote" />
+            <input type="submit" name="option@(option.OptionID)" value="Vote" title="$polloption$@option.OptionID" />
           </td>
           <td>
             @option.OptionText
@@ -22,7 +22,7 @@
             @option.Votes
           </td>
           <td>
-            <img src='/img/bar_red.png' width='@(150*option.Votes/maxVotes)' height='10px' />
+            <img src='/img/bar_red.png' width='@(150*option.Votes/maxVotes)' height='10px'/>
           </td>
         </tr>
       }

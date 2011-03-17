@@ -1,0 +1,10 @@
+﻿@model IQueryable<ZkData.Account>
+         
+<span>
+<small>
+@foreach (var a in Model) {
+  @Html.PrintAccount(a)<br />
+}
+</small>
+</span>
+

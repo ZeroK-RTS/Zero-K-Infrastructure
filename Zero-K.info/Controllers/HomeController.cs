@@ -80,6 +80,8 @@ namespace ZeroKWeb.Controllers
 				case "unlock":
 					return PartialView("UnlockTooltip", db.Unlocks.Single(x => x.UnlockID == int.Parse(args[1])));
 
+				case "polloption":
+					return PartialView("~/Views/Poll/PollVoteList.cshtml", db.PollVotes.Where(x => x.OptionID == int.Parse(args[1])).Select(x=>x.Account).OrderByDescending(x=>x.Level));
 				case "commander":
 					ret = GetCommanderTooltip(int.Parse(args[1]));
 

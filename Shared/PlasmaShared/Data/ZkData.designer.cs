@@ -106,6 +106,15 @@ namespace ZkData
     partial void InsertCommanderSlot(CommanderSlot instance);
     partial void UpdateCommanderSlot(CommanderSlot instance);
     partial void DeleteCommanderSlot(CommanderSlot instance);
+    partial void InsertPoll(Poll instance);
+    partial void UpdatePoll(Poll instance);
+    partial void DeletePoll(Poll instance);
+    partial void InsertPollVote(PollVote instance);
+    partial void UpdatePollVote(PollVote instance);
+    partial void DeletePollVote(PollVote instance);
+    partial void InsertPollOption(PollOption instance);
+    partial void UpdatePollOption(PollOption instance);
+    partial void DeletePollOption(PollOption instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -543,6 +552,30 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<CommanderSlot>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Poll> Polls
+		{
+			get
+			{
+				return this.GetTable<Poll>();
+			}
+		}
+		
+		public System.Data.Linq.Table<PollVote> PollVotes
+		{
+			get
+			{
+				return this.GetTable<PollVote>();
+			}
+		}
+		
+		public System.Data.Linq.Table<PollOption> PollOptions
+		{
+			get
+			{
+				return this.GetTable<PollOption>();
 			}
 		}
 	}
@@ -5152,6 +5185,8 @@ namespace ZkData
 		
 		private EntitySet<Commander> _Commanders;
 		
+		private EntitySet<PollVote> _PollVotes;
+		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -5856,6 +5891,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PollVote", Storage="_PollVotes", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
+		public EntitySet<PollVote> PollVotes
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PollVotes.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PollVotes;
+			}
+			set
+			{
+				this._PollVotes.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -6080,6 +6134,18 @@ namespace ZkData
 			entity.AccountByAccountID = null;
 		}
 		
+		private void attach_PollVotes(PollVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_PollVotes(PollVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -6099,6 +6165,7 @@ namespace ZkData
 			this._AccountBattleStats = new EntitySet<AccountBattleStat>(new Action<AccountBattleStat>(this.attach_AccountBattleStats), new Action<AccountBattleStat>(this.detach_AccountBattleStats));
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
 			this._Commanders = new EntitySet<Commander>(new Action<Commander>(this.attach_Commanders), new Action<Commander>(this.detach_Commanders));
+			this._PollVotes = new EntitySet<PollVote>(new Action<PollVote>(this.attach_PollVotes), new Action<PollVote>(this.detach_PollVotes));
 			OnCreated();
 		}
 		
@@ -13876,6 +13943,682 @@ namespace ZkData
 		private void Initialize()
 		{
 			this._CommanderModules = new EntitySet<CommanderModule>(new Action<CommanderModule>(this.attach_CommanderModules), new Action<CommanderModule>(this.detach_CommanderModules));
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Poll")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class Poll : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _PollID;
+		
+		private string _QuestionText;
+		
+		private EntitySet<PollVote> _PollVotes;
+		
+		private EntitySet<PollOption> _PollOptions;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPollIDChanging(int value);
+    partial void OnPollIDChanged();
+    partial void OnQuestionTextChanging(string value);
+    partial void OnQuestionTextChanged();
+    #endregion
+		
+		public Poll()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PollID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int PollID
+		{
+			get
+			{
+				return this._PollID;
+			}
+			set
+			{
+				if ((this._PollID != value))
+				{
+					this.OnPollIDChanging(value);
+					this.SendPropertyChanging();
+					this._PollID = value;
+					this.SendPropertyChanged("PollID");
+					this.OnPollIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_QuestionText", DbType="NVarChar(500) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string QuestionText
+		{
+			get
+			{
+				return this._QuestionText;
+			}
+			set
+			{
+				if ((this._QuestionText != value))
+				{
+					this.OnQuestionTextChanging(value);
+					this.SendPropertyChanging();
+					this._QuestionText = value;
+					this.SendPropertyChanged("QuestionText");
+					this.OnQuestionTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_PollVote", Storage="_PollVotes", ThisKey="PollID", OtherKey="PollID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3, EmitDefaultValue=false)]
+		public EntitySet<PollVote> PollVotes
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PollVotes.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PollVotes;
+			}
+			set
+			{
+				this._PollVotes.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_PollOption", Storage="_PollOptions", ThisKey="PollID", OtherKey="PollID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4, EmitDefaultValue=false)]
+		public EntitySet<PollOption> PollOptions
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PollOptions.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PollOptions;
+			}
+			set
+			{
+				this._PollOptions.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_PollVotes(PollVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.Poll = this;
+		}
+		
+		private void detach_PollVotes(PollVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.Poll = null;
+		}
+		
+		private void attach_PollOptions(PollOption entity)
+		{
+			this.SendPropertyChanging();
+			entity.Poll = this;
+		}
+		
+		private void detach_PollOptions(PollOption entity)
+		{
+			this.SendPropertyChanging();
+			entity.Poll = null;
+		}
+		
+		private void Initialize()
+		{
+			this._PollVotes = new EntitySet<PollVote>(new Action<PollVote>(this.attach_PollVotes), new Action<PollVote>(this.detach_PollVotes));
+			this._PollOptions = new EntitySet<PollOption>(new Action<PollOption>(this.attach_PollOptions), new Action<PollOption>(this.detach_PollOptions));
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PollVote")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class PollVote : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private int _PollID;
+		
+		private int _OptionID;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Poll> _Poll;
+		
+		private EntityRef<PollOption> _PollOption;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnPollIDChanging(int value);
+    partial void OnPollIDChanged();
+    partial void OnOptionIDChanging(int value);
+    partial void OnOptionIDChanged();
+    #endregion
+		
+		public PollVote()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PollID", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int PollID
+		{
+			get
+			{
+				return this._PollID;
+			}
+			set
+			{
+				if ((this._PollID != value))
+				{
+					if (this._Poll.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPollIDChanging(value);
+					this.SendPropertyChanging();
+					this._PollID = value;
+					this.SendPropertyChanged("PollID");
+					this.OnPollIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OptionID", DbType="Int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int OptionID
+		{
+			get
+			{
+				return this._OptionID;
+			}
+			set
+			{
+				if ((this._OptionID != value))
+				{
+					if (this._PollOption.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnOptionIDChanging(value);
+					this.SendPropertyChanging();
+					this._OptionID = value;
+					this.SendPropertyChanged("OptionID");
+					this.OnOptionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PollVote", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.PollVotes.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.PollVotes.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_PollVote", Storage="_Poll", ThisKey="PollID", OtherKey="PollID", IsForeignKey=true)]
+		public Poll Poll
+		{
+			get
+			{
+				return this._Poll.Entity;
+			}
+			set
+			{
+				Poll previousValue = this._Poll.Entity;
+				if (((previousValue != value) 
+							|| (this._Poll.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Poll.Entity = null;
+						previousValue.PollVotes.Remove(this);
+					}
+					this._Poll.Entity = value;
+					if ((value != null))
+					{
+						value.PollVotes.Add(this);
+						this._PollID = value.PollID;
+					}
+					else
+					{
+						this._PollID = default(int);
+					}
+					this.SendPropertyChanged("Poll");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PollOption_PollVote", Storage="_PollOption", ThisKey="OptionID", OtherKey="OptionID", IsForeignKey=true)]
+		public PollOption PollOption
+		{
+			get
+			{
+				return this._PollOption.Entity;
+			}
+			set
+			{
+				PollOption previousValue = this._PollOption.Entity;
+				if (((previousValue != value) 
+							|| (this._PollOption.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PollOption.Entity = null;
+						previousValue.PollVotes.Remove(this);
+					}
+					this._PollOption.Entity = value;
+					if ((value != null))
+					{
+						value.PollVotes.Add(this);
+						this._OptionID = value.OptionID;
+					}
+					else
+					{
+						this._OptionID = default(int);
+					}
+					this.SendPropertyChanged("PollOption");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._Poll = default(EntityRef<Poll>);
+			this._PollOption = default(EntityRef<PollOption>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PollOption")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class PollOption : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _OptionID;
+		
+		private int _PollID;
+		
+		private string _OptionText;
+		
+		private int _Votes;
+		
+		private EntitySet<PollVote> _PollVotes;
+		
+		private EntityRef<Poll> _Poll;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnOptionIDChanging(int value);
+    partial void OnOptionIDChanged();
+    partial void OnPollIDChanging(int value);
+    partial void OnPollIDChanged();
+    partial void OnOptionTextChanging(string value);
+    partial void OnOptionTextChanged();
+    partial void OnVotesChanging(int value);
+    partial void OnVotesChanged();
+    #endregion
+		
+		public PollOption()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OptionID", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int OptionID
+		{
+			get
+			{
+				return this._OptionID;
+			}
+			set
+			{
+				if ((this._OptionID != value))
+				{
+					this.OnOptionIDChanging(value);
+					this.SendPropertyChanging();
+					this._OptionID = value;
+					this.SendPropertyChanged("OptionID");
+					this.OnOptionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PollID", DbType="Int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int PollID
+		{
+			get
+			{
+				return this._PollID;
+			}
+			set
+			{
+				if ((this._PollID != value))
+				{
+					if (this._Poll.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPollIDChanging(value);
+					this.SendPropertyChanging();
+					this._PollID = value;
+					this.SendPropertyChanged("PollID");
+					this.OnPollIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OptionText", DbType="NVarChar(200) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public string OptionText
+		{
+			get
+			{
+				return this._OptionText;
+			}
+			set
+			{
+				if ((this._OptionText != value))
+				{
+					this.OnOptionTextChanging(value);
+					this.SendPropertyChanging();
+					this._OptionText = value;
+					this.SendPropertyChanged("OptionText");
+					this.OnOptionTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Votes", DbType="Int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public int Votes
+		{
+			get
+			{
+				return this._Votes;
+			}
+			set
+			{
+				if ((this._Votes != value))
+				{
+					this.OnVotesChanging(value);
+					this.SendPropertyChanging();
+					this._Votes = value;
+					this.SendPropertyChanged("Votes");
+					this.OnVotesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PollOption_PollVote", Storage="_PollVotes", ThisKey="OptionID", OtherKey="OptionID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
+		public EntitySet<PollVote> PollVotes
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PollVotes.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PollVotes;
+			}
+			set
+			{
+				this._PollVotes.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_PollOption", Storage="_Poll", ThisKey="PollID", OtherKey="PollID", IsForeignKey=true)]
+		public Poll Poll
+		{
+			get
+			{
+				return this._Poll.Entity;
+			}
+			set
+			{
+				Poll previousValue = this._Poll.Entity;
+				if (((previousValue != value) 
+							|| (this._Poll.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Poll.Entity = null;
+						previousValue.PollOptions.Remove(this);
+					}
+					this._Poll.Entity = value;
+					if ((value != null))
+					{
+						value.PollOptions.Add(this);
+						this._PollID = value.PollID;
+					}
+					else
+					{
+						this._PollID = default(int);
+					}
+					this.SendPropertyChanged("Poll");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_PollVotes(PollVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.PollOption = this;
+		}
+		
+		private void detach_PollVotes(PollVote entity)
+		{
+			this.SendPropertyChanging();
+			entity.PollOption = null;
+		}
+		
+		private void Initialize()
+		{
+			this._PollVotes = new EntitySet<PollVote>(new Action<PollVote>(this.attach_PollVotes), new Action<PollVote>(this.detach_PollVotes));
+			this._Poll = default(EntityRef<Poll>);
 			OnCreated();
 		}
 		
