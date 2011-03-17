@@ -83,6 +83,7 @@
     <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\MyController.cs" />
+    <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\StaticController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\WikiController.cs" />
@@ -129,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
+    <Content Include="Img\bar_red.png" />
     <Content Include="LobbyStart.inc" />
     <Content Include="ResourceList.aspx" />
     <Content Include="ErrorReports.aspx" />
@@ -201,6 +203,7 @@
     <Content Include="Views\My\Commanders.cshtml" />
     <Content Include="Views\My\CommanderProfile.cshtml" />
     <Content Include="Views\Home\UnlockTooltip.cshtml" />
+    <Content Include="Views\Poll\PollView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

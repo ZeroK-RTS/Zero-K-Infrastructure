@@ -4,6 +4,10 @@
   Page.Title = Model.Name;
 }
 
+@{
+  Html.RenderAction("Index", "Poll", new { pollID = 1 });
+  }
+
 @* User Profile Page! *@
 @* First column starts here *@
 <h2>@Html.PrintAccount(Model)</h2>

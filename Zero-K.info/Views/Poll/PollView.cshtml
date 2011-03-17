@@ -1,0 +1,30 @@
+﻿@using ZkData
+@model Poll
+@{
+  var p = Model;
+  var maxVotes = p.PollOptions.Sum(x => x.Votes);
+}
+
+@using (Ajax.BeginForm("PollVote", new { pollID = @p.PollID }, new AjaxOptions() { UpdateTargetId = "pollForm", InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" })) {
+  <span id="pollForm">
+    <h2>@p.QuestionText</h2>
+    <table>
+      @foreach (var option in p.PollOptions) { 
+        <tr>
+          <td>
+            <input type="submit" name="option@(option.OptionID)" value="Vote" />
+          </td>
+          <td>
+            @option.OptionText
+          </td>
+          <td>
+            @option.Votes
+          </td>
+          <td>
+            <img src='/img/bar_red.png' width='@(150*option.Votes/maxVotes)' height='10px' />
+          </td>
+        </tr>
+      }
+    </table>
+  </span>
+}
