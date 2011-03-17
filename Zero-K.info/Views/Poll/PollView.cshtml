@@ -4,10 +4,11 @@
   var p = Model;
   var maxVotes = p.PollOptions.Sum(x => x.Votes);
 }
-
 @using (Ajax.BeginForm("PollVote", new { pollID = @p.PollID }, new AjaxOptions() { UpdateTargetId = "pollForm", InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" })) {
-  <span id="pollForm">
-    <h2>@p.QuestionText</h2>
+
+  <div id="pollForm">
+    <h4>@p.QuestionText</h4>
+	<small>
     <table>
       @foreach (var option in p.PollOptions) { 
         <tr>
@@ -26,5 +27,7 @@
         </tr>
       }
     </table>
-  </span>
+	</small>
+  </div>
+  
 }
