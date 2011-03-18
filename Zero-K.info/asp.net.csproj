@@ -130,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
+    <Content Include="Img\bar_blue.png" />
     <Content Include="Img\bar_red.png" />
     <Content Include="LobbyStart.inc" />
     <Content Include="ResourceList.aspx" />

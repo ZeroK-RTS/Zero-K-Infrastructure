@@ -10,7 +10,7 @@
 @*<a href="@Url.Action("Reset")">Reset list (debug)</a>*@
 <h2>
   Available technologies</h2>
-  <h3>You have @Model.Account.AvailableXP XP available</h3>
+  <h3>You have @Model.Account.AvailableXP points available</h3>
 @foreach (var unlock in Model.Unlocks) {
   <span title="$unlock$@unlock.UnlockID">
     <img src="@unlock.ImageUrl" style="float:left;"/><br />

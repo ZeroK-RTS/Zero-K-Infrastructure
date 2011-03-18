@@ -19,21 +19,28 @@
           <td>
             Level:
           </td>
-          <td>@Model.Level
+          <td><b>@Model.Level</b>
           </td>
         </tr>
         <tr>
           <td>
             XP:
           </td>
-          <td>@Model.XP
-          </td>
-        </tr>
-        <tr>
           <td>
-            XP for next level:
-          </td>
-          <td>@Account.GetXpForLevel(Model.Level + 1)
+          @{
+            var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));
+            }
+            <span title='XP: @Model.XP, next level:@(Account.GetXpForLevel(Model.Level+1)) <br/> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level+1) - Account.GetXpForLevel(Model.Level))'>
+            <table cellpadding='0' cellspacing='0'>
+            <tr>
+            <td width='@((int)(300*ratio))' style="background: url(/img/bar_blue.png);" height='10'>
+            </td>
+            <td width='@((int)(300*(1-ratio)))' style="background: url(/img/bar_red.png);" height='10'>
+            </td>
+            </tr>
+            </table>
+            </span>
+          
           </td>
         </tr>
         <tr>
@@ -148,9 +155,9 @@
         @{Html.RenderPartial("UnlockedTechnologies",Model.AccountUnlocks);}
         <br />
         @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
-          <a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP XP</a>
+          <a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a>
         } else {
-          @Model.Name @:Can unlock technologies worth @Model.AvailableXP XP
+          @Model.Name @:Can unlock technologies worth @Model.AvailableXP points
         }
       <h3>Commanders:</h3>
       @foreach (var comm in Model.Commanders) {

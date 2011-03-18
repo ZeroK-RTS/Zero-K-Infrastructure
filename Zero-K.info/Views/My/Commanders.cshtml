@@ -11,12 +11,16 @@
   <br />
   Each commander starts on level 1 in battle, but can morph up to level 4</div>
 <br />
-
-@for (int i = 1; i <= 4; i++) {
-  using (Ajax.BeginForm("CommanderProfile", new { profileNumber = i }, new AjaxOptions() { UpdateTargetId = "com" + i, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId="ajaxScrollProgress"  })) {
-  <div id='com@(i)'>
-    @{Html.RenderAction("CommanderProfile", new { profileNumber = i });}
-  </div>
-  }
+@if (!Model.Unlocks.Any(x => x.Unlock.UnlockType == UnlockTypes.Chassis)) {
+  <span>You need to unlock some chassis before you can start customizing commander
+  </span>
+} else {
+  for (int i = 1; i <= 4; i++) {
+    using (Ajax.BeginForm("CommanderProfile", new { profileNumber = i }, new AjaxOptions() { UpdateTargetId = "com" + i, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" })) {
+    <div id='com@(i)'>
+      @{Html.RenderAction("CommanderProfile", new { profileNumber = i });}
+    </div>
+    }
   <br />
+  }
 }
