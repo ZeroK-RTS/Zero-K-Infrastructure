@@ -524,10 +524,18 @@ namespace ZeroKLobby.MicroLobby
           }
           else
           {
-            var pmControl = GetPrivateMessageControl(otherUserName) ?? CreatePrivateMessageControl(otherUserName);
-            if (!e.IsEmote) pmControl.AddLine(new SaidLine(e.UserName, e.Text));
-            else pmControl.AddLine(new SaidExLine(e.UserName, e.Text));
-            if (e.UserName != Program.TasClient.MyUser.Name) MainWindow.Instance.NotifyUser("chat/user/" + otherUserName, string.Format("{0}: {1}", otherUserName, e.Text), false, true);
+            var pmControl = GetPrivateMessageControl(otherUserName);
+						// block non friend messages 
+						if (pmControl == null && Program.Conf.BlockNonFriendPm && !Program.FriendManager.Friends.Contains(otherUserName))
+						{
+							if (e.UserName != Program.TasClient.UserName) Program.TasClient.Say(TasClient.SayPlace.User, otherUserName, "Sorry, I'm busy and do not receive messages. If you want to ask something, use #zk channel. If you have issue to report use http://code.google.com/p/zero-k/issues/list", false);
+						} else
+						{
+							pmControl = pmControl ?? CreatePrivateMessageControl(otherUserName);
+							if (!e.IsEmote) pmControl.AddLine(new SaidLine(e.UserName, e.Text));
+							else pmControl.AddLine(new SaidExLine(e.UserName, e.Text));
+							if (e.UserName != Program.TasClient.MyUser.Name) MainWindow.Instance.NotifyUser("chat/user/" + otherUserName, string.Format("{0}: {1}", otherUserName, e.Text), false, true);
+						}
           }
         }
       }
