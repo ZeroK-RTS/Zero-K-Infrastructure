@@ -2,6 +2,7 @@
          
 <span>
 <small>
+Level sum: @(Model.Sum(x=>x.Level))<br />
 @foreach (var a in Model) {
   @Html.PrintAccount(a)<br />
 }
