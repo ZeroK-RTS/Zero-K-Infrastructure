@@ -43,15 +43,22 @@ namespace ZeroKLobby.MicroLobby
 
       if (navigatingTo == pathString) return true; // already navigating there
 
+			/*
       if (navigatedIndex > 1 && navigatedPlaces[navigatedIndex - 2] == pathString)
       {
         navigatedIndex -= 2;
         WebBrowser.GoBack();
         return true;
-      }
+      }*/
 
       //navigatingTo = pathString;
-      WebBrowser.Navigate(pathString);
+			try {
+				WindowsApi.DeleteUrlCacheEntry(pathString);
+			} catch (Exception ex)
+			{
+				Trace.TraceError("Error deleting cache entry: {0}",ex);
+			}
+    	WebBrowser.Navigate(pathString);
 
       return true;
     }

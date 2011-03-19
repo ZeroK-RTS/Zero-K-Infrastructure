@@ -5,6 +5,8 @@ namespace ZeroKLobby
 {
 	static class WindowsApi
 	{
+		[DllImport("wininet.dll", SetLastError = true)]
+		public static extern long DeleteUrlCacheEntry(string lpszUrlName);
 
 		[DllImport("wininet.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern bool InternetSetCookie(string url, string cookieName, string cookieData);
