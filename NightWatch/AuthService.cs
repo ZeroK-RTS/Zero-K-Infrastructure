@@ -110,9 +110,11 @@ namespace NightWatch
                         TargetName = account.Name,
                         TargetAccountID = account.AccountID
                       };
-        var db = new ZkDataContext();
-        db.LobbyMessages.InsertOnSubmit(message);
-        db.SubmitChanges();
+				using (var db = new ZkDataContext())
+				{
+					db.LobbyMessages.InsertOnSubmit(message);
+					db.SubmitChanges();
+				}
       }
     }
 
@@ -121,17 +123,16 @@ namespace NightWatch
       var info = requests[Interlocked.Increment(ref messageId)] = new RequestInfo();
 
       client.SendRaw(string.Format("#{0} TESTLOGIN {1} {2}", messageId, login, hashedPassword));
-      if (info.WaitHandle.WaitOne(AuthServiceTestLoginWait))
-      {
-        if (info.AccountID == 0) return null; // not verified/invalid login or password
-        else
-        {
-          var acc = UpdateUser(info.AccountID, info.CorrectName, info.User, hashedPassword);
-          return acc;
-        }
-      }
-      else // looby timeout, use database
-        return new ZkDataContext().Accounts.SingleOrDefault(x => x.Name == login && x.Password == hashedPassword);
+			if (info.WaitHandle.WaitOne(AuthServiceTestLoginWait)) {
+				if (info.AccountID == 0) return null; // not verified/invalid login or password
+				else {
+					var acc = UpdateUser(info.AccountID, info.CorrectName, info.User, hashedPassword);
+					return acc;
+				}
+			} else // looby timeout, use database
+			{
+				using (var db = new ZkDataContext()) return db.Accounts.SingleOrDefault(x => x.Name == login && x.Password == hashedPassword);
+			}
     }
 
     public CurrentLobbyStats GetCurrentStats()

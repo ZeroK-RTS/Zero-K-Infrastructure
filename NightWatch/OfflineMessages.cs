@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
@@ -13,9 +15,8 @@ namespace NightWatch
 {
 	class OfflineMessages
 	{
+		const int MessageDelay = 66;
 		readonly TasClient client;
-
-	  const int MessageDelay = 66;
 
 		public OfflineMessages(TasClient client)
 		{
@@ -24,37 +25,49 @@ namespace NightWatch
 			client.Said += client_Said;
 			client.LoginAccepted += client_LoginAccepted;
 			client.ChannelUserAdded += client_ChannelUserAdded;
-			var db = new ZkDataContext();
-			db.LobbyMessages.DeleteAllOnSubmit(db.LobbyMessages.Where(x => x.Created < DateTime.UtcNow.AddDays(14)));
-			db.SubmitChanges();
+			using (var db = new ZkDataContext())
+			{
+				db.LobbyMessages.DeleteAllOnSubmit(db.LobbyMessages.Where(x => x.Created < DateTime.UtcNow.AddDays(14)));
+				db.SubmitChanges();
+			}
 		}
 
 		void client_ChannelUserAdded(object sender, TasEventArgs e)
 		{
 			Task.Factory.StartNew(() =>
 				{
-					var name = e.ServerParams[1];
-					var chan = e.ServerParams[0];
-					var db = new ZkDataContext();
-					var messages = db.LobbyMessages.Where(x => x.TargetName == name && x.Channel == chan).ToList();
-					if (messages.Any())
+					try
 					{
-						foreach (var m in messages)
+						var name = e.ServerParams[1];
+						var chan = e.ServerParams[0];
+						using (var db = new ZkDataContext())
+						using (var scope = new TransactionScope())
 						{
-							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
-							client.Say(TasClient.SayPlace.User, name, text, false);
-              Thread.Sleep(MessageDelay);
+							var messages = db.LobbyMessages.Where(x => x.TargetName == name && x.Channel == chan).ToList();
+							if (messages.Any())
+							{
+								foreach (var m in messages)
+								{
+									var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
+									client.Say(TasClient.SayPlace.User, name, text, false);
+									Thread.Sleep(MessageDelay);
+								}
+								db.LobbyMessages.DeleteAllOnSubmit(messages);
+								db.SubmitChanges();
+							}
+							scope.Complete();
 						}
-						db.LobbyMessages.DeleteAllOnSubmit(messages);
-						db.SubmitChanges();
+					}
+					catch (Exception ex)
+					{
+						Trace.TraceError("Error adding user: {0}", ex);
 					}
 				});
 		}
 
 		void client_LoginAccepted(object sender, TasEventArgs e)
 		{
-			var db = new ZkDataContext();
-			foreach (var c in db.LobbyChannelSubscriptions.Select(x => x.Channel).Distinct()) client.JoinChannel(c);
+			using (var db = new ZkDataContext()) foreach (var c in db.LobbyChannelSubscriptions.Select(x => x.Channel).Distinct()) client.JoinChannel(c);
 		}
 
 		void client_Said(object sender, TasSayEventArgs e)
@@ -64,25 +77,36 @@ namespace NightWatch
 				var user = client.ExistingUsers[e.UserName];
 				Task.Factory.StartNew(() =>
 					{
-						var chanusers = new List<string>(client.JoinedChannels[e.Channel].ChannelUsers);
-						var db = new ZkDataContext();
-						foreach (var s in db.LobbyChannelSubscriptions.Where(x => x.Channel == e.Channel))
+						try
 						{
-							if (!chanusers.Contains(s.Name))
+							var chanusers = new List<string>(client.JoinedChannels[e.Channel].ChannelUsers);
+							using (var db = new ZkDataContext())
+							using (var scope = new TransactionScope())
 							{
-								var message = new LobbyMessage()
-								              {
-								              	SourceAccountID = user.AccountID,
-								              	SourceName = e.UserName,
-								              	Created = DateTime.UtcNow,
-								              	Message = e.Text,
-								              	TargetName = s.Name,
-								              	Channel = e.Channel
-								              };
-								db.LobbyMessages.InsertOnSubmit(message);
+								foreach (var s in db.LobbyChannelSubscriptions.Where(x => x.Channel == e.Channel))
+								{
+									if (!chanusers.Contains(s.Name))
+									{
+										var message = new LobbyMessage()
+										              {
+										              	SourceAccountID = user.AccountID,
+										              	SourceName = e.UserName,
+										              	Created = DateTime.UtcNow,
+										              	Message = e.Text,
+										              	TargetName = s.Name,
+										              	Channel = e.Channel
+										              };
+										db.LobbyMessages.InsertOnSubmit(message);
+									}
+								}
+								db.SubmitChanges();
+								scope.Complete();
 							}
 						}
-						db.SubmitChanges();
+						catch (Exception ex)
+						{
+							Trace.TraceError("Error storing message: {0}", ex);
+						}
 					});
 			}
 			else if (e.Place == TasSayEventArgs.Places.Normal && e.Origin == TasSayEventArgs.Origins.Player)
@@ -90,61 +114,74 @@ namespace NightWatch
 				var user = client.ExistingUsers[e.UserName];
 				Task.Factory.StartNew(() =>
 					{
-						if (e.Place == TasSayEventArgs.Places.Normal && e.Origin == TasSayEventArgs.Origins.Player)
+						try
 						{
-							if (e.Text.StartsWith("!pm"))
+							if (e.Place == TasSayEventArgs.Places.Normal && e.Origin == TasSayEventArgs.Origins.Player)
 							{
-								var regex = Regex.Match(e.Text, "!pm ([^ ]+) (.+)");
-								if (regex.Success)
+								if (e.Text.StartsWith("!pm"))
 								{
-									var name = regex.Groups[1].Value;
-									var text = regex.Groups[2].Value;
-
-									var message = new LobbyMessage()
-									              { SourceAccountID = user.AccountID, SourceName = e.UserName, Created = DateTime.UtcNow, Message = text, TargetName = name };
-									var db = new ZkDataContext();
-									db.LobbyMessages.InsertOnSubmit(message);
-									db.SubmitChanges();
-								}
-							}
-							else if (e.Text.StartsWith("!subscribe"))
-							{
-								var regex = Regex.Match(e.Text, "!subscribe #([^ ]+)");
-								if (regex.Success)
-								{
-									var chan = regex.Groups[1].Value;
-									if (chan != "main")
+									var regex = Regex.Match(e.Text, "!pm ([^ ]+) (.+)");
+									if (regex.Success)
 									{
-										var db = new ZkDataContext();
-										var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Name == e.UserName && x.Channel == chan);
-										if (subs == null)
+										var name = regex.Groups[1].Value;
+										var text = regex.Groups[2].Value;
+
+										var message = new LobbyMessage()
+										              { SourceAccountID = user.AccountID, SourceName = e.UserName, Created = DateTime.UtcNow, Message = text, TargetName = name };
+										using (var db = new ZkDataContext())
 										{
-											subs = new LobbyChannelSubscription() { Name = e.UserName, Channel = chan };
-											db.LobbyChannelSubscriptions.InsertOnSubmit(subs);
+											db.LobbyMessages.InsertOnSubmit(message);
 											db.SubmitChanges();
-											client.JoinChannel(chan);
 										}
-										client.Say(TasClient.SayPlace.User, user.Name, "Subscribed", false);
 									}
 								}
-							}
-							else if (e.Text.StartsWith("!unsubscribe"))
-							{
-								var regex = Regex.Match(e.Text, "!unsubscribe #([^ ]+)");
-								if (regex.Success)
+								else if (e.Text.StartsWith("!subscribe"))
 								{
-									var chan = regex.Groups[1].Value;
-
-									var db = new ZkDataContext();
-									var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Name == e.UserName && x.Channel == chan);
-									if (subs != null)
+									var regex = Regex.Match(e.Text, "!subscribe #([^ ]+)");
+									if (regex.Success)
 									{
-										db.LobbyChannelSubscriptions.DeleteOnSubmit(subs);
-										db.SubmitChanges();
+										var chan = regex.Groups[1].Value;
+										if (chan != "main")
+										{
+											using (var db = new ZkDataContext())
+											{
+												var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Name == e.UserName && x.Channel == chan);
+												if (subs == null)
+												{
+													subs = new LobbyChannelSubscription() { Name = e.UserName, Channel = chan };
+													db.LobbyChannelSubscriptions.InsertOnSubmit(subs);
+													db.SubmitChanges();
+													client.JoinChannel(chan);
+												}
+												client.Say(TasClient.SayPlace.User, user.Name, "Subscribed", false);
+											}
+										}
 									}
-									client.Say(TasClient.SayPlace.User, user.Name, "Unsubscribed", false);
+								}
+								else if (e.Text.StartsWith("!unsubscribe"))
+								{
+									var regex = Regex.Match(e.Text, "!unsubscribe #([^ ]+)");
+									if (regex.Success)
+									{
+										var chan = regex.Groups[1].Value;
+
+										using (var db = new ZkDataContext())
+										{
+											var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Name == e.UserName && x.Channel == chan);
+											if (subs != null)
+											{
+												db.LobbyChannelSubscriptions.DeleteOnSubmit(subs);
+												db.SubmitChanges();
+											}
+											client.Say(TasClient.SayPlace.User, user.Name, "Unsubscribed", false);
+										}
+									}
 								}
 							}
+						}
+						catch (Exception ex)
+						{
+							Trace.TraceError("Error sending stored message: {0}", ex);
 						}
 					});
 			}
@@ -155,18 +192,30 @@ namespace NightWatch
 		{
 			Task.Factory.StartNew(() =>
 				{
-					var db = new ZkDataContext();
-					var messages = db.LobbyMessages.Where(x => (x.TargetAccountID == e.Data.AccountID || x.TargetName == e.Data.Name) && x.Channel == null).ToList();
-					if (messages.Any())
+					try
 					{
-						foreach (var m in messages)
+						using (var db = new ZkDataContext())
+						using (var scope = new TransactionScope())
 						{
-							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
-							client.Say(TasClient.SayPlace.User, e.Data.Name, text, false);
-						  Thread.Sleep(MessageDelay);
+							var messages =
+								db.LobbyMessages.Where(x => (x.TargetAccountID == e.Data.AccountID || x.TargetName == e.Data.Name) && x.Channel == null).ToList();
+							if (messages.Any())
+							{
+								foreach (var m in messages)
+								{
+									var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
+									client.Say(TasClient.SayPlace.User, e.Data.Name, text, false);
+									Thread.Sleep(MessageDelay);
+								}
+								db.LobbyMessages.DeleteAllOnSubmit(messages);
+								db.SubmitChanges();
+							}
+							scope.Complete();
 						}
-						db.LobbyMessages.DeleteAllOnSubmit(messages);
-						db.SubmitChanges();
+					}
+					catch (Exception ex)
+					{
+						Trace.TraceError("Error sending PM:{0}", ex);
 					}
 				});
 		}
