@@ -23,7 +23,7 @@ namespace ZkData
 			if (XP > GetXpForLevel(Level + 1))
 			{
 				Level++;
-				new Thread(() =>
+				//new Thread(() =>
 					{
 						try
 						{
@@ -36,7 +36,7 @@ namespace ZkData
 						{
 							Trace.TraceError("Error sending level up lobby message: {0}", ex);
 						}
-					}).Start();
+					}//).Start();
 			}
 		}
 
