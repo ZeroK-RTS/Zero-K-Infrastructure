@@ -15,6 +15,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -130,8 +131,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
-    <Content Include="Img\bar_blue.png" />
-    <Content Include="Img\bar_red.png" />
+    <Content Include="Img\img_progressbar1.png" />
+    <Content Include="Img\img_progressbar2.png" />
+    <Content Include="Img\img_progressbar_border.png" />
+    <Content Include="Img\zk_logo_miniature.png" />
     <Content Include="LobbyStart.inc" />
     <Content Include="ResourceList.aspx" />
     <Content Include="ErrorReports.aspx" />
