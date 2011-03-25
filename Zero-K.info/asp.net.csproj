@@ -131,9 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
-    <Content Include="Img\img_progressbar1.png" />
-    <Content Include="Img\img_progressbar2.png" />
-    <Content Include="Img\img_progressbar_border.png" />
+    <Content Include="Img\img_progressbar1_b.png" />
+    <Content Include="Img\img_progressbar1_h.png" />
+    <Content Include="Img\img_progressbar2_h.png" />
     <Content Include="Img\zk_logo_miniature.png" />
     <Content Include="LobbyStart.inc" />
     <Content Include="ResourceList.aspx" />

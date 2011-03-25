@@ -33,13 +33,13 @@
             <span title='XP: @Model.XP, next level:@(Account.GetXpForLevel(Model.Level+1)) <br/> Your levelprogress: @((int)(ratio*100))% <br/> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level+1) - Account.GetXpForLevel(Model.Level))'>
             <table cellpadding='0' cellspacing='0'>
             <tr>
-            <td width='1' style="background: url(/img/img_progressbar_border.png);" height='10'>
+            <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'>
             </td>
-            <td width='@((int)(300*ratio))' style="background: url(/img/img_progressbar1.png);" height='10'>
+            <td width='@((int)(300*ratio))' style="background: url(/img/img_progressbar1_h.png);" height='12'>
             </td>
-            <td width='@((int)(300*(1-ratio)))' style="background: url(/img/img_progressbar2.png);" height='10'>
+            <td width='@((int)(300*(1-ratio)))' style="background: url(/img/img_progressbar2_h.png);" height='10'>
             </td>
-            <td width='1' style="background: url(/img/img_progressbar_border.png);" height='10'>
+            <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'>
             </td>
             </tr>
             </table>
