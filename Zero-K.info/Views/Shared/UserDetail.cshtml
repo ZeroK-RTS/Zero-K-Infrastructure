@@ -30,7 +30,7 @@
           @{
             var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));
             }
-            <span title='XP: @Model.XP, next level:@(Account.GetXpForLevel(Model.Level+1)) <br/> Your levelprogress: @((int)(ratio*100))% <br/> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level+1) - Account.GetXpForLevel(Model.Level))'>
+            <span title='XP: @Model.XP, next level:@(Account.GetXpForLevel(Model.Level+1)) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level+1) - Account.GetXpForLevel(Model.Level))'>
             <table cellpadding='0' cellspacing='0'>
             <tr>
             <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'>
@@ -131,9 +131,10 @@
         <h3>
           Posted threads</h3>
         foreach (var t in Model.ForumPosts.Select(x => x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10)) {
-          <small>* <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
+          <small><img src="../../Img/bullet.png" />  <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
         }
       }
+      <br />
       @if (Model.SpringBattlePlayers.Any()) {
         <h3>
           Last battles</h3>
