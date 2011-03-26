@@ -10,7 +10,7 @@
 
 @* User Profile Page! *@
 @* First column starts here *@
-<table border="0" width="100%"><tr><td><h2>@Html.PrintAccount(Model)</h2></td><td align="right"><img src="../../Img/zk_logo_miniature.png" /></td></tr></table>
+<table border="0" width="100%"><tr><td><h2>@Html.PrintAccount(Model)</h2></td><td align="right">@if(ZeroKWeb.Global.IsLobbyAccess){ <img src="../../Img/zk_logo_miniature.png" /> }</td></tr></table>
 <table>
   <tr>
     <td valign="top">
