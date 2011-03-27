@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
+    <Content Include="Img\border.png" />
     <Content Include="Img\bullet.png" />
     <Content Include="Img\img_progressbar1_b.png" />
     <Content Include="Img\img_progressbar1_h.png" />
