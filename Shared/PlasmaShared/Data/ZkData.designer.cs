@@ -5448,7 +5448,11 @@ namespace ZkData
 		{
 			get
 			{
-				return this._Country;
+                if (this._Country == "??")
+                {
+                    return "unknown";
+                }else
+                return this._Country;
 			}
 			set
 			{
