@@ -791,7 +791,7 @@ namespace Springie.autohost
 				HandleAutoLocking();
 
 				var cnt = 0;
-				foreach (var ubs in b.Users) if (!ubs.IsSpectator && ubs.IsReady) cnt++;
+				foreach (var ubs in b.Users) if (!ubs.IsSpectator && ubs.SyncStatus == SyncStatuses.Synced) cnt++;
 				List<string> usname;
 				int allyno;
 				if (!manager.Enabled)

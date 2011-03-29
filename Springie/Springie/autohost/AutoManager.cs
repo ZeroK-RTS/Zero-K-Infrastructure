@@ -138,7 +138,7 @@ namespace Springie.AutoHostNamespace
 										string newestName = null;
 										foreach (var u in b.Users)
 										{
-											if (!u.IsReady && !u.IsSpectator && u.JoinTime > newestTime)
+											if (u.SyncStatus != SyncStatuses.Synced && !u.IsSpectator && u.JoinTime > newestTime)
 											{
 												newestName = u.Name;
 												newestTime = u.JoinTime;

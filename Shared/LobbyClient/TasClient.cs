@@ -435,11 +435,6 @@ namespace LobbyClient
       return ExistingUsers.Values.FirstOrDefault(u => String.Equals(u.Name, userName, StringComparison.InvariantCultureIgnoreCase));
     }
 
-    // todo remove this and reimplement in AutoHost if needed
-    public bool IsTeamSpec(int side)
-    {
-      return false;
-    }
 
     public void JoinBattle(int battleID, string password = "*")
     {

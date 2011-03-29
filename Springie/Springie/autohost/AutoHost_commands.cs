@@ -23,8 +23,8 @@ namespace Springie.autohost
 			usname = new List<string>();
 			foreach (var p in tas.MyBattle.Users)
 			{
-				if (p.IsSpectator || tas.IsTeamSpec(p.Side)) continue;
-				if (p.SyncStatus != SyncStatuses.Synced || !p.IsReady) usname.Add(p.Name);
+				if (p.IsSpectator) continue;
+				if (p.SyncStatus != SyncStatuses.Synced) usname.Add(p.Name);
 			}
 			return usname.Count == 0;
 		}
@@ -569,7 +569,7 @@ namespace Springie.autohost
 				foreach (var u in b.Users)
 				{
 					User u2;
-					if (u.Name != tas.UserName && !u.IsSpectator && (!u.IsReady || u.SyncStatus !=  SyncStatuses.Synced) && tas.GetExistingUser(u.Name, out u2)) if (u2.IsAway) ComForceSpectator(e, new[] { u.Name });
+					if (u.Name != tas.UserName && !u.IsSpectator && (u.SyncStatus !=  SyncStatuses.Synced) && tas.GetExistingUser(u.Name, out u2)) if (u2.IsAway) ComForceSpectator(e, new[] { u.Name });
 				}
 			}
 		}
@@ -765,7 +765,7 @@ namespace Springie.autohost
 				foreach (var p in tas.MyBattle.Users)
 				{
 					if (p.IsSpectator) continue;
-					if ((!p.IsReady || p.SyncStatus != SyncStatuses.Synced) && (!spring.IsRunning || !spring.IsPlayerReady(p.Name))) usrlist.Add(p.Name);
+					if ((p.SyncStatus != SyncStatuses.Synced) && (!spring.IsRunning || !spring.IsPlayerReady(p.Name))) usrlist.Add(p.Name);
 				}
 			}
 			else

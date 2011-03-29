@@ -131,7 +131,7 @@ namespace Springie.PlanetWars
                     Mod mod = Program.main.UnitSyncWrapper.GetModInfo(tas.MyBattle.ModName);
                     foreach (UserBattleStatus u in tas.MyBattle.Users)
                     {
-                        if (!u.IsSpectator && !tas.IsTeamSpec(u.Side) && u.Name != e.UserName &&
+                        if (!u.IsSpectator && u.Name != e.UserName &&
                             mod.Sides[u.Side].ToLower() == info.FactionName.ToLower())
                         {
                             IPlayer pi = server.GetPlayerInfo(account, u.Name);
