@@ -114,8 +114,9 @@
         </tr>
         @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) {
           <tr>
-            <td>
-              <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/>
+            <td width="75%">
+              <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/>              
+              <span>@award.First().AwardDescription.Split(',').First()</span>              
             </td>
             <td>@award.Count()
             </td>
