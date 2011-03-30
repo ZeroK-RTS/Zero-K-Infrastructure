@@ -52,7 +52,7 @@ namespace Springie.autohost
 				if (hostedMod.IsMission)
 				{
 					var freeSlots = GetFreeSlots();
-					foreach (var u in b.Users.Where(x => !x.IsSpectator && !tas.IsTeamSpec(x.Side)).ToList())
+					foreach (var u in b.Users.Where(x => !x.IsSpectator).ToList())
 					{
 						var curSlot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
 						if (curSlot != null && curSlot.IsRequired)
@@ -84,7 +84,7 @@ namespace Springie.autohost
 				var ranker = new List<UsRank>();
 				foreach (var u in b.Users)
 				{
-					if (!u.IsSpectator && !tas.IsTeamSpec(u.Side))
+					if (!u.IsSpectator)
 					{
 						double elo;
 						double w;
@@ -261,7 +261,7 @@ namespace Springie.autohost
 
 			foreach (var p in tas.MyBattle.Users)
 			{
-				if (p.IsSpectator || tas.IsTeamSpec(p.Side)) continue;
+				if (p.IsSpectator) continue;
 				counts[p.AllyNumber]++;
 			}
 
@@ -670,7 +670,7 @@ namespace Springie.autohost
 		public void ComPredict(TasSayEventArgs e, string[] words)
 		{
 			var b = tas.MyBattle;
-			var grouping = b.Users.Where(u => !u.IsSpectator && !tas.IsTeamSpec(u.Side)).GroupBy(u => u.AllyNumber);
+			var grouping = b.Users.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber);
 
 			IGrouping<int, UserBattleStatus> oldg = null;
 			foreach (var g in grouping)
@@ -722,7 +722,7 @@ namespace Springie.autohost
 			var b = tas.MyBattle;
 
 			var actUsers = new List<UserBattleStatus>();
-			foreach (var u in b.Users) if (!u.IsSpectator && !tas.IsTeamSpec(u.Side)) actUsers.Add(u);
+			foreach (var u in b.Users) if (!u.IsSpectator) actUsers.Add(u);
 
 			var teamCount = 0;
 			if (words.Length > 0) int.TryParse(words[0], out teamCount);

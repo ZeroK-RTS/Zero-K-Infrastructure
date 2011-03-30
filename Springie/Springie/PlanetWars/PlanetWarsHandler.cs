@@ -325,7 +325,7 @@ namespace Springie.PlanetWars
                 var actual = new List<IPlayer>();
                 foreach (UserBattleStatus user in bat.Users)
                 {
-                    if (!user.IsSpectator && !tas.IsTeamSpec(user.Side) && !IsMercenary(user.Name))
+                    if (!user.IsSpectator && !IsMercenary(user.Name))
                     {
                         IPlayer info = server.GetPlayerInfo(account, user.Name);
                         actual.Add(info);
@@ -506,7 +506,7 @@ namespace Springie.PlanetWars
                 List<string> sides = mod.Sides.ToList();
                 bool teamsOk = true;
                 foreach (
-                    UserBattleStatus user in b.Users.Where(x => !x.IsSpectator && !tas.IsTeamSpec(x.Side) && x.SyncStatus != SyncStatuses.Unknown))
+                    UserBattleStatus user in b.Users.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown))
                 {
                     IPlayer info = null;
                     if (!IsMercenary(user.Name)) info = server.GetPlayerInfo(account, user.Name);
@@ -533,7 +533,7 @@ namespace Springie.PlanetWars
                             List<IGrouping<int, UserBattleStatus>> grp =
                                 b.Users.Where(
                                     u =>
-                                    !u.IsSpectator && !tas.IsTeamSpec(u.Side) && u.SyncStatus != SyncStatuses.Unknown && u.AllyNumber < factions.Count)
+                                    !u.IsSpectator && u.SyncStatus != SyncStatuses.Unknown && u.AllyNumber < factions.Count)
                                     .GroupBy(u => u.AllyNumber).OrderBy(g => g.Count()).ToList(); // get alliances and find smallest to put merc in
                             if (grp.Count > 0) tas.ForceAlly(user.Name, grp[0].Key); // put merc to smallest valid team
                             else tas.ForceAlly(user.Name, 0); // or to ally 0 if none found
@@ -565,7 +565,7 @@ namespace Springie.PlanetWars
                 if (!teamsOk) return; // dont proceed to balancing if teams are bing changed
 
                 List<IGrouping<int, UserBattleStatus>> grouping =
-                    b.Users.Where(u => !u.IsSpectator && !tas.IsTeamSpec(u.Side) && u.SyncStatus != SyncStatuses.Unknown).GroupBy(u => u.AllyNumber).
+                    b.Users.Where(u => !u.IsSpectator && u.SyncStatus != SyncStatuses.Unknown).GroupBy(u => u.AllyNumber).
                         OrderBy(g => g.Count()).ToList();
                 if (grouping.Count() == 2)
                 {
@@ -575,7 +575,7 @@ namespace Springie.PlanetWars
 
                         // find latest joined merc
                         UserBattleStatus newest =
-                            b.Users.Where(u => u.AllyNumber == grouping[1].Key && IsMercenary(u.Name) && !u.IsSpectator && !tas.IsTeamSpec(u.Side)).
+                            b.Users.Where(u => u.AllyNumber == grouping[1].Key && IsMercenary(u.Name) && !u.IsSpectator).
                                 OrderByDescending(u => u.JoinTime).FirstOrDefault();
                         if (newest != null) tas.ForceAlly(newest.Name, grouping[0].Key); // and move to smaller team
                     }
