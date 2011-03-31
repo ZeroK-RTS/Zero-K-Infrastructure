@@ -10,7 +10,7 @@
 
 @* User Profile Page! *@
 @* First column starts here *@
-<table border="0" width="100%"><tr><td><h2>@Html.PrintAccount(Model)</h2></td><td align="right">@if(ZeroKWeb.Global.IsLobbyAccess){ <img src="../../Img/zk_logo_miniature.png" /> }</td></tr></table>
+<table border="0" width="100%"><tr><td><h2>@Html.PrintAccount(Model)</h2></td><td align="right">@if(ZeroKWeb.Global.IsLobbyAccess){ <img src="../../Img/zk_logo_miniature.png" alt="zklogo" /> }</td></tr></table>
 <table>
   <tr>
     <td valign="top">
@@ -30,14 +30,14 @@
           @{
             var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));
             }
-            <span title='XP: @Model.XP, next level:@(Account.GetXpForLevel(Model.Level+1)) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level+1) - Account.GetXpForLevel(Model.Level))'>
+            <span title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
             <table cellpadding='0' cellspacing='0'>
             <tr>
             <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'>
             </td>
-            <td width='@((int)(300*ratio))' style="background: url(/img/img_progressbar1_h.png);" height='12'>
+            <td width='@((int)(300 * ratio))' style="background: url(/img/img_progressbar1_h.png);" height='12'>
             </td>
-            <td width='@((int)(300*(1-ratio)))' style="background: url(/img/img_progressbar2_h.png);" height='10'>
+            <td width='@((int)(300 * (1 - ratio)))' style="background: url(/img/img_progressbar2_h.png);" height='10'>
             </td>
             <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'>
             </td>
@@ -61,7 +61,8 @@
           <td>@Model.Elo
           </td>
         </tr>
-        @if (Model.IsAdmin) {
+        @if (Model.IsAdmin)
+        {
           <tr>
             <td>
               Administrator:
@@ -88,14 +89,14 @@
           <td>
             Games played:
           </td>
-          <td>@Model.SpringBattlePlayers.Count(x=>!x.IsSpectator)
+          <td>@Model.SpringBattlePlayers.Count(x => !x.IsSpectator)
           </td>
         </tr>
         <tr>
           <td>
             Games watched:
           </td>
-          <td>@Model.SpringBattlePlayers.Count(x=>x.IsSpectator)
+          <td>@Model.SpringBattlePlayers.Count(x => x.IsSpectator)
           </td>
         </tr>
         <tr>
@@ -112,7 +113,8 @@
           <td>@Model.ForumPosts.Count()
           </td>
         </tr>
-        @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) {
+        @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count()))
+        {
           <tr>
             <td><span title="@award.First().AwardDescription.Split(',').First()">
               <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/></span>             
@@ -133,7 +135,7 @@
           Posted threads</h3>
           foreach (var t in Model.ForumPosts.Select(x => x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10))
           {
-          <small><img src="../../Img/bullet.png" />  <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
+          <small><img src="../../Img/bullet.png" alt="bullet" />  <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
           }
       }
       <br />
@@ -146,7 +148,6 @@
           <small>@Html.PrintBattle(b)</small><br />
           }
       }
-      </span>
     </td>
   </tr>
 
@@ -166,7 +167,7 @@
         <br />
         @if (Model.AccountID == ZeroKWeb.Global.AccountID)
         {
-          <a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a>
+          <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level+1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)"><a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a></span>
         }
         else
         {
@@ -176,7 +177,7 @@
       @foreach (var comm in Model.Commanders)
       {
         <span style='display:inline-block; width:110px;height:80px' title='$commander$@comm.CommanderID'>
-          <img src='@comm.Unlock.ImageUrl'/><br />@comm.Name
+          <img src='@comm.Unlock.ImageUrl' alt="unlock" /><br />@comm.Name
         </span>
       }
       <br />

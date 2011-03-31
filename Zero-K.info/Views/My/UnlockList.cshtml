@@ -10,10 +10,10 @@
 @*<a href="@Url.Action("Reset")">Reset list (debug)</a>*@
 <h2>
   Available technologies</h2>
-  <h3>You have @Model.Account.AvailableXP points available</h3>
+  <h3><span title="Why only @Model.Account.AvailableXP points? <br /> First you have to reach the next level before you'll receive new points.">You have @Model.Account.AvailableXP points available</span></h3>
 @foreach (var unlock in Model.Unlocks) {
   <span title="$unlock$@unlock.UnlockID">
-    <img src="@unlock.ImageUrl" style="float:left;"/><br />
+    <img src="@unlock.ImageUrl" style="float:left;" alt="unlocks" /><br />
     <span style="color: @unlock.LabelColor; font-weight:bold">@unlock.Name</span>
     Level: @unlock.NeededLevel, 
     XP: @unlock.XpCost, 
@@ -27,7 +27,7 @@
   Unavailable technologies</h2>
 @foreach (var unlock in Model.FutureUnlocks) {
   <span title="$unlock$@unlock.UnlockID" style="display:inline-block; width:250px;height:120px;">
-    <img src="@unlock.ImageUrl"/><span style="color: @unlock.LabelColor;">@unlock.Name</span><br />
+    <img src="@unlock.ImageUrl" alt="unlocks" /><span style="color: @unlock.LabelColor;">@unlock.Name</span><br />
     <span>
       Level: @unlock.NeededLevel, <br />
       XP: @unlock.XpCost
