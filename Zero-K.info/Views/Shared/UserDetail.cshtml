@@ -114,9 +114,8 @@
         </tr>
         @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) {
           <tr>
-            <td width="75%">
-              <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/>              
-              <span>@award.First().AwardDescription.Split(',').First()</span>              
+            <td><span title="@award.First().AwardDescription.Split(',').First()">
+              <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/></span>             
             </td>
             <td>@award.Count()
             </td>
@@ -128,20 +127,24 @@
 
     @* Second column starts here *@
     <td width="40%" valign="top">
-      @if (Model.ForumPosts.Any()) {
+      @if (Model.ForumPosts.Any())
+      {
         <h3>
           Posted threads</h3>
-        foreach (var t in Model.ForumPosts.Select(x => x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10)) {
+          foreach (var t in Model.ForumPosts.Select(x => x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10))
+          {
           <small><img src="../../Img/bullet.png" />  <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
-        }
+          }
       }
       <br />
-      @if (Model.SpringBattlePlayers.Any()) {
+      @if (Model.SpringBattlePlayers.Any())
+      {
         <h3>
           Last battles</h3>
-        foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Select(x => x.SpringBattle).Take(10)) {
+          foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Select(x => x.SpringBattle).Take(10))
+          {
           <small>@Html.PrintBattle(b)</small><br />
-        }
+          }
       }
       </span>
     </td>
@@ -150,7 +153,8 @@
   @* Bottom cell starts here *@
   <tr>
     <td colspan='2'>
-      @if (ZeroKWeb.Global.IsAdmin && ZeroKWeb.Global.AccountID == Model.AccountID) {
+      @if (ZeroKWeb.Global.IsAdmin && ZeroKWeb.Global.AccountID == Model.AccountID)
+      {
         <h3>
           Admin extras</h3>
         <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
@@ -158,21 +162,26 @@
       }
       <h3>
         Technologies:</h3>
-        @{Html.RenderPartial("UnlockedTechnologies",Model.AccountUnlocks);}
+        @{Html.RenderPartial("UnlockedTechnologies", Model.AccountUnlocks);}
         <br />
-        @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
+        @if (Model.AccountID == ZeroKWeb.Global.AccountID)
+        {
           <a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a>
-        } else {
+        }
+        else
+        {
           @Model.Name @:Can unlock technologies worth @Model.AvailableXP points
         }
       <h3>Commanders:</h3>
-      @foreach (var comm in Model.Commanders) {
+      @foreach (var comm in Model.Commanders)
+      {
         <span style='display:inline-block; width:110px;height:80px' title='$commander$@comm.CommanderID'>
           <img src='@comm.Unlock.ImageUrl'/><br />@comm.Name
         </span>
       }
       <br />
-      @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
+      @if (Model.AccountID == ZeroKWeb.Global.AccountID)
+      {
           <a href='@Url.Action("Commanders", "My")'>Configure commanders</a>
       }
 
