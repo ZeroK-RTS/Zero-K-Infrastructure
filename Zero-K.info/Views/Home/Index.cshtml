@@ -40,11 +40,11 @@
   @foreach (var t in Model.NewThreads) {
     var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new {id = t.ForumThread.ForumThreadID},new {title="$thread$" + t.ForumThread.ForumThreadID});
     if (t.WasWritten) {
-      <b>* @link</b><br />
+      <b><img src="../../Img/bullet.png" alt="bullet" /> @link</b><br />
     } else if (t.WasRead) { 
-     <i>* @link</i><br />
+     <i><img src="../../Img/bullet.png" alt="bullet" /> @link</i><br />
     } else { 
-     <span>* @link</span><br />
+     <span><img src="../../Img/bullet.png" alt="bullet" /> @link</span><br />
     }
   }
 

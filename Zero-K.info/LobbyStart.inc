@@ -1,8 +1,8 @@
-<div>
-  <h2>Welcome to Zero-K</h2>
-  
+<div>  
   <img src='/img/zk_logo.png' width='100%' height='100%' alt='alternative' /><br />
 
+  <h2>Welcome to Zero-K</h2>
+  
   To learn basics, please read <a href='/Wiki.mvc/NewbieGuide'>Newbie Guide</a> and inform yourself by reading the <a href='/Wiki.mvc/FAQ'>FAQ</a>.<br/><br/>
   
   Try game in single player first to gain some experiences with the game. Recommended missions are:<br/><br/>
@@ -14,6 +14,26 @@
     <li> <a href="spring://http://@start_script_mission:Very%20easy%20chickens">Very easy chickens</a> - defend yourself from hordes of chicken aliens</li>
      
   </ul>
+
+  <h2>How to register a new account</h2><br />
+
+  1.) First you'll see this form where you can enter a unique player name and password:<br />
+      <img src="/img/tut/register.PNG" /><br /><br />
+
+  2.) So, fill the textbox with your player name and password and click "register":<br />
+      <img src="/img/tut/register2.PNG" /><br /><br />
+  
+  3.) Next, you have to agree to the "Terms of Use" before you can play with your account. Read the lines carefully and click "Accept":<br />
+      <img src="/img/tut/register3.PNG" /><br /><br />
+
+  4.) At last, check out the "Home" button and you will see your profile with some stats (e.g. your current level etc.):<br />
+      <img src="/img/tut/register4.PNG" /><br /><br />
+  
+  5.) Now your account has been created successfully. Try some games, maybe multiplayer, and get some skill ;-)<br />
+  
+  Have fun!<br /><br />
+
+  
   
   <h2>TroubleShooting</h2>
 
