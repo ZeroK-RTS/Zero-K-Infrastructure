@@ -439,8 +439,8 @@ namespace LobbyClient
       try
       {
         var hasError = false;
-        string modName = null;
-        string mapName = null;
+        string modName = battleResult.Mod;
+        string mapName = battleResult.Map;
         var isCheating = false;
         string gameId = null;
         string demoFileName = null;
@@ -459,7 +459,9 @@ namespace LobbyClient
             }
           }
 
-          if (mapName == null && line.StartsWith("Using map") && modName == null) mapName = line.Substring(10);
+          if (mapName == null && line.StartsWith("Using map")) mapName = line.Substring(10);
+					
+					if (modName == null && line.StartsWith("Using mod")) modName = line.Substring(10);
 
           if (line.StartsWith("Recording demo ")) demoFileName = line.Substring(15);
 
@@ -502,7 +504,7 @@ namespace LobbyClient
               (line.StartsWith("Failed to load") && !line.Contains("duplicate name"))) hasError = true;
         }
 
-        var modOk = GlobalConst.IsZkMod(battleResult.Mod);
+        var modOk = GlobalConst.IsZkMod(modName);
 
         // submit main stats
         if (!isCheating && !isCrash && modOk && isHosting && gameEndedOk)
@@ -532,7 +534,7 @@ namespace LobbyClient
           var service = new StatsCollector { Proxy = null };
           try
           {
-            service.SubmitGameEx(gameId, modName, mapName, statsData.ToArray());
+						service.SubmitGameEx(gameId, modName, mapName, statsData.ToArray());
           }
           catch (Exception ex)
           {
