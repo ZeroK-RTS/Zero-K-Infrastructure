@@ -5,6 +5,13 @@
 }
 
 
+ <script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+      window.location.hash = "#post@(Model.GoToPost)";
+    });
+</script>
+
+
 @{Html.RenderPartial("ForumPath", Model.Path);}
 
 <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
@@ -34,6 +41,7 @@ Pages:
         </table>
       </td>
       <td valign="top" class="forumPostText">
+        <a name="post@(p.ForumPostID)"></a>
         @Html.BBCode(p.Text)
       </td>
     </tr>
@@ -43,3 +51,4 @@ Pages:
 @if (!Model.CurrentThread.IsLocked) {
   <h3>@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
 }
+

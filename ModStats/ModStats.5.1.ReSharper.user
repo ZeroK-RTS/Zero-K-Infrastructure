@@ -8,15 +8,24 @@
   </SettingsComponent>
   <RecentFiles>
     <RecentFiles>
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Web.config" caret="623" fromTop="9" />
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx" caret="4687" fromTop="41" />
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="2273" fromTop="45" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:StatsCollector.asmx.cs" caret="1249" fromTop="22" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx" caret="0" fromTop="0" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="1266" fromTop="38" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Global.cs" caret="288" fromTop="14" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:DataContextFactory.cs" caret="1066" fromTop="23" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinq.designer.cs" caret="443" fromTop="11" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="13" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Web.config" caret="1057" fromTop="20" />
     </RecentFiles>
     <RecentEdits>
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="11585" fromTop="29" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="11732" fromTop="35" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="1228" fromTop="29" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="2271" fromTop="45" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="0" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="4" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="11" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="13" />
     </RecentEdits>
   </RecentFiles>
   <NAntValidationSettings>
@@ -29,4 +38,13 @@
     <NUnitInstallDir>C:\Program Files (x86)\NUnit 2.5.3\bin\net-2.0\</NUnitInstallDir>
     <UseAddins>Never</UseAddins>
   </UnitTestRunnerNUnit>
+  <CompletionStatisticsManager>
+    <ItemStatistics item="Default">
+      <Item value="partial" priority="2" />
+      <Item value="class" priority="0" />
+      <Item value="namespace" priority="0" />
+      <Item value="void" priority="0" />
+      <Item value="CommandTimeout" priority="0" />
+    </ItemStatistics>
+  </CompletionStatisticsManager>
 </Configuration>

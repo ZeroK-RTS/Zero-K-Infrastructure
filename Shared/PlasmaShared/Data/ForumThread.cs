@@ -13,8 +13,9 @@ namespace ZkData
 		  LastPost = DateTime.UtcNow;
 		}
 
-    public void UpdateLastRead(int accountID, bool isPost, DateTime? time = null)
+    public int UpdateLastRead(int accountID, bool isPost, DateTime? time = null)
     {
+    	int unreadPostID = 0;
       ViewCount++;
       if (accountID > 0)
       {
@@ -25,9 +26,14 @@ namespace ZkData
           lastRead = new ForumThreadLastRead() { AccountID = accountID };
           ForumThreadLastReads.Add(lastRead);
         }
+
+      	var firstUnreadPost = ForumPosts.FirstOrDefault(x => x.Created > (lastRead.LastRead ?? DateTime.MinValue));
+				if (firstUnreadPost != null) unreadPostID = firstUnreadPost.ForumPostID; 
+
         lastRead.LastRead = time;
         if (isPost) lastRead.LastPosted = time;
       }
+    	return unreadPostID;
     }
 	}
 }
