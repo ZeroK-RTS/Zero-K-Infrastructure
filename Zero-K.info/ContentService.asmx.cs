@@ -244,7 +244,7 @@ namespace ZeroKWeb
     }
 
     [WebMethod]
-    public bool SubmitSpringBattleResult(string accountName, string password, BattleResult result, List<BattlePlayerResult> players)
+    public string SubmitSpringBattleResult(string accountName, string password, BattleResult result, List<BattlePlayerResult> players)
     {
       var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
       if (acc == null) throw new Exception("Account name or password not valid");
@@ -315,7 +315,7 @@ namespace ZeroKWeb
 				db.SubmitChanges();
 			}
 
-    	return true;
+    	return "";
     }
 
     [WebMethod]

@@ -499,13 +499,13 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitSpringBattleResult", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public bool SubmitSpringBattleResult(string accountName, string password, BattleResult result, BattlePlayerResult[] players) {
+        public string SubmitSpringBattleResult(string accountName, string password, BattleResult result, BattlePlayerResult[] players) {
             object[] results = this.Invoke("SubmitSpringBattleResult", new object[] {
                         accountName,
                         password,
                         result,
                         players});
-            return ((bool)(results[0]));
+            return ((string)(results[0]));
         }
         
         /// <remarks/>
@@ -952,39 +952,6 @@ namespace PlasmaShared.ContentService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class ScriptKeyValuePair {
-        
-        private string keyField;
-        
-        private string valueField;
-        
-        /// <remarks/>
-        public string Key {
-            get {
-                return this.keyField;
-            }
-            set {
-                this.keyField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Value {
-            get {
-                return this.valueField;
-            }
-            set {
-                this.valueField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class UserCustomParameters {
         
         private int accountIDField;
@@ -1018,21 +985,44 @@ namespace PlasmaShared.ContentService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class SpringBattleStartSetup {
+    public partial class ScriptKeyValuePair {
         
-        private UserCustomParameters[] userParametersField;
+        private string keyField;
+        
+        private string valueField;
+        
+        /// <remarks/>
+        public string Key {
+            get {
+                return this.keyField;
+            }
+            set {
+                this.keyField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Value {
+            get {
+                return this.valueField;
+            }
+            set {
+                this.valueField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class SpringBattleStartSetup {
         
         private ScriptKeyValuePair[] modOptionsField;
         
-        /// <remarks/>
-        public UserCustomParameters[] UserParameters {
-            get {
-                return this.userParametersField;
-            }
-            set {
-                this.userParametersField = value;
-            }
-        }
+        private UserCustomParameters[] userParametersField;
         
         /// <remarks/>
         public ScriptKeyValuePair[] ModOptions {
@@ -1041,6 +1031,16 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.modOptionsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public UserCustomParameters[] UserParameters {
+            get {
+                return this.userParametersField;
+            }
+            set {
+                this.userParametersField = value;
             }
         }
     }
@@ -1053,23 +1053,13 @@ namespace PlasmaShared.ContentService {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class BattleStartSetupPlayer {
         
-        private int springPlayerIDField;
-        
         private int accountIDField;
         
         private int allyTeamField;
         
         private bool isSpectatorField;
         
-        /// <remarks/>
-        public int SpringPlayerID {
-            get {
-                return this.springPlayerIDField;
-            }
-            set {
-                this.springPlayerIDField = value;
-            }
-        }
+        private int springPlayerIDField;
         
         /// <remarks/>
         public int AccountID {
@@ -1098,6 +1088,16 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.isSpectatorField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int SpringPlayerID {
+            get {
+                return this.springPlayerIDField;
+            }
+            set {
+                this.springPlayerIDField = value;
             }
         }
     }
@@ -1604,10 +1604,10 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        public bool Result {
+        public string Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((bool)(this.results[0]));
+                return ((string)(this.results[0]));
             }
         }
     }
