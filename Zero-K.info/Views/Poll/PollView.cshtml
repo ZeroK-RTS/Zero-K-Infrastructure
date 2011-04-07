@@ -6,14 +6,17 @@
   if (maxVotes == 0) {
 	maxVotes = 1;
   }
-}
-@using (Ajax.BeginForm("PollVote", new { pollID = @p.PollID }, new AjaxOptions() { UpdateTargetId = "pollForm", InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" })) {
+  
+  }
+@using (Ajax.BeginForm("PollVote", new { pollID = @p.PollID }, new AjaxOptions() { UpdateTargetId = "pollForm", InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" }))
+{
 
   <div id="pollForm">
     <h4>@p.QuestionText</h4>
 	<small>
     <table>
-      @foreach (var option in p.PollOptions) { 
+      @foreach (var option in p.PollOptions)
+      { 
         <tr>
           <td>
             <input type="submit" name="option@(option.OptionID)" value="Vote" title="$polloption$@option.OptionID" />
@@ -22,10 +25,10 @@
             @option.OptionText
           </td>
           <td>
-            @option.Votes
+            @(100 * option.Votes / maxVotes) % (@option.Votes)
           </td>
           <td>
-            <img src='/img/bar_red.png' width='@(150*option.Votes/maxVotes)' height='10px'/>
+            <img src='/img/bar_blue_poll.png' alt="bluebar" width='@(150 * option.Votes / maxVotes)' height='10px'/>
           </td>
         </tr>
       }
