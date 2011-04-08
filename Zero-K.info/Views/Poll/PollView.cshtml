@@ -25,13 +25,15 @@
             @option.OptionText
           </td>
           <td>
-            @(100 * option.Votes / maxVotes) % (@option.Votes)
+            @Math.Round(100.0 * option.Votes / maxVotes)% (@option.Votes)
           </td>
           <td>
-            <img src='/img/bar_blue_poll.png' alt="bluebar" width='@(150 * option.Votes / maxVotes)' height='10px'/>
+            <img src='/img/bar_blue_poll.png' alt="@option.Votes" width='@(150 * option.Votes / maxVotes)' height='10px'/>
           </td>
         </tr>
       }
+      <tr><td align="center">-----</td><td align="center">(Total votes: @maxVotes)</td><td align="center">-----</td>
+      </tr>
     </table>
 	</small>
   </div>
