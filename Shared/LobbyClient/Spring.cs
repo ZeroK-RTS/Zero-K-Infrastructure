@@ -50,12 +50,14 @@ namespace LobbyClient
 			pwaward,
 			pwmorph,
 			pwpurchase,
-			pwdeath
+			pwdeath,
+			STATS
 		}
 
 		Dictionary<string, int> PlanetWarsMessages = new Dictionary<string, int>();
 		Guid battleGuid;
 		BattleResult battleResult = new BattleResult();
+		TasClient client;
 		bool gameEndedOk = false;
 		bool isHosting;
 		string lobbyPassword;
@@ -68,6 +70,7 @@ namespace LobbyClient
 		Process process;
 		readonly List<string> readyPlayers = new List<string>();
 		string scriptPath;
+		readonly List<string> statsData = new List<string>();
 		Dictionary<string, BattlePlayerResult> statsPlayers = new Dictionary<string, BattlePlayerResult>();
 		Talker talker;
 
@@ -167,8 +170,6 @@ namespace LobbyClient
 			if (IsRunning) talker.SendText(text);
 		}
 
-		TasClient client;
-
 		/// <summary>
 		/// Starts spring game
 		/// </summary>
@@ -201,6 +202,7 @@ namespace LobbyClient
 				else scriptPath = Utils.MakePath(paths.WritableDirectory, "script.txt").Replace('\\', '/');
 
 				statsPlayers.Clear();
+				statsData.Clear();
 
 				string script;
 				if (!string.IsNullOrEmpty(scriptOverride))
@@ -356,7 +358,7 @@ namespace LobbyClient
 
 		void HandleSpecialMessages(Talker.SpringEventArgs e)
 		{
-			if (string.IsNullOrEmpty(e.Text) || !e.Text.StartsWith("pw")) return;
+			if (string.IsNullOrEmpty(e.Text)) return;
 
 			int count;
 			if (!PlanetWarsMessages.TryGetValue(e.Text, out count)) count = 0;
@@ -391,6 +393,10 @@ namespace LobbyClient
 			{
 				switch (type)
 				{
+					case SpringMessageType.STATS:
+						statsData.Add(text.Substring(6));
+						break;
+
 					case SpringMessageType.pwaward:
 						var partsSpace = text.Split(new[] { ' ' }, 3);
 						var name = partsSpace[0];
@@ -436,6 +442,7 @@ namespace LobbyClient
 			}
 		}
 
+
 		void ParseInfolog(string text, bool isCrash)
 		{
 			if (string.IsNullOrEmpty(text))
@@ -451,7 +458,7 @@ namespace LobbyClient
 				var isCheating = false;
 				string gameId = null;
 				string demoFileName = null;
-				var statsData = new List<string>();
+
 				foreach (var cycleline in text.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries))
 				{
 					var line = cycleline;
@@ -503,7 +510,7 @@ namespace LobbyClient
 						}
 					}
 
-					if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
+					// obsolete, hnalded by pm messages if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
 					if (line.StartsWith("Cheating!")) isCheating = true;
 
@@ -527,11 +534,8 @@ namespace LobbyClient
 						// set victory team for all allied with currently alive
 						foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null)) foreach (var q in statsPlayers.Values.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber)) q.IsVictoryTeam = true;
 
-						string result = service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray());
-						if (result != null) foreach (var line in result.Split('\n'))
-						{
-							client.Say(TasClient.SayPlace.Battle, "", line, true);
-						}
+						var result = service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray());
+						if (result != null) foreach (var line in result.Split('\n')) client.Say(TasClient.SayPlace.Battle, "", line, true);
 					}
 					catch (Exception ex)
 					{
