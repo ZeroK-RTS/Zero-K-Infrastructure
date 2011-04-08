@@ -1,4 +1,4 @@
-﻿@using ZkData
+ @using ZkData
 @model Poll
 @{
   var p = Model;
@@ -28,7 +28,7 @@
             @Math.Round(100.0 * option.Votes / maxVotes)% (@option.Votes)
           </td>
           <td>
-            <img src='/img/bar_blue_poll.png' alt="@option.Votes" width='@(150 * option.Votes / maxVotes)' height='10px'/>
+            <img src='/img/bar_blue_poll.png' alt="@option.Votes%" width='@(150 * option.Votes / maxVotes)' height='10px'/>
           </td>
         </tr>
       }
