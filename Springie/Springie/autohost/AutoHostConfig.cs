@@ -438,12 +438,6 @@ namespace Springie.autohost
                                   new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }),
                 addedCommands);
 
-            AddMissing(
-                new CommandConfig("autolock",
-                                  1,
-                                  "<players> - sets desired number of players in game. If this number is reached, server will autolock itself, if someone leaves, it will autounlock again. !autolock without parameter disables auto locking"),
-                addedCommands);
-
             AddMissing(new CommandConfig("spec", 2, "<username> - forces player to become spectator", 0), addedCommands);
 
             AddMissing(new CommandConfig("predict", 0, "predicts chances of victory", 0), addedCommands);

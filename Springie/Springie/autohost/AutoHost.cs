@@ -33,7 +33,6 @@ namespace Springie.autohost
 		static readonly object savLock = new object();
 
 		IVotable activePoll;
-		int autoLock;
 		BanList banList;
 		string bossName = "";
 		string delayedModChange;
@@ -406,7 +405,6 @@ namespace Springie.autohost
 
 			manager = new AutoManager(this, tas, spring);
 			lockedByKickSpec = false;
-			autoLock = 0;
 			kickSpectators = config.KickSpectators;
 			minCpuSpeed = config.MinCpuSpeed;
 			kickMinRank = config.KickMinRank;
@@ -535,18 +533,6 @@ namespace Springie.autohost
 			return
 				hostedMod.MissionSlots.Where(x => x.IsHuman).OrderByDescending(x => x.IsRequired).Where(
 					x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
-		}
-
-		void HandleAutoLocking()
-		{
-			if (!manager.Enabled && autoLock > 0 && (!spring.IsRunning))
-			{
-				var b = tas.MyBattle;
-				var cnt = b.NonSpectatorCount;
-				if (cnt >= autoLock) tas.ChangeLock(true);
-
-				if (cnt < autoLock) tas.ChangeLock(false);
-			}
 		}
 
 		void HandleKickSpecServerLocking()
@@ -731,7 +717,6 @@ namespace Springie.autohost
 			}
 
 			HandleKickSpecServerLocking();
-			HandleAutoLocking();
 			HandleMinRankKicking();
 
 			if (minCpuSpeed > 0)
@@ -758,7 +743,6 @@ namespace Springie.autohost
 			if (e1.BattleID != tas.MyBattleID) return;
 			CheckForBattleExit();
 			HandleKickSpecServerLocking();
-			HandleAutoLocking();
 
 			if (spring.IsRunning) spring.SayGame(e1.UserName + " has left lobby");
 
@@ -787,23 +771,6 @@ namespace Springie.autohost
 				{
 					SayBattle(config.KickSpectatorText);
 					ComKick(TasSayEventArgs.Default, new[] { u.Name });
-				}
-				HandleAutoLocking();
-
-				var cnt = 0;
-				foreach (var ubs in b.Users) if (!ubs.IsSpectator && ubs.SyncStatus == SyncStatuses.Synced) cnt++;
-				List<string> usname;
-				int allyno;
-				if (!manager.Enabled)
-				{
-					int alliances;
-					if ((cnt == config.MaxPlayers || (autoLock > 0 && autoLock == cnt)) && !config.PlanetWarsEnabled && AllReadyAndSynced(out usname) &&
-					    AllUniqueTeams(out usname) && BalancedTeams(out allyno, out alliances))
-					{
-						SayBattle("server is full, starting");
-						Thread.Sleep(1000); // just to make sure that other clients update their game info and balance ends
-						ComStart(TasSayEventArgs.Default, new string[] { });
-					}
 				}
 			}
 		}
@@ -1170,9 +1137,6 @@ namespace Springie.autohost
 						ComSetMinCpuSpeed(e, words);
 						break;
 
-					case "autolock":
-						ComAutoLock(e, words);
-						break;
 
 					case "spec":
 						ComForceSpectator(e, words);

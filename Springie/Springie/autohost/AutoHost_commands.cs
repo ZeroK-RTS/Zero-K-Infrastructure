@@ -346,27 +346,6 @@ namespace Springie.autohost
 			}
 		}
 
-		public void ComAutoLock(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0)
-			{
-				autoLock = 0;
-				Respond(e, "AutoLocking disabled");
-				return;
-			}
-			var num = 0;
-			int.TryParse(words[0], out num);
-			var maxp = tas.MyBattle.MaxPlayers;
-			if (num < config.AutoLockMinPlayers || num > maxp)
-			{
-				autoLock = 0;
-				Respond(e, "number of players must be between " + config.AutoLockMinPlayers + " and " + maxp + ", AutoLocking disabled");
-				return;
-			}
-			autoLock = num;
-			HandleAutoLocking();
-			Respond(e, "AutoLock set to " + autoLock + " players");
-		}
 
 		public void ComBalance(TasSayEventArgs e, string[] words)
 		{
