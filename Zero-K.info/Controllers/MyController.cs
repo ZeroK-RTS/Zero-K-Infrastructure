@@ -156,7 +156,7 @@ namespace ZeroKWeb.Controllers
 		public ActionResult Unlock(int id)
 		{
 			if (!Global.IsAccountAuthorized) return Content("Not logged in");
-			var db = new ZkDataContext();
+			using (var db = new ZkDataContext())
 			using (var scope = new TransactionScope())
 			{
 

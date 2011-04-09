@@ -42,12 +42,10 @@ namespace NightWatch
 						var chan = e.ServerParams[0];
 						List<LobbyMessage> messages;
 						using (var db = new ZkDataContext())
-						using (var scope = new TransactionScope())
 						{
 							messages = db.LobbyMessages.Where(x => x.TargetName == name && x.Channel == chan).ToList();
 							db.LobbyMessages.DeleteAllOnSubmit(messages);
 							db.SubmitChanges();
-							scope.Complete();
 						}
 						foreach (var m in messages)
 						{
@@ -79,7 +77,6 @@ namespace NightWatch
 						{
 							var chanusers = new List<string>(client.JoinedChannels[e.Channel].ChannelUsers);
 							using (var db = new ZkDataContext())
-							using (var scope = new TransactionScope())
 							{
 								foreach (var s in db.LobbyChannelSubscriptions.Where(x => x.Channel == e.Channel))
 								{
@@ -98,7 +95,6 @@ namespace NightWatch
 									}
 								}
 								db.SubmitChanges();
-								scope.Complete();
 							}
 						}
 						catch (Exception ex)
@@ -194,12 +190,11 @@ namespace NightWatch
 					{
 						List<LobbyMessage> messages;
 						using (var db = new ZkDataContext())
-						using (var scope = new TransactionScope())
+						
 						{
 							messages = db.LobbyMessages.Where(x => (x.TargetAccountID == e.Data.AccountID || x.TargetName == e.Data.Name) && x.Channel == null).ToList();
 							db.LobbyMessages.DeleteAllOnSubmit(messages);
 							db.SubmitChanges();
-							scope.Complete();
 						}
 						foreach (var m in messages)
 						{
