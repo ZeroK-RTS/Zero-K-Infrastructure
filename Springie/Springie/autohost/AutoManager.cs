@@ -90,7 +90,11 @@ namespace Springie.AutoHostNamespace
 						{
 							if (b.IsLocked) tas.ChangeLock(false); // if locked then unlock
 							var plrCnt = b.NonSpectatorCount;
-							if (plrCnt >= from)
+
+
+							var grace = spring.GameEnded.Subtract(spring.GameStarted).TotalSeconds < NormalGameGracePeriod ? ShortGameGracePeriod : NormalGameGracePeriod;
+
+							if (plrCnt >= from && DateTime.Now.Subtract(spring.GameEnded).TotalSeconds > grace)
 							{
 								List<string> notReady;
 
@@ -151,8 +155,7 @@ namespace Springie.AutoHostNamespace
 										}
 									}
 
-									var grace = spring.GameEnded.Subtract(spring.GameStarted).TotalSeconds < NormalGameGracePeriod ? ShortGameGracePeriod : NormalGameGracePeriod;
-									if (!isReady && DateTime.Now.Subtract(spring.GameEnded).TotalSeconds > grace && (!isPlanetwars || allyCount == 2))
+									if (!isReady && (!isPlanetwars || allyCount == 2))
 									{
 										if (now.Subtract(lastRing).TotalSeconds > RingEvery)
 										{

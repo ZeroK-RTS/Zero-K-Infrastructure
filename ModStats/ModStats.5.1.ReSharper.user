@@ -8,14 +8,14 @@
   </SettingsComponent>
   <RecentFiles>
     <RecentFiles>
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:StatsCollector.asmx.cs" caret="1249" fromTop="22" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx" caret="0" fromTop="0" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="1266" fromTop="38" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Global.cs" caret="288" fromTop="14" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:DataContextFactory.cs" caret="1066" fromTop="23" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinq.designer.cs" caret="443" fromTop="11" />
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="13" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Web.config" caret="1057" fromTop="20" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:StatsCollector.asmx.cs" caret="685" fromTop="4" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="13" />
     </RecentFiles>
     <RecentEdits>
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="11585" fromTop="29" />

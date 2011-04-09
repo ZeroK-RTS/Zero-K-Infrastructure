@@ -358,7 +358,7 @@ namespace LobbyClient
 
 		void HandleSpecialMessages(Talker.SpringEventArgs e)
 		{
-			if (string.IsNullOrEmpty(e.Text)) return;
+			if (string.IsNullOrEmpty(e.Text) || (!e.Text.StartsWith("pw") && !e.Text.StartsWith("STATS"))) return;
 
 			int count;
 			if (!PlanetWarsMessages.TryGetValue(e.Text, out count)) count = 0;
@@ -483,6 +483,8 @@ namespace LobbyClient
 
 					if (line.StartsWith("GameID: ") && gameId == null) gameId = line.Substring(8);
 
+					if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
+
 					if (line.StartsWith("LuaRules: >> ID: ") && !isCheating && battleResult.IsMission)
 					{
 						// game score
@@ -521,25 +523,28 @@ namespace LobbyClient
 				var modOk = GlobalConst.IsZkMod(modName);
 
 				// submit main stats
-				if (!isCheating && !isCrash && modOk && isHosting && gameEndedOk)
+				if (!isCheating && !isCrash && modOk && gameEndedOk)
 				{
-					var service = new ContentService() { Proxy = null };
-					try
+					if (isHosting)
 					{
-						if (string.IsNullOrEmpty(gameId) || string.IsNullOrEmpty(demoFileName)) FindAndExtractDemoInfo(out gameId, out demoFileName);
+						var service = new ContentService() { Proxy = null };
+						try
+						{
+							if (string.IsNullOrEmpty(gameId) || string.IsNullOrEmpty(demoFileName)) FindAndExtractDemoInfo(out gameId, out demoFileName);
 
-						battleResult.EngineBattleID = gameId;
-						battleResult.ReplayName = demoFileName;
+							battleResult.EngineBattleID = gameId;
+							battleResult.ReplayName = demoFileName;
 
-						// set victory team for all allied with currently alive
-						foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null)) foreach (var q in statsPlayers.Values.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber)) q.IsVictoryTeam = true;
+							// set victory team for all allied with currently alive
+							foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null)) foreach (var q in statsPlayers.Values.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber)) q.IsVictoryTeam = true;
 
-						var result = service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray());
-						if (result != null) foreach (var line in result.Split('\n')) client.Say(TasClient.SayPlace.Battle, "", line, true);
-					}
-					catch (Exception ex)
-					{
-						Trace.TraceError("Error sending game result: {0}", ex);
+							var result = service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray());
+							if (result != null) foreach (var line in result.Split('\n')) client.Say(TasClient.SayPlace.Battle, "", line, true);
+						}
+						catch (Exception ex)
+						{
+							Trace.TraceError("Error sending game result: {0}", ex);
+						}
 					}
 
 					if (statsData.Count > 1)
