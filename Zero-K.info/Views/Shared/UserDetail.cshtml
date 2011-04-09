@@ -72,35 +72,35 @@
           </tr>
         }
         <tr>
-          <td>
+          <td nowrap="nowrap">
             First login:
           </td>
           <td>@Model.FirstLogin.ToAgoString()
           </td>
         </tr>
         <tr>
-          <td>
+          <td nowrap="nowrap">
             Last login:
           </td>
           <td>@Model.LastLogin.ToAgoString()
           </td>
         </tr>
         <tr>
-          <td>
+          <td nowrap="nowrap">
             Games played:
           </td>
           <td>@Model.SpringBattlePlayers.Count(x => !x.IsSpectator)
           </td>
         </tr>
         <tr>
-          <td>
+          <td nowrap="nowrap">
             Games watched:
           </td>
           <td>@Model.SpringBattlePlayers.Count(x => x.IsSpectator)
           </td>
         </tr>
         <tr>
-          <td>
+          <td nowrap="nowrap">
             Missions played:
           </td>
           <td>@Model.MissionRunCount
