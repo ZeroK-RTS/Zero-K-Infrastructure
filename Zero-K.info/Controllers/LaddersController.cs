@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace ZeroKWeb.Controllers
 {
-    public class Ladders : Controller
+    public class LaddersController : Controller
     {
         //
         // GET: /Ladders/
