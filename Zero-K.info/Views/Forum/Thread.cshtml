@@ -6,8 +6,8 @@
 
 
  <script language="javascript" type="text/javascript">
-    $(document).ready(function () {
-      window.location.hash = "#post@(Model.GoToPost)";
+   $(document).ready(function () {
+      document.getElementById("post@(Model.GoToPost)").scrollIntoView();
     });
 </script>
 
@@ -38,10 +38,18 @@ Pages:
               <small>@p.Created.ToAgoString()</small>
             </td>
           </tr>
+            @if (ZeroKWeb.Global.IsAdmin) {
+              <tr>
+                <td>
+                  <a href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'>Del. post</a>
+                </td>
+              </tr>
+            }
+
         </table>
       </td>
       <td valign="top" class="forumPostText">
-        <a name="post@(p.ForumPostID)"></a>
+        <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
         @Html.BBCode(p.Text)
       </td>
     </tr>

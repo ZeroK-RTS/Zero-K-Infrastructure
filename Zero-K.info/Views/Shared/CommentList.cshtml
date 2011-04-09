@@ -1,11 +1,9 @@
 ﻿@model ZeroKWeb.Models.CommentList
-
 <div id="comments" class="border-test">
   <form method="post" action="@Url.Action("SubmitPost", "Forum", Model.ActionData ?? new { threadID = Model.Thread.ForumThreadID })">
   <textarea name="text" rows="8" cols="80"></textarea><br />
   <input type="submit" value="Submit Comment" />
   </form>
-
   @if (Model.Thread != null) {
     foreach (var p in Model.Thread.ForumPosts.OrderByDescending(x => x.ForumPostID)) {
     <table width='100%'>
@@ -20,6 +18,13 @@
                 <small>@p.Created.ToAgoString()</small><br />
               </td>
             </tr>
+            @if (ZeroKWeb.Global.IsAdmin) {
+              <tr>
+                <td>
+                  <a href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'>Del. post</a>
+                </td>
+              </tr>
+            }
           </table>
         </td>
         <td class="forumPostText" valign="top">

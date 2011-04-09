@@ -10,6 +10,16 @@ namespace ZeroKWeb.Controllers
 	{
 		int PageSize = 100;
 
+		[Authorize(Roles = "admin")]
+		public ActionResult DeletePost(int? postID)
+		{
+			var db = new ZkDataContext();
+			var thread = db.ForumPosts.Single(x => x.ForumPostID == postID);
+			db.ForumPosts.DeleteOnSubmit(thread);
+			db.SubmitChanges();
+			return RedirectToAction("Thread", new { id = thread.ForumThreadID });
+		}
+
 		public ActionResult Index(int? categoryID)
 		{
 			var db = new ZkDataContext();
@@ -46,6 +56,7 @@ namespace ZeroKWeb.Controllers
 			return View(res);
 		}
 
+
 		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, string text, string title)
 		{
 			if (!Global.IsAccountAuthorized) return Content("Not logged in");
@@ -60,7 +71,6 @@ namespace ZeroKWeb.Controllers
 				if (cat.IsLocked) return Content("Thread is locked");
 
 				if (string.IsNullOrEmpty(title)) return Content("Title cannot be empty");
-
 				thread = new ForumThread();
 				thread.CreatedAccountID = Global.AccountID;
 				thread.Title = title;
@@ -89,13 +99,19 @@ namespace ZeroKWeb.Controllers
 			if (thread == null) return Content("Thread not found");
 			if (thread.IsLocked) return Content("Thread is locked");
 
-			thread.ForumPosts.Add(new ForumPost() { AuthorAccountID = Global.AccountID, Text = text });
-			thread.LastPost = DateTime.UtcNow;
-			thread.LastPostAccountID = Global.AccountID;
-			thread.PostCount = thread.ForumPosts.Count();
-			thread.UpdateLastRead(Global.AccountID, true, thread.LastPost);
+			var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
 
-			db.SubmitChanges();
+			if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text)
+			{
+				//double post preventer
+				thread.ForumPosts.Add(new ForumPost() { AuthorAccountID = Global.AccountID, Text = text });
+				thread.LastPost = DateTime.UtcNow;
+				thread.LastPostAccountID = Global.AccountID;
+				thread.PostCount = thread.ForumPosts.Count();
+				thread.UpdateLastRead(Global.AccountID, true, thread.LastPost);
+
+				db.SubmitChanges();
+			}
 
 			if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
 			else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
@@ -120,7 +136,6 @@ namespace ZeroKWeb.Controllers
 
 			db.SubmitChanges();
 
-			
 			res.Path = GetCategoryPath(t.ForumCategoryID, db);
 			res.CurrentThread = t;
 			res.PageCount = (t.PostCount/PageSize) + 1;
@@ -162,10 +177,10 @@ namespace ZeroKWeb.Controllers
 		public class ThreadResult
 		{
 			public ForumThread CurrentThread;
+			public int GoToPost;
 			public int PageCount;
 			public IEnumerable<ForumCategory> Path;
 			public List<ForumPost> Posts;
-			public int GoToPost;
 		}
 	}
 }
