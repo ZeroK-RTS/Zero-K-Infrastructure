@@ -81,6 +81,7 @@
     <Compile Include="Controllers\BattlesController.cs" />
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\Ladders.cs" />
     <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\MyController.cs" />
@@ -211,6 +212,7 @@
     <Content Include="Views\Home\UnlockTooltip.cshtml" />
     <Content Include="Views\Poll\PollView.cshtml" />
     <Content Include="Views\Poll\PollVoteList.cshtml" />
+    <Content Include="Views\Ladders\ladders.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
