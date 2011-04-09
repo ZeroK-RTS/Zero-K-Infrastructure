@@ -156,6 +156,12 @@ namespace ZeroKWeb.Controllers
 
 			foreach (var x in db.Resources) sb.AppendLine(Url.Action("Detail", "Maps", new { id = x.ResourceID }, "http"));
 
+			foreach (var x in db.ForumThreads) sb.AppendLine(Url.Action("Thread", "Forum", new { id = x.ForumThreadID }, "http"));
+
+			foreach (var x in db.SpringBattles) sb.AppendLine(Url.Action("Detail", "Battles", new { id = x.SpringBattleID }, "http"));
+
+			foreach (var x in db.Accounts.OrderByDescending(x=>x.LastLogin).Take(5000)) sb.AppendLine(Url.Action("Index", "Users", new { id = x.AccountID }, "http"));
+
 			var wikiIndex = new WebClient().DownloadString("http://zero-k.googlecode.com/svn/wiki/");
 			var matches = Regex.Matches(wikiIndex, "\"([^\"]+)\"");
 			foreach (Match m in matches)

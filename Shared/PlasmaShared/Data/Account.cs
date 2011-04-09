@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
-using System.Threading;
 
 namespace ZkData
 {
@@ -23,20 +22,18 @@ namespace ZkData
 			if (XP > GetXpForLevel(Level + 1))
 			{
 				Level++;
-				//new Thread(() =>
-					{
-						try
-						{
-							AuthServiceClient.SendLobbyMessage(this,
-							                                   string.Format("Congratulations! You just leveled up to level {0}. http://zero-k.info/Users.mvc/{1}",
-							                                                 Level,
-							                                                 Name));
-						}
-						catch (Exception ex)
-						{
-							Trace.TraceError("Error sending level up lobby message: {0}", ex);
-						}
-					}//).Start();
+
+				try
+				{
+					AuthServiceClient.SendLobbyMessage(this,
+					                                   string.Format("Congratulations! You just leveled up to level {0}. http://zero-k.info/Users.mvc/{1}",
+					                                                 Level,
+					                                                 Name));
+				}
+				catch (Exception ex)
+				{
+					Trace.TraceError("Error sending level up lobby message: {0}", ex);
+				}
 			}
 		}
 

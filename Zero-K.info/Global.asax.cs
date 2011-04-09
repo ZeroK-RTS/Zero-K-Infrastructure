@@ -20,7 +20,7 @@ namespace ZeroKWeb
 	{
 		public MvcApplication()
 		{
-			PostAuthenticateRequest += new EventHandler(MvcApplication_PostAuthenticateRequest);
+			PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
 		}
 
 

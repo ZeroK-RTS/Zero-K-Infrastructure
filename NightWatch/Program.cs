@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace CaTracker
@@ -9,8 +10,9 @@ namespace CaTracker
 
         public static void Main(string[] args)
         {
+        		Trace.Listeners.Add(new ConsoleTraceListener());
             MainInstance = new Main();
-            Console.WriteLine("Starting Tracker");
+            Trace.TraceInformation("Starting Tracker");
             MainInstance.Start();
 						
             while (true) Thread.Sleep(10000);

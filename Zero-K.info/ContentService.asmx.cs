@@ -305,9 +305,8 @@ namespace ZeroKWeb
 
       db.SubmitChanges();
 
-
-      sb.CalculateElo();
-			try {
+			sb.CalculateElo();
+      try {
 				db.SubmitChanges();
 			} catch (ChangeConflictException e)
 			{

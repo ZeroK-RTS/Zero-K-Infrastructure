@@ -40,22 +40,20 @@ namespace NightWatch
 					{
 						var name = e.ServerParams[1];
 						var chan = e.ServerParams[0];
+						List<LobbyMessage> messages;
 						using (var db = new ZkDataContext())
 						using (var scope = new TransactionScope())
 						{
-							var messages = db.LobbyMessages.Where(x => x.TargetName == name && x.Channel == chan).ToList();
-							if (messages.Any())
-							{
-								foreach (var m in messages)
-								{
-									var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
-									client.Say(TasClient.SayPlace.User, name, text, false);
-									Thread.Sleep(MessageDelay);
-								}
-								db.LobbyMessages.DeleteAllOnSubmit(messages);
-								db.SubmitChanges();
-							}
+							messages = db.LobbyMessages.Where(x => x.TargetName == name && x.Channel == chan).ToList();
+							db.LobbyMessages.DeleteAllOnSubmit(messages);
+							db.SubmitChanges();
 							scope.Complete();
+						}
+						foreach (var m in messages)
+						{
+							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
+							client.Say(TasClient.SayPlace.User, name, text, false);
+							Thread.Sleep(MessageDelay);
 						}
 					}
 					catch (Exception ex)
@@ -194,25 +192,23 @@ namespace NightWatch
 				{
 					try
 					{
+						List<LobbyMessage> messages;
 						using (var db = new ZkDataContext())
 						using (var scope = new TransactionScope())
 						{
-							var messages =
-								db.LobbyMessages.Where(x => (x.TargetAccountID == e.Data.AccountID || x.TargetName == e.Data.Name) && x.Channel == null).ToList();
-							if (messages.Any())
-							{
-								foreach (var m in messages)
-								{
-									var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
-									client.Say(TasClient.SayPlace.User, e.Data.Name, text, false);
-									Thread.Sleep(MessageDelay);
-								}
-								db.LobbyMessages.DeleteAllOnSubmit(messages);
-								db.SubmitChanges();
-							}
+							messages = db.LobbyMessages.Where(x => (x.TargetAccountID == e.Data.AccountID || x.TargetName == e.Data.Name) && x.Channel == null).ToList();
+							db.LobbyMessages.DeleteAllOnSubmit(messages);
+							db.SubmitChanges();
 							scope.Complete();
 						}
+						foreach (var m in messages)
+						{
+							var text = string.Format("!pm|{0}|{1}|{2}|{3}", m.Channel, m.SourceName, m.Created.ToString(CultureInfo.InvariantCulture), m.Message);
+							client.Say(TasClient.SayPlace.User, e.Data.Name, text, false);
+							Thread.Sleep(MessageDelay);
+						}
 					}
+
 					catch (Exception ex)
 					{
 						Trace.TraceError("Error sending PM:{0}", ex);

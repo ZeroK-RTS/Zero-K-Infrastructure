@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -57,8 +58,8 @@ namespace ZeroKLobby
             }
             catch (Exception exp)
             {
-                Console.WriteLine("Widget header file info error: " + info.name + "! Error: " + exp.Message);
-                return;
+            	Trace.TraceError("Widget header file info error: " + info.name + "! Error: " + exp.Message);
+              return;
             }
         }
 

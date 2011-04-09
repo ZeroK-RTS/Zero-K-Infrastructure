@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.ServiceModel;
 using System.Timers;
@@ -143,7 +144,7 @@ namespace CaTracker
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("Error while tracking stats " + e.ToString());
+				Trace.TraceError("Error while tracking stats " + e.ToString());
 			}
 		}
 
