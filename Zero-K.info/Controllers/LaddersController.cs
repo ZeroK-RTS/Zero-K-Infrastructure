@@ -13,7 +13,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Ladders/
-				[OutputCache(Duration = 3600*2, VaryByParam = "none")]  // cache for 2 hours
+				[OutputCache(Duration = 3600*2, VaryByCustom = GlobalConst.LobbyAccessCookieName)]  // cache for 2 hours - different look for lobby and for normal
         public ActionResult Index()
         {
                 var db = new ZkDataContext();
