@@ -24,13 +24,14 @@
     <style type="text/css">
       html
       {
-        background: #000 url("/img/bg_bluehex.gif") scroll 50% 0; background-attachment: fixed;
+        background: #000 url("/img/bg_bluehex.gif") scroll 50% 0;
+        background-attachment: fixed;
       }
     </style>
     } else {
       var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
-      @* What we're doing here is generating a number unique to each date *@
-      @* We use this to seed the RNG so that it picks a new background once per day *@
+@* What we're doing here is generating a number unique to each date *@
+@* We use this to seed the RNG so that it picks a new background once per day *@
       int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
       var random = new Random(date);
       var file = Path.GetFileName(files[random.Next(files.Length)]);
@@ -52,8 +53,10 @@
   </script>
 </head>
 <body class="">
-  <span style="display:none; position:fixed; left: 300px; top: 200px; z-index: 10; width:300px; height: 50px; background-color: Black; border: 1px solid Red; font-size: x-large; text-align:center; vertical-align:   middle;" id='ajaxScrollProgress'>Loading....<img src='/img/Loader.gif'/></span>
-
+  <span style="display: none; position: fixed; left: 300px; top: 200px; z-index: 10;
+    width: 300px; height: 50px; background-color: Black; border: 1px solid Red; font-size: x-large;
+    text-align: center; vertical-align: middle;" id='ajaxScrollProgress'>Loading....<img
+      src='/img/Loader.gif' /></span>
   @if (!Global.IsLobbyAccess) {
     <div class="wrapper">
       <div id="header" class="text-center">
@@ -104,7 +107,11 @@
                     <li><a href="/Static.mvc/UnitGuide">Units</a></li>
                     <li><a href="/Wiki.mvc/EconomyGuide">Economy</a></li>
                     <li><a href="/Wiki.mvc/Terraforming">Terraforming<span>Let's go play in the dirt!</span></a></li>
-                    <li><div style="margin-left:8px; height: 3px; background-image:url(../../Img/border.png); background-repeat:repeat-x;"></div></li>
+                    <li>
+                      <div style="margin-left: 8px; height: 3px; background-image: url(../../Img/border.png);
+                        background-repeat: repeat-x;">
+                      </div>
+                    </li>
                     <li><a href="/Wiki.mvc/FAQ">FAQ<span>Frequently Asked Questions</span></a></li>
                   </ul>
                 </li>
@@ -133,9 +140,10 @@
                     <li><a target="_new" href="http://code.google.com/p/zero-k/">Development site</a>
                       <li><a target="_new" href="http://code.google.com/p/zero-k/issues/entry">Bugs?<span>Let
                         us know so we can <b>squash them!</b></span></a></li>
-                      <li><a target="_new" href="http://code.google.com/p/zero-k/wiki/Developing">
-                        Make the game with us</a></li>
-                        <li><a href="@Url.Action("Donate","Wiki")">Donate<span>Help us cover server cost :-)</span></a></li>
+                      <li><a target="_new" href="http://code.google.com/p/zero-k/wiki/Developing">Make the
+                        game with us</a></li>
+                      <li><a href="@Url.Action("Donate", "Wiki")">Donate<span>Help us cover server cost :-)</span></a></li>
+                      <li><a href="/Wiki.mvc/Credits">Credits</a></li>
                   </ul>
                 </li>
               </ul>
@@ -161,7 +169,7 @@
                     <input type="hidden" name="cx" value="005922609343212335344:hhfjrwusr9u" />
                     <input type="hidden" name="ie" value="UTF-8" />
                     <input type="text" name="q" id="q" autocomplete="off" size="11" />
-                    <input name="sa" value="Search" type="image" src="/img/search_img.png" style="border:none;" />
+                    <input name="sa" value="Search" type="image" src="/img/search_img.png" style="border: none;" />
                   </div>
                   </form>
                 </div>
@@ -171,7 +179,7 @@
         </table>
       </div>
       <!close navigation>
-        <div class="border">
+      <div class="border">
         @if (!(Global.IsAccountAuthorized)) {
           <!login> 
           <form method="post" action="@Url.Action("Logon", "Home")" >
@@ -180,7 +188,8 @@
           &nbsp;&nbsp; Password:
           <input type="password" name="password" />
           &nbsp;&nbsp;
-          <input type="submit" value="Login" /> <small>(use Zero-K lobby account)</small>
+          <input type="submit" value="Login" />
+          <small>(use Zero-K lobby account)</small>
           <input type="hidden" name="referer" value="@Request.Url" />
           </form>
         } else {
@@ -190,24 +199,15 @@
           <input type="hidden" name="referer" value="@Request.Url" />
           </form>
         }
-        </div>
+      </div>
       <!close login>
-
       <div class="border">
         @RenderBody()
       </div>
-      <div id="footer" class="border">
-        <span class="abs left cdark">Design by maackey</span>
-        <div class="center">
-          <a href="/Wiki.mvc/Credits">Credits</a> | <a href="http://code.google.com/p/zero-k/issues/entry">
-            Contact</a> | <a href="/Wiki.mvc/Copyright">Copyright</a>
-        </div>
-      </div>
       <!close footer>
-      
     </div>
     
-  <!close wrapper>
+    <!close wrapper>
   } else {
     <div style="margin: 10px;">
       @RenderBody()
