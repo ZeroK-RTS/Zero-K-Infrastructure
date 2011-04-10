@@ -7,7 +7,11 @@
   <meta http-equiv="Expires" content="0">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Cache-Control" content="no-cache">
-  <title>Zero-K</title>
+  @if (!string.IsNullOrEmpty(Page.Title)) {
+    <title>@Page.Title - Zero-K free rts open source game</title>
+  } else { 
+    <title>Zero-K free rts open source game</title>
+  }
   <link rel="icon" href='@Href("~/img/favicon.png")'/>
   <link rel="Stylesheet" href='@Href("~/Styles/style.css")' type="text/css" />
   <script type="text/javascript" src='@Href("~/Scripts/MicrosoftAjax.js")' ></script>

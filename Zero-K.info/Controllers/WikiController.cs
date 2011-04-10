@@ -12,11 +12,12 @@ namespace ZeroKWeb.Controllers
       string ret = WikiHandler.LoadWiki(node);
 
       if (minimal) return Content(ret);
-      else return View(new WikiData() { Content = new MvcHtmlString(ret) });
+      else return View(new WikiData() { Content = new MvcHtmlString(ret), Node = node});
     }
 
     public class WikiData
     {
+    	public string Node;
       public MvcHtmlString Content;
     }
   }

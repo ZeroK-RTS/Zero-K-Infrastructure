@@ -3,7 +3,7 @@
 @using ZeroKWeb
 @{
   var m = Model.Mission;
-  Page.Title = "Zero-K mission " + m.Name;
+  Page.Title = m.Name + " mission";
 }
 @Html.ActionLink("Back to List", "Index")
 <div class="wrapper">

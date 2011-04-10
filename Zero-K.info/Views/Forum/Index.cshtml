@@ -1,6 +1,6 @@
 ﻿@model ZeroKWeb.Controllers.ForumController.IndexResult
 @{
-  Page.Title = "Zero-K forums";
+  Page.Title = "Forums " + Model.Path;
 }
 
 @{Html.RenderPartial("ForumPath", Model.Path);}
