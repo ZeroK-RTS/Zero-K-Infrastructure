@@ -10,17 +10,16 @@ namespace ZkData
 {
 	public class AuthServiceClient
 	{
-		static IAuthService channel;
+		//static IAuthService channel;
 		
 		static AuthServiceClient()
 		{
-			var factory = new ChannelFactory<IAuthService>(new NetTcpBinding(SecurityMode.None),GlobalConst.AuthServiceUri);
-			channel = factory.CreateChannel();
+			factory = new ChannelFactory<IAuthService>(new NetTcpBinding(SecurityMode.None),GlobalConst.AuthServiceUri);
 		}
 
-    public static void SendLobbyMessage(Account account, string text)
+		public static void SendLobbyMessage(Account account, string text)
     {
-      channel.SendLobbyMessage(account, text);
+			factory.CreateChannel().SendLobbyMessage(account, text);
     }
 
 	  public static Account VerifyAccountPlain(string login, string password)
@@ -33,13 +32,15 @@ namespace ZkData
       if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(passwordHash)) return null;
 			var db = new ZkDataContext();
 			var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash);
-			if (acc != null) return acc; else return channel.VerifyAccount(login, passwordHash);
+			if (acc != null) return acc; else return factory.CreateChannel().VerifyAccount(login, passwordHash);
 
 		}
 
     static CurrentLobbyStats cachedStats = new CurrentLobbyStats();
 	  static DateTime lastStatsCheck = DateTime.MinValue;
-	  public static CurrentLobbyStats GetLobbyStats()
+		static ChannelFactory<IAuthService> factory;
+
+		public static CurrentLobbyStats GetLobbyStats()
 	  {
       if (DateTime.UtcNow.Subtract(lastStatsCheck).TotalMinutes < 2) return cachedStats;
       else
@@ -47,7 +48,7 @@ namespace ZkData
         lastStatsCheck = DateTime.UtcNow;
         try
         {
-          cachedStats = channel.GetCurrentStats();
+          cachedStats = factory.CreateChannel().GetCurrentStats();
         }
         catch (Exception ex)
         {
