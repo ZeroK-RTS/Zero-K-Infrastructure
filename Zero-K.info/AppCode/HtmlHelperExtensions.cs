@@ -134,13 +134,24 @@ namespace System.Web.Mvc
       return new MvcHtmlString(WikiHandler.LoadWiki(node));
     }
 
-    public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattle battle)
+    public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattlePlayer battlePlayer)
     {
       var url = new UrlHelper(helper.ViewContext.RequestContext);
-      
-     
+    	var icon = "";
+			if (battlePlayer.IsInVictoryTeam) {
+				icon = "battlewon.png";
+			} else if (battlePlayer.IsSpectator) {
+				icon = "spec.png";
+			} else icon = "battlelost.png";
+			icon = string.Format("<img src='/img/battles/{0}'/>", icon);
 
-      return new MvcHtmlString(string.Format("<a href='{0}'>B{1}</a> {2} on {3} ({4})", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), battle.BattleType));
+    	var battle = battlePlayer.SpringBattle;
+
+			if (battle.IsMission) icon += "<img src='/img/battles/mission.png'/>";
+			if (battle.HasBots) icon += "<img src='/img/battles/robot.png'/>";
+
+
+    	return new MvcHtmlString(string.Format("<a href='{0}'>{5} B{1}</a> {2} on {3} ({4})", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), battle.BattleType, icon));
     }
 
 
