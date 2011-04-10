@@ -60,7 +60,7 @@ namespace ZeroKWeb
     {
       var db = new ZkDataContext();
       var unlock = db.Unlocks.Single(x => x.UnlockID == ((Unlock)e.OriginalObject).UnlockID);
-      unlock.CommanderModules.Clear();
+      db.CommanderModules.DeleteAllOnSubmit(db.CommanderModules.Where(x=>x.ModuleUnlockID == unlock.UnlockID));
       db.Unlocks.DeleteOnSubmit(unlock);
       db.SubmitChanges();
     }

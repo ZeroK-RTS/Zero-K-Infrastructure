@@ -13,6 +13,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Ladders/
+				[OutputCache(Duration = 3600*2, VaryByParam = "none")]  // cache for 2 hours
         public ActionResult Index()
         {
                 var db = new ZkDataContext();
@@ -51,6 +52,7 @@ namespace ZeroKWeb.Controllers
                     Account topAcct = null;
                     var titleName = "";
                     var fullTitle = "";
+                		SpringBattlePlayer topScoreBattlePlayer = null;
                     foreach (var acct in resultTopScore)
                     {
                         var score = Convert.ToInt32( Regex.Replace(acct.AwardDescription, @"\D", String.Empty) );
@@ -59,8 +61,9 @@ namespace ZeroKWeb.Controllers
                         if( score > topScore )
                         {
                             topScore = score;
+                        		topScoreBattlePlayer = acct.SpringBattle.SpringBattlePlayers.Single(x => x.AccountID == acct.AccountID);
                             topAcct = acct.Account;
-                            fullTitle = string.Join("", acct.AwardDescription.Split(',').Skip(1));
+                            fullTitle = string.Join(" ", acct.AwardDescription.Split(',').Skip(1));
                         }
                     }
                     var awardItem = new AwardItem { 
@@ -69,7 +72,7 @@ namespace ZeroKWeb.Controllers
                             TopCollectors = topCollectors, 
                             TopCollectorCount = topCount,
                             TopScoreHolder = topAcct,
-                            
+                            TopScoreBattlePlayer = topScoreBattlePlayer,
                             TopScoreDesc = fullTitle
                     };
                     awardItems.Add(awardItem);
@@ -77,15 +80,6 @@ namespace ZeroKWeb.Controllers
 
                 return View("Ladders", awardItems);
         }
-        /*
-        private string FormatInt(int doubleToFormat)
-        {
-            System.Globalization.NumberFormatInfo nfi = new System.Globalization.CultureInfo("en-US", false).NumberFormat;
-            nfi.NumberGroupSeparator = " ";
-            var temp = doubleToFormat.ToString("n", nfi); 
-            return temp.Remove(temp.Length-3);
-        }
-        */
  
         public class AwardItem
         {
@@ -94,6 +88,7 @@ namespace ZeroKWeb.Controllers
             public string TopScoreDesc;
             public List<Account> TopCollectors;
             public int TopCollectorCount;
+        		public SpringBattlePlayer TopScoreBattlePlayer;
             public Account TopScoreHolder;
         }
 
