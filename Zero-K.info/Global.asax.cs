@@ -37,7 +37,7 @@ namespace ZeroKWeb
 
 		public override string GetVaryByCustomString(HttpContext context, string custom)
 		{
-			if (custom == GlobalConst.LobbyAccessCookieName) return Request[GlobalConst.LoginCookieName];
+			if (custom == GlobalConst.LobbyAccessCookieName) return Global.IsLobbyAccess.ToString();
 			return base.GetVaryByCustomString(context, custom);
 		}
 

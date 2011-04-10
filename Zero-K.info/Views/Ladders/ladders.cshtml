@@ -14,10 +14,6 @@
         </span>
         <span style="left:65px; position:absolute; vertical-align:top; ">
             <div>
-                Top Score: <span style="color:cyan;">@Html.PrintAccount(awardItem.TopScoreHolder)</span> - <span style="color:lightgreen; ">@awardItem.TopScoreDesc</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayer)
-            </div>
-        
-            <div>
                 Top Collector(s): <span style="color:cyan;">
                 @foreach (var collector in awardItem.TopCollectors) {
                   @Html.PrintAccount(collector)
@@ -25,6 +21,11 @@
                 }
                 </span> - <span style="color:lightgreen; ">@awardItem.TopCollectorCount</span> collected
             </div>
+
+            <div>
+                Top Score: <span style="color:cyan;">@Html.PrintAccount(awardItem.TopScoreHolder)</span> - <span style="color:lightgreen; ">@awardItem.TopScoreDesc</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayer)
+            </div>
+        
         </span>
         
     </div>

@@ -1,6 +1,6 @@
 ﻿@model ZeroKWeb.Controllers.ForumController.IndexResult
 @{
-  Page.Title = "Forums " + Model.Path;
+  Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x=>x.Title));
 }
 
 @{Html.RenderPartial("ForumPath", Model.Path);}
