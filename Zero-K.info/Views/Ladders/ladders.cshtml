@@ -3,6 +3,28 @@
     ViewBag.Title = "ladders";
 }
 
-<h2>ladders</h2>
-
 *@
+
+<h2>Awards Hall of Fame</h2>
+<br />
+
+@model List<ZeroKWeb.Controllers.LaddersController.AwardItem>
+
+@foreach (var awardItem in Model)
+{   
+    <div style="height:60px; ">
+        <span title="@awardItem.AwardTitle">
+            <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(awardItem.AwardType).png" height="30" alt="@awardItem.AwardType" />
+        </span>
+        <span style="left:65px; position:absolute; vertical-align:top; ">
+            <div>
+                Top Score: <span style="color:cyan;">@awardItem.TopScoreHolder</span> - <span style="color:lightgreen; ">@awardItem.TopScoreDesc</span>
+            </div>
+        
+            <div>
+                Top Collector(s): <span style="color:cyan;">@awardItem.TopCollectors</span> - <span style="color:lightgreen; ">@awardItem.TopCollectorCount</span> collected
+            </div>
+        </span>
+        
+    </div>
+}
