@@ -30,7 +30,6 @@ namespace ZeroKWeb.Controllers
                         ;
                     var topCount = resultCollCount;
 
-                    var topCollectorsStr = "";
                     
                     var resultCollectorInfo = db.AccountBattleAwards
                         .Where(x => x.AwardKey == awardType)
@@ -38,19 +37,18 @@ namespace ZeroKWeb.Controllers
                         .Where(x => x.Count() == resultCollCount)
                         ;
 
-                    var topCollectors = new List<String>();
+                    var topCollectors = new List<Account>();
                     foreach (var acct in resultCollectorInfo)
                     {
-                        topCollectors.Add(acct.Key.Name);
+                        topCollectors.Add(acct.Key);
                     }
-                    topCollectorsStr = string.Join(", ", topCollectors);
 
                     var resultTopScore = db.AccountBattleAwards
                         .Where(x => x.AwardKey == awardType)
                         ;
                     
                     var topScore = 0;
-                    var topAcctName = "";
+                    Account topAcct = null;
                     var titleName = "";
                     var fullTitle = "";
                     foreach (var acct in resultTopScore)
@@ -61,16 +59,16 @@ namespace ZeroKWeb.Controllers
                         if( score > topScore )
                         {
                             topScore = score;
-                            topAcctName = acct.Account.Name;
+                            topAcct = acct.Account;
                             fullTitle = string.Join("", acct.AwardDescription.Split(',').Skip(1));
                         }
                     }
                     var awardItem = new AwardItem { 
                             AwardType = awardType,
                             AwardTitle = titleName,
-                            TopCollectors = topCollectorsStr, 
+                            TopCollectors = topCollectors, 
                             TopCollectorCount = topCount,
-                            TopScoreHolder = topAcctName,
+                            TopScoreHolder = topAcct,
                             
                             TopScoreDesc = fullTitle
                     };
@@ -94,9 +92,9 @@ namespace ZeroKWeb.Controllers
             public string AwardType;
             public string AwardTitle;
             public string TopScoreDesc;
-            public string TopCollectors;
+            public List<Account> TopCollectors;
             public int TopCollectorCount;
-            public string TopScoreHolder;
+            public Account TopScoreHolder;
         }
 
     }

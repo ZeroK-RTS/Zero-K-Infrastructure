@@ -1,14 +1,10 @@
-﻿@*
+﻿@model List<ZeroKWeb.Controllers.LaddersController.AwardItem>
 @{
-    ViewBag.Title = "ladders";
+  Page.Title = "Award ladders";  
 }
-
-*@
 
 <h2>Awards Hall of Fame</h2>
 <br />
-
-@model List<ZeroKWeb.Controllers.LaddersController.AwardItem>
 
 @foreach (var awardItem in Model)
 {   
@@ -18,11 +14,16 @@
         </span>
         <span style="left:65px; position:absolute; vertical-align:top; ">
             <div>
-                Top Score: <span style="color:cyan;">@awardItem.TopScoreHolder</span> - <span style="color:lightgreen; ">@awardItem.TopScoreDesc</span>
+                Top Score: <span style="color:cyan;">@Html.PrintAccount(awardItem.TopScoreHolder)</span> - <span style="color:lightgreen; ">@awardItem.TopScoreDesc</span>
             </div>
         
             <div>
-                Top Collector(s): <span style="color:cyan;">@awardItem.TopCollectors</span> - <span style="color:lightgreen; ">@awardItem.TopCollectorCount</span> collected
+                Top Collector(s): <span style="color:cyan;">
+                @foreach (var collector in awardItem.TopCollectors) {
+                  @Html.PrintAccount(collector)
+                  @:, 
+                }
+                </span> - <span style="color:lightgreen; ">@awardItem.TopCollectorCount</span> collected
             </div>
         </span>
         
