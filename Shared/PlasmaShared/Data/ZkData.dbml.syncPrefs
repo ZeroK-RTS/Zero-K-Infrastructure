@@ -6,6 +6,7 @@
   <DroppedViews>true</DroppedViews>
   <NewColumns>true</NewColumns>
   <PreserveColumnOrder>true</PreserveColumnOrder>
+  <AlphabeticalColumnOrder>false</AlphabeticalColumnOrder>
   <DroppedColumns>true</DroppedColumns>
   <ModifiedColumns>true</ModifiedColumns>
   <ModifiedDataType>true</ModifiedDataType>
@@ -55,5 +56,6 @@
   <SuppressDialog>false</SuppressDialog>
   <Disable381883>false</Disable381883>
   <AdvancedMode>false</AdvancedMode>
+  <SchemaLessMode>false</SchemaLessMode>
   <VerboseOutput>false</VerboseOutput>
 </SyncPreferences>

@@ -34,6 +34,9 @@ namespace ZkData
     partial void InsertMission(Mission instance);
     partial void UpdateMission(Mission instance);
     partial void DeleteMission(Mission instance);
+    partial void InsertPlayer(Player instance);
+    partial void UpdatePlayer(Player instance);
+    partial void DeletePlayer(Player instance);
     partial void InsertAccount(Account instance);
     partial void UpdateAccount(Account instance);
     partial void DeleteAccount(Account instance);
@@ -115,6 +118,24 @@ namespace ZkData
     partial void InsertPollOption(PollOption instance);
     partial void UpdatePollOption(PollOption instance);
     partial void DeletePollOption(PollOption instance);
+    partial void InsertTreatyOffer(TreatyOffer instance);
+    partial void UpdateTreatyOffer(TreatyOffer instance);
+    partial void DeleteTreatyOffer(TreatyOffer instance);
+    partial void InsertLink(Link instance);
+    partial void UpdateLink(Link instance);
+    partial void DeleteLink(Link instance);
+    partial void InsertPlayerPlanet(PlayerPlanet instance);
+    partial void UpdatePlayerPlanet(PlayerPlanet instance);
+    partial void DeletePlayerPlanet(PlayerPlanet instance);
+    partial void InsertClan(Clan instance);
+    partial void UpdateClan(Clan instance);
+    partial void DeleteClan(Clan instance);
+    partial void InsertPlanet(Planet instance);
+    partial void UpdatePlanet(Planet instance);
+    partial void DeletePlanet(Planet instance);
+    partial void InsertMarketOffer(MarketOffer instance);
+    partial void UpdateMarketOffer(MarketOffer instance);
+    partial void DeleteMarketOffer(MarketOffer instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -155,67 +176,11 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<Transit> Transits
-		{
-			get
-			{
-				return this.GetTable<Transit>();
-			}
-		}
-		
 		public System.Data.Linq.Table<BattleEvent> BattleEvents
 		{
 			get
 			{
 				return this.GetTable<BattleEvent>();
-			}
-		}
-		
-		public System.Data.Linq.Table<CelestialObject> CelestialObjects
-		{
-			get
-			{
-				return this.GetTable<CelestialObject>();
-			}
-		}
-		
-		public System.Data.Linq.Table<CelestialObjectEvent> CelestialObjectEvents
-		{
-			get
-			{
-				return this.GetTable<CelestialObjectEvent>();
-			}
-		}
-		
-		public System.Data.Linq.Table<CelestialObjectLink> CelestialObjectLinks
-		{
-			get
-			{
-				return this.GetTable<CelestialObjectLink>();
-			}
-		}
-		
-		public System.Data.Linq.Table<CelestialObjectShip> CelestialObjectShips
-		{
-			get
-			{
-				return this.GetTable<CelestialObjectShip>();
-			}
-		}
-		
-		public System.Data.Linq.Table<CelestialObjectStructure> CelestialObjectStructures
-		{
-			get
-			{
-				return this.GetTable<CelestialObjectStructure>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Coalition> Coalitions
-		{
-			get
-			{
-				return this.GetTable<Coalition>();
 			}
 		}
 		
@@ -243,35 +208,11 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<FleetEvent> FleetEvents
-		{
-			get
-			{
-				return this.GetTable<FleetEvent>();
-			}
-		}
-		
-		public System.Data.Linq.Table<FleetShip> FleetShips
-		{
-			get
-			{
-				return this.GetTable<FleetShip>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Mission> Missions
 		{
 			get
 			{
 				return this.GetTable<Mission>();
-			}
-		}
-		
-		public System.Data.Linq.Table<MothershipStructure> MothershipStructures
-		{
-			get
-			{
-				return this.GetTable<MothershipStructure>();
 			}
 		}
 		
@@ -288,70 +229,6 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<PlayerEvent>();
-			}
-		}
-		
-		public System.Data.Linq.Table<PlayerTechSpent> PlayerTechSpents
-		{
-			get
-			{
-				return this.GetTable<PlayerTechSpent>();
-			}
-		}
-		
-		public System.Data.Linq.Table<PopulationTransport> PopulationTransports
-		{
-			get
-			{
-				return this.GetTable<PopulationTransport>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Score> Scores
-		{
-			get
-			{
-				return this.GetTable<Score>();
-			}
-		}
-		
-		public System.Data.Linq.Table<ShipType> ShipTypes
-		{
-			get
-			{
-				return this.GetTable<ShipType>();
-			}
-		}
-		
-		public System.Data.Linq.Table<StarSystem> StarSystems
-		{
-			get
-			{
-				return this.GetTable<StarSystem>();
-			}
-		}
-		
-		public System.Data.Linq.Table<StarSystemTech> StarSystemTeches
-		{
-			get
-			{
-				return this.GetTable<StarSystemTech>();
-			}
-		}
-		
-		public System.Data.Linq.Table<StructureType> StructureTypes
-		{
-			get
-			{
-				return this.GetTable<StructureType>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Tech> Teches
-		{
-			get
-			{
-				return this.GetTable<Tech>();
 			}
 		}
 		
@@ -523,14 +400,6 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<SpringBattleRating> SpringBattleRatings
-		{
-			get
-			{
-				return this.GetTable<SpringBattleRating>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Commander> Commanders
 		{
 			get
@@ -576,6 +445,54 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<PollOption>();
+			}
+		}
+		
+		public System.Data.Linq.Table<TreatyOffer> TreatyOffers
+		{
+			get
+			{
+				return this.GetTable<TreatyOffer>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Link> Links
+		{
+			get
+			{
+				return this.GetTable<Link>();
+			}
+		}
+		
+		public System.Data.Linq.Table<PlayerPlanet> PlayerPlanets
+		{
+			get
+			{
+				return this.GetTable<PlayerPlanet>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Clan> Clans
+		{
+			get
+			{
+				return this.GetTable<Clan>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Planet> Planets
+		{
+			get
+			{
+				return this.GetTable<Planet>();
+			}
+		}
+		
+		public System.Data.Linq.Table<MarketOffer> MarketOffers
+		{
+			get
+			{
+				return this.GetTable<MarketOffer>();
 			}
 		}
 	}
@@ -647,225 +564,6 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Transit")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Transit
-	{
-		
-		private int _TransitID;
-		
-		private System.Nullable<int> _FromObjectID;
-		
-		private System.Nullable<int> _ToObjectID;
-		
-		private float _FromX;
-		
-		private float _FromY;
-		
-		private float _ToX;
-		
-		private float _ToY;
-		
-		private int _StartBattleTurn;
-		
-		private int _EndBattleTurn;
-		
-		private int _Warp;
-		
-		private System.Nullable<int> _OrbitsObjectID;
-		
-		public Transit()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TransitID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int TransitID
-		{
-			get
-			{
-				return this._TransitID;
-			}
-			set
-			{
-				if ((this._TransitID != value))
-				{
-					this._TransitID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FromObjectID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public System.Nullable<int> FromObjectID
-		{
-			get
-			{
-				return this._FromObjectID;
-			}
-			set
-			{
-				if ((this._FromObjectID != value))
-				{
-					this._FromObjectID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ToObjectID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public System.Nullable<int> ToObjectID
-		{
-			get
-			{
-				return this._ToObjectID;
-			}
-			set
-			{
-				if ((this._ToObjectID != value))
-				{
-					this._ToObjectID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FromX", DbType="Real NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public float FromX
-		{
-			get
-			{
-				return this._FromX;
-			}
-			set
-			{
-				if ((this._FromX != value))
-				{
-					this._FromX = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FromY", DbType="Real NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public float FromY
-		{
-			get
-			{
-				return this._FromY;
-			}
-			set
-			{
-				if ((this._FromY != value))
-				{
-					this._FromY = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ToX", DbType="Real NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public float ToX
-		{
-			get
-			{
-				return this._ToX;
-			}
-			set
-			{
-				if ((this._ToX != value))
-				{
-					this._ToX = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ToY", DbType="Real NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public float ToY
-		{
-			get
-			{
-				return this._ToY;
-			}
-			set
-			{
-				if ((this._ToY != value))
-				{
-					this._ToY = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartBattleTurn", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public int StartBattleTurn
-		{
-			get
-			{
-				return this._StartBattleTurn;
-			}
-			set
-			{
-				if ((this._StartBattleTurn != value))
-				{
-					this._StartBattleTurn = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EndBattleTurn", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public int EndBattleTurn
-		{
-			get
-			{
-				return this._EndBattleTurn;
-			}
-			set
-			{
-				if ((this._EndBattleTurn != value))
-				{
-					this._EndBattleTurn = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Warp", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public int Warp
-		{
-			get
-			{
-				return this._Warp;
-			}
-			set
-			{
-				if ((this._Warp != value))
-				{
-					this._Warp = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OrbitsObjectID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public System.Nullable<int> OrbitsObjectID
-		{
-			get
-			{
-				return this._OrbitsObjectID;
-			}
-			set
-			{
-				if ((this._OrbitsObjectID != value))
-				{
-					this._OrbitsObjectID = value;
-				}
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.BattleEvent")]
 	[global::System.Runtime.Serialization.DataContractAttribute()]
 	public partial class BattleEvent
@@ -909,883 +607,6 @@ namespace ZkData
 				if ((this._EventID != value))
 				{
 					this._EventID = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CelestialObject")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class CelestialObject
-	{
-		
-		private int _CelestialObjectID;
-		
-		private int _CelestialObjectType;
-		
-		private double _OrbitSpeed;
-		
-		private double _OrbitDistance;
-		
-		private double _OrbitInitialAngle;
-		
-		private System.Nullable<int> _ParentObject;
-		
-		private string _Name;
-		
-		private double _X;
-		
-		private double _Y;
-		
-		private double _MetalDensity;
-		
-		private double _FoodDensity;
-		
-		private double _QuantiumDensity;
-		
-		private double _DarkMatterDensity;
-		
-		private int _Size;
-		
-		private System.Nullable<int> _OwnerID;
-		
-		private bool _IsStargate;
-		
-		private int _Population;
-		
-		private double _HitpointsDamaged;
-		
-		private bool _IsConnected;
-		
-		private int _MaxPopulation;
-		
-		private double _MetalIncome;
-		
-		private double _FoodIncome;
-		
-		private double _QuantiumIncome;
-		
-		private double _DarkMatterIncome;
-		
-		private double _Efficiency;
-		
-		private double _Buildpower;
-		
-		private double _ResearchIncome;
-		
-		private double _BuildpowerUsed;
-		
-		private bool _CanBeRenamed;
-		
-		private bool _CanMapBeChanged;
-		
-		private string _MapName;
-		
-		public CelestialObject()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CelestialObjectID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int CelestialObjectID
-		{
-			get
-			{
-				return this._CelestialObjectID;
-			}
-			set
-			{
-				if ((this._CelestialObjectID != value))
-				{
-					this._CelestialObjectID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CelestialObjectType", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int CelestialObjectType
-		{
-			get
-			{
-				return this._CelestialObjectType;
-			}
-			set
-			{
-				if ((this._CelestialObjectType != value))
-				{
-					this._CelestialObjectType = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OrbitSpeed", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public double OrbitSpeed
-		{
-			get
-			{
-				return this._OrbitSpeed;
-			}
-			set
-			{
-				if ((this._OrbitSpeed != value))
-				{
-					this._OrbitSpeed = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OrbitDistance", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public double OrbitDistance
-		{
-			get
-			{
-				return this._OrbitDistance;
-			}
-			set
-			{
-				if ((this._OrbitDistance != value))
-				{
-					this._OrbitDistance = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OrbitInitialAngle", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public double OrbitInitialAngle
-		{
-			get
-			{
-				return this._OrbitInitialAngle;
-			}
-			set
-			{
-				if ((this._OrbitInitialAngle != value))
-				{
-					this._OrbitInitialAngle = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ParentObject", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public System.Nullable<int> ParentObject
-		{
-			get
-			{
-				return this._ParentObject;
-			}
-			set
-			{
-				if ((this._ParentObject != value))
-				{
-					this._ParentObject = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this._Name = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_X", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public double X
-		{
-			get
-			{
-				return this._X;
-			}
-			set
-			{
-				if ((this._X != value))
-				{
-					this._X = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Y", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public double Y
-		{
-			get
-			{
-				return this._Y;
-			}
-			set
-			{
-				if ((this._Y != value))
-				{
-					this._Y = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MetalDensity", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public double MetalDensity
-		{
-			get
-			{
-				return this._MetalDensity;
-			}
-			set
-			{
-				if ((this._MetalDensity != value))
-				{
-					this._MetalDensity = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FoodDensity", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public double FoodDensity
-		{
-			get
-			{
-				return this._FoodDensity;
-			}
-			set
-			{
-				if ((this._FoodDensity != value))
-				{
-					this._FoodDensity = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_QuantiumDensity", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
-		public double QuantiumDensity
-		{
-			get
-			{
-				return this._QuantiumDensity;
-			}
-			set
-			{
-				if ((this._QuantiumDensity != value))
-				{
-					this._QuantiumDensity = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DarkMatterDensity", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
-		public double DarkMatterDensity
-		{
-			get
-			{
-				return this._DarkMatterDensity;
-			}
-			set
-			{
-				if ((this._DarkMatterDensity != value))
-				{
-					this._DarkMatterDensity = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Size", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
-		public int Size
-		{
-			get
-			{
-				return this._Size;
-			}
-			set
-			{
-				if ((this._Size != value))
-				{
-					this._Size = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
-		public System.Nullable<int> OwnerID
-		{
-			get
-			{
-				return this._OwnerID;
-			}
-			set
-			{
-				if ((this._OwnerID != value))
-				{
-					this._OwnerID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsStargate", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
-		public bool IsStargate
-		{
-			get
-			{
-				return this._IsStargate;
-			}
-			set
-			{
-				if ((this._IsStargate != value))
-				{
-					this._IsStargate = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Population", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
-		public int Population
-		{
-			get
-			{
-				return this._Population;
-			}
-			set
-			{
-				if ((this._Population != value))
-				{
-					this._Population = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HitpointsDamaged", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
-		public double HitpointsDamaged
-		{
-			get
-			{
-				return this._HitpointsDamaged;
-			}
-			set
-			{
-				if ((this._HitpointsDamaged != value))
-				{
-					this._HitpointsDamaged = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsConnected", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
-		public bool IsConnected
-		{
-			get
-			{
-				return this._IsConnected;
-			}
-			set
-			{
-				if ((this._IsConnected != value))
-				{
-					this._IsConnected = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxPopulation", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
-		public int MaxPopulation
-		{
-			get
-			{
-				return this._MaxPopulation;
-			}
-			set
-			{
-				if ((this._MaxPopulation != value))
-				{
-					this._MaxPopulation = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MetalIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
-		public double MetalIncome
-		{
-			get
-			{
-				return this._MetalIncome;
-			}
-			set
-			{
-				if ((this._MetalIncome != value))
-				{
-					this._MetalIncome = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FoodIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
-		public double FoodIncome
-		{
-			get
-			{
-				return this._FoodIncome;
-			}
-			set
-			{
-				if ((this._FoodIncome != value))
-				{
-					this._FoodIncome = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_QuantiumIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
-		public double QuantiumIncome
-		{
-			get
-			{
-				return this._QuantiumIncome;
-			}
-			set
-			{
-				if ((this._QuantiumIncome != value))
-				{
-					this._QuantiumIncome = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DarkMatterIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
-		public double DarkMatterIncome
-		{
-			get
-			{
-				return this._DarkMatterIncome;
-			}
-			set
-			{
-				if ((this._DarkMatterIncome != value))
-				{
-					this._DarkMatterIncome = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Efficiency", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
-		public double Efficiency
-		{
-			get
-			{
-				return this._Efficiency;
-			}
-			set
-			{
-				if ((this._Efficiency != value))
-				{
-					this._Efficiency = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Buildpower", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
-		public double Buildpower
-		{
-			get
-			{
-				return this._Buildpower;
-			}
-			set
-			{
-				if ((this._Buildpower != value))
-				{
-					this._Buildpower = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResearchIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
-		public double ResearchIncome
-		{
-			get
-			{
-				return this._ResearchIncome;
-			}
-			set
-			{
-				if ((this._ResearchIncome != value))
-				{
-					this._ResearchIncome = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BuildpowerUsed", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
-		public double BuildpowerUsed
-		{
-			get
-			{
-				return this._BuildpowerUsed;
-			}
-			set
-			{
-				if ((this._BuildpowerUsed != value))
-				{
-					this._BuildpowerUsed = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanBeRenamed", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
-		public bool CanBeRenamed
-		{
-			get
-			{
-				return this._CanBeRenamed;
-			}
-			set
-			{
-				if ((this._CanBeRenamed != value))
-				{
-					this._CanBeRenamed = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanMapBeChanged", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
-		public bool CanMapBeChanged
-		{
-			get
-			{
-				return this._CanMapBeChanged;
-			}
-			set
-			{
-				if ((this._CanMapBeChanged != value))
-				{
-					this._CanMapBeChanged = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapName", DbType="VarChar(150)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31)]
-		public string MapName
-		{
-			get
-			{
-				return this._MapName;
-			}
-			set
-			{
-				if ((this._MapName != value))
-				{
-					this._MapName = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CelestialObjectEvent")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class CelestialObjectEvent
-	{
-		
-		private int _ObjectID;
-		
-		private int _EventID;
-		
-		public CelestialObjectEvent()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ObjectID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int ObjectID
-		{
-			get
-			{
-				return this._ObjectID;
-			}
-			set
-			{
-				if ((this._ObjectID != value))
-				{
-					this._ObjectID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int EventID
-		{
-			get
-			{
-				return this._EventID;
-			}
-			set
-			{
-				if ((this._EventID != value))
-				{
-					this._EventID = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CelestialObjectLink")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class CelestialObjectLink
-	{
-		
-		private int _FirstObjectID;
-		
-		private int _SecondObjectID;
-		
-		public CelestialObjectLink()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstObjectID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int FirstObjectID
-		{
-			get
-			{
-				return this._FirstObjectID;
-			}
-			set
-			{
-				if ((this._FirstObjectID != value))
-				{
-					this._FirstObjectID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SecondObjectID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int SecondObjectID
-		{
-			get
-			{
-				return this._SecondObjectID;
-			}
-			set
-			{
-				if ((this._SecondObjectID != value))
-				{
-					this._SecondObjectID = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CelestialObjectShip")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class CelestialObjectShip
-	{
-		
-		private int _CelestialObjectID;
-		
-		private int _ShipTypeID;
-		
-		private int _Count;
-		
-		public CelestialObjectShip()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CelestialObjectID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int CelestialObjectID
-		{
-			get
-			{
-				return this._CelestialObjectID;
-			}
-			set
-			{
-				if ((this._CelestialObjectID != value))
-				{
-					this._CelestialObjectID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ShipTypeID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int ShipTypeID
-		{
-			get
-			{
-				return this._ShipTypeID;
-			}
-			set
-			{
-				if ((this._ShipTypeID != value))
-				{
-					this._ShipTypeID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Count", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int Count
-		{
-			get
-			{
-				return this._Count;
-			}
-			set
-			{
-				if ((this._Count != value))
-				{
-					this._Count = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.CelestialObjectStructure")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class CelestialObjectStructure
-	{
-		
-		private int _CelestialObjectID;
-		
-		private int _StructureTypeID;
-		
-		private int _Count;
-		
-		public CelestialObjectStructure()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CelestialObjectID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int CelestialObjectID
-		{
-			get
-			{
-				return this._CelestialObjectID;
-			}
-			set
-			{
-				if ((this._CelestialObjectID != value))
-				{
-					this._CelestialObjectID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StructureTypeID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int StructureTypeID
-		{
-			get
-			{
-				return this._StructureTypeID;
-			}
-			set
-			{
-				if ((this._StructureTypeID != value))
-				{
-					this._StructureTypeID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Count", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int Count
-		{
-			get
-			{
-				return this._Count;
-			}
-			set
-			{
-				if ((this._Count != value))
-				{
-					this._Count = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Coalition")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Coalition
-	{
-		
-		private int _CoalitionID;
-		
-		private string _Name;
-		
-		public Coalition()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CoalitionID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int CoalitionID
-		{
-			get
-			{
-				return this._CoalitionID;
-			}
-			set
-			{
-				if ((this._CoalitionID != value))
-				{
-					this._CoalitionID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this._Name = value;
 				}
 			}
 		}
@@ -2215,121 +1036,6 @@ namespace ZkData
 				if ((this._CanPresidentControl != value))
 				{
 					this._CanPresidentControl = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.FleetEvent")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class FleetEvent
-	{
-		
-		private int _FleetID;
-		
-		private int _EventID;
-		
-		public FleetEvent()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FleetID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int FleetID
-		{
-			get
-			{
-				return this._FleetID;
-			}
-			set
-			{
-				if ((this._FleetID != value))
-				{
-					this._FleetID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int EventID
-		{
-			get
-			{
-				return this._EventID;
-			}
-			set
-			{
-				if ((this._EventID != value))
-				{
-					this._EventID = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.FleetShip")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class FleetShip
-	{
-		
-		private int _FleetID;
-		
-		private int _ShipTypeID;
-		
-		private int _Count;
-		
-		public FleetShip()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FleetID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int FleetID
-		{
-			get
-			{
-				return this._FleetID;
-			}
-			set
-			{
-				if ((this._FleetID != value))
-				{
-					this._FleetID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ShipTypeID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int ShipTypeID
-		{
-			get
-			{
-				return this._ShipTypeID;
-			}
-			set
-			{
-				if ((this._ShipTypeID != value))
-				{
-					this._ShipTypeID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Count", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int Count
-		{
-			get
-			{
-				return this._Count;
-			}
-			set
-			{
-				if ((this._Count != value))
-				{
-					this._Count = value;
 				}
 			}
 		}
@@ -3444,129 +2150,59 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MothershipStructure")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class MothershipStructure
-	{
-		
-		private int _PlayerID;
-		
-		private int _StructureTypeID;
-		
-		private int _Count;
-		
-		public MothershipStructure()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int PlayerID
-		{
-			get
-			{
-				return this._PlayerID;
-			}
-			set
-			{
-				if ((this._PlayerID != value))
-				{
-					this._PlayerID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StructureTypeID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int StructureTypeID
-		{
-			get
-			{
-				return this._StructureTypeID;
-			}
-			set
-			{
-				if ((this._StructureTypeID != value))
-				{
-					this._StructureTypeID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Count", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int Count
-		{
-			get
-			{
-				return this._Count;
-			}
-			set
-			{
-				if ((this._Count != value))
-				{
-					this._Count = value;
-				}
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Player")]
 	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Player
+	public partial class Player : INotifyPropertyChanging, INotifyPropertyChanged
 	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _PlayerID;
 		
-		private int _SystemID;
+		private System.Nullable<int> _SpringAccountID;
 		
-		private int _SpringAccountID;
+		private System.Nullable<int> _Credits;
 		
-		private bool _IsActive;
+		private System.Nullable<int> _ClanLeaderVotePlayerID;
 		
-		private string _MothershipName;
+		private System.Nullable<int> _ClanID;
 		
-		private System.Nullable<int> _TransitID;
+		private EntitySet<PlayerPlanet> _PlayerPlanets;
 		
-		private double _Credits;
+		private EntitySet<Clan> _Clans;
 		
-		private double _Metal;
+		private EntitySet<MarketOffer> _MarketOffersByPlayerID;
 		
-		private double _Food;
+		private EntitySet<MarketOffer> _MarketOffersByAcceptedPlayerID;
 		
-		private double _MetalIncome;
+		private EntityRef<Player> _ParentPlayer;
 		
-		private double _FoodIncome;
+		private EntityRef<Account> _Account;
 		
-		private int _Population;
+		private bool serializing;
 		
-		private int _PopulationCapacity;
-		
-		private double _Quantium;
-		
-		private double _QuantiumIncome;
-		
-		private double _DarkMatter;
-		
-		private double _DarkMatterIncome;
-		
-		private int _XP;
-		
-		private int _Level;
-		
-		private double _ResearchIncome;
-		
-		private double _ResearchPoints;
-		
-		private System.Nullable<int> _HomeworldID;
-		
-		private System.Nullable<int> _PresidentVote;
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPlayerIDChanging(int value);
+    partial void OnPlayerIDChanged();
+    partial void OnSpringAccountIDChanging(System.Nullable<int> value);
+    partial void OnSpringAccountIDChanged();
+    partial void OnCreditsChanging(System.Nullable<int> value);
+    partial void OnCreditsChanged();
+    partial void OnClanLeaderVotePlayerIDChanging(System.Nullable<int> value);
+    partial void OnClanLeaderVotePlayerIDChanged();
+    partial void OnClanIDChanging(System.Nullable<int> value);
+    partial void OnClanIDChanged();
+    #endregion
 		
 		public Player()
 		{
+			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
 		public int PlayerID
 		{
@@ -3578,31 +2214,18 @@ namespace ZkData
 			{
 				if ((this._PlayerID != value))
 				{
+					this.OnPlayerIDChanging(value);
+					this.SendPropertyChanging();
 					this._PlayerID = value;
+					this.SendPropertyChanged("PlayerID");
+					this.OnPlayerIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SystemID", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringAccountID", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int SystemID
-		{
-			get
-			{
-				return this._SystemID;
-			}
-			set
-			{
-				if ((this._SystemID != value))
-				{
-					this._SystemID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringAccountID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int SpringAccountID
+		public System.Nullable<int> SpringAccountID
 		{
 			get
 			{
@@ -3612,65 +2235,22 @@ namespace ZkData
 			{
 				if ((this._SpringAccountID != value))
 				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSpringAccountIDChanging(value);
+					this.SendPropertyChanging();
 					this._SpringAccountID = value;
+					this.SendPropertyChanged("SpringAccountID");
+					this.OnSpringAccountIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsActive", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public bool IsActive
-		{
-			get
-			{
-				return this._IsActive;
-			}
-			set
-			{
-				if ((this._IsActive != value))
-				{
-					this._IsActive = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MothershipName", DbType="NVarChar(100) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public string MothershipName
-		{
-			get
-			{
-				return this._MothershipName;
-			}
-			set
-			{
-				if ((this._MothershipName != value))
-				{
-					this._MothershipName = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TransitID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public System.Nullable<int> TransitID
-		{
-			get
-			{
-				return this._TransitID;
-			}
-			set
-			{
-				if ((this._TransitID != value))
-				{
-					this._TransitID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Credits", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public double Credits
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Credits", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public System.Nullable<int> Credits
 		{
 			get
 			{
@@ -3680,281 +2260,293 @@ namespace ZkData
 			{
 				if ((this._Credits != value))
 				{
+					this.OnCreditsChanging(value);
+					this.SendPropertyChanging();
 					this._Credits = value;
+					this.SendPropertyChanged("Credits");
+					this.OnCreditsChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Metal", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public double Metal
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanLeaderVotePlayerID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<int> ClanLeaderVotePlayerID
 		{
 			get
 			{
-				return this._Metal;
+				return this._ClanLeaderVotePlayerID;
 			}
 			set
 			{
-				if ((this._Metal != value))
+				if ((this._ClanLeaderVotePlayerID != value))
 				{
-					this._Metal = value;
+					if (this._ParentPlayer.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnClanLeaderVotePlayerIDChanging(value);
+					this.SendPropertyChanging();
+					this._ClanLeaderVotePlayerID = value;
+					this.SendPropertyChanged("ClanLeaderVotePlayerID");
+					this.OnClanLeaderVotePlayerIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Food", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public double Food
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public System.Nullable<int> ClanID
 		{
 			get
 			{
-				return this._Food;
+				return this._ClanID;
 			}
 			set
 			{
-				if ((this._Food != value))
+				if ((this._ClanID != value))
 				{
-					this._Food = value;
+					this.OnClanIDChanging(value);
+					this.SendPropertyChanging();
+					this._ClanID = value;
+					this.SendPropertyChanged("ClanID");
+					this.OnClanIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MetalIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public double MetalIncome
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_PlayerPlanet", Storage="_PlayerPlanets", ThisKey="PlayerID", OtherKey="PlayerID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		public EntitySet<PlayerPlanet> PlayerPlanets
 		{
 			get
 			{
-				return this._MetalIncome;
+				if ((this.serializing 
+							&& (this._PlayerPlanets.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlayerPlanets;
 			}
 			set
 			{
-				if ((this._MetalIncome != value))
+				this._PlayerPlanets.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_Clan", Storage="_Clans", ThisKey="PlayerID", OtherKey="LeaderPlayerID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		public EntitySet<Clan> Clans
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Clans.HasLoadedOrAssignedValues == false)))
 				{
-					this._MetalIncome = value;
+					return null;
+				}
+				return this._Clans;
+			}
+			set
+			{
+				this._Clans.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_MarketOffer", Storage="_MarketOffersByPlayerID", ThisKey="PlayerID", OtherKey="PlayerID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		public EntitySet<MarketOffer> MarketOffersByPlayerID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._MarketOffersByPlayerID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._MarketOffersByPlayerID;
+			}
+			set
+			{
+				this._MarketOffersByPlayerID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_MarketOffer1", Storage="_MarketOffersByAcceptedPlayerID", ThisKey="PlayerID", OtherKey="AcceptedPlayerID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		public EntitySet<MarketOffer> MarketOffersByAcceptedPlayerID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._MarketOffersByAcceptedPlayerID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._MarketOffersByAcceptedPlayerID;
+			}
+			set
+			{
+				this._MarketOffersByAcceptedPlayerID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_Player", Storage="_ParentPlayer", ThisKey="ClanLeaderVotePlayerID", OtherKey="PlayerID", IsForeignKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		public Player ParentPlayer
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ParentPlayer.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._ParentPlayer.Entity;
+			}
+			set
+			{
+				if ((this._ParentPlayer.Entity != value))
+				{
+					this.SendPropertyChanging();
+					this._ParentPlayer.Entity = value;
+					this.SendPropertyChanged("ParentPlayer");
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FoodIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public double FoodIncome
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Player", Storage="_Account", ThisKey="SpringAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
 		{
 			get
 			{
-				return this._FoodIncome;
+				return this._Account.Entity;
 			}
 			set
 			{
-				if ((this._FoodIncome != value))
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
 				{
-					this._FoodIncome = value;
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.Players.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.Players.Add(this);
+						this._SpringAccountID = value.AccountID;
+					}
+					else
+					{
+						this._SpringAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Account");
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Population", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
-		public int Population
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
 		{
-			get
+			if ((this.PropertyChanging != null))
 			{
-				return this._Population;
-			}
-			set
-			{
-				if ((this._Population != value))
-				{
-					this._Population = value;
-				}
+				this.PropertyChanging(this, emptyChangingEventArgs);
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PopulationCapacity", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
-		public int PopulationCapacity
+		protected virtual void SendPropertyChanged(String propertyName)
 		{
-			get
+			if ((this.PropertyChanged != null))
 			{
-				return this._PopulationCapacity;
-			}
-			set
-			{
-				if ((this._PopulationCapacity != value))
-				{
-					this._PopulationCapacity = value;
-				}
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantium", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
-		public double Quantium
+		private void attach_PlayerPlanets(PlayerPlanet entity)
 		{
-			get
-			{
-				return this._Quantium;
-			}
-			set
-			{
-				if ((this._Quantium != value))
-				{
-					this._Quantium = value;
-				}
-			}
+			this.SendPropertyChanging();
+			entity.Player = this;
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_QuantiumIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
-		public double QuantiumIncome
+		private void detach_PlayerPlanets(PlayerPlanet entity)
 		{
-			get
-			{
-				return this._QuantiumIncome;
-			}
-			set
-			{
-				if ((this._QuantiumIncome != value))
-				{
-					this._QuantiumIncome = value;
-				}
-			}
+			this.SendPropertyChanging();
+			entity.Player = null;
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DarkMatter", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
-		public double DarkMatter
+		private void attach_Clans(Clan entity)
 		{
-			get
-			{
-				return this._DarkMatter;
-			}
-			set
-			{
-				if ((this._DarkMatter != value))
-				{
-					this._DarkMatter = value;
-				}
-			}
+			this.SendPropertyChanging();
+			entity.Player = this;
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DarkMatterIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
-		public double DarkMatterIncome
+		private void detach_Clans(Clan entity)
 		{
-			get
-			{
-				return this._DarkMatterIncome;
-			}
-			set
-			{
-				if ((this._DarkMatterIncome != value))
-				{
-					this._DarkMatterIncome = value;
-				}
-			}
+			this.SendPropertyChanging();
+			entity.Player = null;
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_XP", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
-		public int XP
+		private void attach_MarketOffersByPlayerID(MarketOffer entity)
 		{
-			get
-			{
-				return this._XP;
-			}
-			set
-			{
-				if ((this._XP != value))
-				{
-					this._XP = value;
-				}
-			}
+			this.SendPropertyChanging();
+			entity.PlayerByPlayerID = this;
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Level]", Storage="_Level", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
-		public int Level
+		private void detach_MarketOffersByPlayerID(MarketOffer entity)
 		{
-			get
-			{
-				return this._Level;
-			}
-			set
-			{
-				if ((this._Level != value))
-				{
-					this._Level = value;
-				}
-			}
+			this.SendPropertyChanging();
+			entity.PlayerByPlayerID = null;
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResearchIncome", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
-		public double ResearchIncome
+		private void attach_MarketOffersByAcceptedPlayerID(MarketOffer entity)
 		{
-			get
-			{
-				return this._ResearchIncome;
-			}
-			set
-			{
-				if ((this._ResearchIncome != value))
-				{
-					this._ResearchIncome = value;
-				}
-			}
+			this.SendPropertyChanging();
+			entity.PlayerByAcceptedPlayerID = this;
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResearchPoints", DbType="Float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
-		public double ResearchPoints
+		private void detach_MarketOffersByAcceptedPlayerID(MarketOffer entity)
 		{
-			get
-			{
-				return this._ResearchPoints;
-			}
-			set
-			{
-				if ((this._ResearchPoints != value))
-				{
-					this._ResearchPoints = value;
-				}
-			}
+			this.SendPropertyChanging();
+			entity.PlayerByAcceptedPlayerID = null;
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HomeworldID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
-		public System.Nullable<int> HomeworldID
+		private void Initialize()
 		{
-			get
-			{
-				return this._HomeworldID;
-			}
-			set
-			{
-				if ((this._HomeworldID != value))
-				{
-					this._HomeworldID = value;
-				}
-			}
+			this._PlayerPlanets = new EntitySet<PlayerPlanet>(new Action<PlayerPlanet>(this.attach_PlayerPlanets), new Action<PlayerPlanet>(this.detach_PlayerPlanets));
+			this._Clans = new EntitySet<Clan>(new Action<Clan>(this.attach_Clans), new Action<Clan>(this.detach_Clans));
+			this._MarketOffersByPlayerID = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffersByPlayerID), new Action<MarketOffer>(this.detach_MarketOffersByPlayerID));
+			this._MarketOffersByAcceptedPlayerID = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffersByAcceptedPlayerID), new Action<MarketOffer>(this.detach_MarketOffersByAcceptedPlayerID));
+			this._ParentPlayer = default(EntityRef<Player>);
+			this._Account = default(EntityRef<Account>);
+			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PresidentVote", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
-		public System.Nullable<int> PresidentVote
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
 		{
-			get
-			{
-				return this._PresidentVote;
-			}
-			set
-			{
-				if ((this._PresidentVote != value))
-				{
-					this._PresidentVote = value;
-				}
-			}
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 	
@@ -4006,1112 +2598,6 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlayerTechSpent")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class PlayerTechSpent
-	{
-		
-		private int _PlayerID;
-		
-		private int _TechID;
-		
-		private int _SpentResearch;
-		
-		private int _SpentQuantium;
-		
-		public PlayerTechSpent()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int PlayerID
-		{
-			get
-			{
-				return this._PlayerID;
-			}
-			set
-			{
-				if ((this._PlayerID != value))
-				{
-					this._PlayerID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TechID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int TechID
-		{
-			get
-			{
-				return this._TechID;
-			}
-			set
-			{
-				if ((this._TechID != value))
-				{
-					this._TechID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpentResearch", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int SpentResearch
-		{
-			get
-			{
-				return this._SpentResearch;
-			}
-			set
-			{
-				if ((this._SpentResearch != value))
-				{
-					this._SpentResearch = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpentQuantium", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int SpentQuantium
-		{
-			get
-			{
-				return this._SpentQuantium;
-			}
-			set
-			{
-				if ((this._SpentQuantium != value))
-				{
-					this._SpentQuantium = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PopulationTransport")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class PopulationTransport
-	{
-		
-		private int _PopulationTransportID;
-		
-		private int _OwnerID;
-		
-		private int _TransitID;
-		
-		private int _Count;
-		
-		public PopulationTransport()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PopulationTransportID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int PopulationTransportID
-		{
-			get
-			{
-				return this._PopulationTransportID;
-			}
-			set
-			{
-				if ((this._PopulationTransportID != value))
-				{
-					this._PopulationTransportID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int OwnerID
-		{
-			get
-			{
-				return this._OwnerID;
-			}
-			set
-			{
-				if ((this._OwnerID != value))
-				{
-					this._OwnerID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TransitID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int TransitID
-		{
-			get
-			{
-				return this._TransitID;
-			}
-			set
-			{
-				if ((this._TransitID != value))
-				{
-					this._TransitID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Count", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int Count
-		{
-			get
-			{
-				return this._Count;
-			}
-			set
-			{
-				if ((this._Count != value))
-				{
-					this._Count = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Score")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Score
-	{
-		
-		private int _MissionID;
-		
-		private string _PlayerName;
-		
-		private int _Score1;
-		
-		private int _TimeSeconds;
-		
-		private string _IP;
-		
-		public Score()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissionID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int MissionID
-		{
-			get
-			{
-				return this._MissionID;
-			}
-			set
-			{
-				if ((this._MissionID != value))
-				{
-					this._MissionID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerName", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public string PlayerName
-		{
-			get
-			{
-				return this._PlayerName;
-			}
-			set
-			{
-				if ((this._PlayerName != value))
-				{
-					this._PlayerName = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="Score", Storage="_Score1", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int Score1
-		{
-			get
-			{
-				return this._Score1;
-			}
-			set
-			{
-				if ((this._Score1 != value))
-				{
-					this._Score1 = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TimeSeconds", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int TimeSeconds
-		{
-			get
-			{
-				return this._TimeSeconds;
-			}
-			set
-			{
-				if ((this._TimeSeconds != value))
-				{
-					this._TimeSeconds = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IP", DbType="VarChar(20) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public string IP
-		{
-			get
-			{
-				return this._IP;
-			}
-			set
-			{
-				if ((this._IP != value))
-				{
-					this._IP = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ShipType")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class ShipType
-	{
-		
-		private int _ShipTypeID;
-		
-		private int _Class;
-		
-		private int _LaserDamage;
-		
-		private int _MissileDamage;
-		
-		private int _BombDamage;
-		
-		private string _Name;
-		
-		private string _Shortcut;
-		
-		private System.Nullable<int> _NeedsTechID;
-		
-		private int _MetalCost;
-		
-		private int _Hitpoints;
-		
-		private int _QuantiumCost;
-		
-		private int _DarkMetalCost;
-		
-		private bool _IsInterdictor;
-		
-		private bool _IsStealthy;
-		
-		public ShipType()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ShipTypeID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int ShipTypeID
-		{
-			get
-			{
-				return this._ShipTypeID;
-			}
-			set
-			{
-				if ((this._ShipTypeID != value))
-				{
-					this._ShipTypeID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Class", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int Class
-		{
-			get
-			{
-				return this._Class;
-			}
-			set
-			{
-				if ((this._Class != value))
-				{
-					this._Class = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LaserDamage", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int LaserDamage
-		{
-			get
-			{
-				return this._LaserDamage;
-			}
-			set
-			{
-				if ((this._LaserDamage != value))
-				{
-					this._LaserDamage = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissileDamage", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int MissileDamage
-		{
-			get
-			{
-				return this._MissileDamage;
-			}
-			set
-			{
-				if ((this._MissileDamage != value))
-				{
-					this._MissileDamage = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BombDamage", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public int BombDamage
-		{
-			get
-			{
-				return this._BombDamage;
-			}
-			set
-			{
-				if ((this._BombDamage != value))
-				{
-					this._BombDamage = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this._Name = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Shortcut", DbType="VarChar(20) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public string Shortcut
-		{
-			get
-			{
-				return this._Shortcut;
-			}
-			set
-			{
-				if ((this._Shortcut != value))
-				{
-					this._Shortcut = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NeedsTechID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public System.Nullable<int> NeedsTechID
-		{
-			get
-			{
-				return this._NeedsTechID;
-			}
-			set
-			{
-				if ((this._NeedsTechID != value))
-				{
-					this._NeedsTechID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MetalCost", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public int MetalCost
-		{
-			get
-			{
-				return this._MetalCost;
-			}
-			set
-			{
-				if ((this._MetalCost != value))
-				{
-					this._MetalCost = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Hitpoints", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public int Hitpoints
-		{
-			get
-			{
-				return this._Hitpoints;
-			}
-			set
-			{
-				if ((this._Hitpoints != value))
-				{
-					this._Hitpoints = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_QuantiumCost", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public int QuantiumCost
-		{
-			get
-			{
-				return this._QuantiumCost;
-			}
-			set
-			{
-				if ((this._QuantiumCost != value))
-				{
-					this._QuantiumCost = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DarkMetalCost", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
-		public int DarkMetalCost
-		{
-			get
-			{
-				return this._DarkMetalCost;
-			}
-			set
-			{
-				if ((this._DarkMetalCost != value))
-				{
-					this._DarkMetalCost = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsInterdictor", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
-		public bool IsInterdictor
-		{
-			get
-			{
-				return this._IsInterdictor;
-			}
-			set
-			{
-				if ((this._IsInterdictor != value))
-				{
-					this._IsInterdictor = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsStealthy", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
-		public bool IsStealthy
-		{
-			get
-			{
-				return this._IsStealthy;
-			}
-			set
-			{
-				if ((this._IsStealthy != value))
-				{
-					this._IsStealthy = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StarSystem")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class StarSystem
-	{
-		
-		private int _SystemID;
-		
-		private int _HomeStarID;
-		
-		private string _Name;
-		
-		private System.Nullable<int> _PresidentID;
-		
-		private System.Nullable<int> _CoalitionID;
-		
-		public StarSystem()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SystemID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int SystemID
-		{
-			get
-			{
-				return this._SystemID;
-			}
-			set
-			{
-				if ((this._SystemID != value))
-				{
-					this._SystemID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HomeStarID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int HomeStarID
-		{
-			get
-			{
-				return this._HomeStarID;
-			}
-			set
-			{
-				if ((this._HomeStarID != value))
-				{
-					this._HomeStarID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="NVarChar(200) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this._Name = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PresidentID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public System.Nullable<int> PresidentID
-		{
-			get
-			{
-				return this._PresidentID;
-			}
-			set
-			{
-				if ((this._PresidentID != value))
-				{
-					this._PresidentID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CoalitionID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public System.Nullable<int> CoalitionID
-		{
-			get
-			{
-				return this._CoalitionID;
-			}
-			set
-			{
-				if ((this._CoalitionID != value))
-				{
-					this._CoalitionID = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StarSystemTech")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class StarSystemTech
-	{
-		
-		private int _StarSystemID;
-		
-		private int _TechID;
-		
-		public StarSystemTech()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StarSystemID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int StarSystemID
-		{
-			get
-			{
-				return this._StarSystemID;
-			}
-			set
-			{
-				if ((this._StarSystemID != value))
-				{
-					this._StarSystemID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TechID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int TechID
-		{
-			get
-			{
-				return this._TechID;
-			}
-			set
-			{
-				if ((this._TechID != value))
-				{
-					this._TechID = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StructureType")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class StructureType
-	{
-		
-		private int _StructureTypeID;
-		
-		private string _Name;
-		
-		private int _CostMetal;
-		
-		private int _MakesMetal;
-		
-		private int _MakesFood;
-		
-		private int _BuildsMetal;
-		
-		private int _MakesPeople;
-		
-		private int _NeedsPeople;
-		
-		private int _StoresPeople;
-		
-		private System.Nullable<int> _NeedsTechID;
-		
-		private int _HitPoints;
-		
-		private int _MakesResearch;
-		
-		private int _LaserDamage;
-		
-		private int _MissileDamage;
-		
-		public StructureType()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StructureTypeID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int StructureTypeID
-		{
-			get
-			{
-				return this._StructureTypeID;
-			}
-			set
-			{
-				if ((this._StructureTypeID != value))
-				{
-					this._StructureTypeID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(100) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this._Name = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostMetal", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int CostMetal
-		{
-			get
-			{
-				return this._CostMetal;
-			}
-			set
-			{
-				if ((this._CostMetal != value))
-				{
-					this._CostMetal = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MakesMetal", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int MakesMetal
-		{
-			get
-			{
-				return this._MakesMetal;
-			}
-			set
-			{
-				if ((this._MakesMetal != value))
-				{
-					this._MakesMetal = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MakesFood", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public int MakesFood
-		{
-			get
-			{
-				return this._MakesFood;
-			}
-			set
-			{
-				if ((this._MakesFood != value))
-				{
-					this._MakesFood = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BuildsMetal", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public int BuildsMetal
-		{
-			get
-			{
-				return this._BuildsMetal;
-			}
-			set
-			{
-				if ((this._BuildsMetal != value))
-				{
-					this._BuildsMetal = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MakesPeople", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public int MakesPeople
-		{
-			get
-			{
-				return this._MakesPeople;
-			}
-			set
-			{
-				if ((this._MakesPeople != value))
-				{
-					this._MakesPeople = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NeedsPeople", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public int NeedsPeople
-		{
-			get
-			{
-				return this._NeedsPeople;
-			}
-			set
-			{
-				if ((this._NeedsPeople != value))
-				{
-					this._NeedsPeople = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StoresPeople", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public int StoresPeople
-		{
-			get
-			{
-				return this._StoresPeople;
-			}
-			set
-			{
-				if ((this._StoresPeople != value))
-				{
-					this._StoresPeople = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NeedsTechID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public System.Nullable<int> NeedsTechID
-		{
-			get
-			{
-				return this._NeedsTechID;
-			}
-			set
-			{
-				if ((this._NeedsTechID != value))
-				{
-					this._NeedsTechID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HitPoints", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public int HitPoints
-		{
-			get
-			{
-				return this._HitPoints;
-			}
-			set
-			{
-				if ((this._HitPoints != value))
-				{
-					this._HitPoints = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MakesResearch", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
-		public int MakesResearch
-		{
-			get
-			{
-				return this._MakesResearch;
-			}
-			set
-			{
-				if ((this._MakesResearch != value))
-				{
-					this._MakesResearch = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LaserDamage", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
-		public int LaserDamage
-		{
-			get
-			{
-				return this._LaserDamage;
-			}
-			set
-			{
-				if ((this._LaserDamage != value))
-				{
-					this._LaserDamage = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MissileDamage", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
-		public int MissileDamage
-		{
-			get
-			{
-				return this._MissileDamage;
-			}
-			set
-			{
-				if ((this._MissileDamage != value))
-				{
-					this._MissileDamage = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Tech")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Tech
-	{
-		
-		private int _TechID;
-		
-		private string _Name;
-		
-		private string _Description;
-		
-		private System.Nullable<int> _NeedsTechID;
-		
-		private int _CostResearch;
-		
-		private int _CostQuantium;
-		
-		public Tech()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TechID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int TechID
-		{
-			get
-			{
-				return this._TechID;
-			}
-			set
-			{
-				if ((this._TechID != value))
-				{
-					this._TechID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="VarChar(200) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this._Name = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="VarChar(500) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public string Description
-		{
-			get
-			{
-				return this._Description;
-			}
-			set
-			{
-				if ((this._Description != value))
-				{
-					this._Description = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NeedsTechID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public System.Nullable<int> NeedsTechID
-		{
-			get
-			{
-				return this._NeedsTechID;
-			}
-			set
-			{
-				if ((this._NeedsTechID != value))
-				{
-					this._NeedsTechID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostResearch", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public int CostResearch
-		{
-			get
-			{
-				return this._CostResearch;
-			}
-			set
-			{
-				if ((this._CostResearch != value))
-				{
-					this._CostResearch = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CostQuantium", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public int CostQuantium
-		{
-			get
-			{
-				return this._CostQuantium;
-			}
-			set
-			{
-				if ((this._CostQuantium != value))
-				{
-					this._CostQuantium = value;
-				}
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Account")]
 	[global::System.Runtime.Serialization.DataContractAttribute()]
 	public partial class Account : INotifyPropertyChanging, INotifyPropertyChanged
@@ -5152,6 +2638,8 @@ namespace ZkData
 		private int _Level;
 		
 		private EntitySet<Mission> _Missions;
+		
+		private EntitySet<Player> _Players;
 		
 		private EntitySet<LobbyMessage> _LobbyMessagesBySourceAccountID;
 		
@@ -5448,11 +2936,7 @@ namespace ZkData
 		{
 			get
 			{
-                if (this._Country == "??")
-                {
-                    return "unknown";
-                }else
-                return this._Country;
+				return this._Country;
 			}
 			set
 			{
@@ -5591,8 +3075,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage", Storage="_LobbyMessagesBySourceAccountID", ThisKey="AccountID", OtherKey="SourceAccountID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Player", Storage="_Players", ThisKey="AccountID", OtherKey="SpringAccountID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		public EntitySet<Player> Players
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Players.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Players;
+			}
+			set
+			{
+				this._Players.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage", Storage="_LobbyMessagesBySourceAccountID", ThisKey="AccountID", OtherKey="SourceAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<LobbyMessage> LobbyMessagesBySourceAccountID
 		{
 			get
@@ -5611,7 +3114,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage1", Storage="_LobbyMessagesByTargetAccountID", ThisKey="AccountID", OtherKey="TargetAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<LobbyMessage> LobbyMessagesByTargetAccountID
 		{
 			get
@@ -5630,7 +3133,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread", Storage="_ForumThreadsByCreatedAccountID", ThisKey="AccountID", OtherKey="CreatedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByCreatedAccountID
 		{
 			get
@@ -5649,7 +3152,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread1", Storage="_ForumThreadsByLastPostAccountID", ThisKey="AccountID", OtherKey="LastPostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByLastPostAccountID
 		{
 			get
@@ -5668,7 +3171,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Resource", Storage="_Resources", ThisKey="AccountID", OtherKey="TaggedByAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<Resource> Resources
 		{
 			get
@@ -5687,7 +3190,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MissionScore", Storage="_MissionScores", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -5706,7 +3209,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Rating", Storage="_Ratings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
 		public EntitySet<Rating> Ratings
 		{
 			get
@@ -5725,7 +3228,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPost", Storage="_ForumPosts", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -5744,7 +3247,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MapRating", Storage="_MapRatings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
 		public EntitySet<MapRating> MapRatings
 		{
 			get
@@ -5763,7 +3266,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattle", Storage="_SpringBattles", ThisKey="AccountID", OtherKey="HostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
 		public EntitySet<SpringBattle> SpringBattles
 		{
 			get
@@ -5782,7 +3285,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -5801,7 +3304,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
 		public EntitySet<ForumThreadLastRead> ForumThreadLastReads
 		{
 			get
@@ -5820,7 +3323,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleAward> AccountBattleAwards
 		{
 			get
@@ -5839,7 +3342,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleStat", Storage="_AccountBattleStats", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleStat> AccountBattleStats
 		{
 			get
@@ -5858,7 +3361,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountUnlock", Storage="_AccountUnlocks", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -5877,7 +3380,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Commanders", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
 		public EntitySet<Commander> Commanders
 		{
 			get
@@ -5896,7 +3399,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PollVote", Storage="_PollVotes", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
 		public EntitySet<PollVote> PollVotes
 		{
 			get
@@ -5941,6 +3444,18 @@ namespace ZkData
 		}
 		
 		private void detach_Missions(Mission entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
+		private void attach_Players(Player entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_Players(Player entity)
 		{
 			this.SendPropertyChanging();
 			entity.Account = null;
@@ -6153,6 +3668,7 @@ namespace ZkData
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
+			this._Players = new EntitySet<Player>(new Action<Player>(this.attach_Players), new Action<Player>(this.detach_Players));
 			this._LobbyMessagesBySourceAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesBySourceAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesBySourceAccountID));
 			this._LobbyMessagesByTargetAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesByTargetAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesByTargetAccountID));
 			this._ForumThreadsByCreatedAccountID = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreadsByCreatedAccountID), new Action<ForumThread>(this.detach_ForumThreadsByCreatedAccountID));
@@ -12388,8 +9904,6 @@ namespace ZkData
 		
 		private EntitySet<Commander> _Commanders;
 		
-		private EntitySet<CommanderModule> _CommanderModules;
-		
 		private EntityRef<Unlock> _ParentUnlock;
 		
 		private bool serializing;
@@ -12811,25 +10325,6 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_CommanderModules", ThisKey="UnlockID", OtherKey="ModuleUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
-		public EntitySet<CommanderModule> CommanderModules
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._CommanderModules.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._CommanderModules;
-			}
-			set
-			{
-				this._CommanderModules.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ParentUnlock", ThisKey="RequiredUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
 		public Unlock ParentUnlock
 		{
@@ -12920,24 +10415,11 @@ namespace ZkData
 			entity.Unlock = null;
 		}
 		
-		private void attach_CommanderModules(CommanderModule entity)
-		{
-			this.SendPropertyChanging();
-			entity.Unlock = this;
-		}
-		
-		private void detach_CommanderModules(CommanderModule entity)
-		{
-			this.SendPropertyChanging();
-			entity.Unlock = null;
-		}
-		
 		private void Initialize()
 		{
 			this._ChildUnlocks = new EntitySet<Unlock>(new Action<Unlock>(this.attach_ChildUnlocks), new Action<Unlock>(this.detach_ChildUnlocks));
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
 			this._Commanders = new EntitySet<Commander>(new Action<Commander>(this.attach_Commanders), new Action<Commander>(this.detach_Commanders));
-			this._CommanderModules = new EntitySet<CommanderModule>(new Action<CommanderModule>(this.attach_CommanderModules), new Action<CommanderModule>(this.detach_CommanderModules));
 			this._ParentUnlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
@@ -13169,73 +10651,6 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.SpringBattleRating")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class SpringBattleRating
-	{
-		
-		private int _SpringBattleID;
-		
-		private int _AccountID;
-		
-		private int _Rating;
-		
-		public SpringBattleRating()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int SpringBattleID
-		{
-			get
-			{
-				return this._SpringBattleID;
-			}
-			set
-			{
-				if ((this._SpringBattleID != value))
-				{
-					this._SpringBattleID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int AccountID
-		{
-			get
-			{
-				return this._AccountID;
-			}
-			set
-			{
-				if ((this._AccountID != value))
-				{
-					this._AccountID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rating", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int Rating
-		{
-			get
-			{
-				return this._Rating;
-			}
-			set
-			{
-				if ((this._Rating != value))
-				{
-					this._Rating = value;
-				}
-			}
 		}
 	}
 	
@@ -13560,8 +10975,6 @@ namespace ZkData
 		
 		private int _SlotID;
 		
-		private EntityRef<Unlock> _Unlock;
-		
 		private EntityRef<Commander> _Commander;
 		
 		private EntityRef<CommanderSlot> _CommanderSlot;
@@ -13620,10 +11033,6 @@ namespace ZkData
 			{
 				if ((this._ModuleUnlockID != value))
 				{
-					if (this._Unlock.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnModuleUnlockIDChanging(value);
 					this.SendPropertyChanging();
 					this._ModuleUnlockID = value;
@@ -13654,40 +11063,6 @@ namespace ZkData
 					this._SlotID = value;
 					this.SendPropertyChanged("SlotID");
 					this.OnSlotIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_Unlock", ThisKey="ModuleUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
-		public Unlock Unlock
-		{
-			get
-			{
-				return this._Unlock.Entity;
-			}
-			set
-			{
-				Unlock previousValue = this._Unlock.Entity;
-				if (((previousValue != value) 
-							|| (this._Unlock.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Unlock.Entity = null;
-						previousValue.CommanderModules.Remove(this);
-					}
-					this._Unlock.Entity = value;
-					if ((value != null))
-					{
-						value.CommanderModules.Add(this);
-						this._ModuleUnlockID = value.UnlockID;
-					}
-					else
-					{
-						this._ModuleUnlockID = default(int);
-					}
-					this.SendPropertyChanged("Unlock");
 				}
 			}
 		}
@@ -13782,7 +11157,6 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			this._Unlock = default(EntityRef<Unlock>);
 			this._Commander = default(EntityRef<Commander>);
 			this._CommanderSlot = default(EntityRef<CommanderSlot>);
 			OnCreated();
@@ -14645,6 +12019,1933 @@ namespace ZkData
 		public void OnSerialized(StreamingContext context)
 		{
 			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TreatyOffer")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class TreatyOffer : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _OfferingClanID;
+		
+		private int _TargetClanID;
+		
+		private bool _IsCeaseFire;
+		
+		private bool _IsResearchAgreement;
+		
+		private bool _IsMilitaryAccess;
+		
+		private EntityRef<Clan> _ClanByOfferingClanID;
+		
+		private EntityRef<Clan> _ClanByTargetClanID;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnOfferingClanIDChanging(int value);
+    partial void OnOfferingClanIDChanged();
+    partial void OnTargetClanIDChanging(int value);
+    partial void OnTargetClanIDChanged();
+    partial void OnIsCeaseFireChanging(bool value);
+    partial void OnIsCeaseFireChanged();
+    partial void OnIsResearchAgreementChanging(bool value);
+    partial void OnIsResearchAgreementChanged();
+    partial void OnIsMilitaryAccessChanging(bool value);
+    partial void OnIsMilitaryAccessChanged();
+    #endregion
+		
+		public TreatyOffer()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OfferingClanID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int OfferingClanID
+		{
+			get
+			{
+				return this._OfferingClanID;
+			}
+			set
+			{
+				if ((this._OfferingClanID != value))
+				{
+					if (this._ClanByOfferingClanID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnOfferingClanIDChanging(value);
+					this.SendPropertyChanging();
+					this._OfferingClanID = value;
+					this.SendPropertyChanged("OfferingClanID");
+					this.OnOfferingClanIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TargetClanID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int TargetClanID
+		{
+			get
+			{
+				return this._TargetClanID;
+			}
+			set
+			{
+				if ((this._TargetClanID != value))
+				{
+					if (this._ClanByTargetClanID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTargetClanIDChanging(value);
+					this.SendPropertyChanging();
+					this._TargetClanID = value;
+					this.SendPropertyChanged("TargetClanID");
+					this.OnTargetClanIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsCeaseFire", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public bool IsCeaseFire
+		{
+			get
+			{
+				return this._IsCeaseFire;
+			}
+			set
+			{
+				if ((this._IsCeaseFire != value))
+				{
+					this.OnIsCeaseFireChanging(value);
+					this.SendPropertyChanging();
+					this._IsCeaseFire = value;
+					this.SendPropertyChanged("IsCeaseFire");
+					this.OnIsCeaseFireChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsResearchAgreement", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool IsResearchAgreement
+		{
+			get
+			{
+				return this._IsResearchAgreement;
+			}
+			set
+			{
+				if ((this._IsResearchAgreement != value))
+				{
+					this.OnIsResearchAgreementChanging(value);
+					this.SendPropertyChanging();
+					this._IsResearchAgreement = value;
+					this.SendPropertyChanged("IsResearchAgreement");
+					this.OnIsResearchAgreementChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsMilitaryAccess", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public bool IsMilitaryAccess
+		{
+			get
+			{
+				return this._IsMilitaryAccess;
+			}
+			set
+			{
+				if ((this._IsMilitaryAccess != value))
+				{
+					this.OnIsMilitaryAccessChanging(value);
+					this.SendPropertyChanging();
+					this._IsMilitaryAccess = value;
+					this.SendPropertyChanged("IsMilitaryAccess");
+					this.OnIsMilitaryAccessChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_ClanByOfferingClanID", ThisKey="OfferingClanID", OtherKey="ClanID", IsForeignKey=true)]
+		public Clan ClanByOfferingClanID
+		{
+			get
+			{
+				return this._ClanByOfferingClanID.Entity;
+			}
+			set
+			{
+				Clan previousValue = this._ClanByOfferingClanID.Entity;
+				if (((previousValue != value) 
+							|| (this._ClanByOfferingClanID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ClanByOfferingClanID.Entity = null;
+						previousValue.TreatyOffersByOfferingClanID.Remove(this);
+					}
+					this._ClanByOfferingClanID.Entity = value;
+					if ((value != null))
+					{
+						value.TreatyOffersByOfferingClanID.Add(this);
+						this._OfferingClanID = value.ClanID;
+					}
+					else
+					{
+						this._OfferingClanID = default(int);
+					}
+					this.SendPropertyChanged("ClanByOfferingClanID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_ClanByTargetClanID", ThisKey="TargetClanID", OtherKey="ClanID", IsForeignKey=true)]
+		public Clan ClanByTargetClanID
+		{
+			get
+			{
+				return this._ClanByTargetClanID.Entity;
+			}
+			set
+			{
+				Clan previousValue = this._ClanByTargetClanID.Entity;
+				if (((previousValue != value) 
+							|| (this._ClanByTargetClanID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ClanByTargetClanID.Entity = null;
+						previousValue.TreatyOffersByTargetClanID.Remove(this);
+					}
+					this._ClanByTargetClanID.Entity = value;
+					if ((value != null))
+					{
+						value.TreatyOffersByTargetClanID.Add(this);
+						this._TargetClanID = value.ClanID;
+					}
+					else
+					{
+						this._TargetClanID = default(int);
+					}
+					this.SendPropertyChanged("ClanByTargetClanID");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._ClanByOfferingClanID = default(EntityRef<Clan>);
+			this._ClanByTargetClanID = default(EntityRef<Clan>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Link")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class Link : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _PlanetID1;
+		
+		private int _PlanetID2;
+		
+		private EntityRef<Planet> _PlanetByPlanetID1;
+		
+		private EntityRef<Planet> _PlanetByPlanetID2;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPlanetID1Changing(int value);
+    partial void OnPlanetID1Changed();
+    partial void OnPlanetID2Changing(int value);
+    partial void OnPlanetID2Changed();
+    #endregion
+		
+		public Link()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID1", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int PlanetID1
+		{
+			get
+			{
+				return this._PlanetID1;
+			}
+			set
+			{
+				if ((this._PlanetID1 != value))
+				{
+					if (this._PlanetByPlanetID1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetID1Changing(value);
+					this.SendPropertyChanging();
+					this._PlanetID1 = value;
+					this.SendPropertyChanged("PlanetID1");
+					this.OnPlanetID1Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID2", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int PlanetID2
+		{
+			get
+			{
+				return this._PlanetID2;
+			}
+			set
+			{
+				if ((this._PlanetID2 != value))
+				{
+					if (this._PlanetByPlanetID2.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetID2Changing(value);
+					this.SendPropertyChanging();
+					this._PlanetID2 = value;
+					this.SendPropertyChanged("PlanetID2");
+					this.OnPlanetID2Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link", Storage="_PlanetByPlanetID1", ThisKey="PlanetID1", OtherKey="PlanetID", IsForeignKey=true)]
+		public Planet PlanetByPlanetID1
+		{
+			get
+			{
+				return this._PlanetByPlanetID1.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._PlanetByPlanetID1.Entity;
+				if (((previousValue != value) 
+							|| (this._PlanetByPlanetID1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PlanetByPlanetID1.Entity = null;
+						previousValue.LinksByPlanetID1.Remove(this);
+					}
+					this._PlanetByPlanetID1.Entity = value;
+					if ((value != null))
+					{
+						value.LinksByPlanetID1.Add(this);
+						this._PlanetID1 = value.PlanetID;
+					}
+					else
+					{
+						this._PlanetID1 = default(int);
+					}
+					this.SendPropertyChanged("PlanetByPlanetID1");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link1", Storage="_PlanetByPlanetID2", ThisKey="PlanetID2", OtherKey="PlanetID", IsForeignKey=true)]
+		public Planet PlanetByPlanetID2
+		{
+			get
+			{
+				return this._PlanetByPlanetID2.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._PlanetByPlanetID2.Entity;
+				if (((previousValue != value) 
+							|| (this._PlanetByPlanetID2.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PlanetByPlanetID2.Entity = null;
+						previousValue.LinksByPlanetID2.Remove(this);
+					}
+					this._PlanetByPlanetID2.Entity = value;
+					if ((value != null))
+					{
+						value.LinksByPlanetID2.Add(this);
+						this._PlanetID2 = value.PlanetID;
+					}
+					else
+					{
+						this._PlanetID2 = default(int);
+					}
+					this.SendPropertyChanged("PlanetByPlanetID2");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._PlanetByPlanetID1 = default(EntityRef<Planet>);
+			this._PlanetByPlanetID2 = default(EntityRef<Planet>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlayerPlanet")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class PlayerPlanet : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _PlanetID;
+		
+		private int _PlayerID;
+		
+		private int _DropshipCount;
+		
+		private int _Influence;
+		
+		private EntityRef<Planet> _Planet;
+		
+		private EntityRef<Player> _Player;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnPlayerIDChanging(int value);
+    partial void OnPlayerIDChanged();
+    partial void OnDropshipCountChanging(int value);
+    partial void OnDropshipCountChanged();
+    partial void OnInfluenceChanging(int value);
+    partial void OnInfluenceChanged();
+    #endregion
+		
+		public PlayerPlanet()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					if (this._Planet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int PlayerID
+		{
+			get
+			{
+				return this._PlayerID;
+			}
+			set
+			{
+				if ((this._PlayerID != value))
+				{
+					if (this._Player.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlayerIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlayerID = value;
+					this.SendPropertyChanged("PlayerID");
+					this.OnPlayerIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipCount", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int DropshipCount
+		{
+			get
+			{
+				return this._DropshipCount;
+			}
+			set
+			{
+				if ((this._DropshipCount != value))
+				{
+					this.OnDropshipCountChanging(value);
+					this.SendPropertyChanging();
+					this._DropshipCount = value;
+					this.SendPropertyChanged("DropshipCount");
+					this.OnDropshipCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Influence", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public int Influence
+		{
+			get
+			{
+				return this._Influence;
+			}
+			set
+			{
+				if ((this._Influence != value))
+				{
+					this.OnInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._Influence = value;
+					this.SendPropertyChanged("Influence");
+					this.OnInfluenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlayerPlanet", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true)]
+		public Planet Planet
+		{
+			get
+			{
+				return this._Planet.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._Planet.Entity;
+				if (((previousValue != value) 
+							|| (this._Planet.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Planet.Entity = null;
+						previousValue.PlayerPlanets.Remove(this);
+					}
+					this._Planet.Entity = value;
+					if ((value != null))
+					{
+						value.PlayerPlanets.Add(this);
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("Planet");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_PlayerPlanet", Storage="_Player", ThisKey="PlayerID", OtherKey="PlayerID", IsForeignKey=true)]
+		public Player Player
+		{
+			get
+			{
+				return this._Player.Entity;
+			}
+			set
+			{
+				Player previousValue = this._Player.Entity;
+				if (((previousValue != value) 
+							|| (this._Player.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Player.Entity = null;
+						previousValue.PlayerPlanets.Remove(this);
+					}
+					this._Player.Entity = value;
+					if ((value != null))
+					{
+						value.PlayerPlanets.Add(this);
+						this._PlayerID = value.PlayerID;
+					}
+					else
+					{
+						this._PlayerID = default(int);
+					}
+					this.SendPropertyChanged("Player");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Planet = default(EntityRef<Planet>);
+			this._Player = default(EntityRef<Player>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Clan")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class Clan : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ClanID;
+		
+		private int _LeaderPlayerID;
+		
+		private string _ClanName;
+		
+		private string _Image;
+		
+		private string _Description;
+		
+		private string _Password;
+		
+		private EntitySet<TreatyOffer> _TreatyOffersByOfferingClanID;
+		
+		private EntitySet<TreatyOffer> _TreatyOffersByTargetClanID;
+		
+		private EntityRef<Player> _Player;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnClanIDChanging(int value);
+    partial void OnClanIDChanged();
+    partial void OnLeaderPlayerIDChanging(int value);
+    partial void OnLeaderPlayerIDChanged();
+    partial void OnClanNameChanging(string value);
+    partial void OnClanNameChanged();
+    partial void OnImageChanging(string value);
+    partial void OnImageChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
+    #endregion
+		
+		public Clan()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ClanID
+		{
+			get
+			{
+				return this._ClanID;
+			}
+			set
+			{
+				if ((this._ClanID != value))
+				{
+					this.OnClanIDChanging(value);
+					this.SendPropertyChanging();
+					this._ClanID = value;
+					this.SendPropertyChanged("ClanID");
+					this.OnClanIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LeaderPlayerID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int LeaderPlayerID
+		{
+			get
+			{
+				return this._LeaderPlayerID;
+			}
+			set
+			{
+				if ((this._LeaderPlayerID != value))
+				{
+					if (this._Player.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnLeaderPlayerIDChanging(value);
+					this.SendPropertyChanging();
+					this._LeaderPlayerID = value;
+					this.SendPropertyChanged("LeaderPlayerID");
+					this.OnLeaderPlayerIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanName", DbType="varchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public string ClanName
+		{
+			get
+			{
+				return this._ClanName;
+			}
+			set
+			{
+				if ((this._ClanName != value))
+				{
+					this.OnClanNameChanging(value);
+					this.SendPropertyChanging();
+					this._ClanName = value;
+					this.SendPropertyChanged("ClanName");
+					this.OnClanNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="varchar(250)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string Image
+		{
+			get
+			{
+				return this._Image;
+			}
+			set
+			{
+				if ((this._Image != value))
+				{
+					this.OnImageChanging(value);
+					this.SendPropertyChanging();
+					this._Image = value;
+					this.SendPropertyChanged("Image");
+					this.OnImageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="varchar(500)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="varchar(20)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		public EntitySet<TreatyOffer> TreatyOffersByOfferingClanID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._TreatyOffersByOfferingClanID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._TreatyOffersByOfferingClanID;
+			}
+			set
+			{
+				this._TreatyOffersByOfferingClanID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_TreatyOffersByTargetClanID", ThisKey="ClanID", OtherKey="TargetClanID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		public EntitySet<TreatyOffer> TreatyOffersByTargetClanID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._TreatyOffersByTargetClanID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._TreatyOffersByTargetClanID;
+			}
+			set
+			{
+				this._TreatyOffersByTargetClanID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_Clan", Storage="_Player", ThisKey="LeaderPlayerID", OtherKey="PlayerID", IsForeignKey=true)]
+		public Player Player
+		{
+			get
+			{
+				return this._Player.Entity;
+			}
+			set
+			{
+				Player previousValue = this._Player.Entity;
+				if (((previousValue != value) 
+							|| (this._Player.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Player.Entity = null;
+						previousValue.Clans.Remove(this);
+					}
+					this._Player.Entity = value;
+					if ((value != null))
+					{
+						value.Clans.Add(this);
+						this._LeaderPlayerID = value.PlayerID;
+					}
+					else
+					{
+						this._LeaderPlayerID = default(int);
+					}
+					this.SendPropertyChanged("Player");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_TreatyOffersByOfferingClanID(TreatyOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.ClanByOfferingClanID = this;
+		}
+		
+		private void detach_TreatyOffersByOfferingClanID(TreatyOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.ClanByOfferingClanID = null;
+		}
+		
+		private void attach_TreatyOffersByTargetClanID(TreatyOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.ClanByTargetClanID = this;
+		}
+		
+		private void detach_TreatyOffersByTargetClanID(TreatyOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.ClanByTargetClanID = null;
+		}
+		
+		private void Initialize()
+		{
+			this._TreatyOffersByOfferingClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByOfferingClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByOfferingClanID));
+			this._TreatyOffersByTargetClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByTargetClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByTargetClanID));
+			this._Player = default(EntityRef<Player>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Planet")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class Planet : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _PlanetID;
+		
+		private string _PlanetName;
+		
+		private double _X1;
+		
+		private double _Y1;
+		
+		private double _X2;
+		
+		private double _Y2;
+		
+		private string _PlanetMap;
+		
+		private int _DefenseLevel;
+		
+		private int _MineLevel;
+		
+		private bool _HasMine;
+		
+		private string _UnlocksUnit;
+		
+		private string _BotList;
+		
+		private System.Nullable<int> _OwnerPlayerID;
+		
+		private EntitySet<Link> _LinksByPlanetID1;
+		
+		private EntitySet<Link> _LinksByPlanetID2;
+		
+		private EntitySet<PlayerPlanet> _PlayerPlanets;
+		
+		private EntitySet<MarketOffer> _MarketOffers;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnPlanetNameChanging(string value);
+    partial void OnPlanetNameChanged();
+    partial void OnX1Changing(double value);
+    partial void OnX1Changed();
+    partial void OnY1Changing(double value);
+    partial void OnY1Changed();
+    partial void OnX2Changing(double value);
+    partial void OnX2Changed();
+    partial void OnY2Changing(double value);
+    partial void OnY2Changed();
+    partial void OnPlanetMapChanging(string value);
+    partial void OnPlanetMapChanged();
+    partial void OnDefenseLevelChanging(int value);
+    partial void OnDefenseLevelChanged();
+    partial void OnMineLevelChanging(int value);
+    partial void OnMineLevelChanged();
+    partial void OnHasMineChanging(bool value);
+    partial void OnHasMineChanged();
+    partial void OnUnlocksUnitChanging(string value);
+    partial void OnUnlocksUnitChanged();
+    partial void OnBotListChanging(string value);
+    partial void OnBotListChanged();
+    partial void OnOwnerPlayerIDChanging(System.Nullable<int> value);
+    partial void OnOwnerPlayerIDChanged();
+    #endregion
+		
+		public Planet()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetName", DbType="varchar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string PlanetName
+		{
+			get
+			{
+				return this._PlanetName;
+			}
+			set
+			{
+				if ((this._PlanetName != value))
+				{
+					this.OnPlanetNameChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetName = value;
+					this.SendPropertyChanged("PlanetName");
+					this.OnPlanetNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_X1", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public double X1
+		{
+			get
+			{
+				return this._X1;
+			}
+			set
+			{
+				if ((this._X1 != value))
+				{
+					this.OnX1Changing(value);
+					this.SendPropertyChanging();
+					this._X1 = value;
+					this.SendPropertyChanged("X1");
+					this.OnX1Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Y1", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public double Y1
+		{
+			get
+			{
+				return this._Y1;
+			}
+			set
+			{
+				if ((this._Y1 != value))
+				{
+					this.OnY1Changing(value);
+					this.SendPropertyChanging();
+					this._Y1 = value;
+					this.SendPropertyChanged("Y1");
+					this.OnY1Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_X2", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public double X2
+		{
+			get
+			{
+				return this._X2;
+			}
+			set
+			{
+				if ((this._X2 != value))
+				{
+					this.OnX2Changing(value);
+					this.SendPropertyChanging();
+					this._X2 = value;
+					this.SendPropertyChanged("X2");
+					this.OnX2Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Y2", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public double Y2
+		{
+			get
+			{
+				return this._Y2;
+			}
+			set
+			{
+				if ((this._Y2 != value))
+				{
+					this.OnY2Changing(value);
+					this.SendPropertyChanging();
+					this._Y2 = value;
+					this.SendPropertyChanged("Y2");
+					this.OnY2Changed();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetMap", DbType="varchar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public string PlanetMap
+		{
+			get
+			{
+				return this._PlanetMap;
+			}
+			set
+			{
+				if ((this._PlanetMap != value))
+				{
+					this.OnPlanetMapChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetMap = value;
+					this.SendPropertyChanged("PlanetMap");
+					this.OnPlanetMapChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DefenseLevel", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public int DefenseLevel
+		{
+			get
+			{
+				return this._DefenseLevel;
+			}
+			set
+			{
+				if ((this._DefenseLevel != value))
+				{
+					this.OnDefenseLevelChanging(value);
+					this.SendPropertyChanging();
+					this._DefenseLevel = value;
+					this.SendPropertyChanged("DefenseLevel");
+					this.OnDefenseLevelChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MineLevel", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public int MineLevel
+		{
+			get
+			{
+				return this._MineLevel;
+			}
+			set
+			{
+				if ((this._MineLevel != value))
+				{
+					this.OnMineLevelChanging(value);
+					this.SendPropertyChanging();
+					this._MineLevel = value;
+					this.SendPropertyChanged("MineLevel");
+					this.OnMineLevelChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HasMine", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public bool HasMine
+		{
+			get
+			{
+				return this._HasMine;
+			}
+			set
+			{
+				if ((this._HasMine != value))
+				{
+					this.OnHasMineChanging(value);
+					this.SendPropertyChanging();
+					this._HasMine = value;
+					this.SendPropertyChanged("HasMine");
+					this.OnHasMineChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlocksUnit", DbType="varchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public string UnlocksUnit
+		{
+			get
+			{
+				return this._UnlocksUnit;
+			}
+			set
+			{
+				if ((this._UnlocksUnit != value))
+				{
+					this.OnUnlocksUnitChanging(value);
+					this.SendPropertyChanging();
+					this._UnlocksUnit = value;
+					this.SendPropertyChanged("UnlocksUnit");
+					this.OnUnlocksUnitChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BotList", DbType="varchar(250)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public string BotList
+		{
+			get
+			{
+				return this._BotList;
+			}
+			set
+			{
+				if ((this._BotList != value))
+				{
+					this.OnBotListChanging(value);
+					this.SendPropertyChanging();
+					this._BotList = value;
+					this.SendPropertyChanged("BotList");
+					this.OnBotListChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerPlayerID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public System.Nullable<int> OwnerPlayerID
+		{
+			get
+			{
+				return this._OwnerPlayerID;
+			}
+			set
+			{
+				if ((this._OwnerPlayerID != value))
+				{
+					this.OnOwnerPlayerIDChanging(value);
+					this.SendPropertyChanging();
+					this._OwnerPlayerID = value;
+					this.SendPropertyChanged("OwnerPlayerID");
+					this.OnOwnerPlayerIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link", Storage="_LinksByPlanetID1", ThisKey="PlanetID", OtherKey="PlanetID1")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		public EntitySet<Link> LinksByPlanetID1
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._LinksByPlanetID1.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._LinksByPlanetID1;
+			}
+			set
+			{
+				this._LinksByPlanetID1.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link1", Storage="_LinksByPlanetID2", ThisKey="PlanetID", OtherKey="PlanetID2")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		public EntitySet<Link> LinksByPlanetID2
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._LinksByPlanetID2.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._LinksByPlanetID2;
+			}
+			set
+			{
+				this._LinksByPlanetID2.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlayerPlanet", Storage="_PlayerPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		public EntitySet<PlayerPlanet> PlayerPlanets
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PlayerPlanets.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlayerPlanets;
+			}
+			set
+			{
+				this._PlayerPlanets.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_MarketOffer", Storage="_MarketOffers", ThisKey="PlanetID", OtherKey="PlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		public EntitySet<MarketOffer> MarketOffers
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._MarketOffers.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._MarketOffers;
+			}
+			set
+			{
+				this._MarketOffers.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_LinksByPlanetID1(Link entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlanetByPlanetID1 = this;
+		}
+		
+		private void detach_LinksByPlanetID1(Link entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlanetByPlanetID1 = null;
+		}
+		
+		private void attach_LinksByPlanetID2(Link entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlanetByPlanetID2 = this;
+		}
+		
+		private void detach_LinksByPlanetID2(Link entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlanetByPlanetID2 = null;
+		}
+		
+		private void attach_PlayerPlanets(PlayerPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = this;
+		}
+		
+		private void detach_PlayerPlanets(PlayerPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = null;
+		}
+		
+		private void attach_MarketOffers(MarketOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = this;
+		}
+		
+		private void detach_MarketOffers(MarketOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = null;
+		}
+		
+		private void Initialize()
+		{
+			this._LinksByPlanetID1 = new EntitySet<Link>(new Action<Link>(this.attach_LinksByPlanetID1), new Action<Link>(this.detach_LinksByPlanetID1));
+			this._LinksByPlanetID2 = new EntitySet<Link>(new Action<Link>(this.attach_LinksByPlanetID2), new Action<Link>(this.detach_LinksByPlanetID2));
+			this._PlayerPlanets = new EntitySet<PlayerPlanet>(new Action<PlayerPlanet>(this.attach_PlayerPlanets), new Action<PlayerPlanet>(this.detach_PlayerPlanets));
+			this._MarketOffers = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffers), new Action<MarketOffer>(this.detach_MarketOffers));
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.MarketOffer")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class MarketOffer : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _OfferID;
+		
+		private int _PlayerID;
+		
+		private int _PlanetID;
+		
+		private int _Quantity;
+		
+		private int _Price;
+		
+		private bool _IsSell;
+		
+		private System.Nullable<System.DateTime> _DatePlaced;
+		
+		private System.Nullable<System.DateTime> _DateAccepted;
+		
+		private System.Nullable<int> _AcceptedPlayerID;
+		
+		private EntityRef<Player> _PlayerByPlayerID;
+		
+		private EntityRef<Planet> _Planet;
+		
+		private EntityRef<Player> _PlayerByAcceptedPlayerID;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnOfferIDChanging(int value);
+    partial void OnOfferIDChanged();
+    partial void OnPlayerIDChanging(int value);
+    partial void OnPlayerIDChanged();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnQuantityChanging(int value);
+    partial void OnQuantityChanged();
+    partial void OnPriceChanging(int value);
+    partial void OnPriceChanged();
+    partial void OnIsSellChanging(bool value);
+    partial void OnIsSellChanged();
+    partial void OnDatePlacedChanging(System.Nullable<System.DateTime> value);
+    partial void OnDatePlacedChanged();
+    partial void OnDateAcceptedChanging(System.Nullable<System.DateTime> value);
+    partial void OnDateAcceptedChanged();
+    partial void OnAcceptedPlayerIDChanging(System.Nullable<int> value);
+    partial void OnAcceptedPlayerIDChanged();
+    #endregion
+		
+		public MarketOffer()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OfferID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int OfferID
+		{
+			get
+			{
+				return this._OfferID;
+			}
+			set
+			{
+				if ((this._OfferID != value))
+				{
+					this.OnOfferIDChanging(value);
+					this.SendPropertyChanging();
+					this._OfferID = value;
+					this.SendPropertyChanged("OfferID");
+					this.OnOfferIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int PlayerID
+		{
+			get
+			{
+				return this._PlayerID;
+			}
+			set
+			{
+				if ((this._PlayerID != value))
+				{
+					if (this._PlayerByPlayerID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlayerIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlayerID = value;
+					this.SendPropertyChanged("PlayerID");
+					this.OnPlayerIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					if (this._Planet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Quantity", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public int Quantity
+		{
+			get
+			{
+				return this._Quantity;
+			}
+			set
+			{
+				if ((this._Quantity != value))
+				{
+					this.OnQuantityChanging(value);
+					this.SendPropertyChanging();
+					this._Quantity = value;
+					this.SendPropertyChanged("Quantity");
+					this.OnQuantityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Price", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public int Price
+		{
+			get
+			{
+				return this._Price;
+			}
+			set
+			{
+				if ((this._Price != value))
+				{
+					this.OnPriceChanging(value);
+					this.SendPropertyChanging();
+					this._Price = value;
+					this.SendPropertyChanged("Price");
+					this.OnPriceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSell", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public bool IsSell
+		{
+			get
+			{
+				return this._IsSell;
+			}
+			set
+			{
+				if ((this._IsSell != value))
+				{
+					this.OnIsSellChanging(value);
+					this.SendPropertyChanging();
+					this._IsSell = value;
+					this.SendPropertyChanged("IsSell");
+					this.OnIsSellChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DatePlaced", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public System.Nullable<System.DateTime> DatePlaced
+		{
+			get
+			{
+				return this._DatePlaced;
+			}
+			set
+			{
+				if ((this._DatePlaced != value))
+				{
+					this.OnDatePlacedChanging(value);
+					this.SendPropertyChanging();
+					this._DatePlaced = value;
+					this.SendPropertyChanged("DatePlaced");
+					this.OnDatePlacedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DateAccepted", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<System.DateTime> DateAccepted
+		{
+			get
+			{
+				return this._DateAccepted;
+			}
+			set
+			{
+				if ((this._DateAccepted != value))
+				{
+					this.OnDateAcceptedChanging(value);
+					this.SendPropertyChanging();
+					this._DateAccepted = value;
+					this.SendPropertyChanged("DateAccepted");
+					this.OnDateAcceptedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AcceptedPlayerID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<int> AcceptedPlayerID
+		{
+			get
+			{
+				return this._AcceptedPlayerID;
+			}
+			set
+			{
+				if ((this._AcceptedPlayerID != value))
+				{
+					if (this._PlayerByAcceptedPlayerID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAcceptedPlayerIDChanging(value);
+					this.SendPropertyChanging();
+					this._AcceptedPlayerID = value;
+					this.SendPropertyChanged("AcceptedPlayerID");
+					this.OnAcceptedPlayerIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_MarketOffer", Storage="_PlayerByPlayerID", ThisKey="PlayerID", OtherKey="PlayerID", IsForeignKey=true)]
+		public Player PlayerByPlayerID
+		{
+			get
+			{
+				return this._PlayerByPlayerID.Entity;
+			}
+			set
+			{
+				Player previousValue = this._PlayerByPlayerID.Entity;
+				if (((previousValue != value) 
+							|| (this._PlayerByPlayerID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PlayerByPlayerID.Entity = null;
+						previousValue.MarketOffersByPlayerID.Remove(this);
+					}
+					this._PlayerByPlayerID.Entity = value;
+					if ((value != null))
+					{
+						value.MarketOffersByPlayerID.Add(this);
+						this._PlayerID = value.PlayerID;
+					}
+					else
+					{
+						this._PlayerID = default(int);
+					}
+					this.SendPropertyChanged("PlayerByPlayerID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_MarketOffer", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true)]
+		public Planet Planet
+		{
+			get
+			{
+				return this._Planet.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._Planet.Entity;
+				if (((previousValue != value) 
+							|| (this._Planet.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Planet.Entity = null;
+						previousValue.MarketOffers.Remove(this);
+					}
+					this._Planet.Entity = value;
+					if ((value != null))
+					{
+						value.MarketOffers.Add(this);
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("Planet");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_MarketOffer1", Storage="_PlayerByAcceptedPlayerID", ThisKey="AcceptedPlayerID", OtherKey="PlayerID", IsForeignKey=true)]
+		public Player PlayerByAcceptedPlayerID
+		{
+			get
+			{
+				return this._PlayerByAcceptedPlayerID.Entity;
+			}
+			set
+			{
+				Player previousValue = this._PlayerByAcceptedPlayerID.Entity;
+				if (((previousValue != value) 
+							|| (this._PlayerByAcceptedPlayerID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PlayerByAcceptedPlayerID.Entity = null;
+						previousValue.MarketOffersByAcceptedPlayerID.Remove(this);
+					}
+					this._PlayerByAcceptedPlayerID.Entity = value;
+					if ((value != null))
+					{
+						value.MarketOffersByAcceptedPlayerID.Add(this);
+						this._AcceptedPlayerID = value.PlayerID;
+					}
+					else
+					{
+						this._AcceptedPlayerID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("PlayerByAcceptedPlayerID");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._PlayerByPlayerID = default(EntityRef<Player>);
+			this._Planet = default(EntityRef<Planet>);
+			this._PlayerByAcceptedPlayerID = default(EntityRef<Player>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
 		}
 	}
 }
