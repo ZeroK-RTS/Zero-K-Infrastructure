@@ -165,7 +165,7 @@ namespace System.Web.Mvc
             }
 
 
-    	return new MvcHtmlString(string.Format("<a href='{0}'>{5} B{1}</a> {2} on {3} ({4})", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), battletypeimg, icon));
+    	return new MvcHtmlString(string.Format("<a href='{0}'>{5} {4} B{1}</a> {2} on {3}", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), battletypeimg, icon));
     }
 
 
