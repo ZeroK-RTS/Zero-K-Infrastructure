@@ -146,26 +146,21 @@ namespace System.Web.Mvc
 			icon = string.Format("<img src='/img/battles/{0}'/>", icon);
 
     	var battle = battlePlayer.SpringBattle;
-        var battletypeimg = "";
         
-			if (battle.IsMission) icon += " <img src='/img/battles/mission.png' />";
-			if (battle.HasBots) icon += " <img src='/img/battles/robot.png' />";
+			if (battle.IsMission) icon += " <img src='/img/battles/mission.png' alt='Misson' />";
+            if (battle.HasBots) icon += " <img src='/img/battles/robot.png' alt='Bots' />";
             
             if (battle.BattleType == "Multiplayer")
             {
-                battletypeimg = "<img src='/img/battles/multiplayer.png' alt='Multiplayer' />";
+                icon += " <img src='/img/battles/multiplayer.png' alt='Multiplayer' />";
             }
             else if (battle.BattleType == "Singleplayer")
             {
-                battletypeimg = "<img src='/img/battles/singleplayer.png' alt='Singleplayer' />";
-            }
-            else
-            {
-                battletypeimg = "";
+                icon += " <img src='/img/battles/singleplayer.png' alt='Singleplayer' />";
             }
 
 
-    	return new MvcHtmlString(string.Format("<a href='{0}'>{5} {4} B{1}</a> {2} on {3}", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), battletypeimg, icon));
+    	return new MvcHtmlString(string.Format("<a href='{0}'>{4} B{1}</a> {2} on {3}", url.Action("Detail", "Battles", new { id = battle.SpringBattleID }), battle.SpringBattleID, battle.PlayerCount, PrintMap(helper, battle.ResourceByMapResourceID.InternalName), icon));
     }
 
 
