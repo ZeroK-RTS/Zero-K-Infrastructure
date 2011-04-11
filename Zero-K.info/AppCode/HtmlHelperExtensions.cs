@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -147,7 +147,7 @@ namespace System.Web.Mvc
 
     	var battle = battlePlayer.SpringBattle;
         
-			if (battle.IsMission) icon += " <img src='/img/battles/mission.png' alt='Misson' />";
+			if (battle.IsMission) icon += " <img src='/img/battles/mission.png' alt='Mission' />";
             if (battle.HasBots) icon += " <img src='/img/battles/robot.png' alt='Bots' />";
             
             if (battle.BattleType == "Multiplayer")
