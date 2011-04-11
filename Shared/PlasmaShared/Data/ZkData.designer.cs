@@ -9904,6 +9904,8 @@ namespace ZkData
 		
 		private EntitySet<Commander> _Commanders;
 		
+		private EntitySet<CommanderModule> _CommanderModules;
+		
 		private EntityRef<Unlock> _ParentUnlock;
 		
 		private bool serializing;
@@ -10325,6 +10327,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_CommanderModules", ThisKey="UnlockID", OtherKey="ModuleUnlockID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		public EntitySet<CommanderModule> CommanderModules
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._CommanderModules.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._CommanderModules;
+			}
+			set
+			{
+				this._CommanderModules.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ParentUnlock", ThisKey="RequiredUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
 		public Unlock ParentUnlock
 		{
@@ -10415,11 +10436,24 @@ namespace ZkData
 			entity.Unlock = null;
 		}
 		
+		private void attach_CommanderModules(CommanderModule entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = this;
+		}
+		
+		private void detach_CommanderModules(CommanderModule entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = null;
+		}
+		
 		private void Initialize()
 		{
 			this._ChildUnlocks = new EntitySet<Unlock>(new Action<Unlock>(this.attach_ChildUnlocks), new Action<Unlock>(this.detach_ChildUnlocks));
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
 			this._Commanders = new EntitySet<Commander>(new Action<Commander>(this.attach_Commanders), new Action<Commander>(this.detach_Commanders));
+			this._CommanderModules = new EntitySet<CommanderModule>(new Action<CommanderModule>(this.attach_CommanderModules), new Action<CommanderModule>(this.detach_CommanderModules));
 			this._ParentUnlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
@@ -10979,6 +11013,8 @@ namespace ZkData
 		
 		private EntityRef<CommanderSlot> _CommanderSlot;
 		
+		private EntityRef<Unlock> _Unlock;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -11033,6 +11069,10 @@ namespace ZkData
 			{
 				if ((this._ModuleUnlockID != value))
 				{
+					if (this._Unlock.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnModuleUnlockIDChanging(value);
 					this.SendPropertyChanging();
 					this._ModuleUnlockID = value;
@@ -11135,6 +11175,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_Unlock", ThisKey="ModuleUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
+		public Unlock Unlock
+		{
+			get
+			{
+				return this._Unlock.Entity;
+			}
+			set
+			{
+				Unlock previousValue = this._Unlock.Entity;
+				if (((previousValue != value) 
+							|| (this._Unlock.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Unlock.Entity = null;
+						previousValue.CommanderModules.Remove(this);
+					}
+					this._Unlock.Entity = value;
+					if ((value != null))
+					{
+						value.CommanderModules.Add(this);
+						this._ModuleUnlockID = value.UnlockID;
+					}
+					else
+					{
+						this._ModuleUnlockID = default(int);
+					}
+					this.SendPropertyChanged("Unlock");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -11159,6 +11233,7 @@ namespace ZkData
 		{
 			this._Commander = default(EntityRef<Commander>);
 			this._CommanderSlot = default(EntityRef<CommanderSlot>);
+			this._Unlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
 		

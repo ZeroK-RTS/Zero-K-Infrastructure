@@ -420,6 +420,7 @@
       <Association Name="Unlock_Unlock" Member="ChildUnlocks" ThisKey="UnlockID" OtherKey="RequiredUnlockID" Type="Unlock" />
       <Association Name="Unlock_AccountUnlock" Member="AccountUnlocks" ThisKey="UnlockID" OtherKey="UnlockID" Type="AccountUnlock" />
       <Association Name="Unlock_Commander" Member="Commanders" ThisKey="UnlockID" OtherKey="ChassisUnlockID" Type="Commander" />
+      <Association Name="Unlock_CommanderModule" Member="CommanderModules" ThisKey="UnlockID" OtherKey="ModuleUnlockID" Type="CommanderModule" />
       <Association Name="Unlock_Unlock" Member="ParentUnlock" ThisKey="RequiredUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
     </Type>
   </Table>
@@ -451,6 +452,7 @@
       <Column Name="SlotID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Association Name="Commander_CommanderModule" Member="Commander" ThisKey="CommanderID" OtherKey="CommanderID" Type="Commander" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="CommanderSlot_CommanderModule" Member="CommanderSlot" ThisKey="SlotID" OtherKey="CommanderSlotID" Type="CommanderSlot" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Unlock_CommanderModule" Member="Unlock" ThisKey="ModuleUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.CommanderSlot" Member="CommanderSlots">
