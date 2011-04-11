@@ -148,20 +148,20 @@ namespace System.Web.Mvc
     	var battle = battlePlayer.SpringBattle;
         var battletypeimg = "";
         
-			if (battle.IsMission) icon += "<img src='/img/battles/mission.png'/>";
-			if (battle.HasBots) icon += "<img src='/img/battles/robot.png'/>";
+			if (battle.IsMission) icon += " <img src='/img/battles/mission.png' />";
+			if (battle.HasBots) icon += " <img src='/img/battles/robot.png' />";
             
             if (battle.BattleType == "Multiplayer")
             {
-                battletypeimg = "<img src='/img/battles/multiplayer.png' />";
+                battletypeimg = "<img src='/img/battles/multiplayer.png' alt='Multiplayer' />";
             }
             else if (battle.BattleType == "Singleplayer")
             {
-                battletypeimg = "<img src='/img/battles/singleplayer.png' />";
+                battletypeimg = "<img src='/img/battles/singleplayer.png' alt='Singleplayer' />";
             }
             else
             {
-                battletypeimg = battle.BattleType;
+                battletypeimg = "";
             }
 
 
