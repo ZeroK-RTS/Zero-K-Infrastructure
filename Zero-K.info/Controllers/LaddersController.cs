@@ -13,7 +13,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /Ladders/
-				[OutputCache(Duration = 3600*2, VaryByCustom = GlobalConst.LobbyAccessCookieName)]  // cache for 2 hours - different look for lobby and for normal
+		[OutputCache(Duration = 3600*2, VaryByCustom = GlobalConst.LobbyAccessCookieName)]  // cache for 2 hours - different look for lobby and for normal
         public ActionResult Index()
         {
                 var db = new ZkDataContext();
@@ -78,7 +78,10 @@ namespace ZeroKWeb.Controllers
                     awardItems.Add(awardItem);
                 }
 
-                return View("Ladders", awardItems);
+                var top50Accounts = db.Accounts.OrderByDescending(x => x.Elo).Take(50);
+
+                var ladderModel = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts };
+                return View("Ladders", ladderModel);
         }
  
         public class AwardItem
@@ -88,8 +91,13 @@ namespace ZeroKWeb.Controllers
             public string TopScoreDesc;
             public List<Account> TopCollectors;
             public int TopCollectorCount;
-        		public SpringBattlePlayer TopScoreBattlePlayer;
+        	public SpringBattlePlayer TopScoreBattlePlayer;
             public Account TopScoreHolder;
+        }
+        public class LadderModel
+        {
+            public List<AwardItem> AwardItems;
+            public IQueryable<Account> Top50Accounts;
         }
 
     }

@@ -1,32 +1,61 @@
-﻿@model List<ZeroKWeb.Controllers.LaddersController.AwardItem>
+﻿@model ZeroKWeb.Controllers.LaddersController.LadderModel
 @{
-  Page.Title = "Award ladders";  
+    Page.Title = "Award ladders";
+    var awardItems = Model.AwardItems;
+    var top50Players = Model.Top50Accounts;
+    var playerIndex = 1;
 }
+
+
+<h2>Top 50 Players</h2>
+<br />
+
+
+@foreach (var acct in top50Players)
+{
+    @playerIndex
+    @:)
+    playerIndex++;
+    @Html.PrintAccount(acct); <br />
+}
+
+<br />
 
 <h2>Awards Hall of Fame</h2>
 <br />
 
-@foreach (var awardItem in Model)
+@foreach (var awardItem in awardItems)
 {   
-    <div style="height:60px; ">
-        <span title="@awardItem.AwardTitle">
-            <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(awardItem.AwardType).png" height="30" alt="@awardItem.AwardType" />
-        </span>
-        <span style="left:65px; position:absolute; vertical-align:top; ">
-            <div>
-                Top Collector(s): <span style="color:cyan;">
-                @foreach (var collector in awardItem.TopCollectors) {
-                  @Html.PrintAccount(collector)
-                  @:, 
-                }
-                </span> - <span style="color:lightgreen; ">@awardItem.TopCollectorCount</span> collected
-            </div>
-
-            <div>
-                Top Score: <span style="color:cyan;">@Html.PrintAccount(awardItem.TopScoreHolder)</span> - <span style="color:lightgreen; ">@awardItem.TopScoreDesc</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayer)
-            </div>
+    <div style="height:60px;  ">
+        <div style="width:60px; position:absolute; " >
+            <span title="@awardItem.AwardTitle">
+                <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(awardItem.AwardType).png" height="30" alt="@awardItem.AwardType" />
+            </span>
+        </div>
         
-        </span>
+            <div style="position:absolute; left:70px; " >
+                <div>
+                    Top Collector(s): 
+                    @{var first = true; }
+                    @foreach (var collector in awardItem.TopCollectors)
+                    {   
+                        if(!first)
+                        {
+                            @:,
+                        }
+                        first = false;
+                        @Html.PrintAccount(collector)
+                    
+                    }
+                    - <span style="color:lightgreen; ">@awardItem.TopCollectorCount</span> collected
+                </div>
+                <div>
+
+                    Top Score: @Html.PrintAccount(awardItem.TopScoreHolder) - <span style="color:lightgreen; ">@awardItem.TopScoreDesc</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayer)
+                </div>
+            </div>
+            
+        
         
     </div>
 }
