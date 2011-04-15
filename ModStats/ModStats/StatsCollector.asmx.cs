@@ -34,60 +34,65 @@ namespace ModStats
 		[WebMethod]
 		public void SubmitGameEx(string gameIDString, string mod, string map, List<string> data)
 		{
-			if (Global.Db.Games.Any(x => x.SpringGameIDString == gameIDString)) return; // data for this game already submitted
+			using (var db = new ModStatsLinqDataContext()) {
+				//db.ObjectTrackingEnabled = false;
+				db.CommandTimeout = 120;
+				if (db.Games.Any(x => x.SpringGameIDString == gameIDString)) return; // data for this game already submitted
 
-			Game game = new Game();
-			game.SpringGameIDString = gameIDString;
-			game.Mod = mod;
-			game.Created = DateTime.UtcNow;
-			game.IP = GetUserIP();
-			game.Map = map;
+				Game game = new Game();
+				game.SpringGameIDString = gameIDString;
+				game.Mod = mod;
+				game.Created = DateTime.UtcNow;
+				game.IP = GetUserIP();
+				game.Map = map;
 
-			string bname;
-			double version;
-			Global.ExtractNameAndVersion(mod, out bname, out version);
-			game.Version = version;
+				string bname;
+				double version;
+				Global.ExtractNameAndVersion(mod, out bname, out version);
+				game.Version = version;
 
 
-			Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-			Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+				Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+				Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
 
-			foreach (string line in data) {
-				string[] parts = line.Split(',');
-				switch (parts[0]) {
-					case "teams":
-						game.Players = Convert.ToInt32(parts[1]);
-						game.Teams = Convert.ToInt32(parts[2]);
-						break;
+				foreach (string line in data) {
+					string[] parts = line.Split(',');
+					switch (parts[0]) {
+						case "teams":
+							game.Players = Convert.ToInt32(parts[1]);
+							game.Teams = Convert.ToInt32(parts[2]);
+							break;
 
-					case "unit":
-						Unit unit = new Unit();
-						unit.Unit1 = parts[1];
-						unit.Cost = Convert.ToInt32(parts[2]);
-						unit.Created = Convert.ToInt32(parts[3]);
-						unit.Destroyed = Convert.ToInt32(parts[4]);
-						unit.Health = Convert.ToInt32(parts[5]);
-						game.Units.Add(unit);
-						break;
+						case "unit":
+							Unit unit = new Unit();
+							unit.Unit1 = parts[1];
+							unit.Cost = Convert.ToInt32(parts[2]);
+							unit.Created = Convert.ToInt32(parts[3]);
+							unit.Destroyed = Convert.ToInt32(parts[4]);
+							unit.Health = Convert.ToInt32(parts[5]);
+							game.Units.Add(unit);
+							break;
 
-					case "dmg":
-						Damage damage = new Damage();
-						damage.AttackerUnit = parts[1];
-						damage.VictimUnit = parts[2];
-						damage.Damage1 = Convert.ToDouble(parts[3]);
-						damage.Paralyze = Convert.ToDouble(parts[4]);
-						game.Damages.Add(damage);
-						break;
-					case "plist":
-						game.PlayerList = line.Substring(6);
-						break;
+						case "dmg":
+							Damage damage = new Damage();
+							damage.AttackerUnit = parts[1];
+							damage.VictimUnit = parts[2];
+							damage.Damage1 = Convert.ToDouble(parts[3]);
+							damage.Paralyze = Convert.ToDouble(parts[4]);
+							game.Damages.Add(damage);
+							break;
+						case "plist":
+							game.PlayerList = line.Substring(6);
+							break;
+					}
 				}
+				if (game.Players <= 0 || game.Teams <= 0) return;
+				var split = (game.PlayerList ?? "").Split(',');
+				if (split.Count() != game.Players || split.Contains("Player")) return; // AI game or crap
+				
+				db.Games.InsertOnSubmit(game);
+				db.SubmitChanges();
 			}
-			if (game.Players <= 0 || game.Teams <= 0) return;
-			var split = (game.PlayerList ?? "").Split(',');
-			if (split.Count() != game.Players || split.Contains("Player")) return; // AI game or crap
-			Global.Db.Games.InsertOnSubmit(game);
-			Global.Db.SubmitChanges();
 		}
 
 		#endregion

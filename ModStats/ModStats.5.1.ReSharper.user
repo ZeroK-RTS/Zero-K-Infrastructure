@@ -8,14 +8,15 @@
   </SettingsComponent>
   <RecentFiles>
     <RecentFiles>
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx" caret="0" fromTop="0" />
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="1266" fromTop="38" />
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Global.cs" caret="288" fromTop="14" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:DataContextFactory.cs" caret="1066" fromTop="23" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinq.designer.cs" caret="443" fromTop="11" />
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Web.config" caret="1057" fromTop="20" />
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:StatsCollector.asmx.cs" caret="685" fromTop="4" />
-      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="13" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Global.cs" caret="226" fromTop="10" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.designer.cs" caret="0" fromTop="0" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="150" fromTop="8" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Web.config" caret="1101" fromTop="22" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:StatsCollector.asmx.cs" caret="1324" fromTop="12" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx" caret="0" fromTop="0" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="1266" fromTop="0" />
     </RecentFiles>
     <RecentEdits>
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:Default.aspx.cs" caret="11585" fromTop="29" />
@@ -26,6 +27,8 @@
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="4" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="11" />
       <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:ModStatsLinqDataContext.cs" caret="179" fromTop="13" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:StatsCollector.asmx.cs" caret="2910" fromTop="54" />
+      <File id="7DD6A908-DDBA-4488-A03D-2589E2B853F0/f:StatsCollector.asmx.cs" caret="1013" fromTop="14" />
     </RecentEdits>
   </RecentFiles>
   <NAntValidationSettings>
@@ -45,6 +48,14 @@
       <Item value="namespace" priority="0" />
       <Item value="void" priority="0" />
       <Item value="CommandTimeout" priority="0" />
+      <Item value="new" priority="0" />
+      <Item value="ModStatsLinqDataContext`0" priority="0" />
+      <Item value="db" priority="1" />
+      <Item value="false" priority="0" />
+    </ItemStatistics>
+    <ItemStatistics item="Qualified:ModStats.ModStatsLinqDataContext">
+      <Item value="CommandTimeout" priority="0" />
+      <Item value="ObjectTrackingEnabled" priority="0" />
     </ItemStatistics>
   </CompletionStatisticsManager>
 </Configuration>

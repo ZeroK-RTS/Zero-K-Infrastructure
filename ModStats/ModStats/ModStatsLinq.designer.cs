@@ -136,7 +136,7 @@ namespace ModStats
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GameID", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GameID", DbType="Int NOT NULL", IsPrimaryKey=true)]
 		public int GameID
 		{
 			get

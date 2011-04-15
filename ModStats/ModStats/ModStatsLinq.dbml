@@ -1,9 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Database Name="ModStats" Class="ModStatsLinqDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ModStats" Class="ModStatsLinqDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="WebSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=ModStats;Persist Security Info=True;User ID=mod_stats" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="ModStatsConnectionString1" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Damage" Member="Damages">
     <Type Name="Damage">
-      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="AttackerUnit" Type="System.String" DbType="VarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="VictimUnit" Type="System.String" DbType="VarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Damage" Member="Damage1" Type="System.Double" DbType="Float NOT NULL" CanBeNull="false" />

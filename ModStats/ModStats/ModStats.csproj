@@ -66,6 +66,15 @@
     <Content Include="Img\Loader.gif" />
     <Content Include="StatsCollector.asmx" />
     <Content Include="UnitSelector.ascx" />
+    <None Include="ModStatsLinq.dbml.namePrefs">
+      <DependentUpon>ModStatsLinq.dbml</DependentUpon>
+    </None>
+    <None Include="ModStatsLinq.dbml.syncPrefs">
+      <DependentUpon>ModStatsLinq.dbml</DependentUpon>
+    </None>
+    <None Include="ModStatsLinq.dbml.views">
+      <DependentUpon>ModStatsLinq.dbml</DependentUpon>
+    </None>
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>
