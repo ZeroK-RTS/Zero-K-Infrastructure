@@ -13,13 +13,41 @@ namespace ZeroKWeb
 {
 	public partial class StructuresAdmin: Page
 	{
+		public void ImportUnitUnlocks()
+		{
+			var db = new ZkDataContext();
+			db.StructureTypes.DeleteAllOnSubmit(db.StructureTypes.Where(x=>x.EffectUnlockID != null));
+			db.SubmitChanges();
+
+			foreach (var u in db.Unlocks.Where(x => x.UnlockType == UnlockTypes.Unit)) {
+				db.StructureTypes.InsertOnSubmit(new StructureType() {
+					Cost = u.XpCost,
+					Name = u.Name,
+					Description = "Gives your clan access to " + u.Name,
+					EffectUnlockID = u.UnlockID,
+					SelfRepairTurns = 5,
+					IsIngameDestructible = true,
+					MapIcon = u.Code + ".png",
+					DestroyedMapIcon = u.Code + "_dead.png",
+					IngameUnitName = "pw_" + u.Code
+				});
+
+			}
+			db.SubmitChanges();
+		}
+
+
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			if (!Global.IsAdmin) throw new ApplicationException("You are not an admin!");
+			ImportUnitUnlocks();
+			return;
+
 			if (!IsPostBack)
 			{
 				var db = new ZkDataContext();
 				var data = db.StructureTypes.ToList();
+				GridView1.DataSource = data;
+				GridView1.DataBind();
 				var sb = new StringBuilder();
 
 				using (
@@ -31,6 +59,7 @@ namespace ZeroKWeb
 
 		protected void btnUpdateClick(object sender, EventArgs e)
 		{
+			if (!Global.Account.IsZeroKAdmin) throw new ApplicationException("You are not an admin!");
 			var data = (List<StructureType>)new DataContractSerializer(typeof(List<StructureType>)).ReadObject(XmlReader.Create(new StringReader(tbData.Text)));
 
 			var db2 = new ZkDataContext();

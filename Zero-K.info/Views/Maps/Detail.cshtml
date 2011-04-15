@@ -118,6 +118,8 @@
     Author: @Html.TextBox("author", m.AuthorName)
     @if (ZeroKWeb.Global.IsAdmin) {
       @:Featured order: @Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)
+      @:Planetwars image: <img src='/img/planets/@Model.Resource.MapPlanetWarsIcon' />  @Html.ActionLink("pick new", "PlanetImageSelect", new { resourceID= Model.Resource.ResourceID })
+
     }
     <input type="submit" value="Update" />
     </form>

@@ -211,6 +211,8 @@
       <Column Name="MapHeight" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="FeaturedOrder" Type="System.Single" DbType="real" CanBeNull="true" />
+      <Column Name="MapIs1v1" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="MapPlanetWarsIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />

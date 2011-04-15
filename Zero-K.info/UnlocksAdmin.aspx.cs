@@ -12,7 +12,8 @@ namespace ZeroKWeb
   {
     protected void Page_Load(object sender, EventArgs e)
     {
-      if (!Global.IsAdmin) throw new ApplicationException("You are not an admin!");
+   
+      if (!Global.Account.IsZeroKAdmin) throw new ApplicationException("You are not an admin!");
       if (!IsPostBack)
       {
         foreach (int kvp in Enum.GetValues(typeof(UnlockTypes)))
@@ -31,9 +32,8 @@ namespace ZeroKWeb
 
     protected void btnAdd_Click(object sender, EventArgs e)
     {
-      
-      if (!Global.IsAdmin) throw new ApplicationException("You are not an admin!");
-      var db = new ZkDataContext();
+			if (!Global.Account.IsZeroKAdmin) throw new ApplicationException("You are not an admin!");
+			var db = new ZkDataContext();
       var unlock = new Unlock()
                    {
                      Code = tbCode.Text,

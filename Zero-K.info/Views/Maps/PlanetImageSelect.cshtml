@@ -1,0 +1,9 @@
+@model ZeroKWeb.Controllers.MapsController.PlanetImageSelectData
+@{
+  Layout = null;
+}
+@foreach (var x in Model.Icons) { 
+  <a href='@Url.Action("SubmitPlanetIcon", new { resourceID = Model.ResourceID, icon = x })'>
+    <img src='/img/planets/@x' style="display: block;	position: relative; float: left" />
+  </a>
+}

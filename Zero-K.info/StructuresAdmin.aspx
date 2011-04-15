@@ -9,6 +9,8 @@
 <body>
     <form id="form1" runat="server">
     <div>
+      <asp:GridView ID="GridView1" runat="server" AllowSorting="True">
+      </asp:GridView>
     <asp:TextBox runat="server" ID="tbData" TextMode="MultiLine" Rows="40" Columns="150"></asp:TextBox>
     <asp:Button runat="server" Text="Update" OnClick="btnUpdateClick" />
     </div>

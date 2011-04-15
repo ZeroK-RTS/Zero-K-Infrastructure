@@ -52,6 +52,15 @@ namespace ZeroKWeb.Controllers
       mis.FeaturedOrder = featuredOrder;
       if (mis.IsScriptMission && !string.IsNullOrEmpty(script)) mis.Script = script;
       db.SubmitChanges();
+
+			int order = 1;
+			if (featuredOrder.HasValue) {
+				foreach (var m in db.Missions.Where(x => x.FeaturedOrder != null).OrderBy(x => x.FeaturedOrder)) {
+					m.FeaturedOrder = order++;
+				}
+			}
+			db.SubmitChanges();
+
       return RedirectToAction("Index");
     }
 

@@ -34,7 +34,33 @@ namespace ZeroKWeb.Controllers
     }
 
 
-    public ActionResult Index(string search,
+		public class PlanetImageSelectData
+		{
+			public List<string> Icons;
+			public int ResourceID;
+		}
+
+
+		public ActionResult SubmitPlanetIcon(int resourceID, string icon)
+		{
+			var db = new ZkDataContext();
+			var res = db.Resources.Single(x => x.ResourceID == resourceID);
+			res.MapPlanetWarsIcon = icon;
+
+			db.SubmitChanges();
+			return RedirectToAction("Detail", new { id = res.ResourceID });
+		}
+
+  	public ActionResult PlanetImageSelect(int resourceID)
+		{
+			var res = new PlanetImageSelectData();
+  		res.ResourceID = resourceID;
+			res.Icons = Directory.GetFiles(Server.MapPath("/img/planets")).Select(Path.GetFileName).ToList();
+			return View("PlanetImageSelect", res);
+
+		}
+
+  	public ActionResult Index(string search,
                               bool? featured,
                               int? offset,
                               bool? ffa,
@@ -151,7 +177,16 @@ namespace ZeroKWeb.Controllers
         r.AuthorName = author;
         if (Global.Account.IsAdmin) r.FeaturedOrder = featuredOrder;
         db.SubmitChanges();
-        return RedirectToAction("Detail", new { id = id });
+      	int order = 1;
+				if (featuredOrder.HasValue)
+				{
+					foreach (var map in db.Resources.Where(x => x.FeaturedOrder != null).OrderBy(x => x.FeaturedOrder))
+					{
+						map.FeaturedOrder = order++;
+					}
+				}
+				db.SubmitChanges();
+      	return RedirectToAction("Detail", new { id = id });
       }
     }
 
