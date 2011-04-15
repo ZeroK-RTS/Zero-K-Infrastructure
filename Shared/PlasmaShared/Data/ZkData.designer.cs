@@ -157,6 +157,12 @@ namespace ZkData
     partial void InsertPlanetInfluenceHistory(PlanetInfluenceHistory instance);
     partial void UpdatePlanetInfluenceHistory(PlanetInfluenceHistory instance);
     partial void DeletePlanetInfluenceHistory(PlanetInfluenceHistory instance);
+    partial void InsertPlanetStructure(PlanetStructure instance);
+    partial void UpdatePlanetStructure(PlanetStructure instance);
+    partial void DeletePlanetStructure(PlanetStructure instance);
+    partial void InsertStructureType(StructureType instance);
+    partial void UpdateStructureType(StructureType instance);
+    partial void DeleteStructureType(StructureType instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -522,6 +528,22 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<PlanetInfluenceHistory>();
+			}
+		}
+		
+		public System.Data.Linq.Table<PlanetStructure> PlanetStructures
+		{
+			get
+			{
+				return this.GetTable<PlanetStructure>();
+			}
+		}
+		
+		public System.Data.Linq.Table<StructureType> StructureTypes
+		{
+			get
+			{
+				return this.GetTable<StructureType>();
 			}
 		}
 	}
@@ -9638,6 +9660,8 @@ namespace ZkData
 		
 		private EntitySet<CommanderModule> _CommanderModules;
 		
+		private EntitySet<StructureType> _StructureTypes;
+		
 		private EntityRef<Unlock> _ParentUnlock;
 		
 		private bool serializing;
@@ -10078,6 +10102,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_StructureType", Storage="_StructureTypes", ThisKey="UnlockID", OtherKey="EffectUnlockID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		public EntitySet<StructureType> StructureTypes
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._StructureTypes.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._StructureTypes;
+			}
+			set
+			{
+				this._StructureTypes.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ParentUnlock", ThisKey="RequiredUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
 		public Unlock ParentUnlock
 		{
@@ -10180,12 +10223,25 @@ namespace ZkData
 			entity.Unlock = null;
 		}
 		
+		private void attach_StructureTypes(StructureType entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = this;
+		}
+		
+		private void detach_StructureTypes(StructureType entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = null;
+		}
+		
 		private void Initialize()
 		{
 			this._ChildUnlocks = new EntitySet<Unlock>(new Action<Unlock>(this.attach_ChildUnlocks), new Action<Unlock>(this.detach_ChildUnlocks));
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
 			this._Commanders = new EntitySet<Commander>(new Action<Commander>(this.attach_Commanders), new Action<Commander>(this.detach_Commanders));
 			this._CommanderModules = new EntitySet<CommanderModule>(new Action<CommanderModule>(this.attach_CommanderModules), new Action<CommanderModule>(this.detach_CommanderModules));
+			this._StructureTypes = new EntitySet<StructureType>(new Action<StructureType>(this.attach_StructureTypes), new Action<StructureType>(this.detach_StructureTypes));
 			this._ParentUnlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
@@ -12644,16 +12700,6 @@ namespace ZkData
 		
 		private string _PlanetMap;
 		
-		private int _DefenseLevel;
-		
-		private int _MineLevel;
-		
-		private bool _HasMine;
-		
-		private string _UnlocksUnit;
-		
-		private string _BotList;
-		
 		private System.Nullable<int> _OwnerPlayerID;
 		
 		private EntitySet<Link> _LinksByPlanetID1;
@@ -12667,6 +12713,8 @@ namespace ZkData
 		private EntitySet<EventPlanet> _EventPlanets;
 		
 		private EntitySet<PlanetInfluenceHistory> _PlanetInfluenceHistories;
+		
+		private EntitySet<PlanetStructure> _PlanetStructures;
 		
 		private bool serializing;
 		
@@ -12688,16 +12736,6 @@ namespace ZkData
     partial void OnY2Changed();
     partial void OnPlanetMapChanging(string value);
     partial void OnPlanetMapChanged();
-    partial void OnDefenseLevelChanging(int value);
-    partial void OnDefenseLevelChanged();
-    partial void OnMineLevelChanging(int value);
-    partial void OnMineLevelChanged();
-    partial void OnHasMineChanging(bool value);
-    partial void OnHasMineChanged();
-    partial void OnUnlocksUnitChanging(string value);
-    partial void OnUnlocksUnitChanged();
-    partial void OnBotListChanging(string value);
-    partial void OnBotListChanged();
     partial void OnOwnerPlayerIDChanging(System.Nullable<int> value);
     partial void OnOwnerPlayerIDChanged();
     #endregion
@@ -12854,113 +12892,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DefenseLevel", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public int DefenseLevel
-		{
-			get
-			{
-				return this._DefenseLevel;
-			}
-			set
-			{
-				if ((this._DefenseLevel != value))
-				{
-					this.OnDefenseLevelChanging(value);
-					this.SendPropertyChanging();
-					this._DefenseLevel = value;
-					this.SendPropertyChanged("DefenseLevel");
-					this.OnDefenseLevelChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MineLevel", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public int MineLevel
-		{
-			get
-			{
-				return this._MineLevel;
-			}
-			set
-			{
-				if ((this._MineLevel != value))
-				{
-					this.OnMineLevelChanging(value);
-					this.SendPropertyChanging();
-					this._MineLevel = value;
-					this.SendPropertyChanged("MineLevel");
-					this.OnMineLevelChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HasMine", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public bool HasMine
-		{
-			get
-			{
-				return this._HasMine;
-			}
-			set
-			{
-				if ((this._HasMine != value))
-				{
-					this.OnHasMineChanging(value);
-					this.SendPropertyChanging();
-					this._HasMine = value;
-					this.SendPropertyChanged("HasMine");
-					this.OnHasMineChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlocksUnit", DbType="varchar(50)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public string UnlocksUnit
-		{
-			get
-			{
-				return this._UnlocksUnit;
-			}
-			set
-			{
-				if ((this._UnlocksUnit != value))
-				{
-					this.OnUnlocksUnitChanging(value);
-					this.SendPropertyChanging();
-					this._UnlocksUnit = value;
-					this.SendPropertyChanged("UnlocksUnit");
-					this.OnUnlocksUnitChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BotList", DbType="varchar(250)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
-		public string BotList
-		{
-			get
-			{
-				return this._BotList;
-			}
-			set
-			{
-				if ((this._BotList != value))
-				{
-					this.OnBotListChanging(value);
-					this.SendPropertyChanging();
-					this._BotList = value;
-					this.SendPropertyChanged("BotList");
-					this.OnBotListChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerPlayerID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public System.Nullable<int> OwnerPlayerID
 		{
 			get
@@ -12981,7 +12914,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link", Storage="_LinksByPlanetID1", ThisKey="PlanetID", OtherKey="PlanetID1")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public EntitySet<Link> LinksByPlanetID1
 		{
 			get
@@ -13000,7 +12933,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link1", Storage="_LinksByPlanetID2", ThisKey="PlanetID", OtherKey="PlanetID2")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<Link> LinksByPlanetID2
 		{
 			get
@@ -13019,7 +12952,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_MarketOffer", Storage="_MarketOffers", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffers
 		{
 			get
@@ -13038,7 +12971,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_AccountPlanet", Storage="_AccountPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<AccountPlanet> AccountPlanets
 		{
 			get
@@ -13057,7 +12990,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_EventPlanet", Storage="_EventPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<EventPlanet> EventPlanets
 		{
 			get
@@ -13076,7 +13009,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -13091,6 +13024,25 @@ namespace ZkData
 			set
 			{
 				this._PlanetInfluenceHistories.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure", Storage="_PlanetStructures", ThisKey="PlanetID", OtherKey="PlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		public EntitySet<PlanetStructure> PlanetStructures
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PlanetStructures.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlanetStructures;
+			}
+			set
+			{
+				this._PlanetStructures.Assign(value);
 			}
 		}
 		
@@ -13186,6 +13138,18 @@ namespace ZkData
 			entity.Planet = null;
 		}
 		
+		private void attach_PlanetStructures(PlanetStructure entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = this;
+		}
+		
+		private void detach_PlanetStructures(PlanetStructure entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = null;
+		}
+		
 		private void Initialize()
 		{
 			this._LinksByPlanetID1 = new EntitySet<Link>(new Action<Link>(this.attach_LinksByPlanetID1), new Action<Link>(this.detach_LinksByPlanetID1));
@@ -13194,6 +13158,7 @@ namespace ZkData
 			this._AccountPlanets = new EntitySet<AccountPlanet>(new Action<AccountPlanet>(this.attach_AccountPlanets), new Action<AccountPlanet>(this.detach_AccountPlanets));
 			this._EventPlanets = new EntitySet<EventPlanet>(new Action<EventPlanet>(this.attach_EventPlanets), new Action<EventPlanet>(this.detach_EventPlanets));
 			this._PlanetInfluenceHistories = new EntitySet<PlanetInfluenceHistory>(new Action<PlanetInfluenceHistory>(this.attach_PlanetInfluenceHistories), new Action<PlanetInfluenceHistory>(this.detach_PlanetInfluenceHistories));
+			this._PlanetStructures = new EntitySet<PlanetStructure>(new Action<PlanetStructure>(this.attach_PlanetStructures), new Action<PlanetStructure>(this.detach_PlanetStructures));
 			OnCreated();
 		}
 		
@@ -15090,6 +15055,993 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlanetStructure")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class PlanetStructure : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _PlanetID;
+		
+		private int _StructureTypeID;
+		
+		private System.Nullable<int> _TurnsToSelfRepair;
+		
+		private bool _IsDestroyed;
+		
+		private EntityRef<Planet> _Planet;
+		
+		private EntityRef<StructureType> _StructureType;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnStructureTypeIDChanging(int value);
+    partial void OnStructureTypeIDChanged();
+    partial void OnTurnsToSelfRepairChanging(System.Nullable<int> value);
+    partial void OnTurnsToSelfRepairChanged();
+    partial void OnIsDestroyedChanging(bool value);
+    partial void OnIsDestroyedChanged();
+    #endregion
+		
+		public PlanetStructure()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					if (this._Planet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StructureTypeID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int StructureTypeID
+		{
+			get
+			{
+				return this._StructureTypeID;
+			}
+			set
+			{
+				if ((this._StructureTypeID != value))
+				{
+					if (this._StructureType.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnStructureTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._StructureTypeID = value;
+					this.SendPropertyChanged("StructureTypeID");
+					this.OnStructureTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TurnsToSelfRepair", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public System.Nullable<int> TurnsToSelfRepair
+		{
+			get
+			{
+				return this._TurnsToSelfRepair;
+			}
+			set
+			{
+				if ((this._TurnsToSelfRepair != value))
+				{
+					this.OnTurnsToSelfRepairChanging(value);
+					this.SendPropertyChanging();
+					this._TurnsToSelfRepair = value;
+					this.SendPropertyChanged("TurnsToSelfRepair");
+					this.OnTurnsToSelfRepairChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDestroyed", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool IsDestroyed
+		{
+			get
+			{
+				return this._IsDestroyed;
+			}
+			set
+			{
+				if ((this._IsDestroyed != value))
+				{
+					this.OnIsDestroyedChanging(value);
+					this.SendPropertyChanging();
+					this._IsDestroyed = value;
+					this.SendPropertyChanged("IsDestroyed");
+					this.OnIsDestroyedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Planet Planet
+		{
+			get
+			{
+				return this._Planet.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._Planet.Entity;
+				if (((previousValue != value) 
+							|| (this._Planet.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Planet.Entity = null;
+						previousValue.PlanetStructures.Remove(this);
+					}
+					this._Planet.Entity = value;
+					if ((value != null))
+					{
+						value.PlanetStructures.Add(this);
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("Planet");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_StructureType", ThisKey="StructureTypeID", OtherKey="StructureTypeID", IsForeignKey=true)]
+		public StructureType StructureType
+		{
+			get
+			{
+				return this._StructureType.Entity;
+			}
+			set
+			{
+				StructureType previousValue = this._StructureType.Entity;
+				if (((previousValue != value) 
+							|| (this._StructureType.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._StructureType.Entity = null;
+						previousValue.PlanetStructures.Remove(this);
+					}
+					this._StructureType.Entity = value;
+					if ((value != null))
+					{
+						value.PlanetStructures.Add(this);
+						this._StructureTypeID = value.StructureTypeID;
+					}
+					else
+					{
+						this._StructureTypeID = default(int);
+					}
+					this.SendPropertyChanged("StructureType");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Planet = default(EntityRef<Planet>);
+			this._StructureType = default(EntityRef<StructureType>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.StructureType")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class StructureType : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _StructureTypeID;
+		
+		private string _Name;
+		
+		private string _Description;
+		
+		private string _IngameUnitName;
+		
+		private string _MapIcon;
+		
+		private string _DestroyedMapIcon;
+		
+		private System.Nullable<int> _UpgradesToStructureID;
+		
+		private System.Nullable<int> _EffectInfluenceDefense;
+		
+		private System.Nullable<int> _EffectDropshipProduction;
+		
+		private System.Nullable<int> _EffectDropshipCapacity;
+		
+		private System.Nullable<double> _EffectLinkStrength;
+		
+		private System.Nullable<int> _EffectUnlockID;
+		
+		private System.Nullable<int> _EffectCreditsPerTurn;
+		
+		private System.Nullable<bool> _EffectIsVictoryPlanet;
+		
+		private System.Nullable<int> _EffectWarpGateCapacity;
+		
+		private string _EffectBots;
+		
+		private int _Cost;
+		
+		private bool _IsBuildable;
+		
+		private bool _IsIngameDestructible;
+		
+		private System.Nullable<int> _IngameDestructionNewStructureTypeID;
+		
+		private System.Nullable<int> _SelfRepairTurns;
+		
+		private bool _OwnerChangeDeletesThis;
+		
+		private EntitySet<PlanetStructure> _PlanetStructures;
+		
+		private EntityRef<Unlock> _Unlock;
+		
+		private EntityRef<StructureType> _ParentStructureTypeByUpgradesToStructureID;
+		
+		private EntityRef<StructureType> _ParentStructureTypeByIngameDestructionNewStructureTypeID;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnStructureTypeIDChanging(int value);
+    partial void OnStructureTypeIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnIngameUnitNameChanging(string value);
+    partial void OnIngameUnitNameChanged();
+    partial void OnMapIconChanging(string value);
+    partial void OnMapIconChanged();
+    partial void OnDestroyedMapIconChanging(string value);
+    partial void OnDestroyedMapIconChanged();
+    partial void OnUpgradesToStructureIDChanging(System.Nullable<int> value);
+    partial void OnUpgradesToStructureIDChanged();
+    partial void OnEffectInfluenceDefenseChanging(System.Nullable<int> value);
+    partial void OnEffectInfluenceDefenseChanged();
+    partial void OnEffectDropshipProductionChanging(System.Nullable<int> value);
+    partial void OnEffectDropshipProductionChanged();
+    partial void OnEffectDropshipCapacityChanging(System.Nullable<int> value);
+    partial void OnEffectDropshipCapacityChanged();
+    partial void OnEffectLinkStrengthChanging(System.Nullable<double> value);
+    partial void OnEffectLinkStrengthChanged();
+    partial void OnEffectUnlockIDChanging(System.Nullable<int> value);
+    partial void OnEffectUnlockIDChanged();
+    partial void OnEffectCreditsPerTurnChanging(System.Nullable<int> value);
+    partial void OnEffectCreditsPerTurnChanged();
+    partial void OnEffectIsVictoryPlanetChanging(System.Nullable<bool> value);
+    partial void OnEffectIsVictoryPlanetChanged();
+    partial void OnEffectWarpGateCapacityChanging(System.Nullable<int> value);
+    partial void OnEffectWarpGateCapacityChanged();
+    partial void OnEffectBotsChanging(string value);
+    partial void OnEffectBotsChanged();
+    partial void OnCostChanging(int value);
+    partial void OnCostChanged();
+    partial void OnIsBuildableChanging(bool value);
+    partial void OnIsBuildableChanged();
+    partial void OnIsIngameDestructibleChanging(bool value);
+    partial void OnIsIngameDestructibleChanged();
+    partial void OnIngameDestructionNewStructureTypeIDChanging(System.Nullable<int> value);
+    partial void OnIngameDestructionNewStructureTypeIDChanged();
+    partial void OnSelfRepairTurnsChanging(System.Nullable<int> value);
+    partial void OnSelfRepairTurnsChanged();
+    partial void OnOwnerChangeDeletesThisChanging(bool value);
+    partial void OnOwnerChangeDeletesThisChanged();
+    #endregion
+		
+		public StructureType()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StructureTypeID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int StructureTypeID
+		{
+			get
+			{
+				return this._StructureTypeID;
+			}
+			set
+			{
+				if ((this._StructureTypeID != value))
+				{
+					this.OnStructureTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._StructureTypeID = value;
+					this.SendPropertyChanged("StructureTypeID");
+					this.OnStructureTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="nvarchar(250)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IngameUnitName", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string IngameUnitName
+		{
+			get
+			{
+				return this._IngameUnitName;
+			}
+			set
+			{
+				if ((this._IngameUnitName != value))
+				{
+					this.OnIngameUnitNameChanging(value);
+					this.SendPropertyChanging();
+					this._IngameUnitName = value;
+					this.SendPropertyChanged("IngameUnitName");
+					this.OnIngameUnitNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapIcon", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public string MapIcon
+		{
+			get
+			{
+				return this._MapIcon;
+			}
+			set
+			{
+				if ((this._MapIcon != value))
+				{
+					this.OnMapIconChanging(value);
+					this.SendPropertyChanging();
+					this._MapIcon = value;
+					this.SendPropertyChanged("MapIcon");
+					this.OnMapIconChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DestroyedMapIcon", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public string DestroyedMapIcon
+		{
+			get
+			{
+				return this._DestroyedMapIcon;
+			}
+			set
+			{
+				if ((this._DestroyedMapIcon != value))
+				{
+					this.OnDestroyedMapIconChanging(value);
+					this.SendPropertyChanging();
+					this._DestroyedMapIcon = value;
+					this.SendPropertyChanged("DestroyedMapIcon");
+					this.OnDestroyedMapIconChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpgradesToStructureID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public System.Nullable<int> UpgradesToStructureID
+		{
+			get
+			{
+				return this._UpgradesToStructureID;
+			}
+			set
+			{
+				if ((this._UpgradesToStructureID != value))
+				{
+					if (this._ParentStructureTypeByUpgradesToStructureID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUpgradesToStructureIDChanging(value);
+					this.SendPropertyChanging();
+					this._UpgradesToStructureID = value;
+					this.SendPropertyChanged("UpgradesToStructureID");
+					this.OnUpgradesToStructureIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectInfluenceDefense", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<int> EffectInfluenceDefense
+		{
+			get
+			{
+				return this._EffectInfluenceDefense;
+			}
+			set
+			{
+				if ((this._EffectInfluenceDefense != value))
+				{
+					this.OnEffectInfluenceDefenseChanging(value);
+					this.SendPropertyChanging();
+					this._EffectInfluenceDefense = value;
+					this.SendPropertyChanged("EffectInfluenceDefense");
+					this.OnEffectInfluenceDefenseChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipProduction", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<int> EffectDropshipProduction
+		{
+			get
+			{
+				return this._EffectDropshipProduction;
+			}
+			set
+			{
+				if ((this._EffectDropshipProduction != value))
+				{
+					this.OnEffectDropshipProductionChanging(value);
+					this.SendPropertyChanging();
+					this._EffectDropshipProduction = value;
+					this.SendPropertyChanged("EffectDropshipProduction");
+					this.OnEffectDropshipProductionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipCapacity", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public System.Nullable<int> EffectDropshipCapacity
+		{
+			get
+			{
+				return this._EffectDropshipCapacity;
+			}
+			set
+			{
+				if ((this._EffectDropshipCapacity != value))
+				{
+					this.OnEffectDropshipCapacityChanging(value);
+					this.SendPropertyChanging();
+					this._EffectDropshipCapacity = value;
+					this.SendPropertyChanged("EffectDropshipCapacity");
+					this.OnEffectDropshipCapacityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectLinkStrength", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public System.Nullable<double> EffectLinkStrength
+		{
+			get
+			{
+				return this._EffectLinkStrength;
+			}
+			set
+			{
+				if ((this._EffectLinkStrength != value))
+				{
+					this.OnEffectLinkStrengthChanging(value);
+					this.SendPropertyChanging();
+					this._EffectLinkStrength = value;
+					this.SendPropertyChanged("EffectLinkStrength");
+					this.OnEffectLinkStrengthChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectUnlockID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public System.Nullable<int> EffectUnlockID
+		{
+			get
+			{
+				return this._EffectUnlockID;
+			}
+			set
+			{
+				if ((this._EffectUnlockID != value))
+				{
+					if (this._Unlock.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEffectUnlockIDChanging(value);
+					this.SendPropertyChanging();
+					this._EffectUnlockID = value;
+					this.SendPropertyChanged("EffectUnlockID");
+					this.OnEffectUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectCreditsPerTurn", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public System.Nullable<int> EffectCreditsPerTurn
+		{
+			get
+			{
+				return this._EffectCreditsPerTurn;
+			}
+			set
+			{
+				if ((this._EffectCreditsPerTurn != value))
+				{
+					this.OnEffectCreditsPerTurnChanging(value);
+					this.SendPropertyChanging();
+					this._EffectCreditsPerTurn = value;
+					this.SendPropertyChanged("EffectCreditsPerTurn");
+					this.OnEffectCreditsPerTurnChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectIsVictoryPlanet", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public System.Nullable<bool> EffectIsVictoryPlanet
+		{
+			get
+			{
+				return this._EffectIsVictoryPlanet;
+			}
+			set
+			{
+				if ((this._EffectIsVictoryPlanet != value))
+				{
+					this.OnEffectIsVictoryPlanetChanging(value);
+					this.SendPropertyChanging();
+					this._EffectIsVictoryPlanet = value;
+					this.SendPropertyChanged("EffectIsVictoryPlanet");
+					this.OnEffectIsVictoryPlanetChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectWarpGateCapacity", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public System.Nullable<int> EffectWarpGateCapacity
+		{
+			get
+			{
+				return this._EffectWarpGateCapacity;
+			}
+			set
+			{
+				if ((this._EffectWarpGateCapacity != value))
+				{
+					this.OnEffectWarpGateCapacityChanging(value);
+					this.SendPropertyChanging();
+					this._EffectWarpGateCapacity = value;
+					this.SendPropertyChanged("EffectWarpGateCapacity");
+					this.OnEffectWarpGateCapacityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBots", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public string EffectBots
+		{
+			get
+			{
+				return this._EffectBots;
+			}
+			set
+			{
+				if ((this._EffectBots != value))
+				{
+					this.OnEffectBotsChanging(value);
+					this.SendPropertyChanging();
+					this._EffectBots = value;
+					this.SendPropertyChanged("EffectBots");
+					this.OnEffectBotsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cost", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public int Cost
+		{
+			get
+			{
+				return this._Cost;
+			}
+			set
+			{
+				if ((this._Cost != value))
+				{
+					this.OnCostChanging(value);
+					this.SendPropertyChanging();
+					this._Cost = value;
+					this.SendPropertyChanged("Cost");
+					this.OnCostChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBuildable", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		public bool IsBuildable
+		{
+			get
+			{
+				return this._IsBuildable;
+			}
+			set
+			{
+				if ((this._IsBuildable != value))
+				{
+					this.OnIsBuildableChanging(value);
+					this.SendPropertyChanging();
+					this._IsBuildable = value;
+					this.SendPropertyChanged("IsBuildable");
+					this.OnIsBuildableChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsIngameDestructible", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		public bool IsIngameDestructible
+		{
+			get
+			{
+				return this._IsIngameDestructible;
+			}
+			set
+			{
+				if ((this._IsIngameDestructible != value))
+				{
+					this.OnIsIngameDestructibleChanging(value);
+					this.SendPropertyChanging();
+					this._IsIngameDestructible = value;
+					this.SendPropertyChanged("IsIngameDestructible");
+					this.OnIsIngameDestructibleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IngameDestructionNewStructureTypeID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		public System.Nullable<int> IngameDestructionNewStructureTypeID
+		{
+			get
+			{
+				return this._IngameDestructionNewStructureTypeID;
+			}
+			set
+			{
+				if ((this._IngameDestructionNewStructureTypeID != value))
+				{
+					if (this._ParentStructureTypeByIngameDestructionNewStructureTypeID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnIngameDestructionNewStructureTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._IngameDestructionNewStructureTypeID = value;
+					this.SendPropertyChanged("IngameDestructionNewStructureTypeID");
+					this.OnIngameDestructionNewStructureTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SelfRepairTurns", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		public System.Nullable<int> SelfRepairTurns
+		{
+			get
+			{
+				return this._SelfRepairTurns;
+			}
+			set
+			{
+				if ((this._SelfRepairTurns != value))
+				{
+					this.OnSelfRepairTurnsChanging(value);
+					this.SendPropertyChanging();
+					this._SelfRepairTurns = value;
+					this.SendPropertyChanged("SelfRepairTurns");
+					this.OnSelfRepairTurnsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDeletesThis", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		public bool OwnerChangeDeletesThis
+		{
+			get
+			{
+				return this._OwnerChangeDeletesThis;
+			}
+			set
+			{
+				if ((this._OwnerChangeDeletesThis != value))
+				{
+					this.OnOwnerChangeDeletesThisChanging(value);
+					this.SendPropertyChanging();
+					this._OwnerChangeDeletesThis = value;
+					this.SendPropertyChanged("OwnerChangeDeletesThis");
+					this.OnOwnerChangeDeletesThisChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_PlanetStructures", ThisKey="StructureTypeID", OtherKey="StructureTypeID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		public EntitySet<PlanetStructure> PlanetStructures
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PlanetStructures.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlanetStructures;
+			}
+			set
+			{
+				this._PlanetStructures.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_StructureType", Storage="_Unlock", ThisKey="EffectUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
+		public Unlock Unlock
+		{
+			get
+			{
+				return this._Unlock.Entity;
+			}
+			set
+			{
+				Unlock previousValue = this._Unlock.Entity;
+				if (((previousValue != value) 
+							|| (this._Unlock.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Unlock.Entity = null;
+						previousValue.StructureTypes.Remove(this);
+					}
+					this._Unlock.Entity = value;
+					if ((value != null))
+					{
+						value.StructureTypes.Add(this);
+						this._EffectUnlockID = value.UnlockID;
+					}
+					else
+					{
+						this._EffectUnlockID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Unlock");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_StructureType", Storage="_ParentStructureTypeByUpgradesToStructureID", ThisKey="UpgradesToStructureID", OtherKey="StructureTypeID", IsForeignKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		public StructureType ParentStructureTypeByUpgradesToStructureID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ParentStructureTypeByUpgradesToStructureID.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._ParentStructureTypeByUpgradesToStructureID.Entity;
+			}
+			set
+			{
+				if ((this._ParentStructureTypeByUpgradesToStructureID.Entity != value))
+				{
+					this.SendPropertyChanging();
+					this._ParentStructureTypeByUpgradesToStructureID.Entity = value;
+					this.SendPropertyChanged("ParentStructureTypeByUpgradesToStructureID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_StructureType1", Storage="_ParentStructureTypeByIngameDestructionNewStructureTypeID", ThisKey="IngameDestructionNewStructureTypeID", OtherKey="StructureTypeID", IsForeignKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		public StructureType ParentStructureTypeByIngameDestructionNewStructureTypeID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ParentStructureTypeByIngameDestructionNewStructureTypeID.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._ParentStructureTypeByIngameDestructionNewStructureTypeID.Entity;
+			}
+			set
+			{
+				if ((this._ParentStructureTypeByIngameDestructionNewStructureTypeID.Entity != value))
+				{
+					this.SendPropertyChanging();
+					this._ParentStructureTypeByIngameDestructionNewStructureTypeID.Entity = value;
+					this.SendPropertyChanged("ParentStructureTypeByIngameDestructionNewStructureTypeID");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_PlanetStructures(PlanetStructure entity)
+		{
+			this.SendPropertyChanging();
+			entity.StructureType = this;
+		}
+		
+		private void detach_PlanetStructures(PlanetStructure entity)
+		{
+			this.SendPropertyChanging();
+			entity.StructureType = null;
+		}
+		
+		private void Initialize()
+		{
+			this._PlanetStructures = new EntitySet<PlanetStructure>(new Action<PlanetStructure>(this.attach_PlanetStructures), new Action<PlanetStructure>(this.detach_PlanetStructures));
+			this._Unlock = default(EntityRef<Unlock>);
+			this._ParentStructureTypeByUpgradesToStructureID = default(EntityRef<StructureType>);
+			this._ParentStructureTypeByIngameDestructionNewStructureTypeID = default(EntityRef<StructureType>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 }

@@ -34,6 +34,7 @@ namespace ZeroKWeb.Controllers
 			sb.AppendFormat("Rating: {0}", HtmlHelperExtensions.Stars(null, StarType.GreenStarSmall, r.MapRating).ToHtmlString());
 
 			sb.Append("</span>");
+			
 			return sb.ToString();
 		}
 

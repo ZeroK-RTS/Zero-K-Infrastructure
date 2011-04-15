@@ -50,6 +50,7 @@ namespace ZeroKWeb
 
 		void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
 		{
+			
 			if (Request[GlobalConst.LoginCookieName] != null)
 			{
 				var acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);

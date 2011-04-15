@@ -48,6 +48,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -125,6 +126,13 @@
     <Compile Include="ResourceDetail.aspx.designer.cs">
       <DependentUpon>ResourceDetail.aspx</DependentUpon>
     </Compile>
+    <Compile Include="StructuresAdmin.aspx.cs">
+      <DependentUpon>StructuresAdmin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StructuresAdmin.aspx.designer.cs">
+      <DependentUpon>StructuresAdmin.aspx</DependentUpon>
+    </Compile>
     <Compile Include="UnlocksAdmin.aspx.cs">
       <DependentUpon>UnlocksAdmin.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -158,6 +166,7 @@
     <Content Include="Scripts\jquery.ui.stars.min.js" />
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\site.js" />
+    <Content Include="StructuresAdmin.aspx" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\jquery.ui.stars.css" />
     <Content Include="Styles\menu.css" />

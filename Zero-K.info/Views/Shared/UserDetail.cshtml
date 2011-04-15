@@ -159,30 +159,26 @@
         <h3>
           Admin extras</h3>
         <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
+        <a href="@Url.Content("~/StructuresAdmin.aspx")">Planetwars structures admin</a><br />
         <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
       }
       <h3>
         Technologies:</h3>
         @{Html.RenderPartial("UnlockedTechnologies", Model.AccountUnlocks);}
         <br />
-        @if (Model.AccountID == ZeroKWeb.Global.AccountID)
-        {
-          <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level+1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)"><a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a></span>
-        }
-        else
-        {
+        @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
+          <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)"><a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a></span>
+        } else {
           @Model.Name @:Can unlock technologies worth @Model.AvailableXP points
         }
       <h3>Commanders:</h3>
-      @foreach (var comm in Model.Commanders)
-      {
+      @foreach (var comm in Model.Commanders) {
         <span style='display:inline-block; width:110px;height:80px' title='$commander$@comm.CommanderID'>
           <img src='@comm.Unlock.ImageUrl' alt="unlock" /><br />@comm.Name
         </span>
       }
       <br />
-      @if (Model.AccountID == ZeroKWeb.Global.AccountID)
-      {
+      @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
           <a href='@Url.Action("Commanders", "My")'>Configure commanders</a>
       }
 
