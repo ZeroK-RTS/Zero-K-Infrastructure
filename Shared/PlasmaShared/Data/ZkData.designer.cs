@@ -31,12 +31,12 @@ namespace ZkData
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
+    partial void InsertEvent(Event instance);
+    partial void UpdateEvent(Event instance);
+    partial void DeleteEvent(Event instance);
     partial void InsertMission(Mission instance);
     partial void UpdateMission(Mission instance);
     partial void DeleteMission(Mission instance);
-    partial void InsertPlayer(Player instance);
-    partial void UpdatePlayer(Player instance);
-    partial void DeletePlayer(Player instance);
     partial void InsertAccount(Account instance);
     partial void UpdateAccount(Account instance);
     partial void DeleteAccount(Account instance);
@@ -124,9 +124,6 @@ namespace ZkData
     partial void InsertLink(Link instance);
     partial void UpdateLink(Link instance);
     partial void DeleteLink(Link instance);
-    partial void InsertPlayerPlanet(PlayerPlanet instance);
-    partial void UpdatePlayerPlanet(PlayerPlanet instance);
-    partial void DeletePlayerPlanet(PlayerPlanet instance);
     partial void InsertClan(Clan instance);
     partial void UpdateClan(Clan instance);
     partial void DeleteClan(Clan instance);
@@ -136,6 +133,30 @@ namespace ZkData
     partial void InsertMarketOffer(MarketOffer instance);
     partial void UpdateMarketOffer(MarketOffer instance);
     partial void DeleteMarketOffer(MarketOffer instance);
+    partial void InsertAccountPlanet(AccountPlanet instance);
+    partial void UpdateAccountPlanet(AccountPlanet instance);
+    partial void DeleteAccountPlanet(AccountPlanet instance);
+    partial void InsertPlanetwarsConfig(PlanetwarsConfig instance);
+    partial void UpdatePlanetwarsConfig(PlanetwarsConfig instance);
+    partial void DeletePlanetwarsConfig(PlanetwarsConfig instance);
+    partial void InsertEventClan(EventClan instance);
+    partial void UpdateEventClan(EventClan instance);
+    partial void DeleteEventClan(EventClan instance);
+    partial void InsertEventAccount(EventAccount instance);
+    partial void UpdateEventAccount(EventAccount instance);
+    partial void DeleteEventAccount(EventAccount instance);
+    partial void InsertEventPlanet(EventPlanet instance);
+    partial void UpdateEventPlanet(EventPlanet instance);
+    partial void DeleteEventPlanet(EventPlanet instance);
+    partial void InsertEventSpringBattle(EventSpringBattle instance);
+    partial void UpdateEventSpringBattle(EventSpringBattle instance);
+    partial void DeleteEventSpringBattle(EventSpringBattle instance);
+    partial void InsertPlanetOwnerHistory(PlanetOwnerHistory instance);
+    partial void UpdatePlanetOwnerHistory(PlanetOwnerHistory instance);
+    partial void DeletePlanetOwnerHistory(PlanetOwnerHistory instance);
+    partial void InsertPlanetInfluenceHistory(PlanetInfluenceHistory instance);
+    partial void UpdatePlanetInfluenceHistory(PlanetInfluenceHistory instance);
+    partial void DeletePlanetInfluenceHistory(PlanetInfluenceHistory instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -168,30 +189,6 @@ namespace ZkData
 			OnCreated();
 		}
 		
-		public System.Data.Linq.Table<Battle> Battles
-		{
-			get
-			{
-				return this.GetTable<Battle>();
-			}
-		}
-		
-		public System.Data.Linq.Table<BattleEvent> BattleEvents
-		{
-			get
-			{
-				return this.GetTable<BattleEvent>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Config> Configs
-		{
-			get
-			{
-				return this.GetTable<Config>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Event> Events
 		{
 			get
@@ -200,35 +197,11 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<Fleet> Fleets
-		{
-			get
-			{
-				return this.GetTable<Fleet>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Mission> Missions
 		{
 			get
 			{
 				return this.GetTable<Mission>();
-			}
-		}
-		
-		public System.Data.Linq.Table<Player> Players
-		{
-			get
-			{
-				return this.GetTable<Player>();
-			}
-		}
-		
-		public System.Data.Linq.Table<PlayerEvent> PlayerEvents
-		{
-			get
-			{
-				return this.GetTable<PlayerEvent>();
 			}
 		}
 		
@@ -464,14 +437,6 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<PlayerPlanet> PlayerPlanets
-		{
-			get
-			{
-				return this.GetTable<PlayerPlanet>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Clan> Clans
 		{
 			get
@@ -495,327 +460,78 @@ namespace ZkData
 				return this.GetTable<MarketOffer>();
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Battle")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Battle
-	{
 		
-		private int _BattleID;
-		
-		private System.Nullable<int> _CelestialObjectID;
-		
-		private bool _IsDone;
-		
-		public Battle()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattleID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int BattleID
+		public System.Data.Linq.Table<AccountPlanet> AccountPlanets
 		{
 			get
 			{
-				return this._BattleID;
-			}
-			set
-			{
-				if ((this._BattleID != value))
-				{
-					this._BattleID = value;
-				}
+				return this.GetTable<AccountPlanet>();
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CelestialObjectID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public System.Nullable<int> CelestialObjectID
+		public System.Data.Linq.Table<PlanetwarsConfig> PlanetwarsConfigs
 		{
 			get
 			{
-				return this._CelestialObjectID;
-			}
-			set
-			{
-				if ((this._CelestialObjectID != value))
-				{
-					this._CelestialObjectID = value;
-				}
+				return this.GetTable<PlanetwarsConfig>();
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDone", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public bool IsDone
+		public System.Data.Linq.Table<EventClan> EventClans
 		{
 			get
 			{
-				return this._IsDone;
-			}
-			set
-			{
-				if ((this._IsDone != value))
-				{
-					this._IsDone = value;
-				}
+				return this.GetTable<EventClan>();
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.BattleEvent")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class BattleEvent
-	{
 		
-		private int _BattleID;
-		
-		private int _EventID;
-		
-		public BattleEvent()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattleID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int BattleID
+		public System.Data.Linq.Table<EventAccount> EventAccounts
 		{
 			get
 			{
-				return this._BattleID;
-			}
-			set
-			{
-				if ((this._BattleID != value))
-				{
-					this._BattleID = value;
-				}
+				return this.GetTable<EventAccount>();
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int EventID
+		public System.Data.Linq.Table<EventPlanet> EventPlanets
 		{
 			get
 			{
-				return this._EventID;
-			}
-			set
-			{
-				if ((this._EventID != value))
-				{
-					this._EventID = value;
-				}
+				return this.GetTable<EventPlanet>();
 			}
 		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Config")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Config
-	{
 		
-		private System.Nullable<System.DateTime> _Started;
-		
-		private int _CombatTurn;
-		
-		private System.Nullable<System.DateTime> _StartOn;
-		
-		private int _GameID;
-		
-		private int _SecondsPerTurn;
-		
-		private int _ResourceTick;
-		
-		private int _PopulationTick;
-		
-		private int _WarpDistance;
-		
-		private int _DirtySecond;
-		
-		private System.Nullable<System.DateTime> _TurnStarted;
-		
-		public Config()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Started", DbType="DateTime")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public System.Nullable<System.DateTime> Started
+		public System.Data.Linq.Table<EventSpringBattle> EventSpringBattles
 		{
 			get
 			{
-				return this._Started;
-			}
-			set
-			{
-				if ((this._Started != value))
-				{
-					this._Started = value;
-				}
+				return this.GetTable<EventSpringBattle>();
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CombatTurn", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int CombatTurn
+		public System.Data.Linq.Table<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
 			{
-				return this._CombatTurn;
-			}
-			set
-			{
-				if ((this._CombatTurn != value))
-				{
-					this._CombatTurn = value;
-				}
+				return this.GetTable<PlanetOwnerHistory>();
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_StartOn", DbType="DateTime")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public System.Nullable<System.DateTime> StartOn
+		public System.Data.Linq.Table<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
 			{
-				return this._StartOn;
-			}
-			set
-			{
-				if ((this._StartOn != value))
-				{
-					this._StartOn = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GameID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int GameID
-		{
-			get
-			{
-				return this._GameID;
-			}
-			set
-			{
-				if ((this._GameID != value))
-				{
-					this._GameID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SecondsPerTurn", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public int SecondsPerTurn
-		{
-			get
-			{
-				return this._SecondsPerTurn;
-			}
-			set
-			{
-				if ((this._SecondsPerTurn != value))
-				{
-					this._SecondsPerTurn = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ResourceTick", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public int ResourceTick
-		{
-			get
-			{
-				return this._ResourceTick;
-			}
-			set
-			{
-				if ((this._ResourceTick != value))
-				{
-					this._ResourceTick = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PopulationTick", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public int PopulationTick
-		{
-			get
-			{
-				return this._PopulationTick;
-			}
-			set
-			{
-				if ((this._PopulationTick != value))
-				{
-					this._PopulationTick = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WarpDistance", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public int WarpDistance
-		{
-			get
-			{
-				return this._WarpDistance;
-			}
-			set
-			{
-				if ((this._WarpDistance != value))
-				{
-					this._WarpDistance = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DirtySecond", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public int DirtySecond
-		{
-			get
-			{
-				return this._DirtySecond;
-			}
-			set
-			{
-				if ((this._DirtySecond != value))
-				{
-					this._DirtySecond = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TurnStarted", DbType="DateTime")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public System.Nullable<System.DateTime> TurnStarted
-		{
-			get
-			{
-				return this._TurnStarted;
-			}
-			set
-			{
-				if ((this._TurnStarted != value))
-				{
-					this._TurnStarted = value;
-				}
+				return this.GetTable<PlanetInfluenceHistory>();
 			}
 		}
 	}
 	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Event")]
 	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Event
+	public partial class Event : INotifyPropertyChanging, INotifyPropertyChanged
 	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
 		private int _EventID;
 		
@@ -825,13 +541,40 @@ namespace ZkData
 		
 		private System.DateTime _Time;
 		
-		private int _BattleTurn;
+		private int _Turn;
+		
+		private EntitySet<EventClan> _EventClans;
+		
+		private EntitySet<EventAccount> _EventAccounts;
+		
+		private EntitySet<EventPlanet> _EventPlanets;
+		
+		private EntitySet<EventSpringBattle> _EventSpringBattles;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnEventIDChanging(int value);
+    partial void OnEventIDChanged();
+    partial void OnTextChanging(string value);
+    partial void OnTextChanged();
+    partial void OnEventTypeChanging(int value);
+    partial void OnEventTypeChanged();
+    partial void OnTimeChanging(System.DateTime value);
+    partial void OnTimeChanged();
+    partial void OnTurnChanging(int value);
+    partial void OnTurnChanged();
+    #endregion
 		
 		public Event()
 		{
+			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
 		public int EventID
 		{
@@ -843,7 +586,11 @@ namespace ZkData
 			{
 				if ((this._EventID != value))
 				{
+					this.OnEventIDChanging(value);
+					this.SendPropertyChanging();
 					this._EventID = value;
+					this.SendPropertyChanged("EventID");
+					this.OnEventIDChanged();
 				}
 			}
 		}
@@ -860,7 +607,11 @@ namespace ZkData
 			{
 				if ((this._Text != value))
 				{
+					this.OnTextChanging(value);
+					this.SendPropertyChanging();
 					this._Text = value;
+					this.SendPropertyChanged("Text");
+					this.OnTextChanged();
 				}
 			}
 		}
@@ -877,7 +628,11 @@ namespace ZkData
 			{
 				if ((this._EventType != value))
 				{
+					this.OnEventTypeChanging(value);
+					this.SendPropertyChanging();
 					this._EventType = value;
+					this.SendPropertyChanged("EventType");
+					this.OnEventTypeChanged();
 				}
 			}
 		}
@@ -894,150 +649,208 @@ namespace ZkData
 			{
 				if ((this._Time != value))
 				{
+					this.OnTimeChanging(value);
+					this.SendPropertyChanging();
 					this._Time = value;
+					this.SendPropertyChanged("Time");
+					this.OnTimeChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattleTurn", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Turn", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public int BattleTurn
+		public int Turn
 		{
 			get
 			{
-				return this._BattleTurn;
+				return this._Turn;
 			}
 			set
 			{
-				if ((this._BattleTurn != value))
+				if ((this._Turn != value))
 				{
-					this._BattleTurn = value;
-				}
-			}
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Fleet")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Fleet
-	{
-		
-		private int _FleetID;
-		
-		private System.Nullable<int> _OwnerID;
-		
-		private int _Tactics;
-		
-		private int _TransitID;
-		
-		private string _CustomName;
-		
-		private bool _CanPresidentControl;
-		
-		public Fleet()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FleetID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int FleetID
-		{
-			get
-			{
-				return this._FleetID;
-			}
-			set
-			{
-				if ((this._FleetID != value))
-				{
-					this._FleetID = value;
+					this.OnTurnChanging(value);
+					this.SendPropertyChanging();
+					this._Turn = value;
+					this.SendPropertyChanged("Turn");
+					this.OnTurnChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerID", DbType="Int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public System.Nullable<int> OwnerID
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventClan", Storage="_EventClans", ThisKey="EventID", OtherKey="EventID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		public EntitySet<EventClan> EventClans
 		{
 			get
 			{
-				return this._OwnerID;
+				if ((this.serializing 
+							&& (this._EventClans.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._EventClans;
 			}
 			set
 			{
-				if ((this._OwnerID != value))
-				{
-					this._OwnerID = value;
-				}
+				this._EventClans.Assign(value);
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Tactics", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int Tactics
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventAccount", Storage="_EventAccounts", ThisKey="EventID", OtherKey="EventID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		public EntitySet<EventAccount> EventAccounts
 		{
 			get
 			{
-				return this._Tactics;
+				if ((this.serializing 
+							&& (this._EventAccounts.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._EventAccounts;
 			}
 			set
 			{
-				if ((this._Tactics != value))
-				{
-					this._Tactics = value;
-				}
+				this._EventAccounts.Assign(value);
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TransitID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int TransitID
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventPlanet", Storage="_EventPlanets", ThisKey="EventID", OtherKey="EventID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		public EntitySet<EventPlanet> EventPlanets
 		{
 			get
 			{
-				return this._TransitID;
+				if ((this.serializing 
+							&& (this._EventPlanets.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._EventPlanets;
 			}
 			set
 			{
-				if ((this._TransitID != value))
-				{
-					this._TransitID = value;
-				}
+				this._EventPlanets.Assign(value);
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CustomName", DbType="NVarChar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public string CustomName
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventSpringBattle", Storage="_EventSpringBattles", ThisKey="EventID", OtherKey="EventID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		public EntitySet<EventSpringBattle> EventSpringBattles
 		{
 			get
 			{
-				return this._CustomName;
+				if ((this.serializing 
+							&& (this._EventSpringBattles.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._EventSpringBattles;
 			}
 			set
 			{
-				if ((this._CustomName != value))
-				{
-					this._CustomName = value;
-				}
+				this._EventSpringBattles.Assign(value);
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanPresidentControl", DbType="Bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public bool CanPresidentControl
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
 		{
-			get
+			if ((this.PropertyChanging != null))
 			{
-				return this._CanPresidentControl;
+				this.PropertyChanging(this, emptyChangingEventArgs);
 			}
-			set
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
 			{
-				if ((this._CanPresidentControl != value))
-				{
-					this._CanPresidentControl = value;
-				}
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_EventClans(EventClan entity)
+		{
+			this.SendPropertyChanging();
+			entity.Event1 = this;
+		}
+		
+		private void detach_EventClans(EventClan entity)
+		{
+			this.SendPropertyChanging();
+			entity.Event1 = null;
+		}
+		
+		private void attach_EventAccounts(EventAccount entity)
+		{
+			this.SendPropertyChanging();
+			entity.Event1 = this;
+		}
+		
+		private void detach_EventAccounts(EventAccount entity)
+		{
+			this.SendPropertyChanging();
+			entity.Event1 = null;
+		}
+		
+		private void attach_EventPlanets(EventPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Event1 = this;
+		}
+		
+		private void detach_EventPlanets(EventPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Event1 = null;
+		}
+		
+		private void attach_EventSpringBattles(EventSpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.Event1 = this;
+		}
+		
+		private void detach_EventSpringBattles(EventSpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.Event1 = null;
+		}
+		
+		private void Initialize()
+		{
+			this._EventClans = new EntitySet<EventClan>(new Action<EventClan>(this.attach_EventClans), new Action<EventClan>(this.detach_EventClans));
+			this._EventAccounts = new EntitySet<EventAccount>(new Action<EventAccount>(this.attach_EventAccounts), new Action<EventAccount>(this.detach_EventAccounts));
+			this._EventPlanets = new EntitySet<EventPlanet>(new Action<EventPlanet>(this.attach_EventPlanets), new Action<EventPlanet>(this.detach_EventPlanets));
+			this._EventSpringBattles = new EntitySet<EventSpringBattle>(new Action<EventSpringBattle>(this.attach_EventSpringBattles), new Action<EventSpringBattle>(this.detach_EventSpringBattles));
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 	
@@ -2150,454 +1963,6 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Player")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class Player : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _PlayerID;
-		
-		private System.Nullable<int> _SpringAccountID;
-		
-		private System.Nullable<int> _Credits;
-		
-		private System.Nullable<int> _ClanLeaderVotePlayerID;
-		
-		private System.Nullable<int> _ClanID;
-		
-		private EntitySet<PlayerPlanet> _PlayerPlanets;
-		
-		private EntitySet<Clan> _Clans;
-		
-		private EntitySet<MarketOffer> _MarketOffersByPlayerID;
-		
-		private EntitySet<MarketOffer> _MarketOffersByAcceptedPlayerID;
-		
-		private EntityRef<Player> _ParentPlayer;
-		
-		private EntityRef<Account> _Account;
-		
-		private bool serializing;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnPlayerIDChanging(int value);
-    partial void OnPlayerIDChanged();
-    partial void OnSpringAccountIDChanging(System.Nullable<int> value);
-    partial void OnSpringAccountIDChanged();
-    partial void OnCreditsChanging(System.Nullable<int> value);
-    partial void OnCreditsChanged();
-    partial void OnClanLeaderVotePlayerIDChanging(System.Nullable<int> value);
-    partial void OnClanLeaderVotePlayerIDChanged();
-    partial void OnClanIDChanging(System.Nullable<int> value);
-    partial void OnClanIDChanged();
-    #endregion
-		
-		public Player()
-		{
-			this.Initialize();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int PlayerID
-		{
-			get
-			{
-				return this._PlayerID;
-			}
-			set
-			{
-				if ((this._PlayerID != value))
-				{
-					this.OnPlayerIDChanging(value);
-					this.SendPropertyChanging();
-					this._PlayerID = value;
-					this.SendPropertyChanged("PlayerID");
-					this.OnPlayerIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringAccountID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public System.Nullable<int> SpringAccountID
-		{
-			get
-			{
-				return this._SpringAccountID;
-			}
-			set
-			{
-				if ((this._SpringAccountID != value))
-				{
-					if (this._Account.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnSpringAccountIDChanging(value);
-					this.SendPropertyChanging();
-					this._SpringAccountID = value;
-					this.SendPropertyChanged("SpringAccountID");
-					this.OnSpringAccountIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Credits", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public System.Nullable<int> Credits
-		{
-			get
-			{
-				return this._Credits;
-			}
-			set
-			{
-				if ((this._Credits != value))
-				{
-					this.OnCreditsChanging(value);
-					this.SendPropertyChanging();
-					this._Credits = value;
-					this.SendPropertyChanged("Credits");
-					this.OnCreditsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanLeaderVotePlayerID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public System.Nullable<int> ClanLeaderVotePlayerID
-		{
-			get
-			{
-				return this._ClanLeaderVotePlayerID;
-			}
-			set
-			{
-				if ((this._ClanLeaderVotePlayerID != value))
-				{
-					if (this._ParentPlayer.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnClanLeaderVotePlayerIDChanging(value);
-					this.SendPropertyChanging();
-					this._ClanLeaderVotePlayerID = value;
-					this.SendPropertyChanged("ClanLeaderVotePlayerID");
-					this.OnClanLeaderVotePlayerIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public System.Nullable<int> ClanID
-		{
-			get
-			{
-				return this._ClanID;
-			}
-			set
-			{
-				if ((this._ClanID != value))
-				{
-					this.OnClanIDChanging(value);
-					this.SendPropertyChanging();
-					this._ClanID = value;
-					this.SendPropertyChanged("ClanID");
-					this.OnClanIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_PlayerPlanet", Storage="_PlayerPlanets", ThisKey="PlayerID", OtherKey="PlayerID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
-		public EntitySet<PlayerPlanet> PlayerPlanets
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._PlayerPlanets.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._PlayerPlanets;
-			}
-			set
-			{
-				this._PlayerPlanets.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_Clan", Storage="_Clans", ThisKey="PlayerID", OtherKey="LeaderPlayerID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
-		public EntitySet<Clan> Clans
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._Clans.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._Clans;
-			}
-			set
-			{
-				this._Clans.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_MarketOffer", Storage="_MarketOffersByPlayerID", ThisKey="PlayerID", OtherKey="PlayerID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
-		public EntitySet<MarketOffer> MarketOffersByPlayerID
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._MarketOffersByPlayerID.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._MarketOffersByPlayerID;
-			}
-			set
-			{
-				this._MarketOffersByPlayerID.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_MarketOffer1", Storage="_MarketOffersByAcceptedPlayerID", ThisKey="PlayerID", OtherKey="AcceptedPlayerID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
-		public EntitySet<MarketOffer> MarketOffersByAcceptedPlayerID
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._MarketOffersByAcceptedPlayerID.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._MarketOffersByAcceptedPlayerID;
-			}
-			set
-			{
-				this._MarketOffersByAcceptedPlayerID.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_Player", Storage="_ParentPlayer", ThisKey="ClanLeaderVotePlayerID", OtherKey="PlayerID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
-		public Player ParentPlayer
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._ParentPlayer.HasLoadedOrAssignedValue == false)))
-				{
-					return null;
-				}
-				return this._ParentPlayer.Entity;
-			}
-			set
-			{
-				if ((this._ParentPlayer.Entity != value))
-				{
-					this.SendPropertyChanging();
-					this._ParentPlayer.Entity = value;
-					this.SendPropertyChanged("ParentPlayer");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Player", Storage="_Account", ThisKey="SpringAccountID", OtherKey="AccountID", IsForeignKey=true)]
-		public Account Account
-		{
-			get
-			{
-				return this._Account.Entity;
-			}
-			set
-			{
-				Account previousValue = this._Account.Entity;
-				if (((previousValue != value) 
-							|| (this._Account.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Account.Entity = null;
-						previousValue.Players.Remove(this);
-					}
-					this._Account.Entity = value;
-					if ((value != null))
-					{
-						value.Players.Add(this);
-						this._SpringAccountID = value.AccountID;
-					}
-					else
-					{
-						this._SpringAccountID = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Account");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_PlayerPlanets(PlayerPlanet entity)
-		{
-			this.SendPropertyChanging();
-			entity.Player = this;
-		}
-		
-		private void detach_PlayerPlanets(PlayerPlanet entity)
-		{
-			this.SendPropertyChanging();
-			entity.Player = null;
-		}
-		
-		private void attach_Clans(Clan entity)
-		{
-			this.SendPropertyChanging();
-			entity.Player = this;
-		}
-		
-		private void detach_Clans(Clan entity)
-		{
-			this.SendPropertyChanging();
-			entity.Player = null;
-		}
-		
-		private void attach_MarketOffersByPlayerID(MarketOffer entity)
-		{
-			this.SendPropertyChanging();
-			entity.PlayerByPlayerID = this;
-		}
-		
-		private void detach_MarketOffersByPlayerID(MarketOffer entity)
-		{
-			this.SendPropertyChanging();
-			entity.PlayerByPlayerID = null;
-		}
-		
-		private void attach_MarketOffersByAcceptedPlayerID(MarketOffer entity)
-		{
-			this.SendPropertyChanging();
-			entity.PlayerByAcceptedPlayerID = this;
-		}
-		
-		private void detach_MarketOffersByAcceptedPlayerID(MarketOffer entity)
-		{
-			this.SendPropertyChanging();
-			entity.PlayerByAcceptedPlayerID = null;
-		}
-		
-		private void Initialize()
-		{
-			this._PlayerPlanets = new EntitySet<PlayerPlanet>(new Action<PlayerPlanet>(this.attach_PlayerPlanets), new Action<PlayerPlanet>(this.detach_PlayerPlanets));
-			this._Clans = new EntitySet<Clan>(new Action<Clan>(this.attach_Clans), new Action<Clan>(this.detach_Clans));
-			this._MarketOffersByPlayerID = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffersByPlayerID), new Action<MarketOffer>(this.detach_MarketOffersByPlayerID));
-			this._MarketOffersByAcceptedPlayerID = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffersByAcceptedPlayerID), new Action<MarketOffer>(this.detach_MarketOffersByAcceptedPlayerID));
-			this._ParentPlayer = default(EntityRef<Player>);
-			this._Account = default(EntityRef<Account>);
-			OnCreated();
-		}
-		
-		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnDeserializing(StreamingContext context)
-		{
-			this.Initialize();
-		}
-		
-		[global::System.Runtime.Serialization.OnSerializingAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnSerializing(StreamingContext context)
-		{
-			this.serializing = true;
-		}
-		
-		[global::System.Runtime.Serialization.OnSerializedAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnSerialized(StreamingContext context)
-		{
-			this.serializing = false;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlayerEvent")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class PlayerEvent
-	{
-		
-		private int _PlayerID;
-		
-		private int _EventID;
-		
-		public PlayerEvent()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int PlayerID
-		{
-			get
-			{
-				return this._PlayerID;
-			}
-			set
-			{
-				if ((this._PlayerID != value))
-				{
-					this._PlayerID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int EventID
-		{
-			get
-			{
-				return this._EventID;
-			}
-			set
-			{
-				if ((this._EventID != value))
-				{
-					this._EventID = value;
-				}
-			}
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Account")]
 	[global::System.Runtime.Serialization.DataContractAttribute()]
 	public partial class Account : INotifyPropertyChanging, INotifyPropertyChanged
@@ -2637,9 +2002,15 @@ namespace ZkData
 		
 		private int _Level;
 		
-		private EntitySet<Mission> _Missions;
+		private System.Nullable<int> _Credits;
 		
-		private EntitySet<Player> _Players;
+		private System.Nullable<int> _ClanID;
+		
+		private System.Nullable<int> _ClanLeaderVoteAccountID;
+		
+		private System.Nullable<int> _PlanetWarsRank;
+		
+		private EntitySet<Mission> _Missions;
 		
 		private EntitySet<LobbyMessage> _LobbyMessagesBySourceAccountID;
 		
@@ -2674,6 +2045,20 @@ namespace ZkData
 		private EntitySet<Commander> _Commanders;
 		
 		private EntitySet<PollVote> _PollVotes;
+		
+		private EntitySet<MarketOffer> _MarketOffersByAccountID;
+		
+		private EntitySet<MarketOffer> _MarketOffersByAcceptedAccountID;
+		
+		private EntitySet<AccountPlanet> _AccountPlanets;
+		
+		private EntitySet<EventAccount> _EventAccounts;
+		
+		private EntitySet<PlanetInfluenceHistory> _PlanetInfluenceHistories;
+		
+		private EntityRef<Account> _ParentAccount;
+		
+		private EntityRef<Clan> _Clan;
 		
 		private bool serializing;
 		
@@ -2713,6 +2098,14 @@ namespace ZkData
     partial void OnXPChanged();
     partial void OnLevelChanging(int value);
     partial void OnLevelChanged();
+    partial void OnCreditsChanging(System.Nullable<int> value);
+    partial void OnCreditsChanged();
+    partial void OnClanIDChanging(System.Nullable<int> value);
+    partial void OnClanIDChanged();
+    partial void OnClanLeaderVoteAccountIDChanging(System.Nullable<int> value);
+    partial void OnClanLeaderVoteAccountIDChanged();
+    partial void OnPlanetWarsRankChanging(System.Nullable<int> value);
+    partial void OnPlanetWarsRankChanged();
     #endregion
 		
 		public Account()
@@ -3056,8 +2449,100 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Credits", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public System.Nullable<int> Credits
+		{
+			get
+			{
+				return this._Credits;
+			}
+			set
+			{
+				if ((this._Credits != value))
+				{
+					this.OnCreditsChanging(value);
+					this.SendPropertyChanging();
+					this._Credits = value;
+					this.SendPropertyChanged("Credits");
+					this.OnCreditsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		public System.Nullable<int> ClanID
+		{
+			get
+			{
+				return this._ClanID;
+			}
+			set
+			{
+				if ((this._ClanID != value))
+				{
+					if (this._Clan.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnClanIDChanging(value);
+					this.SendPropertyChanging();
+					this._ClanID = value;
+					this.SendPropertyChanged("ClanID");
+					this.OnClanIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanLeaderVoteAccountID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		public System.Nullable<int> ClanLeaderVoteAccountID
+		{
+			get
+			{
+				return this._ClanLeaderVoteAccountID;
+			}
+			set
+			{
+				if ((this._ClanLeaderVoteAccountID != value))
+				{
+					if (this._ParentAccount.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnClanLeaderVoteAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._ClanLeaderVoteAccountID = value;
+					this.SendPropertyChanged("ClanLeaderVoteAccountID");
+					this.OnClanLeaderVoteAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetWarsRank", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		public System.Nullable<int> PlanetWarsRank
+		{
+			get
+			{
+				return this._PlanetWarsRank;
+			}
+			set
+			{
+				if ((this._PlanetWarsRank != value))
+				{
+					this.OnPlanetWarsRankChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetWarsRank = value;
+					this.SendPropertyChanged("PlanetWarsRank");
+					this.OnPlanetWarsRankChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Mission", Storage="_Missions", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<Mission> Missions
 		{
 			get
@@ -3075,27 +2560,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Player", Storage="_Players", ThisKey="AccountID", OtherKey="SpringAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
-		public EntitySet<Player> Players
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._Players.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._Players;
-			}
-			set
-			{
-				this._Players.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage", Storage="_LobbyMessagesBySourceAccountID", ThisKey="AccountID", OtherKey="SourceAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public EntitySet<LobbyMessage> LobbyMessagesBySourceAccountID
 		{
 			get
@@ -3114,7 +2580,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage1", Storage="_LobbyMessagesByTargetAccountID", ThisKey="AccountID", OtherKey="TargetAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<LobbyMessage> LobbyMessagesByTargetAccountID
 		{
 			get
@@ -3133,7 +2599,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread", Storage="_ForumThreadsByCreatedAccountID", ThisKey="AccountID", OtherKey="CreatedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByCreatedAccountID
 		{
 			get
@@ -3152,7 +2618,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread1", Storage="_ForumThreadsByLastPostAccountID", ThisKey="AccountID", OtherKey="LastPostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByLastPostAccountID
 		{
 			get
@@ -3171,7 +2637,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Resource", Storage="_Resources", ThisKey="AccountID", OtherKey="TaggedByAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
 		public EntitySet<Resource> Resources
 		{
 			get
@@ -3190,7 +2656,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MissionScore", Storage="_MissionScores", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -3209,7 +2675,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Rating", Storage="_Ratings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
 		public EntitySet<Rating> Ratings
 		{
 			get
@@ -3228,7 +2694,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPost", Storage="_ForumPosts", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -3247,7 +2713,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MapRating", Storage="_MapRatings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
 		public EntitySet<MapRating> MapRatings
 		{
 			get
@@ -3266,7 +2732,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattle", Storage="_SpringBattles", ThisKey="AccountID", OtherKey="HostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<SpringBattle> SpringBattles
 		{
 			get
@@ -3285,7 +2751,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -3304,7 +2770,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
 		public EntitySet<ForumThreadLastRead> ForumThreadLastReads
 		{
 			get
@@ -3323,7 +2789,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleAward> AccountBattleAwards
 		{
 			get
@@ -3342,7 +2808,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleStat", Storage="_AccountBattleStats", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleStat> AccountBattleStats
 		{
 			get
@@ -3361,7 +2827,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountUnlock", Storage="_AccountUnlocks", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -3380,7 +2846,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Commanders", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=37, EmitDefaultValue=false)]
 		public EntitySet<Commander> Commanders
 		{
 			get
@@ -3399,7 +2865,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PollVote", Storage="_PollVotes", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=38, EmitDefaultValue=false)]
 		public EntitySet<PollVote> PollVotes
 		{
 			get
@@ -3414,6 +2880,159 @@ namespace ZkData
 			set
 			{
 				this._PollVotes.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer", Storage="_MarketOffersByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=39, EmitDefaultValue=false)]
+		public EntitySet<MarketOffer> MarketOffersByAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._MarketOffersByAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._MarketOffersByAccountID;
+			}
+			set
+			{
+				this._MarketOffersByAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer1", Storage="_MarketOffersByAcceptedAccountID", ThisKey="AccountID", OtherKey="AcceptedAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=40, EmitDefaultValue=false)]
+		public EntitySet<MarketOffer> MarketOffersByAcceptedAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._MarketOffersByAcceptedAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._MarketOffersByAcceptedAccountID;
+			}
+			set
+			{
+				this._MarketOffersByAcceptedAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountPlanet", Storage="_AccountPlanets", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41, EmitDefaultValue=false)]
+		public EntitySet<AccountPlanet> AccountPlanets
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountPlanets.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountPlanets;
+			}
+			set
+			{
+				this._AccountPlanets.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_EventAccount", Storage="_EventAccounts", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42, EmitDefaultValue=false)]
+		public EntitySet<EventAccount> EventAccounts
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._EventAccounts.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._EventAccounts;
+			}
+			set
+			{
+				this._EventAccounts.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=43, EmitDefaultValue=false)]
+		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PlanetInfluenceHistories.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlanetInfluenceHistories;
+			}
+			set
+			{
+				this._PlanetInfluenceHistories.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Account", Storage="_ParentAccount", ThisKey="ClanLeaderVoteAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=44, EmitDefaultValue=false)]
+		public Account ParentAccount
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ParentAccount.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._ParentAccount.Entity;
+			}
+			set
+			{
+				if ((this._ParentAccount.Entity != value))
+				{
+					this.SendPropertyChanging();
+					this._ParentAccount.Entity = value;
+					this.SendPropertyChanged("ParentAccount");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Clan", ThisKey="ClanID", OtherKey="ClanID", IsForeignKey=true, DeleteRule="SET NULL")]
+		public Clan Clan
+		{
+			get
+			{
+				return this._Clan.Entity;
+			}
+			set
+			{
+				Clan previousValue = this._Clan.Entity;
+				if (((previousValue != value) 
+							|| (this._Clan.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Clan.Entity = null;
+						previousValue.Accounts.Remove(this);
+					}
+					this._Clan.Entity = value;
+					if ((value != null))
+					{
+						value.Accounts.Add(this);
+						this._ClanID = value.ClanID;
+					}
+					else
+					{
+						this._ClanID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Clan");
+				}
 			}
 		}
 		
@@ -3444,18 +3063,6 @@ namespace ZkData
 		}
 		
 		private void detach_Missions(Mission entity)
-		{
-			this.SendPropertyChanging();
-			entity.Account = null;
-		}
-		
-		private void attach_Players(Player entity)
-		{
-			this.SendPropertyChanging();
-			entity.Account = this;
-		}
-		
-		private void detach_Players(Player entity)
 		{
 			this.SendPropertyChanging();
 			entity.Account = null;
@@ -3665,10 +3272,69 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_MarketOffersByAccountID(MarketOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAccountID = this;
+		}
+		
+		private void detach_MarketOffersByAccountID(MarketOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAccountID = null;
+		}
+		
+		private void attach_MarketOffersByAcceptedAccountID(MarketOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAcceptedAccountID = this;
+		}
+		
+		private void detach_MarketOffersByAcceptedAccountID(MarketOffer entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAcceptedAccountID = null;
+		}
+		
+		private void attach_AccountPlanets(AccountPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountPlanets(AccountPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
+		private void attach_EventAccounts(EventAccount entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_EventAccounts(EventAccount entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
+		private void attach_PlanetInfluenceHistories(PlanetInfluenceHistory entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_PlanetInfluenceHistories(PlanetInfluenceHistory entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
-			this._Players = new EntitySet<Player>(new Action<Player>(this.attach_Players), new Action<Player>(this.detach_Players));
 			this._LobbyMessagesBySourceAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesBySourceAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesBySourceAccountID));
 			this._LobbyMessagesByTargetAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesByTargetAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesByTargetAccountID));
 			this._ForumThreadsByCreatedAccountID = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreadsByCreatedAccountID), new Action<ForumThread>(this.detach_ForumThreadsByCreatedAccountID));
@@ -3686,6 +3352,13 @@ namespace ZkData
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
 			this._Commanders = new EntitySet<Commander>(new Action<Commander>(this.attach_Commanders), new Action<Commander>(this.detach_Commanders));
 			this._PollVotes = new EntitySet<PollVote>(new Action<PollVote>(this.attach_PollVotes), new Action<PollVote>(this.detach_PollVotes));
+			this._MarketOffersByAccountID = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffersByAccountID), new Action<MarketOffer>(this.detach_MarketOffersByAccountID));
+			this._MarketOffersByAcceptedAccountID = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffersByAcceptedAccountID), new Action<MarketOffer>(this.detach_MarketOffersByAcceptedAccountID));
+			this._AccountPlanets = new EntitySet<AccountPlanet>(new Action<AccountPlanet>(this.attach_AccountPlanets), new Action<AccountPlanet>(this.detach_AccountPlanets));
+			this._EventAccounts = new EntitySet<EventAccount>(new Action<EventAccount>(this.attach_EventAccounts), new Action<EventAccount>(this.detach_EventAccounts));
+			this._PlanetInfluenceHistories = new EntitySet<PlanetInfluenceHistory>(new Action<PlanetInfluenceHistory>(this.attach_PlanetInfluenceHistories), new Action<PlanetInfluenceHistory>(this.detach_PlanetInfluenceHistories));
+			this._ParentAccount = default(EntityRef<Account>);
+			this._Clan = default(EntityRef<Clan>);
 			OnCreated();
 		}
 		
@@ -7646,6 +7319,8 @@ namespace ZkData
 		
 		private EntitySet<AccountBattleStat> _AccountBattleStats;
 		
+		private EntitySet<EventSpringBattle> _EventSpringBattles;
+		
 		private EntityRef<Account> _Account;
 		
 		private EntityRef<Resource> _ResourceByMapResourceID;
@@ -8177,6 +7852,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_EventSpringBattle", Storage="_EventSpringBattles", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		public EntitySet<EventSpringBattle> EventSpringBattles
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._EventSpringBattles.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._EventSpringBattles;
+			}
+			set
+			{
+				this._EventSpringBattles.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattle", Storage="_Account", ThisKey="HostAccountID", OtherKey="AccountID", IsForeignKey=true)]
 		public Account Account
 		{
@@ -8369,11 +8063,24 @@ namespace ZkData
 			entity.SpringBattle = null;
 		}
 		
+		private void attach_EventSpringBattles(EventSpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.SpringBattle = this;
+		}
+		
+		private void detach_EventSpringBattles(EventSpringBattle entity)
+		{
+			this.SendPropertyChanging();
+			entity.SpringBattle = null;
+		}
+		
 		private void Initialize()
 		{
 			this._SpringBattlePlayers = new EntitySet<SpringBattlePlayer>(new Action<SpringBattlePlayer>(this.attach_SpringBattlePlayers), new Action<SpringBattlePlayer>(this.detach_SpringBattlePlayers));
 			this._AccountBattleAwards = new EntitySet<AccountBattleAward>(new Action<AccountBattleAward>(this.attach_AccountBattleAwards), new Action<AccountBattleAward>(this.detach_AccountBattleAwards));
 			this._AccountBattleStats = new EntitySet<AccountBattleStat>(new Action<AccountBattleStat>(this.attach_AccountBattleStats), new Action<AccountBattleStat>(this.detach_AccountBattleStats));
+			this._EventSpringBattles = new EntitySet<EventSpringBattle>(new Action<EventSpringBattle>(this.attach_EventSpringBattles), new Action<EventSpringBattle>(this.detach_EventSpringBattles));
 			this._Account = default(EntityRef<Account>);
 			this._ResourceByMapResourceID = default(EntityRef<Resource>);
 			this._ResourceByModResourceID = default(EntityRef<Resource>);
@@ -8430,6 +8137,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _XpChange;
 		
+		private System.Nullable<int> _Influence;
+		
 		private EntityRef<SpringBattle> _SpringBattle;
 		
 		private EntityRef<Account> _Account;
@@ -8458,6 +8167,8 @@ namespace ZkData
     partial void OnEloChangeChanged();
     partial void OnXpChangeChanging(System.Nullable<int> value);
     partial void OnXpChangeChanged();
+    partial void OnInfluenceChanging(System.Nullable<int> value);
+    partial void OnInfluenceChanged();
     #endregion
 		
 		public SpringBattlePlayer()
@@ -8679,6 +8390,27 @@ namespace ZkData
 					this._XpChange = value;
 					this.SendPropertyChanged("XpChange");
 					this.OnXpChangeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Influence", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public System.Nullable<int> Influence
+		{
+			get
+			{
+				return this._Influence;
+			}
+			set
+			{
+				if ((this._Influence != value))
+				{
+					this.OnInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._Influence = value;
+					this.SendPropertyChanged("Influence");
+					this.OnInfluenceChanged();
 				}
 			}
 		}
@@ -12538,239 +12270,6 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlayerPlanet")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class PlayerPlanet : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _PlanetID;
-		
-		private int _PlayerID;
-		
-		private int _DropshipCount;
-		
-		private int _Influence;
-		
-		private EntityRef<Planet> _Planet;
-		
-		private EntityRef<Player> _Player;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnPlanetIDChanging(int value);
-    partial void OnPlanetIDChanged();
-    partial void OnPlayerIDChanging(int value);
-    partial void OnPlayerIDChanged();
-    partial void OnDropshipCountChanging(int value);
-    partial void OnDropshipCountChanged();
-    partial void OnInfluenceChanging(int value);
-    partial void OnInfluenceChanged();
-    #endregion
-		
-		public PlayerPlanet()
-		{
-			this.Initialize();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="int NOT NULL", IsPrimaryKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int PlanetID
-		{
-			get
-			{
-				return this._PlanetID;
-			}
-			set
-			{
-				if ((this._PlanetID != value))
-				{
-					if (this._Planet.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnPlanetIDChanging(value);
-					this.SendPropertyChanging();
-					this._PlanetID = value;
-					this.SendPropertyChanged("PlanetID");
-					this.OnPlanetIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", DbType="int NOT NULL", IsPrimaryKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int PlayerID
-		{
-			get
-			{
-				return this._PlayerID;
-			}
-			set
-			{
-				if ((this._PlayerID != value))
-				{
-					if (this._Player.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnPlayerIDChanging(value);
-					this.SendPropertyChanging();
-					this._PlayerID = value;
-					this.SendPropertyChanged("PlayerID");
-					this.OnPlayerIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipCount", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int DropshipCount
-		{
-			get
-			{
-				return this._DropshipCount;
-			}
-			set
-			{
-				if ((this._DropshipCount != value))
-				{
-					this.OnDropshipCountChanging(value);
-					this.SendPropertyChanging();
-					this._DropshipCount = value;
-					this.SendPropertyChanged("DropshipCount");
-					this.OnDropshipCountChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Influence", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int Influence
-		{
-			get
-			{
-				return this._Influence;
-			}
-			set
-			{
-				if ((this._Influence != value))
-				{
-					this.OnInfluenceChanging(value);
-					this.SendPropertyChanging();
-					this._Influence = value;
-					this.SendPropertyChanged("Influence");
-					this.OnInfluenceChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlayerPlanet", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true)]
-		public Planet Planet
-		{
-			get
-			{
-				return this._Planet.Entity;
-			}
-			set
-			{
-				Planet previousValue = this._Planet.Entity;
-				if (((previousValue != value) 
-							|| (this._Planet.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Planet.Entity = null;
-						previousValue.PlayerPlanets.Remove(this);
-					}
-					this._Planet.Entity = value;
-					if ((value != null))
-					{
-						value.PlayerPlanets.Add(this);
-						this._PlanetID = value.PlanetID;
-					}
-					else
-					{
-						this._PlanetID = default(int);
-					}
-					this.SendPropertyChanged("Planet");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_PlayerPlanet", Storage="_Player", ThisKey="PlayerID", OtherKey="PlayerID", IsForeignKey=true)]
-		public Player Player
-		{
-			get
-			{
-				return this._Player.Entity;
-			}
-			set
-			{
-				Player previousValue = this._Player.Entity;
-				if (((previousValue != value) 
-							|| (this._Player.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Player.Entity = null;
-						previousValue.PlayerPlanets.Remove(this);
-					}
-					this._Player.Entity = value;
-					if ((value != null))
-					{
-						value.PlayerPlanets.Add(this);
-						this._PlayerID = value.PlayerID;
-					}
-					else
-					{
-						this._PlayerID = default(int);
-					}
-					this.SendPropertyChanged("Player");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void Initialize()
-		{
-			this._Planet = default(EntityRef<Planet>);
-			this._Player = default(EntityRef<Player>);
-			OnCreated();
-		}
-		
-		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnDeserializing(StreamingContext context)
-		{
-			this.Initialize();
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Clan")]
 	[global::System.Runtime.Serialization.DataContractAttribute()]
 	public partial class Clan : INotifyPropertyChanging, INotifyPropertyChanged
@@ -12790,11 +12289,13 @@ namespace ZkData
 		
 		private string _Password;
 		
+		private EntitySet<Account> _Accounts;
+		
 		private EntitySet<TreatyOffer> _TreatyOffersByOfferingClanID;
 		
 		private EntitySet<TreatyOffer> _TreatyOffersByTargetClanID;
 		
-		private EntityRef<Player> _Player;
+		private EntitySet<EventClan> _EventClans;
 		
 		private bool serializing;
 		
@@ -12854,10 +12355,6 @@ namespace ZkData
 			{
 				if ((this._LeaderPlayerID != value))
 				{
-					if (this._Player.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
 					this.OnLeaderPlayerIDChanging(value);
 					this.SendPropertyChanging();
 					this._LeaderPlayerID = value;
@@ -12951,8 +12448,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Accounts", ThisKey="ClanID", OtherKey="ClanID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		public EntitySet<Account> Accounts
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Accounts.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Accounts;
+			}
+			set
+			{
+				this._Accounts.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByOfferingClanID
 		{
 			get
@@ -12971,7 +12487,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_TreatyOffersByTargetClanID", ThisKey="ClanID", OtherKey="TargetClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByTargetClanID
 		{
 			get
@@ -12989,37 +12505,22 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_Clan", Storage="_Player", ThisKey="LeaderPlayerID", OtherKey="PlayerID", IsForeignKey=true)]
-		public Player Player
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_EventClan", Storage="_EventClans", ThisKey="ClanID", OtherKey="ClanID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		public EntitySet<EventClan> EventClans
 		{
 			get
 			{
-				return this._Player.Entity;
+				if ((this.serializing 
+							&& (this._EventClans.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._EventClans;
 			}
 			set
 			{
-				Player previousValue = this._Player.Entity;
-				if (((previousValue != value) 
-							|| (this._Player.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Player.Entity = null;
-						previousValue.Clans.Remove(this);
-					}
-					this._Player.Entity = value;
-					if ((value != null))
-					{
-						value.Clans.Add(this);
-						this._LeaderPlayerID = value.PlayerID;
-					}
-					else
-					{
-						this._LeaderPlayerID = default(int);
-					}
-					this.SendPropertyChanged("Player");
-				}
+				this._EventClans.Assign(value);
 			}
 		}
 		
@@ -13041,6 +12542,18 @@ namespace ZkData
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_Accounts(Account entity)
+		{
+			this.SendPropertyChanging();
+			entity.Clan = this;
+		}
+		
+		private void detach_Accounts(Account entity)
+		{
+			this.SendPropertyChanging();
+			entity.Clan = null;
 		}
 		
 		private void attach_TreatyOffersByOfferingClanID(TreatyOffer entity)
@@ -13067,11 +12580,24 @@ namespace ZkData
 			entity.ClanByTargetClanID = null;
 		}
 		
+		private void attach_EventClans(EventClan entity)
+		{
+			this.SendPropertyChanging();
+			entity.Clan = this;
+		}
+		
+		private void detach_EventClans(EventClan entity)
+		{
+			this.SendPropertyChanging();
+			entity.Clan = null;
+		}
+		
 		private void Initialize()
 		{
+			this._Accounts = new EntitySet<Account>(new Action<Account>(this.attach_Accounts), new Action<Account>(this.detach_Accounts));
 			this._TreatyOffersByOfferingClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByOfferingClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByOfferingClanID));
 			this._TreatyOffersByTargetClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByTargetClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByTargetClanID));
-			this._Player = default(EntityRef<Player>);
+			this._EventClans = new EntitySet<EventClan>(new Action<EventClan>(this.attach_EventClans), new Action<EventClan>(this.detach_EventClans));
 			OnCreated();
 		}
 		
@@ -13134,9 +12660,13 @@ namespace ZkData
 		
 		private EntitySet<Link> _LinksByPlanetID2;
 		
-		private EntitySet<PlayerPlanet> _PlayerPlanets;
-		
 		private EntitySet<MarketOffer> _MarketOffers;
+		
+		private EntitySet<AccountPlanet> _AccountPlanets;
+		
+		private EntitySet<EventPlanet> _EventPlanets;
+		
+		private EntitySet<PlanetInfluenceHistory> _PlanetInfluenceHistories;
 		
 		private bool serializing;
 		
@@ -13488,27 +13018,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlayerPlanet", Storage="_PlayerPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
-		public EntitySet<PlayerPlanet> PlayerPlanets
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._PlayerPlanets.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._PlayerPlanets;
-			}
-			set
-			{
-				this._PlayerPlanets.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_MarketOffer", Storage="_MarketOffers", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffers
 		{
 			get
@@ -13523,6 +13034,63 @@ namespace ZkData
 			set
 			{
 				this._MarketOffers.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_AccountPlanet", Storage="_AccountPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		public EntitySet<AccountPlanet> AccountPlanets
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountPlanets.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountPlanets;
+			}
+			set
+			{
+				this._AccountPlanets.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_EventPlanet", Storage="_EventPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		public EntitySet<EventPlanet> EventPlanets
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._EventPlanets.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._EventPlanets;
+			}
+			set
+			{
+				this._EventPlanets.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="PlanetID", OtherKey="PlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PlanetInfluenceHistories.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlanetInfluenceHistories;
+			}
+			set
+			{
+				this._PlanetInfluenceHistories.Assign(value);
 			}
 		}
 		
@@ -13570,18 +13138,6 @@ namespace ZkData
 			entity.PlanetByPlanetID2 = null;
 		}
 		
-		private void attach_PlayerPlanets(PlayerPlanet entity)
-		{
-			this.SendPropertyChanging();
-			entity.Planet = this;
-		}
-		
-		private void detach_PlayerPlanets(PlayerPlanet entity)
-		{
-			this.SendPropertyChanging();
-			entity.Planet = null;
-		}
-		
 		private void attach_MarketOffers(MarketOffer entity)
 		{
 			this.SendPropertyChanging();
@@ -13594,12 +13150,50 @@ namespace ZkData
 			entity.Planet = null;
 		}
 		
+		private void attach_AccountPlanets(AccountPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = this;
+		}
+		
+		private void detach_AccountPlanets(AccountPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = null;
+		}
+		
+		private void attach_EventPlanets(EventPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = this;
+		}
+		
+		private void detach_EventPlanets(EventPlanet entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = null;
+		}
+		
+		private void attach_PlanetInfluenceHistories(PlanetInfluenceHistory entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = this;
+		}
+		
+		private void detach_PlanetInfluenceHistories(PlanetInfluenceHistory entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = null;
+		}
+		
 		private void Initialize()
 		{
 			this._LinksByPlanetID1 = new EntitySet<Link>(new Action<Link>(this.attach_LinksByPlanetID1), new Action<Link>(this.detach_LinksByPlanetID1));
 			this._LinksByPlanetID2 = new EntitySet<Link>(new Action<Link>(this.attach_LinksByPlanetID2), new Action<Link>(this.detach_LinksByPlanetID2));
-			this._PlayerPlanets = new EntitySet<PlayerPlanet>(new Action<PlayerPlanet>(this.attach_PlayerPlanets), new Action<PlayerPlanet>(this.detach_PlayerPlanets));
 			this._MarketOffers = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffers), new Action<MarketOffer>(this.detach_MarketOffers));
+			this._AccountPlanets = new EntitySet<AccountPlanet>(new Action<AccountPlanet>(this.attach_AccountPlanets), new Action<AccountPlanet>(this.detach_AccountPlanets));
+			this._EventPlanets = new EntitySet<EventPlanet>(new Action<EventPlanet>(this.attach_EventPlanets), new Action<EventPlanet>(this.detach_EventPlanets));
+			this._PlanetInfluenceHistories = new EntitySet<PlanetInfluenceHistory>(new Action<PlanetInfluenceHistory>(this.attach_PlanetInfluenceHistories), new Action<PlanetInfluenceHistory>(this.detach_PlanetInfluenceHistories));
 			OnCreated();
 		}
 		
@@ -13634,7 +13228,7 @@ namespace ZkData
 		
 		private int _OfferID;
 		
-		private int _PlayerID;
+		private int _AccountID;
 		
 		private int _PlanetID;
 		
@@ -13648,13 +13242,13 @@ namespace ZkData
 		
 		private System.Nullable<System.DateTime> _DateAccepted;
 		
-		private System.Nullable<int> _AcceptedPlayerID;
-		
-		private EntityRef<Player> _PlayerByPlayerID;
+		private System.Nullable<int> _AcceptedAccountID;
 		
 		private EntityRef<Planet> _Planet;
 		
-		private EntityRef<Player> _PlayerByAcceptedPlayerID;
+		private EntityRef<Account> _AccountByAccountID;
+		
+		private EntityRef<Account> _AccountByAcceptedAccountID;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -13662,8 +13256,8 @@ namespace ZkData
     partial void OnCreated();
     partial void OnOfferIDChanging(int value);
     partial void OnOfferIDChanged();
-    partial void OnPlayerIDChanging(int value);
-    partial void OnPlayerIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
     partial void OnPlanetIDChanging(int value);
     partial void OnPlanetIDChanged();
     partial void OnQuantityChanging(int value);
@@ -13676,8 +13270,8 @@ namespace ZkData
     partial void OnDatePlacedChanged();
     partial void OnDateAcceptedChanging(System.Nullable<System.DateTime> value);
     partial void OnDateAcceptedChanged();
-    partial void OnAcceptedPlayerIDChanging(System.Nullable<int> value);
-    partial void OnAcceptedPlayerIDChanged();
+    partial void OnAcceptedAccountIDChanging(System.Nullable<int> value);
+    partial void OnAcceptedAccountIDChanged();
     #endregion
 		
 		public MarketOffer()
@@ -13706,27 +13300,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int PlayerID
+		public int AccountID
 		{
 			get
 			{
-				return this._PlayerID;
+				return this._AccountID;
 			}
 			set
 			{
-				if ((this._PlayerID != value))
+				if ((this._AccountID != value))
 				{
-					if (this._PlayerByPlayerID.HasLoadedOrAssignedValue)
+					if (this._AccountByAccountID.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnPlayerIDChanging(value);
+					this.OnAccountIDChanging(value);
 					this.SendPropertyChanging();
-					this._PlayerID = value;
-					this.SendPropertyChanged("PlayerID");
-					this.OnPlayerIDChanged();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
 				}
 			}
 		}
@@ -13861,61 +13455,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AcceptedPlayerID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AcceptedAccountID", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public System.Nullable<int> AcceptedPlayerID
+		public System.Nullable<int> AcceptedAccountID
 		{
 			get
 			{
-				return this._AcceptedPlayerID;
+				return this._AcceptedAccountID;
 			}
 			set
 			{
-				if ((this._AcceptedPlayerID != value))
+				if ((this._AcceptedAccountID != value))
 				{
-					if (this._PlayerByAcceptedPlayerID.HasLoadedOrAssignedValue)
+					if (this._AccountByAcceptedAccountID.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnAcceptedPlayerIDChanging(value);
+					this.OnAcceptedAccountIDChanging(value);
 					this.SendPropertyChanging();
-					this._AcceptedPlayerID = value;
-					this.SendPropertyChanged("AcceptedPlayerID");
-					this.OnAcceptedPlayerIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_MarketOffer", Storage="_PlayerByPlayerID", ThisKey="PlayerID", OtherKey="PlayerID", IsForeignKey=true)]
-		public Player PlayerByPlayerID
-		{
-			get
-			{
-				return this._PlayerByPlayerID.Entity;
-			}
-			set
-			{
-				Player previousValue = this._PlayerByPlayerID.Entity;
-				if (((previousValue != value) 
-							|| (this._PlayerByPlayerID.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._PlayerByPlayerID.Entity = null;
-						previousValue.MarketOffersByPlayerID.Remove(this);
-					}
-					this._PlayerByPlayerID.Entity = value;
-					if ((value != null))
-					{
-						value.MarketOffersByPlayerID.Add(this);
-						this._PlayerID = value.PlayerID;
-					}
-					else
-					{
-						this._PlayerID = default(int);
-					}
-					this.SendPropertyChanged("PlayerByPlayerID");
+					this._AcceptedAccountID = value;
+					this.SendPropertyChanged("AcceptedAccountID");
+					this.OnAcceptedAccountIDChanged();
 				}
 			}
 		}
@@ -13954,36 +13514,70 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Player_MarketOffer1", Storage="_PlayerByAcceptedPlayerID", ThisKey="AcceptedPlayerID", OtherKey="PlayerID", IsForeignKey=true)]
-		public Player PlayerByAcceptedPlayerID
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer", Storage="_AccountByAccountID", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByAccountID
 		{
 			get
 			{
-				return this._PlayerByAcceptedPlayerID.Entity;
+				return this._AccountByAccountID.Entity;
 			}
 			set
 			{
-				Player previousValue = this._PlayerByAcceptedPlayerID.Entity;
+				Account previousValue = this._AccountByAccountID.Entity;
 				if (((previousValue != value) 
-							|| (this._PlayerByAcceptedPlayerID.HasLoadedOrAssignedValue == false)))
+							|| (this._AccountByAccountID.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._PlayerByAcceptedPlayerID.Entity = null;
-						previousValue.MarketOffersByAcceptedPlayerID.Remove(this);
+						this._AccountByAccountID.Entity = null;
+						previousValue.MarketOffersByAccountID.Remove(this);
 					}
-					this._PlayerByAcceptedPlayerID.Entity = value;
+					this._AccountByAccountID.Entity = value;
 					if ((value != null))
 					{
-						value.MarketOffersByAcceptedPlayerID.Add(this);
-						this._AcceptedPlayerID = value.PlayerID;
+						value.MarketOffersByAccountID.Add(this);
+						this._AccountID = value.AccountID;
 					}
 					else
 					{
-						this._AcceptedPlayerID = default(Nullable<int>);
+						this._AccountID = default(int);
 					}
-					this.SendPropertyChanged("PlayerByAcceptedPlayerID");
+					this.SendPropertyChanged("AccountByAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer1", Storage="_AccountByAcceptedAccountID", ThisKey="AcceptedAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByAcceptedAccountID
+		{
+			get
+			{
+				return this._AccountByAcceptedAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByAcceptedAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByAcceptedAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByAcceptedAccountID.Entity = null;
+						previousValue.MarketOffersByAcceptedAccountID.Remove(this);
+					}
+					this._AccountByAcceptedAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.MarketOffersByAcceptedAccountID.Add(this);
+						this._AcceptedAccountID = value.AccountID;
+					}
+					else
+					{
+						this._AcceptedAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountByAcceptedAccountID");
 				}
 			}
 		}
@@ -14010,9 +13604,1484 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			this._PlayerByPlayerID = default(EntityRef<Player>);
 			this._Planet = default(EntityRef<Planet>);
-			this._PlayerByAcceptedPlayerID = default(EntityRef<Player>);
+			this._AccountByAccountID = default(EntityRef<Account>);
+			this._AccountByAcceptedAccountID = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountPlanet")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountPlanet : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _PlanetID;
+		
+		private int _AccountID;
+		
+		private int _DropshipCount;
+		
+		private int _Influence;
+		
+		private EntityRef<Planet> _Planet;
+		
+		private EntityRef<Account> _Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnDropshipCountChanging(int value);
+    partial void OnDropshipCountChanged();
+    partial void OnInfluenceChanging(int value);
+    partial void OnInfluenceChanged();
+    #endregion
+		
+		public AccountPlanet()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					if (this._Planet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipCount", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int DropshipCount
+		{
+			get
+			{
+				return this._DropshipCount;
+			}
+			set
+			{
+				if ((this._DropshipCount != value))
+				{
+					this.OnDropshipCountChanging(value);
+					this.SendPropertyChanging();
+					this._DropshipCount = value;
+					this.SendPropertyChanged("DropshipCount");
+					this.OnDropshipCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Influence", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public int Influence
+		{
+			get
+			{
+				return this._Influence;
+			}
+			set
+			{
+				if ((this._Influence != value))
+				{
+					this.OnInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._Influence = value;
+					this.SendPropertyChanged("Influence");
+					this.OnInfluenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_AccountPlanet", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true)]
+		public Planet Planet
+		{
+			get
+			{
+				return this._Planet.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._Planet.Entity;
+				if (((previousValue != value) 
+							|| (this._Planet.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Planet.Entity = null;
+						previousValue.AccountPlanets.Remove(this);
+					}
+					this._Planet.Entity = value;
+					if ((value != null))
+					{
+						value.AccountPlanets.Add(this);
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("Planet");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountPlanet", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountPlanets.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountPlanets.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Planet = default(EntityRef<Planet>);
+			this._Account = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlanetwarsConfig")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class PlanetwarsConfig : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _GameID;
+		
+		private System.Nullable<System.DateTime> _Started;
+		
+		private int _CombatTurn;
+		
+		private System.Nullable<System.DateTime> _TurnStarted;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnGameIDChanging(int value);
+    partial void OnGameIDChanged();
+    partial void OnStartedChanging(System.Nullable<System.DateTime> value);
+    partial void OnStartedChanged();
+    partial void OnCombatTurnChanging(int value);
+    partial void OnCombatTurnChanged();
+    partial void OnTurnStartedChanging(System.Nullable<System.DateTime> value);
+    partial void OnTurnStartedChanged();
+    #endregion
+		
+		public PlanetwarsConfig()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GameID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int GameID
+		{
+			get
+			{
+				return this._GameID;
+			}
+			set
+			{
+				if ((this._GameID != value))
+				{
+					this.OnGameIDChanging(value);
+					this.SendPropertyChanging();
+					this._GameID = value;
+					this.SendPropertyChanged("GameID");
+					this.OnGameIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Started", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public System.Nullable<System.DateTime> Started
+		{
+			get
+			{
+				return this._Started;
+			}
+			set
+			{
+				if ((this._Started != value))
+				{
+					this.OnStartedChanging(value);
+					this.SendPropertyChanging();
+					this._Started = value;
+					this.SendPropertyChanged("Started");
+					this.OnStartedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CombatTurn", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int CombatTurn
+		{
+			get
+			{
+				return this._CombatTurn;
+			}
+			set
+			{
+				if ((this._CombatTurn != value))
+				{
+					this.OnCombatTurnChanging(value);
+					this.SendPropertyChanging();
+					this._CombatTurn = value;
+					this.SendPropertyChanged("CombatTurn");
+					this.OnCombatTurnChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TurnStarted", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<System.DateTime> TurnStarted
+		{
+			get
+			{
+				return this._TurnStarted;
+			}
+			set
+			{
+				if ((this._TurnStarted != value))
+				{
+					this.OnTurnStartedChanging(value);
+					this.SendPropertyChanging();
+					this._TurnStarted = value;
+					this.SendPropertyChanged("TurnStarted");
+					this.OnTurnStartedChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EventClan")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class EventClan : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _EventID;
+		
+		private int _ClanID;
+		
+		private EntityRef<Event> _Event1;
+		
+		private EntityRef<Clan> _Clan;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnEventIDChanging(int value);
+    partial void OnEventIDChanged();
+    partial void OnClanIDChanging(int value);
+    partial void OnClanIDChanged();
+    #endregion
+		
+		public EventClan()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int EventID
+		{
+			get
+			{
+				return this._EventID;
+			}
+			set
+			{
+				if ((this._EventID != value))
+				{
+					if (this._Event1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEventIDChanging(value);
+					this.SendPropertyChanging();
+					this._EventID = value;
+					this.SendPropertyChanged("EventID");
+					this.OnEventIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int ClanID
+		{
+			get
+			{
+				return this._ClanID;
+			}
+			set
+			{
+				if ((this._ClanID != value))
+				{
+					if (this._Clan.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnClanIDChanging(value);
+					this.SendPropertyChanging();
+					this._ClanID = value;
+					this.SendPropertyChanged("ClanID");
+					this.OnClanIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventClan", Storage="_Event1", ThisKey="EventID", OtherKey="EventID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Event Event1
+		{
+			get
+			{
+				return this._Event1.Entity;
+			}
+			set
+			{
+				Event previousValue = this._Event1.Entity;
+				if (((previousValue != value) 
+							|| (this._Event1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Event1.Entity = null;
+						previousValue.EventClans.Remove(this);
+					}
+					this._Event1.Entity = value;
+					if ((value != null))
+					{
+						value.EventClans.Add(this);
+						this._EventID = value.EventID;
+					}
+					else
+					{
+						this._EventID = default(int);
+					}
+					this.SendPropertyChanged("Event1");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_EventClan", Storage="_Clan", ThisKey="ClanID", OtherKey="ClanID", IsForeignKey=true)]
+		public Clan Clan
+		{
+			get
+			{
+				return this._Clan.Entity;
+			}
+			set
+			{
+				Clan previousValue = this._Clan.Entity;
+				if (((previousValue != value) 
+							|| (this._Clan.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Clan.Entity = null;
+						previousValue.EventClans.Remove(this);
+					}
+					this._Clan.Entity = value;
+					if ((value != null))
+					{
+						value.EventClans.Add(this);
+						this._ClanID = value.ClanID;
+					}
+					else
+					{
+						this._ClanID = default(int);
+					}
+					this.SendPropertyChanged("Clan");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Event1 = default(EntityRef<Event>);
+			this._Clan = default(EntityRef<Clan>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EventAccount")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class EventAccount : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _EventID;
+		
+		private int _AccountID;
+		
+		private EntityRef<Event> _Event1;
+		
+		private EntityRef<Account> _Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnEventIDChanging(int value);
+    partial void OnEventIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    #endregion
+		
+		public EventAccount()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int EventID
+		{
+			get
+			{
+				return this._EventID;
+			}
+			set
+			{
+				if ((this._EventID != value))
+				{
+					if (this._Event1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEventIDChanging(value);
+					this.SendPropertyChanging();
+					this._EventID = value;
+					this.SendPropertyChanged("EventID");
+					this.OnEventIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventAccount", Storage="_Event1", ThisKey="EventID", OtherKey="EventID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Event Event1
+		{
+			get
+			{
+				return this._Event1.Entity;
+			}
+			set
+			{
+				Event previousValue = this._Event1.Entity;
+				if (((previousValue != value) 
+							|| (this._Event1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Event1.Entity = null;
+						previousValue.EventAccounts.Remove(this);
+					}
+					this._Event1.Entity = value;
+					if ((value != null))
+					{
+						value.EventAccounts.Add(this);
+						this._EventID = value.EventID;
+					}
+					else
+					{
+						this._EventID = default(int);
+					}
+					this.SendPropertyChanged("Event1");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_EventAccount", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.EventAccounts.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.EventAccounts.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Event1 = default(EntityRef<Event>);
+			this._Account = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EventPlanet")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class EventPlanet : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _EventID;
+		
+		private int _PlanetID;
+		
+		private EntityRef<Event> _Event1;
+		
+		private EntityRef<Planet> _Planet;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnEventIDChanging(int value);
+    partial void OnEventIDChanged();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    #endregion
+		
+		public EventPlanet()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int EventID
+		{
+			get
+			{
+				return this._EventID;
+			}
+			set
+			{
+				if ((this._EventID != value))
+				{
+					if (this._Event1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEventIDChanging(value);
+					this.SendPropertyChanging();
+					this._EventID = value;
+					this.SendPropertyChanged("EventID");
+					this.OnEventIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					if (this._Planet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventPlanet", Storage="_Event1", ThisKey="EventID", OtherKey="EventID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Event Event1
+		{
+			get
+			{
+				return this._Event1.Entity;
+			}
+			set
+			{
+				Event previousValue = this._Event1.Entity;
+				if (((previousValue != value) 
+							|| (this._Event1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Event1.Entity = null;
+						previousValue.EventPlanets.Remove(this);
+					}
+					this._Event1.Entity = value;
+					if ((value != null))
+					{
+						value.EventPlanets.Add(this);
+						this._EventID = value.EventID;
+					}
+					else
+					{
+						this._EventID = default(int);
+					}
+					this.SendPropertyChanged("Event1");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_EventPlanet", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true)]
+		public Planet Planet
+		{
+			get
+			{
+				return this._Planet.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._Planet.Entity;
+				if (((previousValue != value) 
+							|| (this._Planet.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Planet.Entity = null;
+						previousValue.EventPlanets.Remove(this);
+					}
+					this._Planet.Entity = value;
+					if ((value != null))
+					{
+						value.EventPlanets.Add(this);
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("Planet");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Event1 = default(EntityRef<Event>);
+			this._Planet = default(EntityRef<Planet>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EventSpringBattle")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class EventSpringBattle : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _EventID;
+		
+		private int _SpringBattleID;
+		
+		private EntityRef<Event> _Event1;
+		
+		private EntityRef<SpringBattle> _SpringBattle;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnEventIDChanging(int value);
+    partial void OnEventIDChanged();
+    partial void OnSpringBattleIDChanging(int value);
+    partial void OnSpringBattleIDChanged();
+    #endregion
+		
+		public EventSpringBattle()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int EventID
+		{
+			get
+			{
+				return this._EventID;
+			}
+			set
+			{
+				if ((this._EventID != value))
+				{
+					if (this._Event1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEventIDChanging(value);
+					this.SendPropertyChanging();
+					this._EventID = value;
+					this.SendPropertyChanged("EventID");
+					this.OnEventIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringBattleID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int SpringBattleID
+		{
+			get
+			{
+				return this._SpringBattleID;
+			}
+			set
+			{
+				if ((this._SpringBattleID != value))
+				{
+					if (this._SpringBattle.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSpringBattleIDChanging(value);
+					this.SendPropertyChanging();
+					this._SpringBattleID = value;
+					this.SendPropertyChanged("SpringBattleID");
+					this.OnSpringBattleIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventSpringBattle", Storage="_Event1", ThisKey="EventID", OtherKey="EventID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Event Event1
+		{
+			get
+			{
+				return this._Event1.Entity;
+			}
+			set
+			{
+				Event previousValue = this._Event1.Entity;
+				if (((previousValue != value) 
+							|| (this._Event1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Event1.Entity = null;
+						previousValue.EventSpringBattles.Remove(this);
+					}
+					this._Event1.Entity = value;
+					if ((value != null))
+					{
+						value.EventSpringBattles.Add(this);
+						this._EventID = value.EventID;
+					}
+					else
+					{
+						this._EventID = default(int);
+					}
+					this.SendPropertyChanged("Event1");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_EventSpringBattle", Storage="_SpringBattle", ThisKey="SpringBattleID", OtherKey="SpringBattleID", IsForeignKey=true)]
+		public SpringBattle SpringBattle
+		{
+			get
+			{
+				return this._SpringBattle.Entity;
+			}
+			set
+			{
+				SpringBattle previousValue = this._SpringBattle.Entity;
+				if (((previousValue != value) 
+							|| (this._SpringBattle.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._SpringBattle.Entity = null;
+						previousValue.EventSpringBattles.Remove(this);
+					}
+					this._SpringBattle.Entity = value;
+					if ((value != null))
+					{
+						value.EventSpringBattles.Add(this);
+						this._SpringBattleID = value.SpringBattleID;
+					}
+					else
+					{
+						this._SpringBattleID = default(int);
+					}
+					this.SendPropertyChanged("SpringBattle");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Event1 = default(EntityRef<Event>);
+			this._SpringBattle = default(EntityRef<SpringBattle>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlanetOwnerHistory")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class PlanetOwnerHistory : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _PlanetID;
+		
+		private int _Turn;
+		
+		private System.Nullable<int> _OwnerAccountID;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnTurnChanging(int value);
+    partial void OnTurnChanged();
+    partial void OnOwnerAccountIDChanging(System.Nullable<int> value);
+    partial void OnOwnerAccountIDChanged();
+    #endregion
+		
+		public PlanetOwnerHistory()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Turn", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int Turn
+		{
+			get
+			{
+				return this._Turn;
+			}
+			set
+			{
+				if ((this._Turn != value))
+				{
+					this.OnTurnChanging(value);
+					this.SendPropertyChanging();
+					this._Turn = value;
+					this.SendPropertyChanged("Turn");
+					this.OnTurnChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerAccountID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public System.Nullable<int> OwnerAccountID
+		{
+			get
+			{
+				return this._OwnerAccountID;
+			}
+			set
+			{
+				if ((this._OwnerAccountID != value))
+				{
+					this.OnOwnerAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._OwnerAccountID = value;
+					this.SendPropertyChanged("OwnerAccountID");
+					this.OnOwnerAccountIDChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlanetInfluenceHistory")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class PlanetInfluenceHistory : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _PlanetID;
+		
+		private int _AccountID;
+		
+		private int _Turn;
+		
+		private int _Influence;
+		
+		private EntityRef<Planet> _Planet;
+		
+		private EntityRef<Account> _Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnTurnChanging(int value);
+    partial void OnTurnChanged();
+    partial void OnInfluenceChanging(int value);
+    partial void OnInfluenceChanged();
+    #endregion
+		
+		public PlanetInfluenceHistory()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					if (this._Planet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Turn", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int Turn
+		{
+			get
+			{
+				return this._Turn;
+			}
+			set
+			{
+				if ((this._Turn != value))
+				{
+					this.OnTurnChanging(value);
+					this.SendPropertyChanging();
+					this._Turn = value;
+					this.SendPropertyChanged("Turn");
+					this.OnTurnChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Influence", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public int Influence
+		{
+			get
+			{
+				return this._Influence;
+			}
+			set
+			{
+				if ((this._Influence != value))
+				{
+					this.OnInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._Influence = value;
+					this.SendPropertyChanged("Influence");
+					this.OnInfluenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetInfluenceHistory", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Planet Planet
+		{
+			get
+			{
+				return this._Planet.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._Planet.Entity;
+				if (((previousValue != value) 
+							|| (this._Planet.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Planet.Entity = null;
+						previousValue.PlanetInfluenceHistories.Remove(this);
+					}
+					this._Planet.Entity = value;
+					if ((value != null))
+					{
+						value.PlanetInfluenceHistories.Add(this);
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("Planet");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetInfluenceHistory", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.PlanetInfluenceHistories.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.PlanetInfluenceHistories.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Planet = default(EntityRef<Planet>);
+			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
 		

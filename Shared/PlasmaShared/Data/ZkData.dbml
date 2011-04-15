@@ -1,49 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="PlasmaShared.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
-  <Table Name="dbo.Battle" Member="Battles">
-    <Type Name="Battle">
-      <Column Name="BattleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="CelestialObjectID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="IsDone" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
-  <Table Name="dbo.BattleEvent" Member="BattleEvents">
-    <Type Name="BattleEvent">
-      <Column Name="BattleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
-  <Table Name="dbo.Config" Member="Configs">
-    <Type Name="Config">
-      <Column Name="Started" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="CombatTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="StartOn" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-      <Column Name="GameID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="SecondsPerTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="ResourceTick" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="PopulationTick" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="WarpDistance" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="DirtySecond" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="TurnStarted" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
-      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Text" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
       <Column Name="EventType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Time" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="BattleTurn" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
-  <Table Name="dbo.Fleet" Member="Fleets">
-    <Type Name="Fleet">
-      <Column Name="FleetID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="OwnerID" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="Tactics" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="TransitID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="CustomName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-      <Column Name="CanPresidentControl" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Turn" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Event_EventClan" Member="EventClans" ThisKey="EventID" OtherKey="EventID" Type="EventClan" />
+      <Association Name="Event_EventAccount" Member="EventAccounts" ThisKey="EventID" OtherKey="EventID" Type="EventAccount" />
+      <Association Name="Event_EventPlanet" Member="EventPlanets" ThisKey="EventID" OtherKey="EventID" Type="EventPlanet" />
+      <Association Name="Event_EventSpringBattle" Member="EventSpringBattles" ThisKey="EventID" OtherKey="EventID" Type="EventSpringBattle" />
     </Type>
   </Table>
   <Table Name="dbo.Mission" Member="Missions">
@@ -88,27 +55,6 @@
       <Association Name="ForumThread_Mission" Member="ForumThread" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThread" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.Player" Member="Players">
-    <Type Name="Player">
-      <Column Name="PlayerID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="SpringAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="Credits" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="ClanLeaderVotePlayerID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="ClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Association Name="Player_PlayerPlanet" Member="PlayerPlanets" ThisKey="PlayerID" OtherKey="PlayerID" Type="PlayerPlanet" />
-      <Association Name="Player_Clan" Member="Clans" ThisKey="PlayerID" OtherKey="LeaderPlayerID" Type="Clan" />
-      <Association Name="Player_MarketOffer" Member="MarketOffersByPlayerID" ThisKey="PlayerID" OtherKey="PlayerID" Type="MarketOffer" />
-      <Association Name="Player_MarketOffer1" Member="MarketOffersByAcceptedPlayerID" ThisKey="PlayerID" OtherKey="AcceptedPlayerID" Type="MarketOffer" />
-      <Association Name="Player_Player" Member="ParentPlayer" ThisKey="ClanLeaderVotePlayerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
-      <Association Name="Account_Player" Member="Account" ThisKey="SpringAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.PlayerEvent" Member="PlayerEvents">
-    <Type Name="PlayerEvent">
-      <Column Name="PlayerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="EventID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
   <Table Name="dbo.Account" Member="Accounts">
     <Type Name="Account">
       <Column Name="AccountID" Storage="_Id" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
@@ -127,8 +73,11 @@
       <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Xp" Member="XP" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Credits" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="ClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="ClanLeaderVoteAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="PlanetWarsRank" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
-      <Association Name="Account_Player" Member="Players" ThisKey="AccountID" OtherKey="SpringAccountID" Type="Player" />
       <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
@@ -146,6 +95,13 @@
       <Association Name="Account_AccountUnlock" Member="AccountUnlocks" ThisKey="AccountID" OtherKey="AccountID" Type="AccountUnlock" />
       <Association Name="Account_Commander" Member="Commanders" ThisKey="AccountID" OtherKey="AccountID" Type="Commander" />
       <Association Name="Account_PollVote" Member="PollVotes" ThisKey="AccountID" OtherKey="AccountID" Type="PollVote" />
+      <Association Name="Account_MarketOffer" Member="MarketOffersByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="MarketOffer" />
+      <Association Name="Account_MarketOffer1" Member="MarketOffersByAcceptedAccountID" ThisKey="AccountID" OtherKey="AcceptedAccountID" Type="MarketOffer" />
+      <Association Name="Account_AccountPlanet" Member="AccountPlanets" ThisKey="AccountID" OtherKey="AccountID" Type="AccountPlanet" />
+      <Association Name="Account_EventAccount" Member="EventAccounts" ThisKey="AccountID" OtherKey="AccountID" Type="EventAccount" />
+      <Association Name="Account_PlanetInfluenceHistory" Member="PlanetInfluenceHistories" ThisKey="AccountID" OtherKey="AccountID" Type="PlanetInfluenceHistory" />
+      <Association Name="Account_Account" Member="ParentAccount" ThisKey="ClanLeaderVoteAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Clan_Account" Member="Clan" ThisKey="ClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" DeleteRule="SET NULL" />
     </Type>
   </Table>
   <Table Name="dbo.LobbyMessage" Member="LobbyMessages">
@@ -333,6 +289,7 @@
       <Association Name="SpringBattle_SpringBattlePlayer" Member="SpringBattlePlayers" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattlePlayer" />
       <Association Name="SpringBattle_AccountBattleAward" Member="AccountBattleAwards" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="AccountBattleAward" />
       <Association Name="SpringBattle_AccountBattleStat" Member="AccountBattleStats" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="AccountBattleStat" />
+      <Association Name="SpringBattle_EventSpringBattle" Member="EventSpringBattles" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="EventSpringBattle" />
       <Association Name="Account_SpringBattle" Member="Account" ThisKey="HostAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="Resource_SpringBattle" Member="ResourceByMapResourceID" ThisKey="MapResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" />
       <Association Name="Resource_SpringBattle1" Member="ResourceByModResourceID" ThisKey="ModResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" />
@@ -351,6 +308,7 @@
       <Column Name="Rank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="EloChange" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="XpChange" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="Influence" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="SpringBattle_SpringBattlePlayer" Member="SpringBattle" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattle" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_SpringBattlePlayer" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
@@ -510,16 +468,6 @@
       <Association Name="Planet_Link1" Member="PlanetByPlanetID2" ThisKey="PlanetID2" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.PlayerPlanet" Member="PlayerPlanets">
-    <Type Name="PlayerPlanet">
-      <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="PlayerID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="DropshipCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="Influence" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Association Name="Planet_PlayerPlanet" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
-      <Association Name="Player_PlayerPlanet" Member="Player" ThisKey="PlayerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.Clan" Member="Clans">
     <Type Name="Clan">
       <Column Name="ClanID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -528,9 +476,10 @@
       <Column Name="Image" Type="System.String" DbType="varchar(250)" CanBeNull="true" />
       <Column Name="Description" Type="System.String" DbType="varchar(500)" CanBeNull="true" />
       <Column Name="Password" Type="System.String" DbType="varchar(20)" CanBeNull="true" />
+      <Association Name="Clan_Account" Member="Accounts" ThisKey="ClanID" OtherKey="ClanID" Type="Account" />
       <Association Name="Clan_TreatyOffer" Member="TreatyOffersByOfferingClanID" ThisKey="ClanID" OtherKey="OfferingClanID" Type="TreatyOffer" />
       <Association Name="Clan_TreatyOffer1" Member="TreatyOffersByTargetClanID" ThisKey="ClanID" OtherKey="TargetClanID" Type="TreatyOffer" />
-      <Association Name="Player_Clan" Member="Player" ThisKey="LeaderPlayerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+      <Association Name="Clan_EventClan" Member="EventClans" ThisKey="ClanID" OtherKey="ClanID" Type="EventClan" />
     </Type>
   </Table>
   <Table Name="dbo.Planet" Member="Planets">
@@ -550,24 +499,93 @@
       <Column Name="OwnerPlayerID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Planet_Link" Member="LinksByPlanetID1" ThisKey="PlanetID" OtherKey="PlanetID1" Type="Link" />
       <Association Name="Planet_Link1" Member="LinksByPlanetID2" ThisKey="PlanetID" OtherKey="PlanetID2" Type="Link" />
-      <Association Name="Planet_PlayerPlanet" Member="PlayerPlanets" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlayerPlanet" />
       <Association Name="Planet_MarketOffer" Member="MarketOffers" ThisKey="PlanetID" OtherKey="PlanetID" Type="MarketOffer" />
+      <Association Name="Planet_AccountPlanet" Member="AccountPlanets" ThisKey="PlanetID" OtherKey="PlanetID" Type="AccountPlanet" />
+      <Association Name="Planet_EventPlanet" Member="EventPlanets" ThisKey="PlanetID" OtherKey="PlanetID" Type="EventPlanet" />
+      <Association Name="Planet_PlanetInfluenceHistory" Member="PlanetInfluenceHistories" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetInfluenceHistory" />
     </Type>
   </Table>
   <Table Name="dbo.MarketOffer" Member="MarketOffers">
     <Type Name="MarketOffer">
       <Column Name="OfferID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="PlayerID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="Quantity" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="Price" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="IsSell" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="DatePlaced" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="DateAccepted" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
-      <Column Name="AcceptedPlayerID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Association Name="Player_MarketOffer" Member="PlayerByPlayerID" ThisKey="PlayerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+      <Column Name="AcceptedAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Planet_MarketOffer" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
-      <Association Name="Player_MarketOffer1" Member="PlayerByAcceptedPlayerID" ThisKey="AcceptedPlayerID" OtherKey="PlayerID" Type="Player" IsForeignKey="true" />
+      <Association Name="Account_MarketOffer" Member="AccountByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_MarketOffer1" Member="AccountByAcceptedAccountID" ThisKey="AcceptedAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AccountPlanet" Member="AccountPlanets">
+    <Type Name="AccountPlanet">
+      <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DropshipCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Influence" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Planet_AccountPlanet" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
+      <Association Name="Account_AccountPlanet" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlanetwarsConfig" Member="PlanetwarsConfigs">
+    <Type Name="PlanetwarsConfig">
+      <Column Name="GameID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Started" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="CombatTurn" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="TurnStarted" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EventClan" Member="EventClans">
+    <Type Name="EventClan">
+      <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ClanID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Event_EventClan" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Clan_EventClan" Member="Clan" ThisKey="ClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EventAccount" Member="EventAccounts">
+    <Type Name="EventAccount">
+      <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Event_EventAccount" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Account_EventAccount" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EventPlanet" Member="EventPlanets">
+    <Type Name="EventPlanet">
+      <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Event_EventPlanet" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Planet_EventPlanet" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EventSpringBattle" Member="EventSpringBattles">
+    <Type Name="EventSpringBattle">
+      <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Event_EventSpringBattle" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="SpringBattle_EventSpringBattle" Member="SpringBattle" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattle" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlanetOwnerHistory" Member="PlanetOwnerHistories">
+    <Type Name="PlanetOwnerHistory">
+      <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Turn" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="OwnerAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PlanetInfluenceHistory" Member="PlanetInfluenceHistories">
+    <Type Name="PlanetInfluenceHistory">
+      <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Turn" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Influence" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Association Name="Planet_PlanetInfluenceHistory" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Account_PlanetInfluenceHistory" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
