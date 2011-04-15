@@ -18,7 +18,16 @@ namespace ZeroKWeb.Controllers
         {
                 var db = new ZkDataContext();
 
-                var r1 = db.AccountBattleAwards.GroupBy(x=>x.AwardKey);
+                var validAwards = db.AccountBattleAwards
+                    .Where(x=> !x.SpringBattle.ResourceByMapResourceID.InternalName.Contains( "SpeedMetal" ) )
+                    ;
+           
+
+                //var r1 = db.AccountBattleAwards.GroupBy(x=>x.AwardKey);
+                var r1 = validAwards
+                    .GroupBy(x => x.AwardKey)
+                    ;
+
                 var awardItems = new List<AwardItem>();
                 foreach (var awardTypeInfo in r1)
                 {
@@ -28,13 +37,13 @@ namespace ZeroKWeb.Controllers
                     var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
 
-                    var topCount = db.AccountBattleAwards
+                    var topCount = validAwards
                         .Where(x => x.AwardKey == awardType)
                         .GroupBy(x => x.Account)
                         .Max(x=>x.Count())
                         ;
 
-                    var resultCollectorInfo = db.AccountBattleAwards
+                    var resultCollectorInfo = validAwards
                         .Where(x => x.AwardKey == awardType)
                         .GroupBy(x => x.Account)
                         .Where(x => x.Count() == topCount)
@@ -48,14 +57,14 @@ namespace ZeroKWeb.Controllers
 
 
 
-                    var topCountM = db.AccountBattleAwards
+                    var topCountM = validAwards
                         .Where(x => x.AwardKey == awardType)
                         .Where(x => x.SpringBattle.StartTime >= monthStart)
                         .GroupBy(x => x.Account)
                         .Max(x => x.Count())
                         ;
 
-                    var resultCollectorInfoM = db.AccountBattleAwards
+                    var resultCollectorInfoM = validAwards
                         .Where(x => x.AwardKey == awardType)
                         .Where(x => x.SpringBattle.StartTime >= monthStart)
                         .GroupBy(x => x.Account)
@@ -71,7 +80,7 @@ namespace ZeroKWeb.Controllers
 
 
 
-                    var resultTopScore = db.AccountBattleAwards
+                    var resultTopScore = validAwards
                         .Where(x => x.AwardKey == awardType)
                         ;
 
