@@ -70,6 +70,8 @@ namespace ZeroKWeb.Controllers
                               int? size,
                               bool? elongated,
                               bool? needsTagging,
+			bool? is1v1,
+			bool? chicken,
                               int? isDownloadable = 1,
                               int? special = 0
                               )
@@ -109,6 +111,9 @@ namespace ZeroKWeb.Controllers
       if (size == 1) ret = ret.Where(x => x.MapHeight <= 12 && x.MapWidth <= 12);
       else if (size == 2) ret = ret.Where(x => (x.MapWidth > 12 || x.MapHeight > 12) && (x.MapWidth <= 20 && x.MapHeight <= 20));
       else if (size == 3) ret = ret.Where(x => x.MapWidth > 20 || x.MapHeight > 20);
+			if (is1v1.HasValue) ret = ret.Where(x => x.MapIs1v1 == is1v1);
+			if (chicken.HasValue) ret = ret.Where(x => x.MapIsChickens == chicken);
+
 
       if (!Global.IsAccountAuthorized || Global.Account.LobbyTimeRank <=3 || featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x=>x.ResourceID); else ret = ret.OrderByDescending(x => x.ResourceID);
       if (offset != null) ret = ret.Skip(offset.Value);

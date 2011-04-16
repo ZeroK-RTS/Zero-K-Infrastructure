@@ -125,7 +125,7 @@
     @if (ZeroKWeb.Global.IsAdmin) {
       <br />
       @:Featured order: @Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)<br />
-      @:Planetwars image: <img src='/img/planets/@Model.Resource.MapPlanetWarsIcon' @(Html.Raw(Model.Resource.MapPlanetWarsIconSizeOverride != null? "'" + Model.Resource.MapPlanetWarsIconSizeOverride +"'": "")) /> 
+      @:Planetwars image: <img src='/img/planets/@Model.Resource.MapPlanetWarsIcon' @(Html.Raw(Model.Resource.MapPlanetWarsIconSizeOverride != null? "width='" + Model.Resource.MapPlanetWarsIconSizeOverride +"'": "")) /> 
       @Html.ActionLink("pick new", "PlanetImageSelect", new { resourceID= Model.Resource.ResourceID }) <br />
             @:Image size override: @Html.TextBox("sizeOverride", Model.Resource.MapPlanetWarsIconSizeOverride)  
     }
