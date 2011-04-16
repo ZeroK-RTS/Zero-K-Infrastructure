@@ -83,7 +83,7 @@
                             <Border Style="{StaticResource smallBorder}" >
                                 <Expander Header="Planet Names">
                                     <StackPanel>
-                                        <CheckBox 
+                                        <CheckBox  IsChecked="True"
                                            Name="DisplayNames"
                                             Checked="DisplayNames_Checked" 
                                             Unchecked="CheckBox_Unchecked">

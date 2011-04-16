@@ -22,7 +22,7 @@
         </RadialGradientBrush>
     </UserControl.Resources>
     <Canvas Name="canvas">
-    <Image Name="img" ></Image>
+    <Image Name="img" SnapsToDevicePixels="True" ></Image>
 
       <Ellipse 
             Name ="Ellipse" 

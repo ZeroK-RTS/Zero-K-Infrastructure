@@ -102,8 +102,8 @@ namespace GalaxyDesigner
 
 		public void Clear()
 		{
-			LinkDrawings.Clear();
-			PlanetDrawings.Clear();
+			if (LinkDrawings != null) LinkDrawings.Clear();
+			if (PlanetDrawings != null) PlanetDrawings.Clear();
 			canvas.Children.Clear();
 			GalaxyUpdated();
 		}
@@ -136,6 +136,17 @@ namespace GalaxyDesigner
 					item.MouseUp += (s, e) => planet.Grow();
 				}
 			}
+
+
+			foreach (var dupMap in PlanetDrawings.GroupBy(x => x.Planet.MapResourceID).Where(x => x.Count() > 1))
+			{
+				var p = dupMap.First();
+				var item = new ListBoxItem { Background = Brushes.Red, Content = string.Format("{0} has duplicate map ({1})", (p.Planet.Name ?? "Planet"), p.Planet.Resource.InternalName) };
+				var planet = p;
+				item.MouseUp += (s, e) => planet.Grow();
+				WarningList.Items.Add(item);
+			}
+
 
 			foreach (var p in PlanetDrawings.Where(x => x.Planet.PlanetStructures == null || !x.Planet.PlanetStructures.Any()))
 			{
@@ -203,6 +214,11 @@ namespace GalaxyDesigner
 			{
 				var db = new ZkDataContext();
 				var gal = db.Galaxies.SingleOrDefault(x => x.GalaxyID == galaxyNumber);
+				if (gal.Started != null)
+				{
+					MessageBox.Show("This galaxy is running, cannot edit it!");
+					return;
+				}
 				if (gal == null || galaxyNumber == 0) {
 					gal = new Galaxy();
 					db.Galaxies.InsertOnSubmit(gal);

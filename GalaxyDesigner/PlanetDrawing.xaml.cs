@@ -51,9 +51,12 @@ namespace GalaxyDesigner
 		public void UpdateData(IEnumerable<string> structureNames)
 		{
 			lbName.Content = planet.Name;
+			img.SnapsToDevicePixels = true;
 			img.Source = new BitmapImage(new Uri(string.Format("http://zero-k.info/img/planets/{0}", planet.Resource.MapPlanetWarsIcon)));
-			var width = planet.Resource.MapPlanetWarsIconSizeOverride ?? (planet.Resource.MapWidth ?? 0 + planet.Resource.MapHeight ?? 0) * 2;
 
+			//Matrix m = PresentationSource.FromVisual(this).CompositionTarget.TransformToDevice;
+			//double dpiFactor = 1 / m.M11;
+			var width = planet.Resource.PlanetWarsIconSize;
 			img.Width = width;
 			Canvas.SetLeft(img, -width / 2.0);
 			Canvas.SetTop(img, -width / 2.0);

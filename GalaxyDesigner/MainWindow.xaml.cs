@@ -97,7 +97,7 @@ namespace GalaxyDesigner
 
 		void DisplayNames_Checked(object sender, RoutedEventArgs e)
 		{
-			galaxyDrawing.PlanetDrawings.ForEach(p => p.lbName.Visibility = Visibility.Visible);
+			if (galaxyDrawing.PlanetDrawings != null) galaxyDrawing.PlanetDrawings.ForEach(p => p.lbName.Visibility = Visibility.Visible);
 		}
 
 		void actionPanel_Click(object sender, RoutedEventArgs e)
