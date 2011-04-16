@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="PlasmaShared.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
@@ -213,6 +214,8 @@
       <Column Name="FeaturedOrder" Type="System.Single" DbType="real" CanBeNull="true" />
       <Column Name="MapIs1v1" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MapPlanetWarsIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="MapPlanetWarsIconSizeOverride" Member="MapPlanetWarsIconSizeOverride" Type="System.Int32" DbType="int" IsDbGenerated="false" CanBeNull="true" IsPrimaryKey="false" />
+      <Column Name="MapIsChickens" Member="MapIsChickens" Type="System.Boolean" DbType="bit" IsDbGenerated="false" CanBeNull="true" IsPrimaryKey="false" />
       <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
