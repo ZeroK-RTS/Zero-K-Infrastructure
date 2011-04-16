@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using ZkData;
 
 namespace GalaxyDesigner
@@ -15,7 +18,6 @@ namespace GalaxyDesigner
 	{
 		readonly Planet planet = new Planet();
 
-		string planetName;
 		public bool IsHighlighted
 		{
 			set
@@ -24,21 +26,7 @@ namespace GalaxyDesigner
 				Ellipse.Fill = (RadialGradientBrush)FindResource(key);
 			}
 		}
-		public Planet Planet { get
-		{
-			planet.Name = planetName;
-			return planet;
-		} }
-
-		public string PlanetName
-		{
-			get { return planetName; }
-			set
-			{
-				planetName = value;
-				PropertyChanged(this, new PropertyChangedEventArgs("PlanetName"));
-			}
-		}
+		public Planet Planet { get { return planet; } }
 
 		public Point Position
 		{
@@ -51,19 +39,35 @@ namespace GalaxyDesigner
 			}
 		}
 
+
 		public PlanetDrawing(Planet planet, double galaxyWidth, double galaxyHeight)
 		{
 			this.planet = planet;
 			InitializeComponent();
 			Position = new Point(planet.X*galaxyWidth, planet.Y*galaxyHeight);
-			PlanetName = planet.Name;
+			UpdateData(planet.PlanetStructures.Select(x => x.StructureType.Name));
+		}
+
+		public void UpdateData(IEnumerable<string> structureNames)
+		{
+			lbName.Content = planet.Name;
+			img.Source = new BitmapImage(new Uri(string.Format("http://zero-k.info/img/planets/{0}", planet.Resource.MapPlanetWarsIcon)));
+			var width = planet.Resource.MapPlanetWarsIconSizeOverride ?? (planet.Resource.MapWidth ?? 0 + planet.Resource.MapHeight ?? 0) * 2;
+
+			img.Width = width;
+			Canvas.SetLeft(img, -width / 2.0);
+			Canvas.SetTop(img, -width / 2.0);
+
+			Structs.Content = string.Join(",", structureNames.ToArray());
+		
 		}
 
 		public PlanetDrawing(Point pos, string name)
 		{
 			InitializeComponent();
 			Position = pos;
-			PlanetName = name;
+			planet.Name = name;
+			lbName.Content = name;
 		}
 
 		public void Grow()

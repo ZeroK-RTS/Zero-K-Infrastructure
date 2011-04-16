@@ -84,7 +84,7 @@
                                 <Expander Header="Planet Names">
                                     <StackPanel>
                                         <CheckBox 
-                                            Name="DisplayNames"
+                                           Name="DisplayNames"
                                             Checked="DisplayNames_Checked" 
                                             Unchecked="CheckBox_Unchecked">
                                             Display Names
@@ -110,15 +110,6 @@
                                             </ScrollViewer>
                                         </GroupBox>
                                     </StackPanel>
-                                </Expander>
-                            </Border>
-                            <Border Style="{StaticResource smallBorder}">
-                                <Expander Header="Maps">
-                                    <TextBox
-                                    AcceptsReturn="True"
-                                    Name="mapNamesTextBox" 
-                                    MinLines="3"
-                                    Text="{Binding ElementName=window, Path=GalaxyDrawing.MapNames, Mode=TwoWay}"/>
                                 </Expander>
                             </Border>
                             <Border Style="{StaticResource smallBorder}">

@@ -1,0 +1,12 @@
+﻿<Window x:Class="GalaxyDesigner.GalaxyDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="GalaxyDialog" Height="300" Width="300">
+  <StackPanel>
+    <TextBlock>Pick galaxy:</TextBlock>
+    <ComboBox Name="cmbGal"></ComboBox>
+    <Button Name="btnOk" IsDefault="True" Click="btnOk_Click">OK</Button>
+    <Button Name="btnCancel" IsCancel="True" Click="btnCancel_Click">Cancel</Button>
+    
+  </StackPanel>
+</Window>

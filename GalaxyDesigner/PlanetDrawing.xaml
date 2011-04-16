@@ -21,18 +21,27 @@
             <GradientStop Color="DarkRed" Offset="0.5" />
         </RadialGradientBrush>
     </UserControl.Resources>
-    <Canvas>
-        <Ellipse 
+    <Canvas Name="canvas">
+    <Image Name="img" ></Image>
+
+      <Ellipse 
             Name ="Ellipse" 
             Width="5" Height="5"
             Fill="{StaticResource BlueGradient}" />
         <Label
-            Visibility="Hidden"
-            Name="Label"
+            
+            Name="lbName"
+            FontSize="5"
+            FontStyle="Normal"
+            Canvas.Top ="10"
+            Foreground="White"
+            x:FieldModifier="public" />
+
+    <Label
+            Name="Structs"
             FontSize="3"
             FontStyle="Normal"
             Foreground="White"
-            Content="{Binding ElementName=planetControl, Path=PlanetName}"
             x:FieldModifier="public" />
-    </Canvas>
+  </Canvas>
 </UserControl>

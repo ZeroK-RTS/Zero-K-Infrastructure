@@ -14,12 +14,10 @@ namespace GalaxyDesigner
 {
 	public class GalaxyDrawing: INotifyPropertyChanged
 	{
-		public const int galaxyNumber = 1;
 
 		Canvas canvas;
 
 		ImageSource imageSource;
-		string mapNames;
 		public Canvas Canvas
 		{
 			get { return canvas; }
@@ -40,21 +38,14 @@ namespace GalaxyDesigner
 		}
 		public List<LinkDrawing> LinkDrawings { get; set; }
 
-		public int MapCount { get { return mapNames != null ? ToLines(mapNames).Length : 0; } }
-		public string MapNames
-		{
-			get { return mapNames; }
-			set
-			{
-				mapNames = value;
-				PropertyChanged(this, new PropertyChangedEventArgs("MapNames"));
-				PropertyChanged(this, new PropertyChangedEventArgs("MapCount"));
-			}
-		}
+		public int MapCount { get { return Maps.Count; } }
+		public List<Resource> Maps = new List<Resource>();
 
 		public int PlanetCount { get { return PlanetDrawings != null ? PlanetDrawings.Count : 0; } }
 
 		public List<PlanetDrawing> PlanetDrawings { get; set; }
+
+		public List<StructureType> StructureTypes = new List<StructureType>();
 		public ListBox WarningList { get; set; }
 
 		public GalaxyDrawing()
@@ -96,11 +87,10 @@ namespace GalaxyDesigner
 
 		public void AskForGalaxy()
 		{
-			var dialog = new OpenFileDialog { Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*", Title = "Select a galaxy xml file." };
 			Clear();
-			LoadGalaxy();
-
-			//Galaxy = dialog.ShowDialog().Value ? Galaxy.FromFile(dialog.FileName) : new Galaxy();
+			var gd = new GalaxyDialog();
+			if (gd.ShowDialog() == true) 
+			LoadGalaxy(gd.GalaxyNumber);
 		}
 
 		public void AskForImageSource()
@@ -140,31 +130,33 @@ namespace GalaxyDesigner
 			{
 				if (kvp.Value == 0)
 				{
-					var item = new ListBoxItem { Background = Brushes.Red, Content = (kvp.Key.PlanetName ?? "Planet") + " has no link" };
+					var item = new ListBoxItem { Background = Brushes.Red, Content = (kvp.Key.Planet.Name ?? "Planet") + " has no link" };
 					WarningList.Items.Add(item);
 					var planet = kvp.Key;
 					item.MouseUp += (s, e) => planet.Grow();
 				}
-				else if (kvp.Value == 2)
-				{
-					/*var item = new ListBoxItem {Content = (kvp.Key.PlanetName ?? "Planet") + " has only two links"};
-                    var planet = kvp.Key;
-                    item.MouseUp += (s, e) => planet.Grow();
-                    WarningList.Items.Add(item);*/
-				}
+			}
+
+			foreach (var p in PlanetDrawings.Where(x => x.Planet.PlanetStructures == null || !x.Planet.PlanetStructures.Any()))
+			{
+				var item = new ListBoxItem { Content = (p.Planet.Name ?? "Planet") + " has no structures" };
+				var planet = p;
+				item.MouseUp += (s, e) => planet.Grow();
+				WarningList.Items.Add(item);
 			}
 			WarningList.Items.Refresh();
 			PropertyChanged(this, new PropertyChangedEventArgs("PlanetCount"));
+			PropertyChanged(this, new PropertyChangedEventArgs("MapCount"));
 		}
 
-		public void LoadGalaxy()
+		public void LoadGalaxy( int galaxyNumber)
 		{
 			try
 			{
 				var db = new ZkDataContext();
-				var planetDict = db.Planets.ToDictionary(p => p.PlanetID, p => new PlanetDrawing(p, ImageSource.Width, ImageSource.Height));
+				var planetDict = db.Planets.Where(x=>x.GalaxyID == galaxyNumber).ToDictionary(p => p.PlanetID, p => new PlanetDrawing(p, ImageSource.Width, ImageSource.Height));
 				PlanetDrawings = planetDict.Values.ToList();
-				LinkDrawings = db.Links.Select(l => new LinkDrawing(planetDict[l.PlanetID1], planetDict[l.PlanetID2])).ToList();
+				LinkDrawings = db.Links.Where(x=>x.GalaxyID == galaxyNumber).Select(l => new LinkDrawing(planetDict[l.PlanetID1], planetDict[l.PlanetID2])).ToList();
 				if (canvas != null)
 				{
 					foreach (var p in PlanetDrawings)
@@ -178,8 +170,9 @@ namespace GalaxyDesigner
 						Panel.SetZIndex(l, 1);
 					}
 				}
-				MapNames = String.Join("\r\n",
-				                       db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.FeaturedOrder != null).Select(x => x.InternalName).ToArray());
+
+				Maps = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.FeaturedOrder != null).ToList();
+				StructureTypes = db.StructureTypes.ToList();
 				GalaxyUpdated();
 			}
 			catch (Exception ex)
@@ -204,69 +197,63 @@ namespace GalaxyDesigner
 			GalaxyUpdated();
 		}
 
-		public void SaveGalaxy()
+		public void SaveGalaxy(int galaxyNumber)
 		{
-			var db = new ZkDataContext();
-			var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyNumber);
-			db.Links.DeleteAllOnSubmit(gal.Links);
-			db.Planets.DeleteAllOnSubmit(gal.Planets);
-			db.SubmitChanges();
-
-			var maps = MapNames.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Shuffle();
-			var cnt = 0;
-
-
-			foreach (var d in PlanetDrawings)
+			try
 			{
-				var p = d.Planet;
-				p.X = (float)(Canvas.GetLeft(d)/imageSource.Width);
-				p.Y = (float)(Canvas.GetTop(d)/imageSource.Height);
-				if (p.MapResourceID == null)
+				var db = new ZkDataContext();
+				var gal = db.Galaxies.SingleOrDefault(x => x.GalaxyID == galaxyNumber);
+				if (gal == null || galaxyNumber == 0) {
+					gal = new Galaxy();
+					db.Galaxies.InsertOnSubmit(gal);
+				} else
 				{
-					p.MapResourceID = db.Resources.Single(x => x.InternalName == maps[cnt]).ResourceID;
-					cnt++;
+					db.Links.DeleteAllOnSubmit(gal.Links);
+					db.Planets.DeleteAllOnSubmit(gal.Planets);
 				}
-				else maps.Remove(db.Resources.Single(x => x.ResourceID == p.MapResourceID).InternalName);
+				db.SubmitChanges();
+				galaxyNumber = gal.GalaxyID;
 
-				gal.Planets.Add(p.DbClone());
+				var maps = Maps.Shuffle();
+				var cnt = 0;
+
+				foreach (var d in PlanetDrawings)
+				{
+					var p = d.Planet;
+					p.GalaxyID = galaxyNumber;
+					p.X = (float)(Canvas.GetLeft(d)/imageSource.Width);
+					p.Y = (float)(Canvas.GetTop(d)/imageSource.Height);
+					if (p.MapResourceID == null)
+					{
+						p.MapResourceID = maps[cnt].ResourceID;
+						cnt++;
+					}
+					else maps.RemoveAll(x => x.ResourceID == p.MapResourceID);
+
+					var clone = p.DbClone();
+					clone.PlanetStructures.AddRange(p.PlanetStructures.Select(x => new PlanetStructure() { StructureTypeID = x.StructureTypeID }));
+					gal.Planets.Add(clone);
+				}
+				db.SubmitChanges();
+
+				var linkList =
+					LinkDrawings.Select(
+						d =>
+						new Link()
+						{
+							GalaxyID = galaxyNumber,
+							PlanetID1 = db.Planets.Single(x => x.GalaxyID == galaxyNumber && x.Name == d.Planet1.Planet.Name).PlanetID,
+							PlanetID2 = db.Planets.Single(x => x.GalaxyID == galaxyNumber && x.Name == d.Planet2.Planet.Name).PlanetID
+						});
+				db.Links.InsertAllOnSubmit(linkList);
+				db.SubmitChanges();
 			}
-			db.SubmitChanges();
-
-			var linkList =
-				LinkDrawings.Select(d => new Link() { GalaxyID = galaxyNumber, PlanetID1 = db.Planets.Single(x => x.GalaxyID == galaxyNumber && x.Name == d.Planet1.PlanetName).PlanetID, PlanetID2 = db.Planets.Single(x => x.GalaxyID == galaxyNumber && x.Name == d.Planet2.PlanetName).PlanetID });
-			db.Links.InsertAllOnSubmit(linkList);
-			db.SubmitChanges();
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.ToString());
+			}
 		}
 
-
-		public void ToGalaxy()
-		{
-			// todo
-			/*
-            var gal = new Galaxy();
-            int id = 0;
-            var planetIDs = PlanetDrawings.ToDictionary(
-                d => d,
-                d =>
-                {
-                    var temp = id++;
-                    return temp;
-                });
-
-            gal.Planets = PlanetDrawings.Select(
-                d => new Planet(planetIDs[d],
-                                (float)(Canvas.GetLeft(d)/imageSource.Width), 
-                                (float)(Canvas.GetTop(d)/imageSource.Height))).ToList();
-            gal.Links = LinkDrawings.Select(d => new Link(planetIDs[d.Planet1], planetIDs[d.Planet2])).ToList();
-            gal.MapNames = ToLines(MapNames).ToList();
-            return gal;
-					 * */
-		}
-
-		string[] ToLines(string textBlock)
-		{
-			return textBlock.Replace("\r\n", "\n").Split('\n');
-		}
 
 		public event PropertyChangedEventHandler PropertyChanged = delegate { };
 	}
