@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="PlasmaShared.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
@@ -96,6 +95,7 @@
       <Association Name="Account_AccountUnlock" Member="AccountUnlocks" ThisKey="AccountID" OtherKey="AccountID" Type="AccountUnlock" />
       <Association Name="Account_Commander" Member="Commanders" ThisKey="AccountID" OtherKey="AccountID" Type="Commander" />
       <Association Name="Account_PollVote" Member="PollVotes" ThisKey="AccountID" OtherKey="AccountID" Type="PollVote" />
+      <Association Name="Account_Planet" Member="Planets" ThisKey="AccountID" OtherKey="OwnerAccountID" Type="Planet" />
       <Association Name="Account_MarketOffer" Member="MarketOffersByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="MarketOffer" />
       <Association Name="Account_MarketOffer1" Member="MarketOffersByAcceptedAccountID" ThisKey="AccountID" OtherKey="AcceptedAccountID" Type="MarketOffer" />
       <Association Name="Account_AccountPlanet" Member="AccountPlanets" ThisKey="AccountID" OtherKey="AccountID" Type="AccountPlanet" />
@@ -214,14 +214,15 @@
       <Column Name="FeaturedOrder" Type="System.Single" DbType="real" CanBeNull="true" />
       <Column Name="MapIs1v1" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MapPlanetWarsIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
-      <Column Name="MapPlanetWarsIconSizeOverride" Member="MapPlanetWarsIconSizeOverride" Type="System.Int32" DbType="int" IsDbGenerated="false" CanBeNull="true" IsPrimaryKey="false" />
-      <Column Name="MapIsChickens" Member="MapIsChickens" Type="System.Boolean" DbType="bit" IsDbGenerated="false" CanBeNull="true" IsPrimaryKey="false" />
+      <Column Name="MapPlanetWarsIconSizeOverride" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MapIsChickens" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
       <Association Name="Resource_MapRating" Member="MapRatings" ThisKey="ResourceID" OtherKey="ResourceID" Type="MapRating" />
       <Association Name="Resource_SpringBattle" Member="SpringBattlesByMapResourceID" ThisKey="ResourceID" OtherKey="MapResourceID" Type="SpringBattle" />
       <Association Name="Resource_SpringBattle1" Member="SpringBattlesByModResourceID" ThisKey="ResourceID" OtherKey="ModResourceID" Type="SpringBattle" />
+      <Association Name="Resource_Planet" Member="Planets" ThisKey="ResourceID" OtherKey="MapResourceID" Type="Planet" />
       <Association Name="Mission_Resource" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" DeleteRule="CASCADE" />
       <Association Name="Account_Resource" Member="Account" ThisKey="TaggedByAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="ForumThread_Resource" Member="ForumThread" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThread" IsForeignKey="true" />
@@ -470,8 +471,10 @@
     <Type Name="Link">
       <Column Name="PlanetID1" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="PlanetID2" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="GalaxyID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Planet_Link" Member="PlanetByPlanetID1" ThisKey="PlanetID1" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Planet_Link1" Member="PlanetByPlanetID2" ThisKey="PlanetID2" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
+      <Association Name="Galaxy_Link" Member="Galaxy" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Galaxy" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.Clan" Member="Clans">
@@ -491,13 +494,12 @@
   <Table Name="dbo.Planet" Member="Planets">
     <Type Name="Planet">
       <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="PlanetName" Type="System.String" DbType="varchar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="X1" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="Y1" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="X2" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="Y2" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="PlanetMap" Type="System.String" DbType="varchar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="OwnerPlayerID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="varchar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="X" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Y" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="MapResourceID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="OwnerAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="GalaxyID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Planet_Link" Member="LinksByPlanetID1" ThisKey="PlanetID" OtherKey="PlanetID1" Type="Link" />
       <Association Name="Planet_Link1" Member="LinksByPlanetID2" ThisKey="PlanetID" OtherKey="PlanetID2" Type="Link" />
       <Association Name="Planet_MarketOffer" Member="MarketOffers" ThisKey="PlanetID" OtherKey="PlanetID" Type="MarketOffer" />
@@ -505,6 +507,9 @@
       <Association Name="Planet_EventPlanet" Member="EventPlanets" ThisKey="PlanetID" OtherKey="PlanetID" Type="EventPlanet" />
       <Association Name="Planet_PlanetInfluenceHistory" Member="PlanetInfluenceHistories" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetInfluenceHistory" />
       <Association Name="Planet_PlanetStructure" Member="PlanetStructures" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetStructure" />
+      <Association Name="Account_Planet" Member="Account" ThisKey="OwnerAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Galaxy_Planet" Member="Galaxy" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Galaxy" IsForeignKey="true" />
+      <Association Name="Resource_Planet" Member="Resource" ThisKey="MapResourceID" OtherKey="ResourceID" Type="Resource" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.MarketOffer" Member="MarketOffers">
@@ -531,14 +536,6 @@
       <Column Name="Influence" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Planet_AccountPlanet" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Account_AccountPlanet" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.PlanetwarsConfig" Member="PlanetwarsConfigs">
-    <Type Name="PlanetwarsConfig">
-      <Column Name="GameID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Started" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
-      <Column Name="CombatTurn" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="TurnStarted" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.EventClan" Member="EventClans">
@@ -628,6 +625,17 @@
       <Association Name="Unlock_StructureType" Member="Unlock" ThisKey="EffectUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
       <Association Name="StructureType_StructureType" Member="ParentStructureTypeByUpgradesToStructureID" ThisKey="UpgradesToStructureID" OtherKey="StructureTypeID" Type="StructureType" IsForeignKey="true" />
       <Association Name="StructureType_StructureType1" Member="ParentStructureTypeByIngameDestructionNewStructureTypeID" ThisKey="IngameDestructionNewStructureTypeID" OtherKey="StructureTypeID" Type="StructureType" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Galaxy" Member="Galaxies">
+    <Type Name="Galaxy">
+      <Column Name="GalaxyID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Started" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="Turn" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="TurnStarted" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="ImageName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Association Name="Galaxy_Link" Member="Links" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Link" />
+      <Association Name="Galaxy_Planet" Member="Planets" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Planet" />
     </Type>
   </Table>
 </Database>

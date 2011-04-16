@@ -113,6 +113,7 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="Data\ZkDataContext.cs" />
+    <Compile Include="DbExtensions.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
     <Compile Include="GlobalConst.cs" />

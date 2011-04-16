@@ -39,8 +39,6 @@ namespace ZeroKWeb
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			ImportUnitUnlocks();
-			return;
 
 			if (!IsPostBack)
 			{
