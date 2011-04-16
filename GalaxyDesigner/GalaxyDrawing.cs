@@ -71,7 +71,7 @@ namespace GalaxyDesigner
 			var d = new LinkDrawing(planet1, planet2);
 			LinkDrawings.Add(d);
 			canvas.Children.Add(d);
-			Panel.SetZIndex(d, 1);
+			Panel.SetZIndex(d, 2);
 			GalaxyUpdated();
 		}
 
@@ -80,7 +80,7 @@ namespace GalaxyDesigner
 			var d = new PlanetDrawing(pos, name);
 			PlanetDrawings.Add(d);
 			canvas.Children.Add(d);
-			Panel.SetZIndex(d, 2);
+			Panel.SetZIndex(d, 1);
 			GalaxyUpdated();
 			return d;
 		}
@@ -173,12 +173,12 @@ namespace GalaxyDesigner
 					foreach (var p in PlanetDrawings)
 					{
 						canvas.Children.Add(p);
-						Panel.SetZIndex(p, 2);
+						Panel.SetZIndex(p, 1);
 					}
 					foreach (var l in LinkDrawings)
 					{
 						canvas.Children.Add(l);
-						Panel.SetZIndex(l, 1);
+						Panel.SetZIndex(l, 2);
 					}
 				}
 
