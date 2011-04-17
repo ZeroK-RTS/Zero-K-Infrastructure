@@ -59,7 +59,7 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, string text, string title)
 		{
-			if (!string.IsNullOrEmpty(text)) return Content("Please type some text :)");
+			if (string.IsNullOrEmpty(text)) return Content("Please type some text :)");
 
 			var db = new ZkDataContext();
 			var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);

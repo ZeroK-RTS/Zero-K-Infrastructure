@@ -25,6 +25,7 @@ namespace ZkData
 				ret.AllyStatus = (AllyStatus)Math.Min((int)t1.AllyStatus, (int)t2.AllyStatus);
 				ret.IsResearchAgreement = t1.IsResearchAgreement && t2.IsResearchAgreement;
 			}
+			return ret;
 		}
 
 	}
