@@ -19,58 +19,71 @@ namespace ZeroKWeb.Controllers
 			Stream res;
 			if (gal.IsDirty || !System.IO.File.Exists(cachePath))
 			{
-				var ms = GenerateGalaxyImage(galaxyID);
-				System.IO.File.WriteAllBytes(cachePath, ms.ToArray());
-				res = ms;
-				gal.IsDirty = false;
+				using (var im = GenerateGalaxyImage(galaxyID))
+				{
+					im.Save(cachePath);
+				
+					gal.IsDirty = false;
+					gal.Width = im.Width;
+					gal.Height = im.Height;
+
+					var ms = new MemoryStream();
+					im.Save(ms, ImageFormat.Jpeg);
+					ms.Seek(0, SeekOrigin.Begin);
+					res = ms;
+				}
 				db.SubmitChanges();
 			}
 			else res = System.IO.File.OpenRead(cachePath);
 
 			return File(res, "image/jpeg");
-
-			//return View(db.Galaxies.Single(x=>x.GalaxyID==galaxyID));
 		}
 
-		public MemoryStream GenerateGalaxyImage(int galaxyID, double zoom = 1)
+		public ActionResult Galaxy(int galaxyID = 1)
+		{
+			var db = new ZkDataContext();
+			var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
+			return View(gal);
+		}
+
+		public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1)
 		{
 			using (var db = new ZkDataContext())
 			{
 				var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
 
 				using (var background = Image.FromFile(Server.MapPath("/img/galaxies/" + gal.ImageName)))
-
-				using (var im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom)))
-				using (var gr = Graphics.FromImage(im))
 				{
-					gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
-					using (var pen = new Pen(Color.FromArgb(255, 0, 255, 255), (int)(2*zoom)))
+					var im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
+					using (var gr = Graphics.FromImage(im))
 					{
-						foreach (var l in gal.Links)
-						{
-							gr.DrawLine(pen,
-							            (int)(l.PlanetByPlanetID1.X*im.Width),
-							            (int)(l.PlanetByPlanetID1.Y*im.Height),
-							            (int)(l.PlanetByPlanetID2.X*im.Width),
-							            (int)(l.PlanetByPlanetID2.Y*im.Height));
-						}
-					}
+						gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
-					foreach (var p in gal.Planets)
-					{
-						using (var pi = Image.FromFile(Server.MapPath("/img/planets/" + p.Resource.MapPlanetWarsIcon)))
+						using (var pen = new Pen(Color.FromArgb(255, 0, 255, 255), (int)(2*zoom)))
 						{
-							var aspect = pi.Height/(double)pi.Width;
-							var width = (int)(p.Resource.PlanetWarsIconSize*zoom);
-							var height = (int)(width*aspect);
-							gr.DrawImage(pi, (int)(p.X*im.Width) - width/2, (int)(p.Y*im.Height) - height/2, width, height);
+							foreach (var l in gal.Links)
+							{
+								gr.DrawLine(pen,
+								            (int)(l.PlanetByPlanetID1.X*im.Width),
+								            (int)(l.PlanetByPlanetID1.Y*im.Height),
+								            (int)(l.PlanetByPlanetID2.X*im.Width),
+								            (int)(l.PlanetByPlanetID2.Y*im.Height));
+							}
 						}
+
+						foreach (var p in gal.Planets)
+						{
+							using (var pi = Image.FromFile(Server.MapPath("/img/planets/" + p.Resource.MapPlanetWarsIcon)))
+							{
+								var aspect = pi.Height/(double)pi.Width;
+								var width = (int)(p.Resource.PlanetWarsIconSize*zoom);
+								var height = (int)(width*aspect);
+								gr.DrawImage(pi, (int)(p.X*im.Width) - width/2, (int)(p.Y*im.Height) - height/2, width, height);
+							}
+						}
+						return im;
 					}
-					var ms = new MemoryStream();
-					im.Save(ms, ImageFormat.Jpeg);
-					ms.Seek(0, SeekOrigin.Begin);
-					return ms;
 				}
 			}
 		}
