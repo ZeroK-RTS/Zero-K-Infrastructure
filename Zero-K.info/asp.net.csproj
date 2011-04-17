@@ -231,6 +231,7 @@
     <Content Include="Views\Poll\PollVoteList.cshtml" />
     <Content Include="Views\Ladders\ladders.cshtml" />
     <Content Include="Views\Home\NotLoggedIn.cshtml" />
+    <Content Include="Views\Shared\LoginBar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

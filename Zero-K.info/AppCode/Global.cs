@@ -16,6 +16,14 @@ namespace ZeroKWeb
 			}
 		}
 
+		public static Clan Clan
+		{
+			get
+			{
+				if (Account == null) return null;
+				else return Account.Clan;
+			}
+		}
 
 		public static bool IsAccountAuthorized { get { return HttpContext.Current.User as Account != null; } }
 

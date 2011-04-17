@@ -184,25 +184,7 @@
       </div>
       <!close navigation>
       <div class="border">
-        @if (!(Global.IsAccountAuthorized)) {
-          <!login> 
-          <form method="post" action="@Url.Action("Logon", "Home")" >
-          Name:
-          <input type="text" name="login" />
-          &nbsp;&nbsp; Password:
-          <input type="password" name="password" />
-          &nbsp;&nbsp;
-          <input type="submit" value="Login" />
-          <small>(use Zero-K lobby account)</small>
-          <input type="hidden" name="referer" value="@(Request["ReturnUrl"] != null ? Request["ReturnUrl"] : Request.Url.ToString())" />
-          </form>
-        } else {
-          <form method="post" action="@Url.Action("Logout", "Home")" >
-          Logged as @Html.PrintAccount(Global.Account)
-          <input type="submit" value="Logout" />
-          <input type="hidden" name="referer" value="@Request.Url" />
-          </form>
-        }
+        @{Html.RenderPartial("LoginBar");}
       </div>
       <!close login>
       <div class="border">

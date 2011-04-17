@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
@@ -99,6 +100,22 @@ namespace ZeroKWeb.Controllers
 		public ActionResult Index()
 		{
 			return View();
+		}
+
+		/// <summary>
+		/// Shows clan page
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult Clan(int id)
+		{
+			var db = new ZkDataContext();
+			return View(db.Clans.First(x => x.ClanID == id));
+		}
+
+		public ActionResult ClanList()
+		{
+
+			throw new NotImplementedException();
 		}
 	}
 }
