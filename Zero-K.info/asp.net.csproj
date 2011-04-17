@@ -177,7 +177,7 @@
     <Content Include="UnlocksAdmin.aspx" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />
     <Content Include="Views\Planetwars\Index.cshtml" />
-    <Content Include="Views\Planetwars\GalaxyImage.cshtml" />
+    <Content Include="Views\Planetwars\Galaxy.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -1,5 +1,14 @@
 @model ZkData.Galaxy
-         
+@{
+  PageData["Minimal"] = true;
+  //Layout = null;
+  }
 
+<div style="text-align: left; border: 0;">
+  <img src="@Url.Action("GalaxyImage", new { galaxyID = Model.GalaxyID })" style="position:static; text-align:left; z-index:-50; top:0px; left:0px;" width="@Model.Width" height="@Model.Height"/>
 
-
+  @foreach (var p in Model.Planets) {
+    var l = p.LabelLocation(Model);
+    <span style="position:absolute; left: @(l.X)px; top: @(l.Y)px;" title="$map$@p.MapResourceID">@p.Name</span>
+  }
+</div>
