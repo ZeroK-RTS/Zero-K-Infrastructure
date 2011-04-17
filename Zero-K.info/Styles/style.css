@@ -203,3 +203,15 @@ div#footer
   background-color:#102020;
   border: 1px solid teal;
 }
+
+
+/* planetwars */
+.pwlabel 
+{
+  font-size:11px; 
+  font-weight:bold; 
+  margin: 0; 
+  padding:0; 
+  position: absolute;
+}
+

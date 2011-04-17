@@ -12039,11 +12039,11 @@ namespace ZkData
 		
 		private int _TargetClanID;
 		
-		private bool _IsCeaseFire;
-		
 		private bool _IsResearchAgreement;
 		
-		private bool _IsMilitaryAccess;
+		private string _OfferingClanMessage;
+		
+		private AllyStatus _AllyStatus;
 		
 		private EntityRef<Clan> _ClanByOfferingClanID;
 		
@@ -12057,12 +12057,12 @@ namespace ZkData
     partial void OnOfferingClanIDChanged();
     partial void OnTargetClanIDChanging(int value);
     partial void OnTargetClanIDChanged();
-    partial void OnIsCeaseFireChanging(bool value);
-    partial void OnIsCeaseFireChanged();
     partial void OnIsResearchAgreementChanging(bool value);
     partial void OnIsResearchAgreementChanged();
-    partial void OnIsMilitaryAccessChanging(bool value);
-    partial void OnIsMilitaryAccessChanged();
+    partial void OnOfferingClanMessageChanging(string value);
+    partial void OnOfferingClanMessageChanged();
+    partial void OnAllyStatusChanging(AllyStatus value);
+    partial void OnAllyStatusChanged();
     #endregion
 		
 		public TreatyOffer()
@@ -12120,29 +12120,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsCeaseFire", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public bool IsCeaseFire
-		{
-			get
-			{
-				return this._IsCeaseFire;
-			}
-			set
-			{
-				if ((this._IsCeaseFire != value))
-				{
-					this.OnIsCeaseFireChanging(value);
-					this.SendPropertyChanging();
-					this._IsCeaseFire = value;
-					this.SendPropertyChanged("IsCeaseFire");
-					this.OnIsCeaseFireChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsResearchAgreement", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public bool IsResearchAgreement
 		{
 			get
@@ -12162,23 +12141,44 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsMilitaryAccess", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public bool IsMilitaryAccess
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OfferingClanMessage", DbType="nvarchar(500)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string OfferingClanMessage
 		{
 			get
 			{
-				return this._IsMilitaryAccess;
+				return this._OfferingClanMessage;
 			}
 			set
 			{
-				if ((this._IsMilitaryAccess != value))
+				if ((this._OfferingClanMessage != value))
 				{
-					this.OnIsMilitaryAccessChanging(value);
+					this.OnOfferingClanMessageChanging(value);
 					this.SendPropertyChanging();
-					this._IsMilitaryAccess = value;
-					this.SendPropertyChanged("IsMilitaryAccess");
-					this.OnIsMilitaryAccessChanged();
+					this._OfferingClanMessage = value;
+					this.SendPropertyChanged("OfferingClanMessage");
+					this.OnOfferingClanMessageChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyStatus", DbType="int", CanBeNull=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public AllyStatus AllyStatus
+		{
+			get
+			{
+				return this._AllyStatus;
+			}
+			set
+			{
+				if ((this._AllyStatus != value))
+				{
+					this.OnAllyStatusChanging(value);
+					this.SendPropertyChanging();
+					this._AllyStatus = value;
+					this.SendPropertyChanged("AllyStatus");
+					this.OnAllyStatusChanged();
 				}
 			}
 		}
@@ -12548,11 +12548,11 @@ namespace ZkData
 		
 		private string _ClanName;
 		
-		private string _Image;
-		
 		private string _Description;
 		
 		private string _Password;
+		
+		private string _SecretTopic;
 		
 		private EntitySet<Account> _Accounts;
 		
@@ -12574,12 +12574,12 @@ namespace ZkData
     partial void OnLeaderPlayerIDChanged();
     partial void OnClanNameChanging(string value);
     partial void OnClanNameChanged();
-    partial void OnImageChanging(string value);
-    partial void OnImageChanged();
     partial void OnDescriptionChanging(string value);
     partial void OnDescriptionChanged();
     partial void OnPasswordChanging(string value);
     partial void OnPasswordChanged();
+    partial void OnSecretTopicChanging(string value);
+    partial void OnSecretTopicChanged();
     #endregion
 		
 		public Clan()
@@ -12650,29 +12650,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Image", DbType="varchar(250)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public string Image
-		{
-			get
-			{
-				return this._Image;
-			}
-			set
-			{
-				if ((this._Image != value))
-				{
-					this.OnImageChanging(value);
-					this.SendPropertyChanging();
-					this._Image = value;
-					this.SendPropertyChanged("Image");
-					this.OnImageChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="varchar(500)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public string Description
 		{
 			get
@@ -12693,7 +12672,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="varchar(20)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public string Password
 		{
 			get
@@ -12709,6 +12688,27 @@ namespace ZkData
 					this._Password = value;
 					this.SendPropertyChanged("Password");
 					this.OnPasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SecretTopic", DbType="nvarchar(500)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public string SecretTopic
+		{
+			get
+			{
+				return this._SecretTopic;
+			}
+			set
+			{
+				if ((this._SecretTopic != value))
+				{
+					this.OnSecretTopicChanging(value);
+					this.SendPropertyChanging();
+					this._SecretTopic = value;
+					this.SendPropertyChanged("SecretTopic");
+					this.OnSecretTopicChanged();
 				}
 			}
 		}

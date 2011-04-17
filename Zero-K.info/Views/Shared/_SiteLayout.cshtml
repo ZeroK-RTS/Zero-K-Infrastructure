@@ -23,8 +23,8 @@
   <script type="text/javascript" src='@Href("~/Scripts/site.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/base.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' ></script>
-  @if (!Global.IsLobbyAccess && PageData["Minimal"] == null) {
-    if (PageData["StaticBackground"] == true) {
+  @if (!Global.IsLobbyAccess && ViewBag.Minimal != true) {
+    if (ViewBag.StaticBackground == true) {
     <style type="text/css">
       html
       {
@@ -61,7 +61,7 @@
     width: 300px; height: 50px; background-color: Black; border: 1px solid Red; font-size: x-large;
     text-align: center; vertical-align: middle;" id='ajaxScrollProgress'>Loading....<img
       src='/img/Loader.gif' /></span>
-  @if (!Global.IsLobbyAccess && PageData["Minimal"] == null) {
+  @if (!Global.IsLobbyAccess && ViewBag.Minimal == null) {
     <div class="wrapper">
       <div id="header" class="text-center">
         <a href="/">
@@ -217,10 +217,12 @@
     </div>
     
     <!close wrapper>
-  } else {
+  } else if (ViewBag.Minimal != true) {
     <div style="margin: 10px;">
       @RenderBody()
     </div>
+  } else {
+    @RenderBody()
   }
 </body>
 </html>

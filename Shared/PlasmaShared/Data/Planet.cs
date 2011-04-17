@@ -6,12 +6,18 @@ using System.Text;
 
 namespace ZkData
 {
+	
+
 	partial class Planet
 	{
-		public Point LabelLocation(Galaxy gal)
+
+
+		public Rectangle PlanetRectangle(Galaxy gal)
 		{
 			var w = Resource.PlanetWarsIconSize;
-			return new Point((int)(X * gal.Width -w/2.0) , (int)(Y*gal.Height + w/2.0));
+			var xp = (int)(X * gal.Width);
+			var yp = (int)(Y * gal.Height);
+			return new Rectangle(xp - w/2, yp - w/2, w, w);
 		}
 	}
 }

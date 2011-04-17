@@ -1,5 +1,6 @@
  using System.Collections.Generic;
-using System.IO;
+ using System.Drawing;
+ using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -277,5 +278,26 @@ namespace System.Web.Mvc
       if (timeSpan.TotalDays < 60) return string.Format("{0} days", (int)timeSpan.TotalDays);
       return string.Format("{0} months", (int)(timeSpan.TotalDays/30));
     }
+
+
+		public static string ClanTreatyColor(Clan clan1, Clan clan2)
+		{
+			if (clan1 == null || clan2 == null) return "#FFFFFF";
+			if (clan1 == clan2) return "#00FFFF";
+			var t = clan1.GetEffectiveTreaty(clan2);
+			switch (t.AllyStatus)
+			{
+				case AllyStatus.Neutral:
+					return "#FFFF00";
+					case AllyStatus.War:
+					return "#FF0000";
+					case AllyStatus.Alliance:
+					return "#66FF99";
+					case AllyStatus.Ceasefire:
+					return "#0066FF";
+			}
+			return "#FFFFFF";
+		}
+
   }
 }

@@ -20,6 +20,7 @@ namespace ZkData
 			}
 		}
 
+
 		public static int GetXpForLevel(int level)
 		{
 			if (level < 0) return 0;

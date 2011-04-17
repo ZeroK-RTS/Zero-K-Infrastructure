@@ -1,6 +1,6 @@
 ﻿@model ZeroKWeb.Controllers.WikiController.WikiData
 @{
     Page.Title =  Model.Node + " wiki";
-    PageData["StaticBackground"] = true;
+    ViewBag.StaticBackground = true;
 }
 @Model.Content

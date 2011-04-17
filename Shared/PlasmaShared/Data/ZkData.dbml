@@ -459,9 +459,9 @@
     <Type Name="TreatyOffer">
       <Column Name="OfferingClanID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="TargetClanID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="IsCeaseFire" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IsResearchAgreement" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="IsMilitaryAccess" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="OfferingClanMessage" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
+      <Column Name="AllyStatus" Type="AllyStatus" DbType="int" CanBeNull="true" />
       <Association Name="Clan_TreatyOffer" Member="ClanByOfferingClanID" ThisKey="OfferingClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
       <Association Name="Clan_TreatyOffer1" Member="ClanByTargetClanID" ThisKey="TargetClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
     </Type>
@@ -481,9 +481,9 @@
       <Column Name="ClanID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="LeaderPlayerID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ClanName" Type="System.String" DbType="varchar(50)" CanBeNull="true" />
-      <Column Name="Image" Type="System.String" DbType="varchar(250)" CanBeNull="true" />
       <Column Name="Description" Type="System.String" DbType="varchar(500)" CanBeNull="true" />
       <Column Name="Password" Type="System.String" DbType="varchar(20)" CanBeNull="true" />
+      <Column Name="SecretTopic" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
       <Association Name="Clan_Account" Member="Accounts" ThisKey="ClanID" OtherKey="ClanID" Type="Account" />
       <Association Name="Clan_TreatyOffer" Member="TreatyOffersByOfferingClanID" ThisKey="ClanID" OtherKey="OfferingClanID" Type="TreatyOffer" />
       <Association Name="Clan_TreatyOffer1" Member="TreatyOffersByTargetClanID" ThisKey="ClanID" OtherKey="TargetClanID" Type="TreatyOffer" />

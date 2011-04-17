@@ -60,7 +60,7 @@ namespace ZeroKWeb.Controllers
 					{
 						gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
-						using (var pen = new Pen(Color.FromArgb(255, 0, 255, 255), (int)(2*zoom)))
+						using (var pen = new Pen(Color.FromArgb(255, 180, 180, 180), (int)(1*zoom)))
 						{
 							foreach (var l in gal.Links)
 							{
