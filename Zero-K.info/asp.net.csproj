@@ -232,6 +232,8 @@
     <Content Include="Views\Ladders\ladders.cshtml" />
     <Content Include="Views\Home\NotLoggedIn.cshtml" />
     <Content Include="Views\Shared\LoginBar.cshtml" />
+    <Content Include="Views\Planetwars\ClanList.cshtml" />
+    <Content Include="Views\Planetwars\Clan.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

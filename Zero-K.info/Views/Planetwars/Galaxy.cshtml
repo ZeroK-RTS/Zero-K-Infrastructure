@@ -8,10 +8,8 @@
 
   int maxDropships = g.Planets.SelectMany(x => x.AccountPlanets).Max(x => (int?)x.DropshipCount) ?? 1; // fake max as 1 to prevent division by zero
 }
-
 @{Html.RenderPartial("LoginBar");}
-
-<div style="text-align: left; border: 0; position:relative">
+<div style="text-align: left; border: 0; position: relative">
   <img src="@Url.Action("GalaxyImage", new { galaxyID = Model.GalaxyID })" style="text-align:left; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
   @foreach (var p in Model.Planets) {
     var pr = p.PlanetRectangle(Model);
@@ -67,10 +65,20 @@
       </table>
     </span>
     
-            if (shipCount > 0) {
-      <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;"> 
-        <img src='/img/fleets/war.png' width='@(Math.Round(20.0 * shipCount / (double)maxDropships))' /><span style="font-size: 10px">@shipCount</span> 
-      </span>
-    }
+    <span style="position: absolute; left: @(pr.Left)px; top: @(pr.Top)px; width: @(pr.Width)px; height: @(pr.Height)px;">
+      @foreach (var s in p.PlanetStructures) {
+        var img = s.IsDestroyed ? s.StructureType.DestroyedMapIcon : s.StructureType.MapIcon;
+        if (img != null) {
+        <img src='/img/structures/@img' width='@(pr.Width)' style='position:absolute' />
+        }
+      }
+    </span>
+    
+    
+      if (shipCount > 0) {
+    <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;">
+      <img src='/img/fleets/war.png' width='@(Math.Round(20.0 * shipCount / (double)maxDropships))' /><span
+        style="font-size: 10px">@shipCount</span> </span>
+      }
   }
 </div>
