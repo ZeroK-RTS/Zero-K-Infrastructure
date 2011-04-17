@@ -170,7 +170,7 @@ namespace ZeroKWeb.Controllers
       }
     }
 
-    public ActionResult Tag(int id, bool? special, int? sea, int? hills, bool? ffa, bool? assymetrical, string author, float? featuredOrder, int? sizeOverride, bool? is1v1, bool? chickens)
+    public ActionResult Tag(int id, bool? special, int? sea, int? hills, bool? ffa, bool? assymetrical, string author, float? featuredOrder, bool? is1v1, bool? chickens)
     {
       if (!Global.IsAccountAuthorized) return Content("Not logged in!");
       else
@@ -189,7 +189,6 @@ namespace ZeroKWeb.Controllers
         if (Global.Account.IsAdmin)
         {
         	r.FeaturedOrder = featuredOrder;
-        	r.MapPlanetWarsIconSizeOverride = sizeOverride;
         }
         db.SubmitChanges();
       	int order = 1;

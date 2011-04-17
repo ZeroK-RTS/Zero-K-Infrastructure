@@ -127,7 +127,6 @@
       @:Featured order: @Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)<br />
       @:Planetwars image: <img src='/img/planets/@Model.Resource.MapPlanetWarsIcon'  width='@Model.Resource.PlanetWarsIconSize' /> 
       @Html.ActionLink("pick new", "PlanetImageSelect", new { resourceID= Model.Resource.ResourceID }) <br />
-            @:Image size override: @Html.TextBox("sizeOverride", Model.Resource.MapPlanetWarsIconSizeOverride)  
     }
     <input type="submit" value="Update" />
     </form>
