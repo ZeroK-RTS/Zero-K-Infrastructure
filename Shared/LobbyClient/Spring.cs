@@ -394,7 +394,7 @@ namespace LobbyClient
 				switch (type)
 				{
 					case SpringMessageType.STATS:
-						statsData.Add(text.Substring(6));
+						statsData.Add(text);
 						break;
 
 					case SpringMessageType.pwaward:
