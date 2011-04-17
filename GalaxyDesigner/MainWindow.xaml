@@ -71,6 +71,7 @@
                                     <Button Click="importButton_Click">Load galaxy from DB</Button>
                                     <Button Click="exportButton_Click">Export galaxy to DB</Button>
                                     <Button Click="helpButton_Click">Help</Button>
+                                    <Button Click="layoutButton_Click">Auto Layout</Button>
                                 </StackPanel>
                             </Border>
                             <Border Style="{StaticResource smallBorder}">

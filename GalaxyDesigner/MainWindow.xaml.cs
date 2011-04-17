@@ -287,6 +287,39 @@ namespace GalaxyDesigner
 		}
 
 		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {}
+
+		private void layoutButton_Click(object sender, RoutedEventArgs e)
+		{
+			var diagram = new Diagram();
+			var nodes = new Dictionary<PlanetDrawing, SpotNode>();
+			foreach (var planetDrawing in galaxyDrawing.PlanetDrawings)
+			{
+				var node = new SpotNode();
+				diagram.AddNode(node);
+				nodes.Add(planetDrawing, node);
+			}
+			foreach (var link in galaxyDrawing.LinkDrawings)
+			{
+				nodes[link.Planet1].AddParent(nodes[link.Planet2]);
+			}
+			diagram.Arrange();
+			var bounds = diagram.GetDiagramBounds();
+			foreach (var kvp in nodes)
+			{
+				var node = kvp.Value;
+				var planetDrawing = kvp.Key;
+				// get relative coordinates (0 to 1) 
+				var x = ((double)node.X - bounds.Left) / bounds.Width;
+				var y = ((double)node.Y - bounds.Top)/bounds.Height;
+				// add some space between the border and planets
+				x = x*0.8 + 0.1;
+				y = y*0.8 + 0.1;
+				// set the planet position
+				planetDrawing.Planet.X = x;
+				planetDrawing.Planet.Y = y;
+				planetDrawing.Position = new Point(x * galaxyDrawing.ImageSource.Width, y * galaxyDrawing.ImageSource.Height);
+			}
+		}
 	}
 
 
