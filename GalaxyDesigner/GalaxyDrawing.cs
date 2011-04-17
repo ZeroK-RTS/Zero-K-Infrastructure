@@ -214,15 +214,17 @@ namespace GalaxyDesigner
 			{
 				var db = new ZkDataContext();
 				var gal = db.Galaxies.SingleOrDefault(x => x.GalaxyID == galaxyNumber);
-				if (gal.Started != null)
+				if (gal == null || galaxyNumber == 0)
+				{
+					gal = new Galaxy();
+					db.Galaxies.InsertOnSubmit(gal);
+				} 
+				else if (gal.Started != null)
 				{
 					MessageBox.Show("This galaxy is running, cannot edit it!");
 					return;
 				}
-				if (gal == null || galaxyNumber == 0) {
-					gal = new Galaxy();
-					db.Galaxies.InsertOnSubmit(gal);
-				} else
+				else
 				{
 					db.Links.DeleteAllOnSubmit(gal.Links);
 					db.Planets.DeleteAllOnSubmit(gal.Planets);
