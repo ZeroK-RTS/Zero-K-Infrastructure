@@ -17,14 +17,30 @@
   @foreach (var p in Model.Planets) {
     var pr = p.PlanetRectangle(Model);
     Clan clan = null;
+    Clan secondClan = null;
+    var secondClanInfluence = 0;
+
+    int shipCount = p.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0;
+
     if (p.Account != null) {
       clan = p.Account.Clan;
+    }
+
+    var secondRatio = 0.0;
+    var entry = p.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != clan).OrderByDescending(x => x.Sum(y => y.Influence)).FirstOrDefault();
+    if (entry != null) {
+      secondClan = entry.Key;
+      secondClanInfluence = entry.Sum(y => y.Influence);
+      var ipToCapture = p.GetIPToCapture();
+      if (ipToCapture - secondClanInfluence < 500) {
+        secondRatio = 1.0 - (ipToCapture - secondClanInfluence) / 500.0;
+      }
     }
     
     <table cellpadding="0" cellspacing="0" style="left: @(pr.Left - 40)px; top: @(pr.Top - 50)px; width:@(pr.Width + 80)px; height:50px;" class="pwlabel" width="@(pr.Width + 80)" height="50">
       <tr>
         <td valign="bottom" align="center">
-          <span title="$map$@p.MapResourceID" style="color: @(Clan.ClanTreatyColor(myClan, clan))" >@p.Name<br />
+          <span title="$map$@p.MapResourceID" style="color: @(Clan.TreatyColor(myClan, clan))" >@p.Name<br />
             @if (clan != null && myClan != null && clan.ClanID == myClan.ClanID) {
               <span style="font-size: 8px">@Global.Account.Name</span>
             }
@@ -36,22 +52,26 @@
     <span style="position: absolute; left: @(pr.Left - 100)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; text-align:right;">
       <table cellpadding="0" cellspacing="0" style="font-size: 2px;">
         <tr>
-          <td rowspan="2" width='100%'>
-          </td>
           <td>
-            <img src='/img/clans/1.png' width='20' />
+            @if (clan != null) {
+              <img src='@clan.GetImageUrl()' width='20' />
+            }
           </td>
         </tr>
-          <tr>
-            <td>
-              <img src='/img/flags/cz.png' width='10' />
-            </td>
-          </tr>
+        <tr>
+          <td>
+            @if (secondRatio > 0) {
+              <img src='@secondClan.GetImageUrl()' width='@(Math.Round(20.0 * secondRatio))' />
+            }
+          </td>
+        </tr>
       </table>
     </span>
     
-    <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;">
-        <img src='/img/fleets/war.png' width='15' /><span style="font-size: 10px">4</span>
-    </span>
+    if (shipCount > 0) {
+      <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;"> 
+        <img src='/img/fleets/war.png' width='@(Math.Round(20.0 * shipCount / (double)maxDropships))' /><span style="font-size: 10px">@shipCount</span> 
+      </span>
+    }
   }
 </div>

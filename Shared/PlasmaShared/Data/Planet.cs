@@ -11,6 +11,17 @@ namespace ZkData
 	partial class Planet
 	{
 
+		public int GetIPToCapture()
+		{
+			var ownerIP = 0;
+			if (Account != null)
+			{
+				ownerIP = Account.Clan.Accounts.SelectMany(x => x.AccountPlanets.Where(y => y.PlanetID == PlanetID)).Sum(x => x.Influence);
+			}
+			ownerIP += PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense) ?? 0;
+
+			return ownerIP;
+		}
 
 		public Rectangle PlanetRectangle(Galaxy gal)
 		{

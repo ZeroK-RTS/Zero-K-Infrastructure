@@ -14,17 +14,22 @@ namespace ZkData
 	}
 	partial class Clan
 	{
-		public string ClanTreatyColor(int? otherClanID)
+		public string TreatyColor(int? otherClanID)
 		{
 			var tr = this.TreatyOffersByOfferingClanID.FirstOrDefault(x => x.TargetClanID == otherClanID);
 			Clan clan2 = null;
 			if (tr != null) clan2 = tr.ClanByTargetClanID;
-			return ClanTreatyColor(this, clan2);
+			return TreatyColor(this, clan2);
 		}
 
 
+		public string GetImageUrl()
+		{
+			return string.Format("/img/clans/{0}.png", ClanID);
+		}
 
-		public static string ClanTreatyColor(Clan clan1, Clan clan2)
+
+		public static string TreatyColor(Clan clan1, Clan clan2)
 		{
 			if (clan1 == null || clan2 == null) return "#FFFFFF";
 			if (clan1 == clan2) return "#00FFFF";
