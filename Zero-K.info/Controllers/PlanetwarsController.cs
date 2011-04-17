@@ -1,8 +1,10 @@
 ﻿using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -46,8 +48,9 @@ namespace ZeroKWeb.Controllers
 			return View(gal);
 		}
 
-		public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1)
+		public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 4)
 		{
+			zoom *= antiAliasingFactor;
 			using (var db = new ZkDataContext())
 			{
 				var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
@@ -82,7 +85,12 @@ namespace ZeroKWeb.Controllers
 								gr.DrawImage(pi, (int)(p.X*im.Width) - width/2, (int)(p.Y*im.Height) - height/2, width, height);
 							}
 						}
-						return im;
+						if (antiAliasingFactor == 1) return im;
+						else
+						{
+							zoom /= antiAliasingFactor;
+							return im.GetResized((int)(background.Width * zoom), (int)(background.Height * zoom), InterpolationMode.HighQualityBicubic);
+						}
 					}
 				}
 			}

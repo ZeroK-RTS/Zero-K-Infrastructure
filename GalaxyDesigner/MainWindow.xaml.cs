@@ -292,17 +292,22 @@ namespace GalaxyDesigner
 		{
 			var diagram = new Diagram();
 			var nodes = new Dictionary<PlanetDrawing, SpotNode>();
+			// add all nodes representing planets to the diagram
 			foreach (var planetDrawing in galaxyDrawing.PlanetDrawings)
 			{
 				var node = new SpotNode();
 				diagram.AddNode(node);
-				nodes.Add(planetDrawing, node);
+				nodes[planetDrawing] = node;
 			}
+			// add planet links to the diagram
 			foreach (var link in galaxyDrawing.LinkDrawings)
 			{
 				nodes[link.Planet1].AddParent(nodes[link.Planet2]);
 			}
+			// create the layout
 			diagram.Arrange();
+
+			// set planet positions, from their nodes
 			var bounds = diagram.GetDiagramBounds();
 			foreach (var kvp in nodes)
 			{

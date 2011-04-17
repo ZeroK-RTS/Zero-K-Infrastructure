@@ -100,6 +100,17 @@ namespace PlasmaShared
 			}
 		}
 
+		public static Bitmap GetResized(this Image original, int newWidth, int newHeight, InterpolationMode mode)
+		{
+			var resized = new Bitmap(newWidth, newHeight);
+			using (var g = Graphics.FromImage(resized))
+			{
+				g.InterpolationMode = mode;
+				g.DrawImage(original, 0, 0, newWidth, newHeight);
+			}
+			return resized;
+		}
+
 		public static int Constrain(this int value, int min, int max)
 		{
 			return Math.Max(min, Math.Min(max, value));
