@@ -14,6 +14,34 @@ namespace ZkData
 	}
 	partial class Clan
 	{
+		public string ClanTreatyColor(int? otherClanID)
+		{
+			var tr = this.TreatyOffersByOfferingClanID.FirstOrDefault(x => x.TargetClanID == otherClanID);
+			Clan clan2 = null;
+			if (tr != null) clan2 = tr.ClanByTargetClanID;
+			return ClanTreatyColor(this, clan2);
+		}
+
+
+
+		public static string ClanTreatyColor(Clan clan1, Clan clan2)
+		{
+			if (clan1 == null || clan2 == null) return "#FFFFFF";
+			if (clan1 == clan2) return "#00FFFF";
+			var t = clan1.GetEffectiveTreaty(clan2);
+			switch (t.AllyStatus) {
+				case AllyStatus.Neutral:
+					return "#FFFF00";
+				case AllyStatus.War:
+					return "#FF0000";
+				case AllyStatus.Alliance:
+					return "#66FF99";
+				case AllyStatus.Ceasefire:
+					return "#0066FF";
+			}
+			return "#FFFFFF";
+		}
+
 		public EffectiveTreaty GetEffectiveTreaty(Clan secondClan)
 		{
 			var t1 = this.TreatyOffersByOfferingClanID.FirstOrDefault(x => x.TargetClanID == secondClan.ClanID);
