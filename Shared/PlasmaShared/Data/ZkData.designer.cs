@@ -16243,6 +16243,8 @@ namespace ZkData
 		
 		private string _ImageName;
 		
+		private bool _IsDirty;
+		
 		private EntitySet<Link> _Links;
 		
 		private EntitySet<Planet> _Planets;
@@ -16263,6 +16265,8 @@ namespace ZkData
     partial void OnTurnStartedChanged();
     partial void OnImageNameChanging(string value);
     partial void OnImageNameChanged();
+    partial void OnIsDirtyChanging(bool value);
+    partial void OnIsDirtyChanged();
     #endregion
 		
 		public Galaxy()
@@ -16375,8 +16379,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDirty", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public bool IsDirty
+		{
+			get
+			{
+				return this._IsDirty;
+			}
+			set
+			{
+				if ((this._IsDirty != value))
+				{
+					this.OnIsDirtyChanging(value);
+					this.SendPropertyChanging();
+					this._IsDirty = value;
+					this.SendPropertyChanged("IsDirty");
+					this.OnIsDirtyChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Galaxy_Link", Storage="_Links", ThisKey="GalaxyID", OtherKey="GalaxyID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
 		public EntitySet<Link> Links
 		{
 			get
@@ -16395,7 +16420,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Galaxy_Planet", Storage="_Planets", ThisKey="GalaxyID", OtherKey="GalaxyID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get

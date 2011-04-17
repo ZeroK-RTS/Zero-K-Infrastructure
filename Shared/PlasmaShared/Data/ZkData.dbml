@@ -634,6 +634,7 @@
       <Column Name="Turn" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="TurnStarted" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="ImageName" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="IsDirty" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="Galaxy_Link" Member="Links" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Link" />
       <Association Name="Galaxy_Planet" Member="Planets" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Planet" />
     </Type>

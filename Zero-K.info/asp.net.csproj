@@ -89,6 +89,7 @@
     <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\MyController.cs" />
+    <Compile Include="Controllers\PlanetwarsController.cs" />
     <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\StaticController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
@@ -175,6 +176,8 @@
     <Content Include="Styles\style.css" />
     <Content Include="UnlocksAdmin.aspx" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />
+    <Content Include="Views\Planetwars\Index.cshtml" />
+    <Content Include="Views\Planetwars\GalaxyImage.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

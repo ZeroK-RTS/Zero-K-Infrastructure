@@ -229,6 +229,7 @@ namespace GalaxyDesigner
 					db.Links.DeleteAllOnSubmit(gal.Links);
 					db.Planets.DeleteAllOnSubmit(gal.Planets);
 				}
+				gal.IsDirty = true;
 				db.SubmitChanges();
 				galaxyNumber = gal.GalaxyID;
 
