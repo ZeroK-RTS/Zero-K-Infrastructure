@@ -23,6 +23,14 @@ namespace ZkData
 		}
 
 
+		public bool CanJoin(Account account)
+		{
+			if (account == null) return true;
+			if (account.LobbyTimeRank > 0 && Accounts.Count >= GlobalConst.MaxClanSkilledSize) return false;
+			else return true;
+		}
+
+
 		public string GetImageUrl()
 		{
 			return string.Format("/img/clans/{0}.png", ClanID);

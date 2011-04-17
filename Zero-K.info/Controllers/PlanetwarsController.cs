@@ -114,8 +114,9 @@ namespace ZeroKWeb.Controllers
 
 		public ActionResult ClanList()
 		{
+			var db = new ZkDataContext();
 
-			throw new NotImplementedException();
+			return View(db.Clans.AsQueryable());
 		}
 	}
 }

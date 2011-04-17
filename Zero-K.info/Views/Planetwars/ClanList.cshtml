@@ -1,4 +1,50 @@
-﻿@{
-
+﻿@using ZkData
+@using ZeroKWeb
+@model IQueryable<Clan>
+@{
+  Page.Title = "List of PlanetWars clans";
 }
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#clanTable").tablesorter();
+  }
+); 
+</script>
+<div>
+To take active part in <a href='@Url.Action("Index","Planetwars")'>PlanetWars</a> join a clan. <br />
+Clan you join or create <b>cannot be changed</b> for the duration of planetwars galaxy, so pick carefully!<br />
+You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
+</div>
 
+<table id="clanTable">
+  <thead>
+    <tr>
+      <th>
+        Clan
+      </th>
+      <th>
+        Influence
+      </th>
+      <th>
+        President
+      </th>
+      <th>
+        Members
+      </th>
+      <th>
+        Can join?
+      </th>
+    </tr>
+  </thead>
+
+  @foreach (var c in Model) {
+    <tr>
+      <td>@Html.PrintClan(c)</td>
+      <td>@c.Accounts.SelectMany(x=>x.AccountPlanets).Sum(x=>(int?)x.Influence)</td>
+      <td>@Html.PrintAccount(c.Account)</td>
+      <td>@c.Accounts.Count()</td>
+      <td>@c.CanJoin(Global.Account)</td>
+    </tr>
+   }
+
+</table>

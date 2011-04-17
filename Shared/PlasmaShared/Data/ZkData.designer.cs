@@ -2068,6 +2068,8 @@ namespace ZkData
 		
 		private EntitySet<PollVote> _PollVotes;
 		
+		private EntitySet<Clan> _Clans;
+		
 		private EntitySet<Planet> _Planets;
 		
 		private EntitySet<MarketOffer> _MarketOffersByAccountID;
@@ -2907,8 +2909,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Planet", Storage="_Planets", ThisKey="AccountID", OtherKey="OwnerAccountID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Clan", Storage="_Clans", ThisKey="AccountID", OtherKey="LeaderAccountID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=39, EmitDefaultValue=false)]
+		public EntitySet<Clan> Clans
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Clans.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Clans;
+			}
+			set
+			{
+				this._Clans.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Planet", Storage="_Planets", ThisKey="AccountID", OtherKey="OwnerAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=40, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get
@@ -2927,7 +2948,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer", Storage="_MarketOffersByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=40, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAccountID
 		{
 			get
@@ -2946,7 +2967,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer1", Storage="_MarketOffersByAcceptedAccountID", ThisKey="AccountID", OtherKey="AcceptedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAcceptedAccountID
 		{
 			get
@@ -2965,7 +2986,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountPlanet", Storage="_AccountPlanets", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=43, EmitDefaultValue=false)]
 		public EntitySet<AccountPlanet> AccountPlanets
 		{
 			get
@@ -2984,7 +3005,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_EventAccount", Storage="_EventAccounts", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=43, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=44, EmitDefaultValue=false)]
 		public EntitySet<EventAccount> EventAccounts
 		{
 			get
@@ -3003,7 +3024,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=44, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=45, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -3022,7 +3043,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Account", Storage="_ParentAccount", ThisKey="ClanLeaderVoteAccountID", OtherKey="AccountID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=45, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=46, EmitDefaultValue=false)]
 		public Account ParentAccount
 		{
 			get
@@ -3315,6 +3336,18 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_Clans(Clan entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_Clans(Clan entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void attach_Planets(Planet entity)
 		{
 			this.SendPropertyChanging();
@@ -3407,6 +3440,7 @@ namespace ZkData
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
 			this._Commanders = new EntitySet<Commander>(new Action<Commander>(this.attach_Commanders), new Action<Commander>(this.detach_Commanders));
 			this._PollVotes = new EntitySet<PollVote>(new Action<PollVote>(this.attach_PollVotes), new Action<PollVote>(this.detach_PollVotes));
+			this._Clans = new EntitySet<Clan>(new Action<Clan>(this.attach_Clans), new Action<Clan>(this.detach_Clans));
 			this._Planets = new EntitySet<Planet>(new Action<Planet>(this.attach_Planets), new Action<Planet>(this.detach_Planets));
 			this._MarketOffersByAccountID = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffersByAccountID), new Action<MarketOffer>(this.detach_MarketOffersByAccountID));
 			this._MarketOffersByAcceptedAccountID = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffersByAcceptedAccountID), new Action<MarketOffer>(this.detach_MarketOffersByAcceptedAccountID));
@@ -12544,7 +12578,7 @@ namespace ZkData
 		
 		private int _ClanID;
 		
-		private int _LeaderPlayerID;
+		private int _LeaderAccountID;
 		
 		private string _ClanName;
 		
@@ -12562,6 +12596,8 @@ namespace ZkData
 		
 		private EntitySet<EventClan> _EventClans;
 		
+		private EntityRef<Account> _Account;
+		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -12570,8 +12606,8 @@ namespace ZkData
     partial void OnCreated();
     partial void OnClanIDChanging(int value);
     partial void OnClanIDChanged();
-    partial void OnLeaderPlayerIDChanging(int value);
-    partial void OnLeaderPlayerIDChanged();
+    partial void OnLeaderAccountIDChanging(int value);
+    partial void OnLeaderAccountIDChanged();
     partial void OnClanNameChanging(string value);
     partial void OnClanNameChanged();
     partial void OnDescriptionChanging(string value);
@@ -12608,23 +12644,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LeaderPlayerID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LeaderAccountID", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int LeaderPlayerID
+		public int LeaderAccountID
 		{
 			get
 			{
-				return this._LeaderPlayerID;
+				return this._LeaderAccountID;
 			}
 			set
 			{
-				if ((this._LeaderPlayerID != value))
+				if ((this._LeaderAccountID != value))
 				{
-					this.OnLeaderPlayerIDChanging(value);
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnLeaderAccountIDChanging(value);
 					this.SendPropertyChanging();
-					this._LeaderPlayerID = value;
-					this.SendPropertyChanged("LeaderPlayerID");
-					this.OnLeaderPlayerIDChanged();
+					this._LeaderAccountID = value;
+					this.SendPropertyChanged("LeaderAccountID");
+					this.OnLeaderAccountIDChanged();
 				}
 			}
 		}
@@ -12789,6 +12829,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Clan", Storage="_Account", ThisKey="LeaderAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.Clans.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.Clans.Add(this);
+						this._LeaderAccountID = value.AccountID;
+					}
+					else
+					{
+						this._LeaderAccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -12863,6 +12937,7 @@ namespace ZkData
 			this._TreatyOffersByOfferingClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByOfferingClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByOfferingClanID));
 			this._TreatyOffersByTargetClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByTargetClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByTargetClanID));
 			this._EventClans = new EntitySet<EventClan>(new Action<EventClan>(this.attach_EventClans), new Action<EventClan>(this.detach_EventClans));
+			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
 		
