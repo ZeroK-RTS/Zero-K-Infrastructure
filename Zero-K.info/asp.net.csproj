@@ -73,6 +73,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\NoCache.cs" />
@@ -229,6 +230,7 @@
     <Content Include="Views\Poll\PollView.cshtml" />
     <Content Include="Views\Poll\PollVoteList.cshtml" />
     <Content Include="Views\Ladders\ladders.cshtml" />
+    <Content Include="Views\Home\NotLoggedIn.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

@@ -18,7 +18,7 @@
                 <small>@p.Created.ToAgoString()</small><br />
               </td>
             </tr>
-            @if (ZeroKWeb.Global.IsAdmin) {
+            @if (ZeroKWeb.Global.IsZeroKAdmin) {
               <tr>
                 <td>
                   <a href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'>Del. post</a>

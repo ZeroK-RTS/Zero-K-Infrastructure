@@ -11,9 +11,9 @@ namespace ZeroKWeb.Controllers
 	{
 		//
 		// GET: /My/
+		[Auth]
 		public ActionResult CommanderProfile(int profileNumber, string name, int? chassis, string deleteCommander)
 		{
-			if (!Global.IsAccountAuthorized) return Content("Not logged in");
 			if (profileNumber < 1 || profileNumber > 4) return Content("WTF! get lost");
 
 			var db = new ZkDataContext();
@@ -126,9 +126,9 @@ namespace ZeroKWeb.Controllers
 			return GetCommanderProfileView(db, profileNumber);
 		}
 
+		[Auth]
 		public ActionResult Commanders()
 		{
-			if (!Global.IsAccountAuthorized) return Content("Not logged in");
 			var db = new ZkDataContext();
 
 			var ret = new CommandersModel();
@@ -153,9 +153,9 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("UnlockList");
 		}
 
+		[Auth]
 		public ActionResult Unlock(int id)
 		{
-			if (!Global.IsAccountAuthorized) return Content("Not logged in");
 			using (var db = new ZkDataContext())
 			using (var scope = new TransactionScope())
 			{
@@ -181,9 +181,9 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("UnlockList");
 		}
 
+		[Auth]
 		public ActionResult UnlockList()
 		{
-			if (!Global.IsAccountAuthorized) return Content("Not logged in");
 			List<Unlock> unlocks;
 			List<Unlock> future;
 			var db = new ZkDataContext();

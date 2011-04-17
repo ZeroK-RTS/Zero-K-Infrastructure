@@ -20,12 +20,12 @@ namespace ZeroKWeb.Controllers
 					return PartialView("PollView", poll);
         }
 			
+			[Auth]
 				public ActionResult PollVote(int pollID)
 				{
 					var key = Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)).First(x => x.StartsWith("option"));
 					int optionID = Convert.ToInt32(key.Substring(6));
 
-					if (Global.AccountID == 0) return Content("Not logged in");
 					var db = new ZkDataContext();
 					var poll = db.Polls.Single(x => x.PollID == pollID);
 

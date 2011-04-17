@@ -122,7 +122,7 @@
     </table>
   </div>
   <!close votes>
-  @if (Global.IsAdmin) {
+  @if (Global.IsZeroKAdmin) {
     <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })'>
     Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
     @if (m.IsScriptMission) {

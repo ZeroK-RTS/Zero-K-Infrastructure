@@ -120,6 +120,12 @@ namespace ZeroKWeb.Controllers
 		}
 
 
+		
+		public ActionResult NotLoggedIn()
+		{
+			return View();
+		}
+
 		public ActionResult Logon(string login, string password, string referer)
 		{
 			var db = new ZkDataContext();

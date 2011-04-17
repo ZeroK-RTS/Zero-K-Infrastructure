@@ -194,7 +194,7 @@
           &nbsp;&nbsp;
           <input type="submit" value="Login" />
           <small>(use Zero-K lobby account)</small>
-          <input type="hidden" name="referer" value="@Request.Url" />
+          <input type="hidden" name="referer" value="@(Request["ReturnUrl"] != null ? Request["ReturnUrl"] : Request.Url.ToString())" />
           </form>
         } else {
           <form method="post" action="@Url.Action("Logout", "Home")" >

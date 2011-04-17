@@ -61,7 +61,7 @@
           <td>@Math.Round(Model.Elo)
           </td>
         </tr>
-        @if (Model.IsAdmin)
+        @if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
         {
           <tr>
             <td>
@@ -154,7 +154,7 @@
   @* Bottom cell starts here *@
   <tr>
     <td colspan='2'>
-      @if (ZeroKWeb.Global.IsAdmin && ZeroKWeb.Global.AccountID == Model.AccountID)
+      @if (ZeroKWeb.Global.IsZeroKAdmin && ZeroKWeb.Global.AccountID == Model.AccountID)
       {
         <h3>
           Admin extras</h3>

@@ -146,11 +146,10 @@ namespace ZeroKWeb.Controllers
       }
     }
 
+		[Auth]
     public ActionResult Rate(int id, int rating)
     {
-      if (!Global.IsAccountAuthorized) return Content("Not logged in!");
-      else
-      {
+
         var db = new ZkDataContext();
         var rat = db.MapRatings.SingleOrDefault(x => x.ResourceID == id && x.AccountID == Global.Account.AccountID);
         if (rat == null)
@@ -167,14 +166,11 @@ namespace ZeroKWeb.Controllers
         db.SubmitChanges();
 
         return Content("");
-      }
     }
-
+		
+		[Auth]
     public ActionResult Tag(int id, bool? special, int? sea, int? hills, bool? ffa, bool? assymetrical, string author, float? featuredOrder, bool? is1v1, bool? chickens)
     {
-      if (!Global.IsAccountAuthorized) return Content("Not logged in!");
-      else
-      {
         var db = new ZkDataContext();
         var r = db.Resources.Single(x => x.ResourceID == id);
         r.TaggedByAccountID = Global.AccountID;
@@ -186,7 +182,7 @@ namespace ZeroKWeb.Controllers
         r.AuthorName = author;
       	r.MapIs1v1 = is1v1;
       	r.MapIsChickens = chickens;
-        if (Global.Account.IsAdmin)
+        if (Global.Account.IsZeroKAdmin)
         {
         	r.FeaturedOrder = featuredOrder;
         }
@@ -201,7 +197,7 @@ namespace ZeroKWeb.Controllers
 				}
 				db.SubmitChanges();
       	return RedirectToAction("Detail", new { id = id });
-      }
+      
     }
 
     MapDetailData GetMapDetailData(Resource res, ZkDataContext db)

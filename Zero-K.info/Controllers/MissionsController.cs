@@ -44,7 +44,7 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-    [Authorize(Roles = "admin")]
+		[Auth(Role = AuthRole.ZkAdmin)]
     public ActionResult ChangeFeaturedOrder(int id, float? featuredOrder, string script)
     {
       var db = new ZkDataContext();
@@ -105,7 +105,7 @@ namespace ZeroKWeb.Controllers
 			return File(Encoding.UTF8.GetBytes(m.Script), "application/octet-stream", "script.txt");
 		}
 
-    [Authorize(Roles = "admin")]
+		[Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
     public ActionResult Undelete(int id)
     {
       var db = new ZkDataContext();
@@ -115,7 +115,7 @@ namespace ZeroKWeb.Controllers
     }
 
 
-		[Authorize(Roles = "admin")]
+		[Auth(Role = AuthRole.ZkAdmin | AuthRole.LobbyAdmin)]
 		public ActionResult Delete(int id)
 		{
 			var db = new ZkDataContext();
@@ -124,11 +124,9 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Index");
 		}
 
+		[Auth]
 		public ActionResult Rate(int id, int? difficulty, int? rating)
 		{
-			if (!Global.IsAccountAuthorized) return Content("Not logged in!");
-			else
-			{
 				var db = new ZkDataContext();
 				var rat = db.Ratings.SingleOrDefault(x => x.MissionID == id && x.AccountID == Global.Account.AccountID);
 				if (rat == null)
@@ -148,7 +146,6 @@ namespace ZeroKWeb.Controllers
 				db.SubmitChanges();
 				
 				return Content("");
-			}
 		}
 	}
 

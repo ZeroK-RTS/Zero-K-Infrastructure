@@ -11,11 +11,6 @@ namespace ZkData
 		public int AvailableXP { get { return GetXpForLevel(Level) - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
 
 		public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
-		/// <summary>
-		/// Aggregate admin rights - either lobby or ZK admin
-		/// </summary>
-		public bool IsAdmin { get { return IsLobbyAdministrator || IsZeroKAdmin; } }
-
 
 		public void CheckLevelUp()
 		{
@@ -61,8 +56,8 @@ namespace ZkData
 
 		public bool IsInRole(string role)
 		{
-			if (role == "admin" || role == "moderator") return IsAdmin;
-			if (role == "user") return true;
+			if (role == "LobbyAdmin") return IsLobbyAdministrator;
+			if (role == "ZkAdmin") return IsZeroKAdmin;
 			else return string.IsNullOrEmpty(role);
 		}
 
