@@ -4,11 +4,10 @@
 @{
   Page.Title = "List of PlanetWars clans";
 }
-<script type="text/javascript">
+<script type="text/javascript" language="javascript">
   $(document).ready(function () {
-    $("#clanTable").tablesorter();
-  }
-); 
+    $('#clanTable').tablesorter();
+  }); 
 </script>
 <div>
 To take active part in <a href='@Url.Action("Index","Planetwars")'>PlanetWars</a> join a clan. <br />
@@ -16,11 +15,13 @@ Clan you join or create <b>cannot be changed</b> for the duration of planetwars 
 You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
 </div>
 
-<table id="clanTable">
-  <thead>
+
+<table id="clanTable" class="tablesorter">
+  <thead style="cursor:pointer">
     <tr>
+      <th>Full name</th>
       <th>
-        Clan
+        Shortcut
       </th>
       <th>
         Influence
@@ -36,15 +37,22 @@ You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
       </th>
     </tr>
   </thead>
+  <tbody>
 
   @foreach (var c in Model) {
     <tr>
+    <td><img src='@c.GetImageUrl()' />@c.ClanName</td>
       <td>@Html.PrintClan(c)</td>
       <td>@c.Accounts.SelectMany(x=>x.AccountPlanets).Sum(x=>(int?)x.Influence)</td>
-      <td>@Html.PrintAccount(c.Account)</td>
+      <td>@Html.PrintAccount(c.LeaderAccount)</td>
       <td>@c.Accounts.Count()</td>
-      <td>@c.CanJoin(Global.Account)</td>
+      @if (c.CanJoin(Global.Account)) {
+        <td>@Html.ActionLink("Join now!", "JoinClan", new { id= c.ClanID }) @(string.IsNullOrEmpty(c.Password) ? "" :"password")</td>
+      } else {
+        <td>No</td>
+      }
+      
     </tr>
    }
-
+   </tbody>
 </table>

@@ -178,7 +178,7 @@ namespace System.Web.Mvc
 					                                url.Action("Clan", "Planetwars", new { id = clan.ClanID }),
 					                                clan.GetImageUrl(),
 					                                Clan.TreatyColor(clan,Global.Clan),
-																					clan.ClanName));
+																					clan.Shortcut));
 			}
 		}
 

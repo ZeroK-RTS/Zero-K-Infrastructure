@@ -162,8 +162,10 @@
     <Content Include="Img\ntbgw.png" />
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
-    <Content Include="Scripts\jquery-1.4.2.min.js" />
+    <Content Include="Scripts\jquery-1.5.2.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.6.custom.min.js" />
+    <Content Include="Scripts\jquery.tablesorter.js" />
+    <Content Include="Scripts\jquery.tablesorter.min.js" />
     <Content Include="Scripts\jquery.ui.stars.js" />
     <Content Include="Scripts\jquery.ui.stars.min.js" />
     <Content Include="Scripts\nicetitle.js" />
@@ -234,6 +236,8 @@
     <Content Include="Views\Shared\LoginBar.cshtml" />
     <Content Include="Views\Planetwars\ClanList.cshtml" />
     <Content Include="Views\Planetwars\Clan.cshtml" />
+    <Content Include="Views\Planetwars\CreateClan.cshtml" />
+    <Content Include="Views\Planetwars\JoinClan.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

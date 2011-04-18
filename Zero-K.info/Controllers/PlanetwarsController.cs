@@ -4,6 +4,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
 using PlasmaShared;
 using ZkData;
@@ -95,6 +96,68 @@ namespace ZeroKWeb.Controllers
 					}
 				}
 			}
+		}
+
+		[Auth]
+		public ActionResult CreateClan()
+		{
+			if (Global.Account.Clan != null && Global.Account.Clan.LeaderAccountID != Global.AccountID) return Content("You already have clan and you are not president of it");
+
+			return View(Global.Clan ?? new Clan());
+		}
+
+		[Auth]
+		public ActionResult SubmitCreateClan(int? clanID, HttpPostedFileBase image, string name, string shortcut, string description, string topic, string password)
+		{
+			var db = new ZkDataContext();
+			Clan clan = null;
+			if ((clanID ?? 0) > 0) {
+				if (clanID != Global.Account.LeaderClan.ClanID || clanID != Global.Account.ClanID) return Content("Unauthorized");
+				clan = db.Clans.Single(x => x.ClanID == clanID);
+			} else
+			{
+				if (Global.Clan != null) return Content("You already have a clan");
+				clan = new Clan();
+				clan.LeaderAccountID = Global.AccountID; // set leader
+				db.Clans.InsertOnSubmit(clan);
+			}
+			if (string.IsNullOrEmpty(shortcut) || string.IsNullOrEmpty(name)) return Content("Name and shortcut cannot be empty!");
+			
+			clan.Shortcut = shortcut;
+			clan.Description = description;
+			clan.ClanName = name;
+			clan.SecretTopic = topic;
+			clan.Password = password;
+			if (clan.ClanID == 0 && (image == null || image.ContentLength ==0)) return Content("Upload image");
+			if (image != null && image.ContentLength >0)
+			{
+				var im = Image.FromStream(image.InputStream);
+				if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
+				db.SubmitChanges();
+				clan.LeaderAccount.ClanID = clan.ClanID; // set self as member through leader
+				im.Save(Server.MapPath(clan.GetImageUrl()));
+			} 
+			db.SubmitChanges();
+				
+			
+			return RedirectToAction("Clan", new { id = clan.ClanID });
+		}
+
+		[Auth]
+		public ActionResult JoinClan(int id, string password)
+		{
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(x => x.ClanID == id);
+			if (clan.CanJoin(Global.Account)) {
+				if (!string.IsNullOrEmpty(clan.Password) && clan.Password != password) return View(clan.ClanID);
+				else {
+					var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+					acc.ClanID = clan.ClanID;
+					db.SubmitChanges();
+					return RedirectToAction("Clan", new { id = clan.ClanID });
+				}
+			} else return Content("You cannot join this clan");
+
 		}
 
 		public ActionResult Index()

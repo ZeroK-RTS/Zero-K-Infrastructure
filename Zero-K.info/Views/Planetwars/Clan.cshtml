@@ -1,3 +1,35 @@
-﻿@{
-
+﻿@using ZeroKWeb
+@using ZkData
+@model Clan
+@{
+  var c = Model;
+  var isMember = c.Accounts.Any(y => y.AccountID == Global.AccountID);
 }
+<h2>@c.ClanName</h2>
+<h3>@Html.PrintClan(c)</h3>
+<img  src='@c.GetImageUrl()'/>
+<h4>President:</h4>@Html.PrintAccount(c.LeaderAccount)
+
+@if (c.CanJoin(Global.Account)) {
+  @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID })
+}
+<div>
+  @Html.BBCode(c.Description)
+</div>
+@if (isMember) {
+  <div>
+    @Html.BBCode(c.SecretTopic)
+  </div>
+}
+
+<h3>Members</h3>
+@foreach (var a in c.Accounts) {
+  @Html.PrintAccount(a) <br />
+}
+
+@if (Global.AccountID == c.LeaderAccountID) { //president
+  @Html.ActionLink("modify this clan", "CreateClan", new {id= c.ClanID})
+}
+
+<br />
+<a href='/planetwars.mvc/ClanList'>Clan list</a>

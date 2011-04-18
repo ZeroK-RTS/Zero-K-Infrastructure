@@ -1,0 +1,58 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model Clan
+<form method="post" action="@Url.Action("SubmitCreateClan", new { clanID = Model != null ? (int?)Model.ClanID : null })" enctype="multipart/form-data">
+<table>
+  <tr>
+    <td>
+      Name:
+    </td>
+    <td>
+      @Html.TextBox("name", Model.ClanName)
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Shortcut:
+    </td>
+    <td>
+      @Html.TextBox("shortcut", Model.Shortcut)
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Password (leave blank to allow any to join):
+    </td>
+    <td>@Html.TextBox("password", Model.Password)
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Image (64x64 png with transparency):
+    </td>
+    <td>
+      <img src='@Model.GetImageUrl()' />
+      <input type="file" name="image" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Topic (internal info):
+    </td>
+    <td>
+      @Html.TextArea("topic", Model.SecretTopic, 4,40, null)
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Description (public):
+    </td>
+    <td>
+      @Html.TextArea("description", Model.Description,4,40,null)
+    </td>
+  </tr>
+  <tr>
+  <td colspan='2'><input type='submit' value="Submit"/></td>
+  </tr>
+</table>
+</form>
