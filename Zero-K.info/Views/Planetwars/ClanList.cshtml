@@ -47,7 +47,7 @@ You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
       <td>@Html.PrintAccount(c.Accounts.Single(x=>x.IsClanFounder))</td>
       <td>@c.Accounts.Count()</td>
       @if (c.CanJoin(Global.Account)) {
-        <td>@Html.ActionLink("Join now!", "JoinClan", new { id= c.ClanID }) @(string.IsNullOrEmpty(c.Password) ? "" :"password")</td>
+        <td>@Html.ActionLink("Join now!", "JoinClan", new { id = c.ClanID }, new {@class="delete"}) @(string.IsNullOrEmpty(c.Password) ? "" :"password")</td>
       } else {
         <td>No</td>
       }

@@ -135,10 +135,10 @@ namespace System.Web.Mvc
 			{
 				return
 					new MvcHtmlString(
-						string.Format("<a href='/Users.mvc/{2}'><img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}</a>",
+						string.Format("<a href='/Users.mvc/{2}' style='color:{3}'><img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}</a>",
 						              account.Country,
 						              account.LobbyTimeRank + 1,
-						              account.Name));
+						              account.Name, Clan.TreatyColor(Global.Clan, account.Clan)));
 			}
 		}
 

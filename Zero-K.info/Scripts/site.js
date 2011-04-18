@@ -6,7 +6,7 @@ var ajaxScrollEnabled = true;
 $(document).ready(function () {
   // delete confirm dialog
   $('a.delete').click(function () {
-    var answer = confirm('Really delete?');
+    var answer = confirm('Are you sure?');
     return answer;
   });
 

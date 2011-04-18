@@ -6,31 +6,36 @@
   var isMember = c.Accounts.Any(y => y.AccountID == Global.AccountID);
 }
 <h2>@c.ClanName</h2>
-<h3>@Html.PrintClan(c)</h3>
-<img  src='@c.GetImageUrl()'/>
-<b>@c.LeaderTitle</b> @Html.PrintAccount(c.Accounts.Single(x=>x.IsClanFounder))
-
+<table>
+  <tr>
+    <td>
+      <h3>@Html.PrintClan(c)</h3>
+      <img  src='@c.GetImageUrl()'/><br />
+      @(c.LeaderTitle ?? "leader"): @Html.PrintAccount(c.Accounts.Single(x=>x.IsClanFounder))
+    </td>
+    <td>
+      <div style='margin:10px; font-size: 80%;'>
+        @Html.BBCode(c.Description)
+      </div>
+    </td>
+  </tr>
+</table>
 @if (c.CanJoin(Global.Account)) {
-  @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID })
+  @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new {@class="delete" })
 }
-<div>
-  @Html.BBCode(c.Description)
-</div>
 @if (isMember) {
   <b>Topic:</b><br />
   <div style='border: 1px dashed white;'>
     @Html.BBCode(c.SecretTopic)
   </div>
 }
-
-<h3>Members</h3>
+<h3>
+  Members</h3>
 @foreach (var a in c.Accounts) {
   @Html.PrintAccount(a) <br />
 }
-
 @if (isMember && Global.Account.HasClanRights) { //has rights
   @Html.ActionLink("modify this clan", "CreateClan", new {id= c.ClanID})
 }
-
 <br />
 <a href='/planetwars.mvc/ClanList'>Clan list</a>
