@@ -89,6 +89,20 @@ namespace ZeroKWeb
 			return PlasmaServer.GetResourceList(lastChange, out currentTime);
 		}
 
+		
+
+		[WebMethod]
+		public string GetRecommendedMap(string autohostName, AutohostMode mode)
+		{
+			if (mode == AutohostMode.Planetwars)
+			{
+				
+
+			}
+
+			return null;
+		}
+
 
 		[WebMethod]
 		public ScriptMissionData GetScriptMissionData(string name)
@@ -119,7 +133,7 @@ namespace ZeroKWeb
 				if (user != null)
 				{
 					var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
-					ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID, Parameters = userParams });
+					ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID,  Parameters = userParams });
 
 					var pu = new LuaTable();
 					foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
@@ -245,6 +259,8 @@ namespace ZeroKWeb
 			}
 		}
 
+
+
 		[WebMethod]
 		public string SubmitSpringBattleResult(string accountName, string password, BattleResult result, List<BattlePlayerResult> players)
 		{
@@ -367,6 +383,7 @@ namespace ZeroKWeb
 		}
 
 
+
 		string GetUserIP()
 		{
 			var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
@@ -454,4 +471,12 @@ namespace ZeroKWeb
 			}
 		}
 	}
-}
+
+	public enum AutohostMode
+	{
+		Planetwars = 1,
+		Game1v1 = 2,
+		GameTeams =3,
+		GameFFA=4,
+		GameChickens = 5
+}}

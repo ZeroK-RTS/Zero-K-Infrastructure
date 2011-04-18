@@ -21,13 +21,13 @@ You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
     <tr>
       <th>Full name</th>
       <th>
-        Shortcut
+        Tag
       </th>
       <th>
         Influence
       </th>
       <th>
-        President
+        Leader
       </th>
       <th>
         Members
@@ -41,7 +41,7 @@ You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
 
   @foreach (var c in Model) {
     <tr>
-    <td><img src='@c.GetImageUrl()' />@c.ClanName</td>
+    <td><a href='@Url.Action("Clan", new {id= c.ClanID})'><img src='@c.GetImageUrl()' />@c.ClanName</a></td>
       <td>@Html.PrintClan(c)</td>
       <td>@c.Accounts.SelectMany(x=>x.AccountPlanets).Sum(x=>(int?)x.Influence)</td>
       <td>@Html.PrintAccount(c.Accounts.Single(x=>x.IsClanFounder))</td>
