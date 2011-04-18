@@ -101,45 +101,47 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult CreateClan()
 		{
-			if (Global.Account.Clan != null && Global.Account.Clan.LeaderAccountID != Global.AccountID) return Content("You already have clan and you are not president of it");
-
-			return View(Global.Clan ?? new Clan());
+			if (Global.Account.Clan == null || (Global.Account.HasClanRights))
+			{
+				return View(Global.Clan ?? new Clan());	
+			} else  return Content("You already have clan and you dont have rights to it");
 		}
 
 		[Auth]
-		public ActionResult SubmitCreateClan(int? clanID, HttpPostedFileBase image, string name, string shortcut, string description, string topic, string password)
+		public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image)
 		{
 			var db = new ZkDataContext();
-			Clan clan = null;
-			if ((clanID ?? 0) > 0) {
-				if (clanID != Global.Account.LeaderClan.ClanID || clanID != Global.Account.ClanID) return Content("Unauthorized");
-				clan = db.Clans.Single(x => x.ClanID == clanID);
+			bool created = clan.ClanID == 0; // existing clan vs creation
+			if (!created) {
+				if (!Global.Account.HasClanRights || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
+				db.Clans.Attach(clan, db.Clans.Single(x=>x.ClanID == clan.ClanID));
 			} else
 			{
 				if (Global.Clan != null) return Content("You already have a clan");
-				clan = new Clan();
-				clan.LeaderAccountID = Global.AccountID; // set leader
 				db.Clans.InsertOnSubmit(clan);
 			}
-			if (string.IsNullOrEmpty(shortcut) || string.IsNullOrEmpty(name)) return Content("Name and shortcut cannot be empty!");
-			
-			clan.Shortcut = shortcut;
-			clan.Description = description;
-			clan.ClanName = name;
-			clan.SecretTopic = topic;
-			clan.Password = password;
-			if (clan.ClanID == 0 && (image == null || image.ContentLength ==0)) return Content("Upload image");
+			if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
+
+			if (created && (image == null || image.ContentLength ==0)) return Content("Upload image");
 			if (image != null && image.ContentLength >0)
 			{
 				var im = Image.FromStream(image.InputStream);
 				if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
-				db.SubmitChanges();
-				clan.LeaderAccount.ClanID = clan.ClanID; // set self as member through leader
+				db.SubmitChanges(); // needed to get clan id for image url - stupid way really
 				im.Save(Server.MapPath(clan.GetImageUrl()));
 			} 
 			db.SubmitChanges();
-				
 			
+			if (created) // we created a new clan, set self as founder and rights
+			{
+				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+				acc.ClanID = clan.ClanID;
+				acc.IsClanFounder = true;
+				acc.HasClanRights = true;
+				db.SubmitChanges();
+			}
+
+
 			return RedirectToAction("Clan", new { id = clan.ClanID });
 		}
 

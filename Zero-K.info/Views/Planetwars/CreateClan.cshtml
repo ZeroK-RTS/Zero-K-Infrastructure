@@ -1,14 +1,15 @@
 ﻿@using ZeroKWeb
 @using ZkData
 @model Clan
-<form method="post" action="@Url.Action("SubmitCreateClan", new { clanID = Model != null ? (int?)Model.ClanID : null })" enctype="multipart/form-data">
+<form method="post" action="@Url.Action("SubmitCreateClan")" enctype="multipart/form-data">
+@Html.HiddenFor(x=>x.ClanID)
 <table>
   <tr>
     <td>
       Name:
     </td>
     <td>
-      @Html.TextBox("name", Model.ClanName)
+    @Html.TextBoxFor(x => x.ClanName, new { maxlength = 50 })
     </td>
   </tr>
   <tr>
@@ -16,14 +17,18 @@
       Shortcut:
     </td>
     <td>
-      @Html.TextBox("shortcut", Model.Shortcut)
+      @Html.TextBoxFor(x=>x.Shortcut, new { maxlength = 6})
     </td>
+  </tr>
+  <tr>
+  <td>Leader title:</td>
+  <td>@Html.TextBoxFor(x=>x.LeaderTitle, new {maxlength=50})</td>
   </tr>
   <tr>
     <td>
       Password (leave blank to allow any to join):
     </td>
-    <td>@Html.TextBox("password", Model.Password)
+    <td>@Html.TextBoxFor(x=>x.Password)
     </td>
   </tr>
   <tr>
@@ -40,7 +45,7 @@
       Topic (internal info):
     </td>
     <td>
-      @Html.TextArea("topic", Model.SecretTopic, 4,40, null)
+      @Html.TextAreaFor(x=>x.SecretTopic, 4,40, null)
     </td>
   </tr>
   <tr>
@@ -48,7 +53,7 @@
       Description (public):
     </td>
     <td>
-      @Html.TextArea("description", Model.Description,4,40,null)
+      @Html.TextAreaFor(x=>x.Description,4,40,null)
     </td>
   </tr>
   <tr>

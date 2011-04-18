@@ -40,7 +40,7 @@ namespace ZkData
 
 		public static string TreatyColor(Clan clan1, Clan clan2)
 		{
-			if (clan1 == null || clan2 == null) return "#FFFFFF";
+			if (clan1 == null || clan2 == null) return "";
 			if (clan1.ClanID  == clan2.ClanID) return "#00FFFF";
 			var t = clan1.GetEffectiveTreaty(clan2.ClanID);
 			switch (t.AllyStatus) {

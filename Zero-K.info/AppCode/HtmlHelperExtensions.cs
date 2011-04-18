@@ -39,6 +39,7 @@ namespace System.Web.Mvc
 
 		public static MvcHtmlString BBCode(this HtmlHelper helper, string str)
 		{
+			if (str == null) return null;
 			Regex exp;
 			// format the bold tags: [b][/b]
 			// becomes: <strong></strong>

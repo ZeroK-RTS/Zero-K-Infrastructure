@@ -44,7 +44,7 @@ You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
     <td><img src='@c.GetImageUrl()' />@c.ClanName</td>
       <td>@Html.PrintClan(c)</td>
       <td>@c.Accounts.SelectMany(x=>x.AccountPlanets).Sum(x=>(int?)x.Influence)</td>
-      <td>@Html.PrintAccount(c.LeaderAccount)</td>
+      <td>@Html.PrintAccount(c.Accounts.Single(x=>x.IsClanFounder))</td>
       <td>@c.Accounts.Count()</td>
       @if (c.CanJoin(Global.Account)) {
         <td>@Html.ActionLink("Join now!", "JoinClan", new { id= c.ClanID }) @(string.IsNullOrEmpty(c.Password) ? "" :"password")</td>

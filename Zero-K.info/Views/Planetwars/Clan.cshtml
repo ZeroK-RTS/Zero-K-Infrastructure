@@ -8,7 +8,7 @@
 <h2>@c.ClanName</h2>
 <h3>@Html.PrintClan(c)</h3>
 <img  src='@c.GetImageUrl()'/>
-<h4>President:</h4>@Html.PrintAccount(c.LeaderAccount)
+<b>@c.LeaderTitle</b> @Html.PrintAccount(c.Accounts.Single(x=>x.IsClanFounder))
 
 @if (c.CanJoin(Global.Account)) {
   @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID })
@@ -17,7 +17,8 @@
   @Html.BBCode(c.Description)
 </div>
 @if (isMember) {
-  <div>
+  <b>Topic:</b><br />
+  <div style='border: 1px dashed white;'>
     @Html.BBCode(c.SecretTopic)
   </div>
 }
@@ -27,7 +28,7 @@
   @Html.PrintAccount(a) <br />
 }
 
-@if (Global.AccountID == c.LeaderAccountID) { //president
+@if (isMember && Global.Account.HasClanRights) { //has rights
   @Html.ActionLink("modify this clan", "CreateClan", new {id= c.ClanID})
 }
 
