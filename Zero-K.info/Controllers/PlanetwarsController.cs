@@ -114,7 +114,14 @@ namespace ZeroKWeb.Controllers
 			bool created = clan.ClanID == 0; // existing clan vs creation
 			if (!created) {
 				if (!Global.Account.HasClanRights || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
-				db.Clans.Attach(clan, db.Clans.Single(x=>x.ClanID == clan.ClanID));
+				var orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
+				orgClan.ClanName = clan.ClanName;
+				orgClan.LeaderTitle = clan.LeaderTitle;
+				orgClan.Shortcut = clan.Shortcut;
+				orgClan.Description = clan.Description;
+				orgClan.SecretTopic = clan.SecretTopic;
+				orgClan.Password = clan.Password;
+				//orgClan.DbCopyProperties(clan); 
 			} else
 			{
 				if (Global.Clan != null) return Content("You already have a clan");

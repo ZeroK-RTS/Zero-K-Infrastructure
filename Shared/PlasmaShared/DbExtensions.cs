@@ -18,5 +18,16 @@ namespace PlasmaShared
 			foreach (var col in cols) col.Prop.SetValue(clone, col.Prop.GetValue(source, null), null);
 			return clone;
 		}
+
+		public static void DbCopyProperties<T>(this T target, T source)
+		{
+			var clone = target;
+			var cols =
+				typeof(T).GetProperties().Select(
+					p => new { Prop = p, Attr = (ColumnAttribute)p.GetCustomAttributes(typeof(ColumnAttribute), true).SingleOrDefault() }).Where(
+						p => p.Attr != null && !p.Attr.IsDbGenerated);
+			foreach (var col in cols) col.Prop.SetValue(clone, col.Prop.GetValue(source, null), null);
+		}
+
 	}
 }
