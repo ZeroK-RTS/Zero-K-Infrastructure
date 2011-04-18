@@ -50,6 +50,15 @@ namespace ZeroKWeb.Controllers
 			return View(gal);
 		}
 
+		[Auth]
+		public ActionResult Planet(int id)
+		{
+			var db = new ZkDataContext();
+			var planet = db.Planets.Single(x => x.PlanetID == id);
+			return View(planet);
+
+		}
+
 		public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 4)
 		{
 			zoom *= antiAliasingFactor;
@@ -105,6 +114,18 @@ namespace ZeroKWeb.Controllers
 			{
 				return View(Global.Clan ?? new Clan());	
 			} else  return Content("You already have clan and you dont have rights to it");
+		}
+
+		[Auth]
+		public ActionResult SubmitRenamePlanet(int planetID, string newName)
+		{
+			if (String.IsNullOrWhiteSpace(newName)) return Content("Error: the planet must have a name.");
+			// if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
+			var db = new ZkDataContext();
+			var planet = db.Planets.Single(p => p.PlanetID == planetID);
+			planet.Name = newName;
+			db.SubmitChanges();
+			return RedirectToAction("Planet", new { id = planet.PlanetID });
 		}
 
 		[Auth]

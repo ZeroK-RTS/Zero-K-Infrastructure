@@ -1,0 +1,52 @@
+﻿@using ZkData
+@using ZeroKWeb
+@model Planet
+
+
+@{
+    ViewBag.Title = "Planet";
+    Layout = "~/Views/Shared/_SiteLayout.cshtml";
+}
+
+<h2>Planet @Model.Name</h2>
+
+@{
+    var planetIconUrl = "/img/planets/" + Model.Resource.MapPlanetWarsIcon;
+    var size = Model.Resource.PlanetWarsIconSize;
+    <img src='@planetIconUrl' width='@size' height='@size' />
+}
+
+
+
+
+
+@if (Model.Account != null)
+{
+    
+    <h3>@Html.PrintClan(Model.Account.Clan)</h3>
+    <h4>@Html.PrintAccount(Model.Account)</h4>
+    
+    <table>
+        <tr>
+            <th>Clan</th>
+            <th>Influence</th>
+        </tr>
+        @foreach (var clan in Model.PlanetInfluenceHistories)
+        {
+        <tr>
+            <td>Clan Name</td>
+            <td>12</td>
+        </tr>
+        }
+    </table>
+    
+    if (Model.OwnerAccountID == Global.AccountID)
+    {
+        <form method="post" action="@Url.Action("SubmitRenamePlanet")">
+            <input type="hidden" name="planetID" value="@Model.PlanetID"/>
+            <input type="text" name="newName" value="@Model.Name"/>
+            <input type='submit' value="Rename Planet"/>
+        </form>
+    }
+}
+
