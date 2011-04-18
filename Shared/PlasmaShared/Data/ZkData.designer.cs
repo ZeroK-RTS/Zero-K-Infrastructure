@@ -16593,6 +16593,8 @@ namespace ZkData
 		
 		private int _Height;
 		
+		private bool _IsDefault;
+		
 		private EntitySet<Link> _Links;
 		
 		private EntitySet<Planet> _Planets;
@@ -16619,6 +16621,8 @@ namespace ZkData
     partial void OnWidthChanged();
     partial void OnHeightChanging(int value);
     partial void OnHeightChanged();
+    partial void OnIsDefaultChanging(bool value);
+    partial void OnIsDefaultChanged();
     #endregion
 		
 		public Galaxy()
@@ -16794,8 +16798,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDefault", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public bool IsDefault
+		{
+			get
+			{
+				return this._IsDefault;
+			}
+			set
+			{
+				if ((this._IsDefault != value))
+				{
+					this.OnIsDefaultChanging(value);
+					this.SendPropertyChanging();
+					this._IsDefault = value;
+					this.SendPropertyChanged("IsDefault");
+					this.OnIsDefaultChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Galaxy_Link", Storage="_Links", ThisKey="GalaxyID", OtherKey="GalaxyID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<Link> Links
 		{
 			get
@@ -16814,7 +16839,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Galaxy_Planet", Storage="_Planets", ThisKey="GalaxyID", OtherKey="GalaxyID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get

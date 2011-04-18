@@ -23,6 +23,144 @@ namespace ZeroKWeb
 	public class ContentService: WebService
 	{
 		[WebMethod]
+		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams, AutohostMode mode = AutohostMode.Planetwars)
+		{
+			using (var db = new ZkDataContext())
+			{
+				var res = new BalanceTeamsResult();
+				var idList = currentTeams.Select(x => x.AccountID).ToList();
+				var players = db.Accounts.Where(x => idList.Contains(x.AccountID)).ToList();
+				var clans = players.Where(x => x.Clan != null).Select(x => x.Clan).ToList();
+				var treaties = new Dictionary<Tuple<Clan, Clan>, EffectiveTreaty>();
+				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
+				for (var i = 1; i < clans.Count; i++)
+				{
+					for (var j = 0; j < i; j++)
+					{
+						var treaty = clans[i].GetEffectiveTreaty(clans[j].ClanID);
+						treaties[new Tuple<Clan, Clan>(clans[i], clans[j])] = treaty;
+						treaties[new Tuple<Clan, Clan>(clans[j], clans[i])] = treaty;
+					}
+				}
+
+				var sameTeamScore = new int[players.Count,players.Count];
+				for (var i = 1; i < players.Count; i++)
+				{
+					for (var j = 0; j < i; j++)
+					{
+						var c1 = players[i].Clan;
+						var c2 = players[j].Clan;
+						var points = 0;
+						if (c1 == c2) points = 3;
+						else
+						{
+							var treaty = treaties[new Tuple<Clan, Clan>(players[i].Clan, players[j].Clan)];
+							if (treaty.AllyStatus == AllyStatus.Alliance) points = 2;
+							else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 1;
+							else if (treaty.AllyStatus == AllyStatus.War) points = -2;
+						}
+						sameTeamScore[i, j] = points;
+						sameTeamScore[j, i] = points;
+					}
+				}
+
+				var playerScoreMultiplier = new double[players.Count];
+				for (var i = 0; i < players.Count; i++)
+				{
+					var mult = 1.0;
+					var player = players[i];
+					if (planet.OwnerAccountID == player.AccountID) mult += 0.5; // owner 50%
+					else if (planet.Account.ClanID == player.AccountID) mult += 0.3; // owner's clan 30% 
+					if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.2; // own dropship +20%
+					else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.1; // clan's dropship +10%
+					playerScoreMultiplier[i] = mult;
+				}
+
+				var limit = 2 ^ players.Count;
+				var bestCombination = 0;
+				var bestScore = double.MinValue;
+				var playerAssignments = new int[players.Count];
+				for (var combinator = 0; combinator < limit; combinator++)
+				{
+					double score = 0;
+
+					double team0Weight = 0;
+					double team0Elo = 0;
+					double team1Weight = 0;
+					double team1Elo = 0;
+					var team0count = 0;
+					var team1count = 0;
+
+					// determine where each player is amd dp some adding
+					for (var i = 0; i < players.Count; i++)
+					{
+						var player = players[i];
+						var team = combinator & (2 ^ i);
+						playerAssignments[i] = team;
+						if (team == 0)
+						{
+							team0Elo += player.Elo*player.EloWeight;
+							team0Weight += player.EloWeight;
+							team0count++;
+						}
+						else
+						{
+							team1Elo += player.Elo*player.EloWeight;
+							team1Weight += player.EloWeight;
+							team1count++;
+						}
+					}
+					if (team0count == 0 || team1count == 0) continue; // skip combination, empty team
+
+					// calculate score for team difference
+					var teamDiffScore = -(20.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count));
+					score += teamDiffScore;
+					if (score < -15) continue;
+
+					// calculate score for elo difference
+					team0Elo = team0Elo/team0Weight;
+					team1Elo = team1Elo/team1Weight;
+					var eloScore = -Math.Pow(Math.Abs(team0Elo - team1Elo)/50, 3);
+					score += eloScore;
+					if (score < -15) continue;
+
+					// calculate score for meaningfull teams
+					for (var i = 0; i < players.Count; i++)
+					{
+						double sum = 0;
+						var cnt = 0;
+						for (var j = 0; j < players.Count; j++)
+						{
+							if (i != j)
+							{
+								var sts = sameTeamScore[i, j];
+								if (sts > 0) // we only consider no-neutral people 
+								{
+									if (playerAssignments[i] == playerAssignments[j]) sum += sts;
+									else sum -= sts; // different teams - score is equal to negation of same team score
+									cnt++;
+								}
+							}
+						}
+						if (cnt > 0) score += sum/cnt;
+					}
+
+					if (score > bestScore)
+					{
+						bestCombination = combinator;
+						bestScore = score;
+					}
+				}
+
+				for (var i = 0; i < players.Count; i++)
+					res.BalancedTeams.Add(new AccountTeam()
+					                      { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = bestCombination & (2 ^ i), TeamID = i });
+
+				return res;
+			}
+		}
+
+		[WebMethod]
 		public bool DownloadFile(string internalName,
 		                         out List<string> links,
 		                         out byte[] torrent,
@@ -70,6 +208,30 @@ namespace ZeroKWeb
 					Select(x => x.Name).Take(10).ToList();
 		}
 
+		[WebMethod]
+		public string GetRecommendedMap(string autohostName, AutohostMode mode = AutohostMode.GameTeams)
+		{
+			using (var db = new ZkDataContext())
+			{
+				if (mode == AutohostMode.Planetwars)
+				{
+					var gal = db.Galaxies.Single(x => x.IsDefault);
+					var maxc = gal.Planets.SelectMany(x => x.AccountPlanets).Max(y => (int?)y.DropshipCount) ?? 0;
+					var targets = gal.Planets.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
+					var r = new Random(autohostName.GetHashCode()); // randomizer based on autohost name to always return same
+					var planet = targets[r.Next(targets.Count)];
+					return planet.Resource.InternalName;
+				}
+				else
+				{
+					var list = db.Resources.Where(x => x.FeaturedOrder != null && x.MapIsFfa != true && x.ResourceContentFiles.Any(y => y.LinkCount > 0)).ToList();
+					var r = new Random();
+					return list[r.Next(list.Count)].InternalName;
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// Finds resource by either md5 or internal name
 		/// </summary>
@@ -87,20 +249,6 @@ namespace ZeroKWeb
 		public List<PlasmaServer.ResourceData> GetResourceList(DateTime? lastChange, out DateTime currentTime)
 		{
 			return PlasmaServer.GetResourceList(lastChange, out currentTime);
-		}
-
-		
-
-		[WebMethod]
-		public string GetRecommendedMap(string autohostName, AutohostMode mode)
-		{
-			if (mode == AutohostMode.Planetwars)
-			{
-				
-
-			}
-
-			return null;
 		}
 
 
@@ -133,7 +281,7 @@ namespace ZeroKWeb
 				if (user != null)
 				{
 					var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
-					ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID,  Parameters = userParams });
+					ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID, Parameters = userParams });
 
 					var pu = new LuaTable();
 					foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
@@ -260,9 +408,12 @@ namespace ZeroKWeb
 		}
 
 
-
 		[WebMethod]
-		public string SubmitSpringBattleResult(string accountName, string password, BattleResult result, List<BattlePlayerResult> players)
+		public string SubmitSpringBattleResult(string accountName,
+		                                       string password,
+		                                       BattleResult result,
+		                                       List<BattlePlayerResult> players,
+		                                       AutohostMode mode = AutohostMode.GameTeams)
 		{
 			var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
 			if (acc == null) throw new Exception("Account name or password not valid");
@@ -383,7 +534,6 @@ namespace ZeroKWeb
 		}
 
 
-
 		string GetUserIP()
 		{
 			var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
@@ -472,11 +622,26 @@ namespace ZeroKWeb
 		}
 	}
 
+	public class BalanceTeamsResult
+	{
+		public List<AccountTeam> BalancedTeams = new List<AccountTeam>();
+		public string Message;
+	}
+
+	public class AccountTeam
+	{
+		public int AccountID;
+		public int AllyID;
+		public string Name;
+		public int TeamID;
+	}
+
 	public enum AutohostMode
 	{
 		Planetwars = 1,
 		Game1v1 = 2,
-		GameTeams =3,
-		GameFFA=4,
+		GameTeams = 3,
+		GameFFA = 4,
 		GameChickens = 5
-}}
+	}
+}
