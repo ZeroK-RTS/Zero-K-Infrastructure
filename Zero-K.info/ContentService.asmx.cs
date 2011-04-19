@@ -516,7 +516,7 @@ namespace ZeroKWeb
 				{
 					try
 					{
-						var message = string.Format("Congratulations {1}! You just leveled up to level {0}. http://zero-k.info/Users.mvc/{1}",
+						var message = string.Format("Congratulations {1}! You just leveled up to level {0}. http://zero-k.info/Users/{1}",
 						                            account.Level,
 						                            account.Name);
 						text.AppendLine(message);
@@ -529,7 +529,7 @@ namespace ZeroKWeb
 				}
 			}
 
-			text.AppendLine(string.Format("View full battle details and demo at http://zero-k.info/Battles.mvc/Detail/{0}", sb.SpringBattleID));
+			text.AppendLine(string.Format("View full battle details and demo at http://zero-k.info/Battles/Detail/{0}", sb.SpringBattleID));
 			return text.ToString();
 		}
 

@@ -86,10 +86,10 @@ namespace ZeroKLobby
       Buttons = new ObservableCollection<ButtonInfo>()
                 {
                   new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info//", LinkBehavior = true},
-                  new ButtonInfo() { Label = "SINGLEPLAYER", TargetPath = "http://zero-k.info/Missions.mvc", Icon = HeaderButton.ButtonIcon.Singleplayer, LinkBehavior =true },
+                  new ButtonInfo() { Label = "SINGLEPLAYER", TargetPath = "http://zero-k.info/Missions", Icon = HeaderButton.ButtonIcon.Singleplayer, LinkBehavior =true },
                   new ButtonInfo() { Label = "MULTIPLAYER", TargetPath = "battles", Icon = HeaderButton.ButtonIcon.Multiplayer },
                   new ButtonInfo() { Label = "CHAT", TargetPath = "chat" },
-                  new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps.mvc", LinkBehavior = true },
+                  new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", LinkBehavior = true },
                   new ButtonInfo() { Label = "WIDGETS", TargetPath = "widgets", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
                   new ButtonInfo() { Label = "RAPID", TargetPath = "rapid", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
                   new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings" },

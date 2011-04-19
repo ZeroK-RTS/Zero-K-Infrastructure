@@ -234,7 +234,7 @@ namespace ZeroKLobby.MicroLobby
 					contextMenu.MenuItems.Add("-");
 
           var details = new MenuItem("Details");
-          details.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users.mvc/" + user.Name;
+          details.Click += (s, e) => NavigationControl.Instance.Path = "http://zero-k.info/Users/" + user.Name;
           contextMenu.MenuItems.Add(details);
 
 

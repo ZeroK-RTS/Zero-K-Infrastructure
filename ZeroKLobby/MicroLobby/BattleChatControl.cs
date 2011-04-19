@@ -50,7 +50,7 @@ namespace ZeroKLobby.MicroLobby
       minimapBox.Click +=
         (s, e) => {
           if (Program.TasClient.MyBattle != null)
-            Program.MainWindow.navigationControl.Path = string.Format("http://zero-k.info/Maps.mvc/DetailName?name={0}",
+            Program.MainWindow.navigationControl.Path = string.Format("http://zero-k.info/Maps/DetailName?name={0}",
                                                                       Program.TasClient.MyBattle.MapName);
         };
 

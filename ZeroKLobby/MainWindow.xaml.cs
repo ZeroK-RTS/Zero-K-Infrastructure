@@ -327,7 +327,7 @@ namespace ZeroKLobby
       // if first run show lobby start
       if (Program.Conf.IsFirstRun)
       {
-        navigationControl.Path = "http://zero-k.info/Static.mvc/LobbyStart";
+        navigationControl.Path = "http://zero-k.info/Static/LobbyStart";
       }
 
       // download primary game 

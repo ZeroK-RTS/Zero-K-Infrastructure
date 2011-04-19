@@ -24,7 +24,7 @@
 <div id="sidebar" class="fright width-30">
   <div id="unit" class="border relative text-left">
     <h2>
-      <a href='/Wiki.mvc/Manual'>Manual: </a>
+      <a href='/Wiki/Manual'>Manual: </a>
     </h2>
     <h3>@s.Name</h3>
     <!-- <span class="absright abstop bold button"> <a>&lt;&lt;</a> <a>?</a> <a>&gt;&gt;</a> </span> -->
@@ -35,7 +35,7 @@
   <!close unit>
 
     <div class="border">
-  <h2><a href='/Forum.mvc'>Forums</a></h2>
+  <h2><a href='/Forum'>Forums</a></h2>
   @foreach (var t in Model.NewThreads) {
     var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new {id = t.ForumThread.ForumThreadID},new {title="$thread$" + t.ForumThread.ForumThreadID});
     if (t.WasWritten) {
@@ -50,7 +50,7 @@
   </div>
 
   <div id="topten" class="border">
-    <h2><a href='/Ladders.mvc'>Top Players</a></h2>
+    <h2><a href='/Ladders'>Top Players</a></h2>
     <table cellpadding='0' cellspacing='0'>
 
       <tr>

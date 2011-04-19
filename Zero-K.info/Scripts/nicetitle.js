@@ -217,7 +217,7 @@ function showNiceTitle(e) {
 
 			var context = CURRENT_NICE_TITLE;
 
-			$.get('/Home.mvc/GetTooltip?key=' + nicetitle, function (ret) {
+			$.get('/Home/GetTooltip?key=' + nicetitle, function (ret) {
 			  if (context == CURRENT_NICE_TITLE) { // if tooltip still same, update it
 			    cachedTooltips[nicetitle] = ret;
 			    CURRENT_NICE_TITLE.removeChild(CURRENT_NICE_TITLE.childNodes[0]); // remove previous
