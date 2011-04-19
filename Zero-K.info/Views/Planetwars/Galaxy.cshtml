@@ -71,10 +71,7 @@ Under construciton, please wait!
     
     <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White'><span style="position: absolute; left: @(pr.Left)px; top: @(pr.Top)px; width: @(pr.Width)px; height: @(pr.Height)px;">
       @foreach (var s in p.PlanetStructures) {
-        var img = s.IsDestroyed ? s.StructureType.DestroyedMapIcon : s.StructureType.MapIcon;
-        if (img != null) {
-        <img src='/img/structures/@img' width='@(pr.Width)' style='position:absolute' />
-        }
+        <img src='@s.GetImageUrl()' width='@(pr.Width)' style='position:absolute' />
       }
     </span></a>
     

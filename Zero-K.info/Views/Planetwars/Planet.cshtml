@@ -2,58 +2,53 @@
 @using ZeroKWeb
 @model Planet
 @{
-    ViewBag.Title = "Planet";
-    Layout = "~/Views/Shared/_SiteLayout.cshtml";
+  ViewBag.Title = "Planet";
+  Layout = "~/Views/Shared/_SiteLayout.cshtml";
 }
-
 <h1>
-    @{
-        var planetIconUrl = "/img/planets/" + Model.Resource.MapPlanetWarsIcon;
-        var size = Model.Resource.PlanetWarsIconSize;
-        <img src='@planetIconUrl' width='@size' height='@size' />
-    }
-    Planet @Model.Name
+  @{
+    var planetIconUrl = "/img/planets/" + Model.Resource.MapPlanetWarsIcon;
+    var size = Model.Resource.PlanetWarsIconSize;
+    <img src='@planetIconUrl' width='@size' height='@size' />
+  }
+  Planet @Model.Name
 </h1>
+@if (Model.OwnerAccountID == Global.AccountID) {
+  <form method="post" action="@Url.Action("SubmitRenamePlanet")">
+  <input type="hidden" name="planetID" value="@Model.PlanetID"/>
+  <input type="text" name="newName" value="@Model.Name"/>
+  <input type='submit' value="Rename Planet" />
+  </form>
+}
 
-if (Model.OwnerAccountID == Global.AccountID) 
-{
-    <form method="post" action="@Url.Action("SubmitRenamePlanet")">
-    <input type="hidden" name="planetID" value="@Model.PlanetID"/>
-    <input type="text" name="newName" value="@Model.Name"/>
-    <input type='submit' value="Rename Planet" />
-    </form>
-}
-@if (Model.Account != null)
-{
-    <h2>Clan Influence</h2>
-    <table>
-        @foreach (var clanGroup in Model.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderBy(g => g.Sum(ap => ap.Influence)))
-        {
-            <tr>
-                <td>
-                    <h3>@Html.PrintClan(clanGroup.Key)</h3>
-                </td>
-                <td>
-                    <h3>@clanGroup.Sum(ap => ap.Influence)</h3>
-                </td>
-                @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence))
-                {
-                    <tr>
-                        <td>@Html.PrintAccount(accountPlanet.Account)
-                        </td>
-                        <td>@accountPlanet.Influence
-                        </td>
-                    </tr>
-                }
-            </tr>
-        }
-    </table>
-        
-    <h2>Structures</h2>
-    <ul>
-        @foreach (var structure in Model.PlanetStructures)
-        {
-            <li>@structure.StructureType.Name (@structure.StructureType.Description)</li>
-        }
-    </ul>
-}
+<h2>
+  Clan Influence</h2>
+<table>
+  @foreach (var clanGroup in Model.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderBy(g => g.Sum(ap => ap.Influence))) {
+    <tr>
+      <td>
+        <h3>@Html.PrintClan(clanGroup.Key)</h3>
+      </td>
+      <td>
+        <h3>@clanGroup.Sum(ap => ap.Influence)</h3>
+      </td>
+      @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence)) {
+        <tr>
+          <td>@Html.PrintAccount(accountPlanet.Account)
+          </td>
+          <td>@accountPlanet.Influence
+          </td>
+        </tr>
+      }
+    </tr>
+  }
+</table>
+<h2>
+  Structures</h2>
+<ul>
+  @foreach (var structure in Model.PlanetStructures) {
+    <li>
+      <img src='@structure.GetImageUrl()'/>
+      @structure.StructureType.Name (@structure.StructureType.Description)</li>
+  }
+</ul>
