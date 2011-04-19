@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -16,33 +14,28 @@ namespace ZeroKWeb.Controllers
 		//
 		// GET: /Planetwars/
 
-		public ActionResult Galaxy(int galaxyID = 1)
+		/// <summary>
+		/// Shows clan page
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult Clan(int id)
 		{
 			var db = new ZkDataContext();
-			var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
+			return View(db.Clans.First(x => x.ClanID == id));
+		}
 
-			var cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
-			if (gal.IsDirty || !System.IO.File.Exists(cachePath)) {
-				using (var im = GenerateGalaxyImage(galaxyID)) {
-					im.Save(cachePath);
-					gal.IsDirty = false;
-					gal.Width = im.Width;
-					gal.Height = im.Height;
-					db.SubmitChanges();
-				}
-			} 
+		public ActionResult ClanList()
+		{
+			var db = new ZkDataContext();
 
-
-			return View(gal);
+			return View(db.Clans.AsQueryable());
 		}
 
 		[Auth]
-		public ActionResult Planet(int id)
+		public ActionResult CreateClan()
 		{
-			var db = new ZkDataContext();
-			var planet = db.Planets.Single(x => x.PlanetID == id);
-			return View(planet);
-
+			if (Global.Account.Clan == null || (Global.Account.HasClanRights)) return View(Global.Clan ?? new Clan());
+			else return Content("You already have clan and you dont have rights to it");
 		}
 
 		public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 4)
@@ -54,7 +47,6 @@ namespace ZeroKWeb.Controllers
 
 				using (var background = Image.FromFile(Server.MapPath("/img/galaxies/" + gal.ImageName)))
 				{
-
 					var im = new Bitmap((int)(background.Width*zoom), (int)(background.Height*zoom));
 					using (var gr = Graphics.FromImage(im))
 					{
@@ -86,20 +78,105 @@ namespace ZeroKWeb.Controllers
 						else
 						{
 							zoom /= antiAliasingFactor;
-							return im.GetResized((int)(background.Width * zoom), (int)(background.Height * zoom), InterpolationMode.HighQualityBicubic);
+							return im.GetResized((int)(background.Width*zoom), (int)(background.Height*zoom), InterpolationMode.HighQualityBicubic);
 						}
 					}
 				}
 			}
 		}
 
-		[Auth]
-		public ActionResult CreateClan()
+		public ActionResult Index(int? galaxyID = null)
 		{
-			if (Global.Account.Clan == null || (Global.Account.HasClanRights))
+			var db = new ZkDataContext();
+
+			Galaxy gal;
+			if (galaxyID != null) gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
+			else gal = db.Galaxies.Single(x => x.IsDefault);
+
+			var cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
+			if (gal.IsDirty || !System.IO.File.Exists(cachePath)) {
+				using (var im = GenerateGalaxyImage(gal.GalaxyID)) {
+					im.Save(cachePath);
+					gal.IsDirty = false;
+					gal.Width = im.Width;
+					gal.Height = im.Height;
+					db.SubmitChanges();
+				}
+			}
+			return View("Galaxy",gal);
+		}
+
+		[Auth]
+		public ActionResult JoinClan(int id, string password)
+		{
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(x => x.ClanID == id);
+			if (clan.CanJoin(Global.Account))
 			{
-				return View(Global.Clan ?? new Clan());	
-			} else  return Content("You already have clan and you dont have rights to it");
+				if (!string.IsNullOrEmpty(clan.Password) && clan.Password != password) return View(clan.ClanID);
+				else
+				{
+					var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+					acc.ClanID = clan.ClanID;
+					db.SubmitChanges();
+					return RedirectToAction("Clan", new { id = clan.ClanID });
+				}
+			}
+			else return Content("You cannot join this clan");
+		}
+
+		[Auth]
+		public ActionResult Planet(int id)
+		{
+			var db = new ZkDataContext();
+			var planet = db.Planets.Single(x => x.PlanetID == id);
+			return View(planet);
+		}
+
+		[Auth]
+		public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image)
+		{
+			var db = new ZkDataContext();
+			var created = clan.ClanID == 0; // existing clan vs creation
+			if (!created)
+			{
+				if (!Global.Account.HasClanRights || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
+				var orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
+				orgClan.ClanName = clan.ClanName;
+				orgClan.LeaderTitle = clan.LeaderTitle;
+				orgClan.Shortcut = clan.Shortcut;
+				orgClan.Description = clan.Description;
+				orgClan.SecretTopic = clan.SecretTopic;
+				orgClan.Password = clan.Password;
+				//orgClan.DbCopyProperties(clan); 
+			}
+			else
+			{
+				if (Global.Clan != null) return Content("You already have a clan");
+				db.Clans.InsertOnSubmit(clan);
+			}
+			if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
+
+			if (created && (image == null || image.ContentLength == 0)) return Content("Upload image");
+			if (image != null && image.ContentLength > 0)
+			{
+				var im = Image.FromStream(image.InputStream);
+				if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
+				db.SubmitChanges(); // needed to get clan id for image url - stupid way really
+				im.Save(Server.MapPath(clan.GetImageUrl()));
+			}
+			db.SubmitChanges();
+
+			if (created) // we created a new clan, set self as founder and rights
+			{
+				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+				acc.ClanID = clan.ClanID;
+				acc.IsClanFounder = true;
+				acc.HasClanRights = true;
+				db.SubmitChanges();
+			}
+
+			return RedirectToAction("Clan", new { id = clan.ClanID });
 		}
 
 		[Auth]
@@ -112,91 +189,6 @@ namespace ZeroKWeb.Controllers
 			planet.Name = newName;
 			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planet.PlanetID });
-		}
-
-		[Auth]
-		public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image)
-		{
-			var db = new ZkDataContext();
-			bool created = clan.ClanID == 0; // existing clan vs creation
-			if (!created) {
-				if (!Global.Account.HasClanRights || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
-				var orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
-				orgClan.ClanName = clan.ClanName;
-				orgClan.LeaderTitle = clan.LeaderTitle;
-				orgClan.Shortcut = clan.Shortcut;
-				orgClan.Description = clan.Description;
-				orgClan.SecretTopic = clan.SecretTopic;
-				orgClan.Password = clan.Password;
-				//orgClan.DbCopyProperties(clan); 
-			} else
-			{
-				if (Global.Clan != null) return Content("You already have a clan");
-				db.Clans.InsertOnSubmit(clan);
-			}
-			if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
-
-			if (created && (image == null || image.ContentLength ==0)) return Content("Upload image");
-			if (image != null && image.ContentLength >0)
-			{
-				var im = Image.FromStream(image.InputStream);
-				if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
-				db.SubmitChanges(); // needed to get clan id for image url - stupid way really
-				im.Save(Server.MapPath(clan.GetImageUrl()));
-			} 
-			db.SubmitChanges();
-			
-			if (created) // we created a new clan, set self as founder and rights
-			{
-				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-				acc.ClanID = clan.ClanID;
-				acc.IsClanFounder = true;
-				acc.HasClanRights = true;
-				db.SubmitChanges();
-			}
-
-
-			return RedirectToAction("Clan", new { id = clan.ClanID });
-		}
-
-		[Auth]
-		public ActionResult JoinClan(int id, string password)
-		{
-			var db = new ZkDataContext();
-			var clan = db.Clans.Single(x => x.ClanID == id);
-			if (clan.CanJoin(Global.Account)) {
-				if (!string.IsNullOrEmpty(clan.Password) && clan.Password != password) return View(clan.ClanID);
-				else {
-					var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-					acc.ClanID = clan.ClanID;
-					db.SubmitChanges();
-					return RedirectToAction("Clan", new { id = clan.ClanID });
-				}
-			} else return Content("You cannot join this clan");
-
-		}
-
-		public ActionResult Index()
-		{
-			return View("Galaxy", new ZkDataContext().Galaxies.Single(x => x.IsDefault));
-			return    View();
-		}
-
-		/// <summary>
-		/// Shows clan page
-		/// </summary>
-		/// <returns></returns>
-		public ActionResult Clan(int id)
-		{
-			var db = new ZkDataContext();
-			return View(db.Clans.First(x => x.ClanID == id));
-		}
-
-		public ActionResult ClanList()
-		{
-			var db = new ZkDataContext();
-
-			return View(db.Clans.AsQueryable());
 		}
 	}
 }
