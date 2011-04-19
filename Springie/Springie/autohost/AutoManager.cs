@@ -80,7 +80,7 @@ namespace Springie.AutoHostNamespace
 			lock (timer)
 			{
 				timer.Stop();
-				var isPlanetwars = ah.config.PlanetWarsEnabled && !string.IsNullOrEmpty(Program.main.Config.PlanetWarsServer);
+				var isPlanetwars = ah.config.PlanetWarsEnabled;
 				try
 				{
 					if (from > 0 && !spring.IsRunning)

@@ -614,21 +614,6 @@ namespace Springie.autohost
 			HandleMinRankKicking();
 		}
 
-		public void ComKickSpec(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length > 0 && (words[0] == "1" || words[0] == "0")) kickSpectators = (words[0] == "1");
-			else kickSpectators = !kickSpectators;
-
-			if (kickSpectators) SayBattle("automatic spectator kicking is now ENABLED");
-			else SayBattle("automatic spectator kicking is now DISABLED");
-
-			if (kickSpectators)
-			{
-				SayBattle(config.KickSpectatorText);
-				var b = tas.MyBattle;
-				if (b != null) foreach (var u in b.Users) if (u.Name != tas.UserName && u.IsSpectator) ComKick(e, new[] { u.Name });
-			}
-		}
 
 		public void ComManage(TasSayEventArgs e, string[] words, bool clanBased)
 		{
@@ -1254,31 +1239,6 @@ namespace Springie.autohost
 				config.MaxPlayers = plr;
 				SaveConfig();
 				Respond(e, "server size changed");
-			}
-		}
-
-		void ComSetMinCpuSpeed(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0) Respond(e, "this command needs one parameter - minimal CPU speed");
-			else
-			{
-				Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-				double minCpu;
-				double.TryParse(words[0], out minCpu);
-				minCpuSpeed = minCpu;
-				SayBattle("minimal CPU speed is now " + minCpuSpeed + "GHz");
-				if (minCpuSpeed > 0)
-				{
-					var b = tas.MyBattle;
-					if (b != null)
-					{
-						foreach (var ubs in b.Users)
-						{
-							User u;
-							if (ubs.Name != tas.UserName && tas.GetExistingUser(ubs.Name, out u)) if (u.Cpu > 0 && u.Cpu < minCpuSpeed*1000) ComKick(e, new[] { u.Name });
-						}
-					}
-				}
 			}
 		}
 

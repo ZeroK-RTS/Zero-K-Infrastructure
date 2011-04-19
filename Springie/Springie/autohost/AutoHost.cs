@@ -17,7 +17,6 @@ using Springie.AutoHostNamespace;
 using Springie.PlanetWars;
 using Springie.SpringNamespace;
 using Timer = System.Timers.Timer;
-using TimeSpan = System.TimeSpan;
 
 #endregion
 
@@ -39,15 +38,11 @@ namespace Springie.autohost
 
 
 		bool kickMinRank;
-		bool kickSpectators;
 		ResourceLinkProvider linkProvider;
-		bool lockedByKickSpec;
 
 		AutoManager manager;
 		int mapCycleIndex;
 
-
-		double minCpuSpeed;
 		Timer pollTimer;
 		readonly QuickMatchTracking quickMatchTracker;
 		readonly Spring spring;
@@ -55,11 +50,8 @@ namespace Springie.autohost
 		public string BossName { get { return bossName; } set { bossName = value; } }
 		public int CloneNumber { get; private set; }
 
-		public bool KickSpectators { get { return kickSpectators; } }
-
 		public Dictionary<string, Dictionary<int, BattleRect>> MapBoxes = new Dictionary<string, Dictionary<int, BattleRect>>();
 
-		public double MinCpuSpeed { get { return minCpuSpeed; } }
 		public PlanetWarsHandler PlanetWars;
 
 		public SpawnConfig SpawnConfig { get; private set; }
@@ -109,7 +101,6 @@ namespace Springie.autohost
 			tas.UserStatusChanged += tas_UserStatusChanged;
 			tas.BattleUserJoined += tas_BattleUserJoined;
 			tas.MyBattleMapChanged += tas_MyBattleMapChanged;
-			tas.BattleUserStatusChanged += tas_BattleUserStatusChanged;
 			tas.BattleLockChanged += tas_BattleLockChanged;
 			tas.BattleOpened += tas_BattleOpened;
 
@@ -139,7 +130,6 @@ namespace Springie.autohost
 			tas.LoginAccepted += tas_LoginAccepted;
 			tas.Said += tas_Said;
 			tas.MyBattleStarted += tas_MyStatusChangedToInGame;
-			tas.ChannelUserAdded += tas_ChannelUserAdded;
 
 			linkProvider = new ResourceLinkProvider(this);
 
@@ -270,7 +260,7 @@ namespace Springie.autohost
 		{
 			if (PlanetWars != null) PlanetWars.Dispose();
 
-			if (config.PlanetWarsEnabled) PlanetWars = new PlanetWarsHandler(Program.main.Config.PlanetWarsServer, Program.main.Config.PlanetWarsPort, this, tas, config);
+			if (config.PlanetWarsEnabled) PlanetWars = new PlanetWarsHandler(this, tas, config, spring);
 			else PlanetWars = null;
 		}
 
@@ -404,9 +394,6 @@ namespace Springie.autohost
 			Stop();
 
 			manager = new AutoManager(this, tas, spring);
-			lockedByKickSpec = false;
-			kickSpectators = config.KickSpectators;
-			minCpuSpeed = config.MinCpuSpeed;
 			kickMinRank = config.KickMinRank;
 
 			if (config.LadderId > 0) ladder = new Ladder(config.LadderId);
@@ -535,25 +522,6 @@ namespace Springie.autohost
 					x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !y.IsSpectator));
 		}
 
-		void HandleKickSpecServerLocking()
-		{
-			if (!spring.IsRunning && (KickSpectators || lockedByKickSpec))
-			{
-				var b = tas.MyBattle;
-				var cnt = b.NonSpectatorCount;
-				if (KickSpectators && cnt >= b.MaxPlayers)
-				{
-					lockedByKickSpec = true;
-					tas.ChangeLock(true);
-				}
-
-				if (lockedByKickSpec && cnt < b.MaxPlayers)
-				{
-					lockedByKickSpec = false;
-					tas.ChangeLock(false);
-				}
-			}
-		}
 
 		void HandleMinRankKicking()
 		{
@@ -716,22 +684,8 @@ namespace Springie.autohost
 				SayBattle("If you say !notify, I will PM you when game ends.", false);
 			}
 
-			HandleKickSpecServerLocking();
 			HandleMinRankKicking();
 
-			if (minCpuSpeed > 0)
-			{
-				User u;
-				if (tas.GetExistingUser(name, out u))
-				{
-					if (u.Cpu != 0 && u.Cpu < minCpuSpeed*1000)
-					{
-						Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-						SayBattle(name + ", your CPU speed is below minimum set for this server:" + minCpuSpeed + "GHz - sorry");
-						ComKick(TasSayEventArgs.Default, new[] { u.Name });
-					}
-				}
-			}
 			if (PlanetWars != null) PlanetWars.UserJoined(name);
 
 			if (SpawnConfig != null && SpawnConfig.Owner == name) // owner joins, set him boss 
@@ -742,7 +696,6 @@ namespace Springie.autohost
 		{
 			if (e1.BattleID != tas.MyBattleID) return;
 			CheckForBattleExit();
-			HandleKickSpecServerLocking();
 
 			if (spring.IsRunning) spring.SayGame(e1.UserName + " has left lobby");
 
@@ -760,25 +713,6 @@ namespace Springie.autohost
 			}
 		}
 
-		void tas_BattleUserStatusChanged(object sender, TasEventArgs e)
-		{
-			UserBattleStatus u;
-			var b = tas.MyBattle;
-
-			if (b != null && b.ContainsUser(e.ServerParams[0], out u))
-			{
-				if (KickSpectators && u.IsSpectator && u.Name != tas.UserName)
-				{
-					SayBattle(config.KickSpectatorText);
-					ComKick(TasSayEventArgs.Default, new[] { u.Name });
-				}
-			}
-		}
-
-		void tas_ChannelUserAdded(object sender, TasEventArgs e)
-		{
-			if (PlanetWars != null) PlanetWars.UserJoinedChannel(e.ServerParams[0], e.ServerParams[1]);
-		}
 
 
 		// login accepted - join channels
@@ -804,7 +738,7 @@ namespace Springie.autohost
 
 		void tas_LoginDenied(object sender, TasEventArgs e)
 		{
-      if (e.ServerParams[0] == "Bad username/password") tas.Register(GetAccountName(), config.AccountPassword);
+			if (e.ServerParams[0] == "Bad username/password") tas.Register(GetAccountName(), config.AccountPassword);
 			else
 			{
 				CloneNumber++;
@@ -846,8 +780,6 @@ namespace Springie.autohost
 
 		void tas_Said(object sender, TasSayEventArgs e)
 		{
-			if (PlanetWars != null) PlanetWars.UserSaid(e);
-
 			if (config.RedirectGameChat && e.Place == TasSayEventArgs.Places.Battle && e.Origin == TasSayEventArgs.Origins.Player && e.UserName != tas.UserName &&
 			    e.IsEmote == false) spring.SayGame("[" + e.UserName + "]" + e.Text);
 
@@ -876,7 +808,7 @@ namespace Springie.autohost
 				if (e.Place == TasSayEventArgs.Places.Normal)
 				{
 					if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listpresets" && com != "listoptions" &&
-					    com != "presetdetails" && com != "spawn" && com != "listbans"  && com != "stats" && com != "predict" && com != "notify") SayBattle(string.Format("{0} executed by {1}", com, e.UserName));
+					    com != "presetdetails" && com != "spawn" && com != "listbans" && com != "stats" && com != "predict" && com != "notify") SayBattle(string.Format("{0} executed by {1}", com, e.UserName));
 				}
 
 				switch (com)
@@ -961,10 +893,9 @@ namespace Springie.autohost
 						StartVote(new VoteKick(tas, spring, this), e, words);
 						break;
 
-          case "votespec":
-            StartVote(new VoteSpec(tas, spring, this), e, words);
-            break;
-
+					case "votespec":
+						StartVote(new VoteSpec(tas, spring, this), e, words);
+						break;
 
 					case "voteforcestart":
 						StartVote(new VoteForceStart(tas, spring, this), e, words);
@@ -982,9 +913,6 @@ namespace Springie.autohost
 						ComPredict(e, words);
 						break;
 
-					case "votepreset":
-						StartVote(new VotePreset(tas, spring, this), e, words);
-						break;
 
 					case "fix":
 						ComFix(e, words);
@@ -1083,14 +1011,9 @@ namespace Springie.autohost
 						banList.ComUnban(e, words);
 						break;
 
-
 					case "stats":
 						//RemoteCommand(Stats.StatsScript, e, words);
-            // todo new stats
-						break;
-
-					case "kickspec":
-						ComKickSpec(e, words);
+						// todo new stats
 						break;
 
 					case "manage":
@@ -1103,10 +1026,6 @@ namespace Springie.autohost
 
 					case "notify":
 						ComNotify(e, words);
-						break;
-
-					case "votekickspec":
-						StartVote(new VoteKickSpec(tas, spring, this), e, words);
 						break;
 
 					case "boss":
@@ -1132,11 +1051,6 @@ namespace Springie.autohost
 					case "setmaxplayers":
 						ComSetMaxPlayers(e, words);
 						break;
-
-					case "mincpuspeed":
-						ComSetMinCpuSpeed(e, words);
-						break;
-
 
 					case "spec":
 						ComForceSpectator(e, words);
@@ -1171,38 +1085,6 @@ namespace Springie.autohost
 						StartVote(new VoteSetOptions(tas, spring, this), e, words);
 						break;
 
-					case "listplanets":
-						if (PlanetWars != null) PlanetWars.ComListPlanets(e, words);
-						else Respond(e, "Not a PlanetWars server");
-						break;
-
-					case "register":
-						if (PlanetWars != null) PlanetWars.ComRegister(e, words);
-						else Respond(e, "Not a PlanetWars autohost");
-						break;
-
-					case "merc":
-						if (PlanetWars != null) PlanetWars.ComMerc(e, words);
-						else Respond(e, "Not a PlanetWars autohost");
-						break;
-
-					case "planet":
-					case "attack":
-						if (PlanetWars != null) PlanetWars.ComPlanet(e, words);
-						else Respond(e, "Not a PlanetWars server");
-						break;
-
-					case "setpwserver":
-						if (words.Length < 1) Respond(e, "Specify address");
-						else
-						{
-							// hack this is just debug, remove this later
-							Program.main.Config.PlanetWarsServer = words[0];
-							InitializePlanetWarsServer();
-							Respond(e, "Planetwars server changed to " + words[0]);
-						}
-						break;
-
 					case "spawn":
 					{
 						var args = Utils.Glue(words);
@@ -1225,17 +1107,6 @@ namespace Springie.autohost
 						}
 						Program.main.SpawnAutoHost(configPath, sc);
 					}
-						break;
-
-					case "voteplanet":
-					case "voteattack":
-						if (config.PlanetWarsEnabled) StartVote(new VotePlanet(tas, spring, this), e, words);
-						else Respond(e, "PlanetWars not enabled on this host");
-						break;
-					case "resetpassword":
-						if (PlanetWars != null) PlanetWars.ComResetPassword(e);
-						else Respond(e, "This is not PlanetWars autohost");
-
 						break;
 				}
 			}

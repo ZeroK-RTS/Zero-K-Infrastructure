@@ -11,7 +11,6 @@ namespace Springie.autohost
 {
     public class AutoHostConfig
     {
-        int autoLockMinPlayers = 2;
         BattleDetails battleDetails = new BattleDetails();
         int defaulRightsLevel = 1;
         int defaulRightsLevelForLobbyAdmins = 4;
@@ -19,7 +18,6 @@ namespace Springie.autohost
         string defaultMod = "XTA v8";
         UnitInfo[] disabledUnits = new UnitInfo[] { };
         string gameTitle = "AutoHost (%1)";
-        string kickSpectatorText = "spectators not allowed here at this time, sorry";
         string[] mapCycle = new string[] { };
         int maxPlayers = 10;
         string password = "*";
@@ -27,11 +25,7 @@ namespace Springie.autohost
         public string AccountName = "login";
         public string AccountPassword = "password";
 
-        [Category("Basic options")]
-        [Description("Minimum number of players for autolocking")]
-        public int AutoLockMinPlayers { get { return autoLockMinPlayers; } set { autoLockMinPlayers = value; } }
         public bool AutoSpawnClone = true;
-
         public string AutoUpdateRapidTag = "";
 
         [Category("Default battle settings")]
@@ -80,14 +74,6 @@ namespace Springie.autohost
         [Description("Should autohost kick people below min rank?")]
         public bool KickMinRank { get; set; }
 
-        [Category("Default battle settings")]
-        [Description("Do you want to automatically kick spectators")]
-        public bool KickSpectators { get; set; }
-
-        [Category("Texts")]
-        [Description("Message used when kicking spectator")]
-        public string KickSpectatorText { get { return kickSpectatorText; } set { kickSpectatorText = value; } }
-
         [Category("Basic options")]
         [Description("Should Springie host ladder map? Pick ladder id")]
         public int LadderId { get; set; }
@@ -112,10 +98,6 @@ namespace Springie.autohost
         [Description("Maximum number of players")]
         public int MaxPlayers { get { return maxPlayers; } set { maxPlayers = value; } }
 
-
-        [Category("Default battle settings")]
-        [Description("Players with CPU speed (in GHz) below this value will be autokicked - 0 no kicking")]
-        public double MinCpuSpeed { get; set; }
 
         [Category("Basic options")]
         [Description("Minimum rank to be allowed to join")]
@@ -145,7 +127,6 @@ namespace Springie.autohost
             var addedCommands = new List<CommandConfig>();
 
             AddMissing(new CommandConfig("help", 0, " - lists all commands available specifically to you", 5), addedCommands);
-            AddMissing(new CommandConfig("setpwserver", 0, " <address> - sets PlanetWars server", 5), addedCommands);
 
             AddMissing(
                 new CommandConfig("random",
@@ -153,9 +134,6 @@ namespace Springie.autohost
                                   "<allycount> - assigns people to <allycount> random alliances, e.g. !random - makes 2 random alliances",
                                   10),
                 addedCommands);
-
-            AddMissing(new CommandConfig("register", 5, "<side> <password> - registers player for PlanetWars, e.g. !register arm secretPassword", 1),
-                       addedCommands);
 
             AddMissing(
                 new CommandConfig("balance",
@@ -175,12 +153,6 @@ namespace Springie.autohost
                 addedCommands);
 
             AddMissing(new CommandConfig("listmaps", 0, "[<filters>..] - lists maps on server, e.g. !listmaps altor div", 10), addedCommands);
-
-            AddMissing(new CommandConfig("listplanets", 5, "[<filters>..] - lists planets open for attack !listmaps quantumia", 1), addedCommands);
-            AddMissing(new CommandConfig("planet", 5, "[<filters>..] - picks a planet (you must be commander-in-chief)", 1), addedCommands);
-            AddMissing(new CommandConfig("voteplanet", 5, "[<filters>..] - starts a vote for new planet", 1), addedCommands);
-            AddMissing(new CommandConfig("attack", 5, "[<filters>..] - picks a planet (you must be commander-in-chief)", 1), addedCommands);
-            AddMissing(new CommandConfig("voteattack", 5, "[<filters>..] - starts a vote for new planet", 1), addedCommands);
 
             AddMissing(new CommandConfig("listmods", 0, "[<filters>..] - lists mods on server, e.g. !listmods absolute 2.23", 5), addedCommands);
             AddMissing(new CommandConfig("map", 2, "[<filters>..] - changes server map, eg. !map altor div"), addedCommands);
@@ -354,12 +326,6 @@ namespace Springie.autohost
             AddMissing(new CommandConfig("votesetoptions", 1, "<name>=<value>[,<name>=<value>] - starts a vote to apply mod/map options", 0),
                        addedCommands);
 
-            AddMissing(new CommandConfig("preset", 2, "[<presetname>..] - applies given preset to current battle"), addedCommands);
-
-            AddMissing(new CommandConfig("votepreset", 0, "[<presetname>..] - starts a vote to apply given preset"), addedCommands);
-
-            AddMissing(new CommandConfig("presetdetails", 0, "[<presetname>..] - shows details of given preset", 2), addedCommands);
-
             AddMissing(
                 new CommandConfig("cbalance",
                                   1,
@@ -394,21 +360,6 @@ namespace Springie.autohost
                                   new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Channel }),
                 addedCommands);
 
-            AddMissing(
-                new CommandConfig("kickspec",
-                                  2,
-                                  "[0|1] - enables or disables automatic spectator kicking",
-                                  0,
-                                  new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game, TasSayEventArgs.Places.Normal }),
-                addedCommands);
-
-            AddMissing(
-                new CommandConfig("votekickspec",
-                                  0,
-                                  "- starts a vote to enables or disable automatic spectator kicking",
-                                  0,
-                                  new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }),
-                addedCommands);
 
             AddMissing(new CommandConfig("setpassword", 4, "<newpassword> - sets server password (needs !rehost to apply)"), addedCommands);
 
@@ -418,11 +369,6 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("setgametitle", 4, "<new title> - sets server game title (needs !rehost to apply)"), addedCommands);
 
-            AddMissing(
-                new CommandConfig("mincpuspeed",
-                                  4,
-                                  "<GHz> - sets minimum CPU for this host - players with CPU speed below this value are auto-kicked, 0 = no limit"),
-                addedCommands);
 
             AddMissing(
                 new CommandConfig("boss",
@@ -468,8 +414,6 @@ namespace Springie.autohost
                 addedCommands);
 
             AddMissing(new CommandConfig("resetpassword", 0, "resets planetwars password", 0), addedCommands);
-
-            AddMissing(new CommandConfig("merc", 0, "[0/1] enables or disables PlanetWars mercenary mode", 0), addedCommands);
 
             Commands.RemoveAll(delegate(CommandConfig c) { return !addedCommands.Contains(c); });
         }
