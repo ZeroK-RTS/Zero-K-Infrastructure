@@ -12,7 +12,7 @@
 <img src='http://3.bp.blogspot.com/_YTJBDUN8iSE/TSjDkNEwJAI/AAAAAAAAD0o/N8w-cy_J_EM/s1600/Tracy_Caldwell_Dyson_in_Cupola_ISS.jpg' width='600'/>
 Under construciton, please wait!
 <div style="text-align: left; border: 0; position: relative">
-  <img src="@Url.Action("GalaxyImage", new { galaxyID = Model.GalaxyID })" style="text-align:left; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
+  <img src="/img/galaxies/render_@(g.GalaxyID).jpg"" style="text-align:left; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
   @foreach (var p in Model.Planets) {
     var pr = p.PlanetRectangle(Model);
     Clan clan = null;

@@ -15,38 +15,24 @@ namespace ZeroKWeb.Controllers
 	{
 		//
 		// GET: /Planetwars/
-		public ActionResult GalaxyImage(int galaxyID = 1)
-		{
-			var db = new ZkDataContext();
-			var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
-			var cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
-			Stream res;
-			if (gal.IsDirty || !System.IO.File.Exists(cachePath))
-			{
-				using (var im = GenerateGalaxyImage(galaxyID))
-				{
-					im.Save(cachePath);
-				
-					gal.IsDirty = false;
-					gal.Width = im.Width;
-					gal.Height = im.Height;
-
-					var ms = new MemoryStream();
-					im.Save(ms, ImageFormat.Jpeg);
-					ms.Seek(0, SeekOrigin.Begin);
-					res = ms;
-				}
-				db.SubmitChanges();
-			}
-			else res = System.IO.File.OpenRead(cachePath);
-
-			return File(res, "image/jpeg");
-		}
 
 		public ActionResult Galaxy(int galaxyID = 1)
 		{
 			var db = new ZkDataContext();
 			var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
+
+			var cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
+			if (gal.IsDirty || !System.IO.File.Exists(cachePath)) {
+				using (var im = GenerateGalaxyImage(galaxyID)) {
+					im.Save(cachePath);
+					gal.IsDirty = false;
+					gal.Width = im.Width;
+					gal.Height = im.Height;
+					db.SubmitChanges();
+				}
+			} 
+
+
 			return View(gal);
 		}
 
