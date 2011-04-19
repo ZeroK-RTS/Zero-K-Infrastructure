@@ -36,20 +36,20 @@ Under construciton, please wait!
       }
     }
     
-    <a href='@Url.Action("Planet",new{id=p.PlanetID})'>
+    <a href='@Url.Action("Planet",new{id=p.PlanetID})' style='color:White'>
     <table cellpadding="0" cellspacing="0" style="left: @(pr.Left - 40)px; top: @(pr.Top - 50)px; width:@(pr.Width + 80)px; height:50px;" class="pwlabel" width="@(pr.Width + 80)" height="50">
       <tr>
         <td valign="bottom" align="center">
           <span title="$map$@p.MapResourceID" style="color: @(Clan.TreatyColor(Global.Clan, clan))" >@p.Name<br />
             @if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID) {
-              <span style="font-size: 8px">@Global.Account.Name</span>
+              <span style="font-size: 8px">@p.Account.Name</span>
             }
           </span>
         </td>
       </tr>
     </table>
     
-    <span style="position: absolute; left: @(pr.Left - 100)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; text-align:right;">
+    <span style="position: absolute; left: @(pr.Left - 20)px; top: @(pr.Top)px; width: 20px; height: @(pr.Height)px; text-align:right;">
       <table cellpadding="0" cellspacing="0" style="font-size: 2px;">
         <tr>
           <td>
