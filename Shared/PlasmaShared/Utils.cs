@@ -439,5 +439,10 @@ namespace PlasmaShared
         }
       } catch { }
 	  }
+
+		public static int GetWinChancePercent(double eloDiff)
+		{
+			return (int)Math.Round((1.0/(1.0 + Math.Pow(10, (eloDiff)/400.0)))*100.0);
+		}
 	}
 }

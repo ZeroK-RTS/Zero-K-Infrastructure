@@ -192,7 +192,8 @@ namespace ZeroKWeb.Controllers
 
 		public ActionResult Index()
 		{
-			return View();
+			return View("Galaxy", new ZkDataContext().Galaxies.Single(x => x.IsDefault));
+			return    View();
 		}
 
 		/// <summary>

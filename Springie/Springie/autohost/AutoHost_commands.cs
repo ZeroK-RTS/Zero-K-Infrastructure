@@ -661,7 +661,7 @@ namespace Springie.autohost
 
 					var t2entries = g.Select(x => Program.main.SpringieServer.GetEloEntry(x.Name));
 					var t2elo = t2entries.Sum(x => x.Elo*x.W)/t2entries.Sum(x => x.W);
-					Respond(e, string.Format("team {0} has {1}% chance to win over team {2}", oldg.Key + 1, GetWinChancePercent(t1elo, t2elo), g.Key + 1));
+					Respond(e, string.Format("team {0} has {1}% chance to win over team {2}", oldg.Key + 1, PlasmaShared.Utils.GetWinChancePercent(t2elo-t1elo), g.Key + 1));
 				}
 				oldg = g;
 			}
@@ -1107,11 +1107,6 @@ namespace Springie.autohost
 			return result;
 		}
 
-
-		public static int GetWinChancePercent(double elo1, double elo2)
-		{
-			return (int)Math.Round((1.0/(1.0 + Math.Pow(10, (elo2 - elo1)/400.0)))*100.0);
-		}
 
 		void ComAdmins(TasSayEventArgs e, string[] words)
 		{

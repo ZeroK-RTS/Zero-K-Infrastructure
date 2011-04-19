@@ -9,6 +9,8 @@
   int maxDropships = g.Planets.SelectMany(x => x.AccountPlanets).Max(x => (int?)x.DropshipCount) ?? 1; // fake max as 1 to prevent division by zero
 }
 @{Html.RenderPartial("LoginBar");}
+<img src='http://3.bp.blogspot.com/_YTJBDUN8iSE/TSjDkNEwJAI/AAAAAAAAD0o/N8w-cy_J_EM/s1600/Tracy_Caldwell_Dyson_in_Cupola_ISS.jpg' width='600'/>
+Under construciton, please wait!
 <div style="text-align: left; border: 0; position: relative">
   <img src="@Url.Action("GalaxyImage", new { galaxyID = Model.GalaxyID })" style="text-align:left; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
   @foreach (var p in Model.Planets) {
@@ -34,6 +36,7 @@
       }
     }
     
+    <a href='@Url.Action("Planet",new{id=p.PlanetID})'>
     <table cellpadding="0" cellspacing="0" style="left: @(pr.Left - 40)px; top: @(pr.Top - 50)px; width:@(pr.Width + 80)px; height:50px;" class="pwlabel" width="@(pr.Width + 80)" height="50">
       <tr>
         <td valign="bottom" align="center">
@@ -75,10 +78,11 @@
     </span>
     
     
-      if (shipCount > 0) {
+      @if (shipCount > 0) {
     <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;">
       <img src='/img/fleets/war.png' width='@(Math.Round(20.0 * shipCount / (double)maxDropships))' /><span
         style="font-size: 10px">@shipCount</span> </span>
       }
+      </a>
   }
 </div>

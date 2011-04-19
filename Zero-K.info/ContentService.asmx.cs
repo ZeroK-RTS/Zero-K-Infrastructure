@@ -51,13 +51,16 @@ namespace ZeroKWeb
 						var c1 = players[i].Clan;
 						var c2 = players[j].Clan;
 						var points = 0;
-						if (c1 == c2) points = 3;
-						else
+						if (c1 != null && c2 != null)
 						{
-							var treaty = treaties[new Tuple<Clan, Clan>(players[i].Clan, players[j].Clan)];
-							if (treaty.AllyStatus == AllyStatus.Alliance) points = 2;
-							else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 1;
-							else if (treaty.AllyStatus == AllyStatus.War) points = -2;
+							if (c1 == c2) points = 3;
+							else
+							{
+								var treaty = treaties[new Tuple<Clan, Clan>(players[i].Clan, players[j].Clan)];
+								if (treaty.AllyStatus == AllyStatus.Alliance) points = 2;
+								else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 1;
+								else if (treaty.AllyStatus == AllyStatus.War) points = -2;
+							}
 						}
 						sameTeamScore[i, j] = points;
 						sameTeamScore[j, i] = points;
@@ -77,13 +80,14 @@ namespace ZeroKWeb
 				}
 
 				var limit = 2 ^ players.Count;
-				var bestCombination = 0;
+				var bestCombination = -1;
 				var bestScore = double.MinValue;
+				double bestCompo = 0;
+				double bestElo = 0;
+				double bestTeamDiffs = 0;
 				var playerAssignments = new int[players.Count];
 				for (var combinator = 0; combinator < limit; combinator++)
 				{
-					double score = 0;
-
 					double team0Weight = 0;
 					double team0Elo = 0;
 					double team1Weight = 0;
@@ -113,19 +117,18 @@ namespace ZeroKWeb
 					if (team0count == 0 || team1count == 0) continue; // skip combination, empty team
 
 					// calculate score for team difference
-					var teamDiffScore = -(20.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count));
-					score += teamDiffScore;
-					if (score < -15) continue;
+					var teamDiffScore = -(30.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count));
+					if (teamDiffScore < -10) continue; // max imabalance 50% (1v2)
 
 					// calculate score for elo difference
 					team0Elo = team0Elo/team0Weight;
 					team1Elo = team1Elo/team1Weight;
-					var eloScore = -Math.Pow(Math.Abs(team0Elo - team1Elo)/50, 3);
-					score += eloScore;
-					if (score < -15) continue;
+					var eloScore = -Math.Abs(team0Elo - team1Elo)/20;
+					if (eloScore < -15) continue; // max 300 elo = 85% chance
 
 					// calculate score for meaningfull teams
-					for (var i = 0; i < players.Count; i++)
+					var compoScore = 0.0;
+					for (var i = 0; i < players.Count; i++) // for every player calculate his score as average of relations to other plaeyrs
 					{
 						double sum = 0;
 						var cnt = 0;
@@ -142,19 +145,37 @@ namespace ZeroKWeb
 								}
 							}
 						}
-						if (cnt > 0) score += sum/cnt;
+						if (cnt > 0) // player can be meaningfully ranked, he had at least one non zero relation
+							compoScore += playerScoreMultiplier[i] * sum/cnt;
 					}
+					var score = teamDiffScore + eloScore + compoScore;
 
 					if (score > bestScore)
 					{
 						bestCombination = combinator;
 						bestScore = score;
+						bestElo = eloScore;
+						bestCompo = compoScore;
+						bestTeamDiffs = teamDiffScore;
 					}
 				}
 
-				for (var i = 0; i < players.Count; i++)
-					res.BalancedTeams.Add(new AccountTeam()
-					                      { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = bestCombination & (2 ^ i), TeamID = i });
+				if (bestCombination == -1)
+				{
+					res.BalancedTeams = null;
+					res.Message = "Cannot be balanced well at this point";
+				}
+				else
+				{
+					for (var i = 0; i < players.Count; i++)
+						res.BalancedTeams.Add(new AccountTeam()
+						                      { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = bestCombination & (2 ^ i), TeamID = i });
+					res.Message = string.Format("Winning combination  score: {0} team difference,  {1} elo,  {2} composition. Win chance {3}%",
+					                            bestTeamDiffs,
+					                            bestElo,
+					                            bestCompo,
+					                            Utils.GetWinChancePercent(bestElo*20));
+				}
 
 				return res;
 			}
