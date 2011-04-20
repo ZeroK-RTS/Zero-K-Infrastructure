@@ -13,17 +13,19 @@ namespace ZeroKWeb.Controllers
 		public ActionResult Games()
 		{
 			var db = new ZkDataContext();
-			var data =
-				db.SpringBattles.Where(x => x.StartTime.Date < DateTime.Now.Date).GroupBy(x => x.StartTime.Date).OrderBy(x => x.Key).Select(
-					x =>
-					new
-					{
-						Day = x.Key,
-						PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
-						Players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => z.IsSpectator)).Select(z => z.AccountID).Distinct().Count(),
-						//PlayerHours = x.Sum(y => y.Duration*y.PlayerCount)/10000,
-						MinutesPerPlayer = x.SelectMany(y=>y.SpringBattlePlayers).GroupBy(y=>y.Account).Average(y=>y.Where(z=>!z.IsSpectator).Sum(z=>z.SpringBattle.Duration))/60
-						});
+			var data = from bat in db.SpringBattles
+			           where bat.StartTime.Date < DateTime.Now.Date
+			           group bat by bat.StartTime.Date
+			           into x orderby x.Key
+			           let players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count()
+			           select
+			           	new
+			           	{
+			           		Day = x.Key,
+			           		PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
+			           		Players = players,
+			           		MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players
+			           	};
 
 			var chart = new Chart(1500, 700, ChartTheme.Blue);
 
@@ -32,7 +34,6 @@ namespace ZeroKWeb.Controllers
 
 			chart.AddSeries("unique players+specs", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PlayersAndSpecs), legend: "dps");
 			chart.AddSeries("unique players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.Players), legend: "dps");
-			//chart.AddSeries("playerseconds/10k", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PlayerHours), legend: "dps");
 			chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.MinutesPerPlayer), legend: "dps");
 
 			return File(chart.GetBytes(), "image/jpeg");
