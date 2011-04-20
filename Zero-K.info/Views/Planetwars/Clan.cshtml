@@ -32,10 +32,19 @@
 <h3>
   Members</h3>
 @foreach (var a in c.Accounts) {
-  @Html.PrintAccount(a) <br />
+    @Html.PrintAccount(a)
+    if (isMember && Global.Account.HasClanRights && !a.IsClanFounder || Global.Account.IsZeroKAdmin)
+    { //has rights
+          <span>&nbsp</span>
+        // todo: disallow kicking after the round starts
+        var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
+        @Html.ActionLink("Expel", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+    }
+    <br />
 }
-@if (isMember && Global.Account.HasClanRights) { //has rights
-  @Html.ActionLink("modify this clan", "CreateClan", new {id= c.ClanID})
+@if (isMember && Global.Account.HasClanRights)
+{ //has rights
+  @Html.ActionLink("modify this clan", "CreateClan", new { id = c.ClanID })
 }
 <br />
 <a href='/planetwars/ClanList'>Clan list</a>

@@ -134,6 +134,20 @@ namespace ZeroKWeb.Controllers
 		}
 
 		[Auth]
+		public ActionResult KickPlayerFromClan(int clanID, int accountID)
+		{
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(c => clanID == c.ClanID);
+			// todo: disallow kicking after the round starts
+			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
+			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
+			if (kickee.IsClanFounder) return Content("Clan founders can't be kicked.");
+			kickee.ClanID = null;
+			db.SubmitChanges();
+			return RedirectToAction("Clan", new { id = clanID });
+		}
+
+		[Auth]
 		public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image)
 		{
 			var db = new ZkDataContext();
