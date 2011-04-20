@@ -197,9 +197,9 @@ namespace ZeroKWeb.Controllers
 		public ActionResult SubmitRenamePlanet(int planetID, string newName)
 		{
 			if (String.IsNullOrWhiteSpace(newName)) return Content("Error: the planet must have a name.");
-			// if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
 			var db = new ZkDataContext();
 			var planet = db.Planets.Single(p => p.PlanetID == planetID);
+			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
 			planet.Name = newName;
 			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planet.PlanetID });

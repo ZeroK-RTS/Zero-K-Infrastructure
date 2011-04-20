@@ -229,9 +229,12 @@ namespace ZeroKWeb
 					Select(x => x.Name).Take(10).ToList();
 		}
 
+
+
 		[WebMethod]
-		public string GetRecommendedMap(string autohostName, AutohostMode mode = AutohostMode.GameTeams)
+		public RecommendedMapResult GetRecommendedMap(string autohostName, AutohostMode mode = AutohostMode.GameTeams)
 		{
+			var res = new RecommendedMapResult();
 			using (var db = new ZkDataContext())
 			{
 				if (mode == AutohostMode.Planetwars)
@@ -241,15 +244,16 @@ namespace ZeroKWeb
 					var targets = gal.Planets.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
 					var r = new Random(autohostName.GetHashCode()); // randomizer based on autohost name to always return same
 					var planet = targets[r.Next(targets.Count)];
-					return planet.Resource.InternalName;
+					res.MapName = planet.Resource.InternalName;
 				}
 				else
 				{
 					var list = db.Resources.Where(x => x.FeaturedOrder != null && x.MapIsFfa != true && x.ResourceContentFiles.Any(y => y.LinkCount > 0)).ToList();
 					var r = new Random();
-					return list[r.Next(list.Count)].InternalName;
+					res.MapName = list[r.Next(list.Count)].InternalName;
 				}
 			}
+			return res;
 		}
 
 
@@ -641,6 +645,13 @@ namespace ZeroKWeb
 				public List<ScriptKeyValuePair> Parameters = new List<ScriptKeyValuePair>();
 			}
 		}
+	}
+
+	public class RecommendedMapResult
+	{
+		public string MapName;
+		public string Message;
+
 	}
 
 	public class BalanceTeamsResult
