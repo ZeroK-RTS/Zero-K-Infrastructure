@@ -21,10 +21,54 @@
   </form>
 }
 
+
+
+    <div class='mission fleft' onclick="window.location='@Url.Action("Detail", new { id = Model.Resource.ResourceID })'">
+      <b>@Model.Resource.InternalName</b>
+      <br />
+      @Model.Resource.AuthorName<br />
+      <table>
+        <tr>
+          <td valign='top'>
+            <span style="margin: 0; padding: 0; border: 1px dashed gray; display: table-cell;
+              text-align: center; vertical-align: middle; width: 96px; height: 96px;">
+              <img src='http://zero-k.info/Resources/@Model.Resource.ThumbnailName' style="margin:0px;padding:0px;"/>
+            </span>
+          </td>
+          <td valign='top'>
+            <table>
+              <tr>
+                <td>
+                  Rating:
+                </td>
+                <td>@Html.Stars(StarType.GreenStarSmall, Model.Resource.MapRating)
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Size:
+                </td>
+                <td>@Model.Resource.MapWidth x @Model.Resource.MapHeight
+                </td>
+              </tr>
+              <tr>
+                <td colspan='2'>
+                  <small>
+                    @{Html.RenderPartial("~/Views/Maps/MapTags.cshtml", Model.Resource);}
+                  </small>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+
 <h2>
   Clan Influence</h2>
 <table>
-  @foreach (var clanGroup in Model.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderBy(g => g.Sum(ap => ap.Influence))) {
+  @foreach (var clanGroup in Model.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderBy(g => g.Sum(ap => ap.Influence)))
+  {
     <tr>
       <td>
         <h3>@Html.PrintClan(clanGroup.Key)</h3>
@@ -32,7 +76,8 @@
       <td>
         <h3>@clanGroup.Sum(ap => ap.Influence)</h3>
       </td>
-      @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence)) {
+      @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence))
+      {
         <tr>
           <td>@Html.PrintAccount(accountPlanet.Account)
           </td>
@@ -46,7 +91,8 @@
 <h2>
   Structures</h2>
 <ul>
-  @foreach (var structure in Model.PlanetStructures) {
+  @foreach (var structure in Model.PlanetStructures)
+  {
     <li>
       <img src='@structure.GetImageUrl()'/>
       @structure.StructureType.Name (@structure.StructureType.Description)</li>
