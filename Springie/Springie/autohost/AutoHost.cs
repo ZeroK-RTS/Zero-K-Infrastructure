@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -28,7 +27,6 @@ namespace Springie.autohost
 		public const string ConfigName = "autohost.xml";
 
 		public const int PollTimeout = 60;
-		public const string PresetsName = "presets.xml";
 		static readonly object savLock = new object();
 
 		IVotable activePoll;
@@ -59,8 +57,6 @@ namespace Springie.autohost
 		public string configPath;
 		public Mod hostedMod;
 		public int hostingPort { get; private set; }
-		public Ladder ladder;
-		public List<Preset> presets = new List<Preset>();
 
 		public SpringPaths springPaths;
 		public TasClient tas;
@@ -72,14 +68,17 @@ namespace Springie.autohost
 			this.configPath = configPath;
 			springPaths = paths;
 			this.hostingPort = hostingPort;
-			spring = new Spring(paths) { UseDedicatedServer = true };
+
+			LoadConfig();
+			SaveConfig();
+		
+			spring = new Spring(paths, config.PlanetWarsEnabled ?  AutohostMode.Planetwars : AutohostMode.GameTeams) { UseDedicatedServer = true };
 			tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, Program.main.Config.IpOverride);
 			quickMatchTracker = new QuickMatchTracking(tas, null);
 
 			banList = new BanList(this, tas);
+			banList.Load();
 
-			LoadConfig();
-			SaveConfig();
 
 			this.wrapper = wrapper;
 
@@ -153,7 +152,6 @@ namespace Springie.autohost
 			pollTimer.Dispose();
 			if (manager != null) manager.Stop();
 			banList.Close();
-			ladder = null;
 			MapBoxes = null;
 			banList = null;
 			manager = null;
@@ -276,15 +274,6 @@ namespace Springie.autohost
 			}
 			else config.Defaults();
 
-			if (File.Exists(configPath + '/' + PresetsName))
-			{
-				var s = new XmlSerializer(presets.GetType());
-				using (var r = File.OpenText(configPath + '/' + PresetsName))
-				{
-					presets = (List<Preset>)s.Deserialize(r);
-					r.Close();
-				}
-			}
 
 			if (File.Exists(springPaths.Cache + '/' + BoxesName))
 			{
@@ -303,7 +292,6 @@ namespace Springie.autohost
 				}
 			}
 
-			banList.Load();
 		}
 
 		public void RegisterVote(TasSayEventArgs e, string[] words)
@@ -346,7 +334,6 @@ namespace Springie.autohost
 				config.PrivilegedUsers = l;
 				config.PrivilegedUsers.Sort(AutoHostConfig.UserComparer);
 
-				presets.Sort(delegate(Preset a, Preset b) { return a.Name.CompareTo(b.Name); });
 
 				var s = new XmlSerializer(config.GetType());
 				var f = File.OpenWrite(configPath + '/' + ConfigName);
@@ -354,13 +341,7 @@ namespace Springie.autohost
 				s.Serialize(f, config);
 				f.Close();
 
-				s = new XmlSerializer(presets.GetType());
-				f = File.OpenWrite(configPath + '/' + PresetsName);
-				f.SetLength(0);
-				s.Serialize(f, presets);
-				f.Close();
-
-				banList.Save();
+				if (banList != null) banList.Save();
 
 				var fm = new BinaryFormatter();
 				using (var fs = new FileStream(springPaths.Cache + '/' + BoxesName, FileMode.Create))
@@ -379,7 +360,7 @@ namespace Springie.autohost
 
 		public void SayBattle(string text, bool ingame)
 		{
-			SayBattle(tas, spring, text, ingame);
+			if (!string.IsNullOrEmpty(text)) foreach (var line in text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) SayBattle(tas, spring, line, ingame);
 		}
 
 
@@ -396,16 +377,13 @@ namespace Springie.autohost
 			manager = new AutoManager(this, tas, spring);
 			kickMinRank = config.KickMinRank;
 
-			if (config.LadderId > 0) ladder = new Ladder(config.LadderId);
-			else ladder = null;
-
 			if (String.IsNullOrEmpty(modname)) modname = config.DefaultMod;
 			if (String.IsNullOrEmpty(mapname)) mapname = config.DefaultMap;
 
 			if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag)) modname = config.AutoUpdateRapidTag;
 
-			var title = (ladder != null ? "(ladder " + ladder.Id + ") " : "") + config.GameTitle.Replace("%1", MainConfig.SpringieVersion);
-			var password = (ladder == null ? config.Password : "ladderlock2");
+			var title = config.GameTitle.Replace("%1", MainConfig.SpringieVersion);
+			var password = config.Password;
 
 			if (SpawnConfig != null)
 			{
@@ -435,7 +413,7 @@ namespace Springie.autohost
 			                   mapi,
 			                   title,
 			                   modi,
-			                   (ladder != null ? ladder.CheckBattleDetails(config.BattleDetails, out mint, out maxt) : config.BattleDetails));
+			                   config.BattleDetails);
 			// if hole punching enabled then we use it
 			if (config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
 			else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;
@@ -714,7 +692,6 @@ namespace Springie.autohost
 		}
 
 
-
 		// login accepted - join channels
 
 		// im connected, let's login
@@ -756,8 +733,6 @@ namespace Springie.autohost
 				var dict = MapBoxes[mapName];
 				foreach (var v in dict) tas.AddBattleRectangle(v.Key, v.Value);
 			}
-
-			if (PlanetWars != null) PlanetWars.MapChanged();
 		}
 
 		void tas_MyStatusChangedToInGame(object sender, TasEventArgs e)
@@ -807,8 +782,8 @@ namespace Springie.autohost
 
 				if (e.Place == TasSayEventArgs.Places.Normal)
 				{
-					if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listpresets" && com != "listoptions" &&
-					    com != "presetdetails" && com != "spawn" && com != "listbans" && com != "stats" && com != "predict" && com != "notify") SayBattle(string.Format("{0} executed by {1}", com, e.UserName));
+					if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listoptions" &&
+					    com != "spawn" && com != "listbans" && com != "stats" && com != "predict" && com != "notify") SayBattle(string.Format("{0} executed by {1}", com, e.UserName));
 				}
 
 				switch (com)
@@ -913,7 +888,6 @@ namespace Springie.autohost
 						ComPredict(e, words);
 						break;
 
-
 					case "fix":
 						ComFix(e, words);
 						break;
@@ -983,17 +957,6 @@ namespace Springie.autohost
 						ComClearBox(e, words);
 						break;
 
-					case "listpresets":
-						ComListPresets(e, words);
-						break;
-
-					case "presetdetails":
-						ComPresetDetails(e, words);
-						break;
-
-					case "preset":
-						ComPreset(e, words);
-						break;
 
 					case "cbalance":
 						ComCBalance(e, words);

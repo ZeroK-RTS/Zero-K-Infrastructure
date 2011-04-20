@@ -27,7 +27,7 @@ namespace ZkData
 		{
 			if (account == null) return true;
 			if (account.ClanID != null) return false;
-			if (account.LobbyTimeRank > 0 && Accounts.Count >= GlobalConst.MaxClanSkilledSize) return false;
+			if (account.LobbyTimeRank > 0 && Accounts.Where(x=>x.LobbyTimeRank > 0).Count() >= GlobalConst.MaxClanSkilledSize) return false;
 			else return true;
 		}
 

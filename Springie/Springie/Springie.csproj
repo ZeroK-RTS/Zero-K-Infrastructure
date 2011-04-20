@@ -124,8 +124,6 @@
     <Compile Include="autohost\BanList.cs" />
     <Compile Include="autohost\BannedUser.cs" />
     <Compile Include="autohost\CommandConfig.cs" />
-    <Compile Include="autohost\Ladder.cs" />
-    <Compile Include="autohost\Preset.cs" />
     <Compile Include="autohost\PrivilegedUser.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="PlanetWars\PlanetWarsHandler.cs" />

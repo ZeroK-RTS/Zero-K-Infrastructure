@@ -2,6 +2,51 @@
 <wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="BalanceTeams">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="autoHost" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="map" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentTeams" type="tns:ArrayOfAccountTeam" />
+            <s:element minOccurs="1" maxOccurs="1" name="mode" type="tns:AutohostMode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAccountTeam">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AccountTeam" nillable="true" type="tns:AccountTeam" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AccountTeam">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="AccountID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="AllyID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="TeamID" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="AutohostMode">
+        <s:restriction base="s:string">
+          <s:enumeration value="Planetwars" />
+          <s:enumeration value="Game1v1" />
+          <s:enumeration value="GameTeams" />
+          <s:enumeration value="GameFFA" />
+          <s:enumeration value="GameChickens" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="BalanceTeamsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="BalanceTeamsResult" type="tns:BalanceTeamsResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="BalanceTeamsResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="BalancedTeams" type="tns:ArrayOfAccountTeam" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="DownloadFile">
         <s:complexType>
           <s:sequence>
@@ -76,6 +121,27 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="GetRecommendedMap">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="autohostName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="mode" type="tns:AutohostMode" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecommendedMapResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRecommendedMapResult" type="tns:RecommendedMapResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RecommendedMapResult">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="MapName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="GetResourceData">
         <s:complexType>
           <s:sequence>
@@ -280,6 +346,7 @@
             <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:BattleResult" />
             <s:element minOccurs="0" maxOccurs="1" name="players" type="tns:ArrayOfBattlePlayerResult" />
+            <s:element minOccurs="1" maxOccurs="1" name="mode" type="tns:AutohostMode" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -365,6 +432,12 @@
       </s:element>
     </s:schema>
   </wsdl:types>
+  <wsdl:message name="BalanceTeamsSoapIn">
+    <wsdl:part name="parameters" element="tns:BalanceTeams" />
+  </wsdl:message>
+  <wsdl:message name="BalanceTeamsSoapOut">
+    <wsdl:part name="parameters" element="tns:BalanceTeamsResponse" />
+  </wsdl:message>
   <wsdl:message name="DownloadFileSoapIn">
     <wsdl:part name="parameters" element="tns:DownloadFile" />
   </wsdl:message>
@@ -388,6 +461,12 @@
   </wsdl:message>
   <wsdl:message name="GetEloTop10SoapOut">
     <wsdl:part name="parameters" element="tns:GetEloTop10Response" />
+  </wsdl:message>
+  <wsdl:message name="GetRecommendedMapSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRecommendedMap" />
+  </wsdl:message>
+  <wsdl:message name="GetRecommendedMapSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRecommendedMapResponse" />
   </wsdl:message>
   <wsdl:message name="GetResourceDataSoapIn">
     <wsdl:part name="parameters" element="tns:GetResourceData" />
@@ -444,6 +523,10 @@
     <wsdl:part name="parameters" element="tns:SubmitStackTraceResponse" />
   </wsdl:message>
   <wsdl:portType name="ContentServiceSoap">
+    <wsdl:operation name="BalanceTeams">
+      <wsdl:input message="tns:BalanceTeamsSoapIn" />
+      <wsdl:output message="tns:BalanceTeamsSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="DownloadFile">
       <wsdl:input message="tns:DownloadFileSoapIn" />
       <wsdl:output message="tns:DownloadFileSoapOut" />
@@ -459,6 +542,10 @@
     <wsdl:operation name="GetEloTop10">
       <wsdl:input message="tns:GetEloTop10SoapIn" />
       <wsdl:output message="tns:GetEloTop10SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRecommendedMap">
+      <wsdl:input message="tns:GetRecommendedMapSoapIn" />
+      <wsdl:output message="tns:GetRecommendedMapSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetResourceData">
       <wsdl:input message="tns:GetResourceDataSoapIn" />
@@ -499,6 +586,15 @@
   </wsdl:portType>
   <wsdl:binding name="ContentServiceSoap" type="tns:ContentServiceSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="BalanceTeams">
+      <soap:operation soapAction="http://tempuri.org/BalanceTeams" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="DownloadFile">
       <soap:operation soapAction="http://tempuri.org/DownloadFile" style="document" />
       <wsdl:input>
@@ -528,6 +624,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetEloTop10">
       <soap:operation soapAction="http://tempuri.org/GetEloTop10" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecommendedMap">
+      <soap:operation soapAction="http://tempuri.org/GetRecommendedMap" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -619,6 +724,15 @@
   </wsdl:binding>
   <wsdl:binding name="ContentServiceSoap12" type="tns:ContentServiceSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="BalanceTeams">
+      <soap12:operation soapAction="http://tempuri.org/BalanceTeams" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="DownloadFile">
       <soap12:operation soapAction="http://tempuri.org/DownloadFile" style="document" />
       <wsdl:input>
@@ -648,6 +762,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetEloTop10">
       <soap12:operation soapAction="http://tempuri.org/GetEloTop10" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecommendedMap">
+      <soap12:operation soapAction="http://tempuri.org/GetRecommendedMap" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

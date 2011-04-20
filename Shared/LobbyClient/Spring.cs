@@ -54,7 +54,7 @@ namespace LobbyClient
 			STATS
 		}
 
-		Dictionary<string, int> PlanetWarsMessages = new Dictionary<string, int>();
+		Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
 		Guid battleGuid;
 		BattleResult battleResult = new BattleResult();
 		TasClient client;
@@ -98,6 +98,7 @@ namespace LobbyClient
 
 		public ProcessPriorityClass ProcessPriority { set { if (IsRunning) process.PriorityClass = value; } }
 		public bool UseDedicatedServer;
+		AutohostMode authostMode;
 
 		public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
 		public event LogLine LogLineAdded = delegate { };
@@ -113,8 +114,9 @@ namespace LobbyClient
 		public event EventHandler<EventArgs<bool>> SpringExited;
 		public event EventHandler SpringStarted;
 
-		public Spring(SpringPaths springPaths)
+		public Spring(SpringPaths springPaths, AutohostMode autohostMode =  AutohostMode.GameTeams)
 		{
+			this.authostMode = authostMode;
 			paths = springPaths;
 		}
 
@@ -284,7 +286,7 @@ namespace LobbyClient
 				process.OutputDataReceived += process_OutputDataReceived;
 				process.EnableRaisingEvents = true;
 
-				PlanetWarsMessages = new Dictionary<string, int>();
+				gamePrivateMessages = new Dictionary<string, int>();
 				battleResult.StartTime = DateTime.UtcNow;
 				process.Start();
 				process.BeginOutputReadLine();
@@ -361,9 +363,9 @@ namespace LobbyClient
 			if (string.IsNullOrEmpty(e.Text) || (!e.Text.StartsWith("pw") && !e.Text.StartsWith("STATS"))) return;
 
 			int count;
-			if (!PlanetWarsMessages.TryGetValue(e.Text, out count)) count = 0;
+			if (!gamePrivateMessages.TryGetValue(e.Text, out count)) count = 0;
 			count++;
-			PlanetWarsMessages[e.Text] = count;
+			gamePrivateMessages[e.Text] = count;
 			if (count != 2) return; // only send if count matches 2 exactly
 
 			var text = e.Text;
@@ -538,7 +540,7 @@ namespace LobbyClient
 							// set victory team for all allied with currently alive
 							foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null)) foreach (var q in statsPlayers.Values.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber)) q.IsVictoryTeam = true;
 
-							var result = service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray());
+							var result = service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray(), authostMode);
 							if (result != null) foreach (var line in result.Split('\n')) client.Say(TasClient.SayPlace.Battle, "", line, true);
 						}
 						catch (Exception ex)

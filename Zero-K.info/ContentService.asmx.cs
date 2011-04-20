@@ -25,6 +25,10 @@ namespace ZeroKWeb
 		[WebMethod]
 		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams, AutohostMode mode = AutohostMode.Planetwars)
 		{
+			if (currentTeams.Count < 2)
+			{
+				return new BalanceTeamsResult() { Message = "Not enough players"} ;
+			}
 			using (var db = new ZkDataContext())
 			{
 				var res = new BalanceTeamsResult();
@@ -79,7 +83,9 @@ namespace ZeroKWeb
 					playerScoreMultiplier[i] = mult;
 				}
 
-				var limit = 2 ^ players.Count;
+				
+
+				var limit = 1 << (players.Count);
 				var bestCombination = -1;
 				var bestScore = double.MinValue;
 				double bestCompo = 0;
@@ -99,7 +105,7 @@ namespace ZeroKWeb
 					for (var i = 0; i < players.Count; i++)
 					{
 						var player = players[i];
-						var team = combinator & (2 ^ i);
+						var team = (combinator & (1 << i)) > 0 ? 1: 0;
 						playerAssignments[i] = team;
 						if (team == 0)
 						{
@@ -169,7 +175,7 @@ namespace ZeroKWeb
 				{
 					for (var i = 0; i < players.Count; i++)
 						res.BalancedTeams.Add(new AccountTeam()
-						                      { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = bestCombination & (2 ^ i), TeamID = i });
+						                      { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = ((bestCombination & (1 << i)) > 0) ? 1:0, TeamID = i });
 					res.Message = string.Format("Winning combination  score: {0} team difference,  {1} elo,  {2} composition. Win chance {3}%",
 					                            bestTeamDiffs,
 					                            bestElo,

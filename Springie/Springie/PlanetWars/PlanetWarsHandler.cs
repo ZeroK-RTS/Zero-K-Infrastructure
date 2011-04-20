@@ -1,145 +1,153 @@
 #region using
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using LobbyClient;
-using PlasmaShared.UnitSyncLib;
+using PlasmaShared;
+using PlasmaShared.ContentService;
 using Springie.autohost;
 
 #endregion
 
 namespace Springie.PlanetWars
 {
-    public class PlanetWarsHandler: IDisposable
-    {
-
-        AutoHost autoHost;
-
-
-
-        TasClient tas;
-        Timer timer = new Timer();
-    	Spring spring;
+	public class PlanetWarsHandler: IDisposable
+	{
+		readonly AutoHost autoHost;
+		readonly ContentService serv = new ContentService();
+		readonly Spring spring;
 
 
-    	public PlanetWarsHandler(AutoHost autoHost, TasClient tas, AutoHostConfig config, Spring spring)
-        {
-        	this.spring = spring;
-            this.autoHost = autoHost;
-            this.tas = tas;
-
-            timer.Interval = 2000;
-            timer.Elapsed += timer_Elapsed;
-            timer.AutoReset = true;
-            timer.Start();
-        }
-
-        public void Dispose()
-        {
-            timer.Stop();
-            timer.Elapsed -= timer_Elapsed;
-        }
-
-        public void MapChanged()
-        {
-            try
-            {
-                string name = tas.MyBattle.MapName;
+		readonly TasClient tas;
+		readonly Timer timer = new Timer();
+		int timerCnt = 0;
 
 
-                autoHost.SayBattle(String.Format("Welcome to "));
-								//ICollection<string> notifyList = server.GetPlayersToNotify(account, name, ReminderEvent.OnBattlePreparing);
-            }
-            catch (Exception ex)
-            {
-                autoHost.SayBattle(string.Format("Error setting planet starting boxes: {0}", ex));
-            }
-        }
+		public PlanetWarsHandler(AutoHost autoHost, TasClient tas, AutoHostConfig config, Spring spring)
+		{
+			if (Debugger.IsAttached) serv.Url = "http://localhost:49576/ContentService.asmx";
+			this.spring = spring;
+			this.autoHost = autoHost;
+			this.tas = tas;
+
+			spring.SpringExited += spring_SpringExited;
+
+			timer.Interval = 30000;
+			timer.Elapsed += timer_Elapsed;
+			timer.AutoReset = true;
+			timer.Start();
+		}
 
 
-        public void SpringExited()
-        {
-            try
-            {
-                //tas.Say();
-            }
-            catch (Exception ex)
-            {
-                autoHost.SayBattle("Error notifying game end:" + ex);
-            }
-        }
+		public void Dispose()
+		{
+			timer.Stop();
+			timer.Elapsed -= timer_Elapsed;
+		}
 
 
-        public static void SpringMessage(string text)
-        {
-        }
-
-        public bool StartGame(TasSayEventArgs e)
-        {
-            try
-            {
-                if (!autoHost.ComFix(e, "silent"))
-                {
-                    autoHost.Respond(e, "Teams were not fixed, fixing");
-                    return false;
-                }
-
-                Battle bat = tas.MyBattle;
-                Mod mod = Program.main.UnitSyncWrapper.GetModInfo(bat.ModName);
-                foreach (var grouping in bat.Users.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber))
-                {
-                }
-
-                string currentMapName = bat.MapName;
-                autoHost.Respond(e, "This mod does not support PlanetWars");
-                return false;
-            }
-            catch (Exception ex)
-            {
-                autoHost.SayBattle(string.Format("Error when checking PlanetWars teams: {0}", ex), false);
-                return false;
-            }
-        }
-
-        public void UserJoined(string name)
-        {
-            try
-            {
-            }
-            catch (Exception ex)
-            {
-                autoHost.SayBattle("PlanetWars error: " + ex);
-            }
-        }
+		public void SpringExited()
+		{
+			try
+			{
+				//tas.Say();
+			}
+			catch (Exception ex)
+			{
+				autoHost.SayBattle("Error notifying game end:" + ex);
+			}
+		}
 
 
+		public bool StartGame(TasSayEventArgs e)
+		{
+			return BalanceTeams();
+		}
 
-        void timer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            timer.Stop();
-            try
-            {
-                Battle b = tas.MyBattle;
-                if (!autoHost.ComFix(TasSayEventArgs.Default, "silent")) return;
+		public void UserJoined(string name)
+		{
+			try {}
+			catch (Exception ex)
+			{
+				autoHost.SayBattle("PlanetWars error: " + ex);
+			}
+		}
 
+		public bool BalanceTeams()
+		{
+			try
+			{
+				var balance = serv.BalanceTeams(tas.UserName,
+				                                tas.MyBattle.MapName,
+				                                tas.MyBattle.Users.Where(x => !x.IsSpectator && x.SyncStatus == SyncStatuses.Synced).Select(
+				                                	x =>
+				                                	new AccountTeam()
+				                                	{ AccountID = x.LobbyUser.AccountID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber }).ToArray(),
+				                                AutohostMode.Planetwars);
+				autoHost.SayBattle(balance.Message);
+				if (balance.BalancedTeams != null)
+				{
+					foreach (var user in balance.BalancedTeams) tas.ForceTeam(user.Name, user.TeamID);
+					foreach (var user in balance.BalancedTeams) tas.ForceAlly(user.Name, user.AllyID);
+					return true;
+				}
+				return false;
+			}
+			catch (Exception ex)
+			{
+				autoHost.SayBattle("Problem with PlanetWars:" + ex);
+				Trace.TraceError(ex.ToString());
+				return false;
+			}
+		}
 
-                Mod mod = Program.main.UnitSyncWrapper.GetModInfo(b.ModName);
+		void VerifyMap()
+		{
+			try
+			{
+				var map = serv.GetRecommendedMap(tas.UserName, AutohostMode.Planetwars);
+				if (map.MapName != null)
+				{
+					if (tas.MyBattle.MapName != map.MapName)
+					{
+						autoHost.ComMap(TasSayEventArgs.Default, map.MapName);
+						autoHost.SayBattle(map.Message);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				autoHost.SayBattle("Problem with PlanetWars:" + ex);
+				Trace.TraceError(ex.ToString());
+			}
+		}
 
-                List<string> sides = mod.Sides.ToList();
-                bool teamsOk = true;
-            }
-            catch (Exception ex)
-            {
-                autoHost.SayBattle("Problem with PlanetWars:" + ex);
-            }
-            finally
-            {
-                timer.Start();
-            }
-        }
-    }
+		void spring_SpringExited(object sender, EventArgs<bool> e)
+		{
+			VerifyMap();
+		}
+
+		void timer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			if (spring.IsRunning) return;
+			timer.Stop();
+			timerCnt++;
+			try
+			{
+				VerifyMap();
+				if (timerCnt%3 == 0) BalanceTeams();
+			}
+			catch (Exception ex)
+			{
+				autoHost.SayBattle("Problem with PlanetWars:" + ex);
+				Trace.TraceError(ex.ToString());
+			}
+			finally
+			{
+				timer.Start();
+			}
+		}
+	}
 }

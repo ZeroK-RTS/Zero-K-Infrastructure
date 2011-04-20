@@ -280,16 +280,6 @@ namespace Springie.autohost
 					}
 				}
 			}
-			if (ladder != null)
-			{
-				int mint, maxt;
-				ladder.CheckBattleDetails(null, out mint, out maxt);
-				if (tsize < mint || tsize > maxt)
-				{
-					SayBattle("Ladder only allows team sizes " + mint + " - " + maxt);
-					return false;
-				}
-			}
 			return true;
 		}
 
@@ -349,11 +339,15 @@ namespace Springie.autohost
 
 		public void ComBalance(TasSayEventArgs e, string[] words)
 		{
-			int teamCount;
-			if (words.Length > 0) int.TryParse(words[0], out teamCount);
-			else teamCount = 2;
-			ComFix(e, words);
-			BalanceTeams(teamCount, false);
+			if (PlanetWars != null) PlanetWars.BalanceTeams();
+			else
+			{
+				int teamCount;
+				if (words.Length > 0) int.TryParse(words[0], out teamCount);
+				else teamCount = 2;
+				ComFix(e, words);
+				BalanceTeams(teamCount, false);
+			}
 		}
 
 		public void ComBoss(TasSayEventArgs e, string[] words)
@@ -653,33 +647,6 @@ namespace Springie.autohost
 		}
 
 
-		public void ComPreset(TasSayEventArgs e, string[] words)
-		{
-			string[] vals;
-			int[] indexes;
-			if (FilterPresets(words, out vals, out indexes) > 0)
-			{
-				var p = presets[indexes[0]];
-				Respond(e, "applying preset " + p.Name + " (" + p.Description + ")");
-				p.Apply(tas, ladder);
-			}
-			else Respond(e, "no such preset found");
-		}
-
-		public void ComPresetDetails(TasSayEventArgs e, string[] words)
-		{
-			string[] vals;
-			int[] indexes;
-			if (FilterPresets(words, out vals, out indexes) > 0)
-			{
-				tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-				foreach (var line in presets[indexes[0]].ToString().Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.User, e.UserName, line, false);
-				tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-			}
-			else Respond(e, "no such preset found");
-		}
-
-
 		public void ComRandom(TasSayEventArgs e, string[] words)
 		{
 			ComFix(e, words);
@@ -865,22 +832,25 @@ namespace Springie.autohost
 				return;
 			}
 
-			int allyno;
-			int alliances;
-			if (!BalancedTeams(out allyno, out alliances))
+			if (PlanetWars == null) {
+				int allyno;
+				int alliances;
+				if (!BalancedTeams(out allyno, out alliances)) {
+					SayBattle("cannot start, alliance " + (allyno + 1) + " not fair. Use !forcestart to override");
+					return;
+				}
+			} else
 			{
-				SayBattle("cannot start, alliance " + (allyno + 1) + " not fair. Use !forcestart to override");
-				return;
+				if (!PlanetWars.StartGame(e))
+				{
+					SayBattle("Cannot start planetwars game atm");
+					return;
+				}
 			}
 
-			if (PlanetWars == null || PlanetWars.StartGame(e))
-			{
-				SayBattle("please wait, game is about to start");
-
-				StopVote();
-
-				tas.StartGame();
-			}
+			SayBattle("please wait, game is about to start");
+			StopVote();
+			tas.StartGame();
 		}
 
 		public void ComTeam(TasSayEventArgs e, string[] words)
@@ -995,7 +965,7 @@ namespace Springie.autohost
 
 		public int FilterMaps(string[] words, out string[] vals, out int[] indexes)
 		{
-			return FilterMaps(words, this, ladder, out vals, out indexes);
+			return FilterMaps(words, this, out vals, out indexes);
 		}
 
 		internal static int FilterMods(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
@@ -1024,14 +994,6 @@ namespace Springie.autohost
 			return Filter(temp, words, out vals, out indexes);
 		}
 
-
-		internal static int FilterPresets(string[] words, AutoHost autohost, out string[] vals, out int[] indexes)
-		{
-			var temp = new string[autohost.presets.Count];
-			var cnt = 0;
-			foreach (var p in autohost.presets) temp[cnt++] = p.Name + " --> " + p.Description;
-			return Filter(temp, words, out vals, out indexes);
-		}
 
 		internal static int FilterUsers(string[] words, TasClient tas, Spring spring, out string[] vals, out int[] indexes)
 		{
@@ -1170,21 +1132,7 @@ namespace Springie.autohost
 		}
 
 
-		void ComListPresets(TasSayEventArgs e, string[] words)
-		{
-			string[] vals;
-			int[] indexes;
-
-			if (FilterPresets(words, out vals, out indexes) > 0)
-			{
-				tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-				for (var i = 0; i < vals.Length; ++i) tas.Say(TasClient.SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
-				tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-			}
-			else Respond(e, "no such preset found");
-		}
-
-		void ComMap(TasSayEventArgs e, string[] words)
+		public void ComMap(TasSayEventArgs e, params string[] words)
 		{
 			if (words.Length == 0)
 			{
@@ -1284,17 +1232,12 @@ namespace Springie.autohost
 			}
 		}
 
-		static int FilterMaps(string[] words, AutoHost ah, Ladder ladder, out string[] vals, out int[] indexes)
+		static int FilterMaps(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
 		{
 			var temp = new string[Program.main.UnitSyncWrapper.MapList.Keys.Count];
 			var cnt = 0;
 			foreach (var s in Program.main.UnitSyncWrapper.MapList.Keys)
 			{
-				if (ladder != null)
-				{
-					if (ladder.Maps.Contains(s.ToLower())) temp[cnt++] = s;
-				}
-				else
 				{
 					var limit = ah.config.LimitMaps;
 					if (limit != null && limit.Length > 0)
@@ -1321,10 +1264,6 @@ namespace Springie.autohost
 			return FilterMods(words, this, out vals, out indexes);
 		}
 
-		int FilterPresets(string[] words, out string[] vals, out int[] indexes)
-		{
-			return FilterPresets(words, this, out vals, out indexes);
-		}
 
 		int FilterUsers(string[] words, out string[] vals, out int[] indexes)
 		{

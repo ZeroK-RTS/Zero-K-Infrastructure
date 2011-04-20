@@ -108,10 +108,8 @@ namespace Springie.autohost
         public string Password { get { return password; } set { password = value; } }
 
         public bool PlanetWarsEnabled;
-        public string PlanetWarsServerPassword;
         public List<PrivilegedUser> PrivilegedUsers = new List<PrivilegedUser>();
         public bool RedirectGameChat = true;
-        public bool StatsEnabled = true;
 
         [Category("Basic options")]
         [Description("Should Springie use hole punching NAT traversal method? - Incompatible with gargamel mode")]
@@ -316,8 +314,6 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("clearbox", 1, "[<number>] - removes a box (or removes all boxes if number not specified)"), addedCommands);
 
-            AddMissing(new CommandConfig("listpresets", 0, "[<presetname>..] - lists all presets this server has (with name filtering)", 5),
-                       addedCommands);
 
             AddMissing(new CommandConfig("listoptions", 1, " - lists all mod/map options", 5), addedCommands);
 
