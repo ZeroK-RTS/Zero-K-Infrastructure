@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Helpers;
@@ -11,24 +10,30 @@ namespace ZeroKWeb.Controllers
 {
 	public class LaddersController: Controller
 	{
-
 		public ActionResult Games()
 		{
 			var db = new ZkDataContext();
-			var data = db.SpringBattles.Where(x=>x.StartTime.Date < DateTime.Now.Date).GroupBy(x => x.StartTime.Date).OrderBy(x=>x.Key).Select(x => new { x.Key, val = x.SelectMany(y=>y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count()});
-			var data2 = db.SpringBattles.Where(x => x.StartTime.Date < DateTime.Now.Date).GroupBy(x => x.StartTime.Date).OrderBy(x => x.Key).Select(x => new { x.Key, val2 = x.SelectMany(y => y.SpringBattlePlayers.Where(z=>z.IsSpectator)).Select(z => z.AccountID).Distinct().Count() });
-			var data3 = db.SpringBattles.Where(x => x.StartTime.Date < DateTime.Now.Date).GroupBy(x => x.StartTime.Date).OrderBy(x => x.Key).Select(x => new { x.Key, val3 = x.Sum(y=>y.Duration * y.PlayerCount)/10000});
+			var data =
+				db.SpringBattles.Where(x => x.StartTime.Date < DateTime.Now.Date).GroupBy(x => x.StartTime.Date).OrderBy(x => x.Key).Select(
+					x =>
+					new
+					{
+						Day = x.Key,
+						PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
+						Players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => z.IsSpectator)).Select(z => z.AccountID).Distinct().Count(),
+						//PlayerHours = x.Sum(y => y.Duration*y.PlayerCount)/10000,
+						MinutesPerPlayer = x.SelectMany(y=>y.SpringBattlePlayers).GroupBy(y=>y.Account).Average(y=>y.Where(z=>!z.IsSpectator).Sum(z=>z.SpringBattle.Duration))/60
+						});
 
+			var chart = new Chart(1500, 700, ChartTheme.Blue);
 
-			Chart chart = new Chart(2024, 700);
 			chart.AddTitle("Daily activity");
-			chart.AddLegend("Daily players + specs (people)", "dps");
-			chart.AddLegend("Daily players (people)", "dp");
-			chart.AddLegend("Daily player minutes (10k)", "dpm");
-			chart.AddSeries("playing+spec", "Line", xValue: data.Select(x => x.Key), yValues: data.Select(x => x.val), legend:"dps");
-			chart.AddSeries("playing", "Line", xValue: data2.Select(x => x.Key), yValues: data2.Select(x => x.val2), legend:"dp");
-			chart.AddSeries("playerminutes", "Line", xValue: data3.Select(x => x.Key), yValues: data3.Select(x => x.val3), legend:"dpm" );
+			chart.AddLegend("Daily values", "dps");
 
+			chart.AddSeries("unique players+specs", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PlayersAndSpecs), legend: "dps");
+			chart.AddSeries("unique players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.Players), legend: "dps");
+			//chart.AddSeries("playerseconds/10k", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PlayerHours), legend: "dps");
+			chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.MinutesPerPlayer), legend: "dps");
 
 			return File(chart.GetBytes(), "image/jpeg");
 		}
