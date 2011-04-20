@@ -14,7 +14,7 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 			var data = from bat in db.SpringBattles
-			           where bat.StartTime.Date < DateTime.Now.Date
+			           where bat.StartTime.Date < DateTime.Now.Date  && bat.StartTime.Date > new DateTime(2011,2,3)
 			           group bat by bat.StartTime.Date
 			           into x orderby x.Key
 			           let players = x.SelectMany(y => y.SpringBattlePlayers.Where(z => !z.IsSpectator)).Select(z => z.AccountID).Distinct().Count()
@@ -24,7 +24,8 @@ namespace ZeroKWeb.Controllers
 			           		Day = x.Key,
 			           		PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
 			           		Players = players,
-			           		MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players
+			           		MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players,
+										FirstGamePlayers = x.SelectMany(y=>y.SpringBattlePlayers).GroupBy(y=>y.Account).Where(y=>y.Any(z=>z == y.Key.SpringBattlePlayers.First())).Count()
 			           	};
 
 			var chart = new Chart(1500, 700, ChartTheme.Blue);
@@ -35,6 +36,7 @@ namespace ZeroKWeb.Controllers
 			chart.AddSeries("unique players+specs", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PlayersAndSpecs), legend: "dps");
 			chart.AddSeries("unique players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.Players), legend: "dps");
 			chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.MinutesPerPlayer), legend: "dps");
+			chart.AddSeries("first game players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.FirstGamePlayers), legend: "dps");
 
 			return File(chart.GetBytes(), "image/jpeg");
 		}
