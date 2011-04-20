@@ -44,6 +44,7 @@ namespace GalaxyDesigner
 			var mid = (int?)((ComboBoxItem)cbMaps.SelectedItem).Tag;
 			
 			planet.Resource = new ZkDataContext().Resources.Single(x => x.ResourceID == mid);
+			planet.MapResourceID = planet.Resource.ResourceID;
 			planet.PlanetStructures.Clear();
 			foreach (ListBoxItem s in lbStructures.Items)
 			{

@@ -141,7 +141,10 @@ namespace GalaxyDesigner
 			foreach (var dupMap in PlanetDrawings.GroupBy(x => x.Planet.MapResourceID).Where(x => x.Count() > 1))
 			{
 				var p = dupMap.First();
-				var item = new ListBoxItem { Background = Brushes.Red, Content = string.Format("{0} has duplicate map ({1})", (p.Planet.Name ?? "Planet"), p.Planet.Resource.InternalName) };
+				ListBoxItem item;
+				if (p.Planet.MapResourceID == null) item = new ListBoxItem { Background = Brushes.Red, Content = string.Format("{0} has no map", (p.Planet.Name ?? "Planet")) };
+				else if (p.Planet.Resource == null) item = new ListBoxItem { Background = Brushes.Red, Content = string.Format("{0} has duplicate map", (p.Planet.Name ?? "Planet")) };
+				else item = new ListBoxItem { Background = Brushes.Red, Content = string.Format("{0} has duplicate map ({1})", (p.Planet.Name ?? "Planet"), p.Planet.Resource.InternalName) };
 				var planet = p;
 				item.MouseUp += (s, e) => planet.Grow();
 				WarningList.Items.Add(item);
@@ -240,6 +243,7 @@ namespace GalaxyDesigner
 				{
 					var p = d.Planet;
 					p.GalaxyID = galaxyNumber;
+					p.OwnerAccountID = null;
 					p.X = (float)(Canvas.GetLeft(d)/imageSource.Width);
 					p.Y = (float)(Canvas.GetTop(d)/imageSource.Height);
 					if (p.MapResourceID == null)

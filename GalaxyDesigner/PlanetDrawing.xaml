@@ -31,7 +31,7 @@
         <Label
             
             Name="lbName"
-            FontSize="5"
+            FontSize="10"
             FontStyle="Normal"
             Canvas.Top ="10"
             Foreground="White"
@@ -39,7 +39,7 @@
 
     <Label
             Name="Structs"
-            FontSize="3"
+            FontSize="7"
             FontStyle="Normal"
             Foreground="White"
             x:FieldModifier="public" />
