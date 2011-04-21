@@ -26,7 +26,7 @@ namespace ZkData
 					// iterate links to this planet
 					foreach (var link in db.Links.Where(l => l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID))
 					{
-						var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID1 : link.PlanetByPlanetID2;
+						var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
 						var otherLinkStrenght = otherPlanet.PlanetStructures.Max(s => s.StructureType.EffectLinkStrength) ?? 0;
 
 						// iterate accountPlanets on other side of the link
@@ -46,11 +46,13 @@ namespace ZkData
 								}
 
 								// increment shadow influence of player on the other side of the link
-								thisAccountPlanet.ShadowInfluence += (int) (otherAccountPlanet.Influence*(1 + thisLinkStrenght)*(1 + otherLinkStrenght));
+								var influenceFactor = GlobalConst.ShadowInfluenceFactor*(1 + thisLinkStrenght)*(1 + otherLinkStrenght);
+								thisAccountPlanet.ShadowInfluence += (int)(otherAccountPlanet.Influence * influenceFactor);
 							}
 						}
 					}
 				}
+				// TODO: make planets flip side?
 				db.SubmitChanges();
 				scope.Complete();
 			}

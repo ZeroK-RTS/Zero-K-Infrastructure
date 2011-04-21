@@ -4,6 +4,7 @@
 @{
   ViewBag.Title = "Planet";
   Layout = "~/Views/Shared/_SiteLayout.cshtml";
+  // ZkData.Galaxy.RecalculateShadowInfluence();
 }
 <h1>
   @{
@@ -60,19 +61,33 @@
     @{
         
     }
-  @foreach (var clanGroup in Model.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderBy(g => g.Sum(ap => ap.Influence)))
+  @foreach (var clanGroup in Model.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderBy(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)))
   {
     <tr>
       
       <td><h3>@Html.PrintClan(clanGroup.Key)</h3></td>
-      <td><h3>@clanGroup.Sum(ap => ap.Influence)</h3></td>
+      <td><h3>@clanGroup.Sum(ap => ap.Influence + ap.ShadowInfluence)</h3></td>
 
-      @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence))
+      @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence))
       {
         <tr>
           <td>@Html.PrintAccount(accountPlanet.Account)</td>
-          <td>@accountPlanet.Influence</td>
+          <td>@String.Format("{0}", accountPlanet.Influence + accountPlanet.ShadowInfluence)</td>
         </tr>
+          if (accountPlanet.Influence > 0)
+          {
+            <tr>
+                <td>Planet influence</td>
+                <td>@accountPlanet.Influence</td>
+            </tr>
+          }
+          if (accountPlanet.ShadowInfluence > 0)
+          {
+            <tr>
+                <td>Influence from connected planets</td>
+                <td>@accountPlanet.ShadowInfluence</td>
+            </tr>
+          }
       }
 
     </tr>
