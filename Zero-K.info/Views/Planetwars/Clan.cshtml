@@ -52,6 +52,6 @@
 @Html.ActionLink("Back to clan list", "ClanList")
 <hr />
 @if (isMember) {
-  Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new {clanID = c.ClanID} });
+  Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new {clanID = c.ClanID, threadID = Model.ForumThreadID} });
 }
 

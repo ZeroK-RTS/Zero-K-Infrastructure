@@ -3943,7 +3943,7 @@ namespace ZkData
 		
 		private EntitySet<ForumThreadLastRead> _ForumThreadLastReads;
 		
-		private EntityRef<Clan> _Clans;
+		private EntitySet<Clan> _Clans;
 		
 		private EntityRef<ForumCategory> _ForumCategory;
 		
@@ -4401,38 +4401,22 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Clan", Storage="_Clans", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Clan", Storage="_Clans", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
-		public Clan Clans
+		public EntitySet<Clan> Clans
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._Clans.HasLoadedOrAssignedValue == false)))
+							&& (this._Clans.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._Clans.Entity;
+				return this._Clans;
 			}
 			set
 			{
-				Clan previousValue = this._Clans.Entity;
-				if (((previousValue != value) 
-							|| (this._Clans.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Clans.Entity = null;
-						previousValue.ForumThread = null;
-					}
-					this._Clans.Entity = value;
-					if ((value != null))
-					{
-						value.ForumThread = this;
-					}
-					this.SendPropertyChanged("Clans");
-				}
+				this._Clans.Assign(value);
 			}
 		}
 		
@@ -4616,6 +4600,18 @@ namespace ZkData
 			entity.ForumThread = null;
 		}
 		
+		private void attach_Clans(Clan entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumThread = this;
+		}
+		
+		private void detach_Clans(Clan entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumThread = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = default(EntityRef<Mission>);
@@ -4623,7 +4619,7 @@ namespace ZkData
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
 			this._SpringBattles = default(EntityRef<SpringBattle>);
 			this._ForumThreadLastReads = new EntitySet<ForumThreadLastRead>(new Action<ForumThreadLastRead>(this.attach_ForumThreadLastReads), new Action<ForumThreadLastRead>(this.detach_ForumThreadLastReads));
-			this._Clans = default(EntityRef<Clan>);
+			this._Clans = new EntitySet<Clan>(new Action<Clan>(this.attach_Clans), new Action<Clan>(this.detach_Clans));
 			this._ForumCategory = default(EntityRef<ForumCategory>);
 			this._AccountByCreatedAccountID = default(EntityRef<Account>);
 			this._AccountByLastPostAccountID = default(EntityRef<Account>);
@@ -12715,6 +12711,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _ForumThreadID;
 		
+		private bool _IsDeleted;
+		
 		private EntitySet<Account> _Accounts;
 		
 		private EntitySet<ForumThread> _ForumThreads;
@@ -12753,6 +12751,8 @@ namespace ZkData
     partial void OnLeaderTitleChanged();
     partial void OnForumThreadIDChanging(System.Nullable<int> value);
     partial void OnForumThreadIDChanged();
+    partial void OnIsDeletedChanging(bool value);
+    partial void OnIsDeletedChanged();
     #endregion
 		
 		public Clan()
@@ -12932,8 +12932,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDeleted", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public bool IsDeleted
+		{
+			get
+			{
+				return this._IsDeleted;
+			}
+			set
+			{
+				if ((this._IsDeleted != value))
+				{
+					this.OnIsDeletedChanging(value);
+					this.SendPropertyChanging();
+					this._IsDeleted = value;
+					this.SendPropertyChanged("IsDeleted");
+					this.OnIsDeletedChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Accounts", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<Account> Accounts
 		{
 			get
@@ -12952,7 +12973,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_ForumThread", Storage="_ForumThreads", ThisKey="ClanID", OtherKey="RestrictedClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreads
 		{
 			get
@@ -12971,7 +12992,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByOfferingClanID
 		{
 			get
@@ -12990,7 +13011,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_TreatyOffersByTargetClanID", ThisKey="ClanID", OtherKey="TargetClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByTargetClanID
 		{
 			get
@@ -13009,7 +13030,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_EventClan", Storage="_EventClans", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<EventClan> EventClans
 		{
 			get
@@ -13028,7 +13049,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="ClanID", OtherKey="OwnerClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -13047,7 +13068,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -13082,12 +13103,12 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._ForumThread.Entity = null;
-						previousValue.Clans = null;
+						previousValue.Clans.Remove(this);
 					}
 					this._ForumThread.Entity = value;
 					if ((value != null))
 					{
-						value.Clans = this;
+						value.Clans.Add(this);
 						this._ForumThreadID = value.ForumThreadID;
 					}
 					else
@@ -14289,6 +14310,8 @@ namespace ZkData
 		
 		private int _Influence;
 		
+		private int _ShadowInfluence;
+		
 		private EntityRef<Planet> _Planet;
 		
 		private EntityRef<Account> _Account;
@@ -14305,6 +14328,8 @@ namespace ZkData
     partial void OnDropshipCountChanged();
     partial void OnInfluenceChanging(int value);
     partial void OnInfluenceChanged();
+    partial void OnShadowInfluenceChanging(int value);
+    partial void OnShadowInfluenceChanged();
     #endregion
 		
 		public AccountPlanet()
@@ -14400,6 +14425,27 @@ namespace ZkData
 					this._Influence = value;
 					this.SendPropertyChanged("Influence");
 					this.OnInfluenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ShadowInfluence", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public int ShadowInfluence
+		{
+			get
+			{
+				return this._ShadowInfluence;
+			}
+			set
+			{
+				if ((this._ShadowInfluence != value))
+				{
+					this.OnShadowInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._ShadowInfluence = value;
+					this.SendPropertyChanged("ShadowInfluence");
+					this.OnShadowInfluenceChanged();
 				}
 			}
 		}
