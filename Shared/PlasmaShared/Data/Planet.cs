@@ -10,7 +10,7 @@ namespace ZkData
 
 	partial class Planet
 	{
-
+		// TODO: update for shadow influence
 		public int GetIPToCapture()
 		{
 			var ownerIP = 0;

@@ -130,7 +130,6 @@ namespace ZeroKWeb.Controllers
 			else return Content("You cannot join this clan");
 		}
 
-		[Auth]
 		public ActionResult Planet(int id)
 		{
 			var db = new ZkDataContext();

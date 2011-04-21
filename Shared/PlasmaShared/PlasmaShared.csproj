@@ -94,6 +94,7 @@
     <Compile Include="Data\Commander.cs" />
     <Compile Include="Data\ForumPost.cs" />
     <Compile Include="Data\ForumThread.cs" />
+    <Compile Include="Data\Galaxy.cs" />
     <Compile Include="Data\IAuthService.cs" />
     <Compile Include="Data\LobbyMessage.cs" />
     <Compile Include="Data\MapRating.cs" />
@@ -171,6 +172,7 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.Services" />
