@@ -57,7 +57,7 @@ namespace ZeroKWeb.Controllers
 		}
 
 		[Auth]
-		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, string text, string title)
+		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, string text, string title)
 		{
 			if (string.IsNullOrEmpty(text)) return Content("Please type some text :)");
 
@@ -95,6 +95,16 @@ namespace ZeroKWeb.Controllers
 				db.ForumThreads.InsertOnSubmit(thread);
 			}
 
+			if (thread == null && clanID != null)
+			{
+				var clan = db.Clans.Single(x => x.ClanID == clanID);
+				thread = new ForumThread() { Title = clan.ClanName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+				thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsClans);
+				clan.ForumThread = thread;
+				thread.Clan = clan;
+				db.ForumThreads.InsertOnSubmit(thread);
+			}
+
 			if (thread == null) return Content("Thread not found");
 			if (thread.IsLocked) return Content("Thread is locked");
 
@@ -115,6 +125,7 @@ namespace ZeroKWeb.Controllers
 			if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
 			else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
 			else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
+			else if (clanID.HasValue) return RedirectToAction("Clan", "Planetwars", new { id = clanID });
 			else return RedirectToAction("Thread", new { id = thread.ForumThreadID });
 		}
 
@@ -128,6 +139,7 @@ namespace ZeroKWeb.Controllers
 				if (cat.IsMissions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.MissionID });
 				if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.ResourceID });
 				if (cat.IsSpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.SpringBattleID });
+				if (cat.IsClans) return RedirectToAction("Clan", "Planetwars", new { id = t.RestrictedClanID});
 			}
 
 			var res = new ThreadResult();

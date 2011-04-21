@@ -9,11 +9,14 @@
     $('#clanTable').tablesorter();
   }); 
 </script>
+@if (Global.Clan == null) {
 <div>
-To take active part in <a href='@Url.Action("Index","Planetwars")'>PlanetWars</a> join a clan. <br />
+To take active part in <a href='@Url.Action("Index", "Planetwars")'>PlanetWars</a> join a clan. <br />
 Clan you join or create <b>cannot be changed</b> for the duration of planetwars galaxy, so pick carefully!<br />
-You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
+You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars") <br />
+Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
 </div>
+}
 
 
 <table id="clanTable" class="tablesorter">
@@ -34,9 +37,11 @@ You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
       </th>
       <th>Elo (avg)</th>
       <th>Level (med)</th>
+      @if (Global.Account == null) {
       <th>
         Can join?
       </th>
+      }
     </tr>
   </thead>
   <tbody>
@@ -50,10 +55,13 @@ You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")
       <td>@c.Accounts.Count()</td>
       <td>@Math.Round(c.Accounts.Average(x=>x.Elo))</td>
       <td>@c.Accounts.OrderBy(x=>x.Level).Skip(c.Accounts.Count()/2).First().Level</td>
-      @if (c.CanJoin(Global.Account)) {
-        <td>@Html.ActionLink("Join now!", "JoinClan", new { id = c.ClanID }, new {@class="delete"}) @(string.IsNullOrEmpty(c.Password) ? "" :"password")</td>
-      } else {
-        <td>No</td>
+      
+      @if (Global.Clan == null) {
+        if (c.CanJoin(Global.Account)) {
+        <td>@Html.ActionLink("Join now!", "JoinClan", new { id = c.ClanID }, new { @class = "delete" }) @(string.IsNullOrEmpty(c.Password) ? "" : "password")</td>
+        } else {
+        <td>Full</td>
+        }
       }
       
     </tr>

@@ -16,6 +16,15 @@ namespace ZeroKWeb
 			}
 		}
 
+		public static int ClanID
+		{
+			get
+			{
+				if (IsAccountAuthorized && Clan != null) return Clan.ClanID;
+				else return 0;
+			} 
+		}
+
 		public static Clan Clan
 		{
 			get

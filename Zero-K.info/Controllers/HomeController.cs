@@ -106,10 +106,12 @@ namespace ZeroKWeb.Controllers
 
 			result.LobbyStats = AuthServiceClient.GetLobbyStats();
 
-			if (!Global.IsAccountAuthorized) result.NewThreads = db.ForumThreads.OrderByDescending(x => x.LastPost).Take(10).Select(x => new NewThreadEntry() { ForumThread = x });
+
+			var accessibleThreads = db.ForumThreads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID);
+			if (!Global.IsAccountAuthorized) result.NewThreads = accessibleThreads.OrderByDescending(x => x.LastPost).Take(10).Select(x => new NewThreadEntry() { ForumThread = x });
 			else
 			{
-				result.NewThreads = (from t in db.ForumThreads
+				result.NewThreads = (from t in accessibleThreads
 				                     let read = t.ForumThreadLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)
 				                     where read == null || t.LastPost > read.LastRead
 				                     orderby t.LastPost descending

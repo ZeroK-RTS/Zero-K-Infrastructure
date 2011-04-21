@@ -102,7 +102,7 @@
         <h3>
           Posted threads</h3>
         <span nowrap="nowrap">@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span><br />
-   foreach (var t in Model.ForumPosts.Select(x => x.ForumThread).Distinct().OrderByDescending(x => x.ForumThreadID).Take(10)) {
+   foreach (var t in Model.ForumPosts.OrderByDescending(x=>x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10)) {
           <small><img src="../../Img/bullet.png" alt="bullet" />  <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
    }
       }

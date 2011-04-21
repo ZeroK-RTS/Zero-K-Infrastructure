@@ -21,7 +21,12 @@ namespace ZeroKWeb.Controllers
 		public ActionResult Clan(int id)
 		{
 			var db = new ZkDataContext();
-			return View(db.Clans.First(x => x.ClanID == id));
+			var clan = db.Clans.First(x => x.ClanID == id);
+			if (Global.Clan == clan)
+			{
+				clan.ForumThread.UpdateLastRead(Global.AccountID, false);
+			}
+			return View(clan);
 		}
 
 		public ActionResult ClanList()

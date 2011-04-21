@@ -3931,6 +3931,8 @@ namespace ZkData
 		
 		private bool _IsPinned;
 		
+		private System.Nullable<int> _RestrictedClanID;
+		
 		private EntityRef<Mission> _Missions;
 		
 		private EntityRef<Resource> _Resources;
@@ -3941,11 +3943,15 @@ namespace ZkData
 		
 		private EntitySet<ForumThreadLastRead> _ForumThreadLastReads;
 		
+		private EntityRef<Clan> _Clans;
+		
 		private EntityRef<ForumCategory> _ForumCategory;
 		
 		private EntityRef<Account> _AccountByCreatedAccountID;
 		
 		private EntityRef<Account> _AccountByLastPostAccountID;
+		
+		private EntityRef<Clan> _Clan;
 		
 		private bool serializing;
 		
@@ -3975,6 +3981,8 @@ namespace ZkData
     partial void OnForumCategoryIDChanged();
     partial void OnIsPinnedChanging(bool value);
     partial void OnIsPinnedChanged();
+    partial void OnRestrictedClanIDChanging(System.Nullable<int> value);
+    partial void OnRestrictedClanIDChanged();
     #endregion
 		
 		public ForumThread()
@@ -4225,8 +4233,33 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RestrictedClanID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public System.Nullable<int> RestrictedClanID
+		{
+			get
+			{
+				return this._RestrictedClanID;
+			}
+			set
+			{
+				if ((this._RestrictedClanID != value))
+				{
+					if (this._Clan.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRestrictedClanIDChanging(value);
+					this.SendPropertyChanging();
+					this._RestrictedClanID = value;
+					this.SendPropertyChanged("RestrictedClanID");
+					this.OnRestrictedClanIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Mission", Storage="_Missions", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public Mission Missions
 		{
 			get
@@ -4261,7 +4294,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Resource", Storage="_Resources", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public Resource Resources
 		{
 			get
@@ -4296,7 +4329,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_ForumPost", Storage="_ForumPosts", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -4315,7 +4348,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_SpringBattle", Storage="_SpringBattles", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public SpringBattle SpringBattles
 		{
 			get
@@ -4350,7 +4383,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="ForumThreadID", OtherKey="ForumThreadID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<ForumThreadLastRead> ForumThreadLastReads
 		{
 			get
@@ -4365,6 +4398,41 @@ namespace ZkData
 			set
 			{
 				this._ForumThreadLastReads.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Clan", Storage="_Clans", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		public Clan Clans
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Clans.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._Clans.Entity;
+			}
+			set
+			{
+				Clan previousValue = this._Clans.Entity;
+				if (((previousValue != value) 
+							|| (this._Clans.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Clans.Entity = null;
+						previousValue.ForumThread = null;
+					}
+					this._Clans.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThread = this;
+					}
+					this.SendPropertyChanged("Clans");
+				}
 			}
 		}
 		
@@ -4470,6 +4538,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_ForumThread", Storage="_Clan", ThisKey="RestrictedClanID", OtherKey="ClanID", IsForeignKey=true, DeleteRule="CASCADE")]
+		public Clan Clan
+		{
+			get
+			{
+				return this._Clan.Entity;
+			}
+			set
+			{
+				Clan previousValue = this._Clan.Entity;
+				if (((previousValue != value) 
+							|| (this._Clan.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Clan.Entity = null;
+						previousValue.ForumThreads.Remove(this);
+					}
+					this._Clan.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThreads.Add(this);
+						this._RestrictedClanID = value.ClanID;
+					}
+					else
+					{
+						this._RestrictedClanID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Clan");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -4521,9 +4623,11 @@ namespace ZkData
 			this._ForumPosts = new EntitySet<ForumPost>(new Action<ForumPost>(this.attach_ForumPosts), new Action<ForumPost>(this.detach_ForumPosts));
 			this._SpringBattles = default(EntityRef<SpringBattle>);
 			this._ForumThreadLastReads = new EntitySet<ForumThreadLastRead>(new Action<ForumThreadLastRead>(this.attach_ForumThreadLastReads), new Action<ForumThreadLastRead>(this.detach_ForumThreadLastReads));
+			this._Clans = default(EntityRef<Clan>);
 			this._ForumCategory = default(EntityRef<ForumCategory>);
 			this._AccountByCreatedAccountID = default(EntityRef<Account>);
 			this._AccountByLastPostAccountID = default(EntityRef<Account>);
+			this._Clan = default(EntityRef<Clan>);
 			OnCreated();
 		}
 		
@@ -8734,6 +8838,8 @@ namespace ZkData
 		
 		private bool _IsSpringBattles;
 		
+		private bool _IsClans;
+		
 		private EntitySet<ForumThread> _ForumThreads;
 		
 		private EntitySet<ForumCategory> _ChildForumCategories;
@@ -8762,6 +8868,8 @@ namespace ZkData
     partial void OnSortOrderChanged();
     partial void OnIsSpringBattlesChanging(bool value);
     partial void OnIsSpringBattlesChanged();
+    partial void OnIsClansChanging(bool value);
+    partial void OnIsClansChanged();
     #endregion
 		
 		public ForumCategory()
@@ -8941,8 +9049,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsClans", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public bool IsClans
+		{
+			get
+			{
+				return this._IsClans;
+			}
+			set
+			{
+				if ((this._IsClans != value))
+				{
+					this.OnIsClansChanging(value);
+					this.SendPropertyChanging();
+					this._IsClans = value;
+					this.SendPropertyChanged("IsClans");
+					this.OnIsClansChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumThread", Storage="_ForumThreads", ThisKey="ForumCategoryID", OtherKey="ForumCategoryID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreads
 		{
 			get
@@ -8961,7 +9090,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumCategory", Storage="_ChildForumCategories", ThisKey="ForumCategoryID", OtherKey="ParentForumCategoryID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<ForumCategory> ChildForumCategories
 		{
 			get
@@ -12584,7 +12713,11 @@ namespace ZkData
 		
 		private string _LeaderTitle;
 		
+		private System.Nullable<int> _ForumThreadID;
+		
 		private EntitySet<Account> _Accounts;
+		
+		private EntitySet<ForumThread> _ForumThreads;
 		
 		private EntitySet<TreatyOffer> _TreatyOffersByOfferingClanID;
 		
@@ -12595,6 +12728,8 @@ namespace ZkData
 		private EntitySet<PlanetOwnerHistory> _PlanetOwnerHistories;
 		
 		private EntitySet<PlanetInfluenceHistory> _PlanetInfluenceHistories;
+		
+		private EntityRef<ForumThread> _ForumThread;
 		
 		private bool serializing;
 		
@@ -12616,6 +12751,8 @@ namespace ZkData
     partial void OnShortcutChanged();
     partial void OnLeaderTitleChanging(string value);
     partial void OnLeaderTitleChanged();
+    partial void OnForumThreadIDChanging(System.Nullable<int> value);
+    partial void OnForumThreadIDChanged();
     #endregion
 		
 		public Clan()
@@ -12770,8 +12907,33 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<int> ForumThreadID
+		{
+			get
+			{
+				return this._ForumThreadID;
+			}
+			set
+			{
+				if ((this._ForumThreadID != value))
+				{
+					if (this._ForumThread.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnForumThreadIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumThreadID = value;
+					this.SendPropertyChanged("ForumThreadID");
+					this.OnForumThreadIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Accounts", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public EntitySet<Account> Accounts
 		{
 			get
@@ -12789,8 +12951,27 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_ForumThread", Storage="_ForumThreads", ThisKey="ClanID", OtherKey="RestrictedClanID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		public EntitySet<ForumThread> ForumThreads
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ForumThreads.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ForumThreads;
+			}
+			set
+			{
+				this._ForumThreads.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByOfferingClanID
 		{
 			get
@@ -12809,7 +12990,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_TreatyOffersByTargetClanID", ThisKey="ClanID", OtherKey="TargetClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByTargetClanID
 		{
 			get
@@ -12828,7 +13009,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_EventClan", Storage="_EventClans", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<EventClan> EventClans
 		{
 			get
@@ -12847,7 +13028,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="ClanID", OtherKey="OwnerClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -12866,7 +13047,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -12881,6 +13062,40 @@ namespace ZkData
 			set
 			{
 				this._PlanetInfluenceHistories.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Clan", Storage="_ForumThread", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsForeignKey=true)]
+		public ForumThread ForumThread
+		{
+			get
+			{
+				return this._ForumThread.Entity;
+			}
+			set
+			{
+				ForumThread previousValue = this._ForumThread.Entity;
+				if (((previousValue != value) 
+							|| (this._ForumThread.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ForumThread.Entity = null;
+						previousValue.Clans = null;
+					}
+					this._ForumThread.Entity = value;
+					if ((value != null))
+					{
+						value.Clans = this;
+						this._ForumThreadID = value.ForumThreadID;
+					}
+					else
+					{
+						this._ForumThreadID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ForumThread");
+				}
 			}
 		}
 		
@@ -12911,6 +13126,18 @@ namespace ZkData
 		}
 		
 		private void detach_Accounts(Account entity)
+		{
+			this.SendPropertyChanging();
+			entity.Clan = null;
+		}
+		
+		private void attach_ForumThreads(ForumThread entity)
+		{
+			this.SendPropertyChanging();
+			entity.Clan = this;
+		}
+		
+		private void detach_ForumThreads(ForumThread entity)
 		{
 			this.SendPropertyChanging();
 			entity.Clan = null;
@@ -12979,11 +13206,13 @@ namespace ZkData
 		private void Initialize()
 		{
 			this._Accounts = new EntitySet<Account>(new Action<Account>(this.attach_Accounts), new Action<Account>(this.detach_Accounts));
+			this._ForumThreads = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreads), new Action<ForumThread>(this.detach_ForumThreads));
 			this._TreatyOffersByOfferingClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByOfferingClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByOfferingClanID));
 			this._TreatyOffersByTargetClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByTargetClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByTargetClanID));
 			this._EventClans = new EntitySet<EventClan>(new Action<EventClan>(this.attach_EventClans), new Action<EventClan>(this.detach_EventClans));
 			this._PlanetOwnerHistories = new EntitySet<PlanetOwnerHistory>(new Action<PlanetOwnerHistory>(this.attach_PlanetOwnerHistories), new Action<PlanetOwnerHistory>(this.detach_PlanetOwnerHistories));
 			this._PlanetInfluenceHistories = new EntitySet<PlanetInfluenceHistory>(new Action<PlanetInfluenceHistory>(this.attach_PlanetInfluenceHistories), new Action<PlanetInfluenceHistory>(this.detach_PlanetInfluenceHistories));
+			this._ForumThread = default(EntityRef<ForumThread>);
 			OnCreated();
 		}
 		

@@ -6,8 +6,8 @@
   var isMember = c.Accounts.Any(y => y.AccountID == Global.AccountID);
 }
 
-
 <h2>@c.ClanName</h2>
+@Html.ActionLink("Back to clan list", "ClanList")
 <table>
   <tr>
     <td>
@@ -35,7 +35,7 @@
   Members</h3>
 @foreach (var a in c.Accounts) {
     @Html.PrintAccount(a)
-    if (isMember && Global.Account.HasClanRights && !a.IsClanFounder || Global.Account.IsZeroKAdmin)
+    if (isMember && Global.Account.HasClanRights && !a.IsClanFounder)
     { //has rights
           <span>&nbsp</span>
         // todo: disallow kicking after the round starts
@@ -49,4 +49,9 @@
   @Html.ActionLink("modify this clan", "CreateClan", new { id = c.ClanID })
 }
 <br />
-<a href='/planetwars/ClanList'>Clan list</a>
+@Html.ActionLink("Back to clan list", "ClanList")
+<hr />
+@if (isMember) {
+  Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new {clanID = c.ClanID} });
+}
+

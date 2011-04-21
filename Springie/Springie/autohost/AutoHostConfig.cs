@@ -391,7 +391,7 @@ namespace Springie.autohost
 
             AddMissing(
                 new CommandConfig("cheats",
-                                  3,
+                                  2,
                                   "enables/disables .cheats in game",
                                   0,
                                   new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }),

@@ -139,14 +139,17 @@
       <Column Name="IsLocked" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="ForumCategoryID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsPinned" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="RestrictedClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="ForumThread_Mission" Member="Missions" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Mission" Cardinality="One" />
       <Association Name="ForumThread_Resource" Member="Resources" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Resource" Cardinality="One" />
       <Association Name="ForumThread_ForumPost" Member="ForumPosts" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumPost" />
       <Association Name="ForumThread_SpringBattle" Member="SpringBattles" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="SpringBattle" Cardinality="One" />
       <Association Name="ForumThread_ForumThreadLastRead" Member="ForumThreadLastReads" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThreadLastRead" />
+      <Association Name="ForumThread_Clan" Member="Clans" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="Clan" Cardinality="One" />
       <Association Name="ForumCategory_ForumThread" Member="ForumCategory" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" DeleteRule="CASCADE" />
       <Association Name="Account_ForumThread" Member="AccountByCreatedAccountID" ThisKey="CreatedAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="Account_ForumThread1" Member="AccountByLastPostAccountID" ThisKey="LastPostAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Clan_ForumThread" Member="Clan" ThisKey="RestrictedClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" DeleteRule="CASCADE" />
     </Type>
   </Table>
   <Table Name="dbo.ExceptionLog" Member="ExceptionLogs">
@@ -329,6 +332,7 @@
       <Column Name="IsMaps" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="SortOrder" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="IsSpringBattles" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsClans" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="ForumCategory_ForumThread" Member="ForumThreads" ThisKey="ForumCategoryID" OtherKey="ForumCategoryID" Type="ForumThread" />
       <Association Name="ForumCategory_ForumCategory" Member="ChildForumCategories" ThisKey="ForumCategoryID" OtherKey="ParentForumCategoryID" Type="ForumCategory" />
       <Association Name="ForumCategory_ForumCategory" Member="ParentForumCategory" ThisKey="ParentForumCategoryID" OtherKey="ForumCategoryID" Type="ForumCategory" IsForeignKey="true" />
@@ -486,12 +490,15 @@
       <Column Name="SecretTopic" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
       <Column Name="Shortcut" Type="System.String" DbType="varchar(6) NOT NULL" CanBeNull="false" />
       <Column Name="LeaderTitle" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Clan_Account" Member="Accounts" ThisKey="ClanID" OtherKey="ClanID" Type="Account" />
+      <Association Name="Clan_ForumThread" Member="ForumThreads" ThisKey="ClanID" OtherKey="RestrictedClanID" Type="ForumThread" />
       <Association Name="Clan_TreatyOffer" Member="TreatyOffersByOfferingClanID" ThisKey="ClanID" OtherKey="OfferingClanID" Type="TreatyOffer" />
       <Association Name="Clan_TreatyOffer1" Member="TreatyOffersByTargetClanID" ThisKey="ClanID" OtherKey="TargetClanID" Type="TreatyOffer" />
       <Association Name="Clan_EventClan" Member="EventClans" ThisKey="ClanID" OtherKey="ClanID" Type="EventClan" />
       <Association Name="Clan_PlanetOwnerHistory" Member="PlanetOwnerHistories" ThisKey="ClanID" OtherKey="OwnerClanID" Type="PlanetOwnerHistory" />
       <Association Name="Clan_PlanetInfluenceHistory" Member="PlanetInfluenceHistories" ThisKey="ClanID" OtherKey="ClanID" Type="PlanetInfluenceHistory" />
+      <Association Name="ForumThread_Clan" Member="ForumThread" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThread" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Planet" Member="Planets">
