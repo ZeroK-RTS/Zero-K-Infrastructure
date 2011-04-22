@@ -16,54 +16,72 @@
   <input type='submit' value="Rename Planet" />
   </form>
 }
-@Html.ActionLink(Model.Resource.InternalName, "Detail", "Maps", new { id = Model.Resource.ResourceID }, null)
-<br />
-<h3>
-  Dropships</h3>
-<table>
-  @foreach (var p in Model.AccountPlanets.GroupBy(x => x.Account.Clan).Select(x => new { clan = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
-    <tr>
-      <td>@Html.PrintClan(p.clan)
-      </td>
-      <td>
-        <img src='/img/dropship.png' />
-        x @p.dropships
-      </td>
-    </tr>
-  }
-</table>
-
 <table>
   <tr>
     <td valign='top'>
-      <span style="margin: 0; padding: 0; border: 1px dashed gray; display: table-cell;
-        text-align: center; vertical-align: middle; width: 96px; height: 96px;">
-        <img src='http://zero-k.info/Resources/@Model.Resource.ThumbnailName' style="margin:0px;padding:0px;"/>
-      </span>
+      <h3>
+        Dropships</h3>
+      <table>
+        @foreach (var p in Model.AccountPlanets.GroupBy(x => x.Account.Clan).Select(x => new { clan = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
+          <tr>
+            <td>@Html.PrintClan(p.clan)
+            </td>
+            <td>
+              <img src='/img/dropship.png' />
+              x @p.dropships
+            </td>
+          </tr>
+        }
+      </table>
+      <h3>
+        Influence on @Model.Name</h3>
+      @Html.Partial("InfluenceList", Model.AccountPlanets)
     </td>
     <td valign='top'>
+      @Html.ActionLink(Model.Resource.InternalName, "Detail", "Maps", new { id = Model.MapResourceID }, new {title="$map$" + Model.MapResourceID})
       <table>
         <tr>
-          <td>
-            Size:
+          <td valign='top'>
+            <span style="margin: 0; padding: 0; border: 1px dashed gray; display: table-cell;
+              text-align: center; vertical-align: middle; width: 96px; height: 96px;" title="$map$@Model.MapResourceID"><a href='@Url.Action("Detail", "Maps", new { id = Model.Resource.ResourceID })'>
+                <img src='http://zero-k.info/Resources/@Model.Resource.ThumbnailName' style="margin:0px;padding:0px;"/>
+              </a></span>
           </td>
-          <td>@Model.Resource.MapWidth x @Model.Resource.MapHeight
-          </td>
-        </tr>
-        <tr>
-          <td colspan='2'>
-            <small>
-              @{Html.RenderPartial("~/Views/Maps/MapTags.cshtml", Model.Resource);}
-            </small>
+          <td valign='top'>
+            <table>
+              <tr>
+                <td>
+                  Size:
+                </td>
+                <td>@Model.Resource.MapWidth x @Model.Resource.MapHeight
+                </td>
+              </tr>
+              <tr>
+                <td colspan='2'>
+                  <small>
+                    @{Html.RenderPartial("~/Views/Maps/MapTags.cshtml", Model.Resource);}
+                  </small>
+                </td>
+              </tr>
+            </table>
           </td>
         </tr>
       </table>
     </td>
   </tr>
 </table>
-<h3>
-  Influence on @Model.Name</h3>
-  @Html.Partial("InfluenceList", Model.AccountPlanets)
+<br />
+@if (Global.IsAccountAuthorized) {
+ if ((Global.Account.DropshipCount??0) <= 0 ) {
+  <span>You have no free dropships to send here</span>
+ } else {
+  <form action='@Url.Action("SendDropships","Planetwars", new{planetID = Model.PlanetID})' method="post">
+  Number of dropships to send: <input type="text" name="count" /> <input type="submit" value="send" />
+  
+  </form>
+ }
+}
+
 <h2>
   Trade</h2>
 <h3>
@@ -86,8 +104,6 @@
     <img  width="32" height="32" src='@structure.GetImageUrl()'/>@structure.StructureType.Name
     (@structure.StructureType.Description)</p>
 }
-
 <h3>@Model.Name events</h3>
-@Html.Action("Events", new {planetID = Model.PlanetID, partial = true})
-
+@Html.Action("Events", new { planetID = Model.PlanetID, partial = true })
 @{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { planetID = Model.PlanetID, threadID = Model.ForumThreadID } });}

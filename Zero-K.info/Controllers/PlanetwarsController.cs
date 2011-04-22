@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using PlasmaShared;
@@ -14,6 +15,22 @@ namespace ZeroKWeb.Controllers
 		//
 		// GET: /Planetwars/
 
+		[Auth]
+		public ActionResult ChangePlayerRights(int clanID, int accountID)
+		{
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(c => clanID == c.ClanID);
+			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
+			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
+			if (kickee.IsClanFounder) return Content("Clan founders can't be modified.");
+			kickee.HasClanRights = !kickee.HasClanRights;
+			var ev = Global.CreateEvent("{0} {1} {2} rights to clan {3}", Global.Account, kickee.HasClanRights ? "gave" : "took", kickee, clan);
+			db.Events.InsertOnSubmit(ev);
+			db.SubmitChanges();
+			return RedirectToAction("Clan", new { id = clanID });
+		}
+
+	
 		/// <summary>
 		/// Shows clan page
 		/// </summary>
@@ -103,8 +120,10 @@ namespace ZeroKWeb.Controllers
 			else gal = db.Galaxies.Single(x => x.IsDefault);
 
 			var cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
-			if (gal.IsDirty || !System.IO.File.Exists(cachePath)) {
-				using (var im = GenerateGalaxyImage(gal.GalaxyID)) {
+			if (gal.IsDirty || !System.IO.File.Exists(cachePath))
+			{
+				using (var im = GenerateGalaxyImage(gal.GalaxyID))
+				{
 					im.Save(cachePath);
 					gal.IsDirty = false;
 					gal.Width = im.Width;
@@ -112,7 +131,7 @@ namespace ZeroKWeb.Controllers
 					db.SubmitChanges();
 				}
 			}
-			return View("Galaxy",gal);
+			return View("Galaxy", gal);
 		}
 
 		[Auth]
@@ -134,18 +153,6 @@ namespace ZeroKWeb.Controllers
 			else return Content("You cannot join this clan");
 		}
 
-		public ActionResult Planet(int id)
-		{
-			var db = new ZkDataContext();
-			var planet = db.Planets.Single(x => x.PlanetID == id);
-			if (planet.ForumThread != null)
-			{
-				planet.ForumThread.UpdateLastRead(Global.AccountID, false);
-				db.SubmitChanges();
-			}
-			return View(planet);
-		}
-
 		[Auth]
 		public ActionResult KickPlayerFromClan(int clanID, int accountID)
 		{
@@ -160,21 +167,66 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Clan", new { id = clanID });
 		}
 
-		[Auth]
-		public ActionResult ChangePlayerRights(int clanID, int accountID)
+		public ActionResult Planet(int id)
 		{
 			var db = new ZkDataContext();
-			var clan = db.Clans.Single(c => clanID == c.ClanID);
-			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
-			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
-			if (kickee.IsClanFounder) return Content("Clan founders can't be modified.");
-			kickee.HasClanRights = !kickee.HasClanRights;
-			var ev = Global.CreateEvent("{0} {1} {2} rights to clan {3}", Global.Account, kickee.HasClanRights ? "gave" : "took", kickee, clan);
-			db.Events.InsertOnSubmit(ev);
-			db.SubmitChanges();
-			return RedirectToAction("Clan", new { id = clanID });
+			var planet = db.Planets.Single(x => x.PlanetID == id);
+			if (planet.ForumThread != null)
+			{
+				planet.ForumThread.UpdateLastRead(Global.AccountID, false);
+				db.SubmitChanges();
+			}
+			return View(planet);
 		}
-		
+
+		[Auth]
+		public ActionResult SendDropships(int planetID, int count)
+		{
+			var db = new ZkDataContext();
+			using (var scope = new TransactionScope())
+			{
+				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+				var cnt = Math.Max(count, 0);
+				cnt = Math.Min(cnt, acc.DropshipCount ?? 0);
+				acc.DropshipCount = (acc.DropshipCount ?? 0) - cnt;
+				var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
+				if (pac == null)
+				{
+					pac = new AccountPlanet() { AccountID = Global.AccountID, PlanetID = planetID };
+					db.AccountPlanets.InsertOnSubmit(pac);
+				}
+				pac.DropshipCount += cnt;
+				if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} dropships to {2}", acc, cnt, pac.Planet));
+				db.SubmitChanges();
+				scope.Complete();
+			}
+			return RedirectToAction("Planet", new { id = planetID });
+		}
+
+		[Auth]
+		public ActionResult SubmitBuyStructure(int planetID, int structureTypeID)
+		{
+			var db = new ZkDataContext();
+			var planet = db.Planets.Single(p => p.PlanetID == planetID);
+			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+			var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
+			if (structureType == null) return Content("Structure type does not exist.");
+			if (!structureType.IsBuildable) return Content("Structure is not buildable.");
+
+			// assumes you can only build level 1 structures! if higher level structures can be built directly, we should check down the upgrade chain too
+			if (HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades already built");
+
+			if (Global.Account.Credits < structureType.Cost) return Content("Insufficient credits.");
+			Global.Account.Credits -= structureType.Cost;
+
+			var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID };
+			db.PlanetStructures.InsertOnSubmit(newBuilding);
+			db.SubmitChanges();
+
+			Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet);
+			return RedirectToAction("Planet", new { id = planet.PlanetID });
+		}
+
 
 		[Auth]
 		public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image)
@@ -229,46 +281,12 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var planet = db.Planets.Single(p => p.PlanetID == planetID);
 			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} form {2} to {3}", Global.Account, planet, planet.Name, newName ));
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} form {2} to {3}", Global.Account, planet, planet.Name, newName));
 			planet.Name = newName;
 			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planet.PlanetID });
 		}
 
-
-		bool HasStructureOrUpgrades(ZkDataContext db, Planet planet, StructureType structureType)
-		{
-			// has found stucture in tech tree
-			if (planet.PlanetStructures.Any(s => structureType.UpgradesToStructureID == s.StructureTypeID)) return true;
-			// has reached the end of the tech tree, no structure found
-			if (structureType.UpgradesToStructureID == null) return false;
-			// search the next step in the tech tree
-			return HasStructureOrUpgrades(db, planet, db.StructureTypes.Single(s => s.StructureTypeID == structureType.UpgradesToStructureID));
-		}
-
-		[Auth]
-		public ActionResult SubmitBuyStructure(int planetID, int structureTypeID) 
-		{
-			var db = new ZkDataContext();
-			var planet = db.Planets.Single(p => p.PlanetID == planetID);
-			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
-			var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
-			if (structureType == null) return Content("Structure type does not exist.");
-			if (!structureType.IsBuildable) return Content("Structure is not buildable.");
-
-			// assumes you can only build level 1 structures! if higher level structures can be built directly, we should check down the upgrade chain too
-			if (HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades already built"); 
-
-			if (Global.Account.Credits < structureType.Cost) return Content("Insufficient credits.");
-			Global.Account.Credits -= structureType.Cost;
-
-			var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID};
-			db.PlanetStructures.InsertOnSubmit(newBuilding);
-			db.SubmitChanges();
-
-			Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet);
-			return RedirectToAction("Planet", new { id = planet.PlanetID });
-		}
 
 		[Auth]
 		public ActionResult SubmitUpgradeStructure(int planetID, int structureTypeID)
@@ -292,7 +310,16 @@ namespace ZeroKWeb.Controllers
 
 			Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newStructure, planet);
 			return RedirectToAction("Planet", new { id = planet.PlanetID });
+		}
 
+		bool HasStructureOrUpgrades(ZkDataContext db, Planet planet, StructureType structureType)
+		{
+			// has found stucture in tech tree
+			if (planet.PlanetStructures.Any(s => structureType.UpgradesToStructureID == s.StructureTypeID)) return true;
+			// has reached the end of the tech tree, no structure found
+			if (structureType.UpgradesToStructureID == null) return false;
+			// search the next step in the tech tree
+			return HasStructureOrUpgrades(db, planet, db.StructureTypes.Single(s => s.StructureTypeID == structureType.UpgradesToStructureID));
 		}
 	}
 }
