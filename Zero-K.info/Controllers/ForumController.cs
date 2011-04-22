@@ -57,7 +57,7 @@ namespace ZeroKWeb.Controllers
 		}
 
 		[Auth]
-		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, string text, string title)
+		public ActionResult SubmitPost(int? threadID, int? categoryID, int? resourceID, int? missionID, int? springBattleID, int? clanID, int? planetID, string text, string title)
 		{
 			if (string.IsNullOrEmpty(text)) return Content("Please type some text :)");
 
@@ -105,6 +105,15 @@ namespace ZeroKWeb.Controllers
 				db.ForumThreads.InsertOnSubmit(thread);
 			}
 
+			if (thread == null && planetID != null)
+			{
+				var planet = db.Planets.Single(x => x.PlanetID == planetID);
+				thread = new ForumThread() { Title = planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+				thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsPlanets);
+				planet.ForumThread = thread;
+				db.ForumThreads.InsertOnSubmit(thread);
+			}
+
 			if (thread == null) return Content("Thread not found");
 			if (thread.IsLocked) return Content("Thread is locked");
 
@@ -126,6 +135,7 @@ namespace ZeroKWeb.Controllers
 			else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
 			else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
 			else if (clanID.HasValue) return RedirectToAction("Clan", "Planetwars", new { id = clanID });
+			else if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
 			else return RedirectToAction("Thread", new { id = thread.ForumThreadID });
 		}
 
@@ -140,6 +150,7 @@ namespace ZeroKWeb.Controllers
 				if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.ResourceID });
 				if (cat.IsSpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.SpringBattleID });
 				if (cat.IsClans) return RedirectToAction("Clan", "Planetwars", new { id = t.RestrictedClanID});
+				if (cat.IsPlanets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.PlanetID});
 			}
 
 			var res = new ThreadResult();

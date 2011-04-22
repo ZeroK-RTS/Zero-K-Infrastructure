@@ -24,7 +24,7 @@ namespace ZeroKWeb.Controllers
 			var clan = db.Clans.First(x => x.ClanID == id);
 			if (Global.Clan == clan)
 			{
-				clan.ForumThread.UpdateLastRead(Global.AccountID, false);
+				if (clan.ForumThread != null) clan.ForumThread.UpdateLastRead(Global.AccountID, false);
 			}
 			return View(clan);
 		}
@@ -134,6 +134,11 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 			var planet = db.Planets.Single(x => x.PlanetID == id);
+			if (planet.ForumThread != null)
+			{
+				planet.ForumThread.UpdateLastRead(Global.AccountID, false);
+				db.SubmitChanges();
+			}
 			return View(planet);
 		}
 

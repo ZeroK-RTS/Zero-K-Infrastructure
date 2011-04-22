@@ -3945,6 +3945,8 @@ namespace ZkData
 		
 		private EntitySet<Clan> _Clans;
 		
+		private EntityRef<Planet> _Planets;
+		
 		private EntityRef<ForumCategory> _ForumCategory;
 		
 		private EntityRef<Account> _AccountByCreatedAccountID;
@@ -4420,6 +4422,41 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Planet", Storage="_Planets", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		public Planet Planets
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Planets.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._Planets.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._Planets.Entity;
+				if (((previousValue != value) 
+							|| (this._Planets.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Planets.Entity = null;
+						previousValue.ForumThread = null;
+					}
+					this._Planets.Entity = value;
+					if ((value != null))
+					{
+						value.ForumThread = this;
+					}
+					this.SendPropertyChanged("Planets");
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumThread", Storage="_ForumCategory", ThisKey="ForumCategoryID", OtherKey="ForumCategoryID", IsForeignKey=true, DeleteRule="CASCADE")]
 		public ForumCategory ForumCategory
 		{
@@ -4620,6 +4657,7 @@ namespace ZkData
 			this._SpringBattles = default(EntityRef<SpringBattle>);
 			this._ForumThreadLastReads = new EntitySet<ForumThreadLastRead>(new Action<ForumThreadLastRead>(this.attach_ForumThreadLastReads), new Action<ForumThreadLastRead>(this.detach_ForumThreadLastReads));
 			this._Clans = new EntitySet<Clan>(new Action<Clan>(this.attach_Clans), new Action<Clan>(this.detach_Clans));
+			this._Planets = default(EntityRef<Planet>);
 			this._ForumCategory = default(EntityRef<ForumCategory>);
 			this._AccountByCreatedAccountID = default(EntityRef<Account>);
 			this._AccountByLastPostAccountID = default(EntityRef<Account>);
@@ -8836,6 +8874,8 @@ namespace ZkData
 		
 		private bool _IsClans;
 		
+		private bool _IsPlanets;
+		
 		private EntitySet<ForumThread> _ForumThreads;
 		
 		private EntitySet<ForumCategory> _ChildForumCategories;
@@ -8866,6 +8906,8 @@ namespace ZkData
     partial void OnIsSpringBattlesChanged();
     partial void OnIsClansChanging(bool value);
     partial void OnIsClansChanged();
+    partial void OnIsPlanetsChanging(bool value);
+    partial void OnIsPlanetsChanged();
     #endregion
 		
 		public ForumCategory()
@@ -9066,8 +9108,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsPlanets", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public bool IsPlanets
+		{
+			get
+			{
+				return this._IsPlanets;
+			}
+			set
+			{
+				if ((this._IsPlanets != value))
+				{
+					this.OnIsPlanetsChanging(value);
+					this.SendPropertyChanging();
+					this._IsPlanets = value;
+					this.SendPropertyChanged("IsPlanets");
+					this.OnIsPlanetsChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumThread", Storage="_ForumThreads", ThisKey="ForumCategoryID", OtherKey="ForumCategoryID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreads
 		{
 			get
@@ -9086,7 +9149,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumCategory_ForumCategory", Storage="_ChildForumCategories", ThisKey="ForumCategoryID", OtherKey="ParentForumCategoryID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<ForumCategory> ChildForumCategories
 		{
 			get
@@ -13280,6 +13343,8 @@ namespace ZkData
 		
 		private int _GalaxyID;
 		
+		private System.Nullable<int> _ForumThreadID;
+		
 		private EntitySet<Link> _LinksByPlanetID1;
 		
 		private EntitySet<Link> _LinksByPlanetID2;
@@ -13302,6 +13367,8 @@ namespace ZkData
 		
 		private EntityRef<Resource> _Resource;
 		
+		private EntityRef<ForumThread> _ForumThread;
+		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -13322,6 +13389,8 @@ namespace ZkData
     partial void OnOwnerAccountIDChanged();
     partial void OnGalaxyIDChanging(int value);
     partial void OnGalaxyIDChanged();
+    partial void OnForumThreadIDChanging(System.Nullable<int> value);
+    partial void OnForumThreadIDChanged();
     #endregion
 		
 		public Planet()
@@ -13488,8 +13557,33 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<int> ForumThreadID
+		{
+			get
+			{
+				return this._ForumThreadID;
+			}
+			set
+			{
+				if ((this._ForumThreadID != value))
+				{
+					if (this._ForumThread.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnForumThreadIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumThreadID = value;
+					this.SendPropertyChanged("ForumThreadID");
+					this.OnForumThreadIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link", Storage="_LinksByPlanetID1", ThisKey="PlanetID", OtherKey="PlanetID1")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public EntitySet<Link> LinksByPlanetID1
 		{
 			get
@@ -13508,7 +13602,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_Link1", Storage="_LinksByPlanetID2", ThisKey="PlanetID", OtherKey="PlanetID2")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<Link> LinksByPlanetID2
 		{
 			get
@@ -13527,7 +13621,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_MarketOffer", Storage="_MarketOffers", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffers
 		{
 			get
@@ -13546,7 +13640,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_AccountPlanet", Storage="_AccountPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<AccountPlanet> AccountPlanets
 		{
 			get
@@ -13565,7 +13659,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_EventPlanet", Storage="_EventPlanets", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<EventPlanet> EventPlanets
 		{
 			get
@@ -13584,7 +13678,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -13603,7 +13697,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -13622,7 +13716,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure", Storage="_PlanetStructures", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get
@@ -13738,6 +13832,40 @@ namespace ZkData
 						this._MapResourceID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Resource");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumThread_Planet", Storage="_ForumThread", ThisKey="ForumThreadID", OtherKey="ForumThreadID", IsForeignKey=true)]
+		public ForumThread ForumThread
+		{
+			get
+			{
+				return this._ForumThread.Entity;
+			}
+			set
+			{
+				ForumThread previousValue = this._ForumThread.Entity;
+				if (((previousValue != value) 
+							|| (this._ForumThread.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ForumThread.Entity = null;
+						previousValue.Planets = null;
+					}
+					this._ForumThread.Entity = value;
+					if ((value != null))
+					{
+						value.Planets = this;
+						this._ForumThreadID = value.ForumThreadID;
+					}
+					else
+					{
+						this._ForumThreadID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("ForumThread");
 				}
 			}
 		}
@@ -13871,6 +13999,7 @@ namespace ZkData
 			this._Account = default(EntityRef<Account>);
 			this._Galaxy = default(EntityRef<Galaxy>);
 			this._Resource = default(EntityRef<Resource>);
+			this._ForumThread = default(EntityRef<ForumThread>);
 			OnCreated();
 		}
 		

@@ -113,9 +113,9 @@
       <DependentUpon>ZkData.dbml</DependentUpon>
     </Compile>
     <Compile Include="Data\ZkData.designer.cs">
-      <DependentUpon>ZkData.dbml</DependentUpon>
-      <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ZkData.dbml</DependentUpon>
     </Compile>
     <Compile Include="Data\ZkDataContext.cs" />
     <Compile Include="DbExtensions.cs" />
@@ -183,8 +183,8 @@
     </None>
     <None Include="Data\ZkData.dbml">
       <Generator>MSLinqToSQLGenerator</Generator>
-      <LastGenOutput>ZkData.designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>ZkData.designer.cs</LastGenOutput>
     </None>
     <None Include="Data\ZkData.dbml.namePrefs">
       <DependentUpon>ZkData.dbml</DependentUpon>

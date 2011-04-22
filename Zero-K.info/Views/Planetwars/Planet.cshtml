@@ -2,8 +2,9 @@
 @using ZeroKWeb
 @model Planet
 @{
-  ViewBag.Title = "Planet";
-  Layout = "~/Views/Shared/_SiteLayout.cshtml";
+//  ViewBag.Title = "Planet";
+  Page.Title = "Planet " + Model.Name;
+//  Layout = "~/Views/Shared/_SiteLayout.cshtml";
   // ZkData.Galaxy.RecalculateShadowInfluence();
 }
 <h1>
@@ -102,3 +103,5 @@
       @structure.StructureType.Name (@structure.StructureType.Description)</li>
   }
 </ul>
+
+@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new {planetID = Model.PlanetID, threadID = Model.ForumThreadID} });}
