@@ -150,7 +150,8 @@
         } else {
           @Model.Name @:Can unlock technologies worth @Model.AvailableXP points
         }
-
+<h3>PlanetWars events</h3>
+@Html.Action("Events","Planetwars", new{ accountID = Model.AccountID, partial=true})
     </td>
   </tr>
 </table>

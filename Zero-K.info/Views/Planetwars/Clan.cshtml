@@ -37,8 +37,6 @@
   <br />
   @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })
 }
-<h3>Clan events</h3>
-@Html.Action("Events", new {clanID = c.ClanID, partial = true})
 <h3>
   Members</h3>
 <table>
@@ -94,6 +92,8 @@
 
   }
 </table>
+<h3>@Model.Shortcut events</h3>
+@Html.Action("Events", new {clanID = c.ClanID, partial = true})
 <br />
 @Html.ActionLink("Back to clan list", "ClanList")
 <hr />

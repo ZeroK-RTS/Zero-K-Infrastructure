@@ -71,4 +71,8 @@
     <img  width="32" height="32" src='@structure.GetImageUrl()'/>@structure.StructureType.Name
     (@structure.StructureType.Description)</p>
 }
+
+<h3>@Model.Name events</h3>
+@Html.Action("Events", new {planetID = Model.PlanetID, partial = true})
+
 @{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { planetID = Model.PlanetID, threadID = Model.ForumThreadID } });}

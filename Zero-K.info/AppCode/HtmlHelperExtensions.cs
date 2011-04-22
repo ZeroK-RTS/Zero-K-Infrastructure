@@ -147,7 +147,7 @@ namespace System.Web.Mvc
 
 		public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattlePlayer battlePlayer)
 		{
-			var url = new UrlHelper(helper.ViewContext.RequestContext);
+			var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
 			var icon = "";
 			if (battlePlayer.IsInVictoryTeam) icon = "battlewon.png";
 			else if (battlePlayer.IsSpectator) icon = "spec.png";
@@ -215,7 +215,7 @@ namespace System.Web.Mvc
 
 		public static MvcHtmlString PrintMap(this HtmlHelper helper, string name)
 		{
-			var url = new UrlHelper(helper.ViewContext.RequestContext);
+			var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
 			return new MvcHtmlString(string.Format("<a href='{0}' title='$map${1}'>{1}</a>", url.Action("DetailName", "Maps", new { name }), name));
 		}
 
@@ -228,7 +228,7 @@ namespace System.Web.Mvc
 		public static MvcHtmlString PrintPlanet(this HtmlHelper helper, Planet planet)
 		{
 			if (planet == null) return new MvcHtmlString("?");
-			var url = new UrlHelper(helper.ViewContext.RequestContext);
+			var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
 			return
 				new MvcHtmlString(string.Format("<a href='{0}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
 				                                url.Action("Planet", "Planetwars", new { id = planet.PlanetID }),
