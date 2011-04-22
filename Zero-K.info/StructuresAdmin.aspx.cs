@@ -25,7 +25,6 @@ namespace ZeroKWeb
 					Name = u.Name,
 					Description = "Gives your clan access to " + u.Name,
 					EffectUnlockID = u.UnlockID,
-					SelfRepairTurns = 5,
 					IsIngameDestructible = true,
 					MapIcon = u.Code + ".png",
 					DestroyedMapIcon = u.Code + "_dead.png",
