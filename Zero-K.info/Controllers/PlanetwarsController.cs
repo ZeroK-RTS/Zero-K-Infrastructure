@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Linq.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -14,21 +13,6 @@ namespace ZeroKWeb.Controllers
 	{
 		//
 		// GET: /Planetwars/
-
-		[Auth]
-		public ActionResult ChangePlayerRights(int clanID, int accountID)
-		{
-			var db = new ZkDataContext();
-			var clan = db.Clans.Single(c => clanID == c.ClanID);
-			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
-			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
-			if (kickee.IsClanFounder) return Content("Clan founders can't be modified.");
-			kickee.HasClanRights = !kickee.HasClanRights;
-			var ev = Global.CreateEvent("{0} {1} {2} rights to clan {3}", Global.Account, kickee.HasClanRights ? "gave" : "took", kickee, clan);
-			db.Events.InsertOnSubmit(ev);
-			db.SubmitChanges();
-			return RedirectToAction("Clan", new { id = clanID });
-		}
 
 		/// <summary>
 		/// Shows clan page
@@ -61,42 +45,6 @@ namespace ZeroKWeb.Controllers
 		{
 			if (Global.Account.Clan == null || (Global.Account.HasClanRights)) return View(Global.Clan ?? new Clan());
 			else return Content("You already have clan and you dont have rights to it");
-		}
-
-		public ActionResult Events(int? planetID,
-		                           int? accountID,
-		                           int? springBattleID,
-		                           int? clanID,
-		                           string filter,
-		                           int page = 0,
-		                           int pageSize = 10,
-			bool partial = false
-		                           )
-		{
-			var db = new ZkDataContext();
-
-			var res = db.Events.AsQueryable();
-			if (planetID.HasValue) res = res.Where(x => x.EventPlanets.Any(y => y.PlanetID == planetID));
-			if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
-			if (clanID.HasValue) res = res.Where(x => x.EventClans.Any(y => y.ClanID == clanID));
-			if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == clanID));
-			if (!string.IsNullOrEmpty(filter)) res = res.Where(x => SqlMethods.Like(x.Text, string.Format("%{0}%", filter)));
-
-			var ret = new EventsResult()
-			          {
-			          	PageCount = (res.Count()/pageSize) + 1,
-			          	Page = page,
-			          	Events = res.Skip(page*pageSize).Take(pageSize),
-			          	PageSize = pageSize,
-			          	PlanetID = planetID,
-			          	AccountID = accountID,
-			          	SpringBattleID = springBattleID,
-			          	Filter = filter,
-			          	ClanID = clanID,
-									Partial = partial
-			          };
-
-			return View(ret);
 		}
 
 		public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 4)
@@ -155,10 +103,8 @@ namespace ZeroKWeb.Controllers
 			else gal = db.Galaxies.Single(x => x.IsDefault);
 
 			var cachePath = Server.MapPath(string.Format("/img/galaxies/render_{0}.jpg", gal.GalaxyID));
-			if (gal.IsDirty || !System.IO.File.Exists(cachePath))
-			{
-				using (var im = GenerateGalaxyImage(gal.GalaxyID))
-				{
+			if (gal.IsDirty || !System.IO.File.Exists(cachePath)) {
+				using (var im = GenerateGalaxyImage(gal.GalaxyID)) {
 					im.Save(cachePath);
 					gal.IsDirty = false;
 					gal.Width = im.Width;
@@ -166,7 +112,7 @@ namespace ZeroKWeb.Controllers
 					db.SubmitChanges();
 				}
 			}
-			return View("Galaxy", gal);
+			return View("Galaxy",gal);
 		}
 
 		[Auth]
@@ -188,20 +134,6 @@ namespace ZeroKWeb.Controllers
 			else return Content("You cannot join this clan");
 		}
 
-		[Auth]
-		public ActionResult KickPlayerFromClan(int clanID, int accountID)
-		{
-			var db = new ZkDataContext();
-			var clan = db.Clans.Single(c => clanID == c.ClanID);
-			// todo: disallow kicking after the round starts
-			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
-			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
-			if (kickee.IsClanFounder) return Content("Clan founders can't be kicked.");
-			kickee.ClanID = null;
-			db.SubmitChanges();
-			return RedirectToAction("Clan", new { id = clanID });
-		}
-
 		public ActionResult Planet(int id)
 		{
 			var db = new ZkDataContext();
@@ -214,6 +146,35 @@ namespace ZeroKWeb.Controllers
 			return View(planet);
 		}
 
+		[Auth]
+		public ActionResult KickPlayerFromClan(int clanID, int accountID)
+		{
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(c => clanID == c.ClanID);
+			// todo: disallow kicking after the round starts
+			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
+			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
+			if (kickee.IsClanFounder) return Content("Clan founders can't be kicked.");
+			kickee.ClanID = null;
+			db.SubmitChanges();
+			return RedirectToAction("Clan", new { id = clanID });
+		}
+
+		[Auth]
+		public ActionResult ChangePlayerRights(int clanID, int accountID)
+		{
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(c => clanID == c.ClanID);
+			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
+			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
+			if (kickee.IsClanFounder) return Content("Clan founders can't be modified.");
+			kickee.HasClanRights = !kickee.HasClanRights;
+			var ev = Global.CreateEvent("{0} {1} {2} rights to clan {3}", Global.Account, kickee.HasClanRights ? "gave" : "took", kickee, clan);
+			db.Events.InsertOnSubmit(ev);
+			db.SubmitChanges();
+			return RedirectToAction("Clan", new { id = clanID });
+		}
+		
 
 		[Auth]
 		public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image)
@@ -261,7 +222,6 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Clan", new { id = clan.ClanID });
 		}
 
-
 		[Auth]
 		public ActionResult SubmitRenamePlanet(int planetID, string newName)
 		{
@@ -269,25 +229,70 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var planet = db.Planets.Single(p => p.PlanetID == planetID);
 			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} form {2} to {3}", Global.Account, planet, planet.Name, newName));
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} form {2} to {3}", Global.Account, planet, planet.Name, newName ));
 			planet.Name = newName;
 			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planet.PlanetID });
 		}
-	}
 
-	public class EventsResult
-	{
-		public int? AccountID;
-		public int? ClanID;
-		public IQueryable<Event> Events;
-		public string Filter;
-		public int Page;
-		public int PageCount;
-		public int PageSize;
-		public int? PlanetID;
-		public int? SpringBattleID;
-		public string Title;
-		public bool Partial;
+
+		bool HasStructureOrUpgrades(ZkDataContext db, Planet planet, StructureType structureType)
+		{
+			// has found stucture in tech tree
+			if (planet.PlanetStructures.Any(s => structureType.UpgradesToStructureID == s.StructureTypeID)) return true;
+			// has reached the end of the tech tree, no structure found
+			if (structureType.UpgradesToStructureID == null) return false;
+			// search the next step in the tech tree
+			return HasStructureOrUpgrades(db, planet, db.StructureTypes.Single(s => s.StructureTypeID == structureType.UpgradesToStructureID));
+		}
+
+		[Auth]
+		public ActionResult SubmitBuyStructure(int planetID, int structureTypeID) 
+		{
+			var db = new ZkDataContext();
+			var planet = db.Planets.Single(p => p.PlanetID == planetID);
+			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+			var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
+			if (structureType == null) return Content("Structure type does not exist.");
+			if (!structureType.IsBuildable) return Content("Structure is not buildable.");
+
+			// assumes you can only build level 1 structures! if higher level structures can be built directly, we should check down the upgrade chain too
+			if (HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades already built"); 
+
+			if (Global.Account.Credits < structureType.Cost) return Content("Insufficient credits.");
+			Global.Account.Credits -= structureType.Cost;
+
+			var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID};
+			db.PlanetStructures.InsertOnSubmit(newBuilding);
+			db.SubmitChanges();
+
+			Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet);
+			return RedirectToAction("Planet", new { id = planet.PlanetID });
+		}
+
+		[Auth]
+		public ActionResult SubmitUpgradeStructure(int planetID, int structureTypeID)
+		{
+			var db = new ZkDataContext();
+			var planet = db.Planets.Single(p => p.PlanetID == planetID);
+			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+			var oldStructure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
+			if (oldStructure == null) return Content("Structure does not exist");
+			if (oldStructure.StructureType.UpgradesToStructureID == null) return Content("Structure can't be upgraded.");
+			if (oldStructure.IsDestroyed) return Content("Can't upgrade a destroyed structure");
+
+			var newStructureType = db.StructureTypes.Single(s => s.StructureTypeID == oldStructure.StructureType.UpgradesToStructureID);
+			if (Global.Account.Credits < newStructureType.Cost) return Content("Insufficient credits.");
+			Global.Account.Credits -= newStructureType.Cost;
+
+			var newStructure = new PlanetStructure { PlanetID = planetID, StructureTypeID = oldStructure.StructureTypeID };
+
+			db.PlanetStructures.InsertOnSubmit(newStructure);
+			db.PlanetStructures.DeleteOnSubmit(oldStructure);
+
+			Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newStructure, planet);
+			return RedirectToAction("Planet", new { id = planet.PlanetID });
+
+		}
 	}
 }
