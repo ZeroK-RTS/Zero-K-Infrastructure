@@ -526,7 +526,7 @@ namespace ZeroKLobby.MicroLobby
           {
             var pmControl = GetPrivateMessageControl(otherUserName);
 						// block non friend messages 
-						if (pmControl == null && Program.Conf.BlockNonFriendPm && !Program.FriendManager.Friends.Contains(otherUserName))
+						if (pmControl == null && Program.Conf.BlockNonFriendPm && !Program.FriendManager.Friends.Contains(otherUserName) && !Program.TasClient.ExistingUsers[e.UserName].IsBot)
 						{
 							if (e.UserName != Program.TasClient.UserName) Program.TasClient.Say(TasClient.SayPlace.User, otherUserName, "Sorry, I'm busy and do not receive messages. If you want to ask something, use #zk channel. If you have issue to report use http://code.google.com/p/zero-k/issues/list", false);
 						} else

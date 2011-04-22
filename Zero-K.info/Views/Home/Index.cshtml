@@ -1,3 +1,4 @@
+ @using ZeroKWeb
  @model ZeroKWeb.Controllers.HomeController.IndexResult
 @{
   var s = Model.Spotlight;
@@ -22,6 +23,12 @@
   </div>
 </div>
 <div id="sidebar" class="fright width-30">
+  @if (!Global.IsLobbyAccess) {
+    @Html.ActionLink("minimal skin", "SwitchSkin")
+  } else {
+    Html.RenderPartial("GoogleSiteSearch");
+  }
+
   <div id="unit" class="border relative text-left">
     <h2>
       <a href='/Wiki/Manual'>Manual: </a>
@@ -86,30 +93,4 @@
     <iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2FZeroK.RTS&amp;width=236&amp;colorscheme=dark&amp;show_faces=true&amp;stream=false&amp;header=false&amp;height=435" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:236px; height:435px;" allowTransparency="true"></iframe>
   </div>  
   
-  <!--div id="poll" class="border">
-    <h2>
-      <a>Poll</a></h1> What is your favorite kind of cake?
-      <form action="poll.php">
-      <ul class="poll">
-        <li>
-          <input type="radio" class="radio" name="option" value="Vanilla" checked />
-          Vanilla </li>
-        <li>
-          <input type="radio" class="radio" name="option" value="Chocolate" />
-          Chocolate </li>
-        <li>
-          <input type="radio" class="radio" name="option" value="Strawberry" />
-          Strawberry </li>
-        <li>
-          <input type="radio" class="radio" name="option" value="Lemon" />
-          Lemon </li>
-        <li>
-          <input type="radio" class="radio" name="option" value="Wrong" />
-          The Cake is a Lie </li>
-      </ul>
-      <center>
-        <input type="submit" value="vote" class="button border" /></center>
-      </form>
-  </div-->
-  <!close poll>
 </div>

@@ -36,7 +36,7 @@ namespace ZeroKWeb.Controllers
 			chart.AddSeries("unique players+specs", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PlayersAndSpecs), legend: "dps");
 			chart.AddSeries("unique players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.Players), legend: "dps");
 			chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.MinutesPerPlayer), legend: "dps");
-			chart.AddSeries("first game players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.FirstGamePlayers), legend: "dps");
+			chart.AddSeries("new players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.FirstGamePlayers), legend: "dps");
 
 			return File(chart.GetBytes(), "image/jpeg");
 		}

@@ -24,7 +24,10 @@
   <script type="text/javascript" src='@Href("~/Scripts/base.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/jquery.tablesorter.min.js")' ></script>
-  @if (!Global.IsLobbyAccess && ViewBag.Minimal != true) {
+<style type="text/css">
+    @@import url(http://www.google.com/cse/api/branding.css);
+</style>
+  @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1") {
     if (ViewBag.StaticBackground == true) {
     <style type="text/css">
       html
@@ -43,6 +46,7 @@
     <style type="text/css"> html { background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0; background-attachment: fixed; }</style>
     }
   }
+  
   <script type="text/javascript">
 
     var _gaq = _gaq || [];
@@ -57,133 +61,21 @@
 
   </script>
 </head>
+
 <body class="">
   <span style="display: none; position: fixed; left: 300px; top: 200px; z-index: 10;
     width: 300px; height: 50px; background-color: Black; border: 1px solid Red; font-size: x-large;
     text-align: center; vertical-align: middle;" id='ajaxScrollProgress'>Loading....<img
       src='/img/Loader.gif' /></span>
-  @if (!Global.IsLobbyAccess && ViewBag.Minimal == null) {
+  @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1") {
     <div class="wrapper">
       <div id="header" class="text-center">
         <a href="/">
           <img src="/img/zk_logo.png" height="150px" alt="Zero K" /></a>
       </div>
       <!close header>
-      <div id="menu" class="border">
-        <table>
-          <tr>
-            <td>
-              <a href="/">Home</a>
-            </td>
-            <!link to a thank you page maybe?>
-            <td>
-              <ul class="menu">
-                <li><a href="/Wiki/Download">Download</a>
-                  <ul>
-                    <li><a href="/Wiki/Download#Windows">Windows</a></li>
-                    <li><a href="/Wiki/Download#Linux">Linux<span>This will now be the only game you
-                      ever play</span></a></li>
-                    <li><a href="/Wiki/Download#Mac">Mac</a></li>
-                    <li><a href="http://code.google.com/p/zero-k/source/checkout">Sources<span>You awesome,
-                      intelligent man-beast, you...</span></a></li>
-                  </ul>
-                </li>
-              </ul>
-            </td>
-            <td>
-              <ul class="menu">
-                <li><a href="/Wiki/Media">Media</a>
-                  <ul class="menu-border">
-                    <li><a href="/Wiki/Media#Screenshots">Screenshots<span>Take a picture, it lasts
-                      longer</span></a></li>
-                    <li><a href="/Wiki/Media#Videos">Video<span>A video says a thousand pictures</span></a></li>
-                    <li><a target="_new" href="http://trac.caspring.org/wiki/ConceptArt">Concept Art</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </td>
-            <td>
-              <ul class="menu">
-                <li><a href="/Wiki/Manual">Manual</a>
-                  <ul class="menu-border">
-                    <li><a href="/Wiki/Manual">Index</a></li>
-                    <li><a href="/Wiki/NewbieGuide">Newbie guide<span>Don't know where to begin? Click
-                      here.</span></a></li>
-                    <li><a href="/Static/UnitGuide">Units</a></li>
-                    <li><a href="/Wiki/EconomyGuide">Economy</a></li>
-                    <li><a href="/Wiki/Terraforming">Terraforming<span>Let's go play in the dirt!</span></a></li>
-                    <li>
-                      <div style="margin-left: 8px; height: 3px; background-image: url(../../Img/border.png);
-                        background-repeat: repeat-x;">
-                      </div>
-                    </li>
-                    <li><a href="/Wiki/FAQ">FAQ<span>Frequently Asked Questions</span></a></li>
-                  </ul>
-                </li>
-              </ul>
-            </td>
-            <td>
-              <ul class="menu">
-                <li><a href="/Missions">Extras</a>
-                  <ul class="menu-border">
-                    <li><a href="/Missions">Missions</a></li>
-                    <li><a href="/Maps">Maps</a></li>
-                    <li><a href="/Ladders">Ladders</a></li>
-                    <li><a href="/Wiki/Fanart">Fanart<span>Show the world your favorite game ;-)</span></a></li>
-                  </ul>
-                </li>
-              </ul>
-            </td>
-            <td>
-              <ul class="menu">
-                <li><a href="/Forum">Forum</a>
-              </ul>
-            </td>
-            <td>
-              <ul class="menu">
-                <li><a target="_new" href="http://code.google.com/p/zero-k/">Contribute</a>
-                  <ul class="menu-border">
-                    <li><a target="_new" href="http://code.google.com/p/zero-k/">Development site</a>
-                      <li><a target="_new" href="http://code.google.com/p/zero-k/issues/entry">Bugs?<span>Let
-                        us know so we can <b>squash them!</b></span></a></li>
-                      <li><a target="_new" href="http://code.google.com/p/zero-k/wiki/Developing">Make the
-                        game with us</a></li>
-                      <li><a href="@Url.Action("Donate", "Wiki")">Donate<span>Help us cover server cost :-)</span></a></li>
-                      <li><a href="/Wiki/Credits">Credits</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </td>
-            <td width="100%">
-              <style type="text/css">
- @@import url(http://www.google.com/cse/api/branding.css);
-</style>
-              <div style="background-color: #000000; color: #FFFFFF">
-                <div>
-                  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-                  <script type="text/javascript">
-                    google.load('search', '1');
-                    google.setOnLoadCallback(function () {
-                      google.search.CustomSearchControl.attachAutoCompletion(
-      '005922609343212335344:hhfjrwusr9u',
-      document.getElementById('q'),
-      'cse-search-box');
-                    });
-                  </script>
-                  <form action="http://www.google.com/cse" id="cse-search-box">
-                  <div>
-                    <input type="hidden" name="cx" value="005922609343212335344:hhfjrwusr9u" />
-                    <input type="hidden" name="ie" value="UTF-8" />
-                    <input type="text" name="q" id="q" autocomplete="off" size="11" />
-                    <input name="sa" value="Search" type="image" src="/img/search_img.png" style="border: none;" />
-                  </div>
-                  </form>
-                </div>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </div>
+      @{Html.RenderPartial("TopMenu");}
+
       <!close navigation>
       <div class="border">
         @{Html.RenderPartial("LoginBar");}
@@ -201,12 +93,13 @@
     </div>
     
     <!close wrapper>
-  } else if (ViewBag.Minimal != true) {
+  } else {
     <div style="margin: 10px;">
+      @if (!Global.IsLobbyAccess) {
+        Html.RenderPartial("TopMenu");
+      }
       @RenderBody()
     </div>
-  } else {
-    @RenderBody()
   }
 </body>
 </html>

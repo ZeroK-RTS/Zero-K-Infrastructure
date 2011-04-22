@@ -22,9 +22,13 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 			var clan = db.Clans.First(x => x.ClanID == id);
-			if (Global.Clan == clan)
+			if (Global.ClanID == clan.ClanID)
 			{
-				if (clan.ForumThread != null) clan.ForumThread.UpdateLastRead(Global.AccountID, false);
+				if (clan.ForumThread != null)
+				{
+					clan.ForumThread.UpdateLastRead(Global.AccountID, false);
+					db.SubmitChanges();
+				}
 			}
 			return View(clan);
 		}

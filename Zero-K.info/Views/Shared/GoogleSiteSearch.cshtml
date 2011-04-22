@@ -1,0 +1,22 @@
+﻿<div style="background-color:#000000;color:#FFFFFF">
+  <div>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load('search', '1');
+      google.setOnLoadCallback(function () {
+        google.search.CustomSearchControl.attachAutoCompletion(
+      '005922609343212335344:hhfjrwusr9u',
+      document.getElementById('q'),
+      'cse-search-box');
+      });
+    </script>
+    <form action="http://www.google.com/cse" id="cse-search-box">
+    <div>
+      <input type="hidden" name="cx" value="005922609343212335344:hhfjrwusr9u" />
+      <input type="hidden" name="ie" value="UTF-8" />
+      <input type="text" name="q" id="q" autocomplete="off" size="11" />
+      <input name="sa" value="Search" type="image" src="/img/search_img.png" style="border: none;" />
+    </div>
+    </form>
+  </div>
+</div>

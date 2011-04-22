@@ -240,6 +240,8 @@
     <Content Include="Views\Planetwars\CreateClan.cshtml" />
     <Content Include="Views\Planetwars\JoinClan.cshtml" />
     <Content Include="Views\Planetwars\Planet.cshtml" />
+    <Content Include="Views\Shared\GoogleSiteSearch.cshtml" />
+    <Content Include="Views\Shared\TopMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

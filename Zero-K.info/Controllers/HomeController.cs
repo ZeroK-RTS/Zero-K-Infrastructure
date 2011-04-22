@@ -15,6 +15,7 @@ namespace ZeroKWeb.Controllers
 
 	public class HomeController: Controller
 	{
+
 		//
 		// GET: /Home/
 		public static string GetMapTooltip(int id)
@@ -38,6 +39,16 @@ namespace ZeroKWeb.Controllers
 			
 			return sb.ToString();
 		}
+
+		public ActionResult SwitchSkin()
+		{
+			var newValue = "";
+			if (Request["minimalDesign"] == "1") newValue = "0";
+			else newValue = "1";
+			Response.Cookies.Add(new HttpCookie("minimalDesign", newValue));
+			return RedirectToAction("Index");
+		}
+
 
 		public static string GetMissionTooltip(int id)
 		{
