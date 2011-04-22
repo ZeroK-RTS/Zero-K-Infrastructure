@@ -10,7 +10,7 @@
     <file relUrl="Views/My/CommanderProfile.cshtml" publishTime="02/20/2011 13:57:59" />
     <file relUrl="Views/Planetwars/JoinClan.cshtml" publishTime="04/18/2011 02:27:49" />
     <file relUrl="Views/Forum/NewPost.cshtml" publishTime="04/10/2011 04:04:43" />
-    <file relUrl="Views/Planetwars/Events.cshtml" publishTime="04/22/2011 23:17:33" />
+    <file relUrl="Views/Planetwars/Events.cshtml" publishTime="04/22/2011 23:29:26" />
     <file relUrl="Views/Missions/TileList.cshtml" publishTime="02/19/2011 15:03:51" />
     <file relUrl="Views/My/UnlockList.cshtml" publishTime="04/01/2011 23:21:03" />
     <file relUrl="Web.config" publishTime="04/20/2011 01:02:46" />
@@ -24,7 +24,7 @@
     <file relUrl="Global.asax" publishTime="01/02/2011 03:33:31" />
     <file relUrl="bin/ZeroKWeb.pdb" publishTime="04/22/2011 23:18:01" />
     <file relUrl="Views/Maps/MapTileList.cshtml" publishTime="02/03/2011 17:16:47" />
-    <file relUrl="Views/Planetwars/Clan.cshtml" publishTime="04/22/2011 23:14:57" />
+    <file relUrl="Views/Planetwars/Clan.cshtml" publishTime="04/22/2011 23:25:02" />
     <file relUrl="Img/zk_logo_miniature.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="Styles/menu.css" publishTime="04/22/2011 14:07:09" />
     <file relUrl="Views/Poll/PollVoteList.cshtml" publishTime="03/26/2011 15:29:51" />
@@ -48,7 +48,7 @@
     <file relUrl="bin/MonoTorrent.dll" publishTime="04/19/2011 16:59:53" />
     <file relUrl="Views/Planetwars/Index.cshtml" publishTime="04/17/2011 02:27:48" />
     <file relUrl="bin/PlasmaShared.dll" publishTime="04/22/2011 19:51:42" />
-    <file relUrl="Views/Shared/UserDetail.cshtml" publishTime="04/22/2011 19:24:48" />
+    <file relUrl="Views/Shared/UserDetail.cshtml" publishTime="04/22/2011 23:31:24" />
     <file relUrl="Views/Maps/Detail.cshtml" publishTime="04/17/2011 13:36:04" />
     <file relUrl="Views/Ladders/ladders.cshtml" publishTime="04/15/2011 22:25:38" />
     <file relUrl="bin/MonoTorrent.pdb" publishTime="04/19/2011 16:59:53" />
@@ -66,7 +66,7 @@
     <file relUrl="Img/cup.png" publishTime="01/02/2011 03:33:30" />
     <file relUrl="bin/Web.config" publishTime="04/20/2011 01:02:46" />
     <file relUrl="Views/Shared/LoginBar.cshtml" publishTime="04/22/2011 22:16:08" />
-    <file relUrl="Views/Battles/Detail.cshtml" publishTime="04/19/2011 13:37:01" />
+    <file relUrl="Views/Battles/Detail.cshtml" publishTime="04/22/2011 23:33:00" />
     <file relUrl="Views/Maps/Index.cshtml" publishTime="04/16/2011 03:05:10" />
     <file relUrl="Scripts/jquery-1.5.2.min.js" publishTime="03/31/2011 22:28:43" />
     <file relUrl="Views/Web.config" publishTime="01/02/2011 03:33:08" />
@@ -87,7 +87,7 @@
     <file relUrl="Scripts/jquery.ui.stars.min.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Views/Home/UnlockTooltip.cshtml" publishTime="03/18/2011 20:55:58" />
     <file relUrl="Views/Planetwars/ClanList.cshtml" publishTime="04/21/2011 00:13:42" />
-    <file relUrl="Views/Planetwars/Planet.cshtml" publishTime="04/22/2011 20:01:54" />
+    <file relUrl="Views/Planetwars/Planet.cshtml" publishTime="04/22/2011 23:25:34" />
     <file relUrl="Views/Missions/Index.cshtml" publishTime="04/10/2011 04:06:38" />
     <file relUrl="Views/Static/Index.cshtml" publishTime="04/17/2011 17:10:58" />
     <file relUrl="Views/Home/Index.cshtml" publishTime="04/22/2011 13:41:21" />

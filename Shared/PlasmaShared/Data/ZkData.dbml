@@ -4,7 +4,6 @@
     <Type Name="Event">
       <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Text" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
-      <Column Name="EventType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Time" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Turn" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Event_EventClan" Member="EventClans" ThisKey="EventID" OtherKey="EventID" Type="EventClan" />
@@ -642,7 +641,6 @@
       <Column Name="IsBuildable" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IsIngameDestructible" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IngameDestructionNewStructureTypeID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="SelfRepairTurns" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="OwnerChangeDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="StructureType_PlanetStructure" Member="PlanetStructures" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="PlanetStructure" />
       <Association Name="Unlock_StructureType" Member="Unlock" ThisKey="EffectUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />

@@ -559,8 +559,6 @@ namespace ZkData
 		
 		private string _Text;
 		
-		private int _EventType;
-		
 		private System.DateTime _Time;
 		
 		private int _Turn;
@@ -583,8 +581,6 @@ namespace ZkData
     partial void OnEventIDChanged();
     partial void OnTextChanging(string value);
     partial void OnTextChanged();
-    partial void OnEventTypeChanging(int value);
-    partial void OnEventTypeChanged();
     partial void OnTimeChanging(System.DateTime value);
     partial void OnTimeChanged();
     partial void OnTurnChanging(int value);
@@ -638,29 +634,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EventType", DbType="Int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int EventType
-		{
-			get
-			{
-				return this._EventType;
-			}
-			set
-			{
-				if ((this._EventType != value))
-				{
-					this.OnEventTypeChanging(value);
-					this.SendPropertyChanging();
-					this._EventType = value;
-					this.SendPropertyChanged("EventType");
-					this.OnEventTypeChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Time", DbType="DateTime NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public System.DateTime Time
 		{
 			get
@@ -681,7 +656,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Turn", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public int Turn
 		{
 			get
@@ -702,7 +677,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventClan", Storage="_EventClans", ThisKey="EventID", OtherKey="EventID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
 		public EntitySet<EventClan> EventClans
 		{
 			get
@@ -721,7 +696,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventAccount", Storage="_EventAccounts", ThisKey="EventID", OtherKey="EventID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
 		public EntitySet<EventAccount> EventAccounts
 		{
 			get
@@ -740,7 +715,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventPlanet", Storage="_EventPlanets", ThisKey="EventID", OtherKey="EventID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
 		public EntitySet<EventPlanet> EventPlanets
 		{
 			get
@@ -759,7 +734,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Event_EventSpringBattle", Storage="_EventSpringBattles", ThisKey="EventID", OtherKey="EventID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
 		public EntitySet<EventSpringBattle> EventSpringBattles
 		{
 			get
@@ -16267,8 +16242,6 @@ namespace ZkData
 		
 		private System.Nullable<int> _IngameDestructionNewStructureTypeID;
 		
-		private System.Nullable<int> _SelfRepairTurns;
-		
 		private bool _OwnerChangeDeletesThis;
 		
 		private EntitySet<PlanetStructure> _PlanetStructures;
@@ -16325,8 +16298,6 @@ namespace ZkData
     partial void OnIsIngameDestructibleChanged();
     partial void OnIngameDestructionNewStructureTypeIDChanging(System.Nullable<int> value);
     partial void OnIngameDestructionNewStructureTypeIDChanged();
-    partial void OnSelfRepairTurnsChanging(System.Nullable<int> value);
-    partial void OnSelfRepairTurnsChanged();
     partial void OnOwnerChangeDeletesThisChanging(bool value);
     partial void OnOwnerChangeDeletesThisChanged();
     #endregion
@@ -16768,29 +16739,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SelfRepairTurns", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
-		public System.Nullable<int> SelfRepairTurns
-		{
-			get
-			{
-				return this._SelfRepairTurns;
-			}
-			set
-			{
-				if ((this._SelfRepairTurns != value))
-				{
-					this.OnSelfRepairTurnsChanging(value);
-					this.SendPropertyChanging();
-					this._SelfRepairTurns = value;
-					this.SendPropertyChanged("SelfRepairTurns");
-					this.OnSelfRepairTurnsChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
 		public bool OwnerChangeDeletesThis
 		{
 			get
@@ -16811,7 +16761,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_PlanetStructures", ThisKey="StructureTypeID", OtherKey="StructureTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get
@@ -16864,7 +16814,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_StructureType", Storage="_ParentStructureTypeByUpgradesToStructureID", ThisKey="UpgradesToStructureID", OtherKey="StructureTypeID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public StructureType ParentStructureTypeByUpgradesToStructureID
 		{
 			get
@@ -16888,7 +16838,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_StructureType1", Storage="_ParentStructureTypeByIngameDestructionNewStructureTypeID", ThisKey="IngameDestructionNewStructureTypeID", OtherKey="StructureTypeID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
 		public StructureType ParentStructureTypeByIngameDestructionNewStructureTypeID
 		{
 			get
