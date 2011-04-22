@@ -128,24 +128,19 @@ namespace System.Web.Mvc
 			return new MvcHtmlString(WikiHandler.LoadWiki(node));
 		}
 
-		public static MvcHtmlString PrintPlanet(this HtmlHelper helper, Planet planet)
-		{
-			if (planet == null) return new MvcHtmlString("?");
-			var url = new UrlHelper(helper.ViewContext.RequestContext);
-			return new MvcHtmlString(string.Format("<a href='{0}'><img src='/img/maps/{1}' width='{2}'>{3}</a>", url.Action("Planet", "Planetwars", new { id = planet.PlanetID}), planet.Resource.MapPlanetWarsIcon, planet.Resource.PlanetWarsIconSize/3, planet.Name));
-		}
-
-		public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account)
+		public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true)
 		{
 			if (account == null) return new MvcHtmlString("?");
 			else
 			{
 				return
 					new MvcHtmlString(
-						string.Format("<a href='/Users/{2}' style='color:{3}'><img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}</a>",
-						              account.Country,
-						              account.LobbyTimeRank + 1,
-						              account.Name, Clan.TreatyColor(Global.Clan, account.Clan)));
+						string.Format(
+							"<a href='/Users/{2}' style='color:{3}'><img src='/img/flags/{0}.png' class='flag'><img src='/img/ranks/{1}.png'  class='icon16'>{2}</a>",
+							account.Country,
+							account.LobbyTimeRank + 1,
+							account.Name,
+							colorize ? Clan.TreatyColor(Global.Clan, account.Clan): ""));
 			}
 		}
 
@@ -177,18 +172,32 @@ namespace System.Web.Mvc
 		}
 
 
-		public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan)
+		public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan, bool colorize = true)
 		{
-			var url = new UrlHelper(helper.ViewContext.RequestContext);
+			var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
 			if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>??</a>", url.Action("ClanList", "Planetwars")));
 			{
 				return
 					new MvcHtmlString(string.Format("<a href='{0}'><img src='{1}' width='16'><span style='color:{2}'>{3}</span></a>",
 					                                url.Action("Clan", "Planetwars", new { id = clan.ClanID }),
 					                                clan.GetImageUrl(),
-					                                Clan.TreatyColor(clan,Global.Clan),
-																					clan.Shortcut));
+																					colorize ? Clan.TreatyColor(clan, Global.Clan):"",
+					                                clan.Shortcut));
 			}
+		}
+
+		public static MvcHtmlString PrintInfluence(this HtmlHelper helper, AccountPlanet accountPlanet)
+		{
+			return PrintInfluence(helper, accountPlanet.Account.Clan, accountPlanet.Influence, accountPlanet.ShadowInfluence);
+		}
+
+		public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Clan clan, int influence, int shadowInfluence)
+		{
+			return
+				new MvcHtmlString(string.Format("<span style='color:{0}'>{1}</span>&nbsp<span style='color:gray'>({2})</span>",
+																				Clan.TreatyColor(clan, Global.Clan),
+																				influence + shadowInfluence,
+																				shadowInfluence));
 		}
 
 
@@ -214,6 +223,18 @@ namespace System.Web.Mvc
 		{
 			const string metalIcon = "http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaUI/Images/ibeam.png";
 			return new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' width='20' height='20'/></span>", cost, metalIcon));
+		}
+
+		public static MvcHtmlString PrintPlanet(this HtmlHelper helper, Planet planet)
+		{
+			if (planet == null) return new MvcHtmlString("?");
+			var url = new UrlHelper(helper.ViewContext.RequestContext);
+			return
+				new MvcHtmlString(string.Format("<a href='{0}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
+				                                url.Action("Planet", "Planetwars", new { id = planet.PlanetID }),
+				                                planet.Resource.MapPlanetWarsIcon,
+				                                planet.Resource.PlanetWarsIconSize/3,
+				                                planet.Name));
 		}
 
 		public static MvcHtmlString Select(this HtmlHelper helper, string name, Type etype, int? selected, string anyItem)

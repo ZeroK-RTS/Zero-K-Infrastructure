@@ -75,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
-    <Compile Include="AppCode\EventExtension.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\NoCache.cs" />
@@ -243,6 +242,8 @@
     <Content Include="Views\Planetwars\Planet.cshtml" />
     <Content Include="Views\Shared\GoogleSiteSearch.cshtml" />
     <Content Include="Views\Shared\TopMenu.cshtml" />
+    <Content Include="Views\Shared\PlanetIcon.cshtml" />
+    <Content Include="Views\Shared\InfluenceList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

@@ -14,15 +14,6 @@ namespace ZkData
 	}
 	partial class Clan
 	{
-		public string TreatyColor(int? otherClanID)
-		{
-			var tr = this.TreatyOffersByOfferingClanID.FirstOrDefault(x => x.TargetClanID == otherClanID);
-			Clan clan2 = null;
-			if (tr != null) clan2 = tr.ClanByTargetClanID;
-			return TreatyColor(this, clan2);
-		}
-
-
 		public bool CanJoin(Account account)
 		{
 			if (account == null) return true;

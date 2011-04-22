@@ -161,6 +161,22 @@ namespace ZeroKWeb.Controllers
 		}
 
 		[Auth]
+		public ActionResult ChangePlayerRights(int clanID, int accountID)
+		{
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(c => clanID == c.ClanID);
+			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
+			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
+			if (kickee.IsClanFounder) return Content("Clan founders can't be modified.");
+			kickee.HasClanRights = !kickee.HasClanRights;
+			var ev = Global.CreateEvent("{0} {1} {2} rights to clan {3}", Global.Account, kickee.HasClanRights ? "gave" : "took", kickee, clan);
+			db.Events.InsertOnSubmit(ev);
+			db.SubmitChanges();
+			return RedirectToAction("Clan", new { id = clanID });
+		}
+		
+
+		[Auth]
 		public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image)
 		{
 			var db = new ZkDataContext();
@@ -213,6 +229,7 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var planet = db.Planets.Single(p => p.PlanetID == planetID);
 			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} form {2} to {3}", Global.Account, planet, planet.Name, newName ));
 			planet.Name = newName;
 			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planet.PlanetID });

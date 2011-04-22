@@ -5,53 +5,91 @@
   var c = Model;
   var isMember = c.Accounts.Any(y => y.AccountID == Global.AccountID);
 }
-
-<h2>@c.ClanName</h2>
 @Html.ActionLink("Back to clan list", "ClanList")
+<h2>@c.ClanName</h2>
 <table>
   <tr>
     <td>
-      <h3>@Html.PrintClan(c)</h3>
+      @{
+  var infl = Model.Accounts.SelectMany(x=>x.AccountPlanets);
+  }
+      <h3>@Html.PrintClan(c)</h3> 
+
       <img  src='@c.GetImageUrl()'/><br />
-      @(c.LeaderTitle ?? "leader"): @Html.PrintAccount(c.Accounts.Single(x=>x.IsClanFounder))
+      Influence: <b>@Html.PrintInfluence(Model, infl.Sum(x => x.Influence), infl.Sum(x => x.ShadowInfluence))</b><br />
+      Credits: <b>@c.Accounts.Sum(x=>x.Credits)</b><br />
+
+      @(c.LeaderTitle ?? "leader"): @Html.PrintAccount(c.Accounts.Single(x => x.IsClanFounder))
     </td>
     <td>
-      <div style='margin:10px; font-size: 80%;'>
+      <div style='margin: 10px; font-size: 80%;'>
         @Html.BBCode(c.Description)
       </div>
     </td>
   </tr>
 </table>
+
 @if (c.CanJoin(Global.Account)) {
-  @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new {@class="delete" })
+  @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })
 }
 @if (isMember) {
-  <b>Topic:</b><br />
-  <div style='border: 1px dashed white;'>
-    @Html.BBCode(c.SecretTopic)
-  </div>
+  <b>Secret topic:</b><br />
+  @Html.BBCode(c.SecretTopic)
 }
+@if (isMember && Global.Account.HasClanRights) { //has rights
+  <br />
+  @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })
+}
+
+
 <h3>
   Members</h3>
-@foreach (var a in c.Accounts) {
-    @Html.PrintAccount(a)
-    if (isMember && Global.Account.HasClanRights && !a.IsClanFounder)
-    { //has rights
-          <span>&nbsp</span>
-        // todo: disallow kicking after the round starts
-        var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
-        @Html.ActionLink("Expel", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+<table>
+<th>
+Name
+</th>
+<th>Influence</th>
+<th></th>
+<th></th>
+  @foreach (var a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence))) {
+    <tr>
+      <td>
+        @Html.PrintAccount(a)
+      </td>
+      <td>
+        @Html.PrintInfluence(Model, a.AccountPlanets.Sum(x => x.Influence), a.AccountPlanets.Sum(x => x.ShadowInfluence))
+      </td>
+      <td>
+       @{
+         var role = "";
+         if (a.IsClanFounder) {role = c.LeaderTitle;}
+         else if (a.HasClanRights) {role = "rights";}
+         }
+@role
+</td><td>
+        @if (isMember && Global.Account.HasClanRights && !a.IsClanFounder) { //has rights
+          @:&nbsp
+          // todo: disallow kicking after the round starts
+          var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
+          @Html.ActionLink("Expel", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) }) @:| @Html.ActionLink(a.HasClanRights ? "Take rights" : "Give rights", "ChangePlayerRights", new { clanID = c.ClanID, accountID = a.AccountID })
+
+        }
+      </td>
+    </tr>
+    foreach (var p in a.Planets) {
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.PrintPlanet(p)</td>
+        <td>&nbsp;&nbsp;&nbsp;<small>@Html.PrintInfluence(a.AccountPlanets.Single(x => x.Planet == p))</small></td>
+        <td></td>
+        <td></td>
+      </tr>
     }
-    <br />
-}
-@if (isMember && Global.Account.HasClanRights)
-{ //has rights
-  @Html.ActionLink("modify this clan", "CreateClan", new { id = c.ClanID })
-}
+    
+  }
+</table>
 <br />
 @Html.ActionLink("Back to clan list", "ClanList")
 <hr />
 @if (isMember) {
-  Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new {clanID = c.ClanID, threadID = Model.ForumThreadID} });
+  Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { clanID = c.ClanID, threadID = Model.ForumThreadID } });
 }
-

@@ -16,8 +16,7 @@
   <input type='submit' value="Rename Planet" />
   </form>
 }
-<h2>@Html.ActionLink(Model.Resource.InternalName, "Detail", "Maps", new { id = Model.Resource.ResourceID }, null)
-</h2>
+@Html.ActionLink(Model.Resource.InternalName, "Detail", "Maps", new { id = Model.Resource.ResourceID }, null)
 <br />
 <table>
   <tr>
@@ -47,49 +46,9 @@
     </td>
   </tr>
 </table>
-<h2>
-  Clan Influence</h2>
-<table>
-  @{
-        
-  }
-  @foreach (var clanGroup in Model.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderBy(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence))) {
-    <tr>
-      <td>
-        <h3>@Html.PrintClan(clanGroup.Key)</h3>
-      </td>
-      <td>
-        <h3>@clanGroup.Sum(ap => ap.Influence + ap.ShadowInfluence)</h3>
-      </td>
-      @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence)) {
-        <tr>
-          <td>@Html.PrintAccount(accountPlanet.Account)
-          </td>
-          <td>@String.Format("{0}", accountPlanet.Influence + accountPlanet.ShadowInfluence)
-          </td>
-        </tr>
-         if (accountPlanet.Influence > 0) {
-        <tr>
-          <td>
-            Planet influence
-          </td>
-          <td>@accountPlanet.Influence
-          </td>
-        </tr>
-         }
-         if (accountPlanet.ShadowInfluence > 0) {
-        <tr>
-          <td>
-            Influence from connected planets
-          </td>
-          <td>@accountPlanet.ShadowInfluence
-          </td>
-        </tr>
-         }
-      }
-    </tr>
-  }
-</table>
+<h3>
+  Influence on @Model.Name</h3>
+  @Html.Partial("InfluenceList", Model.AccountPlanets)
 <h2>
   Trade</h2>
 <h3>

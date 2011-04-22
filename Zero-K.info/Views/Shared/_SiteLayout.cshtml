@@ -24,7 +24,7 @@
   <script type="text/javascript" src='@Href("~/Scripts/base.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/jquery.tablesorter.min.js")' ></script>
-<style type="text/css">
+  <style type="text/css">
     @@import url(http://www.google.com/cse/api/branding.css);
 </style>
   @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1") {
@@ -46,7 +46,6 @@
     <style type="text/css"> html { background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0; background-attachment: fixed; }</style>
     }
   }
-  
   <script type="text/javascript">
 
     var _gaq = _gaq || [];
@@ -61,7 +60,6 @@
 
   </script>
 </head>
-
 <body class="">
   <span style="display: none; position: fixed; left: 300px; top: 200px; z-index: 10;
     width: 300px; height: 50px; background-color: Black; border: 1px solid Red; font-size: x-large;
@@ -74,20 +72,18 @@
           <img src="/img/zk_logo.png" height="150px" alt="Zero K" /></a>
       </div>
       <!close header>
-      @{Html.RenderPartial("TopMenu");}
-
+      @Html.Partial("TopMenu")
       <!close navigation>
       <div class="border">
-        @{Html.RenderPartial("LoginBar");}
+        @Html.Partial("LoginBar")
       </div>
       <!close login>
       <div class="border">
         @RenderBody()
       </div>
       <div id="footer" class="border">
-        <span class="center cdark">
-          Zero-K is a free real time strategy (RTS), that aims to be the best open source multi-platform strategy game available :-)
-        </span>
+        <span class="center cdark">Zero-K is a free real time strategy (RTS), that aims to
+          be the best open source multi-platform strategy game available :-) </span>
       </div>
       <!close footer>
     </div>
@@ -97,6 +93,9 @@
     <div style="margin: 10px;">
       @if (!Global.IsLobbyAccess) {
         Html.RenderPartial("TopMenu");
+        <div class="border">
+          @Html.Partial("LoginBar")
+        </div>
       }
       @RenderBody()
     </div>
