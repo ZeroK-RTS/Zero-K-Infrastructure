@@ -143,7 +143,7 @@
 
       <h3>
         Technologies:</h3>
-        @{Html.RenderPartial("UnlockedTechnologies", Model.AccountUnlocks);}
+        @Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
         <br />
         @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
           <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)"><a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a></span>

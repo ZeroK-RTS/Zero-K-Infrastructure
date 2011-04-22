@@ -92,6 +92,7 @@
     <Compile Include="Data\AuthServiceClient.cs" />
     <Compile Include="Data\Clan.cs" />
     <Compile Include="Data\Commander.cs" />
+    <Compile Include="Data\Event.cs" />
     <Compile Include="Data\ForumPost.cs" />
     <Compile Include="Data\ForumThread.cs" />
     <Compile Include="Data\Galaxy.cs" />

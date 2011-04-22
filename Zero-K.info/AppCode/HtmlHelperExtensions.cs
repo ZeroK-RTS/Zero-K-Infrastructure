@@ -149,6 +149,7 @@ namespace System.Web.Mvc
 			}
 		}
 
+
 		public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattlePlayer battlePlayer)
 		{
 			var url = new UrlHelper(helper.ViewContext.RequestContext);
