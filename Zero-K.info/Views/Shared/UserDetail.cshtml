@@ -141,6 +141,20 @@
           }
         </table>
       }
+      @if (Model.DropshipCount > 0 || Model.AccountPlanets.Where(x=>x.DropshipCount>0).Any()) {
+       <h3>Dropships</h3>
+        <span nowrap="nowrap">@(Model.DropshipCount??0) ready to deploy</span>
+        <table>
+          @foreach (var p in Model.AccountPlanets.Where(x=>x.DropshipCount>0)) { 
+            <tr>
+              <td>@Html.PrintPlanet(p.Planet)
+              </td>
+              <td><img src='/img/dropship.png'/> x @p.DropshipCount</td>
+            </tr>
+          }
+        </table>
+      }
+
       <br />
       @if (Model.SpringBattlePlayers.Any()) {
         <h3>

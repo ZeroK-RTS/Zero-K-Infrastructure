@@ -18,6 +18,21 @@
 }
 @Html.ActionLink(Model.Resource.InternalName, "Detail", "Maps", new { id = Model.Resource.ResourceID }, null)
 <br />
+<h3>
+  Dropships</h3>
+<table>
+  @foreach (var p in Model.AccountPlanets.GroupBy(x => x.Account.Clan).Select(x => new { clan = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
+    <tr>
+      <td>@Html.PrintClan(p.clan)
+      </td>
+      <td>
+        <img src='/img/dropship.png' />
+        x @p.dropships
+      </td>
+    </tr>
+  }
+</table>
+
 <table>
   <tr>
     <td valign='top'>

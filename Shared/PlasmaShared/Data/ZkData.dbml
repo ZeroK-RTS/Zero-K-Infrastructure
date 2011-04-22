@@ -77,6 +77,7 @@
       <Column Name="PlanetWarsRank" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsClanFounder" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="HasClanRights" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="DropshipCount" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
