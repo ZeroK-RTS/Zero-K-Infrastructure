@@ -36,6 +36,7 @@ namespace ZkData
       }
     }
 
+
   	public int PlanetWarsIconSize
   	{
 			get { return 12 + (MapWidth ?? 0 + MapHeight ?? 0)*2; } }

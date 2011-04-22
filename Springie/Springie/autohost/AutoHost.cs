@@ -352,7 +352,6 @@ namespace Springie.autohost
 			}
 		}
 
-
 		public void SayBattle(string text)
 		{
 			SayBattle(text, true);

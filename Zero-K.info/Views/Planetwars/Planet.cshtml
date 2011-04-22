@@ -4,8 +4,6 @@
 @{
 //  ViewBag.Title = "Planet";
   Page.Title = "Planet " + Model.Name;
-//  Layout = "~/Views/Shared/_SiteLayout.cshtml";
-  // ZkData.Galaxy.RecalculateShadowInfluence();
 }
 <h1>
   @{
@@ -94,14 +92,27 @@
     </tr>
   }
 </table>
+
+<h2>Trade</h2>
+<h3>Sell Orders</h3>
+@if (Model.OwnerAccountID == Global.AccountID) {
+    var myInfluence = Model.AccountPlanets.Single(ap => ap.AccountID == Model.OwnerAccountID).Influence;
+  <form method="post" action="@Url.Action("SubmitPlaceSellOrder")">
+  <input type="hidden" name="planetID" value="@Model.PlanetID"/>
+  <input type="text" name="quantity" value="@myInfluence"/>
+  <input type='submit' value="Place Sell Order" />
+  </form>
+}
+<h4>Buy Orders</h4>
+
+
 <h2>Structures</h2>
-<ul>
+
   @foreach (var structure in Model.PlanetStructures)
   {
-    <li>
-      <img src='@structure.GetImageUrl()'/>
-      @structure.StructureType.Name (@structure.StructureType.Description)</li>
+     
+      <p> <img  width="32" height="32" src='@structure.GetImageUrl()'/>@structure.StructureType.Name (@structure.StructureType.Description)</p>
   }
-</ul>
+
 
 @{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new {planetID = Model.PlanetID, threadID = Model.ForumThreadID} });}

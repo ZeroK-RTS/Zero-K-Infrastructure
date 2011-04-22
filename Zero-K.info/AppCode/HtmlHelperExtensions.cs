@@ -128,6 +128,13 @@ namespace System.Web.Mvc
 			return new MvcHtmlString(WikiHandler.LoadWiki(node));
 		}
 
+		public static MvcHtmlString PrintPlanet(this HtmlHelper helper, Planet planet)
+		{
+			if (planet == null) return new MvcHtmlString("?");
+			var url = new UrlHelper(helper.ViewContext.RequestContext);
+			return new MvcHtmlString(string.Format("<a href='{0}'><img src='/img/maps/{1}' width='{2}'>{3}</a>", url.Action("Planet", "Planetwars", new { id = planet.PlanetID}), planet.Resource.MapPlanetWarsIcon, planet.Resource.PlanetWarsIconSize/3, planet.Name));
+		}
+
 		public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account)
 		{
 			if (account == null) return new MvcHtmlString("?");

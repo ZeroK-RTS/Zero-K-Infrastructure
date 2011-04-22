@@ -79,12 +79,18 @@ namespace Springie.PlanetWars
 		{
 			try
 			{
+				var userList =
+					tas.MyBattle.Users.Where(x => !x.IsSpectator && x.SyncStatus == SyncStatuses.Synced).Select(
+						x => new AccountTeam() { AccountID = x.LobbyUser.AccountID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber }).ToArray();
+
+				if (userList.Length <= 1)
+				{
+					autoHost.SayBattle("Not enough players in game");
+					return false;
+				}
+
 				var balance = serv.BalanceTeams(tas.UserName,
-				                                tas.MyBattle.MapName,
-				                                tas.MyBattle.Users.Where(x => !x.IsSpectator && x.SyncStatus == SyncStatuses.Synced).Select(
-				                                	x =>
-				                                	new AccountTeam()
-				                                	{ AccountID = x.LobbyUser.AccountID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber }).ToArray(),
+				                                tas.MyBattle.MapName,userList,
 				                                AutohostMode.Planetwars);
 				autoHost.SayBattle(balance.Message);
 				if (balance.BalancedTeams != null)
