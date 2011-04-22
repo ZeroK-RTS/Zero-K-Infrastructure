@@ -11,14 +11,12 @@
   <tr>
     <td>
       @{
-  var infl = Model.Accounts.SelectMany(x=>x.AccountPlanets);
-  }
-      <h3>@Html.PrintClan(c)</h3> 
-
+        var infl = Model.Accounts.SelectMany(x => x.AccountPlanets);
+      }
+      <h3>@Html.PrintClan(c)</h3>
       <img  src='@c.GetImageUrl()'/><br />
       Influence: <b>@Html.PrintInfluence(Model, infl.Sum(x => x.Influence), infl.Sum(x => x.ShadowInfluence))</b><br />
-      Credits: <b>@c.Accounts.Sum(x=>x.Credits)</b><br />
-
+      Credits: <b>@c.Accounts.Sum(x => x.Credits)</b><br />
       @(c.LeaderTitle ?? "leader"): @Html.PrintAccount(c.Accounts.Single(x => x.IsClanFounder))
     </td>
     <td>
@@ -28,7 +26,6 @@
     </td>
   </tr>
 </table>
-
 @if (c.CanJoin(Global.Account)) {
   @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })
 }
@@ -40,17 +37,21 @@
   <br />
   @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })
 }
-
-
+<h3>Clan events</h3>
+@Html.Action("Events", new {clanID = c.ClanID, partial = true})
 <h3>
   Members</h3>
 <table>
-<th>
-Name
-</th>
-<th>Influence</th>
-<th></th>
-<th></th>
+    <th>
+      Name
+    </th>
+    <th>
+      Influence
+    </th>
+    <th>
+    </th>
+    <th>
+    </th>
   @foreach (var a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence))) {
     <tr>
       <td>
@@ -60,31 +61,37 @@ Name
         @Html.PrintInfluence(Model, a.AccountPlanets.Sum(x => x.Influence), a.AccountPlanets.Sum(x => x.ShadowInfluence))
       </td>
       <td>
-       @{
-         var role = "";
-         if (a.IsClanFounder) {role = c.LeaderTitle;}
-         else if (a.HasClanRights) {role = "rights";}
-         }
-@role
-</td><td>
+        @{
+   var role = "";
+   if (a.IsClanFounder) { role = c.LeaderTitle; } else if (a.HasClanRights) { role = "rights"; }
+        }
+        @role
+      </td>
+      <td>
         @if (isMember && Global.Account.HasClanRights && !a.IsClanFounder) { //has rights
           @:&nbsp
           // todo: disallow kicking after the round starts
           var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
-          @Html.ActionLink("Expel", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) }) @:| @Html.ActionLink(a.HasClanRights ? "Take rights" : "Give rights", "ChangePlayerRights", new { clanID = c.ClanID, accountID = a.AccountID })
-
+          @Html.ActionLink("Expel", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) }) @:|@Html.ActionLink(a.HasClanRights ? "Take rights" : "Give rights", "ChangePlayerRights", new { clanID = c.ClanID, accountID = a.AccountID })
+        
         }
       </td>
     </tr>
-    foreach (var p in a.Planets) {
-      <tr>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.PrintPlanet(p)</td>
-        <td>&nbsp;&nbsp;&nbsp;<small>@Html.PrintInfluence(a.AccountPlanets.Single(x => x.Planet == p))</small></td>
-        <td></td>
-        <td></td>
-      </tr>
-    }
-    
+        foreach (var p in a.Planets) {
+    <tr>
+      <td>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@Html.PrintPlanet(p)
+      </td>
+      <td>
+        &nbsp;&nbsp;&nbsp;<small>@Html.PrintInfluence(a.AccountPlanets.Single(x => x.Planet == p))</small>
+      </td>
+      <td>
+      </td>
+      <td>
+      </td>
+    </tr>
+        }
+
   }
 </table>
 <br />
