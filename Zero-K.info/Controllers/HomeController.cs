@@ -218,6 +218,11 @@ namespace ZeroKWeb.Controllers
 			ForumPost post = null;
 			ForumThreadLastRead last;
 
+			if (thread.RestrictedClanID != null && thread.RestrictedClanID != Global.ClanID)
+			{
+				return "<span>This is a secret clan thread :-)</span>";
+			}
+
 			var postTitle = "Starting post ";
 			if (Global.IsAccountAuthorized && (last = thread.ForumThreadLastReads.SingleOrDefault(x => x.AccountID == Global.AccountID)) != null)
 			{
