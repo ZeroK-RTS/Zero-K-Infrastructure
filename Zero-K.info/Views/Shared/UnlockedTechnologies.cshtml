@@ -1,7 +1,30 @@
 ﻿@model IEnumerable<ZkData.AccountUnlock>
+@{
+  IEnumerable<int?> clanUnlocks = new List<int?>();
+  IEnumerable<int?> pwLocks = new List<int?>();
+  var acc = Model.FirstOrDefault();
+  
+  using (var db = new ZkData.ZkDataContext()) {
+    var gal = db.Galaxies.FirstOrDefault(x => x.IsDefault);
+    if (gal != null) {
+      pwLocks = gal.Planets.SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.EffectUnlockID).Where(x => x != null).Distinct().ToList();
+    }
+  }
+  if (acc != null && acc.Account != null) {
+    clanUnlocks = acc.Account.Clan.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.EffectUnlockID).Where(x=>x!=null).Distinct().ToList();
+  }
+}
+
 @foreach (var au in Model) {
   var unlock = au.Unlock;
-  <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:110px;height:90px" title="$unlock$@unlock.UnlockID"  >
+  <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  >
+    @if (pwLocks.Contains(unlock.UnlockID)) {
+      if (clanUnlocks.Contains(unlock.UnlockID)) {
+          <span style='color:Green'>PW:owned</span>
+      } else {
+        <span style='color:Red'>PW:locked</span>
+      }
+    }
     <img src="@unlock.ImageUrl"/><br />
     @if (au.Count > 1) { 
       <big>@au.Count x</big>

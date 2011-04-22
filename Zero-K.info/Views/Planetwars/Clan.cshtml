@@ -62,8 +62,8 @@
       <td>@a.Credits</td>
       <td>
         @{
-   var role = "";
-   if (a.IsClanFounder) { role = "F"; } else if (a.HasClanRights) { role = "R"; }
+     var role = "";
+     if (a.IsClanFounder) { role = "F"; } else if (a.HasClanRights) { role = "R"; }
         }
         @role
       </td>
@@ -95,8 +95,20 @@
 
   }
 </table>
+<h3>Clan technologies</h3>
+
+@foreach (var unlock in Model.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.Unlock).Distinct().Where(x => x != null)) {
+  <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  >
+    <img src="@unlock.ImageUrl"/><br />
+    @unlock.Name
+  </span>
+}
+
+
+
+
 <h3>@Model.Shortcut events</h3>
-@Html.Action("Events", new {clanID = c.ClanID, partial = true})
+@Html.Action("Events", new { clanID = c.ClanID, partial = true })
 <br />
 @Html.ActionLink("Back to clan list", "ClanList")
 <hr />
