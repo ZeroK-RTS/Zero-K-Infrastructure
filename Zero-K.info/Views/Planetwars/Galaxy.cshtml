@@ -41,7 +41,7 @@ Under construciton, please wait!
     <table cellpadding="0" cellspacing="0" style="left: @(pr.Left - 40)px; top: @(pr.Top - 50)px; width:@(pr.Width + 80)px; height:50px;" class="pwlabel" width="@(pr.Width + 80)" height="50">
       <tr>
         <td valign="bottom" align="center">
-          <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White'><span title="$map$@p.MapResourceID" style="color: @(Clan.TreatyColor(Global.Clan, clan))" >@p.Name<br />
+          <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White'><span title="$planet$@p.PlanetID" style="color: @(Clan.TreatyColor(Global.Clan, clan))" >@p.Name<br />
             @if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID) {
               <span style="font-size: 8px">@p.Account.Name</span>
             }
@@ -50,7 +50,7 @@ Under construciton, please wait!
       </tr>
     </table>
     
-    <span style="position: absolute; left: @(pr.Left - 20)px; top: @(pr.Top)px; width: 20px; height: @(pr.Height)px; text-align:right;">
+    <span style="position: absolute; left: @(pr.Left - 20)px; top: @(pr.Top)px; width: 20px; height: @(pr.Height)px; text-align:right;" title='$planetInfluence$@p.PlanetID'>
       <table cellpadding="0" cellspacing="0" style="font-size: 2px;">
         <tr>
           <td>
@@ -69,7 +69,7 @@ Under construciton, please wait!
       </table>
     </span>
     
-    <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White'><span style="position: absolute; left: @(pr.Left)px; top: @(pr.Top)px; width: @(pr.Width)px; height: @(pr.Height)px;">
+    <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White' title='$planet$@p.PlanetID'><span style="position: absolute; left: @(pr.Left)px; top: @(pr.Top)px; width: @(pr.Width)px; height: @(pr.Height)px;" title='$planet$@p.PlanetID'>
       @foreach (var s in p.PlanetStructures) {
         <img src='@s.GetImageUrl()' width='@(pr.Width)' style='position:absolute' />
       }
@@ -77,7 +77,7 @@ Under construciton, please wait!
     
     
       if (shipCount > 0) {
-    <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;">
+    <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;" title='$planetDropships$@p.PlanetID'>
       <img src='/img/fleets/war.png' width='@(Math.Round(20.0 * shipCount / (double)maxDropships))' /><span
         style="font-size: 10px">@shipCount</span> </span>
       }

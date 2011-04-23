@@ -231,11 +231,11 @@ namespace System.Web.Mvc
 			if (planet == null) return new MvcHtmlString("?");
 			var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
 			return
-				new MvcHtmlString(string.Format("<a href='{0}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
+				new MvcHtmlString(string.Format("<a href='{0}' title='$planet${4}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
 				                                url.Action("Planet", "Planetwars", new { id = planet.PlanetID }),
 				                                planet.Resource.MapPlanetWarsIcon,
 				                                planet.Resource.PlanetWarsIconSize/3,
-				                                planet.Name));
+				                                planet.Name, planet.PlanetID));
 		}
 
 		public static MvcHtmlString Select(this HtmlHelper helper, string name, Type etype, int? selected, string anyItem)

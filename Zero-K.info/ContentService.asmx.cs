@@ -688,7 +688,7 @@ namespace ZeroKWeb
 
 
 		[WebMethod]
-		public bool VerfiyAccountData(string login, string password)
+		public bool VerifyAccountData(string login, string password)
 		{
 			var acc = AuthServiceClient.VerifyAccountPlain(login, password);
 			if (acc == null) return false;

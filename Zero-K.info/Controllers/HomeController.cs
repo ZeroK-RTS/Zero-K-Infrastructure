@@ -97,8 +97,16 @@ namespace ZeroKWeb.Controllers
 					return PartialView("~/Views/Poll/PollVoteList.cshtml", db.PollVotes.Where(x => x.OptionID == int.Parse(args[1])).Select(x=>x.Account).OrderByDescending(x=>x.Level));
 				case "commander":
 					ret = GetCommanderTooltip(int.Parse(args[1]));
-
 					break;
+
+				case "planet":
+					return PartialView("PlanetTooltip", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])));
+
+				case "planetInfluence":
+					return PartialView("InfluenceList", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])).AccountPlanets);
+
+				case "planetDropships":
+					return PartialView("PlanetDropships", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])));
 			}
 			return Content(ret);
 		}

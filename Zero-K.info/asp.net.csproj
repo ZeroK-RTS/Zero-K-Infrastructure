@@ -246,6 +246,8 @@
     <Content Include="Views\Shared\InfluenceList.cshtml" />
     <Content Include="Views\Planetwars\Events.cshtml" />
     <Content Include="Views\Shared\PlanetSummary.cshtml" />
+    <Content Include="Views\Home\PlanetTooltip.cshtml" />
+    <Content Include="Views\Shared\PlanetDropships.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
