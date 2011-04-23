@@ -337,8 +337,7 @@ namespace Springie.autohost
                 addedCommands);
 
             AddMissing(
-                new CommandConfig("spawn",
-                                  1,
+                new CommandConfig("spawn", -2,
                                   "<configs> - creates new autohost. Example: !spawn mod=ca:stable,title=My PWN game,password=secret",
                                   0),
                 addedCommands);

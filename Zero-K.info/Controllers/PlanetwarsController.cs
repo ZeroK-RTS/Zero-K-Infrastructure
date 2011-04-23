@@ -82,6 +82,7 @@ namespace ZeroKWeb.Controllers
 			if (clanID.HasValue) res = res.Where(x => x.EventClans.Any(y => y.ClanID == clanID));
 			if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == clanID));
 			if (!string.IsNullOrEmpty(filter)) res = res.Where(x => SqlMethods.Like(x.Text, string.Format("%{0}%", filter)));
+			res = res.OrderByDescending(x => x.EventID);
 
 			var ret = new EventsResult
 			          {
@@ -224,8 +225,16 @@ namespace ZeroKWeb.Controllers
 			{
 				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 
-				if (!ZkData.Clan.AccessiblePlanets(db, acc.ClanID).Any(x => x.PlanetID == planetID)) return Content("This planet is not accessible for your dropships at this moment");
-
+				var accessiblePlanets = ZkData.Clan.AccessiblePlanets(db, acc.ClanID).Select(x=>x.PlanetID).ToList();
+				var accessible = accessiblePlanets.Any(x=>x == planetID);
+				if (!accessible)
+				{
+					var jumpGateCapacity = acc.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
+					var usedJumpGates = acc.AccountPlanets.Where(x => !accessiblePlanets.Contains(x.PlanetID)).Sum(x => x.DropshipCount);
+					if (usedJumpGates >= jumpGateCapacity)
+						return
+							Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity {0}/{1}", usedJumpGates, jumpGateCapacity));
+				} 
 				var cnt = Math.Max(count, 0);
 				cnt = Math.Min(cnt, acc.DropshipCount ?? 0);
 				acc.DropshipCount = (acc.DropshipCount ?? 0) - cnt;

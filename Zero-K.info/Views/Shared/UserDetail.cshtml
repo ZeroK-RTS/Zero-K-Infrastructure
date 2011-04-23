@@ -141,7 +141,7 @@
           }
         </table>
       }
-      @if (Model.DropshipCount > 0 || Model.AccountPlanets.Where(x=>x.DropshipCount>0).Any()) {
+      @if (Model.Clan != 0) {
        <h3>Dropships</h3>
         <span nowrap="nowrap">@(Model.DropshipCount??0) ready to deploy</span>
         <table>
