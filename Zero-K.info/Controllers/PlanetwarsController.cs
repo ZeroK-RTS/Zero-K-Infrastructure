@@ -428,6 +428,7 @@ namespace ZeroKWeb.Controllers
 			structure.IsDestroyed = false;
 			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure, planet));
 			db.SubmitChanges();
+			SetPlanetOwners(db);
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
@@ -455,6 +456,7 @@ namespace ZeroKWeb.Controllers
 			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newStructure, planet));
 
 			db.SubmitChanges();
+			SetPlanetOwners(db);
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
