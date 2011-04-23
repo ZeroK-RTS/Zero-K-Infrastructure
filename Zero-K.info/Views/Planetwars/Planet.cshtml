@@ -80,8 +80,64 @@
   }
 }
 
-<h2>
-  Trade</h2>
+
+@if (Global.AccountID == Model.OwnerAccountID) {
+    <h2>Construction</h2>
+    foreach (var structure in Model.PlanetStructures.Where(s => s.IsDestroyed))
+    {
+        if (structure.StructureType.Cost > Global.Account.Credits) 
+            {
+                <p>@String.Format("Repair {0} (requires {1})", structure.StructureType.Name, structure.StructureType.Cost)</p>
+            }
+            else
+            {
+                var linkText = String.Format("Repair {0} ({1})", structure.StructureType.Name, structure.StructureType.Cost);
+                <p>@Html.ActionLink(linkText, "RepairStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
+            }
+    }
+    foreach (var structure in Model.PlanetStructures.Where(s => !s.IsDestroyed))
+    {
+
+        var upgrade = structure.StructureType.ParentStructureTypeByUpgradesToStructureID;
+        if (upgrade != null)
+        {
+            if (upgrade.Cost > Global.Account.Credits)
+            {
+                <p>@String.Format("Upgrade {0} to {1} (requires {2})", structure.StructureType.Name, upgrade.Name, upgrade.Cost)</p>
+            }
+            else
+            {
+                var linkText = String.Format("Upgrade {0} to {1} ({2})", structure.StructureType.Name, upgrade.Name, upgrade.Cost);
+                <p>@Html.ActionLink(linkText, "UpgradeStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
+            }
+
+        }
+    }
+    using (var db = new ZkDataContext())
+    {
+        //db.Accounts.Single(a => a.AccountID == Global.AccountID).Credits = 10000;
+        //db.SubmitChanges();
+        var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
+        foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable))
+        {
+            if (!StructureType.HasStructureOrUpgrades(db, planet, structureType))
+            {
+                if (structureType.Cost > Global.Account.Credits)
+                {
+                    <p>@String.Format("Build {0} (requires {1})", structureType.Name, structureType.Cost)</p>
+                }
+                else
+                {
+                    var linkText = String.Format("Build {0} ({1})", structureType.Name, structureType.Cost);
+                    <p>@Html.ActionLink(linkText, "BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })</p>
+                }
+            }
+        }
+    }
+}
+
+
+<h2>Trade</h2>
 <h3>Sell Offers</h3>
       <table>
         <tr>
@@ -89,11 +145,12 @@
             <th>Price</th>
             <th>Seller</th>
         </tr>
-    @foreach (var offer in Model.MarketOffers.Where(o => o.IsSell && o.DateAccepted == null))
+    @foreach (var offer in Model.MarketOffers.Where(o => o.IsSell && o.DateAccepted == null).OrderBy(o => o.Price))
     {
         var sellerAccountPlanet = Model.AccountPlanets.SingleOrDefault(ap => ap.AccountID == offer.AccountID);
         var maxWillSell = 0;
-        if (sellerAccountPlanet != null) {
+        if (sellerAccountPlanet != null)
+        {
             maxWillSell = Math.Min(sellerAccountPlanet.Influence, offer.Quantity);
         }
         <tr>                
@@ -130,7 +187,7 @@
             <th>Price</th>
             <th>Buyer</th>
         </tr>
-    @foreach (var offer in Model.MarketOffers.Where(o => !o.IsSell && o.DateAccepted == null))
+    @foreach (var offer in Model.MarketOffers.Where(o => !o.IsSell && o.DateAccepted == null).OrderBy(o => o.Price))
     {
         var maxWillBuy = Math.Min(offer.AccountByAccountID.Credits / offer.Price, offer.Quantity);
         <tr>

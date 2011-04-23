@@ -257,27 +257,29 @@ namespace ZeroKWeb.Controllers
 
 
 		[Auth]
-		public ActionResult SubmitBuyStructure(int planetID, int structureTypeID)
+		public ActionResult BuildStructure(int planetID, int structureTypeID)
 		{
-			var db = new ZkDataContext();
-			var planet = db.Planets.Single(p => p.PlanetID == planetID);
-			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
-			var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
-			if (structureType == null) return Content("Structure type does not exist.");
-			if (!structureType.IsBuildable) return Content("Structure is not buildable.");
+			using (var db = new ZkDataContext()) 
+			{
+				var planet = db.Planets.Single(p => p.PlanetID == planetID);
+				if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+				var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
+				if (structureType == null) return Content("Structure type does not exist.");
+				if (!structureType.IsBuildable) return Content("Structure is not buildable.");
 
-			// assumes you can only build level 1 structures! if higher level structures can be built directly, we should check down the upgrade chain too
-			if (HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades already built");
+				// assumes you can only build level 1 structures! if higher level structures can be built directly, we should check down the upgrade chain too
+				if (StructureType.HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades already built");
 
-			if (Global.Account.Credits < structureType.Cost) return Content("Insufficient credits.");
-			Global.Account.Credits -= structureType.Cost;
+				if (Global.Account.Credits < structureType.Cost) return Content("Insufficient credits.");
+				planet.Account.Credits -= structureType.Cost;
 
-			var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID };
-			db.PlanetStructures.InsertOnSubmit(newBuilding);
-			db.SubmitChanges();
+				var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID };
+				db.PlanetStructures.InsertOnSubmit(newBuilding);
+				db.SubmitChanges();
 
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet));
-			db.SubmitChanges();
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet));
+				db.SubmitChanges();
+			}
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
@@ -414,7 +416,23 @@ namespace ZeroKWeb.Controllers
 		}
 
 		[Auth]
-		public ActionResult SubmitUpgradeStructure(int planetID, int structureTypeID)
+		public ActionResult RepairStructure(int planetID, int structureTypeID)
+		{
+			var db = new ZkDataContext();
+			var planet = db.Planets.Single(p => p.PlanetID == planetID);
+			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+			var structure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
+			if (!structure.IsDestroyed) return Content("Can't repair a working structure.");
+			if (Global.Account.Credits < structure.StructureType.Cost) return Content("Insufficient credits.");
+			planet.Account.Credits -= structure.StructureType.Cost;
+			structure.IsDestroyed = false;
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure, planet));
+			db.SubmitChanges();
+			return RedirectToAction("Planet", new { id = planetID });
+		}
+
+		[Auth]
+		public ActionResult UpgradeStructure(int planetID, int structureTypeID)
 		{
 			var db = new ZkDataContext();
 			var planet = db.Planets.Single(p => p.PlanetID == planetID);
@@ -426,9 +444,9 @@ namespace ZeroKWeb.Controllers
 
 			var newStructureType = db.StructureTypes.Single(s => s.StructureTypeID == oldStructure.StructureType.UpgradesToStructureID);
 			if (Global.Account.Credits < newStructureType.Cost) return Content("Insufficient credits.");
-			Global.Account.Credits -= newStructureType.Cost;
+			planet.Account.Credits -= newStructureType.Cost;
 
-			var newStructure = new PlanetStructure { PlanetID = planetID, StructureTypeID = oldStructure.StructureTypeID };
+			var newStructure = new PlanetStructure { PlanetID = planetID, StructureTypeID = newStructureType.StructureTypeID };
 
 			db.PlanetStructures.InsertOnSubmit(newStructure);
 			db.PlanetStructures.DeleteOnSubmit(oldStructure);
@@ -438,16 +456,6 @@ namespace ZeroKWeb.Controllers
 
 			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planetID });
-		}
-
-		bool HasStructureOrUpgrades(ZkDataContext db, Planet planet, StructureType structureType)
-		{
-			// has found stucture in tech tree
-			if (planet.PlanetStructures.Any(s => structureType.UpgradesToStructureID == s.StructureTypeID)) return true;
-			// has reached the end of the tech tree, no structure found
-			if (structureType.UpgradesToStructureID == null) return false;
-			// search the next step in the tech tree
-			return HasStructureOrUpgrades(db, planet, db.StructureTypes.Single(s => s.StructureTypeID == structureType.UpgradesToStructureID));
 		}
 
 		public static void SetPlanetOwners(ZkDataContext db)
