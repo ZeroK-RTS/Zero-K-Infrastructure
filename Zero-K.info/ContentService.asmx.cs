@@ -43,8 +43,8 @@ namespace ZeroKWeb
 					for (var j = 0; j < i; j++)
 					{
 						var treaty = clans[i].GetEffectiveTreaty(clans[j].ClanID);
-						treaties[new Tuple<Clan, Clan>(clans[i], clans[j])] = treaty;
-						treaties[new Tuple<Clan, Clan>(clans[j], clans[i])] = treaty;
+						treaties[Tuple.Create(clans[i], clans[j])] = treaty;
+						treaties[Tuple.Create(clans[j], clans[i])] = treaty;
 					}
 				}
 
@@ -61,7 +61,7 @@ namespace ZeroKWeb
 							if (c1 == c2) points = 3;
 							else
 							{
-								var treaty = treaties[new Tuple<Clan, Clan>(players[i].Clan, players[j].Clan)];
+								var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
 								if (treaty.AllyStatus == AllyStatus.Alliance) points = 2;
 								else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 1;
 								else if (treaty.AllyStatus == AllyStatus.War) points = -2;
@@ -373,6 +373,16 @@ namespace ZeroKWeb
 			}
 
 			ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commanderTypes.ToBase64String() });
+			if (mode == AutohostMode.Planetwars)
+			{
+				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
+				
+				var pwStructures = new LuaTable();
+				foreach (var s in planet.PlanetStructures.Where(x=>!x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
+				pwStructures.Add("s" + s.StructureTypeID, s.StructureType.IngameUnitName);
+				ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "pwStructures", Value = pwStructures.ToBase64String() });								
+			}
+
 
 			return ret;
 		}
