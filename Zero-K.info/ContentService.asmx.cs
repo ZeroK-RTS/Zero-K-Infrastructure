@@ -602,7 +602,7 @@ namespace ZeroKWeb
 					
 					// destroy existing dropships
 					List<int> noGrowAccount = new List<int>();
-					foreach (var ap in planet.AccountPlanets)
+					foreach (var ap in planet.AccountPlanets.Where(x=>x.DropshipCount > 0))
 					{
 						ap.DropshipCount = 0;
 						noGrowAccount.Add(ap.AccountID);
@@ -677,6 +677,15 @@ namespace ZeroKWeb
 			if (string.IsNullOrEmpty(ip) || ip.Equals("unknown", StringComparison.OrdinalIgnoreCase)) ip = Context.Request.ServerVariables["REMOTE_ADDR"];
 			return ip;
 		}
+
+		[WebMethod]
+		public bool VerfiyAccountData(string login, string password)
+		{
+				var acc = AuthServiceClient.VerifyAccountPlain(login, password);
+				if (acc == null) return false;
+				return true;
+		}
+
 
 		public class BattlePlayerResult
 		{
