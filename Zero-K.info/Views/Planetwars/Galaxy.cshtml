@@ -28,7 +28,7 @@ Under construciton, please wait!
 
     var secondRatio = 0.0;
     var entry = p.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key != clan).OrderByDescending(x => x.Sum(y => y.Influence + y.ShadowInfluence)).FirstOrDefault();
-    if (entry != null) {
+    if (clan != null && entry != null) {
       secondClan = entry.Key;
       secondClanInfluence = entry.Sum(y => y.Influence + y.ShadowInfluence);
       var ipToCapture = p.GetIPToCapture();
