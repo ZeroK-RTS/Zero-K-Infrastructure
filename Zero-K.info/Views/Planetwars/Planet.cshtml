@@ -72,13 +72,14 @@
 </table>
 <br />
 @if (Global.IsAccountAuthorized) {
- if ((Global.Account.DropshipCount??0) <= 0 ) {
-  <span>You have no free dropships to send here</span>
- } else {
+ if ((Global.Account.DropshipCount??0) <= 0) {
+   <span>You have no free dropships to send here</span>
+ }  if (Clan.AccessiblePlanets(new ZkDataContext(), Global.ClanID).Any(x=>x.PlanetID == Model.PlanetID)) {
   <form action='@Url.Action("SendDropships","Planetwars", new{planetID = Model.PlanetID})' method="post">
   Number of dropships to send: <input type="text" name="count" /> <input type="submit" value="send" />
-  
   </form>
+ } else {
+  <span>You cannot access this planet through wormholes</span>
  }
 }
 

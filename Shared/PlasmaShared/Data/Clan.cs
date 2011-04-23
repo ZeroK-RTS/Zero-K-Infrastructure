@@ -14,16 +14,16 @@ namespace ZkData
 	}
 	partial class Clan
 	{
-		public static List<Planet> AccessiblePlanets(ZkDataContext db, Clan clan)
+		public static List<Planet> AccessiblePlanets(ZkDataContext db, int? clanID)
 		{
-			var milAlly = (from treaty in clan.TreatyOffersByOfferingClanID
+			var milAlly = (from treaty in db.TreatyOffers.Where(x=>x.OfferingClanID == clanID)
 										 where treaty.AllyStatus == AllyStatus.Alliance
 										 join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
 										 where tr2.AllyStatus == AllyStatus.Alliance
 										 select treaty.TargetClanID).ToList();
 			/*	acc.Clan.TreatyOffersByOfferingClanID.Where(x => x.AllyStatus == AllyStatus.Alliance).Select(x => x.ClanByTargetClanID).Where(
 		x => x.TreatyOffersByOfferingClanID.Any(y => y.TargetClanID == Global.ClanID && y.AllyStatus == AllyStatus.Alliance)).Select(x=>x.ClanID).ToList();*/
-			var planets = db.Planets.Where(x => x.Account.ClanID == clan.ClanID || milAlly.Contains(x.Account.ClanID ?? 0));
+			var planets = db.Planets.Where(x => x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0));
 			var accesiblePlanets = new List<Planet>();
 
 			foreach (var thisPlanet in planets) {

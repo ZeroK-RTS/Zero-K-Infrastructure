@@ -224,7 +224,7 @@ namespace ZeroKWeb.Controllers
 			{
 				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 
-				if (!ZkData.Clan.AccessiblePlanets(db, acc.Clan).Any(x => x.PlanetID == planetID)) return Content("This planet is not accessible for your dropships at this moment");
+				if (!ZkData.Clan.AccessiblePlanets(db, acc.ClanID).Any(x => x.PlanetID == planetID)) return Content("This planet is not accessible for your dropships at this moment");
 
 				var cnt = Math.Max(count, 0);
 				cnt = Math.Min(cnt, acc.DropshipCount ?? 0);
