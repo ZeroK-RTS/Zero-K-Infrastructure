@@ -22,6 +22,9 @@
       if (string.IsNullOrEmpty(name)) return false;
       return name.Contains("Zero-K");
     }
+
+		public const int DefaultDropshipCapacity = 3;
+		public const int DefaultDropshipProduction = 1;
 	}
   
 }

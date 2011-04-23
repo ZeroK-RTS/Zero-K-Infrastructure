@@ -26,6 +26,7 @@ namespace ZeroKWeb
 		[WebMethod]
 		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams, AutohostMode mode = AutohostMode.Planetwars)
 		{
+			mode = GetModeFromHost(autoHost);
 			if (currentTeams.Count < 1)
 			{
 				return new BalanceTeamsResult() { Message = "Not enough players"} ;
@@ -332,7 +333,7 @@ namespace ZeroKWeb
 		[WebMethod]
 		public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<BattleStartSetupPlayer> players, AutohostMode mode =  AutohostMode.GameTeams)
 		{
-			if (hostName.StartsWith("PlanetWars")) mode =AutohostMode.Planetwars; // hack remove later
+			mode = GetModeFromHost(hostName);
 			var ret = new SpringBattleStartSetup();
 			var commanderTypes = new LuaTable();
 			var db = new ZkDataContext();
@@ -492,6 +493,16 @@ namespace ZeroKWeb
 			}
 		}
 
+		/// <summary>
+		/// This is backup function, remove when not needed
+		/// </summary>
+		public static AutohostMode GetModeFromHost(string hostname)
+		{
+			// hack this whole function is hack
+			if (hostname.StartsWith("PlanetWars")) return AutohostMode.Planetwars;
+			else return AutohostMode.GameTeams;
+		}
+
 
 		[WebMethod]
 		public string SubmitSpringBattleResult(string accountName,
@@ -503,6 +514,8 @@ namespace ZeroKWeb
 			try {
 				var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
 				if (acc == null) throw new Exception("Account name or password not valid");
+
+				mode = GetModeFromHost(accountName);
 
 				var db = new ZkDataContext();
 				var sb = new SpringBattle() {
@@ -563,16 +576,53 @@ namespace ZeroKWeb
 				}
 
 				if (mode == AutohostMode.Planetwars) {
+					
 					var gal = db.Galaxies.Single(x => x.IsDefault);
 					var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
+					
+					// handle infelunce
+					Clan ownerClan = null;
+					if (planet.Account != null) ownerClan = planet.Account.Clan;
 					foreach (var p in sb.SpringBattlePlayers.Where(x => x.Influence > 0)) {
-						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == p.AccountID);
+			
+						var targetAccount = p.AccountID;
+						if (ownerClan != null && p.Account.Clan != null&& p.Account.Clan != ownerClan) 
+						{
+							var treaty = ownerClan.GetEffectiveTreaty(p.Account.ClanID.Value); // if ceasefired/allianced - give ip to owner
+							if (treaty.AllyStatus == AllyStatus.Ceasefire || treaty.AllyStatus == AllyStatus.Alliance) targetAccount = planet.OwnerAccountID.Value;
+						}
+						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == targetAccount);
 						if (entry == null) {
-							entry = new AccountPlanet() { AccountID = p.AccountID, PlanetID = planet.PlanetID };
+							entry = new AccountPlanet() { AccountID = targetAccount, PlanetID = planet.PlanetID };
 							db.AccountPlanets.InsertOnSubmit(entry);
 						}
 						entry.Influence += (p.Influence ?? 0);
 					}
+					db.SubmitChanges();
+					
+					// destroy existing dropships
+					List<int> noGrowAccount = new List<int>();
+					foreach (var ap in planet.AccountPlanets)
+					{
+						ap.DropshipCount = 0;
+						noGrowAccount.Add(ap.AccountID);
+					}
+
+
+					// spawn new dropships
+					foreach (var a in db.Accounts.Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
+					{
+						var capacity = GlobalConst.DefaultDropshipCapacity +
+						               (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipCapacity)??0);
+						var income = GlobalConst.DefaultDropshipProduction +
+						             (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipProduction)??0);
+						var used = a.AccountPlanets.Sum(x => x.DropshipCount);
+
+						a.DropshipCount += income;
+						a.DropshipCount = Math.Min(a.DropshipCount, capacity - used);
+					}
+					db.SubmitChanges();
+
 					PlanetwarsController.SetPlanetOwners(db);
 				}
 

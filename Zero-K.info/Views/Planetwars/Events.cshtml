@@ -20,16 +20,11 @@
           Time
         </th>
         <th>
-          Turn
-        </th>
-        <th>
           Event
         </th>
         @foreach (var e in Model.Events) {
           <tr>
             <td>@e.Time.ToAgoString()
-            </td>
-            <td align='center'>@e.Turn
             </td>
             <td>@Html.Raw(e.Text)
             </td>
@@ -42,7 +37,7 @@
                 newer</a>
             }
           </td>
-          <td colspan='2' align="right">
+          <td align="right">
           <a href='@Url.Action("Events","Planetwars")'>all</a>
             @Html.TextBox("filter", Model.Filter)<input type="submit" value="filter" id="ev_submit" />
             @if (Model.Page < Model.PageCount - 1) {
