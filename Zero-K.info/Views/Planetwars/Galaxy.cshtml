@@ -32,7 +32,7 @@ Under construciton, please wait!
       secondClan = entry.Key;
       secondClanInfluence = entry.Sum(y => y.Influence + y.ShadowInfluence);
       var ipToCapture = p.GetIPToCapture();
-      if (ipToCapture - secondClanInfluence < 500) {
+      if (secondClanInfluence > 0 && (ipToCapture - secondClanInfluence) < 500) {
         secondRatio = 1.0 - (ipToCapture - secondClanInfluence) / 500.0;
       }
     }
