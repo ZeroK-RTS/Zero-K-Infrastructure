@@ -279,6 +279,9 @@ namespace ZeroKWeb
 					var r = new Random(autohostName.GetHashCode()); // randomizer based on autohost name to always return same
 					var planet = targets[r.Next(targets.Count)];
 					res.MapName = planet.Resource.InternalName;
+					string owner = "";
+					if (planet.Account != null && planet.Account.Clan != null) owner = planet.Account.Clan.Shortcut;
+					res.Message = string.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2}", owner, planet.Name, planet.PlanetID);
 				}
 				else
 				{
@@ -578,6 +581,9 @@ namespace ZeroKWeb
 					db.SubmitChanges();
 				}
 
+
+				var text = new StringBuilder();
+
 				if (mode == AutohostMode.Planetwars)
 				{
 					var gal = db.Galaxies.Single(x => x.IsDefault);
@@ -608,7 +614,11 @@ namespace ZeroKWeb
 							                                            planet,
 							                                            sb,
 							                                            p.Account));
-						else db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} at {2} from {3}", targetAccount, p.Influence ?? 0, planet, sb));
+						else
+						{
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} at {2} from {3}", targetAccount, p.Influence ?? 0, planet, sb));
+							text.AppendFormat("{0} gained {1} influence on {2}\n", targetAccount.Name, p.Influence ?? 0, planet.Name);
+						}
 					}
 					db.SubmitChanges();
 
@@ -634,10 +644,19 @@ namespace ZeroKWeb
 					}
 					db.SubmitChanges();
 
+					var oldOwner = planet.Account;
 					PlanetwarsController.SetPlanetOwners(db);
+					if (planet.Account != oldOwner && planet.Account != null)
+					{
+						text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",
+						                  planet.Name,
+						                  acc.Name,
+						                  planet.PlanetID);
+					}
 				}
 
-				var text = new StringBuilder();
+				db.SubmitChanges();
+				
 
 				foreach (var account in sb.SpringBattlePlayers.Select(x => x.Account))
 				{
