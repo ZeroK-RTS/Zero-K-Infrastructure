@@ -8,6 +8,35 @@ namespace ZkData
 {
 	partial class Galaxy
 	{
+		public static List<Planet> AccessiblePlanets(ZkDataContext db, int? clanID, AllyStatus allyStatus)
+		{
+			var milAlly = (from treaty in db.TreatyOffers.Where(x => x.OfferingClanID == clanID)
+										 where treaty.AllyStatus == allyStatus
+										 join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
+										 where tr2.AllyStatus == allyStatus
+										 select treaty.TargetClanID).ToList();
+
+			var planets = db.Planets.Where(x => x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0));
+			var accesiblePlanets = new List<Planet>();
+
+			foreach (var thisPlanet in planets) {
+				var thisPlanetID = thisPlanet.PlanetID;
+				var thisLinkStrenght = thisPlanet.PlanetStructures.Where(x => !x.IsDestroyed).Max(s => s.StructureType.EffectLinkStrength) ?? 0;
+				accesiblePlanets.Add(thisPlanet);
+
+
+				// iterate links to this planet
+				foreach (var link in db.Links.Where(l => l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID)) {
+					var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
+					var otherLinkStrenght = otherPlanet.PlanetStructures.Where(x => !x.IsDestroyed).Max(s => s.StructureType.EffectLinkStrength) ?? 0;
+					if (otherLinkStrenght > 0 && thisLinkStrenght > 0) accesiblePlanets.Add(otherPlanet);
+				}
+			}
+			return accesiblePlanets;
+		}
+
+
+
 		static public void RecalculateShadowInfluence(ZkDataContext db)
 		{
 			using (var scope = new TransactionScope())

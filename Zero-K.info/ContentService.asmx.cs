@@ -8,6 +8,7 @@ using System.Text;
 using System.Transactions;
 using System.Web.Services;
 using PlasmaShared;
+using ZeroKWeb.Controllers;
 using ZkData;
 
 namespace ZeroKWeb
@@ -173,10 +174,16 @@ namespace ZeroKWeb
 				}
 				else
 				{
+					var differs = false;
 					for (var i = 0; i < players.Count; i++)
+					{
+						int allyID = ((bestCombination & (1 << i)) > 0) ? 1 : 0;
+						if (!differs &&  allyID != currentTeams.First(x => x.AccountID == players[i].AccountID).AllyID) differs = true;
 						res.BalancedTeams.Add(new AccountTeam()
-						                      { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = ((bestCombination & (1 << i)) > 0) ? 1:0, TeamID = i });
-					res.Message = string.Format("Winning combination  score: {0} team difference,  {1} elo,  {2} composition. Win chance {3}%",
+						                      { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = allyID, TeamID = i });
+					}
+
+					if (differs) res.Message = string.Format("Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
 					                            bestTeamDiffs,
 					                            bestElo,
 					                            bestCompo,
@@ -446,101 +453,103 @@ namespace ZeroKWeb
 		                                       List<BattlePlayerResult> players,
 		                                       AutohostMode mode = AutohostMode.GameTeams)
 		{
-			var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
-			if (acc == null) throw new Exception("Account name or password not valid");
+			try {
+				var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
+				if (acc == null) throw new Exception("Account name or password not valid");
 
-			var db = new ZkDataContext();
-			var sb = new SpringBattle()
-			         {
-			         	HostAccountID = acc.AccountID,
-			         	Duration = result.Duration,
-			         	EngineGameID = result.EngineBattleID,
-			         	MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
-			         	ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
-			         	HasBots = result.IsBots,
-			         	IsMission = result.IsMission,
-			         	PlayerCount = players.Count(x => !x.IsSpectator),
-			         	StartTime = result.StartTime,
-			         	Title = result.Title,
-			         	ReplayFileName = result.ReplayName,
-			         	EngineVersion = result.EngineVersion ?? "0.82.7",
-			         	// hack remove when fixed
-			         };
-			db.SpringBattles.InsertOnSubmit(sb);
+				var db = new ZkDataContext();
+				var sb = new SpringBattle() {
+					HostAccountID = acc.AccountID,
+					Duration = result.Duration,
+					EngineGameID = result.EngineBattleID,
+					MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
+					ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
+					HasBots = result.IsBots,
+					IsMission = result.IsMission,
+					PlayerCount = players.Count(x => !x.IsSpectator),
+					StartTime = result.StartTime,
+					Title = result.Title,
+					ReplayFileName = result.ReplayName,
+					EngineVersion = result.EngineVersion ?? "0.82.7",
+					// hack remove when fixed
+				};
+				db.SpringBattles.InsertOnSubmit(sb);
 
-			foreach (var p in players)
-			{
-				sb.SpringBattlePlayers.Add(new SpringBattlePlayer()
-				                           {
-				                           	AccountID = p.AccountID,
-				                           	AllyNumber = p.AllyNumber,
-				                           	CommanderType = p.CommanderType,
-				                           	IsInVictoryTeam = p.IsVictoryTeam,
-				                           	IsSpectator = p.IsSpectator,
-				                           	Rank = p.Rank,
-				                           	LoseTime = p.LoseTime
-				                           });
-			}
-
-			db.SubmitChanges();
-			foreach (var p in players)
-			{
-				foreach (var a in p.Awards)
-				{
-					db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
-					                                      {
-					                                      	AccountID = p.AccountID,
-					                                      	SpringBattleID = sb.SpringBattleID,
-					                                      	AwardKey = a.Award,
-					                                      	AwardDescription = a.Description
-					                                      });
+				foreach (var p in players) {
+					sb.SpringBattlePlayers.Add(new SpringBattlePlayer() {
+						AccountID = p.AccountID,
+						AllyNumber = p.AllyNumber,
+						CommanderType = p.CommanderType,
+						IsInVictoryTeam = p.IsVictoryTeam,
+						IsSpectator = p.IsSpectator,
+						Rank = p.Rank,
+						LoseTime = p.LoseTime
+					});
 				}
 
-				foreach (var s in p.Stats)
-				{
-					db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat()
-					                                     { AccountID = p.AccountID, SpringBattleID = sb.SpringBattleID, StatsKey = s.Key, Value = s.Value });
-				}
-			}
-
-			db.SubmitChanges();
-
-			var orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
-
-			sb.CalculateElo();
-			try
-			{
 				db.SubmitChanges();
-			}
-			catch (ChangeConflictException e)
-			{
-				db.ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
-				db.SubmitChanges();
-			}
-
-			var text = new StringBuilder();
-
-			foreach (var account in sb.SpringBattlePlayers.Select(x => x.Account))
-			{
-				if (account.Level > orgLevels[account.AccountID])
-				{
-					try
-					{
-						var message = string.Format("Congratulations {1}! You just leveled up to level {0}. http://zero-k.info/Users/{1}",
-						                            account.Level,
-						                            account.Name);
-						text.AppendLine(message);
-						AuthServiceClient.SendLobbyMessage(account, message);
+				foreach (var p in players) {
+					foreach (var a in p.Awards) {
+						db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward() {
+							AccountID = p.AccountID,
+							SpringBattleID = sb.SpringBattleID,
+							AwardKey = a.Award,
+							AwardDescription = a.Description
+						});
 					}
-					catch (Exception ex)
-					{
-						Trace.TraceError("Error sending level up lobby message: {0}", ex);
+
+					foreach (var s in p.Stats) {
+						db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat() { AccountID = p.AccountID, SpringBattleID = sb.SpringBattleID, StatsKey = s.Key, Value = s.Value });
 					}
 				}
-			}
 
-			text.AppendLine(string.Format("View full battle details and demo at http://zero-k.info/Battles/Detail/{0}", sb.SpringBattleID));
-			return text.ToString();
+				db.SubmitChanges();
+
+				var orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
+
+				sb.CalculateElo(mode == AutohostMode.Planetwars);
+				try {
+					db.SubmitChanges();
+				} catch (ChangeConflictException e) {
+					db.ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
+					db.SubmitChanges();
+				}
+
+				if (mode == AutohostMode.Planetwars) {
+					var gal = db.Galaxies.Single(x => x.IsDefault);
+					var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
+					foreach (var p in sb.SpringBattlePlayers.Where(x => x.Influence > 0)) {
+						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == p.AccountID);
+						if (entry == null) {
+							entry = new AccountPlanet() { AccountID = p.AccountID, PlanetID = planet.PlanetID };
+							db.AccountPlanets.InsertOnSubmit(entry);
+						}
+						entry.Influence += (p.Influence ?? 0);
+					}
+					PlanetwarsController.SetPlanetOwners(db);
+				}
+
+
+				var text = new StringBuilder();
+
+				foreach (var account in sb.SpringBattlePlayers.Select(x => x.Account)) {
+					if (account.Level > orgLevels[account.AccountID]) {
+						try {
+							var message = string.Format("Congratulations {1}! You just leveled up to level {0}. http://zero-k.info/Users/{1}", account.Level, account.Name);
+							text.AppendLine(message);
+							AuthServiceClient.SendLobbyMessage(account, message);
+						} catch (Exception ex) {
+							Trace.TraceError("Error sending level up lobby message: {0}", ex);
+						}
+					}
+				}
+
+				text.AppendLine(string.Format("View full battle details and demo at http://zero-k.info/Battles/Detail/{0}", sb.SpringBattleID));
+				return text.ToString();
+			} catch (Exception ex)
+			{
+				return ex.ToString();
+			}
 		}
 
 		[WebMethod]

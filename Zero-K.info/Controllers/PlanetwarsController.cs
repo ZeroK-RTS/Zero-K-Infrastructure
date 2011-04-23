@@ -75,7 +75,7 @@ namespace ZeroKWeb.Controllers
 		                           bool partial = false)
 		{
 			var db = new ZkDataContext();
-
+			if (Request.IsAjaxRequest()) partial = true;
 			var res = db.Events.AsQueryable();
 			if (planetID.HasValue) res = res.Where(x => x.EventPlanets.Any(y => y.PlanetID == planetID));
 			if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
@@ -225,7 +225,7 @@ namespace ZeroKWeb.Controllers
 			{
 				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 
-				var accessiblePlanets = ZkData.Clan.AccessiblePlanets(db, acc.ClanID).Select(x=>x.PlanetID).ToList();
+				var accessiblePlanets = ZkData.Galaxy.AccessiblePlanets(db, acc.ClanID, AllyStatus.Alliance).Select(x=>x.PlanetID).ToList();
 				var accessible = accessiblePlanets.Any(x=>x == planetID);
 				if (!accessible)
 				{
@@ -403,7 +403,7 @@ namespace ZeroKWeb.Controllers
 			return HasStructureOrUpgrades(db, planet, db.StructureTypes.Single(s => s.StructureTypeID == structureType.UpgradesToStructureID));
 		}
 
-		void SetPlanetOwners(ZkDataContext db)
+		public static void SetPlanetOwners(ZkDataContext db)
 		{
 			using (var scope = new TransactionScope())
 			{
@@ -442,6 +442,7 @@ namespace ZeroKWeb.Controllers
 					}
 				}
 				if (havePlanetsChangedHands) SetPlanetOwners(db); // we need another cycle because of shadow influence chain reactions
+				db.SubmitChanges();
 				scope.Complete();
 			}
 		}
