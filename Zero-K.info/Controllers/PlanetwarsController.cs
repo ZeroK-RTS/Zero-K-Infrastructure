@@ -221,34 +221,30 @@ namespace ZeroKWeb.Controllers
 		public ActionResult SendDropships(int planetID, int count)
 		{
 			var db = new ZkDataContext();
-			using (var scope = new TransactionScope())
-			{
-				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 
-				var accessiblePlanets = ZkData.Galaxy.AccessiblePlanets(db, acc.ClanID, AllyStatus.Alliance).Select(x=>x.PlanetID).ToList();
-				var accessible = accessiblePlanets.Any(x=>x == planetID);
-				if (!accessible)
-				{
-					var jumpGateCapacity = acc.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
-					var usedJumpGates = acc.AccountPlanets.Where(x => !accessiblePlanets.Contains(x.PlanetID)).Sum(x => x.DropshipCount);
-					if (usedJumpGates >= jumpGateCapacity)
-						return
-							Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity {0}/{1}", usedJumpGates, jumpGateCapacity));
-				} 
-				var cnt = Math.Max(count, 0);
-				cnt = Math.Min(cnt, acc.DropshipCount);
-				acc.DropshipCount = (acc.DropshipCount) - cnt;
-				var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
-				if (pac == null)
-				{
-					pac = new AccountPlanet { AccountID = Global.AccountID, PlanetID = planetID };
-					db.AccountPlanets.InsertOnSubmit(pac);
-				}
-				pac.DropshipCount += cnt;
-				if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} dropships to {2}", acc, cnt, pac.Planet));
-				db.SubmitChanges();
-				scope.Complete();
+			var accessiblePlanets = ZkData.Galaxy.AccessiblePlanets(db, acc.ClanID, AllyStatus.Alliance).Select(x => x.PlanetID).ToList();
+			var accessible = accessiblePlanets.Any(x => x == planetID);
+			if (!accessible)
+			{
+				var jumpGateCapacity = acc.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
+				var usedJumpGates = acc.AccountPlanets.Where(x => !accessiblePlanets.Contains(x.PlanetID)).Sum(x => x.DropshipCount);
+				if (usedJumpGates >= jumpGateCapacity)
+					return
+						Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity {0}/{1}", usedJumpGates, jumpGateCapacity));
 			}
+			var cnt = Math.Max(count, 0);
+			cnt = Math.Min(cnt, acc.DropshipCount);
+			acc.DropshipCount = (acc.DropshipCount) - cnt;
+			var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
+			if (pac == null)
+			{
+				pac = new AccountPlanet { AccountID = Global.AccountID, PlanetID = planetID };
+				db.AccountPlanets.InsertOnSubmit(pac);
+			}
+			pac.DropshipCount += cnt;
+			if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} dropships to {2}", acc, cnt, pac.Planet));
+			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
@@ -280,6 +276,7 @@ namespace ZeroKWeb.Controllers
 			db.SubmitChanges();
 
 			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet));
+			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
@@ -344,7 +341,19 @@ namespace ZeroKWeb.Controllers
 			                               	Quantity = quantity,
 			                               	Price = price,
 			                               });
+			db.SubmitChanges();
 			ResolveMarketTransactions(db);
+			return RedirectToAction("Planet", new { id = planetID });
+		}
+
+		[Auth]
+		public ActionResult CancelMarketOrder(int planetID, int offerID)
+		{
+			var db = new ZkDataContext();
+			var offer = db.MarketOffers.SingleOrDefault(o => o.OfferID == offerID);
+			if (offer == null) return Content("Error: offer does not exist");
+			if (offer.AccountID != Global.AccountID) return Content("Error: can't cancel other people's offers");
+			db.MarketOffers.DeleteOnSubmit(offer);
 			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planetID });
 		}
@@ -357,7 +366,8 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var planet = db.Planets.Single(p => p.PlanetID == planetID);
 			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} form {2} to {3}", Global.Account, planet, planet.Name, newName));
+			db.SubmitChanges();
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} from {2} to {3}", Global.Account, planet, planet.Name, newName));
 			planet.Name = newName;
 			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planet.PlanetID });
@@ -389,7 +399,10 @@ namespace ZeroKWeb.Controllers
 			db.PlanetStructures.InsertOnSubmit(newStructure);
 			db.PlanetStructures.DeleteOnSubmit(oldStructure);
 
+			db.SubmitChanges();
 			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newStructure, planet));
+
+			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
@@ -405,135 +418,138 @@ namespace ZeroKWeb.Controllers
 
 		public static void SetPlanetOwners(ZkDataContext db)
 		{
-			using (var scope = new TransactionScope())
+			Galaxy.RecalculateShadowInfluence(db);
+			var havePlanetsChangedHands = false;
+			foreach (var planet in db.Planets)
 			{
-				Galaxy.RecalculateShadowInfluence(db);
-				var havePlanetsChangedHands = false;
-				foreach (var planet in db.Planets)
+				var clansByInfluence = planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence));
+				var mostInfluentialClan = clansByInfluence.FirstOrDefault();
+				if (mostInfluentialClan != null)
 				{
-					var clansByInfluence = planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence));
-					var mostInfluentialClan = clansByInfluence.FirstOrDefault();
-					if (mostInfluentialClan != null)
+					var mostInfluentialPlayer = mostInfluentialClan.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence).First();
+					if (mostInfluentialPlayer.AccountID != planet.OwnerAccountID)
 					{
-						var mostInfluentialPlayer = mostInfluentialClan.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence).First();
-						if (mostInfluentialPlayer.AccountID != planet.OwnerAccountID)
+						if (planet.OwnerAccountID == null) // no previous owner
 						{
-							if (planet.OwnerAccountID == null) // no previous owner
+							planet.OwnerAccountID = mostInfluentialPlayer.AccountID;
+							db.SubmitChanges();
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1}.", mostInfluentialPlayer.Account, planet));
+							db.SubmitChanges();
+							havePlanetsChangedHands = true;
+						}
+						else
+						{
+							// todo: use factor instead of a fixed boost for defense?
+							var defenseBoost = planet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectInfluenceDefense) ?? 0;
+							var ownerAccountPlanet = planet.AccountPlanets.Single(ap => ap.AccountID == planet.OwnerAccountID);
+							var ownerIP = ownerAccountPlanet.Influence + ownerAccountPlanet.ShadowInfluence;
+							var mostInfluentialPlayerIP = mostInfluentialPlayer.Influence + mostInfluentialPlayer.ShadowInfluence;
+							if (ownerIP + defenseBoost < mostInfluentialPlayerIP)
 							{
 								planet.OwnerAccountID = mostInfluentialPlayer.AccountID;
-								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1}.", mostInfluentialPlayer.Account, planet));
+								db.SubmitChanges();
+								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2}.",
+								                                            mostInfluentialPlayer.Account,
+								                                            planet,
+								                                            ownerAccountPlanet.Planet));
+								db.SubmitChanges();
 								havePlanetsChangedHands = true;
-							}
-							else
-							{
-								// todo: use factor instead of a fixed boost for defense?
-								var defenseBoost = planet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectInfluenceDefense) ?? 0;
-								var ownerAccountPlanet = planet.AccountPlanets.Single(ap => ap.AccountID == planet.OwnerAccountID);
-								var ownerIP = ownerAccountPlanet.Influence + ownerAccountPlanet.ShadowInfluence;
-								var mostInfluentialPlayerIP = mostInfluentialPlayer.Influence + mostInfluentialPlayer.ShadowInfluence;
-								if (ownerIP + defenseBoost < mostInfluentialPlayerIP)
-								{
-									planet.OwnerAccountID = mostInfluentialPlayer.AccountID;
-									db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2}.", mostInfluentialPlayer.Account, planet, ownerAccountPlanet.Planet));
-									havePlanetsChangedHands = true;
-								}
 							}
 						}
 					}
 				}
-				if (havePlanetsChangedHands) SetPlanetOwners(db); // we need another cycle because of shadow influence chain reactions
-				db.SubmitChanges();
-				scope.Complete();
 			}
+			if (havePlanetsChangedHands) SetPlanetOwners(db); // we need another cycle because of shadow influence chain reactions
 		}
 
 		// TODO: run at any change of influence, credits or market offers
 		void ResolveMarketTransactions(ZkDataContext db)
 		{
-			using (var scope = new TransactionScope())
+			var now = DateTime.Now;
+
+			var currentOffers = db.MarketOffers.Where(o => o.DateAccepted == null);
+			var buyOffers = currentOffers.Where(o => !o.IsSell);
+			var sellOffers = currentOffers.Where(o => o.IsSell);
+
+			var offers = from buyOffer in buyOffers
+			             join sellOffer in sellOffers on buyOffer.PlanetID equals sellOffer.PlanetID
+			             where buyOffer.Price > sellOffer.Price
+			             orderby sellOffer.Price
+			             select new { Buy = buyOffer, Sell = sellOffer };
+
+			var influenceChanged = false;
+
+			foreach (var offerPair in offers)
 			{
-				var now = DateTime.Now;
+				var buyOffer = offerPair.Buy;
+				var sellOffer = offerPair.Sell;
 
-				var currentOffers = db.MarketOffers.Where(o => o.DateAccepted == null);
-				var buyOffers = currentOffers.Where(o => !o.IsSell);
-				var sellOffers = currentOffers.Where(o => o.IsSell);
+				var buyer = buyOffer.AccountByAccountID;
+				var seller = sellOffer.AccountByAccountID;
+				var sellerAccountPlanet = db.AccountPlanets.SingleOrDefault(ap => ap.AccountID == seller.AccountID && ap.PlanetID == buyOffer.PlanetID);
 
-				var offers = from buyOffer in buyOffers
-				             join sellOffer in sellOffers on buyOffer.PlanetID equals sellOffer.PlanetID
-				             where buyOffer.Price < sellOffer.Price
-				             orderby sellOffer.Price
-				             select new { Buy = buyOffer, Sell = sellOffer };
+				if (sellerAccountPlanet == null) continue; // seller has nothing to sell
 
-				var influenceChanged = false;
+				var maxWillBuy = Math.Min(buyer.Credits/sellOffer.Price, buyOffer.Quantity);
+				var maxWillSell = Math.Min(sellerAccountPlanet.Influence, sellOffer.Quantity);
 
-				foreach (var offerPair in offers)
+				var quantity = Math.Min(maxWillBuy, maxWillSell);
+
+				if (quantity > 0)
 				{
-					var buyOffer = offerPair.Buy;
-					var sellOffer = offerPair.Sell;
+					buyer.Credits -= quantity*sellOffer.Price;
+					seller.Credits += quantity*sellOffer.Price;
 
-					var buyer = buyOffer.AccountByAccountID;
-					var seller = sellOffer.AccountByAccountID;
-					var sellerAccountPlanet = db.AccountPlanets.SingleOrDefault(ap => ap.AccountID == seller.AccountID && ap.PlanetID == buyOffer.PlanetID);
-
-					if (sellerAccountPlanet == null) continue; // seller has nothing to sell
-
-					var maxWillBuy = Math.Min(buyer.Credits/sellOffer.Price, buyOffer.Quantity);
-					var maxWillSell = Math.Min(sellerAccountPlanet.Influence, sellOffer.Quantity);
-
-					var quantity = Math.Min(maxWillBuy, maxWillSell);
-
-					if (quantity > 0)
+					var buyerAccountPlanet = db.AccountPlanets.SingleOrDefault(ap => ap.AccountID == buyer.AccountID && ap.PlanetID == buyOffer.PlanetID);
+					if (buyerAccountPlanet == null)
 					{
-						buyer.Credits -= quantity*sellOffer.Price;
-						seller.Credits += quantity*sellOffer.Price;
-
-						var buyerAccountPlanet = db.AccountPlanets.SingleOrDefault(ap => ap.AccountID == buyer.AccountID && ap.PlanetID == buyOffer.PlanetID);
-						if (buyerAccountPlanet == null)
-						{
-							buyerAccountPlanet = new AccountPlanet { AccountID = buyer.AccountID, PlanetID = buyOffer.PlanetID };
-							db.AccountPlanets.InsertOnSubmit(buyerAccountPlanet);
-						}
-						buyerAccountPlanet.Influence += quantity;
-						sellerAccountPlanet.Influence -= quantity;
-						influenceChanged = true;
-
-						// record transactions, for history
-						db.MarketOffers.InsertOnSubmit(new MarketOffer
-						                               {
-						                               	AcceptedAccountID = seller.AccountID,
-						                               	AccountID = buyer.AccountID,
-						                               	DateAccepted = now,
-						                               	IsSell = false,
-						                               	Price = sellOffer.Price,
-						                               	DatePlaced = buyOffer.DatePlaced,
-						                               	Quantity = quantity,
-						                               	PlanetID = sellOffer.PlanetID,
-						                               });
-
-						db.MarketOffers.InsertOnSubmit(new MarketOffer
-						                               {
-						                               	AcceptedAccountID = buyer.AccountID,
-						                               	AccountID = seller.AccountID,
-						                               	DateAccepted = now,
-						                               	IsSell = true,
-						                               	Price = sellOffer.Price,
-						                               	DatePlaced = sellOffer.DatePlaced,
-						                               	Quantity = quantity,
-						                               	PlanetID = sellOffer.PlanetID,
-						                               });
-
-						buyOffer.Quantity -= quantity;
-						if (buyOffer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(buyOffer);
-
-						sellOffer.Quantity -= quantity;
-						if (sellOffer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(sellOffer);
-
-						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from {2} on {3}.", buyer, quantity, seller, buyOffer.Planet));
+						buyerAccountPlanet = new AccountPlanet { AccountID = buyer.AccountID, PlanetID = buyOffer.PlanetID };
+						db.AccountPlanets.InsertOnSubmit(buyerAccountPlanet);
+						db.SubmitChanges();
 					}
+					buyerAccountPlanet.Influence += quantity;
+					sellerAccountPlanet.Influence -= quantity;
+					influenceChanged = true;
+
+					// record transactions, for history
+					db.MarketOffers.InsertOnSubmit(new MarketOffer
+					                               {
+					                               	AcceptedAccountID = seller.AccountID,
+					                               	AccountID = buyer.AccountID,
+					                               	DateAccepted = now,
+					                               	IsSell = false,
+					                               	Price = sellOffer.Price,
+					                               	DatePlaced = buyOffer.DatePlaced,
+					                               	Quantity = quantity,
+					                               	PlanetID = sellOffer.PlanetID,
+					                               });
+
+					db.MarketOffers.InsertOnSubmit(new MarketOffer
+					                               {
+					                               	AcceptedAccountID = buyer.AccountID,
+					                               	AccountID = seller.AccountID,
+					                               	DateAccepted = now,
+					                               	IsSell = true,
+					                               	Price = sellOffer.Price,
+					                               	DatePlaced = sellOffer.DatePlaced,
+					                               	Quantity = quantity,
+					                               	PlanetID = sellOffer.PlanetID,
+					                               });
+					db.SubmitChanges();
+
+					buyOffer.Quantity -= quantity;
+					if (buyOffer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(buyOffer);
+
+					sellOffer.Quantity -= quantity;
+					if (sellOffer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(sellOffer);
+
+					db.SubmitChanges();
+					if (seller.AccountID == buyer.AccountID) db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from himself on {2}.", buyer, quantity, buyOffer.Planet));
+					else db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from {2} on {3}.", buyer, quantity, seller, buyOffer.Planet));
+					db.SubmitChanges();
 				}
-				if (influenceChanged) SetPlanetOwners(db);
-				scope.Complete();
 			}
+			if (influenceChanged) SetPlanetOwners(db);
 		}
 	}
 
