@@ -79,7 +79,7 @@ namespace ZeroKWeb
 					else ev.EventPlanets.Add(new EventPlanet() { Planet = planet });
 				} else if (arg is SpringBattle) {
 					var bat = (SpringBattle)arg;
-					args[i] = string.Format("<a href='{0}'>B{1}</a>", url.Action("Detail", "Battles", new { id = bat.SpringBattleID }));   //todo no propoer helper for this
+					args[i] = string.Format("<a href='{0}'>B{1}</a>", url.Action("Detail", "Battles", new { id = bat.SpringBattleID }), bat.SpringBattleID);   //todo no propoer helper for this
 					if (bat.SpringBattleID != 0) ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattleID = bat.SpringBattleID });
 					else ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattle = bat });
 				}
