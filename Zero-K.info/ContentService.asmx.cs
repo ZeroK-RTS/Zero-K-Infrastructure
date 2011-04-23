@@ -26,7 +26,7 @@ namespace ZeroKWeb
 		[WebMethod]
 		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams, AutohostMode mode = AutohostMode.Planetwars)
 		{
-			if (currentTeams.Count < 2)
+			if (currentTeams.Count < 1)
 			{
 				return new BalanceTeamsResult() { Message = "Not enough players"} ;
 			}
@@ -55,6 +55,9 @@ namespace ZeroKWeb
 					return res;
 				}
 
+				if (currentTeams.Count < 2) {
+					return new BalanceTeamsResult() { Message = "Not enough players" };
+				}
 
 
 				for (var i = 1; i < clans.Count; i++)

@@ -83,7 +83,7 @@ namespace Springie.PlanetWars
 					tas.MyBattle.Users.Where(x => !x.IsSpectator && x.SyncStatus == SyncStatuses.Synced).Select(
 						x => new AccountTeam() { AccountID = x.LobbyUser.AccountID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber }).ToArray();
 
-				if (userList.Length <= 1)
+				if (userList.Length < 1)
 				{
 					return false;
 				}
