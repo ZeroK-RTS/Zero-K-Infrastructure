@@ -466,7 +466,7 @@ namespace ZeroKWeb.Controllers
 						if (planet.OwnerAccountID == null) // no previous owner
 						{
 							planet.OwnerAccountID = mostInfluentialPlayer.AccountID;
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1}.", mostInfluentialPlayer.Account, planet));
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2}.", mostInfluentialPlayer.Account, planet, mostInfluentialClan.Key));
 							havePlanetsChangedHands = true;
 						}
 						else
@@ -479,10 +479,10 @@ namespace ZeroKWeb.Controllers
 							if (ownerIP + defenseBoost < mostInfluentialPlayerIP)
 							{
 								planet.OwnerAccountID = mostInfluentialPlayer.AccountID;
-								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2}.",
+								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2} for {3}.",
 								                                            mostInfluentialPlayer.Account,
 								                                            planet,
-								                                            ownerAccountPlanet.Account));
+								                                            ownerAccountPlanet.Account, mostInfluentialClan.Key));
 								havePlanetsChangedHands = true;
 							}
 						}

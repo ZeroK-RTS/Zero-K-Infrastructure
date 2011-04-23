@@ -27,10 +27,7 @@ namespace ZeroKWeb
 		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams, AutohostMode mode = AutohostMode.Planetwars)
 		{
 			mode = GetModeFromHost(autoHost);
-			if (currentTeams.Count < 1)
-			{
-				return new BalanceTeamsResult() { Message = "Not enough players"} ;
-			}
+			if (currentTeams.Count < 1) return new BalanceTeamsResult() { Message = "Not enough players" };
 			using (var db = new ZkDataContext())
 			{
 				var res = new BalanceTeamsResult();
@@ -43,23 +40,15 @@ namespace ZeroKWeb
 				// bots game
 				if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots)))
 				{
-					int teamID = 0;
-					for (var i = 0; i < players.Count; i++) {
-						res.BalancedTeams.Add(new AccountTeam() { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
-					}
-					foreach (var b in planet.PlanetStructures.Select(x=>x.StructureType).Where(x=>!string.IsNullOrEmpty(x.EffectBots)))
-					{
-						res.Bots.Add(new BotTeam() { AllyID = 1, BotName = b.EffectBots, TeamID = teamID++});
-					}
+					var teamID = 0;
+					for (var i = 0; i < players.Count; i++) res.BalancedTeams.Add(new AccountTeam() { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
+					foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = b.EffectBots, TeamID = teamID++ });
 
 					res.Message = string.Format("This planet is infested by aliens, fight for your survival");
 					return res;
 				}
 
-				if (currentTeams.Count < 2) {
-					return new BalanceTeamsResult() { Message = "Not enough players" };
-				}
-
+				if (currentTeams.Count < 2) return new BalanceTeamsResult() { Message = "Not enough players" };
 
 				for (var i = 1; i < clans.Count; i++)
 				{
@@ -107,8 +96,6 @@ namespace ZeroKWeb
 					playerScoreMultiplier[i] = mult;
 				}
 
-				
-
 				var limit = 1 << (players.Count);
 				var bestCombination = -1;
 				var bestScore = double.MinValue;
@@ -129,7 +116,7 @@ namespace ZeroKWeb
 					for (var i = 0; i < players.Count; i++)
 					{
 						var player = players[i];
-						var team = (combinator & (1 << i)) > 0 ? 1: 0;
+						var team = (combinator & (1 << i)) > 0 ? 1 : 0;
 						playerAssignments[i] = team;
 						if (team == 0)
 						{
@@ -176,7 +163,7 @@ namespace ZeroKWeb
 							}
 						}
 						if (cnt > 0) // player can be meaningfully ranked, he had at least one non zero relation
-							compoScore += playerScoreMultiplier[i] * sum/cnt;
+							compoScore += playerScoreMultiplier[i]*sum/cnt;
 					}
 					var score = teamDiffScore + eloScore + compoScore;
 
@@ -200,17 +187,19 @@ namespace ZeroKWeb
 					var differs = false;
 					for (var i = 0; i < players.Count; i++)
 					{
-						int allyID = ((bestCombination & (1 << i)) > 0) ? 1 : 0;
-						if (!differs &&  allyID != currentTeams.First(x => x.AccountID == players[i].AccountID).AllyID) differs = true;
-						res.BalancedTeams.Add(new AccountTeam()
-						                      { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = allyID, TeamID = i });
+						var allyID = ((bestCombination & (1 << i)) > 0) ? 1 : 0;
+						if (!differs && allyID != currentTeams.First(x => x.AccountID == players[i].AccountID).AllyID) differs = true;
+						res.BalancedTeams.Add(new AccountTeam() { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = allyID, TeamID = i });
 					}
 
-					if (differs) res.Message = string.Format("Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
-					                            bestTeamDiffs,
-					                            bestElo,
-					                            bestCompo,
-					                            Utils.GetWinChancePercent(bestElo*20));
+					if (differs)
+					{
+						res.Message = string.Format("Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
+						                            bestTeamDiffs,
+						                            bestElo,
+						                            bestCompo,
+						                            Utils.GetWinChancePercent(bestElo*20));
+					}
 				}
 
 				return res;
@@ -265,6 +254,15 @@ namespace ZeroKWeb
 					Select(x => x.Name).Take(10).ToList();
 		}
 
+		/// <summary>
+		/// This is backup function, remove when not needed
+		/// </summary>
+		public static AutohostMode GetModeFromHost(string hostname)
+		{
+			// hack this whole function is hack
+			if (hostname.StartsWith("PlanetWars")) return AutohostMode.Planetwars;
+			else return AutohostMode.GameTeams;
+		}
 
 
 		[WebMethod]
@@ -331,7 +329,11 @@ namespace ZeroKWeb
 		}
 
 		[WebMethod]
-		public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<BattleStartSetupPlayer> players, AutohostMode mode =  AutohostMode.GameTeams)
+		public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName,
+		                                                        string map,
+		                                                        string mod,
+		                                                        List<BattleStartSetupPlayer> players,
+		                                                        AutohostMode mode = AutohostMode.GameTeams)
 		{
 			mode = GetModeFromHost(hostName);
 			var ret = new SpringBattleStartSetup();
@@ -339,7 +341,12 @@ namespace ZeroKWeb
 			var db = new ZkDataContext();
 
 			var pwLocks = new List<int>();
-			if (mode == AutohostMode.Planetwars) pwLocks = db.Galaxies.Single(x => x.IsDefault).Planets.SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.Unlock).Where(x => x != null).Distinct().Select(x=>x.UnlockID).ToList();
+			if (mode == AutohostMode.Planetwars)
+			{
+				pwLocks =
+					db.Galaxies.Single(x => x.IsDefault).Planets.SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.Unlock).Where(x => x != null).
+						Distinct().Select(x => x.UnlockID).ToList();
+			}
 
 			foreach (var p in players.Where(x => !x.IsSpectator))
 			{
@@ -350,16 +357,12 @@ namespace ZeroKWeb
 					ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID, Parameters = userParams });
 
 					var pu = new LuaTable();
-					if (mode != AutohostMode.Planetwars) {
-						foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
-					} else
+					if (mode != AutohostMode.Planetwars) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
+					else
 					{
 						var clanUnlocks = new List<int>();
-						if (user.ClanID != null) clanUnlocks = Galaxy.ClanUnlocks(db, user.ClanID).Select(x=>x.UnlockID).ToList();
-						foreach (var unlock in user.AccountUnlocks.Select(x=>x.Unlock))
-						{
-							if (!pwLocks.Contains(unlock.UnlockID) || clanUnlocks.Contains(unlock.UnlockID)) pu.Add(unlock.Code);
-						}
+						if (user.ClanID != null) clanUnlocks = Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.UnlockID).ToList();
+						foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) if (!pwLocks.Contains(unlock.UnlockID) || clanUnlocks.Contains(unlock.UnlockID)) pu.Add(unlock.Code);
 					}
 					userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
 
@@ -399,13 +402,11 @@ namespace ZeroKWeb
 			if (mode == AutohostMode.Planetwars)
 			{
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
-				
-				var pwStructures = new LuaTable();
-				foreach (var s in planet.PlanetStructures.Where(x=>!x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
-				pwStructures.Add("s" + s.StructureTypeID, s.StructureType.IngameUnitName);
-				ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "pwStructures", Value = pwStructures.ToBase64String() });								
-			}
 
+				var pwStructures = new LuaTable();
+				foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName))) pwStructures.Add("s" + s.StructureTypeID, s.StructureType.IngameUnitName);
+				ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "pwStructures", Value = pwStructures.ToBase64String() });
+			}
 
 			return ret;
 		}
@@ -493,16 +494,6 @@ namespace ZeroKWeb
 			}
 		}
 
-		/// <summary>
-		/// This is backup function, remove when not needed
-		/// </summary>
-		public static AutohostMode GetModeFromHost(string hostname)
-		{
-			// hack this whole function is hack
-			if (hostname.StartsWith("PlanetWars")) return AutohostMode.Planetwars;
-			else return AutohostMode.GameTeams;
-		}
-
 
 		[WebMethod]
 		public string SubmitSpringBattleResult(string accountName,
@@ -511,55 +502,64 @@ namespace ZeroKWeb
 		                                       List<BattlePlayerResult> players,
 		                                       AutohostMode mode = AutohostMode.GameTeams)
 		{
-			try {
+			try
+			{
 				var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
 				if (acc == null) throw new Exception("Account name or password not valid");
 
 				mode = GetModeFromHost(accountName);
 
 				var db = new ZkDataContext();
-				var sb = new SpringBattle() {
-					HostAccountID = acc.AccountID,
-					Duration = result.Duration,
-					EngineGameID = result.EngineBattleID,
-					MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
-					ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
-					HasBots = result.IsBots,
-					IsMission = result.IsMission,
-					PlayerCount = players.Count(x => !x.IsSpectator),
-					StartTime = result.StartTime,
-					Title = result.Title,
-					ReplayFileName = result.ReplayName,
-					EngineVersion = result.EngineVersion ?? "0.82.7",
-					// hack remove when fixed
-				};
+				var sb = new SpringBattle()
+				         {
+				         	HostAccountID = acc.AccountID,
+				         	Duration = result.Duration,
+				         	EngineGameID = result.EngineBattleID,
+				         	MapResourceID = db.Resources.Single(x => x.InternalName == result.Map).ResourceID,
+				         	ModResourceID = db.Resources.Single(x => x.InternalName == result.Mod).ResourceID,
+				         	HasBots = result.IsBots,
+				         	IsMission = result.IsMission,
+				         	PlayerCount = players.Count(x => !x.IsSpectator),
+				         	StartTime = result.StartTime,
+				         	Title = result.Title,
+				         	ReplayFileName = result.ReplayName,
+				         	EngineVersion = result.EngineVersion ?? "0.82.7",
+				         	// hack remove when fixed
+				         };
 				db.SpringBattles.InsertOnSubmit(sb);
 
-				foreach (var p in players) {
-					sb.SpringBattlePlayers.Add(new SpringBattlePlayer() {
-						AccountID = p.AccountID,
-						AllyNumber = p.AllyNumber,
-						CommanderType = p.CommanderType,
-						IsInVictoryTeam = p.IsVictoryTeam,
-						IsSpectator = p.IsSpectator,
-						Rank = p.Rank,
-						LoseTime = p.LoseTime
-					});
+				foreach (var p in players)
+				{
+					sb.SpringBattlePlayers.Add(new SpringBattlePlayer()
+					                           {
+					                           	AccountID = p.AccountID,
+					                           	AllyNumber = p.AllyNumber,
+					                           	CommanderType = p.CommanderType,
+					                           	IsInVictoryTeam = p.IsVictoryTeam,
+					                           	IsSpectator = p.IsSpectator,
+					                           	Rank = p.Rank,
+					                           	LoseTime = p.LoseTime
+					                           });
 				}
 
 				db.SubmitChanges();
-				foreach (var p in players) {
-					foreach (var a in p.Awards) {
-						db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward() {
-							AccountID = p.AccountID,
-							SpringBattleID = sb.SpringBattleID,
-							AwardKey = a.Award,
-							AwardDescription = a.Description
-						});
+				foreach (var p in players)
+				{
+					foreach (var a in p.Awards)
+					{
+						db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
+						                                      {
+						                                      	AccountID = p.AccountID,
+						                                      	SpringBattleID = sb.SpringBattleID,
+						                                      	AwardKey = a.Award,
+						                                      	AwardDescription = a.Description
+						                                      });
 					}
 
-					foreach (var s in p.Stats) {
-						db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat() { AccountID = p.AccountID, SpringBattleID = sb.SpringBattleID, StatsKey = s.Key, Value = s.Value });
+					foreach (var s in p.Stats)
+					{
+						db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat()
+						                                     { AccountID = p.AccountID, SpringBattleID = sb.SpringBattleID, StatsKey = s.Key, Value = s.Value });
 					}
 				}
 
@@ -568,56 +568,65 @@ namespace ZeroKWeb
 				var orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
 				sb.CalculateElo(mode == AutohostMode.Planetwars);
-				try {
+				try
+				{
 					db.SubmitChanges();
-				} catch (ChangeConflictException e) {
+				}
+				catch (ChangeConflictException e)
+				{
 					db.ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
 					db.SubmitChanges();
 				}
 
-				if (mode == AutohostMode.Planetwars) {
-					
+				if (mode == AutohostMode.Planetwars)
+				{
 					var gal = db.Galaxies.Single(x => x.IsDefault);
 					var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
-					
+
 					// handle infelunce
 					Clan ownerClan = null;
 					if (planet.Account != null) ownerClan = planet.Account.Clan;
-					foreach (var p in sb.SpringBattlePlayers.Where(x => x.Influence > 0)) {
-			
-						var targetAccount = p.AccountID;
-						if (ownerClan != null && p.Account.Clan != null&& p.Account.Clan != ownerClan) 
+					foreach (var p in sb.SpringBattlePlayers.Where(x => x.Influence > 0))
+					{
+						var targetAccount = p.Account;
+						if (ownerClan != null && p.Account.Clan != null && p.Account.Clan != ownerClan)
 						{
 							var treaty = ownerClan.GetEffectiveTreaty(p.Account.ClanID.Value); // if ceasefired/allianced - give ip to owner
-							if (treaty.AllyStatus == AllyStatus.Ceasefire || treaty.AllyStatus == AllyStatus.Alliance) targetAccount = planet.OwnerAccountID.Value;
+							if (treaty.AllyStatus == AllyStatus.Ceasefire || treaty.AllyStatus == AllyStatus.Alliance) targetAccount = planet.Account;
 						}
-						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == targetAccount);
-						if (entry == null) {
-							entry = new AccountPlanet() { AccountID = targetAccount, PlanetID = planet.PlanetID };
+						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == targetAccount.AccountID);
+						if (entry == null)
+						{
+							entry = new AccountPlanet() { AccountID = targetAccount.AccountID, PlanetID = planet.PlanetID };
 							db.AccountPlanets.InsertOnSubmit(entry);
 						}
 						entry.Influence += (p.Influence ?? 0);
-						db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} at {2} from {3}",entry.Account, p.Influence??0, planet, sb));
+						if (p.Account != targetAccount)
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} at {2} from {3} thanks to ally {4}",
+							                                            targetAccount,
+							                                            p.Influence ?? 0,
+							                                            planet,
+							                                            sb,
+							                                            p.Account));
+						else db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} at {2} from {3}", targetAccount, p.Influence ?? 0, planet, sb));
 					}
 					db.SubmitChanges();
-					
-					
+
 					// destroy existing dropships
-					List<int> noGrowAccount = new List<int>();
-					foreach (var ap in planet.AccountPlanets.Where(x=>x.DropshipCount > 0))
+					var noGrowAccount = new List<int>();
+					foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
 					{
 						ap.DropshipCount = 0;
 						noGrowAccount.Add(ap.AccountID);
 					}
 
-
 					// spawn new dropships
 					foreach (var a in db.Accounts.Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
 					{
 						var capacity = GlobalConst.DefaultDropshipCapacity +
-						               (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipCapacity)??0);
+						               (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
 						var income = GlobalConst.DefaultDropshipProduction +
-						             (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipProduction)??0);
+						             (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipProduction) ?? 0);
 						var used = a.AccountPlanets.Sum(x => x.DropshipCount);
 
 						a.DropshipCount += income;
@@ -628,16 +637,20 @@ namespace ZeroKWeb
 					PlanetwarsController.SetPlanetOwners(db);
 				}
 
-
 				var text = new StringBuilder();
 
-				foreach (var account in sb.SpringBattlePlayers.Select(x => x.Account)) {
-					if (account.Level > orgLevels[account.AccountID]) {
-						try {
+				foreach (var account in sb.SpringBattlePlayers.Select(x => x.Account))
+				{
+					if (account.Level > orgLevels[account.AccountID])
+					{
+						try
+						{
 							var message = string.Format("Congratulations {1}! You just leveled up to level {0}. http://zero-k.info/Users/{1}", account.Level, account.Name);
 							text.AppendLine(message);
 							AuthServiceClient.SendLobbyMessage(account, message);
-						} catch (Exception ex) {
+						}
+						catch (Exception ex)
+						{
 							Trace.TraceError("Error sending level up lobby message: {0}", ex);
 						}
 					}
@@ -645,7 +658,8 @@ namespace ZeroKWeb
 
 				text.AppendLine(string.Format("View full battle details and demo at http://zero-k.info/Battles/Detail/{0}", sb.SpringBattleID));
 				return text.ToString();
-			} catch (Exception ex)
+			}
+			catch (Exception ex)
 			{
 				return ex.ToString();
 			}
@@ -673,19 +687,19 @@ namespace ZeroKWeb
 		}
 
 
+		[WebMethod]
+		public bool VerfiyAccountData(string login, string password)
+		{
+			var acc = AuthServiceClient.VerifyAccountPlain(login, password);
+			if (acc == null) return false;
+			return true;
+		}
+
 		string GetUserIP()
 		{
 			var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
 			if (string.IsNullOrEmpty(ip) || ip.Equals("unknown", StringComparison.OrdinalIgnoreCase)) ip = Context.Request.ServerVariables["REMOTE_ADDR"];
 			return ip;
-		}
-
-		[WebMethod]
-		public bool VerfiyAccountData(string login, string password)
-		{
-				var acc = AuthServiceClient.VerifyAccountPlain(login, password);
-				if (acc == null) return false;
-				return true;
 		}
 
 
@@ -774,7 +788,6 @@ namespace ZeroKWeb
 	{
 		public string MapName;
 		public string Message;
-
 	}
 
 	public class BalanceTeamsResult
