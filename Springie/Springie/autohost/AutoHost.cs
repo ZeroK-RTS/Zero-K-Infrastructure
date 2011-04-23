@@ -39,7 +39,6 @@ namespace Springie.autohost
 		ResourceLinkProvider linkProvider;
 
 		AutoManager manager;
-		int mapCycleIndex;
 
 		Timer pollTimer;
 		readonly QuickMatchTracking quickMatchTracker;
@@ -544,13 +543,20 @@ namespace Springie.autohost
 					spring.ExitGame();
 				}).Start();
 
+/*			try
+			{
+				var service = new ContentService();
+				service.GetRecommendedMap()
+
+			}
+
 			if (config.MapCycle.Length > 0)
 			{
 				mapCycleIndex = mapCycleIndex%config.MapCycle.Length;
 				SayBattle("changing to another map in mapcycle");
 				ComMap(TasSayEventArgs.Default, config.MapCycle[mapCycleIndex].Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 				mapCycleIndex++;
-			}
+			}*/
 		}
 
 		void spring_NotifyModsChanged(object sender, EventArgs e)

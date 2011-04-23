@@ -123,13 +123,16 @@ namespace Springie.PlanetWars
 		{
 			try
 			{
-				var map = serv.GetRecommendedMap(tas.UserName, AutohostMode.Planetwars);
-				if (map.MapName != null)
+				if (tas.MyBattle != null)
 				{
-					if (tas.MyBattle.MapName != map.MapName)
+					var map = serv.GetRecommendedMap(tas.UserName, AutohostMode.Planetwars);
+					if (map.MapName != null)
 					{
-						autoHost.ComMap(TasSayEventArgs.Default, map.MapName);
-						autoHost.SayBattle(map.Message);
+						if (tas.MyBattle.MapName != map.MapName)
+						{
+							autoHost.ComMap(TasSayEventArgs.Default, map.MapName);
+							autoHost.SayBattle(map.Message);
+						}
 					}
 				}
 			}

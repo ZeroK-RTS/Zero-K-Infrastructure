@@ -1,4 +1,5 @@
 @model ZkData.Account
+@using ZeroKWeb;
 @using ZkData;
 @{
   Page.Title = Model.Name + " user page";
@@ -8,12 +9,10 @@
   }  *@ @* User Profile Page! *@ @* First column starts here *@
 <table border="0" width="100%">
   <tr>
-    <td>
-      <h2>@Html.PrintAccount(Model)</h2>
+    <td><h2>@Html.PrintAccount(Model)</h2>
     </td>
     <td align="right">
-      @if (ZeroKWeb.Global.IsLobbyAccess) { <img src="../../Img/zk_logo_miniature.png"
-        alt="zklogo" /> }
+      @if (ZeroKWeb.Global.IsLobbyAccess) { <img src="../../Img/zk_logo_miniature.png" alt="zklogo" /> }
     </td>
   </tr>
 </table>
@@ -23,32 +22,22 @@
       <table>
         @if (!string.IsNullOrEmpty(Model.Aliases)) {
           <tr>
-            <td>
-              Aliases:
-            </td>
+            <td>Aliases: </td>
             <td>@Model.Aliases
             </td>
           </tr>
         }
         <tr>
-          <td>
-            Level:
-          </td>
-          <td>
-            <b>@Model.Level</b>
-          </td>
+          <td>Level: </td>
+          <td><b>@Model.Level</b> </td>
         </tr>
         <tr>
-          <td>
-            Clan:
-          </td>
+          <td>Clan: </td>
           <td>@Html.PrintClan(Model.Clan)
           </td>
         </tr>
         <tr>
-          <td>
-            XP:
-          </td>
+          <td>XP: </td>
           <td>
             @{
               var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));
@@ -56,80 +45,60 @@
             <span title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
               <table cellpadding='0' cellspacing='0'>
                 <tr>
-                  <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'>
-                  </td>
-                  <td width='@((int)(300 * ratio))' style="background: url(/img/img_progressbar1_h.png);" height='12'>
-                  </td>
-                  <td width='@((int)(300 * (1 - ratio)))' style="background: url(/img/img_progressbar2_h.png);" height='10'>
-                  </td>
-                  <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'>
-                  </td>
+                  <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'></td>
+                  <td width='@((int)(300 * ratio))' style="background: url(/img/img_progressbar1_h.png);" height='12'></td>
+                  <td width='@((int)(300 * (1 - ratio)))' style="background: url(/img/img_progressbar2_h.png);" height='10'></td>
+                  <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'></td>
                 </tr>
               </table>
-            </span>
-          </td>
+            </span></td>
         </tr>
         <tr>
-          <td>
-            Elo:
-          </td>
+          <td>Elo: </td>
           <td>@Math.Round(Model.Elo)
           </td>
         </tr>
         @if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin) {
           <tr>
-            <td>
-              Administrator:
-            </td>
+            <td>Administrator: </td>
             <td>@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
             </td>
           </tr>
         }
         <tr>
-          <td nowrap="nowrap">
-            Online:
-          </td>
-          <td>
-            first @Model.FirstLogin.ToAgoString(), last @Model.LastLogin.ToAgoString()
+          <td nowrap="nowrap">Online: </td>
+          <td>first @Model.FirstLogin.ToAgoString(), last @Model.LastLogin.ToAgoString()
           </td>
         </tr>
         @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) {
           <tr>
-            <td>
-              <span title="@award.First().AwardDescription.Split(',').First()">
-                <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/></span>
+            <td><span title="@award.First().AwardDescription.Split(',').First()"><img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/></span>
             </td>
             <td>@award.Count()
             </td>
           </tr>    
         }
       </table>
-      <a href='spring://chat/user/@Model.Name'>Send private message to @Model.Name</a>
-      <h3>
-        Commanders:</h3>
+      <a href='spring://chat/user/@Model.Name'>Send private message to @Model.Name</a> <h3>Commanders:</h3>
       @foreach (var comm in Model.Commanders) {
-        <span style='display:inline-block; width:110px;height:80px' title='$commander$@comm.CommanderID'>
-          <img src='@comm.Unlock.ImageUrl' alt="unlock" /><br />@comm.Name
+        <span style='display:inline-block; width:110px;height:80px' title='$commander$@comm.CommanderID'><img src='@comm.Unlock.ImageUrl' alt="unlock" /><br />@comm.Name
         </span>
       }
     </td>
     @* Second column starts here *@
     <td width="40%" valign="top">
       @if (Model.ForumPosts.Any()) {
-        <h3>
-          Posted threads</h3>
+        <h3>Posted threads</h3>
         <span nowrap="nowrap">@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count
           threads</span><br />
                                                             foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10)) {
-        <small>
-          <img src="../../Img/bullet.png" alt="bullet" />
+        <small><img src="../../Img/bullet.png" alt="bullet" />
           <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
                                                             }
       }
       <br />
       @if (Model.Planets.Any()) {
-        <h3>
-          Planets owned</h3>
+        <h3>Planets owned</h3>
         <table>
           @foreach (var p in Model.Planets) { 
             <tr>
@@ -142,23 +111,22 @@
         </table>
       }
       @if (Model.Clan != null) {
-       <h3>Dropships</h3>
-        <span nowrap="nowrap">@(Model.DropshipCount)/@(Model.Planets.SelectMany(x=>x.PlanetStructures).Where(x=>!x.IsDestroyed).Sum(x=>x.StructureType.EffectDropshipCapacity) + GlobalConst.DefaultDropshipCapacity) ready to deploy</span>
+        <h3>Dropships</h3>
+        <span nowrap="nowrap">@(Model.DropshipCount)/@(Model.Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) + GlobalConst.DefaultDropshipCapacity)
+          ready to deploy</span>
         <table>
-          @foreach (var p in Model.AccountPlanets.Where(x=>x.DropshipCount>0)) { 
+          @foreach (var p in Model.AccountPlanets.Where(x => x.DropshipCount > 0)) { 
             <tr>
               <td>@Html.PrintPlanet(p.Planet)
               </td>
-              <td><img src='/img/dropship.png'/>@p.DropshipCount</td>
+              <td><img src='/img/dropship.png' />@p.DropshipCount</td>
             </tr>
           }
         </table>
       }
-
       <br />
       @if (Model.SpringBattlePlayers.Any()) {
-        <h3>
-          Last battles</h3>
+        <h3>Last battles</h3>
         <span nowrap="nowrap">
           @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
           watched, @Model.MissionRunCount missions </span>
@@ -175,26 +143,31 @@
       @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
         <a href='@Url.Action("Commanders", "My")'>Configure commanders</a>
       }
-      <h3>
-        Technologies:</h3>
+      <h3>Technologies:</h3>
       @Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
       <br />
       @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
-        <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)">
-          <a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP
-            points</a></span>
+        <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)"><a href='@Url.Action("UnlockList", "My")'>
+          You can unlock technologies worth @Model.AvailableXP
+          points</a></span>
       } else {
         @Model.Name @:Can unlock technologies worth @Model.AvailableXP points
-                          }
-      <h3>
-        PlanetWars events</h3>
+            }
+      @if (ZeroKWeb.Global.Account != null && Global.AccountID != Model.AccountID) {
+        <h3>PlanetWars gifts</h3>
+        <form method="post" action="@Url.Action("Give", "Planetwars", new { targetAccountID = Model.AccountID})">
+        <span>Credits: </span>@Html.TextBox("giveCredits")
+        <span>Influence: </span>@Html.DropDownList("planetID", ZeroKWeb.Global.Account.AccountPlanets.Where(x => x.Influence > 0).OrderByDescending(x => x.Influence).Select(x => new SelectListItem() { Text = x.Planet.Name + " - " + x.Influence, Value = x.PlanetID.ToString() }))
+        @Html.TextBox("giveInfluence") <input type="submit" value="Send gift"/>
+        </form>
+      }
+      <h3>PlanetWars events</h3>
       @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
     </td>
   </tr>
 </table>
 @if (ZeroKWeb.Global.IsZeroKAdmin && ZeroKWeb.Global.AccountID == Model.AccountID) {
-  <h3>
-    Admin extras</h3>
+  <h3>Admin extras</h3>
   <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
   <a href="@Url.Content("~/StructuresAdmin.aspx")">Planetwars structures admin</a><br />
   <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />

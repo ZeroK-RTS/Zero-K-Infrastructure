@@ -199,6 +199,7 @@ namespace ZeroKWeb.Controllers
 			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
 			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
 			if (kickee.IsClanFounder) return Content("Clan founders can't be kicked.");
+			foreach (var p in kickee.Planets.ToList()) p.OwnerAccountID = null; // disown his planets
 			kickee.ClanID = null;
 			db.SubmitChanges();
 			return RedirectToAction("Clan", new { id = clanID });
@@ -380,6 +381,39 @@ namespace ZeroKWeb.Controllers
 		}
 
 		[Auth]
+		public ActionResult Give(int? planetID, int? giveInfluence, int? giveCredits, int targetAccountID)
+		{
+			var db = new ZkDataContext();
+			var me = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+			var target = db.Accounts.Single(x => x.AccountID == targetAccountID);
+			if (giveCredits > 0)
+			{
+				var creds = Math.Min(giveCredits ?? 0, me.Credits);
+				me.Credits -= creds;
+				target.Credits += creds;
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} credits to {2}", me, creds,target));
+			}
+			if (planetID > 0 && giveInfluence > 0)
+			{
+				var mePlanet = me.AccountPlanets.Single(x => x.PlanetID == planetID);
+				var infl = Math.Min(giveInfluence??0, mePlanet.Influence);
+				var targetPlanet = target.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
+				if (targetPlanet == null)
+				{
+					targetPlanet = new AccountPlanet() { AccountID = target.AccountID, PlanetID = planetID.Value};
+					db.AccountPlanets.InsertOnSubmit(targetPlanet);
+				}
+				mePlanet.Influence -= infl;
+				targetPlanet.Influence += infl;
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} gives {1} influence on {2} to {3}", me, infl, mePlanet.Planet, target));
+			}
+			db.SubmitChanges();
+			SetPlanetOwners(db);
+			db.SubmitChanges();
+			return RedirectToAction("Index", "Users", new { name = targetAccountID });
+		}
+
+		[Auth]
 		public ActionResult SubmitUpgradeStructure(int planetID, int structureTypeID)
 		{
 			var db = new ZkDataContext();
@@ -448,7 +482,7 @@ namespace ZeroKWeb.Controllers
 								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2}.",
 								                                            mostInfluentialPlayer.Account,
 								                                            planet,
-								                                            ownerAccountPlanet.Planet));
+								                                            ownerAccountPlanet.Account));
 								havePlanetsChangedHands = true;
 							}
 						}

@@ -88,12 +88,6 @@ namespace Springie.autohost
         public string[] LimitMods { get; set; }
 
 
-        [Category("Mod and map")]
-        [Description(
-            "Optional mapcycle - when game ends, another map is from this list is picked. You don't have to specify exact names here, springie is using filtering capabilities to find entered maps."
-            )]
-        public string[] MapCycle { get { return mapCycle; } set { mapCycle = value; } }
-
         [Category("Basic options")]
         [Description("Maximum number of players")]
         public int MaxPlayers { get { return maxPlayers; } set { maxPlayers = value; } }

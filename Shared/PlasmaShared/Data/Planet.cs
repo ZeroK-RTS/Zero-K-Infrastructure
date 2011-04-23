@@ -16,7 +16,7 @@ namespace ZkData
 			var ownerIP = 0;
 			if (Account != null)
 			{
-				ownerIP = Account.Clan.Accounts.SelectMany(x => x.AccountPlanets.Where(y => y.PlanetID == PlanetID)).Sum(x => x.Influence);
+				ownerIP = Account.Clan.Accounts.SelectMany(x => x.AccountPlanets.Where(y => y.PlanetID == PlanetID)).Sum(x => (int?)x.Influence) ??0;
 			}
 			ownerIP += PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense) ?? 0;
 
