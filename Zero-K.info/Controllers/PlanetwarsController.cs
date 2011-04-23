@@ -474,6 +474,17 @@ namespace ZeroKWeb.Controllers
 		{
 			Galaxy.RecalculateShadowInfluence(db);
 			var havePlanetsChangedHands = false;
+
+			// set planets with no owners (should only happen as a result of debugging)
+			foreach (var planet in db.Planets.Where(p => p.OwnerAccountID != null))
+			{
+				if (planet.AccountPlanets.Where(ap => ap.Account.ClanID != null).Sum(ap => ap.Influence + ap.ShadowInfluence) == 0)
+				{
+					planet.Account = null;
+					havePlanetsChangedHands = true;
+				}
+			}
+
 			foreach (var planet in db.Planets)
 			{
 				var clansByInfluence = planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x=>x.Key != null).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence));
@@ -485,7 +496,7 @@ namespace ZeroKWeb.Controllers
 					{
 						if (planet.OwnerAccountID == null) // no previous owner
 						{
-							planet.OwnerAccountID = mostInfluentialPlayer.AccountID;
+							planet.Account = mostInfluentialPlayer.Account;
 							db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2}.", mostInfluentialPlayer.Account, planet, mostInfluentialClan.Key));
 							havePlanetsChangedHands = true;
 						}
