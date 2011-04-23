@@ -31,7 +31,7 @@
             </td>
             <td>
               <img src='/img/dropship.png' />
-              x @p.dropships
+              @p.dropships
             </td>
           </tr>
         }
@@ -44,6 +44,7 @@
     </td>
 
     <td valign='top'>
+    <h3>Surface scan</h3>
       @Html.ActionLink(Model.Resource.InternalName, "Detail", "Maps", new { id = Model.MapResourceID }, new { title = "$map$" + Model.MapResourceID })
       <table>
         <tr>
