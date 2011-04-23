@@ -10,13 +10,12 @@ namespace ZkData
 
 	partial class Planet
 	{
-		// TODO: update for shadow influence
 		public int GetIPToCapture()
 		{
 			var ownerIP = 0;
 			if (Account != null)
 			{
-				ownerIP = Account.Clan.Accounts.SelectMany(x => x.AccountPlanets.Where(y => y.PlanetID == PlanetID)).Sum(x => (int?)x.Influence) ??0;
+				ownerIP = Account.Clan.Accounts.SelectMany(x => x.AccountPlanets.Where(y => y.PlanetID == PlanetID)).Sum(x => (int?)(x.Influence + x.ShadowInfluence)) ??0;
 			}
 			ownerIP += PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense) ?? 0;
 
