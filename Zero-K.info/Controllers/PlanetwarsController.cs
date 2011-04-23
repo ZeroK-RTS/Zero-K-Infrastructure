@@ -432,6 +432,16 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
+		// for testing
+		public ActionResult SetPlanetOwners()
+		{
+			using (var db = new ZkDataContext())
+			{
+				SetPlanetOwners(db);
+			}
+			return Content("Done.");
+		}
+
 		[Auth]
 		public ActionResult UpgradeStructure(int planetID, int structureTypeID)
 		{
@@ -481,14 +491,13 @@ namespace ZeroKWeb.Controllers
 						}
 						else
 						{
-							// todo: use factor instead of a fixed boost for defense?
 							var defenseBoost = planet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectInfluenceDefense) ?? 0;
 							var ownerAccountPlanet = planet.AccountPlanets.Single(ap => ap.AccountID == planet.OwnerAccountID);
 							var ownerIP = ownerAccountPlanet.Influence + ownerAccountPlanet.ShadowInfluence;
 							var mostInfluentialPlayerIP = mostInfluentialPlayer.Influence + mostInfluentialPlayer.ShadowInfluence;
 							if (ownerIP + defenseBoost < mostInfluentialPlayerIP)
 							{
-								planet.OwnerAccountID = mostInfluentialPlayer.AccountID;
+								planet.Account = mostInfluentialPlayer.Account;
 								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2} for {3}.",
 								                                            mostInfluentialPlayer.Account,
 								                                            planet,
