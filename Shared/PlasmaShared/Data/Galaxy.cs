@@ -8,15 +8,14 @@ namespace ZkData
 {
 	partial class Galaxy
 	{
-		static public void RecalculateShadowInfluence()
+		static public void RecalculateShadowInfluence(ZkDataContext db)
 		{
 			using (var scope = new TransactionScope())
-			using (var db = new ZkDataContext())
 			{
 				foreach (var thisPlanet in db.Planets)
 				{
 					var thisPlanetID = thisPlanet.PlanetID;
-					var thisLinkStrenght = thisPlanet.PlanetStructures.Max(s => s.StructureType.EffectLinkStrength) ?? 0;
+					var thisLinkStrenght = thisPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Max(s => s.StructureType.EffectLinkStrength) ?? 0;
 
 					// clear shadow influence
 					foreach (var thisAccountPlanet in thisPlanet.AccountPlanets) thisAccountPlanet.ShadowInfluence = 0;
@@ -27,7 +26,7 @@ namespace ZkData
 					foreach (var link in db.Links.Where(l => l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID))
 					{
 						var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
-						var otherLinkStrenght = otherPlanet.PlanetStructures.Max(s => s.StructureType.EffectLinkStrength) ?? 0;
+						var otherLinkStrenght = otherPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Max(s => s.StructureType.EffectLinkStrength) ?? 0;
 
 						// iterate accountPlanets on other side of the link
 						foreach (var otherAccountPlanet in otherPlanet.AccountPlanets)
