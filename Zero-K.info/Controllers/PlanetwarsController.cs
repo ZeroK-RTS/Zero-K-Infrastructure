@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Linq.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Clan", new { id = clanID });
 		}
 
-	
+
 		/// <summary>
 		/// Shows clan page
 		/// </summary>
@@ -62,6 +63,41 @@ namespace ZeroKWeb.Controllers
 		{
 			if (Global.Account.Clan == null || (Global.Account.HasClanRights)) return View(Global.Clan ?? new Clan());
 			else return Content("You already have clan and you dont have rights to it");
+		}
+
+		public ActionResult Events(int? planetID,
+		                           int? accountID,
+		                           int? springBattleID,
+		                           int? clanID,
+		                           string filter,
+		                           int page = 0,
+		                           int pageSize = 10,
+		                           bool partial = false)
+		{
+			var db = new ZkDataContext();
+
+			var res = db.Events.AsQueryable();
+			if (planetID.HasValue) res = res.Where(x => x.EventPlanets.Any(y => y.PlanetID == planetID));
+			if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
+			if (clanID.HasValue) res = res.Where(x => x.EventClans.Any(y => y.ClanID == clanID));
+			if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == clanID));
+			if (!string.IsNullOrEmpty(filter)) res = res.Where(x => SqlMethods.Like(x.Text, string.Format("%{0}%", filter)));
+
+			var ret = new EventsResult()
+			          {
+			          	PageCount = (res.Count()/pageSize) + 1,
+			          	Page = page,
+			          	Events = res.Skip(page*pageSize).Take(pageSize),
+			          	PageSize = pageSize,
+			          	PlanetID = planetID,
+			          	AccountID = accountID,
+			          	SpringBattleID = springBattleID,
+			          	Filter = filter,
+			          	ClanID = clanID,
+			          	Partial = partial
+			          };
+
+			return View(ret);
 		}
 
 		public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 4)
@@ -179,6 +215,7 @@ namespace ZeroKWeb.Controllers
 			return View(planet);
 		}
 
+
 		[Auth]
 		public ActionResult SendDropships(int planetID, int count)
 		{
@@ -186,6 +223,9 @@ namespace ZeroKWeb.Controllers
 			using (var scope = new TransactionScope())
 			{
 				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+
+				if (!ZkData.Clan.AccessiblePlanets(db, acc.Clan).Any(x => x.PlanetID == planetID)) return Content("This planet is not accessible for your dropships at this moment");
+
 				var cnt = Math.Max(count, 0);
 				cnt = Math.Min(cnt, acc.DropshipCount ?? 0);
 				acc.DropshipCount = (acc.DropshipCount ?? 0) - cnt;
@@ -287,7 +327,6 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Planet", new { id = planet.PlanetID });
 		}
 
-
 		[Auth]
 		public ActionResult SubmitUpgradeStructure(int planetID, int structureTypeID)
 		{
@@ -321,5 +360,20 @@ namespace ZeroKWeb.Controllers
 			// search the next step in the tech tree
 			return HasStructureOrUpgrades(db, planet, db.StructureTypes.Single(s => s.StructureTypeID == structureType.UpgradesToStructureID));
 		}
+	}
+
+	public class EventsResult
+	{
+		public int? AccountID;
+		public int? ClanID;
+		public IQueryable<Event> Events;
+		public string Filter;
+		public int Page;
+		public int PageCount;
+		public int PageSize;
+		public bool Partial;
+		public int? PlanetID;
+		public int? SpringBattleID;
+		public string Title;
 	}
 }

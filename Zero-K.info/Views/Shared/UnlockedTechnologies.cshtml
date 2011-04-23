@@ -10,7 +10,7 @@
       pwLocks = gal.Planets.SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.EffectUnlockID).Where(x => x != null).Distinct().ToList();
     }
   }
-  if (acc != null && acc.Account != null) {
+  if (acc != null && acc.Account != null && acc.Account.Clan != null) {
     clanUnlocks = acc.Account.Clan.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.EffectUnlockID).Where(x=>x!=null).Distinct().ToList();
   }
 }

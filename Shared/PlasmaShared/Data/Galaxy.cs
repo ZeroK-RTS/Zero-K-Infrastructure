@@ -46,7 +46,8 @@ namespace ZkData
 								}
 
 								// increment shadow influence of player on the other side of the link
-								var influenceFactor = GlobalConst.ShadowInfluenceFactor*(1 + thisLinkStrenght)*(1 + otherLinkStrenght);
+								var influenceFactor = (thisLinkStrenght + otherLinkStrenght) / 2.0;
+								if (thisLinkStrenght == 0 || otherLinkStrenght == 0) influenceFactor = 0;
 								thisAccountPlanet.ShadowInfluence += (int)(otherAccountPlanet.Influence * influenceFactor);
 							}
 						}
