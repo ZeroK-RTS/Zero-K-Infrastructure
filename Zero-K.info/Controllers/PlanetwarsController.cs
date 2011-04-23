@@ -456,7 +456,7 @@ namespace ZeroKWeb.Controllers
 			var havePlanetsChangedHands = false;
 			foreach (var planet in db.Planets)
 			{
-				var clansByInfluence = planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence));
+				var clansByInfluence = planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x=>x.Key != null).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence));
 				var mostInfluentialClan = clansByInfluence.FirstOrDefault();
 				if (mostInfluentialClan != null)
 				{

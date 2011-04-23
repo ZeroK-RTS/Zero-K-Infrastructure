@@ -27,7 +27,7 @@ Under construciton, please wait!
     }
 
     var secondRatio = 0.0;
-    var entry = p.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != clan).OrderByDescending(x => x.Sum(y => y.Influence)).FirstOrDefault();
+    var entry = p.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key != clan).OrderByDescending(x => x.Sum(y => y.Influence)).FirstOrDefault();
     if (entry != null) {
       secondClan = entry.Key;
       secondClanInfluence = entry.Sum(y => y.Influence);

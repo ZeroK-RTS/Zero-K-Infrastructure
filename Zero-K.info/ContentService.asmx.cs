@@ -597,8 +597,10 @@ namespace ZeroKWeb
 							db.AccountPlanets.InsertOnSubmit(entry);
 						}
 						entry.Influence += (p.Influence ?? 0);
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} at {2} from {3}",entry.Account, p.Influence??0, planet, sb));
 					}
 					db.SubmitChanges();
+					
 					
 					// destroy existing dropships
 					List<int> noGrowAccount = new List<int>();
