@@ -631,7 +631,7 @@ namespace ZeroKWeb
 					}
 
 					// spawn new dropships
-					foreach (var a in db.Accounts.Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
+					foreach (var a in sb.SpringBattlePlayers.Select(x=>x.Account).Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
 					{
 						var capacity = GlobalConst.DefaultDropshipCapacity +
 						               (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
