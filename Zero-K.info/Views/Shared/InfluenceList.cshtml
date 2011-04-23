@@ -12,7 +12,7 @@
       </td>
       <td>
         <b>
-          @Html.PrintInfluence(clanGroup.Key, clanGroup.Sum(ap => ap.Influence + ap.ShadowInfluence), clanGroup.Sum(ap => ap.ShadowInfluence))
+          @Html.PrintInfluence(clanGroup.Key, clanGroup.Sum(ap => ap.Influence), clanGroup.Sum(ap => ap.ShadowInfluence))
         </b>
       </td>
       @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence)) {
