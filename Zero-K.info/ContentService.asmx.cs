@@ -653,9 +653,20 @@ namespace ZeroKWeb
 						                  acc.Name,
 						                  planet.PlanetID);
 					}
-				}
 
-				db.SubmitChanges();
+					// mines
+					foreach (var linkedplanet in gal.Planets.Where(x => (x.PlanetStructures.Sum(y => y.StructureType.EffectLinkStrength) ?? 0) > 0))
+					{
+						var owner = linkedplanet.Account;
+						if (owner != null) owner.Credits += linkedplanet.PlanetStructures.Sum(x => x.StructureType.EffectCreditsPerTurn)??0;
+					}
+
+					db.SubmitChanges();
+				}
+				
+
+
+				
 				
 
 				foreach (var account in sb.SpringBattlePlayers.Select(x => x.Account))
