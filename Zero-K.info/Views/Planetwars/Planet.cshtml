@@ -100,20 +100,28 @@
             <th>Price</th>
             <th>Seller</th>
         </tr>
-    @foreach (var offer in Model.MarketOffers.Where(o => o.IsSell && o.DateAccepted == null)) {
-        <tr>
-            <td>@offer.Quantity</td>
+    @foreach (var offer in Model.MarketOffers.Where(o => o.IsSell && o.DateAccepted == null))
+    {
+        var sellerAccountPlanet = Model.AccountPlanets.SingleOrDefault(ap => ap.AccountID == offer.AccountID);
+        var maxWillSell = 0;
+        if (sellerAccountPlanet != null) {
+            maxWillSell = Math.Min(sellerAccountPlanet.Influence, offer.Quantity);
+        }
+        <tr>                
+            <td>@maxWillSell&nbsp(@offer.Quantity)</td>
             <td>@offer.Price</td>
             <td>@Html.PrintAccount(offer.AccountByAccountID)</td>
-            @if (offer.AccountID == Global.AccountID) {
+            @if (offer.AccountID == Global.AccountID)
+            {
                 <td>@Html.ActionLink("Cancel", "CancelMarketOrder", new { offerID = offer.OfferID, planetID = Model.PlanetID })</td>
             }
         </tr>
     }
     </table>
 
-@if (Model.OwnerAccountID == Global.AccountID) {
-  var myInfluence = Model.AccountPlanets.Single(ap => ap.AccountID == Model.OwnerAccountID).Influence;
+@if (Global.Account != null)
+{
+    var myInfluence = Model.AccountPlanets.Single(ap => ap.AccountID == Model.OwnerAccountID).Influence;
   <form method="post" action="@Url.Action("SubmitSellOrder")">
       <input type="hidden" name="planetID" value="@Model.PlanetID"/>
       Quantity: <input type="text" name="quantity" value="@myInfluence"/>
@@ -121,33 +129,40 @@
       <input type='submit' value="Place Sell Order" />
   </form>
 }
-<h4>  Buy Offer</h4>
+<h4>Buy Offer</h4>
       <table>
         <tr>
             <th>Quantity</th>
             <th>Price</th>
             <th>Buyer</th>
         </tr>
-    @foreach (var offer in Model.MarketOffers.Where(o => !o.IsSell && o.DateAccepted == null)) {
+    @foreach (var offer in Model.MarketOffers.Where(o => !o.IsSell && o.DateAccepted == null))
+    {
+        var maxWillBuy = Math.Min(offer.AccountByAccountID.Credits / offer.Price, offer.Quantity);
         <tr>
-            <td>@offer.Quantity</td>
+            <td>@maxWillBuy&nbsp(@offer.Quantity)</td>
             <td>@offer.Price</td>
             <td>@Html.PrintAccount(offer.AccountByAccountID)</td>
-            @if (offer.AccountID == Global.AccountID) {
+            @if (offer.AccountID == Global.AccountID)
+            {
                 <td>@Html.ActionLink("Cancel", "CancelMarketOrder", new { offerID = offer.OfferID, planetID = Model.PlanetID })</td>
             }
         </tr>
     }
     </table>
+    @if (Global.Account != null)
+    {
     <form method="post" action="@Url.Action("SubmitBuyOrder")">
         <input type="hidden" name="planetID" value="@Model.PlanetID"/>
         Quantity: <input type="text" name="quantity" value="0"/>
         Price: <input type="text" name="price" value="0"/>
         <input type='submit' value="Place Buy Order" />
     </form>
+    }
 <h2>
   Structures</h2>
-@foreach (var structure in Model.PlanetStructures) {
+@foreach (var structure in Model.PlanetStructures)
+{
      
   <p>
     <img  width="32" height="32" src='@structure.GetImageUrl()'/>@structure.StructureType.Name

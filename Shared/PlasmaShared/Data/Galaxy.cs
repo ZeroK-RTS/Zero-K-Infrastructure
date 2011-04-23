@@ -91,7 +91,6 @@ namespace ZkData
 					}
 				}
 			}
-			// TODO: make planets flip side?
 			db.SubmitChanges();
 		}
 	}
