@@ -470,6 +470,8 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
+
+		// TODO: destroy structures on transfer in needed
 		public static void SetPlanetOwners(ZkDataContext db)
 		{
 			Galaxy.RecalculateShadowInfluence(db);
@@ -480,16 +482,22 @@ namespace ZeroKWeb.Controllers
 			{
 				if (planet.AccountPlanets.Where(ap => ap.Account.ClanID != null).Sum(ap => ap.Influence + ap.ShadowInfluence) == 0)
 				{
+					db.Events.InsertOnSubmit(Global.CreateEvent("{0} has lost planet {1}.", planet.Account, planet));
 					planet.Account = null;
 					havePlanetsChangedHands = true;
 				}
+			}
+
+			if (havePlanetsChangedHands)
+			{
+				db.SubmitChanges();
 			}
 
 			foreach (var planet in db.Planets)
 			{
 				var clansByInfluence = planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x=>x.Key != null).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence));
 				var mostInfluentialClan = clansByInfluence.FirstOrDefault();
-				if (mostInfluentialClan != null)
+				if (mostInfluentialClan != null && mostInfluentialClan.Sum(ap => ap.Influence + ap.ShadowInfluence) > 0)
 				{
 					var mostInfluentialPlayer = mostInfluentialClan.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence).First();
 					if (mostInfluentialPlayer.AccountID != planet.OwnerAccountID)
