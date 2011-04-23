@@ -1,0 +1,29 @@
+﻿@model ZkData.Planet
+<table>
+    @{
+      var link = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectLinkStrength);
+      var credits = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectCreditsPerTurn);
+      var dropshipCapa = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity);
+      var dropshipProd = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipProduction);
+      var defense = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense);
+      var jump = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectWarpGateCapacity);
+      var victory = Model.PlanetStructures.Where(x => !x.IsDestroyed).Any(x => x.StructureType.EffectIsVictoryPlanet == true);
+      var aliens = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.EffectBots).Where(x => !string.IsNullOrEmpty(x)).FirstOrDefault();
+      var techs = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.Unlock).Where(x=> x!=null).ToList();
+      
+      
+      <tr><td>Defense:</td><td>+@defense influence</td></tr>
+      <tr><td>Link strength:</td><td>@(link*100)%</td></tr>
+      <tr><td>Credits production:</td><td>@credits</td></tr>
+      <tr><td>Technologies:</td><td>
+        @foreach (var t in techs) {
+          <span title='$unlock$@t.UnlockID' style='color:@t.LabelColor; font-size:small'><img src='@t.ImageUrl' width='20'/>@t.Name<br /></span>
+        }
+      </td></tr>
+      <tr><td>JumpGate capacity:</td><td>@jump</td></tr>      
+      <tr><td>Dropship production:</td><td>@dropshipProd</td></tr>
+      <tr><td>Dropship capacity:</td><td>@dropshipCapa</td></tr>
+      <tr><td>Artefacts:</td><td>@(victory ? "YES!" : "")</td></tr>
+      <tr><td>Alien presence:</td><td>@aliens</td></tr>
+      }
+</table>

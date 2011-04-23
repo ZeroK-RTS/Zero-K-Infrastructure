@@ -20,11 +20,23 @@ namespace Fixer
     static void Main(string[] args)
     {
       //ImportSpringiePlayers();
-      RecalculateBattleElo();
+      //RecalculateBattleElo();
       //FixMaps();
+			AddWormholes();
     }
 
-    static void RecalculateBattleElo()
+		public static void AddWormholes()
+		{
+			var db = new ZkDataContext();
+			var wormhole = db.StructureTypes.Where(x => x.EffectLinkStrength > 0).OrderBy(x => x.EffectLinkStrength).First();
+			foreach (var p in db.Planets.Where(x => !x.PlanetStructures.Any(y => y.StructureType.EffectLinkStrength > 0)))
+			{
+				p.PlanetStructures.Add(new PlanetStructure() { StructureTypeID = wormhole.StructureTypeID});
+			}
+			db.SubmitChanges();
+		}
+
+  	static void RecalculateBattleElo()
     {
 			using (var db = new ZkDataContext())
 			{
