@@ -1999,7 +1999,7 @@ namespace ZkData
 		
 		private int _Level;
 		
-		private System.Nullable<int> _Credits;
+		private int _Credits;
 		
 		private System.Nullable<int> _ClanID;
 		
@@ -2009,7 +2009,7 @@ namespace ZkData
 		
 		private bool _HasClanRights;
 		
-		private System.Nullable<int> _DropshipCount;
+		private int _DropshipCount;
 		
 		private EntitySet<Mission> _Missions;
 		
@@ -2101,7 +2101,7 @@ namespace ZkData
     partial void OnXPChanged();
     partial void OnLevelChanging(int value);
     partial void OnLevelChanged();
-    partial void OnCreditsChanging(System.Nullable<int> value);
+    partial void OnCreditsChanging(int value);
     partial void OnCreditsChanged();
     partial void OnClanIDChanging(System.Nullable<int> value);
     partial void OnClanIDChanged();
@@ -2111,7 +2111,7 @@ namespace ZkData
     partial void OnIsClanFounderChanged();
     partial void OnHasClanRightsChanging(bool value);
     partial void OnHasClanRightsChanged();
-    partial void OnDropshipCountChanging(System.Nullable<int> value);
+    partial void OnDropshipCountChanging(int value);
     partial void OnDropshipCountChanged();
     #endregion
 		
@@ -2456,9 +2456,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Credits", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Credits", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
-		public System.Nullable<int> Credits
+		public int Credits
 		{
 			get
 			{
@@ -2565,9 +2565,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipCount", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipCount", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
-		public System.Nullable<int> DropshipCount
+		public int DropshipCount
 		{
 			get
 			{
@@ -15998,8 +15998,6 @@ namespace ZkData
 		
 		private int _StructureTypeID;
 		
-		private System.Nullable<int> _TurnsToSelfRepair;
-		
 		private bool _IsDestroyed;
 		
 		private EntityRef<Planet> _Planet;
@@ -16014,8 +16012,6 @@ namespace ZkData
     partial void OnPlanetIDChanged();
     partial void OnStructureTypeIDChanging(int value);
     partial void OnStructureTypeIDChanged();
-    partial void OnTurnsToSelfRepairChanging(System.Nullable<int> value);
-    partial void OnTurnsToSelfRepairChanged();
     partial void OnIsDestroyedChanging(bool value);
     partial void OnIsDestroyedChanged();
     #endregion
@@ -16075,29 +16071,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TurnsToSelfRepair", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public System.Nullable<int> TurnsToSelfRepair
-		{
-			get
-			{
-				return this._TurnsToSelfRepair;
-			}
-			set
-			{
-				if ((this._TurnsToSelfRepair != value))
-				{
-					this.OnTurnsToSelfRepairChanging(value);
-					this.SendPropertyChanging();
-					this._TurnsToSelfRepair = value;
-					this.SendPropertyChanged("TurnsToSelfRepair");
-					this.OnTurnsToSelfRepairChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDestroyed", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public bool IsDestroyed
 		{
 			get

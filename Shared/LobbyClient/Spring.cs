@@ -230,7 +230,7 @@ namespace LobbyClient
 							                                               	x =>
 							                                               	new BattleStartSetupPlayer()
 							                                               	{ AccountID = x.LobbyUser.AccountID, AllyTeam = x.AllyNumber, IsSpectator = x.IsSpectator }).
-							                                               	ToArray());
+							                                               	ToArray(), authostMode);
 						}
 						catch (Exception ex)
 						{

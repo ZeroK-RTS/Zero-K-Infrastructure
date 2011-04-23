@@ -72,12 +72,12 @@
       <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Xp" Member="XP" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="Credits" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="Credits" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="PlanetWarsRank" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsClanFounder" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="HasClanRights" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="DropshipCount" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="DropshipCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
       <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
@@ -614,7 +614,6 @@
     <Type Name="PlanetStructure">
       <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="StructureTypeID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="TurnsToSelfRepair" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsDestroyed" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="Planet_PlanetStructure" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="StructureType_PlanetStructure" Member="StructureType" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="StructureType" IsForeignKey="true" />

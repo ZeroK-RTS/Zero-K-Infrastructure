@@ -85,7 +85,6 @@ namespace Springie.PlanetWars
 
 				if (userList.Length <= 1)
 				{
-					autoHost.SayBattle("Not enough players in game");
 					return false;
 				}
 
@@ -97,6 +96,17 @@ namespace Springie.PlanetWars
 				{
 					foreach (var user in balance.BalancedTeams) tas.ForceTeam(user.Name, user.TeamID);
 					foreach (var user in balance.BalancedTeams) tas.ForceAlly(user.Name, user.AllyID);
+					foreach (var b  in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
+					int cnt = 1;
+					foreach (var b in balance.Bots)
+					{
+						var botStatus = tas.MyBattleStatus.Clone();
+						botStatus.TeamNumber = b.TeamID;
+						botStatus.AllyNumber = b.AllyID;
+						tas.AddBot("Aliens" + cnt, botStatus, botStatus.TeamColor, b.BotName);
+						cnt++;
+					}
+
 					return true;
 				}
 				return false;

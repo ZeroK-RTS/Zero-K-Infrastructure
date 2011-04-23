@@ -38,6 +38,25 @@ namespace ZeroKWeb
 				var clans = players.Where(x => x.Clan != null).Select(x => x.Clan).ToList();
 				var treaties = new Dictionary<Tuple<Clan, Clan>, EffectiveTreaty>();
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
+
+				// bots game
+				if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots)))
+				{
+					int teamID = 0;
+					for (var i = 0; i < players.Count; i++) {
+						res.BalancedTeams.Add(new AccountTeam() { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
+					}
+					foreach (var b in planet.PlanetStructures.Select(x=>x.StructureType).Where(x=>!string.IsNullOrEmpty(x.EffectBots)))
+					{
+						res.Bots.Add(new BotTeam() { AllyID = 1, BotName = b.EffectBots, TeamID = teamID++});
+					}
+
+					res.Message = string.Format("This planet is infested by aliens, fight for your survival");
+					return res;
+				}
+
+
+
 				for (var i = 1; i < clans.Count; i++)
 				{
 					for (var j = 0; j < i; j++)
@@ -697,6 +716,7 @@ namespace ZeroKWeb
 	public class BalanceTeamsResult
 	{
 		public List<AccountTeam> BalancedTeams = new List<AccountTeam>();
+		public List<BotTeam> Bots = new List<BotTeam>();
 		public string Message;
 	}
 
@@ -707,6 +727,14 @@ namespace ZeroKWeb
 		public string Name;
 		public int TeamID;
 	}
+
+	public class BotTeam
+	{
+		public int AllyID;
+		public string BotName;
+		public int TeamID;
+	}
+
 
 	public enum AutohostMode
 	{

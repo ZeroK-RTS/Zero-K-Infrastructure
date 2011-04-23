@@ -419,22 +419,23 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetSpringBattleStartSetup", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, BattleStartSetupPlayer[] players) {
+        public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, BattleStartSetupPlayer[] players, AutohostMode mode) {
             object[] results = this.Invoke("GetSpringBattleStartSetup", new object[] {
                         hostName,
                         map,
                         mod,
-                        players});
+                        players,
+                        mode});
             return ((SpringBattleStartSetup)(results[0]));
         }
         
         /// <remarks/>
-        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, BattleStartSetupPlayer[] players) {
-            this.GetSpringBattleStartSetupAsync(hostName, map, mod, players, null);
+        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, BattleStartSetupPlayer[] players, AutohostMode mode) {
+            this.GetSpringBattleStartSetupAsync(hostName, map, mod, players, mode, null);
         }
         
         /// <remarks/>
-        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, BattleStartSetupPlayer[] players, object userState) {
+        public void GetSpringBattleStartSetupAsync(string hostName, string map, string mod, BattleStartSetupPlayer[] players, AutohostMode mode, object userState) {
             if ((this.GetSpringBattleStartSetupOperationCompleted == null)) {
                 this.GetSpringBattleStartSetupOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetSpringBattleStartSetupOperationCompleted);
             }
@@ -442,7 +443,8 @@ namespace PlasmaShared.ContentService {
                         hostName,
                         map,
                         mod,
-                        players}, this.GetSpringBattleStartSetupOperationCompleted, userState);
+                        players,
+                        mode}, this.GetSpringBattleStartSetupOperationCompleted, userState);
         }
         
         private void OnGetSpringBattleStartSetupOperationCompleted(object arg) {
@@ -1435,9 +1437,56 @@ namespace PlasmaShared.ContentService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class BotTeam {
+        
+        private int allyIDField;
+        
+        private string botNameField;
+        
+        private int teamIDField;
+        
+        /// <remarks/>
+        public int AllyID {
+            get {
+                return this.allyIDField;
+            }
+            set {
+                this.allyIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string BotName {
+            get {
+                return this.botNameField;
+            }
+            set {
+                this.botNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int TeamID {
+            get {
+                return this.teamIDField;
+            }
+            set {
+                this.teamIDField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class BalanceTeamsResult {
         
         private AccountTeam[] balancedTeamsField;
+        
+        private BotTeam[] botsField;
         
         private string messageField;
         
@@ -1448,6 +1497,16 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.balancedTeamsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public BotTeam[] Bots {
+            get {
+                return this.botsField;
+            }
+            set {
+                this.botsField = value;
             }
         }
         
