@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<ZkData.AccountUnlock>
 @{
-  IEnumerable<int?> clanUnlocks = new List<int?>();
+  IEnumerable<int> clanUnlocks = new List<int>();
   IEnumerable<int?> pwLocks = new List<int?>();
   var acc = Model.FirstOrDefault();
   
@@ -11,7 +11,7 @@
     }
   }
   if (acc != null && acc.Account != null && acc.Account.Clan != null) {
-    clanUnlocks = acc.Account.Clan.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.EffectUnlockID).Where(x=>x!=null).Distinct().ToList();
+    clanUnlocks = ZkData.Galaxy.ClanUnlocks(new ZkData.ZkDataContext(), acc.Account.ClanID).Select(x=>x.UnlockID);
   }
 }
 

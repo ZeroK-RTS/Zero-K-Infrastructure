@@ -8,12 +8,24 @@ namespace ZkData
 {
 	partial class Galaxy
 	{
-		public static List<Planet> AccessiblePlanets(ZkDataContext db, int? clanID, AllyStatus allyStatus)
+		public static List<Unlock> ClanUnlocks(ZkDataContext db, int? clanID)
 		{
+			var planets = AccessiblePlanets(db, clanID, null, true);
+			var unlocks =
+				planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed && x.StructureType.EffectUnlockID != null).Select(
+					x => x.StructureType.Unlock).Distinct().ToList();
+			return unlocks;
+		}
+
+
+
+		public static List<Planet> AccessiblePlanets(ZkDataContext db, int? clanID, AllyStatus? allyStatus = null, bool? researchTreaty = null)
+		{
+
 			var milAlly = (from treaty in db.TreatyOffers.Where(x => x.OfferingClanID == clanID)
-										 where treaty.AllyStatus == allyStatus
+										 where (allyStatus == null || treaty.AllyStatus == allyStatus) && (researchTreaty == null || treaty.IsResearchAgreement == researchTreaty)
 										 join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
-										 where tr2.AllyStatus == allyStatus
+										 where (allyStatus == null || tr2.AllyStatus == allyStatus) && (researchTreaty == null || tr2.IsResearchAgreement == researchTreaty)
 										 select treaty.TargetClanID).ToList();
 
 			var planets = db.Planets.Where(x => x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0));

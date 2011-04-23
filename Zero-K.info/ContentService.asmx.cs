@@ -308,11 +308,16 @@ namespace ZeroKWeb
 		}
 
 		[WebMethod]
-		public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<BattleStartSetupPlayer> players)
+		public SpringBattleStartSetup GetSpringBattleStartSetup(string hostName, string map, string mod, List<BattleStartSetupPlayer> players, AutohostMode mode =  AutohostMode.GameTeams)
 		{
+			if (hostName.StartsWith("PlanetWars")) mode =AutohostMode.Planetwars; // hack remove later
 			var ret = new SpringBattleStartSetup();
 			var commanderTypes = new LuaTable();
 			var db = new ZkDataContext();
+
+			var pwLocks = new List<int>();
+			if (mode == AutohostMode.Planetwars) pwLocks = db.Galaxies.Single(x => x.IsDefault).Planets.SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.Unlock).Where(x => x != null).Distinct().Select(x=>x.UnlockID).ToList();
+
 			foreach (var p in players.Where(x => !x.IsSpectator))
 			{
 				var user = db.Accounts.SingleOrDefault(x => x.AccountID == p.AccountID);
@@ -322,7 +327,17 @@ namespace ZeroKWeb
 					ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID, Parameters = userParams });
 
 					var pu = new LuaTable();
-					foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
+					if (mode != AutohostMode.Planetwars) {
+						foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
+					} else
+					{
+						var clanUnlocks = new List<int>();
+						if (user.ClanID != null) clanUnlocks = Galaxy.ClanUnlocks(db, user.ClanID).Select(x=>x.UnlockID).ToList();
+						foreach (var unlock in user.AccountUnlocks.Select(x=>x.Unlock))
+						{
+							if (!pwLocks.Contains(unlock.UnlockID) || clanUnlocks.Contains(unlock.UnlockID)) pu.Add(unlock.Code);
+						}
+					}
 					userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
 
 					var pc = new LuaTable();

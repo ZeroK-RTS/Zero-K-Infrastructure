@@ -29,22 +29,16 @@
 @if (c.CanJoin(Global.Account)) {
   @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })
 }
-<h3>
-  Dropships</h3>
-  <span nowrap="nowrap">@Model.Accounts.Sum(x=>x.DropshipCount) ready to deploy</span>
+<h3>Dropships</h3>
+<span nowrap="nowrap">@Model.Accounts.Sum(x => x.DropshipCount) ready to deploy</span>
 <table>
   @foreach (var p in Model.Accounts.SelectMany(x => x.AccountPlanets).GroupBy(x => x.Planet).Select(x => new { planet = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
     <tr>
-      <td>@Html.PrintPlanet(p.planet)
-      </td>
-      <td>
-        <img src='/img/dropship.png' />
-        @p.dropships
-      </td>
+      <td>@Html.PrintPlanet(p.planet)</td>
+      <td><img src='/img/dropship.png' />@p.dropships</td>
     </tr>
   }
 </table>
-
 @if (isMember) {
   <b>Secret topic:</b><br />
   @Html.BBCode(c.SecretTopic)
@@ -53,22 +47,13 @@
   <br />
   @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })
 }
-<h3>
-  Members</h3>
+<h3>Members</h3>
 <table>
-  <th>
-    Name
-  </th>
-  <th>
-    Influence
-  </th>
-  <th>
-    Credits
-  </th>
-  <th>
-  </th>
-  <th>
-  </th>
+  <th>Name </th>
+  <th>Influence </th>
+  <th>Credits </th>
+  <th></th>
+  <th></th>
   @foreach (var a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence))) {
     <tr>
       <td>
@@ -92,34 +77,25 @@
           // todo: disallow kicking after the round starts
           var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
           @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) }) @:|@Html.ActionLink(a.HasClanRights ? "rights" : "rights", "ChangePlayerRights", new { clanID = c.ClanID, accountID = a.AccountID })
-                
+                                                                                                        
         }
       </td>
     </tr>
         foreach (var p in a.Planets) {
     <tr>
-      <td>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>@Html.PrintPlanet(p)</small>
-      </td>
-      <td>
-        &nbsp;&nbsp;&nbsp;<small>@Html.PrintInfluence(a.AccountPlanets.Single(x => x.Planet == p))</small>
-      </td>
-      <td>
-      </td>
-      <td>
-      </td>
-      <td>
-      </td>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>@Html.PrintPlanet(p)</small> </td>
+      <td>&nbsp;&nbsp;&nbsp;<small>@Html.PrintInfluence(a.AccountPlanets.Single(x => x.Planet == p))</small> </td>
+      <td></td>
+      <td></td>
+      <td></td>
     </tr>
         }
 
   }
 </table>
-<h3>
-  Clan technologies</h3>
-@foreach (var unlock in Model.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.Unlock).Distinct().Where(x => x != null)) {
-  <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  >
-    <img src="@unlock.ImageUrl"/><br />
+<h3>Clan technologies</h3>
+@foreach (var unlock in Galaxy.ClanUnlocks(new ZkDataContext(), Model.ClanID)) {
+  <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  ><img src="@unlock.ImageUrl"/><br />
     @unlock.Name
   </span>
 }
