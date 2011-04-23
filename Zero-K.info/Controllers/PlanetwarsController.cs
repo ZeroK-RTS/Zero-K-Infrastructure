@@ -236,8 +236,8 @@ namespace ZeroKWeb.Controllers
 							Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity {0}/{1}", usedJumpGates, jumpGateCapacity));
 				} 
 				var cnt = Math.Max(count, 0);
-				cnt = Math.Min(cnt, acc.DropshipCount ?? 0);
-				acc.DropshipCount = (acc.DropshipCount ?? 0) - cnt;
+				cnt = Math.Min(cnt, acc.DropshipCount);
+				acc.DropshipCount = (acc.DropshipCount) - cnt;
 				var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
 				if (pac == null)
 				{
@@ -477,7 +477,7 @@ namespace ZeroKWeb.Controllers
 
 					if (sellerAccountPlanet == null) continue; // seller has nothing to sell
 
-					var maxWillBuy = Math.Min(buyer.Credits.Value/sellOffer.Price, buyOffer.Quantity);
+					var maxWillBuy = Math.Min(buyer.Credits/sellOffer.Price, buyOffer.Quantity);
 					var maxWillSell = Math.Min(sellerAccountPlanet.Influence, sellOffer.Quantity);
 
 					var quantity = Math.Min(maxWillBuy, maxWillSell);

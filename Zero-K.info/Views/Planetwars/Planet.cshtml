@@ -20,7 +20,7 @@
   <tr>
     <td valign='top'>
       <h3>
-        Influence on @Model.Name</h3>
+        Influence</h3>
       @Html.Partial("InfluenceList", Model.AccountPlanets)
       <h3>
         Dropships</h3>
@@ -79,7 +79,7 @@
 </table>
 <br />
 @if (Global.IsAccountAuthorized) {
-  if ((Global.Account.DropshipCount ?? 0) <= 0) {
+  if (Global.Account.DropshipCount <= 0) {
    <span>You have no free dropships to send here</span>
   } else {
   <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
