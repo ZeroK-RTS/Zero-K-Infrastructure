@@ -274,7 +274,7 @@ namespace ZeroKWeb
 				if (mode == AutohostMode.Planetwars)
 				{
 					var gal = db.Galaxies.Single(x => x.IsDefault);
-					var maxc = gal.Planets.SelectMany(x => x.AccountPlanets).Max(y => (int?)y.DropshipCount) ?? 0;
+					var maxc = gal.Planets.Max(x=>(int?)x.AccountPlanets.Sum(y=>y.DropshipCount)) ?? 0;
 					var targets = gal.Planets.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
 					var r = new Random(autohostName.GetHashCode()); // randomizer based on autohost name to always return same
 					var planet = targets[r.Next(targets.Count)];
