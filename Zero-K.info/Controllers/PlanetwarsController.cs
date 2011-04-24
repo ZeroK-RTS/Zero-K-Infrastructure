@@ -470,8 +470,6 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
-
-		// TODO: destroy structures on transfer in needed
 		public static void SetPlanetOwners(ZkDataContext db)
 		{
 			Galaxy.RecalculateShadowInfluence(db);
@@ -516,6 +514,10 @@ namespace ZeroKWeb.Controllers
 							var mostInfluentialPlayerIP = mostInfluentialPlayer.Influence + mostInfluentialPlayer.ShadowInfluence;
 							if (ownerIP + defenseBoost < mostInfluentialPlayerIP)
 							{
+								foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis)) 
+								{
+									structure.IsDestroyed = true; // destroy or delete?
+								}
 								planet.Account = mostInfluentialPlayer.Account;
 								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2} for {3}.",
 								                                            mostInfluentialPlayer.Account,
