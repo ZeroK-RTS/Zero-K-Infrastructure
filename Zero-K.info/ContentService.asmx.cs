@@ -589,6 +589,8 @@ namespace ZeroKWeb
 					var gal = db.Galaxies.Single(x => x.IsDefault);
 					var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
 
+					text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet{0} has ended\n", planet.PlanetID);
+
 					// handle infelunce
 					Clan ownerClan = null;
 					if (planet.Account != null) ownerClan = planet.Account.Clan;
@@ -665,7 +667,7 @@ namespace ZeroKWeb
 					gal.Turn++;
 
 					// store history
-					foreach (var p in db.Planets)
+					foreach (var p in gal.Planets)
 					{
 						db.PlanetOwnerHistories.InsertOnSubmit(new PlanetOwnerHistory() { PlanetID = p.PlanetID, OwnerAccountID = p.OwnerAccountID, OwnerClanID = p.OwnerAccountID != null? p.Account.ClanID : null, Turn = gal.Turn});
 

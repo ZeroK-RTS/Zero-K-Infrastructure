@@ -397,7 +397,8 @@ namespace ZeroKWeb.Controllers
 			Galaxy.RecalculateShadowInfluence(db);
 			var havePlanetsChangedHands = false;
 
-			foreach (var planet in db.Planets)
+			var gal = db.Galaxies.Single(x => x.IsDefault);
+			foreach (var planet in gal.Planets)
 			{
 				var currentOwnerClanID = planet.Account != null ? planet.Account.ClanID : null;
 				var mostInfluentialClanEntry =

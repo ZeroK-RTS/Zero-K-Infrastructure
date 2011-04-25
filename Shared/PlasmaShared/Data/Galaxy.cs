@@ -28,7 +28,8 @@ namespace ZkData
 										 where (allyStatus == null || tr2.AllyStatus == allyStatus) && (researchTreaty == null || tr2.IsResearchAgreement == researchTreaty)
 										 select treaty.TargetClanID).ToList();
 
-			var planets = db.Planets.Where(x => x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0));
+			var gal = db.Galaxies.Single(x => x.IsDefault);
+			var planets = gal.Planets.Where(x => x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0));
 			var accesiblePlanets = new List<Planet>();
 
 			foreach (var thisPlanet in planets) {
@@ -36,7 +37,7 @@ namespace ZkData
 				accesiblePlanets.Add(thisPlanet);
 
 				// iterate links to this planet
-				foreach (var link in db.Links.Where(l => (l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID) && l.LinktStrength > 0)) {
+				foreach (var link in gal.Links.Where(l => (l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID) && l.LinktStrength > 0)) {
 					var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
 					accesiblePlanets.Add(otherPlanet);
 				}
@@ -48,7 +49,8 @@ namespace ZkData
 
 		static public void RecalculateShadowInfluence(ZkDataContext db)
 		{
-			foreach (var thisPlanet in db.Planets)
+			var gal = db.Galaxies.Single(x => x.IsDefault);
+			foreach (var thisPlanet in gal.Planets)
 			{
 				var thisPlanetID = thisPlanet.PlanetID;
 				var thisLinkStrenght = thisPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectLinkStrength) ?? 0;
@@ -59,7 +61,7 @@ namespace ZkData
 				// set shadow influence
 
 				// iterate links to this planet
-				foreach (var link in db.Links.Where(l => l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID))
+				foreach (var link in gal.Links.Where(l => l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID))
 				{
 					var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
 					var otherLinkStrenght = otherPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectLinkStrength) ?? 0;
