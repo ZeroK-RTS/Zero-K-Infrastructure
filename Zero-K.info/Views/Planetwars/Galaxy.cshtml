@@ -29,7 +29,9 @@
     Clan clan = null;
     Clan secondClan = null;
     var secondClanInfluence = 0;
-
+    var autohost =p.PlanetWarsHosts.FirstOrDefault();
+      
+      
     int shipCount = p.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0;
 
     if (p.Account != null) {
@@ -80,6 +82,11 @@
     </span>
     
     <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White' title='$planet$@p.PlanetID'><span style="position: absolute; left: @(pr.Left)px; top: @(pr.Top)px; width: @(pr.Width)px; height: @(pr.Height)px;" title='$planet$@p.PlanetID'>
+      @if (autohost != null && autohost.Players > 1) { 
+        <img src='/img/planetstatus/@(autohost.InGame ? "attacking" : "preparing")0.png' width='@(pr.Width)' style='position:absolute'/>
+      }
+      
+
       @foreach (var s in p.PlanetStructures) {
         <img src='@s.GetImageUrl()' width='@(pr.Width)' style='position:absolute' />
       }

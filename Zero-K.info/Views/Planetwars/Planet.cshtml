@@ -4,6 +4,7 @@
 @{
   //  ViewBag.Title = "Planet";
   Page.Title = "Planet " + Model.Name;
+  var autohost = Model.PlanetWarsHosts.FirstOrDefault();
 }
 <h1>
   @Html.Partial("PlanetIcon", Model)
@@ -16,6 +17,17 @@
   <input type='submit' value="Rename Planet" />
   </form>
 }
+
+@if (autohost != null) { 
+  <b>
+  @if (autohost.InGame) {
+    <a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID}, Request.Url.Scheme)@@join_player:@autohost.Account.Name'>Battle in progress, JOIN TO WATCH</a>
+  }  else {
+    <a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID}, Request.Url.Scheme)@@join_player:@autohost.Account.Name'>Battle has @autohost.Players players wiating, JOIN IT</a>
+  }
+  </b>
+}
+
 <table>
   <tr>
     <td valign='top'>

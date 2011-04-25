@@ -276,7 +276,7 @@ namespace ZeroKWeb
 					var gal = db.Galaxies.Single(x => x.IsDefault);
 					var maxc = gal.Planets.Max(x=>(int?)x.AccountPlanets.Sum(y=>y.DropshipCount)) ?? 0;
 					var targets = gal.Planets.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
-					var r = new Random(autohostName.GetHashCode()); // randomizer based on autohost name to always return same
+					var r = new Random(autohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
 					var planet = targets[r.Next(targets.Count)];
 					res.MapName = planet.Resource.InternalName;
 					string owner = "";
@@ -667,18 +667,39 @@ namespace ZeroKWeb
 					}
 					gal.Turn++;
 
-					// store history
-					foreach (var p in gal.Planets)
-					{
-						db.PlanetOwnerHistories.InsertOnSubmit(new PlanetOwnerHistory() { PlanetID = p.PlanetID, OwnerAccountID = p.OwnerAccountID, OwnerClanID = p.OwnerAccountID != null? p.Account.ClanID : null, Turn = gal.Turn});
-
-						foreach (var pi in p.AccountPlanets.Where(x=>x.Account.ClanID != null))
-						{
-							db.PlanetInfluenceHistories.InsertOnSubmit(new PlanetInfluenceHistory() { PlanetID = p.PlanetID, AccountID = pi.AccountID, ClanID = pi.Account.ClanID.Value, Influence = pi.Influence + pi.ShadowInfluence, Turn = gal.Turn});
-						}
-					}
-
 					db.SubmitChanges();
+
+					try
+					{
+						// store history
+						foreach (var p in gal.Planets)
+						{
+							db.PlanetOwnerHistories.InsertOnSubmit(new PlanetOwnerHistory()
+							                                       {
+							                                       	PlanetID = p.PlanetID,
+							                                       	OwnerAccountID = p.OwnerAccountID,
+							                                       	OwnerClanID = p.OwnerAccountID != null ? p.Account.ClanID : null,
+							                                       	Turn = gal.Turn
+							                                       });
+
+							foreach (var pi in p.AccountPlanets.Where(x => x.Account.ClanID != null))
+							{
+								db.PlanetInfluenceHistories.InsertOnSubmit(new PlanetInfluenceHistory()
+								                                           {
+								                                           	PlanetID = p.PlanetID,
+								                                           	AccountID = pi.AccountID,
+								                                           	ClanID = pi.Account.ClanID.Value,
+								                                           	Influence = pi.Influence + pi.ShadowInfluence,
+								                                           	Turn = gal.Turn
+								                                           });
+							}
+						}
+
+						db.SubmitChanges();
+					} catch (Exception ex)
+					{
+						text.AppendLine("error saving history: " + ex.ToString());
+					}
 				}
 				
 
