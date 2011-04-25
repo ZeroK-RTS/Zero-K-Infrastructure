@@ -2,6 +2,7 @@
 using System.Data.Linq.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -178,6 +179,7 @@ namespace ZeroKWeb.Controllers
 			return View(ret);
 		}
 
+
 		public Bitmap GenerateGalaxyImage(int galaxyID, double zoom = 1, double antiAliasingFactor = 4)
 		{
 			zoom *= antiAliasingFactor;
@@ -271,7 +273,7 @@ namespace ZeroKWeb.Controllers
 			{
 				using (var im = GenerateGalaxyImage(gal.GalaxyID))
 				{
-					im.Save(cachePath);
+					im.SaveJpeg(cachePath, 85);
 					gal.IsDirty = false;
 					gal.Width = im.Width;
 					gal.Height = im.Height;
