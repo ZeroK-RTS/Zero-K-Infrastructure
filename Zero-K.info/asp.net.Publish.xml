@@ -19,7 +19,7 @@
     <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="03/17/2011 14:55:51" />
     <file relUrl="Views/Missions/Detail.cshtml" publishTime="04/17/2011 13:37:28" />
     <file relUrl="Styles/base.css" publishTime="02/05/2011 13:25:09" />
-    <file relUrl="Views/Planetwars/Galaxy.cshtml" publishTime="04/25/2011 17:06:23" />
+    <file relUrl="Views/Planetwars/Galaxy.cshtml" publishTime="04/25/2011 18:27:12" />
     <file relUrl="Global.asax" publishTime="01/02/2011 03:33:31" />
     <file relUrl="bin/ZeroKWeb.pdb" publishTime="04/25/2011 18:06:51" />
     <file relUrl="Views/Maps/MapTileList.cshtml" publishTime="02/03/2011 17:16:47" />
@@ -67,7 +67,7 @@
     <file relUrl="Img/img_progressbar1_b.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="Img/cup.png" publishTime="01/02/2011 03:33:30" />
     <file relUrl="bin/Web.config" publishTime="04/20/2011 01:02:46" />
-    <file relUrl="Views/Shared/LoginBar.cshtml" publishTime="04/22/2011 22:16:08" />
+    <file relUrl="Views/Shared/LoginBar.cshtml" publishTime="04/25/2011 18:21:36" />
     <file relUrl="Views/Battles/Detail.cshtml" publishTime="04/22/2011 23:33:00" />
     <file relUrl="Views/Maps/Index.cshtml" publishTime="04/16/2011 03:05:10" />
     <file relUrl="Scripts/jquery-1.5.2.min.js" publishTime="03/31/2011 22:28:43" />

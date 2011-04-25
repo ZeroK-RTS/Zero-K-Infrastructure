@@ -18,7 +18,7 @@
  </span>
 }
 <span>
-  @Html.ActionLink("Clans", "ClanList") | @Html.ActionLink("Events","Events")
+  @Html.ActionLink("Clans", "ClanList") | @Html.ActionLink("Events","Events") | turn: @Model.Turn | galaxy started: @Model.Started | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a>
 </span>
 
 <span style='color:red; font-size:bigger'>WARNING, THIS IS BETA!</span>
@@ -94,6 +94,8 @@
   }
 </div>
 <h3>Last events</h3>
-@Html.Action("Events",  new{partial=true, pageSize=40})
+<span style='float:left'>
+@Html.Action("Events", new { partial = true, pageSize = 40 })</span> <span><img  src='http://3.bp.blogspot.com/_YTJBDUN8iSE/TSjDkNEwJAI/AAAAAAAAD0o/N8w-cy_J_EM/s1600/Tracy_Caldwell_Dyson_in_Cupola_ISS.jpg'
+  width='600' /><br /> This is BETA, pelase forgive and report issues :-)</span>
 
 
