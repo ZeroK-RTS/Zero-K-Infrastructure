@@ -36,7 +36,7 @@ namespace ZeroKWeb.Controllers
 				db.PlanetStructures.InsertOnSubmit(newBuilding);
 				db.SubmitChanges();
 
-				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet));
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding.StructureType.Name, planet));
 				SetPlanetOwners(db);
 			}
 			
@@ -109,12 +109,13 @@ namespace ZeroKWeb.Controllers
 		                           int? springBattleID,
 		                           int? clanID,
 		                           string filter,
-		                           int page = 0,
-		                           int pageSize = 10,
-		                           bool partial = false)
+			int pageSize = 0,
+			int page = 0,
+															bool partial = false)
 		{
 			var db = new ZkDataContext();
 			if (Request.IsAjaxRequest()) partial = true;
+			if (pageSize == 0) if (!partial) pageSize = 40; else pageSize = 10;
 			var res = db.Events.AsQueryable();
 			if (planetID.HasValue) res = res.Where(x => x.EventPlanets.Any(y => y.PlanetID == planetID));
 			if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
@@ -300,7 +301,7 @@ namespace ZeroKWeb.Controllers
 			if (Global.Account.Credits < structure.StructureType.Cost) return Content("Insufficient credits.");
 			planet.Account.Credits -= structure.StructureType.Cost;
 			structure.IsDestroyed = false;
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure, planet));
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure.StructureType.Name, planet));
 			db.SubmitChanges();
 			SetPlanetOwners(db);
 			return RedirectToAction("Planet", new { id = planetID });
@@ -529,7 +530,7 @@ namespace ZeroKWeb.Controllers
 			db.PlanetStructures.DeleteOnSubmit(oldStructure);
 
 			db.SubmitChanges();
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newStructure, planet));
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newStructure.StructureType.Name, planet));
 
 			db.SubmitChanges();
 			SetPlanetOwners(db);
