@@ -159,7 +159,7 @@ namespace ZeroKWeb.Controllers
 			if (planetID.HasValue) res = res.Where(x => x.EventPlanets.Any(y => y.PlanetID == planetID));
 			if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
 			if (clanID.HasValue) res = res.Where(x => x.EventClans.Any(y => y.ClanID == clanID));
-			if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == clanID));
+			if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == springBattleID));
 			if (!string.IsNullOrEmpty(filter)) res = res.Where(x => SqlMethods.Like(x.Text, string.Format("%{0}%", filter)));
 			res = res.OrderByDescending(x => x.EventID);
 
@@ -368,6 +368,7 @@ namespace ZeroKWeb.Controllers
 			var cnt = Math.Max(count, 0);
 			cnt = Math.Min(cnt, acc.DropshipCount);
 			acc.DropshipCount = (acc.DropshipCount) - cnt;
+			var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
 			var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
 			if (pac == null)
 			{
@@ -375,7 +376,7 @@ namespace ZeroKWeb.Controllers
 				db.AccountPlanets.InsertOnSubmit(pac);
 			}
 			pac.DropshipCount += cnt;
-			if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} dropships to {2}", acc, cnt, pac.Planet));
+			if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} dropships to {2}", acc, cnt, planet));
 			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planetID });
 		}
@@ -417,7 +418,7 @@ namespace ZeroKWeb.Controllers
 
 					havePlanetsChangedHands = true;
 
-					foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis)) structure.IsDestroyed = true; // destroy or delete?
+					foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) planet.PlanetStructures.Remove(structure); //  delete structure
 
 					// find who will own it
 					var mostInfluentialPlayer =
