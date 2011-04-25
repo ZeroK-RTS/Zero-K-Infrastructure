@@ -325,14 +325,14 @@ namespace LobbyClient
 			{
 				candidates.AddRange(
 					di.GetFiles().Where(
-						x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-5) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(5)));
+						x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-10) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(10)));
 			}
 			di = new DirectoryInfo(Path.Combine(paths.UnitSyncDirectory, "demos"));
 			if (di.Exists)
 			{
 				candidates.AddRange(
 					di.GetFiles().Where(
-						x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-5) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(5)));
+						x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-10) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(10)));
 			}
 			//Console.WriteLine("Candidates: " + candidates.Count);
 			foreach (var file in candidates)
@@ -632,7 +632,7 @@ namespace LobbyClient
 					if (e.Param == 255) HandleSpecialMessages(e);
 
 					// only public chat
-					if (PlayerSaid != null && (e.Param == Talker.TO_EVERYONE || e.Param == Talker.TO_EVERYONE_LEGACY)) PlayerSaid(this, new SpringLogEventArgs(e.PlayerName, e.Text));
+					if (PlayerSaid != null && (e.Param == Talker.TO_EVERYONE || e.Param == Talker.TO_EVERYONE_LEGACY) && !string.IsNullOrEmpty(e.PlayerName)) PlayerSaid(this, new SpringLogEventArgs(e.PlayerName, e.Text));
 					break;
 
 				case Talker.SpringEventType.PLAYER_DEFEATED:

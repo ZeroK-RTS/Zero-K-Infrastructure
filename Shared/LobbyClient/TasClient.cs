@@ -702,7 +702,7 @@ namespace LobbyClient
           case "ACCEPTED": // Login accepted
             username = args[0];
             isLoggedIn = true;
-            LoginAccepted(this, new TasEventArgs());
+						if (LoginAccepted != null) LoginAccepted(this, new TasEventArgs());
             break;
 
           case "DENIED": // login denied

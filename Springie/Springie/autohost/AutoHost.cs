@@ -760,6 +760,7 @@ namespace Springie.autohost
 
 		void tas_Said(object sender, TasSayEventArgs e)
 		{
+			if (string.IsNullOrEmpty(e.UserName)) return;
 			if (config.RedirectGameChat && e.Place == TasSayEventArgs.Places.Battle && e.Origin == TasSayEventArgs.Origins.Player && e.UserName != tas.UserName &&
 			    e.IsEmote == false) spring.SayGame("[" + e.UserName + "]" + e.Text);
 
