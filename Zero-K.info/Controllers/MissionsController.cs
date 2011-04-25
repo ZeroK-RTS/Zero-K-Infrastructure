@@ -22,9 +22,9 @@ namespace ZeroKWeb.Controllers
 					{
             Title = "Latest missions",
 						LastUpdated = FilterMissions(db.Missions, search, featured).Take(Global.AjaxScrollCount),
-						MostPlayed = db.Missions.Where(x=>!x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.MissionRunCount),
-            MostRating = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.Rating),
-            LastComments = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:"))).OrderByDescending(x => x.ForumThread.LastPost),
+						MostPlayed = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") || x.Mod.StartsWith("Complete"))).OrderByDescending(x => x.MissionRunCount),
+						MostRating = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") || x.Mod.StartsWith("Complete"))).OrderByDescending(x => x.Rating),
+						LastComments = db.Missions.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") || x.Mod.StartsWith("Complete"))).OrderByDescending(x => x.ForumThread.LastPost),
 						SearchString = search,
 					});
 
@@ -84,7 +84,7 @@ namespace ZeroKWeb.Controllers
 
 		static IQueryable<Mission> FilterMissions(IQueryable<Mission> ret, string search, bool? featured, int? offset = null, bool? sp = null, bool? coop= null, bool? adversarial= null)
 		{
-      ret = ret.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:")));
+      ret = ret.Where(x => !x.IsDeleted && (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") || x.Mod.StartsWith("Complete")));
       if (featured == true) ret = ret.Where(x => x.FeaturedOrder > 0);
 			if (sp == false) ret = ret.Where(x => x.MaxHumans > 1);
 			if (coop == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) ||  x.MaxHumans > 1 && !x.IsCoop);
