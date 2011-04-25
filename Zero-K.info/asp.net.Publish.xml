@@ -19,7 +19,7 @@
     <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="03/17/2011 14:55:51" />
     <file relUrl="Views/Missions/Detail.cshtml" publishTime="04/17/2011 13:37:28" />
     <file relUrl="Styles/base.css" publishTime="02/05/2011 13:25:09" />
-    <file relUrl="Views/Planetwars/Galaxy.cshtml" publishTime="04/24/2011 01:22:23" />
+    <file relUrl="Views/Planetwars/Galaxy.cshtml" publishTime="04/25/2011 12:58:24" />
     <file relUrl="Global.asax" publishTime="01/02/2011 03:33:31" />
     <file relUrl="bin/ZeroKWeb.pdb" publishTime="04/25/2011 12:51:16" />
     <file relUrl="Views/Maps/MapTileList.cshtml" publishTime="02/03/2011 17:16:47" />
@@ -48,7 +48,7 @@
     <file relUrl="Views/Shared/TopMenu.cshtml" publishTime="04/22/2011 13:47:09" />
     <file relUrl="Views/Home/Index.cshtml" publishTime="04/22/2011 13:41:21" />
     <file relUrl="Views/Poll/PollView.cshtml" publishTime="04/08/2011 15:30:50" />
-    <file relUrl="Views/Shared/PlanetDropships.cshtml" publishTime="04/23/2011 22:37:35" />
+    <file relUrl="Views/Shared/PlanetDropships.cshtml" publishTime="04/25/2011 13:09:32" />
     <file relUrl="bin/MonoTorrent.dll" publishTime="04/19/2011 16:59:53" />
     <file relUrl="Views/Planetwars/Index.cshtml" publishTime="04/17/2011 02:27:48" />
     <file relUrl="bin/PlasmaShared.dll" publishTime="04/25/2011 12:51:14" />

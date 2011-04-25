@@ -1,7 +1,7 @@
 ﻿@model ZkData.Planet
          
 <table>
-  @foreach (var p in Model.AccountPlanets.GroupBy(x => x.Account.Clan).Select(x => new { clan = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
+  @foreach (var p in Model.AccountPlanets.GroupBy(x => x.Account.Clan).Select(x => new { clan = x.Key, dropships = x.Sum(y => y.DropshipCount), list = x }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
     <tr>
       <td>@Html.PrintClan(p.clan)
       </td>
@@ -9,5 +9,12 @@
         @p.dropships
       </td>
     </tr>
+    foreach (var cp in p.list.OrderByDescending(x=>x.DropshipCount)) { 
+      <tr>
+      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>@Html.PrintAccount(cp.Account)</small></td>
+      <td>&nbsp;&nbsp;&nbsp;<img src='/img/dropship.png' width='15'/><small>@cp.DropshipCount</small></td>
+      </tr>
+     
+    }
   }
 </table>
