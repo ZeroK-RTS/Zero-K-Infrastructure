@@ -90,7 +90,7 @@ namespace ZeroKWeb
 					var mult = 1.0;
 					var player = players[i];
 					if (planet.OwnerAccountID == player.AccountID) mult += 0.5; // owner 50%
-					else if (planet.Account.ClanID == player.AccountID) mult += 0.3; // owner's clan 30% 
+					else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.3; // owner's clan 30% 
 					if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.2; // own dropship +20%
 					else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.1; // clan's dropship +10%
 					playerScoreMultiplier[i] = mult;

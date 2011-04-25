@@ -504,6 +504,8 @@ namespace ZeroKWeb.Controllers
 				acc.IsClanFounder = true;
 				acc.HasClanRights = true;
 				db.SubmitChanges();
+				db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
+				db.SubmitChanges();
 			}
 
 			return RedirectToAction("Clan", new { id = clan.ClanID });
