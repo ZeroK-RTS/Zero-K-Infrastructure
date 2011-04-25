@@ -33,15 +33,12 @@ namespace ZkData
 
 			foreach (var thisPlanet in planets) {
 				var thisPlanetID = thisPlanet.PlanetID;
-				var thisLinkStrenght = thisPlanet.PlanetStructures.Where(x => !x.IsDestroyed).Max(s => s.StructureType.EffectLinkStrength) ?? 0;
 				accesiblePlanets.Add(thisPlanet);
 
-
 				// iterate links to this planet
-				foreach (var link in db.Links.Where(l => l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID)) {
+				foreach (var link in db.Links.Where(l => (l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID) && l.LinktStrength > 0)) {
 					var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
-					var otherLinkStrenght = otherPlanet.PlanetStructures.Where(x => !x.IsDestroyed).Max(s => s.StructureType.EffectLinkStrength) ?? 0;
-					if (otherLinkStrenght > 0 && thisLinkStrenght > 0) accesiblePlanets.Add(otherPlanet);
+					accesiblePlanets.Add(otherPlanet);
 				}
 			}
 			return accesiblePlanets;
@@ -67,14 +64,16 @@ namespace ZkData
 					var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
 					var otherLinkStrenght = otherPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectLinkStrength) ?? 0;
 
-					if (otherPlanet.OwnerAccountID == null) continue; // no owner: planet can't project shadow influence
-					if (otherPlanet.Account.ClanID == null) continue; // no clan: can't project influence
-					
 					// increment shadow influence of player on the other side of the link
-					var influenceFactor = (thisLinkStrenght + otherLinkStrenght)/2.0;
+					var influenceFactor = (thisLinkStrenght + otherLinkStrenght) / 2.0;
 					if (thisLinkStrenght == 0 || otherLinkStrenght == 0) influenceFactor = 0;
 
 					link.LinktStrength = influenceFactor;
+
+
+					if (otherPlanet.OwnerAccountID == null) continue; // no owner: planet can't project shadow influence
+					if (otherPlanet.Account.ClanID == null) continue; // no clan: can't project influence
+					
 
 					// iterate accountPlanets on other side of the link
 					foreach (var otherAccountPlanet in otherPlanet.AccountPlanets.Where(ap => ap.Account.ClanID == otherPlanet.Account.ClanID && ap.Influence > 0))

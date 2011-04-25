@@ -367,7 +367,7 @@ namespace ZeroKWeb.Controllers
 				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) && planet.Account != null) 
 				{
 					// disown the planet, nobody has right to own it atm
-					db.Events.InsertOnSubmit(Global.CreateEvent("{0} has abandoned {2} planet {1}. {3}", planet.Account, planet, planet.Account.Clan, sb));
+					db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {2} has abandoned planet {1}. {3}", planet.Account, planet, planet.Account.Clan, sb));
 					planet.Account = null;
 					havePlanetsChangedHands = true;
 				} else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID &&
@@ -395,11 +395,12 @@ namespace ZeroKWeb.Controllers
 					}
 					else
 					{
-						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2} for {3}. {4}",
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {3} has captured planet {1} from {2} of {4}. {5}",
 						                                            mostInfluentialPlayer,
 						                                            planet,
 						                                            planet.Account,
 						                                            mostInfluentialClanEntry.Clan,
+																												planet.Account.Clan,
 						                                            sb));
 						planet.Account = mostInfluentialPlayer;
 					}
