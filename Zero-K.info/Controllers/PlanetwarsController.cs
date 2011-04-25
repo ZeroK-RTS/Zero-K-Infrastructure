@@ -37,8 +37,9 @@ namespace ZeroKWeb.Controllers
 				db.SubmitChanges();
 
 				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet));
-				db.SubmitChanges();
+				SetPlanetOwners(db);
 			}
+			
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
@@ -359,14 +360,14 @@ namespace ZeroKWeb.Controllers
 			{
 				var currentOwnerClanID = planet.Account != null ? planet.Account.ClanID : null;
 				var mostInfluentialClanEntry =
-					planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x => x.Key != null).OrderByDescending(
-						g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)).Select(
-							x => new { Clan = x.Key, ClanInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).FirstOrDefault();
+					planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x => x.Key != null).Select(
+							x => new { Clan = x.Key, ClanInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(
+						x=>x.ClanInfluence).FirstOrDefault();
 
-				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null) && planet.Account != null) 
+				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) && planet.Account != null) 
 				{
 					// disown the planet, nobody has right to own it atm
-					db.Events.InsertOnSubmit(Global.CreateEvent("{0} has lost planet {1} from {2}. {3}", planet.Account, planet, planet.Account.Clan, sb));
+					db.Events.InsertOnSubmit(Global.CreateEvent("{0} has abandoned {2} planet {1}. {3}", planet.Account, planet, planet.Account.Clan, sb));
 					planet.Account = null;
 					havePlanetsChangedHands = true;
 				} else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID &&
