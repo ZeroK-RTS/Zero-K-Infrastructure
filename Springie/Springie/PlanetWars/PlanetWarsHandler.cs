@@ -123,7 +123,7 @@ namespace Springie.PlanetWars
 		{
 			try
 			{
-				if (tas.MyBattle != null)
+				if (tas.MyBattle != null && spring.IsRunning)
 				{
 					var map = serv.GetRecommendedMap(tas.UserName, AutohostMode.Planetwars);
 					if (map.MapName != null)

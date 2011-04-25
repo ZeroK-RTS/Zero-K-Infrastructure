@@ -589,7 +589,7 @@ namespace ZeroKWeb
 					var gal = db.Galaxies.Single(x => x.IsDefault);
 					var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
 
-					text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet{0} has ended\n", planet.PlanetID);
+					text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet/{0} has ended\n", planet.PlanetID);
 
 					// handle infelunce
 					Clan ownerClan = null;
@@ -648,6 +648,7 @@ namespace ZeroKWeb
 
 					var oldOwner = planet.Account;
 					
+					db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
 					PlanetwarsController.SetPlanetOwners(db, sb);
 
 					if (planet.Account != oldOwner && planet.Account != null)

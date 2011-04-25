@@ -163,6 +163,9 @@ namespace ZkData
     partial void InsertGalaxy(Galaxy instance);
     partial void UpdateGalaxy(Galaxy instance);
     partial void DeleteGalaxy(Galaxy instance);
+    partial void InsertPlanetWarsHost(PlanetWarsHost instance);
+    partial void UpdatePlanetWarsHost(PlanetWarsHost instance);
+    partial void DeletePlanetWarsHost(PlanetWarsHost instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -544,6 +547,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<Galaxy>();
+			}
+		}
+		
+		public System.Data.Linq.Table<PlanetWarsHost> PlanetWarsHosts
+		{
+			get
+			{
+				return this.GetTable<PlanetWarsHost>();
 			}
 		}
 	}
@@ -2061,6 +2072,8 @@ namespace ZkData
 		
 		private EntitySet<PlanetInfluenceHistory> _PlanetInfluenceHistories;
 		
+		private EntityRef<PlanetWarsHost> _PlanetWarsHost;
+		
 		private EntityRef<Clan> _Clan;
 		
 		private bool serializing;
@@ -3061,6 +3074,41 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetWarsHost", Storage="_PlanetWarsHost", ThisKey="AccountID", OtherKey="HostAccountID", IsUnique=true, IsForeignKey=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=48, EmitDefaultValue=false)]
+		public PlanetWarsHost PlanetWarsHost
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PlanetWarsHost.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._PlanetWarsHost.Entity;
+			}
+			set
+			{
+				PlanetWarsHost previousValue = this._PlanetWarsHost.Entity;
+				if (((previousValue != value) 
+							|| (this._PlanetWarsHost.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PlanetWarsHost.Entity = null;
+						previousValue.Account = null;
+					}
+					this._PlanetWarsHost.Entity = value;
+					if ((value != null))
+					{
+						value.Account = this;
+					}
+					this.SendPropertyChanged("PlanetWarsHost");
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Clan", ThisKey="ClanID", OtherKey="ClanID", IsForeignKey=true)]
 		public Clan Clan
 		{
@@ -3442,6 +3490,7 @@ namespace ZkData
 			this._EventAccounts = new EntitySet<EventAccount>(new Action<EventAccount>(this.attach_EventAccounts), new Action<EventAccount>(this.detach_EventAccounts));
 			this._PlanetOwnerHistories = new EntitySet<PlanetOwnerHistory>(new Action<PlanetOwnerHistory>(this.attach_PlanetOwnerHistories), new Action<PlanetOwnerHistory>(this.detach_PlanetOwnerHistories));
 			this._PlanetInfluenceHistories = new EntitySet<PlanetInfluenceHistory>(new Action<PlanetInfluenceHistory>(this.attach_PlanetInfluenceHistories), new Action<PlanetInfluenceHistory>(this.detach_PlanetInfluenceHistories));
+			this._PlanetWarsHost = default(EntityRef<PlanetWarsHost>);
 			this._Clan = default(EntityRef<Clan>);
 			OnCreated();
 		}
@@ -13386,6 +13435,8 @@ namespace ZkData
 		
 		private EntitySet<PlanetStructure> _PlanetStructures;
 		
+		private EntitySet<PlanetWarsHost> _PlanetWarsHosts;
+		
 		private EntityRef<Account> _Account;
 		
 		private EntityRef<Galaxy> _Galaxy;
@@ -13759,6 +13810,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetWarsHost", Storage="_PlanetWarsHosts", ThisKey="PlanetID", OtherKey="PlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		public EntitySet<PlanetWarsHost> PlanetWarsHosts
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PlanetWarsHosts.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlanetWarsHosts;
+			}
+			set
+			{
+				this._PlanetWarsHosts.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Planet", Storage="_Account", ThisKey="OwnerAccountID", OtherKey="AccountID", IsForeignKey=true)]
 		public Account Account
 		{
@@ -14011,6 +14081,18 @@ namespace ZkData
 			entity.Planet = null;
 		}
 		
+		private void attach_PlanetWarsHosts(PlanetWarsHost entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = this;
+		}
+		
+		private void detach_PlanetWarsHosts(PlanetWarsHost entity)
+		{
+			this.SendPropertyChanging();
+			entity.Planet = null;
+		}
+		
 		private void Initialize()
 		{
 			this._LinksByPlanetID1 = new EntitySet<Link>(new Action<Link>(this.attach_LinksByPlanetID1), new Action<Link>(this.detach_LinksByPlanetID1));
@@ -14021,6 +14103,7 @@ namespace ZkData
 			this._PlanetOwnerHistories = new EntitySet<PlanetOwnerHistory>(new Action<PlanetOwnerHistory>(this.attach_PlanetOwnerHistories), new Action<PlanetOwnerHistory>(this.detach_PlanetOwnerHistories));
 			this._PlanetInfluenceHistories = new EntitySet<PlanetInfluenceHistory>(new Action<PlanetInfluenceHistory>(this.attach_PlanetInfluenceHistories), new Action<PlanetInfluenceHistory>(this.detach_PlanetInfluenceHistories));
 			this._PlanetStructures = new EntitySet<PlanetStructure>(new Action<PlanetStructure>(this.attach_PlanetStructures), new Action<PlanetStructure>(this.detach_PlanetStructures));
+			this._PlanetWarsHosts = new EntitySet<PlanetWarsHost>(new Action<PlanetWarsHost>(this.attach_PlanetWarsHosts), new Action<PlanetWarsHost>(this.detach_PlanetWarsHosts));
 			this._Account = default(EntityRef<Account>);
 			this._Galaxy = default(EntityRef<Galaxy>);
 			this._Resource = default(EntityRef<Resource>);
@@ -17306,6 +17389,239 @@ namespace ZkData
 		public void OnSerialized(StreamingContext context)
 		{
 			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlanetWarsHost")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class PlanetWarsHost : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _HostAccountID;
+		
+		private int _PlanetID;
+		
+		private bool _InGame;
+		
+		private int _Players;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Planet> _Planet;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnHostAccountIDChanging(int value);
+    partial void OnHostAccountIDChanged();
+    partial void OnPlanetIDChanging(int value);
+    partial void OnPlanetIDChanged();
+    partial void OnInGameChanging(bool value);
+    partial void OnInGameChanged();
+    partial void OnPlayersChanging(int value);
+    partial void OnPlayersChanged();
+    #endregion
+		
+		public PlanetWarsHost()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HostAccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int HostAccountID
+		{
+			get
+			{
+				return this._HostAccountID;
+			}
+			set
+			{
+				if ((this._HostAccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnHostAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._HostAccountID = value;
+					this.SendPropertyChanged("HostAccountID");
+					this.OnHostAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int PlanetID
+		{
+			get
+			{
+				return this._PlanetID;
+			}
+			set
+			{
+				if ((this._PlanetID != value))
+				{
+					if (this._Planet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlanetID = value;
+					this.SendPropertyChanged("PlanetID");
+					this.OnPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InGame", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public bool InGame
+		{
+			get
+			{
+				return this._InGame;
+			}
+			set
+			{
+				if ((this._InGame != value))
+				{
+					this.OnInGameChanging(value);
+					this.SendPropertyChanging();
+					this._InGame = value;
+					this.SendPropertyChanged("InGame");
+					this.OnInGameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Players", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public int Players
+		{
+			get
+			{
+				return this._Players;
+			}
+			set
+			{
+				if ((this._Players != value))
+				{
+					this.OnPlayersChanging(value);
+					this.SendPropertyChanging();
+					this._Players = value;
+					this.SendPropertyChanged("Players");
+					this.OnPlayersChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetWarsHost", Storage="_Account", ThisKey="HostAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.PlanetWarsHost = null;
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.PlanetWarsHost = this;
+						this._HostAccountID = value.AccountID;
+					}
+					else
+					{
+						this._HostAccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetWarsHost", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true)]
+		public Planet Planet
+		{
+			get
+			{
+				return this._Planet.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._Planet.Entity;
+				if (((previousValue != value) 
+							|| (this._Planet.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Planet.Entity = null;
+						previousValue.PlanetWarsHosts.Remove(this);
+					}
+					this._Planet.Entity = value;
+					if ((value != null))
+					{
+						value.PlanetWarsHosts.Add(this);
+						this._PlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._PlanetID = default(int);
+					}
+					this.SendPropertyChanged("Planet");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._Planet = default(EntityRef<Planet>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
 		}
 	}
 }

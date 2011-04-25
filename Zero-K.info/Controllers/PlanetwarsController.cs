@@ -449,11 +449,10 @@ namespace ZeroKWeb.Controllers
 				}
 			}
 
-
+			db.SubmitChanges();
 			if (havePlanetsChangedHands)
 			{
-				db.SubmitChanges();
-				SetPlanetOwners(db); // we need another cycle because of shadow influence chain reactions
+				SetPlanetOwners(db,sb); // we need another cycle because of shadow influence chain reactions
 			}
 		}
 

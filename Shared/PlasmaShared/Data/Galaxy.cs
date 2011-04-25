@@ -29,7 +29,7 @@ namespace ZkData
 										 select treaty.TargetClanID).ToList();
 
 			var gal = db.Galaxies.Single(x => x.IsDefault);
-			var planets = gal.Planets.Where(x => x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0));
+			var planets = gal.Planets.Where(x => x.Account != null && (x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0)));
 			var accesiblePlanets = new List<Planet>();
 
 			foreach (var thisPlanet in planets) {
