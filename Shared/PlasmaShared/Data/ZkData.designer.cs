@@ -613,7 +613,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="NVarChar(500) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="nvarchar(1000) NOT NULL", CanBeNull=false)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
 		public string Text
 		{
@@ -12515,6 +12515,8 @@ namespace ZkData
 		
 		private int _GalaxyID;
 		
+		private double _LinktStrength;
+		
 		private EntityRef<Planet> _PlanetByPlanetID1;
 		
 		private EntityRef<Planet> _PlanetByPlanetID2;
@@ -12531,6 +12533,8 @@ namespace ZkData
     partial void OnPlanetID2Changed();
     partial void OnGalaxyIDChanging(int value);
     partial void OnGalaxyIDChanged();
+    partial void OnLinktStrengthChanging(double value);
+    partial void OnLinktStrengthChanged();
     #endregion
 		
 		public Link()
@@ -12609,6 +12613,27 @@ namespace ZkData
 					this._GalaxyID = value;
 					this.SendPropertyChanged("GalaxyID");
 					this.OnGalaxyIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LinktStrength", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public double LinktStrength
+		{
+			get
+			{
+				return this._LinktStrength;
+			}
+			set
+			{
+				if ((this._LinktStrength != value))
+				{
+					this.OnLinktStrengthChanging(value);
+					this.SendPropertyChanging();
+					this._LinktStrength = value;
+					this.SendPropertyChanged("LinktStrength");
+					this.OnLinktStrengthChanged();
 				}
 			}
 		}

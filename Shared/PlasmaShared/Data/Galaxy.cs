@@ -54,7 +54,7 @@ namespace ZkData
 			foreach (var thisPlanet in db.Planets)
 			{
 				var thisPlanetID = thisPlanet.PlanetID;
-				var thisLinkStrenght = thisPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Max(s => s.StructureType.EffectLinkStrength) ?? 0;
+				var thisLinkStrenght = thisPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectLinkStrength) ?? 0;
 
 				// clear shadow influence
 				foreach (var thisAccountPlanet in thisPlanet.AccountPlanets) thisAccountPlanet.ShadowInfluence = 0;
@@ -65,11 +65,16 @@ namespace ZkData
 				foreach (var link in db.Links.Where(l => l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID))
 				{
 					var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
-					var otherLinkStrenght = otherPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Max(s => s.StructureType.EffectLinkStrength) ?? 0;
+					var otherLinkStrenght = otherPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectLinkStrength) ?? 0;
 
 					if (otherPlanet.OwnerAccountID == null) continue; // no owner: planet can't project shadow influence
 					if (otherPlanet.Account.ClanID == null) continue; // no clan: can't project influence
 					
+					// increment shadow influence of player on the other side of the link
+					var influenceFactor = (thisLinkStrenght + otherLinkStrenght)/2.0;
+					if (thisLinkStrenght == 0 || otherLinkStrenght == 0) influenceFactor = 0;
+
+					link.LinktStrength = influenceFactor;
 
 					// iterate accountPlanets on other side of the link
 					foreach (var otherAccountPlanet in otherPlanet.AccountPlanets.Where(ap => ap.Account.ClanID == otherPlanet.Account.ClanID && ap.Influence > 0))
@@ -80,14 +85,13 @@ namespace ZkData
 						if (thisAccountPlanet == null)
 						{
 							thisAccountPlanet = new AccountPlanet { AccountID = otherAccountID, PlanetID = thisPlanetID };
-							db.SubmitChanges();
+							db.AccountPlanets.InsertOnSubmit(thisAccountPlanet);
 						}
 
-						// increment shadow influence of player on the other side of the link
-						var influenceFactor = (thisLinkStrenght + otherLinkStrenght)/2.0;
-						if (thisLinkStrenght == 0 || otherLinkStrenght == 0) influenceFactor = 0;
 						thisAccountPlanet.ShadowInfluence += (int)(otherAccountPlanet.Influence*influenceFactor);
 					}
+
+					
 				}
 			}
 			db.SubmitChanges();

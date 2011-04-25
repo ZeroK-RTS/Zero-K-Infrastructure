@@ -3,7 +3,7 @@
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
       <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Text" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="nvarchar(1000) NOT NULL" CanBeNull="false" />
       <Column Name="Time" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Turn" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Event_EventClan" Member="EventClans" ThisKey="EventID" OtherKey="EventID" Type="EventClan" />
@@ -478,6 +478,7 @@
       <Column Name="PlanetID1" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="PlanetID2" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="GalaxyID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="LinktStrength" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Association Name="Planet_Link" Member="PlanetByPlanetID1" ThisKey="PlanetID1" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Planet_Link1" Member="PlanetByPlanetID2" ThisKey="PlanetID2" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Galaxy_Link" Member="Galaxy" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Galaxy" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />

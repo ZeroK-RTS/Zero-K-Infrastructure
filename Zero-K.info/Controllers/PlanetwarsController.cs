@@ -3,7 +3,6 @@ using System.Data.Linq.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using PlasmaShared;
@@ -15,6 +14,45 @@ namespace ZeroKWeb.Controllers
 	{
 		//
 		// GET: /Planetwars/
+
+		[Auth]
+		public ActionResult BuildStructure(int planetID, int structureTypeID)
+		{
+			using (var db = new ZkDataContext())
+			{
+				var planet = db.Planets.Single(p => p.PlanetID == planetID);
+				if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+				var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
+				if (structureType == null) return Content("Structure type does not exist.");
+				if (!structureType.IsBuildable) return Content("Structure is not buildable.");
+
+				// assumes you can only build level 1 structures! if higher level structures can be built directly, we should check down the upgrade chain too
+				if (StructureType.HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades already built");
+
+				if (Global.Account.Credits < structureType.Cost) return Content("Insufficient credits.");
+				planet.Account.Credits -= structureType.Cost;
+
+				var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID };
+				db.PlanetStructures.InsertOnSubmit(newBuilding);
+				db.SubmitChanges();
+
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet));
+				db.SubmitChanges();
+			}
+			return RedirectToAction("Planet", new { id = planetID });
+		}
+
+		[Auth]
+		public ActionResult CancelMarketOrder(int planetID, int offerID)
+		{
+			var db = new ZkDataContext();
+			var offer = db.MarketOffers.SingleOrDefault(o => o.OfferID == offerID);
+			if (offer == null) return Content("Error: offer does not exist");
+			if (offer.AccountID != Global.AccountID) return Content("Error: can't cancel other people's offers");
+			db.MarketOffers.DeleteOnSubmit(offer);
+			db.SubmitChanges();
+			return RedirectToAction("Planet", new { id = planetID });
+		}
 
 		[Auth]
 		public ActionResult ChangePlayerRights(int clanID, int accountID)
@@ -148,6 +186,39 @@ namespace ZeroKWeb.Controllers
 			}
 		}
 
+		[Auth]
+		public ActionResult Give(int? planetID, int? giveInfluence, int? giveCredits, int targetAccountID)
+		{
+			var db = new ZkDataContext();
+			var me = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+			var target = db.Accounts.Single(x => x.AccountID == targetAccountID);
+			if (giveCredits > 0)
+			{
+				var creds = Math.Min(giveCredits ?? 0, me.Credits);
+				me.Credits -= creds;
+				target.Credits += creds;
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} credits to {2}", me, creds, target));
+			}
+			if (planetID > 0 && giveInfluence > 0)
+			{
+				var mePlanet = me.AccountPlanets.Single(x => x.PlanetID == planetID);
+				var infl = Math.Min(giveInfluence ?? 0, mePlanet.Influence);
+				var targetPlanet = target.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
+				if (targetPlanet == null)
+				{
+					targetPlanet = new AccountPlanet() { AccountID = target.AccountID, PlanetID = planetID.Value };
+					db.AccountPlanets.InsertOnSubmit(targetPlanet);
+				}
+				mePlanet.Influence -= infl;
+				targetPlanet.Influence += infl;
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} gives {1} influence on {2} to {3}", me, infl, mePlanet.Planet, target));
+			}
+			db.SubmitChanges();
+			SetPlanetOwners(db);
+			db.SubmitChanges();
+			return RedirectToAction("Index", "Users", new { name = targetAccountID });
+		}
+
 		public ActionResult Index(int? galaxyID = null)
 		{
 			var db = new ZkDataContext();
@@ -217,6 +288,23 @@ namespace ZeroKWeb.Controllers
 			return View(planet);
 		}
 
+		[Auth]
+		public ActionResult RepairStructure(int planetID, int structureTypeID)
+		{
+			var db = new ZkDataContext();
+			var planet = db.Planets.Single(p => p.PlanetID == planetID);
+			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+			var structure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
+			if (!structure.IsDestroyed) return Content("Can't repair a working structure.");
+			if (Global.Account.Credits < structure.StructureType.Cost) return Content("Insufficient credits.");
+			planet.Account.Credits -= structure.StructureType.Cost;
+			structure.IsDestroyed = false;
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure, planet));
+			db.SubmitChanges();
+			SetPlanetOwners(db);
+			return RedirectToAction("Planet", new { id = planetID });
+		}
+
 
 		[Auth]
 		public ActionResult SendDropships(int planetID, int count)
@@ -224,15 +312,17 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 
-			var accessiblePlanets = ZkData.Galaxy.AccessiblePlanets(db, acc.ClanID, AllyStatus.Alliance).Select(x => x.PlanetID).ToList();
+			var accessiblePlanets = Galaxy.AccessiblePlanets(db, acc.ClanID, AllyStatus.Alliance).Select(x => x.PlanetID).ToList();
 			var accessible = accessiblePlanets.Any(x => x == planetID);
 			if (!accessible)
 			{
 				var jumpGateCapacity = acc.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
 				var usedJumpGates = acc.AccountPlanets.Where(x => !accessiblePlanets.Contains(x.PlanetID)).Sum(x => x.DropshipCount);
 				if (usedJumpGates >= jumpGateCapacity)
+				{
 					return
 						Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity {0}/{1}", usedJumpGates, jumpGateCapacity));
+				}
 			}
 			var cnt = Math.Max(count, 0);
 			cnt = Math.Min(cnt, acc.DropshipCount);
@@ -249,38 +339,84 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
+		public ActionResult SetPlanetOwners()
+		{
+			using (var db = new ZkDataContext()) SetPlanetOwners(db);
+			return Content("Done.");
+		}
+
+		/// <summary>
+		/// Updates shadow influence and new owners
+		/// </summary>
+		/// <param name="db"></param>
+		/// <param name="sb">optional spring batle that caused this change (for event logging)</param>
+		public static void SetPlanetOwners(ZkDataContext db, SpringBattle sb = null)
+		{
+			Galaxy.RecalculateShadowInfluence(db);
+			var havePlanetsChangedHands = false;
+
+			foreach (var planet in db.Planets)
+			{
+				var currentOwnerClanID = planet.Account != null ? planet.Account.ClanID : null;
+				var mostInfluentialClanEntry =
+					planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x => x.Key != null).OrderByDescending(
+						g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)).Select(
+							x => new { Clan = x.Key, ClanInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).FirstOrDefault();
+
+				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null) && planet.Account != null) 
+				{
+					// disown the planet, nobody has right to own it atm
+					db.Events.InsertOnSubmit(Global.CreateEvent("{0} has lost planet {1} from {2}. {3}", planet.Account, planet, planet.Account.Clan, sb));
+					planet.Account = null;
+					havePlanetsChangedHands = true;
+				} else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID &&
+				    mostInfluentialClanEntry.ClanInfluence > planet.GetIPToCapture())
+				{
+					// planet changes owner, most influential clan is not current owner and has more ip to capture than needed
+
+					havePlanetsChangedHands = true;
+
+					foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis)) structure.IsDestroyed = true; // destroy or delete?
+
+					// find who will own it
+					var mostInfluentialPlayer =
+						planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(
+							ap => ap.Influence + ap.ShadowInfluence).First().Account;
+
+					if (planet.OwnerAccountID == null) // no previous owner
+					{
+						planet.Account = mostInfluentialPlayer;
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2}. {3}",
+						                                            mostInfluentialPlayer,
+						                                            planet,
+						                                            mostInfluentialClanEntry.Clan,
+						                                            sb));
+					}
+					else
+					{
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2} for {3}. {4}",
+						                                            mostInfluentialPlayer,
+						                                            planet,
+						                                            planet.Account,
+						                                            mostInfluentialClanEntry.Clan,
+						                                            sb));
+						planet.Account = mostInfluentialPlayer;
+					}
+				}
+			}
+
+
+			if (havePlanetsChangedHands)
+			{
+				db.SubmitChanges();
+				SetPlanetOwners(db); // we need another cycle because of shadow influence chain reactions
+			}
+		}
+
 		[Auth]
 		public ActionResult SubmitBuyOrder(int planetID, int quantity, int price)
 		{
 			return SubmitMarketOrder(planetID, quantity, price, false);
-		}
-
-
-		[Auth]
-		public ActionResult BuildStructure(int planetID, int structureTypeID)
-		{
-			using (var db = new ZkDataContext()) 
-			{
-				var planet = db.Planets.Single(p => p.PlanetID == planetID);
-				if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
-				var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
-				if (structureType == null) return Content("Structure type does not exist.");
-				if (!structureType.IsBuildable) return Content("Structure is not buildable.");
-
-				// assumes you can only build level 1 structures! if higher level structures can be built directly, we should check down the upgrade chain too
-				if (StructureType.HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades already built");
-
-				if (Global.Account.Credits < structureType.Cost) return Content("Insufficient credits.");
-				planet.Account.Credits -= structureType.Cost;
-
-				var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID };
-				db.PlanetStructures.InsertOnSubmit(newBuilding);
-				db.SubmitChanges();
-
-				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding, planet));
-				db.SubmitChanges();
-			}
-			return RedirectToAction("Planet", new { id = planetID });
 		}
 
 
@@ -349,18 +485,6 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
-		[Auth]
-		public ActionResult CancelMarketOrder(int planetID, int offerID)
-		{
-			var db = new ZkDataContext();
-			var offer = db.MarketOffers.SingleOrDefault(o => o.OfferID == offerID);
-			if (offer == null) return Content("Error: offer does not exist");
-			if (offer.AccountID != Global.AccountID) return Content("Error: can't cancel other people's offers");
-			db.MarketOffers.DeleteOnSubmit(offer);
-			db.SubmitChanges();
-			return RedirectToAction("Planet", new { id = planetID });
-		}
-
 
 		[Auth]
 		public ActionResult SubmitRenamePlanet(int planetID, string newName)
@@ -380,66 +504,6 @@ namespace ZeroKWeb.Controllers
 		public ActionResult SubmitSellOrder(int planetID, int quantity, int price)
 		{
 			return SubmitMarketOrder(planetID, quantity, price, true);
-		}
-
-		[Auth]
-		public ActionResult Give(int? planetID, int? giveInfluence, int? giveCredits, int targetAccountID)
-		{
-			var db = new ZkDataContext();
-			var me = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-			var target = db.Accounts.Single(x => x.AccountID == targetAccountID);
-			if (giveCredits > 0)
-			{
-				var creds = Math.Min(giveCredits ?? 0, me.Credits);
-				me.Credits -= creds;
-				target.Credits += creds;
-				db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} credits to {2}", me, creds,target));
-			}
-			if (planetID > 0 && giveInfluence > 0)
-			{
-				var mePlanet = me.AccountPlanets.Single(x => x.PlanetID == planetID);
-				var infl = Math.Min(giveInfluence??0, mePlanet.Influence);
-				var targetPlanet = target.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
-				if (targetPlanet == null)
-				{
-					targetPlanet = new AccountPlanet() { AccountID = target.AccountID, PlanetID = planetID.Value};
-					db.AccountPlanets.InsertOnSubmit(targetPlanet);
-				}
-				mePlanet.Influence -= infl;
-				targetPlanet.Influence += infl;
-				db.Events.InsertOnSubmit(Global.CreateEvent("{0} gives {1} influence on {2} to {3}", me, infl, mePlanet.Planet, target));
-			}
-			db.SubmitChanges();
-			SetPlanetOwners(db);
-			db.SubmitChanges();
-			return RedirectToAction("Index", "Users", new { name = targetAccountID });
-		}
-
-		[Auth]
-		public ActionResult RepairStructure(int planetID, int structureTypeID)
-		{
-			var db = new ZkDataContext();
-			var planet = db.Planets.Single(p => p.PlanetID == planetID);
-			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
-			var structure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
-			if (!structure.IsDestroyed) return Content("Can't repair a working structure.");
-			if (Global.Account.Credits < structure.StructureType.Cost) return Content("Insufficient credits.");
-			planet.Account.Credits -= structure.StructureType.Cost;
-			structure.IsDestroyed = false;
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure, planet));
-			db.SubmitChanges();
-			SetPlanetOwners(db);
-			return RedirectToAction("Planet", new { id = planetID });
-		}
-
-		// for testing
-		public ActionResult SetPlanetOwners()
-		{
-			using (var db = new ZkDataContext())
-			{
-				SetPlanetOwners(db);
-			}
-			return Content("Done.");
 		}
 
 		[Auth]
@@ -468,72 +532,6 @@ namespace ZeroKWeb.Controllers
 			db.SubmitChanges();
 			SetPlanetOwners(db);
 			return RedirectToAction("Planet", new { id = planetID });
-		}
-
-		public static void SetPlanetOwners(ZkDataContext db)
-		{
-			Galaxy.RecalculateShadowInfluence(db);
-			var havePlanetsChangedHands = false;
-
-			// set planets with no owners (should only happen as a result of debugging)
-			foreach (var planet in db.Planets.Where(p => p.OwnerAccountID != null))
-			{
-				if (planet.AccountPlanets.Where(ap => ap.Account.ClanID != null).Sum(ap => ap.Influence + ap.ShadowInfluence) == 0)
-				{
-					db.Events.InsertOnSubmit(Global.CreateEvent("{0} has lost planet {1}.", planet.Account, planet));
-					planet.Account = null;
-					havePlanetsChangedHands = true;
-				}
-			}
-
-			if (havePlanetsChangedHands)
-			{
-				db.SubmitChanges();
-			}
-
-			foreach (var planet in db.Planets)
-			{
-				var clansByInfluence = planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x=>x.Key != null).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence));
-				var mostInfluentialClan = clansByInfluence.FirstOrDefault();
-				if (mostInfluentialClan != null && mostInfluentialClan.Sum(ap => ap.Influence + ap.ShadowInfluence) > 0)
-				{
-					var mostInfluentialPlayer = mostInfluentialClan.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence).First();
-					if (mostInfluentialPlayer.AccountID != planet.OwnerAccountID)
-					{
-						if (planet.OwnerAccountID == null) // no previous owner
-						{
-							planet.Account = mostInfluentialPlayer.Account;
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2}.", mostInfluentialPlayer.Account, planet, mostInfluentialClan.Key));
-							havePlanetsChangedHands = true;
-						}
-						else
-						{
-							var defenseBoost = planet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectInfluenceDefense) ?? 0;
-							var ownerAccountPlanet = planet.AccountPlanets.Single(ap => ap.AccountID == planet.OwnerAccountID);
-							var ownerIP = ownerAccountPlanet.Influence + ownerAccountPlanet.ShadowInfluence;
-							var mostInfluentialPlayerIP = mostInfluentialPlayer.Influence + mostInfluentialPlayer.ShadowInfluence;
-							if (ownerIP + defenseBoost < mostInfluentialPlayerIP)
-							{
-								foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis)) 
-								{
-									structure.IsDestroyed = true; // destroy or delete?
-								}
-								planet.Account = mostInfluentialPlayer.Account;
-								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has captured planet {1} from {2} for {3}.",
-								                                            mostInfluentialPlayer.Account,
-								                                            planet,
-								                                            ownerAccountPlanet.Account, mostInfluentialClan.Key));
-								havePlanetsChangedHands = true;
-							}
-						}
-					}
-				}
-			}
-			if (havePlanetsChangedHands)
-			{
-				db.SubmitChanges();
-				SetPlanetOwners(db); // we need another cycle because of shadow influence chain reactions
-			}
 		}
 
 		// TODO: run at any change of influence, credits or market offers
@@ -588,7 +586,6 @@ namespace ZeroKWeb.Controllers
 						sellerAccountPlanet.Influence -= quantity;
 						influenceChanged = true;
 
-
 						// record transactions, for history
 						db.MarketOffers.InsertOnSubmit(new MarketOffer
 						                               {
@@ -613,7 +610,12 @@ namespace ZeroKWeb.Controllers
 						                               	Quantity = quantity,
 						                               	PlanetID = sellOffer.PlanetID,
 						                               });
-						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from {2} on {3} for {4} each.", buyer, quantity, seller, buyOffer.Planet, sellOffer.Price));
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from {2} on {3} for {4} each.",
+						                                            buyer,
+						                                            quantity,
+						                                            seller,
+						                                            buyOffer.Planet,
+						                                            sellOffer.Price));
 					}
 
 					buyOffer.Quantity -= quantity;

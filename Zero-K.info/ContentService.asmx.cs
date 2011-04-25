@@ -645,7 +645,9 @@ namespace ZeroKWeb
 					db.SubmitChanges();
 
 					var oldOwner = planet.Account;
-					PlanetwarsController.SetPlanetOwners(db);
+					
+					PlanetwarsController.SetPlanetOwners(db, sb);
+
 					if (planet.Account != oldOwner && planet.Account != null)
 					{
 						text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",
@@ -660,6 +662,7 @@ namespace ZeroKWeb
 						var owner = linkedplanet.Account;
 						if (owner != null) owner.Credits += linkedplanet.PlanetStructures.Sum(x => x.StructureType.EffectCreditsPerTurn)??0;
 					}
+					gal.Turn++;
 
 					db.SubmitChanges();
 				}
