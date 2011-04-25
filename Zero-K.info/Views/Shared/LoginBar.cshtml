@@ -13,6 +13,6 @@
   <input type="hidden" name="referer" value="@(Request["ReturnUrl"] != null ? Request["ReturnUrl"] : Request.Url.ToString())" />
   </form>
 } else {
-   <form method="post" action="@Url.Action("Logout", "Home")" >@Html.PrintAccount(Global.Account) <input type="submit" value="Logout" /><input type="hidden" name="referer" value="@Request.Url" /> <b>@Html.ActionLink("PlanetWars (WIP)","Index","PlanetWars")</b> Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits | Influence: @Global.Account.AccountPlanets.Sum(x => (int?)x.Influence)&nbsp;<span style='color:Gray'>(@Global.Account.AccountPlanets.Sum(x=>x.ShadowInfluence))</span></form>
+   <form method="post" action="@Url.Action("Logout", "Home")" >@Html.PrintAccount(Global.Account) <input type="submit" value="Logout" /><input type="hidden" name="referer" value="@Request.Url" /> <b>@Html.ActionLink("PlanetWars (WIP)","Index","PlanetWars")</b> Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence)??0, Global.Account.AccountPlanets.Sum(x=>(int?)x.ShadowInfluence)??0)</form>
 }
 

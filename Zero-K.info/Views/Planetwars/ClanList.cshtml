@@ -6,7 +6,10 @@
 }
 <script type="text/javascript" language="javascript">
   $(document).ready(function () {
-    $('#clanTable').tablesorter();
+    $('#clanTable').tablesorter({
+      sortList: [[3, 1]]
+    });
+    
   }); 
 </script>
 @if (Global.Clan == null) {
@@ -26,9 +29,12 @@ Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
       <th>
         Tag
       </th>
+      <th>Planets</th>
       <th>
         Influence
       </th>
+      <th>Credits</th>
+      <th>Dropships</th>
       <th>
         Leader
       </th>
@@ -50,7 +56,10 @@ Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
     <tr>
     <td><a href='@Url.Action("Clan", new {id= c.ClanID})'><img src='@c.GetImageUrl()' />@c.ClanName</a></td>
       <td>@Html.PrintClan(c)</td>
+      <td>@c.Accounts.Sum(x=>x.Planets.Count())</td>
       <td>@c.Accounts.SelectMany(x=>x.AccountPlanets).Sum(x=>(int?)x.Influence)</td>
+      <td>@c.Accounts.Sum(x=>x.Credits)</td>
+      <td>@c.Accounts.Sum(x=>x.DropshipCount)</td>
       <td>@Html.PrintAccount(c.Accounts.Single(x=>x.IsClanFounder))</td>
       <td>@c.Accounts.Count()</td>
       <td>@Math.Round(c.Accounts.Average(x=>x.Elo))</td>
