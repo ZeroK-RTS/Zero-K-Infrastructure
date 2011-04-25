@@ -189,15 +189,16 @@ function showNiceTitle(e) {
 
   d.style.width = '350px';
 
-  var offsx = document.body.clientWidth - rect.right - 350 - document.documentElement.scrollLeft;
+  var offsx = document.body.clientWidth - rect.right - 350 - $(document).scrollLeft();
+  alert
   	
   if (offsx < 0) {
-		d.style.left = (rect.left - 380) + document.documentElement.scrollLeft + "px";
-		d.style.top = (rect.top + 5) + document.documentElement.scrollTop + "px";
+		d.style.left = (rect.left - 380) + $(document).scrollLeft() + "px";
+		d.style.top = (rect.top + 5) + $(document).scrollTop() + "px";
 	}
 	else  {
-		d.style.left = (rect.right + 10) + document.documentElement.scrollLeft + "px";
-		d.style.top = (rect.top + 5) + document.documentElement.scrollTop + "px";
+		d.style.left = (rect.right + 10) + $(document).scrollLeft() + "px";
+		d.style.top = (rect.top + 5) + $(document).scrollTop() + "px";
 	}
 
 
@@ -261,9 +262,9 @@ function getParent(el, pTagName) {
 
 function getMousePosition(event) {
 	if (browser.isIE) {
-		x = window.event.clientX + document.documentElement.scrollLeft
+		x = window.event.clientX + $(document).scrollLeft()
       + document.body.scrollLeft;
-		y = window.event.clientY + document.documentElement.scrollTop
+		y = window.event.clientY + $(document).scrollTop()
       + document.body.scrollTop;
 	}
 	if (browser.isNS) {
