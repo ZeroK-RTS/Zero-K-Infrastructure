@@ -325,14 +325,14 @@ namespace LobbyClient
 			{
 				candidates.AddRange(
 					di.GetFiles().Where(
-						x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-10) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(10)));
+						x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-70) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(70)));
 			}
 			di = new DirectoryInfo(Path.Combine(paths.UnitSyncDirectory, "demos"));
 			if (di.Exists)
 			{
 				candidates.AddRange(
 					di.GetFiles().Where(
-						x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-10) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(10)));
+						x => x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-70) && x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(70)));
 			}
 			//Console.WriteLine("Candidates: " + candidates.Count);
 			foreach (var file in candidates)
@@ -593,7 +593,7 @@ namespace LobbyClient
 			process = null;
 			talker.Close();
 			talker = null;
-
+			Thread.Sleep(1000);
 			var logText = LogLines.ToString();
 			ParseInfolog(logText, isCrash);
 
