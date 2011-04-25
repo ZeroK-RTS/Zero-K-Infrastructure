@@ -664,6 +664,17 @@ namespace ZeroKWeb
 					}
 					gal.Turn++;
 
+					// store history
+					foreach (var p in db.Planets)
+					{
+						db.PlanetOwnerHistories.InsertOnSubmit(new PlanetOwnerHistory() { PlanetID = p.PlanetID, OwnerAccountID = p.OwnerAccountID, OwnerClanID = p.OwnerAccountID != null? p.Account.ClanID : null, Turn = gal.Turn});
+
+						foreach (var pi in p.AccountPlanets.Where(x=>x.Account.ClanID != null))
+						{
+							db.PlanetInfluenceHistories.InsertOnSubmit(new PlanetInfluenceHistory() { PlanetID = p.PlanetID, AccountID = pi.AccountID, ClanID = pi.Account.ClanID.Value, Influence = pi.Influence + pi.ShadowInfluence, Turn = gal.Turn});
+						}
+					}
+
 					db.SubmitChanges();
 				}
 				
