@@ -6,7 +6,7 @@
 } else {
   Page.Title = "PlanetWars events";
 }
-@using (Ajax.BeginForm("Events", new { title = Model.Title, accountID = Model.AccountID, clanID = Model.ClanID, planetID = Model.PlanetID, springBattleID = Model.SpringBattleID, partial = Model.Partial }, new AjaxOptions() { InsertionMode = InsertionMode.Replace, UpdateTargetId = "events", LoadingElementId = "ajaxScrollProgress" })) {
+@using (Ajax.BeginForm("Events", new { accountID = Model.AccountID, clanID = Model.ClanID, planetID = Model.PlanetID, springBattleID = Model.SpringBattleID, partial = Model.Partial }, new AjaxOptions() { InsertionMode = InsertionMode.Replace, UpdateTargetId = "events", LoadingElementId = "ajaxScrollProgress" })) {
   <div id='events'>
     @if (!Model.Partial) {
       <h3>
@@ -42,7 +42,7 @@
             }
           </td>
           <td align="right">
-          Page @(Model.Page+1) / @Model.PageCount  <a href='@Url.Action("Events", "Planetwars")'>all</a>
+          Page @(Model.Page+1) / @Model.PageCount <a href='@Url.Action("Events", "Planetwars", new { accountID = Model.AccountID, clanID = Model.ClanID, planetID = Model.PlanetID, springBattleID = Model.SpringBattleID })'>all</a> | <a href='@Url.Action("Events", "Planetwars")'>unfiltered</a>
             @Html.TextBox("filter", Model.Filter)<input type="submit" value="filter" id="ev_submit" />
             
           </td>

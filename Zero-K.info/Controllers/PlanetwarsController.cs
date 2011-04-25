@@ -129,7 +129,6 @@ namespace ZeroKWeb.Controllers
 			          	PageCount = (res.Count()/pageSize) + 1,
 			          	Page = page,
 			          	Events = res.Skip(page*pageSize).Take(pageSize),
-			          	PageSize = pageSize,
 			          	PlanetID = planetID,
 			          	AccountID = accountID,
 			          	SpringBattleID = springBattleID,
@@ -642,10 +641,8 @@ namespace ZeroKWeb.Controllers
 		public string Filter;
 		public int Page;
 		public int PageCount;
-		public int PageSize;
 		public bool Partial;
 		public int? PlanetID;
 		public int? SpringBattleID;
-		public string Title;
 	}
 }
