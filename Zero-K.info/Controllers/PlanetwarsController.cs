@@ -97,6 +97,44 @@ namespace ZeroKWeb.Controllers
 			return View(db.Clans.AsQueryable());
 		}
 
+
+		[Auth]
+		public ActionResult OfferTreaty(int targetClanID, AllyStatus ourStatus, string ourMessage, bool ourResearch)
+		{
+			if (!Global.Account.HasClanRights || Global.Clan == null) return Content("You don't have rights to do this");
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(x => x.ClanID == Global.ClanID);
+			var targetClan = db.Clans.Single(x => x.ClanID == targetClanID);
+			var oldEffect = clan.GetEffectiveTreaty(targetClanID);
+			var entry = clan.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == targetClanID);
+			if (entry == null)
+			{
+				entry = new TreatyOffer() { OfferingClanID = clan.ClanID, TargetClanID = targetClanID };
+				db.TreatyOffers.InsertOnSubmit(entry);
+			}
+			entry.OfferingClanMessage = ourMessage;
+			entry.AllyStatus = ourStatus;
+			entry.IsResearchAgreement = ourResearch;
+			db.SubmitChanges();
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} offers {1}, research: {2} to {3}", clan, ourStatus, ourResearch, targetClan));
+
+			var newEffect = clan.GetEffectiveTreaty(targetClanID);
+
+			if (newEffect.AllyStatus != oldEffect.AllyStatus || newEffect.IsResearchAgreement != oldEffect.IsResearchAgreement)
+			{
+				db.Events.InsertOnSubmit(Global.CreateEvent("New effective treaty between {0} and {1}: {2}->{3}, research {4}->{5}",
+				                                            clan,
+				                                            targetClan,
+				                                            oldEffect.AllyStatus,
+				                                            newEffect.AllyStatus,
+				                                            oldEffect.IsResearchAgreement,
+				                                            newEffect.IsResearchAgreement));
+			}
+			db.SubmitChanges();
+
+			return RedirectToAction("Clan", new { id = clan.ClanID });
+		}
+
 		[Auth]
 		public ActionResult CreateClan()
 		{

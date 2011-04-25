@@ -30,12 +30,14 @@
   @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })
 }
 <h3>Dropships</h3>
-<span nowrap="nowrap">@Model.Accounts.Sum(x => x.DropshipCount)/@(Model.Accounts.Count() * GlobalConst.DefaultDropshipCapacity + Model.Accounts.SelectMany(x=>x.Planets).SelectMany(x=>x.PlanetStructures).Where(x=>!x.IsDestroyed).Sum(x=>x.StructureType.EffectDropshipCapacity)) ready to deploy</span>
+<span nowrap="nowrap">@Model.Accounts.Sum(x => x.DropshipCount)/@(Model.Accounts.Count() * GlobalConst.DefaultDropshipCapacity + Model.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity))
+  ready to deploy</span>
 <table>
   @foreach (var p in Model.Accounts.SelectMany(x => x.AccountPlanets).GroupBy(x => x.Planet).Select(x => new { planet = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
     <tr>
       <td>@Html.PrintPlanet(p.planet)</td>
-      <td><img src='/img/dropship.png' />@p.dropships</td>
+      <td>
+        <img src='/img/dropship.png' />@p.dropships</td>
     </tr>
   }
 </table>
@@ -47,6 +49,51 @@
   <br />
   @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })
 }
+<h3>Diplomacy</h3>
+<table>
+@foreach (var them in new ZkDataContext().Clans.Where(x => x.ClanID != Model.ClanID)) {
+  var our = c.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == them.ClanID) ?? new TreatyOffer();
+  var their = them.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == c.ClanID) ?? new TreatyOffer();
+  var effective = them.GetEffectiveTreaty(Model.ClanID);
+  
+  <tr>
+  <td colspan='2'><b>@Html.PrintClan(them) - @them.ClanName<br />
+   Status: @effective.AllyStatus  Research: @effective.IsResearchAgreement
+   </b>
+   </td>
+  </tr>
+  
+  <tr>
+  <td valign='top'>Our offer:<br />
+  @if (isMember) {
+    if (Global.Account.HasClanRights) {
+    <form method="post" action="@Url.Action("OfferTreaty", new { targetClanID = them.ClanID })">
+      Status: @Html.DropDownList("ourStatus", Enum.GetValues(typeof(AllyStatus)).OfType<AllyStatus>().Select(x => new SelectListItem() { Text = x.ToString(), Value = ((int)x).ToString(), Selected = our.AllyStatus == x }))
+      Research: @Html.CheckBox("ourResearch", our.IsResearchAgreement)<input type="submit" value="offer"/><br />
+      @Html.TextArea("ourMessage", our.OfferingClanMessage, new { rows = 2, cols = 30 })
+    </form>
+    } else { 
+    <span>
+      Status: @our.AllyStatus  Research: @our.IsResearchAgreement<br />
+      @our.OfferingClanMessage<br />
+    </span>
+    }
+  } else { 
+    <span>
+      Status: @our.AllyStatus  Research: @our.IsResearchAgreement<br />
+    </span>
+  }
+  </td>
+  <td valign='top'>Their offer:<br />
+    <span>
+      Status: @their.AllyStatus  Research: @their.IsResearchAgreement<br />
+    </span>
+  </td>
+  </tr>  
+}
+</table>
+
+
 <h3>Members</h3>
 <table>
   <th>Name </th>
@@ -77,7 +124,7 @@
           // todo: disallow kicking after the round starts
           var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
           @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) }) @:|@Html.ActionLink(a.HasClanRights ? "rights" : "rights", "ChangePlayerRights", new { clanID = c.ClanID, accountID = a.AccountID })
-                                                                                                        
+                                                                                                                
         }
       </td>
     </tr>
@@ -95,7 +142,8 @@
 </table>
 <h3>Clan technologies</h3>
 @foreach (var unlock in Galaxy.ClanUnlocks(new ZkDataContext(), Model.ClanID)) {
-  <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  ><img src="@unlock.ImageUrl"/><br />
+  <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  >
+    <img src="@unlock.ImageUrl"/><br />
     @unlock.Name
   </span>
 }

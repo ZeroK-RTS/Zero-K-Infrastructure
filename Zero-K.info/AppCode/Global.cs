@@ -55,7 +55,7 @@ namespace ZeroKWeb
 		public static Event CreateEvent(string format, params object[] args)
 		{
 			var ev = new Event() { Time = DateTime.UtcNow };
-
+			
 			for (int i = 0; i < args.Length; i++) {
 				var arg = args[i];
 				var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
