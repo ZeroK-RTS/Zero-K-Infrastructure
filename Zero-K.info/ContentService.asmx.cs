@@ -608,7 +608,7 @@ namespace ZeroKWeb
 						}
 						entry.Influence += (p.Influence ?? 0);
 						if (p.Account != targetAccount)
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} at {2} from {3} thanks to ally {4}",
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} influence at {2} from {3} thanks to ally {4}",
 							                                            targetAccount,
 							                                            p.Influence ?? 0,
 							                                            planet,
@@ -616,7 +616,7 @@ namespace ZeroKWeb
 							                                            p.Account));
 						else
 						{
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} at {2} from {3}", targetAccount, p.Influence ?? 0, planet, sb));
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} influence at {2} from {3}", targetAccount, p.Influence ?? 0, planet, sb));
 							text.AppendFormat("{0} gained {1} influence on {2}\n", targetAccount.Name, p.Influence ?? 0, planet.Name);
 						}
 					}
@@ -631,7 +631,7 @@ namespace ZeroKWeb
 					}
 
 					// spawn new dropships
-					foreach (var a in sb.SpringBattlePlayers.Select(x=>x.Account).Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
+					foreach (var a in sb.SpringBattlePlayers.Where(x=>!x.IsSpectator).Select(x=>x.Account).Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
 					{
 						var capacity = GlobalConst.DefaultDropshipCapacity +
 						               (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
