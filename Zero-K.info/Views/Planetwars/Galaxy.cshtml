@@ -6,7 +6,10 @@
   ViewBag.Minimal = true;
   var g = Model;
 
-  int maxDropships = g.Planets.SelectMany(x => x.AccountPlanets).Max(x => (int?)x.DropshipCount) ?? 1; // fake max as 1 to prevent division by zero
+  int maxDropships = new ZkDataContext().AccountPlanets.GroupBy(x => x.PlanetID).Select(x => (int?)x.Sum(y=>y.DropshipCount)).Max() ?? 1; // fake max as 1 to prevent division by zero
+  if (maxDropships == 0) {
+    maxDropships = 1;
+  }
 }
 @{Html.RenderPartial("LoginBar");}
 <img src='http://3.bp.blogspot.com/_YTJBDUN8iSE/TSjDkNEwJAI/AAAAAAAAD0o/N8w-cy_J_EM/s1600/Tracy_Caldwell_Dyson_in_Cupola_ISS.jpg'
@@ -78,7 +81,7 @@ Under construciton, please wait!
     
       if (shipCount > 0) {
     <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;" title='$planetDropships$@p.PlanetID'>
-      <img src='/img/fleets/war.png' width='@(Math.Round(20.0 * shipCount / (double)maxDropships))' /><span
+      <img src='/img/fleets/war.png' width='@(Math.Round(25.0 * shipCount / (double)maxDropships))' /><span
         style="font-size: 10px">@shipCount</span> </span>
       }
   }
