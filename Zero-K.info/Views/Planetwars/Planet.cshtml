@@ -209,7 +209,7 @@
         </tr>
     @foreach (var offer in Model.MarketOffers.Where(o => !o.IsSell && o.DateAccepted == null).OrderBy(o => o.Price))
     {
-        var maxWillBuy = Math.Min(offer.AccountByAccountID.Credits / offer.Price, offer.Quantity);
+      var maxWillBuy = offer.Price >0  ?  Math.Min(offer.AccountByAccountID.Credits / offer.Price, offer.Quantity) : offer.Quantity;
         <tr>
             <td>@maxWillBuy&nbsp(@offer.Quantity)</td>
             <td>@offer.Price</td>

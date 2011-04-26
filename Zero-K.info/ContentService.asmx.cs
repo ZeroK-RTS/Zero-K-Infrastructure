@@ -165,6 +165,8 @@ namespace ZeroKWeb
 						if (cnt > 0) // player can be meaningfully ranked, he had at least one non zero relation
 							compoScore += playerScoreMultiplier[i]*sum/cnt;
 					}
+
+					if (compoScore < 0) continue; // get meaningfull teams only
 					var score = teamDiffScore + eloScore + compoScore;
 
 					if (score > bestScore)
@@ -344,8 +346,10 @@ namespace ZeroKWeb
 			var db = new ZkDataContext();
 
 			var pwLocks = new List<int>();
+			var unlockList = new List<Unlock>();
 			if (mode == AutohostMode.Planetwars)
 			{
+				unlockList =  db.Unlocks.ToList();
 				pwLocks =
 					db.Galaxies.Single(x => x.IsDefault).Planets.SelectMany(x => x.PlanetStructures).Select(x => x.StructureType.Unlock).Where(x => x != null).
 						Distinct().Select(x => x.UnlockID).ToList();
@@ -363,9 +367,14 @@ namespace ZeroKWeb
 					if (mode != AutohostMode.Planetwars) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
 					else
 					{
+						var userUnlocks = user.AccountUnlocks.Select(x => x.UnlockID).ToList();
 						var clanUnlocks = new List<int>();
 						if (user.ClanID != null) clanUnlocks = Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.UnlockID).ToList();
-						foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) if (!pwLocks.Contains(unlock.UnlockID) || clanUnlocks.Contains(unlock.UnlockID)) pu.Add(unlock.Code);
+						
+						foreach (var unlock in unlockList)
+						{
+							if (clanUnlocks.Contains(unlock.UnlockID) || (!pwLocks.Contains(unlock.UnlockID) && userUnlocks.Contains(unlock.UnlockID))) pu.Add(unlock.Code);
+						}
 					}
 					userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
 
