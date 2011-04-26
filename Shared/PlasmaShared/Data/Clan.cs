@@ -35,7 +35,11 @@ namespace ZkData
 			if (clan1 == null || clan2 == null) return "";
 			if (clan1.ClanID  == clan2.ClanID) return "#00FFFF";
 			var t = clan1.GetEffectiveTreaty(clan2.ClanID);
-			switch (t.AllyStatus) {
+			return AllyStatusColor(t.AllyStatus);
+		}
+
+		public static string AllyStatusColor(AllyStatus s) {
+			switch (s) {
 				case AllyStatus.Neutral:
 					return "#FFFF00";
 				case AllyStatus.War:

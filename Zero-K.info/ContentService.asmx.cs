@@ -646,10 +646,18 @@ namespace ZeroKWeb
 					}
 					db.SubmitChanges();
 
+					// mines
+					foreach (var linkedplanet in gal.Planets.Where(x => (x.PlanetStructures.Sum(y => y.StructureType.EffectLinkStrength) ?? 0) > 0)) {
+						var owner = linkedplanet.Account;
+						if (owner != null) owner.Credits += linkedplanet.PlanetStructures.Sum(x => x.StructureType.EffectCreditsPerTurn) ?? 0;
+					}
+
 					var oldOwner = planet.Account;
-					
+					gal.Turn++;
+					db.SubmitChanges();
 					db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
 					PlanetwarsController.SetPlanetOwners(db, sb);
+					
 
 					if (planet.Account != oldOwner && planet.Account != null)
 					{
@@ -658,16 +666,7 @@ namespace ZeroKWeb
 						                  acc.Name,
 						                  planet.PlanetID);
 					}
-
-					// mines
-					foreach (var linkedplanet in gal.Planets.Where(x => (x.PlanetStructures.Sum(y => y.StructureType.EffectLinkStrength) ?? 0) > 0))
-					{
-						var owner = linkedplanet.Account;
-						if (owner != null) owner.Credits += linkedplanet.PlanetStructures.Sum(x => x.StructureType.EffectCreditsPerTurn)??0;
-					}
-					gal.Turn++;
-
-					db.SubmitChanges();
+					
 
 					try
 					{

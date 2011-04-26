@@ -26,6 +26,22 @@ namespace System.Web.Mvc
 
 	public static class HtmlHelperExtensions
 	{
+		public static MvcHtmlString PrintTreaty(this HtmlHelper helper, AllyStatus status, bool isResearh)
+		{
+			return new MvcHtmlString(string.Format("<span style='color:{0}'>{1}</span> <span style='color:{2}'>{3}</span>", Clan.AllyStatusColor(status),status, isResearh? "#00FF00": "#FF0000", isResearh?"research shared":""));
+		}
+
+		public static MvcHtmlString PrintTreaty(this HtmlHelper helper, EffectiveTreaty treaty)
+		{
+			return PrintTreaty(helper, treaty.AllyStatus, treaty.IsResearchAgreement);
+		}
+		
+		public static MvcHtmlString PrintTreaty(this HtmlHelper helper, TreatyOffer treaty)
+		{
+			return PrintTreaty(helper, treaty.AllyStatus, treaty.IsResearchAgreement);
+		}
+
+
 		public static MvcHtmlString AccountAvatar(this HtmlHelper helper, int accountID)
 		{
 			var picList = (string[])HttpContext.Current.Application["unitpics"];

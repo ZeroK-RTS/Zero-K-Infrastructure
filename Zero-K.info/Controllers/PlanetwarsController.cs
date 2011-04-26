@@ -133,7 +133,7 @@ namespace ZeroKWeb.Controllers
 			}
 			db.SubmitChanges();
 
-			return RedirectToAction("Clan", new { id = clan.ClanID });
+			return RedirectToAction("ClanDiplomacy", new { id = clan.ClanID });
 		}
 
 		[Auth]
@@ -385,6 +385,12 @@ namespace ZeroKWeb.Controllers
 		{
 			using (var db = new ZkDataContext()) SetPlanetOwners(db);
 			return Content("Done.");
+		}
+
+
+		public ActionResult ClanDiplomacy(int id)
+		{
+			return View("ClanDiplomacy", new ZkDataContext().Clans.Single(x => x.ClanID == id));
 		}
 
 		/// <summary>

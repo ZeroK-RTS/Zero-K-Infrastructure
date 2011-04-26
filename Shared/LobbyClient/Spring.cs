@@ -337,7 +337,7 @@ namespace LobbyClient
 			//Console.WriteLine("Candidates: " + candidates.Count);
 			foreach (var file in candidates)
 			{
-				var buf = new byte[65000];
+				var buf = new byte[120000];
 				var read = 0;
 				using (var stream = file.OpenRead()) read = stream.Read(buf, 0, buf.Length);
 

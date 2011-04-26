@@ -4,6 +4,7 @@
 @{
   var c = Model;
   var isMember = c.Accounts.Any(y => y.AccountID == Global.AccountID);
+  Page.Title = Model.ClanName + " - " + Model.Shortcut + " clan detail";
 }
 @Html.ActionLink("Back to clan list", "ClanList")
 <h2>@c.ClanName</h2>
@@ -49,49 +50,14 @@
   <br />
   @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })
 }
-<h3>Diplomacy</h3>
-<table>
+<h3><a href='@Url.Action("ClanDiplomacy",new {id=Model.ClanID})'>Diplomacy</a></h3>
 @foreach (var them in new ZkDataContext().Clans.Where(x => x.ClanID != Model.ClanID)) {
-  var our = c.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == them.ClanID) ?? new TreatyOffer();
-  var their = them.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == c.ClanID) ?? new TreatyOffer();
   var effective = them.GetEffectiveTreaty(Model.ClanID);
-  
-  <tr>
-  <td colspan='2'><b>@Html.PrintClan(them) - @them.ClanName<br />
-   Status: @effective.AllyStatus  Research: @effective.IsResearchAgreement
-   </b>
-   </td>
-  </tr>
-  
-  <tr>
-  <td valign='top'>Our offer:<br />
-  @if (isMember) {
-    if (Global.Account.HasClanRights) {
-    <form method="post" action="@Url.Action("OfferTreaty", new { targetClanID = them.ClanID })">
-      Status: @Html.DropDownList("ourStatus", Enum.GetValues(typeof(AllyStatus)).OfType<AllyStatus>().Select(x => new SelectListItem() { Text = x.ToString(), Value = ((int)x).ToString(), Selected = our.AllyStatus == x }))
-      Research: @Html.CheckBox("ourResearch", our.IsResearchAgreement)<input type="submit" value="offer"/><br />
-      @Html.TextArea("ourMessage", our.OfferingClanMessage, new { rows = 2, cols = 30 })
-    </form>
-    } else { 
-    <span>
-      Status: @our.AllyStatus  Research: @our.IsResearchAgreement<br />
-      @our.OfferingClanMessage<br />
-    </span>
-    }
-  } else { 
-    <span>
-      Status: @our.AllyStatus  Research: @our.IsResearchAgreement<br />
-    </span>
+  if (effective.AllyStatus != AllyStatus.Neutral || effective.IsResearchAgreement) {
+   <span>@Html.PrintClan(them) - @Html.PrintTreaty(effective)</span> <br />
   }
-  </td>
-  <td valign='top'>Their offer:<br />
-    <span>
-      Status: @their.AllyStatus  Research: @their.IsResearchAgreement<br />
-    </span>
-  </td>
-  </tr>  
 }
-</table>
+
 
 
 <h3>Members</h3>
@@ -99,6 +65,7 @@
   <th>Name </th>
   <th>Influence </th>
   <th>Credits </th>
+  <th>Dropships </th>
   <th></th>
   <th></th>
   @foreach (var a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence))) {
@@ -111,6 +78,7 @@
       </td>
       <td>@a.Credits
       </td>
+      <td>@a.DropshipCount</td>
       <td>
         @{
      var role = "";

@@ -21,14 +21,14 @@
     <file relUrl="Styles/base.css" publishTime="02/05/2011 13:25:09" />
     <file relUrl="Views/Planetwars/Galaxy.cshtml" publishTime="04/25/2011 22:53:44" />
     <file relUrl="Global.asax" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="bin/ZeroKWeb.pdb" publishTime="04/26/2011 01:03:28" />
+    <file relUrl="bin/ZeroKWeb.pdb" publishTime="04/26/2011 02:13:54" />
     <file relUrl="Views/Maps/MapTileList.cshtml" publishTime="02/03/2011 17:16:47" />
-    <file relUrl="Views/Planetwars/Clan.cshtml" publishTime="04/25/2011 15:50:40" />
+    <file relUrl="Views/Planetwars/Clan.cshtml" publishTime="04/26/2011 02:07:31" />
     <file relUrl="Img/bullet.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="Img/zk_logo_miniature.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="Styles/menu.css" publishTime="04/22/2011 14:07:09" />
     <file relUrl="Views/Poll/PollVoteList.cshtml" publishTime="03/26/2011 15:29:51" />
-    <file relUrl="bin/ZeroKWeb.dll" publishTime="04/26/2011 01:03:28" />
+    <file relUrl="bin/ZeroKWeb.dll" publishTime="04/26/2011 02:13:54" />
     <file relUrl="Views/Shared/_SiteLayout.cshtml" publishTime="04/22/2011 19:42:54" />
     <file relUrl="LobbyStart.inc" publishTime="04/19/2011 13:37:01" />
     <file relUrl="Img/img_progressbar1_h.png" publishTime="03/30/2011 01:35:20" />
@@ -40,6 +40,7 @@
     <file relUrl="Scripts/jquery.ui.stars.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="bin/PlanetWarsShared.dll" publishTime="03/16/2010 23:09:37" />
     <file relUrl="StructuresAdmin.aspx" publishTime="04/15/2011 23:24:43" />
+    <file relUrl="Views/Planetwars/ClanDiplomacy.cshtml" publishTime="04/26/2011 02:12:39" />
     <file relUrl="Img/Loader.gif" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Views/Shared/CommentList.cshtml" publishTime="04/17/2011 13:36:32" />
     <file relUrl="UnlocksAdmin.aspx" publishTime="04/15/2011 21:53:45" />
@@ -50,7 +51,7 @@
     <file relUrl="Views/Shared/PlanetDropships.cshtml" publishTime="04/25/2011 13:11:12" />
     <file relUrl="bin/MonoTorrent.dll" publishTime="04/19/2011 16:59:53" />
     <file relUrl="Views/Planetwars/Index.cshtml" publishTime="04/17/2011 02:27:48" />
-    <file relUrl="bin/PlasmaShared.dll" publishTime="04/26/2011 01:03:26" />
+    <file relUrl="bin/PlasmaShared.dll" publishTime="04/26/2011 02:07:32" />
     <file relUrl="Views/Shared/UserDetail.cshtml" publishTime="04/26/2011 01:03:11" />
     <file relUrl="Views/Maps/Detail.cshtml" publishTime="04/17/2011 13:36:04" />
     <file relUrl="Views/Ladders/ladders.cshtml" publishTime="04/15/2011 22:25:38" />
@@ -81,7 +82,7 @@
     <file relUrl="Views/Maps/MapTags.cshtml" publishTime="01/02/2011 03:33:08" />
     <file relUrl="Img/img_progressbar2_h.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="ErrorReports.aspx" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="bin/PlasmaShared.pdb" publishTime="04/26/2011 01:03:26" />
+    <file relUrl="bin/PlasmaShared.pdb" publishTime="04/26/2011 02:07:32" />
     <file relUrl="Img/ntbgw.png" publishTime="02/19/2011 14:05:55" />
     <file relUrl="Views/Shared/InfluenceList.cshtml" publishTime="04/23/2011 18:03:21" />
     <file relUrl="Views/Forum/ForumPath.cshtml" publishTime="01/04/2011 19:24:41" />
