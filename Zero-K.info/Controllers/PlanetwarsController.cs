@@ -305,6 +305,7 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult KickPlayerFromClan(int clanID, int accountID)
 		{
+			return Content("Kicking is not allowed while seasons are in progress.");
 			var db = new ZkDataContext();
 			var clan = db.Clans.Single(c => clanID == c.ClanID);
 			// todo: disallow kicking after the round starts
