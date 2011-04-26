@@ -431,9 +431,9 @@ namespace ZeroKWeb.Controllers
 					foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) planet.PlanetStructures.Remove(structure); //  delete structure
 
 					// find who will own it
-					// in case of a tie when deciding which PLAYER to get a planet - give it to one with more total ip/planet count
+					// in case of a tie when deciding which PLAYER to get a planet - give it to one with least planets
 					var mostInfluentialPlayer =
-						planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(x => x.Influence + x.ShadowInfluence).ThenByDescending(x => x.Account.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence) / (x.Account.Planets.Count() + 1)).First().Account;
+						planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(x => x.Influence + x.ShadowInfluence).ThenBy(x => x.Account.Planets.Count()).First().Account;
 
 
 					if (planet.OwnerAccountID == null) // no previous owner
