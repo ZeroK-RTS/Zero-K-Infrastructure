@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -96,7 +97,17 @@ namespace GalaxyDesigner
 		public void AskForImageSource()
 		{
 			var dialog = new OpenFileDialog { Filter = "JPEG files (*.jpg)|*.jpg|All files (*.*)|*.*", Title = "Select a galaxy background image." };
-			if (dialog.ShowDialog().Value) ImageSource = new BitmapImage(new Uri(dialog.FileName, UriKind.Relative));
+			if (dialog.ShowDialog().Value)
+			{
+				var img = new BitmapImage(new Uri(dialog.FileName, UriKind.Relative));
+				var dpi = 96;
+				var width = img.PixelWidth;
+				var height = img.PixelHeight;
+				var stride = width * 4; // 4 bytes per pixel
+				var pixelData = new byte[stride * height];
+				img.CopyPixels(pixelData, stride, 0);
+				ImageSource = BitmapSource.Create(width, height, dpi, dpi, PixelFormats.Bgra32, null, pixelData, stride);
+			}
 			else if (ImageSource == null) Environment.Exit(1);
 		}
 
@@ -213,67 +224,72 @@ namespace GalaxyDesigner
 
 		public void SaveGalaxy(int galaxyNumber)
 		{
-			try
+			// using (var scope = new TransactionScope())
 			{
-				var db = new ZkDataContext();
-				var gal = db.Galaxies.SingleOrDefault(x => x.GalaxyID == galaxyNumber);
-				if (gal == null || galaxyNumber == 0)
+				try
 				{
-					gal = new Galaxy();
-					db.Galaxies.InsertOnSubmit(gal);
-				} 
-				else if (gal.Started != null)
-				{
-					MessageBox.Show("This galaxy is running, cannot edit it!");
-					return;
-				}
-				else
-				{
-					db.Links.DeleteAllOnSubmit(gal.Links);
-					db.Planets.DeleteAllOnSubmit(gal.Planets);
-				}
-				gal.IsDirty = true;
-				db.SubmitChanges();
-				galaxyNumber = gal.GalaxyID;
-
-				var maps = Maps.Shuffle();
-				var cnt = 0;
-
-				foreach (var d in PlanetDrawings)
-				{
-					var p = d.Planet;
-					p.GalaxyID = galaxyNumber;
-					p.OwnerAccountID = null;
-					p.X = (float)(Canvas.GetLeft(d)/imageSource.Width);
-					p.Y = (float)(Canvas.GetTop(d)/imageSource.Height);
-					if (p.MapResourceID == null)
+					var db = new ZkDataContext();
+					var gal = db.Galaxies.SingleOrDefault(x => x.GalaxyID == galaxyNumber);
+					if (gal == null || galaxyNumber == 0)
 					{
-						p.MapResourceID = maps[cnt].ResourceID;
-						cnt++;
+						gal = new Galaxy();
+						db.Galaxies.InsertOnSubmit(gal);
 					}
-					else maps.RemoveAll(x => x.ResourceID == p.MapResourceID);
+					else if (gal.Started != null)
+					{
+						MessageBox.Show("This galaxy is running, cannot edit it!");
+						return;
+					}
+					else
+					{
+						db.Links.DeleteAllOnSubmit(gal.Links);
+						db.Planets.DeleteAllOnSubmit(gal.Planets);
+					}
+					gal.IsDirty = true;
+					db.SubmitChanges();
+					galaxyNumber = gal.GalaxyID;
 
-					var clone = p.DbClone();
-					clone.PlanetStructures.AddRange(p.PlanetStructures.Select(x => new PlanetStructure() { StructureTypeID = x.StructureTypeID }));
-					gal.Planets.Add(clone);
-				}
-				db.SubmitChanges();
+					var maps = Maps.Shuffle();
+					var cnt = 0;
 
-				var linkList =
-					LinkDrawings.Select(
-						d =>
-						new Link()
+					foreach (var d in PlanetDrawings)
+					{
+						var p = d.Planet;
+						p.GalaxyID = galaxyNumber;
+						p.OwnerAccountID = null;
+						p.X = (float)(Canvas.GetLeft(d)/imageSource.Width);
+						p.Y = (float)(Canvas.GetTop(d)/imageSource.Height);
+						if (p.MapResourceID == null)
 						{
-							GalaxyID = galaxyNumber,
-							PlanetID1 = db.Planets.Single(x => x.GalaxyID == galaxyNumber && x.Name == d.Planet1.Planet.Name).PlanetID,
-							PlanetID2 = db.Planets.Single(x => x.GalaxyID == galaxyNumber && x.Name == d.Planet2.Planet.Name).PlanetID
-						});
-				db.Links.InsertAllOnSubmit(linkList);
-				db.SubmitChanges();
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.ToString());
+							p.MapResourceID = maps[cnt].ResourceID;
+							cnt++;
+							cnt = cnt%maps.Count;
+						}
+
+						var clone = p.DbClone();
+						clone.PlanetStructures.AddRange(p.PlanetStructures.Select(x => new PlanetStructure() { StructureTypeID = x.StructureTypeID }));
+						gal.Planets.Add(clone);
+					}
+					db.SubmitChanges();
+
+					var linkList =
+						LinkDrawings.Select(
+							d =>
+							new Link()
+							{
+								GalaxyID = galaxyNumber,
+								PlanetID1 = db.Planets.Single(x => x.GalaxyID == galaxyNumber && x.Name == d.Planet1.Planet.Name).PlanetID,
+								PlanetID2 = db.Planets.Single(x => x.GalaxyID == galaxyNumber && x.Name == d.Planet2.Planet.Name).PlanetID
+							});
+					db.Links.InsertAllOnSubmit(linkList);
+					db.SubmitChanges();
+					// scope.Complete();
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.ToString());
+				}
+				MessageBox.Show("Exported!");
 			}
 		}
 
