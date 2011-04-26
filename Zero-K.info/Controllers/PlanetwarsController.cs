@@ -407,10 +407,13 @@ namespace ZeroKWeb.Controllers
 			foreach (var planet in gal.Planets)
 			{
 				var currentOwnerClanID = planet.Account != null ? planet.Account.ClanID : null;
+
+				// in case of a tie when deciding which CLAN to get a planet - give to one with less planets
 				var mostInfluentialClanEntry =
 					planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x => x.Key != null).Select(
 							x => new { Clan = x.Key, ClanInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(
-						x=>x.ClanInfluence).FirstOrDefault();
+						x => x.ClanInfluence).ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
+
 
 				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) && planet.Account != null) 
 				{
@@ -428,9 +431,10 @@ namespace ZeroKWeb.Controllers
 					foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) planet.PlanetStructures.Remove(structure); //  delete structure
 
 					// find who will own it
+					// in case of a tie when deciding which PLAYER to get a planet - give it to one with more total ip/planet count
 					var mostInfluentialPlayer =
-						planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(
-							ap => ap.Influence + ap.ShadowInfluence).First().Account;
+						planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(x => x.Influence + x.ShadowInfluence).ThenByDescending(x => x.Account.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence) / (x.Account.Planets.Count() + 1)).First().Account;
+
 
 					if (planet.OwnerAccountID == null) // no previous owner
 					{
@@ -531,6 +535,7 @@ namespace ZeroKWeb.Controllers
 			                               	Quantity = quantity,
 			                               	Price = price,
 			                               });
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} {2} influence for {3}/unit at {4}",Global.Account, isSell?"offers":"asks for", quantity, price, db.Planets.Single(x=>x.PlanetID==planetID)));
 			db.SubmitChanges();
 			ResolveMarketTransactions(db);
 			return RedirectToAction("Planet", new { id = planetID });

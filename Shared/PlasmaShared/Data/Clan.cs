@@ -60,7 +60,11 @@ namespace ZkData
 			var t2 = t1.ClanByTargetClanID.TreatyOffersByOfferingClanID.FirstOrDefault(x => x.TargetClanID == this.ClanID);
 			if (t2 != null)
 			{
-				ret.AllyStatus = (AllyStatus)Math.Min((int)t1.AllyStatus, (int)t2.AllyStatus);
+				ret.AllyStatus = (AllyStatus)Math.Min((int)t1.AllyStatus, (int)t2.AllyStatus); 
+				// the above didnt work for -1 war for some reason..
+				if (t1.AllyStatus ==AllyStatus.War || t2.AllyStatus == AllyStatus.War)
+					ret.AllyStatus =AllyStatus.War;
+				
 				ret.IsResearchAgreement = t1.IsResearchAgreement && t2.IsResearchAgreement;
 			}
 			return ret;

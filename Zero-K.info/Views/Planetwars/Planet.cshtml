@@ -157,12 +157,12 @@
 }
 
 
-<h2>Trade</h2>
+<h2>Influence trading</h2>
 <h3>Sell Offers</h3>
       <table>
         <tr>
             <th>Quantity</th>
-            <th>Price</th>
+            <th>Price/unit</th>
             <th>Seller</th>
         </tr>
     @foreach (var offer in Model.MarketOffers.Where(o => o.IsSell && o.DateAccepted == null).OrderBy(o => o.Price))
@@ -195,8 +195,8 @@
   
   <form method="post" action="@Url.Action("SubmitSellOrder")">
       <input type="hidden" name="planetID" value="@Model.PlanetID"/>
-      Quantity: <input type="text" name="quantity" value="@myInfluence"/>
-      Price: <input type="text" name="price" value="100"/>
+      Quantity (influence): <input type="text" name="quantity" value="@myInfluence"/>
+      Price (per unit): <input type="text" name="price" value="100"/>
       <input type='submit' value="Place Sell Order" />
   </form>
 }
@@ -204,7 +204,7 @@
       <table>
         <tr>
             <th>Quantity</th>
-            <th>Price</th>
+            <th>Price/unit</th>
             <th>Buyer</th>
         </tr>
     @foreach (var offer in Model.MarketOffers.Where(o => !o.IsSell && o.DateAccepted == null).OrderBy(o => o.Price))
@@ -225,8 +225,8 @@
     {
     <form method="post" action="@Url.Action("SubmitBuyOrder")">
         <input type="hidden" name="planetID" value="@Model.PlanetID"/>
-        Quantity: <input type="text" name="quantity" value="0"/>
-        Price: <input type="text" name="price" value="0"/>
+        Quantity (influence): <input type="text" name="quantity" value="0"/>
+        Price (per unit): <input type="text" name="price" value="0"/>
         <input type='submit' value="Place Buy Order" />
     </form>
     }
