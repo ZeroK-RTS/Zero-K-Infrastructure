@@ -18,7 +18,7 @@
 @foreach (var them in new ZkDataContext().Clans.Where(x => x.ClanID != Model.ClanID)) {
   var our = c.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == them.ClanID) ?? new TreatyOffer();
   var their = them.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == c.ClanID) ?? new TreatyOffer();
-  var effective = them.GetEffectiveTreaty(Model.ClanID);
+  var effective = them.GetEffectiveTreaty(Model);
   
   <tr>
   <td colspan='2'><b>@Html.PrintClan(them) - <span style='color:@Clan.AllyStatusColor(effective.AllyStatus)'>@them.ClanName</span> - @Html.PrintTreaty(effective) </b>

@@ -54,7 +54,7 @@ namespace ZeroKWeb
 				{
 					for (var j = 0; j < i; j++)
 					{
-						var treaty = clans[i].GetEffectiveTreaty(clans[j].ClanID);
+						var treaty = clans[i].GetEffectiveTreaty(clans[j]);
 						treaties[Tuple.Create(clans[i], clans[j])] = treaty;
 						treaties[Tuple.Create(clans[j], clans[i])] = treaty;
 					}
@@ -599,7 +599,7 @@ namespace ZeroKWeb
 						var targetAccount = p.Account;
 						if (ownerClan != null && p.Account.Clan != null && p.Account.Clan != ownerClan)
 						{
-							var treaty = ownerClan.GetEffectiveTreaty(p.Account.ClanID.Value); // if ceasefired/allianced - give ip to owner
+							var treaty = ownerClan.GetEffectiveTreaty(p.Account.Clan); // if ceasefired/allianced - give ip to owner
 							if (treaty.AllyStatus == AllyStatus.Ceasefire || treaty.AllyStatus == AllyStatus.Alliance) targetAccount = planet.Account;
 						}
 						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == targetAccount.AccountID);

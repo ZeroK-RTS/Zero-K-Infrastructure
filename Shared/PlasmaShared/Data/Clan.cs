@@ -34,7 +34,7 @@ namespace ZkData
 		{
 			if (clan1 == null || clan2 == null) return "";
 			if (clan1.ClanID  == clan2.ClanID) return "#00FFFF";
-			var t = clan1.GetEffectiveTreaty(clan2.ClanID);
+			var t = clan1.GetEffectiveTreaty(clan2);
 			return AllyStatusColor(t.AllyStatus);
 		}
 
@@ -52,6 +52,27 @@ namespace ZkData
 			return "#FFFFFF";
 		}
 
+		public EffectiveTreaty GetEffectiveTreaty(Clan secondClan)
+		{
+			if (secondClan == null) return new EffectiveTreaty();
+			var t1 = this.TreatyOffersByOfferingClanID.FirstOrDefault(x => x.TargetClanID == secondClan.ClanID);
+			var ret = new EffectiveTreaty();
+			TreatyOffer t2 = null;
+			if (t1 == null) {
+				t2 = secondClan.TreatyOffersByOfferingClanID.FirstOrDefault(x => x.TargetClanID == this.ClanID);
+				if (t2 != null && t2.AllyStatus == AllyStatus.War) ret.AllyStatus = AllyStatus.War;
+			} else {
+				t2 = t1.ClanByTargetClanID.TreatyOffersByOfferingClanID.FirstOrDefault(x => x.TargetClanID == this.ClanID);
+				if (t1.AllyStatus == AllyStatus.War) ret.AllyStatus = AllyStatus.War;
+				if (t2 != null) {
+					ret.AllyStatus = (AllyStatus)Math.Min((int)t1.AllyStatus, (int)t2.AllyStatus);
+					ret.IsResearchAgreement = t1.IsResearchAgreement && t2.IsResearchAgreement;
+				}
+			}
+			return ret;
+		}
+
+		/*
 		public EffectiveTreaty GetEffectiveTreaty(int secondClanID)
 		{
 			var t1 = this.TreatyOffersByOfferingClanID.FirstOrDefault(x => x.TargetClanID == secondClanID);
@@ -68,7 +89,7 @@ namespace ZkData
 				ret.IsResearchAgreement = t1.IsResearchAgreement && t2.IsResearchAgreement;
 			}
 			return ret;
-		}
+		}*/
 
 	}
 

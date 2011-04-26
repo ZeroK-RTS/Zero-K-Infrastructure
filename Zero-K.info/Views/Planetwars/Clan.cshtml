@@ -52,7 +52,7 @@
 }
 <h3><a href='@Url.Action("ClanDiplomacy",new {id=Model.ClanID})'>Diplomacy</a></h3>
 @foreach (var them in new ZkDataContext().Clans.Where(x => x.ClanID != Model.ClanID)) {
-  var effective = them.GetEffectiveTreaty(Model.ClanID);
+  var effective = them.GetEffectiveTreaty(Model);
   if (effective.AllyStatus != AllyStatus.Neutral || effective.IsResearchAgreement) {
    <span>@Html.PrintClan(them) - @Html.PrintTreaty(effective)</span> <br />
   }

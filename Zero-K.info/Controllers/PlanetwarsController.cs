@@ -106,7 +106,7 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var clan = db.Clans.Single(x => x.ClanID == Global.ClanID);
 			var targetClan = db.Clans.Single(x => x.ClanID == targetClanID);
-			var oldEffect = clan.GetEffectiveTreaty(targetClanID);
+			var oldEffect = clan.GetEffectiveTreaty(targetClan);
 			var entry = clan.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == targetClanID);
 			if (entry == null)
 			{
@@ -119,7 +119,7 @@ namespace ZeroKWeb.Controllers
 			db.SubmitChanges();
 			db.Events.InsertOnSubmit(Global.CreateEvent("{0} offers {1}, research: {2} to {3}", clan, ourStatus, ourResearch, targetClan));
 
-			var newEffect = clan.GetEffectiveTreaty(targetClanID);
+			var newEffect = clan.GetEffectiveTreaty(targetClan);
 
 			if (newEffect.AllyStatus != oldEffect.AllyStatus || newEffect.IsResearchAgreement != oldEffect.IsResearchAgreement)
 			{
