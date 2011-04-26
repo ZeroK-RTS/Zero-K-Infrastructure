@@ -29,6 +29,10 @@ namespace ZkData
 			return string.Format("/img/clans/{0}.png", ClanID);
 		}
 
+        public string GetBGImageUrl()
+        {   return string.Format("/img/clans/{0}_bg.png", ClanID);
+        }
+
 
 		public static string TreatyColor(Clan clan1, Clan clan2)
 		{

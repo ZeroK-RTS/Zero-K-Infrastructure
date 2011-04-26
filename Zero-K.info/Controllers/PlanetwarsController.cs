@@ -474,7 +474,7 @@ namespace ZeroKWeb.Controllers
 
 
 		[Auth]
-		public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image)
+        public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage)
 		{
 			var db = new ZkDataContext();
 			var created = clan.ClanID == 0; // existing clan vs creation
@@ -505,6 +505,14 @@ namespace ZeroKWeb.Controllers
 				db.SubmitChanges(); // needed to get clan id for image url - stupid way really
 				im.Save(Server.MapPath(clan.GetImageUrl()));
 			}
+            if (bgimage != null && bgimage.ContentLength > 0)
+            {
+                var im = Image.FromStream(bgimage.InputStream);
+                db.SubmitChanges(); // needed to get clan id for image url - stupid way really
+                                    // DW - Actually its not stupid, its required to enforce locking.
+                                    // It would be possbile to enforce a pre-save id
+                im.Save(Server.MapPath(clan.GetBGImageUrl()));
+            }
 			db.SubmitChanges();
 
 			if (created) // we created a new clan, set self as founder and rights
