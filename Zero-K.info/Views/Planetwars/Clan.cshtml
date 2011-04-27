@@ -7,34 +7,28 @@
   Page.Title = Model.ClanName + " - " + Model.Shortcut + " clan detail";
 }
 @Html.ActionLink("Back to clan list", "ClanList")
-@{/*if (File.Exists(Server.MapPath(c.GetBGImageUrl())))
-  { <script>
+@{if (File.Exists(Server.MapPath(c.GetBGImageUrl())))
+  { /*<script>
         function loadClanBGImage() {
 
             $("body").css("background-image", 'url(@c.GetBGImageUrl())');
         }
         $(document).ready(loadClanBGImage);
     </script>
+    */
+    <style type="text/css">
+        html 
+        { background: #000 url(@c.GetBGImageUrl()) no-repeat scroll 50% 0; background-attachment: fixed; 
+        }
+    </style>
   }
-  else
-  { <script>        alert("no Imaeg");
-  </script>
-    
-  }*/
-<style type="text/css">
-    html 
-    { background: #000 url(@c.GetBGImageUrl()) no-repeat scroll 50% 0; background-attachment: fixed; 
-    }
-</style>
-  
-}
 
 <h2>@c.ClanName</h2>
 <table>
   <tr>
     <td>
       @{
-        var infl = Model.Accounts.SelectMany(x => x.AccountPlanets);
+          var infl = Model.Accounts.SelectMany(x => x.AccountPlanets);
       }
       <h3>@Html.PrintClan(c)</h3>
       <img  src='@c.GetImageUrl()'/><br />
@@ -49,14 +43,16 @@
     </td>
   </tr>
 </table>
-@if (c.CanJoin(Global.Account)) {
+@if (c.CanJoin(Global.Account))
+{
   @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })
 }
 <h3>Dropships</h3>
 <span nowrap="nowrap">@Model.Accounts.Sum(x => x.DropshipCount)/@(Model.Accounts.Count() * GlobalConst.DefaultDropshipCapacity + Model.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity))
   ready to deploy</span>
 <table>
-  @foreach (var p in Model.Accounts.SelectMany(x => x.AccountPlanets).GroupBy(x => x.Planet).Select(x => new { planet = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
+  @foreach (var p in Model.Accounts.SelectMany(x => x.AccountPlanets).GroupBy(x => x.Planet).Select(x => new { planet = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships))
+  { 
     <tr>
       <td>@Html.PrintPlanet(p.planet)</td>
       <td>
@@ -64,20 +60,24 @@
     </tr>
   }
 </table>
-@if (isMember) {
+@if (isMember)
+{
   <b>Secret topic:</b><br />
   @Html.BBCode(c.SecretTopic)
 }
-@if (isMember && Global.Account.HasClanRights) { //has rights
+@if (isMember && Global.Account.HasClanRights)
+{ //has rights
   <br />
   @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })
 }
-<h3><a href='@Url.Action("ClanDiplomacy",new {id=Model.ClanID})'>Diplomacy</a></h3>
-@foreach (var them in new ZkDataContext().Clans.Where(x => x.ClanID != Model.ClanID)) {
-  var effective = them.GetEffectiveTreaty(Model);
-  if (effective.AllyStatus != AllyStatus.Neutral || effective.IsResearchAgreement) {
+<h3><a href='@Url.Action("ClanDiplomacy", new { id = Model.ClanID })'>Diplomacy</a></h3>
+@foreach (var them in new ZkDataContext().Clans.Where(x => x.ClanID != Model.ClanID))
+{
+    var effective = them.GetEffectiveTreaty(Model);
+    if (effective.AllyStatus != AllyStatus.Neutral || effective.IsResearchAgreement)
+    {
    <span>@Html.PrintClan(them) - @Html.PrintTreaty(effective)</span> <br />
-  }
+    }
 }
 
 
@@ -90,7 +90,8 @@
   <th>Dropships </th>
   <th></th>
   <th></th>
-  @foreach (var a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence))) {
+  @foreach (var a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence)))
+  {
     <tr>
       <td>
         @Html.PrintAccount(a)
@@ -109,16 +110,18 @@
         @role
       </td>
       <td>
-        @if (isMember && Global.Account.HasClanRights && !a.IsClanFounder) { //has rights
+        @if (isMember && Global.Account.HasClanRights && !a.IsClanFounder)
+        { //has rights
           @:&nbsp
           // todo: disallow kicking after the round starts
-          var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
+            var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
           @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) }) @:|@Html.ActionLink(a.HasClanRights ? "rights" : "rights", "ChangePlayerRights", new { clanID = c.ClanID, accountID = a.AccountID })
                                                                                                                 
         }
       </td>
     </tr>
-        foreach (var p in a.Planets) {
+        foreach (var p in a.Planets)
+        {
     <tr>
       <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>@Html.PrintPlanet(p)</small> </td>
       <td>&nbsp;&nbsp;&nbsp;<small>@Html.PrintInfluence(a.AccountPlanets.Single(x => x.Planet == p))</small> </td>
@@ -131,7 +134,8 @@
   }
 </table>
 <h3>Clan technologies</h3>
-@foreach (var unlock in Galaxy.ClanUnlocks(new ZkDataContext(), Model.ClanID)) {
+@foreach (var unlock in Galaxy.ClanUnlocks(new ZkDataContext(), Model.ClanID))
+{
   <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  >
     <img src="@unlock.ImageUrl"/><br />
     @unlock.Name
@@ -142,6 +146,7 @@
 <br />
 @Html.ActionLink("Back to clan list", "ClanList")
 <hr />
-@if (isMember) {
-  Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { clanID = c.ClanID, threadID = Model.ForumThreadID } });
+@if (isMember)
+{
+    Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { clanID = c.ClanID, threadID = Model.ForumThreadID } });
 }
