@@ -2,7 +2,7 @@
 {
 	public static class GlobalConst
 	{
-		public const int MaxClanSkilledSize =8;
+		public const int MaxClanSkilledSize =12;
 		public const int XpForMissionOrBots = 25;
 		public const int XpForMissionOrBotsVictory = 50;
 		public const double EloWeightMax = 6;
