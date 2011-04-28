@@ -135,8 +135,6 @@
     }
     using (var db = new ZkDataContext())
     {
-        //db.Accounts.Single(a => a.AccountID == Global.AccountID).Credits = 10000;
-        //db.SubmitChanges();
         var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
         foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable))
         {
