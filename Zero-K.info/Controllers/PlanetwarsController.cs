@@ -411,18 +411,18 @@ namespace ZeroKWeb.Controllers
 				// in case of a tie when deciding which CLAN to get a planet - give to one with less planets
 				var mostInfluentialClanEntry =
 					planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x => x.Key != null).Select(
-							x => new { Clan = x.Key, ClanInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(
+							x => new { Clan = x.Key, ClanInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0, RealInfluence =(int?)x.Sum(y=>y.Influence)??0 }).OrderByDescending(
 						x => x.ClanInfluence).ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
 
 
-				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) && planet.Account != null) 
+				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.RealInfluence <= 0) && planet.Account != null) 
 				{
 					// disown the planet, nobody has right to own it atm
 					db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {2} has abandoned planet {1}. {3}", planet.Account, planet, planet.Account.Clan, sb));
 					planet.Account = null;
 					havePlanetsChangedHands = true;
 				} else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID &&
-				    mostInfluentialClanEntry.ClanInfluence > planet.GetIPToCapture())
+				    mostInfluentialClanEntry.RealInfluence > planet.GetIPToCapture())
 				{
 					// planet changes owner, most influential clan is not current owner and has more ip to capture than needed
 

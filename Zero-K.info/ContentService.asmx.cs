@@ -173,7 +173,7 @@ namespace ZeroKWeb
 					}
 
 					if (compoScore < 0) continue; // get meaningfull teams only
-					var score = balanceModifier + compoScore;
+					var score = -Math.Abs(balanceModifier) + compoScore;
 
 					if (score > bestScore)
 					{
