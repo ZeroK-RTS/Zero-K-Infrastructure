@@ -23,10 +23,11 @@ namespace ZeroKWeb
 		// [System.Web.Script.Services.ScriptService]
 	public class ContentService: WebService
 	{
+
 		[WebMethod]
-		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams, AutohostMode mode = AutohostMode.Planetwars)
+		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams)
 		{
-			mode = GetModeFromHost(autoHost);
+			var mode = GetModeFromHost(autoHost);
 			if (currentTeams.Count < 1) return new BalanceTeamsResult() { Message = "Not enough players" };
 			using (var db = new ZkDataContext())
 			{
@@ -268,8 +269,9 @@ namespace ZeroKWeb
 
 
 		[WebMethod]
-		public RecommendedMapResult GetRecommendedMap(string autohostName, AutohostMode mode = AutohostMode.GameTeams)
+		public RecommendedMapResult GetRecommendedMap(string autohostName)
 		{
+			var mode = GetModeFromHost(autohostName);
 			var res = new RecommendedMapResult();
 			using (var db = new ZkDataContext())
 			{
@@ -512,14 +514,15 @@ namespace ZeroKWeb
 		                                       string password,
 		                                       BattleResult result,
 		                                       List<BattlePlayerResult> players,
-		                                       AutohostMode mode = AutohostMode.GameTeams)
+		                                       List<string> extraData)
 		{
 			try
 			{
 				var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
 				if (acc == null) throw new Exception("Account name or password not valid");
+				if (extraData == null) extraData = new List<string>();
 
-				mode = GetModeFromHost(accountName);
+				var mode = GetModeFromHost(accountName);
 
 				var db = new ZkDataContext();
 				var sb = new SpringBattle()
@@ -555,27 +558,26 @@ namespace ZeroKWeb
 				}
 
 				db.SubmitChanges();
-				foreach (var p in players)
+
+				
+				// awards
+				foreach (var line in extraData.Where(x => x.StartsWith("award")))
 				{
-					foreach (var a in p.Awards)
-					{
-						db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
-						                                      {
-						                                      	AccountID = p.AccountID,
-						                                      	SpringBattleID = sb.SpringBattleID,
-						                                      	AwardKey = a.Award,
-						                                      	AwardDescription = a.Description
-						                                      });
-					}
+					var partsSpace = line.Substring(6).Split(new[] { ' ' }, 3);
+					var name = partsSpace[0];
+					var awardType = partsSpace[1];
+					var awardText = partsSpace[2];
 
-					foreach (var s in p.Stats)
-					{
-						db.AccountBattleStats.InsertOnSubmit(new AccountBattleStat()
-						                                     { AccountID = p.AccountID, SpringBattleID = sb.SpringBattleID, StatsKey = s.Key, Value = s.Value });
-					}
+					var player = sb.SpringBattlePlayers.Single(x => x.Account.Name == name);
+					db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward() {
+						AccountID = player.AccountID,
+						SpringBattleID = sb.SpringBattleID,
+						AwardKey = awardType,
+						AwardDescription = awardText
+					});
 				}
-
 				db.SubmitChanges();
+
 
 				var orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
@@ -631,6 +633,7 @@ namespace ZeroKWeb
 							text.AppendFormat("{0} gained {1} influence on {2}\n", targetAccount.Name, p.Influence ?? 0, planet.Name);
 						}
 					}
+
 					db.SubmitChanges();
 
 					// destroy existing dropships
@@ -640,6 +643,18 @@ namespace ZeroKWeb
 						ap.DropshipCount = 0;
 						noGrowAccount.Add(ap.AccountID);
 					}
+
+					foreach (var line in extraData.Where(x => x.StartsWith("structurekilled")))
+					{
+						var data = line.Substring(16).Split(',');
+						var unitName = data[0];
+						foreach (var s in db.PlanetStructures.Where(x => x.PlanetID == planet.PlanetID && x.StructureType.IngameUnitName == unitName))
+						{
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}",s.StructureType.Name, ownerClan, planet));
+							db.PlanetStructures.DeleteOnSubmit(s);
+						}
+					}
+					db.SubmitChanges();
 
 					// spawn new dropships
 					foreach (var a in sb.SpringBattlePlayers.Where(x=>!x.IsSpectator).Select(x=>x.Account).Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
@@ -664,10 +679,9 @@ namespace ZeroKWeb
 					var oldOwner = planet.Account;
 					gal.Turn++;
 					db.SubmitChanges();
-					db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
+					//db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
 					PlanetwarsController.SetPlanetOwners(db, sb);
-					
-
+				
 					if (planet.Account != oldOwner && planet.Account != null)
 					{
 						text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",
