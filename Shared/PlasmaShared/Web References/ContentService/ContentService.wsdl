@@ -8,7 +8,6 @@
             <s:element minOccurs="0" maxOccurs="1" name="autoHost" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="map" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="currentTeams" type="tns:ArrayOfAccountTeam" />
-            <s:element minOccurs="1" maxOccurs="1" name="mode" type="tns:AutohostMode" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -25,15 +24,6 @@
           <s:element minOccurs="1" maxOccurs="1" name="TeamID" type="s:int" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="AutohostMode">
-        <s:restriction base="s:string">
-          <s:enumeration value="Planetwars" />
-          <s:enumeration value="Game1v1" />
-          <s:enumeration value="GameTeams" />
-          <s:enumeration value="GameFFA" />
-          <s:enumeration value="GameChickens" />
-        </s:restriction>
-      </s:simpleType>
       <s:element name="BalanceTeamsResponse">
         <s:complexType>
           <s:sequence>
@@ -138,7 +128,6 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="autohostName" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="mode" type="tns:AutohostMode" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -256,6 +245,15 @@
           <s:element minOccurs="1" maxOccurs="1" name="SpringPlayerID" type="s:int" />
         </s:sequence>
       </s:complexType>
+      <s:simpleType name="AutohostMode">
+        <s:restriction base="s:string">
+          <s:enumeration value="Planetwars" />
+          <s:enumeration value="Game1v1" />
+          <s:enumeration value="GameTeams" />
+          <s:enumeration value="GameFFA" />
+          <s:enumeration value="GameChickens" />
+        </s:restriction>
+      </s:simpleType>
       <s:element name="GetSpringBattleStartSetupResponse">
         <s:complexType>
           <s:sequence>
@@ -353,6 +351,22 @@
       <s:element name="SubmitMissionScoreResponse">
         <s:complexType />
       </s:element>
+      <s:element name="AutohostPlayerJoined">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="autohostName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="mapName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="accountID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AutohostPlayerJoinedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AutohostPlayerJoinedResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="SubmitSpringBattleResult">
         <s:complexType>
           <s:sequence>
@@ -360,7 +374,7 @@
             <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:BattleResult" />
             <s:element minOccurs="0" maxOccurs="1" name="players" type="tns:ArrayOfBattlePlayerResult" />
-            <s:element minOccurs="1" maxOccurs="1" name="mode" type="tns:AutohostMode" />
+            <s:element minOccurs="0" maxOccurs="1" name="extraData" type="tns:ArrayOfString" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -444,6 +458,21 @@
       <s:element name="SubmitStackTraceResponse">
         <s:complexType />
       </s:element>
+      <s:element name="VerifyAccountData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="VerifyAccountDataResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="VerifyAccountDataResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="BalanceTeamsSoapIn">
@@ -524,6 +553,12 @@
   <wsdl:message name="SubmitMissionScoreSoapOut">
     <wsdl:part name="parameters" element="tns:SubmitMissionScoreResponse" />
   </wsdl:message>
+  <wsdl:message name="AutohostPlayerJoinedSoapIn">
+    <wsdl:part name="parameters" element="tns:AutohostPlayerJoined" />
+  </wsdl:message>
+  <wsdl:message name="AutohostPlayerJoinedSoapOut">
+    <wsdl:part name="parameters" element="tns:AutohostPlayerJoinedResponse" />
+  </wsdl:message>
   <wsdl:message name="SubmitSpringBattleResultSoapIn">
     <wsdl:part name="parameters" element="tns:SubmitSpringBattleResult" />
   </wsdl:message>
@@ -535,6 +570,12 @@
   </wsdl:message>
   <wsdl:message name="SubmitStackTraceSoapOut">
     <wsdl:part name="parameters" element="tns:SubmitStackTraceResponse" />
+  </wsdl:message>
+  <wsdl:message name="VerifyAccountDataSoapIn">
+    <wsdl:part name="parameters" element="tns:VerifyAccountData" />
+  </wsdl:message>
+  <wsdl:message name="VerifyAccountDataSoapOut">
+    <wsdl:part name="parameters" element="tns:VerifyAccountDataResponse" />
   </wsdl:message>
   <wsdl:portType name="ContentServiceSoap">
     <wsdl:operation name="BalanceTeams">
@@ -589,6 +630,10 @@
       <wsdl:input message="tns:SubmitMissionScoreSoapIn" />
       <wsdl:output message="tns:SubmitMissionScoreSoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="AutohostPlayerJoined">
+      <wsdl:input message="tns:AutohostPlayerJoinedSoapIn" />
+      <wsdl:output message="tns:AutohostPlayerJoinedSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="SubmitSpringBattleResult">
       <wsdl:input message="tns:SubmitSpringBattleResultSoapIn" />
       <wsdl:output message="tns:SubmitSpringBattleResultSoapOut" />
@@ -596,6 +641,10 @@
     <wsdl:operation name="SubmitStackTrace">
       <wsdl:input message="tns:SubmitStackTraceSoapIn" />
       <wsdl:output message="tns:SubmitStackTraceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="VerifyAccountData">
+      <wsdl:input message="tns:VerifyAccountDataSoapIn" />
+      <wsdl:output message="tns:VerifyAccountDataSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="ContentServiceSoap" type="tns:ContentServiceSoap">
@@ -717,6 +766,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="AutohostPlayerJoined">
+      <soap:operation soapAction="http://tempuri.org/AutohostPlayerJoined" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="SubmitSpringBattleResult">
       <soap:operation soapAction="http://tempuri.org/SubmitSpringBattleResult" style="document" />
       <wsdl:input>
@@ -728,6 +786,15 @@
     </wsdl:operation>
     <wsdl:operation name="SubmitStackTrace">
       <soap:operation soapAction="http://tempuri.org/SubmitStackTrace" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="VerifyAccountData">
+      <soap:operation soapAction="http://tempuri.org/VerifyAccountData" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -855,6 +922,15 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="AutohostPlayerJoined">
+      <soap12:operation soapAction="http://tempuri.org/AutohostPlayerJoined" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="SubmitSpringBattleResult">
       <soap12:operation soapAction="http://tempuri.org/SubmitSpringBattleResult" style="document" />
       <wsdl:input>
@@ -866,6 +942,15 @@
     </wsdl:operation>
     <wsdl:operation name="SubmitStackTrace">
       <soap12:operation soapAction="http://tempuri.org/SubmitStackTrace" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="VerifyAccountData">
+      <soap12:operation soapAction="http://tempuri.org/VerifyAccountData" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

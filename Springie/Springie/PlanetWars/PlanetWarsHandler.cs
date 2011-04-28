@@ -68,7 +68,10 @@ namespace Springie.PlanetWars
 
 		public void UserJoined(string name)
 		{
-			try {}
+			try
+			{
+				autoHost.SayBattle(serv.AutohostPlayerJoined(tas.UserName, tas.MyBattle.MapName, tas.ExistingUsers[name].AccountID), true);
+			}
 			catch (Exception ex)
 			{
 				autoHost.SayBattle("PlanetWars error: " + ex);
@@ -89,8 +92,7 @@ namespace Springie.PlanetWars
 				}
 
 				var balance = serv.BalanceTeams(tas.UserName,
-				                                tas.MyBattle.MapName,userList,
-				                                AutohostMode.Planetwars);
+				                                tas.MyBattle.MapName,userList);
 				autoHost.SayBattle(balance.Message);
 				if (balance.BalancedTeams != null)
 				{
@@ -125,7 +127,7 @@ namespace Springie.PlanetWars
 			{
 				if (tas.MyBattle != null && !spring.IsRunning)
 				{
-					var map = serv.GetRecommendedMap(tas.UserName, AutohostMode.Planetwars);
+					var map = serv.GetRecommendedMap(tas.UserName);
 					if (map.MapName != null)
 					{
 						if (tas.MyBattle.MapName != map.MapName)

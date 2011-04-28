@@ -508,6 +508,26 @@ namespace ZeroKWeb
 			}
 		}
 
+		[WebMethod]
+		public string AutohostPlayerJoined(string autohostName, string mapName, int accountID)
+		{
+			var db = new ZkDataContext();
+			var mode = GetModeFromHost(autohostName);
+			if (mode == AutohostMode.Planetwars)
+			{
+				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
+				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+				string clanName = "still without a clan";
+				if (account.ClanID != null) clanName = " of " + account.Clan.ClanName;
+				return string.Format("Greetings {0} {1} of {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
+					                     account.IsClanFounder ? account.Clan.LeaderTitle : "",
+					                     account.Name,
+					                     clanName,
+					                     planet.Name,
+					                     planet.PlanetID);
+			}
+			return null;
+		}
 
 		[WebMethod]
 		public string SubmitSpringBattleResult(string accountName,

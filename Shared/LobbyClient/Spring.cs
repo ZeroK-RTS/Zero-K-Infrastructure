@@ -468,7 +468,7 @@ namespace LobbyClient
 							// set victory team for all allied with currently alive
 							foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null)) foreach (var q in statsPlayers.Values.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber)) q.IsVictoryTeam = true;
 
-							var result = service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray(), authostMode);
+							var result = service.SubmitSpringBattleResult(lobbyUserName, lobbyPassword, battleResult, statsPlayers.Values.ToArray(), statsData.ToArray());
 							if (result != null) foreach (var line in result.Split('\n')) client.Say(TasClient.SayPlace.Battle, "", line, true);
 						}
 						catch (Exception ex)

@@ -55,9 +55,13 @@ namespace PlasmaShared.ContentService {
         
         private System.Threading.SendOrPostCallback SubmitMissionScoreOperationCompleted;
         
+        private System.Threading.SendOrPostCallback AutohostPlayerJoinedOperationCompleted;
+        
         private System.Threading.SendOrPostCallback SubmitSpringBattleResultOperationCompleted;
         
         private System.Threading.SendOrPostCallback SubmitStackTraceOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback VerifyAccountDataOperationCompleted;
         
         private bool useDefaultCredentialsSetExplicitly;
         
@@ -137,37 +141,41 @@ namespace PlasmaShared.ContentService {
         public event SubmitMissionScoreCompletedEventHandler SubmitMissionScoreCompleted;
         
         /// <remarks/>
+        public event AutohostPlayerJoinedCompletedEventHandler AutohostPlayerJoinedCompleted;
+        
+        /// <remarks/>
         public event SubmitSpringBattleResultCompletedEventHandler SubmitSpringBattleResultCompleted;
         
         /// <remarks/>
         public event SubmitStackTraceCompletedEventHandler SubmitStackTraceCompleted;
         
         /// <remarks/>
+        public event VerifyAccountDataCompletedEventHandler VerifyAccountDataCompleted;
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/BalanceTeams", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public BalanceTeamsResult BalanceTeams(string autoHost, string map, AccountTeam[] currentTeams, AutohostMode mode) {
+        public BalanceTeamsResult BalanceTeams(string autoHost, string map, AccountTeam[] currentTeams) {
             object[] results = this.Invoke("BalanceTeams", new object[] {
                         autoHost,
                         map,
-                        currentTeams,
-                        mode});
+                        currentTeams});
             return ((BalanceTeamsResult)(results[0]));
         }
         
         /// <remarks/>
-        public void BalanceTeamsAsync(string autoHost, string map, AccountTeam[] currentTeams, AutohostMode mode) {
-            this.BalanceTeamsAsync(autoHost, map, currentTeams, mode, null);
+        public void BalanceTeamsAsync(string autoHost, string map, AccountTeam[] currentTeams) {
+            this.BalanceTeamsAsync(autoHost, map, currentTeams, null);
         }
         
         /// <remarks/>
-        public void BalanceTeamsAsync(string autoHost, string map, AccountTeam[] currentTeams, AutohostMode mode, object userState) {
+        public void BalanceTeamsAsync(string autoHost, string map, AccountTeam[] currentTeams, object userState) {
             if ((this.BalanceTeamsOperationCompleted == null)) {
                 this.BalanceTeamsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnBalanceTeamsOperationCompleted);
             }
             this.InvokeAsync("BalanceTeams", new object[] {
                         autoHost,
                         map,
-                        currentTeams,
-                        mode}, this.BalanceTeamsOperationCompleted, userState);
+                        currentTeams}, this.BalanceTeamsOperationCompleted, userState);
         }
         
         private void OnBalanceTeamsOperationCompleted(object arg) {
@@ -298,26 +306,24 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetRecommendedMap", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public RecommendedMapResult GetRecommendedMap(string autohostName, AutohostMode mode) {
+        public RecommendedMapResult GetRecommendedMap(string autohostName) {
             object[] results = this.Invoke("GetRecommendedMap", new object[] {
-                        autohostName,
-                        mode});
+                        autohostName});
             return ((RecommendedMapResult)(results[0]));
         }
         
         /// <remarks/>
-        public void GetRecommendedMapAsync(string autohostName, AutohostMode mode) {
-            this.GetRecommendedMapAsync(autohostName, mode, null);
+        public void GetRecommendedMapAsync(string autohostName) {
+            this.GetRecommendedMapAsync(autohostName, null);
         }
         
         /// <remarks/>
-        public void GetRecommendedMapAsync(string autohostName, AutohostMode mode, object userState) {
+        public void GetRecommendedMapAsync(string autohostName, object userState) {
             if ((this.GetRecommendedMapOperationCompleted == null)) {
                 this.GetRecommendedMapOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRecommendedMapOperationCompleted);
             }
             this.InvokeAsync("GetRecommendedMap", new object[] {
-                        autohostName,
-                        mode}, this.GetRecommendedMapOperationCompleted, userState);
+                        autohostName}, this.GetRecommendedMapOperationCompleted, userState);
         }
         
         private void OnGetRecommendedMapOperationCompleted(object arg) {
@@ -576,24 +582,57 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string AutohostPlayerJoined(string autohostName, string mapName, int accountID) {
+            object[] results = this.Invoke("AutohostPlayerJoined", new object[] {
+                        autohostName,
+                        mapName,
+                        accountID});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void AutohostPlayerJoinedAsync(string autohostName, string mapName, int accountID) {
+            this.AutohostPlayerJoinedAsync(autohostName, mapName, accountID, null);
+        }
+        
+        /// <remarks/>
+        public void AutohostPlayerJoinedAsync(string autohostName, string mapName, int accountID, object userState) {
+            if ((this.AutohostPlayerJoinedOperationCompleted == null)) {
+                this.AutohostPlayerJoinedOperationCompleted = new System.Threading.SendOrPostCallback(this.OnAutohostPlayerJoinedOperationCompleted);
+            }
+            this.InvokeAsync("AutohostPlayerJoined", new object[] {
+                        autohostName,
+                        mapName,
+                        accountID}, this.AutohostPlayerJoinedOperationCompleted, userState);
+        }
+        
+        private void OnAutohostPlayerJoinedOperationCompleted(object arg) {
+            if ((this.AutohostPlayerJoinedCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.AutohostPlayerJoinedCompleted(this, new AutohostPlayerJoinedCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitSpringBattleResult", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public string SubmitSpringBattleResult(string accountName, string password, BattleResult result, BattlePlayerResult[] players, AutohostMode mode) {
+        public string SubmitSpringBattleResult(string accountName, string password, BattleResult result, BattlePlayerResult[] players, string[] extraData) {
             object[] results = this.Invoke("SubmitSpringBattleResult", new object[] {
                         accountName,
                         password,
                         result,
                         players,
-                        mode});
+                        extraData});
             return ((string)(results[0]));
         }
         
         /// <remarks/>
-        public void SubmitSpringBattleResultAsync(string accountName, string password, BattleResult result, BattlePlayerResult[] players, AutohostMode mode) {
-            this.SubmitSpringBattleResultAsync(accountName, password, result, players, mode, null);
+        public void SubmitSpringBattleResultAsync(string accountName, string password, BattleResult result, BattlePlayerResult[] players, string[] extraData) {
+            this.SubmitSpringBattleResultAsync(accountName, password, result, players, extraData, null);
         }
         
         /// <remarks/>
-        public void SubmitSpringBattleResultAsync(string accountName, string password, BattleResult result, BattlePlayerResult[] players, AutohostMode mode, object userState) {
+        public void SubmitSpringBattleResultAsync(string accountName, string password, BattleResult result, BattlePlayerResult[] players, string[] extraData, object userState) {
             if ((this.SubmitSpringBattleResultOperationCompleted == null)) {
                 this.SubmitSpringBattleResultOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSubmitSpringBattleResultOperationCompleted);
             }
@@ -602,7 +641,7 @@ namespace PlasmaShared.ContentService {
                         password,
                         result,
                         players,
-                        mode}, this.SubmitSpringBattleResultOperationCompleted, userState);
+                        extraData}, this.SubmitSpringBattleResultOperationCompleted, userState);
         }
         
         private void OnSubmitSpringBattleResultOperationCompleted(object arg) {
@@ -645,6 +684,37 @@ namespace PlasmaShared.ContentService {
             if ((this.SubmitStackTraceCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SubmitStackTraceCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/VerifyAccountData", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public bool VerifyAccountData(string login, string password) {
+            object[] results = this.Invoke("VerifyAccountData", new object[] {
+                        login,
+                        password});
+            return ((bool)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void VerifyAccountDataAsync(string login, string password) {
+            this.VerifyAccountDataAsync(login, password, null);
+        }
+        
+        /// <remarks/>
+        public void VerifyAccountDataAsync(string login, string password, object userState) {
+            if ((this.VerifyAccountDataOperationCompleted == null)) {
+                this.VerifyAccountDataOperationCompleted = new System.Threading.SendOrPostCallback(this.OnVerifyAccountDataOperationCompleted);
+            }
+            this.InvokeAsync("VerifyAccountData", new object[] {
+                        login,
+                        password}, this.VerifyAccountDataOperationCompleted, userState);
+        }
+        
+        private void OnVerifyAccountDataOperationCompleted(object arg) {
+            if ((this.VerifyAccountDataCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.VerifyAccountDataCompleted(this, new VerifyAccountDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -1922,6 +1992,32 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void AutohostPlayerJoinedCompletedEventHandler(object sender, AutohostPlayerJoinedCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class AutohostPlayerJoinedCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal AutohostPlayerJoinedCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void SubmitSpringBattleResultCompletedEventHandler(object sender, SubmitSpringBattleResultCompletedEventArgs e);
     
     /// <remarks/>
@@ -1949,6 +2045,32 @@ namespace PlasmaShared.ContentService {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void SubmitStackTraceCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void VerifyAccountDataCompletedEventHandler(object sender, VerifyAccountDataCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class VerifyAccountDataCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal VerifyAccountDataCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public bool Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((bool)(this.results[0]));
+            }
+        }
+    }
 }
 
 #pragma warning restore 1591
