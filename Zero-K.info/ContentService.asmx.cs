@@ -61,23 +61,23 @@ namespace ZeroKWeb
 					}
 				}
 
-				var sameTeamScore = new int[players.Count,players.Count];
+				var sameTeamScore = new double[players.Count,players.Count];
 				for (var i = 1; i < players.Count; i++)
 				{
 					for (var j = 0; j < i; j++)
 					{
 						var c1 = players[i].Clan;
 						var c2 = players[j].Clan;
-						var points = 0;
+						var points = 0.0;
 						if (c1 != null && c2 != null)
 						{
 							if (c1 == c2) points = 3;
 							else
 							{
 								var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
-								if (treaty.AllyStatus == AllyStatus.Alliance) points = 2;
-								else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 1;
-								else if (treaty.AllyStatus == AllyStatus.War) points = -2;
+								if (treaty.AllyStatus == AllyStatus.Alliance) points = 1.5;
+								else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.5;
+								else if (treaty.AllyStatus == AllyStatus.War) points = -1.5;
 							}
 						}
 						sameTeamScore[i, j] = points;
@@ -138,11 +138,16 @@ namespace ZeroKWeb
 					var teamDiffScore = -(30.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count));
 					if (teamDiffScore < -10) continue; // max imabalance 50% (1v2)
 
+					double balanceModifier = 0;
+					if (team0count < team1count) balanceModifier = -teamDiffScore; else balanceModifier = teamDiffScore;
+
 					// calculate score for elo difference
 					team0Elo = team0Elo/team0Weight;
 					team1Elo = team1Elo/team1Weight;
 					var eloScore = -Math.Abs(team0Elo - team1Elo)/20;
 					if (eloScore < -15) continue; // max 300 elo = 85% chance
+
+					if (team0Elo < team1Elo) balanceModifier += -eloScore; else balanceModifier += eloScore;
 
 					// calculate score for meaningfull teams
 					var compoScore = 0.0;
@@ -168,7 +173,7 @@ namespace ZeroKWeb
 					}
 
 					if (compoScore < 0) continue; // get meaningfull teams only
-					var score = teamDiffScore + eloScore + compoScore;
+					var score = balanceModifier + compoScore;
 
 					if (score > bestScore)
 					{
