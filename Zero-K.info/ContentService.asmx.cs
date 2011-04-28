@@ -519,7 +519,7 @@ namespace ZeroKWeb
 				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
 				string clanName = "still without a clan";
 				if (account.ClanID != null) clanName = " of " + account.Clan.ClanName;
-				return string.Format("Greetings {0} {1} of {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
+				return string.Format("Greetings {0} {1} {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
 					                     account.IsClanFounder ? account.Clan.LeaderTitle : "",
 					                     account.Name,
 					                     clanName,
@@ -664,14 +664,23 @@ namespace ZeroKWeb
 						noGrowAccount.Add(ap.AccountID);
 					}
 
+					List<string> handled = new List<string>();
 					foreach (var line in extraData.Where(x => x.StartsWith("structurekilled")))
 					{
 						var data = line.Substring(16).Split(',');
 						var unitName = data[0];
-						foreach (var s in db.PlanetStructures.Where(x => x.PlanetID == planet.PlanetID && x.StructureType.IngameUnitName == unitName))
+						if (handled.Contains(unitName)) continue;
+						handled.Add(unitName);
+						foreach (var s in db.PlanetStructures.Where(x => x.PlanetID == planet.PlanetID && x.StructureType.IngameUnitName == unitName && !x.IsDestroyed))
 						{
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}",s.StructureType.Name, ownerClan, planet));
-							db.PlanetStructures.DeleteOnSubmit(s);
+							if (s.StructureType.IsIngameDestructible)
+							{
+								if (s.StructureType.IngameDestructionNewStructureTypeID != null) {
+									db.PlanetStructures.DeleteOnSubmit(s);
+									db.PlanetStructures.InsertOnSubmit(new PlanetStructure() { PlanetID = planet.PlanetID, StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value, IsDestroyed = false });
+								} else s.IsDestroyed = true;
+								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}", s.StructureType.Name, ownerClan, planet));
+							}
 						}
 					}
 					db.SubmitChanges();
