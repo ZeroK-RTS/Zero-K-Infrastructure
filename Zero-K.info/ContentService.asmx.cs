@@ -720,7 +720,7 @@ namespace ZeroKWeb
 					{
 						text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",
 						                  planet.Name,
-						                  acc.Name,
+						                  planet.Account.Name,
 						                  planet.PlanetID);
 					}
 					
