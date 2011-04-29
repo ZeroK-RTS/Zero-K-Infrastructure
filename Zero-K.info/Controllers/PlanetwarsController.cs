@@ -597,7 +597,7 @@ namespace ZeroKWeb.Controllers
 			{
 				var db = new ZkDataContext();
 				var planet = db.Planets.Single(p => p.PlanetID == planetID);
-				if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+				if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under control.");
 				var oldStructure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
 				if (oldStructure == null) return Content("Structure does not exist");
 				if (oldStructure.StructureType.UpgradesToStructureID == null) return Content("Structure can't be upgraded.");
