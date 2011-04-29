@@ -40,13 +40,22 @@ namespace ZkData
 			return accesiblePlanets;
 		}
 
-		public static List<Unlock> ClanUnlocks(ZkDataContext db, int? clanID)
+		public class ClanUnlockEntry
+		{
+			public Unlock Unlock;
+			public Clan Clan;
+		}
+
+		public static List<ClanUnlockEntry> ClanUnlocks(ZkDataContext db, int? clanID)
 		{
 			var planets = AccessiblePlanets(db, clanID, null, true, false);
-			var unlocks =
-				planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed && x.StructureType.EffectUnlockID != null).Select(
-					x => x.StructureType.Unlock).Distinct().ToList();
-			return unlocks;
+			Dictionary<int,ClanUnlockEntry> result = new Dictionary<int, ClanUnlockEntry>();
+
+			return
+				planets.SelectMany(y => y.PlanetStructures).Where(x => !x.IsDestroyed && x.StructureType.EffectUnlockID != null).Select(
+					x => new { unlock = x.StructureType.Unlock, clan = x.Planet.Account.Clan }).GroupBy(x => x.unlock).Select(
+						x => new ClanUnlockEntry() { Unlock = x.Key, Clan = x.OrderByDescending(y => y.clan.ClanID == clanID).Select(y => y.clan).First() }).ToList();
+
 		}
 
 

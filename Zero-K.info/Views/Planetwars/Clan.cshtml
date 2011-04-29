@@ -134,9 +134,13 @@
   }
 </table>
 <h3>Clan technologies</h3>
-@foreach (var unlock in Galaxy.ClanUnlocks(new ZkDataContext(), Model.ClanID))
+@foreach (var unlockEntry in Galaxy.ClanUnlocks(new ZkDataContext(), Model.ClanID))
 {
+  var unlock = unlockEntry.Unlock;
+  var clanGiver = unlockEntry.Clan;
+  
   <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  >
+    <span style='font-size:x-small'>@Html.PrintClan(clanGiver)</span>
     <img src="@unlock.ImageUrl"/><br />
     @unlock.Name
   </span>
