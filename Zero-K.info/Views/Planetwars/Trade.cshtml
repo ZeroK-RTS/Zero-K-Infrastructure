@@ -1,0 +1,37 @@
+﻿@using ZkData
+@using ZeroKWeb
+@model Account
+
+<h1>Trade for @Model.Name</h1>
+
+<h2>Buy Offers</h2>
+
+<table>
+<tr>
+<th>Planet</th>
+<th>Quantity</th>
+<th>Price</th>
+</tr>
+@foreach (var tradeOffer in Model.MarketOffersByAccountID.Where(o => !o.IsSell))
+{
+    <tr><td>@tradeOffer.Planet.Name</td>
+     <td>@tradeOffer.Quantity </td>
+     <td>@tradeOffer.Price</td>
+     </tr>
+}
+</table>
+<h2>Sell Offers</h2>
+<table>
+<tr>
+<th>Planet</th>
+<th>Quantity</th>
+<th>Price</th>
+</tr>
+@foreach (var tradeOffer in Model.MarketOffersByAccountID.Where(o => o.IsSell))
+{
+    <tr><td>@tradeOffer.Planet.Name</td>
+     <td>@tradeOffer.Quantity </td>
+     <td>@tradeOffer.Price</td>
+     </tr>
+}
+</table>
