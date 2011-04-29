@@ -711,13 +711,14 @@ namespace ZeroKWeb
 						if (owner != null) owner.Credits += linkedplanet.PlanetStructures.Sum(x => x.StructureType.EffectCreditsPerTurn) ?? 0;
 					}
 
-					var oldOwner = planet.Account;
+					var oldOwner = planet.OwnerAccountID;
 					gal.Turn++;
 					db.SubmitChanges();
-					//db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
+					db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
 					PlanetwarsController.SetPlanetOwners(db, sb);
+					gal = db.Galaxies.Single(x => x.IsDefault);
 				
-					if (planet.Account != oldOwner && planet.Account != null)
+					if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
 					{
 						text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",
 						                  planet.Name,
