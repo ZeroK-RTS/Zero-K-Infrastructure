@@ -668,7 +668,8 @@ namespace ZeroKWeb
 						ap.DropshipCount = 0;
 						noGrowAccount.Add(ap.AccountID);
 					}
-
+					
+					// destroy pw structures
 					List<string> handled = new List<string>();
 					foreach (var line in extraData.Where(x => x.StartsWith("structurekilled")))
 					{
@@ -682,7 +683,7 @@ namespace ZeroKWeb
 							{
 								if (s.StructureType.IngameDestructionNewStructureTypeID != null) {
 									db.PlanetStructures.DeleteOnSubmit(s);
-									db.PlanetStructures.InsertOnSubmit(new PlanetStructure() { PlanetID = planet.PlanetID, StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value, IsDestroyed = false });
+									db.PlanetStructures.InsertOnSubmit(new PlanetStructure() { PlanetID = planet.PlanetID, StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value, IsDestroyed = true });
 								} else s.IsDestroyed = true;
 								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}", s.StructureType.Name, ownerClan, planet));
 							}
