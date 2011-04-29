@@ -262,7 +262,7 @@ namespace PlasmaDownloader
         using (var stream = tcp.GetStream())
         {
           var header = new StringBuilder(); // make request
-          header.AppendFormat("GET {0} HTTP/1.1\r\n", Uri.EscapeUriString(url.PathAndQuery));
+          header.AppendFormat("GET {0} HTTP/1.1\r\n", url.PathAndQuery);
           header.AppendFormat("Host: {0}\r\n", url.Host);
           header.AppendFormat("Range: bytes={0}-{1}\r\n", from, from + size);
           header.Append("\r\n");
