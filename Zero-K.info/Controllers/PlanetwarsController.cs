@@ -23,7 +23,7 @@ namespace ZeroKWeb.Controllers
 			using (var db = new ZkDataContext())
 			{
 				var planet = db.Planets.Single(p => p.PlanetID == planetID);
-				if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+				if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under control.");
 				var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
 				if (structureType == null) return Content("Structure type does not exist.");
 				if (!structureType.IsBuildable) return Content("Structure is not buildable.");
@@ -345,7 +345,7 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 			var planet = db.Planets.Single(p => p.PlanetID == planetID);
-			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+			if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under control.");
 			var structure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
 			if (!structure.IsDestroyed) return Content("Can't repair a working structure.");
 			if (Global.Account.Credits < structure.StructureType.Cost) return Content("Insufficient credits.");

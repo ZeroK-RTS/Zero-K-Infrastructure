@@ -685,7 +685,7 @@ namespace ZeroKWeb
 									db.PlanetStructures.DeleteOnSubmit(s);
 									db.PlanetStructures.InsertOnSubmit(new PlanetStructure() { PlanetID = planet.PlanetID, StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value, IsDestroyed = true });
 								} else s.IsDestroyed = true;
-								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}", s.StructureType.Name, ownerClan, planet));
+								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}", s.StructureType.Name, ownerClan, planet, sb));
 							}
 						}
 					}

@@ -101,7 +101,7 @@
 </ul>
 
 
-@if (Global.AccountID == Model.OwnerAccountID) {
+@if (Model.Account != null && Global.ClanID == Model.Account.ClanID) {
     <h2>Construction</h2>
     foreach (var structure in Model.PlanetStructures.Where(s => s.IsDestroyed))
     {
