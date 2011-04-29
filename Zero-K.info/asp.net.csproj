@@ -203,6 +203,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Styles\SM.ttf" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_SiteLayout.cshtml" />

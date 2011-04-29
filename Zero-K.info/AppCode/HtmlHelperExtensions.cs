@@ -209,12 +209,10 @@ namespace System.Web.Mvc
 
 		public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Clan clan, int influence, int shadowInfluence)
 		{
-			return
-				new MvcHtmlString(string.Format("<span style='color:{0}'>{1}</span>&nbsp({2}&nbsp+&nbsp<span style='color:gray'>{3}</span>)",
-																				Clan.TreatyColor(clan, Global.Clan),
-																				influence + shadowInfluence,
-																				influence,
-																				shadowInfluence));
+			var formatString = "<span style='color:{0}'>{1}</span>";
+			if (shadowInfluence > 0) formatString += "&nbsp({2}&nbsp+&nbsp<span style='color:gray'>{3}</span>)";			
+			var formattedString = string.Format(formatString,	Clan.TreatyColor(clan, Global.Clan), influence + shadowInfluence, influence, shadowInfluence);
+			return new MvcHtmlString(formattedString);
 		}
 
 

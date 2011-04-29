@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using PlasmaShared;
@@ -486,57 +487,61 @@ namespace ZeroKWeb.Controllers
 		[Auth]
         public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage)
 		{
-			var db = new ZkDataContext();
-			var created = clan.ClanID == 0; // existing clan vs creation
-			if (!created)
+			using (var scope = new TransactionScope())
 			{
-				if (!Global.Account.HasClanRights || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
-				var orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
-				orgClan.ClanName = clan.ClanName;
-				orgClan.LeaderTitle = clan.LeaderTitle;
-				orgClan.Shortcut = clan.Shortcut;
-				orgClan.Description = clan.Description;
-				orgClan.SecretTopic = clan.SecretTopic;
-				orgClan.Password = clan.Password;
-				//orgClan.DbCopyProperties(clan); 
-			}
-			else
-			{
-				if (Global.Clan != null) return Content("You already have a clan");
-				db.Clans.InsertOnSubmit(clan);
-			}
-			if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
+				var db = new ZkDataContext();
+				var created = clan.ClanID == 0; // existing clan vs creation
+				if (!created)
+				{
+					if (!Global.Account.HasClanRights || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
+					var orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
+					orgClan.ClanName = clan.ClanName;
+					orgClan.LeaderTitle = clan.LeaderTitle;
+					orgClan.Shortcut = clan.Shortcut;
+					orgClan.Description = clan.Description;
+					orgClan.SecretTopic = clan.SecretTopic;
+					orgClan.Password = clan.Password;
+					//orgClan.DbCopyProperties(clan); 
+				}
+				else
+				{
+					if (Global.Clan != null) return Content("You already have a clan");
+					db.Clans.InsertOnSubmit(clan);
+				}
+				if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
 
-			if (created && (image == null || image.ContentLength == 0)) return Content("Upload image");
-			if (image != null && image.ContentLength > 0)
-			{
-				var im = Image.FromStream(image.InputStream);
-				if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
-				db.SubmitChanges(); // needed to get clan id for image url - stupid way really
-				im.Save(Server.MapPath(clan.GetImageUrl()));
-			}
-            if (bgimage != null && bgimage.ContentLength > 0)
-            {
-                var im = Image.FromStream(bgimage.InputStream);
-                db.SubmitChanges(); // needed to get clan id for image url - stupid way really
-                                    // DW - Actually its not stupid, its required to enforce locking.
-                                    // It would be possbile to enforce a pre-save id
-                im.Save(Server.MapPath(clan.GetBGImageUrl()));
-            }
-			db.SubmitChanges();
-
-			if (created) // we created a new clan, set self as founder and rights
-			{
-				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-				acc.ClanID = clan.ClanID;
-				acc.IsClanFounder = true;
-				acc.HasClanRights = true;
+				if (created && (image == null || image.ContentLength == 0)) return Content("Upload image");
+				if (image != null && image.ContentLength > 0)
+				{
+					var im = Image.FromStream(image.InputStream);
+					if (im.Width != 64 || im.Height != 64) im = im.GetResized(64, 64, InterpolationMode.HighQualityBicubic);
+					db.SubmitChanges(); // needed to get clan id for image url - stupid way really
+					im.Save(Server.MapPath(clan.GetImageUrl()));
+				}
+				if (bgimage != null && bgimage.ContentLength > 0)
+				{
+					var im = Image.FromStream(bgimage.InputStream);
+					db.SubmitChanges(); // needed to get clan id for image url - stupid way really
+					// DW - Actually its not stupid, its required to enforce locking.
+					// It would be possbile to enforce a pre-save id
+					im.Save(Server.MapPath(clan.GetBGImageUrl()));
+				}
 				db.SubmitChanges();
-				db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
-				db.SubmitChanges();
-			}
 
+				if (created) // we created a new clan, set self as founder and rights
+				{
+					var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+					acc.ClanID = clan.ClanID;
+					acc.IsClanFounder = true;
+					acc.HasClanRights = true;
+					db.SubmitChanges();
+					db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
+					db.SubmitChanges();
+				}
+				scope.Complete();
+			}
 			return RedirectToAction("Clan", new { id = clan.ClanID });
+			
 		}
 
 
@@ -563,15 +568,20 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult SubmitRenamePlanet(int planetID, string newName)
 		{
-			if (String.IsNullOrWhiteSpace(newName)) return Content("Error: the planet must have a name.");
-			var db = new ZkDataContext();
-			var planet = db.Planets.Single(p => p.PlanetID == planetID);
-			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
-			db.SubmitChanges();
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} from {2} to {3}", Global.Account, planet, planet.Name, newName));
-			planet.Name = newName;
-			db.SubmitChanges();
-			return RedirectToAction("Planet", new { id = planet.PlanetID });
+			using (var scope = new TransactionScope())
+			{
+				if (String.IsNullOrWhiteSpace(newName)) return Content("Error: the planet must have a name.");
+				var db = new ZkDataContext();
+				var planet = db.Planets.Single(p => p.PlanetID == planetID);
+				if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
+				db.SubmitChanges();
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} from {2} to {3}", Global.Account, planet, planet.Name, newName));
+				planet.Name = newName;
+				db.SubmitChanges();
+				scope.Complete();
+				return RedirectToAction("Planet", new { id = planet.PlanetID });
+			}
+
 		}
 
 		[Auth]
@@ -583,29 +593,35 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult UpgradeStructure(int planetID, int structureTypeID)
 		{
-			var db = new ZkDataContext();
-			var planet = db.Planets.Single(p => p.PlanetID == planetID);
-			if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
-			var oldStructure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
-			if (oldStructure == null) return Content("Structure does not exist");
-			if (oldStructure.StructureType.UpgradesToStructureID == null) return Content("Structure can't be upgraded.");
-			if (oldStructure.IsDestroyed) return Content("Can't upgrade a destroyed structure");
+			using (var scope = new TransactionScope())
+			{
+				var db = new ZkDataContext();
+				var planet = db.Planets.Single(p => p.PlanetID == planetID);
+				if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Planet is not under control.");
+				var oldStructure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
+				if (oldStructure == null) return Content("Structure does not exist");
+				if (oldStructure.StructureType.UpgradesToStructureID == null) return Content("Structure can't be upgraded.");
+				if (oldStructure.IsDestroyed) return Content("Can't upgrade a destroyed structure");
 
-			var newStructureType = db.StructureTypes.Single(s => s.StructureTypeID == oldStructure.StructureType.UpgradesToStructureID);
-			if (Global.Account.Credits < newStructureType.Cost) return Content("Insufficient credits.");
-			planet.Account.Credits -= newStructureType.Cost;
+				var newStructureType = db.StructureTypes.Single(s => s.StructureTypeID == oldStructure.StructureType.UpgradesToStructureID);
+				if (Global.Account.Credits < newStructureType.Cost) return Content("Insufficient credits.");
+				planet.Account.Credits -= newStructureType.Cost;
 
-			var newStructure = new PlanetStructure { PlanetID = planetID, StructureTypeID = newStructureType.StructureTypeID };
+				var newStructure = new PlanetStructure { PlanetID = planetID, StructureTypeID = newStructureType.StructureTypeID };
 
-			db.PlanetStructures.InsertOnSubmit(newStructure);
-			db.PlanetStructures.DeleteOnSubmit(oldStructure);
+				db.PlanetStructures.InsertOnSubmit(newStructure);
+				db.PlanetStructures.DeleteOnSubmit(oldStructure);
 
-			db.SubmitChanges();
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newStructure.StructureType.Name, planet));
+				db.SubmitChanges();
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newStructure.StructureType.Name, planet));
 
-			db.SubmitChanges();
-			SetPlanetOwners(db);
+				db.SubmitChanges();
+				SetPlanetOwners(db);
+
+				scope.Complete();
+			}
 			return RedirectToAction("Planet", new { id = planetID });
+			
 		}
 
 		// TODO: run at any change of influence, credits or market offers

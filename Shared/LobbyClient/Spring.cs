@@ -45,13 +45,20 @@ namespace LobbyClient
 
 		public delegate void LogLine(string text, bool isError);
 
-		readonly AutohostMode authostMode;
+		public enum SpringMessageType
+		{
+			pwaward,
+			pwmorph,
+			pwpurchase,
+			pwdeath,
+			STATS
+		}
 
+		Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
 		Guid battleGuid;
 		BattleResult battleResult = new BattleResult();
 		TasClient client;
 		bool gameEndedOk = false;
-		Dictionary<string, int> gamePrivateMessages = new Dictionary<string, int>();
 		bool isHosting;
 		string lobbyPassword;
 		string lobbyUserName;
@@ -91,6 +98,7 @@ namespace LobbyClient
 
 		public ProcessPriorityClass ProcessPriority { set { if (IsRunning) process.PriorityClass = value; } }
 		public bool UseDedicatedServer;
+		AutohostMode authostMode;
 
 		public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
 		public event LogLine LogLineAdded = delegate { };
@@ -106,9 +114,9 @@ namespace LobbyClient
 		public event EventHandler<EventArgs<bool>> SpringExited;
 		public event EventHandler SpringStarted;
 
-		public Spring(SpringPaths springPaths, AutohostMode autohostMode = AutohostMode.GameTeams)
+		public Spring(SpringPaths springPaths, AutohostMode autohostMode =  AutohostMode.GameTeams)
 		{
-			authostMode = authostMode;
+			this.authostMode = authostMode;
 			paths = springPaths;
 		}
 
@@ -222,8 +230,7 @@ namespace LobbyClient
 							                                               	x =>
 							                                               	new BattleStartSetupPlayer()
 							                                               	{ AccountID = x.LobbyUser.AccountID, AllyTeam = x.AllyNumber, IsSpectator = x.IsSpectator }).
-							                                               	ToArray(),
-							                                               authostMode);
+							                                               	ToArray(), authostMode);
 						}
 						catch (Exception ex)
 						{
@@ -353,22 +360,87 @@ namespace LobbyClient
 
 		void HandleSpecialMessages(Talker.SpringEventArgs e)
 		{
-			try
+			if (string.IsNullOrEmpty(e.Text) || (!e.Text.StartsWith("pw") && !e.Text.StartsWith("STATS"))) return;
+
+			int count;
+			if (!gamePrivateMessages.TryGetValue(e.Text, out count)) count = 0;
+			count++;
+			gamePrivateMessages[e.Text] = count;
+			if (count != 2) return; // only send if count matches 2 exactly
+
+			var text = e.Text;
+			var txtOrig = text;
+			var type = SpringMessageType.pwaward;
+			var found = false;
+
+			foreach (var option in (SpringMessageType[])Enum.GetValues(typeof(SpringMessageType)))
 			{
-				if (string.IsNullOrEmpty(e.Text) || !e.Text.StartsWith("SPRINGIE:")) return;
-
-				int count;
-				if (!gamePrivateMessages.TryGetValue(e.Text, out count)) count = 0;
-				count++;
-				gamePrivateMessages[e.Text] = count;
-				if (count != 2) return; // only send if count matches 2 exactly
-
-				statsData.Add(e.Text.Substring(9));
+				var prefix = option + ":";
+				if (text.StartsWith(prefix))
+				{
+					text = text.Substring(prefix.Length);
+					type = option;
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+			{
+				Trace.TraceWarning("Unexpected message: " + text);
+				return;
 			}
 
+			var parts = text.Split(new[] { ',' });
+			try
+			{
+				switch (type)
+				{
+					case SpringMessageType.STATS:
+						statsData.Add(text);
+						break;
+
+					case SpringMessageType.pwaward:
+						var partsSpace = text.Split(new[] { ' ' }, 3);
+						var name = partsSpace[0];
+						var awardType = partsSpace[1];
+						var awardText = partsSpace[2];
+						BattlePlayerResult sp;
+						if (statsPlayers.TryGetValue(name, out sp))
+						{
+							var awards = new List<PlayerAward>();
+							if (sp.Awards != null) awards.AddRange(sp.Awards);
+							awards.Add(new PlayerAward { Award = awardType, Description = awardText });
+							sp.Awards = awards.ToArray();
+						}
+						break;
+
+						/*case SpringMessageType.pwmorph:
+                  server.UnitDeployed(account,
+                                      tas.MyBattle.MapName,
+                                      parts[0],
+                                      parts[1],
+                                      (int)double.Parse(parts[2]),
+                                      (int)double.Parse(parts[3]),
+                                      parts[4]);
+                  break;
+
+                case SpringMessageType.pwpurchase:
+                  server.UnitPurchased(account,
+                                       parts[0],
+                                       parts[1],
+                                       double.Parse(parts[2]),
+                                       (int)double.Parse(parts[3]),
+                                       (int)double.Parse(parts[4]));
+                  break;
+
+                case SpringMessageType.pwdeath:
+                  server.UnitDied(account, parts[0], parts[1], (int)double.Parse(parts[3]), (int)double.Parse(parts[4]));
+                  break;*/
+				}
+			}
 			catch (Exception ex)
 			{
-				Trace.TraceError("Error while processing '{0}' :{1}", e.Text, ex);
+				Trace.TraceError("Error while processing '{0}' :{1}", txtOrig, ex);
 			}
 		}
 
