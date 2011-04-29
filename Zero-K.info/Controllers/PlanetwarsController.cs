@@ -624,11 +624,77 @@ namespace ZeroKWeb.Controllers
 			
 		}
 
+		[Auth]
+		public ActionResult QuickTransaction(int offerID, int quantity)
+		{
+			using (var scope = new TransactionScope())
+			{
+				var db = new ZkDataContext();
+				var offer = db.MarketOffers.SingleOrDefault(o => o.OfferID == offerID);
+				if (offer == null) return Content("Offer does not exist");
+				if (offer.AcceptedAccountID != null) return Content("This transaction was already completed.");
+
+				var seller = offer.IsSell ? offer.AccountByAccountID : db.Accounts.Single(a => a.AccountID == Global.AccountID);
+				var buyer = offer.IsSell ? db.Accounts.Single(a => a.AccountID == Global.AccountID) : offer.AccountByAccountID;
+
+				if (offer.Price * quantity > buyer.Credits) return Content("Insufficient credits");
+
+				var sellerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == seller.AccountID);
+				if (sellerAccountPlanet == null) return Content("Seller has nothing to sell");
+
+				var sellerInfluence = sellerAccountPlanet.Influence;
+				if (sellerInfluence  < quantity) return Content("Seller has not enough to sell");
+
+				var buyerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == Global.AccountID);
+				if (buyerAccountPlanet == null)
+				{
+					buyerAccountPlanet = new AccountPlanet { AccountID = buyer.AccountID, PlanetID = offer.PlanetID };
+					db.AccountPlanets.InsertOnSubmit(buyerAccountPlanet);
+					db.SubmitChanges();
+				}
+
+				buyer.Credits -= quantity * offer.Price;
+				seller.Credits += quantity * offer.Price;
+
+				buyerAccountPlanet.Influence += quantity;
+				sellerAccountPlanet.Influence -= quantity;
+
+
+				// record transaction, for history
+				db.MarketOffers.InsertOnSubmit(new MarketOffer
+				{
+					AcceptedAccountID = seller.AccountID,
+					AccountID = buyer.AccountID,
+					DateAccepted = DateTime.Now,
+					IsSell = false,
+					Price = offer.Price,
+					DatePlaced = offer.DatePlaced,
+					Quantity = quantity,
+					PlanetID = offer.PlanetID,
+				});
+
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from {2} on {3} for {4} each.",
+											buyer,
+											quantity,
+											seller,
+											offer.Planet,
+											offer.Price));
+
+				offer.Quantity -= quantity;
+				if (offer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(offer);
+
+				ResolveMarketTransactions(db);
+				SetPlanetOwners(db);
+				scope.Complete();
+				return RedirectToAction("Planet", new { id = offer.PlanetID });
+			}
+
+
+		}
+
 		// TODO: run at any change of influence, credits or market offers
 		void ResolveMarketTransactions(ZkDataContext db)
 		{
-			var now = DateTime.Now;
-
 			var currentOffers = db.MarketOffers.Where(o => o.DateAccepted == null);
 			var buyOffers = currentOffers.Where(o => !o.IsSell);
 			var sellOffers = currentOffers.Where(o => o.IsSell);
@@ -681,7 +747,7 @@ namespace ZeroKWeb.Controllers
 						                               {
 						                               	AcceptedAccountID = seller.AccountID,
 						                               	AccountID = buyer.AccountID,
-						                               	DateAccepted = now,
+						                               	DateAccepted = DateTime.Now,
 						                               	IsSell = false,
 						                               	Price = sellOffer.Price,
 						                               	DatePlaced = buyOffer.DatePlaced,
@@ -689,17 +755,6 @@ namespace ZeroKWeb.Controllers
 						                               	PlanetID = sellOffer.PlanetID,
 						                               });
 
-						db.MarketOffers.InsertOnSubmit(new MarketOffer
-						                               {
-						                               	AcceptedAccountID = buyer.AccountID,
-						                               	AccountID = seller.AccountID,
-						                               	DateAccepted = now,
-						                               	IsSell = true,
-						                               	Price = sellOffer.Price,
-						                               	DatePlaced = sellOffer.DatePlaced,
-						                               	Quantity = quantity,
-						                               	PlanetID = sellOffer.PlanetID,
-						                               });
 						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from {2} on {3} for {4} each.",
 						                                            buyer,
 						                                            quantity,

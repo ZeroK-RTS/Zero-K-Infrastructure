@@ -1,37 +1,235 @@
 ﻿@using ZkData
 @using ZeroKWeb
 @model Account
+           
 
-<h1>Trade for @Model.Name</h1>
+@{
+    var account = Model;
+    var db = new ZkDataContext();
+    var defaultGalaxy = db.Galaxies.Single(g => g.IsDefault);
+    var galaxyOffers = db.MarketOffers.Where(o => o.Planet.Galaxy.IsDefault);
+    @*
+    basically 4 categories:
+        - sell offers on your clan owned planets 
 
-<h2>Buy Offers</h2>
+        - other buy offers
+        - other sell offers you can satisfy
+    *@
+}
+
+<h1>@account.Name's Trade Office</h1>
+
+<br />
+<h2>@Html.PrintAccount(account)' Sell Offers</h2>
 
 <table>
-<tr>
-<th>Planet</th>
-<th>Quantity</th>
-<th>Price</th>
-</tr>
-@foreach (var tradeOffer in Model.MarketOffersByAccountID.Where(o => !o.IsSell))
+    <tr>
+        <th>Planet</th>
+        <th>Ordered</th>
+        <th>Allowed</th>
+        <th>Price</th>
+        <th>Buy</th>
+        <th>Buy Specific Amount</th>
+    </tr>
+
+@foreach (var offer in galaxyOffers.Where(o => o.AccountID == account.AccountID && o.IsSell && o.AcceptedAccountID == null))
 {
-    <tr><td>@tradeOffer.Planet.Name</td>
-     <td>@tradeOffer.Quantity </td>
-     <td>@tradeOffer.Price</td>
-     </tr>
+    @Html.Partial("TradeOffer", new ViewDataDictionary(offer) { { "hideAccount", true } })
 }
 </table>
-<h2>Sell Offers</h2>
+
+<br />
+<h2>@Html.PrintAccount(account)'s Buy Offers</h2>
+
 <table>
-<tr>
-<th>Planet</th>
-<th>Quantity</th>
-<th>Price</th>
-</tr>
-@foreach (var tradeOffer in Model.MarketOffersByAccountID.Where(o => o.IsSell))
+    <tr>
+        <th>Planet</th>
+        <th>Ordered</th>
+        <th>Allowed</th>
+        <th>Price</th>
+        <th>Sell</th>
+        <th>Sell Specific Amount</th>
+    </tr>
+
+@foreach (var offer in galaxyOffers.Where(o => o.AccountID == account.AccountID && !o.IsSell && o.AcceptedAccountID == null))
 {
-    <tr><td>@tradeOffer.Planet.Name</td>
-     <td>@tradeOffer.Quantity </td>
-     <td>@tradeOffer.Price</td>
-     </tr>
+     @Html.Partial("TradeOffer", new ViewDataDictionary(offer) { { "hideAccount", true } })
+}
+</table>
+
+<br />
+<h2>Trade History</h2>
+
+<table>
+    <tr>
+        <th>Planet</th>
+        <th>Seller</th>
+        <th>Buyer</th>
+        <th>Date</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
+    </tr>
+@{
+    var history = galaxyOffers
+        .Where(o => o.AcceptedAccountID != null && (o.AccountID == account.AccountID || o.AcceptedAccountID == account.AccountID))
+        .GroupBy(o => new {o.DateAccepted, o.Quantity, o.Price})
+        .Select(g => g.First())
+        .OrderBy(o => o.DateAccepted);
+    
+    foreach (var offer in history)
+    {
+        var seller = offer.IsSell ? offer.AccountByAccountID : offer.AccountByAcceptedAccountID;
+        var buyer = offer.IsSell ? offer.AccountByAcceptedAccountID : offer.AccountByAccountID;
+        <tr>
+            <td>@Html.PrintPlanet(offer.Planet)</td>
+            <td>@Html.PrintAccount(seller)</td>
+            <td>@Html.PrintAccount(buyer)</td>
+            <td>@offer.DateAccepted</td>
+            <td>@offer.Quantity</td>
+            <td>@offer.Price.ToString("C0")</td>
+            <td>@String.Format("{0:C0}", offer.Quantity * offer.Price)</td>
+        </tr>
+    }
+}
+</table>
+
+<br />
+<h2>Buy Offers on Disposable Planets</h2>
+A Planet is considered disposable if @Html.PrintAccount(account) has influence on it but it is not controled by @Html.PrintClan(account.Clan)
+<table>
+    <tr>
+        <th>Planet</th>
+        <th>Buyer</th>
+        <th>Ordered</th>
+        <th>Allowed</th>
+        <th>Price</th>
+        <th>Sell</th>
+        <th>Sell Specific Amount</th>
+    </tr>
+@{
+   var influencedAccountPlanets = db.AccountPlanets.Where(ap => ap.AccountID == account.AccountID && ap.Influence > 0);
+   var influencedOffers = from offer in galaxyOffers
+                          where offer.AcceptedAccountID == null && offer.Planet.Account != null && offer.Planet.Account.ClanID != account.ClanID
+                          join ap in influencedAccountPlanets on offer.PlanetID equals ap.PlanetID
+                          orderby offer.Price descending
+                          select offer;
+
+
+   foreach (var offer in influencedOffers)
+    {
+        @Html.Partial("TradeOffer", new ViewDataDictionary(offer))
+    }
+
+}
+
+</table>
+
+
+<br />
+<h2>Sell Offers on Planets Owned by @Html.PrintAccount(account)</h2>
+<table>
+    <tr>
+        <th>Planet</th>
+        <th>Seller</th>
+        <th>Ordered</th>
+        <th>Allowed</th>
+        <th>Price</th>
+        <th>Buy</th>
+        <th>Buy Specific Amount</th>
+    </tr>
+@{ 
+    var ownedOffers = account.Planets.SelectMany(p => p.MarketOffers).Where(o => o.IsSell && o.AcceptedAccountID == null && o.Planet.Galaxy == defaultGalaxy).OrderBy(o => o.Price);
+    foreach (var offer in ownedOffers)
+    {
+        @Html.Partial("TradeOffer", new ViewDataDictionary(offer))
+    }
+}
+</table>
+
+
+<br />
+<h2>Sell Offers on Planets Controlled by @Html.PrintClan(account.Clan)</h2>
+<table>
+    <tr>
+        <th>Planet</th>
+        <th>Seller</th>
+        <th>Ordered</th>
+        <th>Allowed</th>
+        <th>Price</th>
+        <th>Buy</th>
+        <th>Buy Specific Amount</th>
+    </tr>
+@{ 
+    var controlledOffers = galaxyOffers
+        .Where(o => o.Planet.Account != null && o.Planet.Account.ClanID == account.ClanID && o.IsSell && o.AcceptedAccountID == null && o.Planet.OwnerAccountID != account.AccountID)
+        .OrderBy(o => o.Price);
+    foreach (var offer in controlledOffers)
+    {
+        @Html.Partial("TradeOffer", new ViewDataDictionary(offer))
+    }
+}
+</table>
+
+<br />
+<h2>Sell Offers on Neighbor Planets</h2>
+<table>
+    <tr>
+        <th>Planet</th>
+        <th>Seller</th>
+        <th>Ordered</th>
+        <th>Allowed</th>
+        <th>Price</th>
+        <th>Buy</th>
+        <th>Buy Specific Amount</th>
+    </tr>
+@{ 
+    var attackablePlanets = Galaxy.AccessiblePlanets(db, account.ClanID).Where(p => p.OwnerAccountID != null && p.Account.ClanID != account.ClanID);
+    var accessibleOffers = attackablePlanets.SelectMany(p => p.MarketOffers).Where(o => o.IsSell && o.AcceptedAccountID == null).OrderBy(o => o.Price);
+    foreach (var offer in accessibleOffers)
+    {
+        @Html.Partial("TradeOffer", new ViewDataDictionary(offer))
+    }
+}
+</table>
+
+
+<br />
+<h2>All Sell Offers</h2>
+<table>
+    <tr>
+        <th>Planet</th>
+        <th>Seller</th>
+        <th>Ordered</th>
+        <th>Allowed</th>
+        <th>Price</th>
+        <th>Buy</th>
+        <th>Buy Specific Amount</th>
+    </tr>
+@{ 
+    foreach (var offer in galaxyOffers.Where(o => o.IsSell && o.AcceptedAccountID == null).OrderBy(o => o.Price))
+    {
+        @Html.Partial("TradeOffer", new ViewDataDictionary(offer))
+    }
+}
+</table>
+
+<br />
+<h2>All Buy Offers</h2>
+<table>
+    <tr>
+        <th>Planet</th>
+        <th>Buyer</th>
+        <th>Ordered</th>
+        <th>Allowed</th>
+        <th>Price</th>
+        <th>Sell</th>
+        <th>Sell Specific Amount</th>
+    </tr>
+@{ 
+    foreach (var offer in galaxyOffers.Where(o => !o.IsSell && o.AcceptedAccountID == null).OrderByDescending(o => o.Price))
+    {
+        @Html.Partial("TradeOffer", new ViewDataDictionary(offer))
+    }
 }
 </table>

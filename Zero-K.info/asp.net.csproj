@@ -250,6 +250,7 @@
     <Content Include="Views\Shared\PlanetDropships.cshtml" />
     <Content Include="Views\Planetwars\ClanDiplomacy.cshtml" />
     <Content Include="Views\Planetwars\Trade.cshtml" />
+    <Content Include="Views\Shared\TradeOffer.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
