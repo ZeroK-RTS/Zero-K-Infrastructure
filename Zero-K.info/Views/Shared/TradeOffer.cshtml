@@ -20,7 +20,14 @@
         <tr>  
             @if (!ViewData.ContainsKey("hidePlanet"))
             { 
-                <td>@Html.PrintPlanet(offer.Planet)</td>
+                if (offer.Planet.OwnerAccountID == null)
+                {
+                    <td>@Html.PrintPlanet(offer.Planet)</td>               
+                }
+                else
+                {
+                    <td>@Html.PrintPlanet(offer.Planet) (@Html.PrintClan(offer.Planet.Account.Clan)) </td>  
+                }
             }
             @if (!ViewData.ContainsKey("hideAccount"))
             {
@@ -46,10 +53,10 @@
                 </td>           
            }
        </tr>
-     }
+    }
 }
 else
-{ 
+{
     var maxWillBuy = offer.Price > 0 ? Math.Min(offer.AccountByAccountID.Credits / offer.Price, offer.Quantity) : offer.Quantity;
     if (!(maxWillBuy == 0 && Global.AccountID != offer.AccountID))
     {
@@ -64,8 +71,16 @@ else
         }
         <tr>
             @if (!ViewData.ContainsKey("hidePlanet"))
-            { 
-                <td>@Html.PrintPlanet(offer.Planet)</td>
+            {
+                if (offer.Planet.OwnerAccountID == null)
+                {
+                    <td>@Html.PrintPlanet(offer.Planet)</td> 
+              
+                }
+                else
+                {
+                    <td>@Html.PrintPlanet(offer.Planet) (@Html.PrintClan(offer.Planet.Account.Clan)) </td>  
+                }
             }
             @if (!ViewData.ContainsKey("hideAccount"))
             {

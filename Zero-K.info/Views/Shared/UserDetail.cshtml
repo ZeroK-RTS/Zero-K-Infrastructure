@@ -167,6 +167,7 @@
       }
       <h3>PlanetWars events</h3>
       @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
+      @Html.ActionLink("Trade", "Trade", "PlanetWars", new {username = Model.Name}, null)
     </td>
   </tr>
 </table>
