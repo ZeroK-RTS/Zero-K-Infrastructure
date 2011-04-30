@@ -14,16 +14,23 @@
   }
   <link rel="icon" href='@Href("~/img/favicon.png")'/>
   <link rel="Stylesheet" href='@Href("~/Styles/style.css")' type="text/css" />
+  <link rel="Stylesheet" href='@Href("~/Styles/jquery.qtip.css")' />
+  <link rel="Stylesheet" href='@Href("~/Styles/nicetitle.css")' type="text/css" />
+
   <script type="text/javascript" src='@Href("~/Scripts/MicrosoftAjax.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/MicrosoftMvcAjax.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/jquery-1.5.2.min.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/jquery-ui-1.8.6.custom.min.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/nicetitle.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/jquery.ui.stars.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/site.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/base.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' ></script>
   <script type="text/javascript" src='@Href("~/Scripts/jquery.tablesorter.min.js")' ></script>
+  
+  
+  <script type="text/javascript" src='@Href("~/Scripts/jquery.qtip.pack.js")' ></script>
+  
+  <script type="text/javascript" src='@Href("~/Scripts/nicetitle.js")' ></script>
   <style type="text/css">
     @@import url(http://www.google.com/cse/api/branding.css);
 </style>
@@ -66,7 +73,7 @@
     text-align: center; vertical-align: middle;" id='ajaxScrollProgress'>Loading....<img
       src='/img/Loader.gif' /></span>
   @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1") {
-    <div class="wrapper">
+    <div id="mainContentWrapper" class="wrapper">
       <div id="header" class="text-center">
         <a href="/">
           <img src="/img/zk_logo.png" height="150px" alt="Zero K" /></a>

@@ -18,7 +18,7 @@ div.nicetitle {
 	border: 1px solid #780600;     
 }
 */
-div.nicetitle 
+div.nicetitle
 {
 	z-index:2;
     position: absolute;
@@ -30,6 +30,13 @@ div.nicetitle
     font-weight:normal;
     background-image: url(../img/ntbgw.png);
     border: 1px solid #780600;
+    width: 300px;
+}
+div.nicetitle, div.nicetitle *
+{  
+    font-size: 0.9em;
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-weight:normal;
 }
 div.nicetitle p {
     margin: 0; padding: 0 3px;
@@ -39,3 +46,38 @@ div.nicetitle p.destination {
     text-align: left;
     padding-top: 3px;
 }
+
+/*! Default tooltip style */
+.ui-tooltip-titlebar,
+.ui-tooltip-content, .ui-tooltip-content *
+{
+  background: none;
+  color: inherit;
+  border: none;
+  
+  font-size: 0.9em;
+  font-family: Verdana, Helvetica, Arial, sans-serif;
+  font-weight:normal;
+}
+
+/*.ui-tooltip-content p {
+    margin: 0; padding: 0 3px;
+}
+.ui-tooltip-content p.destination {
+    font-size: 9px;
+    text-align: left;
+    padding-top: 3px;
+}
+
+	.ui-tooltip-titlebar
+	{ 
+	}
+
+	.ui-tooltip-titlebar .ui-tooltip-icon
+	{
+	  background: none;
+	}
+	
+	.ui-tooltip-titlebar .ui-state-hover{
+	}
+*/

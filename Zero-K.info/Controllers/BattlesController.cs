@@ -82,8 +82,6 @@ namespace ZeroKWeb.Controllers
             if (offset.HasValue) q = q.Skip(offset.Value);
             q = q.Take(Global.AjaxScrollCount);
 
-            System.IO.File.WriteAllText(@"C:\Users\Yota\Desktop\SQL.txt", q.ToString());
-
             if (offset.HasValue)
                 return View("BattleTileList", q);
             else
