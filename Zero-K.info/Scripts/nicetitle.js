@@ -11,8 +11,10 @@ niceTitlesJS.CURRENT_NICE_TITLE = null;
 niceTitlesJS.cachedToolTips = new Array();
 
 niceTitlesJS.makeNiceTitles = function () {
+    var leafTitlenodes = new Array();
     $("[title]").each(
         function (index) {
+
             var elem = this;
             var nicetitle = $(this).attr("title");
 
@@ -21,8 +23,8 @@ niceTitlesJS.makeNiceTitles = function () {
                 return;
               else
                 elem = $(elem).parent()
-            }
-            */
+            }*/
+            
             var qtipOptions = 
             { position: 
                 { viewport: $(window),
