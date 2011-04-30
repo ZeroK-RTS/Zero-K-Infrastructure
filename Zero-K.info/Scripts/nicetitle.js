@@ -13,13 +13,13 @@ niceTitlesJS.makeNiceTitles = function () {
         function (index) {
 
             var nicetitle = $(this).attr("title");
-            
-            var qtipOptions = 
-            { position: 
+
+            var qtipOptions =
+            { position:
                 { viewport: $(window),
-                  my: 'left top',
-                  at: 'right top',
-                  adjust: 
+                    my: 'left top',
+                    at: 'right top',
+                    adjust:
                   { method: 'flip shift'
                   }
                 },
@@ -27,24 +27,26 @@ niceTitlesJS.makeNiceTitles = function () {
                 { classes: 'nicetitle'
                 },
                 show:
-                { solo: $(document)
+                { solo: $(document),
+                  delay: 0,
+                  effect: false
                 }
             }
 
             var asyncMode = nicetitle.charAt(0) == '$';
-            if (asyncMode)
-            { qtipOptions['content'] = 
+            if (asyncMode) {
+                qtipOptions['content'] =
               { text: "loading...<img src='/img/Loader.gif'>",
-                ajax:
+                  ajax:
                 { url: '/Home/GetTooltip',
-                  type: "GET",
-                  data: {key: nicetitle}
+                    type: "GET",
+                    data: { key: nicetitle }
                 }
               };
-              
+
             }
-            else
-            { qtipOptions['content'] = {text: nicetitle};
+            else {
+                qtipOptions['content'] = { text: nicetitle };
             }
 
             $(this).qtip(qtipOptions);
