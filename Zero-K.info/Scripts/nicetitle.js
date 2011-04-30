@@ -13,23 +13,34 @@ niceTitlesJS.cachedToolTips = new Array();
 niceTitlesJS.makeNiceTitles = function () {
     $("[title]").each(
         function (index) {
+            var elem = this;
+            var nicetitle = $(this).attr("title");
+
+            /*while ($(elem).parent() != $(document)
+            { if ($(elem).parent().attr("title") == nicetitle)
+                return;
+              else
+                elem = $(elem).parent()
+            }
+            */
             var qtipOptions = 
             { position: 
                 { viewport: $(window),
                   my: 'left top',
                   at: 'right top',
+                  adjust: 
+                  { method: 'flip shift',
+                  },
                 },
                 style:
                 { classes: 'nicetitle',
-                }   
+                },
+                show:
+                { solo: $(document),
+                }
             }
 
-            var nicetitle = $(this).attr("title");
             var asyncMode = nicetitle.charAt(0) == '$';
-
-            var niceTitleDiv = $("<div />").addClass("nicetitle");
-            var niceTitleContent;
-
             if (asyncMode)
             { qtipOptions['content'] = 
               { text: "loading...<img src='/img/Loader.gif'>",
@@ -42,7 +53,7 @@ niceTitlesJS.makeNiceTitles = function () {
               
             }
             else
-            { qtipOptions['content'] = {text: "Straight Load"+nicetitle};
+            { qtipOptions['content'] = {text: nicetitle};
             }
 
             $(this).qtip(qtipOptions);

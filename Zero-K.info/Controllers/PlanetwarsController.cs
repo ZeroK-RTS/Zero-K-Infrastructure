@@ -209,7 +209,7 @@ namespace ZeroKWeb.Controllers
 
 						foreach (var p in gal.Planets)
 						{
-							using (var pi = Image.FromFile(Server.MapPath("/img/planets/" + p.Resource.MapPlanetWarsIcon)))
+							using (var pi = Image.FromFile(Server.MapPath("/Img/planets/" + p.Resource.MapPlanetWarsIcon)))
 							{
 								var aspect = pi.Height/(double)pi.Width;
 								var width = (int)(p.Resource.PlanetWarsIconSize*zoom);

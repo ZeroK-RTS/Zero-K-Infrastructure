@@ -31,9 +31,6 @@ div.nicetitle
     background-image: url(../img/ntbgw.png);
     border: 1px solid #780600;
     width: 300px;
-}
-div.nicetitle, div.nicetitle *
-{  
     font-size: 0.9em;
     font-family: Verdana, Helvetica, Arial, sans-serif;
     font-weight:normal;
@@ -54,10 +51,6 @@ div.nicetitle p.destination {
   background: none;
   color: inherit;
   border: none;
-  
-  font-size: 0.9em;
-  font-family: Verdana, Helvetica, Arial, sans-serif;
-  font-weight:normal;
 }
 
 /*.ui-tooltip-content p {
