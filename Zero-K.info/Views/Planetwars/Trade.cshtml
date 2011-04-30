@@ -8,13 +8,6 @@
     var db = new ZkDataContext();
     var defaultGalaxy = db.Galaxies.Single(g => g.IsDefault);
     var galaxyOffers = db.MarketOffers.Where(o => o.Planet.Galaxy.IsDefault);
-    @*
-    basically 4 categories:
-        - sell offers on your clan owned planets 
-
-        - other buy offers
-        - other sell offers you can satisfy
-    *@
 }
 
 <h1>@account.Name's Trade Office</h1>
@@ -75,7 +68,8 @@
         .Where(o => o.AcceptedAccountID != null && (o.AccountID == account.AccountID || o.AcceptedAccountID == account.AccountID))
         .GroupBy(o => new {o.DateAccepted, o.Quantity, o.Price})
         .Select(g => g.First())
-        .OrderBy(o => o.DateAccepted);
+        .OrderBy(o => o.DateAccepted);                  
+                  
     
     foreach (var offer in history)
     {

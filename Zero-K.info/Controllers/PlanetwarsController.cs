@@ -627,8 +627,6 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult QuickTransaction(int offerID, int quantity)
 		{
-			using (var scope = new TransactionScope())
-			{
 				var db = new ZkDataContext();
 				var offer = db.MarketOffers.SingleOrDefault(o => o.OfferID == offerID);
 				if (offer == null) return Content("Offer does not exist");
@@ -645,7 +643,7 @@ namespace ZeroKWeb.Controllers
 				var sellerInfluence = sellerAccountPlanet.Influence;
 				if (sellerInfluence  < quantity) return Content("Seller has not enough to sell");
 
-				var buyerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == Global.AccountID);
+				var buyerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == buyer.AccountID);
 				if (buyerAccountPlanet == null)
 				{
 					buyerAccountPlanet = new AccountPlanet { AccountID = buyer.AccountID, PlanetID = offer.PlanetID };
@@ -682,13 +680,10 @@ namespace ZeroKWeb.Controllers
 
 				offer.Quantity -= quantity;
 				if (offer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(offer);
-
+				db.SubmitChanges();
 				ResolveMarketTransactions(db);
 				SetPlanetOwners(db);
-				scope.Complete();
 				return RedirectToAction("Planet", new { id = offer.PlanetID });
-			}
-
 
 		}
 
