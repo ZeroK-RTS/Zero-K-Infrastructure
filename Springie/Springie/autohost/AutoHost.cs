@@ -42,7 +42,7 @@ namespace Springie.autohost
 
 		Timer pollTimer;
 		readonly QuickMatchTracking quickMatchTracker;
-		readonly Spring spring;
+		public readonly Spring spring;
 
 		public string BossName { get { return bossName; } set { bossName = value; } }
 		public int CloneNumber { get; private set; }

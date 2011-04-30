@@ -135,7 +135,7 @@ namespace Springie
 				lock (autoHosts)
 				{
 					// spawned autohosts
-					var spawnedToDel = autoHosts.Where(x => x.SpawnConfig != null && (x.tas.MyBattle == null || x.tas.MyBattle.Users.Count <= 1)).ToList();
+					var spawnedToDel = autoHosts.Where(x => x.SpawnConfig != null && !x.spring.IsRunning && (x.tas.MyBattle == null || x.tas.MyBattle.Users.Count <= 1)).ToList();
 					foreach (var ah in spawnedToDel.Where(x => deletionCandidate.Contains(x))) StopAutohost(ah); // delete those who are empty during 2 checks
 					deletionCandidate = spawnedToDel;
 
@@ -147,7 +147,7 @@ namespace Springie
 						var empty =
 							autoHosts.Where(
 								x =>
-								x.SpawnConfig == null && x.config.AccountName == key &&
+								x.SpawnConfig == null && x.config.AccountName == key && !x.spring.IsRunning &&
 								(x.tas.MyBattle == null || (x.tas.MyBattle.Users.Count <= 1 && !x.tas.MyUser.IsInGame))).ToList();
 
 						if (empty.Count == 1) continue;
