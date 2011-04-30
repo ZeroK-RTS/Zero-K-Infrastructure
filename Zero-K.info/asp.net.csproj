@@ -251,6 +251,10 @@
     <Content Include="Views\Planetwars\ClanDiplomacy.cshtml" />
     <Content Include="Views\Planetwars\Trade.cshtml" />
     <Content Include="Views\Shared\TradeOffer.cshtml" />
+    <Content Include="Views\Battles\BattleTileList.cshtml" />
+    <Content Include="Views\Battles\Search.cshtml">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">

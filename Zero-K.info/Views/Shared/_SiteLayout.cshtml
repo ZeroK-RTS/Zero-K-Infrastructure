@@ -78,7 +78,7 @@
         @Html.Partial("LoginBar")
       </div>
       <!close login>
-      <div class="border">
+      <div class="border"@if (ViewBag.OpaqueBody == true){<text> style="opacity: 1"</text>}>
         @RenderBody()
       </div>
       <div id="footer" class="border">
