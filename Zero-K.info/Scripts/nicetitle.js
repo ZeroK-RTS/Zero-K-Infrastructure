@@ -30,7 +30,8 @@ niceTitlesJS.makeNiceTitles = function () {
                 { solo: $(document),
                   delay: 0,
                   effect: false
-                }
+                },
+                hide: { effect: false }
             }
 
             var asyncMode = nicetitle.charAt(0) == '$';
