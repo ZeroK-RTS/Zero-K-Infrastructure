@@ -7693,6 +7693,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _ForumThreadID;
 		
+		private string _TeamsTitle;
+		
 		private EntitySet<SpringBattlePlayer> _SpringBattlePlayers;
 		
 		private EntitySet<AccountBattleAward> _AccountBattleAwards;
@@ -7753,6 +7755,8 @@ namespace ZkData
     partial void OnRatingCountChanged();
     partial void OnForumThreadIDChanging(System.Nullable<int> value);
     partial void OnForumThreadIDChanged();
+    partial void OnTeamsTitleChanging(string value);
+    partial void OnTeamsTitleChanged();
     #endregion
 		
 		public SpringBattle()
@@ -8175,8 +8179,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TeamsTitle", DbType="nvarchar(250)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		public string TeamsTitle
+		{
+			get
+			{
+				return this._TeamsTitle;
+			}
+			set
+			{
+				if ((this._TeamsTitle != value))
+				{
+					this.OnTeamsTitleChanging(value);
+					this.SendPropertyChanging();
+					this._TeamsTitle = value;
+					this.SendPropertyChanged("TeamsTitle");
+					this.OnTeamsTitleChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -8195,7 +8220,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleAward> AccountBattleAwards
 		{
 			get
@@ -8214,7 +8239,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_AccountBattleStat", Storage="_AccountBattleStats", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleStat> AccountBattleStats
 		{
 			get
@@ -8233,7 +8258,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="SpringBattle_EventSpringBattle", Storage="_EventSpringBattles", ThisKey="SpringBattleID", OtherKey="SpringBattleID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
 		public EntitySet<EventSpringBattle> EventSpringBattles
 		{
 			get

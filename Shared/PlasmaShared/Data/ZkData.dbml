@@ -297,6 +297,7 @@
       <Column Name="RatingSum" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="RatingCount" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
+      <Column Name="TeamsTitle" Type="System.String" DbType="nvarchar(250)" CanBeNull="true" />
       <Association Name="SpringBattle_SpringBattlePlayer" Member="SpringBattlePlayers" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattlePlayer" />
       <Association Name="SpringBattle_AccountBattleAward" Member="AccountBattleAwards" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="AccountBattleAward" />
       <Association Name="SpringBattle_AccountBattleStat" Member="AccountBattleStats" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="AccountBattleStat" />
