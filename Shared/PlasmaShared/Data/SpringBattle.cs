@@ -19,7 +19,7 @@ namespace ZkData
 		public string FullTitle { get { return string.Format("B{0} {1} on {2} ({3})", SpringBattleID, PlayerCount, ResourceByMapResourceID.InternalName, BattleType); } }
 
 
-		public void CalculateElo(bool planetWars =false)
+		public void CalculateElo()
 		{
 			if (IsEloProcessed || Duration < 120)
 			{
@@ -107,11 +107,6 @@ namespace ZkData
 
 				r.Account.XP += WinnerTeamXpChange.Value;
 				r.Player.XpChange = WinnerTeamXpChange;
-
-				if (planetWars)
-				{
-					r.Player.Influence = WinnerTeamXpChange;
-				}
 
 				if (r.Account.EloWeight < GlobalConst.EloWeightMax)
 				{

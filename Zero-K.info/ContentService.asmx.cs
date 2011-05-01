@@ -589,7 +589,7 @@ namespace ZeroKWeb
 
 				var orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
-				sb.CalculateElo(mode == AutohostMode.Planetwars);
+				sb.CalculateElo();
 				try
 				{
 					db.SubmitChanges();
@@ -603,7 +603,7 @@ namespace ZeroKWeb
 
 				var text = new StringBuilder();
 
-				if (mode == AutohostMode.Planetwars)
+				if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Any())
 				{
 					var gal = db.Galaxies.Single(x => x.IsDefault);
 					var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
@@ -613,8 +613,19 @@ namespace ZeroKWeb
 					// handle infelunce
 					Clan ownerClan = null;
 					if (planet.Account != null) ownerClan = planet.Account.Clan;
-					foreach (var p in sb.SpringBattlePlayers.Where(x => x.Influence > 0))
+					var prizeIp = 40.0 * sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Count()/(double)sb.SpringBattlePlayers.Count(x => !x.IsSpectator && x.IsInVictoryTeam);
+					var clanTechIp =
+						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x=>x.ClanID != null).GroupBy(x => x.ClanID).ToDictionary(
+							x => x.Key,
+							z =>
+							Galaxy.AccessiblePlanets(db, z.Key, null, true, false).SelectMany(y => y.PlanetStructures).Where(y=>!y.IsDestroyed).
+								Select(y => y.StructureType.Unlock).Where(y=>y!=null).Distinct().Count() * 8.0 / z.Count());
+
+					foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam))
 					{
+						var techBonus = p.Account.ClanID != null ? (int)clanTechIp[p.Account.ClanID] : 0;
+						p.Influence = (int)Math.Round(prizeIp) + techBonus;
+
 						var targetAccount = p.Account;
 						if (ownerClan != null && p.Account.Clan != null && p.Account.Clan != ownerClan)
 						{
@@ -629,29 +640,47 @@ namespace ZeroKWeb
 						}
 						entry.Influence += (p.Influence ?? 0);
 						if (p.Account != targetAccount)
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} influence at {2} from {3} thanks to ally {4}",
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({5} from techs) influence  at {2} from {3} thanks to ally {4}",
 							                                            targetAccount,
 							                                            p.Influence ?? 0,
 							                                            planet,
 							                                            sb,
-							                                            p.Account));
+							                                            p.Account, techBonus));
 						else
 						{
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} influence at {2} from {3}", targetAccount, p.Influence ?? 0, planet, sb));
-							text.AppendFormat("{0} gained {1} influence on {2}\n", targetAccount.Name, p.Influence ?? 0, planet.Name);
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} from techs) influence at {2} from {3}", targetAccount, p.Influence ?? 0, planet, sb, techBonus));
+							text.AppendFormat("{0} gained {1} ({3} from techs) influence on {2}\n", targetAccount.Name, p.Influence ?? 0, planet.Name, techBonus);
 						}
 					}
 
 					db.SubmitChanges();
 
+
+					int bleed = 0;
 					// destroy existing dropships
 					var noGrowAccount = new List<int>();
 					foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
 					{
+						if (ap.Account.Clan != ownerClan) bleed += ap.DropshipCount*1000; // bleed credits for each enemy dropsihp in combat
 						ap.DropshipCount = 0;
 						noGrowAccount.Add(ap.AccountID);
 					}
-					
+					if (bleed > 0 && ownerClan != null)
+					{
+						var ownerBleed = Math.Max(bleed, planet.Account.Credits);
+						planet.Account.Credits -= ownerBleed;
+						var reminder = bleed - ownerBleed;
+						if (reminder > 0)
+						{
+							var share = reminder/ownerClan.Accounts.Count(x => x.Credits > 0);
+							foreach (var a in ownerClan.Accounts.Where(x => x.Credits > share)) a.Credits -= share;
+						}
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {4} lost ${1} in combat at {2} {3}", planet.Account, bleed, planet,sb, planet.Account.Clan));
+						text.AppendFormat("{0} lost ${1} due to combat\n", planet.Account.Name, bleed);
+					}
+					db.SubmitChanges();
+
+
 					// destroy pw structures
 					List<string> handled = new List<string>();
 					foreach (var line in extraData.Where(x => x.StartsWith("structurekilled")))
