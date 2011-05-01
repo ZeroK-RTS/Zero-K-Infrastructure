@@ -11,12 +11,18 @@ namespace ZkData
 		                                             bool? researchTreaty = null,
 		                                             bool goRemoteLinks = true)
 		{
-			var milAlly = (from treaty in db.TreatyOffers.Where(x => x.OfferingClanID == clanID)
-			               where
-			               	(allyStatus == null || treaty.AllyStatus == allyStatus) && (researchTreaty == null || treaty.IsResearchAgreement == researchTreaty)
-			               join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
-			               where (allyStatus == null || tr2.AllyStatus == allyStatus) && (researchTreaty == null || tr2.IsResearchAgreement == researchTreaty)
-			               select treaty.TargetClanID).ToList();
+			
+			List<int> milAlly = new List<int>();
+
+			if (allyStatus != null || researchTreaty != null)
+			{
+				milAlly = (from treaty in db.TreatyOffers.Where(x => x.OfferingClanID == clanID)
+				           join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
+				           where tr2.TargetClanID == clanID && (
+				           	(allyStatus == null || (tr2.AllyStatus == allyStatus && treaty.AllyStatus == allyStatus)) &&
+				           	(researchTreaty == null || (tr2.IsResearchAgreement == researchTreaty && treaty.IsResearchAgreement == researchTreaty)))
+				           select treaty.TargetClanID).ToList();
+			}
 
 			var gal = db.Galaxies.Single(x => x.IsDefault);
 			var planets = gal.Planets.Where(x => x.Account != null && (x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0)));
