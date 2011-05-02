@@ -667,7 +667,7 @@ namespace ZeroKWeb
 					}
 					if (bleed > 0 && ownerClan != null)
 					{
-						var ownerBleed = Math.Max(bleed, planet.Account.Credits);
+						var ownerBleed = Math.Min(bleed, planet.Account.Credits);
 						planet.Account.Credits -= ownerBleed;
 						var reminder = bleed - ownerBleed;
 						if (reminder > 0)
