@@ -1,21 +1,25 @@
-﻿@model IQueryable<ZkData.SpringBattle>
+﻿@model IList<ZeroKWeb.Controllers.BattleQuickInfo>
+
 @{
   Layout = "";
 }
 @foreach (var m in Model) {
-  var map = m.ResourceByMapResourceID;
-  var mod = m.ResourceByModResourceID;
-  var players = m.SpringBattlePlayers.Select(p => p.IsSpectator).ToList();
-    <div class='mission fleft' style='width:400px' onclick="window.location='@Url.Action("Detail", new { id = m.SpringBattleID })'">
-      <b>@m.Title</b>
+  var players = m.Players.Count(p => !p.IsSpectator);
+  var specs = m.Players.Count(p => p.IsSpectator);
+    <div class='mission fleft' style='width:400px' onclick="window.location='@Url.Action("Detail", new { id = m.Battle.SpringBattleID })'">
+      <b>@m.Battle.Title</b>
       <br />
-      @map.InternalName (@mod.InternalName)<br />
+      Teams:
+      @string.Join("v", m.Players.Where(p => !p.IsSpectator).GroupBy(p => p.AllyNumber).Select(g => g.Count()))
+      @if (m.Battle.HasBots) { <text>+ Bots</text> }
+      <br />
+      @m.Map.InternalName (@m.Mod.InternalName)<br />
       <table>
         <tr>
           <td valign='top'>
             <span style="margin: 0; padding: 0; border: 1px dashed gray; display: table-cell;
               text-align: center; vertical-align: middle; width: 96px; height: 96px;">
-              <img src='http://zero-k.info/Resources/@m.ResourceByMapResourceID.ThumbnailName' style="margin:0px;padding:0px;"/>
+              <img src='http://zero-k.info/Resources/@m.Map.ThumbnailName' style="margin:0px;padding:0px;"/>
             </span>
           </td>
           <td valign='top'>
@@ -24,28 +28,28 @@
                 <td>
                   Players:
                 </td>
-                <td>@players.Where(p => !p).Count()
+                <td>@players
                 </td>
               </tr>
               <tr>
                 <td>
                   Spectators:
                 </td>
-                <td>@players.Where(p => p).Count()
+                <td>@specs
                 </td>
               </tr>
               <tr>
                 <td>
                   Age:
                 </td>
-                <td>@((DateTime.UtcNow - m.StartTime).ToAgoString())
+                <td>@((DateTime.UtcNow - m.Battle.StartTime).ToAgoString())
                 </td>
               </tr>
               <tr>
                 <td>
                   Duration:
                 </td>
-                <td>@TimeSpan.FromSeconds(m.Duration).ToNiceString()
+                <td>@TimeSpan.FromSeconds(m.Battle.Duration).ToNiceString()
                 </td>
               </tr>
             </table>
