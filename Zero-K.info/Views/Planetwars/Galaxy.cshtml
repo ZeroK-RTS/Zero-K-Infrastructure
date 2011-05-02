@@ -6,7 +6,7 @@
   ViewBag.Minimal = true;
   var g = Model;
 
-  int maxDropships = new ZkDataContext().AccountPlanets.GroupBy(x => x.PlanetID).Select(x => (int?)x.Sum(y=>y.DropshipCount)).Max() ?? 1; // fake max as 1 to prevent division by zero
+  int maxDropships = new ZkDataContext().AccountPlanets.GroupBy(x => x.PlanetID).Select(x => (int?)x.Sum(y => y.DropshipCount)).Max() ?? 1; // fake max as 1 to prevent division by zero
   if (maxDropships == 0) {
     maxDropships = 1;
   }
@@ -14,11 +14,11 @@
 
 @if (Global.IsAccountAuthorized) {
  <span>
-  Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits || @Html.ActionLink("Trade", "Trade", "PlanetWars", new {username = Global.Account.Name}, null) | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0) | 
+  Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits || @Html.ActionLink("Trade", "Trade", "PlanetWars", new { username = Global.Account.Name }, null) | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0) | 
  </span>
 }
 <span>
-  @Html.ActionLink("Clans", "ClanList") | @Html.ActionLink("Events","Events") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString() | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a>
+  @Html.ActionLink("Clans", "ClanList") | @Html.ActionLink("Events", "Events") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString() | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a>
 </span>
 
 <span style='color:red; font-size:bigger'>WARNING, THIS IS BETA!</span>
@@ -26,12 +26,13 @@
   <img src="/img/galaxies/render_@(g.GalaxyID).jpg"" style="text-align:left; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
   @foreach (var p in Model.Planets) {
     var pr = p.PlanetRectangle(Model);
+    var por = p.PlanetOverlayRectangle(Model);
     Clan clan = null;
     Clan secondClan = null;
     var secondClanInfluence = 0;
-    var autohost =p.PlanetWarsHosts.FirstOrDefault();
-      
-      
+    var autohost = p.PlanetWarsHosts.FirstOrDefault();
+
+
     int shipCount = p.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0;
 
     if (p.Account != null) {
@@ -48,6 +49,18 @@
         secondRatio = 1.0 - (ipToCapture - secondClanInfluence) / 500.0;
       }
     }
+    
+    <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White'><span style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px;" title='$planet$@p.PlanetID'>
+      @if (autohost != null && autohost.Players > 1) { 
+        <img src='/img/planetstatus/@(autohost.InGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute'/>
+      }
+      
+
+      @foreach (var s in p.PlanetStructures) {
+        <img src='@s.GetImageUrl()' width='@(por.Width)' style='position:absolute' />
+      }
+    </span></a>
+    
     
     
     <table cellpadding="0" cellspacing="0" style="left: @(pr.Left - 40)px; top: @(pr.Top - 50)px; width:@(pr.Width + 80)px; height:50px;" class="pwlabel" width="@(pr.Width + 80)" height="50">
@@ -81,23 +94,14 @@
       </table>
     </span>
     
-    <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White'><span style="position: absolute; left: @(pr.Left)px; top: @(pr.Top)px; width: @(pr.Width)px; height: @(pr.Height)px;" title='$planet$@p.PlanetID'>
-      @if (autohost != null && autohost.Players > 1) { 
-        <img src='/img/planetstatus/@(autohost.InGame ? "attacking" : "preparing")0.png' width='@(pr.Width)' style='position:absolute'/>
-      }
-      
-
-      @foreach (var s in p.PlanetStructures) {
-        <img src='@s.GetImageUrl()' width='@(pr.Width)' style='position:absolute' />
-      }
-    </span></a>
     
     
-      if (shipCount > 0) {
+    
+            if (shipCount > 0) {
     <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;" title='$planetDropships$@p.PlanetID'>
       <img src='/img/fleets/war.png' width='@(Math.Round(25.0 * shipCount / (double)maxDropships))' /><span
         style="font-size: 10px">@shipCount</span> </span>
-      }
+            }
   }
 </div>
 <h3>Last events</h3>

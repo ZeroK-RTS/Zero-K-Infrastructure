@@ -2,10 +2,11 @@
 @model Planet
 @{         
   var planetIconUrl = "/img/planets/" + Model.Resource.MapPlanetWarsIcon;
-  var size = Model.Resource.PlanetWarsIconSize;
+  var size = Model.Resource.PlanetWarsIconSize * Planet.OverlayRatio;
+  var offset = (Model.Resource.PlanetWarsIconSize * Planet.OverlayRatio - Model.Resource.PlanetWarsIconSize) / 2;
 }
 <span style='width: @(size)px; height:@(size)px; display: inline-block;'>
-  <img src='@planetIconUrl' width='@size' style='position:absolute' />
+  <img src='@planetIconUrl' width='@(Model.Resource.PlanetWarsIconSize)' style='position:absolute; padding-left: @(offset)px; padding-top: @(offset)px' />
   @foreach (var s in Model.PlanetStructures) {
     <img src='@s.GetImageUrl()' width='@size' style='position:absolute' />
   }

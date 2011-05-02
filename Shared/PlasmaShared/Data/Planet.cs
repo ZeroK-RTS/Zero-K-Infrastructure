@@ -10,6 +10,8 @@ namespace ZkData
 
 	partial class Planet
 	{
+		public const double OverlayRatio = 2.25;
+
 		public int GetIPToCapture()
 		{
 			var ownerIP = 0;
@@ -27,7 +29,16 @@ namespace ZkData
 			var w = Resource.PlanetWarsIconSize;
 			var xp = (int)(X * gal.Width);
 			var yp = (int)(Y * gal.Height);
-			return new Rectangle(xp - w/2, yp - w/2, w, w);
+			return new Rectangle((int)(xp - w / 2), (int)(yp - w / 2), (int)w, (int)w);
+		}
+
+
+		public Rectangle PlanetOverlayRectangle(Galaxy gal)
+		{
+			var w = Resource.PlanetWarsIconSize *OverlayRatio;
+			var xp = (int)(X * gal.Width);
+			var yp = (int)(Y * gal.Height);
+			return new Rectangle((int)(xp - w/2), (int)(yp - w/2), (int)w, (int)w);
 		}
 	}
 }
