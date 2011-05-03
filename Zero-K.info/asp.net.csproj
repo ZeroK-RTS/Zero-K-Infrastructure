@@ -165,6 +165,7 @@
     <Content Include="ResourceDetail.aspx" />
     <Content Include="Scripts\jquery-1.5.2.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.6.custom.min.js" />
+    <Content Include="Scripts\jquery.qtip.pack.js" />
     <Content Include="Scripts\jquery.tablesorter.js" />
     <Content Include="Scripts\jquery.tablesorter.min.js" />
     <Content Include="Scripts\jquery.ui.stars.js" />
@@ -173,6 +174,7 @@
     <Content Include="Scripts\site.js" />
     <Content Include="StructuresAdmin.aspx" />
     <Content Include="Styles\base.css" />
+    <Content Include="Styles\jquery.qtip.min.css" />
     <Content Include="Styles\jquery.ui.stars.css" />
     <Content Include="Styles\menu.css" />
     <Content Include="Styles\nicetitle.css" />
