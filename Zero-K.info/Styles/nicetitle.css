@@ -20,7 +20,7 @@ div.nicetitle {
 */
 .nicetitle, .ui-tooltip, .qtip
 {
-	z-index:2;
+	z-index:-2;
     position: absolute;
     padding: 8px;
     top: 0px;
@@ -30,7 +30,8 @@ div.nicetitle {
     font-weight:normal;
     background-image: url(../img/ntbgw.png);
     border: 1px solid #780600;
-    max-width: 500px;
+    max-width: 400px;
+    min-width: 400px;
     width: 400px;
 }
 div.nicetitle p {
@@ -44,11 +45,11 @@ div.nicetitle p.destination {
 
 .ui-tooltip-titlebar,
 .ui-tooltip-content
-{
+{ font-size: 0.9em;
   background: none;
   color: #FFF;
   border: none;
-  width: 500px;
+  width: 380px;
   }
 
 	.ui-tooltip-titlebar
