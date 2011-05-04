@@ -33,6 +33,24 @@ namespace ZkData
 		}
 
 
+		public string GetColor(Account viewer)
+		{
+            if (Account == null || Account.Clan == null)
+            {
+				return "gray";
+            }
+            else if (viewer != null && viewer.Clan != null)
+            {
+                return Clan.TreatyColor(viewer.Clan, Account.Clan);
+            }
+            else
+            { 
+                return "blue";
+            }
+		}
+
+
+
 		public Rectangle PlanetOverlayRectangle(Galaxy gal)
 		{
 			var w = Resource.PlanetWarsIconSize *OverlayRatio;

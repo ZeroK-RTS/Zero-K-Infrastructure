@@ -7,8 +7,6 @@
     var autohost = Model.PlanetWarsHosts.FirstOrDefault();
 }
 
-
-
 <h1>
   @Html.Partial("PlanetIcon", Model)
   Planet @Model.Name
@@ -36,31 +34,53 @@
   </b>
 }
 
-<table>
-  <tr>
-    <td valign='top'>
-    
-    <br /><br /><br />
-      <h3>
-        Influence</h3>
-      @Html.Partial("InfluenceList", Model.AccountPlanets)
-      
-    <br /><br /><br />
-      <h3>
-        Dropships</h3>
+
+
+@section head {
+  <script>
+      $(document).ready(function () {
+          $("#tabs").tabs();
+      });
+  </script>
+}
+
+@Html.Partial("PlanetSummary", Model)
+
+<div id="tabs">
+    <ul>
+        <li><a href="#influence"><span>Influence</span></a></li>
+        <li><a href="#dropships"><span>Dropships</span></a></li>
+        <li><a href="#map"><span>Surface Scan</span></a></li>
+        <li><a href="#navigation"><span>Navigation</span></a></li>
+        <li><a href="#structures"><span>Structures</span></a></li>
+        <li><a href="#trade"><span>Trade</span></a></li>
+        <li><a href="#events"><span>Events</span></a></li>
+    </ul>
+    <div id="influence">
+        @Html.Partial("InfluenceList", Model.AccountPlanets)
+    </div>
+    <div id="dropships">
       @Html.Partial("PlanetDropships", Model) 
-    </td>
-    
-    <br /><br /><br />
-    <td valign="top">
-      <h3>Summary</h3>
-      @Html.Partial("PlanetSummary", Model)
-
-    </td>
-
-    <td valign='top'>
-    <h3>Surface scan</h3>
-      @Html.ActionLink(Model.Resource.InternalName, "Detail", "Maps", new { id = Model.MapResourceID }, new { title = "$map$" + Model.MapResourceID })
+      @if (Global.IsAccountAuthorized)
+        {
+            if (Global.Account.DropshipCount <= 0)
+            {
+           <span>You have no free dropships to send here</span>
+            }
+            else
+            {
+          <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
+          Number of dropships to send (@Global.Account.DropshipCount ready): <input type="text" name="count" /> <input type="submit" value="send" />
+          </form>
+                                  if (!Galaxy.AccessiblePlanets(new ZkDataContext(), Global.ClanID, AllyStatus.Alliance).Any(x => x.PlanetID == Model.PlanetID))
+                                  {
+            <span>You cannot access this planet through wormholes - jumpgate must be used</span>  
+                                  }
+            }
+        }
+    </div>
+    <div id="map">
+          @Html.ActionLink(Model.Resource.InternalName, "Detail", "Maps", new { id = Model.MapResourceID }, new { title = "$map$" + Model.MapResourceID })
       <table>
         <tr>
           <td valign='top'>
@@ -89,176 +109,154 @@
           </td>
         </tr>
       </table>
-    </td>
-  </tr>
-</table>
-<br />
-@if (Global.IsAccountAuthorized)
-{
-    if (Global.Account.DropshipCount <= 0)
+    </div>
+    <div id="navigation">
+    @foreach (var p in Model.LinksByPlanetID1.Union(Model.LinksByPlanetID2))
     {
-   <span>You have no free dropships to send here</span>
+        var planet = p.PlanetByPlanetID1 == Model ? p.PlanetByPlanetID2 : p.PlanetByPlanetID1;
+      <li style='color:@(p.LinktStrength > 0 ? "" : "red")'>@Html.PrintPlanet(planet) - link @(p.LinktStrength * 100)%</li>
     }
-    else
-    {
-  <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
-  Number of dropships to send (@Global.Account.DropshipCount ready): <input type="text" name="count" /> <input type="submit" value="send" />
-  </form>
-                          if (!Galaxy.AccessiblePlanets(new ZkDataContext(), Global.ClanID, AllyStatus.Alliance).Any(x => x.PlanetID == Model.PlanetID))
-                          {
-    <span>You cannot access this planet through wormholes - jumpgate must be used</span>  
-                          }
-    }
-}
- <br /><br /><br />
-<h3>Navigation</h3>
-<ul>
-@foreach (var p in Model.LinksByPlanetID1.Union(Model.LinksByPlanetID2))
-{
-    var planet = p.PlanetByPlanetID1 == Model ? p.PlanetByPlanetID2 : p.PlanetByPlanetID1;
-  <li style='color:@(p.LinktStrength > 0 ? "" : "red")'>@Html.PrintPlanet(planet) - link @(p.LinktStrength * 100)%</li>
-}
-</ul>
-
-
-@if (Model.Account != null && Global.ClanID == Model.Account.ClanID)
-{
-    <h2>Construction</h2>
-    foreach (var structure in Model.PlanetStructures.Where(s => s.IsDestroyed))
-    {
-        if (structure.StructureType.Cost > Global.Account.Credits)
+    </div>
+    <div id="structures">
+        @if (Model.Account != null && Global.ClanID == Model.Account.ClanID)
         {
-                <p>@String.Format("Repair {0} (requires {1:C0})", structure.StructureType.Name, structure.StructureType.Cost)</p>
-        }
-        else
-        {
-            var linkText = String.Format("Repair {0} ({1:C0})", structure.StructureType.Name, structure.StructureType.Cost);
-                <p>@Html.ActionLink(linkText, "RepairStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
-        }
-    }
-    foreach (var structure in Model.PlanetStructures.Where(s => !s.IsDestroyed))
-    {
-
-        var upgrade = structure.StructureType.ParentStructureTypeByUpgradesToStructureID;
-        if (upgrade != null)
-        {
-            if (upgrade.Cost > Global.Account.Credits)
+            <h2>Construction</h2>
+            foreach (var structure in Model.PlanetStructures.Where(s => s.IsDestroyed))
             {
-                <p>@String.Format("Upgrade {0} to {1} (requires {2:C0})", structure.StructureType.Name, upgrade.Name, upgrade.Cost)</p>
-            }
-            else
-            {
-                var linkText = String.Format("Upgrade {0} to {1} ({2:C0})", structure.StructureType.Name, upgrade.Name, upgrade.Cost);
-                <p>@Html.ActionLink(linkText, "UpgradeStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
-            }
-
-        }
-    }
-    using (var db = new ZkDataContext())
-    {
-        var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
-        foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable))
-        {
-            if (!StructureType.HasStructureOrUpgrades(db, planet, structureType))
-            {
-                if (structureType.Cost > Global.Account.Credits)
+                if (structure.StructureType.Cost > Global.Account.Credits)
                 {
-                    <p>@String.Format("Build {0} (requires {1:C0})", structureType.Name, structureType.Cost)</p>
+                        <p>@String.Format("Repair {0} (requires {1:C0})", structure.StructureType.Name, structure.StructureType.Cost)</p>
                 }
                 else
                 {
-                    var linkText = String.Format("Build {0} ({1:C0})", structureType.Name, structureType.Cost);
-                    <p>@Html.ActionLink(linkText, "BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })</p>
+                    var linkText = String.Format("Repair {0} ({1:C0})", structure.StructureType.Name, structure.StructureType.Cost);
+                        <p>@Html.ActionLink(linkText, "RepairStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
+                }
+            }
+            foreach (var structure in Model.PlanetStructures.Where(s => !s.IsDestroyed))
+            {
+
+                var upgrade = structure.StructureType.ParentStructureTypeByUpgradesToStructureID;
+                if (upgrade != null)
+                {
+                    if (upgrade.Cost > Global.Account.Credits)
+                    {
+                        <p>@String.Format("Upgrade {0} to {1} (requires {2:C0})", structure.StructureType.Name, upgrade.Name, upgrade.Cost)</p>
+                    }
+                    else
+                    {
+                        var linkText = String.Format("Upgrade {0} to {1} ({2:C0})", structure.StructureType.Name, upgrade.Name, upgrade.Cost);
+                        <p>@Html.ActionLink(linkText, "UpgradeStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
+                    }
+
+                }
+            }
+            using (var db = new ZkDataContext())
+            {
+                var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
+                foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable))
+                {
+                    if (!StructureType.HasStructureOrUpgrades(db, planet, structureType))
+                    {
+                        if (structureType.Cost > Global.Account.Credits)
+                        {
+                            <p>@String.Format("Build {0} (requires {1:C0})", structureType.Name, structureType.Cost)</p>
+                        }
+                        else
+                        {
+                            var linkText = String.Format("Build {0} ({1:C0})", structureType.Name, structureType.Cost);
+                            <p>@Html.ActionLink(linkText, "BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })</p>
+                        }
+                    }
                 }
             }
         }
-    }
-}
+    </div>
+    <div id="trade">
+        @if (Global.Account != null) 
+        {
+            @Html.ActionLink("Go to Trade Office", "Trade", "PlanetWars", new { username = Global.Account.Name }, null)
+        }
+        <h3>Sell Offers</h3>
+              <table>
+                <tr>
+                    <th>Seller</th>
+                    <th>Ordered</th>
+                    <th>Allowed</th>
+                    <th>Price</th>
+                    <th>Buy</th>
+                    <th>Buy Specific Amount</th>
+                </tr>
+            @foreach (var offer in Model.MarketOffers.Where(o => o.IsSell && o.DateAccepted == null).OrderBy(o => o.Price))
+            {
+                @Html.Partial("TradeOffer", new ViewDataDictionary(offer) { { "hidePlanet", true } })
+            }
+            </table>
 
- <br /><br /><br />
-<h2>Influence Trade</h2>
-@if (Global.AccountID != null) 
-{
-    @Html.ActionLink("Go to Trade Office", "Trade", "PlanetWars", new { username = Global.Account.Name }, null)
-}
-<br />
-<br />
-<h3>Sell Offers</h3>
-      <table>
-        <tr>
-            <th>Seller</th>
-            <th>Ordered</th>
-            <th>Allowed</th>
-            <th>Price</th>
-            <th>Buy</th>
-            <th>Buy Specific Amount</th>
-        </tr>
-    @foreach (var offer in Model.MarketOffers.Where(o => o.IsSell && o.DateAccepted == null).OrderBy(o => o.Price))
-    {
-        @Html.Partial("TradeOffer", new ViewDataDictionary(offer) { { "hidePlanet", true } })
-    }
-    </table>
-
-@if (Global.Account != null)
-{
-    var temp = Model.AccountPlanets.SingleOrDefault(ap => ap.AccountID == Global.AccountID);
-    var myInfluence = 0;
-    if (temp != null)
-    {
-        myInfluence = temp.Influence;
-    }
-  <br />
-  <form method="post" action="@Url.Action("SubmitSellOrder")">
-      <input type="hidden" name="planetID" value="@Model.PlanetID"/>
-      <input type='submit' value="Create New Sell Offer" />
-      Influence: <input type="text" name="quantity" value="@myInfluence"/>
-      Unit Price: <input type="text" name="price" value=""/>
-  </form>
-}
-
- <br />
-
-<h3>Buy Offers</h3>
-      <table>
-        <tr>
-            <th>Buyer</th>
-            <th>Ordered</th>
-            <th>Allowed</th>
-            <th>Price</th>
-            <th>Sell</th>
-            <th>Sell Specific Amount</th>
-        </tr>
-    @foreach (var offer in Model.MarketOffers.Where(o => !o.IsSell && o.DateAccepted == null).OrderByDescending(o => o.Price))
-    {
-        @Html.Partial("TradeOffer", new ViewDataDictionary(offer) { { "hidePlanet", true } })
-    }
-    </table>
-    @if (Global.Account != null)
-    {
+        @if (Global.Account != null)
+        {
+            var temp = Model.AccountPlanets.SingleOrDefault(ap => ap.AccountID == Global.AccountID);
+            var myInfluence = 0;
+            if (temp != null)
+            {
+                myInfluence = temp.Influence;
+            }
           <br />
-    <form method="post" action="@Url.Action("SubmitBuyOrder")">
-        <input type='submit' value="Create New Buy Offer" />
-        <input type="hidden" name="planetID" value="@Model.PlanetID"/>
-        Influence: <input type="text" name="quantity" value="0"/>
-        Unit Price: <input type="text" name="price" value="0"/>
-    </form>
-    }    
+          <form method="post" action="@Url.Action("SubmitSellOrder")">
+              <input type="hidden" name="planetID" value="@Model.PlanetID"/>
+              <input type='submit' value="Create New Sell Offer" />
+              Influence: <input type="text" name="quantity" value="@myInfluence"/>
+              Unit Price: <input type="text" name="price" value=""/>
+          </form>
+        }
 
+         <br />
 
- <br /><br /><br />
-<h2>
-  Structures</h2>
-@foreach (var structure in Model.PlanetStructures)
-{
+        <h3>Buy Offers</h3>
+              <table>
+                <tr>
+                    <th>Buyer</th>
+                    <th>Ordered</th>
+                    <th>Allowed</th>
+                    <th>Price</th>
+                    <th>Sell</th>
+                    <th>Sell Specific Amount</th>
+                </tr>
+            @foreach (var offer in Model.MarketOffers.Where(o => !o.IsSell && o.DateAccepted == null).OrderByDescending(o => o.Price))
+            {
+                @Html.Partial("TradeOffer", new ViewDataDictionary(offer) { { "hidePlanet", true } })
+            }
+            </table>
+            @if (Global.Account != null)
+            {
+                  <br />
+            <form method="post" action="@Url.Action("SubmitBuyOrder")">
+                <input type='submit' value="Create New Buy Offer" />
+                <input type="hidden" name="planetID" value="@Model.PlanetID"/>
+                Influence: <input type="text" name="quantity" value="0"/>
+                Unit Price: <input type="text" name="price" value="0"/>
+            </form>
+            }    
+    </div>
+    <div id="structures">
+        @foreach (var structure in Model.PlanetStructures)
+    {
      
-  <p>
-    <img  width="32" height="32" src='@structure.GetImageUrl()'/>@structure.StructureType.Name
-    (@structure.StructureType.Description)</p>
-}
+      <p>
+        <img  width="32" height="32" src='@structure.GetImageUrl()'/>@structure.StructureType.Name
+        (@structure.StructureType.Description)</p>
+    }
+    </div>
+    <div id="events">
+        @Html.Action("Events", new { planetID = Model.PlanetID, partial = true })
+    </div>
 
- <br /><br /><br />
-<h2>@Model.Name events</h2>
-@Html.Action("Events", new { planetID = Model.PlanetID, partial = true })
+    
+
+</div>
 
 @Html.Partial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { planetID = Model.PlanetID, threadID = Model.ForumThreadID } })
+
+
+
 

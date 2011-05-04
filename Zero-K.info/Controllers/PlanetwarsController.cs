@@ -100,6 +100,13 @@ namespace ZeroKWeb.Controllers
 			return View(db.Clans.AsQueryable());
 		}
 
+		public ActionResult Minimap()
+		{
+			var db = new ZkDataContext();
+
+			return View(db.Galaxies.Single(g => g.IsDefault));
+		}
+
 
 		[Auth]
 		public ActionResult OfferTreaty(int targetClanID, AllyStatus ourStatus, string ourMessage, bool ourResearch)

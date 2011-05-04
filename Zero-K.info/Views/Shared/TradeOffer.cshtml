@@ -14,7 +14,7 @@
     {
         maxWillSell = Math.Min(sellerAccountPlanet.Influence, offer.Quantity);
     }
-    if (!(maxWillSell == 0 && Global.AccountID != offer.AccountID))
+    if (!(maxWillSell == 0 && Global.Account != offer.AccountByAccountID) && Global.Account != null)
     {
         var maxCanBuy = Math.Min(Global.Account.Credits / offer.Price, maxWillSell);    
         <tr>  
