@@ -73,8 +73,11 @@
 </span>
 
 <span style='color:red; font-size:bigger'>WARNING, THIS IS BETA!</span>
-<div id="linkMap" style="text-align: left; border: 0; position: relative">
 <div style="text-align: left; border: 0; position: relative">
+  <div style="position: absolute; z-index:  100">
+    <div id="linkMap" > </div>
+  </div>
+
   <img src="/img/galaxies/render_@(g.GalaxyID).jpg"" style="text-align:left; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
   @foreach (var p in Model.Planets) {
     var pr = p.PlanetRectangle(Model);
@@ -109,7 +112,14 @@
       
 
       @foreach (var s in p.PlanetStructures) {
-        <img src='@s.GetImageUrl()' width='@(por.Width)' style='position:absolute' />
+        var size = por.Width;
+        var urlResized = s.GetPathResized(size);
+        var pathResized = Server.MapPath(urlResized);
+        if (!File.Exists(pathResized))
+        {
+            s.GenerateResized(size, Server.MapPath("/img/structures/"));
+        }
+        <img src='@urlResized' style='position:absolute' />
       }
     </span></a>
     

@@ -95,7 +95,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Vector.cs" />
     <Page Include="GalaxyDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -126,7 +125,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Diagram.cs" />
     <Compile Include="GalaxyDialog.xaml.cs">
       <DependentUpon>GalaxyDialog.xaml</DependentUpon>
     </Compile>
@@ -141,7 +139,6 @@
       <DependentUpon>Help.xaml</DependentUpon>
     </Compile>
     <Compile Include="LinkDrawing.cs" />
-    <Compile Include="Node.cs" />
     <Compile Include="OutlinedText.cs" />
     <Compile Include="PlanetDialog.xaml.cs">
       <DependentUpon>PlanetDialog.xaml</DependentUpon>

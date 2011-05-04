@@ -4,7 +4,7 @@
 
 @{
     var galaxy = Model;
-    var mapWidth = 500;
+    var mapWidth = 700;
     var mapHeight = 500;
 }
 
@@ -56,7 +56,8 @@
                 @: var circle = paper.circle(@(planet.X * mapWidth), @(planet.Y * mapHeight), 10);
                 @: circle.attr({
                 @:  "fill": "@planet.GetColor(Global.Account)",
-                @:  "stroke": "none", //todo: set stroke
+                @:  "stroke": "black",
+                @:  "stroke-width": "3",
                 @: });      
             }
        };
