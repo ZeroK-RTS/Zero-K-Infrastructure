@@ -29,7 +29,6 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
           }
           return View(bat);
-
         }
 
         public ActionResult Search(string title,

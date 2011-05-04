@@ -105,7 +105,7 @@ namespace ZeroKWeb
 
       var bestOld = resource.ResourceContentFiles.FirstOrDefault(x => x.LinkCount == resource.ResourceContentFiles.Max(y => y.LinkCount));
       if (bestOld != null && bestOld.LinkCount > 0 && resource.MissionID != null ||
-          (resource.LastLinkCheck != null && DateTime.Now.Subtract(resource.LastLinkCheck.Value).Days < 1))
+          (resource.LastLinkCheck != null && DateTime.UtcNow.Subtract(resource.LastLinkCheck.Value).Days < 1))
       {
         // use cached values for missions or resources checked less than 1 day ago
         links = PlasmaServer.GetLinkArray(bestOld);

@@ -561,7 +561,7 @@ namespace ZeroKWeb.Controllers
 			db.MarketOffers.InsertOnSubmit(new MarketOffer
 			                               {
 			                               	AccountID = Global.AccountID,
-			                               	DatePlaced = DateTime.Now,
+			                               	DatePlaced = DateTime.UtcNow,
 			                               	IsSell = isSell,
 			                               	PlanetID = planetID,
 			                               	Quantity = quantity,
@@ -673,7 +673,7 @@ namespace ZeroKWeb.Controllers
 				{
 					AcceptedAccountID = seller.AccountID,
 					AccountID = buyer.AccountID,
-					DateAccepted = DateTime.Now,
+					DateAccepted = DateTime.UtcNow,
 					IsSell = false,
 					Price = offer.Price,
 					DatePlaced = offer.DatePlaced,
@@ -752,7 +752,7 @@ namespace ZeroKWeb.Controllers
 						                               {
 						                               	AcceptedAccountID = seller.AccountID,
 						                               	AccountID = buyer.AccountID,
-						                               	DateAccepted = DateTime.Now,
+						                               	DateAccepted = DateTime.UtcNow,
 						                               	IsSell = false,
 						                               	Price = sellOffer.Price,
 						                               	DatePlaced = buyOffer.DatePlaced,

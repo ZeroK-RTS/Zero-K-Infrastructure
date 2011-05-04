@@ -215,7 +215,7 @@ namespace ZeroKWeb
     {
       var file = String.Format("{0}/{1}", HttpContext.Current.Server.MapPath("~/Resources"), resource.InternalName.EscapePath());
 
-      resource.LastChange = DateTime.Now;
+      resource.LastChange = DateTime.UtcNow;
 
       if (minimap != null) File.WriteAllBytes(String.Format("{0}.minimap.jpg", file), minimap);
       if (metalMap != null) File.WriteAllBytes(String.Format("{0}.metalmap.jpg", file), metalMap);
