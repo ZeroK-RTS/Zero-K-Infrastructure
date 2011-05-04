@@ -98,9 +98,9 @@
                     y2 *= mapHeight;
 
                     string stroke = "none";
-                    if (allyStatus == AllyStatus.War) { stroke = "red"; }
-                    else if (allyStatus == AllyStatus.Ceasefire) { stroke = "white"; }
-                    else if (allyStatus == AllyStatus.Alliance) { stroke = "green"; }
+                    if (allyStatus == AllyStatus.War) { stroke = "#ff0000"; }
+                    else if (allyStatus == AllyStatus.Ceasefire) { stroke = "#ffffff"; }
+                    else if (allyStatus == AllyStatus.Alliance) { stroke = "#008000"; }
 
 
                     @: var l = paper.path("@String.Format("M{0:0} {1:0}L{2:0} {3:0}", x1, y1, x2, y2)");
@@ -109,7 +109,7 @@
                     if (!set.Item3.IsResearchAgreement) 
                     {
                        @:  "stroke-dasharray": "-.",
-                       if (stroke == "none") { stroke = "blue"; }
+                       if (stroke == "none") { stroke = "#0000ff"; }
                     }
                     @:  "stroke": "@stroke",
                     @: }); 
@@ -133,8 +133,8 @@
                     // draw the clan
                     @: var circle = paper.circle(@x, @y, 5);
                     @: circle.attr({
-                    @:  "fill": "red",
-                    @:  "stroke": "black",
+                    @:  "fill": "#ff0000",
+                    @:  "stroke": "#000000",
                     @:  "stroke-width": "1",
                     @: });  
                 }

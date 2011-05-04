@@ -37,15 +37,15 @@ namespace ZkData
 		{
             if (Account == null || Account.Clan == null)
             {
-				return "gray";
+				return "#808080";
             }
             else if (viewer != null && viewer.Clan != null)
             {
                 return Clan.TreatyColor(viewer.Clan, Account.Clan);
             }
             else
-            { 
-                return "blue";
+            {
+				return "#7DF9FF";
             }
 		}
 
