@@ -91,6 +91,7 @@ namespace ZeroKWeb.Controllers
 				var bat = db.SpringBattles.Single(x => x.SpringBattleID == springBattleID);
 				thread = new ForumThread() { Title = bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 				thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsSpringBattles);
+				thread.SpringBattles = bat;
 				bat.ForumThread = thread;
 				db.ForumThreads.InsertOnSubmit(thread);
 			}
