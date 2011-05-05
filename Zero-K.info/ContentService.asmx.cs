@@ -23,6 +23,26 @@ namespace ZeroKWeb
 		// [System.Web.Script.Services.ScriptService]
 	public class ContentService: WebService
 	{
+		[WebMethod]
+		public string AutohostPlayerJoined(string autohostName, string mapName, int accountID)
+		{
+			var db = new ZkDataContext();
+			var mode = GetModeFromHost(autohostName);
+			if (mode == AutohostMode.Planetwars)
+			{
+				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
+				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+				var clanName = "still without a clan";
+				if (account.ClanID != null) clanName = " of " + account.Clan.ClanName;
+				return string.Format("Greetings {0} {1} {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
+				                     account.IsClanFounder ? account.Clan.LeaderTitle : "",
+				                     account.Name,
+				                     clanName,
+				                     planet.Name,
+				                     planet.PlanetID);
+			}
+			return null;
+		}
 
 		[WebMethod]
 		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams)
@@ -139,7 +159,8 @@ namespace ZeroKWeb
 					if (teamDiffScore < -10) continue; // max imabalance 50% (1v2)
 
 					double balanceModifier = 0;
-					if (team0count < team1count) balanceModifier = -teamDiffScore; else balanceModifier = teamDiffScore;
+					if (team0count < team1count) balanceModifier = -teamDiffScore;
+					else balanceModifier = teamDiffScore;
 
 					// calculate score for elo difference
 					team0Elo = team0Elo/team0Weight;
@@ -147,7 +168,8 @@ namespace ZeroKWeb
 					var eloScore = -Math.Abs(team0Elo - team1Elo)/20;
 					if (eloScore < -15) continue; // max 300 elo = 85% chance
 
-					if (team0Elo < team1Elo) balanceModifier += -eloScore; else balanceModifier += eloScore;
+					if (team0Elo < team1Elo) balanceModifier += -eloScore;
+					else balanceModifier += eloScore;
 
 					// calculate score for meaningfull teams
 					var compoScore = 0.0;
@@ -283,12 +305,12 @@ namespace ZeroKWeb
 				if (mode == AutohostMode.Planetwars)
 				{
 					var gal = db.Galaxies.Single(x => x.IsDefault);
-					var maxc = gal.Planets.Max(x=>(int?)x.AccountPlanets.Sum(y=>y.DropshipCount)) ?? 0;
+					var maxc = gal.Planets.Max(x => (int?)x.AccountPlanets.Sum(y => y.DropshipCount)) ?? 0;
 					var targets = gal.Planets.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
 					var r = new Random(autohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
 					var planet = targets[r.Next(targets.Count)];
 					res.MapName = planet.Resource.InternalName;
-					string owner = "";
+					var owner = "";
 					if (planet.Account != null && planet.Account.Clan != null) owner = planet.Account.Clan.Shortcut;
 					res.Message = string.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2}", owner, planet.Name, planet.PlanetID);
 				}
@@ -362,10 +384,7 @@ namespace ZeroKWeb
 
 					var pu = new LuaTable();
 					if (mode != AutohostMode.Planetwars) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
-					else
-					{
-						foreach (var unlock in user.AccountUnlocks.Select(x=>x.Unlock).Union(Galaxy.ClanUnlocks(db, user.ClanID).Select(x=>x.Unlock))) pu.Add(unlock.Code);
-					}
+					else foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock).Union(Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock))) pu.Add(unlock.Code);
 					userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
 
 					var pc = new LuaTable();
@@ -408,6 +427,28 @@ namespace ZeroKWeb
 				var pwStructures = new LuaTable();
 				foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName))) pwStructures.Add("s" + s.StructureTypeID, s.StructureType.IngameUnitName);
 				ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "pwStructures", Value = pwStructures.ToBase64String() });
+
+				var owner = "";
+				var second = "";
+				var clanInfluences = planet.GetClanInfluences();
+				var firstEntry = clanInfluences.FirstOrDefault();
+				var secondEntry = clanInfluences.Skip(1).FirstOrDefault();
+				if (firstEntry != null) owner = string.Format("{0} ({1}IP) ", firstEntry.Clan.Shortcut, firstEntry.Influence);
+				if (secondEntry != null) second = string.Format("{0} needs {1}IP ", secondEntry.Clan.Shortcut, firstEntry.Influence - secondEntry.Influence);
+
+				pwStructures = new LuaTable();
+				foreach (var s in planet.PlanetStructures.Where(x => !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
+				{
+					pwStructures.Add("s" + s.StructureTypeID,
+					                 new LuaTable()
+					                 {
+					                 	{ "unitname", s.StructureType.IngameUnitName },
+					                 	{ "isDestroyed", s.IsDestroyed },
+					                 	{ "name", owner + s.StructureType.Name },
+					                 	{ "description", second + s.StructureType.Description }
+					                 });
+				}
+				ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "planetwarsStructures", Value = pwStructures.ToBase64String() });
 			}
 
 			return ret;
@@ -497,27 +538,6 @@ namespace ZeroKWeb
 		}
 
 		[WebMethod]
-		public string AutohostPlayerJoined(string autohostName, string mapName, int accountID)
-		{
-			var db = new ZkDataContext();
-			var mode = GetModeFromHost(autohostName);
-			if (mode == AutohostMode.Planetwars)
-			{
-				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
-				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
-				string clanName = "still without a clan";
-				if (account.ClanID != null) clanName = " of " + account.Clan.ClanName;
-				return string.Format("Greetings {0} {1} {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
-					                     account.IsClanFounder ? account.Clan.LeaderTitle : "",
-					                     account.Name,
-					                     clanName,
-					                     planet.Name,
-					                     planet.PlanetID);
-			}
-			return null;
-		}
-
-		[WebMethod]
 		public string SubmitSpringBattleResult(string accountName,
 		                                       string password,
 		                                       BattleResult result,
@@ -567,7 +587,6 @@ namespace ZeroKWeb
 
 				db.SubmitChanges();
 
-				
 				// awards
 				foreach (var line in extraData.Where(x => x.StartsWith("award")))
 				{
@@ -577,15 +596,15 @@ namespace ZeroKWeb
 					var awardText = partsSpace[2];
 
 					var player = sb.SpringBattlePlayers.Single(x => x.Account.Name == name);
-					db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward() {
-						AccountID = player.AccountID,
-						SpringBattleID = sb.SpringBattleID,
-						AwardKey = awardType,
-						AwardDescription = awardText
-					});
+					db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
+					                                      {
+					                                      	AccountID = player.AccountID,
+					                                      	SpringBattleID = sb.SpringBattleID,
+					                                      	AwardKey = awardType,
+					                                      	AwardDescription = awardText
+					                                      });
 				}
 				db.SubmitChanges();
-
 
 				var orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
@@ -600,7 +619,6 @@ namespace ZeroKWeb
 					db.SubmitChanges();
 				}
 
-
 				var text = new StringBuilder();
 
 				if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Any())
@@ -610,15 +628,14 @@ namespace ZeroKWeb
 
 					text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet/{0} has ended\n", planet.PlanetID);
 
-					
 					// handle infelunce
 					Clan ownerClan = null;
 					if (planet.Account != null) ownerClan = planet.Account.Clan;
-					var prizeIp = 40.0 * sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Count()/(double)sb.SpringBattlePlayers.Count(x => !x.IsSpectator && x.IsInVictoryTeam);
+					var prizeIp = 40.0*sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Count()/
+					              (double)sb.SpringBattlePlayers.Count(x => !x.IsSpectator && x.IsInVictoryTeam);
 					var clanTechIp =
-						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x=>x.ClanID != null).GroupBy(x => x.ClanID).ToDictionary(
-							x => x.Key,
-							z => Galaxy.ClanUnlocks(db,z.Key).Count() * 8.0 / z.Count());
+						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).ToDictionary(
+							x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count()*8.0/z.Count());
 
 					foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam))
 					{
@@ -639,23 +656,30 @@ namespace ZeroKWeb
 						}
 						entry.Influence += (p.Influence ?? 0);
 						if (p.Account != targetAccount)
+						{
 							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({5} from techs) influence  at {2} from {3} thanks to ally {4}",
 							                                            targetAccount,
 							                                            p.Influence ?? 0,
 							                                            planet,
 							                                            sb,
-							                                            p.Account, techBonus));
+							                                            p.Account,
+							                                            techBonus));
+						}
 						else
 						{
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} from techs) influence at {2} from {3}", targetAccount, p.Influence ?? 0, planet, sb, techBonus));
+							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} from techs) influence at {2} from {3}",
+							                                            targetAccount,
+							                                            p.Influence ?? 0,
+							                                            planet,
+							                                            sb,
+							                                            techBonus));
 							text.AppendFormat("{0} gained {1} ({3} from techs) influence on {2}\n", targetAccount.Name, p.Influence ?? 0, planet.Name, techBonus);
 						}
 					}
 
 					db.SubmitChanges();
 
-
-					int bleed = 0;
+					var bleed = 0;
 					// destroy existing dropships
 					var noGrowAccount = new List<int>();
 					foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
@@ -674,14 +698,13 @@ namespace ZeroKWeb
 							var share = reminder/ownerClan.Accounts.Count(x => x.Credits > 0);
 							foreach (var a in ownerClan.Accounts.Where(x => x.Credits > share)) a.Credits -= share;
 						}
-						db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {4} lost ${1} in combat at {2} {3}", planet.Account, bleed, planet,sb, planet.Account.Clan));
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {4} lost ${1} in combat at {2} {3}", planet.Account, bleed, planet, sb, planet.Account.Clan));
 						text.AppendFormat("{0} lost ${1} due to combat\n", planet.Account.Name, bleed);
 					}
 					db.SubmitChanges();
 
-
 					// destroy pw structures
-					List<string> handled = new List<string>();
+					var handled = new List<string>();
 					foreach (var line in extraData.Where(x => x.StartsWith("structurekilled")))
 					{
 						var data = line.Substring(16).Split(',');
@@ -692,10 +715,17 @@ namespace ZeroKWeb
 						{
 							if (s.StructureType.IsIngameDestructible)
 							{
-								if (s.StructureType.IngameDestructionNewStructureTypeID != null) {
+								if (s.StructureType.IngameDestructionNewStructureTypeID != null)
+								{
 									db.PlanetStructures.DeleteOnSubmit(s);
-									db.PlanetStructures.InsertOnSubmit(new PlanetStructure() { PlanetID = planet.PlanetID, StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value, IsDestroyed = true });
-								} else s.IsDestroyed = true;
+									db.PlanetStructures.InsertOnSubmit(new PlanetStructure()
+									                                   {
+									                                   	PlanetID = planet.PlanetID,
+									                                   	StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value,
+									                                   	IsDestroyed = true
+									                                   });
+								}
+								else s.IsDestroyed = true;
 								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}", s.StructureType.Name, ownerClan, planet, sb));
 							}
 						}
@@ -703,7 +733,9 @@ namespace ZeroKWeb
 					db.SubmitChanges();
 
 					// spawn new dropships
-					foreach (var a in sb.SpringBattlePlayers.Where(x=>!x.IsSpectator).Select(x=>x.Account).Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
+					foreach (
+						var a in
+							sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
 					{
 						var capacity = GlobalConst.DefaultDropshipCapacity +
 						               (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
@@ -717,7 +749,8 @@ namespace ZeroKWeb
 					db.SubmitChanges();
 
 					// mines
-					foreach (var linkedplanet in gal.Planets.Where(x => (x.PlanetStructures.Sum(y => y.StructureType.EffectLinkStrength) ?? 0) > 0)) {
+					foreach (var linkedplanet in gal.Planets.Where(x => (x.PlanetStructures.Sum(y => y.StructureType.EffectLinkStrength) ?? 0) > 0))
+					{
 						var owner = linkedplanet.Account;
 						if (owner != null) owner.Credits += linkedplanet.PlanetStructures.Sum(x => x.StructureType.EffectCreditsPerTurn) ?? 0;
 					}
@@ -728,7 +761,7 @@ namespace ZeroKWeb
 					db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
 					PlanetwarsController.SetPlanetOwners(db, sb);
 					gal = db.Galaxies.Single(x => x.IsDefault);
-				
+
 					if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
 					{
 						text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",
@@ -736,7 +769,6 @@ namespace ZeroKWeb
 						                  planet.Account.Name,
 						                  planet.PlanetID);
 					}
-					
 
 					try
 					{
@@ -765,16 +797,12 @@ namespace ZeroKWeb
 						}
 
 						db.SubmitChanges();
-					} catch (Exception ex)
+					}
+					catch (Exception ex)
 					{
 						text.AppendLine("error saving history: " + ex.ToString());
 					}
 				}
-				
-
-
-				
-				
 
 				foreach (var account in sb.SpringBattlePlayers.Select(x => x.Account))
 				{

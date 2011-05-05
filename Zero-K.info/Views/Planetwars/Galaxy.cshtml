@@ -100,10 +100,10 @@
     }
 
     var secondRatio = 0.0;
-    var entry = p.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key != clan).OrderByDescending(x => x.Sum(y => y.Influence + y.ShadowInfluence)).FirstOrDefault();
+    var entry = p.GetClanInfluences().Skip(1).FirstOrDefault();
     if (clan != null && entry != null) {
       secondClan = entry.Key;
-      secondClanInfluence = entry.Sum(y => y.Influence + y.ShadowInfluence);
+      secondClanInfluence = entry.Influence;
       var ipToCapture = p.GetIPToCapture();
       if (secondClanInfluence > 0 && (ipToCapture - secondClanInfluence) < 500) {
         secondRatio = 1.0 - (ipToCapture - secondClanInfluence) / 500.0;

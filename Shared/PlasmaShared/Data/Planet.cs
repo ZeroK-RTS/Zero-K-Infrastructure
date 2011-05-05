@@ -1,62 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 
 namespace ZkData
 {
-	
-
 	partial class Planet
 	{
 		public const double OverlayRatio = 2.25;
 
-		public int GetIPToCapture()
+		public IEnumerable<ClanInfluence> GetClanInfluences()
 		{
-			var ownerIP = 0;
-			if (Account != null && Account.ClanID != null)
-			{
-				ownerIP = AccountPlanets.Where(x =>  x.Account.ClanID == Account.ClanID).Sum(x => (int?)(x.Influence + x.ShadowInfluence)) ?? 0;
-			}
-			ownerIP += PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense) ?? 0;
-
-			return ownerIP;
-		}
-
-		public Rectangle PlanetRectangle(Galaxy gal)
-		{
-			var w = Resource.PlanetWarsIconSize;
-			var xp = (int)(X * gal.Width);
-			var yp = (int)(Y * gal.Height);
-			return new Rectangle((int)(xp - w / 2), (int)(yp - w / 2), (int)w, (int)w);
+			return
+				AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null).Select(
+					x => new ClanInfluence() { Clan = x.Key, Influence = x.Sum(y => (int?)(y.Influence + y.ShadowInfluence)) ?? 0 }).OrderByDescending(
+						x => x.Influence);
 		}
 
 
 		public string GetColor(Account viewer)
 		{
-            if (Account == null || Account.Clan == null)
-            {
-				return "#808080";
-            }
-            else if (viewer != null && viewer.Clan != null)
-            {
-                return Clan.TreatyColor(viewer.Clan, Account.Clan);
-            }
-            else
-            {
-				return "#7DF9FF";
-            }
+			if (Account == null || Account.Clan == null) return "#808080";
+			else if (viewer != null && viewer.Clan != null) return Clan.TreatyColor(viewer.Clan, Account.Clan);
+			else return "#7DF9FF";
 		}
 
+		public int GetIPToCapture()
+		{
+			var ownerIP = 0;
+			if (Account != null && Account.ClanID != null) ownerIP = AccountPlanets.Where(x => x.Account.ClanID == Account.ClanID).Sum(x => (int?)(x.Influence + x.ShadowInfluence)) ?? 0;
+			ownerIP += PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense) ?? 0;
+
+			return ownerIP;
+		}
 
 
 		public Rectangle PlanetOverlayRectangle(Galaxy gal)
 		{
-			var w = Resource.PlanetWarsIconSize *OverlayRatio;
-			var xp = (int)(X * gal.Width);
-			var yp = (int)(Y * gal.Height);
+			var w = Resource.PlanetWarsIconSize*OverlayRatio;
+			var xp = (int)(X*gal.Width);
+			var yp = (int)(Y*gal.Height);
 			return new Rectangle((int)(xp - w/2), (int)(yp - w/2), (int)w, (int)w);
+		}
+
+		public Rectangle PlanetRectangle(Galaxy gal)
+		{
+			var w = Resource.PlanetWarsIconSize;
+			var xp = (int)(X*gal.Width);
+			var yp = (int)(Y*gal.Height);
+			return new Rectangle((int)(xp - w/2), (int)(yp - w/2), (int)w, (int)w);
+		}
+
+		public class ClanInfluence
+		{
+			public Clan Clan;
+			public int Influence;
 		}
 	}
 }
