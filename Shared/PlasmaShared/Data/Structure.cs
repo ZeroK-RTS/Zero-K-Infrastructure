@@ -42,7 +42,7 @@ namespace ZkData
 		{
 			using (var image = Image.FromFile(folder + "/" + (IsDestroyed ? StructureType.DestroyedMapIcon : StructureType.MapIcon)))
 			{
-				using (var resized = image.GetResized(size, size, InterpolationMode.HighQualityBicubic))
+				using (var resized = image.GetResized(size, size, InterpolationMode.HighQualityBilinear))
 				{
 					resized.Save(folder + "/"  + GetFileNameResized(size));
 				}				
