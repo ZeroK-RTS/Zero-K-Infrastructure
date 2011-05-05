@@ -5,48 +5,7 @@ namespace ZkData
 {
 	partial class Galaxy
 	{
-		public static List<Planet> AccessiblePlanets(ZkDataContext db,
-		                                             int? clanID,
-		                                             AllyStatus? allyStatus = null,
-		                                             bool? researchTreaty = null,
-		                                             bool goRemoteLinks = true)
-		{
-			
-			List<int> milAlly = new List<int>();
-
-			if (allyStatus != null || researchTreaty != null)
-			{
-				milAlly = (from treaty in db.TreatyOffers.Where(x => x.OfferingClanID == clanID)
-				           join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
-				           where tr2.TargetClanID == clanID && (
-				           	(allyStatus == null || (tr2.AllyStatus == allyStatus && treaty.AllyStatus == allyStatus)) &&
-				           	(researchTreaty == null || (tr2.IsResearchAgreement == researchTreaty && treaty.IsResearchAgreement == researchTreaty)))
-				           select treaty.TargetClanID).ToList();
-			}
-
-			var gal = db.Galaxies.Single(x => x.IsDefault);
-			var planets = gal.Planets.Where(x => x.Account != null && (x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0)));
-			var accesiblePlanets = new List<Planet>();
-
-			foreach (var thisPlanet in planets)
-			{
-				accesiblePlanets.Add(thisPlanet);
-				var thisPlanetID = thisPlanet.PlanetID;
-
-				if (goRemoteLinks)
-				{
-					// iterate links to this planet
-					foreach (var link in gal.Links.Where(l => (l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID) && l.LinktStrength > 0))
-					{
-						var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
-						accesiblePlanets.Add(otherPlanet);
-					}
-				}
-			}
-			return accesiblePlanets;
-		}
-
-		public class ClanUnlockEntry
+	public class ClanUnlockEntry
 		{
 			public Unlock Unlock;
 			public Clan Clan;
@@ -54,7 +13,16 @@ namespace ZkData
 
 		public static List<ClanUnlockEntry> ClanUnlocks(ZkDataContext db, int? clanID)
 		{
-			var planets = AccessiblePlanets(db, clanID, null, true, false);
+			List<int> techAlly = new List<int>();
+
+			techAlly = (from treaty in db.TreatyOffers.Where(x => x.OfferingClanID == clanID)
+									 join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
+									 where tr2.TargetClanID == clanID && tr2.IsResearchAgreement && treaty.IsResearchAgreement
+									 select treaty.TargetClanID).ToList();
+
+			var gal = db.Galaxies.Single(x => x.IsDefault);
+			var planets = gal.Planets.Where(x => x.Account != null && (x.Account.ClanID == clanID || techAlly.Contains(x.Account.ClanID ?? 0)));
+
 			Dictionary<int,ClanUnlockEntry> result = new Dictionary<int, ClanUnlockEntry>();
 
 			return
@@ -63,6 +31,35 @@ namespace ZkData
 						x => new ClanUnlockEntry() { Unlock = x.Key, Clan = x.OrderByDescending(y => y.clan.ClanID == clanID).Select(y => y.clan).First() }).ToList();
 
 		}
+
+		public static List<Planet> DropshipAttackablePlanets(ZkDataContext db, int? clanID) {
+			List<int> milAlly = new List<int>();
+
+			milAlly = (from treaty in db.TreatyOffers.Where(x => x.OfferingClanID == clanID)
+									 join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
+									 where tr2.TargetClanID == clanID && tr2.AllyStatus == AllyStatus.Alliance && treaty.AllyStatus == AllyStatus.Alliance
+									 select treaty.TargetClanID).ToList();
+			
+
+			var gal = db.Galaxies.Single(x => x.IsDefault);
+			var planets = gal.Planets.Where(x => x.Account != null && (x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0)));
+			if (!planets.Any()) return gal.Planets.ToList(); // if cannot attack any planet (not own/allied to any) -> allow attack anywhere
+			var accesiblePlanets = new List<Planet>();
+
+			foreach (var thisPlanet in planets) {
+				accesiblePlanets.Add(thisPlanet);
+				var thisPlanetID = thisPlanet.PlanetID;
+
+				// iterate links to this planet
+				foreach (var link in gal.Links.Where(l => (l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID))) {
+					var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
+					if (thisPlanet.PlanetStructures.Max(x=>x.StructureType.EffectLinkStrength) > 0) accesiblePlanets.Add(otherPlanet);
+				}
+			}
+
+			return accesiblePlanets;
+		}
+
 
 
 		public static void RecalculateShadowInfluence(ZkDataContext db)

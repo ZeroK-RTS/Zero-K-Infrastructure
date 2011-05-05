@@ -367,22 +367,22 @@ namespace ZeroKWeb.Controllers
 		}
 
 
+
+
 		[Auth]
 		public ActionResult SendDropships(int planetID, int count)
 		{
 			var db = new ZkDataContext();
 			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 
-			var accessiblePlanets = Galaxy.AccessiblePlanets(db, acc.ClanID, AllyStatus.Alliance).Select(x => x.PlanetID).ToList();
+			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db,acc.ClanID.Value).Select(x => x.PlanetID).ToList();
 			var accessible = accessiblePlanets.Any(x => x == planetID);
 			if (!accessible)
 			{
-				var jumpGateCapacity = acc.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
-				var usedJumpGates = acc.AccountPlanets.Where(x => !accessiblePlanets.Contains(x.PlanetID)).Sum(x => x.DropshipCount);
-				if (usedJumpGates >= jumpGateCapacity)
+				if (acc.GetFreeJumpGatesCount(accessiblePlanets) <= 0)
 				{
 					return
-						Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity {0}/{1}", usedJumpGates, jumpGateCapacity));
+						Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity"));
 				}
 			}
 			var cnt = Math.Max(count, 0);

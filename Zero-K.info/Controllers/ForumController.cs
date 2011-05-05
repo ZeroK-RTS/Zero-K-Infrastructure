@@ -83,6 +83,7 @@ namespace ZeroKWeb.Controllers
 				thread = new ForumThread() { Title = res.InternalName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 				thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsMaps);
 				res.ForumThread = thread;
+				thread.Resources = res;
 				db.ForumThreads.InsertOnSubmit(thread);
 			}
 
@@ -112,6 +113,7 @@ namespace ZeroKWeb.Controllers
 				thread = new ForumThread() { Title = planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 				thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsPlanets);
 				planet.ForumThread = thread;
+				thread.Planets = planet;
 				db.ForumThreads.InsertOnSubmit(thread);
 			}
 

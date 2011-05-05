@@ -610,6 +610,7 @@ namespace ZeroKWeb
 
 					text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet/{0} has ended\n", planet.PlanetID);
 
+					
 					// handle infelunce
 					Clan ownerClan = null;
 					if (planet.Account != null) ownerClan = planet.Account.Clan;
@@ -617,9 +618,7 @@ namespace ZeroKWeb
 					var clanTechIp =
 						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x=>x.ClanID != null).GroupBy(x => x.ClanID).ToDictionary(
 							x => x.Key,
-							z =>
-							Galaxy.AccessiblePlanets(db, z.Key, null, true, false).SelectMany(y => y.PlanetStructures).Where(y=>!y.IsDestroyed).
-								Select(y => y.StructureType.Unlock).Where(y=>y!=null).Distinct().Count() * 8.0 / z.Count());
+							z => Galaxy.ClanUnlocks(db,z.Key).Count() * 8.0 / z.Count());
 
 					foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam))
 					{

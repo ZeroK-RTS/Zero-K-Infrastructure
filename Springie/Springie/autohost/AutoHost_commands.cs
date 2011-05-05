@@ -1245,7 +1245,7 @@ namespace Springie.autohost
 						var allowed = false;
 						for (var i = 0; i < limit.Length; ++i)
 						{
-							if (s.ToLower().Contains(limit[i].ToLower()))
+							if (s.ToLower() == limit[i].ToLower())
 							{
 								allowed = true;
 								break;

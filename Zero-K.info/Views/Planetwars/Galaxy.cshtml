@@ -84,7 +84,7 @@
   </div>
 
   <img src="/img/galaxies/render_@(g.GalaxyID).jpg"" style="text-align:left; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
-  @foreach (var p in Model.Planets) {
+@foreach (var p in Model.Planets) {
     var pr = p.PlanetRectangle(Model);
     var por = p.PlanetOverlayRectangle(Model);
     Clan clan = null;
@@ -110,7 +110,7 @@
       }
     }
     
-    <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White'><span style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px;" title='$planet$@p.PlanetID'>
+    <span style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px;">
       @if (autohost != null && autohost.Players > 1) { 
         <img src='/img/planetstatus/@(autohost.InGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute'/>
       }
@@ -126,7 +126,7 @@
         }
         <img src='@urlResized' style='position:absolute' />
       }
-    </span></a>
+    </span>
     
     
     
@@ -164,12 +164,11 @@
     
     
     
-            if (shipCount > 0) {
+	if (shipCount > 0) {
     <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;" title='$planetDropships$@p.PlanetID'>
-      <img src='/img/fleets/war.png' width='@(Math.Round(25.0 * shipCount / (double)maxDropships))' /><span
-        style="font-size: 10px">@shipCount</span> </span>
-            }
+    <img src='/img/fleets/war.png' width='@(Math.Round(25.0 * shipCount / (double)maxDropships))' /><span style="font-size: 10px">@shipCount</span> </span>
   }
+}
 </div>
 <h3>Last events</h3>
 <span style='float:left'>
