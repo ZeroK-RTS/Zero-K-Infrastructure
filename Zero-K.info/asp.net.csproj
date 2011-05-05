@@ -224,7 +224,6 @@
     <Content Include="Views\Forum\Thread.cshtml" />
     <Content Include="Views\Forum\NewPost.cshtml" />
     <Content Include="Views\Forum\ForumPath.cshtml" />
-    <Content Include="Views\Battles\Index.cshtml" />
     <Content Include="Views\Shared\CommentList.cshtml" />
     <Content Include="Views\Shared\UserDetail.cshtml" />
     <Content Include="Views\Battles\Detail.cshtml" />
