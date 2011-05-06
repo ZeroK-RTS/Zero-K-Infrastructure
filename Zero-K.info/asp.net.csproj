@@ -272,6 +272,7 @@
     <Content Include="Views\Battles\BattleTileList.cshtml" />
     <Content Include="Views\Planetwars\Minimap.cshtml" />
     <Content Include="Views\Shared\InfluenceList.cshtml" />
+    <Content Include="Views\Shared\MapInfoBox.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
