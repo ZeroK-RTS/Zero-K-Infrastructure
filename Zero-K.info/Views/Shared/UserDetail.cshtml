@@ -115,7 +115,7 @@
         </table>
       }
       @if (Model.Clan != null) {
-        <h3>Dropships</h3>
+        <h3>Starships</h3>
         <span nowrap="nowrap">@(Model.DropshipCount)/@(Model.Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) + GlobalConst.DefaultDropshipCapacity)
           ready to deploy</span>
         <table>

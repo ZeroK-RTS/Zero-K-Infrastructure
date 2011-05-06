@@ -114,7 +114,7 @@
 <div id="tabs">
 	<ul>
 		<li><a href="#influence"><span>Influence</span></a></li>
-		<li><a href="#dropships"><span>Dropships</span></a></li>
+		<li><a href="#dropships"><span>Starships</span></a></li>
 		<li><a href="#structures"><span>Structures</span></a></li>
 		<li><a href="#trade"><span>Trade</span></a></li>
 		<li><a href="#events"><span>Events</span></a></li>
@@ -127,19 +127,30 @@
 		@Html.Partial("PlanetDropships", Model)
 		@if (Global.IsAccountAuthorized) {
 		if (Global.Account.DropshipCount <= 0) {
-			<span>You have no free dropships</span>
+			<span>You have no free starships - fight more battles</span>
 		} else {
 			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(new ZkDataContext(), Global.ClanID).Select(x => x.PlanetID).ToList();
 			var isAccessible = accessiblePlanets.Contains(Model.PlanetID);
 			var jumpgates = Global.Account.GetFreeJumpGatesCount(accessiblePlanets);
+			var defs = Model.PlanetStructures.Where(x=>!x.IsDestroyed).Sum(x=>x.StructureType.EffectDropshipDefense) ?? 0;
+			var bombNeed = 3+defs/3;
+			var enemyShips = Model.AccountPlanets.Where(x=>x.Account.ClanID != Global.ClanID).Sum(x=>x.DropshipCount);
 			if (isAccessible || jumpgates > 0) {
+				var avail = isAccessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
 			<form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
-			Attack planet (@Global.Account.DropshipCount) @(!isAccessible ? "JUMPGATE" : ""):
+			Invade planet (@avail) @(!isAccessible ? "JUMPGATE" : ""):
 			<input type="text" name="count" />
 			<input type="submit" value="send" />
-			</form>
-			} else {
-			<span>You cannot access this planet</span>  
+			</form> <br />
+			
+				if (avail >= enemyShips && enemyShips > 0) {
+					@Html.ActionLink("Engage enemy fleet with " + enemyShips + " ships", "EngageFleet", "Planetwars", new { planetID = Model.PlanetID }) @:- destroys enemyShips ships<br />
+				} 
+				if (avail >= bombNeed) {
+					@Html.ActionLink("Bombard planet with " + bombNeed+ " ships" , "BombPlanet","Planetwars", new{planetID=Model.PlanetID}) @:- destroys randoms tructure<br />
+				}
+				} else {
+				<span>You cannot access this planet</span>  
 			}
 		}
 	}

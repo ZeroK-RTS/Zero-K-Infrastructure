@@ -2,7 +2,6 @@
 using System.Data.Linq.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Transactions;
 using System.Web;
@@ -16,6 +15,47 @@ namespace ZeroKWeb.Controllers
 	{
 		//
 		// GET: /Planetwars/
+		[Auth]
+		public ActionResult BombPlanet(int planetID)
+		{
+			var db = new ZkDataContext();
+			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+
+			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db, acc.ClanID.Value).Select(x => x.PlanetID).ToList();
+			var accessible = accessiblePlanets.Any(x => x == planetID);
+			var jumpgates = acc.GetFreeJumpGatesCount(accessiblePlanets);
+			var avail = accessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
+			var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+			var defs = planet.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
+			var bombNeed = 3 + defs/3;
+
+			var structs = planet.PlanetStructures.Where(x => !x.IsDestroyed && x.StructureType.IsIngameDestructible).ToList();
+			if (bombNeed > avail && structs.Count > 0)
+			{
+				acc.DropshipCount -= bombNeed;
+				var s = structs[new Random().Next(structs.Count)];
+				if (s.StructureType.IngameDestructionNewStructureTypeID != null)
+				{
+					db.PlanetStructures.DeleteOnSubmit(s);
+					db.PlanetStructures.InsertOnSubmit(new PlanetStructure()
+					                                   {
+					                                   	PlanetID = planet.PlanetID,
+					                                   	StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value,
+					                                   	IsDestroyed = true
+					                                   });
+				}
+				else s.IsDestroyed = true;
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} bombed {1} planet {2} with {3} ships, destroying {4}",
+				                                            acc,
+				                                            planet.Account,
+				                                            planet,
+				                                            bombNeed,
+				                                            s.StructureType.Name));
+			}
+			db.SubmitChanges();
+			return RedirectToAction("Planet", new { id = planetID });
+		}
+
 		[Auth]
 		public ActionResult BuildStructure(int planetID, int structureTypeID)
 		{
@@ -41,7 +81,7 @@ namespace ZeroKWeb.Controllers
 				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding.StructureType.Name, planet));
 				SetPlanetOwners(db);
 			}
-			
+
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
@@ -92,56 +132,16 @@ namespace ZeroKWeb.Controllers
 			return View(clan);
 		}
 
+		public ActionResult ClanDiplomacy(int id)
+		{
+			return View("ClanDiplomacy", new ZkDataContext().Clans.Single(x => x.ClanID == id));
+		}
+
 		public ActionResult ClanList()
 		{
 			var db = new ZkDataContext();
 
 			return View(db.Clans.AsQueryable());
-		}
-
-		public ActionResult Minimap()
-		{
-			var db = new ZkDataContext();
-
-			return View(db.Galaxies.Single(g => g.IsDefault));
-		}
-
-
-		[Auth]
-		public ActionResult OfferTreaty(int targetClanID, AllyStatus ourStatus, string ourMessage, bool ourResearch)
-		{
-			if (!Global.Account.HasClanRights || Global.Clan == null) return Content("You don't have rights to do this");
-			var db = new ZkDataContext();
-			var clan = db.Clans.Single(x => x.ClanID == Global.ClanID);
-			var targetClan = db.Clans.Single(x => x.ClanID == targetClanID);
-			var oldEffect = clan.GetEffectiveTreaty(targetClan);
-			var entry = clan.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == targetClanID);
-			if (entry == null)
-			{
-				entry = new TreatyOffer() { OfferingClanID = clan.ClanID, TargetClanID = targetClanID };
-				db.TreatyOffers.InsertOnSubmit(entry);
-			}
-			entry.OfferingClanMessage = ourMessage;
-			entry.AllyStatus = ourStatus;
-			entry.IsResearchAgreement = ourResearch;
-			db.SubmitChanges();
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} offers {1}, research: {2} to {3}", clan, ourStatus, ourResearch, targetClan));
-
-			var newEffect = clan.GetEffectiveTreaty(targetClan);
-
-			if (newEffect.AllyStatus != oldEffect.AllyStatus || newEffect.IsResearchAgreement != oldEffect.IsResearchAgreement)
-			{
-				db.Events.InsertOnSubmit(Global.CreateEvent("New effective treaty between {0} and {1}: {2}->{3}, research {4}->{5}",
-				                                            clan,
-				                                            targetClan,
-				                                            oldEffect.AllyStatus,
-				                                            newEffect.AllyStatus,
-				                                            oldEffect.IsResearchAgreement,
-				                                            newEffect.IsResearchAgreement));
-			}
-			db.SubmitChanges();
-
-			return RedirectToAction("ClanDiplomacy", new { id = clan.ClanID });
 		}
 
 		[Auth]
@@ -151,18 +151,51 @@ namespace ZeroKWeb.Controllers
 			else return Content("You already have clan and you dont have rights to it");
 		}
 
+		[Auth]
+		public ActionResult EngageFleet(int planetID)
+		{
+			var db = new ZkDataContext();
+			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+
+			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db, acc.ClanID.Value).Select(x => x.PlanetID).ToList();
+			var accessible = accessiblePlanets.Any(x => x == planetID);
+			var jumpgates = acc.GetFreeJumpGatesCount(accessiblePlanets);
+			var avail = accessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
+			var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+			var enemyShips = planet.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID).Sum(x => x.DropshipCount);
+			if (enemyShips > 0 && avail >= enemyShips)
+			{
+				acc.DropshipCount -= enemyShips;
+				foreach (var entry in planet.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID))
+				{
+					db.Events.InsertOnSubmit(Global.CreateEvent("{0} engaged fleet of {1} at {2} destroying {3} ships",
+					                                            acc,
+					                                            entry.Account,
+					                                            planet,
+					                                            entry.DropshipCount));
+					entry.DropshipCount = 0;
+				}
+			}
+			db.SubmitChanges();
+			return RedirectToAction("Planet", new { id = planetID });
+		}
+
 		public ActionResult Events(int? planetID,
 		                           int? accountID,
 		                           int? springBattleID,
 		                           int? clanID,
 		                           string filter,
-			int pageSize = 0,
-			int page = 0,
-															bool partial = false)
+		                           int pageSize = 0,
+		                           int page = 0,
+		                           bool partial = false)
 		{
 			var db = new ZkDataContext();
 			if (Request.IsAjaxRequest()) partial = true;
-			if (pageSize == 0) if (!partial) pageSize = 40; else pageSize = 10;
+			if (pageSize == 0)
+			{
+				if (!partial) pageSize = 40;
+				else pageSize = 10;
+			}
 			var res = db.Events.AsQueryable();
 			if (planetID.HasValue) res = res.Where(x => x.EventPlanets.Any(y => y.PlanetID == planetID));
 			if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
@@ -325,6 +358,51 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Clan", new { id = clanID });
 		}
 
+		public ActionResult Minimap()
+		{
+			var db = new ZkDataContext();
+
+			return View(db.Galaxies.Single(g => g.IsDefault));
+		}
+
+
+		[Auth]
+		public ActionResult OfferTreaty(int targetClanID, AllyStatus ourStatus, string ourMessage, bool ourResearch)
+		{
+			if (!Global.Account.HasClanRights || Global.Clan == null) return Content("You don't have rights to do this");
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(x => x.ClanID == Global.ClanID);
+			var targetClan = db.Clans.Single(x => x.ClanID == targetClanID);
+			var oldEffect = clan.GetEffectiveTreaty(targetClan);
+			var entry = clan.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == targetClanID);
+			if (entry == null)
+			{
+				entry = new TreatyOffer() { OfferingClanID = clan.ClanID, TargetClanID = targetClanID };
+				db.TreatyOffers.InsertOnSubmit(entry);
+			}
+			entry.OfferingClanMessage = ourMessage;
+			entry.AllyStatus = ourStatus;
+			entry.IsResearchAgreement = ourResearch;
+			db.SubmitChanges();
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} offers {1}, research: {2} to {3}", clan, ourStatus, ourResearch, targetClan));
+
+			var newEffect = clan.GetEffectiveTreaty(targetClan);
+
+			if (newEffect.AllyStatus != oldEffect.AllyStatus || newEffect.IsResearchAgreement != oldEffect.IsResearchAgreement)
+			{
+				db.Events.InsertOnSubmit(Global.CreateEvent("New effective treaty between {0} and {1}: {2}->{3}, research {4}->{5}",
+				                                            clan,
+				                                            targetClan,
+				                                            oldEffect.AllyStatus,
+				                                            newEffect.AllyStatus,
+				                                            oldEffect.IsResearchAgreement,
+				                                            newEffect.IsResearchAgreement));
+			}
+			db.SubmitChanges();
+
+			return RedirectToAction("ClanDiplomacy", new { id = clan.ClanID });
+		}
+
 		public ActionResult Planet(int id)
 		{
 			var db = new ZkDataContext();
@@ -337,15 +415,67 @@ namespace ZeroKWeb.Controllers
 			return View(planet);
 		}
 
+		[Auth]
+		public ActionResult QuickTransaction(int offerID, int quantity)
+		{
+			var db = new ZkDataContext();
+			var offer = db.MarketOffers.SingleOrDefault(o => o.OfferID == offerID);
+			if (offer == null) return Content("Offer does not exist");
+			if (offer.AcceptedAccountID != null) return Content("This transaction was already completed.");
 
-        public ActionResult Trade(string username)
-        {
-            if (username == null) return Content("Specify user");
-            var db = new ZkDataContext();
-            var user = db.Accounts.SingleOrDefault(u => u.Name == username);
-            if (user == null) return Content("User does not exist");
-            return View(user);
-        }
+			var seller = offer.IsSell ? offer.AccountByAccountID : db.Accounts.Single(a => a.AccountID == Global.AccountID);
+			var buyer = offer.IsSell ? db.Accounts.Single(a => a.AccountID == Global.AccountID) : offer.AccountByAccountID;
+
+			if (offer.Price*quantity > buyer.Credits) return Content("Insufficient credits");
+
+			var sellerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == seller.AccountID);
+			if (sellerAccountPlanet == null) return Content("Seller has nothing to sell");
+
+			var sellerInfluence = sellerAccountPlanet.Influence;
+			if (sellerInfluence < quantity) return Content("Seller has not enough to sell");
+
+			var buyerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == buyer.AccountID);
+			if (buyerAccountPlanet == null)
+			{
+				buyerAccountPlanet = new AccountPlanet { AccountID = buyer.AccountID, PlanetID = offer.PlanetID };
+				db.AccountPlanets.InsertOnSubmit(buyerAccountPlanet);
+				db.SubmitChanges();
+			}
+
+			buyer.Credits -= quantity*offer.Price;
+			seller.Credits += quantity*offer.Price;
+
+			buyerAccountPlanet.Influence += quantity;
+			sellerAccountPlanet.Influence -= quantity;
+
+			// record transaction, for history
+			db.MarketOffers.InsertOnSubmit(new MarketOffer
+			                               {
+			                               	AcceptedAccountID = seller.AccountID,
+			                               	AccountID = buyer.AccountID,
+			                               	DateAccepted = DateTime.UtcNow,
+			                               	IsSell = false,
+			                               	Price = offer.Price,
+			                               	DatePlaced = offer.DatePlaced,
+			                               	Quantity = quantity,
+			                               	PlanetID = offer.PlanetID,
+			                               });
+
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from {2} on {3} for {4} each.",
+			                                            buyer,
+			                                            quantity,
+			                                            seller,
+			                                            offer.Planet,
+			                                            offer.Price));
+
+			offer.Quantity -= quantity;
+			if (offer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(offer);
+			db.SubmitChanges();
+			ResolveMarketTransactions(db);
+			SetPlanetOwners(db);
+			return RedirectToAction("Planet", new { id = offer.PlanetID });
+		}
+
 
 		[Auth]
 		public ActionResult RepairStructure(int planetID, int structureTypeID)
@@ -366,24 +496,15 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-
-
 		[Auth]
 		public ActionResult SendDropships(int planetID, int count)
 		{
 			var db = new ZkDataContext();
 			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 
-			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db,acc.ClanID.Value).Select(x => x.PlanetID).ToList();
+			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db, acc.ClanID.Value).Select(x => x.PlanetID).ToList();
 			var accessible = accessiblePlanets.Any(x => x == planetID);
-			if (!accessible)
-			{
-				if (acc.GetFreeJumpGatesCount(accessiblePlanets) <= 0)
-				{
-					return
-						Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity"));
-				}
-			}
+			if (!accessible) if (acc.GetFreeJumpGatesCount(accessiblePlanets) <= 0) return Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity"));
 			var cnt = Math.Max(count, 0);
 			cnt = Math.Min(cnt, acc.DropshipCount);
 			acc.DropshipCount = (acc.DropshipCount) - cnt;
@@ -407,11 +528,6 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-		public ActionResult ClanDiplomacy(int id)
-		{
-			return View("ClanDiplomacy", new ZkDataContext().Clans.Single(x => x.ClanID == id));
-		}
-
 		/// <summary>
 		/// Updates shadow influence and new owners
 		/// </summary>
@@ -430,18 +546,19 @@ namespace ZeroKWeb.Controllers
 				// in case of a tie when deciding which CLAN to get a planet - give to one with less planets
 				var mostInfluentialClanEntry =
 					planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x => x.Key != null).Select(
-							x => new { Clan = x.Key, ClanInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(
-						x => x.ClanInfluence).ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
+						x => new { Clan = x.Key, ClanInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(x => x.ClanInfluence).
+						ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
 
-
-				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) && planet.Account != null) 
+				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) &&
+				    planet.Account != null)
 				{
 					// disown the planet, nobody has right to own it atm
 					db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {2} has abandoned planet {1}. {3}", planet.Account, planet, planet.Account.Clan, sb));
 					planet.Account = null;
 					havePlanetsChangedHands = true;
-				} else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID &&
-				    mostInfluentialClanEntry.ClanInfluence > planet.GetIPToCapture())
+				}
+				else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID &&
+				         mostInfluentialClanEntry.ClanInfluence > planet.GetIPToCapture())
 				{
 					// planet changes owner, most influential clan is not current owner and has more ip to capture than needed
 
@@ -452,8 +569,8 @@ namespace ZeroKWeb.Controllers
 					// find who will own it
 					// in case of a tie when deciding which PLAYER to get a planet - give it to one with least planets
 					var mostInfluentialPlayer =
-						planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(x => x.Influence + x.ShadowInfluence).ThenBy(x => x.Account.Planets.Count()).First().Account;
-
+						planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(
+							x => x.Influence + x.ShadowInfluence).ThenBy(x => x.Account.Planets.Count()).First().Account;
 
 					if (planet.OwnerAccountID == null) // no previous owner
 					{
@@ -471,7 +588,7 @@ namespace ZeroKWeb.Controllers
 						                                            planet,
 						                                            planet.Account,
 						                                            mostInfluentialClanEntry.Clan,
-																												planet.Account.Clan,
+						                                            planet.Account.Clan,
 						                                            sb));
 						planet.Account = mostInfluentialPlayer;
 					}
@@ -479,10 +596,7 @@ namespace ZeroKWeb.Controllers
 			}
 
 			db.SubmitChanges();
-			if (havePlanetsChangedHands)
-			{
-				SetPlanetOwners(db,sb); // we need another cycle because of shadow influence chain reactions
-			}
+			if (havePlanetsChangedHands) SetPlanetOwners(db, sb); // we need another cycle because of shadow influence chain reactions
 		}
 
 		[Auth]
@@ -493,7 +607,7 @@ namespace ZeroKWeb.Controllers
 
 
 		[Auth]
-        public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage)
+		public ActionResult SubmitCreateClan(Clan clan, HttpPostedFileBase image, HttpPostedFileBase bgimage)
 		{
 			using (var scope = new TransactionScope())
 			{
@@ -549,7 +663,6 @@ namespace ZeroKWeb.Controllers
 				scope.Complete();
 			}
 			return RedirectToAction("Clan", new { id = clan.ClanID });
-			
 		}
 
 
@@ -566,7 +679,12 @@ namespace ZeroKWeb.Controllers
 			                               	Quantity = quantity,
 			                               	Price = price,
 			                               });
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} {2} influence for {3}/unit at {4}",Global.Account, isSell?"offers":"asks for", quantity, price, db.Planets.Single(x=>x.PlanetID==planetID)));
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} {2} influence for {3}/unit at {4}",
+			                                            Global.Account,
+			                                            isSell ? "offers" : "asks for",
+			                                            quantity,
+			                                            price,
+			                                            db.Planets.Single(x => x.PlanetID == planetID)));
 			db.SubmitChanges();
 			ResolveMarketTransactions(db);
 			return RedirectToAction("Planet", new { id = planetID });
@@ -589,13 +707,21 @@ namespace ZeroKWeb.Controllers
 				scope.Complete();
 				return RedirectToAction("Planet", new { id = planet.PlanetID });
 			}
-
 		}
 
 		[Auth]
 		public ActionResult SubmitSellOrder(int planetID, int quantity, int price)
 		{
 			return SubmitMarketOrder(planetID, quantity, price, true);
+		}
+
+		public ActionResult Trade(string username)
+		{
+			if (username == null) return Content("Specify user");
+			var db = new ZkDataContext();
+			var user = db.Accounts.SingleOrDefault(u => u.Name == username);
+			if (user == null) return Content("User does not exist");
+			return View(user);
 		}
 
 		[Auth]
@@ -630,70 +756,6 @@ namespace ZeroKWeb.Controllers
 				scope.Complete();
 			}
 			return RedirectToAction("Planet", new { id = planetID });
-			
-		}
-
-		[Auth]
-		public ActionResult QuickTransaction(int offerID, int quantity)
-		{
-				var db = new ZkDataContext();
-				var offer = db.MarketOffers.SingleOrDefault(o => o.OfferID == offerID);
-				if (offer == null) return Content("Offer does not exist");
-				if (offer.AcceptedAccountID != null) return Content("This transaction was already completed.");
-
-				var seller = offer.IsSell ? offer.AccountByAccountID : db.Accounts.Single(a => a.AccountID == Global.AccountID);
-				var buyer = offer.IsSell ? db.Accounts.Single(a => a.AccountID == Global.AccountID) : offer.AccountByAccountID;
-
-				if (offer.Price * quantity > buyer.Credits) return Content("Insufficient credits");
-
-				var sellerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == seller.AccountID);
-				if (sellerAccountPlanet == null) return Content("Seller has nothing to sell");
-
-				var sellerInfluence = sellerAccountPlanet.Influence;
-				if (sellerInfluence  < quantity) return Content("Seller has not enough to sell");
-
-				var buyerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == buyer.AccountID);
-				if (buyerAccountPlanet == null)
-				{
-					buyerAccountPlanet = new AccountPlanet { AccountID = buyer.AccountID, PlanetID = offer.PlanetID };
-					db.AccountPlanets.InsertOnSubmit(buyerAccountPlanet);
-					db.SubmitChanges();
-				}
-
-				buyer.Credits -= quantity * offer.Price;
-				seller.Credits += quantity * offer.Price;
-
-				buyerAccountPlanet.Influence += quantity;
-				sellerAccountPlanet.Influence -= quantity;
-
-
-				// record transaction, for history
-				db.MarketOffers.InsertOnSubmit(new MarketOffer
-				{
-					AcceptedAccountID = seller.AccountID,
-					AccountID = buyer.AccountID,
-					DateAccepted = DateTime.UtcNow,
-					IsSell = false,
-					Price = offer.Price,
-					DatePlaced = offer.DatePlaced,
-					Quantity = quantity,
-					PlanetID = offer.PlanetID,
-				});
-
-				db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from {2} on {3} for {4} each.",
-											buyer,
-											quantity,
-											seller,
-											offer.Planet,
-											offer.Price));
-
-				offer.Quantity -= quantity;
-				if (offer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(offer);
-				db.SubmitChanges();
-				ResolveMarketTransactions(db);
-				SetPlanetOwners(db);
-				return RedirectToAction("Planet", new { id = offer.PlanetID });
-
 		}
 
 		// TODO: run at any change of influence, credits or market offers
