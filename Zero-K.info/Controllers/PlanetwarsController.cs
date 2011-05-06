@@ -141,7 +141,7 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 
-			return View(db.Clans.AsQueryable());
+			return View(db.Clans.Where(x=>!x.IsDeleted));
 		}
 
 		[Auth]
@@ -336,12 +336,42 @@ namespace ZeroKWeb.Controllers
 				{
 					var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 					acc.ClanID = clan.ClanID;
+					db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins clan {1}", acc, clan));
 					db.SubmitChanges();
 					return RedirectToAction("Clan", new { id = clan.ClanID });
 				}
 			}
 			else return Content("You cannot join this clan");
 		}
+
+		[Auth]
+		public ActionResult LeaveClan()
+		{
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(x => x.ClanID == Global.ClanID);
+			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+			acc.IsClanFounder = false;
+			acc.HasClanRights = false;
+			acc.Planets.Clear();
+			db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
+			db.SubmitChanges();
+			if (!clan.Accounts.Any())
+			{
+				clan.IsDeleted = true;
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} is disbanded",clan));
+			}
+			else {
+				if (!clan.Accounts.Any(x => x.IsClanFounder)) {
+					clan.Accounts.OrderByDescending(x => x.HasClanRights).First().IsClanFounder = true;
+				}
+			}
+			db.SubmitChanges();
+
+			SetPlanetOwners();
+			return RedirectToAction("ClanList", new { id = clan.ClanID });
+				
+		}
+
 
 		[Auth]
 		public ActionResult KickPlayerFromClan(int clanID, int accountID)
