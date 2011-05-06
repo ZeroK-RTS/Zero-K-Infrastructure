@@ -648,39 +648,42 @@ namespace ZeroKWeb
 						var techBonus = p.Account.ClanID != null ? (int)clanTechIp[p.Account.ClanID] : 0;
 						p.Influence = (int)Math.Round(prizeIp) + techBonus;
 
-						var targetAccount = p.Account;
-						if (ownerClan != null && p.Account.Clan != null && p.Account.Clan != ownerClan)
-						{
-							var treaty = ownerClan.GetEffectiveTreaty(p.Account.Clan); // if ceasefired/allianced - give ip to owner
-							if (treaty.AllyStatus == AllyStatus.Ceasefire || treaty.AllyStatus == AllyStatus.Alliance) targetAccount = planet.Account;
-						}
-						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == targetAccount.AccountID);
-						if (entry == null)
-						{
-							entry = new AccountPlanet() { AccountID = targetAccount.AccountID, PlanetID = planet.PlanetID };
+						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == p.AccountID);
+						if (entry == null) {
+							entry = new AccountPlanet() { AccountID = p.AccountID, PlanetID = planet.PlanetID };
 							db.AccountPlanets.InsertOnSubmit(entry);
 						}
-						entry.Influence += (p.Influence ?? 0);
-						if (p.Account != targetAccount)
-						{
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({5} from techs) influence  at {2} from {3} thanks to ally {4}",
-							                                            targetAccount,
-							                                            p.Influence ?? 0,
-							                                            planet,
-							                                            sb,
-							                                            p.Account,
-							                                            techBonus));
+
+						var infl = p.Influence ?? 0;
+
+						if (ownerClan != null && p.Account.Clan != null && p.Account.Clan != ownerClan) {
+							var treaty = ownerClan.GetEffectiveTreaty(p.Account.Clan); // if ceasefired/allianced - give ip to owner
+							if (treaty.AllyStatus == AllyStatus.Ceasefire || treaty.AllyStatus == AllyStatus.Alliance) {
+								double tax = treaty.AllyStatus == AllyStatus.Ceasefire ? 0.33 : 0.5;
+
+								var ownerEntry = planet.Account.AccountPlanets.SingleOrDefault(x => x.PlanetID == planet.PlanetID);
+								if (ownerEntry != null)
+								{
+									var allyInfl = (int)Math.Round(infl * tax);
+									infl = (int)Math.Round(infl*(1.0 - tax));
+									ownerEntry.Influence += allyInfl;
+									db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} influence at {2} thanks to ally {3} from {4}", planet.Account, allyInfl, planet, p.Account, sb));
+								}
+							}
 						}
-						else
-						{
-							db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} from techs) influence at {2} from {3}",
-							                                            targetAccount,
-							                                            p.Influence ?? 0,
-							                                            planet,
-							                                            sb,
-							                                            techBonus));
-							text.AppendFormat("{0} gained {1} ({3} from techs) influence on {2}\n", targetAccount.Name, p.Influence ?? 0, planet.Name, techBonus);
-						}
+
+						entry.Influence += infl;
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} from techs) influence at {2} from {3}",
+																													p.Account,
+																													p.Influence ?? 0,
+																													planet,
+																													sb,
+																													techBonus));
+						
+						
+						
+
+						
 					}
 
 					db.SubmitChanges();
