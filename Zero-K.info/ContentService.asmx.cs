@@ -155,7 +155,7 @@ namespace ZeroKWeb
 					if (team0count == 0 || team1count == 0) continue; // skip combination, empty team
 
 					// calculate score for team difference
-					var teamDiffScore = -(30.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count));
+					var teamDiffScore = -(30.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count)) - Math.Abs(team0count-team1count);
 					if (teamDiffScore < -10) continue; // max imabalance 50% (1v2)
 
 					double balanceModifier = 0;
