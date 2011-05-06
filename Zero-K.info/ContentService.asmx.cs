@@ -305,8 +305,9 @@ namespace ZeroKWeb
 				if (mode == AutohostMode.Planetwars)
 				{
 					var gal = db.Galaxies.Single(x => x.IsDefault);
-					var maxc = gal.Planets.Max(x => (int?)x.AccountPlanets.Sum(y => y.DropshipCount)) ?? 0;
-					var targets = gal.Planets.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
+					var valids = gal.Planets.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) >= (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0));
+  				var maxc = valids.Max(x => (int?)x.AccountPlanets.Sum(y => y.DropshipCount)) ?? 0;
+					var targets = valids.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
 					var r = new Random(autohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
 					var planet = targets[r.Next(targets.Count)];
 					res.MapName = planet.Resource.InternalName;
@@ -729,6 +730,12 @@ namespace ZeroKWeb
 								db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}", s.StructureType.Name, ownerClan, planet, sb));
 							}
 						}
+					}
+					db.SubmitChanges();
+
+					// destroy structures (usually defenses)
+					foreach (var s in planet.PlanetStructures.Where(x=>!x.IsDestroyed && x.StructureType.BattleDeletesThis).ToList()) {
+						planet.PlanetStructures.Remove(s);
 					}
 					db.SubmitChanges();
 

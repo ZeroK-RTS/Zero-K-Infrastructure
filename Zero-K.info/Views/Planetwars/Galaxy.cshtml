@@ -115,10 +115,16 @@
         <img src='/img/planetstatus/@(autohost.InGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute'/>
       }
       
-
+			@{
+				var rendered = new List<string>();
+			}
       @foreach (var s in p.PlanetStructures) {
-        var size = por.Width;
+				var size = por.Width;			
         var urlResized = s.GetPathResized(size);
+				if (rendered.Contains(urlResized)) {
+					continue;
+				}
+				rendered.Add(urlResized);
         var pathResized = Server.MapPath(urlResized);
         if (!File.Exists(pathResized))
         {

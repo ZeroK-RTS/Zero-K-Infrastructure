@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="PlasmaShared.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
@@ -637,12 +638,14 @@
       <Column Name="EffectCreditsPerTurn" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectIsVictoryPlanet" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectWarpGateCapacity" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="EffectDropshipDefense" Member="EffectDropshipDefense" Type="System.Int32" DbType="int" IsDbGenerated="false" CanBeNull="true" IsPrimaryKey="false" />
       <Column Name="EffectBots" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="Cost" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="IsBuildable" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IsIngameDestructible" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IngameDestructionNewStructureTypeID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="OwnerChangeDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="BattleDeletesThis" Member="BattleDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" IsDbGenerated="false" CanBeNull="false" IsPrimaryKey="false" />
       <Association Name="StructureType_PlanetStructure" Member="PlanetStructures" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="PlanetStructure" />
       <Association Name="Unlock_StructureType" Member="Unlock" ThisKey="EffectUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
       <Association Name="StructureType_StructureType" Member="ParentStructureTypeByUpgradesToStructureID" ThisKey="UpgradesToStructureID" OtherKey="StructureTypeID" Type="StructureType" IsForeignKey="true" />

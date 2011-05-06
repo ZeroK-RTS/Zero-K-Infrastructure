@@ -6,6 +6,7 @@
       var dropshipCapa = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity);
       var dropshipProd = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipProduction);
       var defense = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense);
+			var dropDefense = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense);
       var jump = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectWarpGateCapacity);
       var victory = Model.PlanetStructures.Where(x => !x.IsDestroyed).Any(x => x.StructureType.EffectIsVictoryPlanet == true);
       var aliens = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.EffectBots).Where(x => !string.IsNullOrEmpty(x)).FirstOrDefault();
@@ -21,6 +22,9 @@
 			@if (defense > 0) {
 				@:, <span style='color: red'>+@defense influence</span>
       }
+			@if (dropDefense > 0) {
+				@:, <span style='color: red'>+@dropDefense ship defense</span>
+      }
       @if (credits > 0) {
 				@:, <span style='color: ltGreen'>+$@credits/turn</span>
 			}
@@ -34,10 +38,10 @@
 				@:, +@jump jumpgate
       }
       @if (dropshipProd > 0) {
-				@:, +@dropshipProd dropships/turn
+				@:, +@dropshipProd ships/turn
       }
       @if (dropshipCapa >0) {
-				@:, +@dropshipCapa dropship capacity
+				@:, +@dropshipCapa starfleet capacity
 			}
       @if (victory) {
 	      @:, @(victory ? "ARTEFACT!" : "")

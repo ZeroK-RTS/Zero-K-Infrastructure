@@ -202,13 +202,13 @@
 
 <div id="tabs">
     <ul>
-        <li><a href="#dropships"><span>Dropships</span></a></li>
+        <li><a href="#starships"><span>Starships</span></a></li>
         <li><a href="#diplomacy"><span>Diplomacy</span></a></li>
         <li><a href="#members"><span>Members</span></a></li>
         <li><a href="#technologies"><span>Technology</span></a></li>
         <li><a href="#events"><span>Events</span></a></li>
     </ul>
-    <div id="dropships">
+    <div id="starships">
         <span nowrap="nowrap">@Model.Accounts.Sum(x => x.DropshipCount)/@(Model.Accounts.Count() * GlobalConst.DefaultDropshipCapacity + Model.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity))
           ready to deploy</span>
         <table>
@@ -239,7 +239,7 @@
           <th>Name </th>
           <th>Influence </th>
           <th>Credits </th>
-          <th>Dropships </th>
+          <th>Starships </th>
           <th></th>
           <th></th>
           @foreach (var a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence)))
