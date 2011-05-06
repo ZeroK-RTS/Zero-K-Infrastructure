@@ -637,16 +637,28 @@ namespace ZeroKWeb
 					// handle infelunce
 					Clan ownerClan = null;
 					if (planet.Account != null) ownerClan = planet.Account.Clan;
-					var prizeIp = 40.0*sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Count()/
-					              (double)sb.SpringBattlePlayers.Count(x => !x.IsSpectator && x.IsInVictoryTeam);
+					//var prizeIp = 40.0*sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Count()/(double)sb.SpringBattlePlayers.Count(x => !x.IsSpectator && x.IsInVictoryTeam);
+
 					var clanTechIp =
 						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).ToDictionary(
-							x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count()*8.0/z.Count());
+							x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count()*3.0/z.Count());
+
+					int ownerMalus = 0;
+					if (ownerClan != null) {
+						var entries = planet.GetClanInfluences();
+						if (entries.Count() > 1) {
+							var diff = entries.First().Influence - entries.Skip(1).First().Influence;
+							ownerMalus = (int)((diff / 50.0) * (diff / 50.0));
+						}
+					}
 
 					foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam))
 					{
 						var techBonus = p.Account.ClanID != null ? (int)clanTechIp[p.Account.ClanID] : 0;
-						p.Influence = (int)Math.Round(prizeIp) + techBonus;
+						var gapMalus = 0;
+						if (ownerClan != null && p.Account.Clan == ownerClan) gapMalus = ownerMalus;
+						p.Influence += (techBonus - gapMalus);
+						if (p.Influence < 0) p.Influence = 0;
 
 						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == p.AccountID);
 						if (entry == null) {
@@ -673,12 +685,12 @@ namespace ZeroKWeb
 						}
 
 						entry.Influence += infl;
-						db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} from techs) influence at {2} from {3}",
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} from techs {5}) influence at {2} from {3}",
 																													p.Account,
 																													p.Influence ?? 0,
 																													planet,
 																													sb,
-																													techBonus));
+																													techBonus, gapMalus >0 ? "-" + gapMalus + " from domination":"" ));
 						
 						
 						

@@ -21,7 +21,7 @@ namespace ZkData
 
 		public void CalculateElo()
 		{
-			if (IsEloProcessed || Duration < 120)
+			if (IsEloProcessed || Duration < 240)
 			{
 				IsEloProcessed = true;
 				return;
@@ -29,8 +29,8 @@ namespace ZkData
 
 			if (IsMission || HasBots || PlayerCount < 2)
 			{
-				WinnerTeamXpChange = FactorTime(GlobalConst.XpForMissionOrBotsVictory, Duration);
-				LoserTeamXpChange = FactorTime(GlobalConst.XpForMissionOrBots, Duration);
+				WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
+				LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
 
 				foreach (var a in SpringBattlePlayers.Where(x => !x.IsSpectator))
 				{
@@ -38,6 +38,7 @@ namespace ZkData
 					{
 						a.Account.XP += WinnerTeamXpChange.Value;
 						a.XpChange = WinnerTeamXpChange.Value;
+						a.Influence = WinnerTeamXpChange.Value;
 					}
 					else
 					{
@@ -60,7 +61,7 @@ namespace ZkData
 
 			var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
 			var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
-
+			
 			if (losers.Count == 0 || winners.Count == 0)
 			{
 				IsEloProcessed = true;
@@ -96,8 +97,8 @@ namespace ZkData
 
 			var sumW = winnerW + loserW;
 
-			WinnerTeamXpChange = (int)(20 + (300 + 600*(1 - eWin))/(2.0 + winners.Count));
-			WinnerTeamXpChange = FactorTime(WinnerTeamXpChange, Duration);
+			WinnerTeamXpChange = (int)(20 + (300 + 600*(1 - eWin))/(3.0 + winners.Count));
+			WinnerTeamXpChange = WinnerTeamXpChange;
 
 			foreach (var r in winners)
 			{
@@ -107,6 +108,7 @@ namespace ZkData
 
 				r.Account.XP += WinnerTeamXpChange.Value;
 				r.Player.XpChange = WinnerTeamXpChange;
+				r.Player.Influence = WinnerTeamXpChange;
 
 				if (r.Account.EloWeight < GlobalConst.EloWeightMax)
 				{
@@ -116,7 +118,7 @@ namespace ZkData
 			}
 
 			LoserTeamXpChange = (int)(20 + (200 + 400*(1 - eLose))/(2.0 + losers.Count));
-			LoserTeamXpChange = FactorTime(LoserTeamXpChange, Duration);
+			LoserTeamXpChange = LoserTeamXpChange;
 
 			foreach (var r in losers)
 			{
@@ -138,12 +140,5 @@ namespace ZkData
 			IsEloProcessed = true;
 		}
 
-		static int FactorTime(int? xp, int duration)
-		{
-			xp = xp ?? 0;
-			if (duration < 480) return 0;
-			else if (duration < 720) return (int)(xp*(720 - duration)/240.0);
-			else return xp.Value;
-		}
 	}
 }
