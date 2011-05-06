@@ -144,10 +144,10 @@
 			</form> <br />
 			
 				if (avail >= enemyShips && enemyShips > 0) {
-					@Html.ActionLink("Engage enemy fleet with " + enemyShips + " ships", "EngageFleet", "Planetwars", new { planetID = Model.PlanetID }) @:- destroys enemyShips ships<br />
+					@Html.ActionLink("Engage enemy fleet with " + enemyShips + " ships", "EngageFleet", new { planetID = Model.PlanetID }) @:- destroys enemy ships<br />
 				} 
 				if (avail >= bombNeed) {
-					@Html.ActionLink("Bombard planet with " + bombNeed+ " ships" , "BombPlanet","Planetwars", new{planetID=Model.PlanetID}) @:- destroys randoms tructure<br />
+					@Html.ActionLink("Bombard planet with " + bombNeed+ " ships" , "BombPlanet", new{planetID=Model.PlanetID}) @:- destroys random structure<br />
 				}
 				} else {
 				<span>You cannot access this planet</span>  
@@ -161,7 +161,11 @@
 		@foreach (var structure in Model.PlanetStructures) {
      
 			<p>
-				<img  width="80" height="80" src='@structure.GetImageUrl()'/>@structure.StructureType.Name
+				<img  width="80" height="80" src='@structure.GetImageUrl()'/>
+				@if (structure.IsDestroyed) {
+					<span style='color:red'>DESTROYED</span>
+				}
+				@structure.StructureType.Name
 				(@structure.StructureType.Description)</p>
 	}
 		@if (Model.Account != null && Global.ClanID == Model.Account.ClanID) {
