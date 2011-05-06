@@ -85,7 +85,7 @@
 		
 		var warpGatesTaken = @Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectWarpGateCapacity > 0)).Count(x=>x.OwnerAccountID!= null && x.Account.ClanID == conquest.Clan.ClanID);
 		
-		<span>@Html.PrintClan(conquest.Clan) - @conquest.Count/@Model.Planets.Count() planets and @warpGatesTaken/@warpGates jumpgates</span>
+		<span>@Html.PrintClan(conquest.Clan) - @conquest.Count/@Math.Round(Model.Planets.Count()*0.3) planets and @warpGatesTaken/@Math.Round(warpGates*0.5) jumpgates</span>
 	}
 }
 <br />
@@ -110,7 +110,7 @@
 	var credEntries = db.Clans.Select(x=> new {Clan = x, Credits = x.Accounts.Sum(y=>y.Credits)}).OrderByDescending(x => x.Credits);
 	var creds = credEntries.FirstOrDefault();
 	if (creds != null) {
-		<span>@Html.PrintClan(creds.Clan) - $@creds.Credits/$@credEntries.Sum(x=>x.Credits)</span>
+		<span>@Html.PrintClan(creds.Clan) - $@creds.Credits/$@Math.Round(credEntries.Sum(x=>x.Credits)*0.3)</span>
 	}
 }
 <br />
@@ -120,7 +120,7 @@
 	var diplo = @Model.Planets.SelectMany(x => x.AccountPlanets).Where(x => x.AccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Influence = x.Sum(y => y.Influence + y.ShadowInfluence) }).OrderByDescending(x => x.Influence).FirstOrDefault();
 	if (diplo != null) {
 	
-		<span>@Html.PrintClan(diplo.Clan) - @diplo.Influence/@Model.Planets.SelectMany(x => x.AccountPlanets).Where(x => x.Account.ClanID != null).Sum(x => x.Influence + x.ShadowInfluence) </span>
+		<span>@Html.PrintClan(diplo.Clan) - @diplo.Influence/@Math.Round(Model.Planets.SelectMany(x => x.AccountPlanets).Where(x => x.Account.ClanID != null).Sum(x => x.Influence + x.ShadowInfluence)*0.3) </span>
 	}
 }
 <br />
