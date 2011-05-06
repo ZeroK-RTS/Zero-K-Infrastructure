@@ -307,7 +307,12 @@ namespace ZeroKWeb
 					var gal = db.Galaxies.Single(x => x.IsDefault);
 					var valids = gal.Planets.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) >= (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0));
   				var maxc = valids.Max(x => (int?)x.AccountPlanets.Sum(y => y.DropshipCount)) ?? 0;
-					var targets = valids.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
+					
+					List<Planet> targets = null;
+					// if there are no dropships and there are unclaimed planets, target those
+					if (maxc == 0 && gal.Planets.Any(x=>x.OwnerAccountID == null)) targets = gal.Planets.Where(x=>x.OwnerAccountID == null).ToList();
+					else targets = valids.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList(); // target valid planets with most dropships
+
 					var r = new Random(autohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
 					var planet = targets[r.Next(targets.Count)];
 					res.MapName = planet.Resource.InternalName;
