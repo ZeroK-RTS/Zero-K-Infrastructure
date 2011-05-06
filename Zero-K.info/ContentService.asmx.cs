@@ -390,7 +390,7 @@ namespace ZeroKWeb
 
 					var pu = new LuaTable();
 					if (mode != AutohostMode.Planetwars) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
-					else foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock).Union(Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock))) pu.Add(unlock.Code);
+					else foreach (var unlock in Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock)) pu.Add(unlock.Code);
 					userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
 
 					var pc = new LuaTable();
@@ -648,7 +648,7 @@ namespace ZeroKWeb
 						var entries = planet.GetClanInfluences();
 						if (entries.Count() > 1) {
 							var diff = entries.First().Influence - entries.Skip(1).First().Influence;
-							ownerMalus = (int)((diff / 50.0) * (diff / 50.0));
+							ownerMalus = (int)((diff / 60.0) * (diff / 60.0));
 						}
 					}
 
