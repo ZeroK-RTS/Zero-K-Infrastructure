@@ -76,7 +76,7 @@
 
 <span style='color:red; font-size:bigger'>WARNING, THIS IS BETA!</span><br />
 
-<b>Conquest victory (30% planets + 50% jumpgates):</b>
+<b>Conquest victory (33% planets + 50% jumpgates):</b>
 @{
 	var conquest = @Model.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
 	if (conquest != null) {
@@ -85,7 +85,7 @@
 		
 		var warpGatesTaken = @Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectWarpGateCapacity > 0)).Count(x=>x.OwnerAccountID!= null && x.Account.ClanID == conquest.Clan.ClanID);
 		
-		<span>@Html.PrintClan(conquest.Clan) - @conquest.Count/@Math.Round(Model.Planets.Count()*0.3) planets and @warpGatesTaken/@Math.Round(warpGates*0.5) jumpgates</span>
+		<span>@Html.PrintClan(conquest.Clan) - @conquest.Count/@Math.Round(Model.Planets.Count()/3.0) planets and @warpGatesTaken/@Math.Round(warpGates*0.5) jumpgates</span>
 	}
 }
 <br />
@@ -93,34 +93,35 @@
 <b>Technologic victory (all artefacts and techs):</b>
 @{
 	var db = new ZkDataContext();
-	var tech = Model.Planets.Where(x=>x.OwnerAccountID!=null && x.Account.ClanID!= null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Techs = x.SelectMany(y => y.PlanetStructures).Select(y=>y.StructureType).Distinct().Count(y=>y.EffectUnlockID !=null) }).FirstOrDefault();
-	if (tech != null) {
-		var arts = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet==true)).Count();
-		var artsTaken = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet==true)).Count(x => x.OwnerAccountID != null && x.Account.ClanID == tech.Clan.ClanID);
+	var arts = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)).Count();
+	var artsTaken = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true) && y.OwnerAccountID!= null && y.Account.Clan!=null).GroupBy(x=>x.Account.Clan).Select(x=>new{Clan = x.Key, Arts = x.Count()}).FirstOrDefault();
+	
+	if (artsTaken != null) {
+		var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Account.Clan == artsTaken.Clan).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
 		
-		<span>@Html.PrintClan(tech.Clan) - @artsTaken/@arts artefacts,  @tech.Techs/@db.StructureTypes.Where(x=>x.EffectUnlockID!=null && x.PlanetStructures.Any(y=>y.Planet.GalaxyID == Model.GalaxyID)).Count() techs</span>
+		<span>@Html.PrintClan(artsTaken.Clan) - @artsTaken.Arts/@arts artefacts,  @techs/@db.StructureTypes.Where(x=>x.EffectUnlockID!=null && x.PlanetStructures.Any(y=>y.Planet.GalaxyID == Model.GalaxyID)).Count() techs</span>
 	}
 }
 <br />
 
 
-<b>Economic victory (30% credits):</b>
+<b>Economic victory (33% credit value):</b>
 @{
 	
-	var credEntries = db.Clans.Select(x=> new {Clan = x, Credits = x.Accounts.Sum(y=>y.Credits)}).OrderByDescending(x => x.Credits);
+	var credEntries = db.Clans.Select(x=> new {Clan = x, Credits = x.Accounts.Sum(y=>y.Credits) + x.Accounts.SelectMany(y=>y.Planets).SelectMany(y=>y.PlanetStructures).Where(y=>!y.IsDestroyed).Sum(y=>y.StructureType.Cost)}).OrderByDescending(x => x.Credits);
 	var creds = credEntries.FirstOrDefault();
 	if (creds != null) {
-		<span>@Html.PrintClan(creds.Clan) - $@creds.Credits/$@Math.Round(credEntries.Sum(x=>x.Credits)*0.3)</span>
+		<span>@Html.PrintClan(creds.Clan) - $@creds.Credits/$@Math.Round(credEntries.Sum(x=>x.Credits)/3.0)</span>
 	}
 }
 <br />
 
-<b>Trade victory (30% influence)</b>
+<b>Trade victory (33% real influence)</b>
 @{
-	var diplo = @Model.Planets.SelectMany(x => x.AccountPlanets).Where(x => x.AccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Influence = x.Sum(y => y.Influence + y.ShadowInfluence) }).OrderByDescending(x => x.Influence).FirstOrDefault();
+	var diplo = @Model.Planets.SelectMany(x => x.AccountPlanets).Where(x => x.AccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Influence = x.Sum(y => y.Influence) }).OrderByDescending(x => x.Influence).FirstOrDefault();
 	if (diplo != null) {
 	
-		<span>@Html.PrintClan(diplo.Clan) - @diplo.Influence/@Math.Round(Model.Planets.SelectMany(x => x.AccountPlanets).Where(x => x.Account.ClanID != null).Sum(x => x.Influence + x.ShadowInfluence)*0.3) </span>
+		<span>@Html.PrintClan(diplo.Clan) - @diplo.Influence/@Math.Round(Model.Planets.SelectMany(x => x.AccountPlanets).Where(x => x.Account.ClanID != null).Sum(x => x.Influence)/3.0) </span>
 	}
 }
 <br />
