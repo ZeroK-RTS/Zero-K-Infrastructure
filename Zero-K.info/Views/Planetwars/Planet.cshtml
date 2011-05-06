@@ -132,9 +132,9 @@
 			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(new ZkDataContext(), Global.ClanID).Select(x => x.PlanetID).ToList();
 			var isAccessible = accessiblePlanets.Contains(Model.PlanetID);
 			var jumpgates = Global.Account.GetFreeJumpGatesCount(accessiblePlanets);
-			var defs = Model.PlanetStructures.Where(x=>!x.IsDestroyed).Sum(x=>x.StructureType.EffectDropshipDefense) ?? 0;
-			var bombNeed = 3+defs/3;
-			var enemyShips = Model.AccountPlanets.Where(x=>x.Account.ClanID != Global.ClanID).Sum(x=>x.DropshipCount);
+			var defs = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
+			var bombNeed = 3 + defs / 3;
+			var enemyShips = Model.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID).Sum(x => x.DropshipCount);
 			if (isAccessible || jumpgates > 0) {
 				var avail = isAccessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
 			<form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
@@ -144,13 +144,13 @@
 			</form> <br />
 			
 				if (avail >= enemyShips && enemyShips > 0) {
-					@Html.ActionLink("Engage enemy fleet with " + enemyShips + " ships", "EngageFleet", new { planetID = Model.PlanetID }) @:- destroys enemy ships<br />
-				} 
-				if (avail >= bombNeed) {
-					@Html.ActionLink("Bombard planet with " + bombNeed+ " ships" , "BombPlanet", new{planetID=Model.PlanetID}) @:- destroys random structure<br />
+			@Html.ActionLink("Engage enemy fleet with " + enemyShips + " ships", "EngageFleet", new { planetID = Model.PlanetID }) @:-destroysenemyships<br/>
 				}
-				} else {
-				<span>You cannot access this planet</span>  
+				if (avail >= bombNeed) {
+			@Html.ActionLink("Bombard planet with " + bombNeed + " ships", "BombPlanet", new { planetID = Model.PlanetID }) @:-destroysrandomstructure<br/>
+				}
+			} else {
+			<span>You cannot access this planet</span>  
 			}
 		}
 	}
@@ -163,8 +163,8 @@
 			<p>
 				<img  width="80" height="80" src='@structure.GetImageUrl()'/>
 				@if (structure.IsDestroyed) {
-					<span style='color:red'>DESTROYED</span>
-				}
+					<span style='color: red'>DESTROYED</span>
+		}
 				@structure.StructureType.Name
 				(@structure.StructureType.Description)</p>
 	}
@@ -178,28 +178,31 @@
 			<p>@Html.ActionLink(linkText, "RepairStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
 			}
 		}
-		foreach (var structure in Model.PlanetStructures.Where(s => !s.IsDestroyed)) {
 
-			var upgrade = structure.StructureType.ParentStructureTypeByUpgradesToStructureID;
-			if (upgrade != null) {
-				if (upgrade.Cost > Global.Account.Credits) {
+		if (Model.OwnerAccountID == Global.AccountID) {
+			foreach (var structure in Model.PlanetStructures.Where(s => !s.IsDestroyed)) {
+
+				var upgrade = structure.StructureType.ParentStructureTypeByUpgradesToStructureID;
+				if (upgrade != null) {
+					if (upgrade.Cost > Global.Account.Credits) {
 			<p>@String.Format("Upgrade {0} to {1} (requires {2:C0})", structure.StructureType.Name, upgrade.Name, upgrade.Cost)</p>
-				} else {
-					var linkText = String.Format("Upgrade {0} to {1} ({2:C0})", structure.StructureType.Name, upgrade.Name, upgrade.Cost);
+					} else {
+						var linkText = String.Format("Upgrade {0} to {1} ({2:C0})", structure.StructureType.Name, upgrade.Name, upgrade.Cost);
 			<p>@Html.ActionLink(linkText, "UpgradeStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
+					}
+
 				}
-
 			}
-		}
 
-		var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
-		foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
-			if (!StructureType.HasStructureOrUpgrades(db, planet, structureType)) {
-				if (structureType.Cost > Global.Account.Credits) {
+			var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
+			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
+				if (!StructureType.HasStructureOrUpgrades(db, planet, structureType)) {
+					if (structureType.Cost > Global.Account.Credits) {
 			<p>@String.Format("Build {0} (requires {1:C0})", structureType.Name, structureType.Cost)</p>
-				} else {
-					var linkText = String.Format("Build {0} ({1:C0})", structureType.Name, structureType.Cost);
+					} else {
+						var linkText = String.Format("Build {0} ({1:C0})", structureType.Name, structureType.Cost);
 			<p>@Html.ActionLink(linkText, "BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })</p>
+					}
 				}
 			}
 		}
