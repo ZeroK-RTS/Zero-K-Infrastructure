@@ -16,7 +16,6 @@ namespace ZeroKWeb.Controllers
 	{
 		//
 		// GET: /Planetwars/
-
 		[Auth]
 		public ActionResult BuildStructure(int planetID, int structureTypeID)
 		{

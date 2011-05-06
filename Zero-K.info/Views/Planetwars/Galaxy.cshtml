@@ -102,7 +102,7 @@
     var secondRatio = 0.0;
     var entry = p.GetClanInfluences().Skip(1).FirstOrDefault();
     if (clan != null && entry != null) {
-      secondClan = entry.Key;
+			secondClan = entry.Clan;
       secondClanInfluence = entry.Influence;
       var ipToCapture = p.GetIPToCapture();
       if (secondClanInfluence > 0 && (ipToCapture - secondClanInfluence) < 500) {

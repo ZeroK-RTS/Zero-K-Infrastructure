@@ -1,0 +1,26 @@
+﻿@model ZkData.Resource
+				 
+@Html.ActionLink(Model.InternalName, "Detail", "Maps", new { id = Model.ResourceID }, new { title = "$map$" + Model.ResourceID })
+<table>
+	<tr>
+		<td valign='top'><span style="margin: 0; padding: 0; border: 1px dashed gray; display: table-cell;
+              text-align: center; vertical-align: middle; width: 96px; height: 96px;" title="$map$@Model.ResourceID">
+			<a href='@Url.Action("Detail", "Maps", new { id = Model.ResourceID })'>
+				<img src='http://zero-k.info/Resources/@Model.ThumbnailName' style="margin:0px;padding:0px;"/>
+			</a></span></td>
+		<td valign='top'>
+			<table>
+				<tr>
+					<td>Size: </td>
+					<td>@Model.MapWidth x @Model.MapHeight
+					</td>
+				</tr>
+				<tr>
+					<td colspan='2'><small>
+						@{Html.RenderPartial("~/Views/Maps/MapTags.cshtml", Model);}
+					</small></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>

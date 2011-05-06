@@ -3,9 +3,9 @@
 @model IEnumerable<AccountPlanet>
 
 <table>
-  @foreach (var clanGroup in Model.Where(ap => ap.Influence + ap.ShadowInfluence > 0 && ap.Account.Clan!= null)
+  @foreach (var clanGroup in Model.Where(ap => ap.Influence + ap.ShadowInfluence > 0 && ap.Account.Clan != null)
                                   .GroupBy(ap => ap.Account.Clan)
-                                  .OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence))) {
+                                  .OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)).Take(3)) {
     <tr>
       <td>
         <b>@Html.PrintClan(clanGroup.Key)</b>
@@ -15,7 +15,7 @@
           @Html.PrintInfluence(clanGroup.Key, clanGroup.Sum(ap => ap.Influence), clanGroup.Sum(ap => ap.ShadowInfluence))
         </b>
       </td>
-      @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence)) {
+      @foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence).Take(2)) {
         <tr>
           <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>@Html.PrintAccount(accountPlanet.Account)</small></td>
           <td>&nbsp;&nbsp;&nbsp;<small>@Html.PrintInfluence(accountPlanet)</small></td>

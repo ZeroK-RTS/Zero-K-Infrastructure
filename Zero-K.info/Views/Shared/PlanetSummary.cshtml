@@ -11,78 +11,41 @@
       var aliens = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.EffectBots).Where(x => !string.IsNullOrEmpty(x)).FirstOrDefault();
       var techs = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.Unlock).Where(x=> x!=null).ToList();
       
-      if (Model.OwnerAccountID != null) 
-      {
     <tr>
       <td>Owner:</td>
-      <td>@Model.Account.Name</td>
+      <td>@Html.PrintAccount(Model.Account)  @Html.PrintClan(Model.Account != null ? Model.Account.Clan : null)</td>
     </tr>
-        if (Model.Account.ClanID != null) 
+		<tr>
+			<td>Bonuses:</td>
+			<td><span style='color:@(link == 0 ? "red":"")'>@(link * 100)%</span> link
+			@if (defense > 0) {
+				@:, <span style='color: red'>+@defense influence</span>
+      }
+      @if (credits > 0) {
+				@:, <span style='color: ltGreen'>+$@credits/turn</span>
+			}
+      @if (techs.Any()) {
+				foreach (var t in techs)
         {
-    <tr>
-      <td>Clan:</td>
-      <td>@Model.Account.Clan.ClanName</td>
-    </tr>
+          @:, <span title='$unlock$@t.UnlockID' style='color:@t.LabelColor; white-space: nowrap;' ><img src='@t.ImageUrl' width='20'/>@t.Name</span>
         }
       }
-      if (defense > 0) {
-    <tr>
-      <td>Defense:</td>
-      <td style='color: red'>+@defense influence</td>
-    </tr>
+      @if (jump > 0) {
+				@:, +@jump jumpgate
       }
-    <tr>
-      <td>Link strength:</td>
-      <td style='color:@(link == 0 ? "red":"")'>@(link * 100)%</td>
-    </tr>
-      if (credits > 0) {
-    <tr>
-      <td>Credits production:</td>
-      <td style='color: ltGreen'>+@credits</td>
-    </tr>
+      @if (dropshipProd > 0) {
+				@:, +@dropshipProd dropships/turn
       }
-      if (techs.Any()) {
-    <tr>
-      <td>Technologies:</td>
-      <td>
-        @foreach (var t in techs)
-        {
-          <span title='$unlock$@t.UnlockID' style='color:@t.LabelColor; font-size:small'>
-            <img src='@t.ImageUrl' width='20'/>@t.Name<br />
-          </span>
-        }
-      </td>
-    </tr>
+      @if (dropshipCapa >0) {
+				@:, +@dropshipCapa dropship capacity
+			}
+      @if (victory) {
+	      @:, @(victory ? "ARTEFACT!" : "")
       }
-      if (jump > 0) {
-    <tr>
-      <td>JumpGate capacity:</td>
-      <td>@jump</td>
-    </tr>      
+      @if (!string.IsNullOrEmpty(aliens)) {
+				@:, @aliens
       }
-      if (dropshipProd > 0) {
-    <tr>
-      <td>Dropship production:</td>
-      <td>@dropshipProd</td>
-    </tr>
-      }
-      if (dropshipCapa >0) {
-    <tr>
-      <td>Dropship capacity:</td>
-      <td>@dropshipCapa</td>
-    </tr>
-      }
-      if (victory) {
-    <tr>
-      <td>Artefacts:</td>
-      <td>@(victory ? "YES!" : "")</td>
-    </tr>
-      }
-      if (!string.IsNullOrEmpty(aliens)) {
-    <tr>
-      <td>Alien presence:</td>
-      <td>@aliens</td>
-    </tr>
-      }
+			</td>
+	</tr>		
   }
 </table>

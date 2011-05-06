@@ -8,9 +8,16 @@
 	var db = new ZkData.ZkDataContext();
 }
 <h1>
-	@Html.Partial("PlanetIcon", Model)
 	Planet @Model.Name
 </h1>
+<table><tr><td>
+@Html.Partial("PlanetIcon", Model)
+</td>
+<td>
+@Html.Partial("MapInfoBox",Model.Resource)
+</td>
+</tr></table>
+
 @if (Model.OwnerAccountID == Global.AccountID) {
 	<form method="post" action="@Url.Action("SubmitRenamePlanet")">
 	<input type="hidden" name="planetID" value="@Model.PlanetID"/>
@@ -100,7 +107,6 @@
 	<ul>
 		<li><a href="#influence"><span>Influence</span></a></li>
 		<li><a href="#dropships"><span>Dropships</span></a></li>
-		<li><a href="#map"><span>Surface Scan</span></a></li>
 		<li><a href="#structures"><span>Structures</span></a></li>
 		<li><a href="#trade"><span>Trade</span></a></li>
 		<li><a href="#events"><span>Events</span></a></li>
@@ -129,32 +135,6 @@
 			}
 		}
 	}
-	</div>
-	<div id="map">
-		@Html.ActionLink(Model.Resource.InternalName, "Detail", "Maps", new { id = Model.MapResourceID }, new { title = "$map$" + Model.MapResourceID })
-		<table>
-			<tr>
-				<td valign='top'><span style="margin: 0; padding: 0; border: 1px dashed gray; display: table-cell;
-              text-align: center; vertical-align: middle; width: 96px; height: 96px;" title="$map$@Model.MapResourceID">
-					<a href='@Url.Action("Detail", "Maps", new { id = Model.Resource.ResourceID })'>
-						<img src='http://zero-k.info/Resources/@Model.Resource.ThumbnailName' style="margin:0px;padding:0px;"/>
-					</a></span></td>
-				<td valign='top'>
-					<table>
-						<tr>
-							<td>Size: </td>
-							<td>@Model.Resource.MapWidth x @Model.Resource.MapHeight
-							</td>
-						</tr>
-						<tr>
-							<td colspan='2'><small>
-								@{Html.RenderPartial("~/Views/Maps/MapTags.cshtml", Model.Resource);}
-							</small></td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
 	</div>
 	<div id="navigation">
 		<div id="minimap">
@@ -269,7 +249,7 @@
 			@foreach (var structure in Model.PlanetStructures) {
      
 				<p>
-					<img  width="32" height="32" src='@structure.GetImageUrl()'/>@structure.StructureType.Name
+					<img  width="64" height="64" src='@structure.GetImageUrl()'/>@structure.StructureType.Name
 					(@structure.StructureType.Description)</p>
 	 }
 		</div>

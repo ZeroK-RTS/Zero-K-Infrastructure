@@ -1,13 +1,16 @@
 ﻿@using ZkData
 @using ZeroKWeb
 @model Planet
-<b>@Html.Partial("PlanetIcon", Model) @Model.Name</b>
+<b>@Model.Name</b>
+<table><tr>
+<td>@Html.Partial("PlanetIcon", Model)</td>
+<td>
+@Html.Partial("MapInfoBox",Model.Resource)
+</td>
+</tr></table>
 <small>
 @Html.Partial("PlanetSummary", Model)
-<span style="margin: 0; padding: 0; border: 1px dashed gray; display: table-cell;
-              text-align: center; vertical-align: middle; width: 96px; height: 96px;" title="$map$@Model.MapResourceID"><a href='@Url.Action("Detail", "Maps", new { id = Model.Resource.ResourceID })'><img src='http://zero-k.info/Resources/@Model.Resource.ThumbnailName' style="margin:0px;padding:0px;"/></a>
-</span>
 
 @Html.Partial("PlanetDropships", Model)
-@Html.Partial("InfluenceList", Model.AccountPlanets)
+@Html.Partial("InfluenceListShort", Model.AccountPlanets)
 </small>
