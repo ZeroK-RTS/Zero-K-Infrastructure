@@ -441,7 +441,7 @@ namespace ZeroKWeb
 
 				var owner = "";
 				var second = "";
-				var clanInfluences = planet.GetClanInfluences();
+				var clanInfluences = planet.GetClanInfluences().Where(x=>x.Influence > 0);
 				var firstEntry = clanInfluences.FirstOrDefault();
 				var secondEntry = clanInfluences.Skip(1).FirstOrDefault();
 				if (firstEntry != null) owner = string.Format("{0} ", firstEntry.Clan.Shortcut);
