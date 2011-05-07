@@ -32,12 +32,11 @@ namespace ZeroKWeb
 			{
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
 				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
-				var clanName = "still without a clan";
-				if (account.ClanID != null) clanName = " of " + account.Clan.ClanName;
-				return string.Format("Greetings {0} {1} {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
+				if (account.Clan == null) return string.Format("{0} this is competetive PlanetWars campaign server. Join a clan to fight http://zero-k.info/Planetwars/ClanList", account.Name);
+				return string.Format("Greetings {0} of {1} {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
 				                     account.IsClanFounder ? account.Clan.LeaderTitle : "",
 				                     account.Name,
-				                     clanName,
+				                     account.IsClanFounder ? account.Clan.ClanName : account.Clan.Shortcut,
 				                     planet.Name,
 				                     planet.PlanetID);
 			}
@@ -53,7 +52,7 @@ namespace ZeroKWeb
 			{
 				var res = new BalanceTeamsResult();
 				var idList = currentTeams.Select(x => x.AccountID).ToList();
-				var players = db.Accounts.Where(x => idList.Contains(x.AccountID)).ToList();
+				var players = db.Accounts.Where(x => idList.Contains(x.AccountID) && x.Clan != null).ToList();
 				var clans = players.Where(x => x.Clan != null).Select(x => x.Clan).ToList();
 				var treaties = new Dictionary<Tuple<Clan, Clan>, EffectiveTreaty>();
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
@@ -214,6 +213,7 @@ namespace ZeroKWeb
 				}
 				else
 				{
+					res.Message = "";
 					var differs = false;
 					for (var i = 0; i < players.Count; i++)
 					{
@@ -221,10 +221,15 @@ namespace ZeroKWeb
 						if (!differs && allyID != currentTeams.First(x => x.AccountID == players[i].AccountID).AllyID) differs = true;
 						res.BalancedTeams.Add(new AccountTeam() { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = allyID, TeamID = i });
 					}
+					foreach (var p in currentTeams.Where(x=>!res.BalancedTeams.Any(y=>y.AccountID == x.AccountID))) {
+						res.BalancedTeams.Add(new AccountTeam() { AccountID = p.AccountID, Name = p.Name, Spectate = true });
+						res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
+					}
+
 
 					if (differs)
 					{
-						res.Message = string.Format("Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
+						res.Message+= string.Format("Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
 						                            bestTeamDiffs,
 						                            bestElo,
 						                            bestCompo,
@@ -439,8 +444,8 @@ namespace ZeroKWeb
 				var clanInfluences = planet.GetClanInfluences();
 				var firstEntry = clanInfluences.FirstOrDefault();
 				var secondEntry = clanInfluences.Skip(1).FirstOrDefault();
-				if (firstEntry != null) owner = string.Format("{0} ({1}IP) ", firstEntry.Clan.Shortcut, firstEntry.Influence);
-				if (secondEntry != null) second = string.Format("{0} needs {1}IP ", secondEntry.Clan.Shortcut, firstEntry.Influence - secondEntry.Influence);
+				if (firstEntry != null) owner = string.Format("{0}", firstEntry.Clan.Shortcut);
+				if (secondEntry != null) second = string.Format("{0} needs {1} influence - ", secondEntry.Clan.Shortcut, firstEntry.Influence - secondEntry.Influence);
 
 				pwStructures = new LuaTable();
 				foreach (var s in planet.PlanetStructures.Where(x => !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
@@ -705,7 +710,7 @@ namespace ZeroKWeb
 					var noGrowAccount = new List<int>();
 					foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
 					{
-						if (ap.Account.Clan != ownerClan) bleed += ap.DropshipCount*1000; // bleed credits for each enemy dropsihp in combat
+						if (ap.Account.Clan != ownerClan) bleed += ap.DropshipCount*GlobalConst.PlanetwarsDropshipBleed; // bleed credits for each enemy dropsihp in combat
 						ap.DropshipCount = 0;
 						noGrowAccount.Add(ap.AccountID);
 					}
@@ -995,6 +1000,7 @@ namespace ZeroKWeb
 		public int AllyID;
 		public string Name;
 		public int TeamID;
+		public bool Spectate;
 	}
 
 	public class BotTeam

@@ -29,6 +29,8 @@ namespace PlasmaShared.ContentService {
     [System.Web.Services.WebServiceBindingAttribute(Name="ContentServiceSoap", Namespace="http://tempuri.org/")]
     public partial class ContentService : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
+        private System.Threading.SendOrPostCallback AutohostPlayerJoinedOperationCompleted;
+        
         private System.Threading.SendOrPostCallback BalanceTeamsOperationCompleted;
         
         private System.Threading.SendOrPostCallback DownloadFileOperationCompleted;
@@ -54,8 +56,6 @@ namespace PlasmaShared.ContentService {
         private System.Threading.SendOrPostCallback RegisterResourceOperationCompleted;
         
         private System.Threading.SendOrPostCallback SubmitMissionScoreOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback AutohostPlayerJoinedOperationCompleted;
         
         private System.Threading.SendOrPostCallback SubmitSpringBattleResultOperationCompleted;
         
@@ -102,6 +102,9 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
+        public event AutohostPlayerJoinedCompletedEventHandler AutohostPlayerJoinedCompleted;
+        
+        /// <remarks/>
         public event BalanceTeamsCompletedEventHandler BalanceTeamsCompleted;
         
         /// <remarks/>
@@ -141,9 +144,6 @@ namespace PlasmaShared.ContentService {
         public event SubmitMissionScoreCompletedEventHandler SubmitMissionScoreCompleted;
         
         /// <remarks/>
-        public event AutohostPlayerJoinedCompletedEventHandler AutohostPlayerJoinedCompleted;
-        
-        /// <remarks/>
         public event SubmitSpringBattleResultCompletedEventHandler SubmitSpringBattleResultCompleted;
         
         /// <remarks/>
@@ -151,6 +151,39 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         public event VerifyAccountDataCompletedEventHandler VerifyAccountDataCompleted;
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string AutohostPlayerJoined(string autohostName, string mapName, int accountID) {
+            object[] results = this.Invoke("AutohostPlayerJoined", new object[] {
+                        autohostName,
+                        mapName,
+                        accountID});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void AutohostPlayerJoinedAsync(string autohostName, string mapName, int accountID) {
+            this.AutohostPlayerJoinedAsync(autohostName, mapName, accountID, null);
+        }
+        
+        /// <remarks/>
+        public void AutohostPlayerJoinedAsync(string autohostName, string mapName, int accountID, object userState) {
+            if ((this.AutohostPlayerJoinedOperationCompleted == null)) {
+                this.AutohostPlayerJoinedOperationCompleted = new System.Threading.SendOrPostCallback(this.OnAutohostPlayerJoinedOperationCompleted);
+            }
+            this.InvokeAsync("AutohostPlayerJoined", new object[] {
+                        autohostName,
+                        mapName,
+                        accountID}, this.AutohostPlayerJoinedOperationCompleted, userState);
+        }
+        
+        private void OnAutohostPlayerJoinedOperationCompleted(object arg) {
+            if ((this.AutohostPlayerJoinedCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.AutohostPlayerJoinedCompleted(this, new AutohostPlayerJoinedCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/BalanceTeams", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -582,39 +615,6 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public string AutohostPlayerJoined(string autohostName, string mapName, int accountID) {
-            object[] results = this.Invoke("AutohostPlayerJoined", new object[] {
-                        autohostName,
-                        mapName,
-                        accountID});
-            return ((string)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void AutohostPlayerJoinedAsync(string autohostName, string mapName, int accountID) {
-            this.AutohostPlayerJoinedAsync(autohostName, mapName, accountID, null);
-        }
-        
-        /// <remarks/>
-        public void AutohostPlayerJoinedAsync(string autohostName, string mapName, int accountID, object userState) {
-            if ((this.AutohostPlayerJoinedOperationCompleted == null)) {
-                this.AutohostPlayerJoinedOperationCompleted = new System.Threading.SendOrPostCallback(this.OnAutohostPlayerJoinedOperationCompleted);
-            }
-            this.InvokeAsync("AutohostPlayerJoined", new object[] {
-                        autohostName,
-                        mapName,
-                        accountID}, this.AutohostPlayerJoinedOperationCompleted, userState);
-        }
-        
-        private void OnAutohostPlayerJoinedOperationCompleted(object arg) {
-            if ((this.AutohostPlayerJoinedCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.AutohostPlayerJoinedCompleted(this, new AutohostPlayerJoinedCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SubmitSpringBattleResult", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string SubmitSpringBattleResult(string accountName, string password, BattleResult result, BattlePlayerResult[] players, string[] extraData) {
             object[] results = this.Invoke("SubmitSpringBattleResult", new object[] {
@@ -738,7 +738,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -752,6 +752,8 @@ namespace PlasmaShared.ContentService {
         private string nameField;
         
         private int teamIDField;
+        
+        private bool spectateField;
         
         /// <remarks/>
         public int AccountID {
@@ -792,10 +794,20 @@ namespace PlasmaShared.ContentService {
                 this.teamIDField = value;
             }
         }
+        
+        /// <remarks/>
+        public bool Spectate {
+            get {
+                return this.spectateField;
+            }
+            set {
+                this.spectateField = value;
+            }
+        }
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -828,7 +840,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -861,7 +873,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -979,7 +991,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1108,7 +1120,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1141,7 +1153,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1174,7 +1186,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1207,7 +1219,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1264,7 +1276,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1333,7 +1345,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1366,7 +1378,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1423,7 +1435,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public enum ResourceType {
@@ -1436,7 +1448,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1469,7 +1481,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1502,7 +1514,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1547,7 +1559,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1592,7 +1604,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public enum AutohostMode {
@@ -1614,7 +1626,7 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public enum ReturnValue {
@@ -1639,13 +1651,39 @@ namespace PlasmaShared.ContentService {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.1")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.225")]
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public enum ProgramType {
         
         /// <remarks/>
         MissionEditor,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void AutohostPlayerJoinedCompletedEventHandler(object sender, AutohostPlayerJoinedCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class AutohostPlayerJoinedCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal AutohostPlayerJoinedCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
     }
     
     /// <remarks/>
@@ -1989,32 +2027,6 @@ namespace PlasmaShared.ContentService {
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     public delegate void SubmitMissionScoreCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    public delegate void AutohostPlayerJoinedCompletedEventHandler(object sender, AutohostPlayerJoinedCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class AutohostPlayerJoinedCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal AutohostPlayerJoinedCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]

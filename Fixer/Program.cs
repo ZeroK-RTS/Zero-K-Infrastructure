@@ -97,7 +97,7 @@ namespace Fixer
 592	Disco Rave Party*/
 
 	
-  		List<int> bannedStructures = new List<int>() { 568, 577, 578, 584, 585, 586, 588, 589, 571, 590 };
+  		List<int> bannedStructures = new List<int>(){};// { 568, 577, 578, 584, 585, 586, 588, 589, 571, 590 };
 
   		var structs = db.StructureTypes.Where(x => x.Unlock != null && !bannedStructures.Contains(x.StructureTypeID));
   		List<Tuple<int, int>> costs = new List<Tuple<int, int>>();
@@ -109,23 +109,24 @@ namespace Fixer
 
   		foreach (var p in gal.Planets) {
 				p.PlanetStructures.Clear();
-  			if (rand.Next(30) == 0 ) p.AddStruct(wormhole2);
-				else p.AddStruct(wormhole);
+				p.Name = Resources.names.Lines()[rand.Next(Resources.names.Lines().Length)];
+  			//if (rand.Next(50) == 0 ) p.AddStruct(wormhole2);
+				//else 
+				if (rand.Next(10)<8) p.AddStruct(wormhole);
 
-				if (rand.Next(30) ==0) p.AddStruct(mine3);
-				else if (rand.Next(20)==0) p.AddStruct(mine2);
-				else if (rand.Next(10) < 7) p.AddStruct(mine);
-				
-				
-				if (p.Resource.MapIsChickens == true) p.AddStruct(chicken); else
-				{
-					if (rand.Next(10) == 0) p.AddStruct(dfac);
-					else if (rand.Next(10) == 0) p.AddStruct(ddepot);
-					else if (rand.Next(20) == 0) p.AddStruct(warp);
-				}
+				//if (rand.Next(30) ==0) p.AddStruct(mine3);
+				//else if (rand.Next(20)==0) p.AddStruct(mine2);
+				//else 
+				if (rand.Next(20) ==0) p.AddStruct(mine);
+
+				if (rand.Next(20) == 0) p.AddStruct(dfac);
+				if (rand.Next(20) == 0) p.AddStruct(ddepot);
+				if (rand.Next(20) == 0) p.AddStruct(warp);
+
+				if (p.Resource.MapIsChickens == true) p.AddStruct(chicken);
 
 				// structures
-				if (rand.Next(10) <9)
+				if (rand.Next(8) ==0)
 				{
 
 					var probe = rand.Next(sumCosts);

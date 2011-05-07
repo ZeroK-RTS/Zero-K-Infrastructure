@@ -191,7 +191,7 @@
 
 @if (isMember)
 {
-	@Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })
+	@Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
 	<b>Secret topic:</b><br />
   @Html.BBCode(c.SecretTopic)
 }

@@ -235,6 +235,7 @@ namespace ZeroKWeb.Controllers
 					{
 						gr.DrawImage(background, 0, 0, im.Width, im.Height);
 
+						/*
 						using (var pen = new Pen(Color.FromArgb(255, 180, 180, 180), (int)(1*zoom)))
 						{
 							foreach (var l in gal.Links)
@@ -245,7 +246,7 @@ namespace ZeroKWeb.Controllers
 								            (int)(l.PlanetByPlanetID2.X*im.Width),
 								            (int)(l.PlanetByPlanetID2.Y*im.Height));
 							}
-						}
+						}*/
 
 						foreach (var p in gal.Planets)
 						{
@@ -353,6 +354,7 @@ namespace ZeroKWeb.Controllers
 			acc.IsClanFounder = false;
 			acc.HasClanRights = false;
 			acc.Planets.Clear();
+			acc.Clan = null;
 			db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
 			db.SubmitChanges();
 			if (!clan.Accounts.Any())
@@ -602,14 +604,18 @@ namespace ZeroKWeb.Controllers
 						planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(
 							x => x.Influence + x.ShadowInfluence).ThenBy(x => x.Account.Planets.Count()).First().Account;
 
+					var firstPlanet = !mostInfluentialPlayer.Planets.Any();
+
 					if (planet.OwnerAccountID == null) // no previous owner
 					{
+						
 						planet.Account = mostInfluentialPlayer;
 						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2}. {3}",
 						                                            mostInfluentialPlayer,
 						                                            planet,
 						                                            mostInfluentialClanEntry.Clan,
 						                                            sb));
+						
 					}
 					else
 					{
@@ -621,6 +627,11 @@ namespace ZeroKWeb.Controllers
 						                                            planet.Account.Clan,
 						                                            sb));
 						planet.Account = mostInfluentialPlayer;
+					}
+
+					if (firstPlanet) {
+						mostInfluentialPlayer.Credits += GlobalConst.PlanetwarsColonizationCredits;
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} gets ${1} for colonizing his/her first planet {2}", mostInfluentialPlayer, GlobalConst.PlanetwarsColonizationCredits, planet));
 					}
 				}
 			}
