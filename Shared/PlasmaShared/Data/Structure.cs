@@ -44,7 +44,8 @@ namespace ZkData
 			{
 				using (var resized = image.GetResized(size, size, InterpolationMode.HighQualityBilinear))
 				{
-					resized.Save(folder + "/"  + GetFileNameResized(size));
+					var fileNameResized = GetFileNameResized(size);
+					resized.Save(folder + "/" + fileNameResized);
 				}				
 			}
 		}
