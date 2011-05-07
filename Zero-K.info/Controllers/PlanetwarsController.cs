@@ -166,7 +166,7 @@ namespace ZeroKWeb.Controllers
 			if (enemyShips > 0 && avail >= enemyShips)
 			{
 				acc.DropshipCount -= enemyShips;
-				foreach (var entry in planet.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID))
+				foreach (var entry in planet.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID && x.DropshipCount > 0))
 				{
 					db.Events.InsertOnSubmit(Global.CreateEvent("{0} engaged fleet of {1} at {2} destroying {3} ships",
 					                                            acc,
