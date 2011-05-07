@@ -54,7 +54,7 @@ namespace ZeroKWeb.Controllers
             if (!string.IsNullOrEmpty(mod))
                 q = q.Where(b => SqlMethods.Like(b.ResourceByModResourceID.InternalName, "%" + mod + "%"));
 
-            if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
+            //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
             if (!string.IsNullOrEmpty(user)) {
                 var aid = (from account in db.Accounts
                            where SqlMethods.Like(account.Name, "%" + user + "%")

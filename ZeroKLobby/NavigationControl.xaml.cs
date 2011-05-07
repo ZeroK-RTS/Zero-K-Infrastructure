@@ -91,6 +91,7 @@ namespace ZeroKLobby
                   new ButtonInfo() { Label = "CHAT", TargetPath = "chat" },
 									new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars", LinkBehavior = true },
                   new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", LinkBehavior = true },
+									new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", LinkBehavior = true },
                   new ButtonInfo() { Label = "WIDGETS", TargetPath = "widgets", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
                   new ButtonInfo() { Label = "RAPID", TargetPath = "rapid", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
                   new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings" },

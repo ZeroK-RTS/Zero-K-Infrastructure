@@ -794,6 +794,34 @@ namespace ZeroKWeb
 					PlanetwarsController.SetPlanetOwners(db, sb);
 					gal = db.Galaxies.Single(x => x.IsDefault);
 
+
+					// give free planet to each clan with none here
+					foreach (var kvp in sb.SpringBattlePlayers.Where(x=>!x.IsSpectator && x.Account!=null && x.Account.ClanID!=null).GroupBy(x=>x.Account.ClanID)) {
+						var clan = db.Clans.Single(x => x.ClanID == kvp.Key);
+						bool changed = false;
+						if (clan.Accounts.Sum(x=>x.Planets.Count()) == 0) {
+							var planetList = gal.Planets.Where(x => x.OwnerAccountID == null).Shuffle();
+							if (planetList.Count > 0)
+							{
+								var freePlanet = planetList[new Random().Next(planetList.Count)];
+								foreach (var ac in kvp)
+								{
+									db.AccountPlanets.InsertOnSubmit(new AccountPlanet() { PlanetID = freePlanet.PlanetID, AccountID = ac.AccountID, Influence = 1 });
+								}
+								db.Events.InsertOnSubmit(Global.CreateEvent("{0} was awarded empty planet {1} {2}", clan, freePlanet, sb));
+								changed = true;
+							}
+						}
+						if (changed)
+						{
+							db.SubmitChanges();		
+							PlanetwarsController.SetPlanetOwners(db, sb);
+							db.SubmitChanges();
+						}
+					}
+
+					
+
 					if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
 					{
 						text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",
