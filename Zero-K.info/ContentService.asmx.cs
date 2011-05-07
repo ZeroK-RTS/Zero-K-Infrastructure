@@ -444,7 +444,7 @@ namespace ZeroKWeb
 				var clanInfluences = planet.GetClanInfluences();
 				var firstEntry = clanInfluences.FirstOrDefault();
 				var secondEntry = clanInfluences.Skip(1).FirstOrDefault();
-				if (firstEntry != null) owner = string.Format("{0}", firstEntry.Clan.Shortcut);
+				if (firstEntry != null) owner = string.Format("{0} ", firstEntry.Clan.Shortcut);
 				if (secondEntry != null) second = string.Format("{0} needs {1} influence - ", secondEntry.Clan.Shortcut, firstEntry.Influence - secondEntry.Influence);
 
 				pwStructures = new LuaTable();
