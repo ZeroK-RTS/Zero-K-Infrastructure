@@ -100,7 +100,6 @@ namespace ZkData
 						if (thisAccountPlanet == null)
 						{
 							thisAccountPlanet = new AccountPlanet { AccountID = otherAccountID, PlanetID = thisPlanetID };
-							db.AccountPlanets.InsertOnSubmit(thisAccountPlanet);
 						}
 
 						thisAccountPlanet.ShadowInfluence += (int)(otherAccountPlanet.Influence*influenceFactor);
