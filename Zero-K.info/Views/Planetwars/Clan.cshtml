@@ -189,7 +189,7 @@
 }
 
 
-@if (isMember && Model.Accounts.Count()>=GlobalConst.ClanLeaveLimit)
+@if (isMember && Model.Accounts.Count()<=GlobalConst.ClanLeaveLimit)
 {
 	@Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
 	<b>Secret topic:</b><br />
