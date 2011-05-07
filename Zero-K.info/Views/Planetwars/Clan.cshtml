@@ -189,7 +189,7 @@
 }
 
 
-@if (isMember)
+@if (isMember && Model.Accounts.Count()>4)
 {
 	@Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
 	<b>Secret topic:</b><br />

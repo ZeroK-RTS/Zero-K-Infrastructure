@@ -350,6 +350,7 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 			var clan = db.Clans.Single(x => x.ClanID == Global.ClanID);
+			if (clan.Accounts.Count() > 4) return Content("This clan is too big to leave");
 			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 			acc.IsClanFounder = false;
 			acc.HasClanRights = false;
