@@ -190,7 +190,6 @@
     <Content Include="Styles\dark-hive\images\ui-icons_cccccc_256x240.png" />
     <Content Include="Styles\dark-hive\images\ui-icons_ffffff_256x240.png" />
     <Content Include="Styles\dark-hive\jquery-ui-1.8.12.custom.css" />
-    <Content Include="Styles\jquery-ui-1.8.12.custom.css" />
     <Content Include="Styles\jquery.qtip.min.css" />
     <Content Include="Styles\jquery.ui.stars.css" />
     <Content Include="Styles\menu.css" />
