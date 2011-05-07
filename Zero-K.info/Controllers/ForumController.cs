@@ -64,6 +64,21 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);
 
+			// update title
+			if (thread != null && planetID != null) {
+				var planet = db.Planets.Single(x => x.PlanetID == planetID);
+				thread.Title = planet.Name;
+			}
+			if (thread != null && clanID != null) {
+				var clan = db.Clans.Single(x => x.ClanID == clanID);
+				thread.Title = clan.ClanName;
+			}
+			if (thread != null && missionID != null) {
+				var mission = db.Missions.Single(x => x.MissionID == missionID);
+				thread.Title = mission.Name;
+			}
+
+
 			if (threadID == null && categoryID.HasValue) // new thread
 			{
 				var cat = db.ForumCategories.Single(x => x.ForumCategoryID == categoryID.Value);
@@ -120,6 +135,7 @@ namespace ZeroKWeb.Controllers
 			if (thread == null) return Content("Thread not found");
 			if (thread.IsLocked) return Content("Thread is locked");
 
+			
 			var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
 
 			if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text)

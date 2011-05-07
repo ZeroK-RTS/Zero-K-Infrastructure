@@ -214,7 +214,8 @@ namespace ZeroKWeb.Controllers
 			          	SpringBattleID = springBattleID,
 			          	Filter = filter,
 			          	ClanID = clanID,
-			          	Partial = partial
+			          	Partial = partial,
+									PageSize = pageSize
 			          };
 
 			return View(ret);
@@ -350,7 +351,7 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 			var clan = db.Clans.Single(x => x.ClanID == Global.ClanID);
-			if (clan.Accounts.Count() > 4) return Content("This clan is too big to leave");
+			if (clan.Accounts.Count() >= GlobalConst.ClanLeaveLimit) return Content("This clan is too big to leave");
 			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 			acc.IsClanFounder = false;
 			acc.HasClanRights = false;
@@ -895,5 +896,6 @@ namespace ZeroKWeb.Controllers
 		public bool Partial;
 		public int? PlanetID;
 		public int? SpringBattleID;
+		public int PageSize;
 	}
 }

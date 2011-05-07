@@ -2,6 +2,8 @@
 @{
   Layout = null;
 }
+@Html.ActionLink("Remove planet", "RemovePlanetIcon", new { resourceID = Model.ResourceID}) <br />
+
 @foreach (var x in Model.Icons) { 
   <a href='@Url.Action("SubmitPlanetIcon", new { resourceID = Model.ResourceID, icon = x })'>
     <img src='/img/planets/@x' style="display: block;	position: relative; float: left" />

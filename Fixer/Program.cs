@@ -24,7 +24,7 @@ namespace Fixer
       //RecalculateBattleElo();
       //FixMaps();
 
-    	//RandomizeMaps(9);
+    	RandomizeMaps(9);
 			GenerateStructures(9);
 
 			//AddWormholes();
@@ -41,6 +41,7 @@ namespace Fixer
 				{
 					p.MapResourceID = maps[cnt++].ResourceID;
 				}
+				gal.IsDirty = true;
 				db.SubmitChanges();
 			}
 		}
@@ -146,7 +147,8 @@ namespace Fixer
 			foreach (var p in gal.Planets.Where(x => x.Resource.MapIsChickens!=true && !x.Resource.MapIsFfa != true && x.Resource.MapIs1v1 != true).Shuffle().Take(3)) p.AddStruct(artefact);
 
 			db.SubmitChanges();
-			
+			Galaxy.RecalculateShadowInfluence(db);
+			db.SubmitChanges();
   	}
 
   	public static void AddWormholes()

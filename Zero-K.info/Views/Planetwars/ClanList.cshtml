@@ -15,8 +15,8 @@
 @if (Global.Clan == null) {
 <div>
 To take active part in <a href='@Url.Action("Index", "Planetwars")'>PlanetWars</a> join a clan. <br />
-Clan you join or create <b>cannot be changed</b> for the duration of planetwars galaxy, so pick carefully!<br />
-You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars") <br />
+Clan you join or create <b>cannot always be changed</b>, so pick carefully!<br />
+You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars") but biggest clans are most likely to win<br />
 Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
 </div>
 }

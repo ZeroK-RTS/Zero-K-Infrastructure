@@ -52,6 +52,15 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("Detail", new { id = res.ResourceID });
 		}
 
+		public ActionResult RemovePlanetIcon(int resourceID)
+		{
+			var db = new ZkDataContext();
+			var res = db.Resources.Single(x => x.ResourceID == resourceID);
+			res.MapPlanetWarsIcon = null;
+			db.SubmitChanges();
+			return RedirectToAction("Detail", new { id = res.ResourceID });
+		}
+
   	public ActionResult PlanetImageSelect(int resourceID)
 		{
 			var res = new PlanetImageSelectData();

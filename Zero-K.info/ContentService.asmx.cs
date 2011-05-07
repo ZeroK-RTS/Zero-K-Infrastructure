@@ -33,7 +33,7 @@ namespace ZeroKWeb
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
 				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
 				if (account.Clan == null) return string.Format("{0} this is competetive PlanetWars campaign server. Join a clan to fight http://zero-k.info/Planetwars/ClanList", account.Name);
-				return string.Format("Greetings {0} of {1} {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
+				return string.Format("Greetings {0} {1} of {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
 				                     account.IsClanFounder ? account.Clan.LeaderTitle : "",
 				                     account.Name,
 				                     account.IsClanFounder ? account.Clan.ClanName : account.Clan.Shortcut,
