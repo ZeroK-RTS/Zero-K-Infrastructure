@@ -696,11 +696,12 @@ namespace ZeroKWeb
 																													planet,
 																													sb,
 																													techBonus, gapMalus >0 ? "-" + gapMalus + " from domination":"" ));
-						
-						
-						
 
-						
+						text.AppendFormat("{0} got {1} ({3} from techs {4}) influence at {2}\n",
+																													p.Account.Name,
+																													p.Influence ?? 0,
+																													planet.Name,
+																													techBonus, gapMalus > 0 ? "-" + gapMalus + " from domination" : "");
 					}
 
 					db.SubmitChanges();
@@ -814,9 +815,10 @@ namespace ZeroKWeb
 						}
 						if (changed)
 						{
-							db.SubmitChanges();		
-							PlanetwarsController.SetPlanetOwners(db, sb);
 							db.SubmitChanges();
+							db = new ZkDataContext();
+							PlanetwarsController.SetPlanetOwners(db, sb);
+							gal = db.Galaxies.Single(x => x.IsDefault);
 						}
 					}
 
