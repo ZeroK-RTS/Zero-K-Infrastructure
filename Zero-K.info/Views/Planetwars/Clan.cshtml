@@ -96,21 +96,26 @@
 
                     x2 *= mapWidth;
                     y2 *= mapHeight;
+					
+					
+					if (set.Item3.IsResearchAgreement) 
+                    {
+					    @: var l = paper.path("@String.Format("M{0:0} {1:0}L{2:0} {3:0}", x1, y1, x2, y2)");
+						@: l.attr({
+					    @:  "stroke-dasharray": ". ",
+						@:  "stroke-width": "5",
+						@:  "stroke": "#FFFFFF"
+						@: }); 
+                    }
 
                     string stroke = "none";
                     if (allyStatus == AllyStatus.War) { stroke = "#ff0000"; }
-                    else if (allyStatus == AllyStatus.Ceasefire) { stroke = "#ffffff"; }
-                    else if (allyStatus == AllyStatus.Alliance) { stroke = "#008000"; }
-
-
+                    else if (allyStatus == AllyStatus.Ceasefire) { stroke = "#00FFFF"; }
+                    else if (allyStatus == AllyStatus.Alliance) { stroke = "#00FF00"; }
+					
                     @: var l = paper.path("@String.Format("M{0:0} {1:0}L{2:0} {3:0}", x1, y1, x2, y2)");
                     @: l.attr({
                     @:  "stroke-width": "2",
-                    if (!set.Item3.IsResearchAgreement) 
-                    {
-                       @:  "stroke-dasharray": "-.",
-                       if (stroke == "none") { stroke = "#0000ff"; }
-                    }
                     @:  "stroke": "@stroke"
                     @: }); 
                 }
@@ -131,14 +136,70 @@
                     y *= mapHeight;
 
                     // draw the clan
-                    @: var circle = paper.circle(@x, @y, 5);
-                    @: circle.attr({
-                    @:  "fill": "#ff0000",
-                    @:  "stroke": "#000000",
-                    @:  "stroke-width": "1"
-                    @: });  
+                    @: var i = paper.image("@clan.GetImageUrl()", @((x-20).ToString("0")), @((y-20).ToString("0")), 40, 40);
+                    @: i.attr({
+                    @: "fill": "#ff0000",
+                    @: "stroke": "#000000",
+                    @: "stroke-width": "1",
+					@: "href": "/Planetwars/Clan/@clan.ClanID"
+                    @: });
+                    @: var t = paper.text(@x.ToString("0"), @((y + 40).ToString("0")), "@clan.ClanName");
+                    @: t.attr({
+                    @:  "fill": "#FFFFFF",
+                    @:  "stroke": "none",
+					@:  "href": "/Planetwars/Clan/@clan.ClanID"
+                    @: });
                 }
             }
+			
+			
+			var paper = Raphael(document.getElementById("diplomacyMapLegend"), 300, 100);
+			var l = paper.path("@String.Format("M{0:0} {1:0}L{2:0} {3:0}", 10, 10, 40, 10)");
+            l.attr({
+              "stroke-width": "2",
+              "stroke": "#ff0000"
+            });			
+			var t = paper.text(50, 13, "War");
+			t.attr({
+			  "fill": "#FFFFFF",
+			  "stroke": "none",
+			  "text-anchor": "start"
+			});
+			var l = paper.path("@String.Format("M{0:0} {1:0}L{2:0} {3:0}", 10, 30, 40, 30)");
+            l.attr({
+              "stroke-width": "2",
+              "stroke": "#00FFFF"
+            });	
+			var t = paper.text(50, 33, "Ceasefire");
+			t.attr({
+			  "fill": "#FFFFFF",
+			  "stroke": "none",
+			  "text-anchor": "start"
+			});
+			var l = paper.path("@String.Format("M{0:0} {1:0}L{2:0} {3:0}", 10, 50, 40, 50)");
+            l.attr({
+              "stroke-width": "2",
+              "stroke": "#00FF00"
+            });	
+			var t = paper.text(50, 53, "Alliance");
+			t.attr({
+			  "fill": "#FFFFFF",
+			  "stroke": "none",
+			  "text-anchor": "start"
+			});
+			var l = paper.path("@String.Format("M{0:0} {1:0}L{2:0} {3:0}", 10, 70, 40, 70)");
+            l.attr({				
+			  "stroke-dasharray": ". ",
+			  "stroke-width": "5",
+			  "stroke": "#FFFFFF"
+            });	
+			var t = paper.text(50, 73, "Research Agreement");
+			t.attr({
+			  "fill": "#FFFFFF",
+			  "stroke": "none",
+			  "text-anchor": "start"
+			});
+			
         }
     </script>
  }
@@ -223,6 +284,7 @@
     </div>
     <div id="diplomacy">
         <div id="diplomacyMap"></div>
+        <div id="diplomacyMapLegend"></div>
         <h3><a href='@Url.Action("ClanDiplomacy", new { id = Model.ClanID })'>Diplomacy</a></h3>
         @foreach (var them in new ZkDataContext().Clans.Where(x => x.ClanID != Model.ClanID && !x.IsDeleted)) {
 					var effective = them.GetEffectiveTreaty(Model);
@@ -230,7 +292,9 @@
            <span>@Html.PrintClan(them) - @Html.PrintTreaty(effective)</span> <br />
 					}
 				}
+		@Html.Partial("ClanDiplomacy")
     </div>
+
     <div id="members">
         <table>
           <th>Name </th>

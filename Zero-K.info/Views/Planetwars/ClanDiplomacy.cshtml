@@ -6,8 +6,10 @@
   Page.Title = Model.ClanName + " - " + Model.Shortcut + " clan diplomacy";
   var c = Model;
   var isMember = c.Accounts.Any(y => y.AccountID == Global.AccountID);
+
 }
 
+<div>
 <h3>@Html.PrintClan(Model) diplomacy</h3>
 
 <table>
@@ -56,6 +58,8 @@
   </tr>  
 }
 </table>
+
+</div>
 
 
 

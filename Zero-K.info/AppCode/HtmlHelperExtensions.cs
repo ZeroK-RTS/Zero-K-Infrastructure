@@ -23,7 +23,6 @@ namespace System.Web.Mvc
 		public string Value;
 	}
 
-
 	public static class HtmlHelperExtensions
 	{
 		public static MvcHtmlString PrintTreaty(this HtmlHelper helper, AllyStatus status, bool isResearh)
@@ -146,7 +145,7 @@ namespace System.Web.Mvc
 
 		public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true)
 		{
-			if (account == null) return new MvcHtmlString("?");
+			if (account == null) return new MvcHtmlString("Nobody");
 			else
 			{
 				return
@@ -191,7 +190,7 @@ namespace System.Web.Mvc
 		public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan, bool colorize = true)
 		{
 			var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
-			if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>??</a>", url.Action("ClanList", "Planetwars")));
+			if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>No Clan</a>", url.Action("ClanList", "Planetwars")));
 			{
 				return
 					new MvcHtmlString(string.Format("<a href='{0}'><img src='{1}' width='16'><span style='color:{2}'>{3}</span></a>",
