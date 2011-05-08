@@ -357,7 +357,7 @@ namespace ZeroKWeb
 					var owner = "";
 					if (planet.Account != null) owner = planet.Account.Name;
 					res.Message = string.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2}", owner, planet.Name, planet.PlanetID);
-					if (planet.Account != null) AuthServiceClient.SendLobbyMessage(planet.Account,string.Format("Your planet {0} is going to be attacked! spring://@join_player:{1}", planet.Name, autohostName));
+					//if (planet.Account != null) AuthServiceClient.SendLobbyMessage(planet.Account,string.Format("Your planet {0} is going to be attacked! spring://@join_player:{1}", planet.Name, autohostName));
 				}
 				else
 				{
