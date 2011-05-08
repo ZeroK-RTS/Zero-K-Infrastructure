@@ -32,7 +32,20 @@ namespace ZeroKWeb
 			{
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
 				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
-				if (account.Clan == null) return string.Format("{0} this is competetive PlanetWars campaign server. Join a clan to fight http://zero-k.info/Planetwars/ClanList", account.Name);
+				if (account.Clan == null)
+				{
+					AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
+					return string.Format("{0} this is competetive PlanetWars campaign server. Join a clan to fight http://zero-k.info/Planetwars/ClanList",
+					                     account.Name);
+				}
+				if (!account.Name.Contains(account.Clan.Shortcut))
+				{
+					AuthServiceClient.SendLobbyMessage(account,
+					                                   string.Format("Your name must contain clan tag {0}, rename for example by saying: /rename [{0}]{1}",
+					                                                 account.Clan.Shortcut,
+					                                                 account.Name));
+					return string.Format("{0} cannot play, name must contain clan tag {1}", account.Name, account.Clan.Shortcut);
+				}
 				return string.Format("Greetings {0} {1} of {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
 				                     account.IsClanFounder ? account.Clan.LeaderTitle : "",
 				                     account.Name,
@@ -42,6 +55,7 @@ namespace ZeroKWeb
 			}
 			return null;
 		}
+
 
 		[WebMethod]
 		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams)
@@ -54,14 +68,22 @@ namespace ZeroKWeb
 				res.Message = "";
 				var idList = currentTeams.Select(x => x.AccountID).ToList();
 				var players = new List<Account>();
-				foreach (var p in db.Accounts.Where(x => idList.Contains(x.AccountID))) {
-					if (p.ClanID == null) {
+				foreach (var p in db.Accounts.Where(x => idList.Contains(x.AccountID)))
+				{
+					if (p.ClanID == null)
+					{
 						res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
 						AuthServiceClient.SendLobbyMessage(p, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
-					} else if (!p.Name.Contains(p.Clan.Shortcut)) {
-							res.Message += string.Format("{0} cannot play, name must contain clan tag {1}\n", p.Name, p.Clan.Shortcut);
-							AuthServiceClient.SendLobbyMessage(p, string.Format("Your name must contain clan tag {0}, rename for example by saying: /rename [{0}]{1}",  p.Clan.Shortcut, p.Name));
-					} else players.Add(p);
+					}
+					else if (!p.Name.Contains(p.Clan.Shortcut))
+					{
+						res.Message += string.Format("{0} cannot play, name must contain clan tag {1}\n", p.Name, p.Clan.Shortcut);
+						AuthServiceClient.SendLobbyMessage(p,
+						                                   string.Format("Your name must contain clan tag {0}, rename for example by saying: /rename [{0}]{1}",
+						                                                 p.Clan.Shortcut,
+						                                                 p.Name));
+					}
+					else players.Add(p);
 				}
 				var clans = players.Where(x => x.Clan != null).Select(x => x.Clan).ToList();
 				var treaties = new Dictionary<Tuple<Clan, Clan>, EffectiveTreaty>();
@@ -164,7 +186,7 @@ namespace ZeroKWeb
 					if (team0count == 0 || team1count == 0) continue; // skip combination, empty team
 
 					// calculate score for team difference
-					var teamDiffScore = -(30.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count)) - Math.Abs(team0count-team1count);
+					var teamDiffScore = -(30.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count)) - Math.Abs(team0count - team1count);
 					if (teamDiffScore < -10) continue; // max imabalance 50% (1v2)
 
 					double balanceModifier = 0;
@@ -219,7 +241,7 @@ namespace ZeroKWeb
 				if (bestCombination == -1)
 				{
 					res.BalancedTeams = null;
-					res.Message = "Cannot be balanced well at this point";
+					res.Message += "Cannot be balanced well at this point";
 				}
 				else
 				{
@@ -232,11 +254,11 @@ namespace ZeroKWeb
 					}
 					if (differs)
 					{
-						res.Message+= string.Format("Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
-						                            bestTeamDiffs,
-						                            bestElo,
-						                            bestCompo,
-						                            Utils.GetWinChancePercent(bestElo*20));
+						res.Message += string.Format("Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
+						                             bestTeamDiffs,
+						                             bestElo,
+						                             bestCompo,
+						                             Utils.GetWinChancePercent(bestElo*20));
 					}
 				}
 
@@ -313,13 +335,17 @@ namespace ZeroKWeb
 				if (mode == AutohostMode.Planetwars)
 				{
 					var gal = db.Galaxies.Single(x => x.IsDefault);
-					var valids = gal.Planets.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) >= (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0));
-  				var maxc = valids.Max(x => (int?)x.AccountPlanets.Sum(y => y.DropshipCount)) ?? 0;
-					
+					var valids =
+						gal.Planets.Where(
+							x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) >= (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0));
+					var maxc = valids.Max(x => (int?)x.AccountPlanets.Sum(y => y.DropshipCount)) ?? 0;
+
 					List<Planet> targets = null;
 					// if there are no dropships and there are unclaimed planets, target those
-					if (maxc == 0 && gal.Planets.Any(x=>x.OwnerAccountID == null)) targets = gal.Planets.Where(x=>x.OwnerAccountID == null).ToList();
-					else targets = valids.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList(); // target valid planets with most dropships
+					if (maxc == 0 && gal.Planets.Any(x => x.OwnerAccountID == null)) targets = gal.Planets.Where(x => x.OwnerAccountID == null).ToList();
+					else
+						targets = valids.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
+							// target valid planets with most dropships
 
 					var r = new Random(autohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
 					var planet = targets[r.Next(targets.Count)];
@@ -444,7 +470,7 @@ namespace ZeroKWeb
 
 				var owner = "";
 				var second = "";
-				var clanInfluences = planet.GetClanInfluences().Where(x=>x.Influence > 0);
+				var clanInfluences = planet.GetClanInfluences().Where(x => x.Influence > 0);
 				var firstEntry = clanInfluences.FirstOrDefault();
 				var secondEntry = clanInfluences.Skip(1).FirstOrDefault();
 				if (firstEntry != null) owner = string.Format("{0} ", firstEntry.Clan.Shortcut);
@@ -651,12 +677,14 @@ namespace ZeroKWeb
 						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).ToDictionary(
 							x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count()*3.0/z.Count());
 
-					int ownerMalus = 0;
-					if (ownerClan != null) {
+					var ownerMalus = 0;
+					if (ownerClan != null)
+					{
 						var entries = planet.GetClanInfluences();
-						if (entries.Count() > 1) {
+						if (entries.Count() > 1)
+						{
 							var diff = entries.First().Influence - entries.Skip(1).First().Influence;
-							ownerMalus = (int)((diff / 60.0) * (diff / 60.0));
+							ownerMalus = (int)((diff/60.0)*(diff/60.0));
 						}
 					}
 
@@ -669,42 +697,52 @@ namespace ZeroKWeb
 						if (p.Influence < 0) p.Influence = 0;
 
 						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == p.AccountID);
-						if (entry == null) {
+						if (entry == null)
+						{
 							entry = new AccountPlanet() { AccountID = p.AccountID, PlanetID = planet.PlanetID };
 							db.AccountPlanets.InsertOnSubmit(entry);
 						}
 
 						var infl = p.Influence ?? 0;
 
-						if (ownerClan != null && p.Account.Clan != null && p.Account.Clan != ownerClan) {
+						if (ownerClan != null && p.Account.Clan != null && p.Account.Clan != ownerClan)
+						{
 							var treaty = ownerClan.GetEffectiveTreaty(p.Account.Clan); // if ceasefired/allianced - give ip to owner
-							if (treaty.AllyStatus == AllyStatus.Ceasefire || treaty.AllyStatus == AllyStatus.Alliance) {
-								double tax = treaty.AllyStatus == AllyStatus.Ceasefire ? 0.33 : 0.5;
+							if (treaty.AllyStatus == AllyStatus.Ceasefire || treaty.AllyStatus == AllyStatus.Alliance)
+							{
+								var tax = treaty.AllyStatus == AllyStatus.Ceasefire ? 0.33 : 0.5;
 
 								var ownerEntry = planet.Account.AccountPlanets.SingleOrDefault(x => x.PlanetID == planet.PlanetID);
 								if (ownerEntry != null)
 								{
-									var allyInfl = (int)Math.Round(infl * tax);
+									var allyInfl = (int)Math.Round(infl*tax);
 									infl = (int)Math.Round(infl*(1.0 - tax));
 									ownerEntry.Influence += allyInfl;
-									db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} influence at {2} thanks to ally {3} from {4}", planet.Account, allyInfl, planet, p.Account, sb));
+									db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} influence at {2} thanks to ally {3} from {4}",
+									                                            planet.Account,
+									                                            allyInfl,
+									                                            planet,
+									                                            p.Account,
+									                                            sb));
 								}
 							}
 						}
 
 						entry.Influence += infl;
 						db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} from techs {5}) influence at {2} from {3}",
-																													p.Account,
-																													p.Influence ?? 0,
-																													planet,
-																													sb,
-																													techBonus, gapMalus >0 ? "-" + gapMalus + " from domination":"" ));
+						                                            p.Account,
+						                                            p.Influence ?? 0,
+						                                            planet,
+						                                            sb,
+						                                            techBonus,
+						                                            gapMalus > 0 ? "-" + gapMalus + " from domination" : ""));
 
 						text.AppendFormat("{0} got {1} ({3} from techs {4}) influence at {2}\n",
-																													p.Account.Name,
-																													p.Influence ?? 0,
-																													planet.Name,
-																													techBonus, gapMalus > 0 ? "-" + gapMalus + " from domination" : "");
+						                  p.Account.Name,
+						                  p.Influence ?? 0,
+						                  planet.Name,
+						                  techBonus,
+						                  gapMalus > 0 ? "-" + gapMalus + " from domination" : "");
 					}
 
 					db.SubmitChanges();
@@ -763,15 +801,12 @@ namespace ZeroKWeb
 					db.SubmitChanges();
 
 					// destroy structures (usually defenses)
-					foreach (var s in planet.PlanetStructures.Where(x=>!x.IsDestroyed && x.StructureType.BattleDeletesThis).ToList()) {
-						planet.PlanetStructures.Remove(s);
-					}
+					foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
 					db.SubmitChanges();
 
 					// spawn new dropships
-					foreach (
-						var a in
-							sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
+					foreach (var a in
+						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
 					{
 						var capacity = GlobalConst.DefaultDropshipCapacity +
 						               (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
@@ -798,20 +833,19 @@ namespace ZeroKWeb
 					PlanetwarsController.SetPlanetOwners(db, sb);
 					gal = db.Galaxies.Single(x => x.IsDefault);
 
-
 					// give free planet to each clan with none here
-					foreach (var kvp in sb.SpringBattlePlayers.Where(x=>!x.IsSpectator && x.Account!=null && x.Account.ClanID!=null).GroupBy(x=>x.Account.ClanID)) {
+					foreach (
+						var kvp in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account != null && x.Account.ClanID != null).GroupBy(x => x.Account.ClanID))
+					{
 						var clan = db.Clans.Single(x => x.ClanID == kvp.Key);
-						bool changed = false;
-						if (clan.Accounts.Sum(x=>x.Planets.Count()) == 0) {
+						var changed = false;
+						if (clan.Accounts.Sum(x => x.Planets.Count()) == 0)
+						{
 							var planetList = gal.Planets.Where(x => x.OwnerAccountID == null).Shuffle();
 							if (planetList.Count > 0)
 							{
 								var freePlanet = planetList[new Random().Next(planetList.Count)];
-								foreach (var ac in kvp)
-								{
-									db.AccountPlanets.InsertOnSubmit(new AccountPlanet() { PlanetID = freePlanet.PlanetID, AccountID = ac.AccountID, Influence = 1 });
-								}
+								foreach (var ac in kvp) db.AccountPlanets.InsertOnSubmit(new AccountPlanet() { PlanetID = freePlanet.PlanetID, AccountID = ac.AccountID, Influence = 1 });
 								db.Events.InsertOnSubmit(Global.CreateEvent("{0} was awarded empty planet {1} {2}", clan, freePlanet, sb));
 								changed = true;
 							}
@@ -824,7 +858,6 @@ namespace ZeroKWeb
 							gal = db.Galaxies.Single(x => x.IsDefault);
 						}
 					}
-
 
 					planet = gal.Planets.Single(x => x.Resource.InternalName == result.Map);
 					if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
@@ -1032,8 +1065,8 @@ namespace ZeroKWeb
 		public int AccountID;
 		public int AllyID;
 		public string Name;
-		public int TeamID;
 		public bool Spectate;
+		public int TeamID;
 	}
 
 	public class BotTeam
