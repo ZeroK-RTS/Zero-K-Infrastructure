@@ -76,6 +76,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="OfflineMessages.cs" />
+    <Compile Include="PlanetWarsWatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -23,6 +23,7 @@ namespace ZeroKWeb
 		// [System.Web.Script.Services.ScriptService]
 	public class ContentService: WebService
 	{
+
 		[WebMethod]
 		public string AutohostPlayerJoined(string autohostName, string mapName, int accountID)
 		{
@@ -46,10 +47,13 @@ namespace ZeroKWeb
 					                                                 account.Name));
 					return string.Format("{0} cannot play, name must contain clan tag {1}", account.Name, account.Clan.Shortcut);
 				}
-				return string.Format("Greetings {0} {1} of {2}, welcome to planet {3} http://zero-k.info/PlanetWars/Planet/{4}",
+				string owner = "";
+				if (planet.Account != null) owner = planet.Account.Name;
+				return string.Format("Greetings {0} {1} of {2}, welcome to {3} planet {4} http://zero-k.info/PlanetWars/Planet/{5}",
 				                     account.IsClanFounder ? account.Clan.LeaderTitle : "",
 				                     account.Name,
 				                     account.IsClanFounder ? account.Clan.ClanName : account.Clan.Shortcut,
+														 owner,
 				                     planet.Name,
 				                     planet.PlanetID);
 			}
@@ -351,8 +355,9 @@ namespace ZeroKWeb
 					var planet = targets[r.Next(targets.Count)];
 					res.MapName = planet.Resource.InternalName;
 					var owner = "";
-					if (planet.Account != null && planet.Account.Clan != null) owner = planet.Account.Clan.Shortcut;
+					if (planet.Account != null) owner = planet.Account.Name;
 					res.Message = string.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2}", owner, planet.Name, planet.PlanetID);
+					if (planet.Account != null) AuthServiceClient.SendLobbyMessage(planet.Account,string.Format("Your planet {0} is going to be attacked! spring://@join_player:{1}", planet.Name, autohostName));
 				}
 				else
 				{
@@ -758,14 +763,7 @@ namespace ZeroKWeb
 					}
 					if (bleed > 0 && ownerClan != null)
 					{
-						var ownerBleed = Math.Min(bleed, planet.Account.Credits);
-						planet.Account.Credits -= ownerBleed;
-						var reminder = bleed - ownerBleed;
-						if (reminder > 0)
-						{
-							var share = reminder/ownerClan.Accounts.Count(x => x.Credits > 0);
-							foreach (var a in ownerClan.Accounts.Where(x => x.Credits > share)) a.Credits -= share;
-						}
+						planet.Account.Credits -= bleed;
 						db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {4} lost ${1} in combat at {2} {3}", planet.Account, bleed, planet, sb, planet.Account.Clan));
 						text.AppendFormat("{0} lost ${1} due to combat\n", planet.Account.Name, bleed);
 					}

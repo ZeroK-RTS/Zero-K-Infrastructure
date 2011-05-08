@@ -541,17 +541,21 @@ namespace ZeroKWeb.Controllers
 			if (!accessible) if (acc.GetFreeJumpGatesCount(accessiblePlanets) <= 0) return Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity"));
 			var cnt = Math.Max(count, 0);
 			cnt = Math.Min(cnt, acc.DropshipCount);
-			acc.DropshipCount = (acc.DropshipCount) - cnt;
-			var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
-			var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
-			if (pac == null)
+			if (cnt > 0)
 			{
-				pac = new AccountPlanet { AccountID = Global.AccountID, PlanetID = planetID };
-				db.AccountPlanets.InsertOnSubmit(pac);
+				acc.DropshipCount = (acc.DropshipCount) - cnt;
+				var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+				if (planet.Account != null) AuthServiceClient.SendLobbyMessage(planet.Account,string.Format("Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} http://zero-k.info/Planetwars/Planet/{2}", cnt, planet.Name, planet.PlanetID));
+				var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
+				if (pac == null)
+				{
+					pac = new AccountPlanet { AccountID = Global.AccountID, PlanetID = planetID };
+					db.AccountPlanets.InsertOnSubmit(pac);
+				}
+				pac.DropshipCount += cnt;
+				if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} dropships to {2}", acc, cnt, planet));
+				db.SubmitChanges();
 			}
-			pac.DropshipCount += cnt;
-			if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} dropships to {2}", acc, cnt, planet));
-			db.SubmitChanges();
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
@@ -674,6 +678,7 @@ namespace ZeroKWeb.Controllers
 					db.Clans.InsertOnSubmit(clan);
 				}
 				if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
+				if (clan.Shortcut.Trim().Length < 3) return Content("Shortcut must have at least 3 characters");
 
 				if (created && (image == null || image.ContentLength == 0)) return Content("Upload image");
 				if (image != null && image.ContentLength > 0)
