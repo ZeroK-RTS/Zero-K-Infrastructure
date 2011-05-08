@@ -51,8 +51,18 @@ namespace ZeroKWeb
 			using (var db = new ZkDataContext())
 			{
 				var res = new BalanceTeamsResult();
+				res.Message = "";
 				var idList = currentTeams.Select(x => x.AccountID).ToList();
-				var players = db.Accounts.Where(x => idList.Contains(x.AccountID) && x.Clan != null).ToList();
+				var players = new List<Account>();
+				foreach (var p in db.Accounts.Where(x => idList.Contains(x.AccountID))) {
+					if (p.ClanID == null) {
+						res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
+						AuthServiceClient.SendLobbyMessage(p, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
+					} else if (!p.Name.Contains(p.Clan.Shortcut)) {
+							res.Message += string.Format("{0} cannot play, name must contain clan tag {1}\n", p.Name, p.Clan.Shortcut);
+							AuthServiceClient.SendLobbyMessage(p, string.Format("Your name must contain clan tag {0}, rename for example by saying: /rename [{0}]{1}",  p.Clan.Shortcut, p.Name));
+					} else players.Add(p);
+				}
 				var clans = players.Where(x => x.Clan != null).Select(x => x.Clan).ToList();
 				var treaties = new Dictionary<Tuple<Clan, Clan>, EffectiveTreaty>();
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
@@ -64,7 +74,7 @@ namespace ZeroKWeb
 					for (var i = 0; i < players.Count; i++) res.BalancedTeams.Add(new AccountTeam() { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
 					foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = b.EffectBots, TeamID = teamID++ });
 
-					res.Message = string.Format("This planet is infested by aliens, fight for your survival");
+					res.Message += string.Format("This planet is infested by aliens, fight for your survival");
 					return res;
 				}
 
@@ -213,7 +223,6 @@ namespace ZeroKWeb
 				}
 				else
 				{
-					res.Message = "";
 					var differs = false;
 					for (var i = 0; i < players.Count; i++)
 					{
@@ -221,12 +230,6 @@ namespace ZeroKWeb
 						if (!differs && allyID != currentTeams.First(x => x.AccountID == players[i].AccountID).AllyID) differs = true;
 						res.BalancedTeams.Add(new AccountTeam() { AccountID = players[i].AccountID, Name = players[i].Name, AllyID = allyID, TeamID = i });
 					}
-					foreach (var p in currentTeams.Where(x=>!res.BalancedTeams.Any(y=>y.AccountID == x.AccountID))) {
-						res.BalancedTeams.Add(new AccountTeam() { AccountID = p.AccountID, Name = p.Name, Spectate = true });
-						res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
-					}
-
-
 					if (differs)
 					{
 						res.Message+= string.Format("Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
@@ -822,8 +825,8 @@ namespace ZeroKWeb
 						}
 					}
 
-					
 
+					planet = gal.Planets.Single(x => x.Resource.InternalName == result.Map);
 					if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
 					{
 						text.AppendFormat("Congratulations!! Planet {0} was conquered by {1} !!  http://zero-k.info/PlanetWars/Planet/{2}\n",

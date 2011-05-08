@@ -94,7 +94,7 @@ namespace Springie.PlanetWars
 				var balance = serv.BalanceTeams(tas.UserName,
 				                                tas.MyBattle.MapName,userList);
 				autoHost.SayBattle(balance.Message);
-				if (balance.BalancedTeams != null)
+				if (balance.BalancedTeams != null && balance.BalancedTeams.Any())
 				{
 					foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.BalancedTeams.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
 					foreach (var user in balance.BalancedTeams.Where(x=>x.Spectate)) tas.ForceSpectator(user.Name);
