@@ -169,6 +169,9 @@ namespace ZkData
     partial void InsertAccountRatingVote(AccountRatingVote instance);
     partial void UpdateAccountRatingVote(AccountRatingVote instance);
     partial void DeleteAccountRatingVote(AccountRatingVote instance);
+    partial void InsertPlanetWarsHostPlayer(PlanetWarsHostPlayer instance);
+    partial void UpdatePlanetWarsHostPlayer(PlanetWarsHostPlayer instance);
+    partial void DeletePlanetWarsHostPlayer(PlanetWarsHostPlayer instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -566,6 +569,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<AccountRatingVote>();
+			}
+		}
+		
+		public System.Data.Linq.Table<PlanetWarsHostPlayer> PlanetWarsHostPlayers
+		{
+			get
+			{
+				return this.GetTable<PlanetWarsHostPlayer>();
 			}
 		}
 	}
@@ -2165,6 +2176,8 @@ namespace ZkData
 		
 		private int _DropshipCount;
 		
+		private bool _WasGivenCredits;
+		
 		private EntitySet<Mission> _Missions;
 		
 		private EntitySet<LobbyMessage> _LobbyMessagesBySourceAccountID;
@@ -2216,6 +2229,8 @@ namespace ZkData
 		private EntityRef<PlanetWarsHost> _PlanetWarsHost;
 		
 		private EntitySet<AccountRatingVote> _AccountRatingVotes;
+		
+		private EntitySet<PlanetWarsHostPlayer> _PlanetWarsHostPlayers;
 		
 		private EntityRef<Clan> _Clan;
 		
@@ -2269,6 +2284,8 @@ namespace ZkData
     partial void OnHasClanRightsChanged();
     partial void OnDropshipCountChanging(int value);
     partial void OnDropshipCountChanged();
+    partial void OnWasGivenCreditsChanging(bool value);
+    partial void OnWasGivenCreditsChanged();
     #endregion
 		
 		public Account()
@@ -2742,8 +2759,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_WasGivenCredits", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
+		public bool WasGivenCredits
+		{
+			get
+			{
+				return this._WasGivenCredits;
+			}
+			set
+			{
+				if ((this._WasGivenCredits != value))
+				{
+					this.OnWasGivenCreditsChanging(value);
+					this.SendPropertyChanging();
+					this._WasGivenCredits = value;
+					this.SendPropertyChanged("WasGivenCredits");
+					this.OnWasGivenCreditsChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Mission", Storage="_Missions", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
 		public EntitySet<Mission> Missions
 		{
 			get
@@ -2762,7 +2800,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage", Storage="_LobbyMessagesBySourceAccountID", ThisKey="AccountID", OtherKey="SourceAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
 		public EntitySet<LobbyMessage> LobbyMessagesBySourceAccountID
 		{
 			get
@@ -2781,7 +2819,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage1", Storage="_LobbyMessagesByTargetAccountID", ThisKey="AccountID", OtherKey="TargetAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
 		public EntitySet<LobbyMessage> LobbyMessagesByTargetAccountID
 		{
 			get
@@ -2800,7 +2838,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread", Storage="_ForumThreadsByCreatedAccountID", ThisKey="AccountID", OtherKey="CreatedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByCreatedAccountID
 		{
 			get
@@ -2819,7 +2857,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread1", Storage="_ForumThreadsByLastPostAccountID", ThisKey="AccountID", OtherKey="LastPostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByLastPostAccountID
 		{
 			get
@@ -2838,7 +2876,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Resource", Storage="_Resources", ThisKey="AccountID", OtherKey="TaggedByAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
 		public EntitySet<Resource> Resources
 		{
 			get
@@ -2857,7 +2895,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MissionScore", Storage="_MissionScores", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -2876,7 +2914,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Rating", Storage="_Ratings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<Rating> Ratings
 		{
 			get
@@ -2895,7 +2933,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPost", Storage="_ForumPosts", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -2914,7 +2952,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MapRating", Storage="_MapRatings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
 		public EntitySet<MapRating> MapRatings
 		{
 			get
@@ -2933,7 +2971,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattle", Storage="_SpringBattles", ThisKey="AccountID", OtherKey="HostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
 		public EntitySet<SpringBattle> SpringBattles
 		{
 			get
@@ -2952,7 +2990,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -2971,7 +3009,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
 		public EntitySet<ForumThreadLastRead> ForumThreadLastReads
 		{
 			get
@@ -2990,7 +3028,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=37, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleAward> AccountBattleAwards
 		{
 			get
@@ -3009,7 +3047,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountUnlock", Storage="_AccountUnlocks", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=37, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=38, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -3028,7 +3066,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Commanders", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=38, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=39, EmitDefaultValue=false)]
 		public EntitySet<Commander> Commanders
 		{
 			get
@@ -3047,7 +3085,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PollVote", Storage="_PollVotes", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=39, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=40, EmitDefaultValue=false)]
 		public EntitySet<PollVote> PollVotes
 		{
 			get
@@ -3066,7 +3104,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Planet", Storage="_Planets", ThisKey="AccountID", OtherKey="OwnerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=40, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get
@@ -3085,7 +3123,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer", Storage="_MarketOffersByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAccountID
 		{
 			get
@@ -3104,7 +3142,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer1", Storage="_MarketOffersByAcceptedAccountID", ThisKey="AccountID", OtherKey="AcceptedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=43, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAcceptedAccountID
 		{
 			get
@@ -3123,7 +3161,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountPlanet", Storage="_AccountPlanets", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=43, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=44, EmitDefaultValue=false)]
 		public EntitySet<AccountPlanet> AccountPlanets
 		{
 			get
@@ -3142,7 +3180,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_EventAccount", Storage="_EventAccounts", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=44, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=45, EmitDefaultValue=false)]
 		public EntitySet<EventAccount> EventAccounts
 		{
 			get
@@ -3161,7 +3199,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="AccountID", OtherKey="OwnerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=45, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=46, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -3180,7 +3218,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=46, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=47, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -3199,7 +3237,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetWarsHost", Storage="_PlanetWarsHost", ThisKey="AccountID", OtherKey="HostAccountID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=47, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=48, EmitDefaultValue=false)]
 		public PlanetWarsHost PlanetWarsHost
 		{
 			get
@@ -3234,7 +3272,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountRatingVote", Storage="_AccountRatingVotes", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=48, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=49, EmitDefaultValue=false)]
 		public EntitySet<AccountRatingVote> AccountRatingVotes
 		{
 			get
@@ -3249,6 +3287,25 @@ namespace ZkData
 			set
 			{
 				this._AccountRatingVotes.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetWarsHostPlayer", Storage="_PlanetWarsHostPlayers", ThisKey="AccountID", OtherKey="PlayerAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=50, EmitDefaultValue=false)]
+		public EntitySet<PlanetWarsHostPlayer> PlanetWarsHostPlayers
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PlanetWarsHostPlayers.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlanetWarsHostPlayers;
+			}
+			set
+			{
+				this._PlanetWarsHostPlayers.Assign(value);
 			}
 		}
 		
@@ -3606,6 +3663,18 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_PlanetWarsHostPlayers(PlanetWarsHostPlayer entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_PlanetWarsHostPlayers(PlanetWarsHostPlayer entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -3634,6 +3703,7 @@ namespace ZkData
 			this._PlanetInfluenceHistories = new EntitySet<PlanetInfluenceHistory>(new Action<PlanetInfluenceHistory>(this.attach_PlanetInfluenceHistories), new Action<PlanetInfluenceHistory>(this.detach_PlanetInfluenceHistories));
 			this._PlanetWarsHost = default(EntityRef<PlanetWarsHost>);
 			this._AccountRatingVotes = new EntitySet<AccountRatingVote>(new Action<AccountRatingVote>(this.attach_AccountRatingVotes), new Action<AccountRatingVote>(this.detach_AccountRatingVotes));
+			this._PlanetWarsHostPlayers = new EntitySet<PlanetWarsHostPlayer>(new Action<PlanetWarsHostPlayer>(this.attach_PlanetWarsHostPlayers), new Action<PlanetWarsHostPlayer>(this.detach_PlanetWarsHostPlayers));
 			this._Clan = default(EntityRef<Clan>);
 			OnCreated();
 		}
@@ -17488,11 +17558,13 @@ namespace ZkData
 		
 		private bool _InGame;
 		
-		private int _Players;
+		private EntitySet<PlanetWarsHostPlayer> _PlanetWarsHostPlayers;
 		
 		private EntityRef<Account> _Account;
 		
 		private EntityRef<Planet> _Planet;
+		
+		private bool serializing;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -17504,8 +17576,6 @@ namespace ZkData
     partial void OnPlanetIDChanged();
     partial void OnInGameChanging(bool value);
     partial void OnInGameChanged();
-    partial void OnPlayersChanging(int value);
-    partial void OnPlayersChanged();
     #endregion
 		
 		public PlanetWarsHost()
@@ -17584,24 +17654,22 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Players", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int Players
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PlanetWarsHost_PlanetWarsHostPlayer", Storage="_PlanetWarsHostPlayers", ThisKey="HostAccountID", OtherKey="HostAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4, EmitDefaultValue=false)]
+		public EntitySet<PlanetWarsHostPlayer> PlanetWarsHostPlayers
 		{
 			get
 			{
-				return this._Players;
+				if ((this.serializing 
+							&& (this._PlanetWarsHostPlayers.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlanetWarsHostPlayers;
 			}
 			set
 			{
-				if ((this._Players != value))
-				{
-					this.OnPlayersChanging(value);
-					this.SendPropertyChanging();
-					this._Players = value;
-					this.SendPropertyChanged("Players");
-					this.OnPlayersChanged();
-				}
+				this._PlanetWarsHostPlayers.Assign(value);
 			}
 		}
 		
@@ -17693,8 +17761,21 @@ namespace ZkData
 			}
 		}
 		
+		private void attach_PlanetWarsHostPlayers(PlanetWarsHostPlayer entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlanetWarsHost = this;
+		}
+		
+		private void detach_PlanetWarsHostPlayers(PlanetWarsHostPlayer entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlanetWarsHost = null;
+		}
+		
 		private void Initialize()
 		{
+			this._PlanetWarsHostPlayers = new EntitySet<PlanetWarsHostPlayer>(new Action<PlanetWarsHostPlayer>(this.attach_PlanetWarsHostPlayers), new Action<PlanetWarsHostPlayer>(this.detach_PlanetWarsHostPlayers));
 			this._Account = default(EntityRef<Account>);
 			this._Planet = default(EntityRef<Planet>);
 			OnCreated();
@@ -17705,6 +17786,20 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 	
@@ -18217,6 +18312,214 @@ namespace ZkData
 		{
 			this._Account = default(EntityRef<Account>);
 			this._RatingPoll = default(EntityRef<RatingPoll>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.PlanetWarsHostPlayer")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class PlanetWarsHostPlayer : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _HostAccountID;
+		
+		private int _PlayerAccountID;
+		
+		private bool _IsSpectator;
+		
+		private EntityRef<PlanetWarsHost> _PlanetWarsHost;
+		
+		private EntityRef<Account> _Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnHostAccountIDChanging(int value);
+    partial void OnHostAccountIDChanged();
+    partial void OnPlayerAccountIDChanging(int value);
+    partial void OnPlayerAccountIDChanged();
+    partial void OnIsSpectatorChanging(bool value);
+    partial void OnIsSpectatorChanged();
+    #endregion
+		
+		public PlanetWarsHostPlayer()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HostAccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int HostAccountID
+		{
+			get
+			{
+				return this._HostAccountID;
+			}
+			set
+			{
+				if ((this._HostAccountID != value))
+				{
+					if (this._PlanetWarsHost.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnHostAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._HostAccountID = value;
+					this.SendPropertyChanged("HostAccountID");
+					this.OnHostAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlayerAccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int PlayerAccountID
+		{
+			get
+			{
+				return this._PlayerAccountID;
+			}
+			set
+			{
+				if ((this._PlayerAccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnPlayerAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._PlayerAccountID = value;
+					this.SendPropertyChanged("PlayerAccountID");
+					this.OnPlayerAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSpectator", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public bool IsSpectator
+		{
+			get
+			{
+				return this._IsSpectator;
+			}
+			set
+			{
+				if ((this._IsSpectator != value))
+				{
+					this.OnIsSpectatorChanging(value);
+					this.SendPropertyChanging();
+					this._IsSpectator = value;
+					this.SendPropertyChanged("IsSpectator");
+					this.OnIsSpectatorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="PlanetWarsHost_PlanetWarsHostPlayer", Storage="_PlanetWarsHost", ThisKey="HostAccountID", OtherKey="HostAccountID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public PlanetWarsHost PlanetWarsHost
+		{
+			get
+			{
+				return this._PlanetWarsHost.Entity;
+			}
+			set
+			{
+				PlanetWarsHost previousValue = this._PlanetWarsHost.Entity;
+				if (((previousValue != value) 
+							|| (this._PlanetWarsHost.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PlanetWarsHost.Entity = null;
+						previousValue.PlanetWarsHostPlayers.Remove(this);
+					}
+					this._PlanetWarsHost.Entity = value;
+					if ((value != null))
+					{
+						value.PlanetWarsHostPlayers.Add(this);
+						this._HostAccountID = value.HostAccountID;
+					}
+					else
+					{
+						this._HostAccountID = default(int);
+					}
+					this.SendPropertyChanged("PlanetWarsHost");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetWarsHostPlayer", Storage="_Account", ThisKey="PlayerAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.PlanetWarsHostPlayers.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.PlanetWarsHostPlayers.Add(this);
+						this._PlayerAccountID = value.AccountID;
+					}
+					else
+					{
+						this._PlayerAccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._PlanetWarsHost = default(EntityRef<PlanetWarsHost>);
+			this._Account = default(EntityRef<Account>);
 			OnCreated();
 		}
 		

@@ -166,28 +166,7 @@ namespace CaTracker
 
 		void statsTimer_Elapsed(object sender, ElapsedEventArgs e)
 		{
-			TrackPlanetwarsHosts();
 			TrackPlayerMinutes();
-		}
-
-		void TrackPlanetwarsHosts()
-		{
-			try {
-				using (var db = new ZkDataContext()) {
-					db.PlanetWarsHosts.DeleteAllOnSubmit(db.PlanetWarsHosts);
-					db.SubmitChanges();
-					var gal = db.Galaxies.Single(x => x.IsDefault);
-					foreach (var us in tas.ExistingBattles.Values.Where(x => x.Founder.StartsWith("PlanetWars")))
-					{
-						db.PlanetWarsHosts.InsertOnSubmit(new PlanetWarsHost() { HostAccountID = db.Accounts.Single(x=>x.Name == us.Founder).AccountID, InGame = tas.ExistingUsers[us.Founder].IsInGame, Players = us.Users.Count(x=>!x.IsSpectator), PlanetID = gal.Planets.Single(x=>x.Resource.InternalName==us.MapName).PlanetID});
-					}
-					db.SubmitChanges();
-				}
-			} catch (Exception ex)
-			{
-				Trace.TraceError(ex.ToString());
-			}
-
 		}
 
 		void tas_Connected(object sender, TasEventArgs e)
