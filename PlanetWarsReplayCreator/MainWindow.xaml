@@ -1,0 +1,17 @@
+﻿<Window x:Class="PlanetWarsReplayCreator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <StackPanel Width="50" HorizontalAlignment="Left">
+            <Button Click="nextButton_Click">Next</Button>
+            <Button Click="exportButton_Click">Export to Gif</Button>
+        </StackPanel>
+
+        <Viewbox x:Name="viewBox">
+            <Canvas x:Name="mapCanvas" Loaded="mapCanvas_Loaded" Height="1" Width="1" Background="Black">
+            
+            </Canvas>
+        </Viewbox>
+    </Grid>
+</Window>
