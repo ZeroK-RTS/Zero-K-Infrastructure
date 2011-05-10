@@ -56,7 +56,8 @@ namespace ModStats
 				Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
 
 				foreach (string line in data) {
-					string[] parts = line.Split(',');
+					if (!line.StartsWith("stats")) continue;
+					string[] parts = line.Substring(5).Split(',');
 					switch (parts[0]) {
 						case "teams":
 							game.Players = Convert.ToInt32(parts[1]);
