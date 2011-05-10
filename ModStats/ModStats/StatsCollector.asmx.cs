@@ -57,7 +57,7 @@ namespace ModStats
 
 				foreach (string line in data) {
 					if (!line.StartsWith("stats")) continue;
-					string[] parts = line.Substring(5).Split(',');
+					string[] parts = line.Substring(6).Split(',');
 					switch (parts[0]) {
 						case "teams":
 							game.Players = Convert.ToInt32(parts[1]);
