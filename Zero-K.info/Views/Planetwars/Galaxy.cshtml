@@ -164,7 +164,7 @@ We are setting up the next round.
 	}
     
     <span style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px;">
-      @if (autohost != null && autohost.Players > 1) { 
+      @if (autohost != null && autohost.PlanetWarsHostPlayers.Count() > 1) { 
         <img src='/img/planetstatus/@(autohost.InGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute'/>
 			}
       

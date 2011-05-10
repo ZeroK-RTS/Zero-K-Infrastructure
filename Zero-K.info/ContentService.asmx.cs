@@ -330,7 +330,7 @@ namespace ZeroKWeb
 
 
 		[WebMethod]
-		public RecommendedMapResult GetRecommendedMap(string autohostName)
+		public RecommendedMapResult GetRecommendedMap(string autohostName, List<AccountTeam> accounts)
 		{
 			var mode = GetModeFromHost(autohostName);
 			var res = new RecommendedMapResult();
@@ -972,6 +972,7 @@ namespace ZeroKWeb
 			public string CommanderType;
 			public bool IsSpectator;
 			public bool IsVictoryTeam;
+			public bool IsIngameReady;
 			public int? LoseTime;
 			public int Rank;
 			public List<PlayerStats> Stats;
@@ -1009,6 +1010,7 @@ namespace ZeroKWeb
 			public int AllyTeam;
 			public bool IsSpectator;
 			public int SpringPlayerID;
+			
 		}
 
 		public class EloInfo

@@ -129,7 +129,8 @@ namespace Springie.PlanetWars
 			{
 				if (tas.MyBattle != null && !spring.IsRunning)
 				{
-					var map = serv.GetRecommendedMap(tas.UserName);
+					var map = serv.GetRecommendedMap(tas.UserName, tas.MyBattle.Users.Where(x => !x.IsSpectator).Select(
+						x => new AccountTeam() { AccountID = x.LobbyUser.AccountID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Spectate= x.IsSpectator}).ToArray());
 					if (map.MapName != null)
 					{
 						if (tas.MyBattle.MapName != map.MapName)

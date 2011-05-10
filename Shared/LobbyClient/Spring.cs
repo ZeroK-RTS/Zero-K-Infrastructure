@@ -61,7 +61,6 @@ namespace LobbyClient
 
 
 		Process process;
-		readonly List<string> readyPlayers = new List<string>();
 		string scriptPath;
 		readonly List<string> statsData = new List<string>();
 		Dictionary<string, BattlePlayerResult> statsPlayers = new Dictionary<string, BattlePlayerResult>();
@@ -149,7 +148,7 @@ namespace LobbyClient
 
 		public bool IsPlayerReady(string name)
 		{
-			return readyPlayers.Contains(name);
+			return statsPlayers[name].IsIngameReady;
 		}
 
 
@@ -188,7 +187,6 @@ namespace LobbyClient
 				battleResult = new BattleResult();
 
 				talker = new Talker();
-				readyPlayers.Clear();
 				talker.SpringEvent += talker_SpringEvent;
 				isHosting = client != null && client.MyBattle != null && client.MyBattle.Founder == client.MyUser.Name;
 
@@ -575,8 +573,8 @@ namespace LobbyClient
 					break;
 
 				case Talker.SpringEventType.PLAYER_READY:
-					if (e.Param == 1) readyPlayers.Add(e.PlayerName);
-					break;
+					if (e.Param == 1) statsPlayers[e.PlayerName].IsIngameReady = true;
+				break;
 
 				case Talker.SpringEventType.SERVER_QUIT:
 					//Program.main.AutoHost.SayBattle("dbg quit ");

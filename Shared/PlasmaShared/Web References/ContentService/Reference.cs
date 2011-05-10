@@ -339,24 +339,26 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetRecommendedMap", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public RecommendedMapResult GetRecommendedMap(string autohostName) {
+        public RecommendedMapResult GetRecommendedMap(string autohostName, AccountTeam[] accounts) {
             object[] results = this.Invoke("GetRecommendedMap", new object[] {
-                        autohostName});
+                        autohostName,
+                        accounts});
             return ((RecommendedMapResult)(results[0]));
         }
         
         /// <remarks/>
-        public void GetRecommendedMapAsync(string autohostName) {
-            this.GetRecommendedMapAsync(autohostName, null);
+        public void GetRecommendedMapAsync(string autohostName, AccountTeam[] accounts) {
+            this.GetRecommendedMapAsync(autohostName, accounts, null);
         }
         
         /// <remarks/>
-        public void GetRecommendedMapAsync(string autohostName, object userState) {
+        public void GetRecommendedMapAsync(string autohostName, AccountTeam[] accounts, object userState) {
             if ((this.GetRecommendedMapOperationCompleted == null)) {
                 this.GetRecommendedMapOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRecommendedMapOperationCompleted);
             }
             this.InvokeAsync("GetRecommendedMap", new object[] {
-                        autohostName}, this.GetRecommendedMapOperationCompleted, userState);
+                        autohostName,
+                        accounts}, this.GetRecommendedMapOperationCompleted, userState);
         }
         
         private void OnGetRecommendedMapOperationCompleted(object arg) {
@@ -751,9 +753,9 @@ namespace PlasmaShared.ContentService {
         
         private string nameField;
         
-        private int teamIDField;
-        
         private bool spectateField;
+        
+        private int teamIDField;
         
         /// <remarks/>
         public int AccountID {
@@ -786,22 +788,22 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        public int TeamID {
-            get {
-                return this.teamIDField;
-            }
-            set {
-                this.teamIDField = value;
-            }
-        }
-        
-        /// <remarks/>
         public bool Spectate {
             get {
                 return this.spectateField;
             }
             set {
                 this.spectateField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int TeamID {
+            get {
+                return this.teamIDField;
+            }
+            set {
+                this.teamIDField = value;
             }
         }
     }
@@ -892,6 +894,8 @@ namespace PlasmaShared.ContentService {
         
         private bool isVictoryTeamField;
         
+        private bool isIngameReadyField;
+        
         private System.Nullable<int> loseTimeField;
         
         private int rankField;
@@ -955,6 +959,16 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.isVictoryTeamField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool IsIngameReady {
+            get {
+                return this.isIngameReadyField;
+            }
+            set {
+                this.isIngameReadyField = value;
             }
         }
         

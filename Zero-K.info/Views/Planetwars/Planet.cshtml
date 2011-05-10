@@ -40,7 +40,7 @@
 				Battle in progress, JOIN TO WATCH</a>
 	} else {
 			<a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID }, Request.Url.Scheme)@@join_player:@autohost.Account.Name'>
-				Battle has @autohost.Players players wiating, JOIN IT</a>
+				Battle has @autohost.PlanetWarsHostPlayers.Count() players waiting, JOIN IT</a>
 	}
 	</b>
 }
