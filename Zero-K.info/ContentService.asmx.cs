@@ -338,17 +338,20 @@ namespace ZeroKWeb
 			{
 				if (mode == AutohostMode.Planetwars)
 				{
+					var playerAccountIDs = accounts.Where(x => !x.Spectate).Select(x => x.AccountID).ToList();
 					var gal = db.Galaxies.Single(x => x.IsDefault);
+					var biggestClanEntry = gal.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Clan).Where(x => x.Key != null).OrderByDescending(x => x.Count()).FirstOrDefault();
+					var biggestClan = biggestClanEntry != null ? biggestClanEntry.Key : null;
+					
 					var valids =
-						gal.Planets.Where(
-							x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) >= (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0));
-					var maxc = valids.Max(x => (int?)x.AccountPlanets.Sum(y => y.DropshipCount)) ?? 0;
+						gal.Planets.Select(x => new {Planet = x, Ships= (x.AccountPlanets.Where(y=>playerAccountIDs.Contains(y.AccountID)).Sum(y => (int?)y.DropshipCount) ?? 0), Defenses = (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)}).Where(x=>x.Ships > x.Defenses);
+					var maxc = valids.Max(x => x.Ships);
 
 					List<Planet> targets = null;
-					// if there are no dropships and there are unclaimed planets, target those
-					if (maxc == 0 && gal.Planets.Any(x => x.OwnerAccountID == null)) targets = gal.Planets.Where(x => x.OwnerAccountID == null).ToList();
+					// if there are no dropships target unclaimed and biggest clan planets
+					if (maxc == 0) targets = gal.Planets.Where(x => x.OwnerAccountID == null || x.Account.Clan == biggestClan).ToList();
 					else
-						targets = valids.Where(x => (x.AccountPlanets.Sum(y => (int?)y.DropshipCount) ?? 0) == maxc).ToList();
+						targets = valids.Where(x => x.Ships == maxc).Select(x=>x.Planet).ToList();
 							// target valid planets with most dropships
 
 					var r = new Random(autohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
