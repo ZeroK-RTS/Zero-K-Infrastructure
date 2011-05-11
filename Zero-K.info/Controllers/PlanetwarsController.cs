@@ -635,8 +635,9 @@ namespace ZeroKWeb.Controllers
 						planet.Account = mostInfluentialPlayer;
 					}
 
-					if (firstPlanet) {
+					if (firstPlanet && !mostInfluentialPlayer.WasGivenCredits) {
 						mostInfluentialPlayer.Credits += GlobalConst.PlanetwarsColonizationCredits;
+						mostInfluentialPlayer.WasGivenCredits = true;
 						db.Events.InsertOnSubmit(Global.CreateEvent("{0} gets ${1} for colonizing his/her first planet {2}", mostInfluentialPlayer, GlobalConst.PlanetwarsColonizationCredits, planet));
 					}
 				}

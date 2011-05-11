@@ -2,7 +2,7 @@
 {
 	public static class GlobalConst
 	{
-		public const int MaxClanSkilledSize =12;
+		public const int MaxClanSkilledSize =10;
 		public const int ClanLeaveLimit = 5;
 		public const int PlanetwarsColonizationCredits = 1000;
 		public const int PlanetwarsInvadingShipBonus = 50;
