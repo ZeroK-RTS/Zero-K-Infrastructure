@@ -1030,6 +1030,8 @@ namespace PlasmaShared.ContentService {
         
         private System.DateTime startTimeField;
         
+        private System.Nullable<System.DateTime> ingameStartTimeField;
+        
         private string titleField;
         
         /// <remarks/>
@@ -1119,6 +1121,17 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.startTimeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public System.Nullable<System.DateTime> IngameStartTime {
+            get {
+                return this.ingameStartTimeField;
+            }
+            set {
+                this.ingameStartTimeField = value;
             }
         }
         

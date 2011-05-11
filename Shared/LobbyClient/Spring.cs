@@ -8,9 +8,11 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Timers;
 using PlasmaShared;
 using PlasmaShared.ContentService;
 using ZkData;
+using Timer = System.Timers.Timer;
 
 #endregion
 
@@ -45,8 +47,6 @@ namespace LobbyClient
 
 		public delegate void LogLine(string text, bool isError);
 
-		readonly AutohostMode authostMode;
-
 		Guid battleGuid;
 		BattleResult battleResult = new BattleResult();
 		TasClient client;
@@ -65,6 +65,7 @@ namespace LobbyClient
 		readonly List<string> statsData = new List<string>();
 		Dictionary<string, BattlePlayerResult> statsPlayers = new Dictionary<string, BattlePlayerResult>();
 		Talker talker;
+		readonly Timer timer = new Timer(20000);
 
 		public DateTime GameEnded { get { return battleResult.StartTime.AddSeconds(battleResult.Duration).ToLocalTime(); } }
 
@@ -107,8 +108,8 @@ namespace LobbyClient
 
 		public Spring(SpringPaths springPaths, AutohostMode autohostMode = AutohostMode.GameTeams)
 		{
-			authostMode = authostMode;
 			paths = springPaths;
+			timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
 		}
 
 		/// <summary>
@@ -220,8 +221,7 @@ namespace LobbyClient
 							                                               	x =>
 							                                               	new BattleStartSetupPlayer()
 							                                               	{ AccountID = x.LobbyUser.AccountID, AllyTeam = x.AllyNumber, IsSpectator = x.IsSpectator }).
-							                                               	ToArray(),
-							                                               authostMode);
+							                                               	ToArray(),AutohostMode.GameTeams);
 						}
 						catch (Exception ex)
 						{
@@ -250,6 +250,7 @@ namespace LobbyClient
 					                                    	Rank = x.LobbyUser.Rank,
 					                                    });
 				}
+				if (isHosting) timer.Start();
 
 				File.WriteAllText(scriptPath, script);
 
@@ -574,12 +575,42 @@ namespace LobbyClient
 
 				case Talker.SpringEventType.PLAYER_READY:
 					if (e.Param == 1) statsPlayers[e.PlayerName].IsIngameReady = true;
-				break;
+					break;
+
+				case Talker.SpringEventType.SERVER_STARTPLAYING:
+					battleResult.IngameStartTime = DateTime.UtcNow;
+					break;
 
 				case Talker.SpringEventType.SERVER_QUIT:
 					//Program.main.AutoHost.SayBattle("dbg quit ");
 					//if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
 					break;
+			}
+		}
+
+		void timer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			try {
+				if (isHosting && IsRunning && battleResult.IngameStartTime == null) {
+					// force start after 180s
+					if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 180) {
+						foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator)) {
+							var p = kvp.Value;
+							Kick(kvp.Key);
+							client.Kick(kvp.Key);
+						}
+						ForceStart();
+					} else if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 60) {
+						//warn people after 60s 
+						foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator)) {
+							client.Ring(kvp.Key);
+							client.Say(TasClient.SayPlace.User, kvp.Key, "Ready up ingame, or I kick you", false);
+						}
+						SayGame(string.Format("Game will be force started in {0} seconds", 180 - DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds));
+					}
+				}
+			} catch (Exception ex) {
+				Trace.TraceError("Error checking start: {0}", ex);
 			}
 		}
 	}

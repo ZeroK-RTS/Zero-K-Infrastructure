@@ -391,6 +391,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ReplayName" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="StartTime" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="IngameStartTime" nillable="true" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="Title" type="s:string" />
         </s:sequence>
       </s:complexType>

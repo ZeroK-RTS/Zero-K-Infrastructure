@@ -1001,6 +1001,7 @@ namespace ZeroKWeb
 			public string Mod;
 			public string ReplayName;
 			public DateTime StartTime;
+			public DateTime? IngameStartTime;
 			public string Title;
 		}
 

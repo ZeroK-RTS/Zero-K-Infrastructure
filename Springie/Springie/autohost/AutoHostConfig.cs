@@ -24,7 +24,8 @@ namespace Springie.autohost
         string welcome = "Hi %1 (rights:%2), welcome to %3, automated host. For help say !help";
         public string AccountName = "login";
         public string AccountPassword = "password";
-
+				
+				public int? ForceIngameAfterSeconds = 180;
         public bool AutoSpawnClone = true;
         public string AutoUpdateRapidTag = "";
 
