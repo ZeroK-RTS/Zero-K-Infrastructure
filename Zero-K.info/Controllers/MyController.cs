@@ -214,7 +214,7 @@ namespace ZeroKWeb.Controllers
 			                   });
 		}
 
-		void GetUnlockLists(ZkDataContext db, out List<Unlock> unlocks, out List<Unlock> future)
+		public static void GetUnlockLists(ZkDataContext db, out List<Unlock> unlocks, out List<Unlock> future)
 		{
 			var maxedUnlockList =
 				db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID && x.Count >= x.Unlock.MaxModuleCount).Select(x => x.UnlockID).ToList();

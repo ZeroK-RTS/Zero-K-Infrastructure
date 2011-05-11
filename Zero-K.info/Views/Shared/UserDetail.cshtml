@@ -4,177 +4,268 @@
 @{
   Page.Title = Model.Name + " user page";
 }
+
+@section head {
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#tabs").tabs();
+		});
+	</script>
+   }
+}
+
+
 @*@{
   Html.RenderAction("Index", "Poll", new { pollID = 2 });
-  }  *@ @* User Profile Page! *@ @* First column starts here *@
-<table border="0" width="100%">
-  <tr>
-    <td><h2>@Html.PrintAccount(Model)</h2>
-    </td>
-    <td align="right">
-      @if (ZeroKWeb.Global.IsLobbyAccess) { <img src="../../Img/zk_logo_miniature.png" alt="zklogo" /> }
-    </td>
-  </tr>
-</table>
+  }  *@ @* User Profile Page! *@
+
+
+<h2>@Html.PrintAccount(Model)</h2>
+
+
 <table>
-  <tr>
-    <td valign="top">
-      <table>
-        @if (!string.IsNullOrEmpty(Model.Aliases)) {
-          <tr>
-            <td>Aliases: </td>
-            <td>@Model.Aliases
-            </td>
-          </tr>
-        }
-        <tr>
-          <td>Level: </td>
-          <td><b>@Model.Level</b> </td>
-        </tr>
-        <tr>
-          <td>Clan: </td>
-          <td>@Html.PrintClan(Model.Clan)
-          </td>
-        </tr>
-        <tr>
-          <td>XP: </td>
-          <td>
-            @{
-              var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));
-            }
-            <span title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
-              <table cellpadding='0' cellspacing='0'>
-                <tr>
-                  <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'></td>
-                  <td width='@((int)(300 * ratio))' style="background: url(/img/img_progressbar1_h.png);" height='12'></td>
-                  <td width='@((int)(300 * (1 - ratio)))' style="background: url(/img/img_progressbar2_h.png);" height='10'></td>
-                  <td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'></td>
-                </tr>
-              </table>
-            </span></td>
-        </tr>
-        <tr>
-          <td>Credits: </td>
-          <td>@Model.Credits</td>
-        </tr>
-        <tr>
-          <td>Elo: </td>
-          <td>@Math.Round(Model.Elo)
-          </td>
-        </tr>
-        @if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin) {
-          <tr>
-            <td>Administrator: </td>
-            <td>@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
-            </td>
-          </tr>
-        }
-        <tr>
-          <td nowrap="nowrap">Online: </td>
-          <td>first @Model.FirstLogin.ToAgoString(), last @Model.LastLogin.ToAgoString()
-          </td>
-        </tr>
-        @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) {
-          <tr>
-            <td><span title="@award.First().AwardDescription.Split(',').First()"><img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/></span>
-            </td>
-            <td>@award.Count()
-            </td>
-          </tr>    
-        }
-      </table>
-      <a href='spring://chat/user/@Model.Name'>Send private message to @Model.Name</a> <h3>Commanders:</h3>
-      @foreach (var comm in Model.Commanders) {
-        <span style='display:inline-block; width:110px;height:80px' title='$commander$@comm.CommanderID'><img src='@comm.Unlock.ImageUrl' alt="unlock" /><br />@comm.Name
-        </span>
-      }
-    </td>
-    @* Second column starts here *@
-    <td width="40%" valign="top">
-      @if (Model.ForumPosts.Any()) {
-        <h3>Posted threads</h3>
-        <span nowrap="nowrap">@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count
-          threads</span><br />
-                                                            foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10)) {
-        <small><img src="../../Img/bullet.png" alt="bullet" />
-          <a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
-                                                            }
-      }
-      <br />
-      @if (Model.Planets.Any()) {
-        <h3>Planets owned</h3>
-        <table>
-          @foreach (var p in Model.Planets) { 
-            <tr>
-              <td>@Html.PrintPlanet(p)
-              </td>
-              <td>@Html.PrintInfluence(p.AccountPlanets.Single(x => x.AccountID == Model.AccountID))
-              </td>
-            </tr>
-          }
-        </table>
-      }
-      @if (Model.Clan != null) {
-        <h3>Starships</h3>
-        <span nowrap="nowrap">@(Model.DropshipCount)/@(Model.Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) + GlobalConst.DefaultDropshipCapacity)
-          ready to deploy</span>
-        <table>
-          @foreach (var p in Model.AccountPlanets.Where(x => x.DropshipCount > 0)) { 
-            <tr>
-              <td>@Html.PrintPlanet(p.Planet)
-              </td>
-              <td><img src='/img/dropship.png' />@p.DropshipCount</td>
-            </tr>
-          }
-        </table>
-      }
-      <br />
-      @if (Model.SpringBattlePlayers.Any()) {
-        <h3>Last battles</h3>
-        <span nowrap="nowrap">
-          @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
-          watched, @Model.MissionRunCount missions </span>
-        <br />
-              foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Take(10)) {
-        <small>@Html.PrintBattle(b)</small><br />
-              }
-      }
-    </td>
-  </tr>
-  @* Bottom cell starts here *@
-  <tr>
-    <td colspan='2'>
-      @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
-        <a href='@Url.Action("Commanders", "My")'>Configure commanders</a>
-      }
-      <h3>Technologies:</h3>
-      @Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
-      <br />
-      @if (Model.AccountID == ZeroKWeb.Global.AccountID) {
-        <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)"><a href='@Url.Action("UnlockList", "My")'>
-          You can unlock technologies worth @Model.AvailableXP
-          points</a></span>
-      } else {
-        @Model.Name @:Can unlock technologies worth @Model.AvailableXP points
-            }
-      @if (ZeroKWeb.Global.Account != null && Global.AccountID != Model.AccountID) {
-        <h3>PlanetWars gifts</h3>
-        <form method="post" action="@Url.Action("Give", "Planetwars", new { targetAccountID = Model.AccountID})">
-        <span>Credits (@Global.Account.Credits): </span>@Html.TextBox("giveCredits")
-        <span>Influence: </span>@Html.DropDownList("planetID", ZeroKWeb.Global.Account.AccountPlanets.Where(x => x.Influence > 0).OrderByDescending(x => x.Influence).Select(x => new SelectListItem() { Text = x.Planet.Name + " - " + x.Influence, Value = x.PlanetID.ToString() }))
-        @Html.TextBox("giveInfluence") <input type="submit" value="Send gift"/>
-        </form>
-      }
-      <h3>PlanetWars events</h3>
-      @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
-      @Html.ActionLink("Trade", "Trade", "PlanetWars", new {username = Model.Name}, null)
-    </td>
-  </tr>
+
+ <tr>
+	  @* First column starts here *@
+ <td  valign="top">
+
+	<table>
+	@if (!string.IsNullOrEmpty(Model.Aliases)) {
+		<tr>
+			<td>Aliases:</td>
+			<td> @Model.Aliases</td>
+		</tr>
+	}
+	<tr>
+		<td>Level: </td>
+		<td><b>@Model.Level</b></td>
+	</tr>
+	<tr>
+		<td>Clan: </td>
+		<td>@Html.PrintClan(Model.Clan) </td>
+	</tr>
+	<tr>
+		<td>XP: </td>
+		<td>
+		@{
+			var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));
+		}
+		<span title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
+			<table cellpadding='0' cellspacing='0'>
+			<tr>
+				<td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'></td>
+				<td width='@((int)(300 * ratio))' style="background: url(/img/img_progressbar1_h.png);" height='12'></td>
+				<td width='@((int)(300 * (1 - ratio)))' style="background: url(/img/img_progressbar2_h.png);" height='10'></td>
+				<td width='1' style="background: url(/img/img_progressbar1_b.png);" height='12'></td>
+			</tr>
+			</table>
+		</span></td>
+	</tr>
+	<tr>
+		<td>Credits: </td>
+		<td>@Model.Credits</td>
+	</tr>
+	<tr>
+		<td>Elo: </td>
+		<td>@Math.Round(Model.Elo)
+		</td>
+	</tr>
+	@if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
+	{
+		<tr>
+		<td>Administrator: </td>
+		<td>@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
+		</td>
+		</tr>
+	}
+	<tr>
+		<td nowrap="nowrap">Online: </td>
+		<td>first @Model.FirstLogin.ToAgoString(), last @Model.LastLogin.ToAgoString()
+		</td>
+	</tr>
+	</table>
+	@foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) 
+	{
+		<span title="@award.First().AwardDescription.Split(',').First()">
+			<img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key"/>
+		</span>
+		<span>@award.Count()</span>
+	}
+		  <br />
+	  <br />
+	<div>
+	  @if (Model.ForumPosts.Any())
+	  {
+		<h3>Posted threads</h3>
+		<span nowrap="nowrap">@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
+		<br />
+		 foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10))
+		 {
+			<small><img src="../../Img/bullet.png" alt="bullet" />
+			<a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small><br />
+		 }
+	  }
+	  </div>
+
+ </td>
+	  @* Second column starts here *@
+ <td>
+	 <div>
+	  @if (Model.SpringBattlePlayers.Any())
+	  {
+		<h3>Last battles</h3>
+		<span nowrap="nowrap">
+		  @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
+		  watched, @Model.MissionRunCount missions </span>
+		<br />
+			  foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Take(20))
+			  {
+		<small>@Html.PrintBattle(b)</small><br />
+			  }
+	  }
+	  </div> 
+ </td>
+</tr>
 </table>
-@if (ZeroKWeb.Global.IsZeroKAdmin && ZeroKWeb.Global.AccountID == Model.AccountID) {
-  <h3>Admin extras</h3>
-  <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
-  <a href="@Url.Content("~/StructuresAdmin.aspx")">Planetwars structures admin</a><br />
-  <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
-}
-<br />
+
+
+
+
+<a href='spring://chat/user/@Model.Name'>Send private message to @Model.Name</a>
+
+
+<div id="tabs">
+	<ul>
+		<li><a href="#newsTab"><span>News</span></a></li>
+		<li><a href="#commanders"><span>Commanders</span></a></li>
+		<li><a href="#techs"><span>Technologies</span></a></li>
+		<li><a href="#unlocks"><span>Unlocking</span></a></li>
+		<li><a href="#planetwars"><span>PlanetWars</span></a></li>
+	   @if (ZeroKWeb.Global.IsZeroKAdmin && ZeroKWeb.Global.AccountID == Model.AccountID)
+	   {
+		<li><a href="#admin"><span>Admin</span></a></li>
+	   }
+	</ul>
+	<div id="newsTab">
+		@Html.IncludeWiki("News")
+	</div>
+	<div id="techs">
+	  @Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
+	  <br />
+	  @if (Model.AccountID == ZeroKWeb.Global.AccountID)
+	  {
+		<span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)"><a href='@Url.Action("UnlockList", "My")'>
+		  You can unlock technologies worth @Model.AvailableXP
+		  points</a></span>
+	  }
+	  else
+	  {
+		@Model.Name @:Can unlock technologies worth @Model.AvailableXP points
+	  }
+	</div>
+	<div id="planetwars">
+	  @if (Model.Planets.Any())
+	  {
+		<h3>Planets owned</h3>
+		<table>
+		  @foreach (var p in Model.Planets)
+		  { 
+			<tr>
+			  <td>@Html.PrintPlanet(p)
+			  </td>
+			  <td>@Html.PrintInfluence(p.AccountPlanets.Single(x => x.AccountID == Model.AccountID))
+			  </td>
+			</tr>
+		  }
+		</table>
+	  }
+	  @if (Model.Clan != null)
+	  {
+		<h3>Starships</h3>
+		<span nowrap="nowrap">@(Model.DropshipCount)/@(Model.Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) + GlobalConst.DefaultDropshipCapacity)
+		  ready to deploy</span>
+		<table>
+		  @foreach (var p in Model.AccountPlanets.Where(x => x.DropshipCount > 0))
+		  { 
+			<tr>
+			  <td>@Html.PrintPlanet(p.Planet)
+			  </td>
+			  <td><img src='/img/dropship.png' />@p.DropshipCount</td>
+			</tr>
+		  }
+		</table>
+	  }
+	  @if (ZeroKWeb.Global.Account != null && Global.AccountID != Model.AccountID)
+	  {
+		<h3>Gifts</h3>
+		<form method="post" action="@Url.Action("Give", "Planetwars", new { targetAccountID = Model.AccountID })">
+		<span>Credits (@Global.Account.Credits): </span>@Html.TextBox("giveCredits")
+		<span>Influence: </span>@Html.DropDownList("planetID", ZeroKWeb.Global.Account.AccountPlanets.Where(x => x.Influence > 0).OrderByDescending(x => x.Influence).Select(x => new SelectListItem() { Text = x.Planet.Name + " - " + x.Influence, Value = x.PlanetID.ToString() }))
+		@Html.TextBox("giveInfluence") <input type="submit" value="Send gift"/>
+		</form>
+	  }
+	  <h3>PlanetWars events</h3>
+	  @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
+	  @Html.ActionLink("Trade", "Trade", "PlanetWars", new { username = Model.Name }, null)
+	</div>
+			@if (ZeroKWeb.Global.IsZeroKAdmin && ZeroKWeb.Global.AccountID == Model.AccountID)
+			{
+		<div id="admin">
+			  <h3>Admin extras</h3>
+			  <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
+			  <a href="@Url.Content("~/StructuresAdmin.aspx")">Planetwars structures admin</a><br />
+			  <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />        
+		</div>
+			}
+	<div id ="commanders">
+	  @foreach (var comm in Model.Commanders)
+	  {
+		<span style='display:inline-block; width:110px;height:80px' title='$commander$@comm.CommanderID'><img src='@comm.Unlock.ImageUrl' alt="unlock" /><br />@comm.Name
+		</span>
+	  }
+	  @if (Model.AccountID == ZeroKWeb.Global.AccountID)
+	  {
+		<a href='@Url.Action("Commanders", "My")'>Configure commanders</a>
+	  }
+	</div>
+	<div id="unlocks">
+		<h2>Available technologies</h2>
+		<h3><span title="Why only @Model.AvailableXP points? <br /> First you have to reach the next level before you'll receive new points.">You have @Model.AvailableXP points available</span></h3>
+		@{
+			List<Unlock> unlocks;
+			List<Unlock> future;
+			var db = new ZkDataContext();
+			ZeroKWeb.Controllers.MyController.GetUnlockLists(db, out unlocks, out future);
+			var unlockList = new ZeroKWeb.Controllers.MyController.UnlockListResult() { Account = Global.Account, Unlocks = unlocks, FutureUnlocks = future };
+
+			foreach (var unlock in unlockList.Unlocks)
+			{
+			  <span title="$unlock$@unlock.UnlockID">
+				<img src="@unlock.ImageUrl" style="float:left;" alt="unlocks" /><br />
+				<span style="color: @unlock.LabelColor; font-weight:bold">@unlock.Name</span>
+					Level: @unlock.NeededLevel, 
+					XP: @unlock.XpCost, 
+					<span>@Html.BBCode(unlock.Description)</span>
+					<br />
+					<a href="@Url.Action("Unlock", "My", new { id = unlock.UnlockID })" >Unlock</a><br />
+				</span>
+			  <br />
+			}
+		}
+		<h2>Unavailable technologies</h2>
+		@foreach (var unlock in unlockList.FutureUnlocks)
+		{
+		  <span title="$unlock$@unlock.UnlockID" style="display:inline-block; width:250px;height:120px;">
+			<img src="@unlock.ImageUrl" alt="unlocks" /><span style="color: @unlock.LabelColor;">@unlock.Name</span><br />
+				<span>
+				  Level: @unlock.NeededLevel, <br />
+				  XP: @unlock.XpCost
+				  @if (unlock.ParentUnlock != null) 
+				  {
+					@:,<br /> technology: <span title='$unlock$@unlock.RequiredUnlockID'><img src="@unlock.ParentUnlock.ImageUrl" height="20"width="20"/></span>
+				   }
+				</span>
+			</span>
+		}
+	</div>
+</div>
