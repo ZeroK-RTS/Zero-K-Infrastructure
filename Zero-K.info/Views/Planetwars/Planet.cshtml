@@ -50,7 +50,7 @@
 	var mapHeight = 500;
 }
 @section head {
-	<script>
+	<script type="text/javascript">
 		$(document).ready(function () {
 			$("#tabs").tabs();
 		});
@@ -273,5 +273,7 @@
 	<div id="events">
 		@Html.Action("Events", new { planetID = Model.PlanetID, partial = true })
 	</div>
+
+</div>
 	<br />
 @Html.Partial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { planetID = Model.PlanetID, threadID = Model.ForumThreadID } })

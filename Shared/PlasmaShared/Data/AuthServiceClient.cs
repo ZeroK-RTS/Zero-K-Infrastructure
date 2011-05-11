@@ -31,8 +31,8 @@ namespace ZkData
 		{
       if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(passwordHash)) return null;
 			var db = new ZkDataContext();
-			var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash);
-			if (acc != null) return acc; else return factory.CreateChannel().VerifyAccount(login, passwordHash);
+			var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash);			
+			if (acc != null || Debugger.IsAttached) return acc; else return factory.CreateChannel().VerifyAccount(login, passwordHash);
 
 		}
 

@@ -13,7 +13,7 @@
       var techs = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.Unlock).Where(x=> x!=null).ToList();
       
     <tr>
-      <td>Owner:</td>
+      <td>Governor:</td>
       <td>@Html.PrintAccount(Model.Account)  @Html.PrintClan(Model.Account != null ? Model.Account.Clan : null)</td>
     </tr>
 		<tr>
