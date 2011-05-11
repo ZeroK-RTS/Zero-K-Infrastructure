@@ -27,6 +27,10 @@ namespace ZkData
 			return jumpGateCapacity - usedJumpGates;
 		}
 
+		public int GetDropshipCapacity() {
+			return GlobalConst.DefaultDropshipCapacity + (Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
+		}
+
 		public static int GetXpForLevel(int level)
 		{
 			if (level < 0) return 0;

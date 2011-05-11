@@ -827,10 +827,9 @@ namespace ZeroKWeb
 					foreach (var a in
 						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
 					{
-						var capacity = GlobalConst.DefaultDropshipCapacity +
-						               (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
+						var capacity = a.GetDropshipCapacity();
 						var income = GlobalConst.DefaultDropshipProduction +
-						             (a.Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectDropshipProduction) ?? 0);
+						             (a.Planets.SelectMany(x => x.PlanetStructures).Where(x=>!x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipProduction) ?? 0);
 						var used = a.AccountPlanets.Sum(x => x.DropshipCount);
 
 						a.DropshipCount += income;
