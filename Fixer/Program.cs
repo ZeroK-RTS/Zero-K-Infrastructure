@@ -24,13 +24,38 @@ namespace Fixer
       //RecalculateBattleElo();
       //FixMaps();
 
+			PurgeGalaxy(9);
     	RandomizeMaps(9);
 			GenerateStructures(9);
 
 			//AddWormholes();
     }
 
-		static void RandomizeMaps(int galaxyID)
+		public static void PurgeGalaxy(int galaxyID) {
+			using (var db = new ZkDataContext())
+			{
+				var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
+				foreach (var p in gal.Planets) {
+					p.ForumThread = null;
+					p.OwnerAccountID = null;
+				}
+				db.SubmitChanges();
+
+				db.ExecuteCommand("update account set dropshipcount=1, credits=0, isclanfounder=0, hasclanrights=0, wasgivencredits=0,clanid=null");
+				db.ExecuteCommand("delete from event");
+				db.ExecuteCommand("delete from planetinfluencehistory");
+				db.ExecuteCommand("delete from planetownerhistory");
+				db.ExecuteCommand("delete from accountplanet");
+				db.ExecuteCommand("delete from marketoffer");
+				db.ExecuteCommand("delete from treatyoffer");
+				
+				db.ExecuteCommand("delete from clan");
+				db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
+				db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
+			}
+		}
+
+  	static void RandomizeMaps(int galaxyID)
 		{
 			using (var db = new ZkDataContext())
 			{
@@ -56,6 +81,8 @@ namespace Fixer
 			var rand = new Random();
 			var db = new ZkDataContext();
   		var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
+			var names = Resources.names.Lines().Union(Resources.stars.Lines()).ToList();
+
   		var wormhole = 16;
   		var wormhole2 = 19;
 
@@ -110,24 +137,26 @@ namespace Fixer
 
   		foreach (var p in gal.Planets) {
 				p.PlanetStructures.Clear();
-				p.Name = Resources.names.Lines()[rand.Next(Resources.names.Lines().Length)];
+				p.Name = names[rand.Next(names.Count)];
+				names.Remove(p.Name);
   			//if (rand.Next(50) == 0 ) p.AddStruct(wormhole2);
 				//else 
-				if (rand.Next(10)<8) p.AddStruct(wormhole);
+				//if (rand.Next(10)<8) 
+					p.AddStruct(wormhole);
 
 				//if (rand.Next(30) ==0) p.AddStruct(mine3);
 				//else if (rand.Next(20)==0) p.AddStruct(mine2);
 				//else 
-				if (rand.Next(20) ==0) p.AddStruct(mine);
+				//if (rand.Next(20) ==0) p.AddStruct(mine);
 
-				if (rand.Next(20) == 0) p.AddStruct(dfac);
-				if (rand.Next(20) == 0) p.AddStruct(ddepot);
+				//if (rand.Next(20) == 0) p.AddStruct(dfac);
+				//if (rand.Next(20) == 0) p.AddStruct(ddepot);
 				if (rand.Next(20) == 0) p.AddStruct(warp);
 
 				if (p.Resource.MapIsChickens == true) p.AddStruct(chicken);
 
-				// structures
-				if (rand.Next(8) ==0)
+				// tech structures
+				/*if (rand.Next(8) ==0)
 				{
 
 					var probe = rand.Next(sumCosts);
@@ -140,7 +169,7 @@ namespace Fixer
 							break;
 						}
 					}
-				}
+				}*/
 			}
 			
 			// artefacts

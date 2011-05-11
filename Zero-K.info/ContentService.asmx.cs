@@ -443,10 +443,7 @@ namespace ZeroKWeb
 							foreach (var a in other.Select(x => db.Accounts.Single(y => y.AccountID == x.AccountID)).OrderByDescending(x => x.Elo * x.EloWeight).Take(cnt)) accountIDsWithExtraComms.Add(a.AccountID);
 						}
 					}
-
 				}
-
-				
 			}
 
 			foreach (var p in players.Where(x => !x.IsSpectator))
