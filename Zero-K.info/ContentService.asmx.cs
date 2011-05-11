@@ -345,7 +345,7 @@ namespace ZeroKWeb
 					
 					var valids =
 						gal.Planets.Select(x => new {Planet = x, Ships= (x.AccountPlanets.Where(y=>playerAccountIDs.Contains(y.AccountID)).Sum(y => (int?)y.DropshipCount) ?? 0), Defenses = (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)}).Where(x=>x.Ships > x.Defenses);
-					var maxc = valids.Max(x => x.Ships);
+					var maxc = valids.Max(x => (int?)x.Ships) ??0;
 
 					List<Planet> targets = null;
 					// if there are no dropships target unclaimed and biggest clan planets
