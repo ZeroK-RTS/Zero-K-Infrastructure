@@ -99,7 +99,7 @@ namespace CaTracker
 			host.Open();
 
 			offlineMessages = new OfflineMessages(tas);
-
+			new Shuffler(tas);
 			return true;
 		}
 

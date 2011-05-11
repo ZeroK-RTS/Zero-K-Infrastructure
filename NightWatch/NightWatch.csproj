@@ -79,6 +79,7 @@
     <Compile Include="PlanetWarsWatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shuffler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
