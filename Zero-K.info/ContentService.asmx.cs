@@ -430,7 +430,25 @@ namespace ZeroKWeb
 			var commanderTypes = new LuaTable();
 			var db = new ZkDataContext();
 
-		
+
+			List<int> accountIDsWithExtraComms = new List<int>();
+			// calculate to whom to send extra comms
+			if (mode == AutohostMode.Planetwars) {
+				var groupedByTeam = players.Where(x=>!x.IsSpectator).GroupBy(x=>x.AllyTeam).OrderByDescending(x=>x.Count());
+				var biggest=  groupedByTeam.FirstOrDefault();
+				if (biggest != null) {
+					foreach (var other in groupedByTeam.Skip(1)) {
+						var cnt = biggest.Count() - other.Count();
+						if (cnt > 0) {
+							foreach (var a in other.Select(x => db.Accounts.Single(y => y.AccountID == x.AccountID)).OrderByDescending(x => x.Elo * x.EloWeight).Take(cnt)) accountIDsWithExtraComms.Add(a.AccountID);
+						}
+					}
+
+				}
+
+				
+			}
+
 			foreach (var p in players.Where(x => !x.IsSpectator))
 			{
 				var user = db.Accounts.SingleOrDefault(x => x.AccountID == p.AccountID);
@@ -443,6 +461,8 @@ namespace ZeroKWeb
 					if (mode != AutohostMode.Planetwars) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
 					else foreach (var unlock in Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock)) pu.Add(unlock.Code);
 					userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
+
+					if (accountIDsWithExtraComms.Contains(p.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key="extracomm", Value="1"});
 
 					var pc = new LuaTable();
 
