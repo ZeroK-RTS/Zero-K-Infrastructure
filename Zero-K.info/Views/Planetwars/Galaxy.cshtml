@@ -80,16 +80,12 @@ We are setting up the next round.
 
 <span style='color:red; font-size:bigger'>WARNING, THIS IS BETA!</span><br />
 @*
-<b>Conquest victory (33% planets + 50% jumpgates):</b>
+<b>Conquest victory (70% planets):</b>
 @{
 	var conquest = @Model.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
 	if (conquest != null) {
-	
-		var warpGates = @Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectWarpGateCapacity > 0)).Count();
 		
-		var warpGatesTaken = @Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectWarpGateCapacity > 0)).Count(x=>x.OwnerAccountID!= null && x.Account.ClanID == conquest.Clan.ClanID);
-		
-		<span>@Html.PrintClan(conquest.Clan) - @conquest.Count/@Math.Round(Model.Planets.Count()/3.0) planets and @warpGatesTaken/@Math.Round(warpGates*0.5) jumpgates</span>
+		<span>@Html.PrintClan(conquest.Clan) - @conquest.Count/@Math.Round(Model.Planets.Count()*0.7) planets</span>
 	}
 }
 <br />
@@ -109,23 +105,13 @@ We are setting up the next round.
 <br />
 
 
-<b>Economic victory (40% credit value):</b>
+<b>Economic victory (credits exceed 70% of galaxy assets):</b>
 @{
 	
-	var credEntries = db.Clans.Select(x=> new {Clan = x, Credits = (x.Accounts.Sum(y=>(int?)y.Credits)??0) + x.Accounts.SelectMany(y=>y.Planets).SelectMany(y=>y.PlanetStructures).Where(y=>!y.IsDestroyed).Sum(y=>(int?)y.StructureType.Cost)??0}).OrderByDescending(x => x.Credits);
+	var credEntries = db.Clans.Select(x=> new {Clan = x, Credits=x.Accounts.Sum(y=>(int?)y.Credits)??0, Assets = (x.Accounts.Sum(y=>(int?)y.Credits)??0) + x.Accounts.SelectMany(y=>y.Planets).SelectMany(y=>y.PlanetStructures).Where(y=>!y.IsDestroyed).Sum(y=>(int?)y.StructureType.Cost)??0}).OrderByDescending(x => x.Credits);
 	var creds = credEntries.FirstOrDefault();
 	if (creds != null) {
-		<span>@Html.PrintClan(creds.Clan) - $@creds.Credits/$@Math.Round(credEntries.Sum(x=>x.Credits)*0.4)</span>
-	}
-}
-<br />
-
-<b>Trade victory (40% real influence)</b>
-@{
-	var diplo = @Model.Planets.SelectMany(x => x.AccountPlanets).Where(x => x.AccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Influence = x.Sum(y => y.Influence) }).OrderByDescending(x => x.Influence).FirstOrDefault();
-	if (diplo != null) {
-	
-		<span>@Html.PrintClan(diplo.Clan) - @diplo.Influence/@Math.Round(Model.Planets.SelectMany(x => x.AccountPlanets).Where(x => x.Account.ClanID != null).Sum(x => x.Influence)*0.4) </span>
+		<span>@Html.PrintClan(creds.Clan) - $@creds.Credits/$@Math.Round(credEntries.Sum(x=>x.Assets)*0.7)</span>
 	}
 }
 <br />

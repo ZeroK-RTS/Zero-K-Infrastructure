@@ -38,6 +38,7 @@ namespace ZkData
 			FirstLogin = DateTime.UtcNow;
 			Elo = 1500;
 			EloWeight = 1;
+			DropshipCount = 1;
 		}
 
 		partial void OnNameChanging(string value)
