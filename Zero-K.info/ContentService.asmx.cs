@@ -130,9 +130,9 @@ namespace ZeroKWeb
 							else
 							{
 								var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
-								if (treaty.AllyStatus == AllyStatus.Alliance) points = 1.5;
-								else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.5;
-								else if (treaty.AllyStatus == AllyStatus.War) points = -1.5;
+								if (treaty.AllyStatus == AllyStatus.Alliance) points = 0.5;
+								else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.25;
+								else if (treaty.AllyStatus == AllyStatus.War) points = -2.5;
 							}
 						}
 						sameTeamScore[i, j] = points;
