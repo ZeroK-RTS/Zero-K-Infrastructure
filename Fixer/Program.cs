@@ -24,8 +24,8 @@ namespace Fixer
       //RecalculateBattleElo();
       //FixMaps();
 
-			PurgeGalaxy(9);
-    	RandomizeMaps(9);
+			//PurgeGalaxy(9);
+    	//RandomizeMaps(9);
 			GenerateStructures(9);
 
 			//AddWormholes();
@@ -81,7 +81,7 @@ namespace Fixer
 			var rand = new Random();
 			var db = new ZkDataContext();
   		var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
-			var names = Resources.names.Lines().Union(Resources.stars.Lines()).ToList();
+			var names = Resources.names.Lines().ToList();
 
   		var wormhole = 16;
   		var wormhole2 = 19;
@@ -151,7 +151,7 @@ namespace Fixer
 
 				//if (rand.Next(20) == 0) p.AddStruct(dfac);
 				//if (rand.Next(20) == 0) p.AddStruct(ddepot);
-				if (rand.Next(20) == 0) p.AddStruct(warp);
+				//if (rand.Next(20) == 0) p.AddStruct(warp);
 
 				if (p.Resource.MapIsChickens == true) p.AddStruct(chicken);
 
@@ -174,6 +174,9 @@ namespace Fixer
 			
 			// artefacts
 			foreach (var p in gal.Planets.Where(x => x.Resource.MapIsChickens!=true && !x.Resource.MapIsFfa != true && x.Resource.MapIs1v1 != true).Shuffle().Take(3)) p.AddStruct(artefact);
+
+			// jump gates
+			foreach (var p in gal.Planets.Shuffle().Take(6)) p.AddStruct(warp);
 
 			db.SubmitChanges();
 			Galaxy.RecalculateShadowInfluence(db);

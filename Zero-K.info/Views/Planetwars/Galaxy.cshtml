@@ -20,12 +20,12 @@
 @functions {
 }
 
-<a href='/Forum/Thread/314'>Imperium has won!</a>
+@*<a href='/Forum/Thread/314'>Imperium has won!</a>
 <br />
 We are setting up the next round.
 <br />
 <img src="http://images1.wikia.nocookie.net/__cb20100726165117/starwarstech/images/thumb/0/0d/Imperial_Star_Destroyer_by_MasterofIntelligence.jpg/830px-Imperial_Star_Destroyer_by_MasterofIntelligence.jpg" border="2"  /><br/>
-
+*@
 
 @section head {
     <script type="text/javascript">
@@ -76,10 +76,8 @@ We are setting up the next round.
 }
 <span>
   @Html.ActionLink("Clans", "ClanList") | @Html.ActionLink("Events", "Events") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString() | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a> | <a href='/Forum/Thread/314'>Hall Of Fame</a>
-</span>
+</span><br />
 
-<span style='color:red; font-size:bigger'>WARNING, THIS IS BETA!</span><br />
-@*
 <b>Conquest victory (70% planets):</b>
 @{
 	var conquest = @Model.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
@@ -116,7 +114,7 @@ We are setting up the next round.
 }
 <br />
 
-*@
+
 
 <div style="text-align: left; border: 0; position: relative; z-index:  100" >
   <div style="position: absolute; z-index:  0">
