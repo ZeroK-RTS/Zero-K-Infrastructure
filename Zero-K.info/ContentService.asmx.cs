@@ -357,7 +357,14 @@ namespace ZeroKWeb
 					var owner = "";
 					if (planet.Account != null) owner = planet.Account.Name;
 					res.Message = string.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2}", owner, planet.Name, planet.PlanetID);
-					//if (planet.Account != null) AuthServiceClient.SendLobbyMessage(planet.Account,string.Format("Your planet {0} is going to be attacked! spring://@join_player:{1}", planet.Name, autohostName));
+
+					var hostAccount = db.Accounts.Single(x => x.Name == autohostName);
+					if (hostAccount.PlanetWarsHost == null) hostAccount.PlanetWarsHost = new PlanetWarsHost(); hostAccount.PlanetWarsHost.InGame = false;
+					hostAccount.PlanetWarsHost.PlanetID = planet.PlanetID;
+					hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.Clear();
+					hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(accounts.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = x.AccountID, IsSpectator = x.Spectate }));
+					db.SubmitChanges();
+
 				}
 				else
 				{
@@ -365,6 +372,7 @@ namespace ZeroKWeb
 					var r = new Random();
 					res.MapName = list[r.Next(list.Count)].InternalName;
 				}
+
 			}
 			return res;
 		}
@@ -419,6 +427,7 @@ namespace ZeroKWeb
 			var commanderTypes = new LuaTable();
 			var db = new ZkDataContext();
 
+		
 			foreach (var p in players.Where(x => !x.IsSpectator))
 			{
 				var user = db.Accounts.SingleOrDefault(x => x.AccountID == p.AccountID);
@@ -468,6 +477,13 @@ namespace ZeroKWeb
 			if (mode == AutohostMode.Planetwars)
 			{
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
+
+				var hostAccount = db.Accounts.Single(x => x.Name == hostName);
+				if (hostAccount.PlanetWarsHost == null) hostAccount.PlanetWarsHost = new PlanetWarsHost();				hostAccount.PlanetWarsHost.InGame = true;
+				hostAccount.PlanetWarsHost.PlanetID = planet.PlanetID;
+				hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.Clear();
+				hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(players.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = x.AccountID, IsSpectator = x.IsSpectator }));
+				db.SubmitChanges();
 
 				var pwStructures = new LuaTable();
 				foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName))) pwStructures.Add("s" + s.StructureTypeID, s.StructureType.IngameUnitName);

@@ -217,7 +217,7 @@ namespace LobbyClient
 							startSetup = service.GetSpringBattleStartSetup(client.MyUser.Name,
 							                                               client.MyBattle.MapName,
 							                                               client.MyBattle.ModName,
-							                                               client.MyBattle.Users.Where(x => !x.IsSpectator).Select(
+							                                               client.MyBattle.Users.Select(
 							                                               	x =>
 							                                               	new BattleStartSetupPlayer()
 							                                               	{ AccountID = x.LobbyUser.AccountID, AllyTeam = x.AllyNumber, IsSpectator = x.IsSpectator }).
@@ -606,7 +606,7 @@ namespace LobbyClient
 							client.Ring(kvp.Key);
 							client.Say(TasClient.SayPlace.User, kvp.Key, "Ready up ingame, or I kick you", false);
 						}
-						SayGame(string.Format("Game will be force started in {0} seconds", 180 - DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds));
+						SayGame(string.Format("Game will be force started in {0} seconds", Math.Max(20,180 - Math.Round(DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds))));
 					}
 				}
 			} catch (Exception ex) {

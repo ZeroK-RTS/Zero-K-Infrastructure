@@ -9,7 +9,7 @@ namespace Springie
 {
 	public class MainConfig: IPlasmaDownloaderConfig
 	{
-		public const string SpringieVersion = "Springie 1.49.5";
+		public const string SpringieVersion = "Springie 1.49.6";
 
 		string executableName = "spring-dedicated.exe";
 		bool gargamelMode = true;
