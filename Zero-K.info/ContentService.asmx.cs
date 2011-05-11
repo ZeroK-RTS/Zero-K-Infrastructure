@@ -689,6 +689,7 @@ namespace ZeroKWeb
 				{
 					var gal = db.Galaxies.Single(x => x.IsDefault);
 					var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
+					var playerAccountIDs = players.Where(x => !x.IsSpectator).Select(x => x.AccountID).ToList();
 
 					text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet/{0} has ended\n", planet.PlanetID);
 
@@ -716,8 +717,14 @@ namespace ZeroKWeb
 					{
 						var techBonus = p.Account.ClanID != null ? (int)clanTechIp[p.Account.ClanID] : 0;
 						var gapMalus = 0;
+						var shipBonus = 0;
 						if (ownerClan != null && p.Account.Clan == ownerClan) gapMalus = ownerMalus;
 						p.Influence += (techBonus - gapMalus);
+
+						var ships = planet.AccountPlanets.Where(x => x.AccountID == p.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
+						shipBonus = ships * GlobalConst.PlanetwarsInvadingShipBonus;
+						p.Influence += shipBonus;
+						
 						if (p.Influence < 0) p.Influence = 0;
 
 						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == p.AccountID);
@@ -729,6 +736,8 @@ namespace ZeroKWeb
 
 						var infl = p.Influence ?? 0;
 
+						
+						// give influence to ally
 						if (ownerClan != null && p.Account.Clan != null && p.Account.Clan != ownerClan)
 						{
 							var treaty = ownerClan.GetEffectiveTreaty(p.Account.Clan); // if ceasefired/allianced - give ip to owner
@@ -752,41 +761,34 @@ namespace ZeroKWeb
 							}
 						}
 
+						// store influence
 						entry.Influence += infl;
-						db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} from techs {5}) influence at {2} from {3}",
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} {5} {6}) influence at {2} from {3}",
 						                                            p.Account,
 						                                            p.Influence ?? 0,
 						                                            planet,
 						                                            sb,
-						                                            techBonus,
-						                                            gapMalus > 0 ? "-" + gapMalus + " from domination" : ""));
+						                                            techBonus >0 ? "+" + techBonus + " from techs":"",
+						                                            gapMalus > 0 ? "-" + gapMalus + " from domination" : "", shipBonus > 0 ? "+" + shipBonus + " from ships" : ""));
 
-						text.AppendFormat("{0} got {1} ({3} from techs {4}) influence at {2}\n",
+						text.AppendFormat("{0} got {1} ({3} {4} {5}) influence at {2}\n",
 						                  p.Account.Name,
 						                  p.Influence ?? 0,
 						                  planet.Name,
-						                  techBonus,
-						                  gapMalus > 0 ? "-" + gapMalus + " from domination" : "");
+															techBonus > 0 ? "+" + techBonus + " from techs" : "",
+						                  gapMalus > 0 ? "-" + gapMalus + " from domination" : "",
+															shipBonus > 0 ? "+" + shipBonus + " from ships" : "");
 					}
 
 					db.SubmitChanges();
 
-					var bleed = 0;
-					// destroy existing dropships
+					// destroy existing dropships and prevent growth
 					var noGrowAccount = new List<int>();
-					foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
-					{
-						if (ap.Account.Clan != ownerClan) bleed += ap.DropshipCount*GlobalConst.PlanetwarsDropshipBleed; // bleed credits for each enemy dropsihp in combat
+					foreach (var ap in planet.AccountPlanets.Where(x => playerAccountIDs.Contains(x.AccountID) && x.DropshipCount > 0)) {
 						ap.DropshipCount = 0;
 						noGrowAccount.Add(ap.AccountID);
 					}
-					if (bleed > 0 && ownerClan != null)
-					{
-						planet.Account.Credits -= bleed;
-						db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {4} lost ${1} in combat at {2} {3}", planet.Account, bleed, planet, sb, planet.Account.Clan));
-						text.AppendFormat("{0} lost ${1} due to combat\n", planet.Account.Name, bleed);
-					}
-					db.SubmitChanges();
+					
 
 					// destroy pw structures
 					var handled = new List<string>();
