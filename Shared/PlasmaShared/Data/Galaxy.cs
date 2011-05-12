@@ -53,7 +53,7 @@ namespace ZkData
 				// iterate links to this planet
 				foreach (var link in gal.Links.Where(l => (l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID))) {
 					var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
-					if (thisPlanet.PlanetStructures.Max(x=>x.StructureType.EffectLinkStrength) > 0) accesiblePlanets.Add(otherPlanet);
+					if (thisPlanet.PlanetStructures.Where(x=>!x.IsDestroyed).Max(x=>x.StructureType.EffectLinkStrength) > 0) accesiblePlanets.Add(otherPlanet);
 				}
 			}
 
