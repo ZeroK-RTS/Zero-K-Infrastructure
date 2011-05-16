@@ -125,8 +125,8 @@ We are setting up the next round.
 	var pr = p.PlanetRectangle(Model);
 	var por = p.PlanetOverlayRectangle(Model);
 	Clan clan = null;
-	Clan secondClan = null;
-	var secondClanInfluence = 0;
+	//Clan secondClan = null;
+	//var secondClanInfluence = 0;
 	var autohost = p.PlanetWarsHosts.FirstOrDefault();
 
 
@@ -136,7 +136,7 @@ We are setting up the next round.
 		clan = p.Account.Clan;
 	}
 
-	var secondRatio = 0.0;
+	/*var secondRatio = 0.0;
 	var entry = p.GetClanInfluences().Skip(1).FirstOrDefault();
 	if (clan != null && entry != null) {
 		secondClan = entry.Clan;
@@ -145,7 +145,7 @@ We are setting up the next round.
 		if (secondClanInfluence > 0 && (ipToCapture - secondClanInfluence) < 500) {
 			secondRatio = 1.0 - (ipToCapture - secondClanInfluence) / 500.0;
 		}
-	}
+	}*/
     
     <span style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px;">
       @if (autohost != null && autohost.PlanetWarsHostPlayers.Count() > 1) { 
@@ -193,13 +193,13 @@ We are setting up the next round.
 						}
           </td>
         </tr>
-        <tr>
+        @*<tr>
           <td align="center">
             @if (secondRatio > 0) {
               <img src='@secondClan.GetImageUrl()' width='@(Math.Round(10 + 10.0 * secondRatio))' />
 						}
           </td>
-        </tr>
+        </tr>*@
       </table>
     </span>
     

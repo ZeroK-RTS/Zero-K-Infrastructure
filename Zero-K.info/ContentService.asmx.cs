@@ -35,8 +35,8 @@ namespace ZeroKWeb
 				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
 				if (account.Clan == null)
 				{
-					AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
-					return string.Format("{0} this is competetive PlanetWars campaign server. Join a clan to fight http://zero-k.info/Planetwars/ClanList",
+					//AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
+					return string.Format("{0} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Planetwars/ClanList",
 					                     account.Name);
 				}
 				if (!account.Name.Contains(account.Clan.Shortcut))
@@ -76,8 +76,8 @@ namespace ZeroKWeb
 				{
 					if (p.ClanID == null)
 					{
-						res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
-						AuthServiceClient.SendLobbyMessage(p, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
+						//res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
+						//AuthServiceClient.SendLobbyMessage(p, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
 					}
 					else if (!p.Name.Contains(p.Clan.Shortcut))
 					{
@@ -455,7 +455,7 @@ namespace ZeroKWeb
 					ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID, Parameters = userParams });
 
 					var pu = new LuaTable();
-					if (mode != AutohostMode.Planetwars) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
+					if (mode != AutohostMode.Planetwars || user.ClanID == null) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
 					else foreach (var unlock in Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock)) pu.Add(unlock.Code);
 					userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
 
@@ -730,7 +730,7 @@ namespace ZeroKWeb
 						}
 					}
 
-					foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam))
+					foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.ClanID != null))
 					{
 						var techBonus = p.Account.ClanID != null ? (int)clanTechIp[p.Account.ClanID] : 0;
 						var gapMalus = 0;
