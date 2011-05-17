@@ -343,14 +343,20 @@ namespace ZeroKWeb
 					var biggestClan = biggestClanEntry != null ? biggestClanEntry.Key : null;
 					
 					var valids =
-						gal.Planets.Select(x => new {Planet = x, Ships= (x.AccountPlanets.Where(y=>playerAccountIDs.Contains(y.AccountID)).Sum(y => (int?)y.DropshipCount) ?? 0), Defenses = (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)}).Where(x=>x.Ships >= x.Defenses);
+						gal.Planets.Select(x => new {Planet = x, Ships= (x.AccountPlanets.Where(y=>playerAccountIDs.Contains(y.AccountID)).Sum(y => (int?)y.DropshipCount) ?? 0), Defenses = (x.PlanetStructures.Where(y=>!y.IsDestroyed).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)}).Where(x=>x.Ships >= x.Defenses);
 					var maxc = valids.Max(x => (int?)x.Ships) ??0;
 
 					List<Planet> targets = null;
 					// if there are no dropships target unclaimed and biggest clan planets
-					if (maxc == 0) targets = gal.Planets.Where(x => x.OwnerAccountID == null || x.Account.Clan == biggestClan).ToList();
+					if (maxc == 0)
+					{
+						var possiblePlanets =
+							gal.Planets.Where(x => x.OwnerAccountID == null || x.Account.Clan == biggestClan).Select(
+								x => new { Planet = x, Defenses = x.PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0 }).OrderBy(x=>x.Defenses).ToList();
+						targets = possiblePlanets.Where(x => x.Defenses == possiblePlanets.First().Defenses).Select(x => x.Planet).ToList();
+					}
 					else
-						targets = valids.Where(x => x.Ships == maxc).Select(x=>x.Planet).ToList();
+						targets = valids.Where(x => x.Ships == maxc).Select(x => x.Planet).ToList();
 							// target valid planets with most dropships
 
 					var r = new Random(autohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
