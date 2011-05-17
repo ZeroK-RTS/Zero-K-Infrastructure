@@ -253,9 +253,9 @@
 @if (isMember && Model.Accounts.Count()<=GlobalConst.ClanLeaveLimit)
 {
 	@Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
-	<b>Secret topic:</b><br />
-  @Html.BBCode(c.SecretTopic)
 }
+<b>Secret topic:</b><br />
+@Html.BBCode(c.SecretTopic)
 @if (isMember && Global.Account.HasClanRights) { //has rights
   <br />
   @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })

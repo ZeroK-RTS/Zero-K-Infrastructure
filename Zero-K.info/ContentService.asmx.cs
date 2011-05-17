@@ -65,7 +65,7 @@ namespace ZeroKWeb
 		public BalanceTeamsResult BalanceTeams(string autoHost, string map, List<AccountTeam> currentTeams)
 		{
 			var mode = GetModeFromHost(autoHost);
-			if (currentTeams.Count < 1) return new BalanceTeamsResult() { Message = "Not enough players" };
+			if (currentTeams.Count < 1) return new BalanceTeamsResult();
 			using (var db = new ZkDataContext())
 			{
 				var res = new BalanceTeamsResult();
@@ -79,7 +79,7 @@ namespace ZeroKWeb
 						//res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
 						//AuthServiceClient.SendLobbyMessage(p, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
 					}*/
-					if (!p.Name.Contains(p.Clan.Shortcut))
+					if (p.Clan != null&& !p.Name.Contains(p.Clan.Shortcut))
 					{
 						res.Message += string.Format("{0} cannot play, name must contain clan tag {1}\n", p.Name, p.Clan.Shortcut);
 						AuthServiceClient.SendLobbyMessage(p,
