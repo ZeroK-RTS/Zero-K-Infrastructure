@@ -74,20 +74,19 @@ namespace ZeroKWeb
 				var players = new List<Account>();
 				foreach (var p in db.Accounts.Where(x => idList.Contains(x.AccountID)))
 				{
-					if (p.ClanID == null)
+					/*if (p.ClanID == null)
 					{
 						//res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
 						//AuthServiceClient.SendLobbyMessage(p, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
-					}
-					else if (!p.Name.Contains(p.Clan.Shortcut))
+					}*/
+					if (!p.Name.Contains(p.Clan.Shortcut))
 					{
 						res.Message += string.Format("{0} cannot play, name must contain clan tag {1}\n", p.Name, p.Clan.Shortcut);
 						AuthServiceClient.SendLobbyMessage(p,
 						                                   string.Format("Your name must contain clan tag {0}, rename for example by saying: /rename [{0}]{1}",
 						                                                 p.Clan.Shortcut,
 						                                                 p.Name));
-					}
-					else players.Add(p);
+					} else players.Add(p);
 				}
 				var clans = players.Where(x => x.Clan != null).Select(x => x.Clan).ToList();
 				var treaties = new Dictionary<Tuple<Clan, Clan>, EffectiveTreaty>();
@@ -344,7 +343,7 @@ namespace ZeroKWeb
 					var biggestClan = biggestClanEntry != null ? biggestClanEntry.Key : null;
 					
 					var valids =
-						gal.Planets.Select(x => new {Planet = x, Ships= (x.AccountPlanets.Where(y=>playerAccountIDs.Contains(y.AccountID)).Sum(y => (int?)y.DropshipCount) ?? 0), Defenses = (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)}).Where(x=>x.Ships > x.Defenses);
+						gal.Planets.Select(x => new {Planet = x, Ships= (x.AccountPlanets.Where(y=>playerAccountIDs.Contains(y.AccountID)).Sum(y => (int?)y.DropshipCount) ?? 0), Defenses = (x.PlanetStructures.Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)}).Where(x=>x.Ships >= x.Defenses);
 					var maxc = valids.Max(x => (int?)x.Ships) ??0;
 
 					List<Planet> targets = null;
