@@ -246,7 +246,7 @@
 </table>
 @if (c.CanJoin(Global.Account))
 {
-  @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })
+  @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })<br />
 }
 
 
@@ -254,8 +254,11 @@
 {
 	@Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
 }
-<b>Secret topic:</b><br />
-@Html.BBCode(c.SecretTopic)
+@if (isMember) {
+	<b>Secret topic:</b><br />
+  @Html.BBCode(c.SecretTopic)
+}
+
 @if (isMember && Global.Account.HasClanRights) { //has rights
   <br />
   @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })

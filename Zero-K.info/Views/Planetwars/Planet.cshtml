@@ -185,9 +185,9 @@
 				var upgrade = structure.StructureType.ParentStructureTypeByUpgradesToStructureID;
 				if (upgrade != null) {
 					if (upgrade.Cost > Global.Account.Credits) {
-			<p>@String.Format("Upgrade {0} to {1} (requires {2:C0})", structure.StructureType.Name, upgrade.Name, upgrade.Cost)</p>
+			<p>@String.Format("Upgrade {0} to {1} (requires {2:C0}) - {3}", structure.StructureType.Name, upgrade.Name, upgrade.Cost, upgrade.Description)</p>
 					} else {
-						var linkText = String.Format("Upgrade {0} to {1} ({2:C0})", structure.StructureType.Name, upgrade.Name, upgrade.Cost);
+						var linkText = String.Format("Upgrade {0} to {1} ({2:C0}) - {3}", structure.StructureType.Name, upgrade.Name, upgrade.Cost, upgrade.Description);
 			<p>@Html.ActionLink(linkText, "UpgradeStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
 					}
 
@@ -198,9 +198,9 @@
 			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
 				if (!StructureType.HasStructureOrUpgrades(db, planet, structureType)) {
 					if (structureType.Cost > Global.Account.Credits) {
-			<p>@String.Format("Build {0} (requires {1:C0})", structureType.Name, structureType.Cost)</p>
+			<p>@String.Format("Build {0} (requires {1:C0}) - {2}", structureType.Name, structureType.Cost, structureType.Description)</p>
 					} else {
-						var linkText = String.Format("Build {0} ({1:C0})", structureType.Name, structureType.Cost);
+						var linkText = String.Format("Build {0} ({1:C0}) - {2}", structureType.Name, structureType.Cost, structureType.Description);
 			<p>@Html.ActionLink(linkText, "BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })</p>
 					}
 				}
