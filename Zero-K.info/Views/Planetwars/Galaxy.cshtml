@@ -97,7 +97,7 @@ We are setting up the next round.
 	if (artsTaken != null) {
 		var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Account.Clan == artsTaken.Clan).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
 		
-		<span>@Html.PrintClan(artsTaken.Clan) - @artsTaken.Arts/@arts artefacts,  @techs/@db.StructureTypes.Where(x=>x.EffectUnlockID!=null && x.PlanetStructures.Any(y=>y.Planet.GalaxyID == Model.GalaxyID)).Count() techs</span>
+		<span>@Html.PrintClan(artsTaken.Clan) - @artsTaken.Arts/@arts artefacts,  @techs/@db.StructureTypes.Where(x=>x.EffectUnlockID!=null).Count() techs</span>
 	}
 }
 <br />
