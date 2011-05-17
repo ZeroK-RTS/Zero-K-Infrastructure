@@ -455,7 +455,8 @@ namespace ZeroKWeb
 
 					var pu = new LuaTable();
 					if (mode != AutohostMode.Planetwars || user.ClanID == null) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
-					else foreach (var unlock in Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock)) pu.Add(unlock.Code);
+					else foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock).Union(Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock))) pu.Add(unlock.Code);
+					
 					userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
 
 					if (accountIDsWithExtraComms.Contains(p.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key="extracomm", Value="1"});
@@ -716,7 +717,7 @@ namespace ZeroKWeb
 
 					var clanTechIp =
 						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).ToDictionary(
-							x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count()*3.0/z.Count());
+							x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count()*6.0/z.Count());
 
 					var ownerMalus = 0;
 					if (ownerClan != null)
