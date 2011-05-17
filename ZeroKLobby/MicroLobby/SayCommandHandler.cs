@@ -40,6 +40,8 @@ namespace ZeroKLobby.MicroLobby
                     else if (words[0] == "/rename" || words[0] == "/nick")
                     {
                         Program.TasClient.RenameAccount(words[1]);
+												Program.Conf.LobbyPlayerName = words[1];
+												Program.SaveConfig();
                         MessageBox.Show("Renaming account to: " + words[1] + ".\r\n The server will disconnect you now.");
                     }
                     else if (words[0] == "/raw") Program.TasClient.SendRaw(PlasmaShared.Utils.Glue(words, 1));
