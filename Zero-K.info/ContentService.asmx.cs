@@ -853,10 +853,9 @@ namespace ZeroKWeb
 						var capacity = a.GetDropshipCapacity();
 						var income = GlobalConst.DefaultDropshipProduction +
 						             (a.Planets.SelectMany(x => x.PlanetStructures).Where(x=>!x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipProduction) ?? 0);
-						var used = a.AccountPlanets.Sum(x => x.DropshipCount);
 
 						a.DropshipCount += income;
-						a.DropshipCount = Math.Min(a.DropshipCount, capacity - used);
+						a.DropshipCount = Math.Min(a.DropshipCount, capacity);
 					}
 					db.SubmitChanges();
 
