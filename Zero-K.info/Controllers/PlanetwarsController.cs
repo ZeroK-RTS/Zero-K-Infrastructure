@@ -545,6 +545,8 @@ namespace ZeroKWeb.Controllers
 			{
 				acc.DropshipCount = (acc.DropshipCount) - cnt;
 				var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+				if (planet.PlanetWarsHosts.Any(x => x.InGame)) return Content("Battle in progress on the planet, cannot send ships");
+
 				if (planet.Account != null) AuthServiceClient.SendLobbyMessage(planet.Account,string.Format("Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} http://zero-k.info/Planetwars/Planet/{2}", cnt, planet.Name, planet.PlanetID));
 				var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
 				if (pac == null)
