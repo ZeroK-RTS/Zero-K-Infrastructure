@@ -807,7 +807,7 @@ namespace ZeroKWeb
 
 					// destroy existing dropships and prevent growth
 					var noGrowAccount = new List<int>();
-					foreach (var ap in planet.AccountPlanets.Where(x => playerAccountIDs.Contains(x.AccountID) && x.DropshipCount > 0)) {
+					foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0)) {
 						ap.DropshipCount = 0;
 						noGrowAccount.Add(ap.AccountID);
 					}
