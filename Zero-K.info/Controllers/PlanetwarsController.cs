@@ -251,12 +251,19 @@ namespace ZeroKWeb.Controllers
 
 						foreach (var p in gal.Planets)
 						{
-							using (var pi = Image.FromFile(Server.MapPath("/img/planets/" + p.Resource.MapPlanetWarsIcon)))
+							string planetIconPath = null;
+							try
 							{
-								var aspect = pi.Height/(double)pi.Width;
-								var width = (int)(p.Resource.PlanetWarsIconSize*zoom);
-								var height = (int)(width*aspect);
-								gr.DrawImage(pi, (int)(p.X*im.Width) - width/2, (int)(p.Y*im.Height) - height/2, width, height);
+								planetIconPath = "/img/planets/" + p.Resource.MapPlanetWarsIcon;
+								using (var pi = Image.FromFile(Server.MapPath(planetIconPath)))
+								{
+									var aspect = pi.Height/(double)pi.Width;
+									var width = (int)(p.Resource.PlanetWarsIconSize*zoom);
+									var height = (int)(width*aspect);
+									gr.DrawImage(pi, (int)(p.X*im.Width) - width/2, (int)(p.Y*im.Height) - height/2, width, height);
+								}
+							} catch(Exception ex) {
+								throw new ApplicationException(string.Format("Cannot process planet image {0} for planet {1} map {2}", planetIconPath, p.PlanetID, p.MapResourceID), ex);
 							}
 						}
 						if (antiAliasingFactor == 1) return im;

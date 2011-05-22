@@ -593,20 +593,21 @@ namespace LobbyClient
 			try {
 				if (isHosting && IsRunning && battleResult.IngameStartTime == null) {
 					// force start after 180s
-					if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 180) {
+					if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 240) {
 						foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator)) {
 							var p = kvp.Value;
 							Kick(kvp.Key);
-							client.Kick(kvp.Key);
+							client.ForceSpectator(kvp.Key);
+							//client.Kick(kvp.Key);
 						}
 						ForceStart();
-					} else if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 60) {
+					} else if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 120) {
 						//warn people after 60s 
 						foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator)) {
 							client.Ring(kvp.Key);
-							client.Say(TasClient.SayPlace.User, kvp.Key, "Ready up ingame, or I kick you", false);
+							client.Say(TasClient.SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
 						}
-						SayGame(string.Format("Game will be force started in {0} seconds", Math.Max(20,180 - Math.Round(DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds))));
+						SayGame(string.Format("Game will be force started in {0} seconds", Math.Max(20,240 - Math.Round(DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds))));
 					}
 				}
 			} catch (Exception ex) {
