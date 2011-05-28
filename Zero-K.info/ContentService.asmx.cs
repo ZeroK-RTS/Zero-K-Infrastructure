@@ -193,8 +193,8 @@ namespace ZeroKWeb
 					if (teamDiffScore < -12) continue; // max imabalance 50% (1v2)
 
 					double balanceModifier = 0;
-					if (team0count < team1count) balanceModifier = -teamDiffScore/5;
-					else balanceModifier = teamDiffScore/5;
+					if (team0count < team1count) balanceModifier = -teamDiffScore/3;
+					else balanceModifier = teamDiffScore/3;
 
 					// calculate score for elo difference
 					team0Elo = team0Elo/team0Weight;
@@ -229,7 +229,7 @@ namespace ZeroKWeb
 					}
 
 					if (compoScore < 0) continue; // get meaningfull teams only
-					var score = -Math.Abs(balanceModifier)*.65 + (eloScore + teamDiffScore)*.35 + compoScore;
+					var score = -Math.Abs(balanceModifier)*.50 + (eloScore + teamDiffScore)*.50 + compoScore;
 
 					if (score > bestScore)
 					{
