@@ -21,12 +21,12 @@ namespace Fixer
     static void Main(string[] args)
     {
       //ImportSpringiePlayers();
-      //RecalculateBattleElo();
+      RecalculateBattleElo();
       //FixMaps();
 
 			//PurgeGalaxy(9);
     	//RandomizeMaps(9);
-			GenerateStructures(9);
+			//GenerateStructures(9);
 
 			//AddWormholes();
     }

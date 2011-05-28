@@ -129,8 +129,8 @@ namespace ZeroKWeb
 							else
 							{
 								var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
-								if (treaty.AllyStatus == AllyStatus.Alliance) points = 0.5;
-								else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.25;
+								if (treaty.AllyStatus == AllyStatus.Alliance) points = 1.5;
+								else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.1;
 								else if (treaty.AllyStatus == AllyStatus.War) points = -2.5;
 							}
 						}
@@ -144,8 +144,8 @@ namespace ZeroKWeb
 				{
 					var mult = 1.0;
 					var player = players[i];
-					if (planet.OwnerAccountID == player.AccountID) mult += 0.5; // owner 50%
-					else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.3; // owner's clan 30% 
+					if (planet.OwnerAccountID == player.AccountID) mult += 1; // owner 50%
+					else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.6; // owner's clan 30% 
 					if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.2; // own dropship +20%
 					else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.1; // clan's dropship +10%
 					playerScoreMultiplier[i] = mult;
@@ -190,11 +190,11 @@ namespace ZeroKWeb
 
 					// calculate score for team difference
 					var teamDiffScore = -(30.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count)) - Math.Abs(team0count - team1count);
-					if (teamDiffScore < -10) continue; // max imabalance 50% (1v2)
+					if (teamDiffScore < -12) continue; // max imabalance 50% (1v2)
 
 					double balanceModifier = 0;
-					if (team0count < team1count) balanceModifier = -teamDiffScore;
-					else balanceModifier = teamDiffScore;
+					if (team0count < team1count) balanceModifier = -teamDiffScore/5;
+					else balanceModifier = teamDiffScore/5;
 
 					// calculate score for elo difference
 					team0Elo = team0Elo/team0Weight;
@@ -364,7 +364,10 @@ namespace ZeroKWeb
 					res.MapName = planet.Resource.InternalName;
 					var owner = "";
 					if (planet.Account != null) owner = planet.Account.Name;
-					res.Message = string.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2}", owner, planet.Name, planet.PlanetID);
+					
+					var shipInfo = string.Join(",",planet.AccountPlanets.Where(x=>x.DropshipCount > 0 && playerAccountIDs.Contains(x.AccountID)).Select(x=>string.Format("{0} ships from {1}", x.DropshipCount, x.Account.Name)));
+
+					res.Message = string.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2} attacked by {3}", owner, planet.Name, planet.PlanetID, string.IsNullOrEmpty(shipInfo) ? "insurgents": shipInfo);
 
 					var hostAccount = db.Accounts.Single(x => x.Name == autohostName);
 					if (hostAccount.PlanetWarsHost == null) hostAccount.PlanetWarsHost = new PlanetWarsHost(); hostAccount.PlanetWarsHost.InGame = false;
