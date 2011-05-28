@@ -747,6 +747,7 @@ namespace ZeroKWeb
 					// malus for ships
 					foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam && x.Account.ClanID != null)) {
 						var ships = planet.AccountPlanets.Where(x => x.AccountID == p.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
+						if (ships <= 0) continue;
 						p.Influence = ships * GlobalConst.PlanetwarsInvadingShipLostMalus;
 						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == p.AccountID);
 						if (entry == null) {
