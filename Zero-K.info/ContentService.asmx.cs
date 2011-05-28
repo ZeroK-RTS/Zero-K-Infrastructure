@@ -715,18 +715,23 @@ namespace ZeroKWeb
 				{
 					var gal = db.Galaxies.Single(x => x.IsDefault);
 					var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
-					var playerAccountIDs = players.Where(x => !x.IsSpectator).Select(x => x.AccountID).ToList();
 
 					text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet/{0} has ended\n", planet.PlanetID);
 
 					// handle infelunce
 					Clan ownerClan = null;
 					if (planet.Account != null) ownerClan = planet.Account.Clan;
-					//var prizeIp = 40.0*sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Count()/(double)sb.SpringBattlePlayers.Count(x => !x.IsSpectator && x.IsInVictoryTeam);
 
 					var clanTechIp =
 						sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).ToDictionary(
 							x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count()*6.0/z.Count());
+
+					var planetDefs = (planet.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
+					var totalShips = (planet.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0);
+					double shipMultiplier = 1;
+					if (totalShips > 0 && totalShips > planetDefs && planetDefs > 0) shipMultiplier = (totalShips - planetDefs) / (double)totalShips;
+
+
 
 					var ownerMalus = 0;
 					if (ownerClan != null)
@@ -739,6 +744,31 @@ namespace ZeroKWeb
 						}
 					}
 
+					// malus for ships
+					foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam && x.Account.ClanID != null)) {
+						var ships = planet.AccountPlanets.Where(x => x.AccountID == p.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
+						p.Influence = ships * GlobalConst.PlanetwarsInvadingShipLostMalus;
+						var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == p.AccountID);
+						if (entry == null) {
+							entry = new AccountPlanet() { AccountID = p.AccountID, PlanetID = planet.PlanetID };
+							db.AccountPlanets.InsertOnSubmit(entry);
+						}
+						entry.Influence += p.Influence??0;
+
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} lost {1} influence at {2} because of {3} ships {4}",
+																												p.Account,
+																												p.Influence ?? 0,
+																												planet,
+																												ships,
+																												sb));
+
+						text.AppendFormat("{0} lost {1} influence at {2} because of {3} ships\n",
+															p.Account.Name,
+															p.Influence ?? 0,
+															planet.Name,
+															ships);
+					}
+
 					foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.ClanID != null))
 					{
 						var techBonus = p.Account.ClanID != null ? (int)clanTechIp[p.Account.ClanID] : 0;
@@ -748,7 +778,7 @@ namespace ZeroKWeb
 						p.Influence += (techBonus - gapMalus);
 
 						var ships = planet.AccountPlanets.Where(x => x.AccountID == p.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
-						shipBonus = ships * GlobalConst.PlanetwarsInvadingShipBonus;
+						shipBonus = (int)Math.Round(ships * GlobalConst.PlanetwarsInvadingShipBonus * shipMultiplier);
 						p.Influence += shipBonus;
 						
 						if (p.Influence < 0) p.Influence = 0;

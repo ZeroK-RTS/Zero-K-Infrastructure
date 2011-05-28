@@ -5,7 +5,8 @@
 		public const int MaxClanSkilledSize =10;
 		public const int ClanLeaveLimit = 4;
 		public const int PlanetwarsColonizationCredits = 1000;
-		public const int PlanetwarsInvadingShipBonus = 50;
+		public const int PlanetwarsInvadingShipBonus = 30;
+		public const int PlanetwarsInvadingShipLostMalus = -10;
 		public const int XpForMissionOrBots = 25;
 		public const int XpForMissionOrBotsVictory = 50;
 		public const double EloWeightMax = 6;
