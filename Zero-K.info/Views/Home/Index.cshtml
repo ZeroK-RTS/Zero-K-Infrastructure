@@ -27,7 +27,10 @@
     @Html.ActionLink("minimal skin", "SwitchSkin")
   } else {
       Html.RenderPartial("GoogleSiteSearch");
-      <p><a href="http://zero-k.info/tools/mailer/sendMail.php"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>
+  }
+  @if (ZeroKWeb.Global.IsAccountAuthorized)
+  {
+    <p><a href="http://zero-k.info/tools/mailer/sendMail.php"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>  
   }
 
   <div id="unit" class="border relative text-left">
