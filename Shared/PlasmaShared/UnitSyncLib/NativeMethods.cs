@@ -291,7 +291,7 @@ namespace PlasmaShared.UnitSyncLib
 
             [DllImport(UnitSyncName)]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool Init([MarshalAs(UnmanagedType.I1)] bool isServer, int id, bool enable_logging = false);
+            public static extern bool Init([MarshalAs(UnmanagedType.I1)] bool isServer, int id);	
 
             [DllImport(UnitSyncName)]
             public static extern int InitDirListVFS([In] [MarshalAs(UnmanagedType.LPStr)] string path,
