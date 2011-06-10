@@ -260,9 +260,7 @@ namespace ZeroKLobby
 			}
 			else
 			{
-				var qm = Program.BattleBar.GetQuickMatchInfo();
-				if (qm != null && qm.IsEnabled) sb.AppendFormat("{0}\n", qm);
-				else sb.AppendFormat("idle");
+				sb.AppendFormat("idle");
 			}
 			var str = sb.ToString();
 			systrayIcon.Text = str.Substring(0, Math.Min(str.Length, 64)); // tooltip only allows 64 characters

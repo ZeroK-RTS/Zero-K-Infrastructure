@@ -18,7 +18,6 @@ namespace ZeroKLobby.MicroLobby
         protected override void Dispose(bool disposing)
         {
             if (Program.TasClient != null) Program.TasClient.UnsubscribeEvents(this);
-            if (Program.QuickMatchTracker != null) Program.QuickMatchTracker.UnsubscribeEvents(this);
             
             if (disposing && (components != null))
             {

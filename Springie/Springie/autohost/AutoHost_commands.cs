@@ -94,22 +94,6 @@ namespace Springie.autohost
 				}
 				var totalPlayers = ranker.Count;
 
-				// for each follower replace clan of follower and followed player
-				foreach (var usRank in ranker.Where(x =>
-					{
-						var qm = quickMatchTracker.GetQuickMatchInfo(x.User.Name);
-						return qm != null && qm.CurrentMode == BattleMode.Follow;
-					}))
-				{
-					var followed = quickMatchTracker.GetQuickMatchInfo(usRank.User.Name).GameName;
-					var fp = ranker.SingleOrDefault(x => x.User.Name == followed);
-					if (fp != null)
-					{
-						usRank.Clan = followed;
-						fp.Clan = followed;
-					}
-				}
-
 				var rand = new Random();
 
 				if (teamCount < 1) teamCount = 1;

@@ -211,10 +211,6 @@ namespace ZeroKLobby
       ShowHostDialog(KnownGames.GetDefaultGame());
     }
 
-    void btnQuickJoin_Click(object sender, RoutedEventArgs e)
-    {
-      ActionHandler.StartQuickMatching(Program.Conf.BattleFilter);
-    }
 
     void tbFilter_TextChanged(object sender, TextChangedEventArgs e)
     {

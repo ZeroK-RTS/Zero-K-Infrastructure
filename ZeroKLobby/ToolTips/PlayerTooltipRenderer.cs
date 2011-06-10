@@ -72,11 +72,10 @@ namespace ZeroKLobby
                 drawString("Friend");
                 newLine();
             }
-            var quickMatchInfo = Program.QuickMatchTracker.GetQuickMatchInfo(user.Name);
-            if (quickMatchInfo != null)
+            if (user.Cpu == 6666)
             {
 							drawImage(Resources.ZK_logo_square, 16, 16);
-                drawString("ZK User " + quickMatchInfo);
+                drawString("ZK Lobby (Windows) User");
                 newLine();
             }
             if (!user.IsBot)
@@ -156,7 +155,7 @@ namespace ZeroKLobby
             if (user.IsBot) h += 16; // bot icon
             if (user.IsAdmin) h += 16; // admin icon
             if (Program.FriendManager.Friends.Contains(user.Name)) h += 16; // friend icon
-            if (Program.QuickMatchTracker.GetQuickMatchInfo(user.Name) != null) h += 16; // SD icon
+            if (user.Cpu == 6666) h += 16; // SD icon
             if (!user.IsBot)
             {
                 h += 16; // rank text

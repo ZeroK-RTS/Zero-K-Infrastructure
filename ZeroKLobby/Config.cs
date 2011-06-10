@@ -254,11 +254,13 @@ namespace ZeroKLobby
     [Browsable(false)]
     public int NoticeColorInt = Color.Red.ToArgb();
 
-    [Category("General")]
+
+  	bool showEmptyBattles = true;
+  	[Category("General")]
     [DisplayName("Show Empty Battles")]
     [Description("Show battles with no players in the battle list.")]
-    public bool ShowEmptyBattles { get; set; }
-    [Category("Chat")]
+		public bool ShowEmptyBattles { get { return showEmptyBattles; } set { showEmptyBattles = value; } }
+  	[Category("Chat")]
     [DisplayName("Show Hourly Chat Message")]
     [Description("Show a notification in chat channels every hour.")]
     public bool ShowHourlyChimes { get { return showHourlyChimes; } set { showHourlyChimes = value; } }

@@ -127,11 +127,9 @@ namespace ZeroKLobby
                 {
                     if (user.IsAway) drawImage(Resources.AwayImage, 16, 16);
 										if (user.IsInGame) drawImage(Resources.ingame, 16, 16);
-                    var qmInfo = Program.QuickMatchTracker.GetQuickMatchInfo(user.Name);
-                    if (qmInfo != null)
+                    if (user.Cpu==6666)
                     {
 											drawImage(Resources.ZK_logo_square, 16, 16);
-                        drawString(qmInfo.ToString());
                     }
                 }
                 newLine();

@@ -54,14 +54,6 @@ namespace ZeroKLobby
     }
 
 
-    /// <summary>
-    /// Starts following a player
-    /// </summary>
-    public static void FollowPlayer(string name)
-    {
-      Program.BattleBar.StartFollow(name);
-      NavigationControl.Instance.Path = "chat/battle";
-    }
 
     /// <summary>
     /// Hides the next PM that has a specific string as message
@@ -307,11 +299,6 @@ namespace ZeroKLobby
       Program.NotifySection.AddBar(new MissionBar(name));
     }
 
-    public static void StartQuickMatching(string filter)
-    {
-      Program.BattleBar.StartQuickMatch(filter);
-      NavigationControl.Instance.Path = "chat/battle";
-    }
 
     public static void StartReplay(string url, string mod, string map, string engine)
     {

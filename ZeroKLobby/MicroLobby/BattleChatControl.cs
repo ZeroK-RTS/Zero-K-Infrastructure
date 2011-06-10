@@ -37,7 +37,6 @@ namespace ZeroKLobby.MicroLobby
       Program.TasClient.BattleMapChanged += TasClient_BattleMapChanged;
       Program.TasClient.StartRectAdded += (s, e) => DrawMinimap();
       Program.TasClient.StartRectRemoved += (s, e) => DrawMinimap();
-      Program.QuickMatchTracker.PlayerQuickMatchChanged += (s, e) => RefreshBattleUser(e.Data);
       Program.ModStore.ModLoaded += ModStoreModLoaded;
 
       if (Program.TasClient.MyBattle != null) foreach (var user in Program.TasClient.MyBattle.Users) AddUser(user.Name);
@@ -62,7 +61,6 @@ namespace ZeroKLobby.MicroLobby
     protected override void Dispose(bool disposing)
     {
       if (Program.TasClient != null) Program.TasClient.UnsubscribeEvents(this);
-      if (Program.QuickMatchTracker != null) Program.QuickMatchTracker.UnsubscribeEvents(this);
       base.Dispose(disposing);
     }
 

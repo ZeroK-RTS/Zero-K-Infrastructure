@@ -26,8 +26,7 @@
       <RowDefinition />
     </Grid.RowDefinitions>
     <StackPanel Orientation="Horizontal">
-      <Button Name="btnQuickJoin" Margin="1" Click="btnQuickJoin_Click">Quick Join</Button>
-      <Button Name="btnOpenBattle" Margin="1" Click="btnOpenNewBattle_Click">Open New</Button>
+			<Button Name="btnOpenBattle" Margin="1" Click="btnOpenNewBattle_Click">Open New</Button>
       <Grid Height="26" Margin="3 0">
         <Ellipse Fill="{StaticResource LightAccentBrush}" Height="26" Width="26" HorizontalAlignment="Left" />
         <Rectangle Fill="{StaticResource GradientLightDarkHorizontal}" Margin="13 0 0 0" />
@@ -41,7 +40,7 @@
           <TextBox Name="tbFilter" Margin="3" Width="150" ZeroKLobby:ToolTipHandler.MyToolTip="Search for battle, or user. You can use special values like -locked to hide locked, zk to filter only Zero-K etc" Text="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= BattleFilter}" ></TextBox>
         </StackPanel>
       </Grid>
-      <CheckBox Name="cbUnjoinable" Margin="3" VerticalAlignment="Center" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowNonJoinableBattles}" Checked="RefreshEvent" Unchecked="RefreshEvent" ZeroKLobby:ToolTipHandler.MyToolTip="Filters out locked, passworded full and currently running games">Show Unjoinable</CheckBox>
+      <CheckBox Name="cbUnjoinable" Margin="3" VerticalAlignment="Center" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowNonJoinableBattles}" Checked="RefreshEvent" Unchecked="RefreshEvent" ZeroKLobby:ToolTipHandler.MyToolTip="Filters out locked, passworded, full and currently running games">Show Full</CheckBox>
       <CheckBox Name="cbEmpty" Margin="3" VerticalAlignment="Center" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowEmptyBattles}" Unchecked="RefreshEvent" Checked="RefreshEvent">Show Empty</CheckBox>
     </StackPanel>
     <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1">

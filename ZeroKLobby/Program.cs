@@ -37,7 +37,6 @@ namespace ZeroKLobby
     public static MainWindow MainWindow { get; private set; }
     public static ModStore ModStore { get; private set; }
     public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
-    public static QuickMatchTracking QuickMatchTracker { get; private set; }
     public static SayCommandHandler SayCommandHandler { get; private set; }
     public static SpringPaths SpringPaths { get; private set; }
     public static SpringScanner SpringScanner { get; private set; }
@@ -263,7 +262,6 @@ namespace ZeroKLobby
             };
         }
 
-        QuickMatchTracker = new QuickMatchTracking(TasClient, () => BattleBar.GetQuickMatchInfo());
         ConnectBar = new ConnectBar(TasClient);
         ModStore = new ModStore();
         ToolTip = new ToolTipHandler();

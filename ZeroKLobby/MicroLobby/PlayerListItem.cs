@@ -203,13 +203,11 @@ namespace ZeroKLobby.MicroLobby
 				var commSharers = playerSharers.Concat(botSharers).ToArray();
 				if (commSharers.Any()) drawText("Sharing with " + String.Join(", ", commSharers), Color.Red, backColor);
 			}
-			var qmInfo = Program.QuickMatchTracker.GetQuickMatchInfo(user.Name);
-			if (qmInfo != null)
+			if (user.Cpu == 6666)
 			{
 				g.InterpolationMode = InterpolationMode.NearestNeighbor;
 				g.DrawImage(Resources.ZK_logo_square, bounds.Left + x + 3, bounds.Top + 4, 11, 11);
 				x += 12;
-				drawText(qmInfo.ToString(), foreColor, backColor);
 			}
 
 

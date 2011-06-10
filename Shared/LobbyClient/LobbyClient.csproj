@@ -76,12 +76,9 @@
   <ItemGroup>
     <Compile Include="Battle.cs" />
     <Compile Include="BattleDetails.cs" />
-    <Compile Include="BattleMode.cs" />
     <Compile Include="BattleRect.cs" />
     <Compile Include="BotBattleStatus.cs" />
     <Compile Include="Channel.cs" />
-    <Compile Include="QuickMatchInfo.cs" />
-    <Compile Include="QuickMatchTracking.cs" />
     <Compile Include="SayingEventArgs.cs" />
     <Compile Include="ServerConnection.cs" />
     <Compile Include="Spring.cs" />

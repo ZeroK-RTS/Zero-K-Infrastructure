@@ -259,9 +259,6 @@ namespace ZeroKLobby.MicroLobby
 					joinItem.Click += (s, e) => ActionHandler.JoinPlayer(user.Name);
 					contextMenu.MenuItems.Add(joinItem);
 
-					var followItem = new MenuItem("Follow");
-					followItem.Click += (s, e) => ActionHandler.FollowPlayer(user.Name);
-					contextMenu.MenuItems.Add(followItem);
 
 					var ignoreUser = new MenuItem("Ignore User") { Checked = Program.Conf.IgnoredUsers.Contains(user.Name) };
 					ignoreUser.Click += (s, e) =>
@@ -372,10 +369,6 @@ namespace ZeroKLobby.MicroLobby
 
 				var isUserOnline = Program.TasClient.ExistingUsers.ContainsKey(control.UserName);
 
-				var followItem = new System.Windows.Controls.MenuItem { Header = "Follow", IsEnabled = isUserOnline };
-				followItem.Click += (s, e) => ActionHandler.FollowPlayer(control.UserName);
-				contextMenu.Items.Add(followItem);
-
 				var joinItem = new System.Windows.Controls.MenuItem
 				               {
 				               	Header = "Join Same Battle", 
@@ -440,11 +433,6 @@ namespace ZeroKLobby.MicroLobby
 				}
 
 				var isUserOnline = Program.TasClient.ExistingUsers.ContainsKey(control.UserName);
-
-				var followItem = new MenuItem("Follow");
-				followItem.Enabled = isUserOnline;
-				followItem.Click += (s, e) => ActionHandler.FollowPlayer(control.UserName);
-				contextMenu.MenuItems.Add(followItem);
 
 				var joinItem = new MenuItem("Join Same Battle");
 				joinItem.Enabled = isUserOnline && Program.TasClient.ExistingUsers[control.UserName].IsInBattleRoom;

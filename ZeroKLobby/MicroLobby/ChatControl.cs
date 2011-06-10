@@ -97,8 +97,6 @@ namespace ZeroKLobby.MicroLobby
 			Program.TasClient.ChannelTopicChanged += TasClient_ChannelTopicChanged;
 			Program.TasClient.HourChime += client_HourChime;
 
-			Program.QuickMatchTracker.PlayerQuickMatchChanged += QuickMatchTracker_PlayerQuickMatchChanged;
-
 			Channel channel;
 			Program.TasClient.JoinedChannels.TryGetValue(ChannelName, out channel);
 

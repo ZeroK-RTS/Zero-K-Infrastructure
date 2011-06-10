@@ -41,7 +41,6 @@ namespace Springie.autohost
 		AutoManager manager;
 
 		Timer pollTimer;
-		readonly QuickMatchTracking quickMatchTracker;
 		public readonly Spring spring;
 
 		public string BossName { get { return bossName; } set { bossName = value; } }
@@ -73,7 +72,6 @@ namespace Springie.autohost
 		
 			spring = new Spring(paths, config.PlanetWarsEnabled ?  AutohostMode.Planetwars : AutohostMode.GameTeams) { UseDedicatedServer = true };
 			tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, Program.main.Config.IpOverride);
-			quickMatchTracker = new QuickMatchTracking(tas, null);
 
 			banList = new BanList(this, tas);
 			banList.Load();
