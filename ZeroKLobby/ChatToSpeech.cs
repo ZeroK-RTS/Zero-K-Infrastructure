@@ -27,10 +27,12 @@ namespace ZeroKLobby
 		{
 			if (string.IsNullOrEmpty(text) || isError) return;
 			try {
-
-				if (text == "ENABLE TTS") isSpeechEnabled = true;
-				else if (text == "DISABLE TTS") isSpeechEnabled = false;
-				else {
+				if (text.Contains(Program.Conf.LobbyPlayerName))
+				{
+					if (text.Contains("ENABLE TTS")) isSpeechEnabled = true;
+					else if (text.Contains("DISABLE TTS")) isSpeechEnabled = false;
+				}
+				if (isSpeechEnabled) {
 					var match = Regex.Match(text, "\\] <([^>]+)> Allies: (.+)");
 					if (match.Success) {
 						var name = match.Groups[1].Value;
