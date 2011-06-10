@@ -13,7 +13,7 @@ namespace ZeroKLobby
 {
 	class ChatToSpeech
 	{
-		bool isSpeechEnabled = true;
+		bool isSpeechEnabled = false;
 		SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
 		ReadOnlyCollection<InstalledVoice> voices;
 		
@@ -37,9 +37,11 @@ namespace ZeroKLobby
 					if (match.Success) {
 						var name = match.Groups[1].Value;
 						var sayText = match.Groups[2].Value;
-
-						speechSynthesizer.SelectVoice(voices[name.GetHashCode() % voices.Count].VoiceInfo.Name);
-						speechSynthesizer.SpeakAsync(sayText);
+						if (name != Program.Conf.LobbyPlayerName)
+						{
+							speechSynthesizer.SelectVoice(voices[name.GetHashCode()%voices.Count].VoiceInfo.Name);
+							speechSynthesizer.SpeakAsync(sayText);
+						}
 					}
 				}
 			} catch (Exception ex) {
