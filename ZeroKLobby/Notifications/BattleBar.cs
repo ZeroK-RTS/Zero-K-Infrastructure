@@ -73,6 +73,7 @@ namespace ZeroKLobby.Notifications
 
 			client = Program.TasClient;
 			spring = new Spring(Program.SpringPaths);
+			var speech = new ChatToSpeech(spring);
 			spring.SpringExited += (s, e) =>
 				{
 					client.ChangeMyUserStatus(false, false);
