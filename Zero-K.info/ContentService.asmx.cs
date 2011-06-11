@@ -140,7 +140,7 @@ namespace ZeroKWeb
 							else
 							{
 								var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
-								if (treaty.AllyStatus == AllyStatus.Alliance) points = 0.5;
+								if (treaty.AllyStatus == AllyStatus.Alliance) points = 0.2;
 								else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.1;
 								else if (treaty.AllyStatus == AllyStatus.War) points = -1.5;
 							}
@@ -155,9 +155,9 @@ namespace ZeroKWeb
 				{
 					var mult = 1.0;
 					var player = players[i];
-					if (planet.OwnerAccountID == player.AccountID) mult += 0.5; // owner 50%
-					else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.3; // owner's clan 30% 
-					if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.2; // own dropship +20%
+					if (planet.OwnerAccountID == player.AccountID) mult += 0.3; // owner 30%
+					else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.2; // owner's clan 20% 
+					if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.15; // own dropship +15%
 					else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.10; // clan's dropship +10%
 					playerScoreMultiplier[i] = mult;
 				}
@@ -204,14 +204,14 @@ namespace ZeroKWeb
 					if (teamDiffScore < -8) continue; // max imabalance 50% (1v2)
 
 					double balanceModifier = 0;
-					if (team0count < team1count) balanceModifier = -teamDiffScore/3;
-					else balanceModifier = teamDiffScore/3;
+					if (team0count < team1count) balanceModifier = -teamDiffScore;
+					else balanceModifier = teamDiffScore;
 
 					// calculate score for elo difference
 					team0Elo = team0Elo/team0Weight;
 					team1Elo = team1Elo/team1Weight;
-					var eloScore = -Math.Abs(team0Elo - team1Elo)/15;
-					if (eloScore < -13) continue; // max 200 elo
+					var eloScore = -Math.Abs(team0Elo - team1Elo)/14;
+					if (eloScore < -13) continue; // max 182 elo
 
 					if (team0Elo < team1Elo) balanceModifier += -eloScore;
 					else balanceModifier += eloScore;
@@ -240,7 +240,7 @@ namespace ZeroKWeb
 					}
 
 					if (compoScore < 0) continue; // get meaningfull teams only
-					var score = -Math.Abs(balanceModifier)*.50 + (eloScore + teamDiffScore)*.50 + compoScore;
+					var score = -Math.Abs(balanceModifier) + teamDiffScore + compoScore;
 
 					if (score > bestScore)
 					{
