@@ -141,7 +141,7 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 
-			return View(db.Clans.Where(x=>!x.IsDeleted));
+			return View(db.Clans.Where(x => !x.IsDeleted));
 		}
 
 		[Auth]
@@ -215,7 +215,7 @@ namespace ZeroKWeb.Controllers
 			          	Filter = filter,
 			          	ClanID = clanID,
 			          	Partial = partial,
-									PageSize = pageSize
+			          	PageSize = pageSize
 			          };
 
 			return View(ret);
@@ -262,8 +262,11 @@ namespace ZeroKWeb.Controllers
 									var height = (int)(width*aspect);
 									gr.DrawImage(pi, (int)(p.X*im.Width) - width/2, (int)(p.Y*im.Height) - height/2, width, height);
 								}
-							} catch(Exception ex) {
-								throw new ApplicationException(string.Format("Cannot process planet image {0} for planet {1} map {2}", planetIconPath, p.PlanetID, p.MapResourceID), ex);
+							}
+							catch (Exception ex)
+							{
+								throw new ApplicationException(
+									string.Format("Cannot process planet image {0} for planet {1} map {2}", planetIconPath, p.PlanetID, p.MapResourceID), ex);
 							}
 						}
 						if (antiAliasingFactor == 1) return im;
@@ -353,6 +356,22 @@ namespace ZeroKWeb.Controllers
 			else return Content("You cannot join this clan");
 		}
 
+
+		[Auth]
+		public ActionResult KickPlayerFromClan(int clanID, int accountID)
+		{
+			var db = new ZkDataContext();
+			var clan = db.Clans.Single(c => clanID == c.ClanID);
+			// todo: disallow kicking after the round starts
+			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
+			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
+			if (kickee.IsClanFounder) return Content("Clan founders can't be kicked.");
+			foreach (var p in kickee.Planets.ToList()) p.OwnerAccountID = null; // disown his planets
+			kickee.ClanID = null;
+			db.SubmitChanges();
+			return RedirectToAction("Clan", new { id = clanID });
+		}
+
 		[Auth]
 		public ActionResult LeaveClan()
 		{
@@ -369,34 +388,13 @@ namespace ZeroKWeb.Controllers
 			if (!clan.Accounts.Any())
 			{
 				clan.IsDeleted = true;
-				db.Events.InsertOnSubmit(Global.CreateEvent("{0} is disbanded",clan));
+				db.Events.InsertOnSubmit(Global.CreateEvent("{0} is disbanded", clan));
 			}
-			else {
-				if (!clan.Accounts.Any(x => x.IsClanFounder)) {
-					clan.Accounts.OrderByDescending(x => x.HasClanRights).First().IsClanFounder = true;
-				}
-			}
+			else if (!clan.Accounts.Any(x => x.IsClanFounder)) clan.Accounts.OrderByDescending(x => x.HasClanRights).First().IsClanFounder = true;
 			db.SubmitChanges();
 
 			SetPlanetOwners();
 			return RedirectToAction("ClanList", new { id = clan.ClanID });
-				
-		}
-
-
-		[Auth]
-		public ActionResult KickPlayerFromClan(int clanID, int accountID)
-		{
-			var db = new ZkDataContext();
-			var clan = db.Clans.Single(c => clanID == c.ClanID);
-			// todo: disallow kicking after the round starts
-			if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
-			var kickee = db.Accounts.Single(a => a.AccountID == accountID);
-			if (kickee.IsClanFounder) return Content("Clan founders can't be kicked.");
-			foreach (var p in kickee.Planets.ToList()) p.OwnerAccountID = null; // disown his planets
-			kickee.ClanID = null;
-			db.SubmitChanges();
-			return RedirectToAction("Clan", new { id = clanID });
 		}
 
 		public ActionResult Minimap()
@@ -554,7 +552,15 @@ namespace ZeroKWeb.Controllers
 				var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
 				if (planet.PlanetWarsHosts.Any(x => x.InGame)) return Content("Battle in progress on the planet, cannot send ships");
 
-				if (planet.Account != null) AuthServiceClient.SendLobbyMessage(planet.Account,string.Format("Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} http://zero-k.info/Planetwars/Planet/{2}", cnt, planet.Name, planet.PlanetID));
+				if (planet.Account != null)
+				{
+					AuthServiceClient.SendLobbyMessage(planet.Account,
+					                                   string.Format(
+					                                   	"Warning: long range scanners detected fleet of {0} ships inbound to your planet {1} http://zero-k.info/Planetwars/Planet/{2}",
+					                                   	cnt,
+					                                   	planet.Name,
+					                                   	planet.PlanetID));
+				}
 				var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
 				if (pac == null)
 				{
@@ -623,14 +629,12 @@ namespace ZeroKWeb.Controllers
 
 					if (planet.OwnerAccountID == null) // no previous owner
 					{
-						
 						planet.Account = mostInfluentialPlayer;
 						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2}. {3}",
 						                                            mostInfluentialPlayer,
 						                                            planet,
 						                                            mostInfluentialClanEntry.Clan,
 						                                            sb));
-						
 					}
 					else
 					{
@@ -644,10 +648,14 @@ namespace ZeroKWeb.Controllers
 						planet.Account = mostInfluentialPlayer;
 					}
 
-					if (firstPlanet && !mostInfluentialPlayer.WasGivenCredits) {
+					if (firstPlanet && !mostInfluentialPlayer.WasGivenCredits)
+					{
 						mostInfluentialPlayer.Credits += GlobalConst.PlanetwarsColonizationCredits;
 						mostInfluentialPlayer.WasGivenCredits = true;
-						db.Events.InsertOnSubmit(Global.CreateEvent("{0} gets ${1} for colonizing his/her first planet {2}", mostInfluentialPlayer, GlobalConst.PlanetwarsColonizationCredits, planet));
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} gets ${1} for colonizing his/her first planet {2}",
+						                                            mostInfluentialPlayer,
+						                                            GlobalConst.PlanetwarsColonizationCredits,
+						                                            planet));
 					}
 				}
 			}
@@ -823,6 +831,60 @@ namespace ZeroKWeb.Controllers
 			var buyOffers = currentOffers.Where(o => !o.IsSell);
 			var sellOffers = currentOffers.Where(o => o.IsSell);
 
+			foreach (var bo in buyOffers.Where(x => x.Price >= GlobalConst.InfluenceSystemBuyPrice).ToList())
+			{
+				bo.Price = GlobalConst.InfluenceSystemBuyPrice;
+				var quantity = Math.Min(bo.AccountByAccountID.Credits/bo.Price, bo.Quantity);
+				if (quantity > 0)
+				{
+					bo.AccountByAccountID.Credits -= quantity*bo.Price;
+
+					var buyerAccountPlanet = bo.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == bo.AccountID);
+					if (buyerAccountPlanet == null)
+					{
+						buyerAccountPlanet = new AccountPlanet { AccountID = bo.AccountID, PlanetID = bo.PlanetID };
+						db.AccountPlanets.InsertOnSubmit(buyerAccountPlanet);
+						db.SubmitChanges();
+					}
+					buyerAccountPlanet.Influence += quantity;
+
+					db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from locals on {2} for {3} each.",
+					                                            bo.AccountByAccountID,
+					                                            quantity,
+					                                            bo.Planet,
+					                                            bo.Price));
+				}
+
+				bo.Quantity -= quantity;
+				if (bo.Quantity == 0) db.MarketOffers.DeleteOnSubmit(bo);
+				db.SubmitChanges();
+			}
+
+			foreach (var sellOffer in sellOffers.Where(x => x.Price <= GlobalConst.InfluenceSystemSellPrice).ToList())
+			{
+				sellOffer.Price = GlobalConst.InfluenceSystemSellPrice;
+				var seller = sellOffer.AccountByAccountID;
+				var sellerAccountPlanet = sellOffer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == seller.AccountID);
+				if (sellerAccountPlanet == null) continue; // seller has nothing to sell
+
+				var quantity = Math.Min(sellerAccountPlanet.Influence, sellOffer.Quantity);
+				if (quantity > 0)
+				{
+					seller.Credits += quantity*sellOffer.Price;
+					sellerAccountPlanet.Influence -= quantity;
+
+					db.Events.InsertOnSubmit(Global.CreateEvent("{0} has sold {1} influence to locals on {2} for {3} each.",
+					                                            seller,
+					                                            quantity,
+					                                            sellOffer.Planet,
+					                                            sellOffer.Price));
+				}
+
+				sellOffer.Quantity -= quantity;
+				if (sellOffer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(sellOffer);
+				db.SubmitChanges();
+			}
+
 			var offers = from buyOffer in buyOffers
 			             join sellOffer in sellOffers on buyOffer.PlanetID equals sellOffer.PlanetID
 			             where buyOffer.Price >= sellOffer.Price
@@ -908,9 +970,9 @@ namespace ZeroKWeb.Controllers
 		public string Filter;
 		public int Page;
 		public int PageCount;
+		public int PageSize;
 		public bool Partial;
 		public int? PlanetID;
 		public int? SpringBattleID;
-		public int PageSize;
 	}
 }

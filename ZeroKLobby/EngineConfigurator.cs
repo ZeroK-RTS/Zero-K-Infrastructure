@@ -59,6 +59,7 @@ namespace ZeroKLobby
 
 		void ApplyFileChanges(string target, string data, string regex)
 		{
+			if (string.IsNullOrEmpty(data)) return;
 			if (string.IsNullOrEmpty(regex) || !File.Exists(target)) File.WriteAllText(target, data);
 			else
 			{

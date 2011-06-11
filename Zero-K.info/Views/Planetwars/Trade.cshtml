@@ -142,7 +142,7 @@
                     <form method="post" action="@Url.Action("SubmitSellOrder")">
                      <input type="hidden" name="planetID" value="@planet.PlanetID"/>
                       <td><input type="text" name="quantity" value="@influence"/></td>
-                      <td><input type="text" name="price" value=""/></td>
+                      <td><input type="text" name="price" value="@GlobalConst.InfluenceSystemSellPrice"/></td>
                       <td><input type='submit' value="New Sell Offer" /></td>
                     </form>
                 </tr>
