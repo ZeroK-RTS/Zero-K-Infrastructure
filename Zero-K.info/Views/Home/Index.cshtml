@@ -4,17 +4,28 @@
   var s = Model.Spotlight;
   var stat = @Model.LobbyStats;
 }
-
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
   @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) @:players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat
 }
+  @if (!Global.IsLobbyAccess)
+  {
+    <span class="fright">@Html.ActionLink("Switch Skin", "SwitchSkin")</span>
+  }
+  else
+  {
+      Html.RenderPartial("GoogleSiteSearch");
+  }
+</div> <!hack to prevent renderbody from surrounding *everything*>
 
 <div id="content" class="fleft width-70">
   <div id="features" class="border textwall">
     
-    @if (ZeroKWeb.Global.IsAccountAuthorized) {
-      Html.RenderPartial("UserDetail", ZeroKWeb.Global.Account);
-    } else {
+    @if (ZeroKWeb.Global.IsAccountAuthorized)
+    {
+        Html.RenderPartial("UserDetail", ZeroKWeb.Global.Account);
+    }
+    else
+    {
       @Html.IncludeWiki("Features")
     }
   </div>
@@ -23,11 +34,6 @@
   </div>
 </div>
 <div id="sidebar" class="fright width-30">
-  @if (!Global.IsLobbyAccess) {
-    @Html.ActionLink("minimal skin", "SwitchSkin")
-  } else {
-      Html.RenderPartial("GoogleSiteSearch");
-  }
   @if (ZeroKWeb.Global.IsAccountAuthorized)
   {
       if (Global.IsLobbyAccess)
@@ -54,15 +60,21 @@
 
     <div class="border">
   <h2><a href='/Forum'>Forums</a></h2>
-  @foreach (var t in Model.NewThreads) {
-    var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new {id = t.ForumThread.ForumThreadID},new {title="$thread$" + t.ForumThread.ForumThreadID});
-    if (t.WasWritten) {
+  @foreach (var t in Model.NewThreads)
+  {
+      var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new { id = t.ForumThread.ForumThreadID }, new { title = "$thread$" + t.ForumThread.ForumThreadID });
+      if (t.WasWritten)
+      {
       <b><img src="../../Img/bullet.png" alt="bullet" /> @link</b><br />
-    } else if (t.WasRead) { 
+      }
+      else if (t.WasRead)
+      { 
      <i><img src="../../Img/bullet.png" alt="bullet" /> @link</i><br />
-    } else { 
+      }
+      else
+      { 
      <span><img src="../../Img/bullet.png" alt="bullet" /> @link</span><br />
-    }
+      }
   }
 
   </div>
@@ -84,7 +96,8 @@
       </tr>
 
       @{var cnt = 1;}
-      @foreach (var a in Model.Top10Players) {
+      @foreach (var a in Model.Top10Players)
+      {
         <tr>
         <td>@(cnt++)</td>
         <td><small>@Html.PrintAccount(a)</small></td>
