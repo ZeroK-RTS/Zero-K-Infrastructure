@@ -53,7 +53,13 @@ namespace ZeroKLobby.Notifications
 					Program.MainWindow.Dispatcher.Invoke(new Action(() => {
 						barContainer.btnDetail.Enabled = true;
 					}));
+
+					if (e.Data) {
+						Program.MainWindow.InvokeFunc(() => {
+						                                    	if (MessageBox.Show("Do you want me to set Low details?", "Spring engine has crashed, update your video and audio drivers please!", MessageBoxButtons.YesNo) == DialogResult.Yes) Program.EngineConfigurator.Configure(true, 0);
+						});
 					
+					}
 
 					if (e.Data || IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 				};

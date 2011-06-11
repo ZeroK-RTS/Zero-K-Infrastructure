@@ -128,7 +128,7 @@ namespace ZeroKLobby
 			return null;
 		}
 
-		public void InvokeFunc(Func funcToInvoke)
+		public void InvokeFunc(Action funcToInvoke)
 		{
 			try
 			{
