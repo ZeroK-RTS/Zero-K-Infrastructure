@@ -33,13 +33,14 @@ namespace ZeroKLobby
 					else if (text.Contains("DISABLE TTS")) isSpeechEnabled = false;
 				}
 				if (isSpeechEnabled) {
-					var match = Regex.Match(text, "\\] <([^>]+)> (Allies:|added point:) (.+)");
+					var match = Regex.Match(text, "\\] <([^>]+)> Allies: (.+)");
+					if (!match.Success) match = Regex.Match(text, "\\] ([^ ]+) added point: (.+)");
 					if (match.Success) {
 						var name = match.Groups[1].Value;
 						var sayText = match.Groups[2].Value;
-						if (name != Program.Conf.LobbyPlayerName)
+						if (name != Program.Conf.LobbyPlayerName && !string.IsNullOrEmpty(text))
 						{
-							speechSynthesizer.SelectVoice(voices[name.GetHashCode()%voices.Count].VoiceInfo.Name);
+							if (voices.Count > 1) speechSynthesizer.SelectVoice(voices[name.GetHashCode()%voices.Count].VoiceInfo.Name);
 							speechSynthesizer.SpeakAsync(sayText);
 						}
 					}
