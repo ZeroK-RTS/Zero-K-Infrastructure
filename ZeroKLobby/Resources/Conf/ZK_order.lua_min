@@ -1,5 +1,0 @@
--- Widget Order List  (0 disables a widget)
-return {
-	["Chili Chat Bubbles"] = 0,	
-	UnitShapes = 0,
-}
