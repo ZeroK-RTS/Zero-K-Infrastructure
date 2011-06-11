@@ -830,6 +830,7 @@ namespace ZeroKWeb.Controllers
 			var currentOffers = db.MarketOffers.Where(o => o.DateAccepted == null);
 			var buyOffers = currentOffers.Where(o => !o.IsSell);
 			var sellOffers = currentOffers.Where(o => o.IsSell);
+			var influenceChanged = false;
 
 			foreach (var bo in buyOffers.Where(x => x.Price >= GlobalConst.InfluenceSystemBuyPrice).ToList())
 			{
@@ -837,6 +838,7 @@ namespace ZeroKWeb.Controllers
 				var quantity = Math.Min(bo.AccountByAccountID.Credits/bo.Price, bo.Quantity);
 				if (quantity > 0)
 				{
+					influenceChanged = true;
 					bo.AccountByAccountID.Credits -= quantity*bo.Price;
 
 					var buyerAccountPlanet = bo.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == bo.AccountID);
@@ -870,6 +872,7 @@ namespace ZeroKWeb.Controllers
 				var quantity = Math.Min(sellerAccountPlanet.Influence, sellOffer.Quantity);
 				if (quantity > 0)
 				{
+					influenceChanged = true;
 					seller.Credits += quantity*sellOffer.Price;
 					sellerAccountPlanet.Influence -= quantity;
 
@@ -878,6 +881,7 @@ namespace ZeroKWeb.Controllers
 					                                            quantity,
 					                                            sellOffer.Planet,
 					                                            sellOffer.Price));
+					
 				}
 
 				sellOffer.Quantity -= quantity;
@@ -891,7 +895,7 @@ namespace ZeroKWeb.Controllers
 			             orderby sellOffer.Price
 			             select new { Buy = buyOffer, Sell = sellOffer };
 
-			var influenceChanged = false;
+			
 
 			foreach (var offerPair in offers)
 			{
