@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Navigation;
 using ZkData;
 
@@ -58,6 +59,7 @@ namespace ZeroKLobby.MicroLobby
 			{
 				Trace.TraceError("Error deleting cache entry: {0}",ex);
 			}
+			
     	WebBrowser.Navigate(pathString);
 
       return true;
@@ -85,6 +87,7 @@ namespace ZeroKLobby.MicroLobby
       if (navigatedIndex == navigatedPlaces.Count) navigatedPlaces.Add(e.Uri.ToString());
       else navigatedPlaces[navigatedIndex] = e.Uri.ToString();
       navigatedIndex++;
+			Program.MainWindow.navigationControl.BusyLoading = false;
     }
 
     void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
@@ -102,6 +105,7 @@ namespace ZeroKLobby.MicroLobby
         }
         if (!alreadyNavigating) Program.MainWindow.navigationControl.Path = Uri.UnescapeDataString(e.Uri.ToString());
       }
+			if (navigating) Program.MainWindow.navigationControl.BusyLoading = true;
     }
 
     void webBrowser_Loaded(object sender, RoutedEventArgs e)

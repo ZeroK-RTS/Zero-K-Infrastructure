@@ -577,7 +577,15 @@
     <Resource Include="Resources\Conf\uikeys.txt" />
     <Resource Include="Resources\Conf\lups.cfg" />
     <Resource Include="Resources\Conf\springsettings.cfg" />
-    <Resource Include="Resources\Conf\lups.cfg_Low" />
+    <Resource Include="Resources\Conf\lups.cfg0" />
+    <Resource Include="Resources\Conf\lups.cfg1" />
+    <Resource Include="Resources\Conf\springsettings.cfg0" />
+    <Resource Include="Resources\Conf\springsettings.cfg1" />
+    <Resource Include="Resources\Conf\springsettings.cfg3" />
+    <Resource Include="Resources\Conf\springsettings.cfg4" />
+    <Resource Include="Resources\Conf\ZK_order.lua" />
+    <Resource Include="Resources\Conf\ZK_order.lua0" />
+    <Resource Include="Resources\Conf\ZK_order.lua4" />
     <None Include="Resources\Flags\in.png" />
     <Resource Include="Resources\search.png" />
     <Resource Include="Resources\battle.png" />
@@ -699,6 +707,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ResourceDicts\SakButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDicts\SpinningDonut.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

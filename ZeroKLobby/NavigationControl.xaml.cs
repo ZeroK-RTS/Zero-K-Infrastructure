@@ -21,6 +21,11 @@ namespace ZeroKLobby
     bool CanGoForward { get { return forwardStack.Any(); } }
     INavigatable CurrentINavigatable { get { return GetINavigatableFromControl(tabControl.SelectedContent); } }
 
+		public bool BusyLoading {
+			set { 
+				busyIndicator.Visibility = value ? Visibility.Visible : Visibility.Hidden;
+			} }
+
     NavigationStep CurrentPage
     {
       get { return _currentPage; }
@@ -92,9 +97,9 @@ namespace ZeroKLobby
 									new ButtonInfo() { Label = "PLANETWARS", TargetPath = "http://zero-k.info/PlanetWars", LinkBehavior = true },
                   new ButtonInfo() { Label = "MAPS", TargetPath = "http://zero-k.info/Maps", LinkBehavior = true },
 									new ButtonInfo() { Label = "REPLAYS", TargetPath = "http://zero-k.info/Battles", LinkBehavior = true },
+                  new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings" },
                   new ButtonInfo() { Label = "WIDGETS", TargetPath = "widgets", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
                   new ButtonInfo() { Label = "RAPID", TargetPath = "rapid", Visible = Program.Conf.LimitedMode ? Visibility.Collapsed : Visibility.Visible },
-                  new ButtonInfo() { Label = "SETTINGS", TargetPath = "settings" },
                 };
 
       Instance = this;

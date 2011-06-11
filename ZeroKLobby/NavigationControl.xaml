@@ -11,26 +11,34 @@
     </Grid.RowDefinitions>
     <Grid Grid.Row="0">
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition />
-      </Grid.ColumnDefinitions>
-      <Button x:Name="backButton" Margin="1" Grid.Column="0" Click="backButton_Click">Back</Button>
-      <Button x:Name="forwardButton" Margin="1" Grid.Column="1" Click="forwardButton_Click">Forward</Button>
-      <TextBox x:Name="urlBox" Margin="1" Grid.Column="2" Text="{Binding Path, ElementName=userControl}" GotFocus="urlBox_GotFocus" KeyDown="urlBox_KeyDown" />
-    </Grid>
-    <ItemsControl Grid.Row="1" Margin="3" ItemsSource="{Binding Path=Buttons, ElementName=userControl}">
-      <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-          <UniformGrid Rows="1" />
-        </ItemsPanelTemplate>
-      </ItemsControl.ItemsPanel>
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <c:HeaderButton Icon="{Binding Icon}" Label="{Binding Label}" Click="LocationButton_Click" Margin="3" IsSelected="{Binding Path=IsSelected}" Tag="{Binding}" Visibility="{Binding Visible}" IsAlerting="{Binding IsAlerting}" />
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+				
+			</Grid.ColumnDefinitions>
+			<Control Name="busyIndicator" Style="{StaticResource SpinningDonut}" Grid.Column="0" Visibility="Hidden" Width="25" Height="25" ></Control>
+			<Button x:Name="backButton" Margin="1" Grid.Column="1" Click="backButton_Click">Back</Button>
+      <Button x:Name="forwardButton" Margin="1" Grid.Column="2" Click="forwardButton_Click">Forward</Button>
+      <TextBox x:Name="urlBox" Margin="1" Grid.Column="3" Text="{Binding Path, ElementName=userControl}" GotFocus="urlBox_GotFocus" KeyDown="urlBox_KeyDown" />
+		</Grid>
+		<StackPanel Orientation="Horizontal" Grid.Row="1">
+			
+			<ItemsControl  Margin="3" ItemsSource="{Binding Path=Buttons, ElementName=userControl}">
+				
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<UniformGrid Rows="1" />
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<c:HeaderButton Icon="{Binding Icon}" Label="{Binding Label}" Click="LocationButton_Click" Margin="3" IsSelected="{Binding Path=IsSelected}" Tag="{Binding}" Visibility="{Binding Visible}" IsAlerting="{Binding IsAlerting}" />
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			
+		</StackPanel>
     <TabControl Grid.Row="2" x:Name="tabControl" Background="Black" BorderThickness="0">
       <TabControl.ItemContainerStyle>
         <Style TargetType="{x:Type TabItem}">

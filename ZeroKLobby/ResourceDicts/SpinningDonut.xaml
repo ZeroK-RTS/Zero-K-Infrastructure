@@ -1,0 +1,71 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    >
+	<LinearGradientBrush x:Key="donutBackground" EndPoint="0.5,1" StartPoint="0.5,0">
+		<GradientStop Color="#FF006262" Offset="0"/>
+		<GradientStop Color="#FF00C9C9" Offset="1"/>
+	</LinearGradientBrush>
+
+	<Style TargetType="Control" x:Key="SpinningDonut">
+		<Setter Property="Background" Value="{StaticResource donutBackground}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Control">
+					<ControlTemplate.Resources>
+						<Storyboard x:Key="startSpinning" RepeatBehavior="Forever">
+							<DoubleAnimationUsingKeyFrames 
+                                BeginTime="00:00:00" 
+                                Storyboard.TargetName="donut" 
+                                Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                >
+								<SplineDoubleKeyFrame KeyTime="00:00:00.2500000" Value="180"/>
+								<SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="360"/>
+							</DoubleAnimationUsingKeyFrames>
+						</Storyboard>
+					</ControlTemplate.Resources>
+
+					<!-- whenvever the control becomes visible begin the startSpinning storyboard -->
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsVisible" Value="True">
+							<Trigger.EnterActions>
+								<BeginStoryboard 
+                                    x:Name="startSpinningStoryboard" 
+                                    Storyboard="{StaticResource startSpinning}" 
+                                    />
+							</Trigger.EnterActions>
+
+							<Trigger.ExitActions>
+								<StopStoryboard BeginStoryboardName="startSpinningStoryboard"/>
+							</Trigger.ExitActions>
+						</Trigger>
+					</ControlTemplate.Triggers>
+
+					<!-- the visual is a path that describes two circles, one inside the
+                         other to form a donut. This allows for any background color 
+                         to pass through the control
+                        -->
+					<Viewbox Stretch="Fill">
+						<Path 
+                            x:Name="donut" 
+                            Fill="{TemplateBinding Background}"
+                            Stretch="Fill" 
+                            RenderTransformOrigin="0.5,0.5" 
+                            Data=
+"M12.526,6.132 C8.9946932,6.132 6.132,8.9946932 6.132,12.526 6.132,16.057307 8.9946897,
+18.92 12.526,18.92 16.057311,18.92 18.92,16.057311 18.92,12.526 18.92,8.9946897 16.057307,
+6.132 12.526,6.132 z M12.5,0 C19.403552,0 25,5.596434 25,12.5 25,19.40356 19.40356,25 12.5,
+25 5.596434,25 0,19.403552 0,12.5 0,5.5964418 5.5964418,0 12.5,0 z" >
+							<!-- The storybaord animates the angle of the rotation which causes
+                                 the donut to spin.
+                                -->
+							<Path.RenderTransform>
+								<RotateTransform Angle="0"/>
+							</Path.RenderTransform>
+						</Path>
+					</Viewbox>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+</ResourceDictionary>

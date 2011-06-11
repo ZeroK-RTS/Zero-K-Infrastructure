@@ -31,7 +31,6 @@ namespace ZeroKLobby
 		                                       	new FileInfo() { RelativePath = "selectkeys.txt", Resource = "/Resources/Conf/selectkeys.txt" },
 		                                       	new FileInfo() { RelativePath = "lups.cfg", Resource = "/Resources/Conf/lups.cfg" },
 		                                       };
-		public static readonly string[] LevelNames = new string[] { "Minimal", "Low", "Medium", "High", "Ultra"};
 		readonly string path;
 
 
@@ -48,7 +47,7 @@ namespace ZeroKLobby
 				var target = Path.Combine(path, f.RelativePath);
 				if (overwrite || !File.Exists(target))
 				{
-					var data = ReadResourceString(string.Format("{0}_{1}", f.Resource, LevelNames[level]));
+					var data = ReadResourceString(string.Format("{0}_{1}", f.Resource, level));
 					if (data == null) data = ReadResourceString(f.Resource);
 
 					ApplyFileChanges(target, data, f.MergeRegex);
