@@ -4,14 +4,17 @@ unbindaction groupselect
 unbindaction groupadd
 unbindaction forcestart
 unbindaction force
-unbindaction debug
+unbindaction debug	//do we really want to unbind this without a replacement?
 unbindaction pastetext
+unbind any+j mouse2
+
 
 bind c capture
 bind Shift+c capture
 bind t resurrect
 bind shift+t resurrect
 bind shift+v controlunit
+bind any+j jump
 
 
 
