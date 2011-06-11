@@ -5,8 +5,8 @@
 
 
 //==Distortions==
-Distortions               = false  // force distortions? (you can force it on, too!)
-//DistortionUpdateSkip      = 0      // must be larger zero (larger := better performance)
+//Distortions               = false  // force distortions? (you can force it on, too!)
+DistortionUpdateSkip      = 1      // must be larger zero (larger := better performance)
 //DistortionCopyDepthBuffer = true   // do depthtest? (can increase performance if turned off)
 
 
