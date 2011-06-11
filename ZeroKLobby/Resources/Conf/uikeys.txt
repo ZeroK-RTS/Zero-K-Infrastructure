@@ -2,24 +2,16 @@ unbindaction aiselect
 unbindaction controlunit
 unbindaction groupselect
 unbindaction groupadd
-unbindaction pastetext
-//unbindaction forcestart
-//unbindaction force
-//unbindaction debug
+unbindaction trackmode 
+unbindaction track 
+unbind any+j mouse2
+
 bind alt+b debug
-
-unbind any+j mouse2
-unbindkeyset ctrl+t		//trackmode
-unbindkeyset any+t
-
-bind c capture
-bind shift+c capture
-bind any+t resurrect
-unbind Any+c  controlunit
-bind shift+v controlunit
-
-unbind any+j mouse2
+bind t resurrect
+bind shift+t resurrect
+bind alt+v controlunit
 bind any+j jump
+bind alt+t track
 
 
 
