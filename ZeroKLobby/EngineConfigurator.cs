@@ -47,7 +47,7 @@ namespace ZeroKLobby
 				var target = Path.Combine(path, f.RelativePath);
 				if (overwrite || !File.Exists(target))
 				{
-					var data = ReadResourceString(string.Format("{0}_{1}", f.Resource, level));
+					var data = ReadResourceString(string.Format("{0}{1}", f.Resource, level));
 					if (data == null) data = ReadResourceString(f.Resource);
 
 					ApplyFileChanges(target, data, f.MergeRegex);

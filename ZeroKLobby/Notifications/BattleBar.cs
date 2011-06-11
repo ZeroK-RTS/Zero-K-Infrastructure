@@ -99,7 +99,6 @@ namespace ZeroKLobby.Notifications
 					                                           					if (pickedItem != null) cbSide.SelectedItem = pickedItem;
 					                                           					else cbSide.SelectedIndex = random.Next(cbSide.Items.Count);
 					                                           					cbSide.Visible = mod.Sides.Length > 1;
-																															lbSide.Visible = cbSide.Visible;
 					                                           					suppressSideChangeEvent = false;
 					                                           				}));
 					                                           		}
@@ -521,10 +520,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			client.ChangeMyBattleStatus(side: cbSide.SelectedIndex);
 		}
 
-		void cbSide_VisibleChanged(object sender, EventArgs e)
-		{
-			lbSide.Visible = cbSide.Visible;
-		}
 
 		void cbSpectate_CheckedChanged(object sender, EventArgs e)
 		{

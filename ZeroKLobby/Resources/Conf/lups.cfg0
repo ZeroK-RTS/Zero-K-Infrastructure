@@ -1,6 +1,6 @@
 //==verbose mode?==
 //ShowWarnings = true
-Quality=4 //0=very low,1=low,2=normal,3=high,4=very high	//anything not very high breaks on ATI >:<
+Quality=0 //0=very low,1=low,2=normal,3=high,4=very high	//anything not very high breaks on ATI >:<
 //==Distortions==
 Distortions               = false  // force distortions? (you can force it on, too!)
 //DistortionUpdateSkip      = 0      // must be larger zero (larger := better performance)

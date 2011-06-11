@@ -35,7 +35,6 @@ namespace ZeroKLobby.Notifications
 			this.cbSide = new System.Windows.Forms.ComboBox();
 			this.cbSpectate = new System.Windows.Forms.CheckBox();
 			this.lbPlayers = new System.Windows.Forms.Label();
-			this.lbSide = new System.Windows.Forms.Label();
 			this.gameBox = new System.Windows.Forms.PictureBox();
 			this.cbReady = new System.Windows.Forms.CheckBox();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
@@ -49,13 +48,12 @@ namespace ZeroKLobby.Notifications
 			// 
 			this.cbSide.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbSide.FormattingEnabled = true;
-			this.cbSide.Location = new System.Drawing.Point(54, 52);
+			this.cbSide.Location = new System.Drawing.Point(10, 47);
 			this.cbSide.Name = "cbSide";
 			this.cbSide.Size = new System.Drawing.Size(114, 21);
 			this.cbSide.TabIndex = 4;
 			this.cbSide.Visible = false;
 			this.cbSide.SelectedIndexChanged += new System.EventHandler(this.cbSide_SelectedIndexChanged);
-			this.cbSide.VisibleChanged += new System.EventHandler(this.cbSide_VisibleChanged);
 			// 
 			// cbSpectate
 			// 
@@ -75,16 +73,6 @@ namespace ZeroKLobby.Notifications
 			this.lbPlayers.Name = "lbPlayers";
 			this.lbPlayers.Size = new System.Drawing.Size(0, 13);
 			this.lbPlayers.TabIndex = 3;
-			// 
-			// lbSide
-			// 
-			this.lbSide.AutoSize = true;
-			this.lbSide.Location = new System.Drawing.Point(3, 55);
-			this.lbSide.Name = "lbSide";
-			this.lbSide.Size = new System.Drawing.Size(45, 13);
-			this.lbSide.TabIndex = 7;
-			this.lbSide.Text = "Faction:";
-			this.lbSide.Visible = false;
 			// 
 			// gameBox
 			// 
@@ -130,14 +118,14 @@ namespace ZeroKLobby.Notifications
 			this.picoChat.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.picoChat.HideScroll = false;
 			this.picoChat.IRCForeColor = 0;
-			this.picoChat.Location = new System.Drawing.Point(181, 5);
+			this.picoChat.Location = new System.Drawing.Point(130, 5);
 			this.picoChat.Name = "picoChat";
 			this.picoChat.NoColorMode = false;
 			this.picoChat.ShowHistory = true;
 			this.picoChat.ShowJoinLeave = false;
 			this.picoChat.ShowUnreadLine = true;
 			this.picoChat.SingleLine = false;
-			this.picoChat.Size = new System.Drawing.Size(392, 63);
+			this.picoChat.Size = new System.Drawing.Size(443, 63);
 			this.picoChat.TabIndex = 12;
 			this.picoChat.TextFilter = null;
 			this.picoChat.TotalDisplayLines = 0;
@@ -147,7 +135,6 @@ namespace ZeroKLobby.Notifications
 			// 
 			this.panel1.Controls.Add(this.cbSide);
 			this.panel1.Controls.Add(this.lbPlayers);
-			this.panel1.Controls.Add(this.lbSide);
 			this.panel1.Controls.Add(this.cbSpectate);
 			this.panel1.Controls.Add(this.gameBox);
 			this.panel1.Controls.Add(this.picoChat);
@@ -178,7 +165,6 @@ namespace ZeroKLobby.Notifications
 
 				private System.Windows.Forms.ComboBox cbSide;
 				private System.Windows.Forms.Label lbPlayers;
-				private System.Windows.Forms.Label lbSide;
         private System.Windows.Forms.CheckBox cbSpectate;
         private System.Windows.Forms.PictureBox gameBox;
         private ChatBox picoChat;
