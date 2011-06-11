@@ -33,7 +33,7 @@ namespace ZeroKLobby
 					else if (text.Contains("DISABLE TTS")) isSpeechEnabled = false;
 				}
 				if (isSpeechEnabled) {
-					var match = Regex.Match(text, "\\] <([^>]+)> Allies: (.+)");
+					var match = Regex.Match(text, "\\] <([^>]+)> (Allies:|added point:) (.+)");
 					if (match.Success) {
 						var name = match.Groups[1].Value;
 						var sayText = match.Groups[2].Value;

@@ -26,7 +26,7 @@ namespace ZeroKLobby.MicroLobby
 			var cfRoot = Program.SpringPaths.WritableDirectory;
 
 			cmDisplay = new ContextMenu();
-			cmDisplay.MenuItems.Add(new MenuItem("Run SpringSettings", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "springsettings.exe"), Program.SpringPaths.GetSpringConfigPath())));
+			cmDisplay.MenuItems.Add(new MenuItem("Run SpringSettings", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "springsettings.exe"), string.Format("\"{0}\"", Program.SpringPaths.GetSpringConfigPath()))));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)", (o, x) => Utils.SafeStart("notepad.exe",  Program.SpringPaths.GetSpringConfigPath())));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit LUPS settings (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "lups.cfg"))));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit cmdcolors (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "cmdcolors.txt"))));

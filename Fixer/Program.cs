@@ -20,13 +20,14 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
-      //ImportSpringiePlayers();
+		
+			//ImportSpringiePlayers();
       RecalculateBattleElo();
       //FixMaps();
 
-			//PurgeGalaxy(9);
-    	//RandomizeMaps(9);
-			//GenerateStructures(9);
+			PurgeGalaxy(9);
+    	RandomizeMaps(9);
+			GenerateStructures(9);
 
 			//AddWormholes();
     }
@@ -49,8 +50,9 @@ namespace Fixer
 				db.ExecuteCommand("delete from marketoffer");
 				db.ExecuteCommand("delete from treatyoffer");
 				
-				db.ExecuteCommand("delete from clan");
 				db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
+				
+				db.ExecuteCommand("delete from clan");
 				db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
 			}
 		}
