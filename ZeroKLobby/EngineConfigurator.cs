@@ -31,7 +31,7 @@ namespace ZeroKLobby
 		                                       	new FileInfo() { RelativePath = "selectkeys.txt", Resource = "/Resources/Conf/selectkeys.txt" },
 		                                       	new FileInfo() { RelativePath = "lups.cfg", Resource = "/Resources/Conf/lups.cfg" },
 		                                       };
-		public static readonly string[] LevelNames = new string[] { "Low", "Medium", "High", "Ultra"};
+		public static readonly string[] LevelNames = new string[] { "Minimal", "Low", "Medium", "High", "Ultra"};
 		readonly string path;
 
 

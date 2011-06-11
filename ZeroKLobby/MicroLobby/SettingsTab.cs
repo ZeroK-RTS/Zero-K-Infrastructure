@@ -148,22 +148,27 @@ namespace ZeroKLobby.MicroLobby
 
 		private void button1_Click(object sender, EventArgs e)
 		{
-			Program.EngineConfigurator.Configure(true, 0);
+			Program.EngineConfigurator.Configure(true, 1);
 		}
 
 		private void button2_Click(object sender, EventArgs e)
 		{
-			Program.EngineConfigurator.Configure(true, 1);
+			Program.EngineConfigurator.Configure(true, 2);
 		}
 
 		private void button3_Click(object sender, EventArgs e)
 		{
-			Program.EngineConfigurator.Configure(true, 2);
+			Program.EngineConfigurator.Configure(true, 3);
 		}
 
 		private void button4_Click(object sender, EventArgs e)
 		{
-			Program.EngineConfigurator.Configure(true, 3);
+			Program.EngineConfigurator.Configure(true, 4);
+		}
+
+		private void button5_Click(object sender, EventArgs e)
+		{
+			Program.EngineConfigurator.Configure(true, 0);
 		}
 	}
 }
