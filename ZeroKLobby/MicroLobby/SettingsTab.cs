@@ -170,5 +170,10 @@ namespace ZeroKLobby.MicroLobby
 		{
 			Program.EngineConfigurator.Configure(true, 0);
 		}
+
+		private void btnBrowse_Click(object sender, EventArgs e)
+		{
+			Utils.SafeStart("file://" + Program.SpringPaths.WritableDirectory);
+		}
 	}
 }
