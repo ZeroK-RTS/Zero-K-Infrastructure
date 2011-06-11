@@ -2,9 +2,10 @@ unbindaction aiselect
 unbindaction controlunit
 unbindaction groupselect
 unbindaction groupadd
-unbindaction forcestart
-unbindaction force
-unbindaction debug	//do we really want to unbind this without a replacement?
+//unbindaction forcestart
+//unbindaction force
+//unbindaction debug	//do we really want to unbind this without a replacement?
+bind alt+b debug
 unbindaction pastetext
 unbind any+j mouse2
 
@@ -310,7 +311,7 @@ bind           Any+down  moveback
   bind            Ctrl+f2  viewta
   bind            Ctrl+f3  viewtw
   bind            Ctrl+f4  viewrot
-/
+
   bind             Any+f1  showElevation
   bind             Any+f2  ShowPathMap
   bind             Any+f3  LastMsgPos

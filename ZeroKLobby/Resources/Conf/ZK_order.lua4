@@ -1,4 +1,0 @@
--- Widget Order List  (0 disables a widget)
-return {
-	Halo = 1,
-}
