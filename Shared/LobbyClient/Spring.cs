@@ -269,6 +269,8 @@ namespace LobbyClient
 				{
 					process.StartInfo.FileName = paths.Executable;
 					process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
+					process.StartInfo.Arguments += string.Format(" --config \"{0}\"", paths.GetSpringConfigPath());
+					process.StartInfo.EnvironmentVariables.Add("SPRING_DATADIR", paths.WritableDirectory);
 				}
 				process.StartInfo.UseShellExecute = false;
 				process.StartInfo.RedirectStandardOutput = true;

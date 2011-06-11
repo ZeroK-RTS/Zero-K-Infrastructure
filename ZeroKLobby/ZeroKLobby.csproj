@@ -50,7 +50,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationRevision>7</ApplicationRevision>
     <ApplicationVersion>2.10.2.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="ChatToSpeech.cs" />
     <Compile Include="Controls\HeaderButton.cs" />
+    <Compile Include="EngineConfigurator.cs" />
     <Compile Include="INavigatable.cs" />
     <Compile Include="KnownGames.cs" />
     <Compile Include="Lines\SelfJoinedBattleLine.cs" />
@@ -571,6 +572,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="LuaMgr\doc\changelog.txt" />
+    <Resource Include="Resources\Conf\cmdcolors.txt" />
+    <Resource Include="Resources\Conf\selectkeys.txt" />
+    <Resource Include="Resources\Conf\uikeys.txt" />
+    <Resource Include="Resources\Conf\lups.cfg" />
+    <Resource Include="Resources\Conf\springsettings.cfg" />
+    <Resource Include="Resources\Conf\lups.cfg_Low" />
     <None Include="Resources\Flags\in.png" />
     <Resource Include="Resources\search.png" />
     <Resource Include="Resources\battle.png" />

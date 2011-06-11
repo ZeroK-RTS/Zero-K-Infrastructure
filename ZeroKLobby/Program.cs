@@ -222,6 +222,7 @@ namespace ZeroKLobby
 
         FriendManager = new FriendManager();
         AutoJoinManager = new AutoJoinManager();
+				EngineConfigurator = new EngineConfigurator(SpringPaths.WritableDirectory);
 
         SpringScanner = new SpringScanner(SpringPaths);
         SpringScanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
@@ -289,8 +290,10 @@ namespace ZeroKLobby
       return false;
     }
 
+  	public static EngineConfigurator EngineConfigurator {get;set;}
 
-    internal static void SaveConfig()
+
+  	internal static void SaveConfig()
     {
       var configFilename = GetFullConfigPath();
       lock (configLock)

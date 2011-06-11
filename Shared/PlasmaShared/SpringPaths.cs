@@ -64,10 +64,10 @@ namespace PlasmaShared
       }
     }
 
-    public static string GetSpringConfigPath()
+    public string GetSpringConfigPath()
     {
       if (Environment.OSVersion.Platform == PlatformID.Unix) return Utils.MakePath(Environment.GetEnvironmentVariable("HOME"), ".springrc");
-      else return Utils.MakePath(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "springsettings.cfg");
+      else return Utils.MakePath(WritableDirectory, "springsettings.cfg");
     }
 
     public static bool IsDirectoryWritable(string directory)

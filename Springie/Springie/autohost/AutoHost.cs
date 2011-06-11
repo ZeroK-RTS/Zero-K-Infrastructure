@@ -144,6 +144,7 @@ namespace Springie.autohost
 			spring.UnsubscribeEvents(this);
 			spring.UnsubscribeEvents(PlanetWars);
 			wrapper.UnsubscribeEvents(this);
+			springPaths.UnsubscribeEvents(this);
 			tas.Disconnect();
 			if (PlanetWars != null) PlanetWars.Dispose();
 			pollTimer.Dispose();

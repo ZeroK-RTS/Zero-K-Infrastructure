@@ -1,0 +1,470 @@
+unbindaction aiselect
+unbindaction controlunit
+unbindaction groupselect
+unbindaction groupadd
+unbindaction forcestart
+unbindaction force
+unbindaction debug
+unbindaction pastetext
+
+bind c capture
+bind Shift+c capture
+bind t resurrect
+bind shift+t resurrect
+bind shift+v controlunit
+
+
+
+
+//
+//  DEFAULT UIKEYS.TXT FOR SPRING (0.73)
+//  ------------------------------------
+//
+
+
+//
+//  Quick Notes:
+//
+//  1. The built-in default bindings are always loaded. If you wish
+//     to override them, use the unbindall and unbind commands
+//     to delete them at the beginning of your 'uikeys.txt'.
+//
+//  2. More then one action can be bound to a specific keyset. The
+//     actions for any given keyset are tried in the order that they
+//     were bound. The first currently available command that matches
+//     an action is used.
+//
+//  3. As a slight modification to the above note, keysets that use
+//     the 'Any' modifier are tried after those that do not use it.
+//
+//  4. A keyset using the Shift modifier should be bound with its
+//     unshifted key  (ex: bind  "Shift+."  instead of  "Shift+>" )
+//
+
+
+//
+//  Commands that can be used in this file:
+//
+//    unbindall
+//    ---------
+//    - removes all bindings, and adds "bind enter chat"
+//      (one of the other unbind commands can get rid of that one)
+//    - good for deleting the default bindings
+//
+//    keysym <name> <keycode>
+//    -----------------------
+//    - add a custom key symbol  (the default key symbols can not be overriden)
+//    - name must start with a letter, and only contain letters, numbers, and '_'
+//    - the <keycode> can be a currently recognized keysym
+//      (ex:  "keysym menu 0x13F"  or  "keysym radar r")
+//
+//    keyset <name> <keyset>
+//    ----------------------
+//    - specifies a named keyset
+//    - name must start with a letter, and only contain letters, numbers, and '_'
+//    - named keysets may be accessed by prepending the '&' character to the name
+//      (ex:  "keyset myKeySet Ctrl+x"  then  "bind &myKeySet myAction" )
+//
+//    fakemeta <keysym>
+//    -----------------
+//    - assign an auxiliary key for the Meta modifier ("space" is a good choice)
+//    - use "fakemeta none" to disable this feature
+//
+//    bind <keyset> <action>
+//    ----------------------
+//    - appends the action to the keyset's list of actions
+//    - the action can be just a command, or a command with arguments
+//
+//    unbind <keyset> <action>
+//    ------------------------
+//    - removes the action from the keyset's list of actions
+//    - both the action and the keyset must match
+//
+//    unbindkeyset <keyset>
+//    ---------------------
+//    - removes all bindings that use the keyset
+//
+//    unbindaction <action>
+//    ---------------------
+//    - removes all bindings that use the action  (command that is, a misnomer)
+//
+//
+//  * NOTE: These commands can also be run from the chat line in-game using
+//          the slash command syntax  (/bind, /unbind, etc...)
+//
+
+//
+//  Keyset Format:
+//
+//    A keyset is a combination of keys, the main key and its modifiers.
+//
+//    Here are some examples:
+//
+//      bind            a  fake_action
+//      bind       Ctrl+a  fake_action
+//      bind          C+a  fake_action
+//      bind Ctrl+Shift+a  fake_action
+//      bind          *+a  fake_action
+//      bind   &my_keyset  fake_action
+//
+//    The format then goes like this:
+//
+//      [<Modifier>+]...[<Modifier>+]<keysym>
+//
+//        or
+//
+//      &<keyset_name>    (for named keysets)
+//
+//    The modifiers (and their abbreviations), are:
+//
+//      Any   (*)
+//      Alt   (A)
+//      Ctrl  (C)
+//      Meta  (M)
+//      Shift (S)
+//
+//    The special 'Any' modifier makes it so that the keyset matches
+//    regardless of the current state of the real modifiers.
+//
+//    The known keysyms (key symbols), are listed at the end of this file.
+//    If you want to use a key that is unknown to Spring, then you may use
+//    the hexadecimal notation. Here are two equivalent bindings:
+//
+//      bind Ctrl+0x20  firestate 0  // hold fire
+//      bind Ctrl+space firestate 0  // hold fire
+//
+
+
+//
+//  Extra Run-Time Commands
+//
+//    /keyload   : loads the uikeys.txt bindings  (does not clear current bindings)
+//    /keyreload : loads the uikeys.txt bindings  (clears current bindings first)
+//    /keysave   : save current bindings to 'uikeys.tmp'  (NOTE: 'tmp' vs. 'txt')
+//    /keysyms   : prints the known keysyms to standard out
+//    /keycodes  : prints the known keycodes to standard out
+//    /keyprint  : prints the current bindings to standard out
+//    /keydebug  : prints debugging information to standard out (for each keystroke)
+//
+
+
+//
+//  Hotbinding:
+//
+//    The default bindings include the 'hotbind' (Ctrl+insert) and
+//    'hotunbind' (Ctrl+delete) capabilities. Place the mouse cursor over one
+//    of the control panel icons (normal command or build command), and press
+//    Ctrl+insert. Spring will then ask for a keyset, which will then have the
+//    icon's command immediately appended to its list of actions. Placing the
+//    mouse cursor over an icon and hitting Ctrl+delete will delete all bindings
+//    associated with that icon's command.
+//
+
+
+//
+//  Default Bindings:
+//
+//
+
+
+bind                esc  quitwarn
+bind          Shift+esc  quit
+//
+bind          Any+enter  chat
+//
+//  bind             Ctrl+v  pastetext
+//
+bind          Any+pause  pause
+//
+//
+bind              l  togglelos
+bind              ;  toggleradarandjammer
+bind            tab  toggleoverview
+//
+//  bind                  ,  prevmenu
+//  bind                  .  nextmenu
+bind            Shift+,  decguiopacity
+bind            Shift+.  incguiopacity
+//
+bind        Ctrl+insert  hotbind
+bind        Ctrl+delete  hotunbind
+//
+//bind              Any++  speedup
+//bind              Any+=  speedup
+//bind              Any+-  slowdown
+//  bind         Any+insert  speedup
+//  bind         Any+delete  slowdown
+ bind        Any+numpad+  speedup
+ bind        Any+numpad-  slowdown
+//
+//bind              b  debug
+//  bind              Any+o  singlestep
+//
+bind              h  sharedialog
+//
+//bind              Any+c  controlunit
+//  bind             Ctrl+t  trackmode
+bind              t  track
+//
+bind              Any+`  drawinmap
+bind              Any+\  drawinmap
+bind           Any+0xa7  drawinmap
+//
+//  bind           Any+home  increaseViewRadius
+//  bind            Any+end  decreaseViewRadius
+//
+bind             Any+up  moveforward
+bind           Any+down  moveback
+ bind          Any+right  moveright
+ bind           Any+left  moveleft
+ bind         Any+pageup  moveup
+  bind       Any+pagedown  movedown
+  bind          Any+shift  movefast
+  bind           Any+ctrl  moveslow
+//
+  bind                  1  specteam 0  
+  bind                  2  specteam 1
+  bind                  3  specteam 2
+  bind                  4  specteam 3
+  bind                  5  specteam 4
+  bind                  6  specteam 5
+  bind                  7  specteam 6
+  bind                  8  specteam 7
+  bind                  9  specteam 8
+  bind                  0  specteam 9
+  bind             Ctrl+1  specteam 10
+  bind             Ctrl+2  specteam 11
+  bind             Ctrl+3  specteam 12
+  bind             Ctrl+4  specteam 13
+  bind             Ctrl+5  specteam 14
+  bind             Ctrl+6  specteam 15
+  bind             Ctrl+7  specteam 16
+  bind             Ctrl+8  specteam 17
+  bind             Ctrl+9  specteam 18
+  bind             Ctrl+0  specteam 19
+//
+  bind              Any+0  group0
+  bind              Any+1  group1
+  bind              Any+2  group2
+  bind              Any+3  group3
+  bind              Any+4  group4
+  bind              Any+5  group5
+  bind              Any+6  group6
+  bind              Any+7  group7
+  bind              Any+8  group8
+  bind              Any+9  group9
+//
+  bind              Any+z  buildspacing inc
+  bind              Any+x  buildspacing dec
+//
+  bind                  [  buildfacing inc
+  bind            Shift+[  buildfacing inc
+  bind                  ]  buildfacing dec
+  bind            Shift+]  buildfacing dec
+//
+  bind                  a  attack
+  bind            Shift+a  attack
+  bind              Alt+a  areaattack
+ bind        Alt+Shift+a  areaattack
+  bind                  d  dgun
+  bind            Shift+d  dgun
+  bind             Ctrl+d  selfd
+  bind       Ctrl+Shift+d  selfd queued
+  bind                  e  reclaim
+  bind            Shift+e  reclaim
+  bind                  f  fight
+  bind            Shift+f  fight
+
+
+
+  bind                  g  guard
+  bind            Shift+g  guard
+  bind                  k  cloak
+  bind            Shift+k  cloak
+  bind                  l  loadunits
+  bind            Shift+l  loadunits
+  bind                  m  move
+  bind            Shift+m  move
+  bind                  p  patrol
+  bind            Shift+p  patrol
+  bind                  r  repair
+  bind            Shift+r  repair
+  bind                  s  stop
+  bind            Shift+s  stop
+  bind                  u  unloadunits
+  bind            Shift+u  unloadunits
+  bind                  w  wait
+  bind            Shift+w  wait queued
+  bind                  x  onoff
+  bind            Shift+x  onoff
+//
+//  bind                  q  groupselect
+//  bind                  q  groupadd
+//  bind             Ctrl+q  aiselect
+
+//
+  bind            Ctrl+f1  viewfps
+  bind            Ctrl+f2  viewta
+  bind            Ctrl+f3  viewtw
+  bind            Ctrl+f4  viewrot
+/
+  bind             Any+f1  showElevation
+  bind             Any+f2  ShowPathMap
+  bind             Any+f3  LastMsgPos
+  bind             Any+f4  ShowMetalMap
+  bind             Any+f5  hideinterface
+  bind             Any+f6  NoSound
+  bind             Any+f7  dynamicSky
+  bind             Any+f8  savegame
+  bind             Any+f9  showhealthbars
+  bind            Any+f10  createvideo
+  bind            Any+f11  screenshot
+  bind            Any+f12  screenshot
+//
+
+
+//  Key Symbol    Key Code
+//  ----------    --------
+//
+//  !             0x021
+//  "             0x022
+//  #             0x023
+//  $             0x024
+//  %             0x025
+//  &             0x026
+//  '             0x027
+//  (             0x028
+//  )             0x029
+//  *             0x02A
+//  +             0x02B
+//  ,             0x02C
+//  -             0x02D
+//  .             0x02E
+//  /             0x02F
+//  0             0x030
+//  1             0x031
+//  2             0x032
+//  3             0x033
+//  4             0x034
+//  5             0x035
+//  6             0x036
+//  7             0x037
+//  8             0x038
+//  9             0x039
+//  :             0x03A
+//  ;             0x03B
+//  <             0x03C
+//  =             0x03D
+//  >             0x03E
+//  ?             0x03F
+//  @             0x040
+//  [             0x05B
+//  \             0x05C
+//  ]             0x05D
+//  ^             0x05E
+//  _             0x05F
+//  `             0x060
+//  a             0x061
+//  alt           0x134
+//  b             0x062
+//  backspace     0x008
+//  c             0x063
+//  clear         0x00C
+//  ctrl          0x132
+//  d             0x064
+//  delete        0x07F
+//  down          0x112
+//  e             0x065
+//  end           0x117
+//  enter         0x00D
+//  esc           0x01B
+//  escape        0x01B
+//  f             0x066
+//  f1            0x11A
+//  f10           0x123
+//  f11           0x124
+//  f12           0x125
+//  f13           0x126
+//  f14           0x127
+//  f15           0x128
+//  f2            0x11B
+//  f3            0x11C
+//  f4            0x11D
+//  f5            0x11E
+//  f6            0x11F
+//  f7            0x120
+//  f8            0x121
+//  f9            0x122
+//  g             0x067
+//  h             0x068
+//  home          0x116
+//  i             0x069
+//  insert        0x115
+//  j             0x06A
+//  joy0          0x12C
+//  joy1          0x12D
+//  joy2          0x12E
+//  joy3          0x12F
+//  joy4          0x130
+//  joy5          0x131
+//  joy6          0x132
+//  joy7          0x133
+//  joydown       0x141
+//  joyleft       0x142
+//  joyright      0x143
+//  joyup         0x140
+//  joyw          0x193
+//  joyx          0x190
+//  joyy          0x191
+//  joyz          0x192
+//  k             0x06B
+//  l             0x06C
+//  left          0x114
+//  m             0x06D
+//  meta          0x136
+//  n             0x06E
+//  numpad*       0x10C
+//  numpad+       0x10E
+//  numpad-       0x10D
+//  numpad.       0x10A
+//  numpad/       0x10B
+//  numpad0       0x100
+//  numpad1       0x101
+//  numpad2       0x102
+//  numpad3       0x103
+//  numpad4       0x104
+//  numpad5       0x105
+//  numpad6       0x106
+//  numpad7       0x107
+//  numpad8       0x108
+//  numpad9       0x109
+//  numpad=       0x110
+//  numpad_enter  0x10F
+//  o             0x06F
+//  p             0x070
+//  pagedown      0x119
+//  pageup        0x118
+//  pause         0x013
+//  printscreen   0x13C
+//  q             0x071
+//  r             0x072
+//  return        0x00D
+//  right         0x113
+//  s             0x073
+//  shift         0x130
+//  space         0x020
+//  t             0x074
+//  tab           0x009
+//  u             0x075
+//  up            0x111
+//  v             0x076
+//  w             0x077
+//  x             0x078
+//  y             0x079
+//  z             0x07A
+//  {             0x07B
+//  |             0x07C
+//  }             0x07D
+//  ~             0x07E
+
+fakemeta          space

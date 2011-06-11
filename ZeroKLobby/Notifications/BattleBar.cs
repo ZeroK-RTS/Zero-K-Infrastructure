@@ -49,8 +49,11 @@ namespace ZeroKLobby.Notifications
 				{
 					client.ChangeMyUserStatus(isInGame:false);
 					client.ChangeMyBattleStatus(ready: true);
+
+					Program.MainWindow.Dispatcher.Invoke(new Action(() => {
+						barContainer.btnDetail.Enabled = true;
+					}));
 					
-					barContainer.btnDetail.Enabled = true;
 
 					if (e.Data || IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 				};

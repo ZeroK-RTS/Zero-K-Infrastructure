@@ -23,31 +23,28 @@ namespace ZeroKLobby.MicroLobby
 			var isDesigner = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working
 			if (isDesigner) return;
 
-			var cfRoot = Path.GetDirectoryName(Program.SpringPaths.Executable);
+			var cfRoot = Program.SpringPaths.WritableDirectory;
 
 			cmDisplay = new ContextMenu();
-			cmDisplay.MenuItems.Add(new MenuItem("Run SpringSettings",
+			/*cmDisplay.MenuItems.Add(new MenuItem("Run SpringSettings",
 			                                     (o, x) =>
-			                                     Utils.SafeStart(Utils.MakePath(Path.GetDirectoryName(Program.SpringPaths.Executable), "springsettings.exe"))));
+																					 Utils.SafeStart(Utils.MakePath(cfRoot, "springsettings.exe"), Program.SpringPaths.GetSpringConfigPath())));*/
 
-			cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)", (o, x) => Utils.SafeStart("notepad.exe", SpringPaths.GetSpringConfigPath())));
+			cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)", (o, x) => Utils.SafeStart("notepad.exe",  Program.SpringPaths.GetSpringConfigPath())));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit LUPS settings (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "lups.cfg"))));
-			cmDisplay.MenuItems.Add(new MenuItem("Edit ctrlpanel settings (advanced)",
-			                                     (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "ctrlpanel.txt"))));
+			cmDisplay.MenuItems.Add(new MenuItem("Edit cmdcolors (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "cmdcolors.txt"))));
+			cmDisplay.MenuItems.Add(new MenuItem("Edit ctrlpanel settings (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "ctrlpanel.txt"))));
 
 			// keybindings
 			cmKeybinds = new ContextMenu();
-		  cmKeybinds.MenuItems.Add(new MenuItem("Run SelectionEditor",
-		                                        (o, x) =>
-		                                          {
-		                                            var editor = Utils.MakePath(Path.GetDirectoryName(Program.SpringPaths.Executable), "SelectionEditor.exe");
-		                                            if (File.Exists(editor)) Utils.SafeStart(editor);
-		                                            else Utils.SafeStart(Utils.MakePath(Path.GetDirectoryName(Program.SpringPaths.Executable), "selectkeys.txt"));
-		                                          }));
 
 			cmKeybinds.MenuItems.Add(new MenuItem("Edit UI keys (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
-
-			cmKeybinds.MenuItems.Add(new MenuItem("Edit select keys (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "selectkeys.txt"))));
+			cmKeybinds.MenuItems.Add(new MenuItem("Run SelectionEditor",
+																						(o, x) => {
+																							var editor = Utils.MakePath(Path.GetDirectoryName(Program.SpringPaths.Executable), "SelectionEditor.exe");
+																							if (File.Exists(editor)) Utils.SafeStart(editor);
+																							else Utils.SafeStart(Utils.MakePath(cfRoot, "selectkeys.txt"));
+																						}));
 		}
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
@@ -147,6 +144,26 @@ namespace ZeroKLobby.MicroLobby
 		public string GetTooltip(params string[] path)
 		{
 			return null;
+		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			Program.EngineConfigurator.Configure(true, 0);
+		}
+
+		private void button2_Click(object sender, EventArgs e)
+		{
+			Program.EngineConfigurator.Configure(true, 1);
+		}
+
+		private void button3_Click(object sender, EventArgs e)
+		{
+			Program.EngineConfigurator.Configure(true, 2);
+		}
+
+		private void button4_Click(object sender, EventArgs e)
+		{
+			Program.EngineConfigurator.Configure(true, 3);
 		}
 	}
 }
