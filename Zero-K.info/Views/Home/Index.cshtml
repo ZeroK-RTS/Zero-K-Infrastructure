@@ -34,6 +34,17 @@
   </div>
 </div>
 <div id="sidebar" class="fright width-30">
+  @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess)
+  {
+      <div class="border">
+      <h3>Download</h3>
+      <p align="left">Download now Zero-K's latest version for free:</p><div>Version: <b style="color:#00CCFF;">0.8.8.1</b></div><br />
+      <a href="http://zero-k.info/Wiki/Download">
+      <img src="http://zero-k.info/img/dl_button2.png" alt="download" width="250" />
+      </a></div>
+  }
+
+
   @if (ZeroKWeb.Global.IsAccountAuthorized)
   {
       if (Global.IsLobbyAccess)
