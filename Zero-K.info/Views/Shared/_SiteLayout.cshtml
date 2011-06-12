@@ -87,7 +87,7 @@
         @Html.Partial("LoginBar")
       </div>
       <!close login>
-      <div class="border"@if (ViewBag.OpaqueBody == true){<text> style="opacity: 1"</text>}>
+      <div id="renderbody" class="border"@if (ViewBag.OpaqueBody == true){<text> style="opacity: 1"</text>}>
         @RenderBody()
       <div id="footer" class="border">
         <span class="center">Zero-K is a free real time strategy (RTS), that aims to

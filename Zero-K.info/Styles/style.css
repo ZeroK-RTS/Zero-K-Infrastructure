@@ -16,7 +16,7 @@ html, body
 	padding: 0;
 	margin: 0;
 	border: 0;
-	z-index: 0;
+	z-index: auto;
 }
 
 body
@@ -29,21 +29,6 @@ body
 	margin-bottom: 1em;
 }
 
-.blocker
-{
-	position: absolute;
-	background: #000;
-	top: 0;
-	left: 0%;
-	right: 0%;
-	bottom: 0;
-	padding: 20px;
-	text-align: center;
-	z-index: 100;
-	opacity: .95;
-}
-
-
 .wrapper
 {
 	position: relative;
@@ -54,7 +39,8 @@ body
 	margin-right: auto;
 	border-top: 0;
 	border-bottom: 0;
-	text-align: justify;	
+	text-align: justify;
+	z-index:auto;
 }
 
 div#footer

@@ -34,14 +34,6 @@ pre
 	margin-right: 4em;
 }
 
-pre.credits
-{
-	background: #000;
-	border: none;
-	padding: 0;
-	margin: 0;
-}
-
 input
 {
 	color: #cbd3d4; 
@@ -93,7 +85,7 @@ ul.poll {list-style-type: none; padding: 0; margin: 0;}
 .faceplugin
 {
 	background: #000;
-	border: 1px solid #00a;
+	border: 1px solid red;
 	margin: 10px;
 	padding: 5px;
 	opacity: .88;
