@@ -26,7 +26,15 @@
       <RowDefinition />
     </Grid.RowDefinitions>
     <StackPanel Orientation="Horizontal">
-			<Button Name="btnOpenBattle" Margin="1" Click="btnOpenNewBattle_Click">Open New</Button>
+            <Button Name="btnOpenBattle" Margin="1" Click="btnOpenNewBattle_Click" Background="{x:Null}" Cursor="Hand" MinHeight="0" VerticalAlignment="Center" VerticalContentAlignment="Center">
+                <Button.Content>
+                    <DockPanel VerticalAlignment="Stretch" Width="80">
+                        <Image Source="/Zero-K;component/Images/add.png" HorizontalAlignment="Left" Width="20" Height="20" />
+<TextBlock Cursor="Hand" TextAlignment="Center" Text="Open New" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                    </DockPanel>
+                </Button.Content>
+
+            </Button>
       <Grid Height="26" Margin="3 0">
         <Ellipse Fill="{StaticResource LightAccentBrush}" Height="26" Width="26" HorizontalAlignment="Left" />
         <Rectangle Fill="{StaticResource GradientLightDarkHorizontal}" Margin="13 0 0 0" />
