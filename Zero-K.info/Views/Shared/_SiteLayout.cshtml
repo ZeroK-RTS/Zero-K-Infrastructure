@@ -81,12 +81,10 @@
           <img src="/img/zk_logo.png" height="150px" alt="Zero K" /></a>
       </div>
       <!close header>
+      <div id="menu" class="border">
       @Html.Partial("TopMenu")
-      <!close navigation>
-      <div class="border floatingfooter">
-        @Html.Partial("LoginBar")
       </div>
-      <!close login>
+      <!close navigation>
       <div id="renderbody" class="border"@if (ViewBag.OpaqueBody == true){<text> style="opacity: 1"</text>}>
         @RenderBody()
       <div id="footer" class="border">
@@ -95,6 +93,10 @@
       </div>
       </div> <!another hacky fix>
       <!close footer>
+      <div class="border floatingfooter">
+        @Html.Partial("LoginBar")
+      </div>
+      <!close login>
     </div>
     <!close wrapper>
   } else {

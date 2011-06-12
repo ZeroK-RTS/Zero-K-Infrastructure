@@ -11,12 +11,12 @@ html, body
 	color: #ede;
 	font-family: font, sans-serif;
 	font-size: 100%;
-	/*height: 100%;
-	width: 100%;*/
+	height: 100%;
+	width: 100%;
 	padding: 0;
 	margin: 0;
 	border: 0;
-	z-index: auto;
+	z-index:0;
 }
 
 body
@@ -32,7 +32,6 @@ body
 .wrapper
 {
 	position: relative;
-	
 	padding: 10px;
 	width: 1000px;
 	margin-left: auto;
@@ -40,7 +39,7 @@ body
 	border-top: 0;
 	border-bottom: 0;
 	text-align: justify;
-	z-index:auto;
+	z-index:0;
 }
 
 div#footer

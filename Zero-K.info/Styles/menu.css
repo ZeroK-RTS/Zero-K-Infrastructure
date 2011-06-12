@@ -1,10 +1,5 @@
 @font-face { font-family: sm; src: url("SM.ttf"); }
 
-div#menu
-{
-	position: relative;
-}
-
 #menu table{width:100%;}
 #menu td {vertical-align:middle}
 
@@ -38,7 +33,6 @@ div#menu a:hover span
 	font-family: sans-serif;
 	font-weight: bold;
 	opacity: .9;
-	z-index: 120;
 	
 }
 
@@ -57,7 +51,7 @@ ul.menu li:hover > ul /*dropdown part*/
 	margin-top: -3px;
 	/*border-bottom: 1px solid #42bde8;*/
 	list-style-type: none; 
-	z-index:auto;
+	z-index: 50;
 }
 
 ul.menu li:hover > ul li
@@ -72,7 +66,21 @@ ul.menu li:hover > ul li:hover
 	background: #386779;
 }
 
-.highlight
+
+/* remove for ie */
+.gecko div#mainContentWrapper div#menu
 {
-	
+	position: relative;
+    z-index: 100;
 }
+.webkit div#mainContentWrapper div#menu
+{
+	position: relative;
+    z-index: 100;
+}
+.opera div#mainContentWrapper div#menu
+{
+	position: relative;
+    z-index: 100;
+}
+/**/
