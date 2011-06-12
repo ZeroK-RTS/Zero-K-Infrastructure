@@ -83,20 +83,19 @@
       <!close header>
       @Html.Partial("TopMenu")
       <!close navigation>
-      <div class="border">
+      <div class="border floatingfooter">
         @Html.Partial("LoginBar")
       </div>
       <!close login>
       <div class="border"@if (ViewBag.OpaqueBody == true){<text> style="opacity: 1"</text>}>
         @RenderBody()
-      </div>
       <div id="footer" class="border">
-        <span class="center cdark">Zero-K is a free real time strategy (RTS), that aims to
+        <span class="center">Zero-K is a free real time strategy (RTS), that aims to
           be the best open source multi-platform strategy game available :-) </span>
       </div>
+      </div> <!another hacky fix>
       <!close footer>
     </div>
-    
     <!close wrapper>
   } else {
     <div style="margin: 10px;">

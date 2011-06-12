@@ -5,7 +5,7 @@
   var stat = @Model.LobbyStats;
 }
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
-  @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) @:players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat
+    @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) @:players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat
 }
   @if (!Global.IsLobbyAccess)
   {
@@ -58,7 +58,7 @@
   </div>
   <!close unit>
 
-    <div class="border">
+  <div class="border">
   <h2><a href='/Forum'>Forums</a></h2>
   @foreach (var t in Model.NewThreads)
   {

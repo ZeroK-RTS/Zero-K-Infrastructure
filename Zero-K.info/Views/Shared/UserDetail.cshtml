@@ -20,6 +20,11 @@
   <tr>
     <td valign="top">
       <table>
+        <tr>
+          <td>Clan: </td>
+          <td>@Html.PrintClan(Model.Clan)
+          </td>
+        </tr>
         @if (!string.IsNullOrEmpty(Model.Aliases)) {
           <tr>
             <td>Aliases: </td>
@@ -30,11 +35,6 @@
         <tr>
           <td>Level: </td>
           <td><b>@Model.Level</b> </td>
-        </tr>
-        <tr>
-          <td>Clan: </td>
-          <td>@Html.PrintClan(Model.Clan)
-          </td>
         </tr>
         <tr>
           <td>XP: </td>
