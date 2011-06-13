@@ -25,5 +25,6 @@ namespace ZkData
     public int UsersFighting;
     public int BattlesWaiting;
     public int UsersWaiting;
+		public int UsersLastMonth;
   }
 }

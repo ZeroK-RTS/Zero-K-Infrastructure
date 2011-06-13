@@ -38,7 +38,7 @@ namespace ZeroKLobby
 					if (match.Success) {
 						var name = match.Groups[1].Value;
 						var sayText = match.Groups[2].Value;
-						if (name != Program.Conf.LobbyPlayerName && !string.IsNullOrEmpty(text) && !Regex.IsMatch(text,"Start [0-9]+"))
+						if (name != Program.Conf.LobbyPlayerName && !string.IsNullOrEmpty(text) && !Regex.IsMatch(sayText, "Start [0-9]+$"))
 						{
 							if (voices.Count > 1) speechSynthesizer.SelectVoice(voices[name.GetHashCode()%voices.Count].VoiceInfo.Name);
 							speechSynthesizer.SpeakAsync(sayText);

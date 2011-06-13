@@ -49,11 +49,13 @@ namespace ZkData
         try
         {
           cachedStats = factory.CreateChannel().GetCurrentStats();
+					cachedStats.UsersLastMonth = new ZkDataContext().Accounts.Count(x => x.LastLogin > DateTime.Now.AddDays(-31));
         }
         catch (Exception ex)
         {
           Trace.TraceError("Error getting lobby stats: {0}", ex);
         }
+				
         return cachedStats;
       }
 	  }
