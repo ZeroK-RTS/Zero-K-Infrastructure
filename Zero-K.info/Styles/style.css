@@ -4,7 +4,7 @@
 @import url("stars.css");
 @import url("jquery.ui.stars.css");
 
-html, body
+html
 {
 	background: none;
 	color: #ede;
@@ -16,6 +16,11 @@ html, body
 	margin: 0;
 	border: 0;
 	z-index:0;
+}
+
+body
+{
+    background: #000;
 }
 
 #fadetoblack
