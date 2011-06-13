@@ -40,7 +40,8 @@
     <style type="text/css">
       html
       {
-        background: #000 url("/img/bg_bluehex.gif") fixed;
+        /*background: #000 url("/img/bg_bluehex.gif") fixed;*/
+        background: #000;
       }
     </style>
     } else {
@@ -83,11 +84,11 @@
       <div id="menu" class="border">
       @Html.Partial("TopMenu")
       </div>
+      <!close navigation>
       <div class="border floatingfooter">
         @Html.Partial("LoginBar")
       </div>
       <!close login>
-      <!close navigation>
       <div id="renderbody" class="border"@if (ViewBag.OpaqueBody == true){<text> style="opacity: 1"</text>}>
         @RenderBody()
       <div id="footer" class="border">

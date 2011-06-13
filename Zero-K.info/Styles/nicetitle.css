@@ -28,7 +28,7 @@ div.nicetitle {
     font-size: 0.9em;
     font-family: Verdana, Helvetica, Arial, sans-serif;
     font-weight:normal;
-    background-image: url(../img/ntbgw.png);
+    background: #333;
     border: 5px solid #38bfec;
     max-width: 400px;
     min-width: 400px;
