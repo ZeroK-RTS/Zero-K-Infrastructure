@@ -75,6 +75,7 @@
     text-align: center; vertical-align: middle;" id='ajaxScrollProgress'>Loading....<img
       src='/img/Loader.gif' /></span>
   @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1") {
+    <div id="fadetoblack">
     <div id="mainContentWrapper" class="wrapper">
       <div id="header" class="text-center">
         <a href="/">
@@ -84,6 +85,10 @@
       <div id="menu" class="border">
       @Html.Partial("TopMenu")
       </div>
+      <div class="border floatingfooter">
+        @Html.Partial("LoginBar")
+      </div>
+      <!close login>
       <!close navigation>
       <div id="renderbody" class="border"@if (ViewBag.OpaqueBody == true){<text> style="opacity: 1"</text>}>
         @RenderBody()
@@ -93,16 +98,17 @@
       </div>
       </div> <!another hacky fix>
       <!close footer>
-      <div class="border floatingfooter">
-        @Html.Partial("LoginBar")
-      </div>
-      <!close login>
     </div>
     <!close wrapper>
-  } else {
+    </div>
+    <!close fadetoblack>
+  }
+  else
+  {
     <div style="margin: 10px;">
-      @if (!Global.IsLobbyAccess) {
-        Html.RenderPartial("TopMenu");
+      @if (!Global.IsLobbyAccess)
+      {
+          Html.RenderPartial("TopMenu");
         <div class="border">
           @Html.Partial("LoginBar")
         </div>

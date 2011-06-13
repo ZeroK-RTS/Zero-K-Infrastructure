@@ -6,8 +6,7 @@
 
 html, body
 {
-	/*scroll background is a lot faster, but requires a bigger image to fill page, fixed image makes ff (others?) really horrible for scrolling*/
-	background: #000 url("../img/Kbot_map_test_Flash_stealth.jpg") no-repeat scroll 50% 0;
+	background: none;
 	color: #ede;
 	font-family: font, sans-serif;
 	font-size: 100%;
@@ -19,8 +18,8 @@ html, body
 	z-index:0;
 }
 
-body
-{
+#fadetoblack
+{   
 	background: url("../img/fade.png") repeat-y 50% 0;
 }
 
