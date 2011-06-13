@@ -6,7 +6,7 @@
 
 html
 {
-	background: none;
+    background: #000 url("../img/bg_bluehex.gif") fixed;
 	color: #ede;
 	font-family: font, sans-serif;
 	font-size: 100%;
@@ -20,11 +20,18 @@ html
 
 body
 {
-    background: #000;
+    background: none;
+    width: 100%;
+    top: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
 }
 
 #fadetoblack
-{   
+{
+    height: 100%;
+    width: 100%;
 	background: url("../img/fade.png") repeat-y 50% 0;
 }
 

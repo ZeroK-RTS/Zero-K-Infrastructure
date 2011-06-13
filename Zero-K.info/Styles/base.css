@@ -22,9 +22,6 @@ a:active {color: #cbd3d4;}
 img {border: none;
      opacity: 1;}
 
-/*vertical floating div workaround*/
-hr {display: block; clear: both; visibility: hidden;}
-
 pre
 {
 	background: #222;
