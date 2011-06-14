@@ -525,9 +525,6 @@ namespace ZeroKWeb
 				hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(players.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = x.AccountID, IsSpectator = x.IsSpectator }));
 				db.SubmitChanges();
 
-				var pwStructures = new LuaTable();
-				foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName))) pwStructures.Add("s" + s.StructureTypeID, s.StructureType.IngameUnitName);
-				ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "pwStructures", Value = pwStructures.ToBase64String() });
 
 				var owner = "";
 				var second = "";
@@ -537,8 +534,8 @@ namespace ZeroKWeb
 				if (firstEntry != null) owner = string.Format("{0} ", firstEntry.Clan.Shortcut);
 				if (secondEntry != null) second = string.Format("{0} needs {1} influence - ", secondEntry.Clan.Shortcut, firstEntry.Influence - secondEntry.Influence);
 
-				pwStructures = new LuaTable();
-				foreach (var s in planet.PlanetStructures.Where(x => !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
+				var pwStructures = new LuaTable();
+				foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
 				{
 					pwStructures.Add("s" + s.StructureTypeID,
 					                 new LuaTable()
