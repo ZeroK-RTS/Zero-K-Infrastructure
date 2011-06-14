@@ -2,6 +2,7 @@
 {
 	public static class GlobalConst
 	{
+		public const double EloWeightMalusFactor = -50;
 		public const int InfluenceSystemBuyPrice = 45;
 		public const int InfluenceSystemSellPrice = 8;
 		public const int MaxClanSkilledSize =10;

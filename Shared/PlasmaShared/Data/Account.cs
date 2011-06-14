@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Security.Principal;
 
@@ -12,23 +11,25 @@ namespace ZkData
 
 		public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
 
+		public double WeightEloMalus { get { return (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
+
 		public void CheckLevelUp()
 		{
-			if (XP > GetXpForLevel(Level + 1))
-			{
-				Level++;
-			}
+			if (XP > GetXpForLevel(Level + 1)) Level++;
 		}
 
 
-		public int GetFreeJumpGatesCount(List<int> accessiblePlanets) {
+		public int GetDropshipCapacity()
+		{
+			return GlobalConst.DefaultDropshipCapacity +
+			       (Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
+		}
+
+		public int GetFreeJumpGatesCount(List<int> accessiblePlanets)
+		{
 			var jumpGateCapacity = Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
 			var usedJumpGates = AccountPlanets.Where(x => !accessiblePlanets.Contains(x.PlanetID)).Sum(x => x.DropshipCount);
 			return jumpGateCapacity - usedJumpGates;
-		}
-
-		public int GetDropshipCapacity() {
-			return GlobalConst.DefaultDropshipCapacity + (Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
 		}
 
 		public static int GetXpForLevel(int level)

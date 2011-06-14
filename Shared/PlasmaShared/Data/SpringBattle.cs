@@ -74,7 +74,7 @@ namespace ZkData
 				var w = r.Account.EloWeight;
 				winnerW += w;
 				winnerInvW += r.Account.EloInvWeight;
-				winnerElo += elo*w;
+				winnerElo += elo + r.Account.WeightEloMalus;
 			}
 			foreach (var r in losers)
 			{
@@ -82,11 +82,13 @@ namespace ZkData
 				var w = r.Account.EloWeight;
 				loserW += w;
 				loserInvW += r.Account.EloInvWeight;
-				loserElo += elo*w;
+				loserElo += elo + r.Account.WeightEloMalus;
 			}
 
-			winnerElo = winnerElo/winnerW;
-			loserElo = loserElo/loserW;
+			winnerElo = winnerElo / winners.Count;
+			loserElo = loserElo / losers.Count;
+			//winnerElo = winnerElo/winnerW;
+			//loserElo = loserElo/loserW;
 
 			var eWin = 1/(1 + Math.Pow(10, (loserElo - winnerElo)/400));
 			var eLose = 1/(1 + Math.Pow(10, (winnerElo - loserElo)/400));

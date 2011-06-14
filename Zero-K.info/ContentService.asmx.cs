@@ -155,10 +155,10 @@ namespace ZeroKWeb
 				{
 					var mult = 1.0;
 					var player = players[i];
-					if (planet.OwnerAccountID == player.AccountID) mult += 0.3; // owner 30%
-					else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.2; // owner's clan 20% 
-					if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.15; // own dropship +15%
-					else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.10; // clan's dropship +10%
+					if (planet.OwnerAccountID == player.AccountID) mult += 0.15; // owner 15%
+					else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.1; // owner's clan 10% 
+					if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.1; // own dropship +10%
+					else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.05; // clan's dropship +5%
 					playerScoreMultiplier[i] = mult;
 				}
 
@@ -171,9 +171,9 @@ namespace ZeroKWeb
 				var playerAssignments = new int[players.Count];
 				for (var combinator = 0; combinator < limit; combinator++)
 				{
-					double team0Weight = 0;
+					//double team0Weight = 0;
 					double team0Elo = 0;
-					double team1Weight = 0;
+					//double team1Weight = 0;
 					double team1Elo = 0;
 					var team0count = 0;
 					var team1count = 0;
@@ -186,14 +186,14 @@ namespace ZeroKWeb
 						playerAssignments[i] = team;
 						if (team == 0)
 						{
-							team0Elo += player.Elo*player.EloWeight;
-							team0Weight += player.EloWeight;
+							team0Elo += player.Elo + player.WeightEloMalus;
+							//team0Weight += player.EloWeight;
 							team0count++;
 						}
 						else
 						{
-							team1Elo += player.Elo*player.EloWeight;
-							team1Weight += player.EloWeight;
+							team1Elo += player.Elo + player.WeightEloMalus; // *player.EloWeight;
+							//team1Weight += player.EloWeight;
 							team1count++;
 						}
 					}
@@ -208,8 +208,11 @@ namespace ZeroKWeb
 					else balanceModifier = teamDiffScore;
 
 					// calculate score for elo difference
-					team0Elo = team0Elo/team0Weight;
-					team1Elo = team1Elo/team1Weight;
+
+					team0Elo = team0Elo / team0count;
+					team1Elo = team1Elo / team1count;
+					//team0Elo = team0Elo/team0Weight;
+					//team1Elo = team1Elo/team1Weight;
 					var eloScore = -Math.Abs(team0Elo - team1Elo)/14;
 					if (eloScore < -13) continue; // max 182 elo
 
