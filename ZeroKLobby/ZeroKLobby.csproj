@@ -50,8 +50,8 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>10</ApplicationRevision>
-    <ApplicationVersion>2.11.0.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>2.12.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -155,6 +155,18 @@
     <Compile Include="MicroLobby\Floe\ChatPresenter_Selecting.cs" />
     <Compile Include="MicroLobby\Floe\Constants.cs" />
     <Compile Include="MicroLobby\Floe\Enums.cs" />
+    <Compile Include="MicroLobby\FriendsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\FriendsWindow.Designer.cs">
+      <DependentUpon>FriendsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\FriendsWindowAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\FriendsWindowAdd.Designer.cs">
+      <DependentUpon>FriendsWindowAdd.cs</DependentUpon>
+    </Compile>
     <Compile Include="NavigationControl.xaml.cs">
       <DependentUpon>NavigationControl.xaml</DependentUpon>
     </Compile>
@@ -425,6 +437,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ChatControl.resx">
       <DependentUpon>ChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\FriendsWindow.resx">
+      <DependentUpon>FriendsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\FriendsWindowAdd.resx">
+      <DependentUpon>FriendsWindowAdd.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ModOptionsControl.resx">
       <DependentUpon>ModOptionsControl.cs</DependentUpon>

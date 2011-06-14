@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using ZeroKLobby.MicroLobby;
 
 namespace ZeroKLobby
 {
@@ -19,9 +20,14 @@ namespace ZeroKLobby
 		{
 			if (Program.Main(e.Args))
 			{
-        hasStarted = true;
+                hasStarted = true;
 				MainWindow = Program.MainWindow;
 				MainWindow.Show();
+                if (Program.Conf.ShowFriendsWindow == true)
+                {
+                    FriendsWindow frWindow = new FriendsWindow();
+                    frWindow.Show();
+                }
 			} else Shutdown();
 		}
 

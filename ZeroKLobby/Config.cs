@@ -36,6 +36,7 @@ namespace ZeroKLobby
     List<string> selectedGames = new List<string>();
     bool showHourlyChimes = true;
     bool showNonJoinableBattles = true;
+    bool showFriendsWindow = false;
 
 
     string springServerHost = "springrts.com";
@@ -266,6 +267,11 @@ namespace ZeroKLobby
     public bool ShowHourlyChimes { get { return showHourlyChimes; } set { showHourlyChimes = value; } }
     [Browsable(true)]
     public bool ShowNonJoinableBattles { get { return showNonJoinableBattles; } set { showNonJoinableBattles = value; } }
+
+    [Category("Chat")]
+    [DisplayName("Show Friends Window")]
+    [Description("Shows an extra windows for your friends")]
+    public bool ShowFriendsWindow { get { return showFriendsWindow; } set { showFriendsWindow = value; } }
 
     [Category("General")]
     [DisplayName("Sort Battles by Players")]

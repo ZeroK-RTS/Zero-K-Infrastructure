@@ -35,6 +35,8 @@ namespace ZeroKLobby
 		string baloonTipPath = null;
 
 		readonly ToolStripMenuItem btnExit;
+        readonly ToolStripMenuItem btnFriends;
+        readonly ToolStripSeparator btnSepertator;
 
 		bool closeForReal;
 		readonly WindowInteropHelper interopHelper;
@@ -69,8 +71,17 @@ namespace ZeroKLobby
 			btnExit.Text = "Exit";
 			btnExit.Click += new EventHandler(btnExit_Click);
 
+            btnFriends = new ToolStripMenuItem();
+            btnFriends.Name = "btnFriends";
+            btnFriends.Size = new Size(92, 22);
+            btnFriends.Text = "Show Friends";
+            btnFriends.Click += new EventHandler(btnFriends_Click);
+
+            btnSepertator = new ToolStripSeparator();
+            btnSepertator.Name = "btnSprtr";
+
 			trayStrip = new ContextMenuStrip();
-			trayStrip.Items.AddRange(new ToolStripItem[] { btnExit });
+			trayStrip.Items.AddRange(new ToolStripItem[] { btnFriends, btnSepertator , btnExit});
 			trayStrip.Name = "trayStrip";
 			trayStrip.Size = new Size(93, 26);
 
@@ -350,6 +361,15 @@ namespace ZeroKLobby
 		{
 			Exit();
 		}
+
+        void btnFriends_Click(object sender, EventArgs e)
+        {
+            if (FriendsWindow.Creatable)
+            {
+                FriendsWindow frdWindow = new FriendsWindow();
+                frdWindow.Show();
+            }
+        }
 
 
 		void systrayIcon_BalloonTipClicked(object sender, EventArgs e)
