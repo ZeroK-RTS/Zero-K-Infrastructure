@@ -36,7 +36,7 @@ namespace ZeroKLobby
 
 		private void Application_Exit(object sender, ExitEventArgs e)
 		{
-      if (hasStarted) Program.ShutDown();
+            if (hasStarted) Program.ShutDown();
 		}
 	}
 }

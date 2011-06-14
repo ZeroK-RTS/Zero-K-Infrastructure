@@ -316,6 +316,7 @@ namespace ZeroKLobby
     {
       try
       {
+        if (!MicroLobby.FriendsWindow.Creatable) Program.frWindow.Close();  
         if (!Debugger.IsAttached) mutex.ReleaseMutex();
       }
       catch {}
