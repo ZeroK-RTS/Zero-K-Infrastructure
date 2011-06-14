@@ -31,7 +31,7 @@ mouseBoxBlendDst   one_minus_src_alpha
 //  Command Queue Rendering
 //
 
-alwaysDrawQueue   1
+alwaysDrawQueue   0
 
 useQueueIcons     1
 queueIconAlpha    0.5   

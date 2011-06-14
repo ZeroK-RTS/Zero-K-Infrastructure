@@ -66,8 +66,9 @@ namespace ZeroKLobby.Notifications
           var path = Utils.MakePath(Program.SpringPaths.WritableDirectory, "demos", new Uri(demoUrl).Segments.Last());
           try
           {
-            Process.Start(Program.SpringPaths.Executable, string.Format("\"{0}\"", path));
-            Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
+            Process.Start(Program.SpringPaths.Executable, string.Format("\"{0}\" --config \"{1}\"", path, Program.SpringPaths.GetSpringConfigPath()));
+
+						Program.MainWindow.InvokeFunc(() => Program.NotifySection.RemoveBar(this));
           }
           catch (Exception ex)
           {
