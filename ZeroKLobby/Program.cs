@@ -34,6 +34,7 @@ namespace ZeroKLobby
     public static ConnectBar ConnectBar { get; private set; }
     public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
     public static FriendManager FriendManager;
+    public static FriendsWindow frWindow;
     public static MainWindow MainWindow { get; private set; }
     public static ModStore ModStore { get; private set; }
     public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
@@ -279,6 +280,12 @@ namespace ZeroKLobby
         BattleIconManager = new BattleIconManager(MainWindow);
         BattleBar = new BattleBar();
         NewVersionBar = new NewVersionBar();
+
+        if (Conf.ShowFriendsWindow == true)
+        {
+            frWindow = new FriendsWindow();
+            frWindow.Show();
+        }
 
         return true;
       }

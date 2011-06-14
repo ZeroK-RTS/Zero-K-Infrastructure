@@ -23,11 +23,6 @@ namespace ZeroKLobby
                 hasStarted = true;
 				MainWindow = Program.MainWindow;
 				MainWindow.Show();
-                if (Program.Conf.ShowFriendsWindow == true)
-                {
-                    FriendsWindow frWindow = new FriendsWindow();
-                    frWindow.Show();
-                }
 			} else Shutdown();
 		}
 
