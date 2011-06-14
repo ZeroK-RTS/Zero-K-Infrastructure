@@ -31,13 +31,8 @@ body
 
 #fadetoblack
 {
-    position: fixed;
     height: 100%;
     width: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
 	background: url("../img/fade.png") repeat-y 50% 0;
 }
 
