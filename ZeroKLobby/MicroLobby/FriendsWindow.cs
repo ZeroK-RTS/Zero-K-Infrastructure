@@ -88,13 +88,26 @@ namespace ZeroKLobby.MicroLobby
         {
             try
             {
+
                 if (listBox1.SelectedItem != null && e.Button == MouseButtons.Right)
                 {
-                    String itemChosen = listBox1.SelectedItem.ToString().Substring(0, listBox1.SelectedItem.ToString().IndexOf(" (online"));
+                    int index = listBox1.IndexFromPoint(e.X, e.Y);
 
-                    var user = Program.TasClient.ExistingUsers.Values.SingleOrDefault(x => x.Name.ToString().ToUpper() == itemChosen.ToUpper());
-                    var cm = ContextMenus.GetPlayerContextMenu(user, false);
-                    cm.Show(this, new Point(e.X + 10, e.Y + 20));
+                    if (listBox1.SelectedIndex == index && listBox1.SelectedItem.ToString().Contains(" (online)"))
+                    {
+                        String itemChosen = listBox1.SelectedItem.ToString().Substring(0, listBox1.SelectedItem.ToString().IndexOf(" (online"));
+
+                        var user = Program.TasClient.ExistingUsers.Values.SingleOrDefault(x => x.Name.ToString().ToUpper() == itemChosen.ToUpper());
+                        var cm = ContextMenus.GetPlayerContextMenu(user, false);
+                        cm.Show(this, new Point(e.X + 10, e.Y + 15));
+                    } else if(listBox1.SelectedIndex == index && !listBox1.SelectedItem.ToString().Contains(" (online)"))
+                    {
+                        String itemChosen = listBox1.SelectedItem.ToString();
+
+                        var user = LobbyClient.User.Create(itemChosen);
+                        var cm = ContextMenus.GetPlayerContextMenu(user, false);
+                        cm.Show(this, new Point(e.X + 10, e.Y + 15));
+                    }
                 }
             }
             catch { }
