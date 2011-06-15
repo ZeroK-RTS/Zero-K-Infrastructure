@@ -4,22 +4,21 @@
   var s = Model.Spotlight;
   var stat = @Model.LobbyStats;
 }
+
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
     @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) @:players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
 }
-  @if (!Global.IsLobbyAccess)
-  {
+  
+@if (!Global.IsLobbyAccess)
+{
     <span class="fright">@Html.ActionLink("Switch Skin", "SwitchSkin")</span>
-  }
-  else
-  {
-      Html.RenderPartial("GoogleSiteSearch");
-  }
+}
+
+  
 </div> <!hack to prevent renderbody from surrounding *everything*>
 
 <div id="content" class="fleft width-70">
-  <div id="features" class="border textwall">
-    
+  <div id="features" class="border textwall">    
     @if (ZeroKWeb.Global.IsAccountAuthorized)
     {
         Html.RenderPartial("UserDetail", ZeroKWeb.Global.Account);
@@ -47,14 +46,18 @@
 
   @if (ZeroKWeb.Global.IsAccountAuthorized)
   {
-      if (Global.IsLobbyAccess)
+      <div class="border">
+      <h3>Tools</h3>
+      @if (Global.IsLobbyAccess)
       {
+              Html.RenderPartial("GoogleSiteSearch");
           <p><a href="http://zero-k.info/tools/mailer/sendMail.php"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>  
       }
       else
       {
-          <div class="border"><a href="http://zero-k.info/tools/mailer/sendMail.php" target="_blank"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></div>
+          <p><a href="http://zero-k.info/tools/mailer/sendMail.php" target="_blank"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>
       }
+      </div>
   }
 
   <div id="unit" class="border relative text-left">
