@@ -544,7 +544,7 @@ namespace ZeroKWeb
 					                 new LuaTable()
 					                 {
 					                 	{ "unitname", s.StructureType.IngameUnitName },
-					                 	{ "isDestroyed", s.IsDestroyed ? 1 : 0 },
+					                 	//{ "isDestroyed", s.IsDestroyed ? true : false },
 					                 	{ "name", owner + s.StructureType.Name },
 					                 	{ "description", second + s.StructureType.Description }
 					                 });
