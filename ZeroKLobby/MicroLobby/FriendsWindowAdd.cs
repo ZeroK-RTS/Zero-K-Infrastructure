@@ -23,7 +23,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            Program.FriendManager.AddFriend(textBoxAddFriend.Text);            
+            Program.FriendManager.AddFriend(textBoxAddFriend.Text);
             Close();
         }
     }

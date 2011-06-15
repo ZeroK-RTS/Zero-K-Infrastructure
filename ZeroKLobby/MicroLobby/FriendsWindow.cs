@@ -19,8 +19,28 @@ namespace ZeroKLobby.MicroLobby
             if (creatable)
             {
                 InitializeComponent();
-                labelFriends.Text = "Total friends: " + Program.Conf.Friends.Count;
-                foreach (String s in Program.FriendManager.Friends)
+                refreshItems();
+                creatable = false;
+            }
+        }
+        
+
+        public static bool Creatable
+        {
+            get { return creatable; }
+            set { creatable = value; }
+        }
+
+        public void clearItemlist()
+        {
+            this.listBox1.Items.Clear();
+        }
+
+        public void refreshItems()
+        {
+            labelFriends.Text = "Total friends: " + Program.Conf.Friends.Count;
+
+            foreach (String s in Program.FriendManager.Friends)
                 {
                     if (Program.TasClient.ExistingUsers.ContainsKey(s))
                     {
@@ -31,16 +51,6 @@ namespace ZeroKLobby.MicroLobby
                         listBox1.Items.Add(s);
                     }
                 }
-                
-                creatable = false;
-            }
-        }
-        
-
-        public static bool Creatable
-        {
-            get { return creatable; }
-            set { creatable = value; }
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -76,6 +86,8 @@ namespace ZeroKLobby.MicroLobby
 
         private void listBox1_MouseDown(object sender, MouseEventArgs e)
         {
+            try
+            {
                 if (listBox1.SelectedItem != null && e.Button == MouseButtons.Right)
                 {
                     String itemChosen = listBox1.SelectedItem.ToString().Substring(0, listBox1.SelectedItem.ToString().IndexOf(" (online"));
@@ -84,6 +96,8 @@ namespace ZeroKLobby.MicroLobby
                     var cm = ContextMenus.GetPlayerContextMenu(user, false);
                     cm.Show(this, new Point(e.X + 10, e.Y + 20));
                 }
+            }
+            catch { }
         }
     }
 }

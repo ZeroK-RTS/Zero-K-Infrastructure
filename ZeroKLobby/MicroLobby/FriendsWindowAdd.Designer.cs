@@ -37,6 +37,8 @@
             // labelAddFriend
             // 
             this.labelAddFriend.AutoSize = true;
+            this.labelAddFriend.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.labelAddFriend.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.labelAddFriend.Location = new System.Drawing.Point(12, 9);
             this.labelAddFriend.Name = "labelAddFriend";
             this.labelAddFriend.Size = new System.Drawing.Size(67, 13);
@@ -46,6 +48,11 @@
             // buttonCancel
             // 
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.buttonCancel.FlatAppearance.BorderColor = System.Drawing.Color.DeepSkyBlue;
+            this.buttonCancel.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(20)))), ((int)(((byte)(50)))));
+            this.buttonCancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(20)))), ((int)(((byte)(50)))));
+            this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonCancel.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.buttonCancel.Location = new System.Drawing.Point(12, 55);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(75, 23);
@@ -55,6 +62,11 @@
             // 
             // buttonOK
             // 
+            this.buttonOK.FlatAppearance.BorderColor = System.Drawing.Color.DeepSkyBlue;
+            this.buttonOK.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(20)))), ((int)(((byte)(50)))));
+            this.buttonOK.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(5)))), ((int)(((byte)(20)))), ((int)(((byte)(50)))));
+            this.buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonOK.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.buttonOK.Location = new System.Drawing.Point(97, 55);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
@@ -75,6 +87,7 @@
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(184, 90);
             this.ControlBox = false;
