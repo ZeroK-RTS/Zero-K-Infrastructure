@@ -123,7 +123,7 @@
   </div>
   <!close votes>
   @if (Global.IsZeroKAdmin) {
-    <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })'>
+    <form action='@Url.Action("ChangeFeaturedOrder", "Missions", new { id = m.MissionID })' method="post">
     Featured order: @Html.TextBox("featuredOrder", Model.Mission.FeaturedOrder)
     @if (m.IsScriptMission) {
       @:Script:  @Html.TextArea("script", m.Script,8,40,null)
