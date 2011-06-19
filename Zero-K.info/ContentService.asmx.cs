@@ -918,6 +918,30 @@ namespace ZeroKWeb
 					PlanetwarsController.SetPlanetOwners(db, sb);
 					gal = db.Galaxies.Single(x => x.IsDefault);
 
+
+					// give free planet to each clan with none here
+					foreach (
+						var kvp in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account != null && x.Account.ClanID != null).GroupBy(x => x.Account.ClanID)) {
+						var clan = db.Clans.Single(x => x.ClanID == kvp.Key);
+						var changed = false;
+						if (clan.Accounts.Sum(x => x.Planets.Count()) == 0) {
+							var planetList = gal.Planets.Where(x => x.OwnerAccountID == null && !x.PlanetStructures.Any(y => y.StructureType.EffectLinkStrength == null)).Shuffle(); //pick planets which only have wormhole
+							if (planetList.Count > 0) {
+								var freePlanet = planetList[new Random().Next(planetList.Count)];
+								foreach (var ac in kvp) db.AccountPlanets.InsertOnSubmit(new AccountPlanet() { PlanetID = freePlanet.PlanetID, AccountID = ac.AccountID, Influence = 51 });
+								db.Events.InsertOnSubmit(Global.CreateEvent("{0} was awarded empty planet {1} {2}", clan, freePlanet, sb));
+								changed = true;
+							}
+						}
+						if (changed) {
+							db.SubmitChanges();
+							db = new ZkDataContext();
+							PlanetwarsController.SetPlanetOwners(db, sb);
+							gal = db.Galaxies.Single(x => x.IsDefault);
+						}
+					}
+
+
 					planet = gal.Planets.Single(x => x.Resource.InternalName == result.Map);
 					if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)
 					{

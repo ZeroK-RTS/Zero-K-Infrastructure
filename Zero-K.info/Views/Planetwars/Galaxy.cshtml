@@ -103,13 +103,13 @@ We are setting up the next round.
 <br />
 
 
-<b>Economic victory (credits exceed 70% of galaxy assets):</b>
+<b>Economic victory (credits exceed 50% of galaxy assets):</b>
 @{
 	
 	var credEntries = db.Clans.Select(x=> new {Clan = x, Credits=x.Accounts.Sum(y=>(int?)y.Credits)??0, Assets = (x.Accounts.Sum(y=>(int?)y.Credits)??0) + x.Accounts.SelectMany(y=>y.Planets).SelectMany(y=>y.PlanetStructures).Where(y=>!y.IsDestroyed).Sum(y=>(int?)y.StructureType.Cost)??0}).OrderByDescending(x => x.Credits);
 	var creds = credEntries.FirstOrDefault();
 	if (creds != null) {
-		<span>@Html.PrintClan(creds.Clan) - $@creds.Credits/$@Math.Round(credEntries.Sum(x=>x.Assets)*0.7)</span>
+		<span>@Html.PrintClan(creds.Clan) - $@creds.Credits/$@Math.Round(credEntries.Sum(x=>x.Assets)*0.5)</span>
 	}
 }
 <br />

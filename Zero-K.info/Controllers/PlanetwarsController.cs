@@ -836,7 +836,7 @@ namespace ZeroKWeb.Controllers
 			{
 				bo.Price = GlobalConst.InfluenceSystemBuyPrice;
 				var quantity = Math.Min(bo.AccountByAccountID.Credits/bo.Price, bo.Quantity);
-				if (quantity > 0)
+				if (quantity > 0 && !bo.Planet.PlanetStructures.Any(x=>!x.IsDestroyed && x.StructureType.EffectBlocksEnemyTrade == true))
 				{
 					influenceChanged = true;
 					bo.AccountByAccountID.Credits -= quantity*bo.Price;

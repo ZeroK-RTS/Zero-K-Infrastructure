@@ -22,11 +22,11 @@ namespace Fixer
     {
 		
 			//ImportSpringiePlayers();
-      RecalculateBattleElo();
+      //RecalculateBattleElo();
       //FixMaps();
 
-			PurgeGalaxy(9);
-    	RandomizeMaps(9);
+			//PurgeGalaxy(9);
+    	//RandomizeMaps(9);
 			GenerateStructures(9);
 
 			//AddWormholes();
@@ -42,7 +42,7 @@ namespace Fixer
 				}
 				db.SubmitChanges();
 
-				db.ExecuteCommand("update account set dropshipcount=1, credits=0, isclanfounder=0, hasclanrights=0, wasgivencredits=0,clanid=null");
+				db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0"); //,clanid=null,isclanfounder=0, hasclanrights=0"
 				db.ExecuteCommand("delete from event");
 				db.ExecuteCommand("delete from planetinfluencehistory");
 				db.ExecuteCommand("delete from planetownerhistory");
@@ -52,8 +52,8 @@ namespace Fixer
 				
 				db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
 				
-				db.ExecuteCommand("delete from clan");
-				db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
+				//db.ExecuteCommand("delete from clan");
+				//db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
 			}
 		}
 
@@ -62,12 +62,15 @@ namespace Fixer
 			using (var db = new ZkDataContext())
 			{
 				var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
+
 				var maps = db.Resources.Where(x => x.FeaturedOrder > 0 && x.MapPlanetWarsIcon!=null).ToList().Shuffle();
 				int cnt = 0;
 				foreach (var p in gal.Planets)
 				{
 					p.MapResourceID = maps[cnt++].ResourceID;
 				}
+				gal.Turn = 0;
+				gal.Started = DateTime.UtcNow;
 				gal.IsDirty = true;
 				db.SubmitChanges();
 			}
@@ -97,6 +100,7 @@ namespace Fixer
   		var dfac = 6;
   		var ddepot = 7;
   		int artefact = 9;
+			int militia = 594;
 		
 			/*
 			567	Jumpjet/Specialist Plant
@@ -145,6 +149,7 @@ namespace Fixer
 				//else 
 				//if (rand.Next(10)<8) 
 					p.AddStruct(wormhole);
+					p.AddStruct(militia);
 
 				//if (rand.Next(30) ==0) p.AddStruct(mine3);
 				//else if (rand.Next(20)==0) p.AddStruct(mine2);
@@ -178,7 +183,7 @@ namespace Fixer
 			foreach (var p in gal.Planets.Where(x => x.Resource.MapIsChickens!=true && !x.Resource.MapIsFfa != true && x.Resource.MapIs1v1 != true).Shuffle().Take(3)) p.AddStruct(artefact);
 
 			// jump gates
-			foreach (var p in gal.Planets.Shuffle().Take(6)) p.AddStruct(warp);
+			//foreach (var p in gal.Planets.Shuffle().Take(6)) p.AddStruct(warp);
 
 			db.SubmitChanges();
 			Galaxy.RecalculateShadowInfluence(db);

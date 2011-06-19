@@ -3,8 +3,8 @@
 	public static class GlobalConst
 	{
 		public const double EloWeightMalusFactor = -50;
-		public const int InfluenceSystemBuyPrice = 45;
-		public const int InfluenceSystemSellPrice = 8;
+		public const int InfluenceSystemBuyPrice = 40;
+		public const int InfluenceSystemSellPrice = 10;
 		public const int MaxClanSkilledSize =10;
 		public const int ClanLeaveLimit = 4;
 		public const int PlanetwarsColonizationCredits = 1000;

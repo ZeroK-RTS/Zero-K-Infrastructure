@@ -228,10 +228,10 @@ namespace LobbyClient
 					script.AppendFormat("  MyPlayerNum={0};\n", players.FindIndex(player => player.Name == localUser.Name));
 					script.AppendFormat("  MyPlayerName={0};\n", localUser.Name);
 
-					//var bots = teams.Where(grTeam => grTeam != null && grTeam.bot != null).Select(team => team.bot).ToList();
+					var bots = teams.Where(grTeam => grTeam != null && grTeam.bot != null).Select(team => team.bot).ToList();
 					script.AppendLine();
 					script.AppendFormat("  NumPlayers={0};\n", players.Count);
-					script.AppendFormat("  NumUsers={0};\n", players.Count + Bots.Count);
+					script.AppendFormat("  NumUsers={0};\n", players.Count + bots.Count);
 					script.AppendFormat("  NumTeams={0};\n", teams.Count);
 					script.AppendFormat("  NumAllyTeams={0};\n", alliances.Count);
 					script.AppendLine();
@@ -266,15 +266,15 @@ namespace LobbyClient
 					}
 
 					// AI's
-					for (var i = 0; i < Bots.Count; i++)
+					for (var i = 0; i < bots.Count; i++)
 					{
-						var split = Bots[i].aiLib.Split('|');
+						var split = bots[i].aiLib.Split('|');
 						script.AppendFormat("  [AI{0}]\n", i);
 						script.AppendLine("  {");
 						script.AppendFormat("    ShortName={0};\n", split[0]);
 						script.AppendFormat("    Version={0};\n", split.Length > 1 ? split[1] : "");
-						script.AppendFormat("    Team={0};\n", Bots[i].TeamNumber);
-						script.AppendFormat("    Host={0};\n", players.FindIndex(x => x.Name == Bots[i].owner));
+						script.AppendFormat("    Team={0};\n", bots[i].TeamNumber);
+						script.AppendFormat("    Host={0};\n", players.FindIndex(x => x.Name == bots[i].owner));
 						script.AppendLine("    IsFromDemo=0;");
 						script.AppendLine("    [Options]");
 						script.AppendLine("    {");
