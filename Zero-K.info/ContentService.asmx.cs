@@ -925,7 +925,7 @@ namespace ZeroKWeb
 						var clan = db.Clans.Single(x => x.ClanID == kvp.Key);
 						var changed = false;
 						if (clan.Accounts.Sum(x => x.Planets.Count()) == 0) {
-							var planetList = gal.Planets.Where(x => x.OwnerAccountID == null && !x.PlanetStructures.Any(y => y.StructureType.EffectLinkStrength == null)).Shuffle(); //pick planets which only have wormhole
+							var planetList = gal.Planets.Where(x => x.OwnerAccountID == null && !x.PlanetStructures.Any(y => y.StructureType.EffectIsVictoryPlanet == true)).Shuffle(); //pick planets which only have wormhole
 							if (planetList.Count > 0) {
 								var freePlanet = planetList[new Random().Next(planetList.Count)];
 								foreach (var ac in kvp) db.AccountPlanets.InsertOnSubmit(new AccountPlanet() { PlanetID = freePlanet.PlanetID, AccountID = ac.AccountID, Influence = 51 });
