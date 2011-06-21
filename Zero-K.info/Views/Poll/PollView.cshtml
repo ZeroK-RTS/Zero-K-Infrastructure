@@ -12,14 +12,17 @@
 {
 
   <div id="pollForm">
-    <h4>@p.QuestionText</h4>
+    <h4>@p.QuestionText@(p.IsAnonymous?" (anonymous)":"")</h4>
 	<small>
     <table>
       @foreach (var option in p.PollOptions)
       { 
         <tr>
           <td>
-            <input type="submit" name="option@(option.OptionID)" value="Vote" title="$polloption$@option.OptionID" />
+            <input type="submit" name="option@(option.OptionID)" value="Vote" 
+						title="@(p.IsAnonymous? "":"$polloption$" +option.OptionID)" 
+						
+						/>
           </td>
           <td>
             @option.OptionText

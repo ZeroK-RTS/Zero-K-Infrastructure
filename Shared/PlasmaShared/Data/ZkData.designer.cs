@@ -11731,6 +11731,8 @@ namespace ZkData
 		
 		private string _QuestionText;
 		
+		private bool _IsAnonymous;
+		
 		private EntitySet<PollVote> _PollVotes;
 		
 		private EntitySet<PollOption> _PollOptions;
@@ -11745,6 +11747,8 @@ namespace ZkData
     partial void OnPollIDChanged();
     partial void OnQuestionTextChanging(string value);
     partial void OnQuestionTextChanged();
+    partial void OnIsAnonymousChanging(bool value);
+    partial void OnIsAnonymousChanged();
     #endregion
 		
 		public Poll()
@@ -11794,8 +11798,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsAnonymous", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public bool IsAnonymous
+		{
+			get
+			{
+				return this._IsAnonymous;
+			}
+			set
+			{
+				if ((this._IsAnonymous != value))
+				{
+					this.OnIsAnonymousChanging(value);
+					this.SendPropertyChanging();
+					this._IsAnonymous = value;
+					this.SendPropertyChanged("IsAnonymous");
+					this.OnIsAnonymousChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_PollVote", Storage="_PollVotes", ThisKey="PollID", OtherKey="PollID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4, EmitDefaultValue=false)]
 		public EntitySet<PollVote> PollVotes
 		{
 			get
@@ -11814,7 +11839,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_PollOption", Storage="_PollOptions", ThisKey="PollID", OtherKey="PollID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
 		public EntitySet<PollOption> PollOptions
 		{
 			get

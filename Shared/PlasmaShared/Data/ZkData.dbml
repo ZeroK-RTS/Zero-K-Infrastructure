@@ -439,6 +439,7 @@
     <Type Name="Poll">
       <Column Name="PollID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="QuestionText" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="IsAnonymous" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="Poll_PollVote" Member="PollVotes" ThisKey="PollID" OtherKey="PollID" Type="PollVote" />
       <Association Name="Poll_PollOption" Member="PollOptions" ThisKey="PollID" OtherKey="PollID" Type="PollOption" />
     </Type>
