@@ -40,8 +40,8 @@
     <style type="text/css">
       html
       {
-        /*background: #000 url("/img/bg_bluehex.gif") fixed;*/
-        background: #000;
+        background: #000 url("/img/bg_bluehex.gif") fixed;
+        /*background: #000;*/
       }
     </style>
     } else {
@@ -91,15 +91,15 @@
       <!close login>
       <div id="renderbody" class="border"@if (ViewBag.OpaqueBody == true){<text> style="opacity: 1"</text>}>
         @RenderBody()
+			</div>
       <div id="footer" class="border">
         <span class="center">Zero-K is a free real time strategy (RTS), that aims to
           be the best open source multi-platform strategy game available :-) </span>
       </div>
-      </div> <!another hacky fix>
       <!close footer>
     </div>
     <!close wrapper>
-    </div>
+		</div>
     <!close fadetoblack>
   }
   else
