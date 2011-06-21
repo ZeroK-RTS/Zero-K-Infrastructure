@@ -6,16 +6,17 @@
   var stat = @Model.LobbyStats;
 }
 
-<div class="border">
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
+    <div class="border">
     @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) @:players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
+    </div>
 }
-  
+
 @if (!Global.IsLobbyAccess)
 {
+    //this should probably also go in upper div, but i don't understand syntax to make it work
     <span class="fright">@Html.ActionLink("Switch Skin", "SwitchSkin")</span>
 }
-</div>
 
 <div id="content" class="fleft width-70">
   <div id="features" class="border textwall">    
