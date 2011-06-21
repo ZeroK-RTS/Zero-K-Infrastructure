@@ -905,10 +905,8 @@ namespace ZeroKWeb
 					db.SubmitChanges();
 
 					// mines
-					foreach (var linkedplanet in gal.Planets.Where(x => (x.PlanetStructures.Sum(y => y.StructureType.EffectLinkStrength) ?? 0) > 0))
-					{
-						var owner = linkedplanet.Account;
-						if (owner != null) owner.Credits += linkedplanet.PlanetStructures.Sum(x => x.StructureType.EffectCreditsPerTurn) ?? 0;
+					foreach (var entry in gal.Planets.Select(x => new { Owner = x.Account, MetalMake = x.PlanetStructures.Where(y=>!y.IsDestroyed).Sum(y=>y.StructureType.EffectCreditsPerTurn) ?? 0}).Where(x=>x.Owner != null && x.MetalMake > 0)) {
+						entry.Owner.Credits += entry.MetalMake;
 					}
 
 					var oldOwner = planet.OwnerAccountID;
