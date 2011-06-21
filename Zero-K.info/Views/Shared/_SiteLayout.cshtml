@@ -74,7 +74,8 @@
       background-color: Black; border: 1px solid Red; font-size: x-large;" id='ajaxScrollProgress'>Loading....<img
       src='/img/Loader.gif' /></span>
   @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1") {
-    <div id="fadetoblack">
+  
+    <div id="fadetoblack"></div>
     <div id="mainContentWrapper" class="wrapper">
       <div id="header" class="text-center">
         <a href="/">
@@ -89,7 +90,9 @@
         @Html.Partial("LoginBar")
       </div>
       <!close login>
-    <div id="renderbody" @if (ViewBag.NoBorder == null) {<text>class="border"</text>} @if (ViewBag.OpaqueBody == true){<text> style="opacity: 1"</text>}>
+    <div id="renderbody" @if (ViewBag.NoBorder == null)
+                         {<text>class="border"</text>} @if (ViewBag.OpaqueBody == true)
+                                                                                      {<text> style="opacity: 1"</text>}>
         @RenderBody()
     </div>
       <div id="footer" class="border">
@@ -99,8 +102,6 @@
       <!close footer>
     </div>
     <!close wrapper>
-		</div>
-    <!close fadetoblack>
   }
   else
   {
