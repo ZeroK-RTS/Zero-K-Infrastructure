@@ -39,7 +39,7 @@ namespace ZeroKLobby.Notifications
 		internal BattleBar()
 		{
 			InitializeComponent();
-			Program.ToolTip.SetText(cbSpectate, "As a spectator you will not participate in the gameplay");
+			Program.ToolTip.SetText(cbReady, "Choose whether to play, or join as spectator");
 			Program.ToolTip.SetText(cbSide, "Choose the faction you wish to play.");
 
 			client = Program.TasClient;
@@ -66,7 +66,6 @@ namespace ZeroKLobby.Notifications
 
 			spring.SpringStarted += (s, e) =>
 				{
-					client.ChangeMyBattleStatus(ready: false);
 					client.ChangeMyUserStatus(isInGame: true);
 				};
 
@@ -173,10 +172,10 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 					             		Program.SpringScanner.HasResource(battle.ModName) && Program.SpringScanner.HasResource(battle.MapName)
 					             			? SyncStatuses.Synced
 					             			: SyncStatuses.Unsynced,
-					             	IsSpectator = cbSpectate.Checked,
+					             	IsSpectator = !cbReady.Checked,
 					             	Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0,
 					             	TeamColor = Program.Conf.DefaultPlayerColorInt,
-												IsReady = cbReady.Checked,
+												IsReady = true,
 					             };
 					if (status.SyncStatus == SyncStatuses.Synced && IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 					client.SendMyBattleStatus(status);
@@ -199,11 +198,10 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				{
 					if (client.MyBattleStatus != null)
 					{
-						cbReady.Checked = client.MyBattleStatus.IsReady;
 						barContainer.btnDetail.Enabled = client.MyBattleStatus.IsReady && client.MyBattleStatus.SyncStatus == SyncStatuses.Synced &&
 						                                 !client.ExistingUsers[client.MyBattle.Founder].IsInGame;
 
-						if (client.MyBattleStatus.IsSpectator && !cbSpectate.Checked) // i was spectated
+						if (client.MyBattleStatus.IsSpectator && cbReady.Checked) // i was spectated
 							ChangeGuiSpectatorWithoutEvent(true);
 					}
 				};
@@ -280,7 +278,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		/// <returns>true if change allowed</returns>
 		public bool ChangeDesiredSpectatorState(bool state)
 		{
-			if (cbSpectate.Enabled && cbSpectate.Visible)
+			if (cbReady.Enabled && cbReady.Visible)
 			{
 				ChangeGuiSpectatorWithoutEvent(state);
 				return true;
@@ -344,11 +342,13 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			}
 		}
 
+		bool suppressSpecChange = false;
+
 		void ChangeGuiSpectatorWithoutEvent(bool newState)
 		{
-			cbSpectate.CheckedChanged -= cbSpectate_CheckedChanged;
-			cbSpectate.Checked = newState;
-			cbSpectate.CheckedChanged += cbSpectate_CheckedChanged;
+			suppressSpecChange = true;
+			cbReady.Checked = !newState;
+			suppressSpecChange = false;
 		}
 
 
@@ -376,7 +376,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			if (sharePlayer != null) newStatus.TeamNumber = sharePlayer.TeamNumber;
 			else if (battle.Users.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1) newStatus.TeamNumber = battle.GetFreeTeamID(client.UserName);
 
-			newStatus.IsSpectator = cbSpectate.Checked;
+			newStatus.IsSpectator = !cbReady.Checked;
+			newStatus.IsReady = true;
 
 			if (newStatus != currentStatus) client.SendMyBattleStatus(newStatus);
 		}
@@ -420,8 +421,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		{
 			if (isVisible) Stop();
 			isVisible = true;
-			cbSpectate.Visible = true;
-			cbSpectate.Checked = false;
 			cbReady.Checked = true;
 			Program.NotifySection.AddBar(this);
 		}
@@ -489,6 +488,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		void cbReady_CheckedChanged(object sender, EventArgs e)
 		{
 			cbReady.ImageIndex = cbReady.Checked ? 1 : 2;
+			cbReady.Text = cbReady.Checked ? "Play" : "Watch";
+			if (!suppressSpecChange) client.ChangeMyBattleStatus(spectate: !cbReady.Checked);
 		}
 
 		void cbReady_Click(object sender, EventArgs e)
@@ -520,11 +521,15 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			client.ChangeMyBattleStatus(side: cbSide.SelectedIndex);
 		}
 
-
-		void cbSpectate_CheckedChanged(object sender, EventArgs e)
+		private void battleExtras_Click(object sender, EventArgs e)
 		{
-			client.ChangeMyBattleStatus(spectate: cbSpectate.Checked);
+			var menu = new ContextMenu();
+			menu.MenuItems.Add(ContextMenus.GetAddBotItem());
+			menu.MenuItems.Add(ContextMenus.GetShowOptions());
+			menu.Show(battleExtras, new Point(0, 0));
 		}
+
+
 	}
 
 

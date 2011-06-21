@@ -33,13 +33,13 @@ namespace ZeroKLobby.Notifications
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BattleBar));
 			this.cbSide = new System.Windows.Forms.ComboBox();
-			this.cbSpectate = new System.Windows.Forms.CheckBox();
 			this.lbPlayers = new System.Windows.Forms.Label();
 			this.gameBox = new System.Windows.Forms.PictureBox();
 			this.cbReady = new System.Windows.Forms.CheckBox();
 			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-			this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.battleExtras = new System.Windows.Forms.Button();
+			this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
 			((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
@@ -48,23 +48,12 @@ namespace ZeroKLobby.Notifications
 			// 
 			this.cbSide.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.cbSide.FormattingEnabled = true;
-			this.cbSide.Location = new System.Drawing.Point(10, 47);
+			this.cbSide.Location = new System.Drawing.Point(10, 21);
 			this.cbSide.Name = "cbSide";
 			this.cbSide.Size = new System.Drawing.Size(114, 21);
 			this.cbSide.TabIndex = 4;
 			this.cbSide.Visible = false;
 			this.cbSide.SelectedIndexChanged += new System.EventHandler(this.cbSide_SelectedIndexChanged);
-			// 
-			// cbSpectate
-			// 
-			this.cbSpectate.AutoSize = true;
-			this.cbSpectate.Location = new System.Drawing.Point(10, 29);
-			this.cbSpectate.Name = "cbSpectate";
-			this.cbSpectate.Size = new System.Drawing.Size(69, 17);
-			this.cbSpectate.TabIndex = 10;
-			this.cbSpectate.Text = "Spectate";
-			this.cbSpectate.UseVisualStyleBackColor = true;
-			this.cbSpectate.CheckedChanged += new System.EventHandler(this.cbSpectate_CheckedChanged);
 			// 
 			// lbPlayers
 			// 
@@ -108,6 +97,30 @@ namespace ZeroKLobby.Notifications
 			this.imageList1.Images.SetKeyName(1, "ok.ico");
 			this.imageList1.Images.SetKeyName(2, "run.ico");
 			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.battleExtras);
+			this.panel1.Controls.Add(this.cbSide);
+			this.panel1.Controls.Add(this.lbPlayers);
+			this.panel1.Controls.Add(this.gameBox);
+			this.panel1.Controls.Add(this.picoChat);
+			this.panel1.Controls.Add(this.cbReady);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(888, 76);
+			this.panel1.TabIndex = 15;
+			// 
+			// battleExtras
+			// 
+			this.battleExtras.Location = new System.Drawing.Point(10, 42);
+			this.battleExtras.Name = "battleExtras";
+			this.battleExtras.Size = new System.Drawing.Size(58, 23);
+			this.battleExtras.TabIndex = 14;
+			this.battleExtras.Text = "Extras";
+			this.battleExtras.UseVisualStyleBackColor = true;
+			this.battleExtras.Click += new System.EventHandler(this.battleExtras_Click);
+			// 
 			// picoChat
 			// 
 			this.picoChat.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -131,20 +144,6 @@ namespace ZeroKLobby.Notifications
 			this.picoChat.TotalDisplayLines = 0;
 			this.picoChat.UseTopicBackground = false;
 			// 
-			// panel1
-			// 
-			this.panel1.Controls.Add(this.cbSide);
-			this.panel1.Controls.Add(this.lbPlayers);
-			this.panel1.Controls.Add(this.cbSpectate);
-			this.panel1.Controls.Add(this.gameBox);
-			this.panel1.Controls.Add(this.picoChat);
-			this.panel1.Controls.Add(this.cbReady);
-			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel1.Location = new System.Drawing.Point(0, 0);
-			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(888, 76);
-			this.panel1.TabIndex = 15;
-			// 
 			// BattleBar
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -165,11 +164,11 @@ namespace ZeroKLobby.Notifications
 
 				private System.Windows.Forms.ComboBox cbSide;
 				private System.Windows.Forms.Label lbPlayers;
-        private System.Windows.Forms.CheckBox cbSpectate;
         private System.Windows.Forms.PictureBox gameBox;
         private ChatBox picoChat;
 				private System.Windows.Forms.CheckBox cbReady;
 				private System.Windows.Forms.ImageList imageList1;
 				private System.Windows.Forms.Panel panel1;
+				private System.Windows.Forms.Button battleExtras;
     }
 }

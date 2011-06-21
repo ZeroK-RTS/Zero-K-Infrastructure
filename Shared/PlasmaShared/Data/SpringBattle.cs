@@ -21,7 +21,7 @@ namespace ZkData
 
 		public void CalculateElo()
 		{
-			if (IsEloProcessed || Duration < 240)
+			if (IsEloProcessed || Duration < 360)
 			{
 				IsEloProcessed = true;
 				return;

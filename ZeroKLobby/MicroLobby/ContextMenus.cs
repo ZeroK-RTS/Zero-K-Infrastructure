@@ -497,7 +497,7 @@ namespace ZeroKLobby.MicroLobby
 		}
 
 
-		static MenuItem GetAddBotItem()
+		public static MenuItem GetAddBotItem()
 		{
 			var enabled = Program.TasClient.MyBattle != null && Program.ModStore.Ais != null && Program.ModStore.Ais.Any();
 			var addBotItem = new MenuItem("Add computer player (Bot)" + (enabled ? String.Empty : " (Loading)")) { Visible = enabled };
@@ -623,7 +623,7 @@ namespace ZeroKLobby.MicroLobby
 			return modOptions;
 		}
 
-		static MenuItem GetShowOptions()
+		public static MenuItem GetShowOptions()
 		{
 			var modOptions = new MenuItem("Change Game Options") { Enabled = Program.TasClient.MyBattle != null };
 			modOptions.Click += (s, e) =>
