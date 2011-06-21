@@ -1,10 +1,12 @@
  @using ZeroKWeb
  @model ZeroKWeb.Controllers.HomeController.IndexResult
 @{
+    ViewBag.NoBorder = true;
   var s = Model.Spotlight;
   var stat = @Model.LobbyStats;
 }
 
+<div class="border">
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
     @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) @:players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
 }
@@ -13,9 +15,7 @@
 {
     <span class="fright">@Html.ActionLink("Switch Skin", "SwitchSkin")</span>
 }
-
-  
-@*!hack to prevent renderbody from surrounding *everything*@
+</div>
 
 <div id="content" class="fleft width-70">
   <div id="features" class="border textwall">    
@@ -43,7 +43,6 @@
       </a></div>
   }
 
-
   @if (ZeroKWeb.Global.IsAccountAuthorized)
   {
       <div class="border">
@@ -69,7 +68,6 @@
     <p>@s.Title</p>
     <p>@s.Description</p>
   </div>
-  <!close unit>
 
   <div class="border">
   <h2><a href='/Forum'>Forums</a></h2>
@@ -119,6 +117,7 @@
       }
     </table>
   </div>
+
   <div class="border">
     <h2><a href='http://code.google.com/p/zero-k/'>Help us</a></h2>
     @Html.IncludeWiki("LookingFor")
@@ -127,7 +126,8 @@
   <div class="border">
     <h2><a href="http://www.facebook.com/ZeroK.RTS">Social Media</a></h2>
     <br />
-    <iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2FZeroK.RTS&amp;width=236&amp;colorscheme=dark&amp;show_faces=true&amp;stream=false&amp;header=false&amp;height=435" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:236px; height:435px;" allowTransparency="true"></iframe>
+    <iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2FZeroK.RTS&amp;width=236&amp;colorscheme=dark&amp;show_faces=true&amp;stream=false&amp;header=false&amp;height=435" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:100%; height:400px;" allowTransparency="true"></iframe>
+    <hr />
   </div>  
 
   <div class="border">
