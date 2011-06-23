@@ -76,7 +76,8 @@ namespace ZeroKLobby.MicroLobby
 
         private void FriendsWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Creatable = true;
+            FriendsWindow.Creatable = true;
+            ZeroKLobby.MainWindow.frdWindow = null;
         }
 
         private void buttonAddFriend_Click(object sender, EventArgs e)

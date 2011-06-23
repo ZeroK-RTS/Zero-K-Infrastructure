@@ -49,6 +49,7 @@ namespace ZeroKLobby
 		public ChatTab2 ChatTab { get { return navigationControl.ChatTab; } }
 		public IntPtr Handle { get { return interopHelper.Handle; } }
 		public static MainWindow Instance { get; private set; }
+        public static FriendsWindow frdWindow = null;
 
 		public NotifySection NotifySection { get { return notifySection; } }
 
@@ -364,11 +365,16 @@ namespace ZeroKLobby
 
         void btnFriends_Click(object sender, EventArgs e)
         {
-            if (FriendsWindow.Creatable)
+            if (frdWindow == null && FriendsWindow.Creatable)
             {
-                FriendsWindow frdWindow = new FriendsWindow();
+                frdWindow = new FriendsWindow();
                 frdWindow.Show();
             }
+            else
+            {
+                frdWindow.Activate();
+            }
+                
         }
 
 

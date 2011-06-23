@@ -34,7 +34,6 @@ namespace ZeroKLobby
     public static ConnectBar ConnectBar { get; private set; }
     public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
     public static FriendManager FriendManager;
-    public static FriendsWindow frWindow;
     public static MainWindow MainWindow { get; private set; }
     public static ModStore ModStore { get; private set; }
     public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
@@ -282,9 +281,10 @@ namespace ZeroKLobby
         NewVersionBar = new NewVersionBar();
 
         if (Conf.ShowFriendsWindow == true)
-        {
-            frWindow = new FriendsWindow();
-            frWindow.Show();
+        {          
+            ZeroKLobby.MainWindow.frdWindow = new FriendsWindow();
+            ZeroKLobby.MainWindow.frdWindow.Show();
+            FriendsWindow.Creatable = false;
         }
 
         return true;
@@ -316,7 +316,7 @@ namespace ZeroKLobby
     {
       try
       {
-        if (!MicroLobby.FriendsWindow.Creatable) Program.frWindow.Close();  
+        if (!MicroLobby.FriendsWindow.Creatable) ZeroKLobby.MainWindow.frdWindow.Close();  
         if (!Debugger.IsAttached) mutex.ReleaseMutex();
       }
       catch {}
