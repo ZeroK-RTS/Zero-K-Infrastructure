@@ -23,7 +23,7 @@ namespace ZeroKLobby.MicroLobby
                 creatable = false;
             }
         }
-        
+
 
         public static bool Creatable
         {
@@ -41,16 +41,16 @@ namespace ZeroKLobby.MicroLobby
             labelFriends.Text = "Total friends: " + Program.Conf.Friends.Count;
 
             foreach (String s in Program.FriendManager.Friends)
+            {
+                if (Program.TasClient.ExistingUsers.ContainsKey(s))
                 {
-                    if (Program.TasClient.ExistingUsers.ContainsKey(s))
-                    {
-                        listBox1.Items.Add(s + " (online)");
-                    }
-                    else
-                    {
-                        listBox1.Items.Add(s);
-                    }
+                    listBox1.Items.Add(s + " (online)");
                 }
+                else
+                {
+                    listBox1.Items.Add(s);
+                }
+            }
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -63,11 +63,12 @@ namespace ZeroKLobby.MicroLobby
             if (isSelected)
             {
                 String itemChosen = listBox1.SelectedItem.ToString();
-                if(itemChosen.Contains(" (online)"))
+                if (itemChosen.Contains(" (online)"))
                 {
                     NavigationControl.Instance.Path = "chat/user/" + itemChosen.Substring(0, itemChosen.ToString().IndexOf(" (online)"));
                 }
-                else {
+                else
+                {
                     NavigationControl.Instance.Path = "chat/user/" + itemChosen;
                 }
             }
@@ -89,6 +90,11 @@ namespace ZeroKLobby.MicroLobby
             try
             {
 
+                if (e.Button == MouseButtons.Right)
+                {
+                    listBox1.SelectedIndex = listBox1.IndexFromPoint(e.X, e.Y);
+                }
+
                 if (listBox1.SelectedItem != null && e.Button == MouseButtons.Right)
                 {
                     int index = listBox1.IndexFromPoint(e.X, e.Y);
@@ -100,7 +106,8 @@ namespace ZeroKLobby.MicroLobby
                         var user = Program.TasClient.ExistingUsers.Values.SingleOrDefault(x => x.Name.ToString().ToUpper() == itemChosen.ToUpper());
                         var cm = ContextMenus.GetPlayerContextMenu(user, false);
                         cm.Show(this, new Point(e.X + 10, e.Y + 15));
-                    } else if(listBox1.SelectedIndex == index && !listBox1.SelectedItem.ToString().Contains(" (online)"))
+                    }
+                    else if (listBox1.SelectedIndex == index && !listBox1.SelectedItem.ToString().Contains(" (online)"))
                     {
                         String itemChosen = listBox1.SelectedItem.ToString();
 
