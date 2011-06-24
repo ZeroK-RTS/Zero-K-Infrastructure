@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Linq;
@@ -42,7 +42,7 @@ namespace ZeroKWeb
 				if (!account.Name.Contains(account.Clan.Shortcut))
 				{
 					AuthServiceClient.SendLobbyMessage(account,
-					                                   string.Format("Your name must contain clan tag {0}, rename for example by saying: /rename [{0}]{1}",
+					                                   string.Format("Your name must contain clan tag {0}, rename for example by saying: \"/rename [{0}]{1}\" or \"/rename {0}_{1}\".",
 					                                                 account.Clan.Shortcut,
 					                                                 account.Name));
 					return string.Format("{0} cannot play, name must contain clan tag {1}", account.Name, account.Clan.Shortcut);
