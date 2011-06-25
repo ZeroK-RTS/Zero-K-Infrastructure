@@ -61,7 +61,14 @@ namespace PlasmaShared
             return ToString(0);
         }
 
-        public string ToString(int indent)
+
+			public static string SanitizeString(string input) {
+				if (input == null) return null;
+				input = input.Replace("\"", " ").Replace("'", " ");
+				return Encoding.ASCII.GetString(Encoding.UTF8.GetBytes(input));
+			}
+
+    	public string ToString(int indent)
         {
             string shift = "";
             for (int i = 0; i < indent; i++) shift += "  ";
@@ -82,7 +89,7 @@ namespace PlasmaShared
                     sb.Append(" = ");
                 }
                 if (kvp.Value is string)
-                    sb.AppendFormat("\"{0}\"", kvp.Value);
+                    sb.AppendFormat("\"{0}\"", SanitizeString(kvp.Value as string));
                 else sb.Append(kvp.Value);
                 sb.Append(" }");
                 return sb.ToString();
@@ -103,7 +110,7 @@ namespace PlasmaShared
                     if (kvp.Value is LuaTable)
                         sb.Append((kvp.Value as LuaTable).ToString(indent + 1));
                     else if (kvp.Value is string)
-                        sb.AppendFormat("\"{0}\"", kvp.Value);
+                        sb.AppendFormat("\"{0}\"", SanitizeString(kvp.Value as string));
                     else sb.Append(kvp.Value);
                     cnt++;
                     if (cnt < data.Count) sb.Append(",\n");
