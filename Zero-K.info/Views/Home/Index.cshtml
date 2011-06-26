@@ -19,14 +19,14 @@
 }
 
 <div id="content" class="fleft width-70">
-  <div id="features" class="border textwall">    
+  <div id="features" class="border">    
     @if (ZeroKWeb.Global.IsAccountAuthorized)
     {
         Html.RenderPartial("UserDetail", ZeroKWeb.Global.Account);
     }
     else
     {
-				Html.IncludeWiki("Features");
+		@Html.IncludeWiki("Features");
     }
   </div>
   <div id="news" class="border">
@@ -57,6 +57,8 @@
       {
           <p><a href="http://zero-k.info/tools/mailer/sendMail.php" target="_blank"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>
       }
+
+      <p><a href="http://zero-k.info/Wiki/Manual"><img src="http://zero-k.info/img/manual.png" alt="manual" width="15" height="15" /> The Zero-K manual</a></p>
       </div>
   }
 
