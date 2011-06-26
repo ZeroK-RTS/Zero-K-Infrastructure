@@ -33,6 +33,12 @@ namespace ZeroKWeb
 			{
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
 				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+        if (account.LobbyTimeRank < 4)
+        {
+					AuthServiceClient.SendLobbyMessage(account,
+					                                   string.Format("It seems that you are new to Zero-K {0}. If you have questions about Zero-K or PlanetWars, visit our manual @ http://zero-k.info/Wiki/Manual .",
+					                                                 account.Name));
+        }
 				if (account.Clan == null)
 				{
 					//AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
