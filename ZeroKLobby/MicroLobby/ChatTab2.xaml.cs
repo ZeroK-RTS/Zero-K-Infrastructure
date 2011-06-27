@@ -324,11 +324,21 @@ namespace ZeroKLobby.MicroLobby
       CloseTab(userName);
       CreatePrivateMessageControl(userName);
       SelectTab(userName);
+      if (ZeroKLobby.MainWindow.frdWindow != null)
+      {
+          MainWindow.frdWindow.clearItemlist();
+          MainWindow.frdWindow.refreshItems();
+      }
     }
 
     void FriendManager_FriendRemoved(object sender, EventArgs<string> e)
     {
       CloseTab(e.Data);
+      if (ZeroKLobby.MainWindow.frdWindow != null)
+      {
+          MainWindow.frdWindow.clearItemlist();
+          MainWindow.frdWindow.refreshItems();
+      }
     }
 
     void Label_Loaded(object sender, RoutedEventArgs e)

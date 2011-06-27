@@ -29,7 +29,7 @@
             <Button Name="btnOpenBattle" Margin="1" Click="btnOpenNewBattle_Click" Background="{x:Null}" Cursor="Hand" MinHeight="0" VerticalAlignment="Center" VerticalContentAlignment="Center">
                 <Button.Content>
                     <DockPanel VerticalAlignment="Stretch" Width="80">
-                        <Image Source="/Zero-K;component/Images/add.png" HorizontalAlignment="Left" Width="20" Height="20" />
+                        <Image Source="/Zero-K;component/Images/add.png" HorizontalAlignment="Left" Width="15" Height="15" />
 <TextBlock Cursor="Hand" TextAlignment="Center" Text="Open New" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
                     </DockPanel>
                 </Button.Content>

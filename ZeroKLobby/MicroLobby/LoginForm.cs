@@ -7,9 +7,20 @@ namespace ZeroKLobby.MicroLobby
 	{
 		public string InfoText { set { lbInfo.Text = value; } }
 
-		public string LoginValue { get { return tbLogin.Text; } }
+		public string LoginValue {
+            get
+            {
+                if (!CanRegister) return tbLogin.Text;
+                else return rgName.Text;
+            } 
+        }
 
-		public string PasswordValue { get { return tbPassword.Text; } }
+		public string PasswordValue { 
+            get {
+                if (!CanRegister) return tbPassword.Text;
+                else return rgPassword.Text;;
+            }
+        }
 
 		public bool CanRegister { get; private set; }
 
