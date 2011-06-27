@@ -8,5 +8,6 @@
   $data.= $_GET["moreinfo"]."\r\n";
   $data.= $_GET["exception"]."\r\n\r\n";
 
+  
 	fwrite($file, $data);
 ?>
