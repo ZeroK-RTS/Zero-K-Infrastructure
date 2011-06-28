@@ -221,6 +221,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Styles\PetitaMedium.eot" />
+    <None Include="Styles\PetitaMedium.ttf" />
+    <None Include="Styles\RevoPop.eot" />
+    <None Include="Styles\RevoPop.ttf" />
+    <None Include="Styles\SM.eot" />
     <None Include="Styles\SM.ttf" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_SiteLayout.cshtml" />
@@ -273,6 +278,8 @@
     <Content Include="Views\Shared\InfluenceList.cshtml" />
     <Content Include="Views\Shared\MapInfoBox.cshtml" />
     <Content Include="Views\Battles\Index.cshtml" />
+    <None Include="Styles\tomorrow.eot" />
+    <None Include="Styles\tomorrow.TTF" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
@@ -286,6 +293,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Styles\App_LocalResources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

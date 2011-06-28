@@ -1,14 +1,14 @@
-@font-face { font-family: sm; src: url("SM.ttf"); }
+/*@font-face { font-family: sm; src: url("SM.ttf"); }*/
 
 #menu table{width:100%;}
 #menu td {vertical-align:middle}
 
 div#menu a /*menu bar*/
 {
-	padding: 2px 10px;
+	padding: 1px 10px;
 	text-align: center; 
 	font-family: sm;
-	font-size: 80%;
+	font-size: 13px;
 }
 
 div#menu a span {display:none;} /*menu text sayings*/
@@ -44,12 +44,16 @@ ul.menu li:hover > ul /*dropdown part*/
 {
 	display:block;
 	position:absolute;
-	background: #000 url("../img/border-side.png") no-repeat top left;
+	/*background: #000 url("../img/border-side.png") no-repeat top left;*/
+	background: #000 url("../img/border-1.png") repeat-x scroll 50% 0;
 	padding: 0;
 	padding-top: 3px;
 	margin: 0;
 	margin-top: -3px;
-	/*border-bottom: 1px solid #42bde8;*/
+	border: 1px solid #2a8eaf;
+	border-top: none;
+	border-radius: 3px;
+    box-shadow: 0 0 3px 3px #000;
 	list-style-type: none; 
 	z-index: 50;
 }
