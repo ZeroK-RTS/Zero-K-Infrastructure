@@ -29,33 +29,43 @@ namespace ZeroKWeb
 		{
 			var db = new ZkDataContext();
 			var mode = GetModeFromHost(autohostName);
+      var resultString = "";
 			if (mode == AutohostMode.Planetwars)
 			{
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
 				var account = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
-				if (account.Clan == null)
+        
+        if (account.LobbyTimeRank < 3)
+        {
+          resultString = string.Format("It seems that you are new to Zero-K {0}. If you have questions about Zero-K or PlanetWars, visit our manual @ http://zero-k.info/Wiki/Manual .\n",
+                      account.Name);
+        } 
+        if (account.Clan == null)
 				{
 					//AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
-					return string.Format("{0} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Planetwars/ClanList",
-					                     account.Name);
+              return string.Format("{0}{1} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Planetwars/ClanList",
+					                     resultString,
+                               account.Name);
 				}
 				if (!account.Name.Contains(account.Clan.Shortcut))
 				{
 					AuthServiceClient.SendLobbyMessage(account,
-					                                   string.Format("Your name must contain clan tag {0}, rename for example by saying: \"/rename [{0}]{1}\" or \"/rename {0}_{1}\".",
-					                                                 account.Clan.Shortcut,
+					                                   string.Format("{0}Your name must contain clan tag {1}, rename for example by saying: \"/rename [{1}]{2}\" or \"/rename {1}_{2}\".",
+					                                                 resultString,
+                                                           account.Clan.Shortcut,
 					                                                 account.Name));
-					return string.Format("{0} cannot play, name must contain clan tag {1}", account.Name, account.Clan.Shortcut);
+					return string.Format("{0}{1} cannot play, name must contain clan tag {2}", resultString, account.Name, account.Clan.Shortcut);
 				}
 				string owner = "";
 				if (planet.Account != null) owner = planet.Account.Name;
-				return string.Format("Greetings {0} {1} of {2}, welcome to {3} planet {4} http://zero-k.info/PlanetWars/Planet/{5}",
+           return string.Format("{6}Greetings {0} {1} of {2}, welcome to {3} planet {4} http://zero-k.info/PlanetWars/Planet/{5}",
 				                     account.IsClanFounder ? account.Clan.LeaderTitle : "",
 				                     account.Name,
 				                     account.IsClanFounder ? account.Clan.ClanName : account.Clan.Shortcut,
 														 owner,
 				                     planet.Name,
-				                     planet.PlanetID);
+				                     planet.PlanetID,
+                             resultString);
 			}
 			return null;
 		}
