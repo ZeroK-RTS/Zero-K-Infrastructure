@@ -9,8 +9,8 @@ html
     /*background: #000 url("../img/bg_bluehex.gif") fixed;*/
     background: #000;
 	color: #ede;
-	font-family: petita, sans-serif;
-	font-size: 1.2em;
+	font-family: font, sans-serif;
+	font-size: 1em;
 	height: 100%;
 	width: 100%;
 	padding: 0;
@@ -42,12 +42,7 @@ body
     margin-bottom: 15ex;
 	background: url("../img/fade.png") repeat-y 50% 0;
 }
-/*
-.points li
-{
-	margin-bottom: 1em;
-}
-*/
+
 .wrapper
 {
 	position: relative;
@@ -89,6 +84,11 @@ ul.forumtab
 {
     list-style-image: url("../../Img/bullet.png");
     padding-left: 15px;
+}
+
+div#simplestyle
+{
+    margin: 10px;
 }
 
 /* Single Player missions

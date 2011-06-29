@@ -86,3 +86,21 @@ ul.menu li:hover > ul li:hover
     z-index: 100;
 }
 /**/
+
+/* and again for "simplestyle" */
+.gecko div#simplestyle div#menu
+{
+	position: relative;
+    z-index: 100;
+}
+.webkit div#simplestyle div#menu
+{
+	position: relative;
+    z-index: 100;
+}
+.opera div#simplestyle div#menu
+{
+	position: relative;
+    z-index: 100;
+}
+/**/

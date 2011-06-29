@@ -86,13 +86,11 @@
       @Html.Partial("TopMenu")
       </div>
       <!close navigation>
-      <div class="border floatingfooter">
+      <div class="border">
         @Html.Partial("LoginBar")
       </div>
       <!close login>
-    <div id="renderbody" @if (ViewBag.NoBorder == null)
-                         {<text>class="border"</text>} @if (ViewBag.OpaqueBody == true)
-                                                                                      {<text> style="opacity: 1"</text>}>
+    <div id="renderbody" @if (ViewBag.NoBorder == null) {<text>class="border"</text>} @if (ViewBag.OpaqueBody == true) {<text> style="opacity: 1"</text>}>
         @RenderBody()
     </div>
       <div id="footer" class="border">
@@ -105,11 +103,13 @@
   }
   else
   {
-    <div style="margin: 10px;">
+    <div id="simplestyle">
       @if (!Global.IsLobbyAccess)
       {
-          Html.RenderPartial("TopMenu");
-        <div class="border">
+        <div id="menu" class="border brightline">
+          @Html.Partial("TopMenu")
+        </div>
+        <div class="border brightline">
           @Html.Partial("LoginBar")
         </div>
       }
