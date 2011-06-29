@@ -34,12 +34,9 @@
 <div id="sidebar" class="fright width-30">
   @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess)
   {
-      <div class="border">
-      <h3>Download</h3>
-      <p align="left">Download now Zero-K's latest version for free:</p><div>Version: <b style="color:#00CCFF;">0.8.8.1</b></div><br />
-      <a href="http://zero-k.info/Wiki/Download">
-      <img src="http://zero-k.info/img/dl_button2.png" alt="download" width="250" />
-      </a></div>
+      <center><a href="http://zero-k.info/Wiki/Download">
+      <img src="http://zero-k.info/img/download.png" alt="Download now Zero-K's latest version for free Version: 0.8.8.1" width="95%" />
+      </a></center>
   }
 
   @if (ZeroKWeb.Global.IsAccountAuthorized)
@@ -93,19 +90,11 @@
   <div id="topten" class="border">
     <h2><a href='/Ladders'>Top Players</a></h2>
     <table cellpadding='0' cellspacing='0'>
-
       <tr>
-        <th width="30" align="left">
-          #
-        </th>
-        <th width="200" align="left">
-          Name
-        </th>
-        <th>
-          ELO
-        </th>
+        <th width="30" align="left">#</th>
+        <th width="200" align="left">Name</th>
+        <th>ELO</th>
       </tr>
-
       @{var cnt = 1;}
       @foreach (var a in Model.Top10Players)
       {
