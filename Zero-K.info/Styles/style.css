@@ -42,12 +42,12 @@ body
     margin-bottom: 15ex;
 	background: url("../img/fade.png") repeat-y 50% 0;
 }
-
+/*
 .points li
 {
 	margin-bottom: 1em;
 }
-
+*/
 .wrapper
 {
 	position: relative;
@@ -85,6 +85,14 @@ div#footer
 	z-index:100;
 }
 
+ul.forumtab
+{
+    list-style-image: url("../../Img/bullet.png");
+    padding-left: 15px;
+}
+
+/* Single Player missions
+----------------------------------------------*/
 .mission
 {
 	display: block;
