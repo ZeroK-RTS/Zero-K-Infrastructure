@@ -98,16 +98,13 @@ a.downloadbutton
     height: 99px;
     display: block;
     margin: 0 auto;
-    background-image:url(http://zero-k.info/img/download1.png);
-    background-repeat:no-repeat;
-    background-position:center;    
+    background-image:url(http://zero-k.info/img/downloadbutton.png);
+    background-repeat:no-repeat;   
 }
 
 a.downloadbutton:hover
 {
-    background-image:url(http://zero-k.info/img/download2.png);
-    background-repeat:no-repeat;
-    background-position:center;
+    background-position: 0 -98px;
 }
 /* Single Player missions
 ----------------------------------------------*/
