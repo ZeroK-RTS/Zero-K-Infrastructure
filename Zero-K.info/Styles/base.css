@@ -1,31 +1,3 @@
-@font-face 
-{
-    src: url( ../SM.eot ); /*eot because IE doesn't render ttf :( */
-    font-family: sm;
-    src: local("sm"), url( ../SM.ttf ) format("truetype");
-}
-
-@font-face 
-{
-    src: url( ../tomorrow.eot );
-    font-family: curly;
-    src: local("curly"), url( ../tomorrow.ttf ) format("truetype");
-}
-
-@font-face 
-{
-    src: url( ../RevoPop.eot );
-    font-family: revo;
-    src: local("revo"), url( ../RevoPop.ttf ) format("truetype");
-}
-
-@font-face 
-{
-    src: url( ../PetitaMedium.eot );
-    font-family: petita;
-    src: local("petita"), url( ../PetitaMedium.ttf ) format("truetype");
-}
-
 b {font-weight: bold; color: #fff;}
 i {}
 .indent {text-indent: 2em;}
@@ -87,7 +59,7 @@ ul {list-style-type: circle;}
 
 .border
 {
-	background: #000 url("../img/border-1.png") repeat scroll 50% 0;
+	background: #000 url("../img/border-1.png") repeat-x scroll 50% 0;
 	margin: 10px;
 	padding: 5px;
 	opacity: .9;

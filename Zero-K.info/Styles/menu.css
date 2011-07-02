@@ -42,7 +42,6 @@ ul.menu li:hover > ul /*dropdown part*/
 {
 	display:block;
 	position:absolute;
-	/*background: #000 url("../img/border-side.png") no-repeat top left;*/
 	background: #000 url("../img/border-1.png") repeat-x scroll 50% 0;
 	padding: 0;
 	padding-top: 3px;
@@ -64,7 +63,6 @@ ul.menu li:hover > ul li
 
 ul.menu li:hover > ul li:hover
 {
-	/*background: #42bde8;*/
 	background: #386779;
 }
 

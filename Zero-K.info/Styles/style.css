@@ -1,5 +1,6 @@
 @import url("base.css");
 @import url("menu.css");
+@import url("fonts.css");
 @import url("nicetitle.css");
 @import url("stars.css");
 @import url("jquery.ui.stars.css");
@@ -31,6 +32,7 @@ body
 
 #fadetoblack
 {
+	background: url("../img/fade.png") repeat-y 50% 0;
     position: fixed;
     top: 0px;
     left: 0px;
@@ -38,9 +40,6 @@ body
     bottom: 0px;
     height: 100%;
     width: 100%;
-    /* display about 7 to 15 lines after the bottom of the page - avoid tooltips exceeding the page bottom by make you able to move the link more to the top of the page by scrolling */
-    margin-bottom: 15ex;
-	background: url("../img/fade.png") repeat-y 50% 0;
 }
 
 .wrapper
@@ -89,6 +88,20 @@ ul.forumtab
 div#simplestyle
 {
     margin: 10px;
+}
+
+div#ajaxScrollProgress
+{
+	background: #190c02; /*bgcolor of load.gif*/
+	position: fixed;
+	display: none;
+	top: 40%;
+	left: 40%;
+	right: 40%;
+	padding: 20px;
+	text-align: center;
+	font-weight: bold;
+	z-index: 100;
 }
 
 /* Download-Button on Homepage */
