@@ -142,6 +142,8 @@ a.downloadbutton:hover
 
 .play
 {
+	font-family: sm;
+	font-size: 150%;
 	display: none;
 	position: absolute;
 	top: 150px;

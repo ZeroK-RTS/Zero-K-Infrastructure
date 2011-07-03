@@ -11,7 +11,8 @@
     @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
         @if (!Global.IsLobbyAccess)
         {
-            <span class="fright">@Html.ActionLink("Switch Skin", "SwitchSkin")</span>
+            //<span class="fright">@Html.ActionLink("Switch Skin", "SwitchSkin")</span>
+            <span class="fright"><a href="" onclick="setStyleSheet('default');">1</a> | <a href="" onclick="setStyleSheet('minimal');" class="">2</a> | <a href="" onclick="makefakecookie();">C</a></span>
         }
     </div>
 }

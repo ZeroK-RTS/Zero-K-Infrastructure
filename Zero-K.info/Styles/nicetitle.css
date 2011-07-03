@@ -1,38 +1,20 @@
-﻿/*
-// nicetitle
-// super tooltipy
-
-div.nicetitle {
-    position: absolute;
-    padding: 4px;
-    top: 0px;
-    left: 0px;
-    color: black;
-    font-size: 0.7em;
-    font-family: Verdana;
-    font-weight: bold;
-    display: block;
-    overflow: auto;
-    white-space: pre-wrap;
-    background-color: #f4cecc;
-	border: 1px solid #780600;     
-}
-*/
-.nicetitle, .ui-tooltip, .qtip
+﻿.nicetitle, .ui-tooltip, .qtip
 {
-	z-index:-2;
+    background: #000 url("../img/border-1.png") repeat-x;
     position: absolute;
     padding: 8px;
     top: 0px;
     left: 0px;
     font-size: 0.9em;
-    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-family: font, sans-serif;
     font-weight:normal;
-    background: #333;
-    border: 5px solid #38bfec;
+    border: 1px solid #38bfec;
+    border-radius: 3px;
     max-width: 400px;
     min-width: 400px;
     width: 400px;
+    opacity: .9;
+	z-index:-2;
 }
 div.nicetitle p {
     margin: 0; padding: 0 3px;

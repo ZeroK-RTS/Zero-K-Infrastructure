@@ -1,0 +1,27 @@
+@font-face 
+{
+    src: url( ../SM.eot ); /*eot because IE doesn't render ttf :( */
+    font-family: sm;
+    src: local("sm"), url( ../SM.ttf ) format("truetype");
+}
+
+@font-face 
+{
+    src: url( ../tomorrow.eot );
+    font-family: curly;
+    src: local("curly"), url( ../tomorrow.ttf ) format("truetype");
+}
+
+@font-face 
+{
+    src: url( ../RevoPop.eot );
+    font-family: revo;
+    src: local("revo"), url( ../RevoPop.ttf ) format("truetype");
+}
+
+@font-face 
+{
+    src: url( ../PetitaMedium.eot );
+    font-family: petita;
+    src: local("petita"), url( ../PetitaMedium.ttf ) format("truetype");
+}
