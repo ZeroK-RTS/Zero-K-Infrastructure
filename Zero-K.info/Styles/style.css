@@ -149,6 +149,7 @@ div#ajaxScrollProgress
     box-shadow: 0 0 6px 6px #38bfec;
 	padding: 15px 0 15px 0;
 	margin: 10px;
+	cursor: pointer;
     text-align: center;
     font-family: skir;
     font-size: 200%;

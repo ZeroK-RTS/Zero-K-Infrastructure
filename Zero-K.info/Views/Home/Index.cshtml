@@ -31,7 +31,7 @@
   @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess)
   {
        <!--center><a class ="downloadbutton" href="http://zero-k.info/Wiki/Download" alt="Download" title="Download now Zero-K's latest version for free"></a></center-->
-	  <a href=""><span class="downloadbutton">Download</span></a>
+	  <a onclick="javascript:download();"><span class="downloadbutton">Download</span></a>
   }
 
   @if (ZeroKWeb.Global.IsAccountAuthorized)
