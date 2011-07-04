@@ -1,7 +1,11 @@
 ﻿@using ZeroKWeb
-
+        @if (!Global.IsLobbyAccess)
+		{
+            <span class="fright">@Html.ActionLink("Switch Skin", "SwitchSkin")</span>
+			//<span class="fright"><a href="" onclick="setStyleSheet('default');">1</a> | <a href="" onclick="setStyleSheet('minimal');" class="">2</a> | <a href="" onclick="makefakecookie();">C</a></span>
+		}
 @if (!(Global.IsAccountAuthorized)) {
-  <!login> 
+  <!login>
   <form method="post" action="@Url.Action("Logon", "Home")" >
   Name:
   <input type="text" name="login" />
@@ -12,7 +16,9 @@
   <small>(use Zero-K lobby account)</small>
   <input type="hidden" name="referer" value="@(Request["ReturnUrl"] != null ? Request["ReturnUrl"] : Request.Url.ToString())" />
   </form>
-} else {
-   <form method="post" action="@Url.Action("Logout", "Home")" >@Html.PrintAccount(Global.Account) <input type="image" value="Logout" src="http://zero-k.info/img/logout.png" style="border:none; width:32px; height:32px; vertical-align:middle;" alt="Logout" /> <input type="hidden" name="referer" value="@Request.Url" /> <b>@Html.ActionLink("PlanetWars (BETA)","Index","PlanetWars")</b> Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits.ToString("C0") | @Html.ActionLink("Trade", "Trade", "PlanetWars", new {username = Global.Account.Name}, null) | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence)??0, Global.Account.AccountPlanets.Sum(x=>(int?)x.ShadowInfluence)??0)</form>
+}
+else
+{
+   <form method="post" action="@Url.Action("Logout", "Home")" >@Html.PrintAccount(Global.Account) <input type="image" value="Logout" src="http://zero-k.info/img/logout.png" style="border:none; width:32px; height:32px; vertical-align:middle;" alt="Logout" /> <input type="hidden" name="referer" value="@Request.Url" /> <b>@Html.ActionLink("PlanetWars (BETA)", "Index", "PlanetWars")</b> Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits.ToString("C0") | @Html.ActionLink("Trade", "Trade", "PlanetWars", new { username = Global.Account.Name }, null) | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0)</form>
 }
 

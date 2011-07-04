@@ -24,9 +24,9 @@ div#menu a:hover span
 	border-radius: 10px 10px 10px 10px ;
 	-moz-border-radius: 10px 10px 10px 10px ;
 	-webkit-border-radius: 10px 10px 10px 10px ;
-	box-shadow: 0 0 10px #fff;
-	-moz-box-shadow: 0 0 10px #fff;
-	-webkit-box-shadow: 0 0 10px #fff;
+	box-shadow: 0 0 3px #fff;
+	-moz-box-shadow: 0 0 3px #fff;
+	-webkit-box-shadow: 0 0 3px #fff;
 	
 	font-family: sans-serif;
 	font-weight: bold;
@@ -67,7 +67,7 @@ ul.menu li:hover > ul li:hover
 }
 
 
-/* remove for ie */
+/* should be hidden for ie */
 .gecko div#mainContentWrapper div#menu
 {
 	position: relative;

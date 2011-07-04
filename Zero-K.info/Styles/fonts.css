@@ -25,3 +25,10 @@
     font-family: petita;
     src: local("petita"), url( ../PetitaMedium.ttf ) format("truetype");
 }
+
+@font-face
+{
+	src: url( ../Skir.eot );
+	font-family: skir;
+	src: local("skir"), url( ../Skir.ttf ) format("truetype");
+}

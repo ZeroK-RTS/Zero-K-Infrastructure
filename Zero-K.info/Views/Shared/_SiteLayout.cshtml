@@ -37,21 +37,18 @@
 </style>
   @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1") {
     if (ViewBag.StaticBackground == true) {
-    <style type="text/css">
-      html
-      {
-        background: #000 url("/img/bg_bluehex.gif") fixed;
-      }
-    </style>
-    } else {
-      var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
-// What we're doing here is generating a number unique to each date
-// We use this to seed the RNG so that it picks a new background once per day
-      int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
-      var random = new Random(date);
-      var file = Path.GetFileName(files[random.Next(files.Length)]);
+    <style type="text/css"> html {background: #000 url("/img/bg_bluehex.gif") fixed;} </style>
+	}
+	else
+	{
+		var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
+		// What we're doing here is generating a number unique to each date
+		// We use this to seed the RNG so that it picks a new background once per day
+		int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
+		var random = new Random(date);
+		var file = Path.GetFileName(files[random.Next(files.Length)]);
     <style type="text/css"> html { background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0; background-attachment: fixed; }</style>
-    }
+	}
   }
   <script type="text/javascript">
 
@@ -70,7 +67,8 @@
 </head>
 <body class="">
   <div id='ajaxScrollProgress'>Loading....<img src='/img/Loader.gif' /></div>
-  @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1") {
+  @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1")
+  {
     <div id="fadetoblack"></div>
     <div id="mainContentWrapper" class="wrapper">
       <div id="header" class="text-center">
@@ -85,7 +83,9 @@
         @Html.Partial("LoginBar")
       </div>
       <!close login>
-    <div id="renderbody" @if (ViewBag.NoBorder == null) {<text>class="border"</text>} @if (ViewBag.OpaqueBody == true) {<text> style="opacity: 1"</text>}>
+    <div id="renderbody" @if (ViewBag.NoBorder == null)
+						 {<text>class="border"</text>} @if (ViewBag.OpaqueBody == true)
+																					  {<text> style="opacity: 1"</text>}>
         @RenderBody()
     </div>
       <div id="footer" class="border">
@@ -100,14 +100,14 @@
   {
     <div id="simplestyle">
       @if (!Global.IsLobbyAccess)
-      {
+	  {
         <div id="menu" class="border brightline">
           @Html.Partial("TopMenu")
         </div>
         <div class="border brightline">
           @Html.Partial("LoginBar")
         </div>
-      }
+	  }
       @RenderBody()
     </div>
   }

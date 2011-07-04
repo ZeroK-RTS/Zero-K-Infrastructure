@@ -9,11 +9,6 @@
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
     <div class="border">
     @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
-        @if (!Global.IsLobbyAccess)
-        {
-            <span class="fright">@Html.ActionLink("Switch Skin", "SwitchSkin")</span>
-            //<span class="fright"><a href="" onclick="setStyleSheet('default');">1</a> | <a href="" onclick="setStyleSheet('minimal');" class="">2</a> | <a href="" onclick="makefakecookie();">C</a></span>
-        }
     </div>
 }
 
@@ -35,7 +30,8 @@
 <div id="sidebar" class="fright width-30">
   @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess)
   {
-      <center><a class ="downloadbutton" href="http://zero-k.info/Wiki/Download" alt="Download" title="Download now Zero-K's latest version for free"></a></center>
+       <!--center><a class ="downloadbutton" href="http://zero-k.info/Wiki/Download" alt="Download" title="Download now Zero-K's latest version for free"></a></center-->
+	  <a href=""><span class="downloadbutton">Download</span></a>
   }
 
   @if (ZeroKWeb.Global.IsAccountAuthorized)

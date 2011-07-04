@@ -57,39 +57,6 @@ input.radio
 
 ul {list-style-type: circle;}
 
-.border
-{
-	background: #000 url("../img/border-1.png") repeat-x scroll 50% 0;
-	margin: 10px;
-	padding: 5px;
-	opacity: .9;
-    /**/border: 1px solid #2a8eaf;/**/
-    /*border: 1px solid #000;/**/
-	border-radius: 3px;
-	
-    box-shadow: 0 0 3px 3px #000;
-	-moz-box-shadow: 0 0 3px 3px #000;
-    -webkit-box-shadow: 0 0 3px 3px #000;
-    
-    /*
-    -moz-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
-    -webkit-border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
-    -border-image: url("../img/zk_border.png") 10% 10% 10% 10% / 10px 10px 10px 10px ;
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=88)";
-    /**/
-}
-/*
-.brightline
-{
-    border: 1px solid #2a8eaf;
-}
-*/
-.ie .border
-{
-    padding: 13px;
-	border: 1px solid #38bfec;
-}
-
 .fleft{float: left;}
 .fright{float: right;}
 
