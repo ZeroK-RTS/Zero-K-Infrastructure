@@ -151,7 +151,7 @@ div#ajaxScrollProgress
 	margin: 10px;
 	cursor: pointer;
     text-align: center;
-    font-family: skir;
+    font-family: skir, sans-serif;
     font-size: 200%;
 }
 

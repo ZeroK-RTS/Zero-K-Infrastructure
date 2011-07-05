@@ -5,7 +5,7 @@ div#menu a /*menu bar*/
 {
 	padding: 1px 10px;
 	text-align: center; 
-	font-family: sm;
+	font-family: sm, sans-serif;
 	font-size: 13px;
 }
 
