@@ -2,45 +2,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="description" content="Zero-K or zero k is a FREE, multiplatform, open-source RTS game, which aims to be a dynamic, action-packed, hassle-free game, full of clever strategies and constantly moving combat which usually lasts on average 20-30 minutes." />
+  <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic, action-packed, hassle-free and fun." />
   <meta name="keywords" content="Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech, online, space, 4x, free, open source" />
-  <meta http-equiv="Expires" content="0">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Cache-Control" content="no-cache">
-  @if (!string.IsNullOrEmpty(Page.Title)) {
-    <title>@Page.Title - Zero-K free rts open source game</title>
-  } else { 
-    <title>Zero-K free rts open source game</title>
-  }
+  <meta http-equiv="Expires" content="0" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+
+  <title> @if (!string.IsNullOrEmpty(Page.Title)) {@Page.Title<text> - </text>}Zero-K free rts open source game</title>
+
   <link rel="icon" href='@Href("~/img/favicon.png")'/>
   <link rel="Stylesheet" href='@Href("~/Styles/style.css")' type="text/css" />
   <link rel="Stylesheet" href='@Href("~/Styles/jquery.qtip.min.css")' type="text/css" />
   <link rel="Stylesheet" href='@Href("~/Styles/nicetitle.css")' type="text/css" />
-  <link rel="Stylesheet" href='@Href("~/Styles/dark-hive/jquery-ui-1.8.12.custom.css")' type="text/css" />
-
-  <script type="text/javascript" src='@Href("~/Scripts/MicrosoftAjax.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/MicrosoftMvcAjax.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/jquery-1.5.2.min.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/jquery-ui-1.8.12.custom.min.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/jquery.ui.stars.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/site.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/base.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/jquery.tablesorter.min.js")' ></script>
   
-  <script type="text/javascript" src='@Href("~/Scripts/jquery.qtip.pack.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/nicetitle.js")' ></script>
-  <script type="text/javascript" src='@Href("~/Scripts/raphael-min.js")' ></script>
-  <style type="text/css">
-    @@import url(http://www.google.com/cse/api/branding.css);
-
-</style>
   @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1") {
+	  //******should instead check cookie for design mode and choose style accordingly******
     if (ViewBag.StaticBackground == true) {
     <style type="text/css"> html {background: #000 url("/img/bg_bluehex.gif") fixed;} </style>
 	}
 	else
 	{
+		//lobby access and minimal=true and request minimal=1 ???
 		var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
 		// What we're doing here is generating a number unique to each date
 		// We use this to seed the RNG so that it picks a new background once per day
@@ -50,19 +32,33 @@
     <style type="text/css"> html { background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0; background-attachment: fixed; }</style>
 	}
   }
+
+  <script type="text/javascript" src='@Href("~/Scripts/MicrosoftAjax.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/MicrosoftMvcAjax.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/jquery-1.5.2.min.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/jquery-ui-1.8.12.custom.min.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/jquery.ui.stars.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/jquery.tablesorter.min.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/jquery.qtip.pack.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/site.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/base.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/nicetitle.js")' ></script>
+  <script type="text/javascript" src='@Href("~/Scripts/raphael-min.js")' ></script>
   <script type="text/javascript">
 
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-20510497-1']);
-    _gaq.push(['_trackPageview']);
+  	var _gaq = _gaq || [];
+  	_gaq.push(['_setAccount', 'UA-20510497-1']);
+  	_gaq.push(['_trackPageview']);
 
-    (function () {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
+  	(function () {
+  		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  	})();
 
   </script>
+
   @RenderSection("head", false)
 </head>
 <body class="">
@@ -76,16 +72,14 @@
       </div>
       <!close header>
       <div id="menu" class="border">
-      @Html.Partial("TopMenu")
+        @Html.Partial("TopMenu")
       </div>
       <!close navigation>
       <div class="border">
         @Html.Partial("LoginBar")
       </div>
       <!close login>
-    <div id="renderbody" @if (ViewBag.NoBorder == null)
-						 {<text>class="border"</text>} @if (ViewBag.OpaqueBody == true)
-																					  {<text> style="opacity: 1"</text>}>
+    <div id="renderbody" @if (ViewBag.NoBorder == null) {<text>class="border"</text>} @if (ViewBag.OpaqueBody == true) {<text> style="opacity: 1"</text>}>
         @RenderBody()
     </div>
       <div id="footer" class="border">
