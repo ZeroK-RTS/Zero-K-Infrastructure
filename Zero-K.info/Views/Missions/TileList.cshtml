@@ -1,13 +1,17 @@
 @model IQueryable<ZkData.Mission>
+@using PlasmaShared
+@using ZeroKWeb
 @{
 	Layout = "";
 }
-@foreach (var mission in Model) {
+@foreach (var mission in Model)
+{
 	<div id='@mission.MissionID' class='mission fleft relative' title="$mission$@mission.MissionID" onclick="window.location='@Url.Action("Detail", new { id = mission.MissionID })'" >
 		<b>@mission.Name</b>
-    @if (mission.FeaturedOrder.HasValue) { 
+    @if (mission.FeaturedOrder.HasValue)
+	{ 
       <img src="@Url.Content("~/img/star_40.png")" alt="Featured" style='float:right' />
-    }
+	}
 
     <br />
 		@Html.PrintAccount(mission.Account)
@@ -27,13 +31,13 @@
 		</tr>
 		</table>
 		
-		@if (mission.TopScoreLine != null) {
+		@if (mission.TopScoreLine != null)
+  {
 			<small><img src='/img/cup.png' class='icon16'>@mission.TopScoreLine</small>
-		}
+  }
 		<span class="play border"><a href='spring://@(Url.Action("Detail", "Missions", new { id = mission.MissionID }, Request.Url.Scheme) + (mission.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + mission.Name)'>
 				<!--img src="../../img/playnow.png" width="220" /-->
 				Play Now</a>
 		</span>
-    
 	</div>
 }
