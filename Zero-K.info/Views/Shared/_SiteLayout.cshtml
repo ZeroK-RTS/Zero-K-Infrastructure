@@ -13,6 +13,7 @@
   <link rel="icon" href='@Href("~/img/favicon.png")'/>
   <link rel="Stylesheet" href='@Href("~/Styles/style.css")' type="text/css" />
   <link rel="Stylesheet" href='@Href("~/Styles/jquery.qtip.min.css")' type="text/css" />
+  <link rel="Stylesheet" href='@Href("~/Styles/jquery-ui-1.8.12.custom.css")' type="text/css" />
   <link rel="Stylesheet" href='@Href("~/Styles/nicetitle.css")' type="text/css" />
   
   @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1") {
@@ -22,7 +23,6 @@
 	}
 	else
 	{
-		//lobby access and minimal=true and request minimal=1 ???
 		var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
 		// What we're doing here is generating a number unique to each date
 		// We use this to seed the RNG so that it picks a new background once per day
@@ -62,7 +62,7 @@
   @RenderSection("head", false)
 </head>
 <body class="">
-  <div id='ajaxScrollProgress'>Loading....<img src='/img/Loader.gif' /></div>
+  <div id='ajaxScrollProgress'>Loading...<img src='/img/Loader.gif' /></div>
   @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1")
   {
     <div id="fadetoblack"></div>

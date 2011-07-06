@@ -161,7 +161,6 @@
     </Content>
     <Content Include="Img\cup.png" />
     <Content Include="Img\Loader.gif" />
-    <Content Include="Img\ntbgw.png" />
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
     <Content Include="Scripts\jquery-1.5.2.min.js" />
