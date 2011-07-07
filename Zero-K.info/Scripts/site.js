@@ -10,6 +10,7 @@ $(document).ready(function () {
     return answer;
   });
 
+
   /* ajax form updater and scorll based loader
   It updates form on submit using ajax - sending offset 0 to it when user clicks
 
@@ -55,12 +56,12 @@ $(document).ready(function () {
 
 
 $(window).load(function () {
-  // img zoomer
-  $("img.zoom").each(function () {
-    $.data(this, 'size', { width: $(this).width(), height: $(this).height() });
-  }).hover(function () {
-    $(this).stop().animate({ height: $.data(this, 'size').height * 4, width: $.data(this, 'size').width * 4 }, 300);
-  }, function () {
-    $(this).stop().animate({ height: $.data(this, 'size').height, width: $.data(this, 'size').width }, 600);
-  })
+	// img zoomer
+	$("img.zoom").each(function () {
+		$.data(this, 'size', { width: $(this).width(), height: $(this).height() });
+	}).hover(function () {
+		$(this).stop().animate({ height: $.data(this, 'size').height * 4, width: $.data(this, 'size').width * 4 }, 300);
+	}, function () {
+		$(this).stop().animate({ height: $.data(this, 'size').height, width: $.data(this, 'size').width }, 600);
+	});
 });

@@ -20,6 +20,14 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
+
+			var db = new ZkDataContext();
+			var list = db.ForumCategories.Single(x => x.IsPlanets).ForumThreads.Where(x => x.Planets == null).ToList();
+			db.ForumThreads.DeleteAllOnSubmit(list);
+			//foreach (var t in db.ForumThreads.Where(x=>x.ForumPosts.Any()))
+			db.SubmitChanges();
+
+
     	//ImportSpringiePlayers();
       //RecalculateBattleElo();
       //FixMaps();

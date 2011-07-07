@@ -227,5 +227,15 @@ namespace ZeroKWeb.Controllers
 			public IEnumerable<ForumCategory> Path;
 			public List<ForumPost> Posts;
 		}
+
+		[Auth]
+		public ActionResult MoveThread(int threadID, int newcat)
+		{
+			var db = new ZkDataContext();
+			var thread = db.ForumThreads.Single(x => x.ForumThreadID == threadID);
+			thread.ForumCategoryID = newcat;
+			db.SubmitChanges();
+			return RedirectToAction("Index", new { categoryID = newcat });
+		}
 	}
 }

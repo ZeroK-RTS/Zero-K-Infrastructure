@@ -1,4 +1,5 @@
-﻿@model ZeroKWeb.Controllers.ForumController.ThreadResult
+﻿@using ZeroKWeb
+@model ZeroKWeb.Controllers.ForumController.ThreadResult
 
 @{
   Page.Title = Model.CurrentThread.Title +  " - forum thread";
@@ -20,6 +21,18 @@
 @if (!Model.CurrentThread.IsLocked) {
   <h3>@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
 }
+@if (Global.IsZeroKAdmin) {
+	var db = new ZkData.ZkDataContext();
+	<form action="@Url.Action("MoveThread", new{threadID = Model.CurrentThread.ForumThreadID})" method="post">
+	<select name="newcat">
+		@foreach (var c in db.ForumCategories.Where(x=>!x.IsClans && !x.IsMaps && !x.IsMissions && !x.IsPlanets && !x.IsSpringBattles)) {
+			<option value="@c.ForumCategoryID">@c.Title</option>
+	}
+		</select>
+	<input type="submit" value="move" />
+</form>
+}
+	
 
 Pages: 
 @for (int i = 0; i < Model.PageCount; i++) {

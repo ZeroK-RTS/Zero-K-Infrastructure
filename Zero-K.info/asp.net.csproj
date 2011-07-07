@@ -149,6 +149,7 @@
     <Content Include="Img\border-1.png" />
     <Content Include="Img\border.png" />
     <Content Include="Img\bullet.png" />
+    <Content Include="Img\favicon.png" />
     <Content Include="Img\img_progressbar1_b.png" />
     <Content Include="Img\img_progressbar1_h.png" />
     <Content Include="Img\img_progressbar2_h.png" />
@@ -176,6 +177,7 @@
     <Content Include="StructuresAdmin.aspx" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\fonts.css" />
+    <Content Include="Styles\jquery.qtip.min.css" />
     <Content Include="Styles\jquery.ui.stars.css" />
     <Content Include="Styles\menu.css" />
     <Content Include="Styles\nicetitle.css" />
