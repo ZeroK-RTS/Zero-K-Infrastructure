@@ -55,6 +55,8 @@ namespace ModelBase
 		{
 			Application["LastSvnUpdate"] = DateTime.UtcNow;
 			new SvnController().Update();
+			new ForumController().MakeModelPosts();
+			new ForumController().MakeNewsPosts();
 			GridView1.DataBind();
 		}
 	}
