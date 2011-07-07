@@ -635,6 +635,7 @@ namespace ZeroKWeb.Controllers
 						                                            planet,
 						                                            mostInfluentialClanEntry.Clan,
 						                                            sb));
+						AuthServiceClient.SendLobbyMessage(mostInfluentialPlayer,string.Format("Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}", planet.Name, planet.PlanetID));
 					}
 					else
 					{
@@ -645,7 +646,12 @@ namespace ZeroKWeb.Controllers
 						                                            mostInfluentialClanEntry.Clan,
 						                                            planet.Account.Clan,
 						                                            sb));
+
+						AuthServiceClient.SendLobbyMessage(mostInfluentialPlayer, string.Format("Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}", planet.Name, planet.PlanetID));
+						AuthServiceClient.SendLobbyMessage(planet.Account, string.Format("Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}", planet.Name, planet.PlanetID));
+
 						planet.Account = mostInfluentialPlayer;
+						
 					}
 
 					if (firstPlanet && !mostInfluentialPlayer.WasGivenCredits)
@@ -656,6 +662,7 @@ namespace ZeroKWeb.Controllers
 						                                            mostInfluentialPlayer,
 						                                            GlobalConst.PlanetwarsColonizationCredits,
 						                                            planet));
+						AuthServiceClient.SendLobbyMessage(mostInfluentialPlayer, string.Format("Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}", planet.Name, planet.PlanetID));
 					}
 				}
 			}

@@ -20,9 +20,6 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
-
-
-
     	//ImportSpringiePlayers();
       //RecalculateBattleElo();
       //FixMaps();
