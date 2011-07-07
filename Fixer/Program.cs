@@ -21,20 +21,15 @@ namespace Fixer
     static void Main(string[] args)
     {
 
-			var db = new ZkDataContext();
-			var list = db.ForumCategories.Single(x => x.IsPlanets).ForumThreads.Where(x => x.Planets == null).ToList();
-			db.ForumThreads.DeleteAllOnSubmit(list);
-			//foreach (var t in db.ForumThreads.Where(x=>x.ForumPosts.Any()))
-			db.SubmitChanges();
 
 
     	//ImportSpringiePlayers();
       //RecalculateBattleElo();
       //FixMaps();
 
-			//PurgeGalaxy(9);
-    	//RandomizeMaps(9);
-			//GenerateStructures(9);
+			PurgeGalaxy(9);
+    	RandomizeMaps(9);
+			GenerateStructures(9);
 
 			//AddWormholes();
     }
@@ -42,6 +37,7 @@ namespace Fixer
 		public static void PurgeGalaxy(int galaxyID) {
 			using (var db = new ZkDataContext())
 			{
+				db.CommandTimeout = 300;
 				var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
 				foreach (var p in gal.Planets) {
 					p.ForumThread = null;
@@ -49,7 +45,7 @@ namespace Fixer
 				}
 				db.SubmitChanges();
 
-				db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0"); //,clanid=null,isclanfounder=0, hasclanrights=0"
+//				db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0"); //,clanid=null,isclanfounder=0, hasclanrights=0"
 				db.ExecuteCommand("delete from event");
 				db.ExecuteCommand("delete from planetinfluencehistory");
 				db.ExecuteCommand("delete from planetownerhistory");
@@ -187,7 +183,7 @@ namespace Fixer
 			}
 			
 			// artefacts
-			foreach (var p in gal.Planets.Where(x => x.Resource.MapIsChickens!=true && !x.Resource.MapIsFfa != true && x.Resource.MapIs1v1 != true).Shuffle().Take(3)) p.AddStruct(artefact);
+			foreach (var p in gal.Planets.Where(x => x.Resource.MapIsChickens!=true && !x.Resource.MapIsFfa != true && x.Resource.MapIs1v1 != true).Shuffle().Take(4)) p.AddStruct(artefact);
 
 			// jump gates
 			//foreach (var p in gal.Planets.Shuffle().Take(6)) p.AddStruct(warp);

@@ -152,7 +152,7 @@ namespace System.Web.Mvc
 					new MvcHtmlString(
 						string.Format(
 							"<a href='/Users/{2}' style='color:{3}'><img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='' /><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{2}</a>",
-							account.Country,
+							account.Country != "??" ? account.Country : "unknown",
 							account.LobbyTimeRank + 1,
 							account.Name,
 							colorize ? Clan.TreatyColor(Global.Clan, account.Clan): ""));

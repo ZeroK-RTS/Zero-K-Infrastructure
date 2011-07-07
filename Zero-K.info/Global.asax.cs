@@ -42,6 +42,8 @@ namespace ZeroKWeb
 
 			routes.MapRoute("Root", "", new { controller = "Home", action = "Index", id = "" });
 
+			
+
 		}
 
 		public override string GetVaryByCustomString(HttpContext context, string custom)
