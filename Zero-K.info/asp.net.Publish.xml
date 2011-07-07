@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <publishData>
-  <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="True" userPWD="AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAsc8wdOnVMUK+Mj/IyIjISQAAAAACAAAAAAAQZgAAAAEAACAAAABsEwIz8+mOrRlocf7TTYiBmRskYemKjxEE2VqJ4x6eGQAAAAAOgAAAAAIAACAAAABa6pEtQmSMDWHddpJLz6rP8AG5xrUFzK7JRr8utwudKyAAAAD0wot/x5DpIqpe3t3LQcp9Wpwb0zsq+bw5vVwvQgDsc0AAAAC8/JPT599vIfIxSCUo9kgG4iaGCJxQFkVQWUxrJVEOowCSxF+SXSz+TL461TAgJsLvl/8JWk8wc0+/RWOGxE5K" SelectedForPublish="True">
+  <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="Views/Home/NotLoggedIn.cshtml" publishTime="05/24/2011 11:42:16" />
     <file relUrl="ContentService.asmx" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Views/Wiki/Index.cshtml" publishTime="04/30/2011 11:38:14" />
@@ -28,8 +28,8 @@
     <file relUrl="Img/bullet.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="Img/zk_logo_miniature.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="Styles/menu.css" publishTime="07/07/2011 00:27:33" />
-    <file relUrl="Views/Poll/PollVoteList.cshtml" publishTime="03/19/2011 12:33:50" />
-    <file relUrl="bin/ZeroKWeb.dll" publishTime="07/07/2011 13:41:07" />
+    <file relUrl="Views/Poll/PollVoteList.cshtml" publishTime="07/07/2011 15:08:44" />
+    <file relUrl="bin/ZeroKWeb.dll" publishTime="07/07/2011 15:15:53" />
     <file relUrl="Views/Shared/_SiteLayout.cshtml" publishTime="07/07/2011 13:32:45" />
     <file relUrl="LobbyStart.inc" publishTime="04/19/2011 13:37:01" />
     <file relUrl="Img/img_progressbar1_h.png" publishTime="03/30/2011 01:35:20" />
@@ -89,7 +89,7 @@
     <file relUrl="Views/Poll/PollView.cshtml" publishTime="06/22/2011 01:37:41" />
     <file relUrl="Img/img_progressbar2_h.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="ErrorReports.aspx" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="bin/ZeroKWeb.pdb" publishTime="07/07/2011 13:41:06" />
+    <file relUrl="bin/ZeroKWeb.pdb" publishTime="07/07/2011 15:15:53" />
     <file relUrl="Views/Shared/InfluenceList.cshtml" publishTime="05/24/2011 11:42:16" />
     <file relUrl="Views/Forum/ForumPath.cshtml" publishTime="01/04/2011 19:24:41" />
     <file relUrl="Styles/style.css" publishTime="07/07/2011 00:27:33" />

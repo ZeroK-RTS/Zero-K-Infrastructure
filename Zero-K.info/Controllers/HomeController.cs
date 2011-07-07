@@ -45,7 +45,7 @@ namespace ZeroKWeb.Controllers
 			var newValue = "";
 			if (Request["minimalDesign"] == "1") newValue = "0";
 			else newValue = "1";
-			Response.Cookies.Add(new HttpCookie("minimalDesign", newValue));
+			Response.Cookies.Add(new HttpCookie("minimalDesign", newValue) { Expires = DateTime.Now.AddMonths(6)});
 			return RedirectToAction("Index");
 		}
 

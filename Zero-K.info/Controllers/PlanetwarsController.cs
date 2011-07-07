@@ -836,30 +836,24 @@ namespace ZeroKWeb.Controllers
 			{
 				bo.Price = GlobalConst.InfluenceSystemBuyPrice;
 				var quantity = Math.Min(bo.AccountByAccountID.Credits/bo.Price, bo.Quantity);
-				if (quantity > 0 && !bo.Planet.PlanetStructures.Any(x=>!x.IsDestroyed && x.StructureType.EffectBlocksEnemyTrade == true))
+				if (quantity > 0 && !bo.Planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksEnemyTrade == true))
 				{
-					influenceChanged = true;
-					bo.AccountByAccountID.Credits -= quantity*bo.Price;
-
 					var buyerAccountPlanet = bo.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == bo.AccountID);
-					if (buyerAccountPlanet == null)
+					if (buyerAccountPlanet != null)
 					{
-						buyerAccountPlanet = new AccountPlanet { AccountID = bo.AccountID, PlanetID = bo.PlanetID };
-						db.AccountPlanets.InsertOnSubmit(buyerAccountPlanet);
+						influenceChanged = true;
+						bo.AccountByAccountID.Credits -= quantity*bo.Price;
+						buyerAccountPlanet.Influence += quantity;
+						db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from locals on {2} for {3} each.",
+						                                            bo.AccountByAccountID,
+						                                            quantity,
+						                                            bo.Planet,
+						                                            bo.Price));
+						bo.Quantity -= quantity;
+						if (bo.Quantity == 0) db.MarketOffers.DeleteOnSubmit(bo);
 						db.SubmitChanges();
 					}
-					buyerAccountPlanet.Influence += quantity;
-
-					db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from locals on {2} for {3} each.",
-					                                            bo.AccountByAccountID,
-					                                            quantity,
-					                                            bo.Planet,
-					                                            bo.Price));
 				}
-
-				bo.Quantity -= quantity;
-				if (bo.Quantity == 0) db.MarketOffers.DeleteOnSubmit(bo);
-				db.SubmitChanges();
 			}
 
 			foreach (var sellOffer in sellOffers.Where(x => x.Price <= GlobalConst.InfluenceSystemSellPrice).ToList())
@@ -881,7 +875,6 @@ namespace ZeroKWeb.Controllers
 					                                            quantity,
 					                                            sellOffer.Planet,
 					                                            sellOffer.Price));
-					
 				}
 
 				sellOffer.Quantity -= quantity;
@@ -894,8 +887,6 @@ namespace ZeroKWeb.Controllers
 			             where buyOffer.Price >= sellOffer.Price
 			             orderby sellOffer.Price
 			             select new { Buy = buyOffer, Sell = sellOffer };
-
-			
 
 			foreach (var offerPair in offers)
 			{
