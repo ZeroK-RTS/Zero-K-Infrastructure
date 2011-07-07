@@ -25,7 +25,7 @@
     }
     @if (!Global.IsLobbyAccess && !m.IsScriptMission) {
       <div class="border-test">
-        <!non zk warning> If you don't have Zero-K lobby, send a message to springie like
+        If you don't have Zero-K lobby, send a message to springie like
         so:
         <pre>/msg Springie !spawn mod=@m.Name</pre>
         Then in the battle lobby:
@@ -36,7 +36,7 @@
         Alternative manual download: <a href='@Url.Action("File", "Missions", new { name = m.Name })'>@m.SanitizedFileName</a>
         and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>
       </div>
-      <!close zk warning>
+      @*<!close zk warning>*@
 			<br />
     }
     <span class="">@Html.BBCode(Model.Mission.Description)

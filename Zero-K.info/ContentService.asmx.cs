@@ -926,7 +926,7 @@ namespace ZeroKWeb
 							var planetList = gal.Planets.Where(x => x.OwnerAccountID == null && !x.PlanetStructures.Any(y => y.StructureType.EffectIsVictoryPlanet == true)).Shuffle(); //pick planets which only have wormhole
 							if (planetList.Count > 0) {
 								var freePlanet = planetList[new Random().Next(planetList.Count)];
-								foreach (var ac in kvp) db.AccountPlanets.InsertOnSubmit(new AccountPlanet() { PlanetID = freePlanet.PlanetID, AccountID = ac.AccountID, Influence = 51 });
+								foreach (var ac in kvp) db.AccountPlanets.InsertOnSubmit(new AccountPlanet() { PlanetID = freePlanet.PlanetID, AccountID = ac.AccountID, Influence = 501 });
 								db.Events.InsertOnSubmit(Global.CreateEvent("{0} was awarded empty planet {1} {2}", clan, freePlanet, sb));
 								changed = true;
 							}

@@ -20,14 +20,13 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
-		
-			//ImportSpringiePlayers();
+    	//ImportSpringiePlayers();
       //RecalculateBattleElo();
       //FixMaps();
 
 			//PurgeGalaxy(9);
     	//RandomizeMaps(9);
-			GenerateStructures(9);
+			//GenerateStructures(9);
 
 			//AddWormholes();
     }

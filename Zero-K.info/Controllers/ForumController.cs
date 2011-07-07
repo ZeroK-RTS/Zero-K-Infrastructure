@@ -14,10 +14,14 @@ namespace ZeroKWeb.Controllers
 		public ActionResult DeletePost(int? postID)
 		{
 			var db = new ZkDataContext();
-			var thread = db.ForumPosts.Single(x => x.ForumPostID == postID);
-			db.ForumPosts.DeleteOnSubmit(thread);
+			var post = db.ForumPosts.Single(x => x.ForumPostID == postID);
+			var thread = post.ForumThread;
+			db.ForumPosts.DeleteOnSubmit(post);
 			db.SubmitChanges();
-			return RedirectToAction("Thread", new { id = thread.ForumThreadID });
+			if (thread.ForumPosts.Count() == 0) {
+				db.ForumThreads.DeleteOnSubmit(thread);
+				return RedirectToAction("Index");
+			} else return RedirectToAction("Thread", new { id = post.ForumThreadID });
 		}
 
 		public ActionResult Index(int? categoryID)
@@ -66,11 +70,11 @@ namespace ZeroKWeb.Controllers
 
 			// update title
 			if (thread != null && planetID != null) {
-				var planet = db.Planets.Single(x => x.PlanetID == planetID);
+				var planet = db.Planets.Single(x => x.PlanetID == planetID && x.ForumThreadID == null);
 				thread.Title = planet.Name;
 			}
 			if (thread != null && clanID != null) {
-				var clan = db.Clans.Single(x => x.ClanID == clanID);
+				var clan = db.Clans.Single(x => x.ClanID == clanID && x.ForumThreadID == null);
 				thread.Title = clan.ClanName;
 			}
 			if (thread != null && missionID != null) {

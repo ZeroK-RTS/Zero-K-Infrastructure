@@ -38,14 +38,14 @@
             <td>@offer.Price.ToString("C0")</td>
            @if (offer.AccountID == Global.AccountID)
            {
-                <td>@Html.ActionLink("Cancel", "CancelMarketOrder", new { offerID = offer.OfferID, planetID = Model.PlanetID })</td>
+                <td>@Html.ActionLink("Cancel", "CancelMarketOrder","Planetwars", new { offerID = offer.OfferID, planetID = Model.PlanetID },null)</td>
            }
            else if (Global.AccountID != null && maxWillSell > 0 && maxCanBuy > 0)
            {
                var quickBuyText = String.Format("{0} for {1:C0}", maxCanBuy, maxCanBuy * offer.Price);
-                <td>@Html.ActionLink(quickBuyText, "QuickTransaction", new { offerID = offer.OfferID, quantity = maxCanBuy })</td>
+                <td>@Html.ActionLink(quickBuyText, "QuickTransaction","Planetwars", new { offerID = offer.OfferID, quantity = maxCanBuy }, null)</td>
                 <td>
-                    <form method="post" action="@Url.Action("QuickTransaction")">
+                    <form method="post" action="@Url.Action("QuickTransaction", "Planetwars")">
                         <input type="hidden" name="offerID" value="@offer.OfferID"/>
                         <input type="text" name="quantity" value="@maxCanBuy"/>
                         <input type='submit' value="Buy" />
@@ -91,15 +91,15 @@ else
             <td>@offer.Price.ToString("C0")</td>
            @if (offer.AccountID == Global.AccountID)
            {
-                <td>@Html.ActionLink("Cancel", "CancelMarketOrder", new { offerID = offer.OfferID, planetID = Model.PlanetID })</td>
+                <td>@Html.ActionLink("Cancel", "CancelMarketOrder","Planetwars", new { offerID = offer.OfferID, planetID = Model.PlanetID }, null)</td>
            }
            else if (Global.Account != null && maxWillBuy > 0 && visitorInfluence > 0)
            {
                var maxCanSell = Math.Min(maxWillBuy, visitorInfluence);
                var linkText = String.Format("{0} for {1:C0}", maxCanSell, maxCanSell * offer.Price);
-                <td>@Html.ActionLink(linkText, "QuickTransaction", new { offerID = offer.OfferID, quantity = maxCanSell })</td>
+                <td>@Html.ActionLink(linkText, "QuickTransaction","Planetwars",new { offerID = offer.OfferID, quantity = maxCanSell }, null)</td>
                 <td>
-                    <form method="post" action="@Url.Action("QuickTransaction")">
+                    <form method="post" action="@Url.Action("QuickTransaction","Planetwars")">
                         <input type="hidden" name="offerID" value="@offer.OfferID"/>
                         <input type="text" name="quantity" value="@maxCanSell"/>
                         <input type='submit' value="Sell" />
