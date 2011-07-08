@@ -11,6 +11,7 @@
     <script type="text/javascript">
     	$(document).ready(function () {
     		$(".dialog").dialog();
+    		$("#datepicker").datepicker();
     	});
     </script>
 }
@@ -46,7 +47,7 @@
 		<form action="@Url.Action("PostNews","News")" method="post">
 			Title: <input type="text" name="title"/><br />
 			Text: <textarea rows="5" cols="50" name="text"></textarea><br />
-			Created (UTC): <input type="text" name="created" value="@DateTime.UtcNow"/><small>(if set in future will be invisible until then)</small><br />
+			Created (UTC): <input type="text" name="created" value="@DateTime.UtcNow" id="datepicker"/><small>(if set in future will be invisible until then)</small><br />
 			Headline for (days): <input type="text" name="headlineDays" value=""/><small>(headlines popup for each player once)</small><br />
 		<input type="submit" value="Post" class="delete"/>
 	</form>

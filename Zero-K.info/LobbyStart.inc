@@ -41,7 +41,6 @@
 
     <li> Please make sure your graphic drivers are updated to latest! </li>
     <li> In case of game crashes disable shadows, lua shaders, water, pixel buffer and enable compressed textures. </li>
-    <li> <a href='http://docs.google.com/View?id=ajkvvmht466g_73gmsdwd8r'>Lobby help</a> </li>
     <li> Make sure you read the <a href='/Wiki/FAQ'>FAQ</a>. </li>
     <li> Post a new thread in our <a href='/Forum'>forum</a>. </li>
 

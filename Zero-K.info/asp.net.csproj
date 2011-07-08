@@ -39,7 +39,16 @@
     <Reference Include="CookComputing.XmlRpcV2">
       <HintPath>..\Libs\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
+    <Reference Include="DbLinq">
+      <HintPath>..\Libs\DbLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="DbLinq.MySql">
+      <HintPath>..\Libs\DbLinq.MySql.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MySql.Data">
+      <HintPath>..\Libs\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="PlanetWarsShared">
       <HintPath>..\Springie\libs\PlanetWarsShared.dll</HintPath>
     </Reference>
@@ -79,6 +88,8 @@
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\NoCache.cs" />
     <Compile Include="AppCode\SpotlightHandler.cs" />
+    <Compile Include="AppCode\SpringDb.cs" />
+    <Compile Include="AppCode\SpringForumController.cs" />
     <Compile Include="AppCode\WikiHandler.cs" />
     <Compile Include="ContentService.asmx.cs">
       <DependentUpon>ContentService.asmx</DependentUpon>

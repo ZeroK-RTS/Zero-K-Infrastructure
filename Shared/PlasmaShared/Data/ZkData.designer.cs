@@ -18731,6 +18731,8 @@ namespace ZkData
 		
 		private int _ForumThreadID;
 		
+		private System.Nullable<int> _SpringForumPostID;
+		
 		private EntityRef<Account> _Account;
 		
 		private EntityRef<ForumThread> _ForumThread;
@@ -18753,6 +18755,8 @@ namespace ZkData
     partial void OnHeadlineUntilChanged();
     partial void OnForumThreadIDChanging(int value);
     partial void OnForumThreadIDChanged();
+    partial void OnSpringForumPostIDChanging(System.Nullable<int> value);
+    partial void OnSpringForumPostIDChanged();
     #endregion
 		
 		public News()
@@ -18911,6 +18915,27 @@ namespace ZkData
 					this._ForumThreadID = value;
 					this.SendPropertyChanged("ForumThreadID");
 					this.OnForumThreadIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringForumPostID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<int> SpringForumPostID
+		{
+			get
+			{
+				return this._SpringForumPostID;
+			}
+			set
+			{
+				if ((this._SpringForumPostID != value))
+				{
+					this.OnSpringForumPostIDChanging(value);
+					this.SendPropertyChanging();
+					this._SpringForumPostID = value;
+					this.SendPropertyChanged("SpringForumPostID");
+					this.OnSpringForumPostIDChanged();
 				}
 			}
 		}

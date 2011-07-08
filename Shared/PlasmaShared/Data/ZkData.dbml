@@ -723,6 +723,7 @@
       <Column Name="AuthorAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="HeadlineUntil" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="SpringForumPostID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Account_News" Member="Account" ThisKey="AuthorAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="ForumThread_News" Member="ForumThread" ThisKey="ForumThreadID" OtherKey="ForumThreadID" Type="ForumThread" IsForeignKey="true" />
     </Type>
