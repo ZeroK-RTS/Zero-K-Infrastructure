@@ -124,6 +124,20 @@ namespace ZeroKWeb.Controllers
 			             };
 
 			result.LobbyStats = AuthServiceClient.GetLobbyStats();
+			result.News = db.News.Where(x => x.Created < DateTime.UtcNow).OrderByDescending(x => x.Created);
+			if (Global.Account != null) {
+				result.Headlines =
+					db.News.Where(
+						x => x.Created < DateTime.UtcNow && x.HeadlineUntil != null && x.HeadlineUntil > DateTime.UtcNow && (Global.Account.LastNewsRead == null || ( x.Created > Global.Account.LastNewsRead))).
+						OrderByDescending(x => x.Created);
+
+				if (result.Headlines.Any()) {
+					db.Accounts.Single(x => x.AccountID == Global.AccountID).LastNewsRead = DateTime.UtcNow;
+					db.SubmitChanges();
+				}
+			} else {
+				result.Headlines = new List<News>();
+			}
 
 
 			var accessibleThreads = db.ForumThreads.Where(x => x.RestrictedClanID == null || x.RestrictedClanID == Global.ClanID);
@@ -276,6 +290,8 @@ namespace ZeroKWeb.Controllers
 			public IQueryable<NewThreadEntry> NewThreads;
 			public SpotlightHandler.UnitSpotlight Spotlight;
 			public IEnumerable<Account> Top10Players;
+			public IEnumerable<News> News;
+			public IEnumerable<News> Headlines;
 		}
 
 		public class NewThreadEntry

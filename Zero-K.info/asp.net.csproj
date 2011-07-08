@@ -91,6 +91,7 @@
     <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
     <Compile Include="Controllers\MyController.cs" />
+    <Compile Include="Controllers\NewsController.cs" />
     <Compile Include="Controllers\PlanetwarsController.cs" />
     <Compile Include="Controllers\PollController.cs" />
     <Compile Include="Controllers\StaticController.cs" />
@@ -153,6 +154,7 @@
     <Content Include="Img\img_progressbar1_b.png" />
     <Content Include="Img\img_progressbar1_h.png" />
     <Content Include="Img\img_progressbar2_h.png" />
+    <Content Include="Img\rss.png" />
     <Content Include="Img\zk_logo_miniature.png" />
     <Content Include="LobbyStart.inc" />
     <Content Include="ResourceList.aspx" />
@@ -165,7 +167,7 @@
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
     <Content Include="Scripts\jquery-1.5.2.min.js" />
-    <Content Include="Scripts\jquery-ui-1.8.12.custom.min.js" />
+    <Content Include="Scripts\jquery-ui-1.8.14.custom.min.js" />
     <Content Include="Scripts\jquery.qtip.pack.js" />
     <Content Include="Scripts\jquery.tablesorter.js" />
     <Content Include="Scripts\jquery.tablesorter.min.js" />
@@ -272,6 +274,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\News\Index.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

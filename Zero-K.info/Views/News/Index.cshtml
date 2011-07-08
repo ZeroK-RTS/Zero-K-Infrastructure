@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+@using ZkData 
+@model IEnumerable<News> 
+@{Layout=null;}
+<rss version="2.0">
+<channel>
+<title>Zero-K news</title>
+<link>@Url.Action("Index","Home",null,"http")</link>
+<description>News for the free open source RTS strategy game Zero-K</description>
+<lastBuildDate>@Model.First().Created.ToUniversalTime().ToString("r")</lastBuildDate>
+<language>en-us</language>
+@foreach (News n in Model) {
+    <item>
+    <title>@n.Title</title>
+    <link>@Url.Action("Thread","Forum", new {id = n.ForumThreadID},"http")</link>
+    <guid>@Url.Action("Thread","Forum", new {id = n.ForumThreadID},"http")</guid>
+    <pubDate>@n.Created.ToUniversalTime().ToString("r")</pubDate>
+    <description>@n.Text</description>
+    </item>
+}
+</channel>
+</rss>

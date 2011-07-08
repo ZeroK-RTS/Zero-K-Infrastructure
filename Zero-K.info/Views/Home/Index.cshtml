@@ -6,6 +6,15 @@
   var stat = @Model.LobbyStats;
 }
 
+@section head {
+	<link rel="alternate" type="application/rss+xml" title="Zero-K news" href="@Url.Action("Index","News")"/>
+    <script type="text/javascript">
+    	$(document).ready(function () {
+    		$(".dialog").dialog();
+    	});
+    </script>
+}
+
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
     <div class="border">
     @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
@@ -23,34 +32,53 @@
 		@Html.IncludeWiki("Features");
     }
   </div>
+	@foreach (var n in Model.Headlines)
+	{
+		<div class="dialog" title="News headlines"><h1>@n.Title</h1>
+			<p>@Html.BBCode(n.Text)</p>
+			<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new {id=n.ForumThreadID },null)</small>
+		</div>
+	}
+
+	
   <div id="news" class="border">
-    @Html.IncludeWiki("News")
+	@if (Global.IsZeroKAdmin) {
+		<form action="@Url.Action("PostNews","News")" method="post">
+			Title: <input type="text" name="title"/><br />
+			Text: <textarea rows="5" cols="50" name="text"></textarea><br />
+			Created (UTC): <input type="text" name="created" value="@DateTime.UtcNow"/><small>(if set in future will be invisible until then)</small><br />
+			Headline for (days): <input type="text" name="headlineDays" value=""/><small>(headlines popup for each player once)</small><br />
+		<input type="submit" value="Post" class="delete"/>
+	</form>
+ }
+    @foreach (var n in Model.News.Take(8)) {
+			<h1>@n.Title</h1>	
+			<p>@Html.BBCode(n.Text)</p>
+			<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
+		}		
+		<br />
+			<a href="@Url.Action("Index","News")"><img src="/img/rss.png" />RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a> 
   </div>
 </div>
 <div id="sidebar" class="fright width-30">
-  @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess)
-  {
+  @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess) {
        <!--center><a class ="downloadbutton" href="http://zero-k.info/Wiki/Download" alt="Download" title="Download now Zero-K's latest version for free"></a></center-->
 	  <a onclick="javascript:download();"><span class="downloadbutton">Download</span></a>
-  }
+	}
 
-  @if (ZeroKWeb.Global.IsAccountAuthorized)
-  {
+  @if (ZeroKWeb.Global.IsAccountAuthorized) {
       <div class="border">
       <h3>Tools</h3>
-      @if (Global.IsLobbyAccess)
-      {
-              Html.RenderPartial("GoogleSiteSearch");
+      @if (Global.IsLobbyAccess) {
+				Html.RenderPartial("GoogleSiteSearch");
           <p><a href="http://zero-k.info/tools/mailer/sendMail.php"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>  
-      }
-      else
-      {
+			} else {
           <p><a href="http://zero-k.info/tools/mailer/sendMail.php" target="_blank"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>
-      }
+			}
 
       <p><a href="http://zero-k.info/Wiki/Manual"><img src="http://zero-k.info/img/manual.png" alt="manual" width="24" height="24" /> The Zero-K manual</a></p>
       </div>
-  }
+	}
 
   <div id="unit" class="border relative text-left">
     <img src="/img/unitpics/@(s.Unitname).png" width="64" height="51" class="fright" />
@@ -63,22 +91,16 @@
   <div class="border">
   <h2><a href='/Forum'>Forums</a></h2>
   <ul class="forumtab">
-  @foreach (var t in Model.NewThreads)
-  {
-      var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new { id = t.ForumThread.ForumThreadID }, new { title = "$thread$" + t.ForumThread.ForumThreadID });
-      if (t.WasWritten)
-      {
+  @foreach (var t in Model.NewThreads) {
+		var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new { id = t.ForumThread.ForumThreadID }, new { title = "$thread$" + t.ForumThread.ForumThreadID });
+		if (t.WasWritten) {
       <li><b>@link</b></li>
-      }
-      else if (t.WasRead)
-      { 
+		} else if (t.WasRead) { 
      <li><i>@link</i></li>
-      }
-      else
-      { 
+		} else { 
      <li>@link</li>
-      }
-  }
+		}
+	}
   </ul>
   </div>
 
@@ -91,14 +113,13 @@
         <th>ELO</th>
       </tr>
       @{var cnt = 1;}
-      @foreach (var a in Model.Top10Players)
-      {
+      @foreach (var a in Model.Top10Players) {
         <tr>
         <td>@(cnt++)</td>
         <td><small>@Html.PrintAccount(a)</small></td>
         <td>@Math.Round(a.Elo)</td>
         </tr>      
-      }
+			}
     </table>
   </div>
 

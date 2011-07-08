@@ -20,6 +20,7 @@ namespace ZeroKWeb.Controllers
 			db.SubmitChanges();
 			if (thread.ForumPosts.Count() == 0) {
 				db.ForumThreads.DeleteOnSubmit(thread);
+				db.SubmitChanges();
 				return RedirectToAction("Index");
 			} else return RedirectToAction("Thread", new { id = post.ForumThreadID });
 		}
