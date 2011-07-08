@@ -20,7 +20,7 @@ namespace ZeroKWeb.Controllers
 		public void MakeSpringNewsPosts()
 		{
 			var db =new ZkDataContext();
-			foreach (News n in db.News.Where(x=>x.SpringForumPostID == null).OrderBy(x=>x.Created)) {
+			foreach (News n in db.News.Where(x=>x.SpringForumPostID == null && x.Created <= DateTime.UtcNow).OrderBy(x=>x.Created)) {
 				string bbuid = SpringForumController.GenBBUid();
 				string text = string.Format("[url={0}:{1}][size=150:{1}]  [b:{1}]{2}[/b:{1}][/size:{1}][/url:{1}]\n {3}",
 																		Url.Action("Thread", "Forum", new { id= n.ForumThreadID},"http"),
@@ -28,7 +28,7 @@ namespace ZeroKWeb.Controllers
 																		n.Title,
 																		n.Text);
 				
-				n.SpringForumPostID = SpringForumController.PostOrEdit(text, bbuid, n.SpringForumPostID, SpringForumController.TopicIdNews, n.Title);
+				n.SpringForumPostID = SpringForumController.PostOrEdit(text, bbuid, n.SpringForumPostID, SpringForumController.TopicIdNews, n.Title, n.Created);
 				db.SubmitChanges();				
 			}
 		}

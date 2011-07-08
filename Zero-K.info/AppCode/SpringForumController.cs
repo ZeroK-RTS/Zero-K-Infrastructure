@@ -55,7 +55,7 @@ namespace ZeroKWeb
 		}
 
 
-		public static int PostOrEdit(string text, string bbuid, int? postID, uint topicID, string postSubject)
+		public static int PostOrEdit(string text, string bbuid, int? postID, uint topicID, string postSubject, DateTime postTime)
 		{
 			Spring db = new Spring(new MySqlConnection(ConfigurationManager.AppSettings["SpringConnectionString"]));
 			PhPbB3Posts post;
@@ -66,7 +66,7 @@ namespace ZeroKWeb
 				db.SubmitChanges();
 				return postID.Value;
 			} else {
-				uint time = ToUnix(DateTime.UtcNow);
+				uint time = ToUnix(postTime);
 
 				post = new PhPbB3Posts();
 				post.ForumID = ForumId;

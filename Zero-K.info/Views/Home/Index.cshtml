@@ -41,17 +41,7 @@
 		</div>
 	}
 
-	
   <div id="news" class="border">
-	@if (Global.IsZeroKAdmin) {
-		<form action="@Url.Action("PostNews","News")" method="post">
-			Title: <input type="text" name="title"/><br />
-			Text: <textarea rows="5" cols="50" name="text"></textarea><br />
-			Created (UTC): <input type="text" name="created" value="@DateTime.UtcNow" id="datepicker"/><small>(if set in future will be invisible until then)</small><br />
-			Headline for (days): <input type="text" name="headlineDays" value=""/><small>(headlines popup for each player once)</small><br />
-		<input type="submit" value="Post" class="delete"/>
-	</form>
- }
     @foreach (var n in Model.News.Take(8)) {
 			<h1>@n.Title</h1>	
 			<p>@Html.BBCode(n.Text)</p>
@@ -59,6 +49,18 @@
 		}		
 		<br />
 			<a href="@Url.Action("Index","News")"><img src="/img/rss.png" />RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a> 
+
+		@if (Global.IsZeroKAdmin) {
+			<br />
+		<form action="@Url.Action("PostNews","News")" method="post">
+			Title: <input type="text" name="title"/><br />
+			Text: <textarea rows="15" cols="100" name="text"></textarea><br />
+			Created (UTC): <input type="text" name="created" value="@DateTime.UtcNow" id="datepicker"/><small>(if set in future will be invisible until then)</small><br />
+			Headline for (days): <input type="text" name="headlineDays" value=""/><small>(headlines popup for each player once)</small><br />
+		<input type="submit" value="Post" class="delete"/>
+	</form>
+ }
+
   </div>
 </div>
 <div id="sidebar" class="fright width-30">
