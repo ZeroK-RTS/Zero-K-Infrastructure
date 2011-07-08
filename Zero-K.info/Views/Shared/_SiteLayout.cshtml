@@ -70,8 +70,8 @@
  }
 </head>
 <body class="">
-	<div id='ajaxScrollProgress'>
-		Loading...<img src='/img/Loader.gif' /></div>
+	<div id='ajaxScrollProgress' class="border">
+		Loading...<img src='/img/Loader.gif' class="vcenter"/></div>
 	@if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1") {
 		<div id="fadetoblack">
 		</div>

@@ -32,9 +32,14 @@ input
 	padding: 3px;
 }
 
-input.radio
+.noborder, input.radio
 {
 	border: none;
+}
+
+.vcenter
+{
+	vertical-align:middle;
 }
 
 .button
@@ -92,6 +97,7 @@ ul {list-style-type: circle;}
 
 .fleft{float: left;}
 .fright{float: right;}
+.clearfloat{clear:both;}
 
 .center
 {
@@ -106,6 +112,7 @@ ul {list-style-type: circle;}
 .text-justify{text-align: justify;}
 
 .block{display: block;}
+.inline{display: inline;}
 .hide{display: none;}
 
 .relative{position: relative;}
