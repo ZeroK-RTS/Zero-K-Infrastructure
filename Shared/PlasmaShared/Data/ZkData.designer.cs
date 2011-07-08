@@ -18733,6 +18733,12 @@ namespace ZkData
 		
 		private System.Nullable<int> _SpringForumPostID;
 		
+		private string _ImageExtension;
+		
+		private string _ImageContentType;
+		
+		private System.Nullable<int> _ImageLength;
+		
 		private EntityRef<Account> _Account;
 		
 		private EntityRef<ForumThread> _ForumThread;
@@ -18757,6 +18763,12 @@ namespace ZkData
     partial void OnForumThreadIDChanged();
     partial void OnSpringForumPostIDChanging(System.Nullable<int> value);
     partial void OnSpringForumPostIDChanged();
+    partial void OnImageExtensionChanging(string value);
+    partial void OnImageExtensionChanged();
+    partial void OnImageContentTypeChanging(string value);
+    partial void OnImageContentTypeChanged();
+    partial void OnImageLengthChanging(System.Nullable<int> value);
+    partial void OnImageLengthChanged();
     #endregion
 		
 		public News()
@@ -18936,6 +18948,69 @@ namespace ZkData
 					this._SpringForumPostID = value;
 					this.SendPropertyChanged("SpringForumPostID");
 					this.OnSpringForumPostIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImageExtension", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public string ImageExtension
+		{
+			get
+			{
+				return this._ImageExtension;
+			}
+			set
+			{
+				if ((this._ImageExtension != value))
+				{
+					this.OnImageExtensionChanging(value);
+					this.SendPropertyChanging();
+					this._ImageExtension = value;
+					this.SendPropertyChanged("ImageExtension");
+					this.OnImageExtensionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImageContentType", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public string ImageContentType
+		{
+			get
+			{
+				return this._ImageContentType;
+			}
+			set
+			{
+				if ((this._ImageContentType != value))
+				{
+					this.OnImageContentTypeChanging(value);
+					this.SendPropertyChanging();
+					this._ImageContentType = value;
+					this.SendPropertyChanged("ImageContentType");
+					this.OnImageContentTypeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImageLength", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public System.Nullable<int> ImageLength
+		{
+			get
+			{
+				return this._ImageLength;
+			}
+			set
+			{
+				if ((this._ImageLength != value))
+				{
+					this.OnImageLengthChanging(value);
+					this.SendPropertyChanging();
+					this._ImageLength = value;
+					this.SendPropertyChanged("ImageLength");
+					this.OnImageLengthChanged();
 				}
 			}
 		}

@@ -36,6 +36,10 @@
 	@foreach (var n in Model.Headlines)
 	{
 		<div class="dialog" title="News headlines"><h1>@n.Title</h1>
+			if (n.ImageRelativeUrl != null) {
+				<img src="@n.ImageRelativeUrl" style="float:left; width:120px; margin: 6px;"/>
+			}
+
 			<p>@Html.BBCode(n.Text)</p>
 			<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new {id=n.ForumThreadID },null)</small>
 		</div>
@@ -44,6 +48,9 @@
   <div id="news" class="border">
     @foreach (var n in Model.News.Take(8)) {
 			<h1>@n.Title</h1>	
+			if (n.ImageRelativeUrl != null) {
+				<img src="@n.ImageRelativeUrl" style="float:left; width:120px; margin: 6px;"/>
+			}
 			<p>@Html.BBCode(n.Text)</p>
 			<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
 			<br /><br />
@@ -52,11 +59,12 @@
 
 		@if (Global.IsZeroKAdmin) {
 			<br />
-		<form action="@Url.Action("PostNews","News")" method="post">
+		<form action="@Url.Action("PostNews","News")" enctype="multipart/form-data" method="post">
 			Title: <input type="text" name="title"/><br />
 			Text: <textarea rows="15" cols="100" name="text"></textarea><br />
 			Created (UTC): <input type="text" name="created" value="@DateTime.UtcNow" id="datepicker"/><small>(if set in future will be invisible until then)</small><br />
 			Headline for (days): <input type="text" name="headlineDays" value=""/><small>(headlines popup for each player once)</small><br />
+			Image (optional): <input type="file" name="image" />
 		<input type="submit" value="Post" class="delete"/>
 	</form>
  }

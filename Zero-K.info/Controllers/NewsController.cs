@@ -1,6 +1,12 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
+using System.Transactions;
+using System.Web;
 using System.Web.Mvc;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -34,34 +40,45 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-		[Auth]	
-		public ActionResult PostNews(int? newsID, string title, string text, DateTime created, int? headlineDays)
+		[Auth]
+		public ActionResult PostNews(int? newsID, string title, string text, DateTime created, int? headlineDays, HttpPostedFileBase image)
 		{
 			if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(text)) return Content("Empty text!");
+
 			var db = new ZkDataContext();
-			var news = new News() {
-				AuthorAccountID = Global.AccountID,
-				Created = created,
-				Title = title,
-				Text = text,
-			};
-			if (headlineDays.HasValue && headlineDays.Value > 0) news.HeadlineUntil = news.Created.AddDays(headlineDays.Value);
-			var thread = new ForumThread() {
-				Created = news.Created,
-				CreatedAccountID = news.AuthorAccountID,
-				Title = news.Title,
-				ForumCategoryID = db.ForumCategories.Single(x=>x.IsNews).ForumCategoryID
-			};
-			thread.ForumPosts.Add(new ForumPost() {
-				Created = news.Created,
-				Text = news.Text,
-				AuthorAccountID = news.AuthorAccountID
-			});
-			db.ForumThreads.InsertOnSubmit(thread);
-			db.SubmitChanges();
-			news.ForumThreadID = thread.ForumThreadID;
-			db.News.InsertOnSubmit(news);
-			db.SubmitChanges();
+			using (var scope = new TransactionScope())
+			{
+				var news = new News() { AuthorAccountID = Global.AccountID, Created = created, Title = title, Text = text, };
+
+				Image im = null;
+				if (image != null && image.ContentLength > 0)
+				{
+					im = Image.FromStream(image.InputStream);
+					news.ImageExtension = Path.GetExtension(image.FileName);
+					news.ImageContentType = image.ContentType;
+					news.ImageLength = image.ContentLength;
+				}
+
+				if (headlineDays.HasValue && headlineDays.Value > 0) news.HeadlineUntil = news.Created.AddDays(headlineDays.Value);
+				var thread = new ForumThread()
+				             {
+				             	Created = news.Created,
+				             	CreatedAccountID = news.AuthorAccountID,
+				             	Title = news.Title,
+				             	ForumCategoryID = db.ForumCategories.Single(x => x.IsNews).ForumCategoryID
+				             };
+				thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = news.Text, AuthorAccountID = news.AuthorAccountID });
+				db.ForumThreads.InsertOnSubmit(thread);
+				db.SubmitChanges();
+				news.ForumThreadID = thread.ForumThreadID;
+				db.News.InsertOnSubmit(news);
+				db.SubmitChanges();
+				if (im != null)
+				{
+					im.Save(Server.MapPath(news.ImageRelativeUrl));
+				}
+				scope.Complete();
+			}
 			MakeSpringNewsPosts();
 			return Content("Posted!");
 		}

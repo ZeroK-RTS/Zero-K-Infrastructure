@@ -284,6 +284,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Img\news\" />
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>

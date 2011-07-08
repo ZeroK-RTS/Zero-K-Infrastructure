@@ -16,6 +16,10 @@
     <guid>@Url.Action("Thread","Forum", new {id = n.ForumThreadID},"http")</guid>
     <pubDate>@n.Created.ToUniversalTime().ToString("r")</pubDate>
     <description>@Html.Encode(Html.BBCode(n.Text))</description>
+		@if (n.ImageExtension != null)
+		{
+			<enclosure url="@n.ImageRelativeUrl" length="@n.ImageLength" type="@n.ImageContentType" />
+		}
     </item>
 }
 </channel>

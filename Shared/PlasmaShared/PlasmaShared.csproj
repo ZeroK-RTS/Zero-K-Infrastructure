@@ -100,6 +100,7 @@
     <Compile Include="Data\LobbyMessage.cs" />
     <Compile Include="Data\MapRating.cs" />
     <Compile Include="Data\Mission.cs" />
+    <Compile Include="Data\News.cs" />
     <Compile Include="Data\Planet.cs" />
     <Compile Include="Data\ProgramID.cs" />
     <Compile Include="Data\Resource.cs" />
