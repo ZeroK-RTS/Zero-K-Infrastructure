@@ -15,7 +15,7 @@
     <link>@Url.Action("Thread","Forum", new {id = n.ForumThreadID},"http")</link>
     <guid>@Url.Action("Thread","Forum", new {id = n.ForumThreadID},"http")</guid>
     <pubDate>@n.Created.ToUniversalTime().ToString("r")</pubDate>
-    <description>@n.Text</description>
+    <description>@Html.Encode(Html.BBCode(n.Text))</description>
     </item>
 }
 </channel>
