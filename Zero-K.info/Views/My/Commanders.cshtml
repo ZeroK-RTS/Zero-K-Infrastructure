@@ -15,7 +15,7 @@
 	<span>You need to unlock some chassis before you can start customizing commander
 	</span>
 } else {
-	for (int i = 1; i <= 4; i++) {
+	for (int i = 1; i <= GlobalConst.CommanderProfileCount; i++) {
 		using (Ajax.BeginForm("CommanderProfile", new { profileNumber = i }, new AjaxOptions() { UpdateTargetId = "com" + i, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" })) {
 		<div id='com@(i)' class="fleft border" style="min-height: 600px;">
 			@{Html.RenderAction("CommanderProfile", new { profileNumber = i });}

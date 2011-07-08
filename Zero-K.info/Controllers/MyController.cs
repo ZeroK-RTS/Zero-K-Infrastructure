@@ -14,7 +14,7 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult CommanderProfile(int profileNumber, string name, int? chassis, string deleteCommander)
 		{
-			if (profileNumber < 1 || profileNumber > 4) return Content("WTF! get lost");
+			if (profileNumber < 1 || profileNumber > GlobalConst.CommanderProfileCount) return Content("WTF! get lost");
 
 			var db = new ZkDataContext();
 			using (var scope = new TransactionScope())

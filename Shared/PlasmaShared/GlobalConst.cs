@@ -7,6 +7,7 @@
 		public const int InfluenceSystemSellPrice = 10;
 		public const int MaxClanSkilledSize =10;
 		public const int ClanLeaveLimit = 100;
+		public const int CommanderProfileCount = 6;
 		public const int PlanetwarsColonizationCredits = 1000;
 		public const int PlanetwarsInvadingShipBonus = 30;
 		public const int PlanetwarsInvadingShipLostMalus = -10;
