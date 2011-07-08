@@ -46,6 +46,7 @@
 			<h1>@n.Title</h1>	
 			<p>@Html.BBCode(n.Text)</p>
 			<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
+			<br /><br />
 		}		
 		<br />
 			<a href="@Url.Action("Index","News")"><img src="/img/rss.png" />RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a> 
