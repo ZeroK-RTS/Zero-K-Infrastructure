@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Transactions;
 using System.Web.Mvc;
 using ZkData;
 
@@ -67,100 +68,111 @@ namespace ZeroKWeb.Controllers
 			if (string.IsNullOrEmpty(text)) return Content("Please type some text :)");
 
 			var db = new ZkDataContext();
-			var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);
-
-			// update title
-			if (thread != null && planetID != null) {
-				var planet = db.Planets.Single(x => x.PlanetID == planetID && x.ForumThreadID == null);
-				thread.Title = planet.Name;
-			}
-			if (thread != null && clanID != null) {
-				var clan = db.Clans.Single(x => x.ClanID == clanID && x.ForumThreadID == null);
-				thread.Title = clan.ClanName;
-			}
-			if (thread != null && missionID != null) {
-				var mission = db.Missions.Single(x => x.MissionID == missionID);
-				thread.Title = mission.Name;
-			}
-
-
-			if (threadID == null && categoryID.HasValue) // new thread
+			using (var scope = new TransactionScope())
 			{
-				var cat = db.ForumCategories.Single(x => x.ForumCategoryID == categoryID.Value);
-				if (cat.IsLocked) return Content("Thread is locked");
+				var thread = db.ForumThreads.SingleOrDefault(x => x.ForumThreadID == threadID);
 
-				if (string.IsNullOrEmpty(title)) return Content("Title cannot be empty");
-				thread = new ForumThread();
-				thread.CreatedAccountID = Global.AccountID;
-				thread.Title = title;
-				thread.ForumCategoryID = cat.ForumCategoryID;
-				db.ForumThreads.InsertOnSubmit(thread);
+				// update title
+				if (thread != null && planetID != null)
+				{
+					var planet = db.Planets.Single(x => x.PlanetID == planetID);
+					thread.Title = planet.Name;
+				}
+				if (thread != null && clanID != null)
+				{
+					var clan = db.Clans.Single(x => x.ClanID == clanID);
+					thread.Title = clan.ClanName;
+				}
+				if (thread != null && missionID != null)
+				{
+					var mission = db.Missions.Single(x => x.MissionID == missionID);
+					thread.Title = mission.Name;
+				}
+
+
+				if (threadID == null && categoryID.HasValue) // new thread
+				{
+					var cat = db.ForumCategories.Single(x => x.ForumCategoryID == categoryID.Value);
+					if (cat.IsLocked) return Content("Thread is locked");
+
+					if (string.IsNullOrEmpty(title)) return Content("Title cannot be empty");
+					thread = new ForumThread();
+					thread.CreatedAccountID = Global.AccountID;
+					thread.Title = title;
+					thread.ForumCategoryID = cat.ForumCategoryID;
+					db.ForumThreads.InsertOnSubmit(thread);
+				}
+
+				if (thread == null && resourceID != null) // non existing thread, we posted new post on map
+				{
+					var res = db.Resources.Single(x => x.ResourceID == resourceID);
+					thread = new ForumThread() { Title = res.InternalName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsMaps);
+					if (res.ForumThread != null) return Content("Double post");
+					res.ForumThread = thread;
+					thread.Resources = res;
+					db.ForumThreads.InsertOnSubmit(thread);
+				}
+
+				if (thread == null && springBattleID != null) // non existing thread, we posted new post on battle
+				{
+					var bat = db.SpringBattles.Single(x => x.SpringBattleID == springBattleID);
+					thread = new ForumThread() { Title = bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsSpringBattles);
+					thread.SpringBattles = bat;
+					if (bat.ForumThread != null) return Content("Double post");
+					bat.ForumThread = thread;
+					db.ForumThreads.InsertOnSubmit(thread);
+				}
+
+				if (thread == null && clanID != null)
+				{
+					var clan = db.Clans.Single(x => x.ClanID == clanID);
+					thread = new ForumThread() { Title = clan.ClanName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsClans);
+					if (clan.ForumThread != null) return Content("Double post");
+					clan.ForumThread = thread;
+					thread.Clan = clan;
+					db.ForumThreads.InsertOnSubmit(thread);
+				}
+
+				if (thread == null && planetID != null)
+				{
+					var planet = db.Planets.Single(x => x.PlanetID == planetID);
+					thread = new ForumThread() { Title = planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsPlanets);
+					if (planet.ForumThread != null) return Content("Double post");
+					planet.ForumThread = thread;
+					thread.Planets = planet;
+					db.ForumThreads.InsertOnSubmit(thread);
+				}
+
+				if (thread == null) return Content("Thread not found");
+				if (thread.IsLocked) return Content("Thread is locked");
+
+
+				var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
+
+				if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text)
+				{
+					//double post preventer
+					thread.ForumPosts.Add(new ForumPost() { AuthorAccountID = Global.AccountID, Text = text });
+					thread.LastPost = DateTime.UtcNow;
+					thread.LastPostAccountID = Global.AccountID;
+					thread.PostCount = thread.ForumPosts.Count();
+					thread.UpdateLastRead(Global.AccountID, true, thread.LastPost);
+
+					db.SubmitChanges();
+				}
+				scope.Complete();
+
+				if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
+				else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
+				else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
+				else if (clanID.HasValue) return RedirectToAction("Clan", "Planetwars", new { id = clanID });
+				else if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
+				else return RedirectToAction("Thread", new { id = thread.ForumThreadID });
 			}
-
-			if (thread == null && resourceID != null) // non existing thread, we posted new post on map
-			{
-				var res = db.Resources.Single(x => x.ResourceID == resourceID);
-				thread = new ForumThread() { Title = res.InternalName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
-				thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsMaps);
-				res.ForumThread = thread;
-				thread.Resources = res;
-				db.ForumThreads.InsertOnSubmit(thread);
-			}
-
-			if (thread == null && springBattleID != null) // non existing thread, we posted new post on battle
-			{
-				var bat = db.SpringBattles.Single(x => x.SpringBattleID == springBattleID);
-				thread = new ForumThread() { Title = bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
-				thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsSpringBattles);
-				thread.SpringBattles = bat;
-				bat.ForumThread = thread;
-				db.ForumThreads.InsertOnSubmit(thread);
-			}
-
-			if (thread == null && clanID != null)
-			{
-				var clan = db.Clans.Single(x => x.ClanID == clanID);
-				thread = new ForumThread() { Title = clan.ClanName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
-				thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsClans);
-				clan.ForumThread = thread;
-				thread.Clan = clan;
-				db.ForumThreads.InsertOnSubmit(thread);
-			}
-
-			if (thread == null && planetID != null)
-			{
-				var planet = db.Planets.Single(x => x.PlanetID == planetID);
-				thread = new ForumThread() { Title = planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
-				thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsPlanets);
-				planet.ForumThread = thread;
-				thread.Planets = planet;
-				db.ForumThreads.InsertOnSubmit(thread);
-			}
-
-			if (thread == null) return Content("Thread not found");
-			if (thread.IsLocked) return Content("Thread is locked");
-
-			
-			var lastPost = thread.ForumPosts.OrderByDescending(x => x.ForumPostID).FirstOrDefault();
-
-			if (lastPost == null || lastPost.AuthorAccountID != Global.AccountID || lastPost.Text != text)
-			{
-				//double post preventer
-				thread.ForumPosts.Add(new ForumPost() { AuthorAccountID = Global.AccountID, Text = text });
-				thread.LastPost = DateTime.UtcNow;
-				thread.LastPostAccountID = Global.AccountID;
-				thread.PostCount = thread.ForumPosts.Count();
-				thread.UpdateLastRead(Global.AccountID, true, thread.LastPost);
-
-				db.SubmitChanges();
-			}
-
-			if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
-			else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
-			else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
-			else if (clanID.HasValue) return RedirectToAction("Clan", "Planetwars", new { id = clanID });
-			else if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
-			else return RedirectToAction("Thread", new { id = thread.ForumThreadID });
 		}
 
 		public ActionResult Thread(int id, bool? lastPost, bool? lastSeen, int? page = 0)
