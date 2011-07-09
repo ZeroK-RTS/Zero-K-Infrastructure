@@ -35,7 +35,8 @@
   {
 			<small><img src='/img/cup.png' class='icon16'>@mission.TopScoreLine</small>
   }
-		<span class="play border"><a href='spring://@(Url.Action("Detail", "Missions", new { id = mission.MissionID }, Request.Url.Scheme) + (mission.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + mission.Name)'>
+		<span class="play border">
+		<a href='spring://@(Url.Action("Detail", "Missions", new { id = mission.MissionID }, Request.Url.Scheme) + (mission.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + mission.Name)'>
 				<!--img src="../../img/playnow.png" width="220" /-->
 				Play Now</a>
 		</span>

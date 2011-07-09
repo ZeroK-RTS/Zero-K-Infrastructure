@@ -165,6 +165,10 @@
     <Content Include="Img\img_progressbar1_b.png" />
     <Content Include="Img\img_progressbar1_h.png" />
     <Content Include="Img\img_progressbar2_h.png" />
+    <Content Include="Img\progressl_base.png" />
+    <Content Include="Img\progressl_fill.png" />
+    <Content Include="Img\progressr_base.png" />
+    <Content Include="Img\progressr_fill.png" />
     <Content Include="Img\rss.png" />
     <Content Include="Img\zk_logo_miniature.png" />
     <Content Include="LobbyStart.inc" />

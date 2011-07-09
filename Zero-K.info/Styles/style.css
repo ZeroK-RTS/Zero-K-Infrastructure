@@ -105,6 +105,16 @@ div#ajaxScrollProgress
 	z-index: 100;
 }
 
+.admin
+{
+	border: 1px dotted red;
+}
+
+.test
+{
+	border: 1px solid red;
+}
+
 .border
 {
 	background: #000 url("../img/border-1.png") repeat-x scroll 50% 0;
