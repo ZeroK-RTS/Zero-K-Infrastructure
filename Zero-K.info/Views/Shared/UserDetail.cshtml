@@ -2,7 +2,7 @@
 @using ZeroKWeb;
 @using ZkData;
 @{Page.Title = Model.Name + " user page";}
-@{Html.RenderAction("Index", "Poll", new { pollID = 6 });}	
+@* @{Html.RenderAction("Index", "Poll", new { pollID = 6 });} *@
 
 
 @* User Profile Page! *@ @* First column starts here *@
@@ -17,6 +17,8 @@
 			<b> @Model.Name </b> is an <b>Administrator</b> for: 
 			@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
 		</div>	
+	} else {
+		<br />
 	}
 	<br />
 
