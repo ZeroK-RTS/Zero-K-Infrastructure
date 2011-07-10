@@ -86,6 +86,13 @@ ul.forumtab
     padding-left: 15px;
 }
 
+hr.pretty
+{
+	background: url("../../img/hr_img1.png");
+	width: 80%;
+	height: 1px;
+}
+
 div#simplestyle
 {
     margin: 10px;

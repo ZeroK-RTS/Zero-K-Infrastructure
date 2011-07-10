@@ -7,7 +7,8 @@
 	var g = Model;
 
 	int maxDropships = new ZkDataContext().AccountPlanets.GroupBy(x => x.PlanetID).Select(x => (int?)x.Sum(y => y.DropshipCount)).Max() ?? 1; // fake max as 1 to prevent division by zero
-	if (maxDropships == 0) {
+	if (maxDropships == 0)
+	{
 		maxDropships = 1;
 	}
 	
@@ -33,28 +34,29 @@ We are setting up the next round.
         {
             var paper = Raphael(document.getElementById("linkMap"), @Model.Width, @Model.Height);
 
-            @foreach (var link in Model.Links) {
-					var p1 = link.PlanetByPlanetID1;
-					var p2 = link.PlanetByPlanetID2;
+            @foreach (var link in Model.Links)
+			{
+				var p1 = link.PlanetByPlanetID1;
+				var p2 = link.PlanetByPlanetID2;
 
-					var x1 = p1.X * Model.Width;
-					var y1 = p1.Y * Model.Height;
-					var x2 = p2.X * Model.Width;
-					var y2 = p2.Y * Model.Height;
+				var x1 = p1.X * Model.Width;
+				var y1 = p1.Y * Model.Height;
+				var x2 = p2.X * Model.Width;
+				var y2 = p2.Y * Model.Height;
 
-                 
-					// lines don't support gradients, so use rectangles instead
-                    double width = link.LinktStrength * 5 + 1;
-					var color1 = p1.GetColor(Global.Account);
-					var color2 = p2.GetColor(Global.Account);
-					var angle = -Math.Atan2(x2 - x1, y2 - y1) / Math.PI * 180;
-					var length = Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-                    var lineX = x1-width/2;
-                    var lineY = y1+width/2;
 
-                    // don't let the line cover the planets
-                    lineY += p1.Resource.PlanetWarsIconSize/2 * 1.5;
-                    length -= p2.Resource.PlanetWarsIconSize * 1.5;
+				// lines don't support gradients, so use rectangles instead
+				double width = link.LinktStrength * 5 + 1;
+				var color1 = p1.GetColor(Global.Account);
+				var color2 = p2.GetColor(Global.Account);
+				var angle = -Math.Atan2(x2 - x1, y2 - y1) / Math.PI * 180;
+				var length = Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+				var lineX = x1 - width / 2;
+				var lineY = y1 + width / 2;
+
+				// don't let the line cover the planets
+				lineY += p1.Resource.PlanetWarsIconSize / 2 * 1.5;
+				length -= p2.Resource.PlanetWarsIconSize * 1.5;
 
                     @: var r = paper.rect(@String.Format("{0:0}, {1:0}, {2:0}, {3:0}", lineX, lineY, width, length));
                     @: r.attr({
@@ -69,51 +71,93 @@ We are setting up the next round.
     </script>
 }
 
-@if (Global.IsAccountAuthorized) {
+@* redundant: info is in login bar right above
+@if (Global.IsAccountAuthorized)
+{
  <span>
-  Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits || @Html.ActionLink("Trade", "Trade", "PlanetWars", new { username = Global.Account.Name }, null) | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0) | Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()  (click on planet to use them!)
+  Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits || @Html.ActionLink("Trade", "Trade", "PlanetWars", new { username = Global.Account.Name }, null) | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0) | 
+  
+  Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()  (click on planet to use them!)
  </span>
 }
-<span>
-  @Html.ActionLink("Clans", "ClanList") | @Html.ActionLink("Events", "Events") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString() | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a> | <a href='/Forum/Thread/314'>Hall Of Fame</a>
-</span><br />
+*@
 
+<div class="">
+  @Html.ActionLink("Clans", "ClanList") | @Html.ActionLink("Events", "Events") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString() | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a> | <a href='/Forum/Thread/314'>Hall Of Fame</a>
+</div>
+<br />
+
+<div class="fleft border" style="min-height: 60px;">
 <b>Conquest victory (70% planets):</b>
 @{
 	var conquest = @Model.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
-	if (conquest != null) {
-		
-		<span>@Html.PrintClan(conquest.Clan) - @conquest.Count/@Math.Round(Model.Planets.Count()*0.7) planets</span>
+	var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.7);
+	if (conquest != null)
+	{
+		<span class="fleft">@Html.PrintClan(conquest.Clan) - @conquest.Count/@Math.Round(Model.Planets.Count() * 0.7) planets</span>
+	<br />
+		<img src="/img/progressl_base.png" height="17" class="fleft" />
+		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_planets))" />
+		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_planets)))" />
+		<img src="/img/progressr_base.png" height="17" class="fleft" />
+		//<b class="fleft"> Victory! </b>
+		<br class="clearfloat" />
 	}
 }
-<br />
+</div>
 
+<div class="fleft border" style="min-height: 60px;">
 <b>Technologic victory (all artefacts and techs):</b>
 @{
 	var db = new ZkDataContext();
 	var arts = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)).Count();
-	var artsTaken = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true) && y.OwnerAccountID!= null && y.Account.Clan!=null).GroupBy(x=>x.Account.Clan).Select(x=>new{Clan = x.Key, Arts = x.Count()}).FirstOrDefault();
-	
-	if (artsTaken != null) {
+	var artsTaken = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true) && y.OwnerAccountID != null && y.Account.Clan != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Arts = x.Count() }).FirstOrDefault();
+
+	if (artsTaken != null)
+	{
 		var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Account.Clan == artsTaken.Clan).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
-		
-		<span>@Html.PrintClan(artsTaken.Clan) - @artsTaken.Arts/@arts artefacts,  @techs/@db.StructureTypes.Where(x=>x.EffectUnlockID!=null).Count() techs</span>
+		var ratio_art = @artsTaken.Arts / @arts;
+		var ratio_struct = @techs / @db.StructureTypes.Where(x => x.EffectUnlockID != null).Count();
+		<span class="fleft">@Html.PrintClan(artsTaken.Clan) - @artsTaken.Arts/@arts artefacts,  @techs/@db.StructureTypes.Where(x => x.EffectUnlockID != null).Count() techs</span>
+	<br />
+		//todo: fix to cycle 3 pictures of artifacts
+		<img src="/img/progressl_base.png" height="17" class="fleft" />
+		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_art))" />
+		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_art)))" />
+		<img src="/img/progressr_base.png" height="17" class="fleft" />
+		<br class="clearfloat" />
+		//maybe change colors depending on how many artifacts captured?
+		<img src="/img/progressl_base.png" height="17" class="fleft" />
+		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_struct))" />
+		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_struct)))" />
+		<img src="/img/progressr_base.png" height="17" class="fleft" />
+		//<b class="fleft"> Victory! </b>
+		<br class="clearfloat" />
 	}
 }
-<br />
+</div>
 
-
-<b>Economic victory (credits exceed 50% of galaxy assets):</b>
+<div class="fleft border" style="min-height: 60px;">
+<b>Economic victory (50% of galaxy assets):</b>
 @{
 	
-	var credEntries = db.Clans.Select(x=> new {Clan = x, Credits=x.Accounts.Sum(y=>(int?)y.Credits)??0, Assets = (x.Accounts.Sum(y=>(int?)y.Credits)??0) + x.Accounts.SelectMany(y=>y.Planets).SelectMany(y=>y.PlanetStructures).Where(y=>!y.IsDestroyed).Sum(y=>(int?)y.StructureType.Cost)??0}).OrderByDescending(x => x.Credits);
+	var credEntries = db.Clans.Select(x => new { Clan = x, Credits = x.Accounts.Sum(y => (int?)y.Credits) ?? 0, Assets = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0) + x.Accounts.SelectMany(y => y.Planets).SelectMany(y => y.PlanetStructures).Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.Cost) ?? 0 }).OrderByDescending(x => x.Credits);
 	var creds = credEntries.FirstOrDefault();
-	if (creds != null) {
-		<span>@Html.PrintClan(creds.Clan) - $@creds.Credits/$@Math.Round(credEntries.Sum(x=>x.Assets)*0.5)</span>
+	var ratio_money = @creds.Credits / @Math.Round(credEntries.Sum(x => x.Assets) * 0.5);
+	if (creds != null)
+	{
+		<span class="fleft">@Html.PrintClan(creds.Clan) - $@creds.Credits/$@Math.Round(credEntries.Sum(x => x.Assets) * 0.5)</span>
+	<br />
+		<img src="/img/progressl_base.png" height="17" class="fleft" />
+		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_money))" />
+		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_money)))" />
+		<img src="/img/progressr_base.png" height="17" class="fleft" />
+		//<b class="fleft"> Victory! </b>
+		<br class="clearfloat" />
 	}
 }
-<br />
-
+</div>
+<br class="clearfloat" />
 
 
 <div style="text-align: left; border: 0; position: relative; z-index:  100" >
@@ -121,7 +165,8 @@ We are setting up the next round.
     <div id="linkMap" > </div>
   </div>
   <img src="/img/galaxies/render_@(g.GalaxyID).jpg" style="text-align:left; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
-@foreach (var p in Model.Planets) {
+@foreach (var p in Model.Planets)
+{
 	var pr = p.PlanetRectangle(Model);
 	var por = p.PlanetOverlayRectangle(Model);
 	Clan clan = null;
@@ -132,7 +177,8 @@ We are setting up the next round.
 
 	int shipCount = p.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0;
 
-	if (p.Account != null) {
+	if (p.Account != null)
+	{
 		clan = p.Account.Clan;
 	}
 
@@ -148,26 +194,30 @@ We are setting up the next round.
 	}*/
     
     <span style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px;">
-      @if (autohost != null && autohost.PlanetWarsHostPlayers.Count() > 1) { 
+      @if (autohost != null && autohost.PlanetWarsHostPlayers.Count() > 1)
+	  { 
         <img src='/img/planetstatus/@(autohost.InGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute'/>
-			}
+	  }
       
 			@{
-			var rendered = new List<string>();
+	  var rendered = new List<string>();
 			}
-      @foreach (var s in p.PlanetStructures) {
-				var size = por.Width;
-				var urlResized = s.GetPathResized(size);
-				if (rendered.Contains(urlResized)) {
-					continue;
-				}
-				rendered.Add(urlResized);
-				var pathResized = Server.MapPath(urlResized);
-				if (!File.Exists(pathResized)) {
-					s.GenerateResized(size, Server.MapPath("/img/structures/"));
-				}
+      @foreach (var s in p.PlanetStructures)
+	  {
+		  var size = por.Width;
+		  var urlResized = s.GetPathResized(size);
+		  if (rendered.Contains(urlResized))
+		  {
+			  continue;
+		  }
+		  rendered.Add(urlResized);
+		  var pathResized = Server.MapPath(urlResized);
+		  if (!File.Exists(pathResized))
+		  {
+			  s.GenerateResized(size, Server.MapPath("/img/structures/"));
+		  }
         <img src='@urlResized' style='position:absolute' />
-			}
+	  }
     </span>
     
     
@@ -176,9 +226,10 @@ We are setting up the next round.
       <tr>
         <td valign="bottom" align="center">
           <a href='@Url.Action("Planet", new { id = p.PlanetID })' style='color:White'><span title="$planet$@p.PlanetID" style="color: @(Clan.TreatyColor(Global.Clan, clan))" >@p.Name<br />
-            @if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID) {
+            @if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID)
+			{
               <span style="font-size: 8px">@p.Account.Name</span>
-						}
+			}
           </span></a>
         </td>
       </tr>
@@ -188,9 +239,10 @@ We are setting up the next round.
       <table cellpadding="0" cellspacing="0" style="font-size: 2px;">
         <tr>
           <td align="center">
-            @if (clan != null) {
+            @if (clan != null)
+			{
               <img src='@clan.GetImageUrl()' width='20' />
-						}
+			}
           </td>
         </tr>
         @*<tr>
@@ -206,10 +258,11 @@ We are setting up the next round.
     
     
     
-						if (shipCount > 0) {
+			if (shipCount > 0)
+			{
     <span style="position: absolute; left: @(pr.Right)px; top: @(pr.Top)px; width: 100px; height: @(pr.Height)px; display:inline-block;" title='$planetDropships$@p.PlanetID'>
     <img src='/img/fleets/war.png' width='@(Math.Round(13 + 12.0 * shipCount / (double)maxDropships))' /><span style="font-size: 10px">@shipCount</span> </span>
-						}
+			}
 }
 </div>
 <h3>Last events</h3>

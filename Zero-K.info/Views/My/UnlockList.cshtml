@@ -1,36 +1,42 @@
 ﻿@model ZeroKWeb.Controllers.MyController.UnlockListResult
-@{
-	Page.Title = "Technology unlocks";
-}
+@{Page.Title = "Technology unlocks";}
 <h2>Owned technologies</h2>
 @{Html.RenderPartial("UnlockedTechnologies", Model.Account.AccountUnlocks);}
 
+<div class="border" style="position: fixed; bottom: 10%; left: 40%; z-index: 100; border: #fff;" title="Want more points? <br /> First you have to reach the next level before you'll receive new points. <br /> Gain XP just by playing the game, win or lose!">
+	<h3>You have <span style="color: red; font-size: 130%;"> @Model.Account.AvailableXP </span> points available</h3>
+</div>
 
 @*<a href="@Url.Action("Reset")">Reset list (debug)</a>*@
-<h2>Available technologies</h2>
-	<h3><span title="Why only @Model.Account.AvailableXP points? <br /> First you have to reach the next level before you'll receive new points.">You have @Model.Account.AvailableXP points available</span></h3>
+<div>
+<center><h2>Available technologies</h2></center>
 @foreach (var unlock in Model.Unlocks) {
-	<span title="$unlock$@unlock.UnlockID">
-		<img src="@unlock.ImageUrl" style="float:left;" alt="unlocks" /><br />
+	<div class="border fleft" style="width: 46%; min-height: 100px;">
+		<img src="@unlock.ImageUrl" alt="unlocks" title="$unlock$@unlock.UnlockID" style="float:left; padding: 5px;"/>
 		<span style="color: @unlock.LabelColor; font-weight:bold">@unlock.Name</span>
-		Level: @unlock.NeededLevel, 
-		XP: @unlock.XpCost, 
-		 <span>@Html.BBCode(unlock.Description)</span>
+		Level: @unlock.NeededLevel, XP: @unlock.XpCost
 		<br />
-		<a href="@Url.Action("Unlock", "My", new { id = unlock.UnlockID })" >Unlock</a><br />
-	</span>
-	<br />
+		@Html.BBCode(unlock.Description)
+		<br />
+		<a href="@Url.Action("Unlock", "My", new { id = unlock.UnlockID })" class="clearfloat">Unlock</a>
+	</div>
 }
-<h2>Unavailable technologies</h2>
+<br class="clearfloat" />
+</div>
+
+<div>
+<center><h2>Unavailable technologies</h2></center>
 @foreach (var unlock in Model.FutureUnlocks) {
-	<span title="$unlock$@unlock.UnlockID" style="display:inline-block; width:250px;height:120px;">
-		<img src="@unlock.ImageUrl" alt="unlocks" /><span style="color: @unlock.LabelColor;">@unlock.Name</span><br />
-		<span>
-			Level: @unlock.NeededLevel, <br />
-			XP: @unlock.XpCost
-			@if (unlock.ParentUnlock != null) {
-				@:,<br /> technology: <span title='$unlock$@unlock.RequiredUnlockID'><img src="@unlock.ParentUnlock.ImageUrl" height="20"width="20"/></span>
-			 }
-		</span>
-	</span>
+	<div class="border fleft" style="width:200px; height:90px; border: 1px solid #a00;">
+		<img src="@unlock.ImageUrl" alt="unlocks"  title="$unlock$@unlock.UnlockID" class="fleft" />
+		<span style="color: @unlock.LabelColor;">@unlock.Name</span><br />
+		Level: @unlock.NeededLevel
+		<br />
+		XP: @unlock.XpCost
+		@if (unlock.ParentUnlock != null) {
+			@:,<br /> need: <span title='$unlock$@unlock.RequiredUnlockID'><img src="@unlock.ParentUnlock.ImageUrl" height="20"width="20" class="vcenter" /></span>
+		}
+	</div>
 }
+<br class="clearfloat" />
+</div>

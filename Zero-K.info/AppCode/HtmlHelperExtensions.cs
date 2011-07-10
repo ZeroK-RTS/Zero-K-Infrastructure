@@ -151,15 +151,12 @@ namespace System.Web.Mvc
 				return
 					new MvcHtmlString(
 						string.Format(
-							"<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' /><a href='/Users/{2}' style='color:{3}' title='<b>Elo:</b> {5}<br /><br />First logged in {6}, Last log in {7} <br /><br /><b>Aliases:</b> {4}'>{2}</a>",
+							"<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' /><a href='/Users/{2}' style='color:{3}' title='<b>Aliases:</b> {4}'>{2}</a>",
 							account.Country != "??" ? account.Country : "unknown",
 							account.LobbyTimeRank + 1,
 							account.Name,
 							colorize ? Clan.TreatyColor(Global.Clan, account.Clan): "",
-							account.Aliases,
-							Math.Round(account.Elo),
-							account.FirstLogin.ToAgoString(),
-							account.LastLogin.ToAgoString()));
+							account.Aliases));
 			}
 		}
 

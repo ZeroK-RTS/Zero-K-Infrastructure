@@ -23,6 +23,7 @@
 }
 @if (Global.IsZeroKAdmin) {
 	var db = new ZkData.ZkDataContext();
+	<div class="admin">
 	<form action="@Url.Action("MoveThread", new{threadID = Model.CurrentThread.ForumThreadID})" method="post">
 	<select name="newcat">
 		@foreach (var c in db.ForumCategories.Where(x=>!x.IsClans && !x.IsMaps && !x.IsMissions && !x.IsPlanets && !x.IsSpringBattles)) {
@@ -30,7 +31,8 @@
 	}
 		</select>
 	<input type="submit" value="move" />
-</form>
+	</form>
+	</div>
 }
 	
 
