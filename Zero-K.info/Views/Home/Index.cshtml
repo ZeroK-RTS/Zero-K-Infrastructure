@@ -55,7 +55,7 @@
 		<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
 		<br /><br />
 	}
-	<a href="@Url.Action("Index","News")"><img src="/img/rss.png" />RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a> 
+	<a href="@Url.Action("Index","News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a> 
 	@if (Global.IsZeroKAdmin) {
 		<div class="admin">
 		<form action="@Url.Action("PostNews","News")" enctype="multipart/form-data" method="post" valign="top">
@@ -152,7 +152,7 @@
 <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
 <g:plusone></g:plusone>
 <br />
-<a href="@Url.Action("Index","News")"><img src="/img/rss.png" width="20"/>RSS news feed</a>
+<a href="@Url.Action("Index","News")"><img src="/img/rss.png" width="15" alt="rss" /> RSS news feed</a>
 
 
   </div>  
