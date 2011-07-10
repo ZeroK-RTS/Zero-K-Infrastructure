@@ -24,11 +24,11 @@
 
 	@{var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));}
 	<span class="inline" title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
-		<b class="fleft"> Level @Model.Level </b>
+		<b class="fleft"> Level @Model.Level </b> 
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
 		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300*ratio))" />
 		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300*(1-ratio)))" />
-		<img src="/img/progressr_base.png" height="17" class="fleft" />
+		<img src="/img/progressr_base.png" height="17" class="fleft" /> 
 		<b class="fleft"> Level @(Model.Level+1) </b>
 	</span>
 	<br />
