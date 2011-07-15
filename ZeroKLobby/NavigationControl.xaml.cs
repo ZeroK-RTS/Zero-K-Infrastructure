@@ -90,7 +90,7 @@ namespace ZeroKLobby
     {
       Buttons = new ObservableCollection<ButtonInfo>()
                 {
-                  new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info//", LinkBehavior = true},
+                  new ButtonInfo() { Label = "HOME", TargetPath = "http://zero-k.info/", LinkBehavior = true},
                   new ButtonInfo() { Label = "SINGLEPLAYER", TargetPath = "http://zero-k.info/Missions", Icon = HeaderButton.ButtonIcon.Singleplayer, LinkBehavior =true },
                   new ButtonInfo() { Label = "MULTIPLAYER", TargetPath = "battles", Icon = HeaderButton.ButtonIcon.Multiplayer },
                   new ButtonInfo() { Label = "CHAT", TargetPath = "chat" },
@@ -193,7 +193,7 @@ namespace ZeroKLobby
 
     void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-      if (string.IsNullOrEmpty(Path)) Path = "http://zero-k.info//";
+      if (string.IsNullOrEmpty(Path)) Path = "http://zero-k.info/";
     }
 
 
