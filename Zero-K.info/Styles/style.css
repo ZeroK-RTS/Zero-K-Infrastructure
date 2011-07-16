@@ -156,6 +156,20 @@ div#ajaxScrollProgress
 }
 
 /* Download-Button on Homepage */
+.buttonSpan
+{
+    height: 45px;
+    width: 45px;
+    background-image: url("../img/downloadBlue45.png");
+    display: inline-block;
+    vertical-align:middle;
+}
+
+.buttonSpan:hover
+{
+    background-image: url("../img/downloadBlue45_2.png");
+}
+
 .downloadbutton
 {
 	position: relative;
