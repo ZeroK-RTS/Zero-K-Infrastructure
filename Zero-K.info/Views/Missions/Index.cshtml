@@ -1,4 +1,4 @@
-﻿@model ZeroKWeb.Controllers.MissionsIndexData
+ @model ZeroKWeb.Controllers.MissionsIndexData
 @using ZeroKWeb;
 @{
 	Page.Title = "Singleplayer and missions";
@@ -37,7 +37,7 @@
 					<li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
 				}
 			</ol>
-            <h3>Lastest comments</h3>
+            <h3>Latest comments</h3>
 			<ul>
 				@foreach (var mission in Model.LastComments.Take(15)) {
 					<li><span title='$mission$@mission.MissionID'>@Html.ActionLink(mission.Name, "Detail", new { id = mission.MissionID })</span></li>
