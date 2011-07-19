@@ -6,12 +6,14 @@
 @foreach (var m in Model) {
   var players = m.Players.Count(p => !p.IsSpectator);
   var specs = m.Players.Count(p => p.IsSpectator);
-    <div class='mission fleft' style='width:400px' onclick="window.location='@Url.Action("Detail", new { id = m.Battle.SpringBattleID })'">
-      <b>@m.Battle.Title</b>
+	<a href='@Url.Action("Detail", new { id = m.Battle.SpringBattleID })'>
+	<div class='mission fleft' style='width:400px; color: #fff;'>
+    <b>@m.Battle.Title</b>
       <br />
       Teams:
       @string.Join("v", m.Players.Where(p => !p.IsSpectator).GroupBy(p => p.AllyNumber).Select(g => g.Count()))
-      @if (m.Battle.HasBots) { <text>+ Bots</text> }
+      @if (m.Battle.HasBots)
+	  { <text>+ Bots</text> }
       <br />
       @m.Map.InternalName (@m.Mod.InternalName)<br />
       <table>
@@ -57,4 +59,5 @@
         </tr>
       </table>
     </div>
+	</a>
 }
