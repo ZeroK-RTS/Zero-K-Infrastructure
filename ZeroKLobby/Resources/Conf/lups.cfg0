@@ -1,19 +1,24 @@
 //==verbose mode?==
 //ShowWarnings = true
-Quality=0 //0=very low,1=low,2=normal,3=high,4=very high	//anything not very high breaks on ATI >:<
+
+Quality=0 //0=very low,1=low,2=normal,3=high,4=very high
+
 //==Distortions==
 Distortions               = false  // force distortions? (you can force it on, too!)
 //DistortionUpdateSkip      = 0      // must be larger zero (larger := better performance)
 //DistortionCopyDepthBuffer = true   // do depthtest? (can increase performance if turned off)
+
 //==Force Card Detection==
 // Vendor  = "NVIDIA Corporation"
 // Renderer= "GeForce 7600"
+
 //==Deactivate Specific Classes==
 DisableFX= {
   ShockWave   = true,
   UnitCloaker = true,
   UnitJitter  = true,
 }
+
 //==NanoTower FXs==
 // NanoFxType[0..FACTIONS_COUNT-1] : determines the used particle class
 //                                   (only NanoLasers and NanoParticles possible)
@@ -27,6 +32,7 @@ DisableFX= {
 //         count       (nano density/strength)
 //         limcount    (count scaled between 0..1)
 //         and inverse (->reclaim)
+
 NanoFx = {
 // EXAMPLE CUSTOM ARM NANOFX (freaky!)
 //arm = {
