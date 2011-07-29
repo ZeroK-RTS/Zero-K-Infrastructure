@@ -158,13 +158,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
+    <Content Include="Img\artifact_1.png" />
+    <Content Include="Img\artifact_2.png" />
+    <Content Include="Img\artifact_3.png" />
+    <Content Include="Img\artifact_4.png" />
+    <Content Include="Img\artifact_empty.png" />
+    <Content Include="Img\blank.png" />
     <Content Include="Img\border-1.png" />
     <Content Include="Img\border.png" />
     <Content Include="Img\bullet.png" />
     <Content Include="Img\favicon.png" />
-    <Content Include="Img\img_progressbar1_b.png" />
-    <Content Include="Img\img_progressbar1_h.png" />
-    <Content Include="Img\img_progressbar2_h.png" />
     <Content Include="Img\progressl_base.png" />
     <Content Include="Img\progressl_fill.png" />
     <Content Include="Img\progressr_base.png" />
@@ -202,6 +205,17 @@
     <Content Include="Styles\style.css" />
     <Content Include="UnlocksAdmin.aspx" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />
+    <None Include="PetitaMedium.eot" />
+    <None Include="PetitaMedium.ttf" />
+    <None Include="RevoPop.eot" />
+    <None Include="RevoPop.ttf" />
+    <None Include="Skir.eot" />
+    <None Include="Skir.ttf" />
+    <None Include="SM.eot" />
+    <None Include="SM.ttf" />
+    <None Include="tomorrow.eot" />
+    <None Include="tomorrow.TTF" />
+    <None Include="Views\Shared\Unlocks.cshtml" />
     <Content Include="Views\Planetwars\Index.cshtml" />
     <Content Include="Views\Planetwars\Galaxy.cshtml" />
     <Content Include="Web.config">

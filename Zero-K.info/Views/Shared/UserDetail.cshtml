@@ -10,32 +10,27 @@
 
 	<div id="usr_info" class="">
 	<h2>@Html.PrintAccount(Model)</h2>
-	<a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a>
+	<a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
 	@if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
-	{
-		<div class="">
-			<b> @Model.Name </b> is an <b>Administrator</b> for: 
-			@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
-		</div>	
-	} else {
-		<br />
-	}
+ {
+			<div>
+				<b> @Model.Name </b> is an <b>Administrator</b> for: 
+				@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
+			</div>
+ }
+	<b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
 	<br />
-
+	<b>Elo:</b> @Math.Round(@Model.Elo)
 	@{var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));}
-	<span class="inline" title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
+	<div title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
 		<b class="fleft"> Level @Model.Level </b> 
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
-		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300*ratio))" />
-		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300*(1-ratio)))" />
+		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio))" />
+		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio)))" />
 		<img src="/img/progressr_base.png" height="17" class="fleft" /> 
-		<b class="fleft"> Level @(Model.Level+1) </b>
-	</span>
-	<br />
-	<br />
-	<h3>Elo: </h3>
-	@Math.Round(@Model.Elo)
-	<br />
+		<b class="fleft"> Level @(Model.Level + 1) </b>
+	</div>
+	<br class="clearfloat" />
 	</div>
 
 	<div id="usr_trophies" class="">
@@ -56,13 +51,14 @@
 		
 		@if (Model.AccountID == ZeroKWeb.Global.AccountID)
   {
-			<span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)"><a href='@Url.Action("UnlockList", "My")'>
-				You can unlock technologies worth @Model.AvailableXP points</a></span>
+			<span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)">
+				<a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a>
+			</span>
   }
   else
   {
-			@Model.Name @:Can unlock technologies worth @Model.AvailableXP points
-		}
+			<text>@Model.Name can unlock technologies worth @Model.AvailableXP points</text>
+  }
 		<!--div>
 			@Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
 		</div-->
@@ -72,14 +68,14 @@
 		<h3>Commanders: </h3>
 		
 		@if (Model.AccountID == ZeroKWeb.Global.AccountID)
-		{
+  {
 			<a href='@Url.Action("Commanders", "My")'>Configure Commanders</a>
-		} 
+  } 
 		<br />
 		@foreach (var comm in Model.Commanders)
-		{
+  {
 			<span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID'/><br />@comm.Name</center></span>
-		}
+  }
 		<br class="clearfloat" />
 	</div>
 	

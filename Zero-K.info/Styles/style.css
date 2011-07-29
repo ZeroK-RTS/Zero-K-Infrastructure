@@ -199,6 +199,31 @@ div#ajaxScrollProgress
     box-shadow: 0 0 2px 2px #cbd3d4;
 }
 
+.sectorgrid
+{
+	position: relative; 
+	border: 1px solid white; 
+	opacity: .15;
+	color: white; 
+	text-align: right; 
+	vertical-align: bottom;
+}
+
+.sectorgrid:hover
+{
+	background: #666;
+}
+
+.sectorgrid:hover > .sectorname
+{
+	display: inline;
+}
+
+.ie .sectorgrid
+{
+	display: none;
+}
+
 /* Single Player missions
 ----------------------------------------------*/
 .mission

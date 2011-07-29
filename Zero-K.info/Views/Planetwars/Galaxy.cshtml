@@ -14,23 +14,16 @@
 	
 }
 
-
-
 @* Planet link lines *@
 
 @functions {
 }
 
-@*<a href='/Forum/Thread/314'>Imperium has won!</a>
-<br />
-We are setting up the next round.
-<br />
-<img src="http://images1.wikia.nocookie.net/__cb20100726165117/starwarstech/images/thumb/0/0d/Imperial_Star_Destroyer_by_MasterofIntelligence.jpg/830px-Imperial_Star_Destroyer_by_MasterofIntelligence.jpg" border="2"	/><br/>
-*@
-
 @section head {
 	<script type="text/javascript">
-		window.onload = function () 
+		/*
+		window.onload = function () */
+		$(document).ready(function()
 		{
 			var paper = Raphael(document.getElementById("linkMap"), @Model.Width, @Model.Height);
 
@@ -65,7 +58,7 @@ We are setting up the next round.
 				@: });
 				@: r.rotate(@angle, @String.Format("{0:0}", x1), @String.Format("{0:0}", y1));
 			}
-		};
+		} )
 	</script>
 }
 
@@ -75,7 +68,7 @@ We are setting up the next round.
  <div>
 	Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits || @Html.ActionLink("Trade", "Trade", "PlanetWars", new { username = Global.Account.Name }, null) | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0) | 
 	
-	Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()	(click on planet to use them!)
+	Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity() (click on planet to use them!)
  </div>
 }
 
@@ -139,7 +132,7 @@ We are setting up the next round.
 	{
 		var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Account.Clan == artsTaken.Clan).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
 		var owned = artsTaken.Arts;
-		var ratio_struct = techs / db.StructureTypes.Where(x => x.EffectUnlockID != null).Count();
+		var ratio_struct = techs / (double)db.StructureTypes.Where(x => x.EffectUnlockID != null).Count();
 		<span><b>@Html.PrintClan(artsTaken.Clan)</b> is in the lead! </span>
 	<br />
 		//maybe change colors depending on how many artifacts captured?
@@ -149,35 +142,46 @@ We are setting up the next round.
 		<img src="/img/progressr_base.png" height="17" class="fleft" />
 		<span class="fleft"> @techs / @db.StructureTypes.Where(x => x.EffectUnlockID != null).Count() techs</span>
 		<br class="clearfloat" />
-	
-		for (int i = 0; i < @owned; i++)
+	<div>
+		@for (int i = 0; i < @owned; i++)
 		{
-			<img src="/img/artifact_@(i + 1).png" class="fleft" height="50" width="50" />
+			<img src="/img/artifact_@(i + 1).png" class="fleft" height="30" />
 		}
 
-		for (int i = @owned; i < @arts; i++)
+		@for (int i = @owned; i < @arts; i++)
 		{
-			<img src="/img/artifact_empty.png" class="fleft" height="50" width="50" />
+			<img src="/img/artifact_empty.png" class="fleft" height="30" />
 		}
+		<span> @owned out of @arts Artifacts</span>
 		<br class="clearfloat"/>
+	</div>
 	}
 }
 </div>
 
 <br class="clearfloat" />
 
+@**@
+<div class="border"><center>
+<h1><a href='/Forum/Thread/314'>Valhalla has won!</a></h1>
+We are setting up the next round.
+<br />
+<img src="http://images1.wikia.nocookie.net/__cb20100726165117/starwarstech/images/thumb/0/0d/Imperial_Star_Destroyer_by_MasterofIntelligence.jpg/830px-Imperial_Star_Destroyer_by_MasterofIntelligence.jpg" border="2"	/><br/>
+</center>
+</div>
+@**@
+
+@*
 <div style="position: relative; z-index: 100" >
 	<div id="linkMap" style="position: absolute; z-index: 0"> </div> <! lines connecting planets>
 	<img src="/img/galaxies/render_@(g.GalaxyID).jpg" style="position: absolute; top: 0; left: 0; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
-	<table  width="@Model.Width" height="@Model.Height" cellpadding="0" cellspacing="0" style="position: relative; z-index: 1;">
+	<table  width="@Model.Width" height="@Model.Height" cellpadding="0" cellspacing="0" style="position: relative; z-index: 1; display:none;">
 		@for(int i=0; i<10; i++)
 		{
 			<tr>
 			@for (int j = 0; j < 10; j++)
 			{
-				<td class="sectorgrid" width="@((Model.Width/10)-2)"  height="@((Model.Height/10)-2)" >
-					<span class="hide sectorname" >Sector: (@(i+1),@(j+1))</span>
-				</td>
+				<td class="sectorgrid" width="@((Model.Width/10)-2)"  height="@((Model.Height/10)-2)" ><span class="hide sectorname" >Sector: (@(i+1),@(j+1))</span></td>
 			}
 			</tr>
 		}
@@ -196,24 +200,10 @@ We are setting up the next round.
 	{
 		clan = p.Account.Clan;
 	}
-
-	/*
-	//Clan secondClan = null;
-	//var secondClanInfluence = 0;
-	var secondRatio = 0.0;
-	var entry = p.GetClanInfluences().Skip(1).FirstOrDefault();
-	if (clan != null && entry != null) {
-		secondClan = entry.Clan;
-		secondClanInfluence = entry.Influence;
-		var ipToCapture = p.GetIPToCapture();
-		if (secondClanInfluence > 0 && (ipToCapture - secondClanInfluence) < 500) {
-			secondRatio = 1.0 - (ipToCapture - secondClanInfluence) / 500.0;
-		}
-	}*/
 	<div style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px; font-size: 12px; font-weight: bold; " >
 		<! planet name and owner>
-		<table style="position: absolute; border: 0; padding: 0; text-align: center; z-index: 5; line-height: .85; " width="100%" height="30%"><tr>
-		<td style="vertical-align: bottom;" ><div style="display:inline-block; padding: 3px; box-shadow: 0 0 3px 3px #000; background: #000; border-radius: 3px; opacity: .8; ">
+		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; " width="100%" height="25%"><tr>
+		<td style="vertical-align: bottom;" ><div style="display:inline-block; /*padding: 3px; box-shadow: 0 0 3px 3px #000; background: #000; border-radius: 3px; opacity: .8; */">
 			<a href='@Url.Action("Planet", new { id = p.PlanetID })' title="$planet$@p.PlanetID" style="color: #fff; color: @(Clan.TreatyColor(Global.Clan, clan));">
 			@p.Name<br />
 			@if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID)
@@ -258,9 +248,6 @@ We are setting up the next round.
 			{
 				<img src='@clan.GetImageUrl()' width='20' />
 			}
-			@*@if (secondRatio > 0) {
-				<img src='@secondClan.GetImageUrl()' width='@(Math.Round(10 + 10.0 * secondRatio))' />
-			}*@
 		</span>
 
 		<! dropships>
@@ -281,3 +268,4 @@ We are setting up the next round.
 	@Html.Action("Events", new { partial = true, pageSize = 40 })</span>
 	<span><img	src='http://3.bp.blogspot.com/_YTJBDUN8iSE/TSjDkNEwJAI/AAAAAAAAD0o/N8w-cy_J_EM/s1600/Tracy_Caldwell_Dyson_in_Cupola_ISS.jpg' width='600' /><br /> Please forgive and report issues :-)</span>
 </div>
+@**@
