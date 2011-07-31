@@ -1,35 +1,40 @@
 ﻿@using ZeroKWeb
-@if (!(Global.IsAccountAuthorized)) {
-@*<!login>*@
-	<form method="post" action="@Url.Action("Logon", "Home")" >
-	Name:
-	<input type="text" name="login" />
-	&nbsp;&nbsp; Password:
-	<input type="password" name="password" />
-	&nbsp;&nbsp;
-	<input type="image" value="Login" src="/img/login.png" style="border: none; width: 32px;
-		height: 32px; vertical-align: middle;" title="Login" alt="Login" />
-	<small>(use Zero-K lobby account)</small>
-	<input type="hidden" name="referer" value="@(Request["ReturnUrl"] != null ? Request["ReturnUrl"] : Request.Url.ToString())" />
-	</form>
-}
-else
+@if (!Global.IsLobbyAccess || Global.IsAccountAuthorized)
 {
-	//if not using zklobby
-	if (!Global.IsLobbyAccess)
-	{
-		<span style="position: absolute; right: 3px; bottom: 3px;">@Html.ActionLink("Switch Skin", "SwitchSkin", "Home")</span>
-	}
-	<form method="post" action="@Url.Action("Logout", "Home")" >
-	@Html.PrintAccount(Global.Account)
-	<input type="hidden" name="referer" value="@Request.Url" />
-	<b>@Html.ActionLink("PlanetWars", "Index", "Planetwars")</b> Clan: @Html.PrintClan(Global.Clan)
-	| Credits: @Global.Account.Credits.ToString("C0") | @Html.ActionLink("Trade", "Trade", "Planetwars", new { username = Global.Account.Name }, null)
-	| Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0)
-	| Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()
-	@if (!Global.IsLobbyAccess)
-	{
-		<input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 32px; height: 32px; vertical-align: middle;" alt="Logout" title="Logout"/>
-	}
-	</form>
-	}
+
+    if (!(Global.IsAccountAuthorized))
+    {
+@*<!login>*@
+    <form method="post" action="@Url.Action("Logon", "Home")" >
+    Name:
+    <input type="text" name="login" />
+    &nbsp;&nbsp; Password:
+    <input type="password" name="password" />
+    &nbsp;&nbsp;
+    <input type="image" value="Login" src="/img/login.png" style="border: none; width: 32px;
+        height: 32px; vertical-align: middle;" title="Login" alt="Login" />
+    <small>(use Zero-K lobby account)</small>
+    <input type="hidden" name="referer" value="@(Request["ReturnUrl"] != null ? Request["ReturnUrl"] : Request.Url.ToString())" />
+    </form>
+    }
+    else
+    {
+        //if not using zklobby
+        if (!Global.IsLobbyAccess)
+        {
+    <span style="position: absolute; right: 3px; bottom: 3px;">@Html.ActionLink("Switch Skin", "SwitchSkin", "Home")
+    </span>
+        }
+    <form method="post" action="@Url.Action("Logout", "Home")@(Global.IsLobbyAccess ? "@logout" : "")" >
+    @Html.PrintAccount(Global.Account)
+    <input type="hidden" name="referer" value="@Request.Url" />
+    <b>@Html.ActionLink("PlanetWars", "Index", "Planetwars")</b> Clan: @Html.PrintClan(Global.Clan)
+    | Credits: @Global.Account.Credits.ToString("C0") | @Html.ActionLink("Trade", "Trade", "Planetwars", new { username = Global.Account.Name }, null)
+    | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0)
+    | Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()
+    <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 32px;
+        height: 32px; vertical-align: middle;" alt="Logout" title="Logout" />
+    </form>
+    
+    }
+}
