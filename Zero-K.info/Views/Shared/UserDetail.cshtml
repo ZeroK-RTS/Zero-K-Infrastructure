@@ -79,6 +79,39 @@
 		<br class="clearfloat" />
 	</div>
 	
+	@if (Model.SpringBattlePlayers.Any())
+ {
+		<div id="usr_recentbattles" class="fleft border">
+			<h3>Last battles</h3>
+			<span>
+				@Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
+				watched, @Model.MissionRunCount missions 
+			</span>
+			<br />
+			@foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Take(10))
+   {
+				<small>@Html.PrintBattle(b)</small><br />
+   }
+		</div>
+ }
+	
+	@if (Model.ForumPosts.Any())
+ {
+		<div id="usr_forumposts" class="fleft border">
+			<h3>Posted threads</h3>
+			<span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
+			<br />
+			@foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10))
+   {
+				<small><img src="../../Img/bullet.png" alt="bullet" />
+					<a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small>
+				<br />
+   }
+		</div>
+ }
+			
+<br class="clearfloat" />
+
 	<div id="usr_planetwars" class="border relative">
 	<h3>Clan: </h3>
 	@Html.PrintClan(Model.Clan)
@@ -132,39 +165,6 @@
 	<span style="position: absolute; font-family:Skir; top: 5%; right: 5%; font-size: 500%; color: #222; opacity: .75;">PlanetWars</span>
 	</div>
 	
-	@if (Model.SpringBattlePlayers.Any())
- {
-		<div id="usr_recentbattles" class="fleft border">
-			<h3>Last battles</h3>
-			<span>
-				@Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
-				watched, @Model.MissionRunCount missions 
-			</span>
-			<br />
-			@foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Take(10))
-   {
-				<small>@Html.PrintBattle(b)</small><br />
-   }
-		</div>
- }
-	
-	@if (Model.ForumPosts.Any())
- {
-		<div id="usr_forumposts" class="fleft border">
-			<h3>Posted threads</h3>
-			<span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
-			<br />
-			@foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10))
-   {
-				<small><img src="../../Img/bullet.png" alt="bullet" />
-					<a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small>
-				<br />
-   }
-		</div>
- }
-			
-<br class="clearfloat" />
-
 
 @if (ZeroKWeb.Global.IsZeroKAdmin && ZeroKWeb.Global.AccountID == Model.AccountID)
 {
