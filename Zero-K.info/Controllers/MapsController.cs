@@ -98,7 +98,7 @@ namespace ZeroKWeb.Controllers
         foreach (var word in search.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
         {
           var w = word;
-          ret = ret.Where(x => SqlMethods.Like(x.InternalName, '%' + w + '%') || SqlMethods.Like(x.AuthorName, '%' + w + '%'));
+          ret = ret.Where(x => x.InternalName.Contains(w) || x.AuthorName.Contains(w));
         }
       }
 

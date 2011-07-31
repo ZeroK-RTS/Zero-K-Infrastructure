@@ -41,14 +41,14 @@ namespace ZeroKWeb.Controllers
 
 
 		[Auth]
-		public ActionResult PostNews(int? newsID, string title, string text, DateTime created, int? headlineDays, HttpPostedFileBase image)
+		public ActionResult PostNews(int? newsID, string heading, string text, DateTime created, int? headlineDays, HttpPostedFileBase image)
 		{
-			if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(text)) return Content("Empty text!");
+			if (string.IsNullOrEmpty(heading) || string.IsNullOrEmpty(text)) return Content("Empty text!");
 
 			var db = new ZkDataContext();
 			using (var scope = new TransactionScope())
 			{
-				var news = new News() { AuthorAccountID = Global.AccountID, Created = created, Title = title, Text = text, };
+				var news = new News() { AuthorAccountID = Global.AccountID, Created = created, Title = heading, Text = text, };
 
 				Image im = null;
 				if (image != null && image.ContentLength > 0)

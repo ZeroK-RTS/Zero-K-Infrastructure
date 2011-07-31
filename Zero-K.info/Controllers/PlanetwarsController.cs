@@ -201,7 +201,7 @@ namespace ZeroKWeb.Controllers
 			if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
 			if (clanID.HasValue) res = res.Where(x => x.EventClans.Any(y => y.ClanID == clanID));
 			if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == springBattleID));
-			if (!string.IsNullOrEmpty(filter)) res = res.Where(x => SqlMethods.Like(x.Text, string.Format("%{0}%", filter)));
+			if (!string.IsNullOrEmpty(filter)) res = res.Where(x => x.Text.Contains(filter));
 			res = res.OrderByDescending(x => x.EventID);
 
 			var ret = new EventsResult

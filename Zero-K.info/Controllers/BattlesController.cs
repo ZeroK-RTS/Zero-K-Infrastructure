@@ -27,7 +27,7 @@ namespace ZeroKWeb.Controllers
           return View(bat);
         }
 
-        public ActionResult Index(string title,
+        public ActionResult Index(string battleTitle,
                                   string map,
                                   string mod,
                                   string user,
@@ -43,21 +43,21 @@ namespace ZeroKWeb.Controllers
             db.LoadOptions = opt;
 
             IQueryable<SpringBattle> q = db.SpringBattles;
-
-            if (!string.IsNullOrEmpty(title))
-                q = q.Where(b => SqlMethods.Like(b.Title, "%" + title + "%"));
+            
+            if (!string.IsNullOrEmpty(battleTitle))
+                q = q.Where(b => b.Title.Contains(battleTitle));
 
             if (!string.IsNullOrEmpty(map))
-                q = q.Where(b => SqlMethods.Like(b.ResourceByMapResourceID.InternalName, "%" + map + "%"));
+                q = q.Where(b => b.ResourceByMapResourceID.InternalName.Contains(map));
 
             if (mod == null) mod = "Zero-K";
             if (!string.IsNullOrEmpty(mod))
-                q = q.Where(b => SqlMethods.Like(b.ResourceByModResourceID.InternalName, "%" + mod + "%"));
+                q = q.Where(b => b.ResourceByModResourceID.InternalName.Contains( mod));
 
             //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
             if (!string.IsNullOrEmpty(user)) {
                 var aid = (from account in db.Accounts
-                           where SqlMethods.Like(account.Name, "%" + user + "%")
+                           where account.Name.Contains(user)
                            select account.AccountID).FirstOrDefault();
                 if(aid != 0)
                     q = q.Where(b => b.SpringBattlePlayers.Any(p => p.AccountID == aid));

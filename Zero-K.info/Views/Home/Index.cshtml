@@ -36,7 +36,7 @@
 	@foreach (var n in Model.Headlines)
 	{
 		<div class="dialog" title="News headlines"><h1>@n.Title</h1>
-			if (n.ImageRelativeUrl != null) {
+			@if (n.ImageRelativeUrl != null) {
 				<img src="@n.ImageRelativeUrl" style="float:left; width:120px; margin: 6px;"/>
 			}
 
@@ -60,7 +60,7 @@
 		<div class="admin">
 		<form action="@Url.Action("PostNews","News")" enctype="multipart/form-data" method="post" valign="top">
 			<table>
-			<tr><td>Title: </td><td><input type="text" name="title"/></td></tr>
+			<tr><td>Title: </td><td><input type="text" name="heading"></td></tr>
 			<tr><td valign="top">Text: </td><td><textarea rows="15" cols="70" name="text"></textarea> </td></tr>
 			<tr><td>Created (UTC): </td><td><input type="text" name="created" value="@DateTime.UtcNow" id="datepicker"/><small>(if set in future will be invisible until then)</small></td></tr>
 			<tr><td>Headline for (days): </td><td><input type="text" name="headlineDays" value=""/><small>(headlines popup for each player once)</small></td></tr>

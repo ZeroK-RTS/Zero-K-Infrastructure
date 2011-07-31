@@ -89,7 +89,7 @@ namespace ZeroKWeb.Controllers
 			if (sp == false) ret = ret.Where(x => x.MaxHumans > 1);
 			if (coop == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) ||  x.MaxHumans > 1 && !x.IsCoop);
 			if (adversarial == false) ret = ret.Where(x => (x.MinHumans<=1 && sp==true) || (x.MaxHumans > 1 && x.IsCoop));
-			if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => SqlMethods.Like(x.Name, '%' + search + '%') || SqlMethods.Like(x.Account.Name, '%' + search + '%'));
+			if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => x.Name.Contains(search) || x.Account.Name.Contains(search));
 
 
       if (!Global.IsAccountAuthorized || Global.Account.LobbyTimeRank <= 3 || featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ModifiedTime);
