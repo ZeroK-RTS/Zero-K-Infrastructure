@@ -103,7 +103,7 @@ namespace ZeroKLobby.MicroLobby
           navigatingTo = null;
           navigating = false;
         }
-        if (!alreadyNavigating) Program.MainWindow.navigationControl.Path = Uri.UnescapeDataString(e.Uri.ToString());
+        if (!alreadyNavigating || !navigating) Program.MainWindow.navigationControl.Path = Uri.UnescapeDataString(e.Uri.ToString());
       }
 			if (navigating) Program.MainWindow.navigationControl.BusyLoading = true;
     }

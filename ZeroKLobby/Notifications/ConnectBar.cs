@@ -126,7 +126,7 @@ namespace ZeroKLobby.Notifications
 
 		}
 
-		void LoginWithDialog(string text)
+	    void LoginWithDialog(string text)
 		{
 			do
 			{
