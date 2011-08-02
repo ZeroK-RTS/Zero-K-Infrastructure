@@ -168,18 +168,18 @@ namespace System.Web.Mvc
 			if (battlePlayer.IsInVictoryTeam) icon = "battlewon.png";
 			else if (battlePlayer.IsSpectator) icon = "spec.png";
 			else icon = "battlelost.png";
-			icon = string.Format("<img src='/img/battles/{0}'/>", icon);
+			icon = string.Format("<img src='/img/battles/{0}' class='vcenter' />", icon);
 
 			var battle = battlePlayer.SpringBattle;
 
-			if (battle.IsMission) icon += " <img src='/img/battles/mission.png' alt='Mission' />";
-			if (battle.HasBots) icon += " <img src='/img/battles/robot.png' alt='Bots' />";
+			if (battle.IsMission) icon += " <img src='/img/battles/mission.png' alt='Mission' class='vcenter' />";
+			if (battle.HasBots) icon += " <img src='/img/battles/robot.png' alt='Bots' class='vcenter' />";
 
-			if (battle.BattleType == "Multiplayer") icon += " <img src='/img/battles/multiplayer.png' alt='Multiplayer' />";
-			else if (battle.BattleType == "Singleplayer") icon += " <img src='/img/battles/singleplayer.png' alt='Singleplayer' />";
+			if (battle.BattleType == "Multiplayer") icon += " <img src='/img/battles/multiplayer.png' alt='Multiplayer' class='vcenter' />";
+			else if (battle.BattleType == "Singleplayer") icon += " <img src='/img/battles/singleplayer.png' alt='Singleplayer' class='vcenter' />";
 
 			return
-				new MvcHtmlString(string.Format("<a href='{0}'>{4} B{1}</a> {2} on {3}",
+				new MvcHtmlString(string.Format("<span><a href='{0}'>{4} B{1}</a> {2} on {3}</span>",
 				                                url.Action("Detail", "Battles", new { id = battle.SpringBattleID }),
 				                                battle.SpringBattleID,
 				                                battle.PlayerCount,

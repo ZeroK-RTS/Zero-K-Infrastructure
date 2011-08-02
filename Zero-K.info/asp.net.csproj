@@ -168,6 +168,9 @@
     <Content Include="Img\border.png" />
     <Content Include="Img\bullet.png" />
     <Content Include="Img\favicon.png" />
+    <Content Include="Img\mail\mail-new.png" />
+    <Content Include="Img\mail\mail-read.png" />
+    <Content Include="Img\mail\mail-unread.png" />
     <Content Include="Img\progressl_base.png" />
     <Content Include="Img\progressl_fill.png" />
     <Content Include="Img\progressr_base.png" />

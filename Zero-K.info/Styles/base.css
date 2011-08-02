@@ -15,6 +15,12 @@ a:active {color: #cbd3d4;}
 img {border: none;
      opacity: 1;}
 
+form
+{
+	padding: 0;
+	margin: 0;
+}
+
 pre
 {
 	background: #222;
