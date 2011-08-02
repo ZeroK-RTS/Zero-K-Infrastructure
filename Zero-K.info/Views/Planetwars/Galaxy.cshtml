@@ -16,6 +16,7 @@
 
 @* Planet link lines *@
 
+@* not needed for downtime
 @functions {
 }
 
@@ -61,19 +62,12 @@
 		} )
 	</script>
 }
-
-@* all this is in login bar we should use that instead *@
-@if (Global.IsAccountAuthorized)
-{
- <div>
-	Clan: @Html.PrintClan(Global.Clan) | Credits: @Global.Account.Credits || @Html.ActionLink("Trade", "Trade", "PlanetWars", new { username = Global.Account.Name }, null) | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0) | 
-	
-	Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity() (click on planet to use them!)
- </div>
-}
+	*@
 
 <div class="">
+<center>
 	@Html.ActionLink("Clans", "ClanList") | @Html.ActionLink("Events", "Events") | turn: @Model.Turn | galaxy started: @Model.Started.ToAgoString() | <a href='/Wiki/PlanetWarsDesign'>Help/info</a> | <a href='/Forum?categoryID=9'>Forums</a> | <a href='/Forum/Thread/314'>Hall Of Fame</a>
+</center>
 </div>
 <br />
 
@@ -171,7 +165,7 @@ We are setting up the next round.
 </div>
 @**@
 
-@*
+@* not needed for downtime
 <div style="position: relative; z-index: 100" >
 	<div id="linkMap" style="position: absolute; z-index: 0"> </div> <! lines connecting planets>
 	<img src="/img/galaxies/render_@(g.GalaxyID).jpg" style="position: absolute; top: 0; left: 0; z-index:-50; " width="@Model.Width" height="@Model.Height"/>

@@ -3,7 +3,8 @@
   Layout = "";
 }
 @foreach (var m in Model) {
-    <div class='mission fleft' onclick="window.location='@Url.Action("Detail", new { id = m.ResourceID })'">
+    <a href="@Url.Action("Detail", new { id = m.ResourceID })">
+	<div class='mission fleft'>
       <b>@m.InternalName</b>
       @if (m.FeaturedOrder.HasValue) { 
         <img src="@Url.Content("~/img/star_40.png")" alt="Featured" style='float:right' />
@@ -46,4 +47,5 @@
         </tr>
       </table>
     </div>
+	</a>
 }
