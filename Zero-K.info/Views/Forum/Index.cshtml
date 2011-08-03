@@ -25,10 +25,9 @@
 @if (Model.Threads.Any())
 {
 	var tog = true;
-	<table border="0" cellspacing="0" >
+	<table border="0" cellspacing="0" width="100%" >
 	<tr class="forum_row toggleFalse" >
-		<td title="locked/pinned">L/P</td>
-		<td>S</td>
+		<td title="status">S</td>
 		<td>Thread</td>
 		<td>Author</td>
 		<td>Posts</td>
@@ -37,8 +36,25 @@
 	</tr>
 		@foreach (var t in Model.Threads) {
 			<tr class="forum_row toggle@(tog)">
-				<td>@(t.IsLocked ? "<img id='forum_lock' src='locked' />" : "") @(t.IsPinned ? "<img id='forum_pin' src='pinned' />" : "")</td>
-				<td><!img src="../../img/mail/mail-new.png" /></td>
+				<td>
+					@if (t.IsLocked && t.IsPinned)
+					{
+						<img src="../../img/stickylock.png" width="25" />
+					}
+					else if (t.IsLocked)
+					{
+						<img src="../../img/lock.png" width="25" />
+					}
+					else if (t.IsPinned)
+					{
+						<img src="../../img/sticky.png" width="25" />
+					}
+					else
+					{
+						//should change based on any changes since last read
+						<!img src="../../img/mail/mail-read.png" width="25" />
+					}
+				</td>
 				<td>@Html.ActionLink(t.Title, "Thread", new { id = t.ForumThreadID }, new {title="$thread$" + t.ForumThreadID})</td>
 				<td>@Html.PrintAccount(t.AccountByCreatedAccountID)</td>
 				<td>@t.PostCount</td>

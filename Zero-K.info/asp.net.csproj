@@ -168,6 +168,7 @@
     <Content Include="Img\border.png" />
     <Content Include="Img\bullet.png" />
     <Content Include="Img\favicon.png" />
+    <Content Include="Img\lock.png" />
     <Content Include="Img\mail\mail-new.png" />
     <Content Include="Img\mail\mail-read.png" />
     <Content Include="Img\mail\mail-unread.png" />
@@ -176,6 +177,8 @@
     <Content Include="Img\progressr_base.png" />
     <Content Include="Img\progressr_fill.png" />
     <Content Include="Img\rss.png" />
+    <Content Include="Img\sticky.png" />
+    <Content Include="Img\stickylock.png" />
     <Content Include="Img\zk_logo_miniature.png" />
     <Content Include="LobbyStart.inc" />
     <Content Include="ResourceList.aspx" />
