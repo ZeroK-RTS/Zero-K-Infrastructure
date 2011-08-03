@@ -199,6 +199,8 @@ div#ajaxScrollProgress
     box-shadow: 0 0 2px 2px #cbd3d4;
 }
 
+/* galaxy map
+----------------------------------------------*/
 .sectorgrid
 {
 	position: relative; 
@@ -222,6 +224,24 @@ div#ajaxScrollProgress
 .ie .sectorgrid
 {
 	display: none;
+}
+
+/* Forums
+----------------------------------------------*/
+.forum_row:hover
+{
+	background: #444;
+	border: 1px solid #38bfec;
+}
+
+.toggleFalse
+{
+	background: url("../img/bg_black_translucent.png");
+}
+
+.toggleTrue
+{
+	background: url("../img/bg_111_translucent.png");
 }
 
 /* Single Player missions
