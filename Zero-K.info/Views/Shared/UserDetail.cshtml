@@ -4,6 +4,16 @@
 @{Page.Title = Model.Name + " user page";}
 @* @{Html.RenderAction("Index", "Poll", new { pollID = 6 });} *@
 
+@{
+	var badge_width = 60;
+	var padding = 5;
+	 <style>
+	 #levelrank{ height: @(badge_width*2.5)px; width: @(badge_width+padding*2)px; }
+	 #badge-star{ height: @(badge_width*2.5)px; width: @(badge_width)px; top: @(-badge_width*1.25)px; left: @(padding)px; }
+	 #badge-chevrons{ height: @(badge_width*2.5)px; width: @(badge_width)px; top: @(-badge_width*1.25)px; left: @(padding)px; }
+	 #badge-bars{ height: @(badge_width*2.5)px; width: @(badge_width)px; top: @(-badge_width*3.75)px; left: @(padding)px; }
+	 </style>
+}
 
 @* User Profile Page! *@ @* First column starts here *@
 <div>
@@ -19,7 +29,6 @@
 		<div id="levelrank" title="This is a graphical representation of your level. Play more games to gain more rank!">
 		<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>
 		<div id="badge-center">
-			@*fast progression*@
 			@if(Model.Level > 125)
 			{
 				star = 125;

@@ -7,7 +7,7 @@
 	border: 2px solid #000;
 	border-radius: 6px;
     box-shadow: 0px 0px 3px 3px #000;
-    margin: 5px;
+	margin: 5px;
 }
 
 #velvet
@@ -39,7 +39,7 @@
 	height: 250px;
 	width: 100px;
 	left: 10px;
-	top: -250px;
+	top: -125px;
 }
 
 #badge-bars
@@ -48,7 +48,7 @@
 	height: 250px;
 	width: 100px;
 	left: 10px;
-	top: -250px;
+	top: -375px;
 }
 
 .rank
@@ -102,40 +102,40 @@
 /* each bar is 8% of the total height of the box */
 .bar-1
 {
-	top: 0;
+	top: 50%;
 }
 .bar-2
 {
-	top: 8%;
+	top: 58%;
 }
 .bar-3
 {
-	top: 16%;
+	top: 66%;
 }
 .bar-4
 {
-	top: 24%;
+	top: 74%;
 }
 .bar-5
 {
-	top: 32%;
+	top: 82%;
 }
 
 /* the width of the chevron bar is the same as the flat bar so increment is the same */
 .chev-1
 {
-	bottom: 0;
+	bottom: 50%;
 }
 .chev-2
 {
-	bottom: 8%;
+	bottom: 58%;
 }
 .chev-3
 {
-	bottom: 16%;
+	bottom: 66%;
 }
 .chev-4
 {
-	bottom: 24%;
+	bottom: 74%;
 }
 
