@@ -3,6 +3,7 @@
 @import url("fonts.css");
 @import url("nicetitle.css");
 @import url("stars.css");
+@import url("levelrank.css");
 @import url("jquery.ui.stars.css");
 @import url(http://www.google.com/cse/api/branding.css);
 
@@ -230,8 +231,10 @@ div#ajaxScrollProgress
 ----------------------------------------------*/
 .forum_row:hover
 {
+	/*
 	background: #444;
 	border: 1px solid #38bfec;
+	*/
 }
 
 .toggleFalse

@@ -9,6 +9,48 @@
 <div>
 
 	<div id="usr_info" class="">
+
+	@if (!Global.IsLobbyAccess)
+	{
+	var star = 0;
+	var chev = 0;
+	var bars = 0;
+	<div class="fleft" >
+		<div id="levelrank" title="This is a graphical representation of your level. Play more games to gain more rank!">
+		<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>
+		<div id="badge-center">
+			@*fast progression*@
+			@if(Model.Level > 125)
+			{
+				star = 125;
+				<div id="badge-star">
+					<img src="../../img/ranks/level-elo/star.png" class="rank star" />
+				</div>
+			}
+			<div id="badge-chevrons">
+			@for(int i=0 ; i<(Model.Level-star)/25; i++)
+			{
+				<img src="../../img/ranks/level-elo/chevron_gold.png" class="rank chev chev-@(i+1)" />
+				chev += 25;
+			}
+			</div>
+			<div id="badge-bars">
+			@for (int i=0; i<(Model.Level-star-chev)/5; i++)
+			{
+				<img src="../../img/ranks/level-elo/bar_gold.png" class="rank bar bar-@(i+1)" />
+				bars += 1;
+			}
+			<div class="rank dotline bar-@(bars+1)">
+				@for (int i=0; i<(Model.Level-star-chev)%5; i++)
+				{
+					<img src="../../img/ranks/level-elo/dot_gold.png" class="dot" />
+				}
+			</div>
+			</div>
+		</div>
+		</div>
+	</div>
+ }
 	<h2>@Html.PrintAccount(Model)</h2>
 	<a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
 	@if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
@@ -102,11 +144,11 @@
 			<span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
 			<br />
 			@foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10))
-			{
+   {
 				<small><img src="../../img/mail/mail-read.png" height="18" style="vertical-align:middle; margin: 1px;" />
 				<a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small>
 				<br />
-			}
+   }
 		</div>
  }
 			

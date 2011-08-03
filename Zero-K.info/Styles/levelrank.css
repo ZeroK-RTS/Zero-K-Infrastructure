@@ -1,0 +1,141 @@
+#levelrank
+{
+	position: relative;
+	background: transparent;
+	height: 250px;
+	width: 120px; /*2.5 aspect ratio*/
+	border: 2px solid #000;
+	border-radius: 6px;
+    box-shadow: 0px 0px 3px 3px #000;
+    margin: 5px;
+}
+
+#velvet
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+#badge-center
+{
+	position: relative;
+	height: 0;
+	top: 50%;
+}
+
+#badge-star
+{
+	position: absolute;
+	height: 250px;
+	width: 100px;
+	left: 10px;
+	top: -125px;
+}
+
+#badge-chevrons
+{
+	position: relative;
+	height: 250px;
+	width: 100px;
+	left: 10px;
+	top: -250px;
+}
+
+#badge-bars
+{
+	position: relative;
+	height: 250px;
+	width: 100px;
+	left: 10px;
+	top: -250px;
+}
+
+.rank
+{
+	position: absolute;
+}
+
+
+/* each element is scaled properly to any box (ie. its container) with a 2.5 to 1 ratio of height to width */
+
+.star
+{
+	top: 38%;
+	left: 35%;
+	height: 12%;
+	width: 30%;
+	z-index: 3;
+}
+
+.chev
+{
+	height: 23%;
+	width: 100%;
+	z-index: 1;
+}
+
+.bar
+{
+	height: 8%;
+	width: 100%;
+	z-index: 1;
+}
+
+.dotline
+{
+	position: absolute;
+	height: 8%;
+	width: 100%;
+	text-align: center;
+	z-index: 2;
+}
+
+.dot
+{
+	top: 30%;
+	height: 60%;
+	width: 12%;
+}
+
+
+/* each bar is 8% of the total height of the box */
+.bar-1
+{
+	top: 0;
+}
+.bar-2
+{
+	top: 8%;
+}
+.bar-3
+{
+	top: 16%;
+}
+.bar-4
+{
+	top: 24%;
+}
+.bar-5
+{
+	top: 32%;
+}
+
+/* the width of the chevron bar is the same as the flat bar so increment is the same */
+.chev-1
+{
+	bottom: 0;
+}
+.chev-2
+{
+	bottom: 8%;
+}
+.chev-3
+{
+	bottom: 16%;
+}
+.chev-4
+{
+	bottom: 24%;
+}
+
