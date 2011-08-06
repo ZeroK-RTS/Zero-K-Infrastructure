@@ -845,9 +845,9 @@ namespace ZeroKWeb.Controllers
 				var quantity = Math.Min(bo.AccountByAccountID.Credits/bo.Price, bo.Quantity);
 				if (quantity > 0 && !bo.Planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksEnemyTrade == true))
 				{
-					var buyerAccountPlanet = bo.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == bo.AccountID);
-					if (buyerAccountPlanet != null)
+					if (bo.Planet.OwnerAccountID == bo.AccountID) // buyer owned planet only
 					{
+                        var buyerAccountPlanet = bo.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == bo.AccountID);
 						influenceChanged = true;
 						bo.AccountByAccountID.Credits -= quantity*bo.Price;
 						buyerAccountPlanet.Influence += quantity;
