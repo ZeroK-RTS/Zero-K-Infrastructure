@@ -54,38 +54,47 @@ namespace ZeroKWeb.Controllers
 			var r1 = validAwards.GroupBy(x => x.AwardKey);
 
 			var awardItems = new List<AwardItem>();
+
+            var monthName = DateTime.Now.ToString("MMMM");
+            var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+            var validAwardsM = validAwards.Where(x => x.SpringBattle.StartTime >= monthStart);
+
 			foreach (var awardTypeInfo in r1)
 			{
 				var awardType = awardTypeInfo.Key;
 
-				var monthName = DateTime.Now.ToString("MMMM");
-				var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
-				var topCount = validAwards.Where(x => x.AwardKey == awardType).GroupBy(x => x.Account).Max(x => x.Count());
+                //var curAwards = validAwards.Where(x => x.AwardKey == awardType);
+                //var curAwardsM = curAwards.Where(x => x.SpringBattle.StartTime >= monthStart);
+                var curAwardsM = validAwardsM.Where(x => x.AwardKey == awardType);
 
-				var resultCollectorInfo = validAwards.Where(x => x.AwardKey == awardType).GroupBy(x => x.Account).Where(x => x.Count() == topCount);
+                //var curAwardsAccts = curAwards.GroupBy(x => x.Account);
+                var curAwardsAcctsM = curAwardsM.GroupBy(x => x.Account);
+
+
+                /*
+                var topCount = curAwardsAccts.Max(x => x.Count());
+                var resultCollectorInfo = curAwardsAccts.Where(x => x.Count() == topCount);
 
 				var topCollectors = new List<Account>();
 				foreach (var acct in resultCollectorInfo) topCollectors.Add(acct.Key);
+                */
+                var topCountM = curAwardsAcctsM.Max(x => x.Count());
 
-				var topCountM =
-					validAwards.Where(x => x.AwardKey == awardType).Where(x => x.SpringBattle.StartTime >= monthStart).GroupBy(x => x.Account).Max(x => x.Count());
-
-				var resultCollectorInfoM =
-					validAwards.Where(x => x.AwardKey == awardType).Where(x => x.SpringBattle.StartTime >= monthStart).GroupBy(x => x.Account).Where(
-						x => x.Count() == topCountM);
+                var resultCollectorInfoM = curAwardsAcctsM.Where(x => x.Count() == topCountM);
 
 				var topCollectorsM = new List<Account>();
 				foreach (var acct in resultCollectorInfoM) topCollectorsM.Add(acct.Key);
 
-				var resultTopScore = validAwards.Where(x => x.AwardKey == awardType);
 
 				var topScore = 0;
-				Account topAcct = null;
-				var titleName = "";
+                var titleName = "";
+                /*
 				var fullTitle = "";
+				Account topAcct = null;
 				SpringBattlePlayer topScoreBattlePlayer = null;
-				foreach (var acct in resultTopScore)
+                foreach (var acct in curAwards)
 				{
 					var score = Convert.ToInt32(Regex.Replace(acct.AwardDescription, @"\D", String.Empty));
 					titleName = acct.AwardDescription.Split(',').First();
@@ -98,15 +107,15 @@ namespace ZeroKWeb.Controllers
 						fullTitle = string.Join(" ", acct.AwardDescription.Split(',').Skip(1));
 					}
 				}
-
-				var resultTopScoreM = resultTopScore.Where(x => x.SpringBattle.StartTime >= monthStart);
-				topScore = 0;
+                */
+                topScore = 0;
 				Account topAcctM = null;
 				var fullTitleM = "";
 				SpringBattlePlayer topScoreBattlePlayerM = null;
-				foreach (var acct in resultTopScoreM)
+                foreach (var acct in curAwardsM)
 				{
 					var score = Convert.ToInt32(Regex.Replace(acct.AwardDescription, @"\D", String.Empty));
+                    titleName = acct.AwardDescription.Split(',').First();
 
 					if (score > topScore)
 					{
@@ -121,12 +130,15 @@ namespace ZeroKWeb.Controllers
 				                {
 				                	AwardType = awardType,
 				                	AwardTitle = titleName,
-				                	TopScoreHolder = topAcct,
+				                	
+                                    /** /
+                                    TopScoreHolder = topAcct,
 				                	TopScoreDesc = fullTitle,
 				                	TopScoreBattlePlayer = topScoreBattlePlayer,
 				                	TopCollectors = topCollectors,
 				                	TopCollectorCount = topCount,
 				                	/**/
+
 				                	TopScoreHolderM = topAcctM,
 				                	TopScoreDescM = fullTitleM,
 				                	TopScoreBattlePlayerM = topScoreBattlePlayerM,
