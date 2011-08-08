@@ -219,7 +219,6 @@
     <None Include="SM.ttf" />
     <None Include="tomorrow.eot" />
     <None Include="tomorrow.TTF" />
-    <None Include="Views\Shared\Unlocks.cshtml" />
     <Content Include="Views\Planetwars\Index.cshtml" />
     <Content Include="Views\Planetwars\Galaxy.cshtml" />
     <Content Include="Web.config">
