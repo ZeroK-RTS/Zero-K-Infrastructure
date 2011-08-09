@@ -60,7 +60,7 @@
   </Table>
   <Table Name="dbo.Account" Member="Accounts">
     <Type Name="Account">
-      <Column Name="AccountID" Storage="_Id" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="AccountID" Storage="_Id" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Name" Type="System.String" DbType="varchar(200) NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
@@ -85,9 +85,8 @@
       <Column Name="WasGivenCredits" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="LastNewsRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
-      <Association Name="Account_LobbyMessage" Member="LobbyMessagesBySourceAccountID" ThisKey="AccountID" OtherKey="SourceAccountID" Type="LobbyMessage" />
-      <Association Name="Account_LobbyMessage1" Member="LobbyMessagesByTargetAccountID" ThisKey="AccountID" OtherKey="TargetAccountID" Type="LobbyMessage" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />
       <Association Name="Account_Resource" Member="Resources" ThisKey="AccountID" OtherKey="TaggedByAccountID" Type="Resource" />
@@ -122,13 +121,11 @@
       <Column Name="MessageID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="SourceName" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
       <Column Name="TargetName" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
-      <Column Name="SourceAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="SourceLobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="Message" Type="System.String" DbType="nvarchar(2000)" CanBeNull="true" />
       <Column Name="Created" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
-      <Column Name="TargetAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="TargetLobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="Channel" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
-      <Association Name="Account_LobbyMessage" Member="AccountBySourceAccountID" ThisKey="SourceAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
-      <Association Name="Account_LobbyMessage1" Member="AccountByTargetAccountID" ThisKey="TargetAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.LobbyChannelSubscription" Member="LobbyChannelSubscriptions">

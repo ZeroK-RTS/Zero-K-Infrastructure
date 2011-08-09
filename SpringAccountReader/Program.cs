@@ -54,9 +54,9 @@ namespace SpringAccountReader
               if (de == null) {
                 ac = new Account();
                 db.Accounts.InsertOnSubmit(ac);
-              } else ac = db.Accounts.SingleOrDefault(x => x.AccountID == id);
+              } else ac = db.Accounts.SingleOrDefault(x => x.LobbyID == id);
 
-              ac.AccountID = id;
+              ac.LobbyID = id;
               ac.Name = name;
               //ac.Flags = flags;
               ac.Password = pass;

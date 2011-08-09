@@ -64,19 +64,14 @@ namespace NightWatch
       Account acc = null;
       using (var db = new ZkDataContext())
       {
-        acc = db.Accounts.SingleOrDefault(x => x.AccountID == accountID);
+        acc = db.Accounts.FirstOrDefault(x => x.LobbyID == accountID);
         if (acc == null)
         {
-          acc = db.Accounts.SingleOrDefault(x => x.Name == name && x.AccountID < 0);
-            // some people dont have known account ID - accountID is < 0 - update those
-          if (acc == null)
-          {
-            acc = new Account() { AccountID = accountID, Name = name };
+            acc = new Account();
             db.Accounts.InsertOnSubmit(acc);
-          }
         }
 
-        acc.AccountID = accountID;
+        acc.LobbyID = accountID;
         acc.Name = name;
         if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
         acc.LastLogin = DateTime.UtcNow;
@@ -103,12 +98,12 @@ namespace NightWatch
       {
         var message = new LobbyMessage()
                       {
-                        SourceAccountID = client.MyUser.AccountID,
+                        SourceLobbyID = client.MyUser.AccountID,
                         SourceName = client.MyUser.Name,
                         Created = DateTime.UtcNow,
                         Message = text,
                         TargetName = account.Name,
-                        TargetAccountID = account.AccountID
+                        TargetLobbyID = account.LobbyID
                       };
 				using (var db = new ZkDataContext())
 				{

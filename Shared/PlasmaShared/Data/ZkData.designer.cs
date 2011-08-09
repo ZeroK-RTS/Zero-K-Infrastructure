@@ -2204,11 +2204,9 @@ namespace ZkData
 		
 		private System.Nullable<int> _FactionID;
 		
+		private System.Nullable<int> _LobbyID;
+		
 		private EntitySet<Mission> _Missions;
-		
-		private EntitySet<LobbyMessage> _LobbyMessagesBySourceAccountID;
-		
-		private EntitySet<LobbyMessage> _LobbyMessagesByTargetAccountID;
 		
 		private EntitySet<ForumThread> _ForumThreadsByCreatedAccountID;
 		
@@ -2320,6 +2318,8 @@ namespace ZkData
     partial void OnLastNewsReadChanged();
     partial void OnFactionIDChanging(System.Nullable<int> value);
     partial void OnFactionIDChanged();
+    partial void OnLobbyIDChanging(System.Nullable<int> value);
+    partial void OnLobbyIDChanged();
     #endregion
 		
 		public Account()
@@ -2327,7 +2327,7 @@ namespace ZkData
 			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="int NOT NULL", IsPrimaryKey=true, UpdateCheck=UpdateCheck.WhenChanged)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
 		public int AccountID
 		{
@@ -2860,8 +2860,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LobbyID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
+		public System.Nullable<int> LobbyID
+		{
+			get
+			{
+				return this._LobbyID;
+			}
+			set
+			{
+				if ((this._LobbyID != value))
+				{
+					this.OnLobbyIDChanging(value);
+					this.SendPropertyChanging();
+					this._LobbyID = value;
+					this.SendPropertyChanged("LobbyID");
+					this.OnLobbyIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Mission", Storage="_Missions", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
 		public EntitySet<Mission> Missions
 		{
 			get
@@ -2879,46 +2900,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage", Storage="_LobbyMessagesBySourceAccountID", ThisKey="AccountID", OtherKey="SourceAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
-		public EntitySet<LobbyMessage> LobbyMessagesBySourceAccountID
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._LobbyMessagesBySourceAccountID.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._LobbyMessagesBySourceAccountID;
-			}
-			set
-			{
-				this._LobbyMessagesBySourceAccountID.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage1", Storage="_LobbyMessagesByTargetAccountID", ThisKey="AccountID", OtherKey="TargetAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
-		public EntitySet<LobbyMessage> LobbyMessagesByTargetAccountID
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._LobbyMessagesByTargetAccountID.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._LobbyMessagesByTargetAccountID;
-			}
-			set
-			{
-				this._LobbyMessagesByTargetAccountID.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread", Storage="_ForumThreadsByCreatedAccountID", ThisKey="AccountID", OtherKey="CreatedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByCreatedAccountID
 		{
 			get
@@ -2937,7 +2920,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread1", Storage="_ForumThreadsByLastPostAccountID", ThisKey="AccountID", OtherKey="LastPostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByLastPostAccountID
 		{
 			get
@@ -2956,7 +2939,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Resource", Storage="_Resources", ThisKey="AccountID", OtherKey="TaggedByAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
 		public EntitySet<Resource> Resources
 		{
 			get
@@ -2975,7 +2958,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MissionScore", Storage="_MissionScores", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -2994,7 +2977,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Rating", Storage="_Ratings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
 		public EntitySet<Rating> Ratings
 		{
 			get
@@ -3013,7 +2996,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPost", Storage="_ForumPosts", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -3032,7 +3015,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MapRating", Storage="_MapRatings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
 		public EntitySet<MapRating> MapRatings
 		{
 			get
@@ -3051,7 +3034,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattle", Storage="_SpringBattles", ThisKey="AccountID", OtherKey="HostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
 		public EntitySet<SpringBattle> SpringBattles
 		{
 			get
@@ -3070,7 +3053,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=37, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -3089,7 +3072,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=38, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=37, EmitDefaultValue=false)]
 		public EntitySet<ForumThreadLastRead> ForumThreadLastReads
 		{
 			get
@@ -3108,7 +3091,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=39, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=38, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleAward> AccountBattleAwards
 		{
 			get
@@ -3127,7 +3110,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountUnlock", Storage="_AccountUnlocks", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=40, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=39, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -3146,7 +3129,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Commanders", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=40, EmitDefaultValue=false)]
 		public EntitySet<Commander> Commanders
 		{
 			get
@@ -3165,7 +3148,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PollVote", Storage="_PollVotes", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41, EmitDefaultValue=false)]
 		public EntitySet<PollVote> PollVotes
 		{
 			get
@@ -3184,7 +3167,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Planet", Storage="_Planets", ThisKey="AccountID", OtherKey="OwnerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=43, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get
@@ -3203,7 +3186,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer", Storage="_MarketOffersByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=44, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=43, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAccountID
 		{
 			get
@@ -3222,7 +3205,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer1", Storage="_MarketOffersByAcceptedAccountID", ThisKey="AccountID", OtherKey="AcceptedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=45, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=44, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAcceptedAccountID
 		{
 			get
@@ -3241,7 +3224,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountPlanet", Storage="_AccountPlanets", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=46, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=45, EmitDefaultValue=false)]
 		public EntitySet<AccountPlanet> AccountPlanets
 		{
 			get
@@ -3260,7 +3243,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_EventAccount", Storage="_EventAccounts", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=47, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=46, EmitDefaultValue=false)]
 		public EntitySet<EventAccount> EventAccounts
 		{
 			get
@@ -3279,7 +3262,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="AccountID", OtherKey="OwnerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=48, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=47, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -3298,7 +3281,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=49, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=48, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -3317,7 +3300,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetWarsHost", Storage="_PlanetWarsHost", ThisKey="AccountID", OtherKey="HostAccountID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=50, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=49, EmitDefaultValue=false)]
 		public PlanetWarsHost PlanetWarsHost
 		{
 			get
@@ -3352,7 +3335,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountRatingVote", Storage="_AccountRatingVotes", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=51, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=50, EmitDefaultValue=false)]
 		public EntitySet<AccountRatingVote> AccountRatingVotes
 		{
 			get
@@ -3371,7 +3354,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetWarsHostPlayer", Storage="_PlanetWarsHostPlayers", ThisKey="AccountID", OtherKey="PlayerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=52, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=51, EmitDefaultValue=false)]
 		public EntitySet<PlanetWarsHostPlayer> PlanetWarsHostPlayers
 		{
 			get
@@ -3390,7 +3373,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_News", Storage="_News", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=53, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=52, EmitDefaultValue=false)]
 		public EntitySet<News> News
 		{
 			get
@@ -3506,30 +3489,6 @@ namespace ZkData
 		{
 			this.SendPropertyChanging();
 			entity.Account = null;
-		}
-		
-		private void attach_LobbyMessagesBySourceAccountID(LobbyMessage entity)
-		{
-			this.SendPropertyChanging();
-			entity.AccountBySourceAccountID = this;
-		}
-		
-		private void detach_LobbyMessagesBySourceAccountID(LobbyMessage entity)
-		{
-			this.SendPropertyChanging();
-			entity.AccountBySourceAccountID = null;
-		}
-		
-		private void attach_LobbyMessagesByTargetAccountID(LobbyMessage entity)
-		{
-			this.SendPropertyChanging();
-			entity.AccountByTargetAccountID = this;
-		}
-		
-		private void detach_LobbyMessagesByTargetAccountID(LobbyMessage entity)
-		{
-			this.SendPropertyChanging();
-			entity.AccountByTargetAccountID = null;
 		}
 		
 		private void attach_ForumThreadsByCreatedAccountID(ForumThread entity)
@@ -3823,8 +3782,6 @@ namespace ZkData
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
-			this._LobbyMessagesBySourceAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesBySourceAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesBySourceAccountID));
-			this._LobbyMessagesByTargetAccountID = new EntitySet<LobbyMessage>(new Action<LobbyMessage>(this.attach_LobbyMessagesByTargetAccountID), new Action<LobbyMessage>(this.detach_LobbyMessagesByTargetAccountID));
 			this._ForumThreadsByCreatedAccountID = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreadsByCreatedAccountID), new Action<ForumThread>(this.detach_ForumThreadsByCreatedAccountID));
 			this._ForumThreadsByLastPostAccountID = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreadsByLastPostAccountID), new Action<ForumThread>(this.detach_ForumThreadsByLastPostAccountID));
 			this._Resources = new EntitySet<Resource>(new Action<Resource>(this.attach_Resources), new Action<Resource>(this.detach_Resources));
@@ -3890,19 +3847,15 @@ namespace ZkData
 		
 		private string _TargetName;
 		
-		private System.Nullable<int> _SourceAccountID;
+		private System.Nullable<int> _SourceLobbyID;
 		
 		private string _Message;
 		
 		private System.DateTime _Created;
 		
-		private System.Nullable<int> _TargetAccountID;
+		private System.Nullable<int> _TargetLobbyID;
 		
 		private string _Channel;
-		
-		private EntityRef<Account> _AccountBySourceAccountID;
-		
-		private EntityRef<Account> _AccountByTargetAccountID;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -3914,14 +3867,14 @@ namespace ZkData
     partial void OnSourceNameChanged();
     partial void OnTargetNameChanging(string value);
     partial void OnTargetNameChanged();
-    partial void OnSourceAccountIDChanging(System.Nullable<int> value);
-    partial void OnSourceAccountIDChanged();
+    partial void OnSourceLobbyIDChanging(System.Nullable<int> value);
+    partial void OnSourceLobbyIDChanged();
     partial void OnMessageChanging(string value);
     partial void OnMessageChanged();
     partial void OnCreatedChanging(System.DateTime value);
     partial void OnCreatedChanged();
-    partial void OnTargetAccountIDChanging(System.Nullable<int> value);
-    partial void OnTargetAccountIDChanged();
+    partial void OnTargetLobbyIDChanging(System.Nullable<int> value);
+    partial void OnTargetLobbyIDChanged();
     partial void OnChannelChanging(string value);
     partial void OnChannelChanged();
     #endregion
@@ -3994,27 +3947,23 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SourceAccountID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SourceLobbyID", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public System.Nullable<int> SourceAccountID
+		public System.Nullable<int> SourceLobbyID
 		{
 			get
 			{
-				return this._SourceAccountID;
+				return this._SourceLobbyID;
 			}
 			set
 			{
-				if ((this._SourceAccountID != value))
+				if ((this._SourceLobbyID != value))
 				{
-					if (this._AccountBySourceAccountID.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnSourceAccountIDChanging(value);
+					this.OnSourceLobbyIDChanging(value);
 					this.SendPropertyChanging();
-					this._SourceAccountID = value;
-					this.SendPropertyChanged("SourceAccountID");
-					this.OnSourceAccountIDChanged();
+					this._SourceLobbyID = value;
+					this.SendPropertyChanged("SourceLobbyID");
+					this.OnSourceLobbyIDChanged();
 				}
 			}
 		}
@@ -4061,27 +4010,23 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TargetAccountID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TargetLobbyID", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public System.Nullable<int> TargetAccountID
+		public System.Nullable<int> TargetLobbyID
 		{
 			get
 			{
-				return this._TargetAccountID;
+				return this._TargetLobbyID;
 			}
 			set
 			{
-				if ((this._TargetAccountID != value))
+				if ((this._TargetLobbyID != value))
 				{
-					if (this._AccountByTargetAccountID.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnTargetAccountIDChanging(value);
+					this.OnTargetLobbyIDChanging(value);
 					this.SendPropertyChanging();
-					this._TargetAccountID = value;
-					this.SendPropertyChanged("TargetAccountID");
-					this.OnTargetAccountIDChanged();
+					this._TargetLobbyID = value;
+					this.SendPropertyChanged("TargetLobbyID");
+					this.OnTargetLobbyIDChanged();
 				}
 			}
 		}
@@ -4103,74 +4048,6 @@ namespace ZkData
 					this._Channel = value;
 					this.SendPropertyChanged("Channel");
 					this.OnChannelChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage", Storage="_AccountBySourceAccountID", ThisKey="SourceAccountID", OtherKey="AccountID", IsForeignKey=true)]
-		public Account AccountBySourceAccountID
-		{
-			get
-			{
-				return this._AccountBySourceAccountID.Entity;
-			}
-			set
-			{
-				Account previousValue = this._AccountBySourceAccountID.Entity;
-				if (((previousValue != value) 
-							|| (this._AccountBySourceAccountID.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._AccountBySourceAccountID.Entity = null;
-						previousValue.LobbyMessagesBySourceAccountID.Remove(this);
-					}
-					this._AccountBySourceAccountID.Entity = value;
-					if ((value != null))
-					{
-						value.LobbyMessagesBySourceAccountID.Add(this);
-						this._SourceAccountID = value.AccountID;
-					}
-					else
-					{
-						this._SourceAccountID = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("AccountBySourceAccountID");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_LobbyMessage1", Storage="_AccountByTargetAccountID", ThisKey="TargetAccountID", OtherKey="AccountID", IsForeignKey=true)]
-		public Account AccountByTargetAccountID
-		{
-			get
-			{
-				return this._AccountByTargetAccountID.Entity;
-			}
-			set
-			{
-				Account previousValue = this._AccountByTargetAccountID.Entity;
-				if (((previousValue != value) 
-							|| (this._AccountByTargetAccountID.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._AccountByTargetAccountID.Entity = null;
-						previousValue.LobbyMessagesByTargetAccountID.Remove(this);
-					}
-					this._AccountByTargetAccountID.Entity = value;
-					if ((value != null))
-					{
-						value.LobbyMessagesByTargetAccountID.Add(this);
-						this._TargetAccountID = value.AccountID;
-					}
-					else
-					{
-						this._TargetAccountID = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("AccountByTargetAccountID");
 				}
 			}
 		}
@@ -4197,8 +4074,6 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			this._AccountBySourceAccountID = default(EntityRef<Account>);
-			this._AccountByTargetAccountID = default(EntityRef<Account>);
 			OnCreated();
 		}
 		
