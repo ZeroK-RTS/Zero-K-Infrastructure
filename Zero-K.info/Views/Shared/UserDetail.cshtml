@@ -61,6 +61,20 @@
 	</div>
  }
 	<h2>@Html.PrintAccount(Model)</h2>
+    
+    @if (Global.IsZeroKAdmin)
+    {
+	    <div class="admin">
+	        <h3>Modify user @Model.Name</h3>
+            AccountID: @Model.AccountID <br />
+            LobbyID: @Model.LobbyID <br />
+            <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new {accountID = Model.AccountID})">
+                Change lobby ID: @Html.TextBox("newLobbyID") <input type="submit" />
+            </form>
+	    </div>
+    }
+
+
 	<a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
 	@if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
  {

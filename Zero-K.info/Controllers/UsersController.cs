@@ -9,16 +9,8 @@ namespace ZeroKWeb.Controllers
     //
     // GET: /Users/
 
-    public ActionResult Index(string name)
+    public ActionResult Index()
     {
-      var db = new ZkDataContext();
-      Account acc;
-
-      int id;
-      acc = db.Accounts.FirstOrDefault(x => x.Name == name);
-      if (acc == null && int.TryParse(name, out id)) acc = db.Accounts.Single(x => x.AccountID == id);
-      
-      if (!string.IsNullOrEmpty(name)) return View("UserDetail", acc);
       return View("UserList");
     }
     
@@ -26,5 +18,34 @@ namespace ZeroKWeb.Controllers
     {
       public Account Account;
     }
+
+      [Auth]
+      public ActionResult ChangeLobbyID(int accountID, int newLobbyID)
+      {
+          var db = new ZkDataContext();
+          var account = db.Accounts.Single(x => x.AccountID == accountID);
+          var oldLobbyID = account.LobbyID;
+          account.LobbyID = newLobbyID;
+          db.SubmitChanges();
+          string response = string.Format("{0} lobby ID change from {1} -> {2}", account.Name, oldLobbyID, account.LobbyID);
+          foreach (var duplicate in db.Accounts.Where(x => x.LobbyID == newLobbyID && x.AccountID != accountID)) {
+
+              response += string.Format("\n Duplicate: {0} - {1} {2}", duplicate.Name, duplicate.AccountID, Url.Action("Detail", new { id = duplicate.AccountID }));
+          }
+          return Content(response);
+      }
+
+      public ActionResult Detail(int id)
+      {
+          var db = new ZkDataContext();
+          return View("UserDetail", db.Accounts.FirstOrDefault(x => x.AccountID == id));
+      }
+
+      public ActionResult LobbyDetail(int id)
+      {
+          var db = new ZkDataContext();
+          return View("UserDetail", db.Accounts.FirstOrDefault(x => x.LobbyID == id));
+      }
+
   }
 }

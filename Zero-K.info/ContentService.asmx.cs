@@ -989,7 +989,7 @@ namespace ZeroKWeb
 					{
 						try
 						{
-							var message = string.Format("Congratulations {1}! You just leveled up to level {0}. http://zero-k.info/Users/{1}", account.Level, account.Name);
+							var message = string.Format("Congratulations {0}! You just leveled up to level {1}. http://zero-k.info/Users/Detail/{2}", account.Name, account.Level, account.AccountID);
 							text.AppendLine(message);
 							AuthServiceClient.SendLobbyMessage(account, message);
 						}

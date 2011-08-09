@@ -141,7 +141,7 @@ namespace ZeroKWeb.Controllers
 
 		public ActionResult Index()
 		{
-			return RedirectToAction("Index", "Users", new { name = Global.Account.Name });
+			return RedirectToAction("Detail", "Users", new { id = Global.AccountID });
 		}
 
 

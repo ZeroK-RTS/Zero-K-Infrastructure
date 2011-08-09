@@ -310,7 +310,7 @@ namespace ZeroKWeb.Controllers
 			db.SubmitChanges();
 			SetPlanetOwners(db);
 			db.SubmitChanges();
-			return RedirectToAction("Index", "Users", new { name = targetAccountID });
+			return RedirectToAction("Detail", "Users", new { id = targetAccountID });
 		}
 
 		public ActionResult Index(int? galaxyID = null)
