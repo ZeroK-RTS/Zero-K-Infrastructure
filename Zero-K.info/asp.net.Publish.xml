@@ -2,25 +2,23 @@
 <publishData>
   <publishProfile publishUrl="ftp://zero-k.info/zero-k.info/www" deleteExistingFiles="False" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FTP" replaceMatchingFiles="True" userName="zero-k" savePWD="False" userPWD="" SelectedForPublish="True">
     <file relUrl="Views/News/Index.cshtml" publishTime="07/09/2011 00:13:28" />
+    <file relUrl="Scripts/jquery.qtip.pack.js" publishTime="05/03/2011 13:08:48" />
+    <file relUrl="Views/My/CommanderProfile.cshtml" publishTime="07/08/2011 19:33:18" />
     <file relUrl="ContentService.asmx" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Views/Wiki/Index.cshtml" publishTime="04/30/2011 11:38:14" />
     <file relUrl="Scripts/MicrosoftAjax.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Styles/jquery.ui.stars.css" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Views/Users/UserList.cshtml" publishTime="08/10/2011 01:11:05" />
-    <file relUrl="Views/Shared/TradeOffer.cshtml" publishTime="07/07/2011 13:29:16" />
-    <file relUrl="Views/My/CommanderProfile.cshtml" publishTime="07/08/2011 19:33:18" />
+    <file relUrl="bin/Global.asax" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Views/Planetwars/JoinClan.cshtml" publishTime="04/18/2011 02:27:49" />
     <file relUrl="Views/Planetwars/Minimap.cshtml" publishTime="05/04/2011 23:29:46" />
     <file relUrl="Views/Planetwars/Events.cshtml" publishTime="05/07/2011 11:49:35" />
-    <file relUrl="bin/MySql.Data.dll" publishTime="02/01/2008 21:41:56" />
-    <file relUrl="Views/Planetwars/Clan.cshtml" publishTime="07/07/2011 15:33:23" />
-    <file relUrl="Scripts/site.js" publishTime="07/08/2011 00:54:13" />
+    <file relUrl="Styles/style.css" publishTime="08/06/2011 11:29:47" />
     <file relUrl="Views/Missions/TileList.cshtml" publishTime="07/31/2011 03:52:51" />
     <file relUrl="Views/My/UnlockList.cshtml" publishTime="07/19/2011 10:56:37" />
     <file relUrl="Web.config" publishTime="08/10/2011 00:12:41" />
     <file relUrl="Views/Shared/GoogleSiteSearch.cshtml" publishTime="07/01/2011 01:51:50" />
-    <file relUrl="Views/Battles/Detail.cshtml" publishTime="04/22/2011 23:33:00" />
-    <file relUrl="bin/Global.asax" publishTime="01/02/2011 03:33:31" />
+    <file relUrl="Img/progressl_fill.png" publishTime="07/09/2011 11:24:36" />
     <file relUrl="Scripts/MicrosoftMvcAjax.js" publishTime="03/17/2011 14:55:51" />
     <file relUrl="Views/Missions/Detail.cshtml" publishTime="07/31/2011 03:32:43" />
     <file relUrl="Img/mail/mail-new.png" publishTime="08/03/2011 15:05:41" />
@@ -29,20 +27,21 @@
     <file relUrl="Img/artifact_3.png" publishTime="07/19/2011 10:56:38" />
     <file relUrl="Views/Planetwars/Galaxy.cshtml" publishTime="08/09/2011 00:36:54" />
     <file relUrl="Global.asax" publishTime="01/02/2011 03:33:31" />
-    <file relUrl="bin/ZeroKWeb.pdb" publishTime="08/10/2011 02:58:33" />
+    <file relUrl="bin/ZeroKWeb.pdb" publishTime="08/10/2011 03:18:40" />
     <file relUrl="Views/Maps/MapTileList.cshtml" publishTime="08/02/2011 20:17:57" />
-    <file relUrl="UnlocksAdmin.aspx" publishTime="04/15/2011 21:53:45" />
-    <file relUrl="Img/bullet.png" publishTime="03/30/2011 01:35:20" />
+    <file relUrl="Views/Planetwars/Clan.cshtml" publishTime="07/07/2011 15:33:23" />
     <file relUrl="Scripts/jquery-ui-1.8.14.custom.min.js" publishTime="07/07/2011 17:09:48" />
     <file relUrl="Styles/menu.css" publishTime="07/31/2011 04:25:21" />
     <file relUrl="Views/Poll/PollVoteList.cshtml" publishTime="07/07/2011 15:18:46" />
-    <file relUrl="bin/ZeroKWeb.dll" publishTime="08/10/2011 02:58:34" />
+    <file relUrl="bin/ZeroKWeb.dll" publishTime="08/10/2011 03:18:41" />
     <file relUrl="Views/Shared/_SiteLayout.cshtml" publishTime="07/31/2011 04:44:28" />
     <file relUrl="LobbyStart.inc" publishTime="07/08/2011 12:54:37" />
     <file relUrl="Styles/nicetitle.css" publishTime="07/31/2011 04:25:21" />
     <file relUrl="Scripts/nicetitle.js" publishTime="07/04/2011 21:36:17" />
     <file relUrl="Views/Shared/UnlockedTechnologies.cshtml" publishTime="07/31/2011 02:07:07" />
     <file relUrl="Views/Battles/Index.cshtml" publishTime="07/31/2011 02:47:14" />
+    <file relUrl="Views/Shared/PlanetSummary.cshtml" publishTime="06/21/2011 21:18:35" />
+    <file relUrl="Views/Forum/NewPost.cshtml" publishTime="04/10/2011 04:04:43" />
     <file relUrl="bin/DbLinq.MySql.dll" publishTime="09/13/2008 20:54:26" />
     <file relUrl="bin/PlanetWarsShared.dll" publishTime="03/16/2010 23:09:37" />
     <file relUrl="StructuresAdmin.aspx" publishTime="04/15/2011 23:24:43" />
@@ -50,52 +49,53 @@
     <file relUrl="Img/Loader.gif" publishTime="07/04/2011 21:36:16" />
     <file relUrl="Img/favicon.png" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Views/Shared/CommentList.cshtml" publishTime="04/17/2011 13:36:32" />
-    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="08/09/2011 23:49:19" />
+    <file relUrl="UnlocksAdmin.aspx" publishTime="04/15/2011 21:53:45" />
     <file relUrl="Views/My/Commanders.cshtml" publishTime="07/19/2011 10:56:37" />
     <file relUrl="Views/Shared/TopMenu.cshtml" publishTime="07/07/2011 13:23:01" />
-    <file relUrl="ResourceList.aspx" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Img/progressr_fill.png" publishTime="07/09/2011 11:24:36" />
-    <file relUrl="Views/Home/Index.cshtml" publishTime="08/07/2011 20:01:47" />
+    <file relUrl="Img/border.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="Scripts/raphael-min.js" publishTime="05/04/2011 19:10:58" />
     <file relUrl="Views/Shared/PlanetDropships.cshtml" publishTime="04/25/2011 13:11:12" />
-    <file relUrl="Views/Static/Index.cshtml" publishTime="04/17/2011 17:10:58" />
     <file relUrl="bin/MonoTorrent.dll" publishTime="08/09/2011 23:49:19" />
     <file relUrl="Views/Planetwars/Index.cshtml" publishTime="04/17/2011 02:27:48" />
     <file relUrl="bin/PlasmaShared.dll" publishTime="08/09/2011 23:49:19" />
+    <file relUrl="Styles/fonts.css" publishTime="07/31/2011 04:25:21" />
     <file relUrl="Views/Shared/UserDetail.cshtml" publishTime="08/10/2011 00:48:06" />
     <file relUrl="Views/Maps/Detail.cshtml" publishTime="05/07/2011 11:55:34" />
     <file relUrl="Img/rss.png" publishTime="05/09/2009 14:54:21" />
     <file relUrl="Views/Ladders/ladders.cshtml" publishTime="08/10/2011 02:54:19" />
     <file relUrl="Views/Planetwars/Trade.cshtml" publishTime="06/11/2011 03:43:31" />
     <file relUrl="Views/Shared/PlanetIcon.cshtml" publishTime="05/02/2011 02:30:11" />
-    <file relUrl="Scripts/jquery.ui.stars.js" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Img/blank.png" publishTime="07/19/2011 10:56:38" />
     <file relUrl="Views/Planetwars/CreateClan.cshtml" publishTime="04/27/2011 00:44:10" />
     <file relUrl="Views/Maps/PlanetImageSelect.cshtml" publishTime="05/07/2011 11:33:15" />
+    <file relUrl="bin/PlasmaShared.XmlSerializers.dll" publishTime="08/09/2011 23:49:19" />
     <file relUrl="Views/Home/NotLoggedIn.cshtml" publishTime="04/17/2011 13:11:15" />
     <file relUrl="Views/Forum/Index.cshtml" publishTime="08/08/2011 00:36:07" />
     <file relUrl="Scripts/jquery.validate.min.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="bin/Global.asax.cs" publishTime="08/10/2011 00:19:18" />
-    <file relUrl="Img/mail/mail-read.png" publishTime="08/03/2011 15:05:41" />
+    <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="04/19/2011 13:37:01" />
     <file relUrl="bin/CookComputing.XmlRpcV2.dll" publishTime="09/05/2010 19:47:56" />
     <file relUrl="Views/Planetwars/Planet.cshtml" publishTime="06/11/2011 03:47:58" />
-    <file relUrl="Img/progressl_fill.png" publishTime="07/09/2011 11:24:36" />
+    <file relUrl="Scripts/site.js" publishTime="07/08/2011 00:54:13" />
+    <file relUrl="Styles/stars.css" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Img/zk_logo_miniature.png" publishTime="03/30/2011 01:35:20" />
     <file relUrl="Img/cup.png" publishTime="01/02/2011 03:33:30" />
     <file relUrl="bin/Web.config" publishTime="08/10/2011 00:12:41" />
     <file relUrl="Img/mail/mail-unread.png" publishTime="08/03/2011 15:05:41" />
     <file relUrl="Views/Shared/LoginBar.cshtml" publishTime="08/03/2011 15:05:41" />
-    <file relUrl="Views/Shared/PlanetSummary.cshtml" publishTime="06/21/2011 21:18:35" />
+    <file relUrl="Views/Battles/Detail.cshtml" publishTime="04/22/2011 23:33:00" />
     <file relUrl="Views/Maps/Index.cshtml" publishTime="04/16/2011 03:05:10" />
     <file relUrl="Scripts/jquery-1.5.2.min.js" publishTime="03/31/2011 22:28:43" />
     <file relUrl="Views/Battles/BattleTileList.cshtml" publishTime="07/19/2011 10:56:37" />
     <file relUrl="Views/Web.config" publishTime="01/02/2011 03:33:08" />
-    <file relUrl="Scripts/jquery.qtip.pack.js" publishTime="05/03/2011 13:08:48" />
+    <file relUrl="ResourceList.aspx" publishTime="01/02/2011 03:33:31" />
     <file relUrl="Scripts/jquery.tablesorter.min.js" publishTime="10/15/2010 13:08:19" />
-    <file relUrl="Img/border.png" publishTime="03/30/2011 01:35:20" />
-    <file relUrl="Scripts/MicrosoftMvcValidation.js" publishTime="04/19/2011 13:37:01" />
+    <file relUrl="Img/bullet.png" publishTime="03/30/2011 01:35:20" />
+    <file relUrl="Scripts/jquery.ui.stars.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Img/border-1.png" publishTime="07/01/2011 01:51:51" />
     <file relUrl="Img/artifact_2.png" publishTime="07/19/2011 10:56:38" />
-    <file relUrl="Img/blank.png" publishTime="07/19/2011 10:56:38" />
+    <file relUrl="bin/MySql.Data.dll" publishTime="02/01/2008 21:41:56" />
     <file relUrl="Scripts/jquery.tablesorter.js" publishTime="10/15/2010 13:08:19" />
     <file relUrl="Views/_ViewStart.cshtml" publishTime="07/08/2011 02:47:37" />
     <file relUrl="Views/Shared/MapInfoBox.cshtml" publishTime="05/06/2011 02:14:23" />
@@ -110,15 +110,15 @@
     <file relUrl="Img/progressl_base.png" publishTime="07/09/2011 11:24:36" />
     <file relUrl="bin/DbLinq.dll" publishTime="09/13/2008 20:53:56" />
     <file relUrl="Views/Forum/ForumPath.cshtml" publishTime="01/04/2011 19:24:41" />
-    <file relUrl="Styles/style.css" publishTime="08/06/2011 11:29:47" />
+    <file relUrl="Views/Shared/TradeOffer.cshtml" publishTime="07/07/2011 13:29:16" />
     <file relUrl="Views/Home/PlanetTooltip.cshtml" publishTime="05/06/2011 02:18:10" />
     <file relUrl="Scripts/jquery.ui.stars.min.js" publishTime="01/02/2011 03:33:30" />
     <file relUrl="Views/Shared/InfluenceListShort.cshtml" publishTime="05/06/2011 01:51:27" />
     <file relUrl="Views/Planetwars/ClanList.cshtml" publishTime="05/07/2011 12:11:20" />
-    <file relUrl="Views/Forum/NewPost.cshtml" publishTime="04/10/2011 04:04:43" />
+    <file relUrl="Img/mail/mail-read.png" publishTime="08/03/2011 15:05:41" />
     <file relUrl="Views/Missions/Index.cshtml" publishTime="07/19/2011 10:56:37" />
-    <file relUrl="Styles/fonts.css" publishTime="07/31/2011 04:25:21" />
-    <file relUrl="Styles/stars.css" publishTime="01/02/2011 03:33:30" />
+    <file relUrl="Views/Static/Index.cshtml" publishTime="04/17/2011 17:10:58" />
+    <file relUrl="Views/Home/Index.cshtml" publishTime="08/07/2011 20:01:47" />
     <file relUrl="Img/artifact_1.png" publishTime="07/19/2011 10:56:38" />
     <file relUrl="Views/Forum/Thread.cshtml" publishTime="07/19/2011 10:56:37" />
     <file relUrl="MissionService.svc" publishTime="01/02/2011 03:33:31" />

@@ -136,7 +136,7 @@ namespace ZeroKWeb
 						var points = 0.0;
 						if (c1 != null && c2 != null)
 						{
-							if (c1 == c2) points = 3;
+							if (c1 == c2) points = 4;
 							else
 							{
 								var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
