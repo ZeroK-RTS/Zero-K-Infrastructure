@@ -2,14 +2,19 @@
 
 @{
   Page.Title = "Battle " + Model.SpringBattleID + " detail";
+  //hack to make thin maps a bit thicker
+  var aspectratio = Model.ResourceByMapResourceID.MapSizeRatio;
+  if(aspectratio >= 2)
+  {
+	aspectratio /=  2;
+  }
 }
-<div class="fleft">
-<center>
-	<a href="@Url.Action("Detail","Maps",new {id= @Model.MapResourceID})" title="$map$@Model.ResourceByMapResourceID.InternalName">
+<div class="fleft" style="width: 300px; height: 300px; position: relative; text-align: center;">
+	<a href="@Url.Action("Detail","Maps",new {id= @Model.MapResourceID})" title="$map$@Model.ResourceByMapResourceID.InternalName" style="position: absolute; width: 100%; font-weight: bold; ">
 	Map: @Model.ResourceByMapResourceID.InternalName<br />
-	<img src='http://zero-k.info/Resources/@Model.ResourceByMapResourceID.MinimapName' alt="@Model.ResourceByMapResourceID.InternalName" style="max-width: 300px; max-height: 300px;" />
-	</a>
-</center>
+	</a> 
+	<img src='http://zero-k.info/Resources/@Model.ResourceByMapResourceID.MinimapName' alt="@Model.ResourceByMapResourceID.InternalName" width="100%" 
+	height="@(100/aspectratio)%" />
 </div>
 
 <div class="fleft" style="padding: 5px;">
@@ -39,7 +44,7 @@
 	<td>Bots: </td><td>@Model.HasBots</td>
 </tr>
 <tr>
-	<td>IsMisison: </td><td>@Model.IsMission</td>
+	<td>Mission: </td><td>@Model.IsMission</td>
 </tr>
 </table>
 
@@ -47,7 +52,8 @@
 	<span class="textbutton" style="font-size: 130%">Watch Replay Now</span>
 </a>
 <br />
-@if (!ZeroKWeb.Global.IsLobbyAccess) {
+@if (!ZeroKWeb.Global.IsLobbyAccess)
+{
   <a href='http://springdemos.licho.eu/@Model.ReplayFileName'>Manual download</a> <br />
 }
 
@@ -55,31 +61,35 @@
 
 <br class="clearfloat" />
 <div>
-@foreach (var grp in Model.SpringBattlePlayers.Where(x=>!x.IsSpectator).GroupBy(x=>x.AllyNumber)) 
+@foreach (var grp in Model.SpringBattlePlayers.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber))
 {
 	var win = grp.First().IsInVictoryTeam;
-	<div class='fleft border @(win ? "battle_winner":"battle_loser")'>
-	<span style="font-size: 130%; font-family: Skir;">Team @(grp.Key+1) @(win ? "Won!" : "Lost")</span><br />
+	<div class='fleft border @(win ? "battle_winner" : "battle_loser")'>
+	<span style="font-size: 130%; font-family: Skir;">Team @(grp.Key + 1) @(win ? "Won!" : "Lost")</span><br />
 	<small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange) </small><br />
-	@foreach (var u in grp) {
+	@foreach (var u in grp)
+ {
 	<span>
 		@Html.PrintAccount(u.Account)
 		@(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")  
-		@if (u.EloChange.HasValue) {
+		@if (u.EloChange.HasValue)
+  {
 		@:Elo: @u.EloChange.Value.ToString("F1")
 		}
-		@foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID)) {
+		@foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID))
+  {
 			<img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
-		}
+  }
 	</span><br />
-	}
+ }
 	</div>
 }
 	<div class="fleft border battle_spec">
 		<span style="font-size: 130%; font-family: Skir;">Spectators</span><br />
-		@foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator)) {
+		@foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator))
+  {
 		<small>@Html.PrintAccount(u.Account)</small><br />
-	}
+  }
 	</div>
 <br class="clearfloat" />
 </div>
