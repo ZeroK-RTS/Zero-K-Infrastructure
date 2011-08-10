@@ -43,19 +43,15 @@ namespace ZeroKWeb.Controllers
 
 		//
 		// GET: /Ladders/
-		[OutputCache(Duration = 3600*2, VaryByCustom = GlobalConst.LobbyAccessCookieName)] // cache for 2 hours - different look for lobby and for normal
+        //[OutputCache(Duration = 3600*2, VaryByCustom = GlobalConst.LobbyAccessCookieName)] // cache for 2 hours - different look for lobby and for normal
 		public ActionResult Index()
 		{
-			var db = new ZkDataContext();
-
-			var validAwards = db.AccountBattleAwards.Where(x => !x.SpringBattle.ResourceByMapResourceID.InternalName.Contains("SpeedMetal"));
-
-			//var r1 = db.AccountBattleAwards.GroupBy(x=>x.AwardKey);
-			var r1 = validAwards.GroupBy(x => x.AwardKey);
-
-			var awardItems = new List<AwardItem>();
-
-            var monthName = DateTime.Now.ToString("MMMM");
+            var db = new ZkDataContext();
+            var awardItems = new List<AwardItem>();
+            /*
+            var validAwards = db.AccountBattleAwards.Where(x => !x.SpringBattle.ResourceByMapResourceID.InternalName.Contains("SpeedMetal"));
+            var r1 = validAwards.GroupBy(x => x.AwardKey);
+			var monthName = DateTime.Now.ToString("MMMM");
             var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
 
             var validAwardsM = validAwards.Where(x => x.SpringBattle.StartTime >= monthStart);
@@ -63,51 +59,17 @@ namespace ZeroKWeb.Controllers
 			foreach (var awardTypeInfo in r1)
 			{
 				var awardType = awardTypeInfo.Key;
-
-
-                //var curAwards = validAwards.Where(x => x.AwardKey == awardType);
-                //var curAwardsM = curAwards.Where(x => x.SpringBattle.StartTime >= monthStart);
                 var curAwardsM = validAwardsM.Where(x => x.AwardKey == awardType);
-
-                //var curAwardsAccts = curAwards.GroupBy(x => x.Account);
                 var curAwardsAcctsM = curAwardsM.GroupBy(x => x.Account);
-
-
-                /*
-                var topCount = curAwardsAccts.Max(x => x.Count());
-                var resultCollectorInfo = curAwardsAccts.Where(x => x.Count() == topCount);
-
-				var topCollectors = new List<Account>();
-				foreach (var acct in resultCollectorInfo) topCollectors.Add(acct.Key);
-                */
                 var topCountM = curAwardsAcctsM.Max(x => x.Count());
-
                 var resultCollectorInfoM = curAwardsAcctsM.Where(x => x.Count() == topCountM);
 
 				var topCollectorsM = new List<Account>();
 				foreach (var acct in resultCollectorInfoM) topCollectorsM.Add(acct.Key);
 
-
-				var topScore = 0;
+                var topScore = 0;
                 var titleName = "";
-                /*
-				var fullTitle = "";
-				Account topAcct = null;
-				SpringBattlePlayer topScoreBattlePlayer = null;
-                foreach (var acct in curAwards)
-				{
-					var score = Convert.ToInt32(Regex.Replace(acct.AwardDescription, @"\D", String.Empty));
-					titleName = acct.AwardDescription.Split(',').First();
-
-					if (score > topScore)
-					{
-						topScore = score;
-						topScoreBattlePlayer = acct.SpringBattle.SpringBattlePlayers.Single(x => x.AccountID == acct.AccountID);
-						topAcct = acct.Account;
-						fullTitle = string.Join(" ", acct.AwardDescription.Split(',').Skip(1));
-					}
-				}
-                */
+                
                 topScore = 0;
 				Account topAcctM = null;
 				var fullTitleM = "";
@@ -137,19 +99,20 @@ namespace ZeroKWeb.Controllers
 				                	TopScoreBattlePlayer = topScoreBattlePlayer,
 				                	TopCollectors = topCollectors,
 				                	TopCollectorCount = topCount,
-				                	/**/
+				                	/** /
 
 				                	TopScoreHolderM = topAcctM,
 				                	TopScoreDescM = fullTitleM,
 				                	TopScoreBattlePlayerM = topScoreBattlePlayerM,
 				                	TopCollectorsM = topCollectorsM,
 				                	TopCollectorCountM = topCountM,
-				                	/**/
+				                	/** /
 				                };
 				awardItems.Add(awardItem);
+                
 			}
-
-			var top50Accounts =
+            */
+            var top50Accounts =
 				db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo).
 					Take(50);
 
