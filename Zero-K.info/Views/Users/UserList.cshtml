@@ -1,3 +1,9 @@
-﻿@{
- 
+﻿@using ZkData
+@{
+    Page.Title = "Zero-K admins";
+}
+
+<h2>Admins</h2>
+@foreach (var admin in new ZkDataContext().Accounts.Where(x => x.IsZeroKAdmin)) {
+    @Html.PrintAccount(admin) <br />
 }

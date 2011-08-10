@@ -20,7 +20,7 @@ namespace ZeroKWeb.Controllers
     }
 
       [Auth]
-      public ActionResult ChangeLobbyID(int accountID, int newLobbyID)
+      public ActionResult ChangeLobbyID(int accountID, int? newLobbyID)
       {
           var db = new ZkDataContext();
           var account = db.Accounts.Single(x => x.AccountID == accountID);
