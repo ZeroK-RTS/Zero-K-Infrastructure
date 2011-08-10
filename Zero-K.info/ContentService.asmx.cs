@@ -32,7 +32,7 @@ namespace ZeroKWeb
 			if (mode == AutohostMode.Planetwars)
 			{
 				var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
-				var account = db.Accounts.SingleOrDefault(x => x.LobbyID == accountID);
+				var account = db.Accounts.FirstOrDefault(x => x.LobbyID == accountID);
 				if (account.Clan == null)
 				{
 					//AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
@@ -72,7 +72,8 @@ namespace ZeroKWeb
 				res.Message = "";
 				var idList = currentTeams.Select(x => (int?)x.AccountID).ToList();
 				var players = new List<Account>();
-				foreach (var p in db.Accounts.Where(x => idList.Contains(x.LobbyID)))
+                
+				foreach (var p in idList.Select(x=> db.Accounts.First(y=>y.LobbyID == x)))
 				{
 					/*if (p.ClanID == null)
 					{
@@ -470,7 +471,7 @@ namespace ZeroKWeb
 
 			foreach (var p in players.Where(x => !x.IsSpectator))
 			{
-				var user = db.Accounts.SingleOrDefault(x => x.LobbyID == p.AccountID);
+				var user = db.Accounts.FirstOrDefault(x => x.LobbyID == p.AccountID);
 				if (user != null)
 				{
 					var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
