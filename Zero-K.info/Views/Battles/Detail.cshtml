@@ -3,57 +3,93 @@
 @{
   Page.Title = "Battle " + Model.SpringBattleID + " detail";
 }
-Title: @Model.Title<br />
+<div class="fleft">
+<center>
+	<a href="@Url.Action("Detail","Maps",new {id= @Model.MapResourceID})" title="$map$@Model.ResourceByMapResourceID.InternalName">
+	Map: @Model.ResourceByMapResourceID.InternalName<br />
+	<img src='http://zero-k.info/Resources/@Model.ResourceByMapResourceID.MinimapName' alt="@Model.ResourceByMapResourceID.InternalName" style="max-width: 300px; max-height: 300px;" />
+	</a>
+</center>
+</div>
 
-Host: @Html.PrintAccount(Model.Account) <br />
-Map: <a href="@Url.Action("Detail","Maps",new {id= @Model.MapResourceID})" title="$map$@Model.ResourceByMapResourceID.InternalName"><img src='http://zero-k.info/Resources/@Model.ResourceByMapResourceID.ThumbnailName' style="margin:0px;padding:0px;" alt="@Model.ResourceByMapResourceID.InternalName" /><br />@Model.ResourceByMapResourceID.InternalName<br /></a>
-Game version: @Model.ResourceByModResourceID.InternalName<br />
-Engine version: @Model.EngineVersion<br />
-Started: @Model.StartTime.ToAgoString() <br />
-Duration: @TimeSpan.FromSeconds(Model.Duration).ToNiceString() <br />
-Players: @Model.PlayerCount <br />
-Bots: @Model.HasBots<br />
-IsMisison: @Model.IsMission<br />
-Winners XP: @Model.WinnerTeamXpChange<br />
-Losers XP: @Model.LoserTeamXpChange<br />
+<div class="fleft" style="padding: 5px;">
+<table>
+<tr>
+	<td>Title: </td><td>@Model.Title</td>
+</tr>
+<tr>
+	<td>Host: </td><td>@Html.PrintAccount(Model.Account)</td>
+</tr>
+<tr>
+	<td>Game version: </td><td>@Model.ResourceByModResourceID.InternalName</td>
+</tr>
+<tr>
+	<td>Engine version: </td><td>@Model.EngineVersion</td>
+</tr>
+<tr>
+	<td>Started: </td><td>@Model.StartTime.ToAgoString()</td>
+</tr>
+<tr>
+	<td>Duration: </td><td>@TimeSpan.FromSeconds(Model.Duration).ToNiceString()</td>
+</tr>
+<tr>
+	<td>Players: </td><td>@Model.PlayerCount</td>
+</tr>
+<tr>
+	<td>Bots: </td><td>@Model.HasBots</td>
+</tr>
+<tr>
+	<td>IsMisison: </td><td>@Model.IsMission</td>
+</tr>
+</table>
 
-REPLAY: <a href="@Uri.EscapeUriString(string.Format("spring://http://zero-k.info/Battles/Detail/{4}@start_replay:{0},{1},{2},{3}", "http://springdemos.licho.eu/" + Model.ReplayFileName, Model.ResourceByModResourceID.InternalName, Model.ResourceByMapResourceID.InternalName, Model.EngineVersion, Model.SpringBattleID))">  <img src="../../img/playnow.png" width="250" alt="Play now"/></a><br />
-
+<a href="@Uri.EscapeUriString(string.Format("spring://http://zero-k.info/Battles/Detail/{4}@start_replay:{0},{1},{2},{3}", "http://springdemos.licho.eu/" + Model.ReplayFileName, Model.ResourceByModResourceID.InternalName, Model.ResourceByMapResourceID.InternalName, Model.EngineVersion, Model.SpringBattleID))">
+	<span class="textbutton" style="font-size: 130%">Watch Replay Now</span>
+</a>
+<br />
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
   <a href='http://springdemos.licho.eu/@Model.ReplayFileName'>Manual download</a> <br />
 }
 
-<div>
-@foreach (var grp in Model.SpringBattlePlayers.Where(x=>!x.IsSpectator).GroupBy(x=>x.AllyNumber)) {
-<span style='display:inline-block; @(grp.First().IsInVictoryTeam ? "background-color: #207020;":"background-color: #702020;")'>
-<h3>Team @(grp.Key+1)</h3>
-@foreach (var u in grp) {
-  <span>@Html.PrintAccount(u.Account)
-    @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")  
-    @if (u.EloChange.HasValue) {
-      @:Elo: @u.EloChange.Value.ToString("F1")
-    }
-    @foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID)) {
-      <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
-      
-    }
-  </span><br />
-}
-</span>
-}
-
- <span style='display:inline-block; background-color: #202020;'>
- <h4>Spectators</h4>
- @foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator)) {
- <small>@Html.PrintAccount(u.Account)</small><br />
- }
- </span>
 </div>
+
+<br class="clearfloat" />
+<div>
+@foreach (var grp in Model.SpringBattlePlayers.Where(x=>!x.IsSpectator).GroupBy(x=>x.AllyNumber)) 
+{
+	var win = grp.First().IsInVictoryTeam;
+	<div class='fleft border @(win ? "battle_winner":"battle_loser")'>
+	<span style="font-size: 130%; font-family: Skir;">Team @(grp.Key+1) @(win ? "Won!" : "Lost")</span><br />
+	<small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange) </small><br />
+	@foreach (var u in grp) {
+	<span>
+		@Html.PrintAccount(u.Account)
+		@(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")  
+		@if (u.EloChange.HasValue) {
+		@:Elo: @u.EloChange.Value.ToString("F1")
+		}
+		@foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID)) {
+			<img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
+		}
+	</span><br />
+	}
+	</div>
+}
+	<div class="fleft border battle_spec">
+		<span style="font-size: 130%; font-family: Skir;">Spectators</span><br />
+		@foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator)) {
+		<small>@Html.PrintAccount(u.Account)</small><br />
+	}
+	</div>
+<br class="clearfloat" />
+</div>
+
 <br />
 
-@if (Model.EventSpringBattles.Any()) {
+@if (Model.EventSpringBattles.Any())
+{
 <h3>PlanetWars events</h3>
-@Html.Action("Events","Planetwars", new{ springBattleID = Model.SpringBattleID, partial=true})
+@Html.Action("Events", "Planetwars", new { springBattleID = Model.SpringBattleID, partial = true })
 }
 
 

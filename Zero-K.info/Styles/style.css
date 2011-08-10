@@ -171,6 +171,29 @@ div#ajaxScrollProgress
     background-image: url("../img/downloadBlue45_2.png");
 }
 
+.textbutton
+{
+	display: inline-block;
+	background: #000 url("../Img/download.png") no-repeat center;
+	color: #38bfec;
+	border-radius: 5px;
+	border: 1px solid #2a8eaf;
+    box-shadow: 0 0 2px 2px #38bfec;
+	padding: 2px;
+	padding-left: 6px;
+	padding-right: 6px;
+	margin: 4px 1px 4px 1px;
+	cursor: pointer;
+    text-align: center;
+    font-family: skir, sans-serif;
+}
+
+.textbutton:hover
+{
+	color: #fff;
+    box-shadow: 0 0 2px 2px #fff;
+}
+
 .downloadbutton
 {
 	position: relative;
@@ -312,6 +335,29 @@ div#ajaxScrollProgress
 	margin:0;
 }
 
+/* Battle detail
+-----------------------------------------------------------*/
+
+.battle_winner
+{
+	border: 1px solid #38bfec;
+	margin: 2px;
+	border-radius: 5px;
+}
+
+.battle_loser
+{
+	border: 1px solid #777;
+	margin: 2px;
+	border-radius: 5px;
+}
+
+.battle_spec
+{
+	border: 1px solid #333;
+	margin: 2px;
+	border-radius: 5px;
+}
 
 /* Styles for validation helpers
 -----------------------------------------------------------*/

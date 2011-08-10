@@ -203,6 +203,7 @@
     <Content Include="Styles\fonts.css" />
     <Content Include="Styles\jquery.qtip.min.css" />
     <Content Include="Styles\jquery.ui.stars.css" />
+    <Content Include="Styles\levelrank.css" />
     <Content Include="Styles\menu.css" />
     <Content Include="Styles\nicetitle.css" />
     <Content Include="Styles\stars.css" />
