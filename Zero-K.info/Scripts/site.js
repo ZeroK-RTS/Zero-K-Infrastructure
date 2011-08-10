@@ -10,6 +10,9 @@ $(document).ready(function () {
     return answer;
   });
 
+   $(".dialog").dialog();
+   
+   $(".datepicker").datepicker();
 
   /* ajax form updater and scorll based loader
   It updates form on submit using ajax - sending offset 0 to it when user clicks

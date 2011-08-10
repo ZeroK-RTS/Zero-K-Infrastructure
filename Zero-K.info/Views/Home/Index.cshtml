@@ -6,16 +6,6 @@
   var stat = @Model.LobbyStats;
 }
 
-@section head {
-	<link rel="alternate" type="application/rss+xml" title="Zero-K news" href="@Url.Action("Index","News")"/>
-    <script type="text/javascript">
-    	$(document).ready(function () {
-    		$(".dialog").dialog();
-    		$("#datepicker").datepicker();
-    	});
-    </script>
-}
-
 @if (!ZeroKWeb.Global.IsLobbyAccess) {
     <div class="border">
     @(stat.UsersIdle+stat.UsersWaiting+stat.UsersFighting) players in game: @stat.UsersFighting players fighting in @stat.BattlesRunning battles, @stat.UsersWaiting waiting for battle, @stat.UsersIdle idling in chat (@stat.UsersLastMonth played this month)
@@ -62,7 +52,7 @@
 			<table>
 			<tr><td>Title: </td><td><input type="text" name="heading"></td></tr>
 			<tr><td valign="top">Text: </td><td><textarea rows="15" cols="70" name="text"></textarea> </td></tr>
-			<tr><td>Created (UTC): </td><td><input type="text" name="created" value="@DateTime.UtcNow" id="datepicker"/><small>(if set in future will be invisible until then)</small></td></tr>
+			<tr><td>Created (UTC): </td><td><input type="text" name="created" value="@DateTime.UtcNow" class="datepicker"/><small>(if set in future will be invisible until then)</small></td></tr>
 			<tr><td>Headline for (days): </td><td><input type="text" name="headlineDays" value=""/><small>(headlines popup for each player once)</small></td></tr>
 			<tr><td>Image (optional): </td><td><input type="file" name="image" /><input type="submit" value="Post" class="delete"/></td></tr>
 			</table>

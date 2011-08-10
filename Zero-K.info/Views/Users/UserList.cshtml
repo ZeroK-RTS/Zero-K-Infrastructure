@@ -1,9 +1,51 @@
 ﻿@using ZkData
+@model IEnumerable<Account>
+           
 @{
     Page.Title = "Zero-K admins";
 }
 
 <h2>Admins</h2>
-@foreach (var admin in new ZkDataContext().Accounts.Where(x => x.IsZeroKAdmin)) {
-    @Html.PrintAccount(admin) <br />
+@foreach (var admin in new ZkDataContext().Accounts.Where(x => x.IsZeroKAdmin))
+{
+    @Html.PrintAccount(admin)
+    <br />
 }
+
+<h2>Search (first 100 results)</h2>
+<form action="?" method="post">
+    Name: @Html.TextBox("name")<br />
+    Alias: @Html.TextBox("alias")<br />
+    <input type="submit" value="search"/>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Alias</th>
+            <th>Level</th>
+            <th>Elo</th>
+            <th>First login</th>
+            <th>Last login</th>
+            <th>Lobby ID</th>
+            <th>Deleted</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var a in Model)
+    {
+        <tr>
+            <td>@Html.PrintAccount(a)</td>
+            <td>@a.Aliases</td>
+            <td>@a.Level</td>
+            <td>@a.Elo</td>
+            <td>@a.FirstLogin</td>
+            <td>@a.LastLogin</td>
+            <td>@a.LobbyID</td>
+            <td>@a.IsDeleted</td>
+        </tr>
+    }
+    </tbody>
+
+</table>

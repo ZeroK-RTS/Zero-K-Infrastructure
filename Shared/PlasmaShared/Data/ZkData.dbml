@@ -86,6 +86,7 @@
       <Column Name="LastNewsRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />
@@ -112,6 +113,7 @@
       <Association Name="Account_AccountRatingVote" Member="AccountRatingVotes" ThisKey="AccountID" OtherKey="AccountID" Type="AccountRatingVote" />
       <Association Name="Account_PlanetWarsHostPlayer" Member="PlanetWarsHostPlayers" ThisKey="AccountID" OtherKey="PlayerAccountID" Type="PlanetWarsHostPlayer" />
       <Association Name="Account_News" Member="News" ThisKey="AccountID" OtherKey="AuthorAccountID" Type="News" />
+      <Association Name="Account_Punishment" Member="Punishments" ThisKey="AccountID" OtherKey="AccountID" Type="Punishment" />
       <Association Name="Clan_Account" Member="Clan" ThisKey="ClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
       <Association Name="Faction_Account" Member="Faction" ThisKey="FactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
     </Type>
@@ -740,6 +742,24 @@
       <Column Name="Color" Type="System.String" DbType="varchar(20) NOT NULL" CanBeNull="false" />
       <Association Name="Faction_Account" Member="Accounts" ThisKey="FactionID" OtherKey="FactionID" Type="Account" />
       <Association Name="Faction_Clan" Member="Clans" ThisKey="FactionID" OtherKey="FactionID" Type="Clan" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Punishment" Member="Punishments">
+    <Type Name="Punishment">
+      <Column Name="PunishmentID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Punishment" Member="Punishment1" Type="System.String" DbType="nvarchar(1000) NOT NULL" CanBeNull="false" />
+      <Column Name="Reason" Type="System.String" DbType="nvarchar(1000) NOT NULL" CanBeNull="false" />
+      <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="BanExpires" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="BanMute" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="BanCommanders" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="BanUnlocks" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="BanSite" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="BanLobby" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="BanIP" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
+      <Column Name="BanSecretID" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
+      <Association Name="Account_Punishment" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
 </Database>
