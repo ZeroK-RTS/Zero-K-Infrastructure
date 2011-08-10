@@ -166,7 +166,7 @@ namespace ZeroKWeb.Controllers
 		{
 			var db = new ZkDataContext();
 
-			var acc = db.Accounts.SingleOrDefault(x => x.Name == login);
+			var acc = db.Accounts.SingleOrDefault(x => x.Name == login && x.LobbyID == null);
 			if (acc == null) return Content("Invalid login name");
 			var hashed = Utils.HashLobbyPassword(password);
 			acc = AuthServiceClient.VerifyAccountHashed(login, hashed);

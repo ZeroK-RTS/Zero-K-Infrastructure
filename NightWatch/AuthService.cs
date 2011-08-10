@@ -126,7 +126,7 @@ namespace NightWatch
 				}
 			} else // looby timeout, use database
 			{
-				using (var db = new ZkDataContext()) return db.Accounts.SingleOrDefault(x => x.Name == login && x.Password == hashedPassword);
+				using (var db = new ZkDataContext()) return db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == hashedPassword && x.LobbyID != null);
 			}
     }
 
