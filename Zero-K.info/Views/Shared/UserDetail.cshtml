@@ -16,7 +16,7 @@
 	 </style>
 }
 
-@* User Profile Page! *@ @* First column starts here *@
+@* User Profile Page! *@
 <div>
 
 	<div id="usr_info" class="">
@@ -26,7 +26,7 @@
 	var star = 0;
 	var chev = 0;
 	var bars = 0;
-	<div class="fleft" >
+	<div id="badge" class="fleft" >
 		<div id="levelrank" title="This is a graphical representation of your level. Play more games to gain more rank!">
 		<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>
 		<div id="badge-center">
@@ -63,33 +63,6 @@
  }
 	<h2>@Html.PrintAccount(Model)</h2>
     
-    @if (Global.IsZeroKAdmin)
-    {
-	    <div class="admin">
-	        <h3>Modify user @Model.Name</h3>
-            AccountID: @Model.AccountID <br />
-            LobbyID: @Model.LobbyID <br />
-            <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new {accountID = Model.AccountID})">
-                Change lobby ID: @Html.TextBox("newLobbyID") <input type="submit" />
-            </form>
-            <h4>Punishment</h4>
-            <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID})" method="post">
-                Reason: @Html.TextBox("reason")<br />
-                Delete XP: @Html.CheckBox("deleteXP")<br />
-                Delete influence: @Html.CheckBox("deleteInfluence")<br /><br />
-                Ban mute (not yet): @Html.CheckBox("banMute")<br />
-                Ban commanders: @Html.CheckBox("banCommanders")<br />
-                Ban unlocks: @Html.CheckBox("banUnlocks")<br />
-                Ban site (not yet): @Html.CheckBox("banSite")<br />
-                Ban site (not lobby): @Html.CheckBox("banLobby")<br />
-                Ban expires: <input type="text" name="banExpires" class="datepicker" value="@DateTime.UtcNow.AddDays(7)" /><br />
-                               
-                <input type="submit" value="BAN" class="delete" /> 
-
-            </form>
-	    </div>
-    }
-    
     @foreach (var punish in Model.Punishments) {
         <div>
             <h3>PUNISHED: @punish.Reason</h3>
@@ -121,7 +94,34 @@
 	</div>
 	<br class="clearfloat" />
 	</div>
+		
+    @if (Global.IsZeroKAdmin)
+    {
+	    <div class="admin">
+	        <h3>Modify user @Model.Name</h3>
+            AccountID: @Model.AccountID <br />
+            LobbyID: @Model.LobbyID <br />
+            <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new {accountID = Model.AccountID})">
+                Change lobby ID: @Html.TextBox("newLobbyID") <input type="submit" />
+            </form>
+            <h4>Punishment</h4>
+            <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID})" method="post">
+                Reason: @Html.TextBox("reason")<br />
+                Delete XP: @Html.CheckBox("deleteXP")<br />
+                Delete influence: @Html.CheckBox("deleteInfluence")<br /><br />
+                Ban mute (not yet): @Html.CheckBox("banMute")<br />
+                Ban commanders: @Html.CheckBox("banCommanders")<br />
+                Ban unlocks: @Html.CheckBox("banUnlocks")<br />
+                Ban site (not yet): @Html.CheckBox("banSite")<br />
+                Ban lobby (not yet): @Html.CheckBox("banLobby")<br />
+                Ban expires: <input type="text" name="banExpires" class="datepicker" value="@DateTime.UtcNow.AddDays(7)" /><br />
+                               
+                <input type="submit" value="BAN" class="delete" /> 
 
+            </form>
+	    </div>
+    }
+	
 	<div id="usr_trophies" class="">
 		<h3>Trophies:</h3>
 		@foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count()))
