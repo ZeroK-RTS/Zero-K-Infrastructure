@@ -43,76 +43,68 @@ namespace ZeroKWeb.Controllers
 
 		//
 		// GET: /Ladders/
-        //[OutputCache(Duration = 3600*2, VaryByCustom = GlobalConst.LobbyAccessCookieName)] // cache for 2 hours - different look for lobby and for normal
+		[OutputCache(Duration = 3600*2, VaryByCustom = GlobalConst.LobbyAccessCookieName)] // cache for 2 hours - different look for lobby and for normal
 		public ActionResult Index()
 		{
-            var db = new ZkDataContext();
-            var awardItems = new List<AwardItem>();
-            /*
-            var validAwards = db.AccountBattleAwards.Where(x => !x.SpringBattle.ResourceByMapResourceID.InternalName.Contains("SpeedMetal"));
-            var r1 = validAwards.GroupBy(x => x.AwardKey);
-			var monthName = DateTime.Now.ToString("MMMM");
+			var db = new ZkDataContext();
+
             var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var validAwards = db.SpringBattles.Where(x => x.StartTime >= monthStart && !x.ResourceByMapResourceID.InternalName.Contains("SpeedMetal")).SelectMany(x => x.AccountBattleAwards).GroupBy(x => x.AwardKey);
 
-            var validAwardsM = validAwards.Where(x => x.SpringBattle.StartTime >= monthStart);
-
-			foreach (var awardTypeInfo in r1)
+			var awardItems = new List<AwardItem>();
+            
+			foreach (var awardsByType in validAwards)
 			{
-				var awardType = awardTypeInfo.Key;
-                var curAwardsM = validAwardsM.Where(x => x.AwardKey == awardType);
-                var curAwardsAcctsM = curAwardsM.GroupBy(x => x.Account);
-                var topCountM = curAwardsAcctsM.Max(x => x.Count());
-                var resultCollectorInfoM = curAwardsAcctsM.Where(x => x.Count() == topCountM);
+				var awardType = awardsByType.Key;
 
-				var topCollectorsM = new List<Account>();
-				foreach (var acct in resultCollectorInfoM) topCollectorsM.Add(acct.Key);
+                var awardCounts = awardsByType.GroupBy(x => x.Account).Select(x => new { Account = x.Key, Count = x.Count()}).OrderByDescending(x=>x.Count);
 
-                var topScore = 0;
+                var topCountM = awardCounts.First().Count;
+                var topCollectorsM = new List<Account>();
+                foreach (var award in awardCounts) {
+                    if (award.Count == topCountM) topCollectorsM.Add(award.Account);
+                    else break;
+                }
+			    
+
+
+				var topScore = 0;
                 var titleName = "";
-                
-                topScore = 0;
-				Account topAcctM = null;
-				var fullTitleM = "";
-				SpringBattlePlayer topScoreBattlePlayerM = null;
-                foreach (var acct in curAwardsM)
-				{
-					var score = Convert.ToInt32(Regex.Replace(acct.AwardDescription, @"\D", String.Empty));
-                    titleName = acct.AwardDescription.Split(',').First();
 
+                topScore = 0;
+				var fullTitleM = "";
+                int topActID = 0;
+                int topBattleID = 0;
+                foreach (var award in awardsByType)
+				{
+					var score = Convert.ToInt32(Regex.Replace(award.AwardDescription, @"\D", String.Empty));
+                    titleName = award.AwardDescription.Split(',').First();
+                    
 					if (score > topScore)
 					{
-						topScore = score;
-						topScoreBattlePlayerM = acct.SpringBattle.SpringBattlePlayers.Single(x => x.AccountID == acct.AccountID);
-						topAcctM = acct.Account;
-						fullTitleM = string.Join(" ", acct.AwardDescription.Split(',').Skip(1));
+                        topActID = award.AccountID;
+                        topBattleID = award.SpringBattleID;
+                        topScore = score;
+						fullTitleM = string.Join(" ", award.AwardDescription.Split(',').Skip(1));
 					}
+
+                    
 				}
 
 				var awardItem = new AwardItem
 				                {
 				                	AwardType = awardType,
 				                	AwardTitle = titleName,
-				                	
-                                    /** /
-                                    TopScoreHolder = topAcct,
-				                	TopScoreDesc = fullTitle,
-				                	TopScoreBattlePlayer = topScoreBattlePlayer,
-				                	TopCollectors = topCollectors,
-				                	TopCollectorCount = topCount,
-				                	/** /
-
-				                	TopScoreHolderM = topAcctM,
+				                	TopScoreHolderM = db.Accounts.Single(x=>x.AccountID == topActID),
 				                	TopScoreDescM = fullTitleM,
-				                	TopScoreBattlePlayerM = topScoreBattlePlayerM,
+				                	TopScoreBattlePlayerM = db.SpringBattlePlayers.Single(x=>x.AccountID == topActID && x.SpringBattleID == topBattleID),
 				                	TopCollectorsM = topCollectorsM,
 				                	TopCollectorCountM = topCountM,
-				                	/** /
 				                };
 				awardItems.Add(awardItem);
-                
 			}
-            */
-            var top50Accounts =
+
+			var top50Accounts =
 				db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo).
 					Take(50);
 

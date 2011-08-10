@@ -28,10 +28,6 @@
 
 <h2>Awards Hall of Fame - @DateTime.Now.ToString("MMMM")</h2>
 <br />
-(Currently Down)
-
-@*
-
 
 @foreach (var awardItem in awardItems)
 {   
@@ -62,8 +58,32 @@
 
                     Top Score - @Html.PrintAccount(awardItem.TopScoreHolderM) - <span style="color:lightgreen; ">@awardItem.TopScoreDescM</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayerM)
                 </div>
+                @*
+                <div style="position:absolute; left:20px; font-size:small; " >
+                    <div>
+                        Top Collector(s): 
+                        @{first = true; }
+                        @foreach (var collector in awardItem.TopCollectors)
+                        {
+                            if (!first)
+                            {
+                                @:,
+                            }
+                            first = false;
+                            @Html.PrintAccount(collector)
+                    
+                        }
+                        - <span style="color:lightgreen; ">@awardItem.TopCollectorCount</span> collected
+                    </div>
+                    <div style="font-size:small; ">
+
+                        Top Score: @Html.PrintAccount(awardItem.TopScoreHolder) - <span style="color:lightgreen; ">@awardItem.TopScoreDesc</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayer)
+                    </div>
+                </div>
+                *@
             </div>
+            
+        
         
     </div>
 }
-*@
