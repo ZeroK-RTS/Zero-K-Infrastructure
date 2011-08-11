@@ -384,7 +384,11 @@ namespace ZeroKWeb.Controllers
 			acc.HasClanRights = false;
 			acc.Planets.Clear();
 			acc.Clan = null;
-			db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
+            foreach (var pa in acc.AccountPlanets) {
+                pa.Influence = 0;
+                pa.ShadowInfluence = 0;
+            }
+		    db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
 			db.SubmitChanges();
 			if (!clan.Accounts.Any())
 			{
