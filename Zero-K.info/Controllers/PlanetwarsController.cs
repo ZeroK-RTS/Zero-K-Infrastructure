@@ -286,6 +286,7 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			var me = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 			var target = db.Accounts.Single(x => x.AccountID == targetAccountID);
+            if (me.ClanID == null || me.ClanID != target.ClanID) return Content("Must be in same clan");
 			if (giveCredits > 0)
 			{
 				var creds = Math.Min(giveCredits ?? 0, me.Credits);
