@@ -40,7 +40,7 @@ namespace NightWatch
       this.client.UserStatusChanged += (s, e) =>
         {
           var user = client.ExistingUsers[e.ServerParams[0]];
-          UpdateUser(user.AccountID, user.Name, user, null);
+          UpdateUser(user.LobbyID, user.Name, user, null);
         };
 
       this.client.TestLoginDenied += (s, e) =>
@@ -59,19 +59,19 @@ namespace NightWatch
       return host;
     }
 
-    Account UpdateUser(int accountID, string name, User user, string hashedPassword)
+    Account UpdateUser(int lobbyID, string name, User user, string hashedPassword)
     {
       Account acc = null;
       using (var db = new ZkDataContext())
       {
-        acc = db.Accounts.FirstOrDefault(x => x.LobbyID == accountID);
+        acc = db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
         if (acc == null)
         {
             acc = new Account();
             db.Accounts.InsertOnSubmit(acc);
         }
 
-        acc.LobbyID = accountID;
+        acc.LobbyID = lobbyID;
         acc.Name = name;
         if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
         acc.LastLogin = DateTime.UtcNow;
@@ -98,7 +98,7 @@ namespace NightWatch
       {
         var message = new LobbyMessage()
                       {
-                        SourceLobbyID = client.MyUser.AccountID,
+                        SourceLobbyID = client.MyUser.LobbyID,
                         SourceName = client.MyUser.Name,
                         Created = DateTime.UtcNow,
                         Message = text,

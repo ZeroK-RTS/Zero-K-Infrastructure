@@ -250,13 +250,13 @@ namespace LobbyClient
 
 						script.AppendFormat("     Rank={0};\n", u.LobbyUser.Rank);
 						script.AppendFormat("     CountryCode={0};\n", u.LobbyUser.Country);
-            script.AppendFormat("     AccountID={0};\n", u.LobbyUser.AccountID);
+            script.AppendFormat("     LobbyID={0};\n", u.LobbyUser.LobbyID);
             script.AppendFormat("     LobbyRank={0};\n", u.LobbyUser.Rank);
 						if (u.ScriptPassword != null) script.AppendFormat("     Password={0};\n", u.ScriptPassword);
 
             if (startSetup != null)
             {
-              var entry = startSetup.UserParameters.FirstOrDefault(x => x.AccountID == u.LobbyUser.AccountID);
+              var entry = startSetup.UserParameters.FirstOrDefault(x => x.AccountID == u.LobbyUser.LobbyID);
               if (entry != null) foreach (var kvp in entry.Parameters)
               {
                 script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);

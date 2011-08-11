@@ -84,7 +84,7 @@ namespace NightWatch
 									{
 										var message = new LobbyMessage()
 										              {
-										              	SourceLobbyID = user.AccountID,
+										              	SourceLobbyID = user.LobbyID,
 										              	SourceName = e.UserName,
 										              	Created = DateTime.UtcNow,
 										              	Message = e.Text,
@@ -121,7 +121,7 @@ namespace NightWatch
 										var text = regex.Groups[2].Value;
 
 										var message = new LobbyMessage()
-										              { SourceLobbyID = user.AccountID, SourceName = e.UserName, Created = DateTime.UtcNow, Message = text, TargetName = name };
+										              { SourceLobbyID = user.LobbyID, SourceName = e.UserName, Created = DateTime.UtcNow, Message = text, TargetName = name };
 										using (var db = new ZkDataContext())
 										{
 											db.LobbyMessages.InsertOnSubmit(message);
@@ -192,7 +192,7 @@ namespace NightWatch
 						using (var db = new ZkDataContext())
 						
 						{
-							messages = db.LobbyMessages.Where(x => (x.TargetLobbyID == e.Data.AccountID || x.TargetName == e.Data.Name) && x.Channel == null).ToList();
+							messages = db.LobbyMessages.Where(x => (x.TargetLobbyID == e.Data.LobbyID || x.TargetName == e.Data.Name) && x.Channel == null).ToList();
 							db.LobbyMessages.DeleteAllOnSubmit(messages);
 							db.SubmitChanges();
 						}

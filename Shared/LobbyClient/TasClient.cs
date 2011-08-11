@@ -744,7 +744,7 @@ namespace LobbyClient
 			  int cpu;
 			  int.TryParse(args[2], out cpu);
 			  u.Cpu = cpu;
-			  u.AccountID = Convert.ToInt32(args[3]);
+			  u.LobbyID = Convert.ToInt32(args[3]);
 			  ExistingUsers.Add(u.Name, u);
 			  UserAdded(this, new EventArgs<User>(u));
 			}

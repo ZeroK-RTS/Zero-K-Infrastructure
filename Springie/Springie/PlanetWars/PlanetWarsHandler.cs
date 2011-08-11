@@ -70,7 +70,7 @@ namespace Springie.PlanetWars
 		{
 			try
 			{
-				autoHost.SayBattle(serv.AutohostPlayerJoined(tas.UserName, tas.MyBattle.MapName, tas.ExistingUsers[name].AccountID), true);
+				autoHost.SayBattle(serv.AutohostPlayerJoined(tas.UserName, tas.MyBattle.MapName, tas.ExistingUsers[name].LobbyID), true);
 			}
 			catch (Exception ex)
 			{
@@ -84,7 +84,7 @@ namespace Springie.PlanetWars
 			{
 				var userList =
 					tas.MyBattle.Users.Where(x => !x.IsSpectator).Select(
-						x => new AccountTeam() { AccountID = x.LobbyUser.AccountID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber }).ToArray();
+						x => new AccountTeam() { AccountID = x.LobbyUser.LobbyID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber }).ToArray();
 
 				if (userList.Length < 1)
 				{
@@ -130,7 +130,7 @@ namespace Springie.PlanetWars
 				if (tas.MyBattle != null && !spring.IsRunning)
 				{
 					var map = serv.GetRecommendedMap(tas.UserName, tas.MyBattle.Users.Select(
-						x => new AccountTeam() { AccountID = x.LobbyUser.AccountID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Spectate= x.IsSpectator}).ToArray());
+						x => new AccountTeam() { AccountID = x.LobbyUser.LobbyID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Spectate= x.IsSpectator}).ToArray());
 					if (map.MapName != null)
 					{
 						if (tas.MyBattle.MapName != map.MapName)

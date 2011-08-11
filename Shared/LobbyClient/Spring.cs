@@ -221,7 +221,7 @@ namespace LobbyClient
                                                                                x =>
                                                                                new BattleStartSetupPlayer()
                                                                                {
-                                                                                   AccountID = x.LobbyUser.AccountID,
+                                                                                   AccountID = x.LobbyUser.LobbyID,
                                                                                    AllyTeam = x.AllyNumber,
                                                                                    IsSpectator = x.IsSpectator
                                                                                }).ToArray(),
@@ -245,7 +245,7 @@ namespace LobbyClient
                                                         x =>
                                                         new BattlePlayerResult
                                                         {
-                                                            AccountID = x.LobbyUser.AccountID,
+                                                            AccountID = x.LobbyUser.LobbyID,
                                                             AllyNumber = x.AllyNumber,
                                                             CommanderType = null,
                                                             // todo commandertype

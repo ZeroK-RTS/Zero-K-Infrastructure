@@ -106,9 +106,9 @@ namespace ZeroKWeb.Controllers
 				if (thread == null && resourceID != null) // non existing thread, we posted new post on map
 				{
 					var res = db.Resources.Single(x => x.ResourceID == resourceID);
-					thread = new ForumThread() { Title = res.InternalName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+                    if (res.ForumThread != null) return Content("Double post");
+                    thread = new ForumThread() { Title = res.InternalName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsMaps);
-					if (res.ForumThread != null) return Content("Double post");
 					res.ForumThread = thread;
 					thread.Resources = res;
 					db.ForumThreads.InsertOnSubmit(thread);
@@ -117,10 +117,10 @@ namespace ZeroKWeb.Controllers
 				if (thread == null && springBattleID != null) // non existing thread, we posted new post on battle
 				{
 					var bat = db.SpringBattles.Single(x => x.SpringBattleID == springBattleID);
-					thread = new ForumThread() { Title = bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+                    if (bat.ForumThreadID != 0) return Content("Double post");
+                    thread = new ForumThread() { Title = bat.FullTitle, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsSpringBattles);
 					thread.SpringBattles = bat;
-					if (bat.ForumThread != null) return Content("Double post");
 					bat.ForumThread = thread;
 					db.ForumThreads.InsertOnSubmit(thread);
 				}
@@ -128,9 +128,9 @@ namespace ZeroKWeb.Controllers
 				if (thread == null && clanID != null)
 				{
 					var clan = db.Clans.Single(x => x.ClanID == clanID);
-					thread = new ForumThread() { Title = clan.ClanName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+                    if (clan.ForumThread != null) return Content("Double post");
+                    thread = new ForumThread() { Title = clan.ClanName, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsClans);
-					if (clan.ForumThread != null) return Content("Double post");
 					clan.ForumThread = thread;
 					thread.Clan = clan;
 					db.ForumThreads.InsertOnSubmit(thread);
@@ -139,9 +139,9 @@ namespace ZeroKWeb.Controllers
 				if (thread == null && planetID != null)
 				{
 					var planet = db.Planets.Single(x => x.PlanetID == planetID);
-					thread = new ForumThread() { Title = planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
+                    if (planet.ForumThread != null) return Content("Double post");
+                    thread = new ForumThread() { Title = planet.Name, CreatedAccountID = Global.AccountID, LastPostAccountID = Global.AccountID };
 					thread.ForumCategory = db.ForumCategories.FirstOrDefault(x => x.IsPlanets);
-					if (planet.ForumThread != null) return Content("Double post");
 					planet.ForumThread = thread;
 					thread.Planets = planet;
 					db.ForumThreads.InsertOnSubmit(thread);

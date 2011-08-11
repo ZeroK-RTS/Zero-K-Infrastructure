@@ -22,7 +22,7 @@ namespace LobbyClient
 		public static readonly int[] RankLimits = { 0, 5, 15, 30, 100, 300, 1000, 3000, 5000 }; // last two are just a guess
 
 		string country;
-		public int AccountID;
+		public int LobbyID;
 
 		public DateTime? AwaySince { get; protected set; }
 		// todo: set by tasclient (use "User Battle" instead?)
