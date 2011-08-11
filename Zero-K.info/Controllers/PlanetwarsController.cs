@@ -615,7 +615,7 @@ namespace ZeroKWeb.Controllers
 					planet.Account = null;
 					havePlanetsChangedHands = true;
 				}
-				else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID &&
+				else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan != null && 
 				         mostInfluentialClanEntry.ClanInfluence > planet.GetIPToCapture())
 				{
 					// planet changes owner, most influential clan is not current owner and has more ip to capture than needed
