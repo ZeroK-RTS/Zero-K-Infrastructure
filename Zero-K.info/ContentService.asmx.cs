@@ -701,7 +701,7 @@ namespace ZeroKWeb
                 {
                     sb.SpringBattlePlayers.Add(new SpringBattlePlayer()
                                                {
-                                                   AccountID = p.AccountID,
+                                                   AccountID = db.Accounts.First(x=>x.LobbyID == p.AccountID).AccountID,
                                                    AllyNumber = p.AllyNumber,
                                                    CommanderType = p.CommanderType,
                                                    IsInVictoryTeam = p.IsVictoryTeam,
@@ -721,7 +721,7 @@ namespace ZeroKWeb
                     var awardType = partsSpace[1];
                     var awardText = partsSpace[2];
 
-                    var player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name && x.Account.LobbyID != null);
+                    var player = sb.SpringBattlePlayers.First(x => x.Account.Name == name && x.Account.LobbyID != null);
                     db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
                                                           {
                                                               AccountID = player.AccountID,
