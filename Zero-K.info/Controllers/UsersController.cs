@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web.Mvc;
@@ -29,6 +30,15 @@ namespace ZeroKWeb.Controllers
                                           Url.Action("Detail", new { id = duplicate.AccountID }));
             }
             return Content(response);
+        }
+
+
+        public ActionResult Duplicates() {
+            IEnumerable<Account> ret;
+            var db = new ZkDataContext();
+            ret = db.ExecuteQuery<Account>("select  * from account where lobbyid in (select lobbyid from (select lobbyid, count(*)  as cnt from account group by (lobbyid)) as lc where cnt > 1) and LobbyID is not null order by lobbyid");
+            ret = ret.Union(db.ExecuteQuery<Account>("select * from account where name in (select name from (select name, count(*)  as cnt from account group by (name)) as lc where cnt > 1) order by name"));
+            return View(ret);
         }
 
         public ActionResult Detail(int id)

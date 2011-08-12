@@ -1,25 +1,10 @@
-﻿@using ZkData
-@model IEnumerable<Account>
-           
+﻿@model System.Collections.Generic.IEnumerable<ZkData.Account>
+
 @{
-    Page.Title = "Zero-K admins";
+    Page.Title = "User duplicates";
 }
 
-<h2>Admins</h2>
-@foreach (var admin in new ZkDataContext().Accounts.Where(x => x.IsZeroKAdmin))
-{
-    @Html.PrintAccount(admin)
-    <br />
-}
-
-@Html.ActionLink("User duplicates","Duplicates")
-
-<h2>Search (first 100 results)</h2>
-<form action="?" method="post">
-    Name: @Html.TextBox("name")<br />
-    Alias: @Html.TextBox("alias")<br />
-    <input type="submit" value="search"/>
-</form>
+<h2>Duplicate users</h2>
 
 <table>
     <thead>
@@ -47,5 +32,6 @@
         </tr>
     }
     </tbody>
-
 </table>
+
+
