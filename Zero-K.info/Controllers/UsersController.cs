@@ -13,7 +13,7 @@ namespace ZeroKWeb.Controllers
         // GET: /Users/
 
 
-        [Auth]
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangeLobbyID(int accountID, int? newLobbyID)
         {
             var db = new ZkDataContext();
@@ -32,9 +32,41 @@ namespace ZeroKWeb.Controllers
             return Content(response);
         }
 
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult AutoResolveDuplicates() {
+            var db = new ZkDataContext();
+
+            // fixes duplicate name by preserving last working lobbyID 
+            foreach (var dupl in db.Accounts.Where(x=>x.LobbyID != null).GroupBy(x => x.Name).Where(x => x.Count() > 1))
+            {
+                var dupAccounts = db.Accounts.Where(x => x.Name == dupl.Key).ToList();
+                var bestAccount = dupAccounts.OrderByDescending(x => x.LastLogin).First();
+                foreach (var ac in dupAccounts)
+                {
+                    if (ac.LobbyID != bestAccount.LobbyID) ac.LobbyID = null;
+                }
+            }
+            db.SubmitChanges();
+
+            // fixes duplicate lobbyID by preserving newer account
+            foreach (var dupl in db.Accounts.GroupBy(x => x.LobbyID).Where(x => x.Count() > 1 && x.Key != null)) {
+                var dupAccounts = db.Accounts.Where(x => x.LobbyID == dupl.Key).ToList();
+                var bestAccount = dupAccounts.OrderByDescending(x => x.Level).First();
+                foreach (var ac in dupAccounts) {
+                    if (ac.AccountID != bestAccount.AccountID) ac.LobbyID = null;
+                }
+            }
+            db.SubmitChanges();
+
+
+            return Redirect("Duplicates");
+        }
+
+
 
         public ActionResult Duplicates() {
             IEnumerable<Account> ret;
+
             var db = new ZkDataContext();
             ret = db.ExecuteQuery<Account>("select  * from account where lobbyid in (select lobbyid from (select lobbyid, count(*)  as cnt from account group by (lobbyid)) as lc where cnt > 1) and LobbyID is not null order by lobbyid");
             ret = ret.Union(db.ExecuteQuery<Account>("select * from account where name in (select name from (select name, count(*)  as cnt from account where lobbyid is not null group by (name)) as lc where cnt > 1) order by name"));
