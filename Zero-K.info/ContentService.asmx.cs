@@ -535,6 +535,7 @@ namespace ZeroKWeb
                             }
                         }
                     }
+                    else userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "jokecomm", Value = "1" });
 
                     userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "commanders", Value = pc.ToBase64String() });
 
