@@ -721,7 +721,7 @@ namespace ZeroKWeb
                     var awardType = partsSpace[1];
                     var awardText = partsSpace[2];
 
-                    var player = sb.SpringBattlePlayers.Single(x => x.Account.Name == name);
+                    var player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name && x.Account.LobbyID != null);
                     db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
                                                           {
                                                               AccountID = player.AccountID,
