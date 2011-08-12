@@ -10,12 +10,12 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Alias</th>
             <th>Level</th>
             <th>Elo</th>
             <th>First login</th>
             <th>Last login</th>
             <th>Lobby ID</th>
+            <th>Alias</th>
         </tr>
     </thead>
     <tbody>
@@ -23,12 +23,12 @@
     {
         <tr>
             <td>@Html.PrintAccount(a)</td>
-            <td>@a.Aliases</td>
             <td>@a.Level</td>
             <td>@a.Elo</td>
             <td>@a.FirstLogin</td>
             <td>@a.LastLogin</td>
             <td>@a.LobbyID</td>
+            <td>@a.Aliases</td>
         </tr>
     }
     </tbody>
