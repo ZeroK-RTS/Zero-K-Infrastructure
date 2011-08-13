@@ -4,8 +4,11 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using PlasmaShared;
 
 #endregion
 
@@ -21,6 +24,7 @@ namespace Springie
 
 		static void Main(string[] args)
 		{
+   
 			// setup unhandled exception handlers
 			if (!Debugger.IsAttached) AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			Thread.GetDomain().UnhandledException += Program_UnhandledException;

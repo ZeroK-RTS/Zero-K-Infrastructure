@@ -339,29 +339,36 @@ namespace LobbyClient
             //Console.WriteLine("Candidates: " + candidates.Count);
             foreach (var file in candidates)
             {
-                var buf = new byte[120000];
-                var read = 0;
-                using (var stream = file.OpenRead()) read = stream.Read(buf, 0, buf.Length);
-
-                var guidBytes = Encoding.ASCII.GetBytes(battleGuid.ToString());
-
-                var found = false;
-                for (var i = 0; i < read - guidBytes.Length; i++)
+                try
                 {
-                    if (guidBytes.SequenceEqual(buf.Skip(i).Take(guidBytes.Length)))
+                    var buf = new byte[120000];
+                    var read = 0;
+
+                    using (var stream = File.Open(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) read = stream.Read(buf, 0, buf.Length);
+
+                    var guidBytes = Encoding.ASCII.GetBytes(battleGuid.ToString());
+
+                    var found = false;
+                    for (var i = 0; i < read - guidBytes.Length; i++)
                     {
-                        found = true;
-                        break;
+                        if (guidBytes.SequenceEqual(buf.Skip(i).Take(guidBytes.Length)))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    // found correct 
+                    if (found)
+                    {
+                        var hash = new Hash(buf, 40);
+                        gameId = hash.ToString();
+                        demoFileName = file.Name;
+                        return true;
                     }
                 }
-
-                // found correct 
-                if (found)
-                {
-                    var hash = new Hash(buf, 40);
-                    gameId = hash.ToString();
-                    demoFileName = file.Name;
-                    return true;
+                catch (Exception ex) {
+                    // todo only catch file access exceptions
                 }
             }
 
