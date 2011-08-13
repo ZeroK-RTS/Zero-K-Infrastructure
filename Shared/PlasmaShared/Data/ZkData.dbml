@@ -291,7 +291,7 @@
   <Table Name="dbo.SpringBattle" Member="SpringBattles">
     <Type Name="SpringBattle">
       <Column Name="SpringBattleID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="EngineGameID" Type="System.String" DbType="varchar(64) NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="EngineGameID" Type="System.String" DbType="varchar(64)" CanBeNull="true" />
       <Column Name="HostAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Title" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="MapResourceID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />

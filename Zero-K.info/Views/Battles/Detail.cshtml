@@ -1,109 +1,141 @@
 ﻿@model ZkData.SpringBattle
-
 @{
-  Page.Title = "Battle " + Model.SpringBattleID + " detail";
-  //hack to make thin maps a bit thicker
-  var aspectratio = Model.ResourceByMapResourceID.MapSizeRatio;
-  if(aspectratio >= 2)
-  {
-	aspectratio /=  2;
-  }
+    Page.Title = "Battle " + Model.SpringBattleID + " detail";
+    //hack to make thin maps a bit thicker
+    var aspectratio = Model.ResourceByMapResourceID.MapSizeRatio;
+    if (aspectratio >= 2)
+    {
+        aspectratio /= 2;
+    }
 }
 <div class="fleft" style="width: 300px; height: 320px; position: relative; text-align: center;">
-	<a href="@Url.Action("Detail","Maps",new {id= @Model.MapResourceID})" title="$map$@Model.ResourceByMapResourceID.InternalName" style="height: 20px; width: 100%; font-weight: bold; ">
-	Map: @Model.ResourceByMapResourceID.InternalName<br />
-	</a> 
-	<img src='http://zero-k.info/Resources/@Model.ResourceByMapResourceID.MinimapName' alt="@Model.ResourceByMapResourceID.InternalName" width="100%" 
-	height="@(100/aspectratio)%" style="max-height: 300px;"/>
+    <a href="@Url.Action("Detail", "Maps", new { id = @Model.MapResourceID })" title="$map$@Model.ResourceByMapResourceID.InternalName" style="height: 20px; width: 100%; font-weight: bold; ">
+        Map: @Model.ResourceByMapResourceID.InternalName<br />
+    </a>
+    <img src='http://zero-k.info/Resources/@Model.ResourceByMapResourceID.MinimapName' alt="@Model.ResourceByMapResourceID.InternalName" width="100%" 
+	height="@(100 / aspectratio)%" style="max-height: 300px;"/>
 </div>
-
 <div class="fleft" style="padding: 5px;">
-<table>
-<tr>
-	<td>Title: </td><td>@Model.Title</td>
-</tr>
-<tr>
-	<td>Host: </td><td>@Html.PrintAccount(Model.Account)</td>
-</tr>
-<tr>
-	<td>Game version: </td><td>@Model.ResourceByModResourceID.InternalName</td>
-</tr>
-<tr>
-	<td>Engine version: </td><td>@Model.EngineVersion</td>
-</tr>
-<tr>
-	<td>Started: </td><td>@Model.StartTime.ToAgoString()</td>
-</tr>
-<tr>
-	<td>Duration: </td><td>@TimeSpan.FromSeconds(Model.Duration).ToNiceString()</td>
-</tr>
-<tr>
-	<td>Players: </td><td>@Model.PlayerCount</td>
-</tr>
-<tr>
-	<td>Bots: </td><td>@Model.HasBots</td>
-</tr>
-<tr>
-	<td>Mission: </td><td>@Model.IsMission</td>
-</tr>
-</table>
-
-<a href="@Uri.EscapeUriString(string.Format("spring://http://zero-k.info/Battles/Detail/{4}@start_replay:{0},{1},{2},{3}", "http://springdemos.licho.eu/" + Model.ReplayFileName, Model.ResourceByModResourceID.InternalName, Model.ResourceByMapResourceID.InternalName, Model.EngineVersion, Model.SpringBattleID))">
-	<span class="textbutton" style="font-size: 130%">Watch Replay Now</span>
-</a>
-<br />
-@if (!ZeroKWeb.Global.IsLobbyAccess)
-{
-  <a href='http://springdemos.licho.eu/@Model.ReplayFileName'>Manual download</a> <br />
-}
-
+    <table>
+        <tr>
+            <td>
+                Title:
+            </td>
+            <td>@Model.Title
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Host:
+            </td>
+            <td>@Html.PrintAccount(Model.Account)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Game version:
+            </td>
+            <td>@Model.ResourceByModResourceID.InternalName
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Engine version:
+            </td>
+            <td>@Model.EngineVersion
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Started:
+            </td>
+            <td>@Model.StartTime.ToAgoString()
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Duration:
+            </td>
+            <td>@TimeSpan.FromSeconds(Model.Duration).ToNiceString()
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Players:
+            </td>
+            <td>@Model.PlayerCount
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Bots:
+            </td>
+            <td>@Model.HasBots
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Mission:
+            </td>
+            <td>@Model.IsMission
+            </td>
+        </tr>
+    </table>
+    @if (!string.IsNullOrEmpty(Model.ReplayFileName))
+    {
+        <a href="@Uri.EscapeUriString(string.Format("spring://http://zero-k.info/Battles/Detail/{4}@start_replay:{0},{1},{2},{3}", "http://springdemos.licho.eu/" + Model.ReplayFileName, Model.ResourceByModResourceID.InternalName, Model.ResourceByMapResourceID.InternalName, Model.EngineVersion, Model.SpringBattleID))">
+            <span class="textbutton" style="font-size: 130%">Watch Replay Now</span> </a>
+        <br />
+        if (!ZeroKWeb.Global.IsLobbyAccess)
+        {
+        <a href='http://springdemos.licho.eu/@Model.ReplayFileName'>Manual download</a>
+        <br />
+        }
+    }
 </div>
-
 <br class="clearfloat" />
 <div>
-@foreach (var grp in Model.SpringBattlePlayers.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber))
-{
-	var win = grp.First().IsInVictoryTeam;
-	<div class='fleft border @(win ? "battle_winner" : "battle_loser")'>
-	<span style="font-size: 130%; font-family: Skir;">Team @(grp.Key + 1) @(win ? "Won!" : "Lost")</span><br />
-	<small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange) </small><br />
-	@foreach (var u in grp)
- {
-	<span>
-		@Html.PrintAccount(u.Account)
-		@(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")  
-		@if (u.EloChange.HasValue)
-  {
-		@:Elo: @u.EloChange.Value.ToString("F1")
-		}
-		@foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID))
-  {
-			<img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
-  }
-	</span><br />
- }
-	</div>
-}
-	<div class="fleft border battle_spec">
-		<span style="font-size: 130%; font-family: Skir;">Spectators</span><br />
-		@foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator))
-  {
-		<small>@Html.PrintAccount(u.Account)</small><br />
-  }
-	</div>
-<br class="clearfloat" />
+    @foreach (var grp in Model.SpringBattlePlayers.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber))
+    {
+        var win = grp.First().IsInVictoryTeam;
+        <div class='fleft border @(win ? "battle_winner" : "battle_loser")'>
+            <span style="font-size: 130%; font-family: Skir;">Team @(grp.Key + 1)
+                @(win ? "Won!" : "Lost")</span><br />
+            <small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange)
+            </small>
+            <br />
+            @foreach (var u in grp)
+            {
+                <span>
+                    @Html.PrintAccount(u.Account)
+                    @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
+                    @if (u.EloChange.HasValue)
+                    {
+                        @:Elo: @u.EloChange.Value.ToString("F1")
+                    		}
+                    @foreach (var award in Model.AccountBattleAwards.Where(x => x.AccountID == u.AccountID))
+                    {
+                        <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.AwardKey).png" height="30" title="@award.AwardDescription"/>
+                    }
+                </span>
+                <br />
+            }
+        </div>
+    }
+    <div class="fleft border battle_spec">
+        <span style="font-size: 130%; font-family: Skir;">Spectators</span><br />
+        @foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator))
+        {
+            <small>@Html.PrintAccount(u.Account)</small><br />
+        }
+    </div>
+    <br class="clearfloat" />
 </div>
-
 <br />
-
 @if (Model.EventSpringBattles.Any())
 {
-<h3>PlanetWars events</h3>
-@Html.Action("Events", "Planetwars", new { springBattleID = Model.SpringBattleID, partial = true })
+    <h3>
+        PlanetWars events</h3>
+    @Html.Action("Events", "Planetwars", new { springBattleID = Model.SpringBattleID, partial = true })
 }
-
-
-@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() {Thread = Model.ForumThread,ActionData = new {springBattleID = Model.SpringBattleID, threadID = Model.ForumThreadID} });}
-
-
-
+@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { springBattleID = Model.SpringBattleID, threadID = Model.ForumThreadID } });}
