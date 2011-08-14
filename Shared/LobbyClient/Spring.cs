@@ -71,7 +71,9 @@ namespace LobbyClient
 
 		public DateTime GameStarted { get { return battleResult.StartTime.ToLocalTime(); } }
 
-		public bool IsRunning
+        public int Duration { get { return battleResult.Duration; } }
+
+	    public bool IsRunning
 		{
 			get
 			{

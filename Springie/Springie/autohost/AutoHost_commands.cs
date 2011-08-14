@@ -12,798 +12,819 @@ using LobbyClient;
 
 namespace Springie.autohost
 {
-	public partial class AutoHost
-	{
-		const int MaxMapListLength = 400;
-
-		readonly List<string> toNotify = new List<string>();
-
-		public bool AllReadyAndSynced(out List<string> usname)
-		{
-			usname = new List<string>();
-			foreach (var p in tas.MyBattle.Users)
-			{
-				if (p.IsSpectator) continue;
-				if (p.SyncStatus != SyncStatuses.Synced) usname.Add(p.Name);
-			}
-			return usname.Count == 0;
-		}
-
-		public bool AllUniqueTeams(out List<string> username)
-		{
-			var teams = new List<int>();
-			username = new List<string>();
-			foreach (var p in tas.MyBattle.Users)
-			{
-				if (p.IsSpectator) continue;
-				if (teams.Contains(p.TeamNumber)) username.Add(p.Name);
-				else teams.Add(p.TeamNumber);
-			}
-			return username.Count == 0;
-		}
-
-
-		public void BalanceTeams(int teamCount, bool clanwise)
-		{
-			try
-			{
-				var b = tas.MyBattle;
-				
-				if (hostedMod.IsMission)
-				{
-					var freeSlots = GetFreeSlots();
-					foreach (var u in b.Users.Where(x => !x.IsSpectator).ToList())
-					{
-						var curSlot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
-						if (curSlot != null && curSlot.IsRequired)
-						{
-							if (u.TeamColor != curSlot.Color) tas.ForceColor(u.Name, curSlot.Color);
-						}
-						else
-						{
-							var slot = freeSlots.FirstOrDefault();
-							if (slot == null)
-							{
-								if (curSlot == null) tas.ForceSpectator(u.Name);
-							}
-							else if (slot.IsRequired || curSlot == null)
-							{
-								tas.ForceAlly(u.Name, slot.AllyID);
-								tas.ForceTeam(u.Name, slot.TeamID);
-								tas.ForceColor(u.Name, slot.Color);
-								freeSlots = freeSlots.Skip(1);
-							}
-						}
-					}
-				
-					// remove extra bots 
-					foreach (var bot in b.Bots.Where(x=>x.owner != tas.UserName)) tas.RemoveBot(bot.Name);
-					return;
-				}
-
-				var ranker = new List<UsRank>();
-				foreach (var u in b.Users)
-				{
-					if (!u.IsSpectator)
-					{
-						double elo;
-						double w;
-						Program.main.SpringieServer.GetElo(u.Name, out elo, out w);
-						ranker.Add(new UsRank(ranker.Count, elo, w, clanwise ? GetClan(u.Name) : "", u));
-					}
-				}
-				var totalPlayers = ranker.Count;
-
-				var rand = new Random();
-
-				if (teamCount < 1) teamCount = 1;
-				if (teamCount > ranker.Count) teamCount = ranker.Count;
-
-				var teamUsers = new List<UsRank>[teamCount];
-				for (var i = 0; i < teamUsers.Length; ++i) teamUsers[i] = new List<UsRank>();
-				var teamSums = new double[teamCount];
-
-				var teamClans = new List<string>[teamCount];
-				for (var i = 0; i < teamClans.Length; ++i) teamClans[i] = new List<string>();
-
-				var clans = "";
-				// remove clans that have less than 2 members - those are irelevant
-				foreach (var u in ranker)
-				{
-					if (u.Clan != "")
-					{
-						if (ranker.FindAll(delegate(UsRank x) { return x.Clan == u.Clan; }).Count < 2) u.Clan = "";
-						else clans += u.Clan + ", ";
-					}
-				}
-				if (clans != "") SayBattle("those clan are being balanced: " + clans);
-
-				// this cycle performs actual user adding to teams
-				var cnt = 0;
-				while (ranker.Count > 0)
-				{
-					var minsum = double.MaxValue;
-					var minid = 0;
-					for (var i = 0; i < teamCount; ++i)
-					{
-						var l = teamUsers[i];
-						// pick only current "row" and find the one with least sum
-						if (l.Count == cnt/teamCount)
-						{
-							if (teamSums[i] < minsum)
-							{
-								minid = i;
-								minsum = teamSums[i];
-							}
-						}
-					}
-
-					var candidates = new List<UsRank>();
-
-					// get list of clans assigned to other teams
-					var assignedClans = new List<string>();
-					for (var i = 0; i < teamClans.Length; ++i) if (i != minid) assignedClans.AddRange(teamClans[i]);
-
-					// first try to get some with same clan
-					if (teamClans[minid].Count > 0) candidates.AddRange(ranker.Where(x => x.Clan != "" && teamClans[minid].Contains(x.Clan)));
-
-					// we dont have any candidates try to get clanner from unassigned clan
-					if (candidates.Count == 0) candidates.AddRange(ranker.Where(x => x.Clan != "" && !assignedClans.Contains(x.Clan)));
-
-					// we still dont have any candidates try to get anyone
-					if (candidates.Count == 0) candidates.AddRange(ranker);
-
-					var maxElo = double.MinValue;
-					var maxUsers = new List<UsRank>();
-					// get candidate which increases team elo most (round elo to tens to add some randomness)
-					foreach (var c in candidates)
-					{
-						var newElo = (teamUsers[minid].Sum(x => x.Weight*x.Elo) + c.Weight*Math.Round(c.Elo/10)*10)/(teamUsers[minid].Sum(x => x.Weight) + c.Weight);
-						if (newElo > maxElo)
-						{
-							maxUsers.Clear();
-							maxUsers.Add(c);
-							maxElo = newElo;
-						}
-						else if (newElo == maxElo) maxUsers.Add(c);
-					}
-					var pickedUser = maxUsers[rand.Next(maxUsers.Count)];
-
-					teamUsers[minid].Add(pickedUser);
-					teamSums[minid] = maxElo;
-
-					if (pickedUser.Clan != "")
-					{
-						// if we work with clans add user's clan to clan list for his team
-						if (!teamClans[minid].Contains(pickedUser.Clan)) teamClans[minid].Add(pickedUser.Clan);
-					}
-
-					ranker.Remove(pickedUser);
-
-					cnt++;
-				}
-
-				// alliances for allinace permutations
-				var allys = new List<int>();
-				for (var i = 0; i < teamCount; ++i) allys.Add(i);
-
-				var t = "";
-
-				for (var i = 0; i < teamCount; ++i)
-				{
-					// permute one alliance
-					var rdindex = rand.Next(allys.Count);
-					var allynum = allys[rdindex];
-					allys.RemoveAt(rdindex);
-
-					if (teamUsers[i].Count > 0)
-					{
-						if (i > 0) t += ":";
-						t += (allynum + 1) + "=" + Math.Round(teamSums[i]);
-					}
-
-					foreach (var u in teamUsers[i]) tas.ForceAlly(u.User.Name, allynum);
-				}
-
-				t += ")";
-
-				SayBattle(string.Format("{0} players balanced {2} to {1} teams (ratings {3}", totalPlayers, teamCount, clanwise ? "respecting clans" : "", t));
-			}
-			catch (Exception ex)
-			{
-				ErrorHandling.HandleException(ex, "Error balancing teams");
-			}
-		}
-
-		public bool BalancedTeams(out int allyno, out int alliances)
-		{
-			if (hostedMod.IsMission)
-			{
-				alliances = 0;
-				allyno = 0;
-				var invalidUser =
-					tas.MyBattle.Users.FirstOrDefault(
-						x => !x.IsSpectator && !hostedMod.MissionSlots.Any(y => y.IsHuman && y.TeamID == x.TeamNumber && y.AllyID == x.AllyNumber));
-				if (invalidUser != null)
-				{
-					SayBattle(string.Format("User {0} is not in proper mission slot", invalidUser.Name));
-					return false;
-				}
-
-				var slot = GetFreeSlots().FirstOrDefault();
-				if (slot == null || !slot.IsRequired) return true;
-				else
-				{
-					SayBattle(string.Format("Mission slot {0}/{1} (team {2}, id {3}) needs player", slot.AllyName, slot.TeamName, slot.AllyID, slot.TeamID));
-					allyno = slot.AllyID;
-					return false;
-				}
-			}
-
-			var counts = new int[16];
-			allyno = 0;
-
-			foreach (var p in tas.MyBattle.Users)
-			{
-				if (p.IsSpectator) continue;
-				counts[p.AllyNumber]++;
-			}
-
-			alliances = counts.Count(x => x > 0);
-
-			var tsize = 0;
-			for (var i = 0; i < counts.Length; ++i)
-			{
-				if (counts[i] != 0)
-				{
-					if (tsize == 0) tsize = counts[i];
-					else if (tsize != counts[i])
-					{
-						allyno = i;
-						return false;
-					}
-				}
-			}
-			return true;
-		}
-
-
-		public void ComAddBox(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length < 4)
-			{
-				Respond(e, "This command needs at least 4 parameters");
-				return;
-			}
-			int x, y, w, h;
-			if (!int.TryParse(words[0], out x) || !int.TryParse(words[1], out y) || !int.TryParse(words[2], out w) || !int.TryParse(words[3], out h))
-			{
-				Respond(e, "All parameters must be numbers");
-				return;
-			}
-			var numrect = 0;
-			if (words.Length > 4) int.TryParse(words[4], out numrect);
-
-			if (numrect == 0)
-			{
-				numrect = tas.MyBattle.GetFirstEmptyRectangle();
-				if (numrect == -1)
-				{
-					Respond(e, "Cannot add more boxes");
-					return;
-				}
-				numrect++;
-			}
-			tas.AddBattleRectangle(numrect - 1, new BattleRect(x*2, y*2, (x + w)*2, (y + h)*2));
-		}
-
-		public void ComAlly(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length < 2)
-			{
-				Respond(e, "this command needs 2 parameters (ally number and player name)");
-				return;
-			}
-			var allyno = 0;
-			if (!int.TryParse(words[0], out allyno) || --allyno < 0 || allyno >= Spring.MaxAllies)
-			{
-				Respond(e, "invalid ally number");
-				return;
-			}
-			string[] usrs;
-			int[] idx;
-			if (FilterUsers(Utils.ShiftArray(words, -1), out usrs, out idx) == 0) Respond(e, "no such player found");
-			else
-			{
-				SayBattle("Forcing " + usrs[0] + " to alliance " + (allyno + 1));
-				tas.ForceAlly(usrs[0], allyno);
-			}
-		}
-
-
-		public void ComBalance(TasSayEventArgs e, string[] words)
-		{
-			if (PlanetWars != null) PlanetWars.BalanceTeams();
-			else
-			{
-				int teamCount;
-				if (words.Length > 0) int.TryParse(words[0], out teamCount);
-				else teamCount = 2;
-				ComFix(e, words);
-				BalanceTeams(teamCount, false);
-			}
-		}
-
-		public void ComBoss(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0)
-			{
-				if (bossName == "")
-				{
-					Respond(e, "there is currently no active boss");
-					return;
-				}
-				SayBattle("boss " + bossName + " removed");
-				bossName = "";
-				return;
-			}
-			else
-			{
-				string[] usrs;
-				int[] idx;
-				if (FilterUsers(words, out usrs, out idx) == 0) Respond(e, "no such player found");
-				else
-				{
-					SayBattle("New boss is " + usrs[0]);
-					bossName = usrs[0];
-				}
-			}
-		}
-
-		public void ComCBalance(TasSayEventArgs e, string[] words)
-		{
-			var teamCount = 2;
-			if (words.Length > 0) int.TryParse(words[0], out teamCount);
-			else teamCount = 2;
-			ComFix(e, words);
-			BalanceTeams(teamCount, true);
-		}
-
-		public void ComClearBox(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0) foreach (var i in tas.MyBattle.Rectangles.Keys) tas.RemoveBattleRectangle(i);
-			else
-			{
-				var numrect = 0;
-				if (!int.TryParse(words[0], out numrect)) Respond(e, "paramater must by a number of rectangle");
-				tas.RemoveBattleRectangle(numrect - 1);
-			}
-		}
-
-		public void ComCorners(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length != 2)
-			{
-				Respond(e, "This command needs 2 parameters");
-				return;
-			}
-			if (words[0] != "a" && words[0] != "b") Respond(e, "first parameter must be 'a' or 'b'");
-			else
-			{
-				int perc;
-				int.TryParse(words[1], out perc);
-				if (perc < 0 || perc > 50) Respond(e, "second parameter must be between 0 and 50");
-				else
-				{
-					var p = perc/100.0;
-					if (words[0] == "a")
-					{
-						tas.AddBattleRectangle(0, new BattleRect(0, 0, p, p));
-						tas.AddBattleRectangle(1, new BattleRect(1 - p, 1 - p, 1, 1));
-						tas.AddBattleRectangle(2, new BattleRect(1 - p, 0, 1, p));
-						tas.AddBattleRectangle(3, new BattleRect(0, 1 - p, p, 1));
-					}
-					else
-					{
-						tas.AddBattleRectangle(0, new BattleRect(1 - p, 0, 1, p));
-						tas.AddBattleRectangle(1, new BattleRect(0, 1 - p, p, 1));
-						tas.AddBattleRectangle(2, new BattleRect(0, 0, p, p));
-						tas.AddBattleRectangle(3, new BattleRect(1 - p, 1 - p, 1, 1));
-					}
-				}
-			}
-		}
-
-
-		public void ComExit(TasSayEventArgs e, string[] words)
-		{
-			if (spring.IsRunning) SayBattle("exiting game");
-			else Respond(e, "cannot exit, not in game");
-			spring.ExitGame();
-		}
-
-
-		/// <summary>
-		/// fixes ids
-		/// </summary>
-		/// <param name="e"></param>
-		/// <param name="words">if param is "silent" does not advertise id fixing</param>
-		/// <returns>true if id teams were already fixed</returns>
-		public bool ComFix(TasSayEventArgs e, params string[] words)
-		{
-			var b = tas.MyBattle;
-			var groups = b.Users.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown).GroupBy(x => x.TeamNumber).Where(g => g.Count() > 1);
-			if (groups.Count() > 0)
-			{
-				var id = 0;
-				foreach (var u in b.Users.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown)) tas.ForceTeam(u.Name, id++);
-				if (words == null || words.Length == 0 || words[0] != "silent") SayBattle("team numbers fixed");
-				return false;
-			}
-			else return true;
-		}
-
-
-		public void ComFixColors(TasSayEventArgs e, string[] words)
-		{
-
-			var cols = new List<MyCol>();
-
-
-			if (hostedMod.IsMission)
-			{
-				ForceMissionColors();
-				return;
-			}
-
-			var b = tas.MyBattle;
-			foreach (var u in b.Users) if (!u.IsSpectator) cols.Add((MyCol)u.TeamColor);
-			var arcols = cols.ToArray();
-
-			MyCol.FixColors(arcols, 30000);
-
-			var changed = false;
-			var cnt = 0;
-			foreach (var u in b.Users)
-			{
-				if (!u.IsSpectator)
-				{
-					if (u.TeamColor != (int)arcols[cnt])
-					{
-						tas.ForceColor(u.Name, (int)arcols[cnt]);
-						changed = true;
-					}
-					cnt++;
-				}
-			}
-			if (changed) SayBattle("colors fixed");
-		}
-
-		void ForceMissionColors() {
-			var b = tas.MyBattle;
-			foreach (var u in b.Users.Where(x => !x.IsSpectator))
-			{
-				var slot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
-				if (slot != null && slot.Color != u.TeamColor) tas.ForceColor(u.Name, slot.Color);
-			}
-		}
-
-		public void ComForce(TasSayEventArgs e, string[] words)
-		{
-			if (spring.IsRunning)
-			{
-				SayBattle("forcing game start by " + e.UserName);
-				spring.ForceStart();
-			}
-			else Respond(e, "cannot force, game not started");
-		}
-
-		public void ComForceSpectator(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0)
-			{
-				Respond(e, "You must specify player name");
-				return;
-			}
-
-			int[] indexes;
-			string[] usrlist;
-			if (FilterUsers(words, out usrlist, out indexes) == 0)
-			{
-				Respond(e, "Cannot find such player");
-				return;
-			}
-
-			tas.ForceSpectator(usrlist[0]);
-			Respond(e, "Forcing " + usrlist[0] + " to spectator");
-		}
-
-		public void ComForceSpectatorAfk(TasSayEventArgs e, string[] words)
-		{
-			var b = tas.MyBattle;
-			if (b != null)
-			{
-				foreach (var u in b.Users)
-				{
-					User u2;
-					if (u.Name != tas.UserName && !u.IsSpectator && (u.SyncStatus !=  SyncStatuses.Synced) && tas.GetExistingUser(u.Name, out u2)) if (u2.IsAway) ComForceSpectator(e, new[] { u.Name });
-				}
-			}
-		}
-
-		public void ComForceStart(TasSayEventArgs e, string[] words)
-		{
-			int allyno;
-			int alliances;
-			if (hostedMod.IsMission && !BalancedTeams(out allyno, out alliances))
-			{
-				SayBattle("Cannot start, mission slots are not correct");
-				return;
-			}
-			/*string usname;
+    public partial class AutoHost
+    {
+        const int MaxMapListLength = 400;
+
+        readonly List<string> toNotify = new List<string>();
+
+        public bool AllReadyAndSynced(out List<string> usname)
+        {
+            usname = new List<string>();
+            foreach (var p in tas.MyBattle.Users)
+            {
+                if (p.IsSpectator) continue;
+                if (p.SyncStatus != SyncStatuses.Synced) usname.Add(p.Name);
+            }
+            return usname.Count == 0;
+        }
+
+        public bool AllUniqueTeams(out List<string> username)
+        {
+            var teams = new List<int>();
+            username = new List<string>();
+            foreach (var p in tas.MyBattle.Users)
+            {
+                if (p.IsSpectator) continue;
+                if (teams.Contains(p.TeamNumber)) username.Add(p.Name);
+                else teams.Add(p.TeamNumber);
+            }
+            return username.Count == 0;
+        }
+
+
+        public void BalanceTeams(int teamCount, bool clanwise)
+        {
+            try
+            {
+                var b = tas.MyBattle;
+
+                if (hostedMod.IsMission)
+                {
+                    var freeSlots = GetFreeSlots();
+                    foreach (var u in b.Users.Where(x => !x.IsSpectator).ToList())
+                    {
+                        var curSlot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
+                        if (curSlot != null && curSlot.IsRequired)
+                        {
+                            if (u.TeamColor != curSlot.Color) tas.ForceColor(u.Name, curSlot.Color);
+                        }
+                        else
+                        {
+                            var slot = freeSlots.FirstOrDefault();
+                            if (slot == null)
+                            {
+                                if (curSlot == null) tas.ForceSpectator(u.Name);
+                            }
+                            else if (slot.IsRequired || curSlot == null)
+                            {
+                                tas.ForceAlly(u.Name, slot.AllyID);
+                                tas.ForceTeam(u.Name, slot.TeamID);
+                                tas.ForceColor(u.Name, slot.Color);
+                                freeSlots = freeSlots.Skip(1);
+                            }
+                        }
+                    }
+
+                    // remove extra bots 
+                    foreach (var bot in b.Bots.Where(x => x.owner != tas.UserName)) tas.RemoveBot(bot.Name);
+                    return;
+                }
+
+                var ranker = new List<UsRank>();
+                foreach (var u in b.Users)
+                {
+                    if (!u.IsSpectator)
+                    {
+                        double elo;
+                        double w;
+                        Program.main.SpringieServer.GetElo(u.Name, out elo, out w);
+                        ranker.Add(new UsRank(ranker.Count, elo, w, clanwise ? GetClan(u.Name) : "", u));
+                    }
+                }
+                var totalPlayers = ranker.Count;
+
+                var rand = new Random();
+
+                if (teamCount < 1) teamCount = 1;
+                if (teamCount > ranker.Count) teamCount = ranker.Count;
+
+                var teamUsers = new List<UsRank>[teamCount];
+                for (var i = 0; i < teamUsers.Length; ++i) teamUsers[i] = new List<UsRank>();
+                var teamSums = new double[teamCount];
+
+                var teamClans = new List<string>[teamCount];
+                for (var i = 0; i < teamClans.Length; ++i) teamClans[i] = new List<string>();
+
+                var clans = "";
+                // remove clans that have less than 2 members - those are irelevant
+                foreach (var u in ranker)
+                {
+                    if (u.Clan != "")
+                    {
+                        if (ranker.FindAll(delegate(UsRank x) { return x.Clan == u.Clan; }).Count < 2) u.Clan = "";
+                        else clans += u.Clan + ", ";
+                    }
+                }
+                if (clans != "") SayBattle("those clan are being balanced: " + clans);
+
+                // this cycle performs actual user adding to teams
+                var cnt = 0;
+                while (ranker.Count > 0)
+                {
+                    var minsum = double.MaxValue;
+                    var minid = 0;
+                    for (var i = 0; i < teamCount; ++i)
+                    {
+                        var l = teamUsers[i];
+                        // pick only current "row" and find the one with least sum
+                        if (l.Count == cnt/teamCount)
+                        {
+                            if (teamSums[i] < minsum)
+                            {
+                                minid = i;
+                                minsum = teamSums[i];
+                            }
+                        }
+                    }
+
+                    var candidates = new List<UsRank>();
+
+                    // get list of clans assigned to other teams
+                    var assignedClans = new List<string>();
+                    for (var i = 0; i < teamClans.Length; ++i) if (i != minid) assignedClans.AddRange(teamClans[i]);
+
+                    // first try to get some with same clan
+                    if (teamClans[minid].Count > 0) candidates.AddRange(ranker.Where(x => x.Clan != "" && teamClans[minid].Contains(x.Clan)));
+
+                    // we dont have any candidates try to get clanner from unassigned clan
+                    if (candidates.Count == 0) candidates.AddRange(ranker.Where(x => x.Clan != "" && !assignedClans.Contains(x.Clan)));
+
+                    // we still dont have any candidates try to get anyone
+                    if (candidates.Count == 0) candidates.AddRange(ranker);
+
+                    var maxElo = double.MinValue;
+                    var maxUsers = new List<UsRank>();
+                    // get candidate which increases team elo most (round elo to tens to add some randomness)
+                    foreach (var c in candidates)
+                    {
+                        var newElo = (teamUsers[minid].Sum(x => x.Weight*x.Elo) + c.Weight*Math.Round(c.Elo/10)*10)/
+                                     (teamUsers[minid].Sum(x => x.Weight) + c.Weight);
+                        if (newElo > maxElo)
+                        {
+                            maxUsers.Clear();
+                            maxUsers.Add(c);
+                            maxElo = newElo;
+                        }
+                        else if (newElo == maxElo) maxUsers.Add(c);
+                    }
+                    var pickedUser = maxUsers[rand.Next(maxUsers.Count)];
+
+                    teamUsers[minid].Add(pickedUser);
+                    teamSums[minid] = maxElo;
+
+                    if (pickedUser.Clan != "")
+                    {
+                        // if we work with clans add user's clan to clan list for his team
+                        if (!teamClans[minid].Contains(pickedUser.Clan)) teamClans[minid].Add(pickedUser.Clan);
+                    }
+
+                    ranker.Remove(pickedUser);
+
+                    cnt++;
+                }
+
+                // alliances for allinace permutations
+                var allys = new List<int>();
+                for (var i = 0; i < teamCount; ++i) allys.Add(i);
+
+                var t = "";
+
+                for (var i = 0; i < teamCount; ++i)
+                {
+                    // permute one alliance
+                    var rdindex = rand.Next(allys.Count);
+                    var allynum = allys[rdindex];
+                    allys.RemoveAt(rdindex);
+
+                    if (teamUsers[i].Count > 0)
+                    {
+                        if (i > 0) t += ":";
+                        t += (allynum + 1) + "=" + Math.Round(teamSums[i]);
+                    }
+
+                    foreach (var u in teamUsers[i]) tas.ForceAlly(u.User.Name, allynum);
+                }
+
+                t += ")";
+
+                SayBattle(string.Format("{0} players balanced {2} to {1} teams (ratings {3}",
+                                        totalPlayers,
+                                        teamCount,
+                                        clanwise ? "respecting clans" : "",
+                                        t));
+            }
+            catch (Exception ex)
+            {
+                ErrorHandling.HandleException(ex, "Error balancing teams");
+            }
+        }
+
+        public bool BalancedTeams(out int allyno, out int alliances)
+        {
+            if (hostedMod.IsMission)
+            {
+                alliances = 0;
+                allyno = 0;
+                var invalidUser =
+                    tas.MyBattle.Users.FirstOrDefault(
+                        x => !x.IsSpectator && !hostedMod.MissionSlots.Any(y => y.IsHuman && y.TeamID == x.TeamNumber && y.AllyID == x.AllyNumber));
+                if (invalidUser != null)
+                {
+                    SayBattle(string.Format("User {0} is not in proper mission slot", invalidUser.Name));
+                    return false;
+                }
+
+                var slot = GetFreeSlots().FirstOrDefault();
+                if (slot == null || !slot.IsRequired) return true;
+                else
+                {
+                    SayBattle(string.Format("Mission slot {0}/{1} (team {2}, id {3}) needs player",
+                                            slot.AllyName,
+                                            slot.TeamName,
+                                            slot.AllyID,
+                                            slot.TeamID));
+                    allyno = slot.AllyID;
+                    return false;
+                }
+            }
+
+            var counts = new int[16];
+            allyno = 0;
+
+            foreach (var p in tas.MyBattle.Users)
+            {
+                if (p.IsSpectator) continue;
+                counts[p.AllyNumber]++;
+            }
+
+            alliances = counts.Count(x => x > 0);
+
+            var tsize = 0;
+            for (var i = 0; i < counts.Length; ++i)
+            {
+                if (counts[i] != 0)
+                {
+                    if (tsize == 0) tsize = counts[i];
+                    else if (tsize != counts[i])
+                    {
+                        allyno = i;
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+
+        public void ComAddBox(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length < 4)
+            {
+                Respond(e, "This command needs at least 4 parameters");
+                return;
+            }
+            int x, y, w, h;
+            if (!int.TryParse(words[0], out x) || !int.TryParse(words[1], out y) || !int.TryParse(words[2], out w) || !int.TryParse(words[3], out h))
+            {
+                Respond(e, "All parameters must be numbers");
+                return;
+            }
+            var numrect = 0;
+            if (words.Length > 4) int.TryParse(words[4], out numrect);
+
+            if (numrect == 0)
+            {
+                numrect = tas.MyBattle.GetFirstEmptyRectangle();
+                if (numrect == -1)
+                {
+                    Respond(e, "Cannot add more boxes");
+                    return;
+                }
+                numrect++;
+            }
+            tas.AddBattleRectangle(numrect - 1, new BattleRect(x*2, y*2, (x + w)*2, (y + h)*2));
+        }
+
+        public void ComAlly(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length < 2)
+            {
+                Respond(e, "this command needs 2 parameters (ally number and player name)");
+                return;
+            }
+            var allyno = 0;
+            if (!int.TryParse(words[0], out allyno) || --allyno < 0 || allyno >= Spring.MaxAllies)
+            {
+                Respond(e, "invalid ally number");
+                return;
+            }
+            string[] usrs;
+            int[] idx;
+            if (FilterUsers(Utils.ShiftArray(words, -1), out usrs, out idx) == 0) Respond(e, "no such player found");
+            else
+            {
+                SayBattle("Forcing " + usrs[0] + " to alliance " + (allyno + 1));
+                tas.ForceAlly(usrs[0], allyno);
+            }
+        }
+
+
+        public void ComBalance(TasSayEventArgs e, string[] words)
+        {
+            if (PlanetWars != null) PlanetWars.BalanceTeams();
+            else
+            {
+                int teamCount;
+                if (words.Length > 0) int.TryParse(words[0], out teamCount);
+                else teamCount = 2;
+                ComFix(e, words);
+                BalanceTeams(teamCount, false);
+            }
+        }
+
+        public void ComBoss(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0)
+            {
+                if (bossName == "")
+                {
+                    Respond(e, "there is currently no active boss");
+                    return;
+                }
+                SayBattle("boss " + bossName + " removed");
+                bossName = "";
+                return;
+            }
+            else
+            {
+                string[] usrs;
+                int[] idx;
+                if (FilterUsers(words, out usrs, out idx) == 0) Respond(e, "no such player found");
+                else
+                {
+                    SayBattle("New boss is " + usrs[0]);
+                    bossName = usrs[0];
+                }
+            }
+        }
+
+        public void ComCBalance(TasSayEventArgs e, string[] words)
+        {
+            var teamCount = 2;
+            if (words.Length > 0) int.TryParse(words[0], out teamCount);
+            else teamCount = 2;
+            ComFix(e, words);
+            BalanceTeams(teamCount, true);
+        }
+
+        public void ComClearBox(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0) foreach (var i in tas.MyBattle.Rectangles.Keys) tas.RemoveBattleRectangle(i);
+            else
+            {
+                var numrect = 0;
+                if (!int.TryParse(words[0], out numrect)) Respond(e, "paramater must by a number of rectangle");
+                tas.RemoveBattleRectangle(numrect - 1);
+            }
+        }
+
+        public void ComCorners(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length != 2)
+            {
+                Respond(e, "This command needs 2 parameters");
+                return;
+            }
+            if (words[0] != "a" && words[0] != "b") Respond(e, "first parameter must be 'a' or 'b'");
+            else
+            {
+                int perc;
+                int.TryParse(words[1], out perc);
+                if (perc < 0 || perc > 50) Respond(e, "second parameter must be between 0 and 50");
+                else
+                {
+                    var p = perc/100.0;
+                    if (words[0] == "a")
+                    {
+                        tas.AddBattleRectangle(0, new BattleRect(0, 0, p, p));
+                        tas.AddBattleRectangle(1, new BattleRect(1 - p, 1 - p, 1, 1));
+                        tas.AddBattleRectangle(2, new BattleRect(1 - p, 0, 1, p));
+                        tas.AddBattleRectangle(3, new BattleRect(0, 1 - p, p, 1));
+                    }
+                    else
+                    {
+                        tas.AddBattleRectangle(0, new BattleRect(1 - p, 0, 1, p));
+                        tas.AddBattleRectangle(1, new BattleRect(0, 1 - p, p, 1));
+                        tas.AddBattleRectangle(2, new BattleRect(0, 0, p, p));
+                        tas.AddBattleRectangle(3, new BattleRect(1 - p, 1 - p, 1, 1));
+                    }
+                }
+            }
+        }
+
+
+        public void ComExit(TasSayEventArgs e, string[] words)
+        {
+            if (spring.IsRunning) SayBattle("exiting game");
+            else Respond(e, "cannot exit, not in game");
+            spring.ExitGame();
+        }
+
+
+        /// <summary>
+        /// fixes ids
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="words">if param is "silent" does not advertise id fixing</param>
+        /// <returns>true if id teams were already fixed</returns>
+        public bool ComFix(TasSayEventArgs e, params string[] words)
+        {
+            var b = tas.MyBattle;
+            var groups =
+                b.Users.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown).GroupBy(x => x.TeamNumber).Where(g => g.Count() > 1);
+            if (groups.Count() > 0)
+            {
+                var id = 0;
+                foreach (var u in b.Users.Where(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown)) tas.ForceTeam(u.Name, id++);
+                if (words == null || words.Length == 0 || words[0] != "silent") SayBattle("team numbers fixed");
+                return false;
+            }
+            else return true;
+        }
+
+
+        public void ComFixColors(TasSayEventArgs e, string[] words)
+        {
+
+            var cols = new List<MyCol>();
+
+
+            if (hostedMod.IsMission)
+            {
+                ForceMissionColors();
+                return;
+            }
+
+            var b = tas.MyBattle;
+            foreach (var u in b.Users) if (!u.IsSpectator) cols.Add((MyCol)u.TeamColor);
+            var arcols = cols.ToArray();
+
+            MyCol.FixColors(arcols, 30000);
+
+            var changed = false;
+            var cnt = 0;
+            foreach (var u in b.Users)
+            {
+                if (!u.IsSpectator)
+                {
+                    if (u.TeamColor != (int)arcols[cnt])
+                    {
+                        tas.ForceColor(u.Name, (int)arcols[cnt]);
+                        changed = true;
+                    }
+                    cnt++;
+                }
+            }
+            if (changed) SayBattle("colors fixed");
+        }
+
+        void ForceMissionColors()
+        {
+            var b = tas.MyBattle;
+            foreach (var u in b.Users.Where(x => !x.IsSpectator))
+            {
+                var slot = hostedMod.MissionSlots.FirstOrDefault(x => x.IsHuman && x.TeamID == u.TeamNumber && x.AllyID == u.AllyNumber);
+                if (slot != null && slot.Color != u.TeamColor) tas.ForceColor(u.Name, slot.Color);
+            }
+        }
+
+        public void ComForce(TasSayEventArgs e, string[] words)
+        {
+            if (spring.IsRunning)
+            {
+                SayBattle("forcing game start by " + e.UserName);
+                spring.ForceStart();
+            }
+            else Respond(e, "cannot force, game not started");
+        }
+
+        public void ComForceSpectator(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0)
+            {
+                Respond(e, "You must specify player name");
+                return;
+            }
+
+            int[] indexes;
+            string[] usrlist;
+            if (FilterUsers(words, out usrlist, out indexes) == 0)
+            {
+                Respond(e, "Cannot find such player");
+                return;
+            }
+
+            tas.ForceSpectator(usrlist[0]);
+            Respond(e, "Forcing " + usrlist[0] + " to spectator");
+        }
+
+        public void ComForceSpectatorAfk(TasSayEventArgs e, string[] words)
+        {
+            var b = tas.MyBattle;
+            if (b != null)
+            {
+                foreach (var u in b.Users)
+                {
+                    User u2;
+                    if (u.Name != tas.UserName && !u.IsSpectator && tas.GetExistingUser(u.Name, out u2)) if (u2.IsAway) ComForceSpectator(e, new[] { u.Name });
+                }
+            }
+        }
+
+        public void ComForceStart(TasSayEventArgs e, string[] words)
+        {
+            int allyno;
+            int alliances;
+            if (hostedMod.IsMission && !BalancedTeams(out allyno, out alliances))
+            {
+                SayBattle("Cannot start, mission slots are not correct");
+                return;
+            }
+            /*string usname;
       if (!AllReadyAndSynced(out usname)) {
         SayBattle("cannot start, " + usname + " not ready and synced");
         return;
       }*/
-			if (PlanetWars == null || PlanetWars.StartGame(e))
-			{
-				SayBattle("please wait, game is about to start");
+            if (PlanetWars == null || PlanetWars.StartGame(e))
+            {
+                SayBattle("please wait, game is about to start");
 
-				StopVote();
-				tas.StartGame();
-			}
-		}
+                StopVote();
+                tas.StartGame();
+            }
+        }
 
-		public void ComKick(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0)
-			{
-				Respond(e, "You must specify player name");
-				return;
-			}
+        public void ComKick(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0)
+            {
+                Respond(e, "You must specify player name");
+                return;
+            }
 
-			int[] indexes;
-			string[] usrlist;
-			if (FilterUsers(words, out usrlist, out indexes) == 0)
-			{
-				if (spring.IsRunning) spring.Kick(Utils.Glue(words));
-				Respond(e, "Cannot find such player");
-				return;
-			}
+            int[] indexes;
+            string[] usrlist;
+            if (FilterUsers(words, out usrlist, out indexes) == 0)
+            {
+                if (spring.IsRunning) spring.Kick(Utils.Glue(words));
+                Respond(e, "Cannot find such player");
+                return;
+            }
 
-			if (usrlist[0] == tas.UserName)
-			{
-				Respond(e, "won't kick myself, not in suicidal mood today");
-				return;
-			}
+            if (usrlist[0] == tas.UserName)
+            {
+                Respond(e, "won't kick myself, not in suicidal mood today");
+                return;
+            }
 
-			if (spring.IsRunning) spring.Kick(usrlist[0]);
-			tas.Kick(usrlist[0]);
-		}
+            if (spring.IsRunning) spring.Kick(usrlist[0]);
+            tas.Kick(usrlist[0]);
+        }
 
-		public void ComKickMinRank(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length > 0 && (words[0] == "1" || words[0] == "0")) kickMinRank = (words[0] == "1");
-			else kickMinRank = !kickMinRank;
+        public void ComKickMinRank(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length > 0 && (words[0] == "1" || words[0] == "0")) kickMinRank = (words[0] == "1");
+            else kickMinRank = !kickMinRank;
 
-			if (kickMinRank) SayBattle("automatic minrank kicking is now ENABLED");
-			else SayBattle("automatic minrank kicking is now DISABLED");
+            if (kickMinRank) SayBattle("automatic minrank kicking is now ENABLED");
+            else SayBattle("automatic minrank kicking is now DISABLED");
 
-			HandleMinRankKicking();
-		}
-
-
-		public void ComManage(TasSayEventArgs e, string[] words, bool clanBased)
-		{
-			if (words.Length < 1)
-			{
-				Respond(e, "this command needs 1 parameters (minimum number of players to manage for)");
-				return;
-			}
-			var min = 0;
-			int.TryParse(words[0], out min);
-			var max = min;
-			if (words.Length > 1) int.TryParse(words[1], out max);
-			var allyCount = 2;
-			if (words.Length > 2) int.TryParse(words[2], out allyCount);
-			manager.Manage(min, max, allyCount, e, clanBased);
-		}
-
-		public void ComPredict(TasSayEventArgs e, string[] words)
-		{
-			var b = tas.MyBattle;
-			var grouping = b.Users.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber);
-
-			IGrouping<int, UserBattleStatus> oldg = null;
-			foreach (var g in grouping)
-			{
-				if (oldg != null)
-				{
-					var t1entries = oldg.Select(x => Program.main.SpringieServer.GetEloEntry(x.Name));
-					var t1elo = t1entries.Sum(x => x.Elo*x.W)/t1entries.Sum(x => x.W);
-
-					var t2entries = g.Select(x => Program.main.SpringieServer.GetEloEntry(x.Name));
-					var t2elo = t2entries.Sum(x => x.Elo*x.W)/t2entries.Sum(x => x.W);
-					Respond(e, string.Format("team {0} has {1}% chance to win over team {2}", oldg.Key + 1, PlasmaShared.Utils.GetWinChancePercent(t2elo-t1elo), g.Key + 1));
-				}
-				oldg = g;
-			}
-		}
+            HandleMinRankKicking();
+        }
 
 
-		public void ComRandom(TasSayEventArgs e, string[] words)
-		{
-			ComFix(e, words);
-			var b = tas.MyBattle;
+        public void ComManage(TasSayEventArgs e, string[] words, bool clanBased)
+        {
+            if (words.Length < 1)
+            {
+                Respond(e, "this command needs 1 parameters (minimum number of players to manage for)");
+                return;
+            }
+            var min = 0;
+            int.TryParse(words[0], out min);
+            var max = min;
+            if (words.Length > 1) int.TryParse(words[1], out max);
+            var allyCount = 2;
+            if (words.Length > 2) int.TryParse(words[2], out allyCount);
+            manager.Manage(min, max, allyCount, e, clanBased);
+        }
 
-			var actUsers = new List<UserBattleStatus>();
-			foreach (var u in b.Users) if (!u.IsSpectator) actUsers.Add(u);
+        public void ComPredict(TasSayEventArgs e, string[] words)
+        {
+            var b = tas.MyBattle;
+            var grouping = b.Users.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber);
 
-			var teamCount = 0;
-			if (words.Length > 0) int.TryParse(words[0], out teamCount);
-			else teamCount = 2;
-			if (teamCount < 2) teamCount = 2;
-			if (teamCount > actUsers.Count) teamCount = 2;
-			var r = new Random();
+            IGrouping<int, UserBattleStatus> oldg = null;
+            foreach (var g in grouping)
+            {
+                if (oldg != null)
+                {
+                    var t1entries = oldg.Select(x => Program.main.SpringieServer.GetEloEntry(x.Name));
+                    var t1elo = t1entries.Sum(x => x.Elo*x.W)/t1entries.Sum(x => x.W);
 
-			var al = 0;
-			while (actUsers.Count > 0)
-			{
-				var index = r.Next(actUsers.Count);
-				tas.ForceAlly(actUsers[index].Name, al);
-				actUsers.RemoveAt(index);
-				al++;
-				al = al%teamCount;
-			}
-			SayBattle("players assigned to " + teamCount + " random teams");
-		}
-
-		public void ComRehost(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0) Start(null, null);
-			else
-			{
-				string[] mods;
-				int[] indexes;
-				if (FilterMods(words, out mods, out indexes) == 0) Respond(e, "cannot find such mod");
-				else Start(mods[0], null);
-			}
-		}
-
-		public void ComRing(TasSayEventArgs e, string[] words)
-		{
-			var usrlist = new List<string>();
-
-			if (words.Length == 0)
-			{
-				// ringing idle
-				foreach (var p in tas.MyBattle.Users)
-				{
-					if (p.IsSpectator) continue;
-					if ((p.SyncStatus != SyncStatuses.Synced) && (!spring.IsRunning || !spring.IsPlayerReady(p.Name))) usrlist.Add(p.Name);
-				}
-			}
-			else
-			{
-				string[] vals;
-				int[] indexes;
-				FilterUsers(words, out vals, out indexes);
-				usrlist = new List<string>(vals);
-			}
-
-			var rang = "";
-			foreach (var s in usrlist)
-			{
-				tas.Ring(s);
-				rang += s + ", ";
-			}
-
-			if (words.Length == 0 && usrlist.Count > 7) SayBattle("ringing all unready");
-			else SayBattle("ringing " + rang);
-		}
+                    var t2entries = g.Select(x => Program.main.SpringieServer.GetEloEntry(x.Name));
+                    var t2elo = t2entries.Sum(x => x.Elo*x.W)/t2entries.Sum(x => x.W);
+                    Respond(e,
+                            string.Format("team {0} has {1}% chance to win over team {2}",
+                                          oldg.Key + 1,
+                                          PlasmaShared.Utils.GetWinChancePercent(t2elo - t1elo),
+                                          g.Key + 1));
+                }
+                oldg = g;
+            }
+        }
 
 
-		// user and rank info
+        public void ComRandom(TasSayEventArgs e, string[] words)
+        {
+            ComFix(e, words);
+            var b = tas.MyBattle;
+
+            var actUsers = new List<UserBattleStatus>();
+            foreach (var u in b.Users) if (!u.IsSpectator) actUsers.Add(u);
+
+            var teamCount = 0;
+            if (words.Length > 0) int.TryParse(words[0], out teamCount);
+            else teamCount = 2;
+            if (teamCount < 2) teamCount = 2;
+            if (teamCount > actUsers.Count) teamCount = 2;
+            var r = new Random();
+
+            var al = 0;
+            while (actUsers.Count > 0)
+            {
+                var index = r.Next(actUsers.Count);
+                tas.ForceAlly(actUsers[index].Name, al);
+                actUsers.RemoveAt(index);
+                al++;
+                al = al%teamCount;
+            }
+            SayBattle("players assigned to " + teamCount + " random teams");
+        }
+
+        public void ComRehost(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0) Start(null, null);
+            else
+            {
+                string[] mods;
+                int[] indexes;
+                if (FilterMods(words, out mods, out indexes) == 0) Respond(e, "cannot find such mod");
+                else Start(mods[0], null);
+            }
+        }
+
+        public void ComRing(TasSayEventArgs e, string[] words)
+        {
+            var usrlist = new List<string>();
+
+            if (words.Length == 0)
+            {
+                // ringing idle
+                foreach (var p in tas.MyBattle.Users)
+                {
+                    if (p.IsSpectator) continue;
+                    if ((p.SyncStatus != SyncStatuses.Synced) && (!spring.IsRunning || !spring.IsPlayerReady(p.Name))) usrlist.Add(p.Name);
+                }
+            }
+            else
+            {
+                string[] vals;
+                int[] indexes;
+                FilterUsers(words, out vals, out indexes);
+                usrlist = new List<string>(vals);
+            }
+
+            var rang = "";
+            foreach (var s in usrlist)
+            {
+                tas.Ring(s);
+                rang += s + ", ";
+            }
+
+            if (words.Length == 0 && usrlist.Count > 7) SayBattle("ringing all unready");
+            else SayBattle("ringing " + rang);
+        }
 
 
-		public void ComSay(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0)
-			{
-				Respond(e, "This command needs 1 parameter (say text)");
-				return;
-			}
-			SayBattle("[" + e.UserName + "]" + Utils.Glue(words));
-		}
-
-		public void ComSetCommandLevel(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length != 2)
-			{
-				Respond(e, "This command needs 2 parameters");
-				return;
-			}
-			int lvl;
-			int.TryParse(words[0], out lvl);
-			var com = config.Commands.Find(x => x.Name == words[1]);
-			if (com != null)
-			{
-				com.Level = lvl;
-				SaveConfig();
-				Respond(e, string.Format("Level of command {0} was set to {1}", words[1], lvl));
-			}
-			else Respond(e, "No such command found");
-		}
-
-		public void ComSetLevel(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length != 2)
-			{
-				Respond(e, "This command needs 2 parameters");
-				return;
-			}
-			int lvl;
-			int.TryParse(words[0], out lvl);
-			config.SetPrivilegedUser(words[1], lvl);
-			SaveConfig();
-			Respond(e, words[1] + " has rights level " + lvl);
-		}
+        // user and rank info
 
 
-		public void ComSplit(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length != 2)
-			{
-				Respond(e, "This command needs 2 parameters");
-				return;
-			}
-			if (words[0] != "h" && words[0] != "v") Respond(e, "first parameter must be 'h' or 'v'");
-			else
-			{
-				int perc;
-				int.TryParse(words[1], out perc);
-				if (perc < 0 || perc > 50) Respond(e, "second parameter must be between 0 and 50");
-				else
-				{
-					if (words[0] == "h")
-					{
-						tas.AddBattleRectangle(0, new BattleRect(0, 0, 1.0, perc/100.0));
-						tas.AddBattleRectangle(1, new BattleRect(0, 1.0 - perc/100.0, 1.0, 1.0));
-					}
-					else
-					{
-						tas.AddBattleRectangle(0, new BattleRect(0, 0, perc/100.0, 1.0));
-						tas.AddBattleRectangle(1, new BattleRect(1.0 - perc/100.0, 0, 1.0, 1.0));
-					}
-					tas.RemoveBattleRectangle(2);
-					tas.RemoveBattleRectangle(3);
-				}
-			}
-		}
+        public void ComSay(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0)
+            {
+                Respond(e, "This command needs 1 parameter (say text)");
+                return;
+            }
+            SayBattle("[" + e.UserName + "]" + Utils.Glue(words));
+        }
+
+        public void ComSetCommandLevel(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length != 2)
+            {
+                Respond(e, "This command needs 2 parameters");
+                return;
+            }
+            int lvl;
+            int.TryParse(words[0], out lvl);
+            var com = config.Commands.Find(x => x.Name == words[1]);
+            if (com != null)
+            {
+                com.Level = lvl;
+                SaveConfig();
+                Respond(e, string.Format("Level of command {0} was set to {1}", words[1], lvl));
+            }
+            else Respond(e, "No such command found");
+        }
+
+        public void ComSetLevel(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length != 2)
+            {
+                Respond(e, "This command needs 2 parameters");
+                return;
+            }
+            int lvl;
+            int.TryParse(words[0], out lvl);
+            config.SetPrivilegedUser(words[1], lvl);
+            SaveConfig();
+            Respond(e, words[1] + " has rights level " + lvl);
+        }
 
 
-		public void ComSpringie(TasSayEventArgs e, string[] words)
-		{
-			var b = tas.MyBattle;
+        public void ComSplit(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length != 2)
+            {
+                Respond(e, "This command needs 2 parameters");
+                return;
+            }
+            if (words[0] != "h" && words[0] != "v") Respond(e, "first parameter must be 'h' or 'v'");
+            else
+            {
+                int perc;
+                int.TryParse(words[1], out perc);
+                if (perc < 0 || perc > 50) Respond(e, "second parameter must be between 0 and 50");
+                else
+                {
+                    if (words[0] == "h")
+                    {
+                        tas.AddBattleRectangle(0, new BattleRect(0, 0, 1.0, perc/100.0));
+                        tas.AddBattleRectangle(1, new BattleRect(0, 1.0 - perc/100.0, 1.0, 1.0));
+                    }
+                    else
+                    {
+                        tas.AddBattleRectangle(0, new BattleRect(0, 0, perc/100.0, 1.0));
+                        tas.AddBattleRectangle(1, new BattleRect(1.0 - perc/100.0, 0, 1.0, 1.0));
+                    }
+                    tas.RemoveBattleRectangle(2);
+                    tas.RemoveBattleRectangle(3);
+                }
+            }
+        }
 
-			var running = DateTime.Now.Subtract(Program.startupTime);
-			running = new TimeSpan((int)running.TotalHours, running.Minutes, running.Seconds);
 
-			var started = DateTime.Now.Subtract(spring.GameStarted);
-			started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
+        public void ComSpringie(TasSayEventArgs e, string[] words)
+        {
+            var b = tas.MyBattle;
 
-			Respond(e, tas.UserName + " (" + MainConfig.SpringieVersion + ") running for " + running);
-			Respond(e, "players: " + (b.Users.Count - b.NonSpectatorCount) + "/" + b.MaxPlayers);
-			Respond(e, "mod: " + b.ModName);
-			Respond(e, "map: " + b.MapName);
-			Respond(e,
-			        "game " + (spring.IsRunning ? "running since " : "not running, last started ") +
-			        (spring.GameStarted != DateTime.MinValue ? started + " ago" : "never"));
-		}
+            var running = DateTime.Now.Subtract(Program.startupTime);
+            running = new TimeSpan((int)running.TotalHours, running.Minutes, running.Seconds);
 
-		public void ComStart(TasSayEventArgs e, string[] words)
-		{
-			List<string> usname;
+            var started = DateTime.Now.Subtract(spring.GameStarted);
+            started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
+
+            Respond(e, tas.UserName + " (" + MainConfig.SpringieVersion + ") running for " + running);
+            Respond(e, "players: " + (b.Users.Count - b.NonSpectatorCount) + "/" + b.MaxPlayers);
+            Respond(e, "mod: " + b.ModName);
+            Respond(e, "map: " + b.MapName);
+            Respond(e,
+                    "game " + (spring.IsRunning ? "running since " : "not running, last started ") +
+                    (spring.GameStarted != DateTime.MinValue ? started + " ago" : "never"));
+        }
+
+        public void ComStart(TasSayEventArgs e, string[] words)
+        {
+            if (DateTime.Now.Subtract(spring.GameEnded).TotalMinutes < 3 && spring.Duration > 6 * 60) {
+                SayBattle("cannot start yet, give people some time to rest");
+                return;
+            }
+
+
+            List<string> usname;
 			if (!AllReadyAndSynced(out usname))
 			{
 				SayBattle("cannot start, " + Utils.Glue(usname.ToArray()) + " not ready and synced");

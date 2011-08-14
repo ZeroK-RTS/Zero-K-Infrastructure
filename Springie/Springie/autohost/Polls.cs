@@ -17,7 +17,7 @@ namespace Springie.autohost
 
     public abstract class AbstractPoll
     {
-        protected const double ratio = 0.5;
+        public virtual double Ratio { get { return 0.5; } }
 
         protected AutoHost ah;
         protected int defaultWinVote = 1;
@@ -69,7 +69,7 @@ namespace Springie.autohost
 
             int votesLeft = votes.FindAll(delegate(int t) { return (t == 0); }).Count;
             bool canDecide = false;
-            var winLimit = (int)(initialUserCount*ratio);
+            var winLimit = (int)(initialUserCount*Ratio);
 
             int max = 0;
             int maxCount = 0;
@@ -186,7 +186,7 @@ namespace Springie.autohost
 
     public class VoteKick: AbstractPoll, IVotable
     {
-        new const double ratio = 0.66;
+        public override double Ratio { get { return 0.66; } }
 
         string player;
 
@@ -242,8 +242,6 @@ namespace Springie.autohost
 
     public class VoteSpec : AbstractPoll, IVotable
     {
-      new const double ratio = 0.50;
-
       string player;
 
       public VoteSpec(TasClient tas, Spring spring, AutoHost ah) : base(tas, spring, ah) { }
@@ -289,8 +287,6 @@ namespace Springie.autohost
 
     public class VoteForce: AbstractPoll, IVotable
     {
-        new const double ratio = 0.50;
-
         public VoteForce(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
         public bool Init(TasSayEventArgs e, string[] words)
@@ -334,8 +330,6 @@ namespace Springie.autohost
 
     public class VoteForceStart: AbstractPoll, IVotable
     {
-        new const double ratio = 0.50;
-
         int allowedAlly = -1;
 
         public VoteForceStart(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
@@ -403,8 +397,7 @@ namespace Springie.autohost
 
     public class VoteExit: AbstractPoll, IVotable
     {
-        new const double ratio = 0.66;
-
+        public override double Ratio { get { return 0.66; } }
         public VoteExit(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
         public bool Init(TasSayEventArgs e, string[] words)
