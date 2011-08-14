@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using System.Transactions;
 using LobbyClient;
 using ZkData;
 
@@ -29,7 +30,7 @@ namespace NightWatch
           if (requests.TryGetValue(client.MessageID, out entry))
           {
             entry.CorrectName = e.ServerParams[0];
-            entry.AccountID = Convert.ToInt32(e.ServerParams[1]);
+            entry.LobbyID = Convert.ToInt32(e.ServerParams[1]);
             if (client.ExistingUsers.ContainsKey(entry.CorrectName)) entry.User = client.ExistingUsers[entry.CorrectName];
             entry.WaitHandle.Set();
           }
@@ -63,6 +64,7 @@ namespace NightWatch
     {
       Account acc = null;
       using (var db = new ZkDataContext())
+      using (var scope = new TransactionScope()) 
       {
         acc = db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
         if (acc == null)
@@ -85,6 +87,7 @@ namespace NightWatch
         }
 
         db.SubmitChanges();
+        scope.Complete();
       }
       return acc;
     }
@@ -119,9 +122,9 @@ namespace NightWatch
 
       client.SendRaw(string.Format("#{0} TESTLOGIN {1} {2}", messageId, login, hashedPassword));
 			if (info.WaitHandle.WaitOne(AuthServiceTestLoginWait)) {
-				if (info.AccountID == 0) return null; // not verified/invalid login or password
+				if (info.LobbyID == 0) return null; // not verified/invalid login or password
 				else {
-					var acc = UpdateUser(info.AccountID, info.CorrectName, info.User, hashedPassword);
+					var acc = UpdateUser(info.LobbyID, info.CorrectName, info.User, hashedPassword);
 					return acc;
 				}
 			} else // looby timeout, use database
@@ -155,7 +158,7 @@ namespace NightWatch
 
     class RequestInfo
     {
-      public int AccountID;
+      public int LobbyID;
       public string CorrectName;
       public User User;
       public readonly EventWaitHandle WaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
