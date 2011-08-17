@@ -392,7 +392,7 @@ namespace ZeroKWeb
                     if (hostAccount.PlanetWarsHost == null) hostAccount.PlanetWarsHost = new PlanetWarsHost(); hostAccount.PlanetWarsHost.InGame = false;
                     hostAccount.PlanetWarsHost.PlanetID = planet.PlanetID;
                     hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.Clear();
-                    hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(accounts.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = x.AccountID, IsSpectator = x.Spectate }));
+                    hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(accounts.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = db.Accounts.First(y=>y.LobbyID == x.AccountID).AccountID, IsSpectator = x.Spectate }));
                     db.SubmitChanges();
 
                 }
