@@ -128,6 +128,7 @@ namespace ZeroKWeb
                             }
 
                         }
+                        
                     }
                 }
 
@@ -141,17 +142,18 @@ namespace ZeroKWeb
                         var points = 0.0;
                         if (c1 != null && c2 != null)
                         {
-                            if (c1 == c2) points = 4;
+                            if (c1 == c2) points = 3;
                             else
                             {
                                 var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
-                                if (treaty.AllyStatus == AllyStatus.Alliance) points = 0.2;
-                                else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.1;
-                                else if (treaty.AllyStatus == AllyStatus.War) points = -3;
+                                if (treaty.AllyStatus == AllyStatus.Alliance) points = 1;
+                                else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.5;
+                                else if (treaty.AllyStatus == AllyStatus.War) points = -2;
                             }
                         }
                         sameTeamScore[i, j] = points;
                         sameTeamScore[j, i] = points;
+                        //res.Message += string.Format("{0} + {1} = {2} \n", players[i].Name, players[j].Name, points);
                     }
                 }
 
@@ -160,17 +162,20 @@ namespace ZeroKWeb
                 {
                     var mult = 1.0;
                     var player = players[i];
-                    if (planet.OwnerAccountID == player.AccountID) mult += 0.15; // owner 15%
-                    else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.1; // owner's clan 10% 
-                    if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.1; // own dropship +10%
-                    else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.05; // clan's dropship +5%
+                    if (planet.OwnerAccountID == player.AccountID) mult += 0.2; // owner 
+                    else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.15; // owner's clan 
+                    if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.1; // own dropship 
+                    else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.05; // clan's dropship 
                     playerScoreMultiplier[i] = mult;
+
+                    //res.Message += string.Format("{0} mult = {1} \n", players[i].Name, mult);
                 }
 
                 var limit = 1 << (players.Count);
                 var bestCombination = -1;
                 var bestScore = double.MinValue;
                 double bestCompo = 0;
+                double absCompo = 0;
                 double bestElo = 0;
                 double bestTeamDiffs = 0;
                 var playerAssignments = new int[players.Count];
@@ -206,7 +211,7 @@ namespace ZeroKWeb
 
                     // calculate score for team difference
                     var teamDiffScore = -(20.0 * Math.Abs(team0count - team1count) / (double)(team0count + team1count)) - Math.Abs(team0count - team1count);
-                    if (teamDiffScore < -8) continue; // max imabalance 50% (1v2)
+                    if (teamDiffScore < -10) continue; // max imabalance
 
                     double balanceModifier = 0;
                     if (team0count < team1count) balanceModifier = -teamDiffScore;
@@ -219,7 +224,7 @@ namespace ZeroKWeb
                     //team0Elo = team0Elo/team0Weight;
                     //team1Elo = team1Elo/team1Weight;
                     var eloScore = -Math.Abs(team0Elo - team1Elo) / 14;
-                    if (eloScore < -13) continue; // max 182 elo
+                    if (eloScore < -14) continue; 
 
                     if (team0Elo < team1Elo) balanceModifier += -eloScore;
                     else balanceModifier += eloScore;
@@ -235,7 +240,7 @@ namespace ZeroKWeb
                             if (i != j)
                             {
                                 var sts = sameTeamScore[i, j];
-                                if (sts > 0) // we only consider no-neutral people 
+                                if (sts != 0.0) // we only consider no-neutral people 
                                 {
                                     if (playerAssignments[i] == playerAssignments[j]) sum += sts;
                                     else sum -= sts; // different teams - score is equal to negation of same team score
@@ -247,7 +252,8 @@ namespace ZeroKWeb
                             compoScore += playerScoreMultiplier[i] * sum / cnt;
                     }
 
-                    if (compoScore < 0) continue; // get meaningfull teams only
+                    if (compoScore < 0 || compoScore < 0.5*absCompo) continue; // get meaningfull teams only
+                    if (compoScore > absCompo) absCompo = compoScore; // todo lame - abs compo not known at this point,should be 2 pass
                     var score = -Math.Abs(balanceModifier) + teamDiffScore + compoScore;
 
                     if (score > bestScore)
@@ -264,6 +270,10 @@ namespace ZeroKWeb
                 {
                     res.BalancedTeams = null;
                     res.Message += "Cannot be balanced well at this point";
+                }
+                else if (bestCompo < absCompo * 0.5) {
+                    res.BalancedTeams = null;
+                    res.Message += string.Format("Cannot be balanced well at this point - best composition: {0}, available: {1}", absCompo, bestCompo);
                 }
                 else
                 {
