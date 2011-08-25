@@ -98,7 +98,7 @@
     @foreach (var grp in Model.SpringBattlePlayers.Where(x => !x.IsSpectator).GroupBy(x => x.AllyNumber))
     {
         var win = grp.First().IsInVictoryTeam;
-        <div class='fleft border @(win ? "battle_winner" : "battle_loser")'>
+        <div class='fleft @(win ? "battle_winner" : "battle_loser")'>
             <span style="font-size: 130%; font-family: Skir;">Team @(grp.Key + 1)
                 @(win ? "Won!" : "Lost")</span><br />
             <small>XP gained: @(win ? @Model.WinnerTeamXpChange : @Model.LoserTeamXpChange)
@@ -122,7 +122,7 @@
             }
         </div>
     }
-    <div class="fleft border battle_spec">
+    <div class="fleft battle_spec">
         <span style="font-size: 130%; font-family: Skir;">Spectators</span><br />
         @foreach (var u in Model.SpringBattlePlayers.Where(x => x.IsSpectator))
         {
