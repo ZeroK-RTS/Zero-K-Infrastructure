@@ -187,6 +187,7 @@ div#ajaxScrollProgress
 {
 	color: #fff;
     box-shadow: 0 0 2px 2px #fff;
+    text-decoration: underline;
 }
 
 .downloadbutton

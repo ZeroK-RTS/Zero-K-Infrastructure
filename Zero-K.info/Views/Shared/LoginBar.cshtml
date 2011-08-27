@@ -11,11 +11,14 @@
     &nbsp;&nbsp; Password:
     <input type="password" name="password" />
     &nbsp;&nbsp;
-    <input type="image" value="Login" src="/img/login.png" style="border: none; width: 32px;
-        height: 32px; vertical-align: middle;" title="Login" alt="Login" />
-    <small>(use Zero-K lobby account)</small>
+    <input type="image" value="Login" src="/img/login.png" style="border: none; width: 25px;
+        height: 25px; vertical-align: middle;" title="Login with your Zero-K lobby account" alt="Login" />
+        <small>
+        (<a href="http://zero-k.info/Wiki/FAQ#11._I_forgot_my_password_/_username._Help_me_pls!" target="_blank" alt="forgot password">Forgot password / username?</a> /
+        <a href="http://zero-k.info/Wiki/LobbyStart" alt="create account" target="_blank">Create an account</a>)
+        </small>
     <input type="hidden" name="referer" value="@(Request["ReturnUrl"] != null ? Request["ReturnUrl"] : Request.Url.ToString())" />
-    </form>
+    </form>        
     }
     else
     {
@@ -32,8 +35,8 @@
     | Credits: @Global.Account.Credits.ToString("C0") | @Html.ActionLink("Trade", "Trade", "Planetwars", new { username = Global.Account.Name }, null)
     | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0)
     | Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()
-    <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 32px;
-        height: 32px; vertical-align: middle;" alt="Logout" title="Logout" />
+    <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 25px;
+        height: 25px; vertical-align: middle;" alt="Logout" title="Logout" />
     </form>
     
     }
