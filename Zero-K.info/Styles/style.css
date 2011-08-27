@@ -336,7 +336,7 @@ div#ajaxScrollProgress
 
 .battle_winner
 {
-	border: 1px solid #38bfec;
+	border: 1px solid #00FF21;
 	padding: 5px;
 	margin: 2px;
 	border-radius: 5px;
@@ -347,7 +347,7 @@ div#ajaxScrollProgress
 
 .battle_loser
 {
-	border: 1px solid #777;
+	border: 1px solid #FF0000;
 	padding: 5px;
 	margin: 2px;
 	border-radius: 5px;
