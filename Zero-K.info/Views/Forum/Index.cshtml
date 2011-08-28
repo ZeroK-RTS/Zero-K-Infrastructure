@@ -3,7 +3,8 @@
 	Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x=>x.Title));
 }
 
-@{Html.RenderPartial("ForumPath", Model.Path);}
+@{Html.RenderPartial
+("ForumPath", Model.Path);}
 
 @if (Model.Categories.Any()) {
 	// forum index
@@ -19,7 +20,7 @@
 }
 
 @if (Model.CurrentCategory != null && !Model.CurrentCategory.IsLocked) {
-	<h3>@Html.ActionLink("Post new topic", "NewPost", new {categoryID= Model.CurrentCategory.ForumCategoryID})</h3>
+	<h3 class="textbutton">@Html.ActionLink("Post new topic", "NewPost", new {categoryID= Model.CurrentCategory.ForumCategoryID})</h3><br />
 }
 
 @if (Model.Threads.Any())

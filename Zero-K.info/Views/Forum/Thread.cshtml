@@ -19,7 +19,7 @@
 <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
 
 @if (!Model.CurrentThread.IsLocked) {
-  <h3>@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+ <br /><h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3><br />
 }
 @if (Global.IsZeroKAdmin) {
 	var db = new ZkData.ZkDataContext();
@@ -73,6 +73,6 @@ Pages:
 }
 
 @if (!Model.CurrentThread.IsLocked) {
-  <h3>@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+  <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
 }
 
