@@ -1,0 +1,34 @@
+@{
+    ViewBag.Title = "Index.cshtml";
+}
+<script type="text/javascript" src='@Href("~/Scripts/galleria/galleria-1.2.5.js")' > </script>
+<script type="text/javascript" src='@Href("~/Scripts/galleria/plugins/flickr/galleria.flickr.min.js")' > </script>
+<p>Images of Zero-K</p>
+ <div id="galleria" style="width:100%;height:550px"></div>
+<script>
+// Load the classic theme
+Galleria.loadTheme('@Href("~/Scripts/galleria/themes/classic/galleria.classic.min.js")');
+// Initialize Galleria
+
+var flickr = new Galleria.Flickr();
+flickr.setOptions({
+    imageSize: 'big',
+    thumbSize: 'small'
+});
+flickr.group('1738816@N20', function (data) {
+    $('#galleria').galleria({
+        dataSource: data
+    });
+});
+</script>
+
+ 
+<div class="border">
+<h2>
+    <a href="http://www.facebook.com/ZeroK.RTS" target="_blank">Social Media</a>
+    <!-- Google +1 Button -->
+    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+    <g:plusone></g:plusone>
+</h2>
+<br />
+
