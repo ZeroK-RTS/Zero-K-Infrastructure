@@ -2,173 +2,155 @@
 @using ZkData;
 @using PlasmaShared;
 @{
-  var m = Model.Resource;
-  var mi = Model.MapInfo;
+	var m = Model.Resource;
+	var mi = Model.MapInfo;
 }
 @{
-  Page.Title = m.InternalName+ " map";
-  var size = m.ScaledImageSize(200);
+	Page.Title = m.InternalName+ " map";
+	var size = m.ScaledImageSize(200);
 }
 <script type="text/javascript">
-  $(document).ready(function () {
-    $("#rating").stars({
-      callback: function (ui, type, value) {
-        $.get('@Url.Action("Rate", new { id = m.ResourceID })?rating=' + value, function (ret) { if (ret != "") alert(ret); });
-      }
-    });
-  });
+	$(document).ready(function () {
+		$("#rating").stars({
+			callback: function (ui, type, value) {
+				$.get('@Url.Action("Rate", new { id = m.ResourceID })?rating=' + value, function (ret) { if (ret != "") alert(ret); });
+			}
+		});
+	});
 </script>
-@Html.ActionLink("Back to List", "Index")
-<div class="wrapper">
-  <h2>@m.InternalName</h2>
-  By @m.AuthorName<br />
-  <h3>
-    <a href='spring://chat/battle@select_map:@m.InternalName'>PLAY THIS MAP</a></h3>
-  @if (!ZeroKWeb.Global.IsLobbyAccess) {
-    <small>Manual downloads:
-      <br />
-      @foreach (var l in m.ResourceContentFiles.Where(x => x.LinkCount > 0).Select(x => x.Links).SelectMany(x => x.Split('\n')).Shuffle()) {
-        <a href='@l'>@l</a><br />
-      }
-    </small>
-  }
-  Size: @m.MapWidth x @m.MapHeight
-  <br />
-  @{Html.RenderPartial("MapTags", m);}
-  <br />
-  Downloads: @m.DownloadCount<br />
-  @if (mi != null) {
-@mi.Description 
-<small>
-  <table>
-    <tr>
-      <td>
-        Wind:
-      </td>
-      <td>@mi.MinWind - @mi.MaxWind
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Metal:
-      </td>
-      <td>@mi.MaxMetal
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Tidal:
-      </td>
-      <td>@mi.TidalStrength
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Gravity:
-      </td>
-      <td>@mi.Gravity
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Extractor radius:
-      </td>
-      <td>@mi.ExtractorRadius
-      </td>
-    </tr>
-  </table>
-</small>
-  }
-  <table>
-    <tr>
-      <td>
-        Rating:
-      </td>
-      <td>@Html.Stars(StarType.GreenStarSmall, m.MapRating)
-      </td>
-      <td>
-        Your vote:
-        <div id='rating'>
-          @Html.Select("rating", new List<SelectOption>()
-			                              {
-			                              	new SelectOption() { Value = "1", Name = "Poor" },
-			                              	new SelectOption() { Value = "2", Name = "Below average" },
-			                              	new SelectOption() { Value = "3", Name = "Average" },
-			                              	new SelectOption() { Value = "4", Name = "Good" },
-			                              	new SelectOption() { Value = "5", Name = "Awesome" }
-			                              },
-                                    Model.MyRating.Rating.ToString())
-        </div>
-      </td>
-    </tr>
-  </table>
-  
-  @if (ZeroKWeb.Global.IsAccountAuthorized && ZeroKWeb.Global.Account.LobbyTimeRank > 3) {
-  <div style='border: 1px dashed teal'>
-    Tag this map
-    @if (m.TaggedByAccountID != null) {
-      @: - Last tagged by @m.Account.Name
-    }
-    <form action="@Url.Action("Tag", new { id = m.ResourceID })" method="post">
-    Sea: @Html.Select("sea", typeof(Resource.WaterLevel), m.MapWaterLevel, "?") &nbsp;&nbsp;
-    Hills: @Html.Select("hills", typeof(Resource.Hill), m.MapHills, "?") &nbsp;&nbsp;
-    FFA: @Html.BoolSelect("ffa", m.MapIsFfa, "?") &nbsp;&nbsp; Assymetrical: @Html.BoolSelect("assymetrical", m.MapIsAssymetrical, "?")
-    &nbsp;&nbsp; <span title='Maps with special features, speedmetal, duck, greenfields etc'>
-      Special: @Html.BoolSelect("special", m.MapIsSpecial, "?") &nbsp;&nbsp; </span>
-      <br />
-      <span title='Is the map also good for 1v1?'>
-      1v1: @Html.BoolSelect("is1v1", m.MapIs1v1, "?") &nbsp;&nbsp; </span>
 
-      <span title='Is the map ONLY good for chickens?'>
-      chickens: @Html.BoolSelect("chickens", m.MapIsChickens, "?") &nbsp;&nbsp; </span>
-    Author: @Html.TextBox("author", m.AuthorName)
-    @if (ZeroKWeb.Global.IsZeroKAdmin) {
-      <br />
-      @:Featured order: @Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)<br />
-      @:Planetwars image: <img src='/img/planets/@Model.Resource.MapPlanetWarsIcon'  width='@Model.Resource.PlanetWarsIconSize' /> 
-      @Html.ActionLink("pick new", "PlanetImageSelect", new { resourceID= Model.Resource.ResourceID }) <br />
-    }
-    <input type="submit" value="Update" />
-    </form>
-  </div>
-    }
-  <table>
-    <tr valign='top'>
-      <td align="center">
-        <a href='http://zero-k.info/Resources/@(m.MinimapName)'>
-          <img src='http://zero-k.info/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
-        </a>
-      </td>
-      <td align="center">
-        <a href='http://zero-k.info/Resources/@(m.HeightmapName)'>
-          <img src='http://zero-k.info/Resources/@(m.HeightmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
-        </a>
-      </td>
-      <td align="center">
-        <a href='http://zero-k.info/Resources/@(m.MetalmapName)'>
-          <img src='http://zero-k.info/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
-        </a>
-      </td>
-    </tr>
-  </table>
+@Html.ActionLink("Back to List", "Index")
+<div class="">
+
+<div id="maps" class="relative fleft" style="width: @(size.Width)px; height: @(3*size.Height+10)px; margin: 10px;">
+	<a href='http://zero-k.info/Resources/@(m.MinimapName)' class="">
+		<img src='http://zero-k.info/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+	</a>
+	<a href='http://zero-k.info/Resources/@(m.HeightmapName)' class="">
+		<img src='http://zero-k.info/Resources/@(m.HeightmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+	</a>
+	<a href='http://zero-k.info/Resources/@(m.MetalmapName)' class="">
+		<img src='http://zero-k.info/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
+	</a>
+</div>
+	<h2>@m.InternalName</h2>
+	By @m.AuthorName<br />
+	<table>
+		<tr>
+			<td>Rating:</td>
+			<td valign="middle">
+			<div class="ratings">
+				<div class="rating_all">
+					@Html.Stars(StarType.GreenStarSmall, m.MapRating)
+				</div>
+				<div id='rating' class="rating_yours">
+					@Html.Select("rating", new List<SelectOption>()
+						{
+						    new SelectOption() { Value = "1", Name = "Poor" },
+							new SelectOption() { Value = "2", Name = "Below average" },
+							new SelectOption() { Value = "3", Name = "Average" },
+							new SelectOption() { Value = "4", Name = "Good" },
+							new SelectOption() { Value = "5", Name = "Awesome" }
+						},
+						Model.MyRating.Rating.ToString())
+				</div>
+			</div>
+            </td>
+		</tr>
+	</table>
+	@{Html.RenderPartial("MapTags", m);}<br />
+	
+	@if (mi != null) {
+	@mi.Description 
+	<table style="font-size: small">
+		<tr>
+			<td>Size: </td><td>@m.MapWidth x @m.MapHeight</td>
+		</tr>
+		<tr>
+			<td>Wind:</td>
+			<td>@mi.MinWind - @mi.MaxWind</td>
+		</tr>
+		<tr>
+			<td>Metal:</td>
+			<td>@mi.MaxMetal</td>
+		</tr>
+		<tr>
+			<td>Tidal:</td>
+			<td>@mi.TidalStrength</td>
+		</tr>
+		<tr>
+			<td>Gravity:</td>
+			<td>@mi.Gravity</td>
+		</tr>
+		<tr>
+			<td>Extractor radius:</td>
+			<td>@mi.ExtractorRadius</td>
+		</tr>
+	</table>
+	}
+	
+	<h3 class="textbutton"><a href='spring://chat/battle@select_map:@m.InternalName'>PLAY ON THIS MAP</a></h3><br />
+	Downloads: @m.DownloadCount<br />
+		@if (!ZeroKWeb.Global.IsLobbyAccess) {
+		<div style="font-size: small">
+			Manual downloads:<br />
+			@foreach (var l in m.ResourceContentFiles.Where(x => x.LinkCount > 0).Select(x => x.Links).SelectMany(x => x.Split('\n')).Shuffle()) {
+				<a href='@l'>@l</a><br />
+			}
+		</div>
+	}
+	<br class="clearfloat" />
+	@if (ZeroKWeb.Global.IsAccountAuthorized && ZeroKWeb.Global.Account.LobbyTimeRank > 3)
+	{
+	<div style='border: 1px dashed teal; padding: 10px;'>
+		Tag this map
+		@if (m.TaggedByAccountID != null)
+		{
+			@: - Last tagged by @m.Account.Name
+		}
+		<form action="@Url.Action("Tag", new { id = m.ResourceID })" method="post">
+		<table>
+		<tr>
+			<td>Terrain:</td><td>@Html.Select("sea", typeof(Resource.WaterLevel), m.MapWaterLevel, "?")</td>
+		</tr>
+		<tr>
+			<td>Hills:</td><td>@Html.Select("hills", typeof(Resource.Hill), m.MapHills, "?")</td>
+		</tr>
+		<tr>
+			<td>FFA:</td><td>@Html.BoolSelect("ffa", m.MapIsFfa, "?")</td>
+		</tr>
+		<tr>
+			<td>Assymetrical:</td><td>@Html.BoolSelect("assymetrical", m.MapIsAssymetrical, "?")</td>
+		</tr>
+		<tr>
+			<td title='Maps with special features, speedmetal, duck, greenfields etc.'>Special:</td><td>@Html.BoolSelect("special", m.MapIsSpecial, "?")</td>
+		</tr>
+		<tr>
+			<td title='Is the map also good for 1v1?'>1v1:</td><td>@Html.BoolSelect("is1v1", m.MapIs1v1, "?")</td>
+		</tr>
+		<tr>
+			<td title='Is the map ONLY good for chickens?'>Chickens:</td><td>@Html.BoolSelect("chickens", m.MapIsChickens, "?")</td>
+		</tr>
+		<tr>
+			<td>Author:</td><td>@Html.TextBox("author", m.AuthorName)</td>
+		</tr>
+		@if (ZeroKWeb.Global.IsZeroKAdmin)
+		{
+			<tr>
+				<td>Featured order:</td><td>@Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)</td>
+			</tr>
+			<tr>
+				<td>Planetwars image:</td><td valign="middle"><img src='/img/planets/@Model.Resource.MapPlanetWarsIcon' width='@Model.Resource.PlanetWarsIconSize' /> 
+			@Html.ActionLink("pick new", "PlanetImageSelect", new { resourceID = Model.Resource.ResourceID })</td>
+			</tr>
+		}
+		</table>
+		<input type="submit" value="Update" />
+		</form>
+	</div>
+	}
 </div>
 
-@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.Resource.ForumThread, ActionData = new {resourceID = m.ResourceID, threadID = m.ForumThreadID} });}
+@{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.Resource.ForumThread, ActionData = new { resourceID = m.ResourceID, threadID = m.ForumThreadID } });}
 
-
-<!needs to be outside wrapper because wrapper is relatively positioned>
-<!--div id="maps" class="abs top left">
-	<h2>Map Views:</h2>
-	<a href='http://zero-k.info/Resources/@(m.MinimapName)'>
-          <img src='http://zero-k.info/Resources/@(m.MinimapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
-        </a>
-        <br />
-        <a href='http://zero-k.info/Resources/@(m.HeightmapName)'>
-          <img src='http://zero-k.info/Resources/@(m.HeightmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
-        </a>
-        <br />
-         <a href='http://zero-k.info/Resources/@(m.MetalmapName)'>
-          <img src='http://zero-k.info/Resources/@(m.MetalmapName)' style='width:@(size.Width)px; height:@(size.Height)px' class='zoom' />
-        </a>
-</div-->
-<!close maps> @Html.ActionLink("Back to List", "Index") 
+@Html.ActionLink("Back to List", "Index") 

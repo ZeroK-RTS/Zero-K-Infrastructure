@@ -187,7 +187,7 @@ div#ajaxScrollProgress
 {
 	color: #fff;
     box-shadow: 0 0 2px 2px #fff;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .downloadbutton
@@ -361,6 +361,34 @@ div#ajaxScrollProgress
 	border: 1px solid #333;
 	margin: 2px;
 	border-radius: 5px;
+}
+
+/* Map detail
+-----------------------------------------------------------*/
+.rating_all
+{
+	display: block;
+	width: 70px;
+	height: 14px;
+	padding: 0;
+}
+
+.rating_yours
+{
+	display: none;
+	width: 70px;
+	height: 14px;
+	padding: 0;
+}
+
+.ratings:hover > .rating_yours
+{
+	display: block;
+}
+
+.ratings:hover > .rating_all
+{
+	display: none;
 }
 
 /* Styles for validation helpers
