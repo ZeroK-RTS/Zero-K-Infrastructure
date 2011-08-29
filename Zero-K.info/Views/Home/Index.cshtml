@@ -36,7 +36,7 @@
 	}
 
   <div id="news" class="border">
-    @foreach (var n in Model.News.Take(8)) {
+    @foreach (var n in Model.News.Take(4)) {
 		<h1>@n.Title</h1>	
 		if (n.ImageRelativeUrl != null) {
 			<img src="@n.ImageRelativeUrl" style="float:left; width:120px; margin: 6px;"/>
