@@ -98,6 +98,7 @@
     <Compile Include="Controllers\BattlesController.cs" />
     <Compile Include="Controllers\ForumController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ImagesController.cs" />
     <Compile Include="Controllers\LaddersController.cs" />
     <Compile Include="Controllers\MapsController.cs" />
     <Compile Include="Controllers\MissionsController.cs" />
@@ -188,6 +189,26 @@
     <Content Include="Img\Loader.gif" />
     <Content Include="MissionService.svc" />
     <Content Include="ResourceDetail.aspx" />
+    <Content Include="Scripts\galleria\galleria-1.2.5.js" />
+    <Content Include="Scripts\galleria\galleria-1.2.5.min.js" />
+    <Content Include="Scripts\galleria\plugins\flickr\flickr-demo.html" />
+    <Content Include="Scripts\galleria\plugins\flickr\flickr-loader.gif" />
+    <Content Include="Scripts\galleria\plugins\flickr\galleria.flickr.js" />
+    <Content Include="Scripts\galleria\plugins\flickr\galleria.flickr.min.js" />
+    <Content Include="Scripts\galleria\plugins\flickr\loader.gif" />
+    <Content Include="Scripts\galleria\plugins\history\galleria.history.js" />
+    <Content Include="Scripts\galleria\plugins\history\galleria.history.min.js" />
+    <Content Include="Scripts\galleria\plugins\history\history-demo.html" />
+    <Content Include="Scripts\galleria\plugins\picasa\galleria.picasa.js" />
+    <Content Include="Scripts\galleria\plugins\picasa\galleria.picasa.min.js" />
+    <Content Include="Scripts\galleria\plugins\picasa\loader.gif" />
+    <Content Include="Scripts\galleria\plugins\picasa\picasa-demo.html" />
+    <Content Include="Scripts\galleria\themes\classic\classic-demo.html" />
+    <Content Include="Scripts\galleria\themes\classic\classic-loader.gif" />
+    <Content Include="Scripts\galleria\themes\classic\classic-map.png" />
+    <Content Include="Scripts\galleria\themes\classic\galleria.classic.css" />
+    <Content Include="Scripts\galleria\themes\classic\galleria.classic.js" />
+    <Content Include="Scripts\galleria\themes\classic\galleria.classic.min.js" />
     <Content Include="Scripts\jquery-1.5.2.min.js" />
     <Content Include="Scripts\jquery-ui-1.8.14.custom.min.js" />
     <Content Include="Scripts\jquery.qtip.pack.js" />
@@ -229,6 +250,7 @@
     <None Include="PetitaMedium.ttf" />
     <None Include="RevoPop.eot" />
     <None Include="RevoPop.ttf" />
+    <None Include="Scripts\galleria\LICENSE" />
     <None Include="Skir.eot" />
     <None Include="Skir.ttf" />
     <None Include="SM.eot" />
@@ -257,6 +279,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Users\Duplicates.cshtml" />
+    <Content Include="Views\Images\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
