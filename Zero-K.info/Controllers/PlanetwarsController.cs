@@ -968,6 +968,69 @@ namespace ZeroKWeb.Controllers
 			}
 			if (influenceChanged) SetPlanetOwners(db);
 		}
+
+        [Auth]
+	    public ActionResult EstablishHomeworld(int planetid)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            var planet = db.Planets.Single(x=>x.PlanetID==planetid);
+            var freeInfluence = acc.Clan.Accounts.SelectMany(x => x.AccountPlanets).Where(x => x.Planet.OwnerAccountID == null || x.Planet.Account.ClanID != acc.ClanID).Sum(x => (int?)x.Influence);
+            if ((acc.HasClanRights || acc.IsClanFounder) && acc.Clan.HomeworldPlanetID == null && planet.OwnerAccountID == null)
+            {
+                if (freeInfluence > planet.GetIPToCapture())
+                {
+                    MoveInfluenceToHome(db, planet, acc);
+                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} established {1} homeworld on {2}!", acc, acc.Clan, planet));
+                    db.SubmitChanges();
+                    SetPlanetOwners();
+                    return Content("Done, welcome to your new home");
+                }
+                else return Content("Not enough influence");
+            }
+            else return Content("Cannot make homeworld here");
+        }
+
+	    static int MoveInfluenceToHome(ZkDataContext db, Planet planet, Account acc)
+	    {
+	        acc.Clan.HomeworldPlanetID = planet.PlanetID;
+            var sum = 0;
+	        foreach (
+	            var f in
+	                acc.Clan.Accounts.SelectMany(x => x.AccountPlanets).Where(
+	                    x => (x.Planet.OwnerAccountID == null || x.Planet.Account.ClanID != acc.ClanID) && x.PlanetID != planet.PlanetID).ToList())
+	        {
+	            var entry = db.AccountPlanets.SingleOrDefault(x => x.PlanetID == planet.PlanetID && x.AccountID == f.AccountID);
+	            if (entry == null)
+	            {
+	                entry = new AccountPlanet() { AccountID = f.AccountID, PlanetID = planet.PlanetID };
+	                db.AccountPlanets.InsertOnSubmit(entry);
+	            }
+                sum += f.Influence;
+	            entry.Influence += f.Influence;
+	            f.Influence = 0;
+	            db.SubmitChanges();
+	        }
+            return sum;
+	    }
+
+
+	    [Auth]
+	    public ActionResult ConsolidateHomeworld()
+	    {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            var planet = acc.Clan.HomeworldPlanet;
+            if (acc.HasClanRights || acc.IsClanFounder)
+            {
+                var moved = MoveInfluenceToHome(db, planet, acc);
+                if (moved > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} consolidated {1} of {2} influence on {3}", acc, moved, acc.Clan, planet));
+                db.SubmitChanges();
+                SetPlanetOwners();
+                return Content("Done, influence consolidated");
+            }
+            else return Content("No permissions");
+	    }
 	}
 
 	public class EventsResult

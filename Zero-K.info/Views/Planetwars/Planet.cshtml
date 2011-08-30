@@ -121,7 +121,17 @@
 		<li><a href="#minimap"><span>Navigation</span></a></li>
 	</ul>
 	<div id="influence">
-		@Html.Partial("InfluenceList", Model.AccountPlanets)
+        @if (Global.Account != null && Global.Account.Clan != null && Global.Account.Clan.HomeworldPlanetID == null  && (Global.Account.HasClanRights || Global.Account.IsClanFounder)) {
+            @Html.ActionLink("Establish homeworld", "EstablishHomeworld", new { planetID = Model.PlanetID }, new { title="Creates permanent homeworld using your clan's influence spread across unowned planets"})<br />
+        }
+        @if (Model.HomeworldClan != null) {
+            <b>Homeworld of @Html.PrintClan(Model.HomeworldClan)</b><br />
+        }
+        @if (Model.HomeworldClan != null && Global.Account != null && Global.Account.Clan != null && (Global.Account.HasClanRights || Global.Account.IsClanFounder)&&Model.HomeworldClan.ClanID == Global.Account.ClanID) {
+            @Html.ActionLink("Consolidate home influence", "ConsolidateHomeworld", null, new { title="Strengthens homeworld by moving influence from unowned planets here"})
+        }
+        
+        @Html.Partial("InfluenceList", Model.AccountPlanets)
 	</div>
 	<div id="dropships">
 		@Html.Partial("PlanetDropships", Model)
