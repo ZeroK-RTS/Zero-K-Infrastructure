@@ -5,3 +5,11 @@
     ViewBag.OpaqueBody = true;
 }
 @Model.Content
+
+@if (Model.Node == "LobbyStart") {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            _gaq.push(['_trackEvent', 'Lobby', 'First start']);
+        });
+    </script>
+}

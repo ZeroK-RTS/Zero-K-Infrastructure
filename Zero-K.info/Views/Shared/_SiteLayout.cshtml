@@ -28,21 +28,6 @@
         <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' > </script>
         <script type="text/javascript" src='@Href("~/Scripts/nicetitle.js")' > </script>
         <script type="text/javascript" src='@Href("~/Scripts/raphael-min.js")' > </script>
-        <script type="text/javascript">
-
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-20510497-1']);
-		_gaq.push(['_trackPageview']);
-
-		(function() {
-		    var ga = document.createElement('script');
-		    ga.type = 'text/javascript';
-		    ga.async = true;
-		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		    var s = document.getElementsByTagName('script')[0];
-		    s.parentNode.insertBefore(ga, s);
-		})();
-	</script>
         @RenderSection("head", false)
         @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1")
         {
@@ -73,6 +58,22 @@
         }
     </head>
     <body class="">
+        <script type="text/javascript">
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-20510497-1']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script');
+                ga.type = 'text/javascript';
+                ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(ga, s);
+            })();
+	</script>
+
         <div id='ajaxScrollProgress' class="border">
             Loading...<img src='/img/Loader.gif' class="vcenter"/></div>
         @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1")
@@ -155,5 +156,7 @@
                         src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script></div>
         }
+
+
     </body>
 </html>
