@@ -280,6 +280,7 @@
     </Content>
     <Content Include="Views\Users\Duplicates.cshtml" />
     <Content Include="Views\Images\Index.cshtml" />
+    <Content Include="Views\Home\Download.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

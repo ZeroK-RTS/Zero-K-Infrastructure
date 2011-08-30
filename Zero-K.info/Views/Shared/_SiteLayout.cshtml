@@ -1,103 +1,112 @@
 @using ZeroKWeb
 <!DOCTYPE html>
 <html>
-<head>
-	<meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic, action-packed, hassle-free and fun." />
-	<meta name="keywords" content="Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech, online, space, 4x, free, open source" />
-	<title>
-		@if (!string.IsNullOrEmpty(Page.Title)) {
-			@Page.Title<text> - </text>
-	}
-	Zero-K free rts open source	game</title>
+    <head>
+        <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic, action-packed, hassle-free and fun." />
+        <meta name="keywords" content="Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech, online, space, 4x, free, open source" />
+        <title>
+            @if (!string.IsNullOrEmpty(Page.Title))
+            {
+                @Page.Title<text> - </text>
+            }
+            Zero-K free rts open source	game</title>
 
-	<link rel="icon" href='@Href("~/img/favicon.png")'/>
-	<link rel="Stylesheet" href='@Href("~/Styles/style.css")' type="text/css" />
-	<link rel="Stylesheet" href='@Href("~/Styles/jquery.qtip.min.css")' type="text/css" />
-	<link rel="Stylesheet" href='@Href("~/Styles/dark-hive/jquery-ui-1.8.14.custom.css")' type="text/css" />
-	<link rel="Stylesheet" href='@Href("~/Styles/nicetitle.css")' type="text/css" />
-	<script type="text/javascript" src='@Href("~/Scripts/MicrosoftAjax.js")' > </script>
-	<script type="text/javascript" src='@Href("~/Scripts/MicrosoftMvcAjax.js")' > </script>
-	<script type="text/javascript" src='@Href("~/Scripts/jquery-1.5.2.min.js")' > </script>
-	<script type="text/javascript" src='@Href("~/Scripts/jquery-ui-1.8.14.custom.min.js")' > </script>
-	<script type="text/javascript" src='@Href("~/Scripts/jquery.ui.stars.js")' > </script>
-	<script type="text/javascript" src='@Href("~/Scripts/jquery.tablesorter.min.js")' > </script>
-	<script type="text/javascript" src='@Href("~/Scripts/jquery.qtip.pack.js")' > </script>
-    <script type="text/javascript" src='@Href("~/Scripts/site.js")' > </script> 
-	<script type="text/javascript" src='@Href("~/Scripts/base.js")' > </script>
-	<script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' > </script>
-	<script type="text/javascript" src='@Href("~/Scripts/nicetitle.js")' > </script>
-	<script type="text/javascript" src='@Href("~/Scripts/raphael-min.js")' > </script>
-	<script type="text/javascript">
+        <link rel="icon" href='@Href("~/img/favicon.png")'/>
+        <link rel="Stylesheet" href='@Href("~/Styles/style.css")' type="text/css" />
+        <link rel="Stylesheet" href='@Href("~/Styles/jquery.qtip.min.css")' type="text/css" />
+        <link rel="Stylesheet" href='@Href("~/Styles/dark-hive/jquery-ui-1.8.14.custom.css")' type="text/css" />
+        <link rel="Stylesheet" href='@Href("~/Styles/nicetitle.css")' type="text/css" />
+        <script type="text/javascript" src='@Href("~/Scripts/MicrosoftAjax.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/MicrosoftMvcAjax.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery-1.5.2.min.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery-ui-1.8.14.custom.min.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery.ui.stars.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery.tablesorter.min.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/jquery.qtip.pack.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/site.js")' > </script> 
+        <script type="text/javascript" src='@Href("~/Scripts/base.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/browser-css.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/nicetitle.js")' > </script>
+        <script type="text/javascript" src='@Href("~/Scripts/raphael-min.js")' > </script>
+        <script type="text/javascript">
 
 		var _gaq = _gaq || [];
 		_gaq.push(['_setAccount', 'UA-20510497-1']);
 		_gaq.push(['_trackPageview']);
 
-		(function () {
-			var ga = document.createElement('script');
-			ga.type = 'text/javascript';
-			ga.async = true;
-			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-			var s = document.getElementsByTagName('script')[0];
-			s.parentNode.insertBefore(ga, s);
+		(function() {
+		    var ga = document.createElement('script');
+		    ga.type = 'text/javascript';
+		    ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0];
+		    s.parentNode.insertBefore(ga, s);
 		})();
 	</script>
-	@RenderSection("head", false)
-	@if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1") {
-	 //******should instead check cookie for design mode and choose style accordingly******
-	 if (ViewBag.StaticBackground == true) {
-		<style type="text/css">
-			html
-			{
-				background: #000 url("/img/bg_bluehex.gif") fixed;
-			}
-		</style>
-	 } else {
-		 var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
-		 // What we're doing here is generating a number unique to each date
-		 // We use this to seed the RNG so that it picks a new background once per day
-		 var date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
-		 var random = new Random(date);
-		 var file = Path.GetFileName(files[random.Next(files.Length)]);
-		<style type="text/css">
-					html {
-						background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0;
-						background-attachment: fixed;
-					}</style>
-	 }
- }
-</head>
-<body class="">
-	<div id='ajaxScrollProgress' class="border">
-		Loading...<img src='/img/Loader.gif' class="vcenter"/></div>
-	@if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1") {
-		<div id="fadetoblack">
-		</div>
-		<div id="mainContentWrapper" class="wrapper">
-			<div id="header" class="text-center">
-				<a href="/">
-					<img src="/img/zk_logo.png" height="150px" alt="Zero K" /></a>
-			</div>
-			<!close header>
-			<div id="menu" class="border">
-				@Html.Partial("TopMenu")
-			</div>
-			<!close navigation>
-			<div class="border relative">
-				@Html.Partial("LoginBar")
-			</div>
-			<!close login>
+        @RenderSection("head", false)
+        @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1")
+        {
+            //******should instead check cookie for design mode and choose style accordingly******
+            if (ViewBag.StaticBackground == true)
+            {
+                <style type="text/css">
+                    html
+                    {
+                        background: #000 url("/img/bg_bluehex.gif") fixed;
+                    }
+                </style>
+            }
+            else
+            {
+                var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
+                // What we're doing here is generating a number unique to each date
+                // We use this to seed the RNG so that it picks a new background once per day
+                var date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
+                var random = new Random(date);
+                var file = Path.GetFileName(files[random.Next(files.Length)]);
+                <style type="text/css">
+                    html {
+                        background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0;
+                        background-attachment: fixed;
+                    }</style>
+            }
+        }
+    </head>
+    <body class="">
+        <div id='ajaxScrollProgress' class="border">
+            Loading...<img src='/img/Loader.gif' class="vcenter"/></div>
+        @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1")
+        {
+            <div id="fadetoblack">
+            </div>
+            <div id="mainContentWrapper" class="wrapper">
+                <div id="header" class="text-center">
+                    <a href="/">
+                        <img src="/img/zk_logo.png" height="150px" alt="Zero K" /></a>
+                </div>
+                <!close header>
+                <div id="menu" class="border">
+                    @Html.Partial("TopMenu")
+                </div>
+                <!close navigation>
+                <div class="border relative">
+                    @Html.Partial("LoginBar")
+                </div>
+                <!close login>
 
-			<div id="renderbody" @if (ViewBag.NoBorder == null) {
-														 	<text>class="border"</text>
-												} @if (ViewBag.OpaqueBody == true) {
-															 	<text> style="opacity: 1"</text>
-								 }>
-				@RenderBody()
-			<br/>
-			<br/>
-			
-    <script type="text/javascript"><!--
+                <div id="renderbody" @if (ViewBag.NoBorder == null)
+                                     {
+                                         <text>class="border"</text>
+                                     } @if (ViewBag.OpaqueBody == true)
+                                       {
+                                           <text> style="opacity: 1"</text>
+                                       }>
+                    @RenderBody()
+                </div>
+                <div>
+                    <br/>
+                    <h3>Advertisement</h3>
+                    <script type="text/javascript"><!--
         google_ad_client = "ca-pub-9694351454481658";
         /* podelne */
         google_ad_slot = "9206337938";
@@ -105,30 +114,36 @@
         google_ad_height = 90;
 //-->
 </script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+                    <script type="text/javascript"
+                            src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
-			</div>
-			<div id="footer" class="border">
-				<span class="center">Zero-K is a free real time strategy (RTS), that aims to be the
-					best open source multi-platform strategy game available :-) </span>
-			</div>
-			<!close footer>
-		</div>
-@*<!close wrapper>*@		} else {
-		<div id="simplestyle">
-			@if (!Global.IsLobbyAccess) {
-				<div id="menu" class="border">
-					@Html.Partial("TopMenu")
-				</div>
-			}
-			<div class="border relative" style="padding: 0 10px 0 10px;" >
-				@Html.Partial("LoginBar")
-			</div>
-			@RenderBody()
-			<br/>
-			<br/>
-    <script type="text/javascript"><!--
+                </div>
+
+                <div id="footer" class="border">
+                    <span class="center">Zero-K is a free real time strategy (RTS), that aims to be the
+                        best open source multi-platform strategy game available :-) </span>
+                </div>
+                <!close footer>
+            </div>
+@*<!close wrapper>*@        }
+        else
+        {
+            <div id="simplestyle">
+                @if (!Global.IsLobbyAccess)
+                {
+                    <div id="menu" class="border">
+                        @Html.Partial("TopMenu")
+                    </div>
+                }
+                <div class="border relative" style="padding: 0 10px 0 10px;" >
+                    @Html.Partial("LoginBar")
+                </div>
+                @RenderBody()
+            </div>
+            <br/>
+            <div>
+                <h3>Advertisement</h3>
+                <script type="text/javascript"><!--
         google_ad_client = "ca-pub-9694351454481658";
         /* podelne */
         google_ad_slot = "9206337938";
@@ -136,10 +151,9 @@ src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
         google_ad_height = 90;
 //-->
 </script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-		</div>
- }
-</body>
+                <script type="text/javascript"
+                        src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script></div>
+        }
+    </body>
 </html>

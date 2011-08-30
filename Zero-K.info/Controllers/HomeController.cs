@@ -50,7 +50,12 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-		public static string GetMissionTooltip(int id)
+        public ActionResult Download() {
+
+            return View();
+        }
+
+	    public static string GetMissionTooltip(int id)
 		{
 			var db = new ZkDataContext();
 			var sb = new StringBuilder();
