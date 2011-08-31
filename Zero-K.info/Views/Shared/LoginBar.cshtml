@@ -34,7 +34,7 @@
     <b>@Html.ActionLink("PlanetWars", "Index", "Planetwars")</b> Clan: @Html.PrintClan(Global.Clan)
     | Credits: @Global.Account.Credits.ToString("C0") | @Html.ActionLink("Trade", "Trade", "Planetwars", new { username = Global.Account.Name }, null)
     | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0)
-    | Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()
+    | Ships: @(Global.Account.DropshipCount) Fleet size: @Global.Account.GetDropshipCapacity()
     <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 25px;
         height: 25px; vertical-align: middle;" alt="Logout" title="Logout" />
     </form>

@@ -25,34 +25,49 @@ namespace ZeroKWeb.Controllers
 			var accessible = accessiblePlanets.Any(x => x == planetID);
 			var jumpgates = acc.GetFreeJumpGatesCount(accessiblePlanets);
 			var avail = accessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
+            avail = Math.Min(avail, acc.GetDropshipCapacity());
 			var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
 			var defs = planet.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
 			var bombNeed = 3 + defs/3;
 
 			var structs = planet.PlanetStructures.Where(x => !x.IsDestroyed && x.StructureType.IsIngameDestructible).ToList();
-			if (avail >= bombNeed && structs.Count > 0)
+			if (avail >= bombNeed)
 			{
-				acc.DropshipCount -= bombNeed;
-				var s = structs[new Random().Next(structs.Count)];
-				if (s.StructureType.IngameDestructionNewStructureTypeID != null)
-				{
-					db.PlanetStructures.DeleteOnSubmit(s);
-					db.PlanetStructures.InsertOnSubmit(new PlanetStructure()
-					                                   {
-					                                   	PlanetID = planet.PlanetID,
-					                                   	StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value,
-					                                   	IsDestroyed = true
-					                                   });
-				}
-				else s.IsDestroyed = true;
-				db.Events.InsertOnSubmit(Global.CreateEvent("{0} bombed {1} planet {2} with {3} ships, destroying {4}",
-				                                            acc,
-				                                            planet.Account,
-				                                            planet,
-				                                            bombNeed,
-				                                            s.StructureType.Name));
+                if (structs.Count > 0)
+                {
+                    acc.DropshipCount -= bombNeed;
+                    var s = structs[new Random().Next(structs.Count)];
+                    if (s.StructureType.IngameDestructionNewStructureTypeID != null)
+                    {
+                        db.PlanetStructures.DeleteOnSubmit(s);
+                        db.PlanetStructures.InsertOnSubmit(new PlanetStructure()
+                                                           {
+                                                               PlanetID = planet.PlanetID,
+                                                               StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value,
+                                                               IsDestroyed = true
+                                                           });
+                    }
+                    else s.IsDestroyed = true;
+                    
+                    foreach (var entry in planet.AccountPlanets) entry.Influence = (int)(entry.Influence * 0.97);
+                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} bombed {1} planet {2} with {3} ships, destroying {4} and reducing influence by 3%",
+                                                                acc,
+                                                                planet.Account,
+                                                                planet,
+                                                                bombNeed,
+                                                                s.StructureType.Name));
+                }
+                else {
+                    foreach (var entry in planet.AccountPlanets) entry.Influence = (int)(entry.Influence* 0.90);
+                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} bombed {1} planet {2} with {3} ships, reducing influence by 10%",
+                                                                    acc,
+                                                                    planet.Account,
+                                                                    planet,
+                                                                    bombNeed));
+                }
 			}
 			db.SubmitChanges();
+            SetPlanetOwners();
 			return RedirectToAction("Planet", new { id = planetID });
 		}
 
@@ -550,11 +565,15 @@ namespace ZeroKWeb.Controllers
 			var accessible = accessiblePlanets.Any(x => x == planetID);
 			if (!accessible) if (acc.GetFreeJumpGatesCount(accessiblePlanets) <= 0) return Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity"));
 			var cnt = Math.Max(count, 0);
+            var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+            var capa = acc.GetDropshipCapacity();
+            var there = planet.AccountPlanets.Where(x => x.AccountID == acc.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
+            if (cnt + there > capa) return Content("Too many ships, increase fleet size");
 			cnt = Math.Min(cnt, acc.DropshipCount);
 			if (cnt > 0)
 			{
 				acc.DropshipCount = (acc.DropshipCount) - cnt;
-				var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+				
 				if (planet.PlanetWarsHosts.Any(x => x.InGame)) return Content("Battle in progress on the planet, cannot send ships");
 
 				if (planet.Account != null)
