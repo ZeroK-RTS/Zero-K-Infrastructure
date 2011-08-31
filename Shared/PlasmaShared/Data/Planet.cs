@@ -17,7 +17,23 @@ namespace ZkData
 		}
 
 
-		public string GetColor(Account viewer)
+        public int GetMineIncome() {
+            return PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectCreditsPerTurn) ?? 0;
+        }
+
+        public int GetTaxIncome() {
+            if (OwnerAccountID != null)
+                return (AccountPlanets.Where(y => y.Account.ClanID == Account.ClanID).Sum(y => (int?)y.ShadowInfluence + (int?)y.Influence) ?? 0)/50;
+            else return 0;
+        }
+
+        public double GetCorruption() {
+            var influences = GetClanInfluences().Select(x => (int?)x.Influence);
+            return (influences.Skip(1).FirstOrDefault() ?? 0) / (double)(influences.FirstOrDefault() ?? 1);        
+        }
+
+
+	    public string GetColor(Account viewer)
 		{
 			if (Account == null || Account.Clan == null) return "#808080";
 			else if (viewer != null && viewer.Clan != null) return Clan.TreatyColor(viewer.Clan, Account.Clan);

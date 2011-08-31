@@ -787,7 +787,7 @@ namespace ZeroKWeb
                         if (entries.Count() > 1)
                         {
                             var diff = entries.First().Influence - entries.Skip(1).First().Influence;
-                            ownerMalus = (int)((diff / 60.0) * (diff / 60.0));
+                            ownerMalus = Math.Min((int)((diff / 100.0) * (diff / 100.0)),70);
                         }
                     }
 
@@ -944,9 +944,10 @@ namespace ZeroKWeb
                     db.SubmitChanges();
 
                     // mines
-                    foreach (var entry in gal.Planets.Select(x => new { Owner = x.Account, MetalMake = x.PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectCreditsPerTurn) ?? 0 }).Where(x => x.Owner != null && x.MetalMake > 0))
+                    foreach (var entry in gal.Planets.Where(x=>x.OwnerAccountID!=null))
                     {
-                        entry.Owner.Credits += entry.MetalMake;
+                        
+                        entry.Account.Credits += (int)((entry.GetMineIncome() + entry.GetTaxIncome()) * entry.GetCorruption());
                     }
 
                     var oldOwner = planet.OwnerAccountID;

@@ -2,7 +2,9 @@
 <table>
   @{
       var link = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectLinkStrength);
-      var credits = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectCreditsPerTurn);
+      var credits = Model.GetMineIncome() + Model.GetTaxIncome();
+      var corruption = Math.Round(Model.GetCorruption()*100);
+      
       var dropshipCapa = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity);
       var dropshipProd = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipProduction);
       var defense = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense);
@@ -29,6 +31,9 @@
       @if (credits > 0) {
 				@:, <span style='color: ltGreen'>+$@credits/turn</span>
 			}
+      @if (corruption > 0) {
+        <span style='color: red'>-@corruption % corruption</span>
+      }            
       @if (techs.Any()) {
 				foreach (var t in techs)
         {
