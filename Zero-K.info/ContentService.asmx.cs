@@ -941,11 +941,17 @@ namespace ZeroKWeb
                     }
                     db.SubmitChanges();
 
-                    // mines
+                    // income + decay
                     foreach (var entry in gal.Planets.Where(x=>x.OwnerAccountID!=null))
                     {
-                        
-                        entry.Account.Credits += (int)((entry.GetMineIncome() + entry.GetTaxIncome()) * entry.GetCorruption());
+                        var corruption = entry.GetCorruption();
+                        entry.Account.Credits += (int)((entry.GetMineIncome() + entry.GetTaxIncome()) * corruption);
+                        if (corruption > 0) {
+                            foreach (var clanEntries in entry.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null)) {
+                                var personDecay = (int)Math.Ceiling(GlobalConst.InfluenceDecay / (double)clanEntries.Where(x=>x.Influence > 0).Count());
+                                foreach (var e in clanEntries.Where(x => x.Influence > 0)) { e.Influence = e.Influence - personDecay; }
+                            }
+                        }
                     }
 
                     var oldOwner = planet.OwnerAccountID;
