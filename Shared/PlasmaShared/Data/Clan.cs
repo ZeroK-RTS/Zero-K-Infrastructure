@@ -76,7 +76,7 @@ namespace ZkData
             if (ret.AllyStatus== AllyStatus.Neutral)
             {
                 if (FactionID == secondClan.FactionID) ret.AllyStatus = AllyStatus.Alliance;
-                else if (FactionID != secondClan.FactionID) ret.AllyStatus = AllyStatus.War;
+                //else if (FactionID != secondClan.FactionID) ret.AllyStatus = AllyStatus.War;
 
             }
 
