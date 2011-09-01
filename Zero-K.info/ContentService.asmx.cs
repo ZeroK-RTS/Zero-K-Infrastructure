@@ -945,7 +945,7 @@ namespace ZeroKWeb
                     foreach (var entry in gal.Planets.Where(x=>x.OwnerAccountID!=null))
                     {
                         var corruption = entry.GetCorruption();
-                        entry.Account.Credits += (int)((entry.GetMineIncome() + entry.GetTaxIncome()) * corruption);
+                        entry.Account.Credits += (int)((entry.GetMineIncome() + entry.GetTaxIncome()) * (1.0-corruption));
                         if (corruption > 0) {
                             foreach (var clanEntries in entry.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null)) {
                                 var cnt = clanEntries.Where(x=>x.Influence > 0).Count();
