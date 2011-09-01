@@ -24,7 +24,7 @@ namespace Fixer
       //RecalculateBattleElo();
       //FixMaps();
 
-			PurgeGalaxy(9, true);
+			PurgeGalaxy(9, false);
     	RandomizeMaps(9);
 			GenerateStructures(9);
 

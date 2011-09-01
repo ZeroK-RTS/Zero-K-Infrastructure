@@ -187,8 +187,14 @@ namespace System.Web.Mvc
 				                                icon));
 		}
 
+        public static MvcHtmlString PrintFaction(this HtmlHelper helper, Faction fac) {
+            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            if (fac != null) return new MvcHtmlString(string.Format("<img src='/img/factions/{0}'/>", fac.ImageFile));
+            else return new MvcHtmlString("");
+        }
 
-		public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan, bool colorize = true)
+
+	    public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan, bool colorize = true)
 		{
 			var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
 			if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>No Clan</a>", url.Action("ClanList", "Planetwars")));

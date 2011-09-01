@@ -36,8 +36,7 @@ namespace ZkData
 	    public string GetColor(Account viewer)
 		{
 			if (Account == null || Account.Clan == null) return "#808080";
-			else if (viewer != null && viewer.Clan != null) return Clan.TreatyColor(viewer.Clan, Account.Clan);
-			else return "#7DF9FF";
+			else return Account.Clan.Faction.Color;// todo stupid faction way
 		}
 
 		public int GetIPToCapture()

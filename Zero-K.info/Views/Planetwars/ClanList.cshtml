@@ -26,6 +26,7 @@ Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
   <thead style="cursor:pointer">
     <tr>
       <th>Full name</th>
+      <th>Faction</th>
       <th>
         Tag
       </th>
@@ -55,7 +56,8 @@ Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
   @foreach (var c in Model) {
     <tr>
     <td><a href='@Url.Action("Clan", new {id= c.ClanID})'><img src='@c.GetImageUrl()' />@c.ClanName</a></td>
-      <td>@Html.PrintClan(c)</td>
+      <td>@Html.PrintFaction(c.Faction)</td>
+	  <td>@Html.PrintClan(c)</td>
       <td>@c.Accounts.Sum(x=>x.Planets.Count())</td>
       <td>@c.Accounts.SelectMany(x=>x.AccountPlanets).Sum(x=>(int?)x.Influence)</td>
       <td>@c.Accounts.Sum(x=>x.Credits)</td>

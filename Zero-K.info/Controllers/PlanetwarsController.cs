@@ -720,6 +720,7 @@ namespace ZeroKWeb.Controllers
 					orgClan.Description = clan.Description;
 					orgClan.SecretTopic = clan.SecretTopic;
 					orgClan.Password = clan.Password;
+                    orgClan.FactionID = clan.FactionID;
 					//orgClan.DbCopyProperties(clan); 
 				}
 				else

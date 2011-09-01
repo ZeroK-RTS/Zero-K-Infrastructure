@@ -76,12 +76,12 @@
 <div id="victory_conquest" class="fleft border" style="min-height: 60px;">
 <b>Conquest victory (70% planets):</b>
 @{
-	var conquest = @Model.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
+	var conquest = @Model.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Clan.Faction).Select(x => new { Fac = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
 	
 	if (conquest != null)
 	{
         var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.7);
-		<span><b>@Html.PrintClan(conquest.Clan)</b> is in the lead! </span>
+		<span><b>@Html.PrintFaction(conquest.Fac)</b> is in the lead! </span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
 		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_planets))" />
@@ -96,13 +96,13 @@
 <div id="victory_eco" class="fleft border" style="min-height: 60px;">
 <b>Economic victory (50% of galaxy assets):</b>
 @{
-	var credEntries = db.Clans.Select(x => new { Clan = x, Credits = x.Accounts.Sum(y => (int?)y.Credits) ?? 0, Assets = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0) + x.Accounts.SelectMany(y => y.Planets).SelectMany(y => y.PlanetStructures).Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.Cost) ?? 0 }).OrderByDescending(x => x.Credits);
+	var credEntries = db.Factions.Select(x => new { Fac = x, Credits = x.Clans.SelectMany(y=>y.Accounts).Sum(y => (int?)y.Credits) ?? 0, Assets = (x.Clans.SelectMany(y=>y.Accounts).Sum(y => (int?)y.Credits) ?? 0) + x.Clans.SelectMany(y=>y.Accounts).SelectMany(y => y.Planets).SelectMany(y => y.PlanetStructures).Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.Cost) ?? 0 }).OrderByDescending(x => x.Credits);
 	var creds = credEntries.FirstOrDefault();
 
 	if (creds != null)
 	{
         var ratio_money = @creds.Credits / @Math.Round(credEntries.Sum(x => x.Assets) * 0.5);
-		<span><b>@Html.PrintClan(creds.Clan)</b> is in the lead!</span>
+		<span><b>@Html.PrintFaction(creds.Fac)</b> is in the lead!</span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
 		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_money))" />
@@ -118,14 +118,14 @@
 <b>Technologic victory (all artefacts and techs):</b>
 @{
 	var arts = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)).Count();
-	var artsTaken = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true) && y.OwnerAccountID != null && y.Account.Clan != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Arts = x.Count() }).FirstOrDefault();
+	var artsTaken = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true) && y.OwnerAccountID != null && y.Account.Clan != null).GroupBy(x => x.Account.Faction).Select(x => new { Faction = x.Key, Arts = x.Count() }).FirstOrDefault();
 
 	if (artsTaken != null)
 	{
-		var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Account.Clan == artsTaken.Clan).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
+		var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Account.Clan.Faction == artsTaken.Faction).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
 		var owned = artsTaken.Arts;
 		var ratio_struct = techs / (double)db.StructureTypes.Where(x => x.EffectUnlockID != null).Count();
-		<span><b>@Html.PrintClan(artsTaken.Clan)</b> is in the lead! </span>
+		<span><b>@Html.PrintFaction(artsTaken.Faction)</b> </span>
 	<br />
 		//maybe change colors depending on how many artifacts captured?
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
@@ -197,7 +197,7 @@ We are setting up the next round.
 		<!-- planet name and owner-->
 		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; " width="100%" height="25%"><tr>
 		<td style="vertical-align: bottom;" ><div style="display:inline-block; /*padding: 3px; box-shadow: 0 0 3px 3px #000; background: #000; border-radius: 3px; opacity: .8; */">
-			<a href='@Url.Action("Planet", new { id = p.PlanetID })' title="$planet$@p.PlanetID" style="color: #fff; color: @(Clan.TreatyColor(Global.Clan, clan));">
+			<a href='@Url.Action("Planet", new { id = p.PlanetID })' title="$planet$@p.PlanetID" style="color: #ffffff; color: @(clan!= null ? clan.Faction.Color:"");">
 			@p.Name<br />
 			@if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID)
 			{
@@ -247,7 +247,7 @@ We are setting up the next round.
 		@if (shipCount > 0)
 		{
 			<span style="position: absolute; right: 0; top: 20%;" title='$planetDropships$@p.PlanetID'>
-				<img src='/img/fleets/war.png' width='@(Math.Round(13 + 12.0 * shipCount / (double)maxDropships))' /><span style="font-size: 10px; color: #fff;">@shipCount</span>
+				<img src='/img/fleets/war.png' width='@(Math.Round(13 + 12.0 * shipCount / (double)maxDropships))' /><span style="font-size: 10px; color: #ffffff;">@shipCount</span>
 			</span>
 		}
 	</div>
