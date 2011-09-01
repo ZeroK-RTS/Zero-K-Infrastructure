@@ -48,7 +48,16 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
 			using (var scope = new TransactionScope())
 			{
-				var news = new News() { AuthorAccountID = Global.AccountID, Created = created, Title = heading, Text = text, };
+			    News news;
+                if (newsID == null)
+                {
+                    news = new News();
+                    news.Created = created;
+                }
+                else news = db.News.Single(x => x.NewsID == newsID);
+		        news.AuthorAccountID = Global.AccountID;
+                news.Title=  heading;
+                news.Text = text;
 
 				Image im = null;
 				if (image != null && image.ContentLength > 0)
@@ -60,26 +69,32 @@ namespace ZeroKWeb.Controllers
 				}
 
 				if (headlineDays.HasValue && headlineDays.Value > 0) news.HeadlineUntil = news.Created.AddDays(headlineDays.Value);
-				var thread = new ForumThread()
-				             {
-				             	Created = news.Created,
-				             	CreatedAccountID = news.AuthorAccountID,
-				             	Title = news.Title,
-				             	ForumCategoryID = db.ForumCategories.Single(x => x.IsNews).ForumCategoryID
-				             };
-				thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = news.Text, AuthorAccountID = news.AuthorAccountID });
-				db.ForumThreads.InsertOnSubmit(thread);
-				db.SubmitChanges();
-				news.ForumThreadID = thread.ForumThreadID;
-				db.News.InsertOnSubmit(news);
-				db.SubmitChanges();
+
+                if (newsID == null)
+                {
+                    var thread = new ForumThread()
+                                 {
+                                     Created = news.Created,
+                                     CreatedAccountID = news.AuthorAccountID,
+                                     Title = news.Title,
+                                     ForumCategoryID = db.ForumCategories.Single(x => x.IsNews).ForumCategoryID
+                                 };
+
+                    thread.ForumPosts.Add(new ForumPost() { Created = news.Created, Text = news.Text, AuthorAccountID = news.AuthorAccountID });
+                    db.ForumThreads.InsertOnSubmit(thread);
+                    db.SubmitChanges();
+                    news.ForumThreadID = thread.ForumThreadID;
+                    db.News.InsertOnSubmit(news);
+                }
+                
+			    db.SubmitChanges();
 				if (im != null)
 				{
 					im.Save(Server.MapPath(news.ImageRelativeUrl));
 				}
 				scope.Complete();
 			}
-			MakeSpringNewsPosts();
+			if (newsID == null) MakeSpringNewsPosts();
 			return Content("Posted!");
 		}
 	}
