@@ -234,6 +234,7 @@
       @(c.LeaderTitle ?? "leader"): @Html.PrintAccount(c.Accounts.Single(x => x.IsClanFounder))
     </td>
     <td>
+    <span style='float:right'><img src='/img/factions/@Model.Faction.ImageFile'/></span>
       <div style='margin: 10px; font-size: 80%;'>
         @Html.BBCode(c.Description)
       </div>
