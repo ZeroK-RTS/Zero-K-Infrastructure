@@ -709,7 +709,6 @@ namespace ZeroKWeb.Controllers
 			{
 				var db = new ZkDataContext();
 				var created = clan.ClanID == 0; // existing clan vs creation
-                clan.FactionID = 1; // hack remove when factions imlpemented
 				if (!created)
 				{
 					if (!Global.Account.HasClanRights || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");

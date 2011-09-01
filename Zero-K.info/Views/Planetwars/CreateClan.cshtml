@@ -1,4 +1,5 @@
-﻿@using ZeroKWeb
+﻿@using PlasmaShared
+@using ZeroKWeb
 @using ZkData
 @model Clan
 <form method="post" action="@Url.Action("SubmitCreateClan")" enctype="multipart/form-data">
@@ -21,7 +22,7 @@
     </td>
   </tr>
   <tr><td>Faction:</td>
-  <td>@Html.DropDownListFor(x => x.FactionID, new ZkDataContext().Factions.Select(x => new SelectListItem() { Text = x.Name, Value=x.FactionID.ToString(), Selected = x.FactionID == Model.FactionID}))  <a href='http://zero-k.info/Wiki/PlanetWarsFactions'>read more</a></td>
+  <td>@Html.DropDownListFor(x => x.FactionID, new ZkDataContext().Factions.Shuffle().Select(x => new SelectListItem() { Text = x.Name, Value=x.FactionID.ToString(), Selected = x.FactionID == Model.FactionID}))  <a href='http://zero-k.info/Wiki/PlanetWarsFactions'>read more</a></td>
   </tr>
 
   <tr>
