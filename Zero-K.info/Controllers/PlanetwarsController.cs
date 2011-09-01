@@ -720,7 +720,9 @@ namespace ZeroKWeb.Controllers
 					orgClan.SecretTopic = clan.SecretTopic;
 					orgClan.Password = clan.Password;
                     orgClan.FactionID = clan.FactionID;
-					//orgClan.DbCopyProperties(clan); 
+                    foreach (var a in orgClan.Accounts) {
+                        a.FactionID = clan.FactionID;
+                    }
 				}
 				else
 				{
@@ -746,7 +748,7 @@ namespace ZeroKWeb.Controllers
 					// It would be possbile to enforce a pre-save id
 					im.Save(Server.MapPath(clan.GetBGImageUrl()));
 				}
-				db.SubmitChanges();
+                db.SubmitChanges();
 
 				if (created) // we created a new clan, set self as founder and rights
 				{
@@ -754,6 +756,7 @@ namespace ZeroKWeb.Controllers
 					acc.ClanID = clan.ClanID;
 					acc.IsClanFounder = true;
 					acc.HasClanRights = true;
+                    acc.FactionID = clan.FactionID;
 					db.SubmitChanges();
 					db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
 					db.SubmitChanges();

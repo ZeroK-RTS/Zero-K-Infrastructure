@@ -92,9 +92,11 @@
     <p>@s.Description</p>
   </div>
 
-  <div class="border">
-  <h3>Advertisement</h3>
-  <script type="text/javascript"><!--
+@if (Global.IsAccountAuthorized)
+{
+    <div class="border">
+        <h3>Advertisement</h3>
+        <script type="text/javascript"><!--
       google_ad_client = "ca-pub-9694351454481658";
       /* SquareRight */
       google_ad_slot = "7687840537";
@@ -102,10 +104,11 @@
       google_ad_height = 250;
 //-->
 </script>
-<script type="text/javascript"
-src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+        <script type="text/javascript"
+                src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 </script>
-</div>
+    </div>
+}
 
   <div class="border">
   <h2><a href='/Forum'>Forums</a></h2>
