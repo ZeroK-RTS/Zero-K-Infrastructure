@@ -77,10 +77,10 @@
 <b>Conquest victory (70% planets):</b>
 @{
 	var conquest = @Model.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Clan).Select(x => new { Clan = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
-	var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.7);
 	
 	if (conquest != null)
 	{
+        var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.7);
 		<span><b>@Html.PrintClan(conquest.Clan)</b> is in the lead! </span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
@@ -98,10 +98,10 @@
 @{
 	var credEntries = db.Clans.Select(x => new { Clan = x, Credits = x.Accounts.Sum(y => (int?)y.Credits) ?? 0, Assets = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0) + x.Accounts.SelectMany(y => y.Planets).SelectMany(y => y.PlanetStructures).Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.Cost) ?? 0 }).OrderByDescending(x => x.Credits);
 	var creds = credEntries.FirstOrDefault();
-	var ratio_money = @creds.Credits / @Math.Round(credEntries.Sum(x => x.Assets) * 0.5);
 
 	if (creds != null)
 	{
+        var ratio_money = @creds.Credits / @Math.Round(credEntries.Sum(x => x.Assets) * 0.5);
 		<span><b>@Html.PrintClan(creds.Clan)</b> is in the lead!</span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />

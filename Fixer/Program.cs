@@ -24,14 +24,14 @@ namespace Fixer
       //RecalculateBattleElo();
       //FixMaps();
 
-			PurgeGalaxy(9);
+			PurgeGalaxy(9, true);
     	RandomizeMaps(9);
 			GenerateStructures(9);
 
 			//AddWormholes();
     }
 
-		public static void PurgeGalaxy(int galaxyID) {
+		public static void PurgeGalaxy(int galaxyID, bool resetclans = false) {
 			using (var db = new ZkDataContext())
 			{
 				db.CommandTimeout = 300;
@@ -42,7 +42,8 @@ namespace Fixer
 				}
 				db.SubmitChanges();
 
-//				db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0"); //,clanid=null,isclanfounder=0, hasclanrights=0"
+                db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0");
+                if (resetclans) db.ExecuteCommand("update account set clanid=null,isclanfounder=0, hasclanrights=0");
 				db.ExecuteCommand("delete from event");
 				db.ExecuteCommand("delete from planetinfluencehistory");
 				db.ExecuteCommand("delete from planetownerhistory");
@@ -51,9 +52,12 @@ namespace Fixer
 				db.ExecuteCommand("delete from treatyoffer");
 				
 				db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
-				
-				//db.ExecuteCommand("delete from clan");
-				//db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
+
+                if (resetclans)
+                {
+                    db.ExecuteCommand("delete from clan");
+                    db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsClans).ForumCategoryID);
+                }
 			}
 		}
 

@@ -73,7 +73,14 @@ namespace ZkData
 					ret.IsResearchAgreement = t1.IsResearchAgreement && t2.IsResearchAgreement;
 				}
 			}
-			return ret;
+            if (ret.AllyStatus== AllyStatus.Neutral)
+            {
+                if (FactionID == secondClan.FactionID) ret.AllyStatus = AllyStatus.Alliance;
+                else if (FactionID != secondClan.FactionID) ret.AllyStatus = AllyStatus.War;
+
+            }
+
+		    return ret;
 		}
 
 		/*
