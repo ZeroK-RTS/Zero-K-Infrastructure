@@ -197,7 +197,7 @@ We are setting up the next round.
 		<!-- planet name and owner-->
 		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; " width="100%" height="25%"><tr>
 		<td style="vertical-align: bottom;" ><div style="display:inline-block; /*padding: 3px; box-shadow: 0 0 3px 3px #000; background: #000; border-radius: 3px; opacity: .8; */">
-			<a href='@Url.Action("Planet", new { id = p.PlanetID })' title="$planet$@p.PlanetID" style="color: #ffffff; color: @(clan!= null ? clan.Faction.Color:"");">
+			<a href='@Url.Action("Planet", new { id = p.PlanetID })' title="$planet$@p.PlanetID" style="color: #ffffff; color: @(clan!= null ? clan.Faction.Color:"#ffffff");">
 			@p.Name<br />
 			@if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID)
 			{
