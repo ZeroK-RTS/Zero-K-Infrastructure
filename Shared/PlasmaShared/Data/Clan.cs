@@ -24,6 +24,8 @@ namespace ZkData
 		}
 
 
+
+
 		public string GetImageUrl()
 		{
 			return string.Format("/img/clans/{0}.png", ClanID);
@@ -34,11 +36,19 @@ namespace ZkData
         }
 
 
+        public static string ClanColor(Clan clan, int? myClanID = null)
+        {
+            if (clan == null) return "";
+            if (clan.ClanID == myClanID) return "#00FFFF";
+            return clan.Faction.Color;
+        }
+
 		public static string TreatyColor(Clan clan1, Clan clan2)
 		{
 			if (clan1 == null || clan2 == null) return "";
 			if (clan1.ClanID  == clan2.ClanID) return "#00FFFF";
-			var t = clan1.GetEffectiveTreaty(clan2);
+			
+            var t = clan1.GetEffectiveTreaty(clan2);
 			return AllyStatusColor(t.AllyStatus);
 		}
 

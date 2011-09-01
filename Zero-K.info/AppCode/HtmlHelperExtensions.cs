@@ -155,7 +155,7 @@ namespace System.Web.Mvc
 							account.Country != "??" ? account.Country : "unknown",
 							account.LobbyTimeRank + 1,
 							account.AccountID,
-							colorize ? Clan.TreatyColor(Global.Clan, account.Clan): "",
+                            colorize ? Clan.ClanColor(account.Clan, Global.ClanID) : "",
 							account.Aliases, account.Name));
 			}
 		}
@@ -203,7 +203,7 @@ namespace System.Web.Mvc
 					new MvcHtmlString(string.Format("<a href='{0}'><img src='{1}' width='16'><span style='color:{2}'>{3}</span></a>",
 					                                url.Action("Clan", "Planetwars", new { id = clan.ClanID }),
 					                                clan.GetImageUrl(),
-																					colorize ? Clan.TreatyColor(clan, Global.Clan):"",
+																					colorize ? Clan.ClanColor(clan, Global.ClanID):"",
 					                                clan.Shortcut));
 			}
 		}
@@ -217,7 +217,7 @@ namespace System.Web.Mvc
 		{
 			var formatString = "<span style='color:{0}'>{1}</span>";
 			if (shadowInfluence > 0) formatString += "&nbsp({2}&nbsp+&nbsp<span style='color:gray'>{3}</span>)";			
-			var formattedString = string.Format(formatString,	Clan.TreatyColor(clan, Global.Clan), influence + shadowInfluence, influence, shadowInfluence);
+			var formattedString = string.Format(formatString,	Clan.ClanColor(clan, Global.ClanID), influence + shadowInfluence, influence, shadowInfluence);
 			return new MvcHtmlString(formattedString);
 		}
 
