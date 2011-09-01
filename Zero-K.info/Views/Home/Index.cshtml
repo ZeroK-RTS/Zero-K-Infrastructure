@@ -1,4 +1,5 @@
  @using ZeroKWeb
+@using ZkData
  @model ZeroKWeb.Controllers.HomeController.IndexResult
 @{
     ViewBag.NoBorder = true;
@@ -42,21 +43,20 @@
 			<img src="@n.ImageRelativeUrl" style="float:left; width:120px; margin: 6px;"/>
 		}
 		<p>@Html.BBCode(n.Text)</p>
-		<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
+		<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)
+        @if (Global.IsZeroKAdmin) {
+            <span class="admin">
+                @Html.ActionLink("Edit", "Detail", "News", new { id= n.NewsID}, null)
+            </span>
+        }
+        
+        </small>
 		<br /><br />
 	}
 	<a href="@Url.Action("Index","News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a> 
 	@if (Global.IsZeroKAdmin) {
 		<div class="admin">
-		<form action="@Url.Action("PostNews","News")" enctype="multipart/form-data" method="post" valign="top">
-			<table>
-			<tr><td>Title: </td><td><input type="text" name="heading"></td></tr>
-			<tr><td valign="top">Text: </td><td><textarea rows="15" cols="70" name="text"></textarea> </td></tr>
-			<tr><td>Created (UTC): </td><td><input type="text" name="created" value="@DateTime.UtcNow" class="datepicker"/><small>(if set in future will be invisible until then)</small></td></tr>
-			<tr><td>Headline for (days): </td><td><input type="text" name="headlineDays" value=""/><small>(headlines popup for each player once)</small></td></tr>
-			<tr><td>Image (optional): </td><td><input type="file" name="image" /><input type="submit" value="Post" class="delete"/></td></tr>
-			</table>
-		</form>
+            @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created=DateTime.UtcNow, HeadlineUntil=DateTime.UtcNow.AddDays(7)})
 		</div>
  }
 

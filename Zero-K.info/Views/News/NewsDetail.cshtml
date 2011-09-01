@@ -1,0 +1,14 @@
+﻿@using ZkData
+@model News
+           
+<form action="@Url.Action("PostNews", "News")" enctype="multipart/form-data" method="post" valign="top">
+    @Html.HiddenFor(x=>x.NewsID)
+    <table>
+        <tr><td>Title: </td><td>@Html.TextBoxFor(x=>x.Title)</td></tr>
+        <tr><td valign="top">Text: </td><td>@Html.TextAreaFor(x => x.Text, new { rows="15", cols="70"})</td></tr>
+        <tr><td>Created (UTC): </td><td>@Html.TextBoxFor(x => x.Created, new { @class="datepicker"})<small>(if set in future will be invisible until then)</small></td></tr>
+        <tr><td>Headline until: </td><td>@Html.TextBoxFor(x => x.HeadlineUntil, new { @class="datepicker"})<small>(headlines popup for each player once)</small></td></tr>
+        <tr><td>Image (optional): </td><td><input type="file" name="image" /><input type="submit" value="Post" class="delete"/></td></tr>
+    </table>
+</form>
+

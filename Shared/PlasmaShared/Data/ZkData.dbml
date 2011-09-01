@@ -725,9 +725,9 @@
       <Column Name="NewsID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Created" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="Title" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
-      <Column Name="Text" Type="System.String" DbType="nvarchar(4000) NOT NULL" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="AuthorAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="HeadlineUntil" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
+      <Column Name="HeadlineUntil" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="ForumThreadID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="SpringForumPostID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="ImageExtension" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />

@@ -23,7 +23,13 @@ namespace ZeroKWeb.Controllers
 			return View(db.News.Where(x=>x.Created < DateTime.UtcNow).OrderByDescending(x=>x.Created));
 		}
 
-		public void MakeSpringNewsPosts()
+        public ActionResult Detail(int id) {
+            var db = new ZkDataContext();
+            var news = db.News.Single(x => x.NewsID == id);
+            return View("NewsDetail", news);
+        }
+
+	    public void MakeSpringNewsPosts()
 		{
 			var db =new ZkDataContext();
 			foreach (News n in db.News.Where(x=>x.SpringForumPostID == null && x.Created <= DateTime.UtcNow).OrderBy(x=>x.Created)) {
@@ -41,23 +47,23 @@ namespace ZeroKWeb.Controllers
 
 
 		[Auth]
-		public ActionResult PostNews(int? newsID, string heading, string text, DateTime created, int? headlineDays, HttpPostedFileBase image)
+		public ActionResult PostNews(News nn, HttpPostedFileBase image)
 		{
-			if (string.IsNullOrEmpty(heading) || string.IsNullOrEmpty(text)) return Content("Empty text!");
+			if (string.IsNullOrEmpty(nn.Title) || string.IsNullOrEmpty(nn.Text)) return Content("Empty text!");
 
 			var db = new ZkDataContext();
 			using (var scope = new TransactionScope())
 			{
 			    News news;
-                if (newsID == null)
+                if (nn.NewsID == 0)
                 {
                     news = new News();
-                    news.Created = created;
+                    news.Created = nn.Created;
                 }
-                else news = db.News.Single(x => x.NewsID == newsID);
+                else news = db.News.Single(x => x.NewsID == nn.NewsID);
 		        news.AuthorAccountID = Global.AccountID;
-                news.Title=  heading;
-                news.Text = text;
+                news.Title=  nn.Title;
+                news.Text = nn.Text;
 
 				Image im = null;
 				if (image != null && image.ContentLength > 0)
@@ -68,9 +74,9 @@ namespace ZeroKWeb.Controllers
 					news.ImageLength = image.ContentLength;
 				}
 
-				if (headlineDays.HasValue && headlineDays.Value > 0) news.HeadlineUntil = news.Created.AddDays(headlineDays.Value);
+                news.HeadlineUntil = nn.HeadlineUntil;
 
-                if (newsID == null)
+                if (nn.NewsID == 0)
                 {
                     var thread = new ForumThread()
                                  {
@@ -94,7 +100,7 @@ namespace ZeroKWeb.Controllers
 				}
 				scope.Complete();
 			}
-			if (newsID == null) MakeSpringNewsPosts();
+			if (nn.NewsID == 0) MakeSpringNewsPosts();
 			return Content("Posted!");
 		}
 	}

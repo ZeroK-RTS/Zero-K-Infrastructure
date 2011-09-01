@@ -18919,7 +18919,7 @@ namespace ZkData
 		
 		private int _AuthorAccountID;
 		
-		private System.Nullable<System.DateTime> _HeadlineUntil;
+		private System.DateTime _HeadlineUntil;
 		
 		private int _ForumThreadID;
 		
@@ -18949,7 +18949,7 @@ namespace ZkData
     partial void OnTextChanged();
     partial void OnAuthorAccountIDChanging(int value);
     partial void OnAuthorAccountIDChanged();
-    partial void OnHeadlineUntilChanging(System.Nullable<System.DateTime> value);
+    partial void OnHeadlineUntilChanging(System.DateTime value);
     partial void OnHeadlineUntilChanged();
     partial void OnForumThreadIDChanging(int value);
     partial void OnForumThreadIDChanged();
@@ -19031,7 +19031,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="nvarchar(4000) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="text NOT NULL", CanBeNull=false, UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public string Text
 		{
@@ -19077,9 +19077,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HeadlineUntil", DbType="datetime")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HeadlineUntil", DbType="datetime NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public System.Nullable<System.DateTime> HeadlineUntil
+		public System.DateTime HeadlineUntil
 		{
 			get
 			{
