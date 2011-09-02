@@ -10,7 +10,7 @@ $(document).ready(function () {
         return answer;
     });
 
-    $(".dialog").dialog({width: 800 });
+    $(".dialog").dialog({ width: 800 });
 
     $(".datepicker").datepicker();
 
@@ -24,11 +24,18 @@ $(document).ready(function () {
     var frm = $("#ajaxScrollForm");
     var prg = $("#ajaxScrollProgress");
     var target = $("#ajaxScrollTarget");
-    if (frm && frm.attr("id") != undefined) {
+
+    if (frm && typeof frm.attr("id") != 'undefined') {
         window.onscroll = function () {
-            if (!ajaxScrollEnabled) return;
+            if (!ajaxScrollEnabled) {
+                return;
+            }
             var el = document.documentElement;
-            if (el.scrollHeight - (document.documentElement.scrollTop + document.documentElement.clientHeight) < 50) {
+            var page = $("body");
+            // bugfix for ebkit based stuff 
+            // chrome needs scrolLTop out of jquery by the page. Object Opera, IE, Firefox take the original dom property
+            var scrollTop = (typeof jQuery.browser.mozilla != 'undefined' || typeof jQuery.browser.msie != 'undefined' || typeof jQuery.browser.opera != 'undefined') ? el.scrollTop : page.scrollTop();
+            if (el.scrollHeight - (scrollTop + el.clientHeight) < 50) {
                 ajaxScrollEnabled = false;
                 prg.show();
                 $.post(frm.attr("action"), frm.serialize() + "&offset=" + ajaxScrollOffset, function (ret) {
@@ -40,7 +47,6 @@ $(document).ready(function () {
                 });
             }
         };
-
 
         frm.submit(function () {
             ajaxScrollEnabled = false;
