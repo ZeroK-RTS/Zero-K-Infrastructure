@@ -21,9 +21,14 @@
       @Html.TextBoxFor(x=>x.Shortcut, new { maxlength = 6})
     </td>
   </tr>
-  <tr><td>Faction:</td>
-  <td>@Html.DropDownListFor(x => x.FactionID, new ZkDataContext().Factions.Shuffle().Select(x => new SelectListItem() { Text = x.Name, Value=x.FactionID.ToString(), Selected = x.FactionID == Model.FactionID}))  <a href='http://zero-k.info/Wiki/PlanetWarsFactions'>read more</a></td>
-  </tr>
+  
+  @if (Model.ClanID == 0)
+   {
+       <tr><td>Faction:</td>
+           <td>@Html.DropDownListFor(x => x.FactionID, new ZkDataContext().Factions.Shuffle().Select(x => new SelectListItem() { Text = x.Name, Value = x.FactionID.ToString(), Selected = x.FactionID == Model.FactionID }))  <a href='http://zero-k.info/Wiki/PlanetWarsFactions'>read more</a></td>
+       </tr>
+   }
+      
 
   <tr>
   <td>Leader title:</td>
