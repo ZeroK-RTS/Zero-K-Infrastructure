@@ -468,6 +468,9 @@ div#ajaxScrollProgress
 {
   background-color:#102020;
   border: 1px solid teal;
+  max-width: 700px;
+  overflow: hidden;
+  white-space: wrap;
 }
 
 
