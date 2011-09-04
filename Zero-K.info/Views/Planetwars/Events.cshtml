@@ -43,7 +43,7 @@
           </td>
           <td align="right">
           Page @(Model.Page+1) / @Model.PageCount <a href='@Url.Action("Events", "Planetwars", new { accountID = Model.AccountID, clanID = Model.ClanID, planetID = Model.PlanetID, springBattleID = Model.SpringBattleID, pageSize = int.MaxValue })'>all</a> | <a href='@Url.Action("Events", "Planetwars")'>unfiltered</a>
-            @Html.TextBox("filter", Model.Filter)<input type="submit" value="filter" id="ev_submit" />
+            @Html.TextBox("filter", Model.Filter)<input type="image" src="http://cdn1.iconfinder.com/data/icons/freeapplication/png/24x24/Filter.png" alt="filter events" value="filter" id="ev_submit" style="border: medium none; vertical-align:middle;" />
             
           </td>
         </tr>
