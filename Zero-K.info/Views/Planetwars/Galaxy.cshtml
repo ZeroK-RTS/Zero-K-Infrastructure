@@ -94,21 +94,21 @@
 </div>
 
 <div id="victory_eco" class="fleft border" style="min-height: 60px;">
-<b>Economic victory (60% of galaxy assets):</b>
+<b>Economic victory (50% of galaxy assets in $):</b>
 @{
-	var credEntries = db.Factions.Select(x => new { Fac = x, Assets = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0) + x.Accounts.SelectMany(y => y.Planets).SelectMany(y => y.PlanetStructures).Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.Cost) ?? 0 }).OrderByDescending(x => x.Assets);
-	var creds = credEntries.FirstOrDefault();
+	var credEntries = db.Factions.Select(x => new { Fac = x, Creds = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0), Assets = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0) + x.Accounts.SelectMany(y => y.Planets).SelectMany(y => y.PlanetStructures).Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.Cost) ?? 0 }).OrderByDescending(x => x.Assets).ToList();
+	var creds = credEntries.OrderByDescending(x=>x.Creds).FirstOrDefault();
 
 	if (creds != null)
 	{
-        var ratio_money = @creds.Assets / @Math.Round(credEntries.Sum(x => x.Assets) * 0.6);
+        var ratio_money = @creds.Creds / @Math.Round(credEntries.Sum(x => x.Assets) * 0.5);
 		<span><b>@Html.PrintFaction(creds.Fac)</b> is in the lead!</span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
 		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_money))" />
 		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_money)))" />
 		<img src="/img/progressr_base.png" height="17" class="fleft" />
-		<span class="fleft">$@creds.Assets / $@Math.Round(credEntries.Sum(x => x.Assets) * 0.6) </span>
+		<span class="fleft">$@creds.Creds / $@Math.Round(credEntries.Sum(x => x.Assets) * 0.5) </span>
 		<br class="clearfloat" />
 	}
 }

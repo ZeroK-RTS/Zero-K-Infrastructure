@@ -19,43 +19,58 @@
       <td>Governor:</td>
       <td>@Html.PrintAccount(Model.Account)  @Html.PrintClan(Model.Account != null ? Model.Account.Clan : null)</td>
     </tr>
+      if (Model.HomeworldClan != null)
+      {<tr><td><b>Homeworld </b></td><td>
+            <b>@Html.PrintClan(Model.HomeworldClan)</b></td></tr>
+      }
 		<tr>
 			<td>Bonuses:</td>
-			<td><span style='color:@(link == 0 ? "red":"")'>@(link * 100)%</span> link
-			@if (defense > 0) {
+			<td><span style='color:@(link == 0 ? "red" : "")'>@(link * 100)%</span> link
+			@if (defense > 0)
+   {
 				@:, <span style='color: red'>+@defense influence</span>
       }
-			@if (dropDefense > 0) {
+			@if (dropDefense > 0)
+   {
 				@:, <span style='color: red'>+@dropDefense ship defense</span>
       }
-      @if (credits > 0) {
+      @if (credits > 0)
+      {
 				@:, <span style='color: ltGreen'>+$@credits/turn</span>
 			}
-      @if (corruption > 0) {
+      @if (corruption > 0)
+      {
         <span style='color: red'>-@corruption % corruption</span>
       }            
-      @if (techs.Any()) {
-				foreach (var t in techs)
-        {
+      @if (techs.Any())
+      {
+          foreach (var t in techs)
+          {
           @:, <span title='$unlock$@t.UnlockID' style='color:@t.LabelColor; white-space: nowrap;' ><img src='@t.ImageUrl' width='20'/>@t.Name</span>
         }
       }
-      @if (jump > 0) {
+      @if (jump > 0)
+      {
 				@:, +@jump jumpgate
       }
-      @if (dropshipProd > 0) {
+      @if (dropshipProd > 0)
+      {
 				@:, +@dropshipProd ships/turn
       }
-      @if (dropshipCapa >0) {
+      @if (dropshipCapa > 0)
+      {
 				@:, +@dropshipCapa starfleet capacity
 			}
-      @if (victory) {
+      @if (victory)
+      {
 	      @:, @(victory ? "ARTEFACT!" : "")
       }
-      @if (!string.IsNullOrEmpty(aliens)) {
+      @if (!string.IsNullOrEmpty(aliens))
+      {
 				@:, @aliens
       }
-			@if (blockTrade) {
+			@if (blockTrade)
+   {
 				@:, influence buying from locals blocked
       }
 			</td>

@@ -65,7 +65,7 @@
 <div id="sidebar" class="fright width-30">
   @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess) {
        <!--center><a class ="downloadbutton" href="http://zero-k.info/Wiki/Download" alt="Download" title="Download now Zero-K's latest version for free"></a></center-->
-	  <a onclick="javascript:download();"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
+	  <a onclick="window.location='http://zero-k.info/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
 	}
 
   @if (ZeroKWeb.Global.IsAccountAuthorized) {
