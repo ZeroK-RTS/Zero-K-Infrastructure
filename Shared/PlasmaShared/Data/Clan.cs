@@ -39,7 +39,7 @@ namespace ZkData
         public static string ClanColor(Clan clan, int? myClanID = null)
         {
             if (clan == null) return "";
-            if (clan.ClanID == myClanID) return "#00FFFF";
+            //if (clan.ClanID == myClanID) return "#00FFFF";
             return clan.Faction.Color;
         }
 
