@@ -12,11 +12,13 @@
     
   }); 
 </script>
+@Html.Partial("FactionList")
+<br />
+
 @if (Global.Clan == null) {
 <div>
-To take active part in <a href='@Url.Action("Index", "Planetwars")'>PlanetWars</a> join a clan. <br />
-Clan you join or create <b>cannot always be changed</b>, so pick carefully!<br />
-You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars") but biggest clans are most likely to win<br />
+To take a full part in <a href='@Url.Action("Index", "Planetwars")'>PlanetWars</a> join a clan. <br />
+You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")<br />
 Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
 </div>
 }
@@ -40,7 +42,7 @@ Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
         Leader
       </th>
       <th>
-        Members
+        Commanders
       </th>
       <th>Elo (avg)</th>
       <th>Level (med)</th>

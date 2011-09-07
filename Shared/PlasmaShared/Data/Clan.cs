@@ -19,6 +19,7 @@ namespace ZkData
 		{
 			if (account == null) return true;
 			if (account.ClanID != null) return false;
+            if (account.FactionID != null && account.FactionID != FactionID) return false;
 			if (Accounts.Count() >= GlobalConst.MaxClanSkilledSize) return false;
 			else return true;
 		}

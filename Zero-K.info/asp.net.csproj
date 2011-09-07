@@ -287,6 +287,7 @@
     <Content Include="Views\Images\Index.cshtml" />
     <Content Include="Views\Home\Download.cshtml" />
     <Content Include="Views\News\NewsDetail.cshtml" />
+    <Content Include="Views\Shared\FactionList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

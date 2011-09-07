@@ -353,7 +353,37 @@ namespace ZeroKWeb.Controllers
 			return View("Galaxy", gal);
 		}
 
-		[Auth]
+        [Auth]
+        public ActionResult JoinFaction(int id) {
+            if (Global.Account.FactionID != null) return Content("Already in faction");
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            acc.FactionID = id;
+            Faction faction = db.Factions.Single(x => x.FactionID == id);
+            db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins {1}", acc, faction));
+            db.SubmitChanges();
+            return Content(string.Format("Done, welcome to the {0}!", faction.Name));
+        }
+
+        [Auth]
+        public ActionResult LeaveFaction() {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            if (acc.Clan != null) LeaveClan();
+            foreach (var pa in acc.AccountPlanets)
+            {
+                pa.Influence = 0;
+                pa.ShadowInfluence = 0;
+            }
+            db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
+            db.SubmitChanges();
+
+            
+            SetPlanetOwners();
+            return RedirectToAction("ClanList");
+	    }
+
+	    [Auth]
 		public ActionResult JoinClan(int id, string password)
 		{
 			var db = new ZkDataContext();
@@ -371,7 +401,7 @@ namespace ZeroKWeb.Controllers
 					return RedirectToAction("Clan", new { id = clan.ClanID });
 				}
 			}
-			else return Content("You cannot join this clan");
+			else return Content("You cannot join this clan - its full, or has password, or is different faction");
 		}
 
 
@@ -386,7 +416,8 @@ namespace ZeroKWeb.Controllers
 			if (kickee.IsClanFounder) return Content("Clan founders can't be kicked.");
 			foreach (var p in kickee.Planets.ToList()) p.OwnerAccountID = null; // disown his planets
 			kickee.ClanID = null;
-			db.SubmitChanges();
+            db.SubmitChanges();
+            SetPlanetOwners();
 			return RedirectToAction("Clan", new { id = clanID });
 		}
 
@@ -401,11 +432,7 @@ namespace ZeroKWeb.Controllers
 			acc.HasClanRights = false;
 			acc.Planets.Clear();
 			acc.Clan = null;
-            foreach (var pa in acc.AccountPlanets) {
-                pa.Influence = 0;
-                pa.ShadowInfluence = 0;
-            }
-		    db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
+            db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
 			db.SubmitChanges();
 			if (!clan.Accounts.Any())
 			{

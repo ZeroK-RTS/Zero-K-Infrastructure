@@ -68,6 +68,8 @@
 </center>
 </div>
 <br />
+@Html.Partial("FactionList")
+<br />
 
 @{
 	var db = new ZkDataContext();
@@ -81,7 +83,7 @@
 	if (conquest != null)
 	{
         var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.7);
-		<span><b>@Html.PrintFaction(conquest.Fac)</b> is in the lead! </span>
+		<span><b>@Html.PrintFaction(conquest.Fac)</b></span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
 		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_planets))" />
@@ -102,7 +104,7 @@
 	if (creds != null)
 	{
         var ratio_money = @creds.Creds / @Math.Round(credEntries.Sum(x => x.Assets) * 0.5);
-		<span><b>@Html.PrintFaction(creds.Fac)</b> is in the lead!</span>
+		<span><b>@Html.PrintFaction(creds.Fac)</b></span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
 		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_money))" />

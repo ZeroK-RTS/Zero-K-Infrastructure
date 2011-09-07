@@ -39,6 +39,17 @@ namespace ZeroKWeb
                     return string.Format("{0} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Planetwars/ClanList",
                                          account.Name);
                 }
+                if (account.Faction == null) {
+                    var rand = new Random();
+                    var faclist = db.Factions.ToList();
+                    var fac = faclist[rand.Next(faclist.Count)];
+                    account.FactionID = fac.FactionID;
+                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} was conscripted by {1}", account, fac));
+                    db.SubmitChanges();
+                    AuthServiceClient.SendLobbyMessage(account, string.Format("You must be in a faction to play PlanetWars.  You were conscripted by {0}. To change your faction go to http://zero-k.info/PlanetWars/ClanList ", fac.Name));
+                    return string.Format("Sending {0} to {1}", account.Name, fac.Name);
+                }
+
                 if (!account.Name.Contains(account.Clan.Shortcut))
                 {
                     AuthServiceClient.SendLobbyMessage(account,
