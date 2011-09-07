@@ -21,12 +21,7 @@ namespace ZkData
             return PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectCreditsPerTurn) ?? 0;
         }
 
-        public int GetTaxIncome() {
-            if (OwnerAccountID != null)
-                return (AccountPlanets.Where(y => y.Account.FactionID == Account.FactionID).Sum(y => (int?)y.ShadowInfluence + (int?)y.Influence) ?? 0)/50;
-            else return 0;
-        }
-
+      
         public double GetCorruption() {
             var influences = GetFactionInfluences().Select(x => (int?)x.Influence);
             return (influences.Skip(1).FirstOrDefault() ?? 0) / (double)(influences.FirstOrDefault() ?? 1);        

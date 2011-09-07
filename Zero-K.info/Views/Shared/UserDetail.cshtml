@@ -80,6 +80,7 @@
 				@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
 			</div>
  }
+ 
 	<b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
 	<br />
 	<b>Elo:</b> @Math.Round(@Model.Elo)
@@ -202,7 +203,9 @@
 <br class="clearfloat" />
 
 	<div id="usr_planetwars" class="border relative">
-	<h3>Clan: </h3>
+	<h3>Faction: </h3>
+    @Html.PrintFaction(Model.Faction)
+    <h3>Clan: </h3>
 	@Html.PrintClan(Model.Clan)
 
 	<h3>Credits:</h3>

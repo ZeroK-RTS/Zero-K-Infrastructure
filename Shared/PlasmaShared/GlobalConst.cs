@@ -2,6 +2,7 @@
 {
 	public static class GlobalConst
 	{
+        public const double InfluenceTaxIncome = 1 / 25.0;
 	    public const int InfluenceDecay = 3;
 	    public const bool ClanFreePlanets = false;
 	    public const double EloWeightMalusFactor = -50;

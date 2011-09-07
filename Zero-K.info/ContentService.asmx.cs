@@ -151,6 +151,7 @@ namespace ZeroKWeb
                         var c1 = players[i].Clan;
                         var c2 = players[j].Clan;
                         var points = 0.0;
+                        if (players[i].FactionID != null && players[i].FactionID == players[j].FactionID) points = 1; // same faction weight 1
                         if (c1 != null && c2 != null)
                         {
                             if (c1 == c2) points = 6;
@@ -967,7 +968,24 @@ namespace ZeroKWeb
                     foreach (var entry in gal.Planets.Where(x=>x.OwnerAccountID!=null))
                     {
                         var corruption = entry.GetCorruption();
-                        entry.Account.Credits += (int)((entry.GetMineIncome() + entry.GetTaxIncome()) * (1.0-corruption));
+                        var mineIncome = (int)((entry.GetMineIncome() * (1.0 - corruption)));
+
+                        entry.Account.Credits += mineIncome / 2; // owner gets 50%
+
+                        // remaining 50% split by same faction by influences
+                        Planet entry1 = entry;
+                        var myFactionInfluences = entry.AccountPlanets.Where(x=>x.Account.FactionID == entry1.Account.FactionID).Select(x=>new{Acc = x.Account, Influence=  ((int?)x.Influence + x.ShadowInfluence )??0});
+                        var myFactionSumInflunece = myFactionInfluences.Sum(x=>(int?)x.Influence) ??1;
+                        if (myFactionSumInflunece == 0) myFactionSumInflunece = 1;
+                        foreach (var myFacAcc in myFactionInfluences) {
+                            myFacAcc.Acc.Credits += (int)Math.Ceiling(mineIncome / 2.0 * myFacAcc.Influence / (double)myFactionSumInflunece);
+                        }
+
+                        // taxincome - based on influences
+                        foreach (var ap in entry.AccountPlanets) {
+                            ap.Account.Credits += (int)Math.Round((ap.Influence + ap.ShadowInfluence) * GlobalConst.InfluenceTaxIncome);
+                        }
+
                         if (corruption > 0) {
                             foreach (var facEntries in entry.AccountPlanets.GroupBy(x => x.Account.Faction).Where(x => x.Key != null)) {
                                 var cnt = facEntries.Where(x=>x.Influence > 0).Count();

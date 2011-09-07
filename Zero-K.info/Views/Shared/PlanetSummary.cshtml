@@ -1,8 +1,10 @@
-﻿@model ZkData.Planet
+﻿@using ZkData
+@model ZkData.Planet
 <table>
   @{
       var link = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectLinkStrength);
-      var credits = Model.GetMineIncome() + Model.GetTaxIncome();
+      var credits = Model.GetMineIncome();
+      var tax = (Model.AccountPlanets.Sum(x=>(int?)x.Influence + x.ShadowInfluence)??0) * GlobalConst.InfluenceTaxIncome;
       var corruption = Math.Round(Model.GetCorruption()*100);
       
       var dropshipCapa = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity);
@@ -36,12 +38,15 @@
       }
       @if (credits > 0)
       {
-				@:, <span style='color: ltGreen'>+$@credits/turn</span>
+				@:, <span style='color: ltGreen' title='Mine income goes 50% to planet governor and rest to same faction people according to their influence'>+$@credits mine/turn</span>
 			}
       @if (corruption > 0)
       {
-        <span style='color: red'>-@corruption % corruption</span>
-      }            
+        @:, <span style='color: red' title='Corruption is caused by enemy factions having too big influence. Corruption decreases mine income'>-@corruption % corruption</span>
+      }      
+      @if (tax >0) {
+        @:, <span style='color: ltGreen' title='Tax is distributed proportionally to each holder of influence on the planet. 100 influence makes @(Math.Round(100*GlobalConst.InfluenceTaxIncome))'>+$@tax tax/turn</span>
+      }      
       @if (techs.Any())
       {
           foreach (var t in techs)

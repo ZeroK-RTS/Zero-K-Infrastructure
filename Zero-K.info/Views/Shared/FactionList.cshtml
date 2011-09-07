@@ -8,24 +8,31 @@
 
 @foreach (var f in facs.OrderBy(x => x.Planets))
 {
-    <div style='float:left'>
-        <img src='/img/factions/@f.Faction.ImageFile' style='float: left'/>
-        <span style='color: @f.Faction.Color; font-size:120%;'>@f.Faction.Name</span>
-        @if (Global.Account != null)
-        {
-            if (Global.Account.FactionID == null)
-            {
-                @Html.ActionLink("Join!", "JoinFaction", "Planetwars", new { id = f.Faction.FactionID }, null)
-            }
-            else if (Global.Account.FactionID == f.Faction.FactionID)
-                 {
-                     @Html.ActionLink("Leave (erases progress)", "LeaveFaction", "Planetwars", null, new { @class = "delete" })
-                 }
-        }
-        <table>
-            <tr><td>Planets:</td><td>@f.Planets</td></tr>
-            <tr><td>Commanders:</td><td>@f.PlayerCount</td></tr>
-            <tr><td>Influence:</td><td>@f.Influence</td></tr>
+    <div style='float: left'>
+        <table><tr><td><img src='/img/factions/@f.Faction.ImageFile' style='float: left'/></td>
+                   <td>
+                       <span style='color: @f.Faction.Color; font-size:120%;'>@f.Faction.Name</span>
+                       @if (Global.Account != null)
+                       {
+                           if (Global.Account.FactionID == null)
+                           {
+                               @Html.ActionLink("Join!", "JoinFaction", "Planetwars", new { id = f.Faction.FactionID }, null)
+                           }
+                           else if (Global.Account.FactionID == f.Faction.FactionID)
+                                {
+                                    @Html.ActionLink("Leave (erases progress)", "LeaveFaction", "Planetwars", null, new { @class = "delete" })
+                                }
+                       }
+                       <table>
+                           <tr><td>Planets:</td><td>@f.Planets</td></tr>
+                           <tr><td>Commanders:</td><td>@f.PlayerCount</td></tr>
+                           <tr><td>Influence:</td><td>@f.Influence</td></tr>
+                       </table>
+                   </td>
+    
+               </tr>
         </table>
+        
+    
     </div>
 }
