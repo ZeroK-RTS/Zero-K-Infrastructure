@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Linq.SqlClient;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -364,6 +365,7 @@ namespace ZeroKWeb.Controllers
 				{
 					var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 					acc.ClanID = clan.ClanID;
+                    acc.FactionID = clan.FactionID;
 					db.Events.InsertOnSubmit(Global.CreateEvent("{0} joins clan {1}", acc, clan));
 					db.SubmitChanges();
 					return RedirectToAction("Clan", new { id = clan.ClanID });
@@ -605,7 +607,20 @@ namespace ZeroKWeb.Controllers
 		}
 
 
-		/// <summary>
+	    public class ClanEntry {
+	        readonly Clan clan;
+	        readonly int clanInfluence;
+	        public Clan Clan { get { return clan; } }
+	        public int ClanInfluence { get { return clanInfluence; } }
+
+	        public ClanEntry(Clan clan, int clanInfluence)
+	        {
+	            this.clan = clan;
+	            this.clanInfluence = clanInfluence;
+	        }
+	    }
+
+	    /// <summary>
 		/// Updates shadow influence and new owners
 		/// </summary>
 		/// <param name="db"></param>
@@ -618,13 +633,18 @@ namespace ZeroKWeb.Controllers
 			var gal = db.Galaxies.Single(x => x.IsDefault);
 			foreach (var planet in gal.Planets)
 			{
+                //if (planet.PlanetID == 2274) Debugger.Break();
 				var currentOwnerClanID = planet.Account != null ? planet.Account.ClanID : null;
-
+                var currentOwnerFactionID = planet.Account != null ? planet.Account.FactionID : null;
 				// in case of a tie when deciding which CLAN to get a planet - give to one with less planets
-				var mostInfluentialClanEntry =
-					planet.AccountPlanets.GroupBy(ap => ap.Account.Clan).Where(x => x.Key != null).Select(
-						x => new { Clan = x.Key, ClanInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(x => x.ClanInfluence).
-						ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
+				var mostInfluentiaFactionEntry =
+					planet.AccountPlanets.GroupBy(ap => ap.Account.Faction).Where(x => x.Key != null).Select(
+						x => new { Faction = x.Key, FactionInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(x=>x.FactionInfluence).FirstOrDefault();
+
+
+                ClanEntry mostInfluentialClanEntry = null;
+                if ( mostInfluentiaFactionEntry != null && (mostInfluentiaFactionEntry.Faction.FactionID == currentOwnerFactionID || mostInfluentiaFactionEntry.FactionInfluence > planet.GetIPToCapture())) mostInfluentialClanEntry= planet.AccountPlanets.Where(x => x.Account.FactionID == mostInfluentiaFactionEntry.Faction.FactionID && x.Account.ClanID != null).GroupBy(x => x.Account.Clan).Select(x => new ClanEntry(x.Key, (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0)).OrderByDescending(x => x.ClanInfluence).
+                         ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
 
 				if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) &&
 				    planet.Account != null)
@@ -634,8 +654,7 @@ namespace ZeroKWeb.Controllers
 					planet.Account = null;
 					havePlanetsChangedHands = true;
 				}
-				else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan != null && 
-				         mostInfluentialClanEntry.ClanInfluence > planet.GetIPToCapture())
+				else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID)
 				{
 					// planet changes owner, most influential clan is not current owner and has more ip to capture than needed
 

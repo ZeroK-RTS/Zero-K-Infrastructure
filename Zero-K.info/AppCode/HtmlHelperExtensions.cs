@@ -221,6 +221,13 @@ namespace System.Web.Mvc
 			return new MvcHtmlString(formattedString);
 		}
 
+        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Faction faction, int influence, int shadowInfluence)
+        {
+            var formatString = "<span style='color:{0}'>{1}</span>";
+            if (shadowInfluence > 0) formatString += "&nbsp({2}&nbsp+&nbsp<span style='color:gray'>{3}</span>)";
+            var formattedString = string.Format(formatString, faction.Color, influence + shadowInfluence, influence, shadowInfluence);
+            return new MvcHtmlString(formattedString);
+        }
 
 		public static MvcHtmlString PrintLines(this HtmlHelper helper, string text)
 		{

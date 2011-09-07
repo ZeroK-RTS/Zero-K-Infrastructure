@@ -470,7 +470,7 @@ div#ajaxScrollProgress
   border: 1px solid teal;
   max-width: 700px;
   overflow: hidden;
-  white-space: wrap;
+  white-space:normal;
 }
 
 

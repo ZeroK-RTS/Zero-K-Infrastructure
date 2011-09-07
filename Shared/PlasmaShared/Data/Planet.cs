@@ -8,11 +8,11 @@ namespace ZkData
 	{
 		public const double OverlayRatio = 2.25;
 
-		public IEnumerable<ClanInfluence> GetClanInfluences()
+		public IEnumerable<FactionInfluence> GetFactionInfluences()
 		{
 			return
-				AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null).Select(
-					x => new ClanInfluence() { Clan = x.Key, Influence = x.Sum(y => (int?)(y.Influence + y.ShadowInfluence)) ?? 0 }).OrderByDescending(
+				AccountPlanets.GroupBy(x => x.Account.Faction).Where(x => x.Key != null).Select(
+					x => new FactionInfluence() { Faction = x.Key, Influence = x.Sum(y => (int?)(y.Influence + y.ShadowInfluence)) ?? 0 }).OrderByDescending(
 						x => x.Influence);
 		}
 
@@ -23,12 +23,12 @@ namespace ZkData
 
         public int GetTaxIncome() {
             if (OwnerAccountID != null)
-                return (AccountPlanets.Where(y => y.Account.ClanID == Account.ClanID).Sum(y => (int?)y.ShadowInfluence + (int?)y.Influence) ?? 0)/50;
+                return (AccountPlanets.Where(y => y.Account.FactionID == Account.FactionID).Sum(y => (int?)y.ShadowInfluence + (int?)y.Influence) ?? 0)/50;
             else return 0;
         }
 
         public double GetCorruption() {
-            var influences = GetClanInfluences().Select(x => (int?)x.Influence);
+            var influences = GetFactionInfluences().Select(x => (int?)x.Influence);
             return (influences.Skip(1).FirstOrDefault() ?? 0) / (double)(influences.FirstOrDefault() ?? 1);        
         }
 
@@ -42,7 +42,7 @@ namespace ZkData
 		public int GetIPToCapture()
 		{
 			var ownerIP = 0;
-			if (Account != null && Account.ClanID != null) ownerIP = AccountPlanets.Where(x => x.Account.ClanID == Account.ClanID).Sum(x => (int?)(x.Influence + x.ShadowInfluence)) ?? 0;
+			if (Account != null && Account.ClanID != null) ownerIP = AccountPlanets.Where(x => x.Account.FactionID == Account.FactionID).Sum(x => (int?)(x.Influence + x.ShadowInfluence)) ?? 0;
 			ownerIP += PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense) ?? 0;
 
 			return ownerIP;
@@ -65,9 +65,9 @@ namespace ZkData
 			return new Rectangle((int)(xp - w/2), (int)(yp - w/2), (int)w, (int)w);
 		}
 
-		public class ClanInfluence
+		public class FactionInfluence
 		{
-			public Clan Clan;
+			public Faction Faction;
 			public int Influence;
 		}
 	}

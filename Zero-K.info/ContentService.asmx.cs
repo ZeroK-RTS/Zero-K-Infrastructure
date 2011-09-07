@@ -567,11 +567,12 @@ namespace ZeroKWeb
 
                 var owner = "";
                 var second = "";
-                var clanInfluences = planet.GetClanInfluences().Where(x => x.Influence > 0);
-                var firstEntry = clanInfluences.FirstOrDefault();
-                var secondEntry = clanInfluences.Skip(1).FirstOrDefault();
-                if (firstEntry != null) owner = string.Format("{0} ", firstEntry.Clan.Shortcut);
-                if (secondEntry != null) second = string.Format("{0} needs {1} influence - ", secondEntry.Clan.Shortcut, firstEntry.Influence - secondEntry.Influence);
+                var factionInfluences = planet.GetFactionInfluences().Where(x => x.Influence > 0);
+                var first = factionInfluences.FirstOrDefault();
+                var firstEntry = planet.Account!= null ? planet.Account : null;
+                var secondEntry = factionInfluences.Skip(1).FirstOrDefault();
+                if (firstEntry != null) owner = string.Format("{0} of {1}", firstEntry.Clan.Shortcut, firstEntry.Faction.Name);
+                if (secondEntry != null) second = string.Format("{0} needs {1} influence - ", secondEntry.Faction.Shortcut, first.Influence - secondEntry.Influence);
 
                 var pwStructures = new LuaTable();
                 foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
@@ -766,9 +767,13 @@ namespace ZeroKWeb
                     text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet/{0} has ended\n", planet.PlanetID);
 
                     // handle infelunce
+                    Faction ownerFaction = null;
                     Clan ownerClan = null;
-                    if (planet.Account != null) ownerClan = planet.Account.Clan;
-
+                    if (planet.Account != null)
+                    {
+                        ownerClan = planet.Account.Clan;
+                        ownerFaction = planet.Account.Faction;
+                    }
                     var clanTechIp =
                         sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).ToDictionary(
                             x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count() * 6.0 / z.Count());
@@ -781,9 +786,9 @@ namespace ZeroKWeb
 
 
                     var ownerMalus = 0;
-                    if (ownerClan != null)
+                    if (ownerFaction != null)
                     {
-                        var entries = planet.GetClanInfluences();
+                        var entries = planet.GetFactionInfluences();
                         if (entries.Count() > 1)
                         {
                             var diff = entries.First().Influence - entries.Skip(1).First().Influence;
@@ -804,7 +809,7 @@ namespace ZeroKWeb
                             db.AccountPlanets.InsertOnSubmit(entry);
                         }
                         entry.Influence += p.Influence ?? 0;
-
+                        
                         db.Events.InsertOnSubmit(Global.CreateEvent("{0} lost {1} influence at {2} because of {3} ships {4}",
                                                                                                                 p.Account,
                                                                                                                 p.Influence ?? 0,
@@ -824,7 +829,7 @@ namespace ZeroKWeb
                         var techBonus = p.Account.ClanID != null ? (int)clanTechIp[p.Account.ClanID] : 0;
                         var gapMalus = 0;
                         var shipBonus = 0;
-                        if (ownerClan != null && p.Account.Clan == ownerClan) gapMalus = ownerMalus;
+                        if (ownerFaction != null && p.Account.Faction == ownerFaction) gapMalus = ownerMalus;
                         p.Influence += (techBonus - gapMalus);
 
                         var ships = planet.AccountPlanets.Where(x => x.AccountID == p.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
@@ -892,7 +897,11 @@ namespace ZeroKWeb
                     var noGrowAccount = new List<int>();
                     foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
                     {
-                        ap.DropshipCount = 0;
+                        if (sb.SpringBattlePlayers.Any(x => x.AccountID == ap.AccountID && !x.IsSpectator))
+                        {
+                            ap.DropshipCount = 0;
+                          // only destroy ships if player actually played
+                        }
                         noGrowAccount.Add(ap.AccountID);
                     }
 
@@ -947,12 +956,12 @@ namespace ZeroKWeb
                         var corruption = entry.GetCorruption();
                         entry.Account.Credits += (int)((entry.GetMineIncome() + entry.GetTaxIncome()) * (1.0-corruption));
                         if (corruption > 0) {
-                            foreach (var clanEntries in entry.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null)) {
-                                var cnt = clanEntries.Where(x=>x.Influence > 0).Count();
+                            foreach (var facEntries in entry.AccountPlanets.GroupBy(x => x.Account.Faction).Where(x => x.Key != null)) {
+                                var cnt = facEntries.Where(x=>x.Influence > 0).Count();
                                 if (cnt > 0)
                                 {
                                     var personDecay = (int)Math.Ceiling(GlobalConst.InfluenceDecay/(double)cnt);
-                                    foreach (var e in clanEntries.Where(x => x.Influence > 0))
+                                    foreach (var e in facEntries.Where(x => x.Influence > 0))
                                     {
                                         e.Influence = e.Influence - personDecay;
                                     }
