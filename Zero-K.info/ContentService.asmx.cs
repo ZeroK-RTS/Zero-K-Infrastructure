@@ -897,11 +897,13 @@ namespace ZeroKWeb
                     var noGrowAccount = new List<int>();
                     foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
                     {
-                        if (sb.SpringBattlePlayers.Any(x => x.AccountID == ap.AccountID && !x.IsSpectator))
+                        if (!sb.SpringBattlePlayers.Any(x => x.AccountID == ap.AccountID && !x.IsSpectator))
                         {
-                            ap.DropshipCount = 0;
+                            ap.Account.DropshipCount += ap.DropshipCount;
+                            
                           // only destroy ships if player actually played
                         }
+                        ap.DropshipCount = 0;
                         noGrowAccount.Add(ap.AccountID);
                     }
 
