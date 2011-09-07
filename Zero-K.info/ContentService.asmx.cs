@@ -34,7 +34,7 @@ namespace ZeroKWeb
                 var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
                 var account = db.Accounts.FirstOrDefault(x => x.LobbyID == accountID);
                 
-                if (account.Faction == null) {
+                if (account.FactionID == null) {
                     var rand = new Random();
                     var faclist = db.Factions.ToList();
                     var fac = faclist[rand.Next(faclist.Count)];
