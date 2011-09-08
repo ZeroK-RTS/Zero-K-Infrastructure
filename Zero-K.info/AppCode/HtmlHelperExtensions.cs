@@ -198,7 +198,7 @@ namespace System.Web.Mvc
                 {
                     return
                         new MvcHtmlString(string.Format(
-                            "<span style='color:{0}'><img src='/img/factions/{1}' style='width:16;height:16'/>{2}</span>",
+                            "<span style='color:{0}'><img src='/img/factions/{1}'  style='width:16px;height:16px'/>{2}</span>",
                             fac.Color,
                             fac.ImageFile,
                             fac.Shortcut));

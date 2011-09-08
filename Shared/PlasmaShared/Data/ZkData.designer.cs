@@ -16258,7 +16258,7 @@ namespace ZkData
 		
 		private int _Turn;
 		
-		private int _ClanID;
+		private System.Nullable<int> _ClanID;
 		
 		private int _Influence;
 		
@@ -16278,7 +16278,7 @@ namespace ZkData
     partial void OnAccountIDChanged();
     partial void OnTurnChanging(int value);
     partial void OnTurnChanged();
-    partial void OnClanIDChanging(int value);
+    partial void OnClanIDChanging(System.Nullable<int> value);
     partial void OnClanIDChanged();
     partial void OnInfluenceChanging(int value);
     partial void OnInfluenceChanged();
@@ -16360,9 +16360,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanID", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int ClanID
+		public System.Nullable<int> ClanID
 		{
 			get
 			{
@@ -16501,7 +16501,7 @@ namespace ZkData
 					}
 					else
 					{
-						this._ClanID = default(int);
+						this._ClanID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Clan");
 				}

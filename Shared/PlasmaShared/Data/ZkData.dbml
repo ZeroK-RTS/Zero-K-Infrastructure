@@ -617,7 +617,7 @@
       <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Turn" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="ClanID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="Influence" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Planet_PlanetInfluenceHistory" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_PlanetInfluenceHistory" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
