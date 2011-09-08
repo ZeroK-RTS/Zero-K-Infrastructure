@@ -73,7 +73,7 @@ Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
         if (c.CanJoin(Global.Account)) {
         <td><span class="textbutton">@Html.ActionLink("Join now!", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })</span> @(string.IsNullOrEmpty(c.Password) ? "" : "password")</td>
         } else {
-        <td>Full</td>
+        <td>Full or different faction</td>
         }
       }
       

@@ -39,10 +39,11 @@ namespace ZkData
 									 join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
 									 where tr2.TargetClanID == clanID && tr2.AllyStatus == AllyStatus.Alliance && treaty.AllyStatus == AllyStatus.Alliance
 									 select treaty.TargetClanID).ToList();
-			
+
+            var facId = db.Clans.Where(x => x.ClanID == clanID).Select(x => x.FactionID).FirstOrDefault();
 
 			var gal = db.Galaxies.Single(x => x.IsDefault);
-			var planets = gal.Planets.Where(x => x.Account != null && (x.Account.ClanID == clanID || milAlly.Contains(x.Account.ClanID ?? 0)));
+			var planets = gal.Planets.Where(x => x.Account != null && (x.Account.FactionID == facId || milAlly.Contains(x.Account.ClanID ?? 0)));
 			if (!planets.Any()) return gal.Planets.ToList(); // if cannot attack any planet (not own/allied to any) -> allow attack anywhere
 			var accesiblePlanets = new List<Planet>();
 

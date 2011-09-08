@@ -82,7 +82,12 @@ namespace ZeroKWeb
 					args[i] = string.Format("<a href='{0}'>B{1}</a>", url.Action("Detail", "Battles", new { id = bat.SpringBattleID }), bat.SpringBattleID);   //todo no propoer helper for this
 					if (bat.SpringBattleID != 0) ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattleID = bat.SpringBattleID });
 					else ev.EventSpringBattles.Add(new EventSpringBattle() { SpringBattle = bat });
-				}
+                }
+                else if (arg is Faction) {
+                var fac = (Faction)arg;
+					args[i] = HtmlHelperExtensions.PrintFaction(null,fac,false);
+					
+                }
 
 			}
 			ev.Text = string.Format(format, args);
