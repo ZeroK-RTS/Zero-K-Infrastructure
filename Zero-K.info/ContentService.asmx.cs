@@ -517,136 +517,148 @@ namespace ZeroKWeb
                                                                 List<BattleStartSetupPlayer> players,
                                                                 AutohostMode mode = AutohostMode.GameTeams)
         {
-            mode = GetModeFromHost(hostName);
-            var ret = new SpringBattleStartSetup();
-            var commanderTypes = new LuaTable();
-            var db = new ZkDataContext();
-
-            var accountIDsWithExtraComms = new List<int>();
-            // calculate to whom to send extra comms
-            if (mode == AutohostMode.Planetwars)
+            try
             {
-                var groupedByTeam = players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyTeam).OrderByDescending(x => x.Count());
-                var biggest = groupedByTeam.FirstOrDefault();
-                if (biggest != null)
+                mode = GetModeFromHost(hostName);
+                var ret = new SpringBattleStartSetup();
+                var commanderTypes = new LuaTable();
+                var db = new ZkDataContext();
+
+                var accountIDsWithExtraComms = new List<int>();
+                // calculate to whom to send extra comms
+                if (mode == AutohostMode.Planetwars)
                 {
-                    foreach (var other in groupedByTeam.Skip(1))
+                    var groupedByTeam = players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyTeam).OrderByDescending(x => x.Count());
+                    var biggest = groupedByTeam.FirstOrDefault();
+                    if (biggest != null)
                     {
-                        var cnt = biggest.Count() - other.Count();
-                        if (cnt > 0)
+                        foreach (var other in groupedByTeam.Skip(1))
                         {
-                            foreach (var a in
-                                other.Select(x => db.Accounts.First(y => y.LobbyID == x.AccountID)).OrderByDescending(x => x.Elo*x.EloWeight).Take(cnt)
-                                ) accountIDsWithExtraComms.Add(a.AccountID);
-                        }
-                    }
-                }
-            }
-
-            foreach (var p in players.Where(x => !x.IsSpectator))
-            {
-                var user = db.Accounts.FirstOrDefault(x => x.LobbyID == p.AccountID);
-                if (user != null)
-                {
-                    var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
-                    ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID, Parameters = userParams });
-
-                    var pu = new LuaTable();
-                    var userUnlocksBanned = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanUnlocks);
-                    var userCommandersBanned = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanCommanders);
-
-                    if (!userUnlocksBanned)
-                    {
-                        if (mode != AutohostMode.Planetwars || user.ClanID == null) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
-                        else
-                        {
-                            foreach (var unlock in
-                                user.AccountUnlocks.Select(x => x.Unlock).Union(Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock))) pu.Add(unlock.Code);
-                        }
-                    }
-
-                    userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
-
-                    if (accountIDsWithExtraComms.Contains(p.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "extracomm", Value = "1" });
-
-                    var pc = new LuaTable();
-
-                    if (!userCommandersBanned)
-                    {
-                        foreach (var c in user.Commanders)
-                        {
-                            var morphTable = new LuaTable();
-                            pc["[\"" + c.Name + "\"]"] = morphTable;
-                            for (var i = 1; i <= 4; i++)
+                            var cnt = biggest.Count() - other.Count();
+                            if (cnt > 0)
                             {
-                                var key = "c" + user.AccountID + "_" + c.CommanderID + "_" + i;
-                                morphTable.Add(key);
-
-                                var comdef = new LuaTable();
-                                commanderTypes[key] = comdef;
-
-                                comdef["chassis"] = c.Unlock.Code + i;
-
-                                var modules = new LuaTable();
-                                comdef["modules"] = modules;
-
-                                comdef["cost"] = c.GetTotalMorphLevelCost(i);
-
-                                comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
-
-                                foreach (var m in
-                                    c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i).OrderBy(x => x.Unlock.UnlockType).ThenBy(
-                                        x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
+                                foreach (var a in
+                                    other.Select(x => db.Accounts.First(y => y.LobbyID == x.AccountID)).OrderByDescending(x => x.Elo * x.EloWeight).Take
+                                        (cnt)) accountIDsWithExtraComms.Add(a.AccountID);
                             }
                         }
                     }
-                    else userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "jokecomm", Value = "1" });
-
-                    userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "commanders", Value = pc.ToBase64String() });
                 }
-            }
 
-            ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commanderTypes.ToBase64String() });
-            if (mode == AutohostMode.Planetwars)
-            {
-                var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
-
-                var hostAccount = db.Accounts.Single(x => x.Name == hostName);
-                if (hostAccount.PlanetWarsHost == null) hostAccount.PlanetWarsHost = new PlanetWarsHost();
-                hostAccount.PlanetWarsHost.InGame = true;
-                hostAccount.PlanetWarsHost.PlanetID = planet.PlanetID;
-                hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.Clear();
-                hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(
-                    players.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = x.AccountID, IsSpectator = x.IsSpectator }));
-                // todo stores lobby id in account id table - needs mapping
-                db.SubmitChanges();
-
-                var owner = "";
-                var second = "";
-                var factionInfluences = planet.GetFactionInfluences().Where(x => x.Influence > 0);
-                var first = factionInfluences.FirstOrDefault();
-                var firstEntry = planet.Account != null ? planet.Account : null;
-                var secondEntry = factionInfluences.Skip(1).FirstOrDefault();
-                if (firstEntry != null) owner = string.Format("{0} of {1}", firstEntry.Clan.Shortcut, firstEntry.Faction.Name);
-                if (secondEntry != null) second = string.Format("{0} needs {1} influence - ", secondEntry.Faction.Shortcut, first.Influence - secondEntry.Influence);
-
-                var pwStructures = new LuaTable();
-                foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
+                foreach (var p in players.Where(x => !x.IsSpectator))
                 {
-                    pwStructures.Add("s" + s.StructureTypeID,
-                                     new LuaTable()
-                                     {
-                                         { "unitname", s.StructureType.IngameUnitName },
-                                         //{ "isDestroyed", s.IsDestroyed ? true : false },
-                                         { "name", owner + s.StructureType.Name },
-                                         { "description", second + s.StructureType.Description }
-                                     });
-                }
-                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair
-                                   { Key = "planetwarsStructures", Value = pwStructures.ToBase64String() });
-            }
+                    var user = db.Accounts.FirstOrDefault(x => x.LobbyID == p.AccountID);
+                    if (user != null)
+                    {
+                        var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
+                        ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { AccountID = p.AccountID, Parameters = userParams });
 
-            return ret;
+                        var pu = new LuaTable();
+                        var userUnlocksBanned = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanUnlocks);
+                        var userCommandersBanned = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanCommanders);
+
+                        if (!userUnlocksBanned)
+                        {
+                            if (mode != AutohostMode.Planetwars || user.ClanID == null) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
+                            else
+                            {
+                                foreach (var unlock in
+                                    user.AccountUnlocks.Select(x => x.Unlock).Union(Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock))) pu.Add(unlock.Code);
+                            }
+                        }
+
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
+
+                        if (accountIDsWithExtraComms.Contains(p.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "extracomm", Value = "1" });
+
+                        var pc = new LuaTable();
+
+                        if (!userCommandersBanned)
+                        {
+                            foreach (var c in user.Commanders)
+                            {
+                                var morphTable = new LuaTable();
+                                pc["[\"" + c.Name + "\"]"] = morphTable;
+                                for (var i = 1; i <= 4; i++)
+                                {
+                                    var key = "c" + user.AccountID + "_" + c.CommanderID + "_" + i;
+                                    morphTable.Add(key);
+
+                                    var comdef = new LuaTable();
+                                    commanderTypes[key] = comdef;
+
+                                    comdef["chassis"] = c.Unlock.Code + i;
+
+                                    var modules = new LuaTable();
+                                    comdef["modules"] = modules;
+
+                                    comdef["cost"] = c.GetTotalMorphLevelCost(i);
+
+                                    comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
+
+                                    foreach (var m in
+                                        c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i).OrderBy(x => x.Unlock.UnlockType).ThenBy(
+                                            x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
+                                }
+                            }
+                        }
+                        else userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "jokecomm", Value = "1" });
+
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "commanders", Value = pc.ToBase64String() });
+                    }
+                }
+
+                ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "commanderTypes", Value = commanderTypes.ToBase64String() });
+                if (mode == AutohostMode.Planetwars)
+                {
+                    var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
+
+                    var hostAccount = db.Accounts.Single(x => x.Name == hostName);
+                    if (hostAccount.PlanetWarsHost == null) hostAccount.PlanetWarsHost = new PlanetWarsHost();
+                    hostAccount.PlanetWarsHost.InGame = true;
+                    hostAccount.PlanetWarsHost.PlanetID = planet.PlanetID;
+                    hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.Clear();
+                    hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(
+                        players.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = x.AccountID, IsSpectator = x.IsSpectator }));
+                    // todo stores lobby id in account id table - needs mapping
+                    db.SubmitChanges();
+
+                    var owner = "";
+                    var second = "";
+                    var factionInfluences = planet.GetFactionInfluences().Where(x => x.Influence > 0).ToList();
+                    var firstEntry = factionInfluences.FirstOrDefault();
+                    var ownerAccount = planet.Account;
+                    var secondEntry = factionInfluences.Skip(1).FirstOrDefault();
+                    if (ownerAccount != null) owner = string.Format("{0} of {1}", ownerAccount.Clan.Shortcut, ownerAccount.Faction.Name);
+                    if (secondEntry != null && firstEntry != null)
+                        second = string.Format("{0} needs {1} influence - ",
+                                               secondEntry.Faction.Shortcut,
+                                               firstEntry.Influence - secondEntry.Influence);
+
+                    var pwStructures = new LuaTable();
+                    foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
+                    {
+                        pwStructures.Add("s" + s.StructureTypeID,
+                                         new LuaTable()
+                                         {
+                                             { "unitname", s.StructureType.IngameUnitName },
+                                             //{ "isDestroyed", s.IsDestroyed ? true : false },
+                                             { "name", owner + s.StructureType.Name },
+                                             { "description", second + s.StructureType.Description }
+                                         });
+                    }
+                    ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "planetwarsStructures", Value = pwStructures.ToBase64String() });
+                }
+
+                return ret;
+            }
+            catch (Exception ex) {
+                var db = new ZkDataContext();
+                var licho = db.Accounts.SingleOrDefault(x=>x.AccountID ==5986);
+                if (licho != null) foreach (var line in ex.ToString().Lines())
+                        AuthServiceClient.SendLobbyMessage(licho, line);
+                throw;
+            }
         }
 
 

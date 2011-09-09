@@ -13,6 +13,7 @@ namespace ZkData
 
 		public static List<ClanUnlockEntry> ClanUnlocks(ZkDataContext db, int? clanID)
 		{
+            if (clanID == null) return new List<ClanUnlockEntry>();
 			List<int> techAlly = new List<int>();
 
 			techAlly = (from treaty in db.TreatyOffers.Where(x => x.OfferingClanID == clanID)
