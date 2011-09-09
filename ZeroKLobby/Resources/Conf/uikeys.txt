@@ -6,6 +6,9 @@ unbindaction trackmode
 unbindaction track 
 unbind any+j mouse2
 
+bind d oneclickwep
+bind Shift+d oneclickwep
+
 bind alt+b debug
 bind t resurrect
 bind shift+t resurrect
