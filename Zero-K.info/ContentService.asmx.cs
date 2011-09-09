@@ -245,6 +245,14 @@ namespace ZeroKWeb
                     if (team0Elo < team1Elo) balanceModifier += -eloScore;
                     else balanceModifier += eloScore;
 
+                    // verify if ther eis sense in playing (no zero sum game ip abuse)
+                    var majorityFactions = (from teamData in Enumerable.Range(0, players.Count).GroupBy(x => playerAssignments[x])
+                                            let majorityCount = Math.Ceiling(teamData.Count()/2.0)
+                                            select
+                                                teamData.GroupBy(x => players[x].FactionID).Where(x => x.Key != null && x.Count() >= majorityCount).
+                                                Select(x => x.Key ?? 0)).ToList();
+                    if (majorityFactions.Count == 2 && majorityFactions[0].Intersect(majorityFactions[1]).Any()) continue; // winning either side would be benefitial for some majority faction
+
                     // calculate score for meaningfull teams
                     var compoScore = 0.0;
                     for (var i = 0; i < players.Count; i++) // for every player calculate his score as average of relations to other plaeyrs
@@ -526,10 +534,11 @@ namespace ZeroKWeb
                     {
                         var cnt = biggest.Count() - other.Count();
                         if (cnt > 0)
-                            foreach (
-                                var a in
-                                    other.Select(x => db.Accounts.First(y => y.LobbyID == x.AccountID)).OrderByDescending(x => x.Elo*x.EloWeight).Take
-                                        (cnt)) accountIDsWithExtraComms.Add(a.AccountID);
+                        {
+                            foreach (var a in
+                                other.Select(x => db.Accounts.First(y => y.LobbyID == x.AccountID)).OrderByDescending(x => x.Elo*x.EloWeight).Take(cnt)
+                                ) accountIDsWithExtraComms.Add(a.AccountID);
+                        }
                     }
                 }
             }
@@ -609,7 +618,7 @@ namespace ZeroKWeb
                 hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.Clear();
                 hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(
                     players.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = x.AccountID, IsSpectator = x.IsSpectator }));
-                    // todo stores lobby id in account id table - needs mapping
+                // todo stores lobby id in account id table - needs mapping
                 db.SubmitChanges();
 
                 var owner = "";
@@ -957,10 +966,9 @@ namespace ZeroKWeb
                         var unitName = data[0];
                         if (handled.Contains(unitName)) continue;
                         handled.Add(unitName);
-                        foreach (
-                            var s in
-                                db.PlanetStructures.Where(
-                                    x => x.PlanetID == planet.PlanetID && x.StructureType.IngameUnitName == unitName && !x.IsDestroyed))
+                        foreach (var s in
+                            db.PlanetStructures.Where(
+                                x => x.PlanetID == planet.PlanetID && x.StructureType.IngameUnitName == unitName && !x.IsDestroyed))
                         {
                             if (s.StructureType.IsIngameDestructible)
                             {
