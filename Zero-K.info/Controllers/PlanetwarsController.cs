@@ -376,6 +376,7 @@ namespace ZeroKWeb.Controllers
                 pa.ShadowInfluence = 0;
             }
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
+            acc.FactionID = null;
             db.SubmitChanges();
 
             
