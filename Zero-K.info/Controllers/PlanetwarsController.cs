@@ -34,9 +34,9 @@ namespace ZeroKWeb.Controllers
 			var structs = planet.PlanetStructures.Where(x => !x.IsDestroyed && x.StructureType.IsIngameDestructible).ToList();
 			if (avail >= bombNeed)
 			{
-                if (structs.Count > 0)
+                acc.DropshipCount -= bombNeed;
+				if (structs.Count > 0)
                 {
-                    acc.DropshipCount -= bombNeed;
                     var s = structs[new Random().Next(structs.Count)];
                     if (s.StructureType.IngameDestructionNewStructureTypeID != null)
                     {
