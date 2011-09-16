@@ -376,9 +376,12 @@ namespace ZeroKWeb.Controllers
                 pa.ShadowInfluence = 0;
             }
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
-            acc.FactionID = null;
             db.SubmitChanges();
-
+            db.Dispose();
+            db = new ZkDataContext();
+            var acc2 = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            acc2.FactionID = null;
+            db.SubmitChanges();
             
             SetPlanetOwners();
             return RedirectToAction("ClanList");
