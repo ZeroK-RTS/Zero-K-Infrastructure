@@ -730,7 +730,10 @@ namespace ZeroKWeb.Controllers
 
 					if (firstPlanet && !mostInfluentialPlayer.WasGivenCredits)
 					{
-						mostInfluentialPlayer.Credits += GlobalConst.PlanetwarsColonizationCredits;
+                        if (mostInfluentialPlayer.Clan.HomeworldPlanet == null) { // if clan has no home, make first planet its home
+                            mostInfluentialPlayer.Clan.HomeworldPlanet = planet;
+                        }
+					    mostInfluentialPlayer.Credits += GlobalConst.PlanetwarsColonizationCredits;
 						mostInfluentialPlayer.WasGivenCredits = true;
 						db.Events.InsertOnSubmit(Global.CreateEvent("{0} gets ${1} for colonizing his/her first planet {2}",
 						                                            mostInfluentialPlayer,
@@ -1048,7 +1051,7 @@ namespace ZeroKWeb.Controllers
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             var planet = db.Planets.Single(x=>x.PlanetID==planetid);
             var freeInfluence = acc.Clan.Accounts.SelectMany(x => x.AccountPlanets).Where(x => x.Planet.OwnerAccountID == null || x.Planet.Account.ClanID != acc.ClanID).Sum(x => (int?)x.Influence);
-            if ((acc.HasClanRights || acc.IsClanFounder) && acc.Clan.HomeworldPlanetID == null && planet.OwnerAccountID == null)
+            if ((acc.HasClanRights || acc.IsClanFounder) && acc.Clan.HomeworldPlanetID == null && (planet.OwnerAccountID == null || planet.Account.ClanID == acc.ClanID) && !planet.PlanetStructures.Any(x=>x.StructureType.EffectIsVictoryPlanet==true)) 
             {
                 if (freeInfluence > planet.GetIPToCapture())
                 {
