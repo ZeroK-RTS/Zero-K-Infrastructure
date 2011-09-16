@@ -103,7 +103,7 @@
 
 	if (creds != null)
 	{
-        var ratio_money = @creds.Creds / @Math.Round(credEntries.Sum(x => x.Assets) * 0.5);
+        var ratio_money = @creds.Creds / @Math.Round((credEntries.Sum(x => x.Assets)-creds.Assets) * 0.5);
 		<span><b>@Html.PrintFaction(creds.Fac)</b></span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
