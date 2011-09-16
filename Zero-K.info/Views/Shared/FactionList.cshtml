@@ -9,7 +9,7 @@
 @foreach (var f in facs.OrderBy(x => x.Planets))
 {
     <div style='float: left'>
-        <table><tr><td><img src='/img/factions/@f.Faction.ImageFile' style='float: left'/></td>
+        <table><tr><td><img src='@f.Faction.GetImageUrl()' style='float: left'/></td>
                    <td>
                        <span style='color: @f.Faction.Color; font-size:120%;'>@f.Faction.Name</span>
                        @if (Global.Account != null)

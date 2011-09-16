@@ -133,16 +133,25 @@ namespace System.Web.Mvc
             if (account == null) return new MvcHtmlString("Nobody");
             else
             {
+                var clanStr = "";
+                var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+                if (account.Clan != null) {
+                    clanStr = string.Format("<a href='{1}'><img src='{0}' width='16'/></a>", account.Clan.GetImageUrl(), url.Action("Clan", "PlanetWars", new { id= account.ClanID}));
+                }
+                else if (account.Faction != null) {
+                    clanStr = string.Format("<img src='{0}' width='16'/>", account.Faction.GetImageUrl());
+                }
+
                 return
                     new MvcHtmlString(
                         string.Format(
-                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' /><a href='/Users/Detail/{2}' style='color:{3}' title='<b>Aliases:</b> {4}'>{5}</a>",
+                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{6}<a href='/Users/Detail/{2}' style='color:{3}' title='<b>Aliases:</b> {4}'>{5}</a>",
                             account.Country != "??" ? account.Country : "unknown",
                             account.LobbyTimeRank + 1,
                             account.AccountID,
-                            colorize ? Clan.ClanColor(account.Clan, Global.ClanID) : "",
+                            colorize ? Faction.FactionColor(account.Faction, Global.FactionID) : "",
                             account.Aliases,
-                            account.Name));
+                            account.Name,clanStr));
             }
         }
 
@@ -193,14 +202,14 @@ namespace System.Web.Mvc
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             if (fac != null)
             {
-                if (big) return new MvcHtmlString(string.Format("<img src='/img/factions/{0}'/>", fac.ImageFile));
+                if (big) return new MvcHtmlString(string.Format("<img src='{0}'/>", fac.GetImageUrl()));
                 else
                 {
                     return
                         new MvcHtmlString(string.Format(
-                            "<span style='color:{0}'><img src='/img/factions/{1}'  style='width:16px;height:16px'/>{2}</span>",
+                            "<span style='color:{0}'><img src='{1}'  style='width:16px;height:16px'/>{2}</span>",
                             fac.Color,
-                            fac.ImageFile,
+                            fac.GetImageUrl(),
                             fac.Shortcut));
                 }
             }
