@@ -163,7 +163,7 @@ namespace ZeroKWeb.Controllers
 		[Auth]
 		public ActionResult CreateClan()
 		{
-			if (Global.Account.Clan == null || (Global.Account.HasClanRights)) return View(Global.Clan ?? new Clan());
+            if (Global.Account.Clan == null || (Global.Account.HasClanRights)) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID} );
 			else return Content("You already have clan and you dont have rights to it");
 		}
 
@@ -780,6 +780,7 @@ namespace ZeroKWeb.Controllers
 				else
 				{
 					if (Global.Clan != null) return Content("You already have a clan");
+                    if (Global.FactionID != clan.FactionID) return Content("Clan must belong to same faction");
 					db.Clans.InsertOnSubmit(clan);
 				}
 				if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
