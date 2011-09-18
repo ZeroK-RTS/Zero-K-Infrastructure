@@ -153,11 +153,8 @@
 			<input type="submit" value="send" />
 			</form> <br />
 			
-				if (avail >= enemyShips && enemyShips > 0) {
-			@Html.ActionLink("Engage enemy fleet with " + enemyShips + " ships", "EngageFleet", new { planetID = Model.PlanetID }) @:-destroysenemyships<br/>
-				}
-				if (avail >= bombNeed) {
-			@Html.ActionLink("Bombard planet with " + bombNeed + " ships", "BombPlanet", new { planetID = Model.PlanetID }) @:-destroysrandomstructure<br/>
+		    if (avail >= bombNeed) {
+			    @Html.ActionLink("Bombard planet with " + bombNeed + " ships", "BombPlanet", new { planetID = Model.PlanetID, title="Destroys random structure and reduces 3% of influence. If there is no structure on planet, reduces 10% of influence. Bombing needs 3 + planet defense/3 ships. " })<br/>
 				}
 			} else {
 			<span>You cannot access this planet through link of wormholes</span>  

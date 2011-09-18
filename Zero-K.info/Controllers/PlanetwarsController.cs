@@ -167,34 +167,6 @@ namespace ZeroKWeb.Controllers
 			else return Content("You already have clan and you dont have rights to it");
 		}
 
-		[Auth]
-		public ActionResult EngageFleet(int planetID)
-		{
-			var db = new ZkDataContext();
-			var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-
-			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db, acc.ClanID.Value).Select(x => x.PlanetID).ToList();
-			var accessible = accessiblePlanets.Any(x => x == planetID);
-			var jumpgates = acc.GetFreeJumpGatesCount(accessiblePlanets);
-			var avail = accessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
-			var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
-			var enemyShips = planet.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID).Sum(x => x.DropshipCount);
-			if (enemyShips > 0 && avail >= enemyShips)
-			{
-				acc.DropshipCount -= enemyShips;
-				foreach (var entry in planet.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID && x.DropshipCount > 0))
-				{
-					db.Events.InsertOnSubmit(Global.CreateEvent("{0} engaged fleet of {1} at {2} destroying {3} ships",
-					                                            acc,
-					                                            entry.Account,
-					                                            planet,
-					                                            entry.DropshipCount));
-					entry.DropshipCount = 0;
-				}
-			}
-			db.SubmitChanges();
-			return RedirectToAction("Planet", new { id = planetID });
-		}
 
 		public ActionResult Events(int? planetID,
 		                           int? accountID,
