@@ -39,6 +39,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -70,6 +71,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NGif\AnimatedGifEncoder.cs" />
+    <Compile Include="NGif\GifDecoder.cs" />
+    <Compile Include="NGif\LZWEncoder.cs" />
+    <Compile Include="NGif\NeuQuant.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

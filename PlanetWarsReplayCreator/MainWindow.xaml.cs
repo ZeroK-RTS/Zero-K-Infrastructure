@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Gif.Components;
 using ZkData;
 using System.IO;
 using System.Net;
@@ -126,24 +127,27 @@ namespace PlanetWarsReplayCreator
 			fileStream.Close();
 #endif
 #if true			
-			for (var i = 0; i <= 100; i++)
-			{
-				Debug.WriteLine(i);
+			
+                var anim = new AnimatedGifEncoder();
+                anim.SetSize(512, 512);
+                anim.SetDelay(200);
+                anim.Start(File.OpenWrite(@"c:\temp\pw_replay.gif"));    
+            foreach (var chapters in db.PlanetOwnerHistories.GroupBy(x=>x.Turn).OrderBy(x=>x.Key))
+			    {
+                    foreach (var chapter in chapters) ApplyHistoryItem(chapter);
+			        mapCanvas.UpdateLayout();
 
-				var chapters = db.PlanetOwnerHistories.Where(h => h.Turn == i);
-				foreach (var chapter in chapters) ApplyHistoryItem(chapter);
-				mapCanvas.UpdateLayout();
+			        var bitmap = new RenderTargetBitmap(512, 512, 96*512, 96*512, PixelFormats.Pbgra32);
+			        bitmap.Render(mapCanvas);
 
-				var bitmap = new RenderTargetBitmap(512, 512, 96 * 512, 96 * 512, PixelFormats.Pbgra32);
-				bitmap.Render(mapCanvas);
-
-				var encoder = new BmpBitmapEncoder();
-				encoder.Frames.Add(BitmapFrame.Create(bitmap));
-
-				var fileStream = new FileStream(@"C:\Users\Nubtron\Desktop\replay2\" + i + ".bmp", FileMode.Create);
-				encoder.Save(fileStream);
-				fileStream.Close();
-			}			
+			        var encoder = new BmpBitmapEncoder();
+			        encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                    var ms = new MemoryStream();
+                    encoder.Save(ms);
+                    anim.AddFrame(System.Drawing.Image.FromStream(ms));
+			    }
+            anim.Finish();
+					
 #endif
 		}
 
