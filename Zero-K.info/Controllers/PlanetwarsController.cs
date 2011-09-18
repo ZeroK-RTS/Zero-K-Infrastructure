@@ -702,9 +702,6 @@ namespace ZeroKWeb.Controllers
 
 					if (firstPlanet && !mostInfluentialPlayer.WasGivenCredits)
 					{
-                        if (mostInfluentialPlayer.Clan.HomeworldPlanet == null) { // if clan has no home, make first planet its home
-                            mostInfluentialPlayer.Clan.HomeworldPlanet = planet;
-                        }
 					    mostInfluentialPlayer.Credits += GlobalConst.PlanetwarsColonizationCredits;
 						mostInfluentialPlayer.WasGivenCredits = true;
 						db.Events.InsertOnSubmit(Global.CreateEvent("{0} gets ${1} for colonizing his/her first planet {2}",
