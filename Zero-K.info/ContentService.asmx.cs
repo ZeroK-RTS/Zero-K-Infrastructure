@@ -385,6 +385,19 @@ namespace ZeroKWeb
         }
 
 
+        public class PlanetPickEntry {
+            readonly Planet planet;
+            readonly int weight;
+            public Planet Planet { get { return planet; } }
+            public int Weight { get { return weight; } }
+
+            public PlanetPickEntry(Planet planet, int weight)
+            {
+                this.planet = planet;
+                this.weight = weight;
+            }
+        }
+
         [WebMethod]
         public RecommendedMapResult GetRecommendedMap(string autohostName, List<AccountTeam> accounts)
         {
@@ -394,13 +407,15 @@ namespace ZeroKWeb
             {
                 if (mode == AutohostMode.Planetwars)
                 {
-                    var playerAccountIDs =
-                        accounts.Where(x => !x.Spectate).Select(x => db.Accounts.First(z => z.LobbyID == x.AccountID).AccountID).ToList();
+                    var playerAccounts = accounts.Where(x => !x.Spectate).Select(x => db.Accounts.First(z => z.LobbyID == x.AccountID)).ToList();
+                    var playerAccountIDs = playerAccounts.Select(x => x.AccountID).ToList();
+                    var playerFactionIDs = playerAccounts.Select(x => x.FactionID).Distinct().ToList();
+
                     var gal = db.Galaxies.Single(x => x.IsDefault);
-                    var biggestClanEntry =
+                    var biggestFactionEntry =
                         gal.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Faction).Where(x => x.Key != null).OrderByDescending(
                             x => x.Count()).FirstOrDefault();
-                    var biggestClan = biggestClanEntry != null ? biggestClanEntry.Key : null;
+                    var biggestFaction = biggestFactionEntry != null ? biggestFactionEntry.Key : null;
 
                     var valids =
                         gal.Planets.Select(
@@ -411,29 +426,41 @@ namespace ZeroKWeb
                                 Ships = (x.AccountPlanets.Where(y => playerAccountIDs.Contains(y.AccountID)).Sum(y => (int?)y.DropshipCount) ?? 0),
                                 Defenses = (x.PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)
                             }).
-                            Where(x => x.Ships >= x.Defenses);
+                            Where(x => (x.Planet.Account == null ||  playerFactionIDs.Contains(x.Planet.Account.FactionID)) && x.Ships >= x.Defenses).ToList();
                     var maxc = valids.Max(x => (int?)x.Ships) ?? 0;
 
-                    List<Planet> targets = null;
-                    // if there are no dropships target unclaimed and biggest clan planets
+                    List<PlanetPickEntry> targets = null;
+                    // if there are no dropships target unclaimed and biggest clan planets - INSURGENTS
                     if (maxc == 0)
                     {
-                        var possiblePlanets =
-                            gal.Planets.Where(x => x.OwnerAccountID == null || x.Account.Faction == biggestClan).Select(
+                        targets =
+                            gal.Planets.Where(x => x.OwnerAccountID != null || playerFactionIDs.Contains(x.Account.FactionID)).Select(
                                 x =>
-                                new
-                                {
-                                    Planet = x,
-                                    Defenses = x.PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0
-                                })
-                                .OrderBy(x => x.Defenses).ToList();
-                        targets = possiblePlanets.Where(x => x.Defenses == possiblePlanets.First().Defenses).Select(x => x.Planet).ToList();
+                                new PlanetPickEntry(x, Math.Max(0, (2000 - x.AccountPlanets.Sum(y=>(int?)y.Influence + y.ShadowInfluence)??0)/200))).ToList();
+
+                        targets.AddRange(gal.Planets.Where(x => x.OwnerAccountID == null && db.Links.Any(y => (y.PlanetID1 == x.PlanetID && y.PlanetByPlanetID2.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID2.Account.FactionID) || (y.PlanetID2 == x.PlanetID && y.PlanetByPlanetID1.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID1.Account.FactionID))))).Select(x=>new PlanetPickEntry(x, 10 + (x.AccountPlanets.Sum(y=>(int?)y.Influence)??0) /50)));
+
+                        if (!targets.Any()) targets = gal.Planets.Select(x => new PlanetPickEntry(x, 1)).ToList();
                     }
-                    else targets = valids.Where(x => x.Ships == maxc).Select(x => x.Planet).ToList();
+                    else targets = valids.Where(x => x.Ships == maxc).Select(x => new PlanetPickEntry(x.Planet, 1)).ToList();
                     // target valid planets with most dropships
 
+                    var sumw = targets.Sum(x => x.Weight);
+                    
                     var r = new Random(autohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
-                    var planet = targets[r.Next(targets.Count)];
+                    var random = r.Next(sumw);
+                    sumw = 0;
+                    Planet planet = null;
+                    foreach (var target in targets) {
+                        sumw += target.Weight;
+                        if (sumw >= random)
+                        {
+                            planet = target.Planet;
+                            break;
+                        }
+                    }
+                    if (planet == null) planet = targets[r.Next(targets.Count)].Planet; // this should not be needed;
+
                     res.MapName = planet.Resource.InternalName;
                     var owner = "";
                     if (planet.Account != null) owner = planet.Account.Name;
@@ -760,7 +787,6 @@ namespace ZeroKWeb
                 var mode = GetModeFromHost(accountName);
 
                 var db = new ZkDataContext();
-                db.ExecuteCommand("update account set creditsincome =0, creditsexpense=0 where creditsincome<>0 or creditsexpense<>0");
 
 
                 var sb = new SpringBattle()
@@ -833,6 +859,8 @@ namespace ZeroKWeb
 
                 if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Any())
                 {
+                    db.ExecuteCommand("update account set creditsincome =0, creditsexpense=0 where creditsincome<>0 or creditsexpense<>0");
+
                     var gal = db.Galaxies.Single(x => x.IsDefault);
                     var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
 

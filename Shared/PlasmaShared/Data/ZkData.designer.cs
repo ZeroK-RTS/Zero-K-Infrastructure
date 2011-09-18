@@ -2927,7 +2927,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsIncome", DbType="float NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsIncome", DbType="float NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
 		public double CreditsIncome
 		{
@@ -2948,7 +2948,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsExpense", DbType="float NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsExpense", DbType="float NOT NULL", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
 		public double CreditsExpense
 		{
