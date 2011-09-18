@@ -84,7 +84,7 @@
  
 	<b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
 	<br />
-	<b>Elo:</b> @Math.Round(@Model.Elo)
+	<b>Elo:</b> @Math.Round(@Model.EffectiveElo)
 	@{var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));}
 	<div title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
 		<b class="fleft"> Level @Model.Level </b> 

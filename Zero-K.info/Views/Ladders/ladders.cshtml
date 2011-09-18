@@ -18,7 +18,7 @@
         @:</span> <br /> <span style="font-size: small" >
     }
     <text>
-    @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.Elo)) <br />
+    @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.EffectiveElo)) <br />
     </text>
     playerIndex++;
 }

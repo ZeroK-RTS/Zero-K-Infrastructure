@@ -211,13 +211,13 @@ namespace ZeroKWeb
                         playerAssignments[i] = team;
                         if (team == 0)
                         {
-                            team0Elo += player.Elo + player.WeightEloMalus;
+                            team0Elo += player.EffectiveElo;
                             //team0Weight += player.EloWeight;
                             team0count++;
                         }
                         else
                         {
-                            team1Elo += player.Elo + player.WeightEloMalus; // *player.EloWeight;
+                            team1Elo += player.EffectiveElo; // *player.EloWeight;
                             //team1Weight += player.EloWeight;
                             team1count++;
                         }
@@ -345,7 +345,7 @@ namespace ZeroKWeb
             var ret = new EloInfo();
             if (user != null)
             {
-                ret.Elo = user.Elo;
+                ret.Elo = user.EffectiveElo;
                 ret.Weight = user.EloWeight;
             }
             return ret;
@@ -359,7 +359,7 @@ namespace ZeroKWeb
             var ret = new EloInfo();
             if (user != null)
             {
-                ret.Elo = user.Elo;
+                ret.Elo = user.EffectiveElo;
                 ret.Weight = user.EloWeight;
             }
             return ret;

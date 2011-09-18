@@ -70,19 +70,15 @@ namespace ZkData
 
 			foreach (var r in winners)
 			{
-				var elo = r.Account.Elo;
-				var w = r.Account.EloWeight;
-				winnerW += w;
+				winnerW += r.Account.EloWeight;
 				winnerInvW += r.Account.EloInvWeight;
-				winnerElo += elo + r.Account.WeightEloMalus;
+				winnerElo += r.Account.EffectiveElo;
 			}
 			foreach (var r in losers)
 			{
-				var elo = r.Account.Elo;
-				var w = r.Account.EloWeight;
-				loserW += w;
+				loserW += r.Account.EloWeight;
 				loserInvW += r.Account.EloInvWeight;
-				loserElo += elo + r.Account.WeightEloMalus;
+				loserElo += r.Account.EffectiveElo;
 			}
 
 			winnerElo = winnerElo / winners.Count;

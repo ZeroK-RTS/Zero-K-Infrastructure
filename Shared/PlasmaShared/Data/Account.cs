@@ -13,7 +13,10 @@ namespace ZkData
 
 		public double WeightEloMalus { get { return (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
 
-		public void CheckLevelUp()
+        public double EffectiveElo { get { return Elo + WeightEloMalus; } }
+
+
+	    public void CheckLevelUp()
 		{
 			if (XP > GetXpForLevel(Level + 1)) Level++;
 		}
