@@ -11,7 +11,7 @@ Commander name: @Html.TextBox("name", c != null ? c.Name : "Commander " + Model.
 <input type="image" src="@(c != null ? "http://cdn1.iconfinder.com/data/icons/dellipack/32/interact.png" : "/img/add.png")" alt="@(c != null ? "Update" : "Construct!")" id="commanderUpdate@(Model.ProfileID)" class="vcenter noborder" /><br />
 @if (c != null) {
 	<span style='color:@c.Unlock.LabelColor' title='$unlock$@c.ChassisUnlockID'><img src='@c.Unlock.ImageUrl' />@c.Unlock.Name</span>
-	<input type="image" name="deleteCommander" src='/img/delete_icon.png' class="vcenter noborder" />
+	<input type="submit" name="deleteCommander" value="Delete commander" />
 	
     foreach (var slots in Model.Slots.GroupBy(x => x.MorphLevel).OrderBy(x => x.Key)) {
 	<h3>Morph @slots.Key:</h3>
