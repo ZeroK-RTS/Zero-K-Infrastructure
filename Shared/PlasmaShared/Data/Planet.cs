@@ -65,5 +65,10 @@ namespace ZkData
 			public Faction Faction;
 			public int Influence;
 		}
+
+	    public int GetUpkeepCost()
+	    {
+            return PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.UpkeepCost)??0;
+	    }
 	}
 }

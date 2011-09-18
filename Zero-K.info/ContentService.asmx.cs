@@ -1030,6 +1030,7 @@ namespace ZeroKWeb
                         var corruption = entry.GetCorruption();
                         var mineIncome = (int)((entry.GetMineIncome()*(1.0 - corruption)));
 
+                        entry.Account.Credits -= entry.GetUpkeepCost();
                         entry.Account.Credits += mineIncome/2; // owner gets 50%
 
                         // remaining 50% split by same faction by influences

@@ -1,84 +1,89 @@
 ﻿@using ZkData
-@model ZkData.Planet
+@model Planet
 <table>
-  @{
-      var link = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectLinkStrength);
-      var credits = Model.GetMineIncome();
-      var tax = (Model.AccountPlanets.Sum(x=>(int?)x.Influence + x.ShadowInfluence)??0) * GlobalConst.InfluenceTaxIncome;
-      var corruption = Math.Round(Model.GetCorruption()*100);
-      
-      var dropshipCapa = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity);
-      var dropshipProd = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipProduction);
-      var defense = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense);
-			var dropDefense = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense);
-      var jump = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectWarpGateCapacity);
-      var victory = Model.PlanetStructures.Where(x => !x.IsDestroyed).Any(x => x.StructureType.EffectIsVictoryPlanet == true);
-      var aliens = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.EffectBots).Where(x => !string.IsNullOrEmpty(x)).FirstOrDefault();
-      var techs = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.Unlock).Where(x=> x!=null).ToList();
-			var blockTrade = Model.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksEnemyTrade == true);
-      
-    <tr>
-      <td>Governor:</td>
-      <td>@Html.PrintAccount(Model.Account)  @Html.PrintClan(Model.Account != null ? Model.Account.Clan : null)</td>
-    </tr>
-      if (Model.HomeworldClan != null)
-      {<tr><td><b>Homeworld </b></td><td>
-            <b>@Html.PrintClan(Model.HomeworldClan)</b></td></tr>
-      }
-		<tr>
-			<td>Bonuses:</td>
-			<td><span style='color:@(link == 0 ? "red" : "")'>@(link * 100)%</span> link
-			@if (defense > 0)
-   {
-				@:, <span style='color: red'>+@defense influence</span>
-      }
-			@if (dropDefense > 0)
-   {
-				@:, <span style='color: red'>+@dropDefense ship defense</span>
-      }
-      @if (credits > 0)
-      {
-				@:, <span style='color: ltGreen' title='Mine income goes 50% to planet governor and rest to same faction people according to their influence'>+$@credits mine/turn</span>
-			}
-      @if (corruption > 0)
-      {
-        @:, <span style='color: red' title='Corruption is caused by enemy factions having too big influence. Corruption decreases mine income'>-@corruption % corruption</span>
-      }      
-      @if (tax >0) {
-        @:, <span style='color: ltGreen' title='Tax is distributed proportionally to each holder of influence on the planet. 100 influence makes @(Math.Round(100*GlobalConst.InfluenceTaxIncome))'>+$@tax tax/turn</span>
-      }      
-      @if (techs.Any())
-      {
-          foreach (var t in techs)
-          {
-          @:, <span title='$unlock$@t.UnlockID' style='color:@t.LabelColor; white-space: nowrap;' ><img src='@t.ImageUrl' width='20'/>@t.Name</span>
+    @{
+        var link = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectLinkStrength);
+        var credits = Model.GetMineIncome();
+        var tax = (Model.AccountPlanets.Sum(x => (int?)x.Influence + x.ShadowInfluence) ?? 0)*GlobalConst.InfluenceTaxIncome;
+        var corruption = Math.Round(Model.GetCorruption()*100);
+
+        var dropshipCapa = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity);
+        var dropshipProd = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipProduction);
+        var defense = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense);
+        var dropDefense = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense);
+        var jump = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectWarpGateCapacity);
+        var victory = Model.PlanetStructures.Where(x => !x.IsDestroyed).Any(x => x.StructureType.EffectIsVictoryPlanet == true);
+        var aliens = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.EffectBots).Where(x => !string.IsNullOrEmpty(x)).FirstOrDefault();
+        var techs = Model.PlanetStructures.Where(x => !x.IsDestroyed).Select(x => x.StructureType.Unlock).Where(x => x != null).ToList();
+        var blockTrade = Model.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksEnemyTrade == true);
+        var upkeep = Model.GetUpkeepCost();
+
+        <tr>
+            <td>Governor:</td>
+            <td>@Html.PrintAccount(Model.Account)  @Html.PrintClan(Model.Account != null ? Model.Account.Clan : null)</td>
+        </tr>
+        if (Model.HomeworldClan != null)
+        {
+            <tr><td><b>Homeworld </b></td><td>
+                                              <b>@Html.PrintClan(Model.HomeworldClan)</b></td></tr>
         }
-      }
-      @if (jump > 0)
-      {
-				@:, +@jump jumpgate
-      }
-      @if (dropshipProd > 0)
-      {
-				@:, +@dropshipProd ships/turn
-      }
-      @if (dropshipCapa > 0)
-      {
-				@:, +@dropshipCapa starfleet capacity
-			}
-      @if (victory)
-      {
-	      @:, @(victory ? "ARTEFACT!" : "")
-      }
-      @if (!string.IsNullOrEmpty(aliens))
-      {
-				@:, @aliens
-      }
-			@if (blockTrade)
-   {
-				@:, influence buying from locals blocked
-      }
-			</td>
-	</tr>		
-  }
+        <tr>
+            <td>Bonuses:</td>
+            <td><span style='color: @(link == 0 ? "red" : "")'>@(link*100)%</span> link
+                @if (defense > 0)
+                {
+                    @:, <span style='color: red'>+@defense influence</span>
+                }
+                @if (dropDefense > 0)
+                {
+                    @:, <span style='color: red'>+@dropDefense ship defense</span>
+                }
+                @if (credits > 0)
+                {
+                    @:, <span style='color: ltGreen' title='Mine income goes 50% to planet governor and rest to same faction people according to their influence'>+$@credits mine/turn</span>
+                }
+                @if (corruption > 0)
+                {
+                    @:, <span style='color: red' title='Corruption is caused by enemy factions having too big influence. Corruption decreases mine income'>-@corruption % corruption</span>
+                }  
+                @if (upkeep > 0) {
+                    @:, <span style='color: red' title='Most structures need 2% of their cost/turn as upkeep'>-@(upkeep) upkeep/turn</span>
+                }    
+                @if (tax > 0)
+                {
+                    @:, <span style='color: ltGreen' title='Tax is distributed proportionally to each holder of influence on the planet. 100 influence makes @(Math.Round(100 * GlobalConst.InfluenceTaxIncome))'>+$@tax tax/turn</span>
+                }      
+                @if (techs.Any())
+                {
+                    foreach (var t in techs)
+                    {
+                        @:, <span title='$unlock$@t.UnlockID' style='color:@t.LabelColor; white-space: nowrap;' ><img src='@t.ImageUrl' width='20'/>@t.Name</span>
+                    }
+                }
+                @if (jump > 0)
+                {
+                    @:, +@jump jumpgate
+                }
+                @if (dropshipProd > 0)
+                {
+                    @:, +@dropshipProd ships/turn
+                }
+                @if (dropshipCapa > 0)
+                {
+                    @:, +@dropshipCapa starfleet capacity
+                }
+                @if (victory)
+                {
+                    @:, @(victory ? "ARTEFACT!" : "")
+                }
+                @if (!string.IsNullOrEmpty(aliens))
+                {
+                    @:, @aliens
+                }
+                @if (blockTrade)
+                {
+                    @:, influence buying from locals blocked
+                }
+            </td>
+        </tr> }
 </table>
