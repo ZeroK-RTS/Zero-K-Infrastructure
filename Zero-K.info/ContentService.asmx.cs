@@ -760,6 +760,9 @@ namespace ZeroKWeb
                 var mode = GetModeFromHost(accountName);
 
                 var db = new ZkDataContext();
+                db.ExecuteCommand("update account set creditsincome =0, creditsexpense=0 where creditsincome<>0 or creditsexpense<>0");
+
+
                 var sb = new SpringBattle()
                          {
                              HostAccountID = acc.AccountID,
@@ -1023,6 +1026,10 @@ namespace ZeroKWeb
                         a.DropshipCount = Math.Min(a.DropshipCount, capacity);
                     }
                     db.SubmitChanges();
+
+
+                    
+
 
                     // income + decay
                     foreach (var entry in gal.Planets.Where(x => x.OwnerAccountID != null))

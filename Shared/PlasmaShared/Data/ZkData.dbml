@@ -87,8 +87,8 @@
       <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="CreditsIncome" Type="System.Double" DbType="float" CanBeNull="true" />
-      <Column Name="CreditsExpense" Type="System.Double" DbType="float" CanBeNull="true" />
+      <Column Name="CreditsIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="CreditsExpense" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />

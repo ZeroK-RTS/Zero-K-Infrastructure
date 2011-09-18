@@ -15,6 +15,12 @@ namespace ZkData
 
         public double EffectiveElo { get { return Elo + WeightEloMalus; } }
 
+        partial void OnCreditsChanging(int value)
+        {
+            if (value > Credits) CreditsIncome += value - Credits;
+            else CreditsExpense += Credits - value;
+        }
+
 
 	    public void CheckLevelUp()
 		{

@@ -2219,9 +2219,9 @@ namespace ZkData
 		
 		private bool _IsDeleted;
 		
-		private System.Nullable<double> _CreditsIncome;
+		private double _CreditsIncome;
 		
-		private System.Nullable<double> _CreditsExpense;
+		private double _CreditsExpense;
 		
 		private EntitySet<Mission> _Missions;
 		
@@ -2341,9 +2341,9 @@ namespace ZkData
     partial void OnLobbyIDChanged();
     partial void OnIsDeletedChanging(bool value);
     partial void OnIsDeletedChanged();
-    partial void OnCreditsIncomeChanging(System.Nullable<double> value);
+    partial void OnCreditsIncomeChanging(double value);
     partial void OnCreditsIncomeChanged();
-    partial void OnCreditsExpenseChanging(System.Nullable<double> value);
+    partial void OnCreditsExpenseChanging(double value);
     partial void OnCreditsExpenseChanged();
     #endregion
 		
@@ -2927,9 +2927,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsIncome", DbType="float")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsIncome", DbType="float NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
-		public System.Nullable<double> CreditsIncome
+		public double CreditsIncome
 		{
 			get
 			{
@@ -2948,9 +2948,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsExpense", DbType="float")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsExpense", DbType="float NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
-		public System.Nullable<double> CreditsExpense
+		public double CreditsExpense
 		{
 			get
 			{

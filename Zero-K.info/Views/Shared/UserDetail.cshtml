@@ -210,7 +210,7 @@
 	@Html.PrintClan(Model.Clan)
 
 	<h3>Credits:</h3>
-	@Model.Credits
+	@Model.Credits.ToString("C0") (+@Model.CreditsIncome, -@Model.CreditsExpense)
 	<br />
 	@if (ZeroKWeb.Global.Account != null && Global.AccountID != Model.AccountID && Global.Account.FactionID == Model.FactionID)
  {
