@@ -4,6 +4,7 @@
 	{
         public const double InfluenceTaxIncome = 1 / 25.0;
 	    public const int InfluenceDecay = 3;
+        public const double PlanetwarsRepairCost = 0.5; // repair cost is 50% only
 	    public const bool ClanFreePlanets = false;
 	    public const double EloWeightMalusFactor = -50;
 		public const int InfluenceSystemBuyPrice = 40;

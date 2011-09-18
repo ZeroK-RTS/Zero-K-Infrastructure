@@ -2207,7 +2207,7 @@ namespace ZkData
 		
 		private bool _HasClanRights;
 		
-		private int _DropshipCount;
+		private double _DropshipCount;
 		
 		private bool _WasGivenCredits;
 		
@@ -2218,6 +2218,10 @@ namespace ZkData
 		private System.Nullable<int> _LobbyID;
 		
 		private bool _IsDeleted;
+		
+		private System.Nullable<double> _CreditsIncome;
+		
+		private System.Nullable<double> _CreditsExpense;
 		
 		private EntitySet<Mission> _Missions;
 		
@@ -2325,7 +2329,7 @@ namespace ZkData
     partial void OnIsClanFounderChanged();
     partial void OnHasClanRightsChanging(bool value);
     partial void OnHasClanRightsChanged();
-    partial void OnDropshipCountChanging(int value);
+    partial void OnDropshipCountChanging(double value);
     partial void OnDropshipCountChanged();
     partial void OnWasGivenCreditsChanging(bool value);
     partial void OnWasGivenCreditsChanged();
@@ -2337,6 +2341,10 @@ namespace ZkData
     partial void OnLobbyIDChanged();
     partial void OnIsDeletedChanging(bool value);
     partial void OnIsDeletedChanged();
+    partial void OnCreditsIncomeChanging(System.Nullable<double> value);
+    partial void OnCreditsIncomeChanged();
+    partial void OnCreditsExpenseChanging(System.Nullable<double> value);
+    partial void OnCreditsExpenseChanged();
     #endregion
 		
 		public Account()
@@ -2789,9 +2797,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipCount", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipCount", DbType="float NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
-		public int DropshipCount
+		public double DropshipCount
 		{
 			get
 			{
@@ -2919,8 +2927,50 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsIncome", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
+		public System.Nullable<double> CreditsIncome
+		{
+			get
+			{
+				return this._CreditsIncome;
+			}
+			set
+			{
+				if ((this._CreditsIncome != value))
+				{
+					this.OnCreditsIncomeChanging(value);
+					this.SendPropertyChanging();
+					this._CreditsIncome = value;
+					this.SendPropertyChanged("CreditsIncome");
+					this.OnCreditsIncomeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsExpense", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
+		public System.Nullable<double> CreditsExpense
+		{
+			get
+			{
+				return this._CreditsExpense;
+			}
+			set
+			{
+				if ((this._CreditsExpense != value))
+				{
+					this.OnCreditsExpenseChanging(value);
+					this.SendPropertyChanging();
+					this._CreditsExpense = value;
+					this.SendPropertyChanged("CreditsExpense");
+					this.OnCreditsExpenseChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Mission", Storage="_Missions", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
 		public EntitySet<Mission> Missions
 		{
 			get
@@ -2939,7 +2989,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread", Storage="_ForumThreadsByCreatedAccountID", ThisKey="AccountID", OtherKey="CreatedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByCreatedAccountID
 		{
 			get
@@ -2958,7 +3008,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThread1", Storage="_ForumThreadsByLastPostAccountID", ThisKey="AccountID", OtherKey="LastPostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreadsByLastPostAccountID
 		{
 			get
@@ -2977,7 +3027,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Resource", Storage="_Resources", ThisKey="AccountID", OtherKey="TaggedByAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
 		public EntitySet<Resource> Resources
 		{
 			get
@@ -2996,7 +3046,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MissionScore", Storage="_MissionScores", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
 		public EntitySet<MissionScore> MissionScores
 		{
 			get
@@ -3015,7 +3065,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Rating", Storage="_Ratings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
 		public EntitySet<Rating> Ratings
 		{
 			get
@@ -3034,7 +3084,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPost", Storage="_ForumPosts", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
 		public EntitySet<ForumPost> ForumPosts
 		{
 			get
@@ -3053,7 +3103,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MapRating", Storage="_MapRatings", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=37, EmitDefaultValue=false)]
 		public EntitySet<MapRating> MapRatings
 		{
 			get
@@ -3072,7 +3122,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattle", Storage="_SpringBattles", ThisKey="AccountID", OtherKey="HostAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=38, EmitDefaultValue=false)]
 		public EntitySet<SpringBattle> SpringBattles
 		{
 			get
@@ -3091,7 +3141,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_SpringBattlePlayer", Storage="_SpringBattlePlayers", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=37, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=39, EmitDefaultValue=false)]
 		public EntitySet<SpringBattlePlayer> SpringBattlePlayers
 		{
 			get
@@ -3110,7 +3160,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumThreadLastRead", Storage="_ForumThreadLastReads", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=38, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=40, EmitDefaultValue=false)]
 		public EntitySet<ForumThreadLastRead> ForumThreadLastReads
 		{
 			get
@@ -3129,7 +3179,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountBattleAward", Storage="_AccountBattleAwards", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=39, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41, EmitDefaultValue=false)]
 		public EntitySet<AccountBattleAward> AccountBattleAwards
 		{
 			get
@@ -3148,7 +3198,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountUnlock", Storage="_AccountUnlocks", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=40, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -3167,7 +3217,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Commander", Storage="_Commanders", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=41, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=43, EmitDefaultValue=false)]
 		public EntitySet<Commander> Commanders
 		{
 			get
@@ -3186,7 +3236,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PollVote", Storage="_PollVotes", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=42, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=44, EmitDefaultValue=false)]
 		public EntitySet<PollVote> PollVotes
 		{
 			get
@@ -3205,7 +3255,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Planet", Storage="_Planets", ThisKey="AccountID", OtherKey="OwnerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=43, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=45, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get
@@ -3224,7 +3274,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer", Storage="_MarketOffersByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=44, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=46, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAccountID
 		{
 			get
@@ -3243,7 +3293,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer1", Storage="_MarketOffersByAcceptedAccountID", ThisKey="AccountID", OtherKey="AcceptedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=45, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=47, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAcceptedAccountID
 		{
 			get
@@ -3262,7 +3312,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountPlanet", Storage="_AccountPlanets", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=46, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=48, EmitDefaultValue=false)]
 		public EntitySet<AccountPlanet> AccountPlanets
 		{
 			get
@@ -3281,7 +3331,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_EventAccount", Storage="_EventAccounts", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=47, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=49, EmitDefaultValue=false)]
 		public EntitySet<EventAccount> EventAccounts
 		{
 			get
@@ -3300,7 +3350,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="AccountID", OtherKey="OwnerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=48, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=50, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -3319,7 +3369,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=49, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=51, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -3338,7 +3388,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetWarsHost", Storage="_PlanetWarsHost", ThisKey="AccountID", OtherKey="HostAccountID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=50, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=52, EmitDefaultValue=false)]
 		public PlanetWarsHost PlanetWarsHost
 		{
 			get
@@ -3373,7 +3423,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountRatingVote", Storage="_AccountRatingVotes", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=51, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=53, EmitDefaultValue=false)]
 		public EntitySet<AccountRatingVote> AccountRatingVotes
 		{
 			get
@@ -3392,7 +3442,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetWarsHostPlayer", Storage="_PlanetWarsHostPlayers", ThisKey="AccountID", OtherKey="PlayerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=52, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=54, EmitDefaultValue=false)]
 		public EntitySet<PlanetWarsHostPlayer> PlanetWarsHostPlayers
 		{
 			get
@@ -3411,7 +3461,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_News", Storage="_News", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=53, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=55, EmitDefaultValue=false)]
 		public EntitySet<News> News
 		{
 			get
@@ -3430,7 +3480,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Punishment", Storage="_Punishments", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=54, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=56, EmitDefaultValue=false)]
 		public EntitySet<Punishment> Punishments
 		{
 			get
@@ -12589,6 +12639,8 @@ namespace ZkData
 		
 		private AllyStatus _AllyStatus;
 		
+		private System.Nullable<int> _InfluenceGiven;
+		
 		private EntityRef<Clan> _ClanByOfferingClanID;
 		
 		private EntityRef<Clan> _ClanByTargetClanID;
@@ -12607,6 +12659,8 @@ namespace ZkData
     partial void OnOfferingClanMessageChanged();
     partial void OnAllyStatusChanging(AllyStatus value);
     partial void OnAllyStatusChanged();
+    partial void OnInfluenceGivenChanging(System.Nullable<int> value);
+    partial void OnInfluenceGivenChanged();
     #endregion
 		
 		public TreatyOffer()
@@ -12723,6 +12777,27 @@ namespace ZkData
 					this._AllyStatus = value;
 					this.SendPropertyChanged("AllyStatus");
 					this.OnAllyStatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InfluenceGiven", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public System.Nullable<int> InfluenceGiven
+		{
+			get
+			{
+				return this._InfluenceGiven;
+			}
+			set
+			{
+				if ((this._InfluenceGiven != value))
+				{
+					this.OnInfluenceGivenChanging(value);
+					this.SendPropertyChanging();
+					this._InfluenceGiven = value;
+					this.SendPropertyChanged("InfluenceGiven");
+					this.OnInfluenceGivenChanged();
 				}
 			}
 		}
@@ -16775,7 +16850,7 @@ namespace ZkData
 		
 		private System.Nullable<int> _EffectInfluenceDefense;
 		
-		private System.Nullable<int> _EffectDropshipProduction;
+		private System.Nullable<double> _EffectDropshipProduction;
 		
 		private System.Nullable<int> _EffectDropshipCapacity;
 		
@@ -16807,6 +16882,8 @@ namespace ZkData
 		
 		private bool _BattleDeletesThis;
 		
+		private int _UpkeepCost;
+		
 		private EntitySet<PlanetStructure> _PlanetStructures;
 		
 		private EntityRef<Unlock> _Unlock;
@@ -16837,7 +16914,7 @@ namespace ZkData
     partial void OnUpgradesToStructureIDChanged();
     partial void OnEffectInfluenceDefenseChanging(System.Nullable<int> value);
     partial void OnEffectInfluenceDefenseChanged();
-    partial void OnEffectDropshipProductionChanging(System.Nullable<int> value);
+    partial void OnEffectDropshipProductionChanging(System.Nullable<double> value);
     partial void OnEffectDropshipProductionChanged();
     partial void OnEffectDropshipCapacityChanging(System.Nullable<int> value);
     partial void OnEffectDropshipCapacityChanged();
@@ -16869,6 +16946,8 @@ namespace ZkData
     partial void OnOwnerChangeDeletesThisChanged();
     partial void OnBattleDeletesThisChanging(bool value);
     partial void OnBattleDeletesThisChanged();
+    partial void OnUpkeepCostChanging(int value);
+    partial void OnUpkeepCostChanged();
     #endregion
 		
 		public StructureType()
@@ -17048,9 +17127,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipProduction", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipProduction", DbType="float")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public System.Nullable<int> EffectDropshipProduction
+		public System.Nullable<double> EffectDropshipProduction
 		{
 			get
 			{
@@ -17392,8 +17471,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpkeepCost", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
+		public int UpkeepCost
+		{
+			get
+			{
+				return this._UpkeepCost;
+			}
+			set
+			{
+				if ((this._UpkeepCost != value))
+				{
+					this.OnUpkeepCostChanging(value);
+					this.SendPropertyChanging();
+					this._UpkeepCost = value;
+					this.SendPropertyChanged("UpkeepCost");
+					this.OnUpkeepCostChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_PlanetStructures", ThisKey="StructureTypeID", OtherKey="StructureTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get
@@ -17446,7 +17546,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_StructureType", Storage="_ParentStructureTypeByUpgradesToStructureID", ThisKey="UpgradesToStructureID", OtherKey="StructureTypeID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
 		public StructureType ParentStructureTypeByUpgradesToStructureID
 		{
 			get
@@ -17470,7 +17570,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_StructureType1", Storage="_ParentStructureTypeByIngameDestructionNewStructureTypeID", ThisKey="IngameDestructionNewStructureTypeID", OtherKey="StructureTypeID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
 		public StructureType ParentStructureTypeByIngameDestructionNewStructureTypeID
 		{
 			get

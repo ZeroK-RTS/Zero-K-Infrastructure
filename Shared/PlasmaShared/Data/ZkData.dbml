@@ -81,12 +81,14 @@
       <Column Name="PlanetWarsRank" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsClanFounder" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="HasClanRights" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="DropshipCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="DropshipCount" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="WasGivenCredits" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="LastNewsRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="CreditsIncome" Type="System.Double" DbType="float" CanBeNull="true" />
+      <Column Name="CreditsExpense" Type="System.Double" DbType="float" CanBeNull="true" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />
@@ -476,6 +478,7 @@
       <Column Name="IsResearchAgreement" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="OfferingClanMessage" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
       <Column Name="AllyStatus" Type="AllyStatus" DbType="int" CanBeNull="true" />
+      <Column Name="InfluenceGiven" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Clan_TreatyOffer" Member="ClanByOfferingClanID" ThisKey="OfferingClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
       <Association Name="Clan_TreatyOffer1" Member="ClanByTargetClanID" ThisKey="TargetClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
     </Type>
@@ -643,7 +646,7 @@
       <Column Name="DestroyedMapIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="UpgradesToStructureID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectInfluenceDefense" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="EffectDropshipProduction" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="EffectDropshipProduction" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectDropshipCapacity" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectLinkStrength" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectUnlockID" Type="System.Int32" DbType="int" CanBeNull="true" />
@@ -659,6 +662,7 @@
       <Column Name="IngameDestructionNewStructureTypeID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="OwnerChangeDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BattleDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="UpkeepCost" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="StructureType_PlanetStructure" Member="PlanetStructures" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="PlanetStructure" />
       <Association Name="Unlock_StructureType" Member="Unlock" ThisKey="EffectUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
       <Association Name="StructureType_StructureType" Member="ParentStructureTypeByUpgradesToStructureID" ThisKey="UpgradesToStructureID" OtherKey="StructureTypeID" Type="StructureType" IsForeignKey="true" />

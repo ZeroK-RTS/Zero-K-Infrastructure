@@ -550,8 +550,8 @@ namespace ZeroKWeb.Controllers
 			if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under control.");
 			var structure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
 			if (!structure.IsDestroyed) return Content("Can't repair a working structure.");
-			if (acc.Credits < structure.StructureType.Cost) return Content("Insufficient credits.");
-			acc.Credits -= structure.StructureType.Cost;
+			if (acc.Credits < structure.StructureType.Cost * GlobalConst.PlanetwarsRepairCost) return Content("Insufficient credits.");
+			acc.Credits -= (int)(structure.StructureType.Cost * GlobalConst.PlanetwarsRepairCost);
 			structure.IsDestroyed = false;
 			db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure.StructureType.Name, planet));
 			db.SubmitChanges();
@@ -574,7 +574,7 @@ namespace ZeroKWeb.Controllers
             var capa = acc.GetDropshipCapacity();
             var there = planet.AccountPlanets.Where(x => x.AccountID == acc.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
             if (cnt + there > capa) return Content("Too many ships, increase fleet size");
-			cnt = Math.Min(cnt, acc.DropshipCount);
+			cnt = Math.Min(cnt, (int)acc.DropshipCount);
 			if (cnt > 0)
 			{
 				acc.DropshipCount = (acc.DropshipCount) - cnt;
