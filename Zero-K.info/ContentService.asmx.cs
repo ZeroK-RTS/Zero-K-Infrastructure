@@ -1014,11 +1014,13 @@ namespace ZeroKWeb
                         sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(
                             x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
                     {
+                        var capacity = a.GetDropshipCapacity();
                         var income = GlobalConst.DefaultDropshipProduction +
                                      (a.Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(
                                          x => x.StructureType.EffectDropshipProduction) ?? 0);
 
                         a.DropshipCount += income;
+                        a.DropshipCount = Math.Min(a.DropshipCount, capacity);
                     }
                     db.SubmitChanges();
 
