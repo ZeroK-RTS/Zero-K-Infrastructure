@@ -1053,9 +1053,6 @@ namespace ZeroKWeb
                         if (myFactionSumInflunece == 0) myFactionSumInflunece = 1;
                         foreach (var myFacAcc in myFactionInfluences) myFacAcc.Acc.Credits += (int)Math.Ceiling(mineIncome/2.0*myFacAcc.Influence/(double)myFactionSumInflunece);
 
-                        // taxincome - based on influences
-                        foreach (var ap in entry.AccountPlanets) ap.Account.Credits += (int)Math.Round((ap.Influence + ap.ShadowInfluence)*GlobalConst.InfluenceTaxIncome);
-
                         if (corruption > 0)
                         {
                             foreach (var facEntries in entry.AccountPlanets.GroupBy(x => x.Account.Faction).Where(x => x.Key != null))
@@ -1068,6 +1065,12 @@ namespace ZeroKWeb
                                 }
                             }
                         }
+                    }
+
+                    // taxincome - based on influences
+                    //todo this might calculate other galaxies, check before adding more galaxies
+                    foreach (var ap in db.AccountPlanets.GroupBy(x=>x.Account).Select(x=> new {Acc = x.Key, Infl = x.Sum(y=>y.Influence + y.ShadowInfluence)})) {
+                        ap.Acc.Credits += (int)Math.Round(ap.Infl * GlobalConst.InfluenceTaxIncome);
                     }
 
                     // kill structures you cannot support 

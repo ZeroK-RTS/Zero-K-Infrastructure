@@ -44,6 +44,7 @@ namespace Fixer
 				db.SubmitChanges();
 
                 db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0");
+                db.ExecuteCommand("update clan set homeworldplanetid=null");
                 if (resetclans) db.ExecuteCommand("update account set clanid=null,isclanfounder=0, hasclanrights=0");
 				db.ExecuteCommand("delete from event");
 				db.ExecuteCommand("delete from planetinfluencehistory");
