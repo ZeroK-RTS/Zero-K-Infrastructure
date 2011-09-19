@@ -217,7 +217,7 @@
 		<h3>PlanetWars gifts</h3>
 		<form method="post" action="@Url.Action("Give", "Planetwars", new { targetAccountID = Model.AccountID })">
 		<span>Credits (@Global.Account.Credits): </span>@Html.TextBox("giveCredits")
-		<span>Influence: </span>@Html.DropDownList("planetID", ZeroKWeb.Global.Account.AccountPlanets.Where(x => x.Influence > 0).OrderByDescending(x => x.Influence).Select(x => new SelectListItem() { Text = x.Planet.Name + " - " + x.Influence, Value = x.PlanetID.ToString() }))
+		<span>Influence: </span>@Html.DropDownList("planetID", Global.Account.AccountPlanets.Where(x => x.Influence > 0).OrderByDescending(x => x.Influence).Select(x => new SelectListItem() { Text = x.Planet.Name + " - " + x.Influence, Value = x.PlanetID.ToString() }))
 		@Html.TextBox("giveInfluence") <input type="submit" value="Send gift"/>
 		</form>
  }
