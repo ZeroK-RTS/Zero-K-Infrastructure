@@ -278,19 +278,29 @@ namespace System.Web.Mvc
                                                 planet.PlanetID));
         }
 
-        public static MvcHtmlString PrintTreaty(this HtmlHelper helper, AllyStatus status, bool isResearh, int balance)
+        public static MvcHtmlString PrintTreaty(this HtmlHelper helper, AllyStatus status, bool isResearh, int givenInfluence)
         {
             return
-                new MvcHtmlString(string.Format("<span style='color:{0}'>{1}</span> Influence balance: {4} <span style='color:{2}'>{3}</span>",
+                new MvcHtmlString(string.Format("<span style='color:{0}'>{1}</span> Influence given: {4} <span style='color:{2}'>{3}</span>",
                                                 Clan.AllyStatusColor(status),
                                                 status,
                                                 isResearh ? "#00FF00" : "#FF0000",
-                                                isResearh ? "research shared" : "", balance));
+                                                isResearh ? "research shared" : "", givenInfluence));
+        }
+
+        public static MvcHtmlString PrintEffectiveTreaty(this HtmlHelper helper, AllyStatus status, bool isResearh, double balance)
+        {
+            return
+                new MvcHtmlString(string.Format("<span style='color:{0}'>{1}</span> Influence balance: {4}% <span style='color:{2}'>{3}</span>",
+                                                Clan.AllyStatusColor(status),
+                                                status,
+                                                isResearh ? "#00FF00" : "#FF0000",
+                                                isResearh ? "research shared" : "", Math.Round(balance*100)));
         }
 
         public static MvcHtmlString PrintTreaty(this HtmlHelper helper, EffectiveTreaty treaty)
         {
-            return PrintTreaty(helper, treaty.AllyStatus, treaty.IsResearchAgreement, treaty.InfluenceGivenToSecondClanBalance);
+            return PrintEffectiveTreaty(helper, treaty.AllyStatus, treaty.IsResearchAgreement, treaty.InfluenceGivenToSecondClanBalance);
         }
 
         public static MvcHtmlString PrintTreaty(this HtmlHelper helper, TreatyOffer treaty)

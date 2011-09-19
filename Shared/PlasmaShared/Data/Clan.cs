@@ -94,7 +94,8 @@ namespace ZkData
                 //else if (FactionID != secondClan.FactionID) ret.AllyStatus = AllyStatus.War;
             }
 
-            ret.InfluenceGivenToSecondClanBalance = (t1 != null ? t1.InfluenceGiven:0) - (t2 != null ? t2.InfluenceGiven : 0);
+            ret.InfluenceGivenToSecondClanBalance = (t1 != null ? t1.InfluenceGiven+100.0:100.0) / (t2 != null ? t2.InfluenceGiven +100.0: 100.0);
+
 
 		    return ret;
 		}
@@ -124,6 +125,6 @@ namespace ZkData
 	{
 		public bool IsResearchAgreement;
 		public AllyStatus AllyStatus;
-	    public int InfluenceGivenToSecondClanBalance;
+	    public double InfluenceGivenToSecondClanBalance;
 	}
 }
