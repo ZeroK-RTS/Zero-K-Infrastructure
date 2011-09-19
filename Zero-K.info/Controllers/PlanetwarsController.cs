@@ -25,7 +25,9 @@ namespace ZeroKWeb.Controllers
             var jumpgates = acc.GetFreeJumpGatesCount(accessiblePlanets);
             var avail = accessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
             avail = Math.Min(avail, acc.GetDropshipCapacity());
-            var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+            var planet = db.Planets.Single(x => x.PlanetID == planetID);
+            if (!accessible && planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksJumpgate == true)) return Content("Planetary defenses interdict your jumpgate");
+
             var defs = planet.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
             var bombNeed = 3 + defs/3;
 
@@ -632,6 +634,7 @@ namespace ZeroKWeb.Controllers
             if (!accessible) if (acc.GetFreeJumpGatesCount(accessiblePlanets) <= 0) return Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity"));
             var cnt = Math.Max(count, 0);
             var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+            if (!accessible && planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksJumpgate == true)) return Content("Planetary defenses interdict your jumpgate");
             var capa = acc.GetDropshipCapacity();
             var there = planet.AccountPlanets.Where(x => x.AccountID == acc.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
             if (cnt + there > capa) return Content("Too many ships, increase fleet size");
@@ -867,7 +870,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult SubmitMarketOrder(int planetID, int quantity, int price, bool isSell)
         {
             var db = new ZkDataContext();
-            if (price > GlobalConst.InfluenceSystemBuyPrice || price < GlobalConst.InfluenceSystemSellPrice) return Content(string.Format("Price must be between {0} and {1}.", GlobalConst.InfluenceSystemSellPrice, GlobalConst.InfluenceSystemBuyPrice));
+            if (price > GlobalConst.InfluenceSystemBuyPrice*3 || price < GlobalConst.InfluenceSystemSellPrice) return Content(string.Format("Price must be between {0} and {1}.", GlobalConst.InfluenceSystemSellPrice, GlobalConst.InfluenceSystemBuyPrice*3));
             db.MarketOffers.InsertOnSubmit(new MarketOffer
                                            {
                                                AccountID = Global.AccountID,

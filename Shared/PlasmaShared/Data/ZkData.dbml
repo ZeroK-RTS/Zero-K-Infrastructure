@@ -655,6 +655,7 @@
       <Column Name="EffectDropshipDefense" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectBots" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="EffectBlocksEnemyTrade" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="EffectBlocksJumpgate" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="Cost" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="IsBuildable" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IsIngameDestructible" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />

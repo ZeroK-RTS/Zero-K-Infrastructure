@@ -17,7 +17,7 @@
 <td>Our offer</td>
 <td>Their offer</td>
 </tr>
-@foreach (var them in new ZkDataContext().AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key.ClanID != Model.ClanID && !x.Key.IsDeleted).Select(x => new { Clan = x.Key, Influence = x.Sum(y => (int?)y.Influence)??0 }).OrderByDescending(x => x.Influence).Select(x => x.Clan))
+@foreach (var them in new ZkDataContext().AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key.ClanID != Model.ClanID && !x.Key.IsDeleted).Select(x => new { Clan = x.Key, Influence = x.Sum(y => (int?)y.Influence)??0 }).Where(x=>x.Influence > 0).OrderByDescending(x => x.Influence).Select(x => x.Clan))
 {
     var our = c.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == them.ClanID) ?? new TreatyOffer();
     var their = them.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == c.ClanID) ?? new TreatyOffer();

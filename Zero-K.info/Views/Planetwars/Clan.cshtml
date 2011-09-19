@@ -283,7 +283,7 @@
         <div id="diplomacyMap"></div>
         <div id="diplomacyMapLegend"></div>
         <h3><a href='@Url.Action("ClanDiplomacy", new { id = Model.ClanID })'>Diplomacy</a></h3>
-        @foreach (var them in new ZkDataContext().AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key.ClanID != Model.ClanID && !x.Key.IsDeleted).Select(x => new { Clan = x.Key, Influence = x.Sum(y=>y.Influence)}).OrderByDescending(x=>x.Influence).Select(x=>x.Clan))
+        @foreach (var them in new ZkDataContext().AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key.ClanID != Model.ClanID && !x.Key.IsDeleted).Select(x => new { Clan = x.Key, Influence = x.Sum(y=>y.Influence)}).Where(x=>x.Influence>0).OrderByDescending(x=>x.Influence).Select(x=>x.Clan))
         {
             var effective = them.GetEffectiveTreaty(Model);
             if (effective.AllyStatus != AllyStatus.Neutral || effective.IsResearchAgreement)
