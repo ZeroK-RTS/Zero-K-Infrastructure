@@ -212,7 +212,7 @@
 	<h3>Credits:</h3>
 	@Model.Credits.ToString("C0") (+@Model.CreditsIncome, -@Model.CreditsExpense)
 	<br />
-	@if (ZeroKWeb.Global.Account != null && Global.AccountID != Model.AccountID && Global.Account.FactionID == Model.FactionID)
+	@if (Global.Account != null && Global.AccountID != Model.AccountID)
  {
 		<h3>PlanetWars gifts</h3>
 		<form method="post" action="@Url.Action("Give", "Planetwars", new { targetAccountID = Model.AccountID })">

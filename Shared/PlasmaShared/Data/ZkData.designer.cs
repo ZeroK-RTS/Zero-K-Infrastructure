@@ -12639,7 +12639,7 @@ namespace ZkData
 		
 		private AllyStatus _AllyStatus;
 		
-		private System.Nullable<int> _InfluenceGiven;
+		private int _InfluenceGiven;
 		
 		private EntityRef<Clan> _ClanByOfferingClanID;
 		
@@ -12659,7 +12659,7 @@ namespace ZkData
     partial void OnOfferingClanMessageChanged();
     partial void OnAllyStatusChanging(AllyStatus value);
     partial void OnAllyStatusChanged();
-    partial void OnInfluenceGivenChanging(System.Nullable<int> value);
+    partial void OnInfluenceGivenChanging(int value);
     partial void OnInfluenceGivenChanged();
     #endregion
 		
@@ -12781,9 +12781,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InfluenceGiven", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InfluenceGiven", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public System.Nullable<int> InfluenceGiven
+		public int InfluenceGiven
 		{
 			get
 			{
