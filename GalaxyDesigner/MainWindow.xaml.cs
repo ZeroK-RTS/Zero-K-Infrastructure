@@ -47,12 +47,12 @@ namespace GalaxyDesigner
 					galaxyDrawing.LoadGalaxy(gd.GalaxyNumber);
 				
 				galaxyDrawing.GalaxyUpdated();
-				starNames = GetTextResource("Names/stars.txt").Replace("\r\n", "\n").Split('\n');
-				fictionalNames = GetTextResource("Names/names.txt").Replace("\r\n", "\n").Split('\n');
+				starNames = GetTextResource("Names/stars.txt").Replace("\r\n", "\n").Split('\n').Select(x=>x.Trim()).Where(x=>!string.IsNullOrEmpty(x)).Distinct().ToArray();
+                fictionalNames = GetTextResource("Names/names.txt").Replace("\r\n", "\n").Split('\n').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToArray();
 			}
 			catch (Exception e)
 			{
-				MessageBox.Show("Error: " + e.Message);
+				MessageBox.Show("Error: " + e.ToString());
 			}
 		}
 
@@ -284,7 +284,13 @@ namespace GalaxyDesigner
 
 		void importButton_Click(object sender, RoutedEventArgs e)
 		{
-			galaxyDrawing.AskForGalaxy();
+            try
+            {
+                galaxyDrawing.AskForGalaxy();
+            }
+            catch (Exception ex) {
+                MessageBox.Show(ex.ToString());
+            }
 		}
 
 		void tabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {}

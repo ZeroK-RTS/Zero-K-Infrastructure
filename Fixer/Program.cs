@@ -24,9 +24,10 @@ namespace Fixer
       //RecalculateBattleElo();
       //FixMaps();
 
-		PurgeGalaxy(9, false);
-    	RandomizeMaps(9);
-		GenerateStructures(9);
+		//PurgeGalaxy(19, false);
+
+    	RandomizeMaps(20);
+		GenerateStructures(20);
 
 			//AddWormholes();
     }

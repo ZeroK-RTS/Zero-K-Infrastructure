@@ -12,7 +12,7 @@
 <div>
 
 
-    @if (Global.Clan != null && (Global.Account.IsClanFounder || Global.Account.HasClanRights))
+    @if (Global.Clan != null && (Global.Account.IsClanFounder || Global.Account.HasClanRights) && Global.ClanID != Model.ClanID)
     {
         <h3>@Global.Clan.ClanName diplomatic releationship with @Model.ClanName</h3>
         

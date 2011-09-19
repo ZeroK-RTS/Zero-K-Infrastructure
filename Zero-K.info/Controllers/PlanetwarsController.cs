@@ -26,6 +26,7 @@ namespace ZeroKWeb.Controllers
             var avail = accessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
             avail = Math.Min(avail, acc.GetDropshipCapacity());
             var planet = db.Planets.Single(x => x.PlanetID == planetID);
+
             if (!accessible && planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksJumpgate == true)) return Content("Planetary defenses interdict your jumpgate");
 
             var defs = planet.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;

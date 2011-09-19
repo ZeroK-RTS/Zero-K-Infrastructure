@@ -55,7 +55,7 @@ namespace ZeroKWeb
                             "{0} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Planetwars/ClanList",
                             account.Name);
                 }
-                if (!account.Name.Contains(account.Clan.Shortcut))
+                /*if (!account.Name.Contains(account.Clan.Shortcut))
                 {
                     AuthServiceClient.SendLobbyMessage(account,
                                                        string.Format(
@@ -63,7 +63,7 @@ namespace ZeroKWeb
                                                            account.Clan.Shortcut,
                                                            account.Name));
                     return string.Format("{0} cannot play, name must contain clan tag {1}", account.Name, account.Clan.Shortcut);
-                }
+                }*/
                 var owner = "";
                 if (planet.Account != null) owner = planet.Account.Name;
                 return string.Format("Greetings {0} {1} of {2}, welcome to {3} planet {4} http://zero-k.info/PlanetWars/Planet/{5}",
@@ -434,7 +434,7 @@ namespace ZeroKWeb
                     if (maxc == 0)
                     {
                         targets =
-                            gal.Planets.Where(x => x.OwnerAccountID != null || playerFactionIDs.Contains(x.Account.FactionID)).Select(
+                            gal.Planets.Where(x => x.Account!=null && playerFactionIDs.Contains(x.Account.FactionID)).Select(
                                 x =>
                                 new PlanetPickEntry(x, Math.Max(0, (2000 - x.AccountPlanets.Sum(y=>(int?)y.Influence + y.ShadowInfluence)??0)/200))).ToList();
 

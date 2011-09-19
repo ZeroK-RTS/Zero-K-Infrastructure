@@ -8,7 +8,7 @@
 27 Tauri
 28 Tauri - see Pleiades
 31 Lyncis
-38 Bo�tis
+38 Bootis
 41 Arietis
 46 Leo Minoris
 46 Leonis Minoris
@@ -41,9 +41,7 @@ Albali
 Albireo
 Alchiba
 Alcor
-Alcor 
 Alcyone
-Alcyone 
 Aldebaran
 Alderamin
 Aldhafera
@@ -173,10 +171,8 @@ Askella
 Aspidiske
 Asterion
 Asterope
-Asterope 
 Atik
 Atlas
-Atlas 
 Atria
 Auva
 Avior
@@ -196,7 +192,7 @@ Beta Aquarii
 Beta Aquilae
 Beta Arietis
 Beta Aurigae
-Beta Bo�tis
+Beta Bootis
 Beta Cancri
 Beta Canis Majoris
 Beta Canis Minoris
@@ -235,9 +231,7 @@ Beta Trianguli Australis
 Beta Ursae Majoris
 Beta Ursae Minoris
 Beta Virginis
-Beta1 Sagittarii
 Beta-1 Sagittarii
-Beta2 Sagittarii
 Beta-2 Sagittarii
 Betelgeuse
 Betria
@@ -308,7 +302,6 @@ Dubhe
 Duhr
 Edasich
 Electra
-Electra 
 Elmuthalleth
 Elnath
 Eltanin
@@ -316,7 +309,6 @@ Enif
 Epsilon Aquarii
 Epsilon Aurigae
 Epsilon Bootis
-Epsilon Bo�tis
 Epsilon Canis Majoris
 Epsilon Capricorni
 Epsilon Carinae
@@ -494,7 +486,6 @@ Menkib
 Merak
 Merga
 Merope
-Merope 
 Mesarthim
 Miaplacidus
 Mimosa
@@ -558,7 +549,6 @@ Peacock
 Phact
 Phad 
 Phecda
-Phekda
 Pherkad
 Pherkard
 Phi Velorum
@@ -578,7 +568,6 @@ Pleione
 Polaris
 Polaris Australis
 Pollux
-Pollux 
 Porrima
 Praecipua
 Procyon
