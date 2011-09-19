@@ -200,7 +200,7 @@ namespace ZeroKWeb.Controllers
                 (planet.OwnerAccountID == null || planet.Account.ClanID == acc.ClanID) &&
                 !planet.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true))
             {
-                if (freeInfluence > planet.GetIPToCapture())
+                if (freeInfluence > planet.GetIPToCapture() || (planet.Account != null && planet.Account.ClanID == Global.ClanID))
                 {
                     if (planet.OwnerAccountID == null && planet.AccountPlanets.Any(x => x.Influence > 0 && x.Account.FactionID != acc.FactionID)) return Content("Planet contains influence of other faction");
 
