@@ -202,7 +202,7 @@ namespace ZeroKWeb.Controllers
             {
                 if (freeInfluence > planet.GetIPToCapture())
                 {
-                    if (planet.AccountPlanets.Any(x => x.Influence > 0 && x.Account.FactionID != acc.FactionID)) return Content("Planet contains influence of other faction");
+                    if (planet.OwnerAccountID == null && planet.AccountPlanets.Any(x => x.Influence > 0 && x.Account.FactionID != acc.FactionID)) return Content("Planet contains influence of other faction");
 
                     MoveInfluenceToHome(db, planet, acc);
                     db.Events.InsertOnSubmit(Global.CreateEvent("{0} established {1} homeworld on {2}!", acc, acc.Clan, planet));
