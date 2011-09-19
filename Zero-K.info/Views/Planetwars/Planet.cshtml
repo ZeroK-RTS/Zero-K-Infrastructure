@@ -218,7 +218,7 @@
 	</div>
 	<div id="trade">
 		@if (Global.Account != null) {
-			@Html.ActionLink("Go to Trade Office", "Trade", "PlanetWars", new { username = Global.Account.Name }, null)
+			@Html.ActionLink("Go to Trade Office", "Trade", "PlanetWars", new { id = Global.AccountID }, null)
 	}
 		<h3>Sell Offers</h3>
 		<table>

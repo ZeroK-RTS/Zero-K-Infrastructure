@@ -12635,8 +12635,6 @@ namespace ZkData
 		
 		private bool _IsResearchAgreement;
 		
-		private string _OfferingClanMessage;
-		
 		private AllyStatus _AllyStatus;
 		
 		private int _InfluenceGiven;
@@ -12655,8 +12653,6 @@ namespace ZkData
     partial void OnTargetClanIDChanged();
     partial void OnIsResearchAgreementChanging(bool value);
     partial void OnIsResearchAgreementChanged();
-    partial void OnOfferingClanMessageChanging(string value);
-    partial void OnOfferingClanMessageChanged();
     partial void OnAllyStatusChanging(AllyStatus value);
     partial void OnAllyStatusChanged();
     partial void OnInfluenceGivenChanging(int value);
@@ -12739,29 +12735,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OfferingClanMessage", DbType="nvarchar(500)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public string OfferingClanMessage
-		{
-			get
-			{
-				return this._OfferingClanMessage;
-			}
-			set
-			{
-				if ((this._OfferingClanMessage != value))
-				{
-					this.OnOfferingClanMessageChanging(value);
-					this.SendPropertyChanging();
-					this._OfferingClanMessage = value;
-					this.SendPropertyChanged("OfferingClanMessage");
-					this.OnOfferingClanMessageChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyStatus", DbType="int", CanBeNull=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public AllyStatus AllyStatus
 		{
 			get
@@ -12782,7 +12757,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InfluenceGiven", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public int InfluenceGiven
 		{
 			get

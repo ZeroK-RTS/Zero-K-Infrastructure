@@ -31,7 +31,7 @@
 }
 
 
-<div id="tabs">
+<div>
     <ul>
         <li><a href="#sell"><span>Sell Offers</span></a></li>
         <li><a href="#buy"><span>Buy Offers</span></a></li>
@@ -40,6 +40,7 @@
         <li><a href="#allSell"><span>All Sell Offers</span></a></li>
         <li><a href="#allBuy"><span>All Buy Offers</span></a></li>
     </ul>
+    <h2>@Model.Name sell offers</h2>
     <div id="sell">
         <table>
             <tr>
@@ -57,6 +58,7 @@
         }
         </table>
     </div>
+    <h2>@Model.Name buy offers</h2>
     <div id="buy">
         <table>
             <tr>
@@ -74,6 +76,48 @@
         }
         </table>
     </div>
+    <h2>@Model.Name trade opportunities</h2>
+    <div id="opportunities">
+        <table>
+            <tr>
+                <th>Planet</th>
+                <th>Already Trading</th>
+                <th>Influence</th>
+                <th>Unit Price</th>
+            </tr>
+        @{
+
+            var planets = from planet in defaultGalaxy.Planets
+                          let ap = planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == account.AccountID && ap.Influence > 0)
+                          where ap != null
+                          orderby ap.Influence descending
+                          select new { planet, ap.Influence };
+            foreach (var planetData in planets)
+            {
+                var planet = planetData.planet;
+                var influence = planetData.Influence;
+                <tr>
+                    @if (planet.Account != null)
+                    { 
+                        <td>@Html.PrintPlanet(planet) (@Html.PrintClan(planet.Account.Clan)) </td>                
+                    }
+                    else
+                    {
+                        <td>@Html.PrintPlanet(planet)</td>
+                    }
+                    <td>@(planet.MarketOffers.Any(o => o.AcceptedAccountID == null && o.AccountID == account.AccountID) ? "yes" : "no")</td>
+                    <form method="post" action="@Url.Action("SubmitSellOrder")">
+                     <input type="hidden" name="planetID" value="@planet.PlanetID"/>
+                      <td><input type="text" name="quantity" value="@influence"/></td>
+                      <td><input type="text" name="price" value="@GlobalConst.InfluenceSystemSellPrice"/></td>
+                      <td><input type='submit' value="New Sell Offer" /></td>
+                    </form>
+                </tr>
+            }
+        }
+        </table>
+    </div>
+    <h2>@Model.Name trade history</h2>
     <div id="history">
         <table>
             <tr>
@@ -110,46 +154,7 @@
         }
         </table>
     </div>
-    <div id="opportunities">
-        <table>
-            <tr>
-                <th>Planet</th>
-                <th>Already Trading</th>
-                <th>Influence</th>
-                <th>Unit Price</th>
-            </tr>
-        @{
-
-            var planets = from planet in defaultGalaxy.Planets
-                          let ap = planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == account.AccountID && ap.Influence > 0)
-                          where ap != null
-                          orderby ap.Influence descending
-                          select new {planet, ap.Influence};
-            foreach (var planetData in planets) 
-            {
-                var planet = planetData.planet;
-                var influence = planetData.Influence;
-                <tr>
-                    @if (planet.Account != null) 
-                    { 
-                        <td>@Html.PrintPlanet(planet) (@Html.PrintClan(planet.Account.Clan)) </td>                
-                    }
-                    else
-                    {
-                        <td>@Html.PrintPlanet(planet)</td>
-                    }
-                    <td>@(planet.MarketOffers.Any(o => o.AcceptedAccountID == null && o.AccountID == account.AccountID)?"yes":"no")</td>
-                    <form method="post" action="@Url.Action("SubmitSellOrder")">
-                     <input type="hidden" name="planetID" value="@planet.PlanetID"/>
-                      <td><input type="text" name="quantity" value="@influence"/></td>
-                      <td><input type="text" name="price" value="@GlobalConst.InfluenceSystemSellPrice"/></td>
-                      <td><input type='submit' value="New Sell Offer" /></td>
-                    </form>
-                </tr>
-            }
-        }
-        </table>
-    </div>
+    <h2>All sell offers</h2>
     <div id="allSell">
         <table>
             <tr>
@@ -169,6 +174,7 @@
         }
         </table>
     </div>
+    <h2>All buy offers</h2>
     <div id="allBuy">
         <table>
             <tr>

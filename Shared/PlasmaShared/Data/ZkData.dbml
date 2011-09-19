@@ -476,7 +476,6 @@
       <Column Name="OfferingClanID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="TargetClanID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="IsResearchAgreement" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="OfferingClanMessage" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
       <Column Name="AllyStatus" Type="AllyStatus" DbType="int" CanBeNull="true" />
       <Column Name="InfluenceGiven" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Clan_TreatyOffer" Member="ClanByOfferingClanID" ThisKey="OfferingClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
