@@ -941,30 +941,6 @@ namespace ZeroKWeb
 
                         var infl = p.Influence ?? 0;
 
-                        // give influence to ally
-                        if (ownerClan != null && p.Account.Clan != null && p.Account.Clan != ownerClan)
-                        {
-                            var treaty = ownerClan.GetEffectiveTreaty(p.Account.Clan); // if ceasefired/allianced - give ip to owner
-                            if (treaty.AllyStatus == AllyStatus.Ceasefire || treaty.AllyStatus == AllyStatus.Alliance)
-                            {
-                                var tax = treaty.AllyStatus == AllyStatus.Ceasefire ? 0.33 : 0.5;
-
-                                var ownerEntry = planet.Account.AccountPlanets.SingleOrDefault(x => x.PlanetID == planet.PlanetID);
-                                if (ownerEntry != null)
-                                {
-                                    var allyInfl = (int)Math.Round(infl*tax);
-                                    infl = (int)Math.Round(infl*(1.0 - tax));
-                                    ownerEntry.Influence += allyInfl;
-                                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} influence at {2} thanks to ally {3} from {4}",
-                                                                                planet.Account,
-                                                                                allyInfl,
-                                                                                planet,
-                                                                                p.Account,
-                                                                                sb));
-                                }
-                            }
-                        }
-
                         // store influence
                         entry.Influence += infl;
                         db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} {5} {6}) influence at {2} from {3}",
@@ -1125,6 +1101,48 @@ namespace ZeroKWeb
                         }
                     }
                     db.SubmitChanges();
+
+                    // transfer ceasefire/alliance influences
+                    if (ownerClan != null)
+                    {
+                        var ownerEntries = planet.AccountPlanets.Where(x => x.Influence > 0 && x.Account.ClanID == ownerClan.ClanID).ToList();
+                        if (ownerEntries.Any())
+                        {
+                            foreach (
+                                var clan in
+                                    planet.AccountPlanets.Where(
+                                        x =>
+                                        x.Account.ClanID != null && x.Account.ClanID != ownerClan.ClanID && x.Influence > 0 &&
+                                        x.Account.Clan.FactionID != ownerClan.FactionID).GroupBy(x => x.Account.Clan))
+                            {
+                                // get clanned influences of other than owner clans of different factions
+
+
+                                var treaty = clan.Key.GetEffectiveTreaty(ownerClan);
+                                if (treaty.AllyStatus == AllyStatus.Alliance ||
+                                    (treaty.AllyStatus == AllyStatus.Ceasefire &&
+                                     treaty.InfluenceGivenToSecondClanBalance < GlobalConst.CeasefireMaxInfluenceBalanceRatio))
+                                {
+                                    // if we are allied or ceasefired and influence balance < 150%, send ifnluence to owners
+                                    var total = clan.Sum(x => x.Influence);
+                                    var increment = total/ownerEntries.Count();
+                                    foreach (var e in ownerEntries) e.Influence += increment;
+                                    foreach (var e in clan) e.Influence = 0;
+
+                                    var offer = db.TreatyOffers.SingleOrDefault(x => x.OfferingClanID == clan.Key.ClanID && x.TargetClanID == ownerClan.ClanID);
+                                    if (offer == null) {
+                                        offer = new TreatyOffer() { OfferingClanID = clan.Key.ClanID, TargetClanID = ownerClan.ClanID };
+                                        db.TreatyOffers.InsertOnSubmit(offer);
+                                    }
+                                    offer.InfluenceGiven += total;
+
+                                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} gave {1} influence on {2} to clan {3} because of their treaty", clan.Key, total, planet, ownerClan));
+                                }
+                            }
+                        }
+                   }
+                    db.SubmitChanges();
+
 
 
                     db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
