@@ -3,66 +3,100 @@
 @model Clan
          
 @{
-  Page.Title = Model.ClanName + " - " + Model.Shortcut + " clan diplomacy";
-  var c = Model;
-  var isMember = c.Accounts.Any(y => y.AccountID == Global.AccountID);
+    Page.Title = Model.ClanName + " - " + Model.Shortcut + " clan diplomacy";
+    var c = Model;
+    var isMember = c.Accounts.Any(y => y.AccountID == Global.AccountID);
 
 }
 
 <div>
-<h3>@Html.PrintClan(Model) diplomacy</h3>
 
-<table>
-<tr>
-<td>Our offer</td>
-<td>Their offer</td>
-</tr>
-@foreach (var them in new ZkDataContext().AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key.ClanID != Model.ClanID && !x.Key.IsDeleted).Select(x => new { Clan = x.Key, Influence = x.Sum(y => (int?)y.Influence)??0 }).Where(x=>x.Influence > 0).OrderByDescending(x => x.Influence).Select(x => x.Clan))
-{
-    var our = c.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == them.ClanID) ?? new TreatyOffer();
-    var their = them.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == c.ClanID) ?? new TreatyOffer();
-    var effective = Model.GetEffectiveTreaty(them);
-  
-  <tr>
-  <td colspan='2'><b>@Html.PrintClan(them) - <span style='color:@Clan.AllyStatusColor(effective.AllyStatus)'>@them.ClanName</span> - @Html.PrintTreaty(effective) </b>
-   </td>
-  </tr>
-  
-  <tr>
-  <td valign='top'>
-  @if (isMember)
-  {
-      if (Global.Account.HasClanRights)
-      {
-    <form method="post" action="@Url.Action("OfferTreaty", new { targetClanID = them.ClanID })">
-      @Html.PrintTreaty(our)<br />
-      Status: @Html.DropDownList("ourStatus", Enum.GetValues(typeof(AllyStatus)).OfType<AllyStatus>().Select(x => new SelectListItem() { Text = x.ToString(), Value = ((int)x).ToString(), Selected = our.AllyStatus == x }))
-      Research: @Html.CheckBox("ourResearch", our.IsResearchAgreement)<input type="submit" value="offer"/><br />
-    </form>
-      }
-      else
-      { 
-    <span>
-      @Html.PrintTreaty(our)<br />
-    </span>
-      }
-  }
-  else
-  { 
-    <span>
-      @Html.PrintTreaty(our)
-      <br />
-    </span>
-  }
-  </td>
-  <td valign='top'>
-    <span>
-      @Html.PrintTreaty(their)<br />
-    </span>
-  </td>
-  </tr>  
-}
-</table>
+
+    @if (Global.Clan != null && (Global.Account.IsClanFounder || Global.Account.HasClanRights))
+    {
+        <h3>@Global.Clan.ClanName diplomatic releationship with @Model.ClanName</h3>
+        
+        var our = Global.Clan.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == Model.ClanID) ?? new TreatyOffer();
+        var their = Model.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == c.ClanID) ?? new TreatyOffer();
+        var effective = Global.Clan.GetEffectiveTreaty(Model);
+        <table>
+
+            <tr>
+                <td colspan='2'><b>@Html.PrintClan(Model) - <span style='color:@Clan.AllyStatusColor(effective.AllyStatus)'>@Model.ClanName</span> - @Html.PrintTreaty(effective) </b>
+                </td>
+            </tr>
+            <tr>
+                <td valign='top'>
+                    <form method="post" action="@Url.Action("OfferTreaty", new { targetClanID = Model.ClanID })">
+                        @Html.PrintTreaty(our)<br />
+                        Status: @Html.DropDownList("ourStatus", Enum.GetValues(typeof(AllyStatus)).OfType<AllyStatus>().Select(x => new SelectListItem() { Text = x.ToString(), Value = ((int)x).ToString(), Selected = our.AllyStatus == x }))
+                        Research: @Html.CheckBox("ourResearch", our.IsResearchAgreement)<input type="submit" value="offer"/><br />
+                    </form>
+                </td>    
+
+                <td valign='top'>
+                    <span>
+                        @Html.PrintTreaty(their)<br />
+                    </span>
+                </td>
+
+            </tr>
+        </table>
+    }
+
+
+    <h3>@Model.ClanName diplomacy</h3>
+    <table>
+        <tr>
+            <td>Our offer</td>
+            <td>Their offer</td>
+        </tr>
+        @foreach (var them in new ZkDataContext().AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key.ClanID != Model.ClanID && !x.Key.IsDeleted).Select(x => new { Clan = x.Key, Influence = x.Sum(y => (int?)y.Influence) ?? 0 }).Where(x => x.Influence > 0).OrderByDescending(x => x.Influence).Select(x => x.Clan))
+        {
+            var our = c.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == them.ClanID) ?? new TreatyOffer();
+            var their = them.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == c.ClanID) ?? new TreatyOffer();
+            var effective = Model.GetEffectiveTreaty(them);
+
+            <tr>
+                <td colspan='2'><b>@Html.PrintClan(them) - <span style='color:@Clan.AllyStatusColor(effective.AllyStatus)'>@them.ClanName</span> - @Html.PrintTreaty(effective) </b>
+                </td>
+            </tr>
+
+            <tr>
+                <td valign='top'>
+                    @if (isMember)
+                    {
+                        if (Global.Account.HasClanRights)
+                        {
+                            <form method="post" action="@Url.Action("OfferTreaty", new { targetClanID = them.ClanID })">
+                                @Html.PrintTreaty(our)<br />
+                                Status: @Html.DropDownList("ourStatus", Enum.GetValues(typeof(AllyStatus)).OfType<AllyStatus>().Select(x => new SelectListItem() { Text = x.ToString(), Value = ((int)x).ToString(), Selected = our.AllyStatus == x }))
+                                Research: @Html.CheckBox("ourResearch", our.IsResearchAgreement)<input type="submit" value="offer"/><br />
+                            </form>
+                        }
+                        else
+                        {
+                            <span>
+                                @Html.PrintTreaty(our)<br />
+                            </span>
+                        }
+                    }
+                    else
+                    {
+                        <span>
+                            @Html.PrintTreaty(our)
+                            <br />
+                        </span>
+                    }
+                </td>
+                <td valign='top'>
+                    <span>
+                        @Html.PrintTreaty(their)<br />
+                    </span>
+                </td>
+            </tr>
+        }
+    </table>
 
 </div>
 
