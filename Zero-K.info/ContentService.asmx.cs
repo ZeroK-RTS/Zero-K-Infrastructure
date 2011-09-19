@@ -1090,6 +1090,8 @@ namespace ZeroKWeb
 
 
                     // give unclanned influence to clanned
+                    db = new ZkDataContext();
+                    planet = db.Planets.Single(x => x.PlanetID == planet.PlanetID);
                     foreach (var faction in planet.AccountPlanets.Where(x => x.Account.FactionID != null && x.Influence > 0).GroupBy(x => x.Account.FactionID)) {
                         var unclanned = faction.Where(x => x.Account.ClanID == null).ToList();
                         var clanned = faction.Where(x => x.Account.ClanID != null).ToList();
@@ -1105,6 +1107,9 @@ namespace ZeroKWeb
                     // transfer ceasefire/alliance influences
                     if (ownerClan != null)
                     {
+                        db = new ZkDataContext();
+                        planet = db.Planets.Single(x => x.PlanetID == planet.PlanetID);
+
                         var ownerEntries = planet.AccountPlanets.Where(x => x.Influence > 0 && x.Account.ClanID == ownerClan.ClanID).ToList();
                         if (ownerEntries.Any())
                         {
@@ -1140,8 +1145,9 @@ namespace ZeroKWeb
                                 }
                             }
                         }
+                        db.SubmitChanges();
                    }
-                    db.SubmitChanges();
+                    
 
 
 
