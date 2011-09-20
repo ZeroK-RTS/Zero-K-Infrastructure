@@ -409,7 +409,7 @@ namespace ZeroKWeb
                 {
                     var playerAccounts = accounts.Where(x => !x.Spectate).Select(x => db.Accounts.First(z => z.LobbyID == x.AccountID)).ToList();
                     var playerAccountIDs = playerAccounts.Select(x => x.AccountID).ToList();
-                    var playerFactionIDs = playerAccounts.Select(x => x.FactionID).Distinct().ToList();
+                    var playerFactionIDs = playerAccounts.Where(x=>x.ClanID!=null).Select(x => x.FactionID).Distinct().ToList();
 
                     var gal = db.Galaxies.Single(x => x.IsDefault);
                     var biggestFactionEntry =
@@ -646,8 +646,7 @@ namespace ZeroKWeb
                     hostAccount.PlanetWarsHost.PlanetID = planet.PlanetID;
                     hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.Clear();
                     hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(
-                        players.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = x.AccountID, IsSpectator = x.IsSpectator }));
-                    // todo stores lobby id in account id table - needs mapping
+                    players.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = db.Accounts.First(y=>y.LobbyID == x.AccountID).AccountID, IsSpectator = x.IsSpectator }));
                     db.SubmitChanges();
 
                     var owner = "";
