@@ -436,9 +436,9 @@ namespace ZeroKWeb
                         targets =
                             gal.Planets.Where(x => x.Account!=null && playerFactionIDs.Contains(x.Account.FactionID)).Select(
                                 x =>
-                                new PlanetPickEntry(x, Math.Max(1, (2000 - x.AccountPlanets.Sum(y=>(int?)y.Influence + y.ShadowInfluence)??0)/200))).ToList();
+                                new PlanetPickEntry(x, Math.Max(1, (2000 - x.AccountPlanets.Sum(y=>(int?)y.Influence + y.ShadowInfluence)??0)/200) - (x.PlanetStructures.Where(y=>!y.IsDestroyed).Sum(y=>y.StructureType.EffectDropshipDefense)??0))).ToList();
 
-                        targets.AddRange(gal.Planets.Where(x => x.OwnerAccountID == null && db.Links.Any(y => (y.PlanetID1 == x.PlanetID && y.PlanetByPlanetID2.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID2.Account.FactionID) || (y.PlanetID2 == x.PlanetID && y.PlanetByPlanetID1.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID1.Account.FactionID))))).Select(x=>new PlanetPickEntry(x, 15 + (x.AccountPlanets.Sum(y=>(int?)y.Influence)??0) /50)));
+                        targets.AddRange(gal.Planets.Where(x => x.OwnerAccountID == null && db.Links.Any(y => (y.PlanetID1 == x.PlanetID && y.PlanetByPlanetID2.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID2.Account.FactionID) || (y.PlanetID2 == x.PlanetID && y.PlanetByPlanetID1.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID1.Account.FactionID))))).Select(x=>new PlanetPickEntry(x, 16 + (x.AccountPlanets.Sum(y=>(int?)y.Influence)??0) /50)));
 
                         if (!targets.Any()) targets = gal.Planets.Select(x => new PlanetPickEntry(x, 1)).ToList();
                     }
