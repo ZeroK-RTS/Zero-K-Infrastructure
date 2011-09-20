@@ -436,9 +436,9 @@ namespace ZeroKWeb
                         targets =
                             gal.Planets.Where(x => x.Account!=null && playerFactionIDs.Contains(x.Account.FactionID)).Select(
                                 x =>
-                                new PlanetPickEntry(x, Math.Max(0, (2000 - x.AccountPlanets.Sum(y=>(int?)y.Influence + y.ShadowInfluence)??0)/200))).ToList();
+                                new PlanetPickEntry(x, Math.Max(1, (2000 - x.AccountPlanets.Sum(y=>(int?)y.Influence + y.ShadowInfluence)??0)/200))).ToList();
 
-                        targets.AddRange(gal.Planets.Where(x => x.OwnerAccountID == null && db.Links.Any(y => (y.PlanetID1 == x.PlanetID && y.PlanetByPlanetID2.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID2.Account.FactionID) || (y.PlanetID2 == x.PlanetID && y.PlanetByPlanetID1.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID1.Account.FactionID))))).Select(x=>new PlanetPickEntry(x, 10 + (x.AccountPlanets.Sum(y=>(int?)y.Influence)??0) /50)));
+                        targets.AddRange(gal.Planets.Where(x => x.OwnerAccountID == null && db.Links.Any(y => (y.PlanetID1 == x.PlanetID && y.PlanetByPlanetID2.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID2.Account.FactionID) || (y.PlanetID2 == x.PlanetID && y.PlanetByPlanetID1.Account != null && playerFactionIDs.Contains(y.PlanetByPlanetID1.Account.FactionID))))).Select(x=>new PlanetPickEntry(x, 15 + (x.AccountPlanets.Sum(y=>(int?)y.Influence)??0) /50)));
 
                         if (!targets.Any()) targets = gal.Planets.Select(x => new PlanetPickEntry(x, 1)).ToList();
                     }
@@ -785,9 +785,9 @@ namespace ZeroKWeb
                 if (extraData == null) extraData = new List<string>();
 
                 var mode = GetModeFromHost(accountName);
-
                 var db = new ZkDataContext();
-
+                if (mode == AutohostMode.Planetwars) db.ExecuteCommand("update account set creditsincome =0, creditsexpense=0 where creditsincome<>0 or creditsexpense<>0");
+                
 
                 var sb = new SpringBattle()
                          {
@@ -859,7 +859,7 @@ namespace ZeroKWeb
 
                 if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Any())
                 {
-                    db.ExecuteCommand("update account set creditsincome =0, creditsexpense=0 where creditsincome<>0 or creditsexpense<>0");
+                    
 
                     var gal = db.Galaxies.Single(x => x.IsDefault);
                     var planet = gal.Planets.Single(x => x.MapResourceID == sb.MapResourceID);
