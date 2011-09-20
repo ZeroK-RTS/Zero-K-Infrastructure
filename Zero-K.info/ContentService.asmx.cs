@@ -55,6 +55,11 @@ namespace ZeroKWeb
                             "{0} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Planetwars/ClanList",
                             account.Name);
                 }
+                if (account.Level < GlobalConst.MinPlanetWarsLevel)
+                {
+                    AuthServiceClient.SendLobbyMessage(account, "Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level 5 to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can observe this game however.");
+
+                }
                 /*if (!account.Name.Contains(account.Clan.Shortcut))
                 {
                     AuthServiceClient.SendLobbyMessage(account,
@@ -97,7 +102,7 @@ namespace ZeroKWeb
                         //res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
                         //AuthServiceClient.SendLobbyMessage(p, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
                     }*/
-                    if (p.Clan != null && !p.Name.Contains(p.Clan.Shortcut))
+                    /*if (p.Clan != null && !p.Name.Contains(p.Clan.Shortcut))
                     {
                         res.Message += string.Format("{0} cannot play, name must contain clan tag {1}\n", p.Name, p.Clan.Shortcut);
                         AuthServiceClient.SendLobbyMessage(p,
@@ -105,6 +110,13 @@ namespace ZeroKWeb
                                                                "Your name must contain clan tag {0}, rename for example by saying: /rename [{0}]{1}",
                                                                p.Clan.Shortcut,
                                                                p.Name));
+                    }*/
+                    if (p.Level < GlobalConst.MinPlanetWarsLevel) {
+                        res.Message += string.Format("{0} cannot play, his level is {1}, minimum level is {2}\n", p.Name, p.Level, GlobalConst.MinPlanetWarsLevel);
+                        AuthServiceClient.SendLobbyMessage(p,
+                                                           string.Format(
+                                                               "Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level 5 to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots. You can observe this game however."));
+                    
                     }
                     else players.Add(p);
                 }
