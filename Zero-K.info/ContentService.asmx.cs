@@ -409,13 +409,17 @@ namespace ZeroKWeb
                 {
                     var playerAccounts = accounts.Where(x => !x.Spectate).Select(x => db.Accounts.First(z => z.LobbyID == x.AccountID)).ToList();
                     var playerAccountIDs = playerAccounts.Select(x => x.AccountID).ToList();
-                    var playerFactionIDs = playerAccounts.Where(x=>x.ClanID!=null).Select(x => x.FactionID).Distinct().ToList();
+                    
+                    var facGroups = playerAccounts.Where(x=>x.ClanID!=null).GroupBy(x=>x.FactionID).Select(x=>new{FactionID = x.Key, Count = x.Count()}).ToList();
+                    List<int?> playerFactionIDs = new List<int?>();
+                    if (facGroups.Any())
+                    {
+                        var biggestGroup = facGroups.OrderByDescending(x => x.Count).Select(x => x.Count).FirstOrDefault();
+                        playerFactionIDs = facGroups.Where(x=>x.Count == biggestGroup).Select(x => x.FactionID).ToList();
+                    }
+                    
 
                     var gal = db.Galaxies.Single(x => x.IsDefault);
-                    var biggestFactionEntry =
-                        gal.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Faction).Where(x => x.Key != null).OrderByDescending(
-                            x => x.Count()).FirstOrDefault();
-                    var biggestFaction = biggestFactionEntry != null ? biggestFactionEntry.Key : null;
 
                     var valids =
                         gal.Planets.Select(
