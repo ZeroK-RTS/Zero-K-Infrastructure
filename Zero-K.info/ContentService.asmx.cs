@@ -288,7 +288,7 @@ namespace ZeroKWeb
                             compoScore += playerScoreMultiplier[i]*sum/cnt;
                     }
 
-                    if (compoScore < 0 || compoScore < 0.5*absCompo) continue; // get meaningfull teams only
+                    if (compoScore < 0) continue; // get meaningfull teams only   || compoScore < 0.5*absCompo
                     if (compoScore > absCompo) absCompo = compoScore; // todo lame - abs compo not known at this point,should be 2 pass
                     var score = -Math.Abs(balanceModifier) + teamDiffScore + compoScore;
 
@@ -307,11 +307,11 @@ namespace ZeroKWeb
                     res.BalancedTeams = null;
                     res.Message += "Cannot be balanced well at this point";
                 }
-                else if (bestCompo < absCompo*0.5)
+                /*else if (bestCompo < absCompo*0.5)
                 {
                     res.BalancedTeams = null;
                     res.Message += string.Format("Cannot be balanced well at this point - best composition: {0}, available: {1}", absCompo, bestCompo);
-                }
+                }*/
                 else
                 {
                     var differs = false;
