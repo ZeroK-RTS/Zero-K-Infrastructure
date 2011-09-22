@@ -1,9 +1,11 @@
-﻿@using PlasmaShared
+@using PlasmaShared
 @using ZeroKWeb
 @using ZkData
 @model Clan
 <form method="post" action="@Url.Action("SubmitCreateClan")" enctype="multipart/form-data">
 @Html.HiddenFor(x=>x.ClanID)
+  @if (Model.ClanID > 0)
+   {      @Html.HiddenFor(x=>x.FactionID)   }
 <table>
   <tr>
     <td>
