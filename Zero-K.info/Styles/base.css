@@ -30,7 +30,7 @@ pre
 	margin-right: 4em;
 }
 
-input
+input, textarea
 {
 	color: #cbd3d4; 
 	background: none;
