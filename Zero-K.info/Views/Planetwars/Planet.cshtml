@@ -179,7 +179,7 @@
 			<h2>Construction</h2>
 		foreach (var structure in Model.PlanetStructures.Where(s => s.IsDestroyed)) {
 			if (structure.StructureType.Cost > Global.Account.Credits) {
-			<p>@String.Format("Repair {0} (requires {1:C0})", structure.StructureType.Name, structure.StructureType.Cost)</p>
+			<p>@String.Format("Repair {0} (requires {1:C0})", structure.StructureType.Name, structure.StructureType.Cost * GlobalConst.PlanetwarsRepairCost)</p>
 			} else {
 				var linkText = String.Format("Repair {0} ({1:C0})", structure.StructureType.Name, structure.StructureType.Cost);
 			<p>@Html.ActionLink(linkText, "RepairStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>

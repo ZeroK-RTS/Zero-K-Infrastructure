@@ -21,68 +21,79 @@
     }
     else
     {
+        <iframe width="560" height="315" src="http://www.youtube.com/embed/kumCaGeaA-w" frameborder="0" allowfullscreen></iframe>
 		@Html.IncludeWiki("Features");
     }
   </div>
   	@foreach (var n in Model.Headlines)
-	{
+   {
 		<div class="dialog" title="News headlines"><h1>@n.Title</h1>
-			@if (n.ImageRelativeUrl != null) {
+			@if (n.ImageRelativeUrl != null)
+   {
 				<img src="@n.ImageRelativeUrl" style="float:left; width:800px; margin: 6px;"/>
-			}
+   }
 
 			<p>@Html.BBCode(n.Text)</p>
-			<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new {id=n.ForumThreadID },null)</small>
+			<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)</small>
 		</div>
-	}
+   }
 
   <div id="news" class="border">
-    @foreach (var n in Model.News.Take(4)) {
+    @foreach (var n in Model.News.Take(4))
+    {
 		<h1>@n.Title</h1>	
-		if (n.ImageRelativeUrl != null) {
+        if (n.ImageRelativeUrl != null)
+        {
 			<img src="@n.ImageRelativeUrl" style="float:left; width:120px; margin: 6px;"/>
-		}
+        }
 		<p>@Html.BBCode(n.Text)</p>
 		<small>Posted by @Html.PrintAccount(n.Account) @n.Created.ToAgoString() - @Html.ActionLink("comment", "Thread", "Forum", new { id = n.ForumThreadID }, null)
-        @if (Global.IsZeroKAdmin) {
+        @if (Global.IsZeroKAdmin)
+        {
             <span class="admin">
-                @Html.ActionLink("Edit", "Detail", "News", new { id= n.NewsID}, null)
+                @Html.ActionLink("Edit", "Detail", "News", new { id = n.NewsID }, null)
             </span>
         }
         
         </small>
 		<br /><br />
-	}
-	<a href="@Url.Action("Index","News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a> 
-	@if (Global.IsZeroKAdmin) {
+    }
+	<a href="@Url.Action("Index", "News")"><img src="/img/rss.png" width="25" alt="rss" /> RSS feed</a> | <a href='/Forum?categoryID=13'>news archive</a> 
+	@if (Global.IsZeroKAdmin)
+ {
 		<div class="admin">
-            @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created=DateTime.UtcNow, HeadlineUntil=DateTime.UtcNow.AddDays(7)})
+            @Html.Partial("/Views/News/NewsDetail.cshtml", new News() { Created = DateTime.UtcNow, HeadlineUntil = DateTime.UtcNow.AddDays(7) })
 		</div>
  }
 
   </div>
 </div>
 <div id="sidebar" class="fright width-30">
-  @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess) {
+  @if (!ZeroKWeb.Global.IsAccountAuthorized && !Global.IsLobbyAccess)
+  {
        <!--center><a class ="downloadbutton" href="http://zero-k.info/Wiki/Download" alt="Download" title="Download now Zero-K's latest version for free"></a></center-->
 	  <a onclick="window.location='http://zero-k.info/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
-	}
+  }
 
-  @if (ZeroKWeb.Global.IsAccountAuthorized) {
+  @if (ZeroKWeb.Global.IsAccountAuthorized)
+  {
       <div class="border">
       <h3>Tools</h3>
-      @if (Global.IsLobbyAccess) {
-				Html.RenderPartial("GoogleSiteSearch");
+      @if (Global.IsLobbyAccess)
+      {
+          Html.RenderPartial("GoogleSiteSearch");
           <p><a href="http://zero-k.info/tools/mailer/sendMail.php"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>  
-			} else {
+      }
+      else
+      {
           <p><a href="http://zero-k.info/tools/mailer/sendMail.php" target="_blank"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>
-			}
+      }
         @if (Global.Account.Country == "de" || Global.Account.Country == "at" || Global.Account.Country == "ch")
         {
       <p><a href="http://zero-k.info/Forum?categoryID=12" title="German Forum"><img src="/img/flags/de.png" alt="Germany" /> Deutschsprachiges Forum</a></p>}
       <p><a href="http://zero-k.info/Wiki/Manual"><img src="http://zero-k.info/img/manual.png" alt="manual" width="24" height="24" /> The Zero-K manual</a></p>
       </div>
-	}
+  }
 
   <div id="unit" class="border relative text-left">
     <img src="/img/unitpics/@(s.Unitname).png" width="64" height="51" class="fright" />
@@ -112,20 +123,22 @@
 
   <div class="border">
   <h2><a href='/Forum'>Forums</a></h2>
-  @foreach (var t in Model.NewThreads) {
-	var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new { id = t.ForumThread.ForumThreadID }, new { title = "$thread$" + t.ForumThread.ForumThreadID });
-		if (t.WasWritten) {
+  @foreach (var t in Model.NewThreads)
+  {
+      var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new { id = t.ForumThread.ForumThreadID }, new { title = "$thread$" + t.ForumThread.ForumThreadID });
+      if (t.WasWritten)
+      {
 			<span><img src="../../img/mail/mail-new.png" height="15" title="new message" /> <b>@link</b></span><br />
-		}
-		else if (t.WasRead)
-		{ 
+      }
+      else if (t.WasRead)
+      { 
 			<span><img src="../../img/mail/mail-read.png" height="15" title="already read" /> <i>@link</i></span><br />
-		}
-		else
-		{ 
+      }
+      else
+      { 
 			<span><img src="../../img/mail/mail-unread.png" height="15" title="not read" /> @link</span><br />
-		}
-	}
+      }
+  }
   </div>
 
   <div id="topten" class="border">
@@ -137,13 +150,14 @@
         <th>ELO</th>
       </tr>
       @{var cnt = 1;}
-      @foreach (var a in Model.Top10Players) {
+      @foreach (var a in Model.Top10Players)
+      {
         <tr>
         <td>@(cnt++)</td>
         <td><small>@Html.PrintAccount(a)</small></td>
         <td>@Math.Round(a.EffectiveElo)</td>
         </tr>      
-			}
+      }
     </table>
   </div>
 
@@ -162,7 +176,7 @@
 		
 		<a href="http://twitter.com/ZeroKTeam" class="twitter-follow-button" data-button="grey" data-text-color="#FFFFFF" data-link-color="#00AEFF">Follow @@ZeroKTeam</a>
 <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
-<a href="@Url.Action("Index","News")" target="_blank"><img src="/img/rss.png" width="15" alt="rss" /> RSS news feed</a><br />
+<a href="@Url.Action("Index", "News")" target="_blank"><img src="/img/rss.png" width="15" alt="rss" /> RSS news feed</a><br />
 <a href="http://steamcommunity.com/groups/0-K" alt="Visit us on Steam" target="_blank"><img src="../../Img/steam_20p.png" height="20" width="20" alt="Steam" /> Visit us on Steam</a>
 
 

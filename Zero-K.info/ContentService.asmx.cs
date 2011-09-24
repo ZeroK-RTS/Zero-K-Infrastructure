@@ -137,6 +137,10 @@ namespace ZeroKWeb
                     return res;
                 }
 
+
+                int planetFactionId = planet.Account != null ? planet.Account.FactionID??0 : 0;
+                var attackerFactions = planet.AccountPlanets.Where(x => x.DropshipCount > 0 && x.Account.FactionID!=null).Select(x => (x.Account.FactionID??0)).Distinct().ToList();
+
                 if (currentTeams.Count < 2) return new BalanceTeamsResult() { Message = "Not enough players" };
 
                 for (var i = 1; i < clans.Count; i++)
@@ -165,6 +169,8 @@ namespace ZeroKWeb
                     {
                         var c1 = players[i].Clan;
                         var c2 = players[j].Clan;
+                        var f1 = players[i].FactionID??-1;
+                        var f2 = players[i].FactionID??-1;
                         var points = 0.0;
                         if (players[i].FactionID != null && players[i].FactionID == players[j].FactionID) points = 1; // same faction weight 1
                         if (c1 != null && c2 != null)
@@ -176,8 +182,18 @@ namespace ZeroKWeb
                                 if (treaty.AllyStatus == AllyStatus.Alliance) points = 1;
                                 else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.5;
                                 else if (treaty.AllyStatus == AllyStatus.War) points = -2;
+                                if (treaty.AllyStatus == AllyStatus.Neutral && f1!=f2)
+                                {
+                                    if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId==f2 && attackerFactions.Contains(f1))) points = -2;
+                                }
                             }
                         }
+                        else {
+                            if (f1 != f2) {
+                                if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -2;
+                            }
+                        }
+
                         sameTeamScore[i, j] = points;
                         sameTeamScore[j, i] = points;
                         //res.Message += string.Format("{0} + {1} = {2} \n", players[i].Name, players[j].Name, points);
