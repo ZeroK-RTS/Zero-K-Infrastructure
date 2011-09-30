@@ -219,6 +219,40 @@ div#ajaxScrollProgress
     box-shadow: 0 0 2px 2px #cbd3d4;
 }
 
+div.button_2
+{
+    position:static;
+    display:inline-block;
+	left: 60px;
+	width: 197px;
+	height: 43px;
+	background: url(/img/download_button.png) no-repeat 0 0;
+	font-family: 'Klavika', Helvetica, Arial, sans-serif;
+	color: #FFF;
+	font-size: 18px;
+	text-decoration: none;
+	text-align: center;
+	vertical-align:middle;
+	opacity: 1;
+	
+}
+
+div.button_2:hover {
+	background: url(/img/download_button.png) no-repeat 0 -43px;
+}
+
+span.button_2text
+{
+    font-family: 'Klavika', Helvetica, Arial, sans-serif;
+    color: #FFF;
+    font-size: 18px;
+    line-height: 1;
+    text-decoration: none;
+    text-align: center;
+    position: relative;
+    top: 9px;
+}
+
 /* galaxy map
 ----------------------------------------------*/
 .sectorgrid
