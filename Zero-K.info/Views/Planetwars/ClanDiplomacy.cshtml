@@ -1,4 +1,4 @@
-﻿@using ZeroKWeb
+ @using ZeroKWeb
 @using ZkData
 @model Clan
          
@@ -31,6 +31,7 @@
                         @Html.PrintTreaty(our)<br />
                         Status: @Html.DropDownList("ourStatus", Enum.GetValues(typeof(AllyStatus)).OfType<AllyStatus>().Select(x => new SelectListItem() { Text = x.ToString(), Value = ((int)x).ToString(), Selected = our.AllyStatus == x }))
                         Research: @Html.CheckBox("ourResearch", our.IsResearchAgreement)<input type="submit" value="offer"/><br />
+                        WARNING: If your ally or ceasefire partner owns the planet where you fought after battle, you give all your influence there to him/her!<br />
                     </form>
                 </td>    
 
