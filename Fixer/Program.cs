@@ -26,13 +26,84 @@ namespace Fixer
 
 		//PurgeGalaxy(19, false);
 
-    	RandomizeMaps(20);
-		GenerateStructures(20);
+    	//RandomizeMaps(20);
+		//GenerateStructures(20);
 
 			//AddWormholes();
+        TestPrediction();
     }
 
-		public static void PurgeGalaxy(int galaxyID, bool resetclans = false) {
+
+    public static void TestPrediction() {
+        var db = new ZkDataContext();
+        var factWinCnt= 0;
+        var factWinSum = 0.0;
+        var predWinSum = 0.0;
+        var predWinCnt = 0;
+        var err = 0.0;
+        var i = 0;
+        var nsum = 0.0;
+        foreach (var sb in db.SpringBattles.Where(x=>!x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.EventSpringBattles.Any()).OrderByDescending(x => x.SpringBattleID)) {
+
+            var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
+            var winners = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
+
+            if (losers.Count == 0 || winners.Count == 0 || losers.Count == winners.Count) continue;
+
+            var winnerEloSum = winners.Sum(x => x.Account.EffectiveElo);
+            var loserEloSum = losers.Sum(x => x.Account.EffectiveElo);
+
+            /*if (winners.Count > losers.Count) loserEloSum += loserEloSum / losers.Count;
+            else if (losers.Count > winners.Count) winnerEloSum += winnerEloSum / winners.Count;
+
+            var ts = Math.Sqrt(Math.Max(winners.Count, losers.Count));
+            var winnerElo = winnerEloSum / ts;
+            var loserElo = loserEloSum / ts;*/
+
+
+            var winnerElo = 1.0;
+            foreach (var w in winners) winnerElo *= w.Account.EffectiveElo;
+            winnerElo = Math.Pow(winnerElo, 1.0 / winners.Count);
+
+            var loserElo = 1.0;
+            foreach (var l in losers) loserElo *= l.Account.EffectiveElo;
+            loserElo = Math.Pow(loserElo, 1.0 / losers.Count);
+
+            //var winnerElo = winnerEloSum / Math.Sqrt(winners.Count);
+            //var loserElo = loserEloSum / Math.Sqrt(losers.Count);
+
+            //var winnerElo = winnerEloSum / winners.Count;
+            //var loserElo = loserEloSum / losers.Count;
+
+            var eWin = 1 / (1 + Math.Pow(10, (loserElo - winnerElo) / 400));
+            var eLose = 1 / (1 + Math.Pow(10, (winnerElo - loserElo) / 400));
+
+            if (eWin > eLose)
+            {
+                factWinSum += eWin * 100.0;
+                nsum += eWin * 100;
+                factWinCnt++;
+            }
+            else {
+                err += Math.Abs(eWin - eLose);
+                predWinSum += eWin * 100.0;
+                nsum += eLose * 100;
+                predWinCnt++;
+            }
+            i++;
+            if (i >= 100) break;
+        }
+        var fwp = factWinSum / factWinCnt;
+        var pwp = predWinSum / predWinCnt;
+        var cnt = factWinCnt + predWinCnt;
+        var ns = nsum / cnt;
+        var predGood = 100.0*factWinCnt / cnt;
+
+        Console.WriteLine("fwin: {0},  ns: {1} factwin%: {2}  predwin%: {3}: err: {4}", predGood, ns,fwp ,pwp, err );
+
+    }
+
+      public static void PurgeGalaxy(int galaxyID, bool resetclans = false) {
 			using (var db = new ZkDataContext())
 			{
 				db.CommandTimeout = 300;

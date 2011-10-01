@@ -178,7 +178,7 @@
 		@if (Model.Account != null && Global.ClanID == Model.Account.ClanID) {
 			<h2>Construction</h2>
 		foreach (var structure in Model.PlanetStructures.Where(s => s.IsDestroyed)) {
-			if (structure.StructureType.Cost > Global.Account.Credits) {
+			if (structure.StructureType.Cost*GlobalConst.PlanetwarsRepairCost > Global.Account.Credits) {
 			<p>@String.Format("Repair {0} (requires {1:C0})", structure.StructureType.Name, structure.StructureType.Cost * GlobalConst.PlanetwarsRepairCost)</p>
 			} else {
 				var linkText = String.Format("Repair {0} ({1:C0})", structure.StructureType.Name, structure.StructureType.Cost);
