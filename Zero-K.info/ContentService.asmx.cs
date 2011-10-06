@@ -1059,7 +1059,12 @@ namespace ZeroKWeb
                                          x => x.StructureType.EffectDropshipProduction) ?? 0);
 
                         a.DropshipCount += income;
-                        a.DropshipCount = Math.Min(a.DropshipCount, capacity);
+                        if (Math.Floor(a.DropshipCount) > capacity) // dont exceed capacity by more than 1
+                        {
+                            a.DropshipCount -= income;
+                            AuthServiceClient.SendLobbyMessage(a, "You cannot produce any more dropships, fleet capacity is full, use your ships to attack enemy planet in PlanetWars");
+                        }
+                        
                     }
                     db.SubmitChanges();
 
