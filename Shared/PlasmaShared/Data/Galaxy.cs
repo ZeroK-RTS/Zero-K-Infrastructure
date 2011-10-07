@@ -41,23 +41,31 @@ namespace ZkData
                        where tr2.TargetClanID == clanID && tr2.AllyStatus == AllyStatus.Alliance && treaty.AllyStatus == AllyStatus.Alliance
                        select treaty.TargetClanID).ToList();
 
+            var peace = (from treaty in db.TreatyOffers.Where(x => x.OfferingClanID == clanID)
+                         join tr2 in db.TreatyOffers on treaty.TargetClanID equals tr2.OfferingClanID
+                         where tr2.TargetClanID == clanID && tr2.AllyStatus >= AllyStatus.Ceasefire && treaty.AllyStatus >= AllyStatus.Ceasefire
+                         select treaty.TargetClanID).ToList();
+
             var facId = db.Clans.Where(x => x.ClanID == clanID).Select(x => x.FactionID).FirstOrDefault();
 
             var gal = db.Galaxies.Single(x => x.IsDefault);
-            var planets = gal.Planets.Where(x => x.Account != null && (x.Account.FactionID == facId || milAlly.Contains(x.Account.ClanID ?? 0)));
+            var planets = gal.Planets.Where(x => x.Account != null && (x.Account.FactionID == facId || peace.Contains(x.Account.ClanID ?? 0)));
             if (!planets.Any()) return gal.Planets.ToList(); // if cannot attack any planet (not own/allied to any) -> allow attack anywhere
             var accesiblePlanets = new List<Planet>();
 
             foreach (var thisPlanet in planets)
             {
-                accesiblePlanets.Add(thisPlanet);
+                if (thisPlanet.OwnerAccountID == null || thisPlanet.Account.FactionID == facId || milAlly.Contains(thisPlanet.Account.ClanID??0)) accesiblePlanets.Add(thisPlanet);
                 var thisPlanetID = thisPlanet.PlanetID;
 
                 // iterate links to this planet
                 foreach (var link in gal.Links.Where(l => (l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID)))
                 {
                     var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
-                    if (thisPlanet.PlanetStructures.Where(x => !x.IsDestroyed).Max(x => x.StructureType.EffectLinkStrength) > 0) accesiblePlanets.Add(otherPlanet);
+                    if (otherPlanet.OwnerAccountID == null || otherPlanet.Account.FactionID == facId || peace.Contains(otherPlanet.Account.ClanID ?? 0)) 
+                    {
+                        if (thisPlanet.PlanetStructures.Where(x => !x.IsDestroyed).Max(x => x.StructureType.EffectLinkStrength) > 0) accesiblePlanets.Add(otherPlanet);
+                    }
                 }
             }
 
