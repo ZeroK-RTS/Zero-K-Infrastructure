@@ -26,6 +26,7 @@ namespace ZeroKWeb.Controllers
             var avail = accessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
             avail = Math.Min(avail, acc.GetDropshipCapacity());
             var planet = db.Planets.Single(x => x.PlanetID == planetID);
+            if (!planet.TreatyAttackablePlanet(acc.Clan)) return Content("This is allied world");
 
             if (!accessible && planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksJumpgate == true)) return Content("Planetary defenses interdict your jumpgate");
 
@@ -635,6 +636,10 @@ namespace ZeroKWeb.Controllers
             if (!accessible) if (acc.GetFreeJumpGatesCount(accessiblePlanets) <= 0) return Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity"));
             var cnt = Math.Max(count, 0);
             var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+            
+            if (!planet.TreatyAttackablePlanet(acc.Clan)) return Content("This is allied world");
+
+
             if (!accessible && planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksJumpgate == true)) return Content("Planetary defenses interdict your jumpgate");
             var capa = acc.GetDropshipCapacity();
             var there = planet.AccountPlanets.Where(x => x.AccountID == acc.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;

@@ -16,6 +16,14 @@ namespace ZkData
 						x => x.Influence);
 		}
 
+        public bool TreatyAttackablePlanet( Clan clan)
+        {
+            var planet = this;
+            if (planet != null && clan != null && planet.OwnerAccountID != null) if (planet.Account.FactionID == clan.FactionID || planet.Account.Clan.GetEffectiveTreaty(clan).AllyStatus >= AllyStatus.Ceasefire) return false;
+            return true;
+        }
+
+
 
         public int GetMineIncome() {
             return PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectCreditsPerTurn) ?? 0;
