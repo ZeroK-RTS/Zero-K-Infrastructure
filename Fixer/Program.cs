@@ -20,7 +20,8 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
-    	//ImportSpringiePlayers();
+        
+        //ImportSpringiePlayers();
       //RecalculateBattleElo();
       //FixMaps();
 
@@ -30,7 +31,7 @@ namespace Fixer
 		//GenerateStructures(20);
 
 			//AddWormholes();
-        TestPrediction();
+        //TestPrediction();
     }
 
 
