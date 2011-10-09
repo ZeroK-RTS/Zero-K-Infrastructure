@@ -2,6 +2,7 @@
 @model IEnumerable<AccountPlanet>
 
 <table>
+    
     @foreach (var facGroup in Model.Where(ap => ap.Influence + ap.ShadowInfluence > 0).GroupBy(ap => ap.Account.Faction).Where(x=>x.Key!=null).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)).Take(3))
     {
         <tr>
