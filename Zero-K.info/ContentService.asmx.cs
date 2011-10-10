@@ -175,22 +175,22 @@ namespace ZeroKWeb
                         if (players[i].FactionID != null && players[i].FactionID == players[j].FactionID) points = 1; // same faction weight 1
                         if (c1 != null && c2 != null)
                         {
-                            if (c1 == c2) points = 6;
+                            if (c1 == c2) points = 4;
                             else
                             {
                                 var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
                                 if (treaty.AllyStatus == AllyStatus.Alliance) points = 1;
                                 else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.5;
-                                else if (treaty.AllyStatus == AllyStatus.War) points = -2;
+                                else if (treaty.AllyStatus == AllyStatus.War) points = -3;
                                 if (treaty.AllyStatus == AllyStatus.Neutral && f1!=f2)
                                 {
-                                    if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId==f2 && attackerFactions.Contains(f1))) points = -2;
+                                    if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId==f2 && attackerFactions.Contains(f1))) points = -3;
                                 }
                             }
                         }
                         else {
                             if (f1 != f2) {
-                                if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -2;
+                                if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -3;
                             }
                         }
 
@@ -629,7 +629,7 @@ namespace ZeroKWeb
 
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
 
-                        if (accountIDsWithExtraComms.Contains(p.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "extracomm", Value = "1" });
+                        if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "extracomm", Value = "1" });
 
                         var pc = new LuaTable();
 
