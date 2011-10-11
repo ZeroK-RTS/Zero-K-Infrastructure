@@ -478,18 +478,22 @@ namespace ZeroKWeb
                     else targets = valids.Where(x => x.Ships == maxc).Select(x => new PlanetPickEntry(x.Planet, 1)).ToList();
                     // target valid planets with most dropships
 
-                    var sumw = targets.Sum(x => x.Weight);
-                    
                     var r = new Random(autohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
-                    var random = r.Next(sumw);
-                    sumw = 0;
+
                     Planet planet = null;
-                    foreach (var target in targets) {
-                        sumw += target.Weight;
-                        if (sumw >= random)
+                    var sumw = targets.Sum(x => x.Weight);
+                    if (sumw > 0)
+                    {
+                        var random = r.Next(sumw);
+                        sumw = 0;
+                        foreach (var target in targets)
                         {
-                            planet = target.Planet;
-                            break;
+                            sumw += target.Weight;
+                            if (sumw >= random)
+                            {
+                                planet = target.Planet;
+                                break;
+                            }
                         }
                     }
                     if (planet == null) planet = targets[r.Next(targets.Count)].Planet; // this should not be needed;
