@@ -698,7 +698,7 @@ namespace ZeroKWeb.Controllers
                 var currentOwnerFactionID = planet.Account != null ? planet.Account.FactionID : null;
                 // in case of a tie when deciding which CLAN to get a planet - give to one with less planets
                 var mostInfluentiaFactionEntry =
-                    planet.AccountPlanets.GroupBy(ap => ap.Account.Faction).Where(x => x.Key != null).Select(
+                    planet.AccountPlanets.Where(x=>x.Account.ClanID!=null).GroupBy(ap => ap.Account.Faction).Where(x => x.Key != null).Select(
                         x => new { Faction = x.Key, FactionInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(
                             x => x.FactionInfluence).FirstOrDefault();
 
