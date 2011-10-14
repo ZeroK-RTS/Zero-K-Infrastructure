@@ -141,7 +141,7 @@
 		} else {
 			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(new ZkDataContext(), Global.ClanID).Select(x => x.PlanetID).ToList();
 			var isAccessible = accessiblePlanets.Contains(Model.PlanetID);
-			var jumpgates = Global.Account.GetFreeJumpGatesCount(accessiblePlanets);
+			var jumpgates = Global.Account.GetJumpGateCapacity();
 			var defs = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
 			var bombNeed = 3 + defs / 3;
 			var enemyShips = Model.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID).Sum(x => x.DropshipCount);

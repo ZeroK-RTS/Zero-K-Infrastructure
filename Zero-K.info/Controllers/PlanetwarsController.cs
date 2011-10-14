@@ -22,8 +22,8 @@ namespace ZeroKWeb.Controllers
 
             var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db, acc.ClanID.Value).Select(x => x.PlanetID).ToList();
             var accessible = accessiblePlanets.Any(x => x == planetID);
-            var jumpgates = acc.GetFreeJumpGatesCount(accessiblePlanets);
-            var avail = accessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
+            var jumpgates = acc.GetJumpGateCapacity();
+            var avail = accessible ?Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
             avail = Math.Min(avail, acc.GetDropshipCapacity());
             var planet = db.Planets.Single(x => x.PlanetID == planetID);
             if (!planet.TreatyAttackablePlanet(acc.Clan)) return Content("This is allied world");
@@ -630,19 +630,24 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-
+            var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+            var there = planet.AccountPlanets.Where(x => x.AccountID == acc.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
             var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db, acc.ClanID.Value).Select(x => x.PlanetID).ToList();
             var accessible = accessiblePlanets.Any(x => x == planetID);
-            if (!accessible) if (acc.GetFreeJumpGatesCount(accessiblePlanets) <= 0) return Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity"));
+            if (!accessible)
+            {
+                int jumpGateCapacity = acc.GetJumpGateCapacity();
+                if (there + count > jumpGateCapacity) return Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity - you can maintain {0} ships using jumpgates", jumpGateCapacity));
+            }
             var cnt = Math.Max(count, 0);
-            var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
+            
             
             if (!planet.TreatyAttackablePlanet(acc.Clan)) return Content("This is allied world");
 
 
             if (!accessible && planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksJumpgate == true)) return Content("Planetary defenses interdict your jumpgate");
             var capa = acc.GetDropshipCapacity();
-            var there = planet.AccountPlanets.Where(x => x.AccountID == acc.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
+            
             if (cnt + there > capa) return Content("Too many ships, increase fleet size");
             cnt = Math.Min(cnt, (int)acc.DropshipCount);
             if (cnt > 0)

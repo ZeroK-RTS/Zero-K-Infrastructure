@@ -34,14 +34,12 @@ namespace ZkData
 			       (Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
 		}
 
-		public int GetFreeJumpGatesCount(List<int> accessiblePlanets)
-		{
-			var jumpGateCapacity = Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
-			var usedJumpGates = AccountPlanets.Where(x => !accessiblePlanets.Contains(x.PlanetID)).Sum(x => x.DropshipCount);
-			return jumpGateCapacity - usedJumpGates;
-		}
 
-		public static int GetXpForLevel(int level)
+        public int GetJumpGateCapacity() {
+            return Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
+        }
+
+	    public static int GetXpForLevel(int level)
 		{
 			if (level < 0) return 0;
 			return level*80 + 20*level*level;
