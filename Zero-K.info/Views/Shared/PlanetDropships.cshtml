@@ -5,14 +5,14 @@
     <tr>
       <td>@Html.PrintClan(p.clan)
       </td>
-      <td><img src='/img/dropship.png' />
+      <td><img src='@p.clan.Faction.GetShipImageUrl()' />
         @p.dropships
       </td>
     </tr>
     foreach (var cp in p.list.Where(x=>x.DropshipCount> 0).OrderByDescending(x=>x.DropshipCount)) { 
       <tr>
       <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>@Html.PrintAccount(cp.Account)</small></td>
-      <td>&nbsp;&nbsp;&nbsp;<img src='/img/dropship.png' width='15'/><small>@cp.DropshipCount</small></td>
+      <td>&nbsp;&nbsp;&nbsp;<img src='@p.clan.Faction.GetShipImageUrl()' width='15'/><small>@cp.DropshipCount</small></td>
       </tr>
      
     }

@@ -274,7 +274,7 @@
             <tr>
               <td>@Html.PrintPlanet(p.planet)</td>
               <td>
-                <img src='/img/dropship.png' />@p.dropships</td>
+                <img src='@Model.Faction.GetShipImageUrl()' />@p.dropships</td>
             </tr>
 					}
         </table>

@@ -250,7 +250,12 @@ We are setting up the next round.
 		@if (shipCount > 0)
 		{
 			<span style="position: absolute; right: 0; top: 20%;" title='$planetDropships$@p.PlanetID'>
-				<img src='/img/fleets/war.png' width='@(Math.Round(13 + 12.0 * shipCount / (double)maxDropships))' /><span style="font-size: 10px; color: #ffffff;">@shipCount</span>
+                @foreach (var ships in p.AccountPlanets.Where(x => x.DropshipCount > 0 ).GroupBy(x => x.Account.Faction).Where(x=>x.Key!=null).Select(x => new {Faction=x.Key, shipCount = x.Sum(y=>y.DropshipCount) }).OrderByDescending(x=>x.shipCount))
+                {
+                    
+                    <img src='@ships.Faction.GetShipImageUrl()' width='@(Math.Round(13 + 12.0 * ships.shipCount / (double)maxDropships))' />
+                    <span style="font-size: 10px; color: #ffffff;">@ships.shipCount</span><br />
+                }
 			</span>
 		}
 	</div>
