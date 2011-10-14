@@ -917,7 +917,7 @@ namespace ZeroKWeb
                     var planetDefs = (planet.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
                     var totalShips = (planet.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0);
                     double shipMultiplier = 1;
-                    if (totalShips > 0 && totalShips > planetDefs && planetDefs > 0) shipMultiplier = (totalShips - planetDefs)/(double)totalShips;
+                    if (totalShips > 0 && totalShips >= planetDefs) shipMultiplier = (totalShips - planetDefs)/(double)totalShips;
 
                     var ownerMalus = 0;
                     if (ownerFaction != null)
