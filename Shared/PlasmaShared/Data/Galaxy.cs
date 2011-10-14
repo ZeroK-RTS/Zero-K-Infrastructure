@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ZkData
@@ -64,6 +65,31 @@ namespace ZkData
             }
 
             return accesiblePlanets;
+        }
+
+
+        /// <summary>
+        /// Removes ships which cannot be supported by current jumpgates/links
+        /// </summary>
+        public static void RemoveOrphanedShips(ZkDataContext db) {
+
+            foreach (var clanShips in db.AccountPlanets.Where(x => x.DropshipCount > 0 && x.Account.ClanID != null).GroupBy(x => x.Account.Clan)) {
+                var accessible = DropshipAttackablePlanets(db, clanShips.Key.ClanID);
+
+                foreach (var accountShips in clanShips.GroupBy(x => x.Account)) {
+                    var jumpgates = accountShips.Key.GetJumpGateCapacity();
+                    var capacity = accountShips.Key.GetDropshipCapacity();
+
+                    foreach (var planetEntry in accountShips) {
+                        var isAccessible = accessible.Contains(planetEntry.Planet);
+                        var maxCount = isAccessible ? capacity : jumpgates;
+                        if (planetEntry.DropshipCount > maxCount) {
+                            accountShips.Key.DropshipCount += planetEntry.DropshipCount - maxCount;
+                            planetEntry.DropshipCount = maxCount;
+                        }
+                    }
+                }
+            }
         }
 
 

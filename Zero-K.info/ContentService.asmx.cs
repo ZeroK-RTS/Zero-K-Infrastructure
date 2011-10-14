@@ -1066,13 +1066,15 @@ namespace ZeroKWeb
                         if (Math.Floor(a.DropshipCount) > capacity) // dont exceed capacity by more than 1
                         {
                             a.DropshipCount -= income;
+                            if (a.DropshipCount < capacity) a.DropshipCount = capacity;
                             AuthServiceClient.SendLobbyMessage(a, "You cannot produce any more dropships, fleet capacity is full, use your ships to attack enemy planet in PlanetWars");
                         }
                         
                     }
                     db.SubmitChanges();
 
-
+                    Galaxy.RemoveOrphanedShips(db);
+                    db.SubmitChanges();
                     
 
 
