@@ -3,6 +3,7 @@ using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using CaTracker;
 using ZkData;
 
 namespace ZeroKWeb
@@ -16,8 +17,9 @@ namespace ZeroKWeb
 		{
 			PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
 			this.Error += MvcApplication_Error;
-		}
+        }
 
+     
 		void MvcApplication_Error(object sender, EventArgs e)
 		{
 			if (Request.Url.ToString().Contains(".mvc")) {
@@ -52,6 +54,9 @@ namespace ZeroKWeb
 
 		protected void Application_Start()
 		{
+            Application["Nightwatch"] = new Nightwatch(Server.MapPath("/"));
+            Global.Nightwatch.Start();
+
 			AreaRegistration.RegisterAllAreas();
 			RegisterRoutes(RouteTable.Routes);
 			Application.Add("unitpics", Directory.GetFiles(Server.MapPath("~/img/unitpics")));

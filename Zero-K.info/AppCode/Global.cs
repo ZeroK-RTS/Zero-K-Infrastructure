@@ -1,12 +1,23 @@
 ﻿using System;
 using System.Web;
 using System.Web.Mvc;
+using CaTracker;
 using ZkData;
 
 namespace ZeroKWeb
 {
     public static class Global
     {
+        static Nightwatch nightwatch;
+        public static Nightwatch Nightwatch {
+            get {
+                if (nightwatch != null) return nightwatch;
+                nightwatch = (Nightwatch)HttpContext.Current.Application["Nightwatch"];
+                return nightwatch;
+            }
+        }
+
+
         public const int AjaxScrollCount = 40;
         public static Account Account { get { return HttpContext.Current.User as Account; } }
         public static int AccountID

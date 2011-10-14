@@ -5,6 +5,7 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using PlasmaShared;
 using System.Linq;
+using ZeroKWeb;
 
 namespace ZkData
 {
@@ -14,12 +15,11 @@ namespace ZkData
 		
 		static AuthServiceClient()
 		{
-			factory = new ChannelFactory<IAuthService>(new NetTcpBinding(SecurityMode.None),GlobalConst.AuthServiceUri);
 		}
 
 		public static void SendLobbyMessage(Account account, string text)
     {
-			factory.CreateChannel().SendLobbyMessage(account, text);
+        Global.Nightwatch.Auth.SendLobbyMessage(account, text);
     }
 
 	  public static Account VerifyAccountPlain(string login, string password)
@@ -31,14 +31,13 @@ namespace ZkData
 		{
       if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(passwordHash)) return null;
 			var db = new ZkDataContext();
-			var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null);			
-			if (acc != null || Debugger.IsAttached) return acc; else return factory.CreateChannel().VerifyAccount(login, passwordHash);
+			var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null);
+            if (acc != null || Debugger.IsAttached) return acc; else return Global.Nightwatch.Auth.VerifyAccount(login, passwordHash);
 
 		}
 
     static CurrentLobbyStats cachedStats = new CurrentLobbyStats();
 	  static DateTime lastStatsCheck = DateTime.MinValue;
-		static ChannelFactory<IAuthService> factory;
 
 		public static CurrentLobbyStats GetLobbyStats()
 	  {
@@ -48,8 +47,9 @@ namespace ZkData
         lastStatsCheck = DateTime.UtcNow;
         try
         {
-          cachedStats = factory.CreateChannel().GetCurrentStats();
-					cachedStats.UsersLastMonth = new ZkDataContext().Accounts.Count(x => x.LastLogin > DateTime.Now.AddDays(-31));
+            
+            cachedStats = Global.Nightwatch.Auth.GetCurrentStats();
+			cachedStats.UsersLastMonth = new ZkDataContext().Accounts.Count(x => x.LastLogin > DateTime.Now.AddDays(-31));
         }
         catch (Exception ex)
         {

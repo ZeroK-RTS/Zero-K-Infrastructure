@@ -17,9 +17,8 @@ using ZkData;
 
 namespace CaTracker
 {
-	public class Main
+	public class Nightwatch
 	{
-		public const string ConfigMain = "CaTrackerConfig.xml";
 		DateTime lastStatsSave;
 
 		Timer recon;
@@ -33,41 +32,21 @@ namespace CaTracker
 		public static Config config;
 		ServiceHost host;
 		OfflineMessages offlineMessages;
+        string webRoot;
 
-		public Main()
-		{
-			LoadConfig();
-			SaveConfig();
+	    public AuthService Auth { get; private set; }
+
+	    public Nightwatch(string webRoot)
+		
+        {
+            this.webRoot = webRoot;
+			config = new Config();
 			statsTimer.Elapsed += statsTimer_Elapsed;
 			statsTimer.AutoReset = true;
 			statsTimer.Start();
 			
 		}
 
-
-		public void LoadConfig()
-		{
-			config = new Config();
-			if (File.Exists(ConfigMain))
-			{
-				var s = new XmlSerializer(config.GetType());
-				using (var r = File.OpenText(ConfigMain))
-				{
-					config = (Config)s.Deserialize(r);
-					r.Close();
-				}
-			}
-		}
-
-
-		public void SaveConfig()
-		{
-			var s = new XmlSerializer(config.GetType());
-			var f = File.OpenWrite(ConfigMain);
-			f.SetLength(0);
-			s.Serialize(f, config);
-			f.Close();
-		}
 
 		public bool Start()
 		{
@@ -95,8 +74,7 @@ namespace CaTracker
 				recon.Start();
 			}
 
-			host = AuthService.CreateServiceHost(tas);
-			host.Open();
+            Auth = new AuthService(tas);
 
 			offlineMessages = new OfflineMessages(tas);
 			new Shuffler(tas);
@@ -106,6 +84,7 @@ namespace CaTracker
 
 		void TrackPlayerMinutes()
 		{
+            Directory.SetCurrentDirectory(webRoot);
 			try
 			{
 				var now = DateTime.Now;

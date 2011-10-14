@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
+    <Compile Include="AppCode\AuthServiceClient.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\NoCache.cs" />
@@ -349,6 +350,10 @@
     <Content Include="Views\Battles\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NightWatch\NightWatch.csproj">
+      <Project>{6CE1E0F1-447C-4871-9246-CC7CCB359D89}</Project>
+      <Name>NightWatch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
       <Project>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</Project>
       <Name>MonoTorrent</Name>

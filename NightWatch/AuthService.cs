@@ -10,7 +10,7 @@ using ZkData;
 namespace NightWatch
 {
   [ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
-  class AuthService: IAuthService
+  public class AuthService: IAuthService
   {
     const int AuthServiceTestLoginWait = 8000;
     readonly TasClient client;
@@ -52,13 +52,6 @@ namespace NightWatch
         };
     }
 
-    public static ServiceHost CreateServiceHost(TasClient client)
-    {
-      var host = new ServiceHost(new AuthService(client), new Uri(GlobalConst.AuthServiceUri));
-      var tcp = new NetTcpBinding(SecurityMode.None);
-      host.AddServiceEndpoint(typeof(IAuthService), tcp, GlobalConst.AuthServiceUri);
-      return host;
-    }
 
     Account UpdateUser(int lobbyID, string name, User user, string hashedPassword)
     {
