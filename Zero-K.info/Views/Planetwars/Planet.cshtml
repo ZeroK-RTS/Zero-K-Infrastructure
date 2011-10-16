@@ -4,7 +4,7 @@
 @{
 	ViewBag.Title = "Planet";
 	Page.Title = "Planet " + Model.Name;
-	var autohost = Model.PlanetWarsHosts.FirstOrDefault();
+	var autohost = Global.Nightwatch.GetPlanetBattles(Model).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
 	var db = new ZkData.ZkDataContext();
 }
 <h1>Planet @Model.Name
@@ -35,12 +35,12 @@
 }
 @if (autohost != null) { 
 	<b>
-		@if (autohost.InGame) {
-			<a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID }, Request.Url.Scheme)@@join_player:@autohost.Account.Name'>
+		@if (autohost.IsInGame) {
+			<a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID }, Request.Url.Scheme)@@join_player:@autohost.Founder'>
 				Battle in progress, JOIN TO WATCH</a>
 	} else {
-			<a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID }, Request.Url.Scheme)@@join_player:@autohost.Account.Name'>
-				Battle has @autohost.PlanetWarsHostPlayers.Count() players waiting, JOIN IT</a>
+			<a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID }, Request.Url.Scheme)@@join_player:@autohost.Founder'>
+				Battle has @autohost.Users.Count players waiting, JOIN IT</a>
 	}
 	</b>
 }

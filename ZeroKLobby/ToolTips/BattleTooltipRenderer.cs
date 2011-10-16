@@ -22,9 +22,10 @@ namespace ZeroKLobby
         private bool GetBattleAndFounder(out Battle battle, out User founder)
         {
             founder = null;
-            if (Program.TasClient.ExistingBattles.TryGetValue(battleID, out battle) &&
-                Program.TasClient.ExistingUsers.TryGetValue(battle.Founder, out founder)) return true;
-
+            if (Program.TasClient.ExistingBattles.TryGetValue(battleID, out battle)) {
+                founder = battle.Founder;
+                return true;
+            }
             return false;
         }
 
@@ -52,7 +53,7 @@ namespace ZeroKLobby
                     g.DrawImage(image, x, y, w, h);
                     x += w + 3;
                 };
-            founder = Program.TasClient.ExistingUsers[battle.Founder];
+            founder = battle.Founder;
             drawString("Founder: " + battle.Founder);
             newLine();
             drawString("Map: " + battle.MapName);

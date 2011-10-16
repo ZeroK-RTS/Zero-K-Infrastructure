@@ -80,7 +80,7 @@ namespace ZeroKLobby.Notifications
 					if (!isVisible) ManualBattleStarted();
 					//client.ChangeMyUserStatus(false, false);
 					var battle = client.MyBattle;
-					lastBattleFounder = battle.Founder;
+					lastBattleFounder = battle.Founder.Name;
 					Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
 					                                           (mod) =>
 					                                           	{
@@ -199,7 +199,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 					if (client.MyBattleStatus != null)
 					{
 						barContainer.btnDetail.Enabled = client.MyBattleStatus.IsReady && client.MyBattleStatus.SyncStatus == SyncStatuses.Synced &&
-						                                 !client.ExistingUsers[client.MyBattle.Founder].IsInGame;
+						                                 !client.MyBattle.IsInGame;
 
 						if (client.MyBattleStatus.IsSpectator && cbReady.Checked) // i was spectated
 							ChangeGuiSpectatorWithoutEvent(true);
@@ -227,7 +227,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 							if (tryCount > 15) t.Stop();
 							else if (client.IsLoggedIn && client.MyBattle == null)
 							{
-								var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Founder == lastBattleFounder && !x.IsPassworded);
+								var bat = client.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == lastBattleFounder && !x.IsPassworded);
 								if (bat != null)
 								{
 									ActionHandler.JoinBattle(bat.BattleID, null);
@@ -409,8 +409,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				var bat = client.MyBattle;
 				if (bat != null)
 				{
-					User founder;
-					return client.ExistingUsers.TryGetValue(bat.Founder, out founder) && founder.IsInGame;
+					return bat.IsInGame;
 				}
 			}
 			return false;

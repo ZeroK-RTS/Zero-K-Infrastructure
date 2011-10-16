@@ -26,11 +26,6 @@ namespace NightWatch
 			return userName.StartsWith("PlanetWars");
 		}
 
-		bool IsSpec(ZkDataContext db, string userName)
-		{
-			var dbPlayerData = db.PlanetWarsHostPlayers.SingleOrDefault(p => p.Account.Name == userName);
-			return dbPlayerData != null && dbPlayerData.IsSpectator;
-		}
 
 		// players to relocate:
 		// 1) the game is full and the player is a spectator
@@ -40,7 +35,7 @@ namespace NightWatch
 		{
 			using (var db = new ZkDataContext())
 			{
-				var planetWarsBattles = tascClient.ExistingBattles.Values.Where(b => IsPlanetWarsHost(b.Founder));
+				var planetWarsBattles = tascClient.ExistingBattles.Values.Where(b => IsPlanetWarsHost(b.Founder.Name));
 
 				var nonFullHosts = planetWarsBattles.Where(b => b.MaxPlayers > b.NonSpectatorCount).Select(b => new HostInfo(b)).ToList();
 				if (nonFullHosts.Count == 0) return;
@@ -51,15 +46,15 @@ namespace NightWatch
 						where battle.MaxPlayers == battle.NonSpectatorCount // battle is full
 						from user in battle.Users
 						where !tascClient.ExistingUsers[user.Name].IsInGame // user is not ingame
-						where IsSpec(db, user.Name) // user is spectator
+						where user.IsSpectator // user is spectator
 						select user.Name;
 
 				// 2) the game is not full but has started, player is not spec
 				var players2 = from host in nonFullHosts
-							   where tascClient.ExistingUsers[host.Battle.Founder].IsInGame // battle has started
+							   where host.Battle.IsInGame // battle has started
 							   from user in host.Battle.Users
 							   where !tascClient.ExistingUsers[user.Name].IsInGame // user is not ingame
-							   where !IsSpec(db, user.Name) // user is *not* a spec
+							   where !user.IsSpectator // user is *not* a spec
 				               select user.Name;
 				
 				

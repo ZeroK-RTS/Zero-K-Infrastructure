@@ -79,7 +79,6 @@
     <Compile Include="Nightwatch.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="OfflineMessages.cs" />
-    <Compile Include="PlanetWarsWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shuffler.cs" />
   </ItemGroup>

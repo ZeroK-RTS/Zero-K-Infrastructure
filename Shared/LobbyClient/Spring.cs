@@ -191,7 +191,7 @@ namespace LobbyClient
 
 				talker = new Talker();
 				talker.SpringEvent += talker_SpringEvent;
-				isHosting = client != null && client.MyBattle != null && client.MyBattle.Founder == client.MyUser.Name;
+				isHosting = client != null && client.MyBattle != null && client.MyBattle.Founder.Name == client.MyUser.Name;
 
 				if (isHosting) scriptPath = Utils.MakePath(paths.WritableDirectory, "script_" + client.MyBattle.Founder + ".txt").Replace('\\', '/');
 				else scriptPath = Utils.MakePath(paths.WritableDirectory, "script.txt").Replace('\\', '/');

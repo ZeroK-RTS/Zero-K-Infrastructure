@@ -654,7 +654,7 @@ namespace ZeroKWeb.Controllers
             {
                 acc.DropshipCount = (acc.DropshipCount) - cnt;
 
-                if (planet.PlanetWarsHosts.Any(x => x.InGame)) return Content("Battle in progress on the planet, cannot send ships");
+                if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
 
                 if (planet.Account != null)
                 {

@@ -531,7 +531,7 @@ namespace LobbyClient
 					  '\t' + MyBattle.Title,
 					  '\t' + MyBattle.ModName
 					};
-	  MyBattle.Founder = username;
+	  MyBattle.Founder = ExistingUsers[username];
 	  MyBattle.Ip = localIp;
 
 	  //battle.Details.AddToParamList(objList);
@@ -881,7 +881,7 @@ namespace LobbyClient
 
 			if (u.IsInGame && old.IsInGame == false) BattleStarted(this, new EventArgs<User>(u));
 
-			if (MyBattle != null && MyBattle.Founder == u.Name)
+			if (MyBattle != null && MyBattle.Founder.Name == u.Name)
 			{
 			  if (u.IsInGame && old.IsInGame == false) MyBattleStarted(this, new TasEventArgs(args));
 			  if (!u.IsInGame && old.IsInGame == true) MyBattleHostExited(this, new TasEventArgs(args));
@@ -1100,7 +1100,7 @@ namespace LobbyClient
 							{
 							  BattleID = Int32.Parse(args[0]),
 							  IsReplay = args[1] != "0",
-							  Founder = args[3],
+							  Founder = ExistingUsers[args[3]],
 							  Ip = args[4],
 							  HostPort = Int32.Parse(args[5]),
 							  MaxPlayers = Int32.Parse(args[6]),
@@ -1108,16 +1108,16 @@ namespace LobbyClient
 							  Rank = Int32.Parse(args[8])
 							};
 
-			if (newBattle.Founder == username) newBattle.Ip = localIp; // lobby can send wahtever, betteroverride here
+			if (newBattle.Founder.Name == username) newBattle.Ip = localIp; // lobby can send wahtever, betteroverride here
 
 			// NatType = Int32.Parse(args[2]); // todo: correctly add nattype
 			newBattle.MapName = mapName;
 			newBattle.MapHash = Int32.Parse(mapHash);
 			newBattle.Title = rest[1];
 			newBattle.ModName = modName;
-			newBattle.Users.Add(new UserBattleStatus(newBattle.Founder, existingUsers[newBattle.Founder]));
+			newBattle.Users.Add(new UserBattleStatus(newBattle.Founder.Name, newBattle.Founder));
 			existingBattles[newBattle.BattleID] = newBattle;
-			existingUsers[newBattle.Founder].IsInBattleRoom = true;
+			newBattle.Founder.IsInBattleRoom = true;
 			BattleFound(this, new TasEventArgs(args));
 			break;
 		  }

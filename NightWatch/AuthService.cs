@@ -143,7 +143,7 @@ namespace NightWatch
           if (u.IsInGame) ret.UsersFighting++;
           else if (u.IsInBattleRoom) ret.UsersWaiting++;
       }
-        if (client.ExistingUsers[b.Founder].IsInGame) ret.BattlesRunning++;
+        if (b.IsInGame) ret.BattlesRunning++;
         else ret.BattlesWaiting++;
       }
       return ret;

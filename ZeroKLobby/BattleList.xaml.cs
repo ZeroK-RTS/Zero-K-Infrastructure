@@ -105,7 +105,7 @@ namespace ZeroKLobby
             isMatch = battle.Password != "*";
             return true;
           case "INGAME":
-            isMatch = Program.TasClient.ExistingUsers[battle.Founder].IsInGame;
+            isMatch = battle.IsInGame;
             return true;
           case "FULL":
             isMatch = battle.NonSpectatorCount >= battle.MaxPlayers;
@@ -179,7 +179,7 @@ namespace ZeroKLobby
       {
         if (battle.Password != "*")
         {
-          using (var form = new AskBattlePasswordForm(battle.Founder)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
+          using (var form = new AskBattlePasswordForm(battle.Founder.Name)) if (form.ShowDialog() == DialogResult.OK) ActionHandler.JoinBattle(battle.BattleID, form.Password);
         }
         else ActionHandler.JoinBattle(battle.BattleID, null);
       }
@@ -229,7 +229,7 @@ namespace ZeroKLobby
       }
       if (cbUnjoinable.IsChecked == false &&
           (battle.IsLocked || battle.IsPassworded || battle.NonSpectatorCount >= battle.MaxPlayers ||
-           Program.TasClient.ExistingUsers[battle.Founder].IsInGame))
+           battle.Founder.IsInGame))
       {
         e.Accepted = false;
         return;

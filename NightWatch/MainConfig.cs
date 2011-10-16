@@ -6,7 +6,7 @@ namespace CaTracker
         string accountPassword = "secret";
         int attemptReconnectInterval = 60;
         bool attemptToRecconnect = true;
-        string[] joinChannels = new string[] { "main" };
+        string[] joinChannels = new string[] { "main","zk" };
 
         string serverHost = "springrts.com";
 

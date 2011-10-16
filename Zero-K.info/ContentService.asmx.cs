@@ -512,16 +512,6 @@ namespace ZeroKWeb
                                                 planet.PlanetID,
                                                 string.IsNullOrEmpty(shipInfo) ? "insurgents" : shipInfo);
 
-                    var hostAccount = db.Accounts.Single(x => x.Name == autohostName);
-                    if (hostAccount.PlanetWarsHost == null) hostAccount.PlanetWarsHost = new PlanetWarsHost();
-                    hostAccount.PlanetWarsHost.InGame = false;
-                    hostAccount.PlanetWarsHost.PlanetID = planet.PlanetID;
-                    hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.Clear();
-                    hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(
-                        accounts.Select(
-                            x =>
-                            new PlanetWarsHostPlayer()
-                            { PlayerAccountID = db.Accounts.First(y => y.LobbyID == x.AccountID).AccountID, IsSpectator = x.Spectate }));
                     db.SubmitChanges();
                 }
                 else
@@ -676,15 +666,6 @@ namespace ZeroKWeb
                 if (mode == AutohostMode.Planetwars)
                 {
                     var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == map);
-
-                    var hostAccount = db.Accounts.Single(x => x.Name == hostName);
-                    if (hostAccount.PlanetWarsHost == null) hostAccount.PlanetWarsHost = new PlanetWarsHost();
-                    hostAccount.PlanetWarsHost.InGame = true;
-                    hostAccount.PlanetWarsHost.PlanetID = planet.PlanetID;
-                    hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.Clear();
-                    hostAccount.PlanetWarsHost.PlanetWarsHostPlayers.AddRange(
-                    players.Select(x => new PlanetWarsHostPlayer() { PlayerAccountID = db.Accounts.First(y=>y.LobbyID == x.AccountID).AccountID, IsSpectator = x.IsSpectator }));
-                    db.SubmitChanges();
 
                     var owner = "";
                     var second = "";

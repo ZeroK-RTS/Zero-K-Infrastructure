@@ -188,7 +188,7 @@ We are setting up the next round.
 	var pr = p.PlanetRectangle(Model);
 	var por = p.PlanetOverlayRectangle(Model);
 	Clan clan = null;
-	var autohost = p.PlanetWarsHosts.FirstOrDefault();
+	var autohost = Global.Nightwatch.GetPlanetBattles(p).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
 
 	int shipCount = p.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0;
 
@@ -210,9 +210,9 @@ We are setting up the next round.
 		</div></td></tr></table>
 
 		<!--planet being/preparing for attack icon-->
-		@if (autohost != null && autohost.PlanetWarsHostPlayers.Count() > 1)
+		@if (autohost != null && autohost.Users.Count > 1)
 		{ 
-			<img src='/img/planetstatus/@(autohost.InGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute; left: 0;'/>
+			<img src='/img/planetstatus/@(autohost.IsInGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute; left: 0;'/>
 		}
 		
 		<!planet structures>

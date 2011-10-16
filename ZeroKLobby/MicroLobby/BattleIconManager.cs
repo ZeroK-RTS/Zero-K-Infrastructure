@@ -58,7 +58,7 @@ namespace ZeroKLobby.MicroLobby
             var battle = Program.TasClient.ExistingBattles[battleID];
             //string modName = null;
             //foreach (var game in KnownGames.List) if (game.Regex.IsMatch(battle.ModName)) modName = game.Shortcut;
-            var founder = Program.TasClient.ExistingUsers[battle.Founder];
+            var founder = battle.Founder;
             var battleIcon = new BattleIcon(battle) { IsInGame = founder.IsInGame};
             try
             {
@@ -148,7 +148,7 @@ namespace ZeroKLobby.MicroLobby
         {
             var battleID = e1.BattleID;
             var battle = Program.TasClient.ExistingBattles[battleID];
-            var founder = Program.TasClient.ExistingUsers[battle.Founder];
+            var founder = battle.Founder;
             var battleIcon = GetBattleIcon(battleID);
             battleIcon.SetPlayers();
             battleIcon.IsInGame = founder.IsInGame;
@@ -190,9 +190,9 @@ namespace ZeroKLobby.MicroLobby
         void TasClient_UserStatusChanged(object sender, TasEventArgs e)
         {
             var userName = e.ServerParams[0];
-            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Founder == userName);
+            var battle = Program.TasClient.ExistingBattles.Values.SingleOrDefault(b => b.Founder.Name == userName);
             if (battle == null) return;
-            var founder = Program.TasClient.ExistingUsers[battle.Founder];
+            var founder = battle.Founder;
             var battleIcon = GetBattleIcon(battle);
             battleIcon.IsInGame = founder.IsInGame;
             BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));

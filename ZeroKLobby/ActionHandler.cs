@@ -255,7 +255,7 @@ namespace ZeroKLobby
             Program.NotifySection.RemoveBar(waitingBar);
             Program.TasClient.PreviewSaidPrivate -= joinGame;
             var myHostName = e.Data.UserName;
-            var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder == myHostName);
+            var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder.Name == myHostName);
 
             EventHandler<EventArgs<Battle>> battleJoined = null;
             battleJoined = (s2, e2) =>

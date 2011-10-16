@@ -17,26 +17,34 @@ using ZkData;
 
 namespace CaTracker
 {
-	public class Nightwatch
-	{
-		DateTime lastStatsSave;
+    public class Nightwatch
+    {
+        DateTime lastStatsSave;
 
-		Timer recon;
-		readonly Timer statsTimer = new Timer(60000);
-		TasClient tas;
+        Timer recon;
+        readonly Timer statsTimer = new Timer(60000);
+        TasClient tas;
 
-		public Dictionary<string, int> MapPlayerMinutes = new Dictionary<string, int>();
-		public Dictionary<string, int> ModPlayerMinutes = new Dictionary<string, int>();
+        public Dictionary<string, int> MapPlayerMinutes = new Dictionary<string, int>();
+        public Dictionary<string, int> ModPlayerMinutes = new Dictionary<string, int>();
 
-		public TasClient Tas { get { return tas; } }
-		public static Config config;
-		ServiceHost host;
-		OfflineMessages offlineMessages;
+        public TasClient Tas { get { return tas; } }
+        public static Config config;
+        ServiceHost host;
+        OfflineMessages offlineMessages;
         string webRoot;
 
-	    public AuthService Auth { get; private set; }
+        public AuthService Auth { get; private set; }
 
-	    public Nightwatch(string webRoot)
+        public List<Battle> GetPlanetWarsBattles() {
+            return tas.ExistingBattles.Values.Where(x => x.Founder.Name.StartsWith("PlanetWars")).ToList();
+        }
+
+        public List<Battle> GetPlanetBattles(Planet planet) {
+            return GetPlanetWarsBattles().Where(x => x.MapName == planet.Resource.InternalName).ToList();
+        }
+
+        public Nightwatch(string webRoot)
 		
         {
             this.webRoot = webRoot;
