@@ -1,7 +1,7 @@
 ﻿@model ZkData.Planet
          
 <table>
-  @foreach (var p in Model.AccountPlanets.GroupBy(x => x.Account.Clan).Select(x => new { clan = x.Key, dropships = x.Sum(y => y.DropshipCount), list = x }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
+  @foreach (var p in Model.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x=>x.Key != null).Select(x => new { clan = x.Key, dropships = x.Sum(y => y.DropshipCount), list = x }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
     <tr>
       <td>@Html.PrintClan(p.clan)
       </td>
