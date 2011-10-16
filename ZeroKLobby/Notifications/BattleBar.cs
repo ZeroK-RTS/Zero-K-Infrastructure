@@ -30,7 +30,6 @@ namespace ZeroKLobby.Notifications
 		readonly Spring spring;
 		bool suppressSideChangeEvent;
 		readonly Timer timer = new Timer();
-		public string CommShareWith { get; set; }
 
 
 		/// <summary>
@@ -208,7 +207,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
 			client.BattleClosed += (s, e) =>
 				{
-					CommShareWith = null;
 					if (gameBox.Image != null) gameBox.Image.Dispose();
 					gameBox.Image = null;
 					cbSide.Visible = false;
@@ -372,9 +370,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			}
 
 			// fix my id
-			var sharePlayer = battle.Users.FirstOrDefault(x => x.Name == CommShareWith);
-			if (sharePlayer != null) newStatus.TeamNumber = sharePlayer.TeamNumber;
-			else if (battle.Users.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1) newStatus.TeamNumber = battle.GetFreeTeamID(client.UserName);
+            if (battle.Users.Count(x => !x.IsSpectator && x.TeamNumber == currentStatus.TeamNumber) > 1) newStatus.TeamNumber = battle.GetFreeTeamID(client.UserName);
 
 			newStatus.IsSpectator = !cbReady.Checked;
 			newStatus.IsReady = true;

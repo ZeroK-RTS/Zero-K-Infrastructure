@@ -285,21 +285,6 @@ namespace ZeroKLobby.MicroLobby
 							               { Enabled = !battleStatus.IsSpectator && (battleStatus.AllyNumber != myStatus.AllyNumber || myStatus.IsSpectator) };
 							allyWith.Click += (s, e) => ActionHandler.JoinAllyTeam(battleStatus.AllyNumber);
 							contextMenu.MenuItems.Add(allyWith);
-
-							if (battleStatus.TeamNumber == myStatus.TeamNumber)
-							{
-								var unShareControl = new MenuItem("Unshare Command")
-								                     { Enabled = !battleStatus.IsSpectator && !myStatus.IsSpectator && (myStatus.Name != battleStatus.Name) };
-								unShareControl.Click += (s, e) => ActionHandler.Unshare();
-								contextMenu.MenuItems.Add(unShareControl);
-							}
-							else
-							{
-								var shareControl = new MenuItem("Share Command")
-								                   { Enabled = !battleStatus.IsSpectator && (battleStatus.TeamNumber != myStatus.TeamNumber || myStatus.IsSpectator) };
-								shareControl.Click += (s, e) => ActionHandler.CommShare(battleStatus);
-								contextMenu.MenuItems.Add(shareControl);
-							}
 						}
 
 						var colorItem = new MenuItem("Select Color") { Enabled = Program.TasClient.UserName == user.Name && !myStatus.IsSpectator };
@@ -323,7 +308,6 @@ namespace ZeroKLobby.MicroLobby
 						contextMenu.MenuItems.Add(colorItem);
 
 						contextMenu.MenuItems.Add(GetSetAllyTeamItem(user));
-						contextMenu.MenuItems.Add(GetSetTeamItem(user));
 
 						contextMenu.MenuItems.Add("-");
 						contextMenu.MenuItems.Add(GetShowOptions());
@@ -571,36 +555,6 @@ namespace ZeroKLobby.MicroLobby
 			}
 
 			return setAllyTeamItem;
-		}
-
-		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-		static MenuItem GetSetTeamItem(User user)
-		{
-			var setTeamItem = new MenuItem("Select Command Sharing");
-			if (Program.TasClient.MyBattle == null || user.Name != Program.TasClient.UserName) setTeamItem.Enabled = false;
-			else if (Program.TasClient.MyBattle != null)
-			{
-				foreach (var battleStatus in Program.TasClient.MyBattle.Users)
-				{
-					if (battleStatus.IsSpectator) continue;
-					if (battleStatus.Name == Program.TasClient.UserName) continue;
-					var shareControl = new MenuItem("With " + battleStatus.Name);
-					var status = battleStatus;
-					shareControl.Click += (s, e) => ActionHandler.CommShare(status);
-					setTeamItem.MenuItems.Add(shareControl);
-				}
-
-				if (!Program.TasClient.MyBattleStatus.IsSpectator &&
-				    Program.TasClient.MyBattle.Users.Any(u => !u.IsSpectator && u.TeamNumber == Program.TasClient.MyBattleStatus.TeamNumber))
-				{
-					setTeamItem.MenuItems.Add("-");
-					var unshareItem = new MenuItem("Do not Share");
-					unshareItem.Click += (s, e) => ActionHandler.Unshare();
-					setTeamItem.MenuItems.Add(unshareItem);
-				}
-			}
-
-			return setTeamItem;
 		}
 
 

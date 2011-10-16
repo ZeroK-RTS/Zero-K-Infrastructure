@@ -37,22 +37,6 @@ namespace ZeroKLobby
       Program.MainWindow.ChatTab.CloseTab(key);
     }
 
-    /// <summary>
-    /// Make this client join a team (not same as allyteam)
-    /// </summary>
-    public static void CommShare([NotNull] UserBattleStatus withUser)
-    {
-      if (withUser == null) throw new ArgumentNullException("withUser");
-      if (ChangeDesiredSpectatorState(false))
-      {
-        var newStatus = Program.TasClient.MyBattleStatus.Clone();
-        Program.BattleBar.CommShareWith = withUser.Name;
-        newStatus.TeamNumber = withUser.TeamNumber;
-        newStatus.IsSpectator = false;
-        Program.TasClient.SendMyBattleStatus(newStatus);
-      }
-    }
-
 
 
     /// <summary>
@@ -347,19 +331,5 @@ namespace ZeroKLobby
       }
     }
 
-    /// <summary>
-    /// Don't commashare
-    /// </summary>
-    public static void Unshare()
-    {
-      Program.BattleBar.CommShareWith = null;
-      if (ChangeDesiredSpectatorState(false))
-      {
-        var newStatus = Program.TasClient.MyBattleStatus.Clone();
-        newStatus.TeamNumber = Program.TasClient.MyBattle.GetFreeTeamID(Program.TasClient.UserName);
-        newStatus.IsSpectator = false;
-        Program.TasClient.SendMyBattleStatus(newStatus);
-      }
-    }
   }
 }
