@@ -3,6 +3,8 @@
 	Page.Title = "Forum " + string.Join(" > ", Model.Path.Select(x=>x.Title));
 }
 
+<h2>Zero-K forums</h2>
+
 @{Html.RenderPartial
 ("ForumPath", Model.Path);}
 
