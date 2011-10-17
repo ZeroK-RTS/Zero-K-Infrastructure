@@ -622,6 +622,8 @@ namespace ZeroKWeb
                         }
 
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "faction", Value = user.Faction != null ? user.Faction.Shortcut:""});
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
 
                         if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "extracomm", Value = "1" });
 

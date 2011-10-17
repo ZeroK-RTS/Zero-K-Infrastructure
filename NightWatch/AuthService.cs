@@ -47,9 +47,10 @@ namespace NightWatch
               var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == e.Data.LobbyID);
               if (acc != null) {
                   client.Extensions.Publish(e.Data.Name, new Dictionary<string, string>() { 
-                  {ProtocolExtension.Keys.Level.ToString() , acc.Level.ToString()},
-                      {ProtocolExtension.Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString()}
-                  
+                      {ProtocolExtension.Keys.Level.ToString() , acc.Level.ToString()},
+                      {ProtocolExtension.Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString()},
+                      {ProtocolExtension.Keys.Faction.ToString(), acc.Faction!= null ? acc.Faction.Shortcut:""},
+                      {ProtocolExtension.Keys.Clan.ToString(), acc.Clan!= null ? acc.Clan.Shortcut:""}
                   });
               
               }

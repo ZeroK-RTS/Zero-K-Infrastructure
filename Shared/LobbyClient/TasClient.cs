@@ -216,8 +216,7 @@ namespace LobbyClient
                                                                          User u;
                                                                          if (ExistingUsers.TryGetValue(user, out u))
                                                                          {
-                                                                             u.Extensions = data;
-
+                                                                             u.SetExtension(data);
                                                                              UserStatusChanged(this, new TasEventArgs(u.Name, u.ToInt().ToString()));
                                                                          }
 

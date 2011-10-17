@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 
@@ -25,6 +24,7 @@ namespace LobbyClient
         string country;
 
         public DateTime? AwaySince { get; protected set; }
+        public string Clan { get; private set; }
         // todo: set by tasclient (use "User Battle" instead?)
 
 
@@ -44,32 +44,17 @@ namespace LobbyClient
         public string CountryName { get; protected set; }
 
         public int Cpu { get; set; }
-        public Dictionary<string, string> Extensions { get; internal set; }
+        public int EffectiveElo { get; private set; }
+        public Dictionary<string, string> Extensions { get; private set; }
+        public string Faction { get; private set; }
         public DateTime? InGameSince { get; protected set; }
         public bool IsAdmin { get; protected set; }
         public bool IsAway { get; set; }
         public bool IsBot { get; protected set; }
         public bool IsInBattleRoom { get; set; }
         public bool IsInGame { get; set; }
-        public int Level
-        {
-            get
-            {
-                int ret;
-                int.TryParse(GetExtension(ProtocolExtension.Keys.Level), out ret);
-                return ret;
-            }
-        }
 
-        public int EffectiveElo
-        {
-            get
-            {
-                int ret;
-                int.TryParse(GetExtension(ProtocolExtension.Keys.EffectiveElo), out ret);
-                return ret;
-            }
-        }
+        public int Level { get; private set; }
 
         public int LobbyID;
         public string Name { get; protected set; }
@@ -116,6 +101,18 @@ namespace LobbyClient
             IsAdmin = (status & 32) > 0;
             IsBot = (status & 64) > 0;
             Rank = (status & 28) >> 2;
+        }
+
+        internal void SetExtension(Dictionary<string, string> data)
+        {
+            Extensions = data;
+            int ret;
+            int.TryParse(GetExtension(ProtocolExtension.Keys.Level), out ret);
+            Level = ret;
+            int.TryParse(GetExtension(ProtocolExtension.Keys.EffectiveElo), out ret);
+            EffectiveElo = ret;
+            Faction = GetExtension(ProtocolExtension.Keys.Faction);
+            Clan = GetExtension(ProtocolExtension.Keys.Clan);
         }
 
         public int ToInt()

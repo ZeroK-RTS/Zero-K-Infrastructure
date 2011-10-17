@@ -646,10 +646,6 @@ namespace Springie.autohost
 			if (e1.BattleID != tas.MyBattleID) return;
 			var name = e1.UserName;
 
-			double elo;
-			double w;
-			Program.main.SpringieServer.GetElo(name, out elo, out w);
-
 			var welc = config.Welcome;
 			if (welc != "")
 			{

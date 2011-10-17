@@ -17,7 +17,9 @@ namespace LobbyClient
         public enum Keys
         {
             Level,
-            EffectiveElo
+            EffectiveElo,
+            Faction,
+            Clan
         }
 
         readonly Action<string, Dictionary<string, string>> notifyUserExtensionChange;

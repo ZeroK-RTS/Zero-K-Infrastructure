@@ -86,10 +86,7 @@ namespace Springie.autohost
                 {
                     if (!u.IsSpectator)
                     {
-                        double elo;
-                        double w;
-                        Program.main.SpringieServer.GetElo(u.Name, out elo, out w);
-                        ranker.Add(new UsRank(ranker.Count, elo, w, clanwise ? GetClan(u.Name) : "", u));
+                        ranker.Add(new UsRank(ranker.Count, u.LobbyUser.EffectiveElo, clanwise ? GetClan(u.Name) : "", u));
                     }
                 }
                 var totalPlayers = ranker.Count;
@@ -158,8 +155,7 @@ namespace Springie.autohost
                     // get candidate which increases team elo most (round elo to tens to add some randomness)
                     foreach (var c in candidates)
                     {
-                        var newElo = (teamUsers[minid].Sum(x => x.Weight*x.Elo) + c.Weight*Math.Round(c.Elo/10)*10)/
-                                     (teamUsers[minid].Sum(x => x.Weight) + c.Weight);
+                        var newElo = ((teamUsers[minid].Sum(x => x.Elo) + Math.Round(c.Elo/10)*10))/ (teamUsers.Count()+1);
                         if (newElo > maxElo)
                         {
                             maxUsers.Clear();
@@ -630,11 +626,9 @@ namespace Springie.autohost
             {
                 if (oldg != null)
                 {
-                    var t1entries = oldg.Select(x => Program.main.SpringieServer.GetEloEntry(x.Name));
-                    var t1elo = t1entries.Sum(x => x.Elo*x.W)/t1entries.Sum(x => x.W);
+                    var t1elo = oldg.Average(x => x.LobbyUser.EffectiveElo);
 
-                    var t2entries = g.Select(x => Program.main.SpringieServer.GetEloEntry(x.Name));
-                    var t2elo = t2entries.Sum(x => x.Elo*x.W)/t2entries.Sum(x => x.W);
+                    var t2elo = g.Average(x => x.LobbyUser.EffectiveElo);
                     Respond(e,
                             string.Format("team {0} has {1}% chance to win over team {2}",
                                           oldg.Key + 1,
@@ -1288,13 +1282,11 @@ namespace Springie.autohost
 			public readonly double Elo;
 			public readonly int Id;
 			public readonly UserBattleStatus User;
-			public readonly double Weight;
-
-			public UsRank(int id, double elo, double weight, string clan, UserBattleStatus user)
+			
+			public UsRank(int id, double elo, string clan, UserBattleStatus user)
 			{
 				Id = id;
 				Elo = elo;
-				Weight = weight;
 				User = user;
 				Clan = clan;
 			}
