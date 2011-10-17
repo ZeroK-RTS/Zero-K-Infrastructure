@@ -38,8 +38,11 @@ namespace ZeroKLobby
                     try
                     {
                         if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-                        if (File.Exists(item.LocalPath)) item.Image = Image.FromFile(item.LocalPath);
-                        item.IsLoaded = true;
+                        if (File.Exists(item.LocalPath))
+                        {
+                            item.Image = Image.FromFile(item.LocalPath);
+                            item.IsLoaded = true;
+                        }
                     }
                     catch (Exception ex) {
                         Trace.TraceWarning("Failed to load image:{0}", ex);

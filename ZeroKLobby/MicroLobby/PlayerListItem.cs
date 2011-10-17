@@ -167,11 +167,9 @@ namespace ZeroKLobby.MicroLobby
 			x += 16;
 			x += 2; // margin
 			drawImage(Images.GetRank(user.Level));
-            
-            if (!string.IsNullOrEmpty(user.Faction)  ) {
-                var facImg = Program.ServerImages.GetImage(string.Format("Factions/{0}.png", user.Faction));
-                if (facImg != null) drawImage(facImg);
-            }
+
+            var clan = Utils.GetClanOrFactionImage(user);
+            if (clan.Item1 != null) drawImage(clan.Item1);
 		    
 
 

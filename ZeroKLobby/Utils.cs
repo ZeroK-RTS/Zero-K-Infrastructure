@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -12,6 +13,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using LobbyClient;
 using Microsoft.Win32;
 using ZeroKLobby.Notifications;
 using MessageBox = System.Windows.Forms.MessageBox;
@@ -21,7 +23,38 @@ namespace ZeroKLobby
 {
   static class Utils
   {
-    static IInputElement lastElement;
+      public static Tuple<Image,string> GetClanOrFactionImage(User user) {
+          Image ret = null;
+          string rets = null;
+          if (!string.IsNullOrEmpty(user.Clan))
+          {
+              var clanImg = Program.ServerImages.GetImage(string.Format("Clans/{0}.png", user.Clan));
+              ret = clanImg;
+              rets = user.Clan + " " + user.Faction;
+          }
+          else
+              if (!string.IsNullOrEmpty(user.Faction))
+              {
+                  var facImg = Program.ServerImages.GetImage(string.Format("Factions/{0}.png", user.Faction));
+                  ret = facImg;
+                  rets = user.Faction;
+              }
+          return Tuple.Create(ret, rets);
+      }
+
+      public static Dictionary<string, Color> FactionColors = new Dictionary<string, Color>() { { "Ascended", ColorTranslator.FromHtml("#94C8FF") },
+       { "Born", ColorTranslator.FromHtml("#00FF00") },
+        { "Machines", ColorTranslator.FromHtml("#FF0000") },
+         { "Empire", ColorTranslator.FromHtml("#880088") },
+          { "Unaligned", ColorTranslator.FromHtml("#DDBB00") }
+      };
+
+      public static Color GetFactionColor(string faction) {
+          if (FactionColors.ContainsKey(faction)) return FactionColors[faction]; else return Color.Black;
+      }
+
+
+      static IInputElement lastElement;
     public static bool IsDesignTime { get { return DesignerProperties.GetIsInDesignMode(new DependencyObject()); } }
 
     public static bool CanRead(string filename)

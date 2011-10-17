@@ -33,11 +33,19 @@ namespace ZeroKLobby
                     x = 1;
                     y += 16;
                 };
-            Action<string> drawString = text =>
+            Action<string> drawString = (text) =>
                 {
                     TextRenderer.DrawText(g, text, font, new Point(x, y), foreColor);
                     x += (int)Math.Ceiling((double)TextRenderer.MeasureText(g, text, font).Width);
                 };
+            
+            Action<string, Color> drawString2 = (text, color) =>
+            {
+                TextRenderer.DrawText(g, text, font, new Point(x, y), color);
+                x += (int)Math.Ceiling((double)TextRenderer.MeasureText(g, text, font).Width);
+            };
+
+
             Action<Image, int, int> drawImage = (image, w, h) =>
                 {
                     g.DrawImage(image, x, y, w, h);
@@ -46,6 +54,15 @@ namespace ZeroKLobby
             using (var boldFont = new Font(font, FontStyle.Bold)) TextRenderer.DrawText(g, user.Name, boldFont, new Point(x, y), foreColor);
 
             newLine();
+
+            var clan = Utils.GetClanOrFactionImage(user);
+            if (clan.Item1 != null) {
+                drawImage(clan.Item1, 16, 16);
+                drawString2(clan.Item2, Utils.GetFactionColor(user.Faction));
+                newLine();
+            }
+            
+
             drawString("Country: ");
             Image flag;
             if (Images.CountryFlags.TryGetValue(user.Country, out flag) && flag != null)
