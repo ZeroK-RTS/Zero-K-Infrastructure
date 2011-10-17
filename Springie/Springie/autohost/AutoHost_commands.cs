@@ -831,12 +831,7 @@ namespace Springie.autohost
 				return;
 			}
 
-			if (!AllUniqueTeams(out usname))
-			{
-				SayBattle("cannot start, " + Utils.Glue(usname.ToArray()) + " is sharing teams. Use !forcestart to override");
-				return;
-			}
-
+	
 			if (PlanetWars == null) {
 				int allyno;
 				int alliances;

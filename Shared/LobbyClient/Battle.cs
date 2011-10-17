@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using PlasmaShared;
 using PlasmaShared.ContentService;
 using PlasmaShared.UnitSyncLib;
 
@@ -18,7 +19,6 @@ namespace LobbyClient
             FixedPorts = 2
         };
 
-        string founder;
         /// <summary>
         /// Full map metadata - loaded only for joined battle
         /// </summary>
@@ -33,20 +33,16 @@ namespace LobbyClient
         public BattleDetails Details { get; set; }
         public List<string> DisabledUnits { get; set; }
 
-        public User Founder
-        {
-            get;
-            set;
-        }
+        public User Founder { get; set; }
 
         public int HostPort { get; set; }
         public string Ip { get; set; }
         public bool IsFull { get { return NonSpectatorCount == MaxPlayers; } }
+        public bool IsInGame { get { return Founder.IsInGame; } }
         public bool IsLocked { get; set; }
         public bool IsMission { get { return mod != null && mod.IsMission; } }
         public bool IsPassworded { get { return Password != "*"; } }
         public bool IsReplay { get; set; }
-        public bool IsInGame { get { return Founder.IsInGame;} }
 
         public int? MapHash { get; set; }
         public string MapName { get; set; }
@@ -132,48 +128,9 @@ namespace LobbyClient
             {
                 Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-                List<GrTeam> teams;
-                List<GrAlly> alliances;
-
-                if (mod == null || !mod.IsMission) GroupData(out players, out teams, out alliances);
-                else
-                {
-                    players = Users.ToList();
-
-                    var playerTeamNumbers = Users.Where(u => !u.IsSpectator).Select(u => u.TeamNumber).Distinct();
-                    var aiTeamNumbers = Bots.Select(b => b.TeamNumber).Distinct();
-                    var allTeamNumbers = playerTeamNumbers.Concat(aiTeamNumbers).Distinct();
-                    var maxTeamNumber = allTeamNumbers.Max();
-                    var grTeams = new GrTeam[maxTeamNumber + 1];
-                    foreach (var teamNumber in allTeamNumbers)
-                    {
-                        GrTeam grTeam;
-                        var playerLeader = players.FirstOrDefault(p => !p.IsSpectator && p.TeamNumber == teamNumber);
-                        if (playerLeader != null)
-                        {
-                            // is player
-                            var leaderIndex = players.IndexOf(playerLeader);
-                            grTeam = new GrTeam(leaderIndex);
-                        }
-                        else
-                        {
-                            // is bot
-                            var bot = Bots.FirstOrDefault(p => p.TeamNumber == teamNumber);
-                            var botOwner = players.First(p => p.Name == bot.owner);
-                            grTeam = new GrTeam(players.IndexOf(botOwner)) { bot = bot }; // team leader in bots is the player ID of the bot owner
-                        }
-                        grTeams[teamNumber] = grTeam;
-                    }
-                    teams = grTeams.ToList();
-
-                    var playerAlliances = Users.Where(u => !u.IsSpectator).Select(u => u.AllyNumber).Distinct();
-                    var botAlliances = Bots.Select(b => b.AllyNumber).Distinct();
-                    var allAlliances = playerAlliances.Concat(botAlliances).Distinct();
-                    alliances = allAlliances.Select(n => new GrAlly()).ToList();
-                }
-
+                players = Users.Where(x => !x.IsSpectator).Select(x => x.Clone()).ToList();
                 var isHost = localUser.Name == Founder.Name;
-                var myUbs = players.Single(x => x.Name == localUser.Name);
+                var myUbs = Users.Single(x => x.Name == localUser.Name);
                 if (!isHost)
                 {
                     var sb = new StringBuilder();
@@ -215,29 +172,26 @@ namespace LobbyClient
                     script.AppendFormat("  HostIP={0};\n", Ip);
                     script.AppendFormat("  HostPort={0};\n", HostPort);
                     script.AppendFormat("  SourcePort={0};\n", 8300);
-                    script.AppendFormat("  IsHost={0};\n", localUser.Name == founder ? 1 : 0);
+                    script.AppendFormat("  IsHost=1;\n");
                     script.AppendLine();
-                    script.AppendFormat("  MyPlayerNum={0};\n", players.FindIndex(player => player.Name == localUser.Name));
+
                     script.AppendFormat("  MyPlayerName={0};\n", localUser.Name);
 
-                    var bots = teams.Where(grTeam => grTeam != null && grTeam.bot != null).Select(team => team.bot).ToList();
-                    script.AppendLine();
-                    script.AppendFormat("  NumPlayers={0};\n", players.Count);
-                    script.AppendFormat("  NumUsers={0};\n", players.Count + bots.Count);
-                    script.AppendFormat("  NumTeams={0};\n", teams.Count);
-                    script.AppendFormat("  NumAllyTeams={0};\n", alliances.Count);
-                    script.AppendLine();
+                    var positions = map.Positions != null ? map.Positions.ToList() : new List<StartPos>();
+                    if (Details.StartPos == BattleStartPos.Random) positions = positions.Shuffle();
 
-                    // PLAYERS
-                    for (var i = 0; i < players.Count; ++i)
+                    var userNum = 0;
+                    var teamNum = 0;
+                    var aiNum = 0;
+                    foreach (var u in Users.OrderBy(x=>x.TeamNumber))
                     {
-                        var u = players[i];
-                        script.AppendFormat("  [PLAYER{0}]\n", i);
+                        // PLAYERS
+                        script.AppendFormat("  [PLAYER{0}]\n", userNum);
                         script.AppendLine("  {");
                         script.AppendFormat("     name={0};\n", u.Name);
 
                         script.AppendFormat("     Spectator={0};\n", u.IsSpectator ? 1 : 0);
-                        if (!u.IsSpectator) script.AppendFormat("     team={0};\n", u.TeamNumber);
+                        if (!u.IsSpectator) script.AppendFormat("     team={0};\n", teamNum);
 
                         script.AppendFormat("     Rank={0};\n", u.LobbyUser.Rank);
                         script.AppendFormat("     CountryCode={0};\n", u.LobbyUser.Country);
@@ -251,92 +205,45 @@ namespace LobbyClient
                             if (entry != null) foreach (var kvp in entry.Parameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
                         }
                         script.AppendLine("  }");
-                    }
 
-                    // AI's
-                    for (var i = 0; i < bots.Count; i++)
-                    {
-                        var split = bots[i].aiLib.Split('|');
-                        script.AppendFormat("  [AI{0}]\n", i);
-                        script.AppendLine("  {");
-                        script.AppendFormat("    ShortName={0};\n", split[0]);
-                        script.AppendFormat("    Version={0};\n", split.Length > 1 ? split[1] : "");
-                        script.AppendFormat("    Team={0};\n", bots[i].TeamNumber);
-                        script.AppendFormat("    Host={0};\n", players.FindIndex(x => x.Name == bots[i].owner));
-                        script.AppendLine("    IsFromDemo=0;");
-                        script.AppendLine("    [Options]");
-                        script.AppendLine("    {");
-                        script.AppendLine("    }");
-                        script.AppendLine("  }\n");
-                    }
+                        if (!u.IsSpectator) AddTeam(script, ref teamNum, positions, userNum, u.AllyNumber, u.TeamColor, u.Side);
 
-                    var r = new Random();
-                    var positions = map.Positions;
-                    var tpos = new List<StartPos>();
-                    if (Details.StartPos == BattleStartPos.Random)
-                    {
-                        var org = new List<StartPos>(positions);
-                        while (org.Count > 0)
+                        foreach (var b in Bots.Where(x => x.owner == u.Name))
                         {
-                            var t = org[r.Next(org.Count)];
-                            org.Remove(t);
-                            tpos.Add(t);
-                        }
-                    }
+                            // AI
+                            var split = b.aiLib.Split('|');
+                            script.AppendFormat("  [AI{0}]\n", aiNum);
+                            script.AppendLine("  {");
+                            script.AppendFormat("    ShortName={0};\n", split[0]);
+                            script.AppendFormat("    Version={0};\n", split.Length > 1 ? split[1] : "");
+                            script.AppendFormat("    Team={0};\n", teamNum);
+                            script.AppendFormat("    Host={0};\n", userNum);
+                            script.AppendLine("    IsFromDemo=0;");
+                            script.AppendLine("    [Options]");
+                            script.AppendLine("    {");
+                            script.AppendLine("    }");
+                            script.AppendLine("  }\n");
+                            aiNum++;
 
-                    // TEAMS
-                    script.AppendLine();
-                    for (var teamNumber = 0; teamNumber < teams.Count; ++teamNumber)
-                    {
-                        var grTeam = teams[teamNumber];
-                        if (grTeam == null && mod.IsMission) continue; // skip unoccupied slot
-                        var grLeader = players[grTeam.leader];
-                        var leaderStatus = grTeam.bot ?? grLeader;
-                        var teamAlly = leaderStatus.AllyNumber;
-                        script.AppendFormat("  [TEAM{0}]\n", teamNumber);
-                        script.AppendLine("  {");
-                        script.AppendFormat("     TeamLeader={0};\n", grTeam.leader);
-                        script.AppendFormat("     AllyTeam={0};\n", teamAlly);
-                        script.AppendFormat("     RGBColor={0:F5} {1:F5} {2:F5};\n",
-                                            (leaderStatus.TeamColor & 255)/255.0,
-                                            ((leaderStatus.TeamColor >> 8) & 255)/255.0,
-                                            ((leaderStatus.TeamColor >> 16) & 255)/255.0);
-                        var side = "mission";
-                        if (mod.Sides.Length > leaderStatus.Side) side = mod.Sides[leaderStatus.Side];
-                        script.AppendFormat("     Side={0};\n", side);
+                            AddTeam(script, ref teamNum, positions, userNum, b.AllyNumber, b.TeamColor, b.Side);
+                        }
 
-                        script.AppendFormat("     Handicap={0};\n", 0);
-                        if (mod.IsMission)
-                        {
-                            script.AppendFormat("      StartPosX={0};\n", 0);
-                            script.AppendFormat("      StartPosZ={0};\n", 0);
-                        }
-                        else
-                        {
-                            StartPos? pos = null;
-                            if (Details.StartPos == BattleStartPos.Random)
-                            {
-                                if (tpos != null && tpos.Count() > teamNumber) pos = tpos.Skip(teamNumber).First();
-                            }
-                            else if (Details.StartPos == BattleStartPos.Fixed) if (positions != null && positions.Length > teamNumber) pos = positions[teamNumber];
-                            if (pos != null)
-                            {
-                                script.AppendFormat("      StartPosX={0};\n", pos.Value.x);
-                                script.AppendFormat("      StartPosZ={0};\n", pos.Value.z);
-                            }
-                        }
-                        script.AppendLine("  }");
+                        userNum++;
                     }
 
                     // ALLIANCES
                     script.AppendLine();
-                    for (var allyNumber = 0; allyNumber < alliances.Count; ++allyNumber)
+                    foreach (var allyNumber in
+                        Users.Where(x => !x.IsSpectator).Select(x => x.AllyNumber).Union(Bots.Select(x => x.AllyNumber)).Union(Rectangles.Keys).
+                            Distinct())
                     {
+                        // get allies from each player, bot and rectangles (for koth)
                         script.AppendFormat("[ALLYTEAM{0}]\n", allyNumber);
                         script.AppendLine("{");
                         script.AppendFormat("     NumAllies={0};\n", 0);
-                        double left, top, right, bottom;
-                        alliances[allyNumber].rect.ToFractions(out left, out top, out right, out bottom);
+                        double left = 0, top = 0, right = 1, bottom = 1;
+                        BattleRect rect;
+                        if (Rectangles.TryGetValue(allyNumber, out rect)) rect.ToFractions(out left, out top, out right, out bottom);
                         script.AppendFormat("     StartRectLeft={0};\n", left);
                         script.AppendFormat("     StartRectTop={0};\n", top);
                         script.AppendFormat("     StartRectRight={0};\n", right);
@@ -424,76 +331,6 @@ namespace LobbyClient
             return -1;
         }
 
-        /// <summary>
-        /// Groups tam and ally numbers, so that they both start from 0
-        /// </summary>
-        public void GroupData(out List<UserBattleStatus> players, out List<GrTeam> teams, out List<GrAlly> alliances)
-        {
-            var teamNums = new Dictionary<int, int>();
-            var allyNums = new Dictionary<int, int>();
-
-            players = new List<UserBattleStatus>();
-            teams = new List<GrTeam>();
-            alliances = new List<GrAlly>();
-
-            foreach (var p in Users)
-            {
-                var u = (UserBattleStatus)p.Clone();
-
-                if (!u.IsSpectator)
-                {
-                    if (!teamNums.ContainsKey(u.TeamNumber))
-                    {
-                        teamNums.Add(u.TeamNumber, teams.Count); // add transformation of team
-                        teams.Add(new GrTeam(players.Count));
-                    }
-                    u.TeamNumber = teamNums[u.TeamNumber];
-
-                    if (!allyNums.ContainsKey(u.AllyNumber))
-                    {
-                        allyNums.Add(u.AllyNumber, alliances.Count); // add transformation of ally
-                        alliances.Add(new GrAlly());
-                    }
-                    u.AllyNumber = allyNums[u.AllyNumber];
-                }
-                players.Add(u);
-            }
-
-            foreach (var p in Bots)
-            {
-                var u = (BotBattleStatus)p.Clone();
-
-                if (!teamNums.ContainsKey(u.TeamNumber))
-                {
-                    teamNums.Add(u.TeamNumber, teams.Count); // add transformation of team
-                    var leader = 0;
-                    for (leader = 0; leader < players.Count; ++leader) if (players[leader].Name == u.owner) break;
-                    var gr = new GrTeam(leader) { bot = u };
-                    teams.Add(gr);
-                }
-                u.TeamNumber = teamNums[u.TeamNumber];
-
-                if (!allyNums.ContainsKey(u.AllyNumber))
-                {
-                    allyNums.Add(u.AllyNumber, alliances.Count); // add transformation of ally
-                    alliances.Add(new GrAlly());
-                }
-                u.AllyNumber = allyNums[u.AllyNumber];
-            }
-
-            // now assign rectangles and skip unused
-            var rects = new List<BattleRect>();
-            foreach (var r in Rectangles)
-            {
-                if (allyNums.ContainsKey(r.Key)) alliances[allyNums[r.Key]] = new GrAlly(r.Value);
-                else rects.Add(r.Value);
-            }
-            if (Rectangles.Count > alliances.Count && rects.Count > 0)
-            {
-                // add last unused rectangle too (KOH mode)
-                foreach (var r in rects) alliances.Add(new GrAlly(r));
-            }
-        }
 
         public void RemoveUser(string name)
         {
@@ -504,6 +341,41 @@ namespace LobbyClient
         public override string ToString()
         {
             return String.Format("{0} {1} ({2}+{3}/{4})", ModName, MapName, NonSpectatorCount, SpectatorCount, MaxPlayers);
+        }
+
+        void AddTeam(StringBuilder script, ref int teamNum, List<StartPos> positions, int userNum, int allyNumber, int teamColor, int sideNum)
+        {
+            BotBattleStatus b;
+            // BOT TEAM
+            script.AppendFormat("  [TEAM{0}]\n", teamNum);
+            script.AppendLine("  {");
+            script.AppendFormat("     TeamLeader={0};\n", userNum);
+            script.AppendFormat("     AllyTeam={0};\n", allyNumber);
+            script.AppendFormat("     RGBColor={0:F5} {1:F5} {2:F5};\n",
+                                (teamColor & 255)/255.0,
+                                ((teamColor >> 8) & 255)/255.0,
+                                ((teamColor >> 16) & 255)/255.0);
+            var side = "mission";
+            if (mod.Sides.Length > sideNum) side = mod.Sides[sideNum];
+            script.AppendFormat("     Side={0};\n", side);
+
+            script.AppendFormat("     Handicap={0};\n", 0);
+            if (mod.IsMission)
+            {
+                script.AppendFormat("      StartPosX={0};\n", 0);
+                script.AppendFormat("      StartPosZ={0};\n", 0);
+            }
+            else
+            {
+                if ((Details.StartPos == BattleStartPos.Random || Details.StartPos == BattleStartPos.Fixed) && positions.Count > teamNum)
+                {
+                    var pos = positions[teamNum];
+                    script.AppendFormat("      StartPosX={0};\n", pos.x);
+                    script.AppendFormat("      StartPosZ={0};\n", pos.z);
+                }
+            }
+            script.AppendLine("  }");
+            teamNum++;
         }
 
         public object Clone()
@@ -521,33 +393,5 @@ namespace LobbyClient
             if (DisabledUnits != null) b.DisabledUnits = new List<string>(DisabledUnits);
             return b;
         }
-
-
-        public class GrAlly
-        {
-            public BattleRect rect;
-
-
-            public GrAlly() {}
-
-
-            public GrAlly(BattleRect r)
-            {
-                rect = r;
-            }
-        };
-
-
-        public class GrTeam
-        {
-            public BotBattleStatus bot;
-            public int leader;
-
-            public GrTeam(int leader)
-            {
-                bot = null;
-                this.leader = leader;
-            }
-        };
     }
 }

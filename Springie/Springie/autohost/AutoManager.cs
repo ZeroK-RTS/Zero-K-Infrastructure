@@ -98,12 +98,6 @@ namespace Springie.AutoHostNamespace
 							{
 								List<string> notReady;
 
-								if (!isPlanetwars && !ah.AllUniqueTeams(out notReady))
-								{
-									ah.ComFix(TasSayEventArgs.Default, new string[] { });
-									return;
-								}
-
 								var isReady = ah.AllReadyAndSynced(out notReady);
 								if ((!isPlanetwars && plrCnt%allyCount == 0) || ah.hostedMod.IsMission)
 								{
