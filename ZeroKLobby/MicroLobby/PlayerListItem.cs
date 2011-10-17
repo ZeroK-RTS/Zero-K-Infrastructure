@@ -166,7 +166,7 @@ namespace ZeroKLobby.MicroLobby
 			if (Images.CountryFlags.TryGetValue(user.Country, out flag) && flag != null) g.DrawImageUnscaled(flag, bounds.Left + x, bounds.Top + 4);
 			x += 16;
 			x += 2; // margin
-			drawImage(Images.GetRank(user.Rank));
+			drawImage(Images.GetRank(user.Level));
 
 			var userDisplayName = MissionSlot == null ? user.Name : String.Format("{1}: {0}", MissionSlot.TeamName, user.Name);
 			drawText(userDisplayName, foreColor, backColor);

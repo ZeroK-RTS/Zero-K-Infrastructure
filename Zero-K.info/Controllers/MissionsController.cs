@@ -158,7 +158,7 @@ namespace ZeroKWeb.Controllers
             if (adversarial == false) ret = ret.Where(x => (x.MinHumans <= 1 && sp == true) || (x.MaxHumans > 1 && x.IsCoop));
             if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => x.Name.Contains(search) || x.Account.Name.Contains(search));
 
-            if (!Global.IsAccountAuthorized || Global.Account.LobbyTimeRank <= 3 || featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ModifiedTime);
+            if (!Global.IsAccountAuthorized || Global.Account.Level <= 20 || featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ModifiedTime);
             else ret = ret.OrderByDescending(x => x.ModifiedTime);
             if (offset != null) ret = ret.Skip(offset.Value);
 

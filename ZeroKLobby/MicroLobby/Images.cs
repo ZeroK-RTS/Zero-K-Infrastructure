@@ -110,8 +110,9 @@ namespace ZeroKLobby.MicroLobby
             return grayBitmap;
         }
 
-        public static Image GetRank(int rankIndex)
+        public static Image GetRank(int level)
         {
+            var rankIndex = level / 10;
             return rankImages[Math.Min(rankIndex, rankImages.Length - 1)];
         }
 

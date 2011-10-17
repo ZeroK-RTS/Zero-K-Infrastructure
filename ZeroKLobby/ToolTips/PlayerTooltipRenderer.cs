@@ -80,9 +80,8 @@ namespace ZeroKLobby
             }
             if (!user.IsBot)
             {
-                drawImage(Images.GetRank(user.Rank), 16, 16);
-                var rankText = user.Rank == 0 ? "Beginner" : string.Format(" > {0} hours", User.RankLimits[user.Rank]);
-                drawString("Experience: " + rankText);
+                drawImage(Images.GetRank(user.Level), 16, 16);
+                drawString(string.Format("Level: {0}, Skill: {1}", user.Level, user.EffectiveElo));
                 newLine();
                 if (user.IsAway)
                 {
@@ -104,9 +103,6 @@ namespace ZeroKLobby
                     drawString(string.Format("Top 10 Rank: {0}.", top10));
                     newLine();
                 }
-
-                drawString(string.Format("Level: {0}, Skill: {1}", user.Level, user.EffectiveElo));
-                newLine();
 
             }
             if (user.IsInBattleRoom)

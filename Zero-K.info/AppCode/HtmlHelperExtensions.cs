@@ -147,7 +147,7 @@ namespace System.Web.Mvc
                         string.Format(
                             "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{6}<a href='/Users/Detail/{2}' style='color:{3}' title='<b>Aliases:</b> {4}'>{5}</a>",
                             account.Country != "??" ? account.Country : "unknown",
-                            account.LobbyTimeRank + 1,
+                            account.Level / 10 + 1,
                             account.AccountID,
                             colorize ? Faction.FactionColor(account.Faction, Global.FactionID) : "",
                             account.Aliases,

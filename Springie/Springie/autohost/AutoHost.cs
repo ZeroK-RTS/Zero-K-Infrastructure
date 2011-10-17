@@ -510,7 +510,7 @@ namespace Springie.autohost
 					{
 						User x;
 						tas.GetExistingUser(u.Name, out x);
-						if (u.Name != tas.UserName && x.Rank < config.MinRank)
+						if (u.Name != tas.UserName && x.Level < config.MinRank)
 						{
 							SayBattle(x.Name + ", your rank is too low, rank kicking is enabled here");
 							ComKick(TasSayEventArgs.Default, new[] { u.Name });

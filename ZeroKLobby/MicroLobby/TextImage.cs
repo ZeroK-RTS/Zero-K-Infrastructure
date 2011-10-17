@@ -56,13 +56,14 @@ namespace ZeroKLobby.MicroLobby
         {
             User user;
             if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) {
-              if (userName == Program.TasClient.UserName) return Resources.jimi;
+              //if (userName == Program.TasClient.UserName) return Resources.jimi;
               if (user.IsBot) return Resources.robot;
               if (Program.FriendManager.Friends.Contains(user.Name)) return Resources.Friend;
               if (user.IsAdmin) return Resources.police;
-              if (user.Rank > 5) return Resources.napoleon;
-              if (user.Rank > 3) return Resources.soldier;
-              if (user.Rank == 0) return Resources.smurf;
+              if (user.EffectiveElo > 1800)  return Resources.napoleon;
+              if (user.EffectiveElo > 1600) return Resources.soldier;
+              if (user.EffectiveElo < 1400) return Resources.smurf;
+                
             } else return Resources.Grayuser;
 						return Resources.user;
         }
@@ -72,13 +73,13 @@ namespace ZeroKLobby.MicroLobby
             User user;
             if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user))
             {
-                if (userName == Program.TasClient.UserName) return Jimi;
+                //if (userName == Program.TasClient.UserName) return Jimi;
                 if (user.IsBot) return Robot;
                 if (Program.FriendManager.Friends.Contains(user.Name)) return Friend;
                 if (user.IsAdmin) return Police;
-                if (user.Rank > 5) return Napoleon;
-                if (user.Rank > 3) return Soldier;
-                if (user.Rank == 0) return Smurf;
+                if (user.EffectiveElo > 1800) return Napoleon;
+                if (user.EffectiveElo > 1600) return Soldier;
+                if (user.EffectiveElo < 1400) return Smurf;
                 return User;
             }
             return String.Empty;
