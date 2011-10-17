@@ -111,13 +111,13 @@ namespace LobbyClient
         /// <summary>
         /// Generates script
         /// </summary>
-        /// <param name="players">list of players</param>
+        /// <param name="playersExport">list of players</param>
         /// <param name="localUser">myself</param>
         /// <param name="loopbackListenPort">listen port for autohost interface</param>
         /// <param name="zkSearchTag">hackish search tag</param>
         /// <param name="startSetup">structure with custom extra data</param>
         /// <returns></returns>
-        public string GenerateScript(out List<UserBattleStatus> players,
+        public string GenerateScript(out List<UserBattleStatus> playersExport,
                                      User localUser,
                                      int loopbackListenPort,
                                      string zkSearchTag,
@@ -128,7 +128,7 @@ namespace LobbyClient
             {
                 Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-                players = Users.Where(x => !x.IsSpectator).Select(x => x.Clone()).ToList();
+                playersExport = new List<UserBattleStatus>();
                 var isHost = localUser.Name == Founder.Name;
                 var myUbs = Users.Single(x => x.Name == localUser.Name);
                 if (!isHost)
@@ -188,7 +188,7 @@ namespace LobbyClient
                         for (var i = 0; i < orderedUsers.Count; i++)
                         {
                             var u = orderedUsers[i];
-                            ScriptAddUser(script, i, startSetup, u.TeamNumber, u);
+                            ScriptAddUser(script, i, playersExport, startSetup, u.TeamNumber, u);
                             if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
                             {
                                 ScriptAddTeam(script, u.TeamNumber, positions, i, u);
@@ -217,7 +217,7 @@ namespace LobbyClient
                         var aiNum = 0;
                         foreach (var u in Users.OrderBy(x => x.TeamNumber))
                         {
-                            ScriptAddUser(script, userNum, startSetup, teamNum, u);
+                            ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
 
                             if (!u.IsSpectator)
                             {
@@ -400,8 +400,12 @@ namespace LobbyClient
             script.AppendLine("  }");
         }
 
-        static void ScriptAddUser(StringBuilder script, int userNum, SpringBattleStartSetup startSetup, int teamNum, UserBattleStatus status)
+        static void ScriptAddUser(StringBuilder script, int userNum, List<UserBattleStatus> playersExport, SpringBattleStartSetup startSetup, int teamNum, UserBattleStatus status)
         {
+            var export = status.Clone();
+            export.TeamNumber = teamNum;
+            playersExport.Add(status);
+
             // PLAYERS
             script.AppendFormat("  [PLAYER{0}]\n", userNum);
             script.AppendLine("  {");
