@@ -196,12 +196,6 @@ namespace ZeroKLobby.MicroLobby
 						drawText(string.Format("Wrong alliance ({0} instead of {1}).", userStatus.AllyNumber, MissionSlot.AllyID), Color.Red, backColor);
 					}
 				}
-				var players = Program.TasClient.MyBattle.Users.Where(u => !u.IsSpectator && u.Name != userStatus.Name);
-				var bots = Program.TasClient.MyBattle.Bots;
-				var playerSharers = players.Where(p => p.TeamNumber == userStatus.TeamNumber).Select(p => p.Name);
-				var botSharers = bots.Where(b => b.TeamNumber == userStatus.TeamNumber).Select(b => b.Name);
-				var commSharers = playerSharers.Concat(botSharers).ToArray();
-				if (commSharers.Any()) drawText("Sharing with " + String.Join(", ", commSharers), Color.Red, backColor);
 			}
 			if (user.Cpu == 6666)
 			{

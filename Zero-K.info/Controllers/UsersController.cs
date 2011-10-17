@@ -73,10 +73,21 @@ namespace ZeroKWeb.Controllers
             return View(ret);
         }
 
-        public ActionResult Detail(int id)
+        public ActionResult Detail(string id)
         {
             var db = new ZkDataContext();
-            return View("UserDetail", db.Accounts.FirstOrDefault(x => x.AccountID == id));
+
+            int idint;
+            Account user = null;
+            if (int.TryParse(id, out idint))
+            {
+                user = db.Accounts.FirstOrDefault(x => x.AccountID == idint);
+            }
+            if (user == null)
+            {
+                user = db.Accounts.FirstOrDefault(x => x.Name == id);
+            }
+            return View("UserDetail", user);
         }
 
         public ActionResult Index(string name, string alias)
@@ -90,10 +101,20 @@ namespace ZeroKWeb.Controllers
             return View("UserList", ret.Take(100));
         }
 
-        public ActionResult LobbyDetail(int id)
+        public ActionResult LobbyDetail(string id)
         {
             var db = new ZkDataContext();
-            return View("UserDetail", db.Accounts.FirstOrDefault(x => x.LobbyID == id));
+            int idint;
+            Account user = null;
+            if (int.TryParse(id, out idint))
+            {
+                user = db.Accounts.FirstOrDefault(x => x.LobbyID == idint);
+            }
+            if (user == null) {
+                user = db.Accounts.FirstOrDefault(x => x.Name == id);
+            }
+
+            return View("UserDetail", user);
         }
 
 
