@@ -1,7 +1,8 @@
- namespace ZkData
+﻿ namespace ZkData
 {
 	public static class GlobalConst
 	{
+	    public const string BaseImageUrl = "http://zero-k.info/img/";
 	    public const int MinPlanetWarsLevel = 5;
 	    public const double InfluenceTaxIncome = 1 / 25.0;
 	    public const int InfluenceDecay = 3;

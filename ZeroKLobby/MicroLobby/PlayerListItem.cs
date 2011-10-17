@@ -167,6 +167,13 @@ namespace ZeroKLobby.MicroLobby
 			x += 16;
 			x += 2; // margin
 			drawImage(Images.GetRank(user.Level));
+            
+            if (!string.IsNullOrEmpty(user.Faction)  ) {
+                var facImg = Program.ServerImages.GetImage(string.Format("Factions/{0}.png", user.Faction));
+                if (facImg != null) drawImage(facImg);
+            }
+		    
+
 
 			var userDisplayName = MissionSlot == null ? user.Name : String.Format("{1}: {0}", MissionSlot.TeamName, user.Name);
 			drawText(userDisplayName, foreColor, backColor);

@@ -481,7 +481,8 @@ namespace ZeroKLobby.MicroLobby
 
     void client_Said(object sender, TasSayEventArgs e)
     {
-      if (e.Origin == TasSayEventArgs.Origins.Player)
+
+        if (e.Origin == TasSayEventArgs.Origins.Player)
       {
         if (Program.Conf.IgnoredUsers.Contains(e.UserName)) return;
 

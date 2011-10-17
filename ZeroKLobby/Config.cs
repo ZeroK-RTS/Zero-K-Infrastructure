@@ -92,7 +92,16 @@ namespace ZeroKLobby
     [DisplayName("Connect on startup")]
     [Description("Connect and login player on program start?")]
     public bool ConnectOnStartup { get { return connectOnStartup; } set { connectOnStartup = value; } }
-    [Browsable(false)]
+
+      [Category("Connection")]
+      [DisplayName("Debuggin - store server messages")]
+      [Description("Stores server message - server address to view them")]
+      public bool DebugServer { get; set; }
+
+
+
+
+      [Browsable(false)]
     public int DefaultPlayerColorInt = 16776960; // default teal color
     [Category("Chat")]
     [DisplayName("Disable Bubble On Channel Highlight")]

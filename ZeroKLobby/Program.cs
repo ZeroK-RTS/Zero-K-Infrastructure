@@ -242,6 +242,9 @@ namespace ZeroKLobby
 
         SayCommandHandler = new SayCommandHandler(TasClient);
 
+        ServerImages = new ServerImagesHandler(SpringPaths);
+    
+
         // log, for debugging
         TasClient.Connected += (s, e) => Trace.TraceInformation("TASC connected");
         TasClient.LoginAccepted += (s, e) =>
@@ -297,7 +300,9 @@ namespace ZeroKLobby
       return false;
     }
 
-  	public static EngineConfigurator EngineConfigurator {get;set;}
+      public static ServerImagesHandler ServerImages { get; private set;}
+
+      public static EngineConfigurator EngineConfigurator {get;set;}
 
 
   	internal static void SaveConfig()
