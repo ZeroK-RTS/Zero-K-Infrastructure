@@ -18831,8 +18831,6 @@ namespace ZkData
 		
 		private string _Color;
 		
-		private string _ImageFile;
-		
 		private EntitySet<Account> _Accounts;
 		
 		private EntitySet<Clan> _Clans;
@@ -18851,8 +18849,6 @@ namespace ZkData
     partial void OnShortcutChanged();
     partial void OnColorChanging(string value);
     partial void OnColorChanged();
-    partial void OnImageFileChanging(string value);
-    partial void OnImageFileChanged();
     #endregion
 		
 		public Faction()
@@ -18944,29 +18940,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ImageFile", DbType="nvarchar(200)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public string ImageFile
-		{
-			get
-			{
-				return this._ImageFile;
-			}
-			set
-			{
-				if ((this._ImageFile != value))
-				{
-					this.OnImageFileChanging(value);
-					this.SendPropertyChanging();
-					this._ImageFile = value;
-					this.SendPropertyChanged("ImageFile");
-					this.OnImageFileChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_Account", Storage="_Accounts", ThisKey="FactionID", OtherKey="FactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
 		public EntitySet<Account> Accounts
 		{
 			get
@@ -18985,7 +18960,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_Clan", Storage="_Clans", ThisKey="FactionID", OtherKey="FactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
 		public EntitySet<Clan> Clans
 		{
 			get

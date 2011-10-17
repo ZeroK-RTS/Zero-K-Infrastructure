@@ -725,7 +725,6 @@
       <Column Name="Name" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
       <Column Name="Shortcut" Type="System.String" DbType="nvarchar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Color" Type="System.String" DbType="varchar(20) NOT NULL" CanBeNull="false" />
-      <Column Name="ImageFile" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Association Name="Faction_Account" Member="Accounts" ThisKey="FactionID" OtherKey="FactionID" Type="Account" />
       <Association Name="Faction_Clan" Member="Clans" ThisKey="FactionID" OtherKey="FactionID" Type="Clan" />
     </Type>

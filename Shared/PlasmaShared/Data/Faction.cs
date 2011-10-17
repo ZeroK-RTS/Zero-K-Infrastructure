@@ -9,7 +9,7 @@ namespace ZkData
     {
 
         public string GetImageUrl() {
-            return string.Format("/img/factions/{0}", ImageFile);
+            return string.Format("/img/factions/{0}.png", Shortcut);
         }
 
         public string GetShipImageUrl() {
