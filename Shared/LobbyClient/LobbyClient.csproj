@@ -111,6 +111,7 @@
     <Compile Include="BattleRect.cs" />
     <Compile Include="BotBattleStatus.cs" />
     <Compile Include="Channel.cs" />
+    <Compile Include="ProtocolExtension.cs" />
     <Compile Include="SayingEventArgs.cs" />
     <Compile Include="ServerConnection.cs" />
     <Compile Include="Spring.cs" />

@@ -13,6 +13,7 @@ namespace LobbyClient
     {
         const string ExtensionChannelName = "extension";
 
+
         public enum Keys
         {
             Level,
