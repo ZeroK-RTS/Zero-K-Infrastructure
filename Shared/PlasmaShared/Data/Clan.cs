@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Text;
 
@@ -14,8 +15,14 @@ namespace ZkData
 	}
 	partial class Clan
 	{
+        partial void OnValidate(ChangeAction action) {
+            if (action != ChangeAction.Delete) {
+                if (!IsShortcutValid(Shortcut)) throw new ApplicationException("Invalid shortcut - can only contain numbers and letters and must be at least one character long");
+            
+            }
+        }
 
-		public bool CanJoin(Account account)
+	    public bool CanJoin(Account account)
 		{
 			if (account == null) return true;
 			if (account.ClanID != null) return false;
@@ -25,15 +32,20 @@ namespace ZkData
 		}
 
 
+	    public static bool IsShortcutValid(string text) {
+            return text.All(Char.IsLetterOrDigit) && text.Length > 0 && text.Length <= 8;
+        }
 
 
-		public string GetImageUrl()
+
+
+	    public string GetImageUrl()
 		{
-			return string.Format("/img/clans/{0}.png", ClanID);
+			return string.Format("/img/clans/{0}.png", Shortcut);
 		}
 
         public string GetBGImageUrl()
-        {   return string.Format("/img/clans/{0}_bg.png", ClanID);
+        {   return string.Format("/img/clans/{0}_bg.png", Shortcut);
         }
 
 
@@ -52,6 +64,8 @@ namespace ZkData
             var t = clan1.GetEffectiveTreaty(clan2);
 			return AllyStatusColor(t.AllyStatus);
 		}
+
+        
 
 		public static string AllyStatusColor(AllyStatus s) {
 			switch (s) {

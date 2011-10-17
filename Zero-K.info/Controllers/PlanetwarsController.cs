@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Linq.SqlClient;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -852,7 +853,8 @@ namespace ZeroKWeb.Controllers
                     db.Clans.InsertOnSubmit(clan);
                 }
                 if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
-                if (clan.Shortcut.Trim().Length < 3) return Content("Shortcut must have at least 3 characters");
+                if (!ZkData.Clan.IsShortcutValid(clan.Shortcut)) return Content("Shortcut must have at least 1 characters and contain only numbers and letters");
+                if (db.Clans.Any(x=> (SqlMethods.Like(x.Shortcut, clan.Shortcut) || SqlMethods.Like(x.ClanName, clan.ClanName))&& x.ClanID != clan.ClanID)) return Content("Clan with this shortcut or name already exists");
 
                 if (created && (image == null || image.ContentLength == 0)) return Content("Upload image");
                 if (image != null && image.ContentLength > 0)

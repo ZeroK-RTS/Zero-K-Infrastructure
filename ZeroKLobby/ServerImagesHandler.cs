@@ -34,10 +34,19 @@ namespace ZeroKLobby
                     items[name] = item;
                     item.LocalPath = Utils.MakePath(basePath, name);
                     var dir = Path.GetDirectoryName(item.LocalPath);
-                    if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
 
-                    if (File.Exists(item.LocalPath)) item.IsLoaded = true;
-                    else
+                    try
+                    {
+                        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                        if (File.Exists(item.LocalPath)) item.Image = Image.FromFile(item.LocalPath);
+                        item.IsLoaded = true;
+                    }
+                    catch (Exception ex) {
+                        Trace.TraceWarning("Failed to load image:{0}", ex);
+                    }
+
+
+                    if (!item.IsLoaded)
                     {
                         Task.Factory.StartNew((state) =>
                             {

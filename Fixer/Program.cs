@@ -20,6 +20,58 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
+        /*
+        var db = new ZkDataContext();
+        foreach (var c in db.Clans) {
+            var path = @"c:\projekty\zero-k.info\www\img\clans";
+            var from = Utils.MakePath(path, c.ClanID + ".png");
+            var to = Utils.MakePath(path, c.Shortcut + ".png");
+            try
+            {
+                if (File.Exists(from))
+                {
+                    File.Move(from, to);
+                }
+
+                from = Utils.MakePath(path, c.ClanID + "_bg.png");
+                to = Utils.MakePath(path, c.Shortcut + "_bg.png");
+                if (File.Exists(from))
+                {
+                    File.Move(from, to);
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine(string.Format("Error: {0} -> {1}", from, to));
+            }
+
+        }*/
+
+                /*HashSet<string> names = new HashSet<string>();
+        var db = new ZkDataContext();
+        foreach (var clan in db.Clans) {
+            var newShortcut = "";
+            foreach (var c in clan.Shortcut.Where(Char.IsLetterOrDigit)) {
+                newShortcut += c;
+            }
+            
+            int number = 1;
+            var baseName = newShortcut;
+            while (newShortcut.Length<1 || names.Contains(newShortcut.ToLower())) {
+                newShortcut = baseName + number++;
+            }
+
+            clan.Shortcut = newShortcut;
+            names.Add(newShortcut.ToLower());
+            try
+            {
+                db.SubmitChanges();
+            }
+            catch (Exception ex) {
+            
+            }
+        }*/
+        
+
         //ImportSpringiePlayers();
       //RecalculateBattleElo();
       //FixMaps();
