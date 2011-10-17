@@ -50,10 +50,10 @@ namespace ZeroKLobby
           if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text == text)
           {
             e.Cancel = true;
-            Program.TasClient.PreviewSaidPrivate -= hideMessage;
+            Program.TasClient.PreviewSaid -= hideMessage;
           }
         };
-      Program.TasClient.PreviewSaidPrivate += hideMessage;
+      Program.TasClient.PreviewSaid += hideMessage;
     }
 
     /// <summary>
@@ -237,7 +237,7 @@ namespace ZeroKLobby
           {
             e.Cancel = true;
             Program.NotifySection.RemoveBar(waitingBar);
-            Program.TasClient.PreviewSaidPrivate -= joinGame;
+            Program.TasClient.PreviewSaid -= joinGame;
             var myHostName = e.Data.UserName;
             var battle = Program.TasClient.ExistingBattles.Values.First(b => b.Founder.Name == myHostName);
 
@@ -265,7 +265,7 @@ namespace ZeroKLobby
           }
         };
 
-      Program.TasClient.PreviewSaidPrivate += joinGame;
+      Program.TasClient.PreviewSaid += joinGame;
       HidePM(spawnCommand.Command);
       Program.TasClient.Say(TasClient.SayPlace.User, hostSpawnerName, spawnCommand.Command, false);
     }

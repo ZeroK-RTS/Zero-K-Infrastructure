@@ -73,7 +73,7 @@ namespace ZeroKLobby.MicroLobby
 			Action<Image> drawImage = image =>
 				{
 					g.DrawImage(image, bounds.Left + x, bounds.Top, 16, 16);
-					x += 19;
+                    x += 19;
 				};
 
 			Action<string, Color, Color> drawText = (text, fore, back) =>

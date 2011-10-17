@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Transactions;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace NightWatch
@@ -38,6 +40,25 @@ namespace NightWatch
           requests.TryRemove(client.MessageID, out entry);
         };
 
+
+      this.client.UserAdded += (s, e) =>
+      {
+          using (var db = new ZkDataContext()) {
+              var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == e.Data.LobbyID);
+              if (acc != null) {
+                  client.Extensions.Publish(e.Data.Name, new Dictionary<string, string>() { 
+                  {ProtocolExtension.Keys.Level.ToString() , acc.Level.ToString()},
+                      {ProtocolExtension.Keys.EffectiveElo.ToString(), acc.EffectiveElo.ToString()}
+                  
+                  });
+              
+              }
+
+          }
+
+      };
+
+        // todo this executes for nothing after useradded sets extension -> avoid by splitting extension changed na duserstatuschanged
       this.client.UserStatusChanged += (s, e) =>
         {
           var user = client.ExistingUsers[e.ServerParams[0]];
