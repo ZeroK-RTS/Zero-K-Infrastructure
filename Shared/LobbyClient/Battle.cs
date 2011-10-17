@@ -180,55 +180,60 @@ namespace LobbyClient
                     var positions = map.Positions != null ? map.Positions.ToList() : new List<StartPos>();
                     if (Details.StartPos == BattleStartPos.Random) positions = positions.Shuffle();
 
-                    var userNum = 0;
-                    var teamNum = 0;
-                    var aiNum = 0;
-                    foreach (var u in Users.OrderBy(x=>x.TeamNumber))
+                    if (mod != null && mod.IsMission)
                     {
-                        // PLAYERS
-                        script.AppendFormat("  [PLAYER{0}]\n", userNum);
-                        script.AppendLine("  {");
-                        script.AppendFormat("     name={0};\n", u.Name);
-
-                        script.AppendFormat("     Spectator={0};\n", u.IsSpectator ? 1 : 0);
-                        if (!u.IsSpectator) script.AppendFormat("     team={0};\n", teamNum);
-
-                        script.AppendFormat("     Rank={0};\n", u.LobbyUser.Rank);
-                        script.AppendFormat("     CountryCode={0};\n", u.LobbyUser.Country);
-                        script.AppendFormat("     LobbyID={0};\n", u.LobbyUser.LobbyID);
-                        script.AppendFormat("     LobbyRank={0};\n", u.LobbyUser.Rank);
-                        if (u.ScriptPassword != null) script.AppendFormat("     Password={0};\n", u.ScriptPassword);
-
-                        if (startSetup != null)
+                        var aiNum = 0;
+                        var declaredTeams = new HashSet<int>();
+                        var orderedUsers = Users.OrderBy(x => x.TeamNumber).ToList();
+                        for (var i = 0; i < orderedUsers.Count; i++)
                         {
-                            var entry = startSetup.UserParameters.FirstOrDefault(x => x.AccountID == u.LobbyUser.LobbyID);
-                            if (entry != null) foreach (var kvp in entry.Parameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
-                        }
-                        script.AppendLine("  }");
-
-                        if (!u.IsSpectator) AddTeam(script, ref teamNum, positions, userNum, u.AllyNumber, u.TeamColor, u.Side);
-
-                        foreach (var b in Bots.Where(x => x.owner == u.Name))
-                        {
-                            // AI
-                            var split = b.aiLib.Split('|');
-                            script.AppendFormat("  [AI{0}]\n", aiNum);
-                            script.AppendLine("  {");
-                            script.AppendFormat("    ShortName={0};\n", split[0]);
-                            script.AppendFormat("    Version={0};\n", split.Length > 1 ? split[1] : "");
-                            script.AppendFormat("    Team={0};\n", teamNum);
-                            script.AppendFormat("    Host={0};\n", userNum);
-                            script.AppendLine("    IsFromDemo=0;");
-                            script.AppendLine("    [Options]");
-                            script.AppendLine("    {");
-                            script.AppendLine("    }");
-                            script.AppendLine("  }\n");
-                            aiNum++;
-
-                            AddTeam(script, ref teamNum, positions, userNum, b.AllyNumber, b.TeamColor, b.Side);
+                            var u = orderedUsers[i];
+                            ScriptAddUser(script, i, startSetup, u.TeamNumber, u);
+                            if (!u.IsSpectator && !declaredTeams.Contains(u.TeamNumber))
+                            {
+                                ScriptAddTeam(script, u.TeamNumber, positions, i, u);
+                                declaredTeams.Add(u.TeamNumber);
+                            }
                         }
 
-                        userNum++;
+                        for (var i = 0; i < orderedUsers.Count; i++)
+                        {
+                            var u = orderedUsers[i];
+                            foreach (var b in Bots.Where(x => x.owner == u.Name))
+                            {
+                                ScriptAddBot(script, aiNum++, b.TeamNumber, i, b);
+                                if (!declaredTeams.Contains(b.TeamNumber))
+                                {
+                                    ScriptAddTeam(script, b.TeamNumber, positions, i, b);
+                                    declaredTeams.Add(b.TeamNumber);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var userNum = 0;
+                        var teamNum = 0;
+                        var aiNum = 0;
+                        foreach (var u in Users.OrderBy(x => x.TeamNumber))
+                        {
+                            ScriptAddUser(script, userNum, startSetup, teamNum, u);
+
+                            if (!u.IsSpectator)
+                            {
+                                ScriptAddTeam(script, teamNum, positions, userNum, u);
+                                teamNum++;
+                            }
+
+                            foreach (var b in Bots.Where(x => x.owner == u.Name))
+                            {
+                                ScriptAddBot(script, aiNum, teamNum, userNum, b);
+                                aiNum++;
+                                ScriptAddTeam(script, teamNum, positions, userNum, b);
+                                teamNum++;
+                            }
+                            userNum++;
+                        }
                     }
 
                     // ALLIANCES
@@ -293,6 +298,7 @@ namespace LobbyClient
                     return script.ToString();
                 }
             }
+
             finally
             {
                 Thread.CurrentThread.CurrentCulture = previousCulture;
@@ -343,20 +349,37 @@ namespace LobbyClient
             return String.Format("{0} {1} ({2}+{3}/{4})", ModName, MapName, NonSpectatorCount, SpectatorCount, MaxPlayers);
         }
 
-        void AddTeam(StringBuilder script, ref int teamNum, List<StartPos> positions, int userNum, int allyNumber, int teamColor, int sideNum)
+        static void ScriptAddBot(StringBuilder script, int aiNum, int teamNum, int userNum, BotBattleStatus status)
+        {
+            // AI
+            var split = status.aiLib.Split('|');
+            script.AppendFormat("  [AI{0}]\n", aiNum);
+            script.AppendLine("  {");
+            script.AppendFormat("    ShortName={0};\n", split[0]);
+            script.AppendFormat("    Version={0};\n", split.Length > 1 ? split[1] : "");
+            script.AppendFormat("    Team={0};\n", teamNum);
+            script.AppendFormat("    Host={0};\n", userNum);
+            script.AppendLine("    IsFromDemo=0;");
+            script.AppendLine("    [Options]");
+            script.AppendLine("    {");
+            script.AppendLine("    }");
+            script.AppendLine("  }\n");
+        }
+
+        void ScriptAddTeam(StringBuilder script, int teamNum, List<StartPos> positions, int userNum, UserBattleStatus status)
         {
             BotBattleStatus b;
             // BOT TEAM
             script.AppendFormat("  [TEAM{0}]\n", teamNum);
             script.AppendLine("  {");
             script.AppendFormat("     TeamLeader={0};\n", userNum);
-            script.AppendFormat("     AllyTeam={0};\n", allyNumber);
+            script.AppendFormat("     AllyTeam={0};\n", status.AllyNumber);
             script.AppendFormat("     RGBColor={0:F5} {1:F5} {2:F5};\n",
-                                (teamColor & 255)/255.0,
-                                ((teamColor >> 8) & 255)/255.0,
-                                ((teamColor >> 16) & 255)/255.0);
+                                (status.TeamColor & 255)/255.0,
+                                ((status.TeamColor >> 8) & 255)/255.0,
+                                ((status.TeamColor >> 16) & 255)/255.0);
             var side = "mission";
-            if (mod.Sides.Length > sideNum) side = mod.Sides[sideNum];
+            if (mod.Sides.Length > status.Side) side = mod.Sides[status.Side];
             script.AppendFormat("     Side={0};\n", side);
 
             script.AppendFormat("     Handicap={0};\n", 0);
@@ -375,7 +398,30 @@ namespace LobbyClient
                 }
             }
             script.AppendLine("  }");
-            teamNum++;
+        }
+
+        static void ScriptAddUser(StringBuilder script, int userNum, SpringBattleStartSetup startSetup, int teamNum, UserBattleStatus status)
+        {
+            // PLAYERS
+            script.AppendFormat("  [PLAYER{0}]\n", userNum);
+            script.AppendLine("  {");
+            script.AppendFormat("     name={0};\n", status.Name);
+
+            script.AppendFormat("     Spectator={0};\n", status.IsSpectator ? 1 : 0);
+            if (!status.IsSpectator) script.AppendFormat("     team={0};\n", teamNum);
+
+            script.AppendFormat("     Rank={0};\n", status.LobbyUser.Rank);
+            script.AppendFormat("     CountryCode={0};\n", status.LobbyUser.Country);
+            script.AppendFormat("     LobbyID={0};\n", status.LobbyUser.LobbyID);
+            script.AppendFormat("     LobbyRank={0};\n", status.LobbyUser.Rank);
+            if (status.ScriptPassword != null) script.AppendFormat("     Password={0};\n", status.ScriptPassword);
+
+            if (startSetup != null)
+            {
+                var entry = startSetup.UserParameters.FirstOrDefault(x => x.AccountID == status.LobbyUser.LobbyID);
+                if (entry != null) foreach (var kvp in entry.Parameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
+            }
+            script.AppendLine("  }");
         }
 
         public object Clone()
