@@ -14,7 +14,7 @@ using PlasmaShared;
 
 namespace Springie
 {
-	static class Program
+	public static class Program
 	{
 		public static Main main;
 
@@ -22,7 +22,7 @@ namespace Springie
 		public static DateTime startupTime = DateTime.Now;
 
 
-		static void Main(string[] args)
+		public static void Main(string[] args)
 		{
    
 			// setup unhandled exception handlers

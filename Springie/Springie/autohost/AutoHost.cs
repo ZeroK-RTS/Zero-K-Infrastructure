@@ -99,6 +99,7 @@ namespace Springie.autohost
 			tas.MyBattleMapChanged += tas_MyBattleMapChanged;
 			tas.BattleLockChanged += tas_BattleLockChanged;
 			tas.BattleOpened += tas_BattleOpened;
+            tas.UserAdded += (o, u) => { if (u.Data.Name == GetAccountName()) Start(null, null); };
 
 			tas.RegistrationDenied += (s, e) =>
 				{
@@ -714,7 +715,6 @@ namespace Springie.autohost
 		void tas_LoginAccepted(object sender, TasEventArgs e)
 		{
 			for (var i = 0; i < config.JoinChannels.Count; ++i) tas.JoinChannel(config.JoinChannels[i]);
-			Start(null, null);
 		}
 
 		void tas_LoginDenied(object sender, TasEventArgs e)
