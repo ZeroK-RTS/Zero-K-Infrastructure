@@ -48,7 +48,7 @@ namespace NightWatch
               if (acc != null) {
                   client.Extensions.Publish(e.Data.Name, new Dictionary<string, string>() { 
                   {ProtocolExtension.Keys.Level.ToString() , acc.Level.ToString()},
-                      {ProtocolExtension.Keys.EffectiveElo.ToString(), acc.EffectiveElo.ToString()}
+                      {ProtocolExtension.Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString()}
                   
                   });
               

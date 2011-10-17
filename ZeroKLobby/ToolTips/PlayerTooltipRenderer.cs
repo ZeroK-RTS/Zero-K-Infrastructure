@@ -105,36 +105,9 @@ namespace ZeroKLobby
                     newLine();
                 }
 
-                //double elo; // synced elo loading
-                //double w;
-                //Program.SpringieServer.GetElo(hoverUser.Name, out elo, out w);
-                //if (w > 0.2) drawString("Skill: " + Math.Round(elo));
-                //else drawString("Skill: unknown");
-
-                if (loadedEloPlayerName == user.Name)
-                {
-                    if (loadedW > 2) drawString("Skill: " + Math.Round(loadedElo));
-                    else drawString("Skill: unknown");
-                }
-                else
-                {
-                    drawString("Skill: loading...");
-                    if (loadedEloPlayerName != user.Name)
-                    {
-                        Program.SpringieServer.GetEloAsync(user.Name,
-                                                           (player, elo, w, token) =>
-                                                               {
-                                                                   if (userName == user.Name)
-                                                                   {
-                                                                       loadedEloPlayerName = userName;
-                                                                       loadedElo = elo;
-                                                                       loadedW = w;
-                                                                   }
-                                                               },
-                                                           null);
-                    }
-                }
+                drawString(string.Format("Level: {0}, Skill: {1}", user.Level, user.EffectiveElo));
                 newLine();
+
             }
             if (user.IsInBattleRoom)
             {

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 
@@ -59,6 +60,17 @@ namespace LobbyClient
                 return ret;
             }
         }
+
+        public int EffectiveElo
+        {
+            get
+            {
+                int ret;
+                int.TryParse(GetExtension(ProtocolExtension.Keys.EffectiveElo), out ret);
+                return ret;
+            }
+        }
+
         public int LobbyID;
         public string Name { get; protected set; }
         public int Rank { get; protected set; }
