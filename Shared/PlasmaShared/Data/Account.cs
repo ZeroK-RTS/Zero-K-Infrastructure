@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
 
@@ -21,6 +22,19 @@ namespace ZkData
             else CreditsExpense += Credits - value;
         }
 
+
+        partial void OnValidate(ChangeAction action)
+        {
+            if (action == ChangeAction.Update || action == ChangeAction.Insert)
+            {
+                if (string.IsNullOrEmpty(Avatar))
+                {
+                    var rand = new Random();
+                    var avatars = ZkData.Avatar.GetCachedList();
+                    Avatar = avatars[rand.Next(avatars.Count)].AvatarName;
+                }
+            }
+        }
 
 	    public void CheckLevelUp()
 		{

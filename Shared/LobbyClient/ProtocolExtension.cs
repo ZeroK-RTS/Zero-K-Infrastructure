@@ -19,7 +19,8 @@ namespace LobbyClient
             Level,
             EffectiveElo,
             Faction,
-            Clan
+            Clan,
+            Avatar
         }
 
         readonly Action<string, Dictionary<string, string>> notifyUserExtensionChange;

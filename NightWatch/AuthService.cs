@@ -50,7 +50,8 @@ namespace NightWatch
                       {ProtocolExtension.Keys.Level.ToString() , acc.Level.ToString()},
                       {ProtocolExtension.Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString()},
                       {ProtocolExtension.Keys.Faction.ToString(), acc.Faction!= null ? acc.Faction.Shortcut:""},
-                      {ProtocolExtension.Keys.Clan.ToString(), acc.Clan!= null ? acc.Clan.Shortcut:""}
+                      {ProtocolExtension.Keys.Clan.ToString(), acc.Clan!= null ? acc.Clan.Shortcut:""},
+                      {ProtocolExtension.Keys.Avatar.ToString(), acc.Avatar}
                   });
               
               }

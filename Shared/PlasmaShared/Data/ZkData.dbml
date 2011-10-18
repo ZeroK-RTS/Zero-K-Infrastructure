@@ -89,6 +89,7 @@
       <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="CreditsIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="CreditsExpense" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Avatar" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />
@@ -745,6 +746,11 @@
       <Column Name="BanIP" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
       <Column Name="BanSecretID" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
       <Association Name="Account_Punishment" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Avatar" Member="Avatars">
+    <Type Name="Avatar">
+      <Column Name="AvatarName" Type="System.String" DbType="nvarchar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
     </Type>
   </Table>
 </Database>

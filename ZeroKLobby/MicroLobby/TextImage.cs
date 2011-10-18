@@ -56,7 +56,7 @@ namespace ZeroKLobby.MicroLobby
         {
             User user;
             if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user)) {
-              //if (userName == Program.TasClient.UserName) return Resources.jimi;
+              if (userName == Program.TasClient.UserName) return Resources.jimi;
               if (user.IsBot) return Resources.robot;
               if (Program.FriendManager.Friends.Contains(user.Name)) return Resources.Friend;
               if (user.IsAdmin) return Resources.police;
@@ -73,7 +73,7 @@ namespace ZeroKLobby.MicroLobby
             User user;
             if (Program.TasClient.ExistingUsers.TryGetValue(userName, out user))
             {
-                //if (userName == Program.TasClient.UserName) return Jimi;
+                if (userName == Program.TasClient.UserName) return Jimi;
                 if (user.IsBot) return Robot;
                 if (Program.FriendManager.Friends.Contains(user.Name)) return Friend;
                 if (user.IsAdmin) return Police;
