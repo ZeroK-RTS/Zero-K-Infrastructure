@@ -9,7 +9,8 @@
 <table>
   <tr>
     <td>
-      Name:
+      Name:<br/>
+      WARNING: for consistency reasons make sure it matches theme of planetwars and the faction you choose
     </td>
     <td>
     @Html.TextBoxFor(x => x.ClanName, new { maxlength = 50 })
@@ -45,7 +46,8 @@
   </tr>
   <tr>
     <td>
-      Image (64x64 png with transparency):
+      Image (64x64 png with transparency):<br/>>
+      WARNING: for consistency reasons make sure it matches color of the faciton and is thematically matching (no troll face or cat if you are killer robots faction :-)
     </td>
     <td>
       <img src='@Model.GetImageUrl()' />

@@ -166,14 +166,18 @@ namespace ZeroKLobby.MicroLobby
 			if (Images.CountryFlags.TryGetValue(user.Country, out flag) && flag != null) g.DrawImageUnscaled(flag, bounds.Left + x, bounds.Top + 4);
 			x += 16;
 			x += 2; // margin
-			drawImage(Images.GetRank(user.Level));
 
-            var clan = Utils.GetClanOrFactionImage(user);
-            if (clan.Item1 != null) drawImage(clan.Item1);
-		    
+            if (!user.IsBot)
+            {
+                drawImage(Images.GetRank(user.Level));
+
+                var clan = Utils.GetClanOrFactionImage(user);
+                if (clan.Item1 != null) drawImage(clan.Item1);
+            }
 
 
-			var userDisplayName = MissionSlot == null ? user.Name : String.Format("{1}: {0}", MissionSlot.TeamName, user.Name);
+
+		    var userDisplayName = MissionSlot == null ? user.Name : String.Format("{1}: {0}", MissionSlot.TeamName, user.Name);
 			drawText(userDisplayName, foreColor, backColor);
 			var top10 = Program.SpringieServer.GetTop10Rank(user.Name);
 			if (top10 > 0)
@@ -201,12 +205,6 @@ namespace ZeroKLobby.MicroLobby
 						drawText(string.Format("Wrong alliance ({0} instead of {1}).", userStatus.AllyNumber, MissionSlot.AllyID), Color.Red, backColor);
 					}
 				}
-			}
-			if (user.Cpu == 6666)
-			{
-				g.InterpolationMode = InterpolationMode.NearestNeighbor;
-				g.DrawImage(Resources.ZK_logo_square, bounds.Left + x + 3, bounds.Top + 4, 11, 11);
-				x += 12;
 			}
 
 

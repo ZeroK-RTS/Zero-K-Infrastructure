@@ -111,9 +111,13 @@ namespace ZeroKLobby
                 if (Images.CountryFlags.TryGetValue(user.Country, out flag) && flag != null) drawImage(flag, flag.Width, flag.Height);
                 else x += 19;
                 y -= 3;
-                drawImage(Images.GetRank(user.Level), 16, 16);
-                var clan = Utils.GetClanOrFactionImage(user);
-                if (clan.Item1 != null) drawImage(clan.Item1, 16, 16);
+                if (!user.IsBot)
+                {
+                    drawImage(Images.GetRank(user.Level), 16, 16);
+                    var clan = Utils.GetClanOrFactionImage(user);
+
+                    if (clan.Item1 != null) drawImage(clan.Item1, 16, 16);
+                }
                 drawString(player.Name);
 
                 var top10 = Program.SpringieServer.GetTop10Rank(user.Name);

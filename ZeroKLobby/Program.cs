@@ -266,6 +266,22 @@ namespace ZeroKLobby
             };
         }
 
+        // special "!join" command for quickmatching
+        TasClient.PreviewSaid += (s, e) =>
+        {
+            var tas = (TasClient)s;
+            if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text.StartsWith("!join")) {
+                var user = tas.ExistingUsers[e.Data.UserName];
+                if (user.IsAdmin || user.IsBot || (tas.MyBattle != null && tas.MyBattle.Founder.Name == user.Name)) {
+                    e.Cancel = true;
+                    var parts = e.Data.Text.Split(' ');
+                    var battleID = tas.ExistingBattles.Values.Where(x => x.Founder.Name == parts[1]).First().BattleID;
+                    var password = parts.Length > 2 ? parts[2] : null;
+                    ActionHandler.JoinBattle(battleID, password);
+                }
+            }
+        };
+
         ConnectBar = new ConnectBar(TasClient);
         ModStore = new ModStore();
         ToolTip = new ToolTipHandler();

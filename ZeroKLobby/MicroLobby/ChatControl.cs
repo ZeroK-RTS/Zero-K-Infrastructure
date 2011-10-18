@@ -212,9 +212,11 @@ namespace ZeroKLobby.MicroLobby
 						var userNameFound = playerListItem.UserName.ToUpper().Contains(word);
 						var countryFound = user.Country.ToUpper() == word;
 						var countryNameFound = user.CountryName.ToUpper() == word;
+                        var clanFound = user.Clan.ToUpper() == word;
+                        var factionFound = user.Faction.ToUpper() == word;
 						if (!negation)
 						{
-							if (!(userNameFound || countryFound || countryNameFound))
+							if (!(userNameFound || countryFound || countryNameFound || clanFound || factionFound))
 							{
 								match = false;
 								break;
@@ -222,7 +224,7 @@ namespace ZeroKLobby.MicroLobby
 						}
 						else
 						{
-							if ((userNameFound || countryFound || countryNameFound))
+							if ((userNameFound || countryFound || countryNameFound || clanFound || factionFound))
 							{
 								match = false;
 								break;

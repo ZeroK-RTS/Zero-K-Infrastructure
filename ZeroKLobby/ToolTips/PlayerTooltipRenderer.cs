@@ -55,13 +55,17 @@ namespace ZeroKLobby
 
             newLine();
 
-            var clan = Utils.GetClanOrFactionImage(user);
-            if (clan.Item1 != null) {
-                drawImage(clan.Item1, 16, 16);
-                drawString2(clan.Item2, Utils.GetFactionColor(user.Faction));
-                newLine();
+            if (!user.IsBot)
+            {
+                var clan = Utils.GetClanOrFactionImage(user);
+                if (clan.Item1 != null)
+                {
+                    drawImage(clan.Item1, 16, 16);
+                    drawString2(clan.Item2, Utils.GetFactionColor(user.Faction));
+                    newLine();
+                }
             }
-            
+
 
             drawString("Country: ");
             Image flag;
@@ -108,7 +112,7 @@ namespace ZeroKLobby
                 }
                 if (user.IsInGame)
                 {
-									drawImage(Resources.ingame, 16, 16);
+			        drawImage(Resources.ingame, 16, 16);
                     var time = DateTime.Now.Subtract(user.InGameSince.Value).PrintTimeRemaining();
                     drawString("Playing since " + time + " ago.");
                     newLine();
@@ -120,6 +124,11 @@ namespace ZeroKLobby
                     drawString(string.Format("Top 10 Rank: {0}.", top10));
                     newLine();
                 }
+                if (!string.IsNullOrEmpty(user.Avatar))
+                {
+                    var image = Program.ServerImages.GetImage(string.Format("Avatars/{0}.png", user.Avatar));
+                    if (image != null) g.DrawImage(image, 302 - 65, 0, 64, 64);
+                }
 
             }
             if (user.IsInBattleRoom)
@@ -128,6 +137,7 @@ namespace ZeroKLobby
                 var battleIcon = Program.BattleIconManager.GetBattleIcon(battle.BattleID);
                 if (battleIcon != null) g.DrawImageUnscaled(battleIcon.Image, x, y);
             }
+
         }
 
 
