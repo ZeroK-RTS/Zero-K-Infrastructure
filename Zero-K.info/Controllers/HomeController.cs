@@ -16,27 +16,6 @@ namespace ZeroKWeb.Controllers
 
 	public class HomeController: Controller
 	{
-        public ActionResult StoreAvatars() {
-            var picList = (string[])HttpContext.Application["unitpics"];
-            var db = new ZkDataContext();
-            foreach (var a in picList) {
-                db.Avatars.InsertOnSubmit(new Avatar() { AvatarName = Path.GetFileNameWithoutExtension(a)});
-            }
-            db.SubmitChanges();
-            return Content("ok");
-        }
-
-        public ActionResult AssignAvatars() {
-            var db = new ZkDataContext();
-            var avatars = db.Avatars.ToList();
-            foreach (var a in db.Accounts.Where(x => x.Avatar == null)) {
-                a.Avatar = avatars[a.AccountID % avatars.Count].AvatarName;
-            }
-            db.SubmitChanges();
-            return Content("ok");
-        }
-
-
 	    //
 		// GET: /Home/
 		public static string GetMapTooltip(int id)

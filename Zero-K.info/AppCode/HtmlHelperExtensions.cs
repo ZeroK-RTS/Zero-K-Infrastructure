@@ -25,16 +25,11 @@ namespace System.Web.Mvc
 
     public static class HtmlHelperExtensions
     {
-        public static MvcHtmlString AccountAvatar(this HtmlHelper helper, int accountID)
-        {
-            var picList = (string[])HttpContext.Current.Application["unitpics"];
-            return
-                new MvcHtmlString(string.Format("<img src='/img/unitpics/{0}' class='avatar'>", Path.GetFileName(picList[accountID%picList.Length])));
-        }
 
         public static MvcHtmlString AccountAvatar(this HtmlHelper helper, Account account)
         {
-            return AccountAvatar(helper, account.AccountID);
+            return
+                new MvcHtmlString(string.Format("<img src='/img/avatars/{0}.png' class='avatar'>", account.Avatar));
         }
 
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str)

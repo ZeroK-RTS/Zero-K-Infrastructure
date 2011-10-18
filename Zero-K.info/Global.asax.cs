@@ -59,7 +59,6 @@ namespace ZeroKWeb
 
 			AreaRegistration.RegisterAllAreas();
 			RegisterRoutes(RouteTable.Routes);
-			Application.Add("unitpics", Directory.GetFiles(Server.MapPath("~/img/unitpics")));
 		}
 
 		void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
