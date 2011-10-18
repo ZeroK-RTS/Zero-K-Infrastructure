@@ -33,6 +33,8 @@ namespace LobbyClient
 
         readonly Dictionary<string, Dictionary<string, string>> userAttributes = new Dictionary<string, Dictionary<string, string>>();
 
+
+
         public ProtocolExtension(TasClient tas, Action<string, Dictionary<string, string>> notifyUserExtensionChange)
         {
             this.tas = tas;

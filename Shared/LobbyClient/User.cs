@@ -26,7 +26,8 @@ namespace LobbyClient
         public DateTime? AwaySince { get; protected set; }
         public string Clan { get; private set; }
         // todo: set by tasclient (use "User Battle" instead?)
-
+        
+        public string Avatar { get; private set; }
 
         public string Country
         {
@@ -113,6 +114,7 @@ namespace LobbyClient
             EffectiveElo = ret;
             Faction = GetExtension(ProtocolExtension.Keys.Faction);
             Clan = GetExtension(ProtocolExtension.Keys.Clan);
+            Avatar = GetExtension(ProtocolExtension.Keys.Avatar);
         }
 
         public int ToInt()
