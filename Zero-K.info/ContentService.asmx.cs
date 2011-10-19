@@ -172,25 +172,25 @@ namespace ZeroKWeb
                         var f1 = players[i].FactionID??-1;
                         var f2 = players[i].FactionID??-1;
                         var points = 0.0;
-                        if (players[i].FactionID != null && players[i].FactionID == players[j].FactionID) points = 1; // same faction weight 1
+                        if (players[i].FactionID != null && players[i].FactionID == players[j].FactionID) points = 4; // same faction weight 1
                         if (c1 != null && c2 != null)
                         {
-                            if (c1 == c2) points = 4;
+                            if (c1 == c2) points = 5;
                             else
                             {
                                 var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
-                                if (treaty.AllyStatus == AllyStatus.Alliance) points = 1;
-                                else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 0.5;
-                                else if (treaty.AllyStatus == AllyStatus.War) points = -3;
+                                if (treaty.AllyStatus == AllyStatus.Alliance) points = 3;
+                                else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 2;
+                                else if (treaty.AllyStatus == AllyStatus.War) points = -4;
                                 if (treaty.AllyStatus == AllyStatus.Neutral && f1!=f2)
                                 {
-                                    if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId==f2 && attackerFactions.Contains(f1))) points = -3;
+                                    if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId==f2 && attackerFactions.Contains(f1))) points = -5;
                                 }
                             }
                         }
                         else {
                             if (f1 != f2) {
-                                if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -3;
+                                if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -5;
                             }
                         }
 
@@ -205,10 +205,10 @@ namespace ZeroKWeb
                 {
                     var mult = 1.0;
                     var player = players[i];
-                    if (planet.OwnerAccountID == player.AccountID) mult += 0.2; // owner 
-                    else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.15; // owner's clan 
-                    if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 0.1; // own dropship 
-                    else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.05; // clan's dropship 
+                    if (planet.OwnerAccountID == player.AccountID) mult += 1; // owner 
+                    else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.5; // owner's clan 
+                    if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 1; // own dropship 
+                    else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.5; // clan's dropship 
                     playerScoreMultiplier[i] = mult;
 
                     //res.Message += string.Format("{0} mult = {1} \n", players[i].Name, mult);
@@ -268,7 +268,7 @@ namespace ZeroKWeb
                     //team0Elo = team0Elo/team0Weight;
                     //team1Elo = team1Elo/team1Weight;
                     var eloScore = -Math.Abs(team0Elo - team1Elo)/14;
-                    if (eloScore < -14) continue;
+                    if (eloScore < -17) continue;
 
                     if (team0Elo < team1Elo) balanceModifier += -eloScore;
                     else balanceModifier += eloScore;
