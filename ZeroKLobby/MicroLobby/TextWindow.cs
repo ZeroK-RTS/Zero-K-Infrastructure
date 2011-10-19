@@ -616,8 +616,8 @@ namespace ZeroKLobby.MicroLobby
                                             lastColor = nextColor;
                                             nextColor = "";
                                         }
-                                        displayLines[line].Previous = true;
                                         line++;
+                                        displayLines[line].Previous = true;
                                         buildString = null;
                                         buildString = new StringBuilder();
                                         buildString.Append(ch[0]);

@@ -212,8 +212,8 @@ namespace ZeroKLobby.MicroLobby
 						var userNameFound = playerListItem.UserName.ToUpper().Contains(word);
 						var countryFound = user.Country.ToUpper() == word;
 						var countryNameFound = user.CountryName.ToUpper() == word;
-                        var clanFound = user.Clan.ToUpper() == word;
-                        var factionFound = user.Faction.ToUpper() == word;
+                        var clanFound = user.Clan != null && user.Clan.ToUpper() == word;
+                        var factionFound = user.Faction != null && user.Faction.ToUpper() == word;
 						if (!negation)
 						{
 							if (!(userNameFound || countryFound || countryNameFound || clanFound || factionFound))
