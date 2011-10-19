@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,8 @@ namespace ZeroKLobby
 		                                       	{
 		                                       		RelativePath = "springsettings.cfg",
 		                                       		Resource = "/Resources/Conf/springsettings.cfg",
+                                                    KeyValueRegex ="([^=]+)=(.*)",
+                                                    KeyValueFormat = "{0}={1}",
 		                                       		MergeRegex = "([^=]+)=",
 		                                       		SpecialLines = () =>
 		                                       			{
@@ -40,7 +43,55 @@ namespace ZeroKLobby
 			Configure(false, DefaultLevel);
 		}
 
-		public void Configure(bool overwrite, int level)
+        /// <summary>
+        /// Sets value if newValue is not null
+        /// </summary>
+        private string GetAndSetConfigValue(string key, string newValue = null) {
+
+            string foundValue = null;
+            foreach (var f in FileInfos.Where(x=>!string.IsNullOrEmpty(x.KeyValueRegex)))
+            {
+                var targetFile = Path.Combine(path, f.RelativePath);
+                var targetLines = new List<string>();
+                foreach (var line in File.ReadAllLines(targetFile)) {
+                    var finalLine = line;
+                    var match = Regex.Match(line, f.KeyValueRegex);
+                    if (match.Success && match.Groups[1].Value == key)
+                    {
+                        foundValue = match.Groups[2].Value;
+                        if (newValue != null) {
+                            finalLine = string.Format(f.KeyValueFormat, key, newValue);
+                        }
+                    }
+                    targetLines.Add(finalLine);
+                }
+
+                // didnt find key, add as new line 
+                if (foundValue == null) {
+                    targetLines.Add(string.Format(f.KeyValueFormat, key, newValue));
+                }
+
+                if (newValue != null)
+                {
+                    File.WriteAllLines(targetFile, targetLines);
+                }
+
+            }
+
+            return foundValue;
+        }
+
+        public string GetConfigValue(string key) {
+            return GetAndSetConfigValue(key, null);
+        }
+
+        public void SetConfigValue(string key, string newValue) {
+            GetAndSetConfigValue(key, newValue ?? "");
+        }
+
+
+
+	    public void Configure(bool overwrite, int level)
 		{
 			foreach (var f in FileInfos)
 			{
@@ -98,6 +149,8 @@ namespace ZeroKLobby
 			public string RelativePath;
 			public string Resource;
 			public Func<string> SpecialLines;
+		    public string KeyValueRegex;
+		    public string KeyValueFormat;
 		}
 	}
 }

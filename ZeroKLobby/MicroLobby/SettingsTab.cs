@@ -52,12 +52,27 @@ namespace ZeroKLobby.MicroLobby
 		}
 
 
+        bool refreshingConfig = false;
 		public void RefreshConfig()
 		{
+            refreshingConfig = true;
 			propertyGrid1.SelectedObject = Program.Conf;
+            cbWindowed.Checked = Program.EngineConfigurator.GetConfigValue("Fullscreen") == "0";
+            cbHwCursor.Checked = Program.EngineConfigurator.GetConfigValue("HardwareCursor") == "1";
+            tbResx.Text = Program.EngineConfigurator.GetConfigValue("XResolution");
+            tbResy.Text = Program.EngineConfigurator.GetConfigValue("YResolution");
+            refreshingConfig = false;
 		}
 
-		public string PathHead { get { return "settings"; } }
+
+	    public void SaveConfig() {
+            Program.EngineConfigurator.SetConfigValue("Fullscreen", cbWindowed.Checked?"0":"1");
+            Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
+            Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
+            Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);
+        }
+
+	    public string PathHead { get { return "settings"; } }
 
 		public bool TryNavigate(params string[] path)
 		{
@@ -97,29 +112,35 @@ namespace ZeroKLobby.MicroLobby
 		void button1_Click(object sender, EventArgs e)
 		{
 			Program.EngineConfigurator.Configure(true, 1);
+            RefreshConfig();
 		}
 
 		void button2_Click(object sender, EventArgs e)
 		{
 			Program.EngineConfigurator.Configure(true, 2);
+            RefreshConfig();
 		}
 
 		void button3_Click(object sender, EventArgs e)
 		{
 			Program.EngineConfigurator.Configure(true, 3);
+            RefreshConfig();
 		}
 
 		void button4_Click(object sender, EventArgs e)
 		{
 			Program.EngineConfigurator.Configure(true, 4);
+            RefreshConfig();
 		}
 
 		void button5_Click(object sender, EventArgs e)
 		{
 			Program.EngineConfigurator.Configure(true, 0);
+            RefreshConfig();
 		}
 
-		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+
+	    [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		void feedbackButton_MouseUp(object sender, MouseEventArgs ea)
 		{
 			var menu = new ContextMenu();
@@ -136,10 +157,10 @@ namespace ZeroKLobby.MicroLobby
 		void helpButton_MouseUp(object sender, MouseEventArgs ea)
 		{
 			var menu = new ContextMenu();
-			var joinItem = new MenuItem("Ask in the developer channel (#sy)");
-			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/sy";
+			var joinItem = new MenuItem("Ask in the developer channel (#zkdev)");
+			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/zkdev";
 			menu.MenuItems.Add(joinItem);
-			var helpForumItem = new MenuItem("Ask in the Spring Help Forum");
+			var helpForumItem = new MenuItem("Ask in the Help Forum");
 			helpForumItem.Click += helpForumItem_Click;
 			menu.MenuItems.Add(helpForumItem);
 			var adminsItem = new MenuItem("Ask an Administrator");
@@ -158,7 +179,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			try
 			{
-				Process.Start("http://springrts.com/phpbb/viewforum.php?f=11");
+                Process.Start("http://zero-k.info/Forum?categoryID=3");
 			}
 			catch {}
 		}
@@ -185,5 +206,10 @@ namespace ZeroKLobby.MicroLobby
 			}
 			catch {}
 		}
+
+        private void settingsControlChanged(object sender, EventArgs e)
+        {
+            if (!refreshingConfig) SaveConfig();
+        }
 	}
 }
