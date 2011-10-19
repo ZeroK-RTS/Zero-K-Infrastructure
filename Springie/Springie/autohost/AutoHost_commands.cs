@@ -86,7 +86,7 @@ namespace Springie.autohost
                 {
                     if (!u.IsSpectator)
                     {
-                        ranker.Add(new UsRank(ranker.Count, u.LobbyUser.EffectiveElo, clanwise ? GetClan(u.Name) : "", u));
+                        ranker.Add(new UsRank(ranker.Count, u.LobbyUser.EffectiveElo, clanwise ? (u.LobbyUser.Clan??"") :"", u));
                     }
                 }
                 var totalPlayers = ranker.Count;
@@ -1264,11 +1264,6 @@ namespace Springie.autohost
 			return FilterUsers(words, tas, spring, out vals, out indexes);
 		}
 
-		static string GetClan(string name)
-		{
-			foreach (Match m in Regex.Matches(name, "^\\[([^\\]]+)\\]")) return m.Groups[1].Value;
-			return "";
-		}
 
 
     void SayLines(TasSayEventArgs e, string what)
