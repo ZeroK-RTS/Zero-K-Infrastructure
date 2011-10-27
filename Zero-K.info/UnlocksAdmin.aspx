@@ -64,7 +64,7 @@
     Morph2 metal cost(chassis): <asp:TextBox ID="tbMorph2" runat="server"></asp:TextBox><br />
     Morph3 metal cost(chassis): <asp:TextBox ID="tbMorph3" runat="server"></asp:TextBox><br />
     Morph4 metal cost(chassis): <asp:TextBox ID="tbMorph4" runat="server"></asp:TextBox><br />
-    Description: <asp:TextBox ID="tbDescription" runat="server" Rows="4" Columns="40"></asp:TextBox><br />
+    Description: <asp:TextBox ID="tbDescription" runat="server" Rows="4" Columns="160"></asp:TextBox><br />
     <asp:Button ID="btnAdd" runat="server" Text="Add new" onclick="btnAdd_Click" />
     </form>
 </body>
