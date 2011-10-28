@@ -105,6 +105,7 @@ namespace ZeroKLobby
 					if (f.SpecialLines != null) ApplyFileChanges(target, f.SpecialLines(), f.MergeRegex);
 				}
 			}
+            SetConfigValue("widgetDetailLevel",level.ToString());
 		}
 
 		void ApplyFileChanges(string target, string data, string regex)
