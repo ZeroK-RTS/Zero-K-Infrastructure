@@ -505,6 +505,7 @@
       <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="FactionID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="HomeworldPlanetID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="CanMakeHomeworld" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="Clan_Account" Member="Accounts" ThisKey="ClanID" OtherKey="ClanID" Type="Account" />
       <Association Name="Clan_ForumThread" Member="ForumThreads" ThisKey="ClanID" OtherKey="RestrictedClanID" Type="ForumThread" />
       <Association Name="Clan_TreatyOffer" Member="TreatyOffersByOfferingClanID" ThisKey="ClanID" OtherKey="OfferingClanID" Type="TreatyOffer" />

@@ -13125,6 +13125,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _HomeworldPlanetID;
 		
+		private bool _CanMakeHomeworld;
+		
 		private EntitySet<Account> _Accounts;
 		
 		private EntitySet<ForumThread> _ForumThreads;
@@ -13173,6 +13175,8 @@ namespace ZkData
     partial void OnFactionIDChanged();
     partial void OnHomeworldPlanetIDChanging(System.Nullable<int> value);
     partial void OnHomeworldPlanetIDChanged();
+    partial void OnCanMakeHomeworldChanging(bool value);
+    partial void OnCanMakeHomeworldChanged();
     #endregion
 		
 		public Clan()
@@ -13423,8 +13427,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanMakeHomeworld", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public bool CanMakeHomeworld
+		{
+			get
+			{
+				return this._CanMakeHomeworld;
+			}
+			set
+			{
+				if ((this._CanMakeHomeworld != value))
+				{
+					this.OnCanMakeHomeworldChanging(value);
+					this.SendPropertyChanging();
+					this._CanMakeHomeworld = value;
+					this.SendPropertyChanged("CanMakeHomeworld");
+					this.OnCanMakeHomeworldChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Accounts", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<Account> Accounts
 		{
 			get
@@ -13443,7 +13468,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_ForumThread", Storage="_ForumThreads", ThisKey="ClanID", OtherKey="RestrictedClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreads
 		{
 			get
@@ -13462,7 +13487,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByOfferingClanID
 		{
 			get
@@ -13481,7 +13506,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_TreatyOffersByTargetClanID", ThisKey="ClanID", OtherKey="TargetClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByTargetClanID
 		{
 			get
@@ -13500,7 +13525,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_EventClan", Storage="_EventClans", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<EventClan> EventClans
 		{
 			get
@@ -13519,7 +13544,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="ClanID", OtherKey="OwnerClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -13538,7 +13563,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get

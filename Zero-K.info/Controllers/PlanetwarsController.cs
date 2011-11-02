@@ -168,6 +168,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult ConsolidateHomeworld()
         {
+            return Content("Disabled");
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             var planet = acc.Clan.HomeworldPlanet;
@@ -195,24 +196,23 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             var planet = db.Planets.Single(x => x.PlanetID == planetid);
-            var freeInfluence =
-                acc.Clan.Accounts.SelectMany(x => x.AccountPlanets).Where(
-                    x => x.Planet.OwnerAccountID == null || x.Planet.Account.ClanID != acc.ClanID).Sum(x => (int?)x.Influence);
-            if ((acc.HasClanRights || acc.IsClanFounder) && acc.Clan.HomeworldPlanetID == null &&
+
+            if (planet.AccountPlanets.Any(x => x.Influence > 0 && x.Account.FactionID != acc.FactionID)) return Content("Planet contains influence of other faction");
+
+            if ((acc.HasClanRights || acc.IsClanFounder) && acc.Clan.HomeworldPlanetID == null && planet.HomeworldClan == null && acc.Clan.CanMakeHomeworld&& 
                 (planet.OwnerAccountID == null || planet.Account.ClanID == acc.ClanID) &&
                 !planet.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true))
             {
-                if (freeInfluence > planet.GetIPToCapture() || (planet.Account != null && planet.Account.ClanID == Global.ClanID))
-                {
-                    if (planet.OwnerAccountID == null && planet.AccountPlanets.Any(x => x.Influence > 0 && x.Account.FactionID != acc.FactionID)) return Content("Planet contains influence of other faction");
-
-                    MoveInfluenceToHome(db, planet, acc);
-                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} established {1} homeworld on {2}!", acc, acc.Clan, planet));
-                    db.SubmitChanges();
-                    SetPlanetOwners();
-                    return Content("Done, welcome to your new home");
+                var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == acc.AccountID);
+                if (entry == null) {
+                    entry = new AccountPlanet() { PlanetID = planet.PlanetID, AccountID = acc.AccountID};
+                    db.AccountPlanets.InsertOnSubmit(entry);
                 }
-                else return Content("Not enough influence");
+                entry.Influence += 501; // needed to overcome 500 based militia
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} established {1} homeworld on {2}!", acc, acc.Clan, planet));
+                db.SubmitChanges();
+                SetPlanetOwners();
+                return Content("Done, welcome to your new home");
             }
             else return Content("Cannot make homeworld here");
         }
@@ -926,6 +926,7 @@ namespace ZeroKWeb.Controllers
                 var db = new ZkDataContext();
                 var planet = db.Planets.Single(p => p.PlanetID == planetID);
                 if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
+                if (Global.Account.Clan.HomeworldPlanetID != planet.PlanetID) return Content("Can only rename a homeworld");
                 db.SubmitChanges();
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} from {2} to {3}", Global.Account, planet, planet.Name, newName));
                 planet.Name = newName;
@@ -1021,7 +1022,7 @@ namespace ZeroKWeb.Controllers
                 var quantity = Math.Min(bo.AccountByAccountID.Credits/bo.Price, bo.Quantity);
                 if (quantity > 0 && !bo.Planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksEnemyTrade == true))
                 {
-                    if (bo.Planet.OwnerAccountID == bo.AccountID) // buyer owned planet only
+                    if (bo.Planet.Account != null && bo.Planet.Account.FactionID == bo.AccountByAccountID.FactionID) // buyer from same faction only
                     {
                         var buyerAccountPlanet = bo.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == bo.AccountID);
                         influenceChanged = true;

@@ -26,7 +26,7 @@
 		</td>
 	</tr>
 </table>
-@if (Model.OwnerAccountID == Global.AccountID) {
+@if (Model.OwnerAccountID == Global.AccountID && Global.Clan != null && Global.Clan.HomeworldPlanetID == Model.PlanetID) {
 	<form method="post" action="@Url.Action("SubmitRenamePlanet")">
 	<input type="hidden" name="planetID" value="@Model.PlanetID"/>
 	<input type="text" name="newName" value="@Model.Name"/>
@@ -121,15 +121,15 @@
 		<li><a href="#minimap"><span>Navigation</span></a></li>
 	</ul>
 	<div id="influence">
-        @if (Global.Account != null && Global.Account.Clan != null && Global.Account.Clan.HomeworldPlanetID == null  && (Global.Account.HasClanRights || Global.Account.IsClanFounder)) {
+        @if (Global.Account != null && Global.Account.Clan != null && Global.Clan.CanMakeHomeworld&& Global.Account.Clan.HomeworldPlanetID == null  && (Global.Account.HasClanRights || Global.Account.IsClanFounder) && Model.HomeworldClan == null) {
             @Html.ActionLink("Establish homeworld", "EstablishHomeworld", new { planetID = Model.PlanetID }, new { title="Creates permanent homeworld using your clan's influence spread across unowned planets"})<br />
         }
         @if (Model.HomeworldClan != null) {
             <b>Homeworld of @Html.PrintClan(Model.HomeworldClan)</b><br />
         }
-        @if (Model.HomeworldClan != null && Global.Account != null && Global.Account.Clan != null && (Global.Account.HasClanRights || Global.Account.IsClanFounder)&&Model.HomeworldClan.ClanID == Global.Account.ClanID) {
+        @*@if (Model.HomeworldClan != null && Global.Account != null && Global.Account.Clan != null && (Global.Account.HasClanRights || Global.Account.IsClanFounder)&&Model.HomeworldClan.ClanID == Global.Account.ClanID) {
             @Html.ActionLink("Consolidate home influence", "ConsolidateHomeworld", null, new { title="Strengthens homeworld by moving influence from unowned planets here"})
-        }
+        }*@
         
         @Html.Partial("InfluenceList", Model.AccountPlanets)
 	</div>
