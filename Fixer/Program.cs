@@ -20,66 +20,14 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
-        /*
-        var db = new ZkDataContext();
-        foreach (var c in db.Clans) {
-            var path = @"c:\projekty\zero-k.info\www\img\clans";
-            var from = Utils.MakePath(path, c.ClanID + ".png");
-            var to = Utils.MakePath(path, c.Shortcut + ".png");
-            try
-            {
-                if (File.Exists(from))
-                {
-                    File.Move(from, to);
-                }
-
-                from = Utils.MakePath(path, c.ClanID + "_bg.png");
-                to = Utils.MakePath(path, c.Shortcut + "_bg.png");
-                if (File.Exists(from))
-                {
-                    File.Move(from, to);
-                }
-            }
-            catch (Exception ex) {
-                Console.WriteLine(string.Format("Error: {0} -> {1}", from, to));
-            }
-
-        }*/
-
-                /*HashSet<string> names = new HashSet<string>();
-        var db = new ZkDataContext();
-        foreach (var clan in db.Clans) {
-            var newShortcut = "";
-            foreach (var c in clan.Shortcut.Where(Char.IsLetterOrDigit)) {
-                newShortcut += c;
-            }
-            
-            int number = 1;
-            var baseName = newShortcut;
-            while (newShortcut.Length<1 || names.Contains(newShortcut.ToLower())) {
-                newShortcut = baseName + number++;
-            }
-
-            clan.Shortcut = newShortcut;
-            names.Add(newShortcut.ToLower());
-            try
-            {
-                db.SubmitChanges();
-            }
-            catch (Exception ex) {
-            
-            }
-        }*/
-        
-
-        //ImportSpringiePlayers();
+      //ImportSpringiePlayers();
       //RecalculateBattleElo();
       //FixMaps();
 
-		//PurgeGalaxy(19, false);
+		//PurgeGalaxy(20, false);
 
-    	//RandomizeMaps(20);
-		//GenerateStructures(20);
+    	RandomizeMaps(21);
+		GenerateStructures(21);
 
 			//AddWormholes();
         //TestPrediction();
@@ -159,14 +107,31 @@ namespace Fixer
 			using (var db = new ZkDataContext())
 			{
 				db.CommandTimeout = 300;
-				var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
-				foreach (var p in gal.Planets) {
-					p.ForumThread = null;
-					p.OwnerAccountID = null;
-				}
-				db.SubmitChanges();
 
-                db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0");
+                if (db.AccountPlanets.Any(x => x.Influence > 0))
+                {
+                    db.ExecuteCommand("update clan set canmakehomeworld=0");
+                    foreach (
+                        var clan in
+                            db.Clans.Where(x => !x.IsDeleted).OrderByDescending(
+                                x =>
+                                x.Accounts.SelectMany(y => y.AccountPlanets).Sum(y => y.Influence + y.ShadowInfluence)*15 +
+                                x.Accounts.Sum(y => y.Credits)).Take(20))
+                    {
+                        clan.CanMakeHomeworld = true;
+                    }
+                    db.SubmitChanges();
+                }
+
+			    var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
+                foreach (var p in gal.Planets)
+                {
+                    p.ForumThread = null;
+                    p.OwnerAccountID = null;
+                }
+                db.SubmitChanges();
+
+			    db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0");
                 db.ExecuteCommand("update clan set homeworldplanetid=null");
                 if (resetclans) db.ExecuteCommand("update account set clanid=null,isclanfounder=0, hasclanrights=0");
 				db.ExecuteCommand("delete from event");
@@ -309,7 +274,7 @@ namespace Fixer
 			}
 			
 			// artefacts
-			foreach (var p in gal.Planets.Where(x => x.Resource.MapIsChickens!=true && !x.Resource.MapIsFfa != true && x.Resource.MapIs1v1 != true).Shuffle().Take(4)) p.AddStruct(artefact);
+			foreach (var p in gal.Planets.Where(x => x.Resource.MapIsChickens!=true && !x.Resource.MapIsFfa != true && x.Resource.MapIs1v1 != true).Shuffle().Take(5)) p.AddStruct(artefact);
 
 			// jump gates
 			//foreach (var p in gal.Planets.Shuffle().Take(6)) p.AddStruct(warp);

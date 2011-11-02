@@ -99,11 +99,11 @@
 </div>
 
 <div id="victory_eco" class="fleft border" style="min-height: 60px;">
-<b>Economic victory (50% of galaxy assets in $):</b>
+<b>Economic victory (80% of galaxy assets in $):</b>
 @{
 	var credEntries = db.Factions.Select(x => new { Fac = x, Creds = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0), Assets = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0) + x.Accounts.SelectMany(y => y.Planets).SelectMany(y => y.PlanetStructures).Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.Cost) ?? 0 }).OrderByDescending(x => x.Assets).ToList();
 	var creds = credEntries.OrderByDescending(x=>x.Creds).FirstOrDefault();
-    var total = @Math.Round((credEntries.Sum(x => x.Assets)-creds.Assets) * 0.5);
+    var total = @Math.Round((credEntries.Sum(x => x.Assets)-creds.Assets) * 0.8);
 
 	if (creds != null)
 	{
