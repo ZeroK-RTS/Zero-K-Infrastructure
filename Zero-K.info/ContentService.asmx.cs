@@ -50,6 +50,13 @@ namespace ZeroKWeb
                     return string.Format("Sending {0} to {1}", account.Name, fac.Name);
                 }
                  */
+                 
+                if (account.Level < GlobalConst.MinPlanetWarsLevel)
+                {
+                    AuthServiceClient.SendLobbyMessage(account, "Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level 5 to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can observe this game however.");
+
+                }
+
                 if (account.Clan == null)
                 {
                     //AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
@@ -58,11 +65,8 @@ namespace ZeroKWeb
                             "{0} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Planetwars/ClanList",
                             account.Name);
                 }
-                if (account.Level < GlobalConst.MinPlanetWarsLevel)
-                {
-                    AuthServiceClient.SendLobbyMessage(account, "Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level 5 to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can observe this game however.");
 
-                }
+                
                 /*if (!account.Name.Contains(account.Clan.Shortcut))
                 {
                     AuthServiceClient.SendLobbyMessage(account,
