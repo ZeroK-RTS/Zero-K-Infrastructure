@@ -208,6 +208,7 @@ namespace ZeroKWeb.Controllers
                     entry = new AccountPlanet() { PlanetID = planet.PlanetID, AccountID = acc.AccountID};
                     db.AccountPlanets.InsertOnSubmit(entry);
                 }
+                acc.Clan.HomeworldPlanetID = planet.PlanetID;
                 entry.Influence += 501; // needed to overcome 500 based militia
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} established {1} homeworld on {2}!", acc, acc.Clan, planet));
                 db.SubmitChanges();
