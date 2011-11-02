@@ -33,6 +33,8 @@ namespace ZeroKWeb
                 var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == mapName);
                 var account = db.Accounts.FirstOrDefault(x => x.LobbyID == accountID);
 
+                // conscription
+                /*
                 if (account.FactionID == null)
                 {
                     var rand = new Random();
@@ -47,6 +49,7 @@ namespace ZeroKWeb
                                                            fac.Name));
                     return string.Format("Sending {0} to {1}", account.Name, fac.Name);
                 }
+                 */
                 if (account.Clan == null)
                 {
                     //AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
