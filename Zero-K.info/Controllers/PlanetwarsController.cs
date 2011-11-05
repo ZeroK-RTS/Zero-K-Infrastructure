@@ -706,6 +706,8 @@ namespace ZeroKWeb.Controllers
                 //if (planet.PlanetID == 2274) Debugger.Break();
                 var currentOwnerClanID = planet.Account != null ? planet.Account.ClanID : null;
                 var currentOwnerFactionID = planet.Account != null ? planet.Account.FactionID : null;
+
+
                 // in case of a tie when deciding which CLAN to get a planet - give to one with less planets
                 var mostInfluentiaFactionEntry =
                     planet.AccountPlanets.Where(x=>x.Account.ClanID!=null).GroupBy(ap => ap.Account.Faction).Where(x => x.Key != null).Select(
@@ -715,13 +717,12 @@ namespace ZeroKWeb.Controllers
                 ClanEntry mostInfluentialClanEntry = null;
                 if (mostInfluentiaFactionEntry != null &&
                     (mostInfluentiaFactionEntry.Faction.FactionID == currentOwnerFactionID ||
-                     mostInfluentiaFactionEntry.FactionInfluence > planet.GetIPToCapture()))
+                     mostInfluentiaFactionEntry.FactionInfluence >  planet.GetIPToCapture() ))
                 {
                     mostInfluentialClanEntry =
                         planet.AccountPlanets.Where(
                             x => x.Account.FactionID == mostInfluentiaFactionEntry.Faction.FactionID && x.Account.ClanID != null).GroupBy(
-                                x => x.Account.Clan).Select(x => new ClanEntry(x.Key, (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0)).
-                            OrderByDescending(x => x.ClanInfluence).ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
+                                x => x.Account.Clan).Select(x => new ClanEntry(x.Key, (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0)).OrderByDescending(x => x.ClanInfluence).ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
                 }
 
                 if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) &&
@@ -736,7 +737,7 @@ namespace ZeroKWeb.Controllers
                     planet.Account = null;
                     havePlanetsChangedHands = true;
                 }
-                else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID)
+                else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence + x.ShadowInfluence)))
                 {
                     // planet changes owner, most influential clan is not current owner and has more ip to capture than needed
 
