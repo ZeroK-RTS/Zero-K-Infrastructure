@@ -25,12 +25,11 @@ namespace PlasmaDownloader
     {
       Utils.StartAsync(() =>
         {
-          for (var i = 9; i >= 0; i--)
+          for (var i = 9; i >= -1; i--)
           {
             
-            string version;
-            if (i > 0) version = string.Format("{0}.{1}", Name, i);
-            else version = Name;
+            string version = Name;
+            if (i >= 0) version = string.Format("{0}.{1}", Name, i);
 
             // try to find zip - if does not exist, try exe
             var source = string.Format("{0}spring_{1}.zip", EngineDownloadPath, version);

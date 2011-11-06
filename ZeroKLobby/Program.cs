@@ -179,7 +179,8 @@ namespace ZeroKLobby
           }
           else
           {
-            foreach (var game in KnownGames.List) Conf.AutoJoinChannels.Add(game.Channel);
+            Conf.AutoJoinChannels.Add(KnownGames.GetDefaultGame().Channel);
+            Conf.AutoJoinChannels.Add("newbies");
             Conf.AutoJoinChannels.Add("main");
           }
           Conf.JoinChannelsSetupDone = true;
