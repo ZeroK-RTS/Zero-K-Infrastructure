@@ -161,12 +161,23 @@ namespace PlasmaShared
         p.Start();
         var data = p.StandardOutput.ReadToEnd();
         data = data.Trim();
-        var match = Regex.Match(data, "Spring (\\d+\\.\\d+\\.\\d+)\\.\\d+.*");
+        var word = "";
+        var match = Regex.Match(data, @"Spring [^ ]+ \(([^\)]+)\)");
+        if (match.Success) word = match.Groups[1].Value;
+        else
+        {
+            match = Regex.Match(data, @"Spring ([^ ]+)");
+            if (match.Success) word = match.Groups[1].Value;
+        }
+
+        // parse word
+        match = Regex.Match(word, "(\\d+\\.\\d+\\.\\d+)\\.\\d+$");
         if (match.Success) return match.Groups[1].Value;
-        match = Regex.Match(data, "Spring (\\d+)\\.\\d+.*");
+
+        match = Regex.Match(word, "(\\d+)\\.\\d+$");
         if (match.Success) return match.Groups[1].Value;
-        match = Regex.Match(data, "\\((\\{[^\\}]+\\})?([^\\)]+)\\)");
-        if (match.Success) return match.Groups[2].Value;
+
+        return word;
       }
       catch (Exception ex)
       {

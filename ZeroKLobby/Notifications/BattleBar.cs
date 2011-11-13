@@ -167,8 +167,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 					             {
 					             	AllyNumber = alliance,
 					             	TeamNumber = team,
-					             	SyncStatus =
-					             		Program.SpringScanner.HasResource(battle.ModName) && Program.SpringScanner.HasResource(battle.MapName)
+					             	SyncStatus = HasAllResources()
 					             			? SyncStatuses.Synced
 					             			: SyncStatuses.Unsynced,
 					             	IsSpectator = !cbReady.Checked,
@@ -349,8 +348,18 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			suppressSpecChange = false;
 		}
 
+        private bool HasAllResources() {
+            if (client != null && client.MyBattle != null)
+            {
+                var battle = client.MyBattle;
+                return Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) &&
+                       (engineVersionNeeded == null || Program.SpringPaths.SpringVersion == engineVersionNeeded);
+            }
+            else return false;
+        }
 
-		void CheckMyBattle()
+
+	    void CheckMyBattle()
 		{
 			var battle = client.MyBattle;
 			var currentStatus = client.MyBattleStatus;
@@ -360,8 +369,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
 			if (currentStatus.SyncStatus != SyncStatuses.Synced)
 			{
-				if (Program.SpringScanner.HasResource(battle.MapName) && Program.SpringScanner.HasResource(battle.ModName) &&
-				    (engineVersionNeeded == null || Program.SpringPaths.SpringVersion == engineVersionNeeded))
+				if (HasAllResources())
 				{
 					// if didnt have map and have now, set it
 					newStatus.SyncStatus = SyncStatuses.Synced;
