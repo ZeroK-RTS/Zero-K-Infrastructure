@@ -381,6 +381,7 @@ namespace Springie.autohost
 			if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag)) modname = config.AutoUpdateRapidTag;
 
 			var title = config.GameTitle.Replace("%1", MainConfig.SpringieVersion);
+            if (springPaths.SpringVersion != tas.ServerSpringVersion) title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
 			var password = config.Password;
 
 			if (SpawnConfig != null)
