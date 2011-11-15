@@ -43,7 +43,7 @@ namespace ZeroKLobby
       }
 
       public static Dictionary<string, Color> FactionColors = new Dictionary<string, Color>() { { "Ascended", ColorTranslator.FromHtml("#94C8FF") },
-       { "Born", ColorTranslator.FromHtml("#00FF00") },
+       { "Trueborn", ColorTranslator.FromHtml("#00FF00") },
         { "Machines", ColorTranslator.FromHtml("#FF0000") },
          { "Empire", ColorTranslator.FromHtml("#880088") },
           { "Unaligned", ColorTranslator.FromHtml("#DDBB00") }
