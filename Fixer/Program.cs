@@ -20,6 +20,9 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
+        FixDemoEngineVersion();
+
+        return;
       //ImportSpringiePlayers();
       //RecalculateBattleElo();
       //FixMaps();
@@ -33,8 +36,21 @@ namespace Fixer
         //TestPrediction();
     }
 
+      static void FixDemoEngineVersion()
+      {
+          var db = new ZkDataContext();
+          foreach (var b in db.SpringBattles.Where(x=>x.Title.Contains("[engine"))) {
+              var match = Regex.Match(b.Title, @"\[engine([^\]]+)\]");
+              if (match.Success) {
+                  var eng = match.Groups[1].Value;
+                  if (eng != b.EngineVersion) b.EngineVersion = eng;
+              }
+          }
+          db.SubmitChanges();
+      }
 
-    public static void TestPrediction() {
+
+      public static void TestPrediction() {
         var db = new ZkDataContext();
         var factWinCnt= 0;
         var factWinSum = 0.0;
