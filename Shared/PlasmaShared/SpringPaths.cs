@@ -162,7 +162,7 @@ namespace PlasmaShared
         var data = p.StandardOutput.ReadToEnd();
         data = data.Trim();
         var word = "";
-        var match = Regex.Match(data, @"Spring [^ ]+ \(([^\)]+)\)");
+        var match = Regex.Match(data, @"Spring ([^ ]+) \([^\)]+\)");
         if (match.Success) word = match.Groups[1].Value;
         else
         {
