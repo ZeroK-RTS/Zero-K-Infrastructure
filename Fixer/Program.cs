@@ -20,21 +20,44 @@ namespace Fixer
   {
     static void Main(string[] args)
     {
-        FixDemoEngineVersion();
+        //FixDemoEngineVersion();
 
-        return;
       //ImportSpringiePlayers();
       //RecalculateBattleElo();
       //FixMaps();
 
-		//PurgeGalaxy(20, false);
+        //PickHomworldOwners();
 
-    	RandomizeMaps(21);
-		GenerateStructures(21);
+		//PurgeGalaxy(21, false);
+        //RandomizeMaps(21);
+		//GenerateStructures(21);
 
 			//AddWormholes();
         //TestPrediction();
     }
+
+      static void PickHomworldOwners()
+      {
+
+          var db = new ZkDataContext();
+          foreach (var a in db.Accounts.Where(x=>x.ClanID != null && x.Clan.FactionID != x.FactionID)) {
+              a.FactionID = a.Clan.FactionID;
+          }
+          db.SubmitChanges();
+
+
+          db.ExecuteCommand("update clan set homeworldplanetid=null");
+          foreach (var f in db.SpringBattles.Where(x => x.StartTime >= DateTime.Now.AddDays(-14)).SelectMany(x => x.SpringBattlePlayers).Where(x=>x.Account.Clan!= null).GroupBy(x => x.Account.Clan.Faction)) {
+              foreach (var topclan in f.GroupBy(x=>x.Account.Clan).OrderByDescending(x => x.Count()).Take(4))
+              {
+                  topclan.Key.CanMakeHomeworld = true;
+                  Console.WriteLine("{0}  :   {1}", f.Key.Name, topclan.Key.ClanName);
+
+              }
+          
+          }
+          db.SubmitChanges();
+      }
 
       static void FixDemoEngineVersion()
       {
@@ -119,12 +142,12 @@ namespace Fixer
 
     }
 
-      public static void PurgeGalaxy(int galaxyID, bool resetclans = false) {
+      public static void PurgeGalaxy(int galaxyID, bool resetclans = false, bool setPlanetOwners = false) {
 			using (var db = new ZkDataContext())
 			{
 				db.CommandTimeout = 300;
 
-                if (db.AccountPlanets.Any(x => x.Influence > 0))
+                if (setPlanetOwners && db.AccountPlanets.Any(x => x.Influence > 0))
                 {
                     db.ExecuteCommand("update clan set canmakehomeworld=0");
                     foreach (
@@ -147,7 +170,7 @@ namespace Fixer
                 }
                 db.SubmitChanges();
 
-			    db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0");
+                db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0");
                 db.ExecuteCommand("update clan set homeworldplanetid=null");
                 if (resetclans) db.ExecuteCommand("update account set clanid=null,isclanfounder=0, hasclanrights=0");
 				db.ExecuteCommand("delete from event");

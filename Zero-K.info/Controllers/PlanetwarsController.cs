@@ -412,6 +412,21 @@ namespace ZeroKWeb.Controllers
             else return Content("You cannot join this clan - its full, or has password, or is different faction");
         }
 
+
+        [Auth]
+        public ActionResult NotifCanEstablishHomeworld() {
+            var db = new ZkDataContext();
+            foreach (var c in db.Clans.Where(x => x.CanMakeHomeworld)) {
+                foreach (var a in c.Accounts)
+                {
+                    AuthServiceClient.SendLobbyMessage(a, string.Format("New PlanetWars season will start soon. Your clan can SELECT HOMEWORLD already! Tell founder/person with rights to click on any planet and pick it as your homeworld"));
+                }
+            
+            }
+
+        }
+
+
         [Auth]
         public ActionResult JoinFaction(int id)
         {
