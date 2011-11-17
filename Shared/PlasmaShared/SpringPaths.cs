@@ -161,15 +161,15 @@ namespace PlasmaShared
         p.Start();
         var data = p.StandardOutput.ReadToEnd();
         data = data.Trim();
+        data = data.Replace("MT-Sim","");
         var word = "";
-        var match = Regex.Match(data, @"Spring ([^ ]+) \([^\)]+\)");
+        var match = Regex.Match(data, @"Spring [^ ]+ \(([^\)]+)\)");
         if (match.Success) word = match.Groups[1].Value;
         else
         {
             match = Regex.Match(data, @"Spring ([^ ]+)");
             if (match.Success) word = match.Groups[1].Value;
         }
-
         // parse word
         match = Regex.Match(word, "(\\d+\\.\\d+\\.\\d+)\\.\\d+$");
         if (match.Success) return match.Groups[1].Value;
