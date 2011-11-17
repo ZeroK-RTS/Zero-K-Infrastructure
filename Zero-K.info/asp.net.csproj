@@ -186,14 +186,13 @@
     <Content Include="Img\border.png" />
     <Content Include="Img\bullet.png" />
     <Content Include="Img\factions\Ascended.png" />
-    <Content Include="Img\factions\Ascended2_ship.png" />
     <Content Include="Img\factions\Ascended_ship.png" />
-    <Content Include="Img\factions\Born_ship.png" />
     <Content Include="Img\factions\Empire.png" />
     <Content Include="Img\factions\Empire_ship.png" />
     <Content Include="Img\factions\Machines.png" />
     <Content Include="Img\factions\Machines_ship.png" />
-    <Content Include="Img\factions\Born.png" />
+    <Content Include="Img\factions\Trueborn.png" />
+    <Content Include="Img\factions\Trueborn_ship.png" />	
     <Content Include="Img\factions\Unaligned.png" />
     <Content Include="Img\factions\Unaligned_ship.png" />
     <Content Include="Img\favicon.png" />
