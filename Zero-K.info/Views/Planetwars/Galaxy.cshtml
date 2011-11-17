@@ -80,6 +80,8 @@
 	var db = new ZkDataContext();
 }
 
+@if (g.Turn > 100) { // hide before turn 100
+
 <div id="victory_conquest" class="fleft border" style="min-height: 60px;">
 <b>Conquest victory (70% planets):</b>
 @{
@@ -158,6 +160,8 @@
 	}
 }
 </div>
+
+}
 
 <br class="clearfloat" />
 
