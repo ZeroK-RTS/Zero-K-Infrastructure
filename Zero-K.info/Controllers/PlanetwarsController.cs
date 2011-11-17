@@ -517,8 +517,19 @@ namespace ZeroKWeb.Controllers
             }
             entry.AllyStatus = ourStatus;
             entry.IsResearchAgreement = ourResearch;
+            var theirEntry = targetClan.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == clan.ClanID);
+            if (theirEntry == null) {
+               theirEntry = new TreatyOffer() {OfferingClanID = targetClanID, TargetClanID = clan.ClanID};
+               db.TreatyOffers.InsertOnSubmit(theirEntry);
+            }
+            if (ourStatus < theirEntry.AllyStatus) theirEntry.AllyStatus = ourStatus;
+
             db.SubmitChanges();
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} offers {1}, research: {2} to {3}", clan, ourStatus, ourResearch, targetClan));
+
+            foreach (var acc in targetClan.Accounts.Where(x=>x.IsClanFounder || x.HasClanRights)) {
+                AuthServiceClient.SendLobbyMessage(acc, string.Format("{0} wants {1}, research: {2}. Check diplomacy at: http://zero-k.info/Planetwars/Clan/{3}", clan.ClanName, ourStatus, ourResearch, clan.ClanID));
+            }
 
             var newEffect = clan.GetEffectiveTreaty(targetClan);
 
