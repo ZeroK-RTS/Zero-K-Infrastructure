@@ -187,8 +187,14 @@
     <Content Include="Img\bullet.png" />
     <Content Include="Img\factions\Ascended.png" />
     <Content Include="Img\factions\Ascended_ship.png" />
+    <Content Include="Img\factions\Cybernetic.png" />
+    <Content Include="Img\factions\Cybernetic_ship.png" />	
+    <Content Include="Img\factions\Dynasty.png" />
+    <Content Include="Img\factions\Dynasty_ship.png" />			
     <Content Include="Img\factions\Empire.png" />
     <Content Include="Img\factions\Empire_ship.png" />
+    <Content Include="Img\factions\Liberty.png" />
+    <Content Include="Img\factions\Liberty_ship.png" />		
     <Content Include="Img\factions\Machines.png" />
     <Content Include="Img\factions\Machines_ship.png" />
     <Content Include="Img\factions\Trueborn.png" />

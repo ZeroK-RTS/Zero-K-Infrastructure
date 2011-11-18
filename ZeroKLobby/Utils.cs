@@ -43,10 +43,14 @@ namespace ZeroKLobby
       }
 
       public static Dictionary<string, Color> FactionColors = new Dictionary<string, Color>() { { "Ascended", ColorTranslator.FromHtml("#94C8FF") },
-       { "Trueborn", ColorTranslator.FromHtml("#00FF00") },
+		{ "Trueborn", ColorTranslator.FromHtml("#00FF00") },
         { "Machines", ColorTranslator.FromHtml("#FF0000") },
-         { "Empire", ColorTranslator.FromHtml("#880088") },
-          { "Unaligned", ColorTranslator.FromHtml("#DDBB00") }
+		{ "Empire", ColorTranslator.FromHtml("#6010FF") },
+		{ "Unaligned", ColorTranslator.FromHtml("#DDBB00") }
+		// PW11 new factions
+		{ "Cybernetic", ColorTranslator.FromHtml("#88AAFF") },
+        { "Dynasty", ColorTranslator.FromHtml("#FFAA20") },
+		{ "Liberty", ColorTranslator.FromHtml("#55BB55") }		
       };
 
       public static Color GetFactionColor(string faction) {
