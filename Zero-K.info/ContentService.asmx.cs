@@ -191,13 +191,13 @@ namespace ZeroKWeb
                                 else if (treaty.AllyStatus == AllyStatus.War) points = -4;
                                 if (treaty.AllyStatus == AllyStatus.Neutral && f1!=f2)
                                 {
-                                    if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId==f2 && attackerFactions.Contains(f1))) points = -5;
+                                    if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId==f2 && attackerFactions.Contains(f1))) points = -3;
                                 }
                             }
                         }
                         else {
                             if (f1 != f2) {
-                                if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -5;
+                                if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -3;
                             }
                         }
 
