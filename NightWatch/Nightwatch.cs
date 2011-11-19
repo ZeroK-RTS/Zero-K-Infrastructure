@@ -214,7 +214,7 @@ namespace CaTracker
                         {
                             foreach (var b in from.Users)
                             {
-                                tas.Say(TasClient.SayPlace.User, b.Name, "!join " + parts[2], false);
+                                if (!b.LobbyUser.IsInGame) tas.Say(TasClient.SayPlace.User, b.Name, "!join " + parts[2], false);
                             }
                         }
                         else {
