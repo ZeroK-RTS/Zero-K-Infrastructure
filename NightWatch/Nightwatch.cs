@@ -33,6 +33,7 @@ namespace CaTracker
         ServiceHost host;
         OfflineMessages offlineMessages;
         string webRoot;
+        PlayerMover playerMover;
 
         public AuthService Auth { get; private set; }
 
