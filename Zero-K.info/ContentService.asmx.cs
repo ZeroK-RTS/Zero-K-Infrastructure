@@ -179,19 +179,19 @@ namespace ZeroKWeb
                         var f1 = players[i].FactionID??-1;
                         var f2 = players[i].FactionID??-1;
                         var points = 0.0;
-                        if (players[i].FactionID != null && players[i].FactionID == players[j].FactionID) points = 4; // same faction weight 1
+                        if (players[i].FactionID != null && players[i].FactionID == players[j].FactionID) points = 3; // same faction weight 1
                         if (c1 != null && c2 != null)
                         {
-                            if (c1 == c2) points = 5;
+                            if (c1 == c2) points = 4;
                             else
                             {
                                 var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
-                                if (treaty.AllyStatus == AllyStatus.Alliance) points = 3;
-                                else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 2;
-                                else if (treaty.AllyStatus == AllyStatus.War) points = -4;
-                                if (treaty.AllyStatus == AllyStatus.Neutral && f1!=f2)
+                                if (treaty.AllyStatus == AllyStatus.Alliance) points = 2;
+                                else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 1;
+                                else if (treaty.AllyStatus == AllyStatus.War) points = -3;
+                                if (treaty.AllyStatus == AllyStatus.Neutral && f1 != f2)
                                 {
-                                    if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId==f2 && attackerFactions.Contains(f1))) points = -3;
+                                    if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -3;
                                 }
                             }
                         }
