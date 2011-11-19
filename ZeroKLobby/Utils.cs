@@ -46,7 +46,7 @@ namespace ZeroKLobby
 		{ "Trueborn", ColorTranslator.FromHtml("#00FF00") },
         { "Machines", ColorTranslator.FromHtml("#FF0000") },
 		{ "Empire", ColorTranslator.FromHtml("#6010FF") },
-		{ "Unaligned", ColorTranslator.FromHtml("#DDBB00") }
+		{ "Unaligned", ColorTranslator.FromHtml("#DDBB00") },
 		// PW11 new factions
 		{ "Cybernetic", ColorTranslator.FromHtml("#88AAFF") },
         { "Dynasty", ColorTranslator.FromHtml("#FFAA20") },
