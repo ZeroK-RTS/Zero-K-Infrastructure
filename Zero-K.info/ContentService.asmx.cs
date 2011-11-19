@@ -519,6 +519,13 @@ namespace ZeroKWeb
                                                 planet.PlanetID,
                                                 string.IsNullOrEmpty(shipInfo) ? "insurgents" : shipInfo);
 
+                    if (planet.OwnerAccountID != null && planet.Account.Clan != null) {
+                        foreach (var a in planet.Account.Clan.Accounts) {
+                            AuthServiceClient.SendLobbyMessage(a, string.Format("Your clan's planet {0} is about to be attacked! Come defend it to PlanetWars spring://@join_player:{1} ", planet.Name,autohostName));
+                        }
+                    }
+
+
                     db.SubmitChanges();
                 }
                 else
