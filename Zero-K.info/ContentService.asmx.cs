@@ -905,11 +905,21 @@ namespace ZeroKWeb
                     // handle infelunce
                     Faction ownerFaction = null;
                     Clan ownerClan = null;
+                    List<Clan> involvedClans = new List<Clan>();
                     if (planet.Account != null)
                     {
                         ownerClan = planet.Account.Clan;
                         ownerFaction = planet.Account.Faction;
+                        if (ownerClan != null) involvedClans.Add(ownerClan); // planet ownerinvolved
                     }
+                    
+                    // ship owners -> involved
+                    foreach (var c in planet.AccountPlanets.Where(x => x.DropshipCount > 0 && x.Account!=null && x.Account.Clan!=null).GroupBy(x=>x.Account.Clan).Select(x=>x.Key)) {
+                       involvedClans.Add(c);
+                    }
+
+
+
                     var clanTechIp =
                         sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).
                             ToDictionary(x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count()*6.0/z.Count());
@@ -977,24 +987,35 @@ namespace ZeroKWeb
 
                         var infl = p.Influence ?? 0;
 
+                        // is involved - is same faction as involved clan, or same clan as involved clan or allied to involved clan
+                        bool isInvolved = !involvedClans.Any() || involvedClans.Any(x=>x.FactionID == p.Account.FactionID || x.ClanID == p.Account.ClanID) || (p.Account.Clan!= null && involvedClans.Any(x=> x.GetEffectiveTreaty(p.Account.Clan).AllyStatus == AllyStatus.Alliance));
+
+
                         // store influence
-                        entry.Influence += infl;
-                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} {5} {6}) influence at {2} from {3}",
+                        var soldStr = "";
+                        if (isInvolved) entry.Influence += infl;
+                        else
+                        {
+                            p.Account.Credits += infl*GlobalConst.NotInvolvedIpSell;
+                            soldStr = string.Format("sold for ${0} to locals because wasn't directly involved", infl * GlobalConst.NotInvolvedIpSell);
+                        }
+
+                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} {5} {6}) influence at {2} from {3} {7}",
                                                                     p.Account,
                                                                     p.Influence ?? 0,
                                                                     planet,
                                                                     sb,
                                                                     techBonus > 0 ? "+" + techBonus + " from techs" : "",
                                                                     gapMalus > 0 ? "-" + gapMalus + " from domination" : "",
-                                                                    shipBonus > 0 ? "+" + shipBonus + " from ships" : ""));
+                                                                    shipBonus > 0 ? "+" + shipBonus + " from ships" : "", soldStr));
 
-                        text.AppendFormat("{0} got {1} ({3} {4} {5}) influence at {2}\n",
+                        text.AppendFormat("{0} got {1} ({3} {4} {5}) influence at {2} {6}\n",
                                           p.Account.Name,
                                           p.Influence ?? 0,
                                           planet.Name,
                                           techBonus > 0 ? "+" + techBonus + " from techs" : "",
                                           gapMalus > 0 ? "-" + gapMalus + " from domination" : "",
-                                          shipBonus > 0 ? "+" + shipBonus + " from ships" : "");
+                                          shipBonus > 0 ? "+" + shipBonus + " from ships" : "", soldStr);
                     }
 
                     db.SubmitChanges();

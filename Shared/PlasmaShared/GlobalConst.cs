@@ -2,6 +2,7 @@
 {
 	public static class GlobalConst
 	{
+	    public const int NotInvolvedIpSell = 20;
 	    public const string BaseImageUrl = "http://zero-k.info/img/";
 	    public const int MinPlanetWarsLevel = 0;
 	    public const double InfluenceTaxIncome = 1 / 25.0;
