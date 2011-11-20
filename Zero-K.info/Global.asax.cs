@@ -55,6 +55,13 @@ namespace ZeroKWeb
 
 		protected void Application_Start()
 		{
+		    /*List<string> links;
+		    byte[] tor;
+		    List<string> dep;
+		    ResourceType rt;
+		    string fn;
+            ResourceLinkProvider.GetLinksAndTorrent("Zero-K v0.8.14", out links, out tor, out dep, out rt, out fn);
+            */
             Application["Nightwatch"] = new Nightwatch(Server.MapPath("/"));
             Global.Nightwatch.Start();
 
