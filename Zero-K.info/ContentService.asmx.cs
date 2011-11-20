@@ -520,8 +520,17 @@ namespace ZeroKWeb
                                                 string.IsNullOrEmpty(shipInfo) ? "insurgents" : shipInfo);
 
                     if (planet.OwnerAccountID != null && planet.Account.Clan != null) {
-                        foreach (var a in planet.Account.Clan.Accounts) {
-                            AuthServiceClient.SendLobbyMessage(a, string.Format("Your clan's planet {0} is about to be attacked! Come defend it to PlanetWars spring://@join_player:{1} ", planet.Name,autohostName));
+                        var be = Global.Nightwatch.Tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == autohostName);
+                        if (be != null && !be.Founder.IsInGame && be.MapName != res.MapName && be.NonSpectatorCount>0)
+                        {
+                            foreach (var a in planet.Account.Clan.Accounts)
+                            {
+                                AuthServiceClient.SendLobbyMessage(a,
+                                                                   string.Format(
+                                                                       "Your clan's planet {0} is about to be attacked! Come defend it to PlanetWars spring://@join_player:{1} ",
+                                                                       planet.Name,
+                                                                       autohostName));
+                            }
                         }
                     }
 
