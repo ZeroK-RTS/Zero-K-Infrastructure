@@ -253,6 +253,12 @@ span.button_2text
     top: 9px;
 }
 
+/* Share */
+#shares 
+{
+    vertical-align:middle;
+}
+
 /* galaxy map
 ----------------------------------------------*/
 .sectorgrid
