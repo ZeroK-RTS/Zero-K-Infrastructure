@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CookComputing.XmlRpc;
+using PlasmaShared;
 using ZkData;
 
 #endregion
@@ -99,30 +100,6 @@ namespace ZeroKWeb
                 resourceType = ResourceType.Map;
                 torrentFileName = null;
                 return false;
-            }
-
-            var match = Regex.Match(resource.InternalName, "Zero-K (.+)"); // special zero-k hack
-            if (match.Success)
-            {
-                var fn = string.Format("zk-{0}.sdz", match.Groups[1].Value);
-                var url = string.Format("http://packages.springrts.com/builds/{0}", fn);
-                if (!resource.ResourceContentFiles.Any(x => x.FileName == fn))
-                {
-                    string redirect;
-                    var len = (int)GetLinkLength(url, out redirect);
-                    if (len > 0)
-                    {
-                        resource.ResourceContentFiles.Add(new ResourceContentFile()
-                                                          {
-                                                              FileName = fn,
-                                                              LinkCount = 1,
-                                                              Length = len,
-                                                              ResourceID = resource.ResourceID,
-                                                              Links = url
-                                                          });
-                        db.SubmitChanges();
-                    }
-                }
             }
 
             dependencies = resource.ResourceDependencies.Select(x => x.NeedsInternalName).ToList();

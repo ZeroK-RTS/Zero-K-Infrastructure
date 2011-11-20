@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
@@ -59,6 +60,8 @@ namespace ZeroKWeb
 
 			AreaRegistration.RegisterAllAreas();
 			RegisterRoutes(RouteTable.Routes);
+
+		    
 		}
 
 		void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
