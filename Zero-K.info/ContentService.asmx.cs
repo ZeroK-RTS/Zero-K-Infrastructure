@@ -914,7 +914,8 @@ namespace ZeroKWeb
                     }
                     
                     // ship owners -> involved
-                    foreach (var c in planet.AccountPlanets.Where(x => x.DropshipCount > 0 && x.Account!=null && x.Account.Clan!=null).GroupBy(x=>x.Account.Clan).Select(x=>x.Key)) {
+                    var activePlayerIds = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account.FactionID != null).Select(x => x.AccountID).ToList();
+                    foreach (var c in planet.AccountPlanets.Where(x => x.DropshipCount > 0 && activePlayerIds.Contains(x.AccountID) && x.Account!=null && x.Account.Clan!=null).GroupBy(x=>x.Account.Clan).Select(x=>x.Key)) {
                        involvedClans.Add(c);
                     }
 
