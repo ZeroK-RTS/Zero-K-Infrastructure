@@ -748,7 +748,7 @@ namespace ZeroKWeb.Controllers
                     mostInfluentialClanEntry =
                         planet.AccountPlanets.Where(
                             x => x.Account.FactionID == mostInfluentiaFactionEntry.Faction.FactionID && x.Account.ClanID != null).GroupBy(
-                                x => x.Account.Clan).Select(x => new ClanEntry(x.Key, (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0)).OrderByDescending(x => x.ClanInfluence).ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
+                                x => x.Account.Clan).Select(x => new ClanEntry(x.Key, (int?)x.Sum(y => y.Influence) ?? 0)).OrderByDescending(x => x.ClanInfluence).ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
                 }
 
                 if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) &&
@@ -763,7 +763,7 @@ namespace ZeroKWeb.Controllers
                     planet.Account = null;
                     havePlanetsChangedHands = true;
                 }
-                else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence + x.ShadowInfluence)))
+                else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence)))
                 {
                     // planet changes owner, most influential clan is not current owner and has more ip to capture than needed
 
@@ -775,7 +775,7 @@ namespace ZeroKWeb.Controllers
                     // in case of a tie when deciding which PLAYER to get a planet - give it to one with least planets
                     var mostInfluentialPlayer =
                         planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(
-                            x => x.Influence + x.ShadowInfluence).ThenBy(x => x.Account.Planets.Count()).First().Account;
+                            x => x.Influence).ThenBy(x => x.Account.Planets.Count()).First().Account;
 
                     var firstPlanet = !mostInfluentialPlayer.Planets.Any();
 
