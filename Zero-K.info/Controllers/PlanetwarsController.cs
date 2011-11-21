@@ -542,7 +542,7 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} offers {1}, research: {2} to {3}", clan, ourStatus, ourResearch, targetClan));
 
-            foreach (var acc in targetClan.Accounts.Where(x=>x.IsClanFounder || x.HasClanRights)) {
+            foreach (var acc in targetClan.Accounts) {
                 AuthServiceClient.SendLobbyMessage(acc, string.Format("{0} wants {1}, research: {2}. Check diplomacy at: http://zero-k.info/Planetwars/Clan/{3}", clan.ClanName, ourStatus, ourResearch, clan.ClanID));
             }
 
