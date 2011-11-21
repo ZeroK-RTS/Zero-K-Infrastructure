@@ -119,13 +119,15 @@ namespace ZkData
                     link.LinktStrength = influenceFactor;
 
                     if (otherPlanet.Account == null || otherPlanet.Account.ClanID == null) continue; // no owner: planet can't project shadow influence
-                    if (thisPlanet.Account == null || thisPlanet.Account.Clan == null) continue; // no owner: planet cant recieve shadow influence
-                    if (thisPlanet.Account.FactionID != otherPlanet.Account.FactionID) continue; // planet factions dont match - influence cant be transferred
-                    var factionID = thisPlanet.Account.FactionID;
+                    //if (thisPlanet.Account == null || thisPlanet.Account.Clan == null) continue; // no owner: planet cant recieve shadow influence
+                    
+                    int? factionID = thisPlanet.Account != null ? thisPlanet.Account.FactionID : null;
+                    if (factionID != null && factionID != otherPlanet.Account.FactionID) continue; // planet factions dont match - influence cant be transferred
+                    
 
                     // iterate accountPlanets on other side of the link
                     foreach (var otherAccountPlanet in
-                        otherPlanet.AccountPlanets.Where(ap => ap.Account != null && ap.Account.FactionID == factionID && ap.Influence > 0))
+                        otherPlanet.AccountPlanets.Where(ap => ap.Account != null && (factionID == null || ap.Account.FactionID == factionID) && ap.Influence > 0))
                     {
                         var otherAccountID = otherAccountPlanet.AccountID;
                         // get corresponding accountPlanet on this side of the link
