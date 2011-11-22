@@ -1170,19 +1170,26 @@ namespace ZeroKWeb
 
 
                     // give unclanned influence to clanned
-                    db = new ZkDataContext();
-                    planet = db.Planets.Single(x => x.PlanetID == planet.PlanetID);
-                    foreach (var faction in planet.AccountPlanets.Where(x => x.Account.FactionID != null && x.Influence > 0).GroupBy(x => x.Account.FactionID)) {
-                        var unclanned = faction.Where(x => x.Account.ClanID == null).ToList();
-                        var clanned = faction.Where(x => x.Account.ClanID != null).ToList();
-                        int unclannedInfluence = 0;
-                        if (unclanned.Any() && clanned.Any() && (unclannedInfluence = unclanned.Sum(x => x.Influence)) > 0) {
-                            int influenceBonus = unclannedInfluence / clanned.Count();
-                            foreach (var clannedEntry in clanned) clannedEntry.Influence += influenceBonus;
-                            foreach (var unclannedEntry in unclanned) unclannedEntry.Influence = 0;
+                    if (GlobalConst.GiveUnclannedInfluenceToClanned)
+                    {
+                        db = new ZkDataContext();
+                        planet = db.Planets.Single(x => x.PlanetID == planet.PlanetID);
+                        foreach (
+                            var faction in
+                                planet.AccountPlanets.Where(x => x.Account.FactionID != null && x.Influence > 0).GroupBy(x => x.Account.FactionID))
+                        {
+                            var unclanned = faction.Where(x => x.Account.ClanID == null).ToList();
+                            var clanned = faction.Where(x => x.Account.ClanID != null).ToList();
+                            int unclannedInfluence = 0;
+                            if (unclanned.Any() && clanned.Any() && (unclannedInfluence = unclanned.Sum(x => x.Influence)) > 0)
+                            {
+                                int influenceBonus = unclannedInfluence/clanned.Count();
+                                foreach (var clannedEntry in clanned) clannedEntry.Influence += influenceBonus;
+                                foreach (var unclannedEntry in unclanned) unclannedEntry.Influence = 0;
+                            }
                         }
+                        db.SubmitChanges();
                     }
-                    db.SubmitChanges();
 
                     // transfer ceasefire/alliance influences
                     if (ownerClan != null)
