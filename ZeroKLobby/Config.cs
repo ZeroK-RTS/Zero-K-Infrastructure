@@ -64,8 +64,12 @@ namespace ZeroKLobby
     [Description("This is the filter entered in battle list by default")]
     public string BattleFilter { get; set; }
 
+    [Category("General")]
+    [DisplayName("Data folder to store all game content")]
+    [Description("This path will be used for downloaded maps, games, logs, settings etc.")]
+    public string DataFolder { get; set; }
 
-    [Category("Chat")]
+      [Category("Chat")]
     [DisplayName("Color: Background")]
     [XmlIgnore]
     public Color BgColor
@@ -250,8 +254,8 @@ namespace ZeroKLobby
 
 
     [Category("General")]
-    [DisplayName("Spring Path")]
-    [Description("Path to spring")]
+    [DisplayName("Spring Path override")]
+    [Description("Path to spring - this is set automatically, kept for override only")]
     public string ManualSpringPath { get { return manualSpringPath; } set { manualSpringPath = value; } }
     [Category("General")]
     [DisplayName("Minimize to tray")]

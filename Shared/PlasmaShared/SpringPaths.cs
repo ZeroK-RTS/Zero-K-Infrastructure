@@ -25,9 +25,11 @@ namespace PlasmaShared
 
     public string WritableDirectory { get; private set; }
     public event EventHandler SpringVersionChanged;
+    string writableFolderOverride;
 
-    public SpringPaths(string springPath, string version = null)
+    public SpringPaths(string springPath, string version = null, string writableFolderOverride = null)
     {
+      this.writableFolderOverride = writableFolderOverride;
       SetEnginePath(springPath);
       if (version != null) springVersion = version;
     }
@@ -110,9 +112,23 @@ namespace PlasmaShared
 
     public void SetEnginePath(string springPath)
     {
-      DataDirectories = new List<string> { DetectSpringConfigDataPath(GetSpringConfigPath()), GetMySpringDocPath(), springPath };
 
-      DataDirectories = DataDirectories.Where(Directory.Exists).ToList();
+      DataDirectories = new List<string> {DetectSpringConfigDataPath(GetSpringConfigPath()), GetMySpringDocPath(), springPath };
+      if (!string.IsNullOrEmpty(writableFolderOverride))
+      {
+          if (!Directory.Exists(writableFolderOverride))
+          {
+              try
+              {
+                  Directory.CreateDirectory(writableFolderOverride);
+              }
+              catch {}
+              ;
+          }
+          DataDirectories.Insert(0, writableFolderOverride);
+      }
+
+        DataDirectories = DataDirectories.Where(Directory.Exists).ToList();
 
       WritableDirectory = DataDirectories.First(IsDirectoryWritable);
       UnitSyncDirectory = springPath;

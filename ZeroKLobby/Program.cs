@@ -160,7 +160,8 @@ namespace ZeroKLobby
                                  ?? (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\spring.exe", "@", null) ?? (string)
                                 Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spring", "DisplayIcon", null);
 
-        SpringPaths = new SpringPaths(Conf.ManualSpringPath);
+        SpringPaths = new SpringPaths(Conf.ManualSpringPath, null, Conf.DataFolder);
+        Conf.DataFolder = SpringPaths.WritableDirectory;
         if (Debugger.IsAttached) SpringPaths.Cache = Utils.MakePath(StartupPath, "cache");
         else SpringPaths.Cache = Utils.MakePath(SpringPaths.WritableDirectory, "cache", "SD");
         SpringPaths.MakeFolders();
