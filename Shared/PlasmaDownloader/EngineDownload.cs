@@ -35,12 +35,13 @@ namespace PlasmaDownloader
             var source = string.Format("{0}spring_{1}.zip", EngineDownloadPath, version);
             string extension = ".zip";
             bool ok = VerifyFile(source);
-            if (!ok)
+            /*
+              if (!ok)
             {
               source = string.Format("{0}buildbot/default/master/{1}/spring_{1}.exe", EngineDownloadPath, version);
               extension = ".exe";
               ok = VerifyFile(source);
-            }
+            }*/
 
             // if i==-1 we tested without version number
             IndividualProgress = 10 - i;

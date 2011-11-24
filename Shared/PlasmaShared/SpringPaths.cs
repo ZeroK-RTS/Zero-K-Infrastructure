@@ -152,6 +152,9 @@ namespace PlasmaShared
     static string GetSpringVersion(string executablePath)
     {
       if (!File.Exists(executablePath)) return null;
+      var LastPart = Path.GetDirectoryName(executablePath).Split(new char[]{'\\','/'},StringSplitOptions.RemoveEmptyEntries ).LastOrDefault();
+      return LastPart;
+        
       if (string.IsNullOrEmpty(executablePath)) throw new ApplicationException("Version can only be determined after executable path is known");
       try
       {
