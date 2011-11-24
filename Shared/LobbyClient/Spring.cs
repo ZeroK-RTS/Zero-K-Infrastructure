@@ -121,6 +121,8 @@ namespace LobbyClient
             if (IsRunning) talker.SendText(string.Format("/adduser {0} {1}", name, scriptPassword));
         }
 
+        bool wasKilled = false;
+
         public void ExitGame()
         {
             try
@@ -130,6 +132,7 @@ namespace LobbyClient
                     SayGame("/kill"); // todo dont do this if talker does not work (not a host)
                     process.WaitForExit(2000);
                     if (!IsRunning) return;
+                    wasKilled = true;
                     process.Kill();
                     ;
                     process.WaitForExit(1000);
@@ -177,9 +180,11 @@ namespace LobbyClient
         /// <returns>generates script</returns>
         public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride)
         {
+
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException("Spring or dedicated server executable not found");
 
             this.client = client;
+            this.wasKilled = false;
 
             if (!IsRunning)
             {
@@ -403,6 +408,8 @@ namespace LobbyClient
                 {
                     var line = cycleline;
                     var gameframe = 0;
+                    if (line.StartsWith("[DedicatedServer]")) line = line.Replace("[DedicatedServer] ","");
+
                     if (line.StartsWith("["))
                     {
                         var idx = line.IndexOf("] ");
@@ -413,15 +420,15 @@ namespace LobbyClient
                         }
                     }
 
-                    if (mapName == null && line.StartsWith("Using map")) mapName = line.Substring(10);
+                    if (mapName == null && line.StartsWith("using map")) mapName = line.Substring(10).Trim();
 
-                    if (modName == null && line.StartsWith("Using mod")) modName = line.Substring(10);
+                    if (modName == null && line.StartsWith("using mod")) modName = line.Substring(10).Trim();
 
-                    if (line.StartsWith("Recording demo ")) demoFileName = line.Substring(15);
+                    if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());
 
                     if (line.StartsWith("Using demofile")) return; // do nothing if its demo
 
-                    if (line.StartsWith("GameID: ") && gameId == null) gameId = line.Substring(8);
+                    if (line.StartsWith("GameID: ") && gameId == null) gameId = line.Substring(8).Trim();
 
                     if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
@@ -531,7 +538,7 @@ namespace LobbyClient
 
         void springProcess_Exited(object sender, EventArgs e)
         {
-            var isCrash = process.ExitCode != 0;
+            var isCrash = process.ExitCode != 0 && !wasKilled;
             process = null;
             talker.Close();
             talker = null;
@@ -554,6 +561,8 @@ namespace LobbyClient
 
         void talker_SpringEvent(object sender, Talker.SpringEventArgs e)
         {
+
+            //this.client.Say(TasClient.SayPlace.Battle, "",string.Format("type:{0} param:{1} player:{2}-{3} text:{4}",e.EventType.ToString(), e.Param,e.PlayerNumber, e.PlayerName, e.Text),false);
             try
             {
                 switch (e.EventType)

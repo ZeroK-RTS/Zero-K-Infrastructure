@@ -381,7 +381,7 @@ namespace Springie.autohost
 			if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag)) modname = config.AutoUpdateRapidTag;
 
 			var title = config.GameTitle.Replace("%1", MainConfig.SpringieVersion);
-            if (springPaths.SpringVersion != tas.ServerSpringVersion) title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
+            title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
 			var password = config.Password;
 
 			if (SpawnConfig != null)
@@ -540,7 +540,7 @@ namespace Springie.autohost
 			SayBattle("Game over, exiting");
 			PlasmaShared.Utils.SafeThread(() =>
 				{
-					Thread.Sleep(3000); // wait for stats
+					Thread.Sleep(5000); // wait for stats
 					spring.ExitGame();
 				}).Start();
 

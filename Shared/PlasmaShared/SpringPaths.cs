@@ -28,8 +28,8 @@ namespace PlasmaShared
 
     public SpringPaths(string springPath, string version = null)
     {
-      if (version != null) springVersion = version;
       SetEnginePath(springPath);
+      if (version != null) springVersion = version;
     }
 
     public string GetEngineFolderByVersion(string version)
@@ -120,7 +120,7 @@ namespace PlasmaShared
       else Executable = null;
 
       var ov = springVersion;
-      if (DedicatedServer != Executable) springVersion = GetSpringVersion(Executable); // get spring verison does not work for dedicated
+      if (string.IsNullOrEmpty(DedicatedServer)) springVersion = GetSpringVersion(Executable); // get spring verison does not work for dedicated
       if (ov != springVersion && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
     }
 
