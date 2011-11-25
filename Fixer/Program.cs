@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -18,8 +19,41 @@ namespace Fixer
 {
   public static class Program
   {
-    static void Main(string[] args)
+
+      public static void FixHashes() {
+          var db = new ZkDataContext();
+          var lo = new DataLoadOptions();
+          lo.LoadWith<Resource>(x=>x.ResourceSpringHashes);
+          db.LoadOptions = lo;
+          foreach (var r in db.Resources) {
+              var h84 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84").Select(x => x.SpringHash).SingleOrDefault();
+              var h840 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84.0").Select(x => x.SpringHash).SingleOrDefault();
+
+              if (h84 != h840) {
+                  var entry = r.ResourceSpringHashes.SingleOrDefault(x => x.SpringVersion == "84.0");
+                  if (h84 != 0)
+                  {
+                        if (entry == null)
+                      {
+                          entry = new ResourceSpringHash() { SpringVersion = "84.0" };
+                          r.ResourceSpringHashes.Add(entry);
+                      }
+                      entry.SpringHash = h84;
+                  }
+                  else {
+                      if (entry != null) db.ResourceSpringHashes.DeleteOnSubmit(entry);
+                  }
+              }
+            }
+          db.SubmitChanges();
+      }
+
+      static void Main(string[] args)
     {
+        FixHashes();
+
+        return;
+
         //FixDemoEngineVersion();
 
       //ImportSpringiePlayers();
