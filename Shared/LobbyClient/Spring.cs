@@ -317,9 +317,8 @@ namespace LobbyClient
             return null;
         }
 
-        bool FindAndExtractDemoInfo(out string gameId, out string demoFileName)
+        bool FindAndExtractDemoInfo(ref string gameId, out string demoFileName)
         {
-            gameId = null;
             demoFileName = null;
 
             var candidates = new List<FileInfo>();
@@ -424,7 +423,7 @@ namespace LobbyClient
 
                     if (modName == null && line.StartsWith("using mod")) modName = line.Substring(10).Trim();
 
-                    if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());
+                    // todo uncomment when engine/dedi fixed if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());
 
                     if (line.StartsWith("Using demofile")) return; // do nothing if its demo
 
@@ -477,7 +476,7 @@ namespace LobbyClient
                         var service = new ContentService() { Proxy = null };
                         try
                         {
-                            if (string.IsNullOrEmpty(gameId) || string.IsNullOrEmpty(demoFileName)) FindAndExtractDemoInfo(out gameId, out demoFileName);
+                            if (string.IsNullOrEmpty(gameId) || string.IsNullOrEmpty(demoFileName)) FindAndExtractDemoInfo(ref gameId, out demoFileName);
 
                             battleResult.EngineBattleID = gameId;
                             battleResult.ReplayName = demoFileName;
