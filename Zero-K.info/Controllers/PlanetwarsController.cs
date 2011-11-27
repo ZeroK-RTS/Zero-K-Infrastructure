@@ -818,14 +818,18 @@ namespace ZeroKWeb.Controllers
 
                         planet.Account = mostInfluentialPlayer;
 
-                        // return dropshuips home if owner is ceasefired/allied/same faction
-                        foreach (var entry in planet.AccountPlanets.Where(x => x.DropshipCount > 0)) {
-                            if (entry.Account.FactionID == planet.Account.FactionID || planet.Account.Clan.GetEffectiveTreaty(entry.Account.Clan).AllyStatus >= AllyStatus.Ceasefire) {
-                                entry.Account.DropshipCount += entry.DropshipCount;
-                                entry.DropshipCount = 0;
-                            }
+                    }
+
+                    // return dropshuips home if owner is ceasefired/allied/same faction
+                    foreach (var entry in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
+                    {
+                        if (entry.Account.FactionID == planet.Account.FactionID || planet.Account.Clan.GetEffectiveTreaty(entry.Account.Clan).AllyStatus >= AllyStatus.Ceasefire)
+                        {
+                            entry.Account.DropshipCount += entry.DropshipCount;
+                            entry.DropshipCount = 0;
                         }
                     }
+
 
 
                     if (firstPlanet && !mostInfluentialPlayer.WasGivenCredits)
