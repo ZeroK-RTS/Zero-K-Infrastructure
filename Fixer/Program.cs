@@ -48,9 +48,20 @@ namespace Fixer
           db.SubmitChanges();
       }
 
+      public static void FixDemoFiles() {
+          var db = new ZkDataContext();
+          foreach (var sb in db.SpringBattles.Where(x => x.EngineVersion == "84.0")) {
+              var url = "http://springdemos.licho.eu/" + sb.ReplayFileName;
+
+          
+          }
+
+      }
+
+
       static void Main(string[] args)
     {
-        FixHashes();
+          FixDemoFiles();
 
         return;
 

@@ -752,6 +752,7 @@ namespace ZeroKWeb.Controllers
                                 x => x.Account.Clan).Select(x => new ClanEntry(x.Key, (int?)x.Sum(y => y.Influence) ?? 0)).OrderByDescending(x => x.ClanInfluence).ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
                 }
 
+                /*
                 if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) &&
                     planet.Account != null)
                 {
@@ -764,7 +765,7 @@ namespace ZeroKWeb.Controllers
                     planet.Account = null;
                     havePlanetsChangedHands = true;
                 }
-                else if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence)))
+                else */if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence)))
                 {
                     // planet changes owner, most influential clan is not current owner and has more ip to capture than needed
 
@@ -1179,6 +1180,7 @@ namespace ZeroKWeb.Controllers
             readonly int clanInfluence;
             public Clan Clan { get { return clan; } }
             public int ClanInfluence { get { return clanInfluence; } }
+            public int ShadowInfluence;
 
             public ClanEntry(Clan clan, int clanInfluence)
             {
