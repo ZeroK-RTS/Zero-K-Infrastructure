@@ -430,7 +430,6 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult JoinFaction(int id)
         {
-            return Content("No longer possible to join faction directly, join a clan");
             if (Global.Account.FactionID != null) return Content("Already in faction");
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);

@@ -14,12 +14,11 @@
                        <span style='color: @f.Faction.Color; font-size:120%;'>@f.Faction.Name</span>
                        @if (Global.Account != null)
                        {
-                           /*if (Global.Account.FactionID == null)
+                           if (Global.Account.FactionID == null)
                            {
                                @Html.ActionLink("Join!", "JoinFaction", "Planetwars", new { id = f.Faction.FactionID }, null)
                            }
-                           else*/
-                               if (Global.Account.FactionID == f.Faction.FactionID)
+                           else if (Global.Account.FactionID == f.Faction.FactionID)
                                 {
                                     @Html.ActionLink("Leave (erases influence)", "LeaveFaction", "Planetwars", null, new { @class = "delete" })
                                 }
