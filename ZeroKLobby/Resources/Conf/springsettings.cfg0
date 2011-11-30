@@ -59,6 +59,7 @@ InvertMouse = 0
 InvertQueueKey = 0
 JoystickEnabled = 1
 JoystickUse = 0
+LoadingMT = 0
 LODScale = 1.000
 LODScaleReflection = 1.000
 LODScaleRefraction = 1.000
