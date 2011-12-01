@@ -53,11 +53,11 @@ namespace CaTracker
                             var to = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == parts[2]);
                             if (from != null && to != null)
                             {
-                                var list = from.Users.OrderBy(x => x.LobbyUser.EffectiveElo);
-                                var toMove = list.Take(from.Users.Count / 2); 
+                                var list = from.Users.Where(x=>!x.LobbyUser.IsInGame && x.Name != from.Founder.Name).OrderBy(x => x.LobbyUser.EffectiveElo);
+                                var toMove = list.Take(list.Count() / 2);   
                                 foreach (var b in toMove)
                                 {
-                                    if (!b.LobbyUser.IsInGame) tas.Say(TasClient.SayPlace.User, b.Name, "!join " + parts[2], false);
+                                    if (!b.LobbyUser.IsInGame) tas.Say(TasClient.SayPlace.User, e.UserName, "Moving " + b.Name, false);//tas.Say(TasClient.SayPlace.User, b.Name, "!join " + parts[2], false);
                                 }
                             }
                             else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid battle host name", false);
