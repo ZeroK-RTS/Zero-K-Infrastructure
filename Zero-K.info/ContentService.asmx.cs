@@ -265,8 +265,10 @@ namespace ZeroKWeb
                     if (teamDiffScore < -10) continue; // max imabalance
 
                     double balanceModifier = 0;
+                    // count elo vs balance modifier
+                    /*
                     if (team0count < team1count) balanceModifier = -teamDiffScore;
-                    else balanceModifier = teamDiffScore;
+                    else balanceModifier = teamDiffScore;*/
 
                     // calculate score for elo difference
 
