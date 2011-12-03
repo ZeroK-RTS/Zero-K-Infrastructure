@@ -1155,7 +1155,7 @@ namespace ZeroKWeb
                     // kill structures you cannot support 
                     foreach (var owner in gal.Planets.Where(x => x.Account != null).Select(x=>x.Account).Distinct()) {
                         if (owner.Credits < 0) {
-                            var upkeepStructs = owner.Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed && x.StructureType.UpkeepCost > 0).OrderByDescending(x => x.StructureType.UpkeepCost);
+                            var upkeepStructs = owner.Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed && x.StructureType.UpkeepCost > 0 && x.StructureType.EffectIsVictoryPlanet!=true).OrderByDescending(x => x.StructureType.UpkeepCost);
                             var structToKill = upkeepStructs.FirstOrDefault();
                             if (structToKill != null) {
                                 structToKill.IsDestroyed = true;
