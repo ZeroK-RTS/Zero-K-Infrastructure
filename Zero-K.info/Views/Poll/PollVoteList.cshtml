@@ -2,7 +2,8 @@
          
 <span>
 <small>
-Level sum: @Model.Sum(x=>x.Level), level avg: @Model.Average(x => x.Level), elo avg: @Math.Round(Model.Average(x => x.EffectiveElo)) <br />
+Level sum: @Model.Sum(x => (int?)x.Level), level avg: @Model.Average(x => (int?)x.Level), elo avg: @Math.Round(Model.Average(x => (double?)x.EffectiveElo)??0) <br />
+
 @foreach (var a in Model) {
   @Html.PrintAccount(a)<br />
 }
