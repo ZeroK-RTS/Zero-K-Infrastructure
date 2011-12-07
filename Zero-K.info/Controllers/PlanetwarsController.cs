@@ -734,12 +734,13 @@ namespace ZeroKWeb.Controllers
                 var currentOwnerFactionID = planet.Account != null ? planet.Account.FactionID : null;
 
 
-                // in case of a tie when deciding which CLAN to get a planet - give to one with less planets
                 var mostInfluentiaFactionEntry =
-                    planet.AccountPlanets.Where(x=>x.Account.ClanID!=null).GroupBy(ap => ap.Account.Faction).Where(x => x.Key != null).Select(
+                    planet.AccountPlanets.GroupBy(ap => ap.Account.Faction).Where(x => x.Key != null).Select(
                         x => new { Faction = x.Key, FactionInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(
                             x => x.FactionInfluence).FirstOrDefault();
 
+                
+                // in case of a tie when deciding which CLAN to get a planet - give to one with less planets
                 ClanEntry mostInfluentialClanEntry = null;
                 if (mostInfluentiaFactionEntry != null &&
                     (mostInfluentiaFactionEntry.Faction.FactionID == currentOwnerFactionID ||
@@ -764,7 +765,7 @@ namespace ZeroKWeb.Controllers
                     planet.Account = null;
                     havePlanetsChangedHands = true;
                 }
-                else */if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || currentOwnerFactionID != mostInfluentiaFactionEntry.Faction.FactionID || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence)))
+                else */if (mostInfluentialClanEntry != null &&  mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || currentOwnerFactionID != mostInfluentiaFactionEntry.Faction.FactionID || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence)))
                 {
                     // planet changes owner, most influential clan is not current owner and has more ip to capture than needed
 
