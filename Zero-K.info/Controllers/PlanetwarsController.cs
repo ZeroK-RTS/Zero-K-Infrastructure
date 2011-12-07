@@ -764,7 +764,7 @@ namespace ZeroKWeb.Controllers
                     planet.Account = null;
                     havePlanetsChangedHands = true;
                 }
-                else */if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence)))
+                else */if (mostInfluentialClanEntry != null && mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || currentOwnerFactionID != mostInfluentiaFactionEntry.Faction.FactionID || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence)))
                 {
                     // planet changes owner, most influential clan is not current owner and has more ip to capture than needed
 
@@ -1060,6 +1060,11 @@ namespace ZeroKWeb.Controllers
                         var buyerAccountPlanet = bo.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == bo.AccountID);
                         influenceChanged = true;
                         bo.AccountByAccountID.Credits -= quantity*bo.Price;
+                        if (buyerAccountPlanet == null) {
+                            buyerAccountPlanet = new AccountPlanet() { PlanetID = bo.PlanetID, AccountID = bo.AccountID};
+                            bo.Planet.AccountPlanets.Add(buyerAccountPlanet);
+                        }
+
                         buyerAccountPlanet.Influence += quantity;
                         db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from locals on {2} for {3} each.",
                                                                     bo.AccountByAccountID,

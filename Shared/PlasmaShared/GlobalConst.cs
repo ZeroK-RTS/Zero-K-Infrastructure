@@ -5,7 +5,7 @@
 	    public const bool GiveUnclannedInfluenceToClanned = false;
 	    public const int NotInvolvedIpSell = 20;
 	    public const string BaseImageUrl = "http://zero-k.info/img/";
-	    public const int MinPlanetWarsLevel = 6;
+	    public const int MinPlanetWarsLevel = 2;
 	    public const double InfluenceTaxIncome = 1 / 25.0;
 	    public const int InfluenceDecay = 3;
         public const double PlanetwarsRepairCost = 0.5; // repair cost is 50% only
