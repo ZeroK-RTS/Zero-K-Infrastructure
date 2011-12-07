@@ -3,7 +3,7 @@
 
 <table>
 
-    @foreach (var facGroup in Model.Where(ap => ap.Influence + ap.ShadowInfluence > 0).GroupBy(ap => ap.Account.Faction).Where(x=>x.Key!=null).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)))
+    @foreach (var facGroup in Model.Where(ap => ap.Influence + ap.ShadowInfluence != 0).GroupBy(ap => ap.Account.Faction).Where(x=>x.Key!=null).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)))
     {
         <tr>
             <td>
@@ -15,7 +15,7 @@
                 </b>
             </td>
         </tr>
-  foreach (var clanGroup in facGroup.Where(ap => ap.Influence + ap.ShadowInfluence > 0).GroupBy(ap => ap.Account.Clan).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)))
+  foreach (var clanGroup in facGroup.Where(ap => ap.Influence + ap.ShadowInfluence != 0).GroupBy(ap => ap.Account.Clan).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)))
         {
       <tr>
           <td>
