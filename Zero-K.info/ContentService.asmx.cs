@@ -1070,7 +1070,7 @@ namespace ZeroKWeb
                                                                        {
                                                                            PlanetID = planet.PlanetID,
                                                                            StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value,
-                                                                           IsDestroyed = true
+                                                                           //IsDestroyed = true
                                                                        });
                                 }
                                 else s.IsDestroyed = true;
