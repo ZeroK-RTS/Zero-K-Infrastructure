@@ -1,5 +1,6 @@
 3DTrees = 0
 AdvSky = 0
+AdvMapShading = 0
 AdvUnitShading = 0
 AtiHacks = 1
 AutohostIP = 127.0.0.1
