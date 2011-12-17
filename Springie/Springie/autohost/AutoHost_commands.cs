@@ -42,6 +42,30 @@ namespace Springie.autohost
             return username.Count == 0;
         }
 
+        public void ComSplitPlayers(TasSayEventArgs e, string[] words)
+        {
+            if (tas.MyBattle != null) {
+                var target = tas.ExistingBattles.Values.Where(x=>x.Founder.Name.StartsWith(config.AccountName) && x.Founder.Name != GetAccountName() && x.NonSpectatorCount ==0).FirstOrDefault();
+
+                if (target != null)
+                {
+                    // move nonspecs
+                    var list =
+                        tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && !x.IsSpectator&& x.Name != tas.MyBattle.Founder.Name).OrderBy(
+                            x => x.LobbyUser.EffectiveElo).ToList();
+
+                    foreach (var p in list.Take(list.Count()/2)) tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
+
+                    // move specs
+                    list = tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && x.IsSpectator && x.Name != tas.MyBattle.Founder.Name).OrderBy(
+                            x => x.LobbyUser.EffectiveElo).ToList();
+                    
+                    foreach (var p in list.Take(list.Count() / 2)) tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
+                }
+
+            }
+        }
+
 
         public void BalanceTeams(int teamCount, bool clanwise)
         {

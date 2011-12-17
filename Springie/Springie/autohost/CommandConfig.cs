@@ -11,7 +11,7 @@ namespace Springie.autohost
 {
     public class CommandConfig
     {
-        TasSayEventArgs.Places[] listenTo = new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Normal };
+        TasSayEventArgs.Places[] listenTo = new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Game };
 
         [Category("Texts")]
         [Description("Help text to be displayed in !help listings.")]

@@ -1050,6 +1050,10 @@ namespace Springie.autohost
 						StartVote(new VoteSetOptions(tas, spring, this), e, words);
 						break;
 
+                    case "splitplayers":
+                        ComSplitPlayers(e,words);
+                        break;
+
 					case "spawn":
 					{
 						var args = Utils.Glue(words);

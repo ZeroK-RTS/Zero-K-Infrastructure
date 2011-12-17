@@ -222,6 +222,14 @@ namespace Springie.autohost
                                   new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }),
                 addedCommands);
 
+            AddMissing(
+                new CommandConfig("splitplayers",
+                                  2,
+                                  " - splots players to 2 hosts based on their elo",
+                                  2,
+                                  new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }),
+                addedCommands);
+
             AddMissing(new CommandConfig("voteforcestart", 0, " - starts vote to force game to start in lobby"), addedCommands);
 
             AddMissing(
