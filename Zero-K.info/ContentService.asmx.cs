@@ -365,14 +365,14 @@ namespace ZeroKWeb
         }
 
         [WebMethod]
-        public List<Resource> SearchResources(string[] words, ResourceType? type = null)
+        public List<PlasmaServer.ResourceData> FindResourceData(string[] words, ResourceType? type = null)
         {
             var db= new ZkDataContext();
             var ret= db.Resources.AsQueryable();
             if (type == ResourceType.Map) ret = ret.Where(x => x.TypeID == ResourceType.Map);
             if (type == ResourceType.Mod) ret = ret.Where(x => x.TypeID == ResourceType.Mod);
             var test = ret.Where(x => x.InternalName == string.Join(" ", words));
-            if (test.Any()) return test.OrderByDescending(x=>-x.FeaturedOrder).ToList();
+            if (test.Any()) return test.OrderByDescending(x=>-x.FeaturedOrder).Select(x=>new PlasmaServer.ResourceData(x)).ToList();
             int i;
             if (words.Length == 1 && int.TryParse(words[0], out i)) {
                 ret = ret.Where(x => x.ResourceID == i);
@@ -382,13 +382,19 @@ namespace ZeroKWeb
                 string w1 = w;
                 ret = ret.Where(x => SqlMethods.Like(x.InternalName, "%"+ w1 +"%"));
             }
-            return ret.OrderByDescending(x => -x.FeaturedOrder).ToList();
+            return ret.OrderByDescending(x => -x.FeaturedOrder).Select(x => new PlasmaServer.ResourceData(x)).ToList();
         }
 
         [WebMethod]
-        public Resource GetResource(int resourceID) {
+        public PlasmaServer.ResourceData GetResourceData(int resourceID) {
             var db =  new ZkDataContext();
-            return db.Resources.Single(x=>x.ResourceID == resourceID);
+            return new PlasmaServer.ResourceData(db.Resources.Single(x=>x.ResourceID == resourceID));
+        }
+        [WebMethod]
+        public PlasmaServer.ResourceData GetResourceData(string internalName)
+        {
+            var db = new ZkDataContext();
+            return new PlasmaServer.ResourceData(db.Resources.Single(x => x.InternalName == internalName));
         }
 
 
