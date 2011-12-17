@@ -45,7 +45,9 @@ namespace ModelBase
 		public List<SvnLogSchema.logLogentry> GetPathLog(string path)
 		{
 			string data;
-			RunCmd(string.Format("log --xml \"{0}\"", path), out data);
+			// hack RunCmd(string.Format("log --xml \"{0}\"", path), out data);
+            data = File.ReadAllText(workPath + "/" + "log.xml");
+
 			XmlSerializer s = new XmlSerializer(typeof (log));
 			var log = (log)s.Deserialize(new StringReader(data));
 			return new List<logLogentry>(log.Items);
@@ -91,7 +93,8 @@ namespace ModelBase
 		{
 			bool modelsAdded = false;
 			lock (HttpContext.Current.Application) {
-				if (RunCmd("up svn") > 1 && (ConfigurationManager.AppSettings["BlockSvn"] == null)) {
+                if (true)
+                { // hack RunCmd("up svn") > 1 && (ConfigurationManager.AppSettings["BlockSvn"] == null)
 					DirectoryInfo root = new DirectoryInfo(repoPath);
 					foreach (DirectoryInfo usdir in root.GetDirectories().Where(x => x.Name != ".svn")) {
 						User u = Global.Db.Users.SingleOrDefault(x => x.Login == usdir.Name);
@@ -169,15 +172,16 @@ namespace ModelBase
 				pi.CreateNoWindow = true;
 				pi.UseShellExecute = false;
 				pi.WindowStyle = ProcessWindowStyle.Hidden;
-				pi.FileName = "cmd.exe";
-				pi.Arguments = "/C \"\"" + execPath + "\" " + args + " --username admin --password sasl\"";
+				pi.FileName = execPath;
+                pi.Arguments = args;// +" --username admin --password sasl";
 				pi.RedirectStandardError = true;
-				pi.RedirectStandardOutput = true;
+                pi.RedirectStandardOutput = true;
 				Process pr = new Process();
 				pr.StartInfo = pi;
 				errorData = new StringBuilder();
 				outputData = new StringBuilder();
-				lineCount = 0;
+                lineCount = 0;
+                
 				pr.ErrorDataReceived += pr_ErrorDataReceived;
 				pr.OutputDataReceived += pr_OutputDataReceived;
 

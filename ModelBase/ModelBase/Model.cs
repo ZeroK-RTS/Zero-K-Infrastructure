@@ -86,25 +86,29 @@ namespace ModelBase
 
 		internal void GenerateIconThumbnail()
 		{
-			string file;
-			if (IconFile == null) {
-				file = string.Format("svn/{0}/{1}/icon.png", User.Login, Name);
-			} else {
-				file = string.Format("svn/{0}/{1}/{2}", User.Login, Name, IconFile);
-			}
-			file = HttpContext.Current.Server.MapPath(file);
-			if (File.Exists(file)) {
-				var orig = new Bitmap(file);
-				var newW = 96;
-				var newH = 96;
-				if (orig.Width > orig.Height) {
-					newH = newH * orig.Height/orig.Width;
-				} else if (orig.Height > orig.Width) {
-					newW = newW * orig.Width/orig.Height;
-				}
-				var thumb = new Bitmap(orig, newW, newH);
-				thumb.Save(HttpContext.Current.Server.MapPath(string.Format("~/modelicons/{0}.png", ModelID)));
-			}
+            try {
+                string file;
+                if (IconFile == null) {
+                    file = string.Format("svn/{0}/{1}/icon.png", User.Login, Name);
+                } else {
+                    file = string.Format("svn/{0}/{1}/{2}", User.Login, Name, IconFile);
+                }
+                file = HttpContext.Current.Server.MapPath(file);
+                if (File.Exists(file)) {
+                    using (var orig = new Bitmap(file)) {
+                        var newW = 96;
+                        var newH = 96;
+                        if (orig.Width > orig.Height) {
+                            newH = newH*orig.Height/orig.Width;
+                        } else if (orig.Height > orig.Width) {
+                            newW = newW*orig.Width/orig.Height;
+                        }
+                        using (var thumb = new Bitmap(orig, newW, newH)) {
+                            thumb.Save(HttpContext.Current.Server.MapPath(string.Format("~/modelicons/{0}.png", ModelID)));
+                        }
+                    }
+                }
+            } catch {}
 		}
 	}
 }
