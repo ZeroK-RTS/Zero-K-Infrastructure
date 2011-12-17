@@ -174,8 +174,8 @@ namespace Springie.autohost
                 if (winVote == 1)
                 {
                     ah.SayBattle("vote successful - changing map to " + map);
-                    var mapi = ah.wrapper.MapList[map];
-                    tas.ChangeMap(mapi.Name, mapi.Checksum);
+                    var mapi = ah.cache.GetResourceDataByInternalName(map);
+                    if (mapi != null) tas.ChangeMap(mapi.InternalName, mapi.SpringHashes.Where(x=>x.SpringVersion == ah.springPaths.SpringVersion).Select(x=>x.SpringHash).FirstOrDefault());
                 }
                 else ah.SayBattle("not enough votes, map stays");
                 return true;

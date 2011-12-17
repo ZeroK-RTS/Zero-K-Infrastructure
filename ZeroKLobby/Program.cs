@@ -162,8 +162,6 @@ namespace ZeroKLobby
 
         SpringPaths = new SpringPaths(Conf.ManualSpringPath, null, Conf.DataFolder);
         Conf.DataFolder = SpringPaths.WritableDirectory;
-        if (Debugger.IsAttached) SpringPaths.Cache = Utils.MakePath(StartupPath, "cache");
-        else SpringPaths.Cache = Utils.MakePath(SpringPaths.WritableDirectory, "cache", "SD");
         SpringPaths.MakeFolders();
 
 

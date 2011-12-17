@@ -55,7 +55,7 @@ namespace ZeroKLobby.Notifications
 					                                           				btnCancel.IsEnabled = true;
 					                                           			});
 					                                           		metaWait.Set();
-					                                           	});
+					                                           	}, Program.SpringPaths.SpringVersion);
 					if (down != null) WaitHandle.WaitAll(new WaitHandle[] { down.WaitHandle, metaWait });
 					else metaWait.WaitOne();
 

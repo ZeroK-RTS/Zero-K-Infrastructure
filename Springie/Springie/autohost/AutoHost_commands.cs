@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using LobbyClient;
+using PlasmaShared.ContentService;
 
 #endregion
 
@@ -988,28 +989,10 @@ namespace Springie.autohost
 
 		internal static int FilterMods(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
 		{
-			var temp = new string[Program.main.UnitSyncWrapper.ModList.Keys.Count];
-			var cnt = 0;
-			foreach (var s in Program.main.UnitSyncWrapper.ModList.Keys)
-			{
-				var limit = ah.config.LimitMods;
-				if (limit != null && limit.Length > 0)
-				{
-					var allowed = false;
-					for (var i = 0; i < limit.Length; ++i)
-					{
-						if (s.ToLower().Contains(limit[i].ToLower()))
-						{
-							allowed = true;
-							break;
-						}
-					}
-					if (allowed) temp[cnt++] = s;
-				}
-				else temp[cnt++] = s;
-			}
-
-			return Filter(temp, words, out vals, out indexes);
+            var result = ah.cache.FindResourceData(words, ResourceType.Mod);
+            vals = result.Select(x => x.InternalName).ToArray();
+            indexes = result.Select(x => x.ResourceID).ToArray();
+            return vals.Length;
 		}
 
 
@@ -1041,12 +1024,11 @@ namespace Springie.autohost
 					Respond(e, "requires key=value format");
 					return "";
 				}
-				var b = tas.MyBattle;
 				var key = parts[0];
 				var val = parts[1];
 
 				var found = false;
-				var mod = wrapper.GetModInfo(b.ModName);
+                var mod = hostedMod;
 				foreach (var o in mod.Options)
 				{
 					if (o.Key == key)
@@ -1143,8 +1125,7 @@ namespace Springie.autohost
 
 		void ComListOptions(TasSayEventArgs e, string[] words)
 		{
-			var b = tas.MyBattle;
-			var mod = wrapper.GetModInfo(b.ModName);
+			var mod = hostedMod;
 			if (mod.Options.Length == 0) Respond(e, "this mod has no options");
 			else foreach (var opt in mod.Options) Respond(e, opt.ToString());
 		}
@@ -1168,8 +1149,11 @@ namespace Springie.autohost
 			if (FilterMaps(words, out vals, out indexes) > 0)
 			{
 				SayBattle("changing map to " + vals[0]);
-				var mapi = wrapper.MapList[vals[0]];
-				tas.ChangeMap(mapi.Name, mapi.Checksum);
+				var mapi = cache.GetResourceDataByInternalName(vals[0]);
+                if (mapi != null)
+                {
+                    tas.ChangeMap(mapi.InternalName, mapi.SpringHashes.Where(x=>x.SpringVersion == springPaths.SpringVersion).Select(x=>x.SpringHash).FirstOrDefault());
+                }
 			}
 			else Respond(e, "Cannot find such map.");
 		}
@@ -1252,32 +1236,13 @@ namespace Springie.autohost
 
 		static int FilterMaps(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
 		{
-			var temp = new string[Program.main.UnitSyncWrapper.MapList.Keys.Count];
-			var cnt = 0;
-			foreach (var s in Program.main.UnitSyncWrapper.MapList.Keys)
-			{
-				{
-					var limit = ah.config.LimitMaps;
-					if (limit != null && limit.Length > 0)
-					{
-						var allowed = false;
-						for (var i = 0; i < limit.Length; ++i)
-						{
-							if (s.ToLower() == limit[i].ToLower())
-							{
-								allowed = true;
-								break;
-							}
-						}
-						if (allowed) temp[cnt++] = s;
-					}
-					else temp[cnt++] = s;
-				}
-			}
-			return Filter(temp, words, out vals, out indexes);
+            var result = ah.cache.FindResourceData(words, ResourceType.Map);
+            vals = result.Select(x => x.InternalName).ToArray();
+            indexes = result.Select(x => x.ResourceID).ToArray();
+            return vals.Length;
 		}
 
-		int FilterMods(string[] words, out string[] vals, out int[] indexes)
+		public int FilterMods(string[] words, out string[] vals, out int[] indexes)
 		{
 			return FilterMods(words, this, out vals, out indexes);
 		}

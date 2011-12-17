@@ -14,7 +14,6 @@ using PlasmaShared.ContentService;
 using PlasmaShared.UnitSyncLib;
 using Springie.AutoHostNamespace;
 using Springie.PlanetWars;
-using Springie.SpringNamespace;
 using Timer = System.Timers.Timer;
 
 #endregion
@@ -58,10 +57,11 @@ namespace Springie.autohost
 
 		public SpringPaths springPaths;
 		public TasClient tas;
-		public UnitSyncWrapper wrapper { get; private set; }
+        public MetaDataCache cache;
 
-		public AutoHost(SpringPaths paths, UnitSyncWrapper wrapper, string configPath, int hostingPort, SpawnConfig spawn)
+		public AutoHost(SpringPaths paths, MetaDataCache cache, string configPath, int hostingPort, SpawnConfig spawn)
 		{
+            this.cache = cache;
 			SpawnConfig = spawn;
 			this.configPath = configPath;
 			springPaths = paths;
@@ -77,8 +77,6 @@ namespace Springie.autohost
 			banList.Load();
 
 
-			this.wrapper = wrapper;
-
 			pollTimer = new Timer(PollTimeout*1000);
 			pollTimer.Enabled = false;
 			pollTimer.AutoReset = false;
@@ -90,8 +88,6 @@ namespace Springie.autohost
 			spring.SpringExited += spring_SpringExited;
 			spring.SpringStarted += spring_SpringStarted;
 			spring.PlayerSaid += spring_PlayerSaid;
-
-			wrapper.NotifyModsChanged += spring_NotifyModsChanged;
 
 			tas.BattleUserLeft += tas_BattleUserLeft;
 			tas.UserStatusChanged += tas_UserStatusChanged;
@@ -133,7 +129,36 @@ namespace Springie.autohost
 			InitializePlanetWarsServer();
 
 			tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
+
+            Program.main.Downloader.PackagesChanged += new EventHandler(Downloader_PackagesChanged);
+            
 		}
+
+        void Downloader_PackagesChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag) && SpawnConfig == null)
+            {
+                var version = Program.main.Downloader.PackageDownloader.GetByTag(config.AutoUpdateRapidTag);
+                if (version != null)
+                {
+                    var latest = version.InternalName;
+                    if (cache.GetResourceDataByInternalName(latest) != null)
+                    {
+                        var b = tas.MyBattle;
+                        if (!string.IsNullOrEmpty(latest) && b != null && b.ModName != latest)
+                        {
+                            config.DefaultMod = latest;
+                            if (!spring.IsRunning)
+                            {
+                                SayBattle("Updating to latest mod version: " + latest);
+                                ComRehost(TasSayEventArgs.Default, new[] { latest });
+                            }
+                            else delayedModChange = latest;
+                        }
+                    }
+                }
+            }
+        }
 
 		public void Dispose()
 		{
@@ -144,7 +169,6 @@ namespace Springie.autohost
 			tas.UnsubscribeEvents(PlanetWars);
 			spring.UnsubscribeEvents(this);
 			spring.UnsubscribeEvents(PlanetWars);
-			wrapper.UnsubscribeEvents(this);
 			springPaths.UnsubscribeEvents(this);
 			tas.Disconnect();
 			if (PlanetWars != null) PlanetWars.Dispose();
@@ -157,7 +181,6 @@ namespace Springie.autohost
 			pollTimer = null;
 			PlanetWars = null;
 			linkProvider = null;
-			wrapper = null;
 		}
 
 		public string GetAccountName()
@@ -395,15 +418,13 @@ namespace Springie.autohost
 			var version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
 			if (version != null) modname = version.InternalName;
 
-			if (!wrapper.HasMod(modname)) modname = wrapper.GetFirstMod();
-			var modi = wrapper.GetModInfo(modname);
-			hostedMod = modi;
+            hostedMod = new Mod();
+            cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { }, springPaths.SpringVersion);
 			if (hostedMod.IsMission && !string.IsNullOrEmpty(hostedMod.MissionMap)) mapname = hostedMod.MissionMap;
 
-			if (!wrapper.HasMap(mapname)) mapname = wrapper.GetFirstMap();
-
+            Map mapi = null;
+            cache.GetMap(mapname, (m,x,y,z) => { mapi = m; }, (e) => { } , springPaths.SpringVersion);
 			int mint, maxt;
-			var mapi = wrapper.GetMapInfo(mapname);
 
 			var b = new Battle(password,
 			                   hostingPort,
@@ -411,7 +432,7 @@ namespace Springie.autohost
 			                   config.MinRank,
 			                   mapi,
 			                   title,
-			                   modi,
+			                   hostedMod,
 			                   config.BattleDetails);
 			// if hole punching enabled then we use it
 			if (config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
@@ -560,31 +581,6 @@ namespace Springie.autohost
 			}*/
 		}
 
-		void spring_NotifyModsChanged(object sender, EventArgs e)
-		{
-			if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag) && SpawnConfig == null)
-			{
-				var version = Program.main.Downloader.PackageDownloader.GetByTag(config.AutoUpdateRapidTag);
-				if (version != null)
-				{
-					var latest = version.InternalName;
-					if (wrapper.HasMod(latest))
-					{
-						var b = tas.MyBattle;
-						if (!string.IsNullOrEmpty(latest) && b != null && b.ModName != latest)
-						{
-							config.DefaultMod = latest;
-							if (!spring.IsRunning)
-							{
-								SayBattle("Updating to latest mod version: " + latest);
-								ComRehost(TasSayEventArgs.Default, new[] { latest });
-							}
-							else delayedModChange = latest;
-						}
-					}
-				}
-			}
-		}
 
 
 		void spring_PlayerSaid(object sender, SpringLogEventArgs e)

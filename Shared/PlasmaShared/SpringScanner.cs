@@ -186,6 +186,7 @@ namespace PlasmaShared
     {
       lock (cache)
       {
+        springVersion = springVersion ?? springPaths.SpringVersion;
         CacheItem item;
         if (cache.NameIndex.TryGetValue(name, out item))
         {
@@ -198,10 +199,6 @@ namespace PlasmaShared
       return 0;
     }
 
-    public int GetSpringHash(string name)
-    {
-      return GetSpringHash(name, springPaths.SpringVersion);
-    }
 
 
     public bool HasResource(string name)

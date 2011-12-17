@@ -54,17 +54,18 @@ namespace Springie
             }
             else
             {
-                List<string> items;
-                if (type == FileType.Map) items = new List<string>(Program.main.UnitSyncWrapper.MapList.Keys);
-                else items = new List<string>(Program.main.UnitSyncWrapper.ModList.Keys);
-
                 int[] resultIndexes;
                 string[] resultVals;
-                int cnt = AutoHost.Filter(items.ToArray(), words, out resultVals, out resultIndexes);
-                if (cnt == 0) ah.Respond(e, string.Format("No such {0} found", type));
-                ah.Respond(e, string.Format("Getting Zero-K mirrors for {0}, please wait", resultVals[0]));
+                int cnt;
+                if (type == FileType.Map) cnt = ah.FilterMaps(words, out resultVals, out resultIndexes);
+                else cnt = ah.FilterMods(words, out resultVals, out resultIndexes);
 
-                plasmaService.DownloadFileAsync(resultVals[0], e);
+                if (cnt == 0) ah.Respond(e, string.Format("No such {0} found", type));
+                else
+                {
+                    ah.Respond(e, string.Format("Getting Zero-K mirrors for {0}, please wait", resultVals[0]));
+                    plasmaService.DownloadFileAsync(resultVals[0], e);
+                }
             }
         }
 

@@ -101,7 +101,7 @@ namespace ZeroKLobby.Notifications
 					                                           				}));
 					                                           		}
 					                                           	},
-					                                           (ex) => { });
+					                                           (ex) => { }, Program.SpringPaths.SpringVersion);
 
 					Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
 					Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);

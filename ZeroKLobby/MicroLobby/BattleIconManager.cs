@@ -99,7 +99,7 @@ namespace ZeroKLobby.MicroLobby
                                                                    battleIcon.MinimapImage = null;
                                                                    BattleChanged(this, new EventArgs<BattleIcon>(battleIcon));
                                                                }
-                                                           }));
+                                                           }), Program.SpringPaths.SpringVersion);
         }
 
 

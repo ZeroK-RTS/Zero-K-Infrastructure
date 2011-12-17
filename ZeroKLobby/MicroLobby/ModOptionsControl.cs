@@ -200,7 +200,7 @@ namespace ZeroKLobby.MicroLobby
       Program.TasClient.BattleDetailsChanged += (s, e) => SetScriptTags(e.ServerParams);
       Program.SpringScanner.MetaData.GetModAsync(Program.TasClient.MyBattle.ModName,
                                                  mod => { if (!Disposing && IsHandleCreated && !IsDisposed) Invoke(new Action(() => HandleMod(mod))); },
-                                                 exception => { });
+                                                 exception => { }, Program.SpringPaths.SpringVersion);
     }
 
 

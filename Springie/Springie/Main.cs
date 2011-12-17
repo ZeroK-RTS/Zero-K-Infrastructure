@@ -7,7 +7,6 @@ using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
 using Springie.autohost;
-using Springie.SpringNamespace;
 
 namespace Springie
 {
@@ -21,14 +20,15 @@ namespace Springie
 
 		readonly List<AutoHost> autoHosts = new List<AutoHost>();
 		List<AutoHost> deletionCandidate = new List<AutoHost>();
-		readonly SpringPaths paths;
+		private readonly SpringPaths paths;
 		readonly Timer timer;
 
 		public string RootWorkPath { get; private set; }
 		public SpringieServer SpringieServer = new SpringieServer();
-		public UnitSyncWrapper UnitSyncWrapper { get; private set; }
 		public MainConfig Config;
-		public PlasmaDownloader.PlasmaDownloader Downloader;
+
+        public PlasmaDownloader.PlasmaDownloader Downloader;
+        public MetaDataCache MetaCache;
 
 		public Main(string path)
 		{
@@ -36,11 +36,11 @@ namespace Springie
 			LoadConfig();
 			SaveConfig();
             paths = new SpringPaths(Path.GetDirectoryName(Config.ExecutableName),Config.SpringVersion);
-			paths.DedicatedServer = Config.ExecutableName;
-            paths.Cache = path;
-			paths.MakeFolders();
-
-			UnitSyncWrapper = new UnitSyncWrapper(paths);
+			if (!string.IsNullOrEmpty(Config.ExecutableName)) paths.OverrideDedicatedServer(Config.ExecutableName);
+            paths.MakeFolders();
+            
+            MetaCache = new MetaDataCache(paths, null);
+            
 
 			timer = new Timer(30000);
 			timer.Elapsed += timer_Elapsed;
@@ -87,7 +87,7 @@ namespace Springie
 		{
 			lock (autoHosts)
 			{
-				var ah = new AutoHost(paths, UnitSyncWrapper, path, GetFreeHostingPort(), spawnData);
+				var ah = new AutoHost(paths, MetaCache, path, GetFreeHostingPort(), spawnData);
 				autoHosts.Add(ah);
 			}
 		}

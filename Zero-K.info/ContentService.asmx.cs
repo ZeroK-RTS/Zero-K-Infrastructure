@@ -374,15 +374,19 @@ namespace ZeroKWeb
             var test = ret.Where(x => x.InternalName == string.Join(" ", words));
             if (test.Any()) return test.OrderByDescending(x=>-x.FeaturedOrder).Select(x=>new PlasmaServer.ResourceData(x)).ToList();
             int i;
-            if (words.Length == 1 && int.TryParse(words[0], out i)) {
+            if (words.Length == 1 && int.TryParse(words[0], out i))
+            {
                 ret = ret.Where(x => x.ResourceID == i);
             }
-            foreach (var w in words)
+            else
             {
-                string w1 = w;
-                ret = ret.Where(x => SqlMethods.Like(x.InternalName, "%"+ w1 +"%"));
+                foreach (var w in words)
+                {
+                    string w1 = w;
+                    ret = ret.Where(x => SqlMethods.Like(x.InternalName, "%" + w1 + "%"));
+                }
+                return ret.OrderByDescending(x => -x.FeaturedOrder).Take(400).Select(x => new PlasmaServer.ResourceData(x)).ToList();
             }
-            return ret.OrderByDescending(x => -x.FeaturedOrder).Select(x => new PlasmaServer.ResourceData(x)).ToList();
         }
 
         [WebMethod]
