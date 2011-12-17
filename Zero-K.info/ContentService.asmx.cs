@@ -385,8 +385,8 @@ namespace ZeroKWeb
                     string w1 = w;
                     ret = ret.Where(x => SqlMethods.Like(x.InternalName, "%" + w1 + "%"));
                 }
-                return ret.OrderByDescending(x => -x.FeaturedOrder).Take(400).Select(x => new PlasmaServer.ResourceData(x)).ToList();
             }
+            return ret.OrderByDescending(x => -x.FeaturedOrder).Take(400).Select(x => new PlasmaServer.ResourceData(x)).ToList();
         }
 
         [WebMethod]
