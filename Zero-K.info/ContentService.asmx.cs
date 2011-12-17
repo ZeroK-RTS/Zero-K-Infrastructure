@@ -386,12 +386,12 @@ namespace ZeroKWeb
         }
 
         [WebMethod]
-        public PlasmaServer.ResourceData GetResourceData(int resourceID) {
+        public PlasmaServer.ResourceData GetResourceDataByResourceID(int resourceID) {
             var db =  new ZkDataContext();
             return new PlasmaServer.ResourceData(db.Resources.Single(x=>x.ResourceID == resourceID));
         }
         [WebMethod]
-        public PlasmaServer.ResourceData GetResourceData(string internalName)
+        public PlasmaServer.ResourceData GetResourceDataByInternalName(string internalName)
         {
             var db = new ZkDataContext();
             return new PlasmaServer.ResourceData(db.Resources.Single(x => x.InternalName == internalName));
