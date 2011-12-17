@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Linq;
+using System.Data.Linq.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -362,6 +363,34 @@ namespace ZeroKWeb
                 return res;
             }
         }
+
+        [WebMethod]
+        public List<Resource> SearchResources(string[] words, ResourceType? type = null)
+        {
+            var db= new ZkDataContext();
+            var ret= db.Resources.AsQueryable();
+            if (type == ResourceType.Map) ret = ret.Where(x => x.TypeID == ResourceType.Map);
+            if (type == ResourceType.Mod) ret = ret.Where(x => x.TypeID == ResourceType.Mod);
+            var test = ret.Where(x => x.InternalName == string.Join(" ", words));
+            if (test.Any()) return test.OrderByDescending(x=>-x.FeaturedOrder).ToList();
+            int i;
+            if (words.Length == 1 && int.TryParse(words[0], out i)) {
+                ret = ret.Where(x => x.ResourceID == i);
+            }
+            foreach (var w in words)
+            {
+                string w1 = w;
+                ret = ret.Where(x => SqlMethods.Like(x.InternalName, "%"+ w1 +"%"));
+            }
+            return ret.OrderByDescending(x => -x.FeaturedOrder).ToList();
+        }
+
+        [WebMethod]
+        public Resource GetResource(int resourceID) {
+            var db =  new ZkDataContext();
+            return db.Resources.Single(x=>x.ResourceID == resourceID);
+        }
+
 
         [WebMethod]
         public bool DownloadFile(string internalName,
