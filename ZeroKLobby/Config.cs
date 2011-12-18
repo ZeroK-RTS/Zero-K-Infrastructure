@@ -181,7 +181,6 @@ namespace ZeroKLobby
     [DisplayName("Disable Context Menu on Leftclick")]
     [Description("Only right clicking shows context menu. Left clicking on a playername will select them in the player list.")]
     public bool LeftClickSelectsPlayer { get; set; }
-    public bool LimitedMode { get { return false; } }
 
 
     [Category("Chat")]

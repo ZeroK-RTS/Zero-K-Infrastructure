@@ -342,7 +342,7 @@ namespace ZeroKLobby
 
       // download primary game 
 		  var defaultTag = KnownGames.GetDefaultGame().RapidTag;
-      if (Program.Conf.LimitedMode && !Program.Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag)) {
+      if (!Program.Downloader.PackageDownloader.SelectedPackages.Contains(defaultTag)) {
         Program.Downloader.PackageDownloader.SelectPackage(defaultTag); 
         Program.Downloader.GetResource(DownloadType.MOD, defaultTag);
       }

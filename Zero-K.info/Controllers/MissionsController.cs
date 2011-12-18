@@ -61,6 +61,8 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult Index(string search, int? offset, bool? sp, bool? coop, bool? adversarial, bool? featured)
         {
+            if (featured == null) featured = true;
+
             var db = new ZkDataContext();
             if (!offset.HasValue)
             {
@@ -147,6 +149,8 @@ namespace ZeroKWeb.Controllers
                                                   bool? coop = null,
                                                   bool? adversarial = null)
         {
+            if (featured == null) featured = true;
+
             ret =
                 ret.Where(
                     x =>

@@ -90,7 +90,7 @@ namespace ZeroKWeb.Controllers
                               )
     {
       var db = new ZkDataContext();
-
+      if (featured == null) featured = true;
 
       var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map);
       if (!string.IsNullOrEmpty(search))

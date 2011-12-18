@@ -231,15 +231,7 @@ namespace ZeroKLobby
         TasClient.LoginDenied += (s, e) => Trace.TraceInformation("TASC login denied");
         TasClient.ChannelJoined += (s, e) => Trace.TraceInformation("TASC channel joined: " + e.ServerParams[0]);
         TasClient.ConnectionLost += (s, e) => Trace.TraceInformation("Connection lost");
-        // filter non-zk mods in limited mode
-        if (Conf.LimitedMode)
-        {
-          TasClient.FilterBattleByMod += (s, e) =>
-            {
-              var game = KnownGames.GetGame(e.Data);
-              if (game == null || !game.IsPrimary) e.Cancel = true;
-            };
-        }
+
 
         // special "!join" command for quickmatching
         TasClient.PreviewSaid += (s, e) =>
