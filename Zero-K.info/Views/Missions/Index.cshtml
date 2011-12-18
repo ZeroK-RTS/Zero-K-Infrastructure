@@ -8,7 +8,7 @@
 
 <form action="@Url.Action("Index")" id='ajaxScrollForm' method="post">
   <span title="List only featured missions">
-    Featured: @Html.CheckBox("featured")
+    Official: @Html.CheckBox("featured", true)
   </span>
 	<span title="Missions for one player">Singleplayer: @Html.CheckBox("sp", true)</span>
 	<span title="Missions where players fight together versus computer">Coop: @Html.CheckBox("coop", true)</span>

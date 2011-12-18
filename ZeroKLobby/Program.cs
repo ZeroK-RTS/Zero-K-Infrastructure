@@ -156,35 +156,9 @@ namespace ZeroKLobby
 
         LoadConfig();
 
-        Conf.ManualSpringPath = Conf.ManualSpringPath 
-                                 ?? (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\spring.exe", "@", null) ?? (string)
-                                Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Spring", "DisplayIcon", null);
-
         SpringPaths = new SpringPaths(Conf.ManualSpringPath, null, Conf.DataFolder);
         Conf.DataFolder = SpringPaths.WritableDirectory;
         SpringPaths.MakeFolders();
-
-
-        // if first started from web directly and not spring preinstalled -> limited mode
-        if (Conf.IsFirstRun && (string.IsNullOrEmpty(SpringPaths.SpringVersion) || SpringPaths.UnitSyncDirectory.Contains("engine"))) {
-          Conf.LimitedMode = true;
-        }
-
-        // set default join channels
-        if (!Conf.JoinChannelsSetupDone)
-        {
-          if (Conf.LimitedMode)
-          {
-            Conf.AutoJoinChannels.Add(KnownGames.GetDefaultGame().Channel);
-          }
-          else
-          {
-            Conf.AutoJoinChannels.Add(KnownGames.GetDefaultGame().Channel);
-            Conf.AutoJoinChannels.Add("newbies");
-            Conf.AutoJoinChannels.Add("main");
-          }
-          Conf.JoinChannelsSetupDone = true;
-        }
 
         SaveConfig();
 

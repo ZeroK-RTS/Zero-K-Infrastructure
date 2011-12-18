@@ -23,7 +23,7 @@ namespace ZeroKLobby
     public const string LogFile = "ZeroKLobbyErrors.txt";
     public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
 
-    StringCollection autoJoinChannels = new StringCollection();
+    StringCollection autoJoinChannels = new StringCollection() { KnownGames.GetDefaultGame().Channel};
     bool connectOnStartup = true;
     Color fadeColor = Color.Gray;
     StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
@@ -161,8 +161,6 @@ namespace ZeroKLobby
       typeof(UITypeEditor))]
     public StringCollection IgnoredUsers { get { return ignoredUsers; } set { ignoredUsers = value; } }
     public bool IsFirstRun = true;
-    [Browsable(false)]
-    public bool JoinChannelsSetupDone;
 
 
     [Category("Chat")]
@@ -183,24 +181,7 @@ namespace ZeroKLobby
     [DisplayName("Disable Context Menu on Leftclick")]
     [Description("Only right clicking shows context menu. Left clicking on a playername will select them in the player list.")]
     public bool LeftClickSelectsPlayer { get; set; }
-    public bool LimitedMode
-    {
-      get { return limitedMode; }
-      set
-      {
-        if (limitedMode != value) JoinChannelsSetupDone = false;
-
-        limitedMode = value;
-        try
-        {
-          WindowsApi.InternetSetCookie(BaseUrl, GlobalConst.LimitedModeCookieName, value ? "1" : "0");
-        }
-        catch (Exception ex)
-        {
-          Trace.TraceError("Cannot set user cookie: {0}", ex);
-        }
-      }
-    }
+    public bool LimitedMode { get { return false; } }
 
 
     [Category("Chat")]

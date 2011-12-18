@@ -128,7 +128,7 @@ namespace ZeroKWeb.Controllers
 			if (chicken.HasValue) ret = ret.Where(x => x.MapIsChickens == chicken);
 
 
-      if (!Global.IsAccountAuthorized || Global.Account.Level < 20 || featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x=>x.ResourceID); else ret = ret.OrderByDescending(x => x.ResourceID);
+      if (featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x=>x.ResourceID); else ret = ret.OrderByDescending(x => x.ResourceID);
       if (offset != null) ret = ret.Skip(offset.Value);
       ret = ret.Take(Global.AjaxScrollCount);
 

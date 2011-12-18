@@ -73,19 +73,19 @@ namespace ZeroKWeb.Controllers
                                  db.Missions.Where(
                                      x =>
                                      !x.IsDeleted &&
-                                     (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") ||
+                                     (featured == false || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") ||
                                       x.Mod.StartsWith("Complete"))).OrderByDescending(x => x.MissionRunCount),
                              MostRating =
                                  db.Missions.Where(
                                      x =>
                                      !x.IsDeleted &&
-                                     (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") ||
+                                     (featured == false || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") ||
                                       x.Mod.StartsWith("Complete"))).OrderByDescending(x => x.Rating),
                              LastComments =
                                  db.Missions.Where(
                                      x =>
                                      !x.IsDeleted &&
-                                     (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") ||
+                                     (featured == false || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") ||
                                       x.Mod.StartsWith("Complete"))).OrderByDescending(x => x.ForumThread.LastPost),
                              SearchString = search,
                          });
@@ -151,14 +151,14 @@ namespace ZeroKWeb.Controllers
                 ret.Where(
                     x =>
                     !x.IsDeleted &&
-                    (!Global.IsLimitedMode || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") || x.Mod.StartsWith("Complete")));
+                    (featured == false || x.ModRapidTag.StartsWith("zk:") || x.Mod.StartsWith("Zero-K") || x.Mod.StartsWith("Complete")));
             if (featured == true) ret = ret.Where(x => x.FeaturedOrder > 0);
             if (sp == false) ret = ret.Where(x => x.MaxHumans > 1);
             if (coop == false) ret = ret.Where(x => (x.MinHumans <= 1 && sp == true) || x.MaxHumans > 1 && !x.IsCoop);
             if (adversarial == false) ret = ret.Where(x => (x.MinHumans <= 1 && sp == true) || (x.MaxHumans > 1 && x.IsCoop));
             if (!string.IsNullOrEmpty(search)) ret = ret.Where(x => x.Name.Contains(search) || x.Account.Name.Contains(search));
 
-            if (!Global.IsAccountAuthorized || Global.Account.Level <= 20 || featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ModifiedTime);
+            if (featured == true) ret = ret.OrderByDescending(x => -x.FeaturedOrder).ThenByDescending(x => x.ModifiedTime);
             else ret = ret.OrderByDescending(x => x.ModifiedTime);
             if (offset != null) ret = ret.Skip(offset.Value);
 
