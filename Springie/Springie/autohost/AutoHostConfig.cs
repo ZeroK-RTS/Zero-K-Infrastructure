@@ -33,6 +33,9 @@ namespace Springie.autohost
         [Description("Defines battle details to use by default")]
         public BattleDetails BattleDetails { get { return battleDetails; } set { battleDetails = value; } }
 
+        public string SpringVersion { get; set; }
+        public string AutoUpdateSpringBranch { get; set; }
+
         public List<CommandConfig> Commands = new List<CommandConfig>();
 
         [Category("Rights")]
@@ -302,6 +305,8 @@ namespace Springie.autohost
                 addedCommands);
 
             AddMissing(new CommandConfig("teamcolors", 1, "- assigns similar colors to allies", 10), addedCommands);
+            
+            AddMissing(new CommandConfig("setengine", 2, "[version] - sets a new spring version", 2), addedCommands);
 
             AddMissing(
                 new CommandConfig("springie",

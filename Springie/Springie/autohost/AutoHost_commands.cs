@@ -1275,5 +1275,20 @@ namespace Springie.autohost
 				Clan = clan;
 			}
 		}
-	}
+
+        void ComSetEngine(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length != 1)
+            {
+                Respond(e, "Specify engine version");
+                return;
+            }
+            else {
+                var version = words[0];
+                requestedEngineChange = version;
+                Respond(e, "Preparing engine change to " + version);
+                Program.main.Downloader.GetAndSwitchEngine(version);
+            }
+        }
+    }
 }

@@ -59,18 +59,46 @@ namespace Springie.autohost
 		public TasClient tas;
         public MetaDataCache cache;
 
-		public AutoHost(SpringPaths paths, MetaDataCache cache, string configPath, int hostingPort, SpawnConfig spawn)
+        private string requestedEngineChange = null;
+
+		public AutoHost(MetaDataCache cache, string configPath, int hostingPort, SpawnConfig spawn)
 		{
             this.cache = cache;
 			SpawnConfig = spawn;
 			this.configPath = configPath;
-			springPaths = paths;
 			this.hostingPort = hostingPort;
 
-			LoadConfig();
+            // hacky springpaths handling, fix/improve
+			springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), Program.main.Config.SpringVersion, null);//temp spring paths for settings load
+            LoadConfig();
 			SaveConfig();
-		
-			spring = new Spring(paths, config.PlanetWarsEnabled ?  AutohostMode.Planetwars : AutohostMode.GameTeams) { UseDedicatedServer = true };
+
+            
+            if (!string.IsNullOrEmpty(config.SpringVersion))
+		    {
+                springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), config.SpringVersion);
+		    } else {
+                springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), Program.main.Config.SpringVersion);
+            }
+
+            Program.main.paths.SpringVersionChanged += (s, e) =>
+            {
+                if (!string.IsNullOrEmpty(requestedEngineChange) && requestedEngineChange == Program.main.paths.SpringVersion)
+                {
+                    config.SpringVersion = requestedEngineChange;
+                    springPaths.SetEnginePath(Program.main.paths.GetEngineFolderByVersion(requestedEngineChange));
+                    SaveConfig();
+                    requestedEngineChange = null;
+
+                    tas.Say(TasClient.SayPlace.Battle, "", "rehosting to engine version " + springPaths.SpringVersion, true);
+                    ComRehost(TasSayEventArgs.Default, new string[] { });
+                }
+            };
+            if (!string.IsNullOrEmpty(config.SpringVersion)&& config.SpringVersion != springPaths.SpringVersion) Program.main.Downloader.GetAndSwitchEngine(config.SpringVersion);
+
+
+
+		    spring = new Spring(springPaths, config.PlanetWarsEnabled ?  AutohostMode.Planetwars : AutohostMode.GameTeams) { UseDedicatedServer = true };
 			tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, Program.main.Config.IpOverride);
 
 			banList = new BanList(this, tas);
@@ -170,6 +198,8 @@ namespace Springie.autohost
 			spring.UnsubscribeEvents(this);
 			spring.UnsubscribeEvents(PlanetWars);
 			springPaths.UnsubscribeEvents(this);
+            Program.main.Downloader.UnsubscribeEvents(this);
+            Program.main.paths.UnsubscribeEvents(this);
 			tas.Disconnect();
 			if (PlanetWars != null) PlanetWars.Dispose();
 			pollTimer.Dispose();
@@ -1049,6 +1079,13 @@ namespace Springie.autohost
                     case "splitplayers":
                         ComSplitPlayers(e,words);
                         break;
+
+                    case "setengine":
+                        ComSetEngine(e, words);
+
+
+                        break;
+
 
 					case "spawn":
 					{

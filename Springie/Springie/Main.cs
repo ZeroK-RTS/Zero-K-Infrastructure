@@ -20,7 +20,7 @@ namespace Springie
 
 		readonly List<AutoHost> autoHosts = new List<AutoHost>();
 		List<AutoHost> deletionCandidate = new List<AutoHost>();
-		private readonly SpringPaths paths;
+	    public readonly SpringPaths paths;
 		readonly Timer timer;
 
 		public string RootWorkPath { get; private set; }
@@ -87,7 +87,7 @@ namespace Springie
 		{
 			lock (autoHosts)
 			{
-				var ah = new AutoHost(paths, MetaCache, path, GetFreeHostingPort(), spawnData);
+				var ah = new AutoHost(MetaCache, path, GetFreeHostingPort(), spawnData);
 				autoHosts.Add(ah);
 			}
 		}

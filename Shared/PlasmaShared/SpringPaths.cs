@@ -127,16 +127,18 @@ namespace PlasmaShared
 
             WritableDirectory = DataDirectories.First(IsDirectoryWritable);
             UnitSyncDirectory = springPath;
-            if (!string.IsNullOrEmpty(springPath)) Executable = Utils.MakePath(springPath, "Spring.exe");
-            else Executable = null;
-
-            var ov = springVersion;
-            if (string.IsNullOrEmpty(DedicatedServer)) springVersion = GetSpringVersion(Executable); // get spring verison does not work for dedicated
-            if (ov != springVersion && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
 
             Executable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe");
             DedicatedServer = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-dedicated" : "spring-dedicated.exe");
-            Cache = Utils.MakePath(WritableDirectory, "cache","SD");
+            Cache = Utils.MakePath(WritableDirectory, "cache", "SD");
+
+            var ov = springVersion;
+            springVersion = GetSpringVersion(Executable);
+            // get spring verison does not work for dedicated
+
+            
+            if (ov != springVersion  && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
+
         }
 
         void CreateFolder(string path)
