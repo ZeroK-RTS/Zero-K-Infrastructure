@@ -22,6 +22,13 @@ namespace ZeroKLobby
             basePath = Utils.MakePath(springPaths.WritableDirectory, "LuaUI", "Configs");
         }
 
+        public Image GetImage(string name)
+        {
+            var item = GetImageItem(name);
+            if (item != null) return item.Image;
+            else return null;
+        }
+
         public Item GetImageItem(string name)
         {
             lock (locker)
@@ -40,16 +47,16 @@ namespace ZeroKLobby
                         if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
                         if (File.Exists(item.LocalPath))
                         {
-                            item.Image = Image.FromFile(item.LocalPath);
+                            item.Image = Image.FromStream(new MemoryStream(File.ReadAllBytes(item.LocalPath)));
                             item.IsLoaded = true;
                         }
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                         Trace.TraceWarning("Failed to load image:{0}", ex);
                     }
 
-
-                    if (!item.IsLoaded)
+                    if (!item.IsLoaded || DateTime.Now.Subtract(File.GetLastWriteTime(item.LocalPath)).TotalDays > 3)
                     {
                         Task.Factory.StartNew((state) =>
                             {
@@ -58,13 +65,14 @@ namespace ZeroKLobby
                                 try
                                 {
                                     using (var wc = new WebClient()) wc.DownloadFile(url, i.LocalPath);
-                                    i.Image = Image.FromFile(i.LocalPath);
+                                    i.Image = Image.FromStream(new MemoryStream(File.ReadAllBytes(item.LocalPath)));
                                     i.IsLoaded = true;
+                                    File.SetLastWriteTime(i.LocalPath, DateTime.Now);
                                 }
                                 catch (Exception ex)
                                 {
                                     Trace.TraceWarning("Failed to load server image: {0}: {1}", url, ex);
-                                    i.IsError = true;
+                                    if (!i.IsLoaded) i.IsError = true;
                                 }
                             },
                                               item);
@@ -72,12 +80,6 @@ namespace ZeroKLobby
                 }
                 return item;
             }
-        }
-
-        public Image GetImage(string name) {
-            var item = GetImageItem(name);
-            if (item != null) return item.Image;
-            else return null;
         }
 
 
