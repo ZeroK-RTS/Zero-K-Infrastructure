@@ -97,7 +97,7 @@ namespace Springie.autohost
                     ComRehost(TasSayEventArgs.Default, new string[] { });
                 }
             };
-            if (!string.IsNullOrEmpty(config.SpringVersion)&& config.SpringVersion != springPaths.SpringVersion) Program.main.Downloader.GetAndSwitchEngine(config.SpringVersion);
+            if (!string.IsNullOrEmpty(config.SpringVersion)&& config.SpringVersion != Program.main.paths.SpringVersion) Program.main.Downloader.GetAndSwitchEngine(config.SpringVersion);
 
             
 
