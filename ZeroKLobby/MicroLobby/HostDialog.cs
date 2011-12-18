@@ -28,8 +28,8 @@ namespace ZeroKLobby.MicroLobby
       battleTitleBox.Text = Program.TasClient.MyUser + "'s Battle";
       HideAdvanced();
       gameBox.DropDownStyle = ComboBoxStyle.DropDownList;
-
-      gameBox.Items.AddRange(KnownGames.List.ToArray());
+      if (Program.Conf.ShowOfficialBattles) gameBox.Items.Add(KnownGames.GetDefaultGame());
+      else gameBox.Items.AddRange(KnownGames.List.ToArray());
 
       if (defaultGame == null || gameBox.Items.Cast<GameInfo>().SingleOrDefault(n => n == defaultGame) == null) gameBox.SelectedIndex = new Random().Next(0, gameBox.Items.Count);
       else gameBox.SelectedIndex = gameBox.Items.IndexOf(gameBox.Items.Cast<GameInfo>().Single(n => n == defaultGame));
