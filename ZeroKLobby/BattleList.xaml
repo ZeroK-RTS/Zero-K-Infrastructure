@@ -50,7 +50,8 @@
       </Grid>
       <CheckBox Name="cbUnjoinable" Margin="3" VerticalAlignment="Center" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowNonJoinableBattles}" Checked="RefreshEvent" Unchecked="RefreshEvent" ZeroKLobby:ToolTipHandler.MyToolTip="Filters out locked, passworded, full and currently running games">Show Full</CheckBox>
       <CheckBox Name="cbEmpty" Margin="3" VerticalAlignment="Center" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowEmptyBattles}" Unchecked="RefreshEvent" Checked="RefreshEvent">Show Empty</CheckBox>
-    </StackPanel>
+      <CheckBox Name="cbOfficial" Margin="3" VerticalAlignment="Center" IsChecked="{Binding Source={x:Static ZeroKLobby:Program.Conf}, Path= ShowOfficialBattles}" Unchecked="RefreshEvent" Checked="RefreshEvent">Show Official</CheckBox>
+        </StackPanel>
     <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1">
       <ItemsControl
               ItemsSource="{Binding Source={StaticResource view}}"

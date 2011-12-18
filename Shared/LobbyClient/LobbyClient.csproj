@@ -124,9 +124,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <EmbeddedResource Include="Resources\CountryNames.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\CountryNames.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

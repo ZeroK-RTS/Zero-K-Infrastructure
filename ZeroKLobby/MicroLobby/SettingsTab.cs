@@ -211,5 +211,16 @@ namespace ZeroKLobby.MicroLobby
         {
             if (!refreshingConfig) SaveConfig();
         }
+
+        private void btnWidgets_Click(object sender, EventArgs e)
+        {
+            Program.MainWindow.navigationControl.Path = "widgets";
+        }
+
+        private void btnRapid_Click(object sender, EventArgs e)
+        {
+            Program.MainWindow.navigationControl.Path = "rapid";
+        }
+
 	}
 }

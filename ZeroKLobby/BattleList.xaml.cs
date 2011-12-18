@@ -235,7 +235,12 @@ namespace ZeroKLobby
         return;
       }
 
-      e.Accepted = // Isn't this just GORGEOUS?!
+      if (cbOfficial.IsChecked == true && !battle.IsOfficial()) {
+          e.Accepted = false;
+          return;
+      }
+
+        e.Accepted = // Isn't this just GORGEOUS?!
           filterOrSplit.Split(tbFilter.Text.ToUpper())
           .Where(f => f.Trim().Length > 0)
           .Select(f => f.Split(' '))

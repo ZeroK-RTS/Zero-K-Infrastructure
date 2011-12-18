@@ -123,7 +123,7 @@ namespace PlasmaShared
                 DataDirectories.Insert(0, writableFolderOverride);
             }
 
-            DataDirectories = DataDirectories.Where(Directory.Exists).ToList();
+            DataDirectories = DataDirectories.Where(Directory.Exists).Distinct().ToList();
 
             WritableDirectory = DataDirectories.First(IsDirectoryWritable);
             UnitSyncDirectory = springPath;

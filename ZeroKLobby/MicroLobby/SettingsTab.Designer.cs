@@ -33,6 +33,9 @@
             this.btnKeybindings = new System.Windows.Forms.Button();
             this.btnDisplay = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnRapid = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.btnWidgets = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.tbResy = new System.Windows.Forms.TextBox();
             this.tbResx = new System.Windows.Forms.TextBox();
@@ -60,9 +63,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.propertyGrid1);
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.groupBox1.Location = new System.Drawing.Point(0, 171);
+            this.groupBox1.Location = new System.Drawing.Point(0, 212);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(559, 206);
+            this.groupBox1.Size = new System.Drawing.Size(559, 165);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Zero-K lobby settings: (changes need restart)";
@@ -72,7 +75,7 @@
             this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid1.Location = new System.Drawing.Point(3, 16);
             this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(553, 187);
+            this.propertyGrid1.Size = new System.Drawing.Size(553, 146);
             this.propertyGrid1.TabIndex = 0;
             // 
             // btnKeybindings
@@ -99,6 +102,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnRapid);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.btnWidgets);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.tbResy);
             this.panel1.Controls.Add(this.tbResx);
@@ -123,6 +129,35 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(562, 380);
             this.panel1.TabIndex = 15;
+            // 
+            // btnRapid
+            // 
+            this.btnRapid.Location = new System.Drawing.Point(188, 171);
+            this.btnRapid.Name = "btnRapid";
+            this.btnRapid.Size = new System.Drawing.Size(75, 23);
+            this.btnRapid.TabIndex = 33;
+            this.btnRapid.Text = "Rapid";
+            this.btnRapid.UseVisualStyleBackColor = true;
+            this.btnRapid.Click += new System.EventHandler(this.btnRapid_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(27, 176);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(36, 13);
+            this.label3.TabIndex = 32;
+            this.label3.Text = "Tools:";
+            // 
+            // btnWidgets
+            // 
+            this.btnWidgets.Location = new System.Drawing.Point(94, 171);
+            this.btnWidgets.Name = "btnWidgets";
+            this.btnWidgets.Size = new System.Drawing.Size(75, 23);
+            this.btnWidgets.TabIndex = 31;
+            this.btnWidgets.Text = "Widgets";
+            this.btnWidgets.UseVisualStyleBackColor = true;
+            this.btnWidgets.Click += new System.EventHandler(this.btnWidgets_Click);
             // 
             // label2
             // 
@@ -321,5 +356,8 @@
         private System.Windows.Forms.TextBox tbResx;
         private System.Windows.Forms.CheckBox cbWindowed;
         private System.Windows.Forms.CheckBox cbHwCursor;
+        private System.Windows.Forms.Button btnRapid;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button btnWidgets;
     }
 }
