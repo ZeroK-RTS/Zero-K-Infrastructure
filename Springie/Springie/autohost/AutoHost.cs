@@ -2,8 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Timers;
@@ -40,6 +42,7 @@ namespace Springie.autohost
 		AutoManager manager;
 
 		Timer pollTimer;
+        Timer timer;
 		public readonly Spring spring;
 
 		public string BossName { get { return bossName; } set { bossName = value; } }
@@ -96,7 +99,7 @@ namespace Springie.autohost
             };
             if (!string.IsNullOrEmpty(config.SpringVersion)&& config.SpringVersion != springPaths.SpringVersion) Program.main.Downloader.GetAndSwitchEngine(config.SpringVersion);
 
-
+            
 
 		    spring = new Spring(springPaths, config.PlanetWarsEnabled ?  AutohostMode.Planetwars : AutohostMode.GameTeams) { UseDedicatedServer = true };
 			tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, Program.main.Config.IpOverride);
@@ -159,7 +162,35 @@ namespace Springie.autohost
 			tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
 
             Program.main.Downloader.PackagesChanged += new EventHandler(Downloader_PackagesChanged);
-            
+
+
+            if (!string.IsNullOrEmpty(config.AutoUpdateSpringBranch)) {
+                timer = new Timer(60000);
+                timer.Elapsed += (s, e) =>
+                {
+                    var url = string.Format("http://springrts.com/dl/buildbot/default/{0}/LATEST", config.AutoUpdateSpringBranch);
+                    try
+                    {
+                        var wc = new WebClient();
+                        var str = wc.DownloadString(url);
+                        var bstr = "{"+config.AutoUpdateSpringBranch +"}";
+                        if (str.StartsWith(bstr)) str = str.Replace(bstr, "");
+                        str = str.Trim('\n', '\r', ' ');
+                        
+                        if (springPaths.SpringVersion != str) {
+                            ComSetEngine(TasSayEventArgs.Default, new string[]{str});
+                        }
+
+                    }
+                    catch (Exception ex) {
+                        Trace.TraceWarning("Error getting latest engine branch version from {0}: {1}");
+                    }
+
+
+                };
+                timer.Start();
+            }
+
 		}
 
         void Downloader_PackagesChanged(object sender, EventArgs e)
@@ -204,6 +235,7 @@ namespace Springie.autohost
 			if (PlanetWars != null) PlanetWars.Dispose();
 			pollTimer.Dispose();
 			if (manager != null) manager.Stop();
+            if (timer != null) timer.Dispose(); 
 			banList.Close();
 			MapBoxes = null;
 			banList = null;
