@@ -79,7 +79,8 @@ namespace Springie.autohost
             
             if (!string.IsNullOrEmpty(config.SpringVersion))
 		    {
-                springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), config.SpringVersion);
+                springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(config.SpringVersion), config.SpringVersion);
+
 		    } else {
                 springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), Program.main.Config.SpringVersion);
             }
@@ -97,10 +98,7 @@ namespace Springie.autohost
                     ComRehost(TasSayEventArgs.Default, new string[] { });
                 }
             };
-            if (!string.IsNullOrEmpty(config.SpringVersion)&& config.SpringVersion != Program.main.paths.SpringVersion) Program.main.Downloader.GetAndSwitchEngine(config.SpringVersion);
-
             
-
 		    spring = new Spring(springPaths, config.PlanetWarsEnabled ?  AutohostMode.Planetwars : AutohostMode.GameTeams) { UseDedicatedServer = true };
 			tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, Program.main.Config.IpOverride);
 

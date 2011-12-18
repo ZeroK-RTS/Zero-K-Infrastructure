@@ -301,12 +301,17 @@ namespace ZeroKWeb
                         {
                             if (i != j)
                             {
+                                
                                 var sts = sameTeamScore[i, j];
                                 if (sts != 0.0) // we only consider no-neutral people 
                                 {
-                                    if (playerAssignments[i] == playerAssignments[j]) sum += sts;
-                                    else sum -= sts; // different teams - score is equal to negation of same team score
-                                    cnt++;
+                                    if (playerAssignments[i] == playerAssignments[j])
+                                    {
+                                        sum += sts;
+                                        cnt++;
+                                    }
+                                    /*else sum -= sts; // different teams - score is equal to negation of same team score
+                                    cnt++;*/
                                 }
                             }
                         }
