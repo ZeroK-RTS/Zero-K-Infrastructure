@@ -43,7 +43,8 @@ namespace ZeroKLobby
 			Configure(false, DefaultLevel);
 		}
 
-        /// <summary>
+
+	    /// <summary>
         /// Sets value if newValue is not null
         /// </summary>
         private string GetAndSetConfigValue(string key, string newValue = null) {
