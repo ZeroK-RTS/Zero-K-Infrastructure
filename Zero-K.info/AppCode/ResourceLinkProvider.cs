@@ -255,7 +255,7 @@ namespace ZeroKWeb
             content.Links = string.Join("\n", valids.ToArray());
         }
 
-        [XmlRpcUrl("http://springfiles.com/xmlrpc.php")]
+        [XmlRpcUrl("http://api.springfiles.com/xmlrpc.php")]
         public interface ISpringFilesRpc
         {
             [XmlRpcMethod("springfiles.search")]
