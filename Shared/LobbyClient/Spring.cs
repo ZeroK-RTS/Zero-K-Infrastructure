@@ -279,8 +279,9 @@ namespace LobbyClient
                 {
                     process.StartInfo.FileName = paths.Executable;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
+                    process.StartInfo.Arguments += string.Format(" --config \"{0}\"", paths.GetSpringConfigPath());
                 }
-                process.StartInfo.Arguments += string.Format(" --config \"{0}\"", paths.GetSpringConfigPath());
+                
                 process.StartInfo.EnvironmentVariables.Add("SPRING_DATADIR", paths.WritableDirectory);
 
 
@@ -346,22 +347,25 @@ namespace LobbyClient
             //Console.WriteLine("Candidates: " + candidates.Count);
             foreach (var file in candidates)
             {
-                var buf = new byte[120000];
-                var read = 0;
-                using (var stream = file.OpenRead()) read = stream.Read(buf, 0, buf.Length);
-
-                if (read > 113)
+                try
                 {
-                    var script = Encoding.ASCII.GetString(buf, 112, read - 112 - 1);
-                    if (script.Contains(battleGuid.ToString()))
+                    var buf = new byte[120000];
+                    var read = 0;
+                    using (var stream = file.OpenRead()) read = stream.Read(buf, 0, buf.Length);
+
+                    if (read > 113)
                     {
-                        // found correct 
-                        var hash = new Hash(buf, 40);
-                        gameId = hash.ToString();
-                        demoFileName = file.Name;
-                        return true;
+                        var script = Encoding.ASCII.GetString(buf, 112, read - 112 - 1);
+                        if (script.Contains(battleGuid.ToString()))
+                        {
+                            // found correct 
+                            var hash = new Hash(buf, 40);
+                            gameId = hash.ToString();
+                            demoFileName = file.Name;
+                            return true;
+                        }
                     }
-                }
+                } catch {}
             }
             return false;
         }
@@ -540,6 +544,11 @@ namespace LobbyClient
         void springProcess_Exited(object sender, EventArgs e)
         {
             var isCrash = process.ExitCode != 0 && !wasKilled;
+            try
+            {
+                if (!process.WaitForExit(2000)) process.Kill();
+            } catch  {}
+
             process = null;
             talker.Close();
             talker = null;
