@@ -464,8 +464,7 @@ namespace Springie.autohost
 			if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag)) modname = config.AutoUpdateRapidTag;
 
 			var title = config.GameTitle.Replace("%1", MainConfig.SpringieVersion);
-            title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
-			var password = config.Password;
+            var password = config.Password;
 
 			if (SpawnConfig != null)
 			{
@@ -474,6 +473,8 @@ namespace Springie.autohost
 				if (string.IsNullOrEmpty(SpawnConfig.Password)) password = "*";
 				else password = SpawnConfig.Password;
 			}
+            
+            title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
 
 			var version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
 			if (version != null) modname = version.InternalName;
@@ -1108,6 +1109,10 @@ namespace Springie.autohost
 
                     case "splitplayers":
                         ComSplitPlayers(e,words);
+                        break;
+
+                    case "votesplitplayers":
+                        StartVote(new VoteSplitPlayers(tas,spring,this),e,words);
                         break;
 
                     case "setengine":

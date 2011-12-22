@@ -50,11 +50,10 @@ namespace Fixer
 
       public static void FixDemoFiles() {
           var db = new ZkDataContext();
-          foreach (var sb in db.SpringBattles.Where(x => x.EngineVersion == "84.0")) {
-              var url = "http://springdemos.licho.eu/" + sb.ReplayFileName;
-
-          
+          foreach (var sb in db.SpringBattles) {
+              //sb.ReplayFileName = sb.ReplayFileName.Replace("http://springdemos.licho.eu/","http://zero-k.info/replays/");
           }
+          //db.SubmitChanges();
 
       }
 

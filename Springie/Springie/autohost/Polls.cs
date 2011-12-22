@@ -285,6 +285,41 @@ namespace Springie.autohost
     }
 
 
+    public class VoteSplitPlayers : AbstractPoll, IVotable
+    {
+
+        public VoteSplitPlayers(TasClient tas, Spring spring, AutoHost ah) : base(tas, spring, ah) { }
+
+        public bool Init(TasSayEventArgs e, string[] words)
+        {
+            ah.SayBattle("Do you want to split game into two? !vote 1 = yes, !vote 2 = no");
+            return true;
+        }
+
+        public bool Vote(TasSayEventArgs e, string[] words)
+        {
+            int vote;
+            if (!RegisterVote(e, words, out vote))
+            {
+                AutoHost.Respond(tas, spring, e, "You must vote valid option/not be a spectator");
+                return false;
+            }
+
+            int winVote;
+            if (CheckEnd(out winVote))
+            {
+                if (winVote == 1)
+                {
+                    ah.SayBattle("vote successful - splitting ");
+                    ah.ComSplitPlayers(TasSayEventArgs.Default, new string[] { });
+                }
+                else ah.SayBattle("not enough votes");
+                return true;
+            }
+            else return false;
+        }
+    }
+
     public class VoteForce: AbstractPoll, IVotable
     {
         public VoteForce(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
