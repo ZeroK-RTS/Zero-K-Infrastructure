@@ -3,8 +3,27 @@ unbindaction controlunit
 unbindaction groupselect
 unbindaction groupadd
 unbindaction trackmode 
-unbindaction track 
+unbindaction track
+unbindaction specteam
+
 unbind any+j mouse2
+
+bind ctrl+a select AllMap++_ClearSelection_SelectAll+
+bind ctrl+b select AllMap+_Builder_Not_Building_Not_Transport_Idle+_ClearSelection_SelectAll+
+bind ctrl+e select PrevSelection+_Not_RelativeHealth_30+_ClearSelection_SelectAll+
+bind ctrl+f select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Weapons_Not_NameContain_Vamp_Not_Radar+_ClearSelection_SelectAll+
+bind ctrl+g select AllMap+_NameContain_Vamp+_ClearSelection_SelectAll+
+bind ctrl+h select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_NameContain_Stiletto+_ClearSelection_SelectAll+
+bind ctrl+i select PrevSelection+_Idle+_ClearSelection_SelectAll+
+bind ctrl+r select AllMap+_Not_Builder_Not_Building+_ClearSelection_SelectAll+
+bind ctrl+s select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Radar+_ClearSelection_SelectAll+
+bind ctrl+t select AllMap+_Not_Builder_Not_Building_Transport_Aircraft+_ClearSelection_SelectAll+
+bind ctrl+shift+b select AllMap+_Builder_Not_Building_Idle+_ClearSelection_SelectOne+
+bind ctrl+w select AllMap+_Not_Builder_Not_Building_Not_Transport_Not_Aircraft_Weapons_Not_WeaponRange_600+_ClearSelection_SelectAll+
+bind ctrl+x select Visible+_InPrevSel+_ClearSelection_SelectAll+
+bind ctrl+z select AllMap+_InPrevSel_Not_Builder+_ClearSelection_SelectAll+
+
+bind ctrl+c selectcomm
 
 bind d oneclickwep
 bind Shift+d oneclickwep
@@ -16,8 +35,26 @@ bind alt+v controlunit
 bind any+j jump
 bind alt+t track
 
-
-
+bind meta+1  specteam 0  
+bind meta+2  specteam 1
+bind meta+3  specteam 2
+bind meta+4  specteam 3
+bind meta+5  specteam 4
+bind meta+6  specteam 5
+bind meta+7  specteam 6
+bind meta+8  specteam 7
+bind meta+9  specteam 8
+bind meta+0  specteam 9
+bind alt+meta+1  specteam 10
+bind alt+meta+2  specteam 11
+bind alt+meta+3  specteam 12
+bind alt+meta+4  specteam 13
+bind alt+meta+5  specteam 14
+bind alt+meta+6  specteam 15
+bind alt+meta+7  specteam 16
+bind alt+meta+8  specteam 17
+bind alt+meta+9  specteam 18
+bind alt+meta+0  specteam 19
 
 //
 //  DEFAULT UIKEYS.TXT FOR SPRING (0.73)
