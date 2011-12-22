@@ -29,7 +29,7 @@ namespace PlasmaDownloader
                 {
                     var paths = new List<string>();
 
-                    paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{{master}}{1}_minimal-portable+dedicated.zip",
+                    paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_minimal-portable+dedicated.zip",
                                             EngineDownloadPath,
                                             Name));
                     paths.Add(string.Format("{0}buildbot/default/develop/{1}/spring_{{develop}}{1}_minimal-portable+dedicated.zip",
