@@ -41,6 +41,17 @@ namespace ZeroKLobby
 		{
 			this.path = path;
 			Configure(false, DefaultLevel);
+            if (!Program.Conf.ResetUiKeysHack) {
+                foreach (var f in FileInfos.Where(x=>x.RelativePath == "uikeys.txt"))
+                {
+                    var target = Path.Combine(path, f.RelativePath);
+                        var data = ReadResourceString(string.Format("{0}{1}", f.Resource, DefaultLevel));
+                        if (data == null) data = ReadResourceString(f.Resource);
+                        ApplyFileChanges(target, data, f.MergeRegex);
+                }
+                Program.Conf.ResetUiKeysHack = true;
+                Program.SaveConfig();
+            }
 		}
 
 

@@ -136,7 +136,8 @@ namespace PlasmaShared
             springVersion = GetSpringVersion(Executable);
             // get spring verison does not work for dedicated
 
-            
+            Environment.SetEnvironmentVariable("SPRING_DATADIR", WritableDirectory, EnvironmentVariableTarget.Process);
+
             if (ov != springVersion  && SpringVersionChanged != null) SpringVersionChanged(this, EventArgs.Empty);
 
         }

@@ -307,6 +307,8 @@ namespace ZeroKLobby
         /// Keeps datetime of last topic change for each channel
         /// </summary>
         public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
+        [Browsable(false)]
+        public bool ResetUiKeysHack { get; set; }
         public Config() {}
 
 

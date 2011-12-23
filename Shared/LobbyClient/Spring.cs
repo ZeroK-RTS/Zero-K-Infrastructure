@@ -270,11 +270,12 @@ namespace LobbyClient
                 process.StartInfo.CreateNoWindow = true;
                 process.StartInfo.Arguments += string.Format("\"{0}\"", scriptPath);
 
+                if (!process.StartInfo.EnvironmentVariables.ContainsKey("SPRING_DATADIR")) process.StartInfo.EnvironmentVariables.Add("SPRING_DATADIR", paths.WritableDirectory);
+
                 if (UseDedicatedServer)
                 {
                     process.StartInfo.FileName = paths.DedicatedServer;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
-                    process.StartInfo.EnvironmentVariables.Add("SPRING_ISOLATED", paths.WritableDirectory);
                 }
                 else
                 {
@@ -283,8 +284,6 @@ namespace LobbyClient
                     process.StartInfo.Arguments += string.Format(" --config \"{0}\"", paths.GetSpringConfigPath());
                 }
                 
-                process.StartInfo.EnvironmentVariables.Add("SPRING_DATADIR", paths.WritableDirectory);
-
 
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;

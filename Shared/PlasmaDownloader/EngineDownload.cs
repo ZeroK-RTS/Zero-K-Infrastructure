@@ -44,6 +44,16 @@ namespace PlasmaDownloader
                         paths.Add(string.Format("{0}spring_{1}.zip", EngineDownloadPath, version));
                     }
 
+                    for (var i = 9; i >= -1; i--)
+                    {
+                        var version = Name;
+                        // if i==-1 we tested without version number
+                        if (i >= 0) version = string.Format("{0}.{1}", Name, i);
+                        paths.Add(string.Format("{0}buildbot/default/master/{1}/spring_{1}_minimal-portable+dedicated.zip",
+                                            EngineDownloadPath,
+                                            version));
+                    }
+
                     var source = paths.FirstOrDefault(VerifyFile);
                     var extension = ".zip";
 
