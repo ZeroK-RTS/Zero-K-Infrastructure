@@ -526,7 +526,8 @@ namespace ZeroKLobby.LuaMgr
 
         void addInstalledMods(Dictionary<string, ModInfoDb> allKnownMods)
         {
-            foreach (var modKey in allKnownMods.Keys) if (File.Exists(springHome + Path.DirectorySeparatorChar + allKnownMods[modKey].configOrderFilename)) mods.Add(modKey, allKnownMods[modKey]);
+            foreach (var modKey in allKnownMods.Keys) if (File.Exists(springHome + Path.DirectorySeparatorChar + allKnownMods[modKey].configOrderFilename)) 
+                if (!mods.ContainsKey(modKey)) mods.Add(modKey, allKnownMods[modKey]);
         }
 
         ArrayList getHeaderNamesInstalledByIds(List<int> luaIds)

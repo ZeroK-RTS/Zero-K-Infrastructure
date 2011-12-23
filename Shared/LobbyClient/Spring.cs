@@ -274,6 +274,7 @@ namespace LobbyClient
                 {
                     process.StartInfo.FileName = paths.DedicatedServer;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
+                    process.StartInfo.EnvironmentVariables.Add("SPRING_ISOLATED", paths.WritableDirectory);
                 }
                 else
                 {
