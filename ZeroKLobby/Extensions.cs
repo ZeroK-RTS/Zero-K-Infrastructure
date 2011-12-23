@@ -10,7 +10,7 @@ namespace ZeroKLobby
     {
         public static bool IsOfficial(this Battle b) {
             var gameInfo = KnownGames.GetGame(b.ModName);
-            if (gameInfo != null && gameInfo.IsPrimary && b.Founder.Cpu == 6666) return true;
+            if (gameInfo != null && gameInfo.IsPrimary && b.Founder.IsZkLobbyUser) return true;
             else return false;
         }
     }

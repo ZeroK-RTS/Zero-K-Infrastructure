@@ -134,7 +134,7 @@ namespace ZeroKLobby
                 {
                     if (user.IsAway) drawImage(Resources.AwayImage, 16, 16);
 										if (user.IsInGame) drawImage(Resources.ingame, 16, 16);
-                    if (user.Cpu==6666)
+                    if (user.IsZkLobbyUser)
                     {
 											drawImage(Resources.ZK_logo_square, 16, 16);
                     }

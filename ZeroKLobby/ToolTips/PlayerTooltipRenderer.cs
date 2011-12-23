@@ -93,7 +93,7 @@ namespace ZeroKLobby
                 drawString("Friend");
                 newLine();
             }
-            if (user.Cpu == 6666)
+            if (user.IsZkLobbyUser)
             {
 							drawImage(Resources.ZK_logo_square, 16, 16);
                 drawString("ZK Lobby (Windows) User");
@@ -151,7 +151,7 @@ namespace ZeroKLobby
             if (user.IsBot) h += 16; // bot icon
             if (user.IsAdmin) h += 16; // admin icon
             if (Program.FriendManager.Friends.Contains(user.Name)) h += 16; // friend icon
-            if (user.Cpu == 6666) h += 16; // SD icon
+            if (user.IsZkLobbyUser) h += 16; // SD icon
             if (!user.IsBot)
             {
                 h += 16; // rank text

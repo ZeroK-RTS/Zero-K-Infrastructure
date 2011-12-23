@@ -28,16 +28,17 @@ namespace Springie
 		public string IpOverride;
 		public int MaxInstances = 100;
 
-		public bool RedirectGameChat { get { return redirectGameChat; } set { redirectGameChat = value; } }
+	    public string DataDir { get; set; }
+
+	    public bool RedirectGameChat { get { return redirectGameChat; } set { redirectGameChat = value; } }
 
 		public string ServerHost { get { return serverHost; } set { serverHost = value; } }
 
 		public int ServerPort { get { return serverPort; } set { serverPort = value; } }
 
-		public int SpringCoreAffinity { get { return springCoreAffinity; } set { springCoreAffinity = value; } }
 		public string SpringVersion { get; set; }
 
 		public int RepoMasterRefresh { get { return 120; } }
-		public string PackageMasterUrl { get { return "http://repos.caspring.org/"; } }
+		public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
 	} ;
 }

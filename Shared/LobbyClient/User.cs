@@ -58,6 +58,7 @@ namespace LobbyClient
         public int Level { get; private set; }
 
         public int LobbyID;
+        public bool IsZkLobbyUser { get { return Cpu == 6666; } }
         public string Name { get; protected set; }
         public int Rank { get; protected set; }
 

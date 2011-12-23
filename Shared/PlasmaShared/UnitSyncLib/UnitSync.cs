@@ -26,36 +26,26 @@ namespace PlasmaShared.UnitSyncLib
 		Dictionary<uint, string> maps;
 		readonly string originalDirectory;
 
-		string writableDataDirectory;
 		public static string[] DependencyExceptions = new[]
 		                                              {
 		                                              	"Spring Bitmaps", "Spring Cursors", "Map Helper v1", "Spring content v1", "TA Content version 2",
 		                                              	"tatextures.sdz", "TA Textures v0.62", "tacontent.sdz", "springcontent.sdz", "cursors.sdz"
 		                                              };
 
-		public string UnitSyncPath { get; private set; }
+        public string Version { get; set; }
 
-		public string Version { get; set; }
+        SpringPaths paths;
 
-
-		public string WritableDataDirectory
+		public UnitSync(SpringPaths springPaths)
 		{
-			get
-			{
-				if (writableDataDirectory == null) writableDataDirectory = GetWritableDataDirectory();
-				return writableDataDirectory;
-			}
-			set { writableDataDirectory = value; }
-		}
-
-		public UnitSync(string path)
-		{
-			if (!Directory.Exists(path)) throw new UnitSyncException("Directory not found");
-			UnitSyncPath = path;
+            paths = springPaths;
 			originalDirectory = Directory.GetCurrentDirectory();
-			Directory.SetCurrentDirectory(path);
-			if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
+			Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
+            Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);
+            //Environment.SetEnvironmentVariable("SPRING_ISOLATED", paths.WritableDirectory, EnvironmentVariableTarget.Process);
+            if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
 			Version = NativeMethods.GetSpringVersion();
+            var writ = NativeMethods.GetWritableDataDirectory();
 			TraceErrors();
 		}
 
@@ -560,10 +550,6 @@ namespace PlasmaShared.UnitSyncLib
 			for (var i = 0; i < NativeMethods.GetUnitCount(); i++) yield return new UnitInfo(NativeMethods.GetUnitName(i), NativeMethods.GetFullUnitName(i));
 		}
 
-		string GetWritableDataDirectory()
-		{
-			return NativeMethods.GetWritableDataDirectory();
-		}
 
 
 		ListOption LoadListOption(int optionIndex, int itemIndex)

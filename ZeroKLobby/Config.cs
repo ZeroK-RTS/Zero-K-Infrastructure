@@ -326,7 +326,7 @@ namespace ZeroKLobby
 
 
         [Browsable(false)]
-        public string PackageMasterUrl { get { return "http://repos.caspring.org/"; } }
+        public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
     }
 
 

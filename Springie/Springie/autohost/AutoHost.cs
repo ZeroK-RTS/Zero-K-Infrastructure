@@ -72,17 +72,17 @@ namespace Springie.autohost
 			this.hostingPort = hostingPort;
 
             // hacky springpaths handling, fix/improve
-			springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), Program.main.Config.SpringVersion, null);//temp spring paths for settings load
+			springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), Program.main.Config.SpringVersion, Program.main.Config.DataDir);//temp spring paths for settings load
             LoadConfig();
 			SaveConfig();
 
             
             if (!string.IsNullOrEmpty(config.SpringVersion))
 		    {
-                springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(config.SpringVersion), config.SpringVersion);
+                springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(config.SpringVersion), config.SpringVersion, Program.main.Config.DataDir);
 
 		    } else {
-                springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), Program.main.Config.SpringVersion);
+                springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), Program.main.Config.SpringVersion, Program.main.Config.DataDir);
             }
 
             Program.main.paths.SpringVersionChanged += (s, e) =>
@@ -199,10 +199,10 @@ namespace Springie.autohost
                 if (version != null)
                 {
                     var latest = version.InternalName;
-                    if (cache.GetResourceDataByInternalName(latest) != null)
+                    if (!string.IsNullOrEmpty(latest) && cache.GetResourceDataByInternalName(latest) != null)
                     {
                         var b = tas.MyBattle;
-                        if (!string.IsNullOrEmpty(latest) && b != null && b.ModName != latest)
+                        if (b != null && b.ModName != latest)
                         {
                             config.DefaultMod = latest;
                             if (!spring.IsRunning)
@@ -477,7 +477,7 @@ namespace Springie.autohost
             title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
 
 			var version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
-			if (version != null) modname = version.InternalName;
+			if (version != null && cache.GetResourceDataByInternalName(version.InternalName) != null) modname = version.InternalName;
 
             hostedMod = new Mod();
             cache.GetMod(modname, (m) => { hostedMod = m; }, (m) => { }, springPaths.SpringVersion);
@@ -808,7 +808,7 @@ namespace Springie.autohost
 				SaveConfig();
 			}
 
-			spring.StartGame(tas, Program.main.Config.HostingProcessPriority, Program.main.Config.SpringCoreAffinity, null);
+			spring.StartGame(tas, Program.main.Config.HostingProcessPriority, null, null);
 		}
 
 		void tas_Said(object sender, TasSayEventArgs e)

@@ -742,7 +742,7 @@ namespace PlasmaShared
                 unitSyncAttemptedFolder = springPaths.UnitSyncDirectory;
                 try
                 {
-                    unitSync = new UnitSync(springPaths.UnitSyncDirectory);
+                    unitSync = new UnitSync(springPaths);
                 }
                 catch (Exception ex)
                 {

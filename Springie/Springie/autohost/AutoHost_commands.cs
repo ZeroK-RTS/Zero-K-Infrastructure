@@ -25,7 +25,7 @@ namespace Springie.autohost
             foreach (var p in tas.MyBattle.Users)
             {
                 if (p.IsSpectator) continue;
-                if (p.SyncStatus != SyncStatuses.Synced) usname.Add(p.Name);
+                if (p.SyncStatus != SyncStatuses.Synced && p.LobbyUser.IsZkLobbyUser) usname.Add(p.Name);
             }
             return usname.Count == 0;
         }
