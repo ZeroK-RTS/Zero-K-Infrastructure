@@ -658,6 +658,7 @@ local function ExecuteTrigger(trigger, frame)
              action.logicType == "MarkerPointAction" or 
              action.logicType == "SetCameraPointTargetAction" or 
              action.logicType == "GuiMessageAction" or
+			 action.logicType == "GuiMessagePersistentAction" or
              action.logicType == "SoundAction" or 
              action.logicType == "SunriseAction" or 
              action.logicType == "SunsetAction" then

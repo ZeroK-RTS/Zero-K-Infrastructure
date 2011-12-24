@@ -7,6 +7,7 @@ namespace CMissionLib
 	{
 		public RepeatOrder(int mode) : base(mode)
 		{
+            //get { return "Repeat"; }
 		}
 
 		public override string Name

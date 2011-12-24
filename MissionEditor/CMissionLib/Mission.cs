@@ -323,6 +323,15 @@ namespace CMissionLib
 							zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
 						}
 					}
+                    else if (item is GuiMessagePersistentAction)
+                    {
+                        var action = (GuiMessagePersistentAction)item;
+                        if (!String.IsNullOrEmpty(action.ImagePath))
+                        {
+                            if (!File.Exists(action.ImagePath)) throw new Exception("Image not found: " + action.ImagePath);
+                            zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
+                        }
+                    }
 					else if (item is SoundAction)
 					{
 						var action = (SoundAction)item;

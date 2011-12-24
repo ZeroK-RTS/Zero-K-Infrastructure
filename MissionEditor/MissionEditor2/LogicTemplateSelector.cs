@@ -24,7 +24,8 @@ namespace MissionEditor2
 			else if (item is PlayerDiedCondition) resourceName = "playerDiedConditionTemplate";
 			else if (item is VictoryAction) resourceName = "victoryActionTemplate";
 			else if (item is DefeatAction) resourceName = "defeatActionTemplate";
-			else if (item is GuiMessageAction) resourceName = "guiMessageTemplate";
+            else if (item is GuiMessageAction) resourceName = "guiMessageTemplate";
+            else if (item is GuiMessagePersistentAction) resourceName = "guiMessagePersistentTemplate";
 			else if (item is UnitDestroyedCondition) resourceName = "unitDestroyedTemplate";
 			else if (item is DummyCondition || item is DummyAction || item is ConditionsFolder || item is ActionsFolder) resourceName = "dummyTemplate";
 			else if (item is SunriseAction) resourceName = "sunriseTemplate";

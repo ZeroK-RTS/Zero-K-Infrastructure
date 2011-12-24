@@ -158,7 +158,16 @@
                             <Label DockPanel.Dock="Left" Content="{Binding Width, Mode=TwoWay}" />
                             <Slider Minimum="0" Maximum="1000" Value="{Binding Width, Mode=TwoWay}" />
                         </DockPanel>
-
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Message Box Height:</Label>
+                            <Label DockPanel.Dock="Left" Content="{Binding Height, Mode=TwoWay}" />
+                            <Slider Minimum="0" Maximum="1000" Value="{Binding Height, Mode=TwoWay}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Font Size:</Label>
+                            <Label DockPanel.Dock="Left" Content="{Binding FontSize, Mode=TwoWay}" />
+                            <Slider Minimum="8" Maximum="72" Value="{Binding FontSize, Mode=TwoWay}" />
+                        </DockPanel>                        
                         <Label>Image:</Label>
                         <Viewbox Width="150" Height="150">
                             <Grid>
@@ -168,6 +177,63 @@
                             </Grid>
                         </Viewbox>
                         <Button Loaded="GuiMessageButtonLoaded" Tag="{Binding}">Select</Button>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Description">
+                    <TextBlock TextWrapping="WrapWithOverflow">
+                        This action displays a box with the message and/or the image. You can define any of the two, or both.
+                    </TextBlock>
+                </GroupBox>
+            </Grid>
+        </DataTemplate>
+
+        <!-- ======== GuiMessagePersistent Template ======== -->
+
+        <DataTemplate x:Key="guiMessagePersistentTemplate">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <GroupBox Header="Settings">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label>Message</Label>
+                            <TextBox Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
+                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="20" TextWrapping="Wrap" />
+                        </Grid>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Message Box Width:</Label>
+                            <Label DockPanel.Dock="Left" Content="{Binding Width, Mode=TwoWay}" />
+                            <Slider Minimum="0" Maximum="1000" Value="{Binding Width, Mode=TwoWay}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Message Box Height:</Label>
+                            <Label DockPanel.Dock="Left" Content="{Binding Height, Mode=TwoWay}" />
+                            <Slider Minimum="0" Maximum="1000" Value="{Binding Height, Mode=TwoWay}" />
+                        </DockPanel>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Font Size:</Label>
+                            <Label DockPanel.Dock="Left" Content="{Binding FontSize, Mode=TwoWay}" />
+                            <Slider Minimum="8" Maximum="72" Value="{Binding FontSize, Mode=TwoWay}" />
+                        </DockPanel>
+                        <Label>Image:</Label>
+                        <Viewbox Width="150" Height="150">
+                            <Grid>
+                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.FontSize="12">?</TextBlock>
+                                <!--if the image is found, it will hide the question mark-->
+                                <Image Source="{Binding ImagePath}" />
+                            </Grid>
+                        </Viewbox>
+                        <Button Loaded="GuiMessagePersistentButtonLoaded" Tag="{Binding}">Select</Button>
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description">

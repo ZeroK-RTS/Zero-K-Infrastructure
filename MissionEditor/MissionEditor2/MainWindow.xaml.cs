@@ -124,6 +124,8 @@ namespace MissionEditor2
 							}
 						};
 				};
+            String GuiMessagePersistentDesc = "Hello!\nI differ from the regular GUI message in that I can't pause the game, have no close button, and there can be only one of me!\nI require a Chili widget to work!";
+
 			addAction("Allow Unit Transfers", () => new AllowUnitTransfersAction());
 			addAction("Cancel Countdown", () => new CancelCountdownAction(Mission.Countdowns.FirstOrDefault()));
 			addAction("Cause Defeat", () => new DefeatAction());
@@ -154,6 +156,7 @@ namespace MissionEditor2
 			addAction("Send Scores", () => new SendScoreAction());
 			addAction("Show Console Message", () => new ConsoleMessageAction("Hello!"));
 			addAction("Show GUI Message", () => new GuiMessageAction("Hello!"));
+            addAction("Show GUI Message (Persistent)", () => new GuiMessagePersistentAction(GuiMessagePersistentDesc));
 			addAction("Show Marker Point", () => new MarkerPointAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
 			addAction("Start Countdown", () => new StartCountdownAction(GetNewCountdownName()));
 			addAction("Transfer Units", () => new TransferUnitsAction(Mission.Players.First()));
@@ -468,6 +471,21 @@ namespace MissionEditor2
 					}
 				};
 		}
+
+        void GuiMessagePersistentButtonLoaded(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)e.Source;
+            button.Click += delegate
+            {
+                var filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG|All files (*.*)|*.*";
+                var dialog = new OpenFileDialog { Filter = filter, RestoreDirectory = true };
+                if (dialog.ShowDialog() == true)
+                {
+                    var action = (GuiMessagePersistentAction)button.Tag;
+                    action.ImagePath = dialog.FileName;
+                }
+            };
+        }
 
 		void UnitDestroyedGroupsListLoaded(object sender, RoutedEventArgs e)
 		{

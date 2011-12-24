@@ -12,6 +12,8 @@ namespace CMissionLib.Actions
 		string imagePath;
 		string message;
 		int width = 400;
+        int height = 300;
+        int fontSize = 14;
 
 		public GuiMessageAction(string message)
 		{
@@ -55,6 +57,27 @@ namespace CMissionLib.Actions
 			}
 		}
 
+        [DataMember]
+        public int Height
+        {
+            get { return height; }
+            set
+            {
+                height = value;
+                RaisePropertyChanged("Height");
+            }
+        }
+
+        [DataMember]
+        public int FontSize
+        {
+            get { return fontSize; }
+            set
+            {
+                fontSize = value;
+                RaisePropertyChanged("FontSize");
+            }
+        }
 		public override LuaTable GetLuaTable(Mission mission)
 		{
 			if (string.IsNullOrEmpty(imagePath) || !File.Exists(ImagePath))
@@ -63,7 +86,9 @@ namespace CMissionLib.Actions
 					{
 						{"message", message},
 						{"width", Width},
+                        {"height", Height},
 						{"pause", Pause},
+                        {"fontSize", FontSize},
 					};
 				return new LuaTable(map);
 			}
@@ -77,6 +102,7 @@ namespace CMissionLib.Actions
 						{"imageWidth", image.PixelWidth},
 						{"imageHeight", image.PixelHeight},
 						{"pause", Pause},
+                        {"fontSize", FontSize},
 					};
 				return new LuaTable(map);
 			}

@@ -34,15 +34,20 @@ function MissionEvent(e)
         text = e.message,
         width = e.imageWidth,
         height = e.imageHeight,
+		fontsize = e.fontSize,
         pause = e.pause,
       }
     else
       if WG.ShowMessageBox then
-        WG.ShowMessageBox(e.message, e.width, e.pause)
+        WG.ShowMessageBox(e.message, e.width, e.height, e.fontSize, e.pause)
       else
-        WG.Message:Show{text = e.message, width = e.width, pause = e.pause}
+        WG.Message:Show{text = e.message, width = e.width, height = e.height, fontsize = e.fontSize, pause = e.pause}
       end
     end
+  elseif e.logicType == "GuiMessagePersistentAction" then
+      if WG.ShowPersistentMessageBox then
+        WG.ShowPersistentMessageBox(e.message, e.width, e.height, e.fontSize, (e.image and "LuaUI/Images/"..e.image) or nil)
+      end
   elseif e.logicType == "PauseAction" then
     Spring.SendCommands"pause"
   elseif e.logicType == "MarkerPointAction" then
