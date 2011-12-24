@@ -12,6 +12,8 @@ unbind any+j mouse2
 bind ctrl+a select AllMap++_ClearSelection_SelectAll+
 bind ctrl+b select AllMap+_Builder_Not_Building_Not_Transport_Idle+_ClearSelection_SelectAll+
 bind ctrl+e select PrevSelection+_Not_RelativeHealth_30+_ClearSelection_SelectAll+
+bind ctrl+f select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Weapons_Not_NameContain_Vamp_Not_Radar+_ClearSelection_SelectAll+
+bind ctrl+g select AllMap+_NameContain_Vamp+_ClearSelection_SelectAll+
 bind ctrl+i select PrevSelection+_Idle+_ClearSelection_SelectAll+
 bind ctrl+r select AllMap+_Not_Builder_Not_Building+_ClearSelection_SelectAll+
 bind ctrl+s select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Radar+_ClearSelection_SelectAll+
