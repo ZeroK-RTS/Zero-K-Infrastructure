@@ -308,7 +308,7 @@ namespace ZeroKLobby
         /// </summary>
         public SerializableDictionary<string, DateTime> Topics = new SerializableDictionary<string, DateTime>();
         [Browsable(false)]
-        public bool ResetUiKeysHack { get; set; }
+        public bool ResetUiKeysHack2 { get; set; }
         public Config() {}
 
 

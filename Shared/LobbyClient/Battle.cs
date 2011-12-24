@@ -175,7 +175,7 @@ namespace LobbyClient
                     script.AppendFormat("  IsHost=1;\n");
                     script.AppendLine();
 
-                    script.AppendFormat("  MyPlayerName={0};\n", localUser.Name);
+                    //script.AppendFormat("  MyPlayerName={0};\n", localUser.Name);
 
                     var positions = map.Positions != null ? map.Positions.ToList() : new List<StartPos>();
                     if (Details.StartPos == BattleStartPos.Random) positions = positions.Shuffle();
@@ -215,7 +215,7 @@ namespace LobbyClient
                         var userNum = 0;
                         var teamNum = 0;
                         var aiNum = 0;
-                        foreach (var u in Users.OrderBy(x => x.TeamNumber))
+                        foreach (var u in Users.OrderBy(x => x.TeamNumber).Where(x=>x.Name!=localUser.Name))
                         {
                             ScriptAddUser(script, userNum, playersExport, startSetup, teamNum, u);
 
