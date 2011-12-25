@@ -61,6 +61,8 @@ namespace LobbyClient
         public int Rank { get; set; }
         public Dictionary<int, BattleRect> Rectangles { get; set; }
         public List<string> ScriptTags = new List<string>();
+        public string EngineName = "spring";
+        public string EngineVersion { get; set; }
         public int SpectatorCount { get; set; }
         public string Title { get; set; }
 
@@ -79,11 +81,12 @@ namespace LobbyClient
         }
 
 
-        public Battle(string password, int port, int maxplayers, int rank, Map map, string title, Mod mod, BattleDetails details): this()
+        public Battle(string engineVersion, string password, int port, int maxplayers, int rank, Map map, string title, Mod mod, BattleDetails details): this()
         {
             if (!String.IsNullOrEmpty(password)) Password = password;
             if (port == 0) HostPort = 8452;
             else HostPort = port;
+            EngineVersion = engineVersion;
             MaxPlayers = maxplayers;
             Rank = rank;
             this.map = map;

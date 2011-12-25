@@ -105,9 +105,7 @@ namespace ZeroKLobby.Notifications
 
 					Program.Downloader.GetResource(DownloadType.MAP, battle.MapName);
 					Program.Downloader.GetResource(DownloadType.MOD, battle.ModName);
-					var match = Regex.Match(battle.Title, "\\[engine([^\\]]+)\\].*");
-					if (match.Success) engineVersionNeeded = match.Groups[1].Value;
-					else engineVersionNeeded = client.ServerSpringVersion;
+					engineVersionNeeded = battle.EngineVersion;
 					if (engineVersionNeeded != Program.SpringPaths.SpringVersion) Program.Downloader.GetAndSwitchEngine(engineVersionNeeded);
 					else engineVersionNeeded = null;
 

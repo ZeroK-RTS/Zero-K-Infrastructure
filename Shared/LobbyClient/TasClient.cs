@@ -518,7 +518,7 @@ namespace LobbyClient
             var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
             var h = "0";
             if (nic != null) h = nic.GetPhysicalAddress().GetAddressBytes().GetHashCode().ToString("x").ToUpper();
-            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), mhz, localIp, appName, "\t" + h, "\ta sp");
+            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), mhz, localIp, appName, "\t" + h, "\ta sp eb");
         }
 
 
@@ -540,6 +540,8 @@ namespace LobbyClient
                               MyBattle.ModHash,
                               MyBattle.Rank,
                               MyBattle.MapHash,
+                              MyBattle.EngineName,
+                              MyBattle.EngineVersion,
                               MyBattle.MapName,
                               '\t' + MyBattle.Title,
                               '\t' + MyBattle.ModName
@@ -552,7 +554,7 @@ namespace LobbyClient
             mapChecksumToChangeTo = MyBattle.MapHash.Value;
             lockToChangeTo = false;
 
-            con.SendCommand("OPENBATTLE", objList.ToArray());
+            con.SendCommand("OPENBATTLEEX", objList.ToArray());
 
             lastSpectatorCount = 0;
 
@@ -1132,10 +1134,10 @@ namespace LobbyClient
                     }
                         break;
 
-                    case "BATTLEOPENED":
+                    case "BATTLEOPENEDEX":
                     {
                         var mapHash = args[9];
-                        var rest = Utils.Glue(args, 10).Split('\t');
+                        var rest = Utils.Glue(args, 12).Split('\t');
                         var mapName = rest[0];
                         var modName = rest[2];
                         if (!IsBattleVisible(modName)) break;
@@ -1149,7 +1151,10 @@ namespace LobbyClient
                                             HostPort = Int32.Parse(args[5]),
                                             MaxPlayers = Int32.Parse(args[6]),
                                             Password = args[7] != "1" ? "*" : "apassword",
-                                            Rank = Int32.Parse(args[8])
+                                            Rank = Int32.Parse(args[8]),
+                                            EngineVersion = args[11],
+                                            EngineName = args[10]
+                                            
                                         };
 
                         if (newBattle.Founder.Name == username) newBattle.Ip = localIp; // lobby can send wahtever, betteroverride here

@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Timers;
 using System.Xml.Serialization;
 using LobbyClient;
@@ -55,13 +57,26 @@ namespace Springie
 			lock (autoHosts)
 			{
 				var usedPorts = autoHosts.ToDictionary(x => x.hostingPort);
-				var freePort = Enumerable.Range(Config.HostingPortStart, Config.MaxInstances).FirstOrDefault(x => !usedPorts.ContainsKey(x));
+				var freePort = Enumerable.Range(Config.HostingPortStart, Config.MaxInstances).FirstOrDefault(x => !usedPorts.ContainsKey(x) && VerifyUdpSocket(x));
 				return freePort;
 			}
 		}
 
+        public static bool VerifyUdpSocket(int port) {
+            try
+            {
+                using (var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+                {
+                    var endpoint = new IPEndPoint(IPAddress.Loopback, port);
+                    sock.ExclusiveAddressUse = true;
+                    sock.Bind(endpoint);
+                }
+            } catch {return false;}
+            return true;            
+        }
 
-		public void LoadConfig()
+
+	    public void LoadConfig()
 		{
 			Config = new MainConfig();
 			if (File.Exists(RootWorkPath + '/' + ConfigMain))

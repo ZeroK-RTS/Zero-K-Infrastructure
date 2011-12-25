@@ -218,7 +218,7 @@ namespace ZeroKLobby.MicroLobby
         g.SetClip(new Rectangle(0, 0, Width, Height));
         var y = 3;
         g.DrawString(Battle.Title, TitleFont, TextBrush, MapCellSize.Width, y + 16*0);
-        g.DrawString(Battle.ModName, ModFont, TextBrush, MapCellSize.Width, y + 16*1);
+        g.DrawString(string.Format("{0}     {1}{2}", Battle.ModName, Battle.EngineName, Battle.EngineVersion), ModFont, TextBrush, MapCellSize.Width, y + 16*1);
         g.DrawImageUnscaled(playersBoxImage, MapCellSize.Width, y + 16*2);
         g.ResetClip();
       }

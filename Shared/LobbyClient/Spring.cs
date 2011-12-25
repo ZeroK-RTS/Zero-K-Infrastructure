@@ -268,21 +268,26 @@ namespace LobbyClient
 
                 process = new Process();
                 process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.Arguments += string.Format("\"{0}\"", scriptPath);
 
-                if (!process.StartInfo.EnvironmentVariables.ContainsKey("SPRING_DATADIR")) process.StartInfo.EnvironmentVariables.Add("SPRING_DATADIR", paths.WritableDirectory);
+                process.StartInfo.Arguments += string.Format("--config \"{0}\"", paths.GetSpringConfigPath());    
+                process.StartInfo.EnvironmentVariables["SPRING_DATADIR"]= paths.WritableDirectory;
+                
 
                 if (UseDedicatedServer)
                 {
+                    process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = paths.WritableDirectory;
                     process.StartInfo.FileName = paths.DedicatedServer;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
+                    process.StartInfo.Arguments += string.Format("-i --isolation-dir \"{0}\"", paths.WritableDirectory);
                 }
                 else
                 {
                     process.StartInfo.FileName = paths.Executable;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
-                    process.StartInfo.Arguments += string.Format(" --config \"{0}\"", paths.GetSpringConfigPath());
+                    
                 }
+
+                process.StartInfo.Arguments += string.Format(" \"{0}\"", scriptPath);
                 
 
                 process.StartInfo.UseShellExecute = false;

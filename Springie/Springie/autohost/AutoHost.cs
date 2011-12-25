@@ -474,7 +474,7 @@ namespace Springie.autohost
 				else password = SpawnConfig.Password;
 			}
             
-            title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
+            //title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);
 
 			var version = Program.main.Downloader.PackageDownloader.GetByTag(modname);
 			if (version != null && cache.GetResourceDataByInternalName(version.InternalName) != null) modname = version.InternalName;
@@ -487,7 +487,7 @@ namespace Springie.autohost
             cache.GetMap(mapname, (m,x,y,z) => { mapi = m; }, (e) => { } , springPaths.SpringVersion);
 			int mint, maxt;
 
-			var b = new Battle(password,
+			var b = new Battle(springPaths.SpringVersion, password,
 			                   hostingPort,
 			                   config.MaxPlayers,
 			                   config.MinRank,
