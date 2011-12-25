@@ -1,6 +1,7 @@
 ﻿﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+﻿using System.Data.Linq.SqlClient;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -23,7 +24,8 @@ namespace ZeroKWeb.Controllers
 			           	{
 			           		Day = x.Key,
 			           		PlayersAndSpecs = x.SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
-			           		Players = players,
+			           		//Players = players,
+                            PwPlayers = x.Where(y => SqlMethods.Like(y.Account.Name,"PlanetWars%")).SelectMany(y => y.SpringBattlePlayers).Select(z => z.AccountID).Distinct().Count(),
 			           		MinutesPerPlayer = x.Sum(y => y.Duration*y.PlayerCount)/60/players,
 										FirstGamePlayers = x.SelectMany(y=>y.SpringBattlePlayers).GroupBy(y=>y.Account).Where(y=>y.Any(z=>z == y.Key.SpringBattlePlayers.First())).Count()
 			           	};
@@ -34,7 +36,8 @@ namespace ZeroKWeb.Controllers
 			chart.AddLegend("Daily values", "dps");
 
 			chart.AddSeries("unique players+specs", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PlayersAndSpecs), legend: "dps");
-			chart.AddSeries("unique players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.Players), legend: "dps");
+            chart.AddSeries("PW players+specs", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.PwPlayers), legend: "dps");
+			//chart.AddSeries("unique players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.Players), legend: "dps");
 			chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.MinutesPerPlayer), legend: "dps");
 			chart.AddSeries("new players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.FirstGamePlayers), legend: "dps");
 
