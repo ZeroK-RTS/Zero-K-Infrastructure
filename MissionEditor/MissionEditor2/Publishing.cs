@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using CMissionLib;
 using MissionEditor2.Properties;
+using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
 using Binary = System.Data.Linq.Binary;
@@ -71,16 +72,17 @@ namespace MissionEditor2
 				var missionFileName = "publish_mission_temp.sdz";
 				try
 				{
-					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(Settings.Default.SpringPath))
+                    var paths = new SpringPaths(Settings.Default.SpringPath);
+                    using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(paths))
 					{
-						var modPath = Path.Combine(unitSync.WritableDataDirectory, "mods");
+						var modPath = Path.Combine(paths.WritableDirectory, "mods");
 						tempPath = Path.Combine(modPath, missionFileName);
 					}
 					if (File.Exists(tempPath)) File.Delete(tempPath);
 					mission.CreateArchive(tempPath);
 
 					PlasmaShared.UnitSyncLib.Mod mod;
-					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(Settings.Default.SpringPath))
+					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(paths))
 					{
 						mod = unitSync.GetModFromArchive(missionFileName);
 						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");

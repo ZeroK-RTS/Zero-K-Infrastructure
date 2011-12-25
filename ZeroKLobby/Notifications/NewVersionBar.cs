@@ -24,9 +24,9 @@ namespace ZeroKLobby.Notifications
 
 			if (ApplicationDeployment.IsNetworkDeployed && (deployment = ApplicationDeployment.CurrentDeployment) != null)
 			{
-        deployment.UpdateCompleted += deployment_UpdateCompleted;
+                deployment.UpdateCompleted += deployment_UpdateCompleted;
 				deployment.UpdateProgressChanged += deployment_UpdateProgressChanged;
-				timer = new Timer(timer_Tick, null, TimeSpan.FromMinutes(20), TimeSpan.FromMinutes(20));
+				timer = new Timer(timer_Tick, null, TimeSpan.FromMinutes(15), TimeSpan.FromSeconds(10));
 			}
 
 			else Trace.TraceError("Zero-K not installed propery - get latest version from http://zero-k.info/");
