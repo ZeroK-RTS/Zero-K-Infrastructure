@@ -66,6 +66,7 @@ namespace LobbyClient
         Dictionary<string, BattlePlayerResult> statsPlayers = new Dictionary<string, BattlePlayerResult>();
         Talker talker;
         readonly Timer timer = new Timer(20000);
+        bool wasKilled = false;
         public int Duration { get { return battleResult.Duration; } }
 
         public DateTime GameEnded { get { return battleResult.StartTime.AddSeconds(battleResult.Duration).ToLocalTime(); } }
@@ -120,8 +121,6 @@ namespace LobbyClient
         {
             if (IsRunning) talker.SendText(string.Format("/adduser {0} {1}", name, scriptPassword));
         }
-
-        bool wasKilled = false;
 
         public void ExitGame()
         {
@@ -180,11 +179,10 @@ namespace LobbyClient
         /// <returns>generates script</returns>
         public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride)
         {
-
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException("Spring or dedicated server executable not found");
 
             this.client = client;
-            this.wasKilled = false;
+            wasKilled = false;
 
             if (!IsRunning)
             {
@@ -216,7 +214,7 @@ namespace LobbyClient
                     battleGuid = Guid.NewGuid();
                     var service = new ContentService() { Proxy = null };
                     SpringBattleStartSetup startSetup = null;
-                    if (GlobalConst.IsZkMod(client.MyBattle.ModName))
+                    if (isHosting && GlobalConst.IsZkMod(client.MyBattle.ModName))
                     {
                         try
                         {
@@ -269,9 +267,8 @@ namespace LobbyClient
                 process = new Process();
                 process.StartInfo.CreateNoWindow = true;
 
-                process.StartInfo.Arguments += string.Format("--config \"{0}\"", paths.GetSpringConfigPath());    
-                process.StartInfo.EnvironmentVariables["SPRING_DATADIR"]= paths.WritableDirectory;
-                
+                process.StartInfo.Arguments += string.Format("--config \"{0}\"", paths.GetSpringConfigPath());
+                process.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = paths.WritableDirectory;
 
                 if (UseDedicatedServer)
                 {
@@ -284,7 +281,6 @@ namespace LobbyClient
                 {
                     process.StartInfo.FileName = paths.Executable;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
-                    
                 }
 
                 process.StartInfo.Arguments += string.Format(" \"{0}\"", scriptPath);
@@ -370,7 +366,8 @@ namespace LobbyClient
                             return true;
                         }
                     }
-                } catch {}
+                }
+                catch {}
             }
             return false;
         }
@@ -418,7 +415,7 @@ namespace LobbyClient
                 {
                     var line = cycleline;
                     var gameframe = 0;
-                    if (line.StartsWith("[DedicatedServer]")) line = line.Replace("[DedicatedServer] ","");
+                    if (line.StartsWith("[DedicatedServer]")) line = line.Replace("[DedicatedServer] ", "");
 
                     if (line.StartsWith("["))
                     {
@@ -552,7 +549,8 @@ namespace LobbyClient
             try
             {
                 if (!process.WaitForExit(2000)) process.Kill();
-            } catch  {}
+            }
+            catch {}
 
             process = null;
             talker.Close();
@@ -576,7 +574,6 @@ namespace LobbyClient
 
         void talker_SpringEvent(object sender, Talker.SpringEventArgs e)
         {
-
             //this.client.Say(TasClient.SayPlace.Battle, "",string.Format("type:{0} param:{1} player:{2}-{3} text:{4}",e.EventType.ToString(), e.Param,e.PlayerNumber, e.PlayerName, e.Text),false);
             try
             {
