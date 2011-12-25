@@ -77,13 +77,8 @@ namespace Springie.autohost
 			SaveConfig();
 
             
-            if (!string.IsNullOrEmpty(config.SpringVersion))
-		    {
-                springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(config.SpringVersion), config.SpringVersion, Program.main.Config.DataDir);
-
-		    } else {
-                springPaths = new SpringPaths(Path.GetDirectoryName(Program.main.Config.ExecutableName), Program.main.Config.SpringVersion, Program.main.Config.DataDir);
-            }
+            var version = !string.IsNullOrEmpty(config.SpringVersion) ? config.SpringVersion : Program.main.paths.SpringVersion;
+            springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), version, Program.main.Config.DataDir);
 
             Program.main.paths.SpringVersionChanged += (s, e) =>
             {
