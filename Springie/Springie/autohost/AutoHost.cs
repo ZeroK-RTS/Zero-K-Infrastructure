@@ -77,7 +77,7 @@ namespace Springie.autohost
 			SaveConfig();
 
             
-            var version = !string.IsNullOrEmpty(config.SpringVersion) ? config.SpringVersion : Program.main.paths.SpringVersion;
+            var version = !string.IsNullOrEmpty(config.SpringVersion) ? config.SpringVersion : Program.main.Config.SpringVersion;
             springPaths = new SpringPaths(Program.main.paths.GetEngineFolderByVersion(version), version, Program.main.Config.DataDir);
 
             Program.main.paths.SpringVersionChanged += (s, e) =>
