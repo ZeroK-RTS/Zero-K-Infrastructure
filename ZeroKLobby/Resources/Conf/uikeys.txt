@@ -32,7 +32,8 @@ bind alt+b debug
 bind t resurrect
 bind shift+t resurrect
 bind alt+v controlunit
-bind any+j jump
+bind j jump
+bind shift+j jump
 bind alt+t track
 
 bind meta+1  specteam 0  
