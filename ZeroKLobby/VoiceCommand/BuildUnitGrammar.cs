@@ -9,12 +9,13 @@ namespace ZeroKLobby.VoiceCommand
 	 * examples:
 	 * - build a bandit
 	 * - make 20 drones and repeat
+	 * - build one weaver now
 	 */
-	
 
-	class BuildUnitGrammar: ZkGrammar
+
+	class BuildUnitGrammar : ZkGrammar
 	{
-		const int MAX_ORDERS = 1000;
+		const int MAX_ORDERS = 50;
 
 
 		// todo: don't hardcode
@@ -202,9 +203,16 @@ namespace ZeroKLobby.VoiceCommand
 				var grammarBuilder = new GrammarBuilder();
 
 				grammarBuilder.Append(verb);
+
 				grammarBuilder.Append(new SemanticResultKey("number", numbers));
 				grammarBuilder.Append(new SemanticResultKey("unit", units));
-				grammarBuilder.Append(new SemanticResultKey("repeat", " and repeat"), 0, 1);
+
+				var modifier = new Choices();
+				modifier.Add(new SemanticResultKey("repeat", " and repeat"));
+				modifier.Add(new SemanticResultKey("insert", "now"));
+				modifier.Add(new SemanticResultKey("insert", "fast"));
+				modifier.Add(new SemanticResultKey("insert", "first"));
+				grammarBuilder.Append(modifier, 0, 1);
 
 				return grammarBuilder;
 			}
@@ -221,7 +229,9 @@ namespace ZeroKLobby.VoiceCommand
 			{
 				unitName = Pluralizer.ToPlural(unitName);
 			}
-			var reply = string.Format(result.Semantics.ContainsKey("repeat") ? "Build {0} {1} and repeat, aye aye!" : "Build {0} {1}, yes sir!", number, unitName);
+			var repeat = result.Semantics.ContainsKey("repeat") ? "and repeat" : "";
+			var insert = result.Semantics.ContainsKey("insert") ? "now" : "";
+			var reply = string.Format("Build {0} {1} {2}{3}, yes sir!", number, unitName, repeat, insert);
 			speechSynthesizer.SpeakAsync(reply);
 		}
 
@@ -233,7 +243,8 @@ namespace ZeroKLobby.VoiceCommand
 			table += String.Format("  commandName = \"{0}\",\n", Name);
 			table += String.Format("  unit = \"{0}\",\n", unit);
 			table += String.Format("  number = \"{0}\",\n", number);
-			table += String.Format("  [\"repeat\"] = {0}\n", result.Semantics.ContainsKey("repeat") ? "true" : "false");
+			table += String.Format("  [\"repeat\"] = {0},\n", result.Semantics.ContainsKey("repeat") ? "true" : "false");
+			table += String.Format("  insert = {0},\n", result.Semantics.ContainsKey("insert") ? "true" : "false");
 			table += "}";
 			return table;
 		}
