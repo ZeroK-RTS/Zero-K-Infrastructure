@@ -443,7 +443,9 @@
     <Compile Include="UserToIconConverter.cs" />
     <Compile Include="VoiceCommand\BuildUnitGrammar.cs" />
     <Compile Include="VoiceCommand\Pluralizer.cs" />
-    <Compile Include="VoiceCommand\VoiceCommand.cs" />
+    <Compile Include="VoiceCommand\SimpleOrderGrammar.cs" />
+    <Compile Include="VoiceCommand\ToggleOrderGrammar.cs" />
+    <Compile Include="VoiceCommand\VoiceCommandEngine.cs" />
     <Compile Include="VoiceCommand\ZkGrammar.cs" />
     <Compile Include="WindowsApi.cs" />
     <EmbeddedResource Include="Flags.resx">

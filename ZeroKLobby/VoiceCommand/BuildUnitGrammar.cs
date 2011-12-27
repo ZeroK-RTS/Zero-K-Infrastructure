@@ -1,13 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Speech.Recognition;
+using System.Speech.Synthesis;
 
 namespace ZeroKLobby.VoiceCommand
 {
-	// grammar for ordering the construction of mobile units in factories
+	/* grammar for ordering the construction of mobile units in factories
+	 * examples:
+	 * - build a bandit
+	 * - make 20 drones and repeat
+	 */
+	
+
 	class BuildUnitGrammar: ZkGrammar
 	{
 		const int MAX_ORDERS = 1000;
+
 
 		// todo: don't hardcode
 		Dictionary<string, string> unitNames = new Dictionary<string, string>
@@ -197,12 +205,26 @@ namespace ZeroKLobby.VoiceCommand
 				grammarBuilder.Append(verb);
 				grammarBuilder.Append(new SemanticResultKey("number", numbers));
 				grammarBuilder.Append(new SemanticResultKey("unit", units));
-				grammarBuilder.Append(new SemanticResultKey("and repeat", "repeat"), 0, 1);
+				grammarBuilder.Append(new SemanticResultKey("repeat", " and repeat"), 0, 1);
 
 				return grammarBuilder;
 			}
 		}
 		public override string Name { get { return "buildUnit"; } }
+
+		public override void Aknowledge(SpeechSynthesizer speechSynthesizer, RecognitionResult result)
+		{
+			var unit = (string)result.Semantics["unit"].Value;
+			var number = (int)result.Semantics["number"].Value;
+
+			var unitName = unitNames[unit];
+			if (number > 1)
+			{
+				unitName = Pluralizer.ToPlural(unitName);
+			}
+			var reply = string.Format(result.Semantics.ContainsKey("repeat") ? "Build {0} {1} and repeat, aye aye!" : "Build {0} {1}, aye aye!", number, unitName);
+			speechSynthesizer.SpeakAsync(reply);
+		}
 
 		public override string ToLua(RecognitionResult result)
 		{

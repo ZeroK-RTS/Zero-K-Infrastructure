@@ -5,6 +5,7 @@ using System.Speech.Recognition;
 using System.Speech.Synthesis;
 using System.Text;
 using System.Windows.Forms;
+using LobbyClient;
 
 namespace ZeroKLobby.VoiceCommand
 {
@@ -15,29 +16,30 @@ namespace ZeroKLobby.VoiceCommand
 		public abstract string Name { get; }
 		public abstract GrammarBuilder GrammarBuilder { get; }
 
-		public static void ProcessResult(RecognitionResult result, SpeechSynthesizer speechSynthesizer)
+		public static void ProcessResult(RecognitionResult result, SpeechSynthesizer speechSynthesizer, TasClient client)
 		{
-			var table = zkGrammars.FirstOrDefault(g => result.Grammar.Name == g.Name);
-			if (table == null)
+			var grammar = zkGrammars.FirstOrDefault(g => result.Grammar.Name == g.Name);
+			if (grammar == null)
 			{
 				speechSynthesizer.SpeakAsync("What was that?");
-				MessageBox.Show("Not recognized");
 			}
-			table.Aknowledge(speechSynthesizer);
-			MessageBox.Show(table.ToLua(result));
+			grammar.Aknowledge(speechSynthesizer, result);
+			var table = grammar.ToLua(result);
+			client.Say(TasClient.SayPlace.User, client.MyBattle.Founder.Name, "!say " + table.Replace("\n", ""), false);
+			MessageBox.Show(table);
 		}
 
-		public void Initialize(SpeechRecognizer speechRecognizer)
+		public void Initialize(SpeechRecognitionEngine speechEngine)
 		{
 			var grammar = new Grammar(GrammarBuilder);
 			grammar.Name = Name;
-			speechRecognizer.LoadGrammarAsync(grammar);
+			speechEngine.LoadGrammarAsync(grammar);
 			zkGrammars.Add(this);
 		}
 
-		public virtual void Aknowledge(SpeechSynthesizer speechSynthesizer)
+		public virtual void Aknowledge(SpeechSynthesizer speechSynthesizer, RecognitionResult result)
 		{
-			speechSynthesizer.SpeakAsync("Yes sir!");
+			speechSynthesizer.SpeakAsync("Roger roger!");
 		}
 
 		public abstract string ToLua(RecognitionResult result);

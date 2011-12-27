@@ -10,6 +10,7 @@ using LobbyClient;
 using PlasmaDownloader;
 using PlasmaShared;
 using ZeroKLobby.MicroLobby;
+using ZeroKLobby.VoiceCommand;
 
 namespace ZeroKLobby.Notifications
 {
@@ -44,6 +45,7 @@ namespace ZeroKLobby.Notifications
 			client = Program.TasClient;
 			spring = new Spring(Program.SpringPaths);
 			var speech = new ChatToSpeech(spring);
+			var voiceCommand = new VoiceCommandEngine(client);
 			spring.SpringExited += (s, e) =>
 				{
 					client.ChangeMyUserStatus(isInGame:false);
@@ -80,6 +82,7 @@ namespace ZeroKLobby.Notifications
 					//client.ChangeMyUserStatus(false, false);
 					var battle = client.MyBattle;
 					lastBattleFounder = battle.Founder.Name;
+					voiceCommand.Start();
 					Program.SpringScanner.MetaData.GetModAsync(battle.ModName,
 					                                           (mod) =>
 					                                           	{
@@ -204,6 +207,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
 			client.BattleClosed += (s, e) =>
 				{
+					voiceCommand.Stop();
 					if (gameBox.Image != null) gameBox.Image.Dispose();
 					gameBox.Image = null;
 					cbSide.Visible = false;
