@@ -36,10 +36,8 @@ namespace AutoRegistrator
         static void Main()
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
-
             Paths = new SpringPaths(null);
             Scanner = new SpringScanner(Paths);
-            
             
             Scanner.LocalResourceAdded += (s, e) => Trace.TraceInformation("New resource found: {0}", e.Item.InternalName);
             Scanner.LocalResourceRemoved += (s, e) => Trace.TraceInformation("Resource removed: {0}", e.Item.InternalName);
@@ -112,7 +110,8 @@ namespace AutoRegistrator
                                     Trace.TraceInformation("Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
                                     var mu = new MissionUpdater();
                                     Mod modInfo = null;
-                                    Scanner.MetaData.GetMod(mis.Mod, m => { modInfo = m; }, (er) => { }, Paths.SpringVersion);
+                                    Scanner.MetaData.GetMod(mis.NameWithVersion, m => { modInfo = m; }, (er) => { }, Paths.SpringVersion);
+                                    mis.Revision++;
                                     mu.UpdateMission(db, mis, modInfo);
                                     db.SubmitChanges();
                                 }

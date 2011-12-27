@@ -5,6 +5,8 @@ using System.Data.Linq;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using Ionic.Zip;
 using MonoTorrent.Common;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
@@ -40,11 +42,16 @@ namespace PlasmaShared
             var file = mission.Mutator.ToArray();
             var tempName = Path.GetTempFileName() + ".zip";
             File.WriteAllBytes(tempName, file);
-            using (var zf = new Ionic.Zip.ZipFile(tempName))
+            using (var zf = new ZipFile(tempName))
             {
-                zf.UpdateEntry("modinfo.lua", GetModInfo(mission.NameWithVersion, mission.Mod));
+                zf.UpdateEntry("modinfo.lua", Encoding.UTF8.GetBytes(GetModInfo(mission.NameWithVersion, mission.Mod)));
+                FixScript(mission, zf, "script.txt");
+                var script = FixScript(mission, zf, GlobalConst.MissionScriptFileName);
+                modInfo.MissionScript = script;
+                zf.Save();
             }
             mission.Mutator = new Binary(File.ReadAllBytes(tempName));
+            
             File.Delete(tempName);
             
             var resource = db.Resources.FirstOrDefault(x => x.MissionID == mission.MissionID); 
@@ -96,11 +103,23 @@ namespace PlasmaShared
             
 
             var basePath = ConfigurationManager.AppSettings["ResourcePath"] ?? @"c:\projekty\zero-k.info\www\resources\";
-            File.WriteAllBytes(string.Format(@"{2}\{0}_{1}.torrent", mission.SanitizedFileName.EscapePath(), md5, basePath), torrentStream.ToArray());
-            File.WriteAllBytes(string.Format(@"{1}\{0}.metadata.xml.gz", mission.SanitizedFileName.EscapePath(), basePath),
-                               MetaDataCache.SerializeAndCompressMetaData(modInfo));
+            File.WriteAllBytes(string.Format(@"{2}\{0}_{1}.torrent", resource.InternalName.EscapePath(), md5, basePath), torrentStream.ToArray());
+            
+            File.WriteAllBytes(string.Format(@"{1}\{0}.metadata.xml.gz", resource.InternalName.EscapePath(), basePath),
+                                   MetaDataCache.SerializeAndCompressMetaData(modInfo));
+            
             File.WriteAllBytes(string.Format(@"c:\projekty\zero-k.info\www\img\missions\{0}.png", mission.MissionID, basePath), mission.Image.ToArray());
 
+        }
+
+        static string FixScript(Mission mission, ZipFile zf, string scriptName)
+        {
+            var ms = new MemoryStream();
+            zf[scriptName].Extract(ms);
+            var script = Encoding.UTF8.GetString(ms.ToArray());
+            script = Regex.Replace(script, "GameType=([^;]+);", (m) => { return string.Format("GameType={0};", mission.NameWithVersion); });
+            zf.UpdateEntry(scriptName, Encoding.UTF8.GetBytes(script));
+            return script;
         }
     }
 
