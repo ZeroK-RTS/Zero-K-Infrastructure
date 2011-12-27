@@ -321,56 +321,6 @@ namespace LobbyClient
             return null;
         }
 
-        bool FindAndExtractDemoInfo(ref string gameId, out string demoFileName)
-        {
-            demoFileName = null;
-
-            var candidates = new List<FileInfo>();
-            var di = new DirectoryInfo(Path.Combine(paths.WritableDirectory, "demos"));
-
-            if (di.Exists)
-            {
-                candidates.AddRange(
-                    di.GetFiles().Where(
-                        x =>
-                        x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-70) &&
-                        x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(70)));
-            }
-            di = new DirectoryInfo(Path.Combine(paths.UnitSyncDirectory, "demos"));
-            if (di.Exists)
-            {
-                candidates.AddRange(
-                    di.GetFiles().Where(
-                        x =>
-                        x.CreationTimeUtc > GameStarted.ToUniversalTime().AddMinutes(-70) &&
-                        x.CreationTimeUtc < GameEnded.ToUniversalTime().AddMinutes(70)));
-            }
-            //Console.WriteLine("Candidates: " + candidates.Count);
-            foreach (var file in candidates)
-            {
-                try
-                {
-                    var buf = new byte[120000];
-                    var read = 0;
-                    using (var stream = file.OpenRead()) read = stream.Read(buf, 0, buf.Length);
-
-                    if (read > 113)
-                    {
-                        var script = Encoding.ASCII.GetString(buf, 112, read - 112 - 1);
-                        if (script.Contains(battleGuid.ToString()))
-                        {
-                            // found correct 
-                            var hash = new Hash(buf, 40);
-                            gameId = hash.ToString();
-                            demoFileName = file.Name;
-                            return true;
-                        }
-                    }
-                }
-                catch {}
-            }
-            return false;
-        }
 
 
         void HandleSpecialMessages(Talker.SpringEventArgs e)
@@ -431,7 +381,7 @@ namespace LobbyClient
 
                     if (modName == null && line.StartsWith("using mod")) modName = line.Substring(10).Trim();
 
-                    // todo uncomment when engine/dedi fixed if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());
+                    if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());
 
                     if (line.StartsWith("Using demofile")) return; // do nothing if its demo
 
@@ -484,8 +434,6 @@ namespace LobbyClient
                         var service = new ContentService() { Proxy = null };
                         try
                         {
-                            if (string.IsNullOrEmpty(gameId) || string.IsNullOrEmpty(demoFileName)) FindAndExtractDemoInfo(ref gameId, out demoFileName);
-
                             battleResult.EngineBattleID = gameId;
                             battleResult.ReplayName = demoFileName;
 
