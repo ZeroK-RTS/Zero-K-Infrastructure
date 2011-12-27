@@ -48,7 +48,7 @@ local lastFinishedUnits = {} -- key: teamID, value: unitID
 local allowTransfer = false
 local factoryExpectedUnits = {} -- key: factoryID, value: {unitDefID, groups: group set}
 local repeatFactoryGroups = {} -- key: factoryID, value: group set
-
+local objectives = {}	-- key: ID, value: {title, description, color, target}	-- important: widget must be able to access on demand
 
 GG.mission = {
   scores = scores,
@@ -616,23 +616,31 @@ local function ExecuteTrigger(trigger, frame)
         Event = function()
           Spring.Echo("defeating")
 		  -- kill all human players
+		  local aiAllyTeams = {}
           for _, unitID in ipairs(Spring.GetAllUnits()) do
             local unitTeam = Spring.GetUnitTeam(unitID)
-            local _, _, _, isAI = Spring.GetTeamInfo(unitTeam)
+            local _, _, _, isAI, _,allyTeam = Spring.GetTeamInfo(unitTeam)
             if not isAI then
               SpecialTransferUnit(unitID, gaiaTeamID, false)
-            end
+			else
+			  aiAllyTeams[#aiAllyTeams+1] = allyTeam
+			end
           end
+		  Spring.GameOver(aiAllyTeams)
         end
       elseif action.logicType == "VictoryAction" then
         Event = function()
+		  local humanAllyTeams = {}
           for _, unitID in ipairs(Spring.GetAllUnits()) do
             local unitTeam = Spring.GetUnitTeam(unitID)
-            local _, _, _, isAI = Spring.GetTeamInfo(unitTeam)
+            local _, _, _, isAI, _, allyTeam = Spring.GetTeamInfo(unitTeam)
             if isAI then
               SpecialTransferUnit(unitID, gaiaTeamID, false)
+			else
+			  humanAllyTeams[#humanAllyTeams+1] = allyTeam
             end
           end
+		  Spring.GameOver(humanAllyTeams)
         end
       elseif action.logicType == "LockUnitsAction" then
         Event = function()
@@ -659,6 +667,8 @@ local function ExecuteTrigger(trigger, frame)
              action.logicType == "SetCameraPointTargetAction" or 
              action.logicType == "GuiMessageAction" or
 			 action.logicType == "GuiMessagePersistentAction" or
+			 action.logicType == "HideGuiMessagePersistentAction" or
+			 action.logicType == "AddObjectiveAction" or
              action.logicType == "SoundAction" or 
              action.logicType == "SunriseAction" or 
              action.logicType == "SunsetAction" then
@@ -668,6 +678,9 @@ local function ExecuteTrigger(trigger, frame)
           SendToUnsynced"MissionEvent"
           _G.missionEventArgs = nil
         end
+		if action.logicType == "AddObjectiveAction" then
+			objectives[action.args.id] = {title = action.args.title, description = action.args.description}
+		end
       elseif action.logicType == "GiveOrdersAction" then
         Event = function()
           local orderedUnits
