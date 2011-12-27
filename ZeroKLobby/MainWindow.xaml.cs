@@ -56,6 +56,8 @@ namespace ZeroKLobby
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			// var voiceCommand = new VoiceCommand.VoiceCommand();
       
 			if (Utils.IsDesignTime) return;
 
