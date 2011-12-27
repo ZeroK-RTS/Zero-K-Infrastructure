@@ -94,7 +94,7 @@ namespace AutoRegistrator
 
             lock (Locker)
             {
-                foreach (var id in new ZkDataContext().Missions.Where(x => !x.IsDeleted && !x.IsScriptMission && x.ModRapidTag != "").Select(x=>x.MissionID).ToList())
+                foreach (var id in new ZkDataContext().Missions.Where(x => !x.IsScriptMission && x.ModRapidTag != "").Select(x=>x.MissionID).ToList())
                 {
                     using (var db = new ZkDataContext())
                     {
