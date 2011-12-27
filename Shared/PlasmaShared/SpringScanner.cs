@@ -443,7 +443,7 @@ namespace PlasmaShared
             throw new ArgumentException("Invalid watcher", "watcher");
         }
 
-        int GetWorkCost()
+        public int GetWorkCost()
         {
             lock (workQueue)
             {

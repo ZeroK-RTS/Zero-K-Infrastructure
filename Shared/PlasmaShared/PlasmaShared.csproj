@@ -167,6 +167,7 @@
     <Compile Include="IResourceInfo.cs" />
     <Compile Include="LuaTable.cs" />
     <Compile Include="MetaDataCache.cs" />
+    <Compile Include="MissionUpdater.cs" />
     <Compile Include="Pool.cs" />
     <Compile Include="PoolFileInfo.cs" />
     <Compile Include="MapRegisteredEventArgs.cs" />
@@ -206,7 +207,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\..\Libs\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.EnterpriseServices" />

@@ -55,7 +55,12 @@ namespace ZeroKWeb.Controllers
 
         public ActionResult File(string name)
         {
-            var m = new ZkDataContext().Missions.Single(x => x.Name == name);
+            var id = 0;
+            Mission m;
+            var db = new ZkDataContext();
+            if (int.TryParse(name, out id)) {
+                m = db.Missions.Single(x => x.MissionID == id);
+            } else m = db.Missions.Single(x => x.Name == name);
             return File(m.Mutator.ToArray(), "application/octet-stream", m.SanitizedFileName);
         }
 

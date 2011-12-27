@@ -23,11 +23,13 @@ namespace ZkData
 			set { authorName = value; }
 		}
 
-		public string SanitizedFileName
+        public string NameWithVersion { get { return string.Format("{0} r{1}", Name,Revision); } }
+
+	    public string SanitizedFileName
 		{
 			get
 			{
-				var fileName = Name;
+				var fileName = NameWithVersion;
 				foreach (var character in Path.GetInvalidFileNameChars()) fileName = fileName.Replace(character, '_');
 				return fileName + ".sdz";
 			}

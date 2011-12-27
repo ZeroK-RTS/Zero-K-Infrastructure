@@ -91,12 +91,14 @@ namespace ZeroKWeb
 
 			if (acc == null) throw new ApplicationException("Cannot verify user account");
 
-			if (db.Missions.Any(x => x.Name == mission.Name)) throw new ApplicationException("Mission name must be unique");
+			if (mission.MissionID == 0 && db.Missions.Any(x =>x.Name == mission.Name)) throw new ApplicationException("Mission name must be unique");
 			var map = db.Resources.SingleOrDefault(x => x.InternalName == mission.Map && x.TypeID == ZkData.ResourceType.Map);
 			if (map == null) throw new ApplicationException("Map name is unknown");
 			var mod = db.Resources.SingleOrDefault(x => x.InternalName == mission.Mod && x.TypeID == ZkData.ResourceType.Mod);
 			if (mod == null) throw new ApplicationException("Mod name is unknown");
 			if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != mission.MissionID)) throw new ApplicationException("Name already taken by other mod/map");
+
+            modInfo.MissionMap = mission.Map; // todo solve properly - it should be in mod and unitsync should be able to read it too
 
 			var prev = db.Missions.Where(x => x.MissionID == mission.MissionID).SingleOrDefault();
 
@@ -134,64 +136,8 @@ namespace ZeroKWeb
 
 			db.SubmitChanges();
 
-			db.Resources.DeleteAllOnSubmit(db.Resources.Where(x => x.MissionID == mission.MissionID));
-			db.SubmitChanges();
-
-			var resource = db.Resources.FirstOrDefault(x => x.InternalName == mission.Name); // todo delete full resource data
-			if (resource == null)
-			{
-				resource = new Resource() { InternalName = mission.Name, DownloadCount = 0, TypeID = ZkData.ResourceType.Mod };
-				db.Resources.InsertOnSubmit(resource);
-			}
-			resource.MissionID = mission.MissionID;
-
-			resource.ResourceDependencies.Clear();
-			resource.ResourceDependencies.Add(new ResourceDependency() { NeedsInternalName = map.InternalName });
-			resource.ResourceDependencies.Add(new ResourceDependency() { NeedsInternalName = mod.InternalName });
-			resource.ResourceContentFiles.Clear();
-
-			
-
-			// generate torrent
-			var tempFile = Path.Combine(Path.GetTempPath(), mission.SanitizedFileName);
-			File.WriteAllBytes(tempFile, mission.Mutator.ToArray());
-			var creator = new TorrentCreator();
-			creator.Path = tempFile;
-			var torrentStream = new MemoryStream();
-			creator.Create(torrentStream);
-			try
-			{
-				File.Delete(tempFile);
-			}
-			catch {}
-
-			var md5 = Hash.HashBytes(mission.Mutator.ToArray()).ToString();
-			resource.ResourceContentFiles.Add(new ResourceContentFile()
-			                                  {
-			                                  	FileName = mission.SanitizedFileName,
-			                                  	Length = mission.Mutator.Length,
-			                                  	LinkCount = 1,
-			                                  	Links = string.Format(MissionFileUrl, mission.Name),
-			                                  	Md5 = md5
-			                                  });
-
-			var sh = resource.ResourceSpringHashes.SingleOrDefault(x => x.SpringVersion == mission.SpringVersion);
-			if (sh == null)
-			{
-				sh = new ResourceSpringHash();
-				resource.ResourceSpringHashes.Add(sh);
-			}
-			sh.SpringVersion = mission.SpringVersion;
-			sh.SpringHash = modInfo.Checksum;
-
-			modInfo.MissionMap = mission.Map; // todo solve properly - it should be in mod and unitsync should be able to read it too
-
-
-		  var basePath = ConfigurationManager.AppSettings["ResourcePath"]  ?? @"c:\projekty\zero-k.info\www\resources\";
-      File.WriteAllBytes(string.Format(@"{2}\{0}_{1}.torrent", mission.Name.EscapePath(), md5, basePath), torrentStream.ToArray());
-			File.WriteAllBytes(string.Format(@"{1}\{0}.metadata.xml.gz", mission.Name.EscapePath(), basePath),
-			                   MetaDataCache.SerializeAndCompressMetaData(modInfo));
-			File.WriteAllBytes(string.Format(@"c:\projekty\zero-k.info\www\img\missions\{0}.png", mission.MissionID, basePath), mission.Image.ToArray());
+            var updater = new MissionUpdater();
+            updater.UpdateMission(db, mission, modInfo);
 
 			mission.IsDeleted = false;
 			db.SubmitChanges();
