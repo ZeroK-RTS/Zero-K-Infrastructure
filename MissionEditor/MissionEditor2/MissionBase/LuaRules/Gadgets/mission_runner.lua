@@ -1071,13 +1071,13 @@ end
 local function Deserialize(text)
   local f, err = loadstring(text)
   if not f then
-    Spring.Echo("error while desrializing (compiling): "..tostring(err))
+    Spring.Echo("error while deserializing (compiling): "..tostring(err))
     return
   end
   setfenv(f, {}) -- sandbox for security and cheat prevention
   local success, arg = pcall(f)
   if not success then
-    Spring.Echo("error while desrializing (calling): "..tostring(arg))
+    Spring.Echo("error while deserializing (calling): "..tostring(arg))
     return
   end
   return arg

@@ -197,7 +197,6 @@ namespace ZeroKLobby.VoiceCommand
 				foreach (var kvp in unitNames)
 				{
 					units.Add(new SemanticResultValue(kvp.Value, kvp.Key));
-					units.Add(new SemanticResultValue(kvp.Key, kvp.Key));
 				}
 
 				var grammarBuilder = new GrammarBuilder();
@@ -222,7 +221,7 @@ namespace ZeroKLobby.VoiceCommand
 			{
 				unitName = Pluralizer.ToPlural(unitName);
 			}
-			var reply = string.Format(result.Semantics.ContainsKey("repeat") ? "Build {0} {1} and repeat, aye aye!" : "Build {0} {1}, aye aye!", number, unitName);
+			var reply = string.Format(result.Semantics.ContainsKey("repeat") ? "Build {0} {1} and repeat, aye aye!" : "Build {0} {1}, yes sir!", number, unitName);
 			speechSynthesizer.SpeakAsync(reply);
 		}
 
@@ -234,7 +233,7 @@ namespace ZeroKLobby.VoiceCommand
 			table += String.Format("  commandName = \"{0}\",\n", Name);
 			table += String.Format("  unit = \"{0}\",\n", unit);
 			table += String.Format("  number = \"{0}\",\n", number);
-			table += String.Format("  repeat = \"{0}\",\n", result.Semantics.ContainsKey("repeat") ? "true" : "false");
+			table += String.Format("  [\"repeat\"] = {0}\n", result.Semantics.ContainsKey("repeat") ? "true" : "false");
 			table += "}";
 			return table;
 		}
