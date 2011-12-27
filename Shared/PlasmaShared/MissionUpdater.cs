@@ -101,7 +101,6 @@ namespace PlasmaShared
                                MetaDataCache.SerializeAndCompressMetaData(modInfo));
             File.WriteAllBytes(string.Format(@"c:\projekty\zero-k.info\www\img\missions\{0}.png", mission.MissionID, basePath), mission.Image.ToArray());
 
-            mission.IsDeleted = false;
         }
     }
 

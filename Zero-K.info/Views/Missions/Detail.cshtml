@@ -14,12 +14,12 @@
     @if (m.MinHumans < 2) {
       <br />
       <br />
-      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.Name)'>
+      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.NameWithVersion)'>
         <img src="../../img/playnow.png" width="250" /></a>
     }
     <br />
     @if (!m.IsScriptMission) {
-      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.Name)'>
+      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + "@host_mission:" + m.NameWithVersion)'>
         <img src="../../img/hostmulti.png" width="300" /></a><br />
       <br />
     }
@@ -27,13 +27,13 @@
       <div class="border-test">
         If you don't have Zero-K lobby, send a message to springie like
         so:
-        <pre>/msg Springie !spawn mod=@m.Name</pre>
+        <pre>/msg Springie !spawn mod=@m.NameWithVersion</pre>
         Then in the battle lobby:
         <pre>
 !balance
 !start
 </pre>
-        Alternative manual download: <a href='@Url.Action("File", "Missions", new { name = m.Name })'>@m.SanitizedFileName</a>
+        Alternative manual download: <a href='@Url.Action("File", "Missions", new { name = m.MissionID })'>@m.SanitizedFileName</a>
         and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>
       </div>
       @*<!close zk warning>*@

@@ -59,6 +59,8 @@ namespace AutoRegistrator
             Application.Run(new Form1());*/
         }
 
+        static object Locker = new object();
+
         static void Downloader_PackagesChanged(object sender, EventArgs e)
         {
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys)) {
@@ -88,35 +90,41 @@ namespace AutoRegistrator
                 }
                 else waiting = false;
                 if (waiting) Thread.Sleep(10000);
-            } while (waiting); 
-            
-           
-            foreach (var mis in new ZkDataContext().Missions.Where(x => x.IsDeleted && !x.IsScriptMission && x.ModRapidTag != "").ToList())
+            } while (waiting);
+
+
+
+            lock (Locker)
             {
-                using (var db = new ZkDataContext())
+                foreach (var id in new ZkDataContext().Missions.Where(x => !x.IsDeleted && !x.IsScriptMission && x.ModRapidTag != "").Select(x=>x.MissionID).ToList())
                 {
-                    try
+                    using (var db = new ZkDataContext())
                     {
-                        if (!string.IsNullOrEmpty(mis.ModRapidTag))
+                        var mis = db.Missions.Single(x => x.MissionID == id);
+                        try
                         {
-                            var latestMod = Downloader.PackageDownloader.GetByTag(mis.ModRapidTag);
-                            if (latestMod != null && mis.Mod != latestMod.InternalName)
+                            if (!string.IsNullOrEmpty(mis.ModRapidTag))
                             {
-                                Trace.TraceInformation("Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
-                                mis.Mod = latestMod.InternalName;
-                                var mu = new MissionUpdater();
-                                Mod modInfo = null;
-                                Scanner.MetaData.GetMod(mis.Mod, m => { modInfo = m; }, (er) => { }, Paths.SpringVersion);
-                                mu.UpdateMission(db, mis, modInfo);
-                                db.SubmitChanges();
+                                var latestMod = Downloader.PackageDownloader.GetByTag(mis.ModRapidTag);
+                                if (latestMod != null && mis.Mod != latestMod.InternalName)
+                                {
+                                    mis.Mod = latestMod.InternalName;
+                                    Trace.TraceInformation("Updating mission {0} {1} to {2}", mis.MissionID, mis.Name, mis.Mod);
+                                    var mu = new MissionUpdater();
+                                    Mod modInfo = null;
+                                    Scanner.MetaData.GetMod(mis.Mod, m => { modInfo = m; }, (er) => { }, Paths.SpringVersion);
+                                    mu.UpdateMission(db, mis, modInfo);
+                                    db.SubmitChanges();
+                                }
+
                             }
 
-                        }
 
-                        
-                    }
-                    catch (Exception ex) {
-                        Trace.TraceError("Failed to update mission {0}: {1}", mis.MissionID, ex);
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.TraceError("Failed to update mission {0}: {1}", mis.MissionID, ex);
+                        }
                     }
                 }
             }
