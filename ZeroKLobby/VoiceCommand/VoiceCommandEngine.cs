@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
-using System.Text;
 using LobbyClient;
 
 /* 
@@ -18,54 +15,58 @@ using LobbyClient;
 
 namespace ZeroKLobby.VoiceCommand
 {
-	class VoiceCommandEngine : IDisposable
-	{
-		readonly TasClient client;
-		SpeechRecognitionEngine speechEngine = new SpeechRecognitionEngine();
-		SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
+    class VoiceCommandEngine: IDisposable
+    {
+        readonly TasClient client;
+        readonly SpeechRecognitionEngine speechEngine = new SpeechRecognitionEngine();
+        readonly SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
 
-		public VoiceCommandEngine(TasClient client)
-		{
-			this.client = client;
-			speechEngine.SetInputToDefaultAudioDevice();
-			speechEngine.SpeechRecognized += SpeechEngineSpeechRecognized;
-			speechEngine.SpeechRecognitionRejected += SpeechEngineSpeechRecognitionRejected;
-			InitializeGrammars();
+        public VoiceCommandEngine(TasClient client)
+        {
+            this.client = client;
+            speechEngine.SetInputToDefaultAudioDevice();
+            speechEngine.SpeechRecognized += SpeechEngineSpeechRecognized;
+            speechEngine.SpeechRecognitionRejected += SpeechEngineSpeechRecognitionRejected;
+            client.MyBattleStarted += (s, e) => { if (!client.MyBattleStatus.IsSpectator) Start(); };
+            client.MyBattleEnded += (s, e) => Stop();
+            client.PreviewSaid += (s, e) =>
+            {
+                if (client.MyBattle != null && e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.UserName == client.MyBattle.Founder.Name && e.Data.Text.StartsWith("!transmit ")) e.Cancel = true;
+            };
 
-		}
+            InitializeGrammars();
+        }
 
-		public void Start()
-		{
-			speechEngine.RecognizeAsync(RecognizeMode.Multiple);
-		}
+        public void Dispose()
+        {
+            speechEngine.Dispose();
+            speechSynthesizer.Dispose();
+        }
 
-		public void Stop()
-		{
-			speechEngine.RecognizeAsyncStop();
-		}
+        public void Start()
+        {
+            speechEngine.RecognizeAsync(RecognizeMode.Multiple);
+        }
 
-		void InitializeGrammars()
-		{
-			new BuildUnitGrammar().Initialize(speechEngine);
-		}
+        public void Stop()
+        {
+            speechEngine.RecognizeAsyncStop();
+        }
 
-		void SpeechEngineSpeechRecognitionRejected(object sender, SpeechRecognitionRejectedEventArgs e)
-		{
-			speechSynthesizer.SpeakAsync("What was that?");
-		}
+        void InitializeGrammars()
+        {
+            new BuildUnitGrammar().Initialize(speechEngine);
+        }
+
+        void SpeechEngineSpeechRecognitionRejected(object sender, SpeechRecognitionRejectedEventArgs e)
+        {
+            speechSynthesizer.SpeakAsync("What was that?");
+        }
 
 
-		void SpeechEngineSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
-		{
-			ZkGrammar.ProcessResult(e.Result, speechSynthesizer, client);
-		}
-
-
-		public void Dispose()
-		{
-			speechEngine.Dispose();
-			speechSynthesizer.Dispose();
-		}
-	}
-
+        void SpeechEngineSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            ZkGrammar.ProcessResult(e.Result, speechSynthesizer, client);
+        }
+    }
 }

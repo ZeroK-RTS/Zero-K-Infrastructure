@@ -1112,10 +1112,11 @@ namespace Springie.autohost
 
                     case "setengine":
                         ComSetEngine(e, words);
-
-
                         break;
 
+                    case "transmit":
+                        ComTransmit(e, words);
+                        break;
 
 					case "spawn":
 					{

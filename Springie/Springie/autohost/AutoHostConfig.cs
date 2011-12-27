@@ -189,6 +189,9 @@ namespace Springie.autohost
             AddMissing(new CommandConfig("split", 1, "<\"h\"/\"v\"> <percent> - draws with given direction and percentual size, e.g. !split h 15"),
                        addedCommands);
 
+            AddMissing(new CommandConfig("transmit", 0, "Internal command transfer to ingame"),
+                       addedCommands);
+
             AddMissing(
                 new CommandConfig("corners", 1, "<\"a\"/\"b\"> <percent> - draws corners (a or b mode differ in ordering), e.g. !corners a 15"),
                 addedCommands);

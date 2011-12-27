@@ -329,6 +329,12 @@ namespace ZeroKLobby
 
         [Browsable(false)]
         public string PackageMasterUrl { get { return " http://repos.springrts.com/"; } }
+        
+        [Category("General")]
+        [DisplayName("Enable voice commands (EXPERIMENTAL)")]
+        [Description("Control the game using your voice")]
+        public bool EnableVoiceCommands { get ; set; }
+        
     }
 
 

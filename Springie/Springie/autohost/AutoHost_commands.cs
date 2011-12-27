@@ -1290,5 +1290,12 @@ namespace Springie.autohost
                 Program.main.Downloader.GetAndSwitchEngine(version);
             }
         }
+
+        void ComTransmit(TasSayEventArgs e, string[] words)
+        {
+            if (spring.IsRunning) {
+                spring.SayGame(string.Format("[{0}]{1}", e.UserName, Utils.Glue(words)));
+            }
+        }
     }
 }

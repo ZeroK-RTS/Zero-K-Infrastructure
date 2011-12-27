@@ -25,7 +25,7 @@ namespace ZeroKLobby.VoiceCommand
 			}
 			grammar.Aknowledge(speechSynthesizer, result);
 			var table = grammar.ToLua(result);
-			client.Say(TasClient.SayPlace.User, client.MyBattle.Founder.Name, "!say voice" + table.Replace("\n", ""), false);
+			client.Say(TasClient.SayPlace.User, client.MyBattle.Founder.Name, "!transmit voice" + table.Replace("\n", ""), false);
 		}
 
 		public void Initialize(SpeechRecognitionEngine speechEngine)
