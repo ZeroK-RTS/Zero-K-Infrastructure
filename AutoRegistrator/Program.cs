@@ -62,7 +62,7 @@ namespace AutoRegistrator
         static void Downloader_PackagesChanged(object sender, EventArgs e)
         {
             foreach (var ver in Downloader.PackageDownloader.Repositories.SelectMany(x => x.VersionsByTag.Keys)) {
-                if (ver.EndsWith(":stable") || ver.EndsWith(":test") || ver.EndsWith(":latest")) {
+                if (ver.EndsWith(":test") || ver.EndsWith(":latest")) {
                     if (!Downloader.PackageDownloader.SelectedPackages.Contains(ver))
                     {
                         Trace.TraceInformation("Selecting package: {0}",ver);
