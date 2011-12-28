@@ -42,12 +42,6 @@ namespace PlasmaShared.UnitSyncLib
 			originalDirectory = Directory.GetCurrentDirectory();
 			Directory.SetCurrentDirectory(paths.UnitSyncDirectory);
             Environment.SetEnvironmentVariable("SPRING_DATADIR", paths.WritableDirectory, EnvironmentVariableTarget.Process);
-            Environment.SetEnvironmentVariable("HOME", paths.WritableDirectory, EnvironmentVariableTarget.Process);
-            Environment.SetEnvironmentVariable("SPRING_ISOLATED", paths.WritableDirectory, EnvironmentVariableTarget.Process);
-            try
-            {
-                File.WriteAllText(Path.Combine(paths.UnitSyncDirectory, "springsettings.cfg"), "SpringData = " + paths.WritableDirectory);
-            } catch  {}
 		    if (!NativeMethods.Init(false, 666)) throw new UnitSyncException("Unitsync initialization failed.");
 			Version = NativeMethods.GetSpringVersion();
             var writ = NativeMethods.GetWritableDataDirectory();

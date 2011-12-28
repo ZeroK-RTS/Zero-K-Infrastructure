@@ -275,10 +275,11 @@ namespace LobbyClient
                     process.StartInfo.EnvironmentVariables["SPRING_ISOLATED"] = paths.WritableDirectory;
                     process.StartInfo.FileName = paths.DedicatedServer;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.DedicatedServer);
-                    process.StartInfo.Arguments += string.Format(" -i --isolation-dir \"{0}\"", paths.WritableDirectory);
+                    //process.StartInfo.Arguments += string.Format(" -i --isolation-dir \"{0}\"", paths.WritableDirectory);
                 }
                 else
                 {
+                    process.StartInfo.EnvironmentVariables.Remove("SPRING_ISOLATED");
                     process.StartInfo.FileName = paths.Executable;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
                 }
