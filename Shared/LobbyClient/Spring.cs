@@ -111,7 +111,7 @@ namespace LobbyClient
         public Spring(SpringPaths springPaths, AutohostMode autohostMode = AutohostMode.GameTeams)
         {
             paths = springPaths;
-            timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+            timer.Elapsed += timer_Elapsed;
         }
 
         /// <summary>

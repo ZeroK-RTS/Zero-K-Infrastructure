@@ -45,13 +45,13 @@
     <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
     <ProductName>Zero-K</ProductName>
     <PublisherName>Zero-K</PublisherName>
-    <MinimumRequiredVersion>2.30.1.0</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.29.1.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>5</ApplicationRevision>
-    <ApplicationVersion>2.30.1.%2a</ApplicationVersion>
+    <ApplicationRevision>2</ApplicationRevision>
+    <ApplicationVersion>2.29.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -137,7 +137,7 @@
     <Compile Include="AdvertiserWindow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AdvertiserWindow.Designer.cs">
+    <Compile Include="AdvertiserWindow.designer.cs">
       <DependentUpon>AdvertiserWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
@@ -447,12 +447,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UrlSecurityZone.cs" />
     <Compile Include="UserToIconConverter.cs" />
-    <Compile Include="VoiceCommand\BuildUnitGrammar.cs" />
+    <Compile Include="VoiceCommand\BuildUnitRule.cs" />
+    <Compile Include="VoiceCommand\FactoryPauseRule.cs" />
     <Compile Include="VoiceCommand\Pluralizer.cs" />
-    <Compile Include="VoiceCommand\SimpleOrderGrammar.cs" />
-    <Compile Include="VoiceCommand\ToggleOrderGrammar.cs" />
     <Compile Include="VoiceCommand\VoiceCommandEngine.cs" />
-    <Compile Include="VoiceCommand\ZkGrammar.cs" />
+    <Compile Include="VoiceCommand\VoiceRule.cs" />
     <Compile Include="WindowsApi.cs" />
     <EmbeddedResource Include="AdvertiserWindow.resx">
       <DependentUpon>AdvertiserWindow.cs</DependentUpon>

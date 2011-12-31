@@ -258,7 +258,6 @@ namespace ZeroKLobby
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();
-                if (Conf.EnableVoiceCommands) VoiceCommandEngine = new VoiceCommandEngine(TasClient);
 
                 Application.AddMessageFilter(ToolTip);
 

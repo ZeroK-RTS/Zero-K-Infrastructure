@@ -45,6 +45,8 @@ namespace ZeroKLobby.Notifications
 			client = Program.TasClient;
 			spring = new Spring(Program.SpringPaths);
 			var speech = new ChatToSpeech(spring);
+			if (Program.Conf.EnableVoiceCommands) new VoiceCommandEngine(client, spring);
+
 			spring.SpringExited += (s, e) =>
 				{
 					client.ChangeMyUserStatus(isInGame:false);
