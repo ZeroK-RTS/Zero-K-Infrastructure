@@ -71,7 +71,15 @@
           <MicroLobby:ServerTab />
         </WindowsFormsHost>
       </TabItem>
-      <TabItem>
+
+            <TabItem>
+                <WindowsFormsHost>
+                    <ZeroKLobby:AdvertiserWindow />
+                </WindowsFormsHost>
+            </TabItem>
+
+
+            <TabItem>
         <MicroLobby:BrowserControl x:Name="browserControl"/>
       </TabItem>
     </TabControl>

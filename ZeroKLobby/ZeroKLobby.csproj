@@ -50,7 +50,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>5</ApplicationRevision>
     <ApplicationVersion>2.30.1.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -134,6 +134,12 @@
       <DependentUpon>AcceptAgreementForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ActionHandler.cs" />
+    <Compile Include="AdvertiserWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AdvertiserWindow.Designer.cs">
+      <DependentUpon>AdvertiserWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -448,6 +454,9 @@
     <Compile Include="VoiceCommand\VoiceCommandEngine.cs" />
     <Compile Include="VoiceCommand\ZkGrammar.cs" />
     <Compile Include="WindowsApi.cs" />
+    <EmbeddedResource Include="AdvertiserWindow.resx">
+      <DependentUpon>AdvertiserWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Flags.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>

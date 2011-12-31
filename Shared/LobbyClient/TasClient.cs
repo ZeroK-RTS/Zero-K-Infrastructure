@@ -551,7 +551,7 @@ namespace LobbyClient
 
             //battle.Details.AddToParamList(objList);
             mapToChangeTo = MyBattle.MapName;
-            mapChecksumToChangeTo = MyBattle.MapHash.Value;
+            mapChecksumToChangeTo = MyBattle.MapHash ?? 0;
             lockToChangeTo = false;
 
             con.SendCommand("OPENBATTLEEX", objList.ToArray());

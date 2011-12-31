@@ -334,6 +334,19 @@ namespace ZeroKLobby
         [DisplayName("Enable voice commands (EXPERIMENTAL)")]
         [Description("Control the game using your voice")]
         public bool EnableVoiceCommands { get ; set; }
+
+        
+        
+        [Browsable(false)]
+        public int AdDelays = 1;
+        [Browsable(false)]
+        public string AdChannels = "main,newbies";
+        [Browsable(false)]
+        public string AdSuffix = "\r\n\r\nmodlink: http://zero-k.info/";
+        [Browsable(false)]
+        public string AdLines = "Faster, smarter, nicer! \r\n";
+        [Browsable(false)]
+        public string AdPreffix = "Join ZK \r\njoin zero-k. \r\nJoin ZK. \r\n";
         
     }
 

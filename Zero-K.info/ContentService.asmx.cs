@@ -6,9 +6,12 @@ using System.Data.Linq.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Transactions;
+using System.Web.Script.Serialization;
 using System.Web.Services;
 using PlasmaShared;
+using ZeroKWeb.AppCode;
 using ZeroKWeb.Controllers;
 using ZkData;
 
@@ -862,6 +865,8 @@ namespace ZeroKWeb
             }
         }
 
+
+
         [WebMethod]
         public string SubmitSpringBattleResult(string accountName,
                                                string password,
@@ -873,6 +878,10 @@ namespace ZeroKWeb
             {
                 var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
                 if (acc == null) throw new Exception("Account name or password not valid");
+                
+                Utils.StartAsync(() => { JsonRequest.MakeRequest("http://packages.springrts.com", new { accountName = accountName, result = result, players = players, extraData = extraData }); });
+                
+
                 if (extraData == null) extraData = new List<string>();
 
                 var mode = GetModeFromHost(accountName);
