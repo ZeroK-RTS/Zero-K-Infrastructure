@@ -879,7 +879,7 @@ namespace ZeroKWeb
                 var acc = AuthServiceClient.VerifyAccountPlain(accountName, password);
                 if (acc == null) throw new Exception("Account name or password not valid");
                 
-                Utils.StartAsync(() => { JsonRequest.MakeRequest("http://packages.springrts.com", new { accountName = accountName, result = result, players = players, extraData = extraData }); });
+                Utils.StartAsync(() => { JsonRequest.MakeRequest("http://packages.springrts.com/jsonapi.php", new { accountName = accountName, result = result, players = players, extraData = extraData }); });
                 
 
                 if (extraData == null) extraData = new List<string>();
