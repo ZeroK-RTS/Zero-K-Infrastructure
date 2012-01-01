@@ -1293,6 +1293,11 @@ namespace Springie.autohost
 
         void ComTransmit(TasSayEventArgs e, string[] words)
         {
+            if (words.Length == 0)
+            {
+                Respond(e, "This command needs 1 parameter (transmit text)");
+                return;
+            }
             if (spring.IsRunning) {
                 spring.SayGame(string.Format("[{0}]{1}", e.UserName, "!transmit " + Utils.Glue(words)));
             }
