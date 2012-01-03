@@ -9,7 +9,6 @@ namespace ZeroKLobby.Notifications
 {
     public partial class DownloadBar: UserControl, INotifyBar
     {
-        string fileName;
         bool imageLoaded;
 
         public Download Download { get; set; }
@@ -60,16 +59,35 @@ namespace ZeroKLobby.Notifications
 
         void LoadMinimapImage(string fn)
         {
-            if (!imageLoaded && progress.Width > 0)
+            if (!imageLoaded)
             {
-                imageLoaded = true;
-                var wc = new WebClient { Proxy = null };
-                wc.DownloadDataCompleted += minimapImageLoadComplete;
-            	fileName = fn + ".sd7";
-                var uri = new Uri("http://springfiles.com/mini/" + Uri.EscapeUriString(fileName) + "_minimap.jpg");
-                wc.DownloadDataAsync(uri);
+                Program.SpringScanner.MetaData.GetMapAsync(fn,
+                                                           (map, minimap, heightmap, metalmap) => Program.MainWindow.InvokeFunc(() =>
+                                                               {
+                                                                   var ms = new MemoryStream(minimap);
+                                                                   var minimapImage = Image.FromStream(ms);
+
+                                                                   var w = map.Size.Width;
+                                                                   var h = map.Size.Height;
+                                                                   w = (int)Math.Round(w*((double)(Height)/h));
+                                                                   h = Height;
+                                                                   minimapBox.Location = new Point(Width - w, 0);
+                                                                   minimapBox.Width = w;
+                                                                   minimapBox.Height = h;
+
+                                                                   Image.GetThumbnailImageAbort myCallback = () => false;
+                                                                   minimapBox.WaitOnLoad = true;
+                                                                   minimapBox.Image = minimapImage.GetThumbnailImage(w, h, myCallback, IntPtr.Zero);
+
+                                                                   progress.Width = progress.Width - w;
+                                                                   label.Width = label.Width - w;
+                                                               }),
+                                                           e => { },
+                                                           null);
             }
+            imageLoaded = true;
         }
+
 
 
         public Control GetControl()
@@ -95,30 +113,7 @@ namespace ZeroKLobby.Notifications
 
         void minimapBox_Click(object sender, EventArgs e)
         {
-            Utils.OpenWeb("http://springfiles.com/search_result.php?select_select=select_file_name&search=" + Uri.EscapeDataString(fileName));
-        }
-
-        void minimapImageLoadComplete(object sender, DownloadDataCompletedEventArgs e)
-        {
-            if (e.Error == null && !e.Cancelled && e.Result != null)
-            {
-                var ms = new MemoryStream(e.Result);
-                var minimapImage = Image.FromStream(ms);
-                var w = minimapImage.Width;
-                var h = minimapImage.Height;
-                w = (int)Math.Round(w*((double)(Height)/h));
-                h = Height;
-                minimapBox.Location = new Point(Width - w, 0);
-                minimapBox.Width = w;
-                minimapBox.Height = h;
-
-                Image.GetThumbnailImageAbort myCallback = () => false;
-                minimapBox.WaitOnLoad = true;
-                minimapBox.Image = minimapImage.GetThumbnailImage(w, h, myCallback, IntPtr.Zero);
-
-                progress.Width = progress.Width - w;
-                label.Width = label.Width - w;
-            }
+            Utils.OpenWeb("http://zero-k.info/Maps/DetailName?name=" + Uri.EscapeDataString(Download.Name));
         }
     }
 }
