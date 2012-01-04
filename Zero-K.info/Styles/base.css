@@ -7,7 +7,7 @@ h1 {font-size: 160%; color: #fff; padding: 0; margin: 0; }
 h2 {font-size: 140%; color: #cee; padding: 0; margin: 0; }
 h3 {font-size: 120%; color: #eec; padding: 0; margin: 0; }
 
-a {color: #38bfec; text-decoration: none; cursor: pointer !important;}
+a {color: #38bfec; text-decoration: none;}
 a:visited {color: #4c90a6;}
 a:hover {color: #fff;}
 a:active {color: #cbd3d4;}
@@ -16,7 +16,13 @@ a:active {color: #cbd3d4;}
 base.css might be the wrong file, please move when needed or delete this comment.
 Whatever you do, please notify me so I know next time. -Skasi */
 [nicetitle], [nicetitle-processed] {cursor: help;}
-[nicetitle] a, [nicetitle-processed] a {cursor: pointer;}
+
+input[type="button"], input[type="checkbox"], input[type="image"], input[type="submit"], input[type="radio"], input[type="reset"],
+a, a[nicetitle], a[nicetitle-processed], 
+[onclick], [onclick][nicetitle], [onclick][nicetitle-processed]
+{
+  cursor: pointer;
+}
 
 img
 {
@@ -47,8 +53,6 @@ input, textarea
 	border: 1px solid teal;
 	padding: 3px;
 }
-
-input[type="button"], input[type="image"], input[type="submit"], input[type="reset"] {cursor: pointer !important;}
 
 .noborder, input.radio
 {
