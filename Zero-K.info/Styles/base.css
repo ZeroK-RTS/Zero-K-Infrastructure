@@ -16,6 +16,7 @@ a:active {color: #cbd3d4;}
 base.css might be the wrong file, please move when needed or delete this comment.
 Whatever you do, please notify me so I know next time. -Skasi */
 [nicetitle], [nicetitle-processed] {cursor: help;}
+[nicetitle] a, [nicetitle-processed] a {cursor: pointer;}
 
 img
 {
@@ -47,7 +48,7 @@ input, textarea
 	padding: 3px;
 }
 
-input[type="submit"] {cursor: pointer !important;}
+input[type="button"], input[type="image"], input[type="submit"], input[type="reset"] {cursor: pointer !important;}
 
 .noborder, input.radio
 {
