@@ -17,9 +17,10 @@ base.css might be the wrong file, please move when needed or delete this comment
 Whatever you do, please notify me so I know next time. -Skasi */
 [nicetitle], [nicetitle-processed] {cursor: help;}
 
-input[type="button"], input[type="checkbox"], input[type="image"], input[type="submit"], input[type="radio"], input[type="reset"],
-a, a[nicetitle], a[nicetitle-processed], 
-[onclick], [onclick][nicetitle], [onclick][nicetitle-processed]
+input[type="button"], input[type="checkbox"], input[type="image"],
+input[type="submit"], input[type="radio"], input[type="reset"],
+select, a, a[nicetitle], a[nicetitle-processed], 
+[onclick][nicetitle], [onclick][nicetitle-processed]
 {
   cursor: pointer;
 }
