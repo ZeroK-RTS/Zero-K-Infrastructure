@@ -7,13 +7,22 @@ h1 {font-size: 160%; color: #fff; padding: 0; margin: 0; }
 h2 {font-size: 140%; color: #cee; padding: 0; margin: 0; }
 h3 {font-size: 120%; color: #eec; padding: 0; margin: 0; }
 
-a {color: #38bfec; text-decoration: none;}
+a {color: #38bfec; text-decoration: none; cursor: pointer !important;}
 a:visited {color: #4c90a6;}
 a:hover {color: #fff;}
 a:active {color: #cbd3d4;}
 
-img {border: none;
-     opacity: 1;}
+/* Help cursor for anything that brings up a tooltip when moused over.
+base.css might be the wrong file, please move when needed or delete this comment.
+Whatever you do, please notify me so I know next time. -Skasi */
+[nicetitle], [nicetitle-processed] {cursor: help;}
+
+img
+{
+  border: none;
+  opacity: 1;
+  vertical-align: middle;
+}
 
 form
 {
@@ -37,6 +46,8 @@ input, textarea
 	border: 1px solid teal;
 	padding: 3px;
 }
+
+input[type="submit"] {cursor: pointer !important;}
 
 .noborder, input.radio
 {
