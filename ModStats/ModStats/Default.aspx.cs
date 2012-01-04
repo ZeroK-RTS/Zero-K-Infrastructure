@@ -89,7 +89,7 @@ namespace ModStats
 
 			if (!string.IsNullOrEmpty(tbPlayer.Text)) ret = ret.Where(x => x.PlayerList.Contains(tbPlayer.Text));
 
-			return ret.Take(500);
+			return ret.OrderByDescending(x=>x.GameID).Take(500);
 		}
 
 		protected void gridUnits_RowCommand(object sender, GridViewCommandEventArgs e)

@@ -52,10 +52,14 @@ namespace Springie.autohost
                 {
                     // move nonspecs
                     var list =
-                        tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && !x.IsSpectator&& x.Name != tas.MyBattle.Founder.Name).OrderBy(
+                        tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && !x.IsSpectator&& x.Name != tas.MyBattle.Founder.Name).OrderByDescending(
                             x => x.LobbyUser.EffectiveElo).ToList();
 
-                    foreach (var p in list.Take(list.Count()/2)) tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
+                    foreach (var p in list.Take(list.Count() / 2))
+                    {
+                        tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
+                        if (!p.LobbyUser.IsZkLobbyUser) tas.Kick(p.Name);
+                    }
 
                     // move specs
                     list = tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && x.IsSpectator && x.Name != tas.MyBattle.Founder.Name).OrderBy(
