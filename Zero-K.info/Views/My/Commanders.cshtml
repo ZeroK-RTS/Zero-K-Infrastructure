@@ -1,16 +1,18 @@
-﻿@model ZeroKWeb.Controllers.MyController.CommandersModel
+ @model ZeroKWeb.Controllers.MyController.CommandersModel
 @using ZeroKWeb.Controllers
 @using ZkData
 <h2>Unlocked technologies</h2>
+<a href="/My/UnlockList">View all unlocks</a>
 @{Html.RenderPartial("UnlockedTechnologies", Model.Unlocks);}
-<div>
-	You can prepare 6 different commanders using technologies you own.
-	<br />
-	At the start of each battle, you can pick one of them.
-	<br />
-	Each commander starts on level 1 in battle, but can morph up to level 4
-</div>
-<br />
+<h2>HowTo</h2>
+<a href="/My/UnlockList">Official commander guide</a>
+<0l>
+ <li><a href="/My/UnlockList">Unlock</a> at least one chassis and any number of weapons and modules.
+ <li>Create different layouts below.
+ <li>Pick a commander when the game starts.
+</0l>
+ You can prepare up to 6 different commanders. Each one starts on level 1 in every battle and can morph up to level 4.
+<h2>Commanders</h2>
 @if (!Model.Unlocks.Any(x => x.Unlock.UnlockType == UnlockTypes.Chassis)) {
 	<span>You need to unlock some chassis before you can start customizing commander
 	</span>
