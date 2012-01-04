@@ -6,11 +6,11 @@
 @{Html.RenderPartial("UnlockedTechnologies", Model.Unlocks);}
 <h2>HowTo</h2>
 <a href="/My/UnlockList">Official commander guide</a>
-<0l>
+<ol>
  <li><a href="/My/UnlockList">Unlock</a> at least one chassis and any number of weapons and modules.
  <li>Create different layouts below.
  <li>Pick a commander when the game starts.
-</0l>
+</ol>
  You can prepare up to 6 different commanders. Each one starts on level 1 in every battle and can morph up to level 4.
 <h2>Commanders</h2>
 @if (!Model.Unlocks.Any(x => x.Unlock.UnlockType == UnlockTypes.Chassis)) {
