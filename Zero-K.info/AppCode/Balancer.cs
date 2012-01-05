@@ -26,6 +26,7 @@ namespace ZeroKWeb.AppCode
     public class BotTeam
     {
         public int AllyID;
+        public string BotAI;
         public string BotName;
         public string Owner;
         public int TeamID;
@@ -84,7 +85,8 @@ namespace ZeroKWeb.AppCode
                     for (var i = 0; i < players.Count; i++)
                         res.BalancedTeams.Add(new AccountTeam()
                                               { AccountID = players[i].LobbyID ?? 0, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
-                    foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam() { AllyID = 1, BotName = b.EffectBots, TeamID = teamID++ });
+                    int cnt = 1;
+                    foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam() { AllyID = 1, BotAI = b.EffectBots, TeamID = teamID++, BotName = "Aliens" + cnt++});
 
                     res.Message += string.Format("This planet is infested by aliens, fight for your survival");
                     return res;
