@@ -25,11 +25,6 @@ namespace ZeroKLobby.MicroLobby
             if (!Friends.Contains(userName)) Program.Conf.Friends.Add(userName);
             SaveFriends();
             FriendAdded(this, new EventArgs<string>(userName));
-            if (Program.TasClient.IsLoggedIn)
-              Program.TasClient.Say(TasClient.SayPlace.User,
-                                    userName,
-                                    string.Format("I added you to my friend list - add me too: spring://@add_friend:{0}", Program.TasClient.UserName),
-                                    true);
         }
 
         public void RemoveFriend(string userName)
