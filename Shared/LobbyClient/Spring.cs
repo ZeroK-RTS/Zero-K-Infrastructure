@@ -108,7 +108,7 @@ namespace LobbyClient
         public event EventHandler<EventArgs<bool>> SpringExited;
         public event EventHandler SpringStarted;
 
-        public Spring(SpringPaths springPaths, AutohostMode autohostMode = AutohostMode.GameTeams)
+        public Spring(SpringPaths springPaths)
         {
             paths = springPaths;
             timer.Elapsed += timer_Elapsed;
