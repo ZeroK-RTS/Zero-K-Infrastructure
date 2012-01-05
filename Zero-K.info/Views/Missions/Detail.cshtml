@@ -14,7 +14,7 @@
     @if (m.MinHumans < 2) {
       <br />
       <br />
-      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.Name)'>
+      <a href='spring://@(Url.Action("Detail", "Missions", new { id = m.MissionID }, Request.Url.Scheme) + (m.IsScriptMission ? "@start_script_mission:" : "@start_mission:") + m.NameWithVersion)'>
         <img src="../../img/playnow.png" width="250" /></a>
     }
     <br />
