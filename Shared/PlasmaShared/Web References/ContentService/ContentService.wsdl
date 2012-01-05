@@ -23,7 +23,9 @@
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="autoHost" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="map" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="mod" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="currentTeams" type="tns:ArrayOfAccountTeam" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentBots" type="tns:ArrayOfBotTeam" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -41,6 +43,20 @@
           <s:element minOccurs="1" maxOccurs="1" name="TeamID" type="s:int" />
         </s:sequence>
       </s:complexType>
+      <s:complexType name="ArrayOfBotTeam">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="BotTeam" nillable="true" type="tns:BotTeam" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="BotTeam">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="AllyID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="BotAI" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BotName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Owner" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="TeamID" type="s:int" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="BalanceTeamsResponse">
         <s:complexType>
           <s:sequence>
@@ -52,26 +68,26 @@
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="BalancedTeams" type="tns:ArrayOfAccountTeam" />
           <s:element minOccurs="0" maxOccurs="1" name="Bots" type="tns:ArrayOfBotTeam" />
+          <s:element minOccurs="1" maxOccurs="1" name="DeleteBots" type="s:boolean" />
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:complexType name="ArrayOfBotTeam">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="BotTeam" nillable="true" type="tns:BotTeam" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="BotTeam">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="AllyID" type="s:int" />
-          <s:element minOccurs="0" maxOccurs="1" name="BotName" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="TeamID" type="s:int" />
-        </s:sequence>
-      </s:complexType>
-      <s:element name="FindResourceData">
+      <s:element name="DownloadFile">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="words" type="tns:ArrayOfString" />
-            <s:element minOccurs="1" maxOccurs="1" name="type" nillable="true" type="tns:ResourceType" />
+            <s:element minOccurs="0" maxOccurs="1" name="internalName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="DownloadFileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="DownloadFileResult" type="s:boolean" />
+            <s:element minOccurs="0" maxOccurs="1" name="links" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="torrent" type="s:base64Binary" />
+            <s:element minOccurs="0" maxOccurs="1" name="dependencies" type="tns:ArrayOfString" />
+            <s:element minOccurs="1" maxOccurs="1" name="resourceType" type="tns:ResourceType" />
+            <s:element minOccurs="0" maxOccurs="1" name="torrentFileName" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -86,6 +102,14 @@
           <s:enumeration value="Mod" />
         </s:restriction>
       </s:simpleType>
+      <s:element name="FindResourceData">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="words" type="tns:ArrayOfString" />
+            <s:element minOccurs="1" maxOccurs="1" name="type" nillable="true" type="tns:ResourceType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="FindResourceDataResponse">
         <s:complexType>
           <s:sequence>
@@ -118,53 +142,6 @@
           <s:element minOccurs="0" maxOccurs="1" name="SpringVersion" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:element name="GetResourceDataByResourceID">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="resourceID" type="s:int" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="GetResourceDataByResourceIDResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetResourceDataByResourceIDResult" type="tns:ResourceData" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="GetResourceDataByInternalName">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="internalName" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="GetResourceDataByInternalNameResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetResourceDataByInternalNameResult" type="tns:ResourceData" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="DownloadFile">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="internalName" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="DownloadFileResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="DownloadFileResult" type="s:boolean" />
-            <s:element minOccurs="0" maxOccurs="1" name="links" type="tns:ArrayOfString" />
-            <s:element minOccurs="0" maxOccurs="1" name="torrent" type="s:base64Binary" />
-            <s:element minOccurs="0" maxOccurs="1" name="dependencies" type="tns:ArrayOfString" />
-            <s:element minOccurs="1" maxOccurs="1" name="resourceType" type="tns:ResourceType" />
-            <s:element minOccurs="0" maxOccurs="1" name="torrentFileName" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="GetEloByAccountID">
         <s:complexType>
           <s:sequence>
@@ -213,7 +190,10 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="autohostName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentMap" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="mod" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="accounts" type="tns:ArrayOfAccountTeam" />
+            <s:element minOccurs="0" maxOccurs="1" name="currentBots" type="tns:ArrayOfBotTeam" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -242,6 +222,34 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="GetResourceDataResult" type="tns:ResourceData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetResourceDataByInternalName">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="internalName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetResourceDataByInternalNameResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetResourceDataByInternalNameResult" type="tns:ResourceData" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetResourceDataByResourceID">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="resourceID" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetResourceDataByResourceIDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetResourceDataByResourceIDResult" type="tns:ResourceData" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -535,29 +543,17 @@
   <wsdl:message name="BalanceTeamsSoapOut">
     <wsdl:part name="parameters" element="tns:BalanceTeamsResponse" />
   </wsdl:message>
-  <wsdl:message name="FindResourceDataSoapIn">
-    <wsdl:part name="parameters" element="tns:FindResourceData" />
-  </wsdl:message>
-  <wsdl:message name="FindResourceDataSoapOut">
-    <wsdl:part name="parameters" element="tns:FindResourceDataResponse" />
-  </wsdl:message>
-  <wsdl:message name="GetResourceDataByResourceIDSoapIn">
-    <wsdl:part name="parameters" element="tns:GetResourceDataByResourceID" />
-  </wsdl:message>
-  <wsdl:message name="GetResourceDataByResourceIDSoapOut">
-    <wsdl:part name="parameters" element="tns:GetResourceDataByResourceIDResponse" />
-  </wsdl:message>
-  <wsdl:message name="GetResourceDataByInternalNameSoapIn">
-    <wsdl:part name="parameters" element="tns:GetResourceDataByInternalName" />
-  </wsdl:message>
-  <wsdl:message name="GetResourceDataByInternalNameSoapOut">
-    <wsdl:part name="parameters" element="tns:GetResourceDataByInternalNameResponse" />
-  </wsdl:message>
   <wsdl:message name="DownloadFileSoapIn">
     <wsdl:part name="parameters" element="tns:DownloadFile" />
   </wsdl:message>
   <wsdl:message name="DownloadFileSoapOut">
     <wsdl:part name="parameters" element="tns:DownloadFileResponse" />
+  </wsdl:message>
+  <wsdl:message name="FindResourceDataSoapIn">
+    <wsdl:part name="parameters" element="tns:FindResourceData" />
+  </wsdl:message>
+  <wsdl:message name="FindResourceDataSoapOut">
+    <wsdl:part name="parameters" element="tns:FindResourceDataResponse" />
   </wsdl:message>
   <wsdl:message name="GetEloByAccountIDSoapIn">
     <wsdl:part name="parameters" element="tns:GetEloByAccountID" />
@@ -588,6 +584,18 @@
   </wsdl:message>
   <wsdl:message name="GetResourceDataSoapOut">
     <wsdl:part name="parameters" element="tns:GetResourceDataResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetResourceDataByInternalNameSoapIn">
+    <wsdl:part name="parameters" element="tns:GetResourceDataByInternalName" />
+  </wsdl:message>
+  <wsdl:message name="GetResourceDataByInternalNameSoapOut">
+    <wsdl:part name="parameters" element="tns:GetResourceDataByInternalNameResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetResourceDataByResourceIDSoapIn">
+    <wsdl:part name="parameters" element="tns:GetResourceDataByResourceID" />
+  </wsdl:message>
+  <wsdl:message name="GetResourceDataByResourceIDSoapOut">
+    <wsdl:part name="parameters" element="tns:GetResourceDataByResourceIDResponse" />
   </wsdl:message>
   <wsdl:message name="GetResourceListSoapIn">
     <wsdl:part name="parameters" element="tns:GetResourceList" />
@@ -652,21 +660,13 @@
       <wsdl:input message="tns:BalanceTeamsSoapIn" />
       <wsdl:output message="tns:BalanceTeamsSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="FindResourceData">
-      <wsdl:input message="tns:FindResourceDataSoapIn" />
-      <wsdl:output message="tns:FindResourceDataSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="GetResourceDataByResourceID">
-      <wsdl:input message="tns:GetResourceDataByResourceIDSoapIn" />
-      <wsdl:output message="tns:GetResourceDataByResourceIDSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="GetResourceDataByInternalName">
-      <wsdl:input message="tns:GetResourceDataByInternalNameSoapIn" />
-      <wsdl:output message="tns:GetResourceDataByInternalNameSoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="DownloadFile">
       <wsdl:input message="tns:DownloadFileSoapIn" />
       <wsdl:output message="tns:DownloadFileSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="FindResourceData">
+      <wsdl:input message="tns:FindResourceDataSoapIn" />
+      <wsdl:output message="tns:FindResourceDataSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetEloByAccountID">
       <wsdl:input message="tns:GetEloByAccountIDSoapIn" />
@@ -687,6 +687,14 @@
     <wsdl:operation name="GetResourceData">
       <wsdl:input message="tns:GetResourceDataSoapIn" />
       <wsdl:output message="tns:GetResourceDataSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetResourceDataByInternalName">
+      <wsdl:input message="tns:GetResourceDataByInternalNameSoapIn" />
+      <wsdl:output message="tns:GetResourceDataByInternalNameSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetResourceDataByResourceID">
+      <wsdl:input message="tns:GetResourceDataByResourceIDSoapIn" />
+      <wsdl:output message="tns:GetResourceDataByResourceIDSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetResourceList">
       <wsdl:input message="tns:GetResourceListSoapIn" />
@@ -745,35 +753,17 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="FindResourceData">
-      <soap:operation soapAction="http://tempuri.org/FindResourceData" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetResourceDataByResourceID">
-      <soap:operation soapAction="http://tempuri.org/GetResourceDataByResourceID" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetResourceDataByInternalName">
-      <soap:operation soapAction="http://tempuri.org/GetResourceDataByInternalName" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="DownloadFile">
       <soap:operation soapAction="http://tempuri.org/DownloadFile" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FindResourceData">
+      <soap:operation soapAction="http://tempuri.org/FindResourceData" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -819,6 +809,24 @@
     </wsdl:operation>
     <wsdl:operation name="GetResourceData">
       <soap:operation soapAction="http://tempuri.org/GetResourceData" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetResourceDataByInternalName">
+      <soap:operation soapAction="http://tempuri.org/GetResourceDataByInternalName" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetResourceDataByResourceID">
+      <soap:operation soapAction="http://tempuri.org/GetResourceDataByResourceID" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -928,35 +936,17 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="FindResourceData">
-      <soap12:operation soapAction="http://tempuri.org/FindResourceData" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetResourceDataByResourceID">
-      <soap12:operation soapAction="http://tempuri.org/GetResourceDataByResourceID" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetResourceDataByInternalName">
-      <soap12:operation soapAction="http://tempuri.org/GetResourceDataByInternalName" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="DownloadFile">
       <soap12:operation soapAction="http://tempuri.org/DownloadFile" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FindResourceData">
+      <soap12:operation soapAction="http://tempuri.org/FindResourceData" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -1002,6 +992,24 @@
     </wsdl:operation>
     <wsdl:operation name="GetResourceData">
       <soap12:operation soapAction="http://tempuri.org/GetResourceData" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetResourceDataByInternalName">
+      <soap12:operation soapAction="http://tempuri.org/GetResourceDataByInternalName" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetResourceDataByResourceID">
+      <soap12:operation soapAction="http://tempuri.org/GetResourceDataByResourceID" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

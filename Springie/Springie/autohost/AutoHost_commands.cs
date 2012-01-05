@@ -46,26 +46,37 @@ namespace Springie.autohost
         public void ComSplitPlayers(TasSayEventArgs e, string[] words)
         {
             if (tas.MyBattle != null) {
-                var target = tas.ExistingBattles.Values.Where(x=>x.Founder.Name.StartsWith(config.AccountName) && x.Founder.Name != GetAccountName() && x.NonSpectatorCount ==0).FirstOrDefault();
+                var target = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name.StartsWith(config.AccountName) && x.Founder.Name != GetAccountName() && x.NonSpectatorCount ==0);
 
+                
                 if (target != null)
                 {
-                    // move nonspecs
-                    var list =
-                        tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && !x.IsSpectator&& x.Name != tas.MyBattle.Founder.Name).OrderByDescending(
-                            x => x.LobbyUser.EffectiveElo).ToList();
-
-                    foreach (var p in list.Take(list.Count() / 2))
-                    {
-                        tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
-                        if (!p.LobbyUser.IsZkLobbyUser) tas.Kick(p.Name);
-                    }
-
-                    // move specs
-                    list = tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && x.IsSpectator && x.Name != tas.MyBattle.Founder.Name).OrderBy(
-                            x => x.LobbyUser.EffectiveElo).ToList();
                     
-                    foreach (var p in list.Take(list.Count() / 2)) tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
+                    var plist =
+                        tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && !x.IsSpectator&& x.Name != tas.MyBattle.Founder.Name).ToList();
+                    var slist = tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && x.IsSpectator&& x.Name != tas.MyBattle.Founder.Name).ToList();
+
+                    // group people by clans - if he has no clan use lobbyid as clan name, order by average elo
+                    var groups = plist.GroupBy(x => !string.IsNullOrEmpty(x.LobbyUser.Clan) ? x.LobbyUser.Clan : x.LobbyUser.LobbyID.ToString()).OrderByDescending(x => x.Average(y => y.LobbyUser.EffectiveElo));
+
+                    var moveCnt = plist.Count/2;
+                    var moved = 0;
+
+                    // take half players with top elo and move them - incuding specs from same clan
+                    foreach (var g in groups) {
+                        foreach (var p in g)
+                        {
+                            tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
+                            if (!p.LobbyUser.IsZkLobbyUser) tas.Kick(p.Name);
+                        }
+                        foreach (var p in slist.Where(x=>x.LobbyUser.Clan == g.Key)) {
+                            tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
+                            if (!p.LobbyUser.IsZkLobbyUser) tas.Kick(p.Name);
+                        }
+
+                        moved+= g.Count();
+                        if (moved > moveCnt) break;
+                    }
                 }
 
             }

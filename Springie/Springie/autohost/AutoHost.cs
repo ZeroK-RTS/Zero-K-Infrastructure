@@ -94,7 +94,7 @@ namespace Springie.autohost
                 }
             };
             
-		    spring = new Spring(springPaths, config.PlanetWarsEnabled ?  AutohostMode.Planetwars : AutohostMode.GameTeams) { UseDedicatedServer = true };
+		    spring = new Spring(springPaths) { UseDedicatedServer = true };
 			tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, Program.main.Config.IpOverride);
 
 			banList = new BanList(this, tas);
@@ -705,7 +705,7 @@ namespace Springie.autohost
 				welc = welc.Replace("%1", name);
 				welc = welc.Replace("%2", GetUserLevel(name).ToString());
 				welc = welc.Replace("%3", MainConfig.SpringieVersion);
-				SayBattle(welc, false);
+                SayBattle(welc, false);
 			}
 			if (spring.IsRunning)
 			{
