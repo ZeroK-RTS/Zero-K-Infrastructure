@@ -31,7 +31,6 @@ namespace Springie.autohost
 		static readonly object savLock = new object();
 
 		IVotable activePoll;
-		BanList banList;
 		string bossName = "";
 		string delayedModChange;
 
@@ -96,10 +95,6 @@ namespace Springie.autohost
             
 		    spring = new Spring(springPaths) { UseDedicatedServer = true };
 			tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, Program.main.Config.IpOverride);
-
-			banList = new BanList(this, tas);
-			banList.Load();
-
 
 			pollTimer = new Timer(PollTimeout*1000);
 			pollTimer.Enabled = false;
@@ -217,7 +212,6 @@ namespace Springie.autohost
 			Stop();
 			tas.UnsubscribeEvents(this);
 			tas.UnsubscribeEvents(manager);
-			tas.UnsubscribeEvents(banList);
 			tas.UnsubscribeEvents(PlanetWars);
 			spring.UnsubscribeEvents(this);
 			spring.UnsubscribeEvents(PlanetWars);
@@ -229,9 +223,7 @@ namespace Springie.autohost
 			pollTimer.Dispose();
 			if (manager != null) manager.Stop();
             if (timer != null) timer.Dispose(); 
-			banList.Close();
 			MapBoxes = null;
-			banList = null;
 			manager = null;
 			pollTimer = null;
 			PlanetWars = null;
@@ -259,20 +251,17 @@ namespace Springie.autohost
 
 		public int GetUserLevel(string name)
 		{
-			foreach (var pu in config.PrivilegedUsers) if (pu.Name == name) return pu.Level;
-			User u;
-			if (tas.GetExistingUser(name, out u)) if (u.IsAdmin) return config.DefaulRightsLevelForLobbyAdmins;
-			return name == bossName ? config.BossRightsLevel : config.DefaulRightsLevel;
+            var ret = tas.ExistingUsers[name].SpringieLevel;
+            if (!string.IsNullOrEmpty(bossName)) {
+                if (name == bossName) ret += 1;
+                else ret += -1;
+            }
+            return ret;
 		}
 
 
 		public bool HasRights(string command, TasSayEventArgs e)
 		{
-			if (banList.IsBanned(e.UserName))
-			{
-				Respond(e, "tough luck, you are banned");
-				return false;
-			}
 			foreach (var c in config.Commands)
 			{
 				if (c.Name == command)
@@ -296,17 +285,8 @@ namespace Springie.autohost
 
 							if (ulevel >= reqLevel)
 							{
-								// boss stuff
-								if (bossName != "" && ulevel <= config.DefaulRightsLevel && e.UserName != bossName && config.DefaultRightsLevelWithBoss < reqLevel)
-								{
-									Respond(e, "Sorry, you cannot do this right now, ask boss admin " + bossName);
-									return false;
-								}
-								else
-								{
-									c.lastCall = DateTime.Now;
-									return true; // ALL OK
-								}
+        						c.lastCall = DateTime.Now;
+		    					return true; // ALL OK
 							}
 							else
 							{
@@ -318,7 +298,8 @@ namespace Springie.autohost
 								}
 								else
 								{
-									Respond(e, "Sorry, you do not have rights to execute " + command);
+                                    
+									Respond(e, string.Format("Sorry, you do not have rights to execute {0}{1}", command, (bossName != null ? ", ask boss admin " + bossName :"")));
 									return false;
 								}
 							}
@@ -404,12 +385,6 @@ namespace Springie.autohost
 			{
 				config.Commands.Sort(AutoHostConfig.CommandComparer);
 
-				// remove duplicated admins
-				var l = new List<PrivilegedUser>();
-				foreach (var p in config.PrivilegedUsers) if (l.Find(delegate(PrivilegedUser u) { return u.Name == p.Name; }) == null) l.Add(p);
-				;
-				config.PrivilegedUsers = l;
-				config.PrivilegedUsers.Sort(AutoHostConfig.UserComparer);
 
 
 				var s = new XmlSerializer(config.GetType());
@@ -417,8 +392,6 @@ namespace Springie.autohost
 				f.SetLength(0);
 				s.Serialize(f, config);
 				f.Close();
-
-				if (banList != null) banList.Save();
 
 				var fm = new BinaryFormatter();
 				using (var fs = new FileStream(springPaths.Cache + '/' + BoxesName, FileMode.Create))
@@ -962,14 +935,6 @@ namespace Springie.autohost
 						ComBalance(e, words);
 						break;
 
-					case "setlevel":
-						ComSetLevel(e, words);
-						break;
-
-					case "setcommandlevel":
-						ComSetCommandLevel(e, words);
-						break;
-
 					case "say":
 						ComSay(e, words);
 						break;
@@ -1014,18 +979,6 @@ namespace Springie.autohost
 
 					case "cbalance":
 						ComCBalance(e, words);
-						break;
-
-					case "listbans":
-						banList.ComListBans(e, words);
-						break;
-
-					case "ban":
-						banList.ComBan(e, words);
-						break;
-
-					case "unban":
-						banList.ComUnban(e, words);
 						break;
 
 					case "stats":

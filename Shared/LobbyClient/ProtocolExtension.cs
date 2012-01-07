@@ -20,7 +20,11 @@ namespace LobbyClient
             EffectiveElo,
             Faction,
             Clan,
-            Avatar
+            Avatar,
+            SpringieLevel,
+            ZkAdmin,
+            BanMute,
+            BanLobby
         }
 
         readonly Action<string, Dictionary<string, string>> notifyUserExtensionChange;

@@ -18,7 +18,6 @@ namespace Springie.autohost
         string defaultMod = "XTA v8";
         UnitInfo[] disabledUnits = new UnitInfo[] { };
         string gameTitle = "AutoHost (%1)";
-        string[] mapCycle = new string[] { };
         int maxPlayers = 10;
         string password = "*";
         string welcome = "Hi %1 (rights:%2), welcome to %3, automated host. For help say !help";
@@ -38,15 +37,8 @@ namespace Springie.autohost
 
         public List<CommandConfig> Commands = new List<CommandConfig>();
 
-        [Category("Rights")]
-        [Description("Default rights level for non-privileged users")]
-        public int DefaulRightsLevel { get { return defaulRightsLevel; } set { defaulRightsLevel = value; } }
 
         public int BossRightsLevel = 2;
-
-        [Category("Rights")]
-        [Description("Default rights level for lobby admins (mod admins)")]
-        public int DefaulRightsLevelForLobbyAdmins { get { return defaulRightsLevelForLobbyAdmins; } set { defaulRightsLevelForLobbyAdmins = value; } }
 
         [Category("Mod and map")]
         [Description("Default game map")]
@@ -106,7 +98,6 @@ namespace Springie.autohost
         public string Password { get { return password; } set { password = value; } }
 
         public bool PlanetWarsEnabled;
-        public List<PrivilegedUser> PrivilegedUsers = new List<PrivilegedUser>();
         public bool RedirectGameChat = true;
 
         [Category("Basic options")]
@@ -446,31 +437,7 @@ namespace Springie.autohost
             AddMissingCommands();
         }
 
-        public void SetPrivilegedUser(string name, int level)
-        {
-            for (var i = 0; i < PrivilegedUsers.Count; ++i)
-            {
-                if (PrivilegedUsers[i].Name == name)
-                {
-                    if (level == 0)
-                    {
-                        PrivilegedUsers.RemoveAt(i);
-                        return;
-                    }
-                    else
-                    {
-                        PrivilegedUsers[i].Level = level;
-                        return;
-                    }
-                }
-            }
-            if (level > 0) PrivilegedUsers.Add(new PrivilegedUser(name, level));
-        }
 
-        public static int UserComparer(PrivilegedUser a, PrivilegedUser b)
-        {
-            return a.Name.CompareTo(b.Name);
-        }
 
         void AddMissing(CommandConfig command, List<CommandConfig> addedCommands)
         {

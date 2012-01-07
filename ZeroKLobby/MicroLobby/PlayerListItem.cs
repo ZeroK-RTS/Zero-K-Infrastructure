@@ -127,7 +127,7 @@ namespace ZeroKLobby.MicroLobby
 				}
 				drawImage(Resources.robot);
 				var botDisplayName = MissionSlot == null ? bot.aiLib : MissionSlot.TeamName;
-				drawText(botDisplayName, foreColor, backColor);
+				drawText(botDisplayName + " (" + bot.owner + ")", foreColor, backColor);
 				return;
 			}
 

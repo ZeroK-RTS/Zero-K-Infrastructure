@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Caching;
 using PlasmaShared;
 
-namespace ZeroKWeb.AppCode
+namespace ZeroKWeb
 {
 	public class SpotlightHandler
 	{

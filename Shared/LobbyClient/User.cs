@@ -54,6 +54,8 @@ namespace LobbyClient
         public bool IsBot { get; protected set; }
         public bool IsInBattleRoom { get; set; }
         public bool IsInGame { get; set; }
+        public bool BanMute { get; set; }
+        public bool BanLobby { get; set; }
 
         public int Level { get; private set; }
 
@@ -80,6 +82,8 @@ namespace LobbyClient
             return (User)MemberwiseClone();
         }
 
+        public User() {
+        }
 
         public static User Create(string name)
         {
@@ -109,14 +113,22 @@ namespace LobbyClient
         {
             Extensions = data;
             int ret;
-            int.TryParse(GetExtension(ProtocolExtension.Keys.Level), out ret);
-            Level = ret;
-            int.TryParse(GetExtension(ProtocolExtension.Keys.EffectiveElo), out ret);
-            EffectiveElo = ret;
+            if (int.TryParse(GetExtension(ProtocolExtension.Keys.Level), out ret)) Level = ret;
+            if (int.TryParse(GetExtension(ProtocolExtension.Keys.EffectiveElo), out ret)) EffectiveElo = ret;
+            if (int.TryParse(GetExtension(ProtocolExtension.Keys.SpringieLevel), out ret)) SpringieLevel = ret;
+
             Faction = GetExtension(ProtocolExtension.Keys.Faction);
             Clan = GetExtension(ProtocolExtension.Keys.Clan);
             Avatar = GetExtension(ProtocolExtension.Keys.Avatar);
+
+            if (GetExtension(ProtocolExtension.Keys.ZkAdmin) == "1") IsZeroKAdmin =true;
+            if (GetExtension(ProtocolExtension.Keys.BanMute) == "1") BanMute = true;
+            if (GetExtension(ProtocolExtension.Keys.BanLobby) == "1") BanLobby = true;
+            
         }
+
+        public int SpringieLevel =1;
+        public bool IsZeroKAdmin { get; protected set; }
 
         public int ToInt()
         {

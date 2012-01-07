@@ -765,39 +765,6 @@ namespace Springie.autohost
             SayBattle("[" + e.UserName + "]" + Utils.Glue(words));
         }
 
-        public void ComSetCommandLevel(TasSayEventArgs e, string[] words)
-        {
-            if (words.Length != 2)
-            {
-                Respond(e, "This command needs 2 parameters");
-                return;
-            }
-            int lvl;
-            int.TryParse(words[0], out lvl);
-            var com = config.Commands.Find(x => x.Name == words[1]);
-            if (com != null)
-            {
-                com.Level = lvl;
-                SaveConfig();
-                Respond(e, string.Format("Level of command {0} was set to {1}", words[1], lvl));
-            }
-            else Respond(e, "No such command found");
-        }
-
-        public void ComSetLevel(TasSayEventArgs e, string[] words)
-        {
-            if (words.Length != 2)
-            {
-                Respond(e, "This command needs 2 parameters");
-                return;
-            }
-            int lvl;
-            int.TryParse(words[0], out lvl);
-            config.SetPrivilegedUser(words[1], lvl);
-            SaveConfig();
-            Respond(e, words[1] + " has rights level " + lvl);
-        }
-
 
         public void ComSplit(TasSayEventArgs e, string[] words)
         {
@@ -1073,7 +1040,9 @@ namespace Springie.autohost
 		void ComAdmins(TasSayEventArgs e, string[] words)
 		{
 			tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-			foreach (var u in config.PrivilegedUsers) tas.Say(TasClient.SayPlace.User, e.UserName, " " + u.Name + " (level " + u.Level + ")", false);
+            foreach (var u in tas.ExistingUsers.Values.Where(x=>x.SpringieLevel > 1)) {
+                tas.Say(TasClient.SayPlace.User, e.UserName, " " + u.Name + " (level " + u.SpringieLevel + ")", false);
+            }
 			tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
 		}
 

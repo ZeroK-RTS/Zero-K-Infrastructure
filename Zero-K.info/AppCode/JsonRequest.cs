@@ -8,7 +8,7 @@ using System.Text;
 using System.Web;
 using System.Web.Script.Serialization;
 
-namespace ZeroKWeb.AppCode
+namespace ZeroKWeb
 {
     public class JsonRequest
     {

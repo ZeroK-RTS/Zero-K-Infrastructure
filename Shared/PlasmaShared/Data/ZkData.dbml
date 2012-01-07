@@ -90,6 +90,7 @@
       <Column Name="CreditsIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="CreditsExpense" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="Avatar" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="SpringieLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />
@@ -233,6 +234,7 @@
       <Column Name="MapPlanetWarsIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="MapIsChickens" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="RatingPollID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MapSpringieCommands" Type="System.String" DbType="nvarchar(2000)" CanBeNull="true" />
       <Association Name="Resource_ResourceDependency" Member="ResourceDependencies" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceDependency" />
       <Association Name="Resource_ResourceContentFile" Member="ResourceContentFiles" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceContentFile" />
       <Association Name="Resource_ResourceSpringHash" Member="ResourceSpringHashes" ThisKey="ResourceID" OtherKey="ResourceID" Type="ResourceSpringHash" />
@@ -727,6 +729,7 @@
       <Column Name="Name" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
       <Column Name="Shortcut" Type="System.String" DbType="nvarchar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Color" Type="System.String" DbType="varchar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Association Name="Faction_Account" Member="Accounts" ThisKey="FactionID" OtherKey="FactionID" Type="Account" />
       <Association Name="Faction_Clan" Member="Clans" ThisKey="FactionID" OtherKey="FactionID" Type="Clan" />
     </Type>
@@ -752,6 +755,13 @@
   <Table Name="dbo.Avatar" Member="Avatars">
     <Type Name="Avatar">
       <Column Name="AvatarName" Type="System.String" DbType="nvarchar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ClanBackup" Member="ClanBackups">
+    <Type Name="ClanBackup">
+      <Column Name="ClanID" Type="System.String" DbType="varchar(50)" CanBeNull="true" />
+      <Column Name="Shortcut" Type="System.String" DbType="varchar(50)" CanBeNull="true" />
+      <Column Name="FactionID" Type="System.String" DbType="varchar(50)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

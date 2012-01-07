@@ -153,10 +153,7 @@
     <Compile Include="autohost\AutoHost_commands.cs" />
     <Compile Include="autohost\AutoHostConfig.cs" />
     <Compile Include="autohost\AutoManager.cs" />
-    <Compile Include="autohost\BanList.cs" />
-    <Compile Include="autohost\BannedUser.cs" />
     <Compile Include="autohost\CommandConfig.cs" />
-    <Compile Include="autohost\PrivilegedUser.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="PlanetWars\PlanetWarsHandler.cs" />
     <Compile Include="utils\ResourceLinkProvider.cs" />

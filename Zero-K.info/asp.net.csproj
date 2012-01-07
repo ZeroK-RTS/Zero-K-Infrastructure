@@ -101,10 +101,13 @@
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\AuthServiceClient.cs" />
-    <Compile Include="AppCode\Balancer.cs" />
+    <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />
     <Compile Include="AppCode\JsonRequest.cs" />
+    <Compile Include="SpringieInterface\BattleContext.cs" />
+    <Compile Include="SpringieInterface\BattleResultHandler.cs" />
+    <Compile Include="SpringieInterface\MapPicker.cs" />
     <Compile Include="AppCode\NoCache.cs" />
     <Compile Include="AppCode\SpotlightHandler.cs" />
     <Compile Include="AppCode\SpringDb.cs" />
@@ -160,6 +163,12 @@
     </Compile>
     <Compile Include="ResourceDetail.aspx.designer.cs">
       <DependentUpon>ResourceDetail.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="SpringieInterface\PlayerJoinHandler.cs" />
+    <Compile Include="SpringieInterface\StartSetup.cs" />
+    <Compile Include="SpringieService.asmx.cs">
+      <DependentUpon>SpringieService.asmx</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="StructuresAdmin.aspx.cs">
       <DependentUpon>StructuresAdmin.aspx</DependentUpon>
@@ -254,6 +263,7 @@
     <Content Include="Scripts\nicetitle.js" />
     <Content Include="Scripts\raphael-min.js" />
     <Content Include="Scripts\site.js" />
+    <Content Include="SpringieService.asmx" />
     <Content Include="StructuresAdmin.aspx" />
     <Content Include="Styles\base.css" />
     <Content Include="Styles\dark-hive\images\ui-bg_flat_30_cccccc_40x100.png" />
