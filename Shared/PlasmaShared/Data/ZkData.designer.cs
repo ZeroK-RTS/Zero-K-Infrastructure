@@ -6001,6 +6001,8 @@ namespace ZkData
 		
 		private string _MapSpringieCommands;
 		
+		private System.Nullable<int> _MapFFAMaxTeams;
+		
 		private EntitySet<ResourceDependency> _ResourceDependencies;
 		
 		private EntitySet<ResourceContentFile> _ResourceContentFiles;
@@ -6085,6 +6087,8 @@ namespace ZkData
     partial void OnRatingPollIDChanged();
     partial void OnMapSpringieCommandsChanging(string value);
     partial void OnMapSpringieCommandsChanged();
+    partial void OnMapFFAMaxTeamsChanging(System.Nullable<int> value);
+    partial void OnMapFFAMaxTeamsChanged();
     #endregion
 		
 		public Resource()
@@ -6696,8 +6700,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MapFFAMaxTeams", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
+		public System.Nullable<int> MapFFAMaxTeams
+		{
+			get
+			{
+				return this._MapFFAMaxTeams;
+			}
+			set
+			{
+				if ((this._MapFFAMaxTeams != value))
+				{
+					this.OnMapFFAMaxTeamsChanging(value);
+					this.SendPropertyChanging();
+					this._MapFFAMaxTeams = value;
+					this.SendPropertyChanged("MapFFAMaxTeams");
+					this.OnMapFFAMaxTeamsChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceDependency", Storage="_ResourceDependencies", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
 		public EntitySet<ResourceDependency> ResourceDependencies
 		{
 			get
@@ -6716,7 +6741,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceContentFile", Storage="_ResourceContentFiles", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<ResourceContentFile> ResourceContentFiles
 		{
 			get
@@ -6735,7 +6760,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_ResourceSpringHash", Storage="_ResourceSpringHashes", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
 		public EntitySet<ResourceSpringHash> ResourceSpringHashes
 		{
 			get
@@ -6754,7 +6779,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_MapRating", Storage="_MapRatings", ThisKey="ResourceID", OtherKey="ResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
 		public EntitySet<MapRating> MapRatings
 		{
 			get
@@ -6773,7 +6798,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_SpringBattle", Storage="_SpringBattlesByMapResourceID", ThisKey="ResourceID", OtherKey="MapResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
 		public EntitySet<SpringBattle> SpringBattlesByMapResourceID
 		{
 			get
@@ -6792,7 +6817,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_SpringBattle1", Storage="_SpringBattlesByModResourceID", ThisKey="ResourceID", OtherKey="ModResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
 		public EntitySet<SpringBattle> SpringBattlesByModResourceID
 		{
 			get
@@ -6811,7 +6836,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Resource_Planet", Storage="_Planets", ThisKey="ResourceID", OtherKey="MapResourceID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get

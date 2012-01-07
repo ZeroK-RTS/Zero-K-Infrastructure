@@ -39,6 +39,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private System.Threading.SendOrPostCallback SubmitSpringBattleResultOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetClusterConfigsOperationCompleted;
+        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -91,6 +93,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         public event SubmitSpringBattleResultCompletedEventHandler SubmitSpringBattleResultCompleted;
+        
+        /// <remarks/>
+        public event GetClusterConfigsCompletedEventHandler GetClusterConfigsCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -244,6 +249,35 @@ namespace PlasmaShared.SpringieInterfaceReference {
             if ((this.SubmitSpringBattleResultCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.SubmitSpringBattleResultCompleted(this, new SubmitSpringBattleResultCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetClusterConfigs", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public AhConfig[] GetClusterConfigs(string clusterNode) {
+            object[] results = this.Invoke("GetClusterConfigs", new object[] {
+                        clusterNode});
+            return ((AhConfig[])(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetClusterConfigsAsync(string clusterNode) {
+            this.GetClusterConfigsAsync(clusterNode, null);
+        }
+        
+        /// <remarks/>
+        public void GetClusterConfigsAsync(string clusterNode, object userState) {
+            if ((this.GetClusterConfigsOperationCompleted == null)) {
+                this.GetClusterConfigsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetClusterConfigsOperationCompleted);
+            }
+            this.InvokeAsync("GetClusterConfigs", new object[] {
+                        clusterNode}, this.GetClusterConfigsOperationCompleted, userState);
+        }
+        
+        private void OnGetClusterConfigsOperationCompleted(object arg) {
+            if ((this.GetClusterConfigsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetClusterConfigsCompleted(this, new GetClusterConfigsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -402,6 +436,238 @@ namespace PlasmaShared.SpringieInterfaceReference {
                 this.teamIDField = value;
             }
         }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.233")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class CommandLevel {
+        
+        private string commandField;
+        
+        private int levelField;
+        
+        /// <remarks/>
+        public string Command {
+            get {
+                return this.commandField;
+            }
+            set {
+                this.commandField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Level {
+            get {
+                return this.levelField;
+            }
+            set {
+                this.levelField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.233")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class AhConfig {
+        
+        private string loginField;
+        
+        private string passwordField;
+        
+        private string[] joinChannelsField;
+        
+        private string titleField;
+        
+        private string welcomeField;
+        
+        private string mapField;
+        
+        private string modField;
+        
+        private int maxPlayersField;
+        
+        private bool autoSpawnClonesField;
+        
+        private string autoUpdateRapidTagField;
+        
+        private string springVersionField;
+        
+        private string autoUpdateSpringBranchField;
+        
+        private AutohostMode modeField;
+        
+        private CommandLevel[] commandLevelsField;
+        
+        /// <remarks/>
+        public string Login {
+            get {
+                return this.loginField;
+            }
+            set {
+                this.loginField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Password {
+            get {
+                return this.passwordField;
+            }
+            set {
+                this.passwordField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string[] JoinChannels {
+            get {
+                return this.joinChannelsField;
+            }
+            set {
+                this.joinChannelsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Title {
+            get {
+                return this.titleField;
+            }
+            set {
+                this.titleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Welcome {
+            get {
+                return this.welcomeField;
+            }
+            set {
+                this.welcomeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Map {
+            get {
+                return this.mapField;
+            }
+            set {
+                this.mapField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Mod {
+            get {
+                return this.modField;
+            }
+            set {
+                this.modField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int MaxPlayers {
+            get {
+                return this.maxPlayersField;
+            }
+            set {
+                this.maxPlayersField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool AutoSpawnClones {
+            get {
+                return this.autoSpawnClonesField;
+            }
+            set {
+                this.autoSpawnClonesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string AutoUpdateRapidTag {
+            get {
+                return this.autoUpdateRapidTagField;
+            }
+            set {
+                this.autoUpdateRapidTagField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string SpringVersion {
+            get {
+                return this.springVersionField;
+            }
+            set {
+                this.springVersionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string AutoUpdateSpringBranch {
+            get {
+                return this.autoUpdateSpringBranchField;
+            }
+            set {
+                this.autoUpdateSpringBranchField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public AutohostMode Mode {
+            get {
+                return this.modeField;
+            }
+            set {
+                this.modeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public CommandLevel[] CommandLevels {
+            get {
+                return this.commandLevelsField;
+            }
+            set {
+                this.commandLevelsField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.233")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public enum AutohostMode {
+        
+        /// <remarks/>
+        GameTeams,
+        
+        /// <remarks/>
+        Planetwars,
+        
+        /// <remarks/>
+        Game1v1,
+        
+        /// <remarks/>
+        GameFFA,
+        
+        /// <remarks/>
+        GameChickens,
     }
     
     /// <remarks/>
@@ -1117,6 +1383,32 @@ namespace PlasmaShared.SpringieInterfaceReference {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetClusterConfigsCompletedEventHandler(object sender, GetClusterConfigsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetClusterConfigsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetClusterConfigsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public AhConfig[] Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((AhConfig[])(this.results[0]));
             }
         }
     }

@@ -9,7 +9,6 @@ namespace ZeroKWeb.SpringieInterface
     public class RecommendedMapResult
     {
         public string MapName;
-        public string SpringieCommands;
         public string Message;
     }
 
@@ -155,10 +154,6 @@ namespace ZeroKWeb.SpringieInterface
                     var r = new Random();
                     res.MapName = list[r.Next(list.Count)].InternalName;
                 }
-
-                var entry = db.Resources.SingleOrDefault(x => x.InternalName == res.MapName);
-                if (entry != null) res.SpringieCommands = entry.MapSpringieCommands;
-
             }
             return res;
         }

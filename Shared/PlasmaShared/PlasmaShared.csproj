@@ -270,6 +270,9 @@
     <None Include="Web References\ContentService\ScriptMissionData.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\SpringieInterfaceReference\AhConfig.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
     <None Include="Web References\SpringieInterfaceReference\BalanceTeamsResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>

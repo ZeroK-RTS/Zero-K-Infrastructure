@@ -178,7 +178,7 @@ namespace ZeroKWeb.Controllers
     }
 		
 		[Auth]
-    public ActionResult Tag(int id, bool? special, int? sea, int? hills, bool? ffa, bool? assymetrical, string author, float? featuredOrder, bool? is1v1, bool? chickens)
+    public ActionResult Tag(int id, bool? special, int? sea, int? hills, bool? ffa, bool? assymetrical, string author, float? featuredOrder, bool? is1v1, bool? chickens, int? ffaTeams, string springieCommands)
     {
         var db = new ZkDataContext();
         var r = db.Resources.Single(x => x.ResourceID == id);
@@ -194,6 +194,8 @@ namespace ZeroKWeb.Controllers
         if (Global.Account.IsZeroKAdmin)
         {
         	r.FeaturedOrder = featuredOrder;
+            r.MapFFAMaxTeams = ffaTeams;
+            r.MapSpringieCommands = springieCommands;
         }
         db.SubmitChanges();
       	int order = 1;

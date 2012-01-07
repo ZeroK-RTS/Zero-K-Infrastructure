@@ -102,7 +102,8 @@
 	<br class="clearfloat" />
 	@if (ZeroKWeb.Global.IsAccountAuthorized && ZeroKWeb.Global.Account.Level > 20)
 	{
-	<div style='border: 1px dashed teal; padding: 10px;'>
+	<a href="#" onclick="$('#divTag').toggle()" >TAG the MAP</a>
+     <div style='border: 1px dashed teal; padding: 10px; display:none' id="divTag">
 		Tag this map
 		@if (m.TaggedByAccountID != null)
 		{
@@ -116,9 +117,10 @@
 		<tr>
 			<td>Hills:</td><td>@Html.Select("hills", typeof(Resource.Hill), m.MapHills, "?")</td>
 		</tr>
-		<tr>
-			<td>FFA:</td><td>@Html.BoolSelect("ffa", m.MapIsFfa, "?")</td>
-		</tr>
+            <tr>
+                <td>FFA:</td><td>@Html.BoolSelect("ffa", m.MapIsFfa, "?")</td>
+            </tr>
+            <tr><td>Max FFA team count</td><td>@Html.TextBox("ffaTeams",m.MapFFAMaxTeams)</td></tr>
 		<tr>
 			<td>Assymetrical:</td><td>@Html.BoolSelect("assymetrical", m.MapIsAssymetrical, "?")</td>
 		</tr>
@@ -136,9 +138,11 @@
 		</tr>
 		@if (ZeroKWeb.Global.IsZeroKAdmin)
 		{
-			<tr>
-				<td>Featured order:</td><td>@Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)</td>
-			</tr>
+            <tr>
+                <td>Featured order:</td><td>@Html.TextBox("featuredOrder", Model.Resource.FeaturedOrder)</td>
+            </tr>
+                <tr><td>Springie commands</td><td>@Html.TextArea("springieCommands", m.MapSpringieCommands, 8,30,null)</td></tr>    
+        
 			<tr>
 				<td>Planetwars image:</td><td valign="middle"><img src='/img/planets/@Model.Resource.MapPlanetWarsIcon' width='@Model.Resource.PlanetWarsIconSize' /> 
 			@Html.ActionLink("pick new", "PlanetImageSelect", new { resourceID = Model.Resource.ResourceID })</td>

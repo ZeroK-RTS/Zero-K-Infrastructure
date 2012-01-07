@@ -24,9 +24,9 @@ namespace ZeroKWeb
         }
 
         [WebMethod]
-        public BalanceTeamsResult BalanceTeams(BattleContext context)
+        public BalanceTeamsResult BalanceTeams(BattleContext context, int allyCount, bool clanWise)
         {
-            return Balancer.BalanceTeams(context);
+            return Balancer.BalanceTeams(context,allyCount,clanWise);
         }
 
         [WebMethod]
@@ -58,6 +58,13 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             return db.AutohostConfigs.Where(x => x.ClusterNode == clusterNode).Select(x => new AhConfig(x)).ToList();
         }
+
+        [WebMethod]
+        public string GetMapCommands(string mapName) {
+            var db = new ZkDataContext();
+            return db.Resources.Single(x => x.InternalName == mapName).MapSpringieCommands;
+        }
+
 
     }
 }

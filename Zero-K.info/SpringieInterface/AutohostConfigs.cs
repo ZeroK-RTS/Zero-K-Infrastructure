@@ -21,7 +21,6 @@ namespace ZeroKWeb.SpringieInterface
         public string AutoUpdateSpringBranch;
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
-
         public AhConfig() {}
 
 

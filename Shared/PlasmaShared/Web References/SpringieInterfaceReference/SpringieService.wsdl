@@ -203,6 +203,63 @@
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="GetClusterConfigs">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="clusterNode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetClusterConfigsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetClusterConfigsResult" type="tns:ArrayOfAhConfig" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfAhConfig">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AhConfig" nillable="true" type="tns:AhConfig" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AhConfig">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Login" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="JoinChannels" type="tns:ArrayOfString" />
+          <s:element minOccurs="0" maxOccurs="1" name="Title" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Welcome" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Map" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MaxPlayers" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="AutoSpawnClones" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="AutoUpdateRapidTag" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="SpringVersion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AutoUpdateSpringBranch" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Mode" type="tns:AutohostMode" />
+          <s:element minOccurs="0" maxOccurs="1" name="CommandLevels" type="tns:ArrayOfCommandLevel" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="AutohostMode">
+        <s:restriction base="s:string">
+          <s:enumeration value="GameTeams" />
+          <s:enumeration value="Planetwars" />
+          <s:enumeration value="Game1v1" />
+          <s:enumeration value="GameFFA" />
+          <s:enumeration value="GameChickens" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="ArrayOfCommandLevel">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CommandLevel" nillable="true" type="tns:CommandLevel" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="CommandLevel">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Command" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Level" type="s:int" />
+        </s:sequence>
+      </s:complexType>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="AutohostPlayerJoinedSoapIn">
@@ -235,6 +292,12 @@
   <wsdl:message name="SubmitSpringBattleResultSoapOut">
     <wsdl:part name="parameters" element="tns:SubmitSpringBattleResultResponse" />
   </wsdl:message>
+  <wsdl:message name="GetClusterConfigsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetClusterConfigs" />
+  </wsdl:message>
+  <wsdl:message name="GetClusterConfigsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetClusterConfigsResponse" />
+  </wsdl:message>
   <wsdl:portType name="SpringieServiceSoap">
     <wsdl:operation name="AutohostPlayerJoined">
       <wsdl:input message="tns:AutohostPlayerJoinedSoapIn" />
@@ -255,6 +318,10 @@
     <wsdl:operation name="SubmitSpringBattleResult">
       <wsdl:input message="tns:SubmitSpringBattleResultSoapIn" />
       <wsdl:output message="tns:SubmitSpringBattleResultSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetClusterConfigs">
+      <wsdl:input message="tns:GetClusterConfigsSoapIn" />
+      <wsdl:output message="tns:GetClusterConfigsSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="SpringieServiceSoap" type="tns:SpringieServiceSoap">
@@ -304,6 +371,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetClusterConfigs">
+      <soap:operation soapAction="http://tempuri.org/GetClusterConfigs" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="SpringieServiceSoap12" type="tns:SpringieServiceSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -345,6 +421,15 @@
     </wsdl:operation>
     <wsdl:operation name="SubmitSpringBattleResult">
       <soap12:operation soapAction="http://tempuri.org/SubmitSpringBattleResult" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetClusterConfigs">
+      <soap12:operation soapAction="http://tempuri.org/GetClusterConfigs" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
