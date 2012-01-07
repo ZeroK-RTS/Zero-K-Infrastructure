@@ -2,76 +2,6 @@
 <wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
     <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
-      <s:element name="AutohostPlayerJoined">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="autohostName" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="mapName" type="s:string" />
-            <s:element minOccurs="1" maxOccurs="1" name="accountID" type="s:int" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="AutohostPlayerJoinedResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="AutohostPlayerJoinedResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="BalanceTeams">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="autoHost" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="map" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="mod" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="currentTeams" type="tns:ArrayOfAccountTeam" />
-            <s:element minOccurs="0" maxOccurs="1" name="currentBots" type="tns:ArrayOfBotTeam" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="ArrayOfAccountTeam">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="AccountTeam" nillable="true" type="tns:AccountTeam" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="AccountTeam">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="AccountID" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="AllyID" type="s:int" />
-          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="Spectate" type="s:boolean" />
-          <s:element minOccurs="1" maxOccurs="1" name="TeamID" type="s:int" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfBotTeam">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="BotTeam" nillable="true" type="tns:BotTeam" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="BotTeam">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="AllyID" type="s:int" />
-          <s:element minOccurs="0" maxOccurs="1" name="BotAI" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="BotName" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Owner" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="TeamID" type="s:int" />
-        </s:sequence>
-      </s:complexType>
-      <s:element name="BalanceTeamsResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="BalanceTeamsResult" type="tns:BalanceTeamsResult" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="BalanceTeamsResult">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="BalancedTeams" type="tns:ArrayOfAccountTeam" />
-          <s:element minOccurs="0" maxOccurs="1" name="Bots" type="tns:ArrayOfBotTeam" />
-          <s:element minOccurs="1" maxOccurs="1" name="DeleteBots" type="s:boolean" />
-          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
-        </s:sequence>
-      </s:complexType>
       <s:element name="DownloadFile">
         <s:complexType>
           <s:sequence>
@@ -186,30 +116,6 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="GetRecommendedMap">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="autohostName" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="currentMap" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="mod" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="accounts" type="tns:ArrayOfAccountTeam" />
-            <s:element minOccurs="0" maxOccurs="1" name="currentBots" type="tns:ArrayOfBotTeam" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="GetRecommendedMapResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetRecommendedMapResult" type="tns:RecommendedMapResult" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="RecommendedMapResult">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="MapName" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
-        </s:sequence>
-      </s:complexType>
       <s:element name="GetResourceData">
         <s:complexType>
           <s:sequence>
@@ -291,74 +197,6 @@
           <s:element minOccurs="0" maxOccurs="1" name="StartScript" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:element name="GetSpringBattleStartSetup">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="hostName" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="map" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="mod" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="players" type="tns:ArrayOfBattleStartSetupPlayer" />
-            <s:element minOccurs="1" maxOccurs="1" name="mode" type="tns:AutohostMode" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="ArrayOfBattleStartSetupPlayer">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="BattleStartSetupPlayer" nillable="true" type="tns:BattleStartSetupPlayer" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="BattleStartSetupPlayer">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="AccountID" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="AllyTeam" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="IsSpectator" type="s:boolean" />
-          <s:element minOccurs="1" maxOccurs="1" name="SpringPlayerID" type="s:int" />
-        </s:sequence>
-      </s:complexType>
-      <s:simpleType name="AutohostMode">
-        <s:restriction base="s:string">
-          <s:enumeration value="Planetwars" />
-          <s:enumeration value="Game1v1" />
-          <s:enumeration value="GameTeams" />
-          <s:enumeration value="GameFFA" />
-          <s:enumeration value="GameChickens" />
-        </s:restriction>
-      </s:simpleType>
-      <s:element name="GetSpringBattleStartSetupResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetSpringBattleStartSetupResult" type="tns:SpringBattleStartSetup" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="SpringBattleStartSetup">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="ModOptions" type="tns:ArrayOfScriptKeyValuePair" />
-          <s:element minOccurs="0" maxOccurs="1" name="UserParameters" type="tns:ArrayOfUserCustomParameters" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfScriptKeyValuePair">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="ScriptKeyValuePair" nillable="true" type="tns:ScriptKeyValuePair" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ScriptKeyValuePair">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Value" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfUserCustomParameters">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="UserCustomParameters" nillable="true" type="tns:UserCustomParameters" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="UserCustomParameters">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="AccountID" type="s:int" />
-          <s:element minOccurs="0" maxOccurs="1" name="Parameters" type="tns:ArrayOfScriptKeyValuePair" />
-        </s:sequence>
-      </s:complexType>
       <s:element name="NotifyMissionRun">
         <s:complexType>
           <s:sequence>
@@ -421,80 +259,6 @@
       <s:element name="SubmitMissionScoreResponse">
         <s:complexType />
       </s:element>
-      <s:element name="SubmitSpringBattleResult">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="accountName" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="result" type="tns:BattleResult" />
-            <s:element minOccurs="0" maxOccurs="1" name="players" type="tns:ArrayOfBattlePlayerResult" />
-            <s:element minOccurs="0" maxOccurs="1" name="extraData" type="tns:ArrayOfString" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="BattleResult">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Duration" type="s:int" />
-          <s:element minOccurs="0" maxOccurs="1" name="EngineBattleID" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="EngineVersion" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="IngameStartTime" nillable="true" type="s:dateTime" />
-          <s:element minOccurs="1" maxOccurs="1" name="IsBots" type="s:boolean" />
-          <s:element minOccurs="1" maxOccurs="1" name="IsMission" type="s:boolean" />
-          <s:element minOccurs="0" maxOccurs="1" name="Map" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="ReplayName" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="StartTime" type="s:dateTime" />
-          <s:element minOccurs="0" maxOccurs="1" name="Title" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfBattlePlayerResult">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="BattlePlayerResult" nillable="true" type="tns:BattlePlayerResult" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="BattlePlayerResult">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="AccountID" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="AllyNumber" type="s:int" />
-          <s:element minOccurs="0" maxOccurs="1" name="Awards" type="tns:ArrayOfPlayerAward" />
-          <s:element minOccurs="0" maxOccurs="1" name="CommanderType" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="IsIngameReady" type="s:boolean" />
-          <s:element minOccurs="1" maxOccurs="1" name="IsSpectator" type="s:boolean" />
-          <s:element minOccurs="1" maxOccurs="1" name="IsVictoryTeam" type="s:boolean" />
-          <s:element minOccurs="1" maxOccurs="1" name="LoseTime" nillable="true" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="Rank" type="s:int" />
-          <s:element minOccurs="0" maxOccurs="1" name="Stats" type="tns:ArrayOfPlayerStats" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfPlayerAward">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="PlayerAward" nillable="true" type="tns:PlayerAward" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="PlayerAward">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="Award" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfPlayerStats">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="PlayerStats" nillable="true" type="tns:PlayerStats" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="PlayerStats">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="Key" type="s:string" />
-          <s:element minOccurs="1" maxOccurs="1" name="Value" type="s:double" />
-        </s:sequence>
-      </s:complexType>
-      <s:element name="SubmitSpringBattleResultResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="SubmitSpringBattleResultResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="SubmitStackTrace">
         <s:complexType>
           <s:sequence>
@@ -531,18 +295,6 @@
       </s:element>
     </s:schema>
   </wsdl:types>
-  <wsdl:message name="AutohostPlayerJoinedSoapIn">
-    <wsdl:part name="parameters" element="tns:AutohostPlayerJoined" />
-  </wsdl:message>
-  <wsdl:message name="AutohostPlayerJoinedSoapOut">
-    <wsdl:part name="parameters" element="tns:AutohostPlayerJoinedResponse" />
-  </wsdl:message>
-  <wsdl:message name="BalanceTeamsSoapIn">
-    <wsdl:part name="parameters" element="tns:BalanceTeams" />
-  </wsdl:message>
-  <wsdl:message name="BalanceTeamsSoapOut">
-    <wsdl:part name="parameters" element="tns:BalanceTeamsResponse" />
-  </wsdl:message>
   <wsdl:message name="DownloadFileSoapIn">
     <wsdl:part name="parameters" element="tns:DownloadFile" />
   </wsdl:message>
@@ -572,12 +324,6 @@
   </wsdl:message>
   <wsdl:message name="GetEloTop10SoapOut">
     <wsdl:part name="parameters" element="tns:GetEloTop10Response" />
-  </wsdl:message>
-  <wsdl:message name="GetRecommendedMapSoapIn">
-    <wsdl:part name="parameters" element="tns:GetRecommendedMap" />
-  </wsdl:message>
-  <wsdl:message name="GetRecommendedMapSoapOut">
-    <wsdl:part name="parameters" element="tns:GetRecommendedMapResponse" />
   </wsdl:message>
   <wsdl:message name="GetResourceDataSoapIn">
     <wsdl:part name="parameters" element="tns:GetResourceData" />
@@ -609,12 +355,6 @@
   <wsdl:message name="GetScriptMissionDataSoapOut">
     <wsdl:part name="parameters" element="tns:GetScriptMissionDataResponse" />
   </wsdl:message>
-  <wsdl:message name="GetSpringBattleStartSetupSoapIn">
-    <wsdl:part name="parameters" element="tns:GetSpringBattleStartSetup" />
-  </wsdl:message>
-  <wsdl:message name="GetSpringBattleStartSetupSoapOut">
-    <wsdl:part name="parameters" element="tns:GetSpringBattleStartSetupResponse" />
-  </wsdl:message>
   <wsdl:message name="NotifyMissionRunSoapIn">
     <wsdl:part name="parameters" element="tns:NotifyMissionRun" />
   </wsdl:message>
@@ -633,12 +373,6 @@
   <wsdl:message name="SubmitMissionScoreSoapOut">
     <wsdl:part name="parameters" element="tns:SubmitMissionScoreResponse" />
   </wsdl:message>
-  <wsdl:message name="SubmitSpringBattleResultSoapIn">
-    <wsdl:part name="parameters" element="tns:SubmitSpringBattleResult" />
-  </wsdl:message>
-  <wsdl:message name="SubmitSpringBattleResultSoapOut">
-    <wsdl:part name="parameters" element="tns:SubmitSpringBattleResultResponse" />
-  </wsdl:message>
   <wsdl:message name="SubmitStackTraceSoapIn">
     <wsdl:part name="parameters" element="tns:SubmitStackTrace" />
   </wsdl:message>
@@ -652,14 +386,6 @@
     <wsdl:part name="parameters" element="tns:VerifyAccountDataResponse" />
   </wsdl:message>
   <wsdl:portType name="ContentServiceSoap">
-    <wsdl:operation name="AutohostPlayerJoined">
-      <wsdl:input message="tns:AutohostPlayerJoinedSoapIn" />
-      <wsdl:output message="tns:AutohostPlayerJoinedSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="BalanceTeams">
-      <wsdl:input message="tns:BalanceTeamsSoapIn" />
-      <wsdl:output message="tns:BalanceTeamsSoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="DownloadFile">
       <wsdl:input message="tns:DownloadFileSoapIn" />
       <wsdl:output message="tns:DownloadFileSoapOut" />
@@ -679,10 +405,6 @@
     <wsdl:operation name="GetEloTop10">
       <wsdl:input message="tns:GetEloTop10SoapIn" />
       <wsdl:output message="tns:GetEloTop10SoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="GetRecommendedMap">
-      <wsdl:input message="tns:GetRecommendedMapSoapIn" />
-      <wsdl:output message="tns:GetRecommendedMapSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetResourceData">
       <wsdl:input message="tns:GetResourceDataSoapIn" />
@@ -704,10 +426,6 @@
       <wsdl:input message="tns:GetScriptMissionDataSoapIn" />
       <wsdl:output message="tns:GetScriptMissionDataSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="GetSpringBattleStartSetup">
-      <wsdl:input message="tns:GetSpringBattleStartSetupSoapIn" />
-      <wsdl:output message="tns:GetSpringBattleStartSetupSoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="NotifyMissionRun">
       <wsdl:input message="tns:NotifyMissionRunSoapIn" />
       <wsdl:output message="tns:NotifyMissionRunSoapOut" />
@@ -720,10 +438,6 @@
       <wsdl:input message="tns:SubmitMissionScoreSoapIn" />
       <wsdl:output message="tns:SubmitMissionScoreSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="SubmitSpringBattleResult">
-      <wsdl:input message="tns:SubmitSpringBattleResultSoapIn" />
-      <wsdl:output message="tns:SubmitSpringBattleResultSoapOut" />
-    </wsdl:operation>
     <wsdl:operation name="SubmitStackTrace">
       <wsdl:input message="tns:SubmitStackTraceSoapIn" />
       <wsdl:output message="tns:SubmitStackTraceSoapOut" />
@@ -735,24 +449,6 @@
   </wsdl:portType>
   <wsdl:binding name="ContentServiceSoap" type="tns:ContentServiceSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="AutohostPlayerJoined">
-      <soap:operation soapAction="http://tempuri.org/AutohostPlayerJoined" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="BalanceTeams">
-      <soap:operation soapAction="http://tempuri.org/BalanceTeams" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="DownloadFile">
       <soap:operation soapAction="http://tempuri.org/DownloadFile" style="document" />
       <wsdl:input>
@@ -791,15 +487,6 @@
     </wsdl:operation>
     <wsdl:operation name="GetEloTop10">
       <soap:operation soapAction="http://tempuri.org/GetEloTop10" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetRecommendedMap">
-      <soap:operation soapAction="http://tempuri.org/GetRecommendedMap" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -852,15 +539,6 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetSpringBattleStartSetup">
-      <soap:operation soapAction="http://tempuri.org/GetSpringBattleStartSetup" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="NotifyMissionRun">
       <soap:operation soapAction="http://tempuri.org/NotifyMissionRun" style="document" />
       <wsdl:input>
@@ -881,15 +559,6 @@
     </wsdl:operation>
     <wsdl:operation name="SubmitMissionScore">
       <soap:operation soapAction="http://tempuri.org/SubmitMissionScore" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SubmitSpringBattleResult">
-      <soap:operation soapAction="http://tempuri.org/SubmitSpringBattleResult" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -918,24 +587,6 @@
   </wsdl:binding>
   <wsdl:binding name="ContentServiceSoap12" type="tns:ContentServiceSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="AutohostPlayerJoined">
-      <soap12:operation soapAction="http://tempuri.org/AutohostPlayerJoined" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="BalanceTeams">
-      <soap12:operation soapAction="http://tempuri.org/BalanceTeams" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="DownloadFile">
       <soap12:operation soapAction="http://tempuri.org/DownloadFile" style="document" />
       <wsdl:input>
@@ -974,15 +625,6 @@
     </wsdl:operation>
     <wsdl:operation name="GetEloTop10">
       <soap12:operation soapAction="http://tempuri.org/GetEloTop10" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetRecommendedMap">
-      <soap12:operation soapAction="http://tempuri.org/GetRecommendedMap" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -1035,15 +677,6 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetSpringBattleStartSetup">
-      <soap12:operation soapAction="http://tempuri.org/GetSpringBattleStartSetup" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
     <wsdl:operation name="NotifyMissionRun">
       <soap12:operation soapAction="http://tempuri.org/NotifyMissionRun" style="document" />
       <wsdl:input>
@@ -1064,15 +697,6 @@
     </wsdl:operation>
     <wsdl:operation name="SubmitMissionScore">
       <soap12:operation soapAction="http://tempuri.org/SubmitMissionScore" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SubmitSpringBattleResult">
-      <soap12:operation soapAction="http://tempuri.org/SubmitSpringBattleResult" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>

@@ -13,5 +13,8 @@
 &lt;/SerializableConnectionString&gt;</DesignTimeValue>
       <Value Profile="(Default)">Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1</Value>
     </Setting>
+    <Setting Name="PlasmaShared_SpringieInterfaceReference_SpringieService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://zero-k.info/SpringieService.asmx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -202,6 +202,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.map</DependentUpon>
     </Compile>
+    <Compile Include="Web References\SpringieInterfaceReference\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
     <Compile Include="WebReferences\StatsCollector.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -244,14 +249,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Web References\ContentService\BalanceTeamsResult.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
     <None Include="Web References\ContentService\ContentService.wsdl" />
     <None Include="Web References\ContentService\EloInfo.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\ContentService\RecommendedMapResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
     <None Include="Web References\ContentService\Reference.map">
@@ -270,9 +269,23 @@
     <None Include="Web References\ContentService\ScriptMissionData.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
-    <None Include="Web References\ContentService\SpringBattleStartSetup.datasource">
+    <None Include="Web References\SpringieInterfaceReference\BalanceTeamsResult.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
+    <None Include="Web References\SpringieInterfaceReference\PlayerJoinResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\SpringieInterfaceReference\RecommendedMapResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\SpringieInterfaceReference\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\SpringieInterfaceReference\SpringBattleStartSetup.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\SpringieInterfaceReference\SpringieService.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -315,6 +328,17 @@
       <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
       <CachedSettingsPropName>PlasmaShared_ContentService_ContentService</CachedSettingsPropName>
     </WebReferenceUrl>
+    <WebReferenceUrl Include="http://zero-k.info/SpringieService.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\SpringieInterfaceReference\</RelPath>
+      <UpdateFromURL>http://zero-k.info/SpringieService.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>PlasmaShared_SpringieInterfaceReference_SpringieService</CachedSettingsPropName>
+    </WebReferenceUrl>
   </ItemGroup>
   <ItemGroup>
     <None Include="Web References\ContentService\ContentService.disco" />
@@ -326,5 +350,8 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Web References\SpringieInterfaceReference\SpringieService.disco" />
   </ItemGroup>
 </Project>

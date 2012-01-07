@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using PlasmaShared;
 using PlasmaShared.ContentService;
+using PlasmaShared.SpringieInterfaceReference;
 using PlasmaShared.UnitSyncLib;
 
 namespace LobbyClient
@@ -425,7 +426,7 @@ namespace LobbyClient
 
             if (startSetup != null)
             {
-                var entry = startSetup.UserParameters.FirstOrDefault(x => x.AccountID == status.LobbyUser.LobbyID);
+                var entry = startSetup.UserParameters.FirstOrDefault(x => x.LobbyID == status.LobbyUser.LobbyID);
                 if (entry != null) foreach (var kvp in entry.Parameters) script.AppendFormat("     {0}={1};\n", kvp.Key, kvp.Value);
             }
             script.AppendLine("  }");
@@ -445,6 +446,18 @@ namespace LobbyClient
 
             if (DisabledUnits != null) b.DisabledUnits = new List<string>(DisabledUnits);
             return b;
+        }
+
+        public  BattleContext GetContext()
+        {
+            var ret = new BattleContext();
+            ret.AutohostName = Founder.Name;
+            ret.Map = MapName;
+            ret.Mod = ModName;
+            ret.Players = Users.Select(x => new PlayerTeam() { AllyID = x.AllyNumber, Name = x.Name, LobbyID = x.LobbyUser.LobbyID, TeamID = x.TeamNumber, IsSpectator = x.IsSpectator }).ToArray();
+
+            ret.Bots = Bots.Select(x => new BotTeam() { BotName = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber, Owner = x.owner, BotAI = x.aiLib }).ToArray();
+            return ret;
         }
     }
 }

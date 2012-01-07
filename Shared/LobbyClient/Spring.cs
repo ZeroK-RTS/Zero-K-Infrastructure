@@ -11,6 +11,7 @@ using System.Threading;
 using System.Timers;
 using PlasmaShared;
 using PlasmaShared.ContentService;
+using PlasmaShared.SpringieInterfaceReference;
 using ZkData;
 using Timer = System.Timers.Timer;
 
@@ -167,6 +168,9 @@ namespace LobbyClient
             if (IsRunning) talker.SendText(text);
         }
 
+
+        public BattleContext StartContext { get; private set; }
+
         /// <summary>
         /// Starts spring game
         /// </summary>
@@ -200,6 +204,7 @@ namespace LobbyClient
 
                 statsPlayers.Clear();
                 statsData.Clear();
+                StartContext = null;
 
                 string script;
                 if (!string.IsNullOrEmpty(scriptOverride))
@@ -212,24 +217,14 @@ namespace LobbyClient
                 {
                     List<UserBattleStatus> players;
                     battleGuid = Guid.NewGuid();
-                    var service = new ContentService() { Proxy = null };
+                    var service = new SpringieService() { Proxy = null };
                     SpringBattleStartSetup startSetup = null;
                     if (isHosting && GlobalConst.IsZkMod(client.MyBattle.ModName))
                     {
                         try
                         {
-                            startSetup = service.GetSpringBattleStartSetup(client.MyUser.Name,
-                                                                           client.MyBattle.MapName,
-                                                                           client.MyBattle.ModName,
-                                                                           client.MyBattle.Users.Select(
-                                                                               x =>
-                                                                               new BattleStartSetupPlayer()
-                                                                               {
-                                                                                   AccountID = x.LobbyUser.LobbyID,
-                                                                                   AllyTeam = x.AllyNumber,
-                                                                                   IsSpectator = x.IsSpectator
-                                                                               }).ToArray(),
-                                                                           AutohostMode.GameTeams);
+                            StartContext = client.MyBattle.GetContext();
+                            startSetup = service.GetSpringBattleStartSetup(StartContext);
                         }
                         catch (Exception ex)
                         {
@@ -249,7 +244,7 @@ namespace LobbyClient
                                                         x =>
                                                         new BattlePlayerResult
                                                         {
-                                                            AccountID = x.LobbyUser.LobbyID,
+                                                            LobbyID = x.LobbyUser.LobbyID,
                                                             AllyNumber = x.AllyNumber,
                                                             CommanderType = null,
                                                             // todo commandertype
@@ -432,7 +427,8 @@ namespace LobbyClient
                 {
                     if (isHosting)
                     {
-                        var service = new ContentService() { Proxy = null };
+                        var service = new SpringieService() { Proxy = null };
+                        var mis = new ContentService() { Proxy = null };
                         try
                         {
                             battleResult.EngineBattleID = gameId;
@@ -441,12 +437,15 @@ namespace LobbyClient
                             // set victory team for all allied with currently alive
                             foreach (var p in statsPlayers.Values.Where(x => !x.IsSpectator && x.LoseTime == null)) foreach (var q in statsPlayers.Values.Where(x => !x.IsSpectator && x.AllyNumber == p.AllyNumber)) q.IsVictoryTeam = true;
 
-                            var result = service.SubmitSpringBattleResult(lobbyUserName,
-                                                                          lobbyPassword,
-                                                                          battleResult,
-                                                                          statsPlayers.Values.ToArray(),
-                                                                          statsData.ToArray());
-                            if (result != null) foreach (var line in result.Split('\n')) client.Say(TasClient.SayPlace.Battle, "", line, true);
+                            if (StartContext != null)
+                            {
+                                var result = service.SubmitSpringBattleResult(StartContext,
+                                                                              lobbyPassword,
+                                                                              battleResult,
+                                                                              statsPlayers.Values.ToArray(),
+                                                                              statsData.ToArray());
+                                if (result != null) foreach (var line in result.Split('\n')) client.Say(TasClient.SayPlace.Battle, "", line, true);
+                            }
                         }
                         catch (Exception ex)
                         {

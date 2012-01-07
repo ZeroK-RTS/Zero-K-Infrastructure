@@ -7,6 +7,7 @@ using System.Timers;
 using LobbyClient;
 using PlasmaShared;
 using PlasmaShared.ContentService;
+using PlasmaShared.SpringieInterfaceReference;
 using Springie.autohost;
 
 #endregion
@@ -16,7 +17,7 @@ namespace Springie.PlanetWars
     public class PlanetWarsHandler: IDisposable
     {
         readonly AutoHost autoHost;
-        readonly ContentService serv = new ContentService();
+        readonly SpringieService serv = new SpringieService();
         readonly Spring spring;
 
 
@@ -51,34 +52,26 @@ namespace Springie.PlanetWars
         {
             try
             {
-                var userList =
-                    tas.MyBattle.Users.Where(x => !x.IsSpectator).Select(
-                        x => new AccountTeam() { AccountID = x.LobbyUser.LobbyID, Name = x.Name, AllyID = x.AllyNumber, TeamID = x.TeamNumber }).
-                        ToArray();
-                var botList =
-                    tas.MyBattle.Bots.Where(x => !x.IsSpectator).Select(
-                        x => new BotTeam() { AllyID = x.AllyNumber, BotName = x.Name, BotAI = x.aiLib, Owner = x.owner, TeamID = x.TeamNumber }).
-                        ToArray();
+                if (tas.MyBattle.NonSpectatorCount < 1) return false;
 
-                if (userList.Length < 1) return false;
-
-                var balance = serv.BalanceTeams(tas.UserName, tas.MyBattle.MapName, tas.MyBattle.ModName, userList, botList);
-                autoHost.SayBattle(balance.Message);
-                if (balance.BalancedTeams != null && balance.BalancedTeams.Any())
+                var balance = serv.BalanceTeams(tas.MyBattle.GetContext());
+                if (!string.IsNullOrEmpty(balance.Message))  autoHost.SayBattle(balance.Message);
+                if (balance != null && balance.Players != null)
                 {
-                    foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.BalancedTeams.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
-                    foreach (var user in balance.BalancedTeams.Where(x => x.Spectate)) tas.ForceSpectator(user.Name);
-                    foreach (var user in balance.BalancedTeams) tas.ForceTeam(user.Name, user.TeamID);
-                    foreach (var user in balance.BalancedTeams) tas.ForceAlly(user.Name, user.AllyID);
-                    foreach (var b  in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
-                    var cnt = 1;
+                    foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
+                    foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
+                    foreach (var user in balance.Players.Where(x => !x.IsSpectator))
+                    {
+                        tas.ForceTeam(user.Name, user.TeamID);
+                        tas.ForceAlly(user.Name, user.AllyID);
+                    }
+                    if (balance.DeleteBots) foreach (var b  in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
                     foreach (var b in balance.Bots)
                     {
                         var botStatus = tas.MyBattleStatus.Clone();
                         botStatus.TeamNumber = b.TeamID;
                         botStatus.AllyNumber = b.AllyID;
-                        tas.AddBot("Aliens" + cnt, botStatus, botStatus.TeamColor, b.BotName);
-                        cnt++;
+                        tas.AddBot(b.BotName, botStatus, botStatus.TeamColor, b.BotAI);
                     }
 
                     return true;
@@ -116,7 +109,20 @@ namespace Springie.PlanetWars
         {
             try
             {
-                autoHost.SayBattle(serv.AutohostPlayerJoined(tas.UserName, tas.MyBattle.MapName, tas.ExistingUsers[name].LobbyID), false);
+                var ret = serv.AutohostPlayerJoined(tas.MyBattle.GetContext(), tas.ExistingUsers[name].LobbyID);
+                if (ret != null)
+                {
+                    if (!string.IsNullOrEmpty(ret.PrivateMessage))
+                    {
+                        tas.Say(TasClient.SayPlace.User, name, ret.PrivateMessage, false);
+                    }
+                    if (!string.IsNullOrEmpty(ret.PublicMessage))
+                    {
+                        tas.Say(TasClient.SayPlace.Battle, "", ret.PublicMessage, true);
+                    }
+                    if (ret.ForceSpec) tas.ForceSpectator(name);
+                    if (ret.Kick) tas.Kick(name);
+                }
             }
             catch (Exception ex)
             {
@@ -135,20 +141,7 @@ namespace Springie.PlanetWars
                             x => new BotTeam() { AllyID = x.AllyNumber, BotName = x.Name, BotAI = x.aiLib, Owner = x.owner, TeamID = x.TeamNumber }).
                             ToArray();
 
-                    var map = serv.GetRecommendedMap(tas.UserName,
-                                                     tas.MyBattle.MapName,
-                                                     tas.MyBattle.ModName,
-                                                     tas.MyBattle.Users.Select(
-                                                         x =>
-                                                         new AccountTeam()
-                                                         {
-                                                             AccountID = x.LobbyUser.LobbyID,
-                                                             Name = x.Name,
-                                                             AllyID = x.AllyNumber,
-                                                             TeamID = x.TeamNumber,
-                                                             Spectate = x.IsSpectator
-                                                         }).ToArray(),
-                                                     botList);
+                    var map = serv.GetRecommendedMap(tas.MyBattle.GetContext());
 
                     if (map.MapName != null)
                     {
@@ -156,6 +149,9 @@ namespace Springie.PlanetWars
                         {
                             autoHost.ComMap(TasSayEventArgs.Default, map.MapName);
                             autoHost.SayBattle(map.Message);
+                            foreach (var c in map.SpringieCommands.Split('\n').Where(x => !string.IsNullOrEmpty(x))) {
+                                autoHost.RunCommand(c);
+                            }
                         }
                     }
                 }

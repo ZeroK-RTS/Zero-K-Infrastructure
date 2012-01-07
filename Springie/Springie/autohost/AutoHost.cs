@@ -813,293 +813,306 @@ namespace Springie.autohost
 					    com != "spawn" && com != "listbans" && com != "stats" && com != "predict" && com != "notify") SayBattle(string.Format("{0} executed by {1}", com, e.UserName));
 				}
 
-				switch (com)
-				{
-					case "listmaps":
-						ComListMaps(e, words);
-						break;
-
-					case "listmods":
-						ComListMods(e, words);
-						break;
-
-					case "help":
-						ComHelp(e, words);
-						break;
-
-					case "map":
-						ComMap(e, words);
-						break;
-
-					case "admins":
-						ComAdmins(e, words);
-						break;
-
-					case "start":
-						ComStart(e, words);
-						break;
-
-					case "forcestart":
-						ComForceStart(e, words);
-						break;
-
-					case "force":
-						ComForce(e, words);
-						break;
-
-					case "split":
-						ComSplit(e, words);
-						break;
-
-					case "corners":
-						ComCorners(e, words);
-						break;
-
-					case "maplink":
-						linkProvider.FindLinks(words, ResourceLinkProvider.FileType.Map, tas, e);
-						break;
-
-					case "modlink":
-						linkProvider.FindLinks(words, ResourceLinkProvider.FileType.Mod, tas, e);
-						break;
-
-					case "ring":
-						ComRing(e, words);
-						break;
-
-					case "kick":
-						ComKick(e, words);
-						break;
-
-					case "exit":
-						ComExit(e, words);
-						break;
-
-					case "lock":
-						if (!manager.Enabled) tas.ChangeLock(true);
-						break;
-
-					case "unlock":
-						if (!manager.Enabled) tas.ChangeLock(false);
-						break;
-
-					case "vote":
-						RegisterVote(e, words);
-						break;
-
-					case "votemap":
-						StartVote(new VoteMap(tas, spring, this), e, words);
-						break;
-
-					case "votekick":
-						StartVote(new VoteKick(tas, spring, this), e, words);
-						break;
-
-					case "votespec":
-						StartVote(new VoteSpec(tas, spring, this), e, words);
-						break;
-
-					case "voteforcestart":
-						StartVote(new VoteForceStart(tas, spring, this), e, words);
-						break;
-
-					case "voteforce":
-						StartVote(new VoteForce(tas, spring, this), e, words);
-						break;
-
-					case "voteexit":
-						StartVote(new VoteExit(tas, spring, this), e, words);
-						break;
-
-					case "predict":
-						ComPredict(e, words);
-						break;
-
-					case "fix":
-						ComFix(e, words);
-						break;
-
-					case "rehost":
-						ComRehost(e, words);
-						break;
-
-					case "voterehost":
-						StartVote(new VoteRehost(tas, spring, this), e, words);
-						break;
-
-					case "random":
-						ComRandom(e, words);
-						break;
-
-					case "balance":
-						ComBalance(e, words);
-						break;
-
-					case "say":
-						ComSay(e, words);
-						break;
-
-					case "id":
-						ComTeam(e, words);
-						break;
-
-					case "team":
-						ComAlly(e, words);
-						break;
-
-					case "helpall":
-						ComHelpAll(e, words);
-						break;
-
-					case "fixcolors":
-						ComFixColors(e, words);
-						break;
-
-					case "teamcolors":
-						ComTeamColors(e, words);
-						break;
-
-					case "springie":
-						ComSpringie(e, words);
-						break;
-
-					case "endvote":
-						StopVote();
-						SayBattle("poll cancelled");
-						break;
-
-					case "addbox":
-						ComAddBox(e, words);
-						break;
-
-					case "clearbox":
-						ComClearBox(e, words);
-						break;
-
-
-					case "cbalance":
-						ComCBalance(e, words);
-						break;
-
-					case "stats":
-						//RemoteCommand(Stats.StatsScript, e, words);
-						// todo new stats
-						break;
-
-					case "manage":
-						ComManage(e, words, false);
-						break;
-
-					case "cmanage":
-						ComManage(e, words, true);
-						break;
-
-					case "notify":
-						ComNotify(e, words);
-						break;
-
-					case "boss":
-						ComBoss(e, words);
-						break;
-
-					case "voteboss":
-						StartVote(new VoteBoss(tas, spring, this), e, words);
-						break;
-
-					case "setpassword":
-						ComSetPassword(e, words);
-						break;
-
-					case "setgametitle":
-						ComSetGameTitle(e, words);
-						break;
-
-					case "setminrank":
-						ComSetMinRank(e, words);
-						break;
-
-					case "setmaxplayers":
-						ComSetMaxPlayers(e, words);
-						break;
-
-					case "spec":
-						ComForceSpectator(e, words);
-						break;
-
-					case "specafk":
-						ComForceSpectatorAfk(e, words);
-						break;
-
-					case "kickminrank":
-						ComKickMinRank(e, words);
-						break;
-
-					case "cheats":
-						if (spring.IsRunning)
-						{
-							spring.SayGame("/cheat");
-							SayBattle("Cheats!");
-						}
-						else Respond(e, "Cannot set cheats, game not running");
-						break;
-
-					case "listoptions":
-						ComListOptions(e, words);
-						break;
-
-					case "setoptions":
-						ComSetOption(e, words);
-						break;
-
-					case "votesetoptions":
-						StartVote(new VoteSetOptions(tas, spring, this), e, words);
-						break;
-
-                    case "splitplayers":
-                        ComSplitPlayers(e,words);
-                        break;
-
-                    case "votesplitplayers":
-                        StartVote(new VoteSplitPlayers(tas,spring,this),e,words);
-                        break;
-
-                    case "setengine":
-                        ComSetEngine(e, words);
-                        break;
-
-                    case "transmit":
-                        ComTransmit(e, words);
-                        break;
-
-					case "spawn":
-					{
-						var args = Utils.Glue(words);
-						if (string.IsNullOrEmpty(args))
-						{
-							Respond(e, "Please specify parameters");
-							return;
-						}
-						var configKeys = new Dictionary<string, string>();
-						foreach (var f in args.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-						{
-							var parts = f.Split('=');
-							if (parts.Length == 2) configKeys[parts[0].Trim()] = parts[1].Trim();
-						}
-						var sc = new SpawnConfig(e.UserName, configKeys);
-						if (string.IsNullOrEmpty(sc.Mod))
-						{
-							Respond(e, "Please specify at least mod name: !spawn mod=zk:stable");
-							return;
-						}
-						Program.main.SpawnAutoHost(configPath, sc);
-					}
-						break;
-				}
+				RunCommand(e, com, words);
 			}
 		}
 
+        public void RunCommand(string text) {
+            var allwords = text.Substring(1).Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (allwords.Length < 1) return;
+            var com = allwords[0];
+            // remove first word (command)
+            var words = Utils.ShiftArray(allwords, -1);
+            RunCommand(TasSayEventArgs.Default, com, words);
+        }
 
-		void tas_UserStatusChanged(object sender, TasEventArgs e)
+	    public void RunCommand(TasSayEventArgs e, string com, string[] words)
+	    {
+	        switch (com)
+	        {
+	            case "listmaps":
+	                ComListMaps(e, words);
+	                break;
+
+	            case "listmods":
+	                ComListMods(e, words);
+	                break;
+
+	            case "help":
+	                ComHelp(e, words);
+	                break;
+
+	            case "map":
+	                ComMap(e, words);
+	                break;
+
+	            case "admins":
+	                ComAdmins(e, words);
+	                break;
+
+	            case "start":
+	                ComStart(e, words);
+	                break;
+
+	            case "forcestart":
+	                ComForceStart(e, words);
+	                break;
+
+	            case "force":
+	                ComForce(e, words);
+	                break;
+
+	            case "split":
+	                ComSplit(e, words);
+	                break;
+
+	            case "corners":
+	                ComCorners(e, words);
+	                break;
+
+	            case "maplink":
+	                linkProvider.FindLinks(words, ResourceLinkProvider.FileType.Map, tas, e);
+	                break;
+
+	            case "modlink":
+	                linkProvider.FindLinks(words, ResourceLinkProvider.FileType.Mod, tas, e);
+	                break;
+
+	            case "ring":
+	                ComRing(e, words);
+	                break;
+
+	            case "kick":
+	                ComKick(e, words);
+	                break;
+
+	            case "exit":
+	                ComExit(e, words);
+	                break;
+
+	            case "lock":
+	                if (!manager.Enabled) tas.ChangeLock(true);
+	                break;
+
+	            case "unlock":
+	                if (!manager.Enabled) tas.ChangeLock(false);
+	                break;
+
+	            case "vote":
+	                RegisterVote(e, words);
+	                break;
+
+	            case "votemap":
+	                StartVote(new VoteMap(tas, spring, this), e, words);
+	                break;
+
+	            case "votekick":
+	                StartVote(new VoteKick(tas, spring, this), e, words);
+	                break;
+
+	            case "votespec":
+	                StartVote(new VoteSpec(tas, spring, this), e, words);
+	                break;
+
+	            case "voteforcestart":
+	                StartVote(new VoteForceStart(tas, spring, this), e, words);
+	                break;
+
+	            case "voteforce":
+	                StartVote(new VoteForce(tas, spring, this), e, words);
+	                break;
+
+	            case "voteexit":
+	                StartVote(new VoteExit(tas, spring, this), e, words);
+	                break;
+
+	            case "predict":
+	                ComPredict(e, words);
+	                break;
+
+	            case "fix":
+	                ComFix(e, words);
+	                break;
+
+	            case "rehost":
+	                ComRehost(e, words);
+	                break;
+
+	            case "voterehost":
+	                StartVote(new VoteRehost(tas, spring, this), e, words);
+	                break;
+
+	            case "random":
+	                ComRandom(e, words);
+	                break;
+
+	            case "balance":
+	                ComBalance(e, words);
+	                break;
+
+	            case "say":
+	                ComSay(e, words);
+	                break;
+
+	            case "id":
+	                ComTeam(e, words);
+	                break;
+
+	            case "team":
+	                ComAlly(e, words);
+	                break;
+
+	            case "helpall":
+	                ComHelpAll(e, words);
+	                break;
+
+	            case "fixcolors":
+	                ComFixColors(e, words);
+	                break;
+
+	            case "teamcolors":
+	                ComTeamColors(e, words);
+	                break;
+
+	            case "springie":
+	                ComSpringie(e, words);
+	                break;
+
+	            case "endvote":
+	                StopVote();
+	                SayBattle("poll cancelled");
+	                break;
+
+	            case "addbox":
+	                ComAddBox(e, words);
+	                break;
+
+	            case "clearbox":
+	                ComClearBox(e, words);
+	                break;
+
+	            case "cbalance":
+	                ComCBalance(e, words);
+	                break;
+
+	            case "stats":
+	                //RemoteCommand(Stats.StatsScript, e, words);
+	                // todo new stats
+	                break;
+
+	            case "manage":
+	                ComManage(e, words, false);
+	                break;
+
+	            case "cmanage":
+	                ComManage(e, words, true);
+	                break;
+
+	            case "notify":
+	                ComNotify(e, words);
+	                break;
+
+	            case "boss":
+	                ComBoss(e, words);
+	                break;
+
+	            case "voteboss":
+	                StartVote(new VoteBoss(tas, spring, this), e, words);
+	                break;
+
+	            case "setpassword":
+	                ComSetPassword(e, words);
+	                break;
+
+	            case "setgametitle":
+	                ComSetGameTitle(e, words);
+	                break;
+
+	            case "setminrank":
+	                ComSetMinRank(e, words);
+	                break;
+
+	            case "setmaxplayers":
+	                ComSetMaxPlayers(e, words);
+	                break;
+
+	            case "spec":
+	                ComForceSpectator(e, words);
+	                break;
+
+	            case "specafk":
+	                ComForceSpectatorAfk(e, words);
+	                break;
+
+	            case "kickminrank":
+	                ComKickMinRank(e, words);
+	                break;
+
+	            case "cheats":
+	                if (spring.IsRunning)
+	                {
+	                    spring.SayGame("/cheat");
+	                    SayBattle("Cheats!");
+	                }
+	                else Respond(e, "Cannot set cheats, game not running");
+	                break;
+
+	            case "listoptions":
+	                ComListOptions(e, words);
+	                break;
+
+	            case "setoptions":
+	                ComSetOption(e, words);
+	                break;
+
+	            case "votesetoptions":
+	                StartVote(new VoteSetOptions(tas, spring, this), e, words);
+	                break;
+
+	            case "splitplayers":
+	                ComSplitPlayers(e, words);
+	                break;
+
+	            case "votesplitplayers":
+	                StartVote(new VoteSplitPlayers(tas, spring, this), e, words);
+	                break;
+
+	            case "setengine":
+	                ComSetEngine(e, words);
+	                break;
+
+	            case "transmit":
+	                ComTransmit(e, words);
+	                break;
+
+	            case "spawn":
+	            {
+	                var args = Utils.Glue(words);
+	                if (string.IsNullOrEmpty(args))
+	                {
+	                    Respond(e, "Please specify parameters");
+	                    return;
+	                }
+	                var configKeys = new Dictionary<string, string>();
+	                foreach (var f in args.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+	                {
+	                    var parts = f.Split('=');
+	                    if (parts.Length == 2) configKeys[parts[0].Trim()] = parts[1].Trim();
+	                }
+	                var sc = new SpawnConfig(e.UserName, configKeys);
+	                if (string.IsNullOrEmpty(sc.Mod))
+	                {
+	                    Respond(e, "Please specify at least mod name: !spawn mod=zk:stable");
+	                    return;
+	                }
+	                Program.main.SpawnAutoHost(configPath, sc);
+	            }
+	                break;
+	        }
+	    }
+
+
+	    void tas_UserStatusChanged(object sender, TasEventArgs e)
 		{
 			if (spring.IsRunning)
 			{
