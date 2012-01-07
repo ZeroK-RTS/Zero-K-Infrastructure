@@ -2,17 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
 {
-        public enum AutohostMode
-    {
-        Planetwars = 1,
-        Game1v1 = 2,
-        GameTeams = 3,
-        GameFFA = 4,
-        GameChickens = 5
-    }
 
     public class BattleContext
     {

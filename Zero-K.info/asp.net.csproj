@@ -101,6 +101,7 @@
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\AuthServiceClient.cs" />
+    <Compile Include="SpringieInterface\AutohostConfigs.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />
     <Compile Include="AppCode\HtmlHelperExtensions.cs" />

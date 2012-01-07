@@ -764,4 +764,24 @@
       <Column Name="FactionID" Type="System.String" DbType="varchar(50)" CanBeNull="true" />
     </Type>
   </Table>
+  <Table Name="dbo.AutohostConfig" Member="AutohostConfigs">
+    <Type Name="AutohostConfig">
+      <Column Name="AutohostConfigID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="ClusterNode" Type="System.String" DbType="nvarchar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Login" Type="System.String" DbType="nvarchar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="nvarchar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="MaxPlayers" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="Welcome" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="AutoSpawn" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="AutoUpdateRapidTag" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="SpringVersion" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="AutoUpdateSpringBranch" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="CommandLevels" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
+      <Column Name="[Map]" Member="Map" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="[Mod]" Member="Mod" Storage="_Mod1" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="Title" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="JoinChannels" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
+      <Column Name="AutohostMode" Type="AutohostMode" DbType="int NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
 </Database>

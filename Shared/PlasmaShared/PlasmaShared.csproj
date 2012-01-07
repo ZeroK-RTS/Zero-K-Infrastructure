@@ -123,6 +123,7 @@
     <Compile Include="ChangeEventArgs.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Data\Account.cs" />
+    <Compile Include="Data\AutohostMode.cs" />
     <Compile Include="Data\Avatar.cs" />
     <Compile Include="Data\Clan.cs" />
     <Compile Include="Data\Commander.cs" />

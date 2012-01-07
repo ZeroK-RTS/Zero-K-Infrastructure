@@ -14,7 +14,6 @@ using ZeroKWeb;
 using ZeroKWeb.Controllers;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
-using AutohostMode = ZeroKWeb.SpringieInterface.AutohostMode;
 using BalanceTeamsResult = ZeroKWeb.SpringieInterface.BalanceTeamsResult;
 using BattlePlayerResult = ZeroKWeb.SpringieInterface.BattlePlayerResult;
 using BattleResult = ZeroKWeb.SpringieInterface.BattleResult;

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Web.Services;
 using ZeroKWeb.SpringieInterface;
+using ZkData;
 
 namespace ZeroKWeb
 {
@@ -49,5 +51,13 @@ namespace ZeroKWeb
         {
             return BattleResultHandler.SubmitSpringBattleResult(context, password, result, players, extraData);
         }
+
+        [WebMethod]
+        public static List<AhConfig> GetClusterConfigs(string clusterNode)
+        {
+            var db = new ZkDataContext();
+            return db.AutohostConfigs.Where(x => x.ClusterNode == clusterNode).Select(x => new AhConfig(x)).ToList();
+        }
+
     }
 }

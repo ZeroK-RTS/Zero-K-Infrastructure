@@ -178,6 +178,9 @@ namespace ZkData
     partial void InsertAvatar(Avatar instance);
     partial void UpdateAvatar(Avatar instance);
     partial void DeleteAvatar(Avatar instance);
+    partial void InsertAutohostConfig(AutohostConfig instance);
+    partial void UpdateAutohostConfig(AutohostConfig instance);
+    partial void DeleteAutohostConfig(AutohostConfig instance);
     #endregion
 		
 		public ZkDataContext() : 
@@ -607,6 +610,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<ClanBackup>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AutohostConfig> AutohostConfigs
+		{
+			get
+			{
+				return this.GetTable<AutohostConfig>();
 			}
 		}
 	}
@@ -19752,6 +19763,457 @@ namespace ZkData
 					this._FactionID = value;
 				}
 			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AutohostConfig")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AutohostConfig : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AutohostConfigID;
+		
+		private string _ClusterNode;
+		
+		private string _Login;
+		
+		private string _Password;
+		
+		private int _MaxPlayers;
+		
+		private string _Welcome;
+		
+		private bool _AutoSpawn;
+		
+		private string _AutoUpdateRapidTag;
+		
+		private string _SpringVersion;
+		
+		private string _AutoUpdateSpringBranch;
+		
+		private string _CommandLevels;
+		
+		private string _Map;
+		
+		private string _Mod1;
+		
+		private string _Title;
+		
+		private string _JoinChannels;
+		
+		private AutohostMode _AutohostMode;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAutohostConfigIDChanging(int value);
+    partial void OnAutohostConfigIDChanged();
+    partial void OnClusterNodeChanging(string value);
+    partial void OnClusterNodeChanged();
+    partial void OnLoginChanging(string value);
+    partial void OnLoginChanged();
+    partial void OnPasswordChanging(string value);
+    partial void OnPasswordChanged();
+    partial void OnMaxPlayersChanging(int value);
+    partial void OnMaxPlayersChanged();
+    partial void OnWelcomeChanging(string value);
+    partial void OnWelcomeChanged();
+    partial void OnAutoSpawnChanging(bool value);
+    partial void OnAutoSpawnChanged();
+    partial void OnAutoUpdateRapidTagChanging(string value);
+    partial void OnAutoUpdateRapidTagChanged();
+    partial void OnSpringVersionChanging(string value);
+    partial void OnSpringVersionChanged();
+    partial void OnAutoUpdateSpringBranchChanging(string value);
+    partial void OnAutoUpdateSpringBranchChanged();
+    partial void OnCommandLevelsChanging(string value);
+    partial void OnCommandLevelsChanged();
+    partial void OnMapChanging(string value);
+    partial void OnMapChanged();
+    partial void OnModChanging(string value);
+    partial void OnModChanged();
+    partial void OnTitleChanging(string value);
+    partial void OnTitleChanged();
+    partial void OnJoinChannelsChanging(string value);
+    partial void OnJoinChannelsChanged();
+    partial void OnAutohostModeChanging(AutohostMode value);
+    partial void OnAutohostModeChanged();
+    #endregion
+		
+		public AutohostConfig()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AutohostConfigID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AutohostConfigID
+		{
+			get
+			{
+				return this._AutohostConfigID;
+			}
+			set
+			{
+				if ((this._AutohostConfigID != value))
+				{
+					this.OnAutohostConfigIDChanging(value);
+					this.SendPropertyChanging();
+					this._AutohostConfigID = value;
+					this.SendPropertyChanged("AutohostConfigID");
+					this.OnAutohostConfigIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClusterNode", DbType="nvarchar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string ClusterNode
+		{
+			get
+			{
+				return this._ClusterNode;
+			}
+			set
+			{
+				if ((this._ClusterNode != value))
+				{
+					this.OnClusterNodeChanging(value);
+					this.SendPropertyChanging();
+					this._ClusterNode = value;
+					this.SendPropertyChanged("ClusterNode");
+					this.OnClusterNodeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Login", DbType="nvarchar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public string Login
+		{
+			get
+			{
+				return this._Login;
+			}
+			set
+			{
+				if ((this._Login != value))
+				{
+					this.OnLoginChanging(value);
+					this.SendPropertyChanging();
+					this._Login = value;
+					this.SendPropertyChanged("Login");
+					this.OnLoginChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Password", DbType="nvarchar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string Password
+		{
+			get
+			{
+				return this._Password;
+			}
+			set
+			{
+				if ((this._Password != value))
+				{
+					this.OnPasswordChanging(value);
+					this.SendPropertyChanging();
+					this._Password = value;
+					this.SendPropertyChanged("Password");
+					this.OnPasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxPlayers", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public int MaxPlayers
+		{
+			get
+			{
+				return this._MaxPlayers;
+			}
+			set
+			{
+				if ((this._MaxPlayers != value))
+				{
+					this.OnMaxPlayersChanging(value);
+					this.SendPropertyChanging();
+					this._MaxPlayers = value;
+					this.SendPropertyChanged("MaxPlayers");
+					this.OnMaxPlayersChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Welcome", DbType="nvarchar(200)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public string Welcome
+		{
+			get
+			{
+				return this._Welcome;
+			}
+			set
+			{
+				if ((this._Welcome != value))
+				{
+					this.OnWelcomeChanging(value);
+					this.SendPropertyChanging();
+					this._Welcome = value;
+					this.SendPropertyChanged("Welcome");
+					this.OnWelcomeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AutoSpawn", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public bool AutoSpawn
+		{
+			get
+			{
+				return this._AutoSpawn;
+			}
+			set
+			{
+				if ((this._AutoSpawn != value))
+				{
+					this.OnAutoSpawnChanging(value);
+					this.SendPropertyChanging();
+					this._AutoSpawn = value;
+					this.SendPropertyChanged("AutoSpawn");
+					this.OnAutoSpawnChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AutoUpdateRapidTag", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public string AutoUpdateRapidTag
+		{
+			get
+			{
+				return this._AutoUpdateRapidTag;
+			}
+			set
+			{
+				if ((this._AutoUpdateRapidTag != value))
+				{
+					this.OnAutoUpdateRapidTagChanging(value);
+					this.SendPropertyChanging();
+					this._AutoUpdateRapidTag = value;
+					this.SendPropertyChanged("AutoUpdateRapidTag");
+					this.OnAutoUpdateRapidTagChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SpringVersion", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public string SpringVersion
+		{
+			get
+			{
+				return this._SpringVersion;
+			}
+			set
+			{
+				if ((this._SpringVersion != value))
+				{
+					this.OnSpringVersionChanging(value);
+					this.SendPropertyChanging();
+					this._SpringVersion = value;
+					this.SendPropertyChanged("SpringVersion");
+					this.OnSpringVersionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AutoUpdateSpringBranch", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public string AutoUpdateSpringBranch
+		{
+			get
+			{
+				return this._AutoUpdateSpringBranch;
+			}
+			set
+			{
+				if ((this._AutoUpdateSpringBranch != value))
+				{
+					this.OnAutoUpdateSpringBranchChanging(value);
+					this.SendPropertyChanging();
+					this._AutoUpdateSpringBranch = value;
+					this.SendPropertyChanged("AutoUpdateSpringBranch");
+					this.OnAutoUpdateSpringBranchChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CommandLevels", DbType="nvarchar(500)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public string CommandLevels
+		{
+			get
+			{
+				return this._CommandLevels;
+			}
+			set
+			{
+				if ((this._CommandLevels != value))
+				{
+					this.OnCommandLevelsChanging(value);
+					this.SendPropertyChanging();
+					this._CommandLevels = value;
+					this.SendPropertyChanged("CommandLevels");
+					this.OnCommandLevelsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Map]", Storage="_Map", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public string Map
+		{
+			get
+			{
+				return this._Map;
+			}
+			set
+			{
+				if ((this._Map != value))
+				{
+					this.OnMapChanging(value);
+					this.SendPropertyChanging();
+					this._Map = value;
+					this.SendPropertyChanged("Map");
+					this.OnMapChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Mod]", Storage="_Mod1", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public string Mod
+		{
+			get
+			{
+				return this._Mod1;
+			}
+			set
+			{
+				if ((this._Mod1 != value))
+				{
+					this.OnModChanging(value);
+					this.SendPropertyChanging();
+					this._Mod1 = value;
+					this.SendPropertyChanged("Mod");
+					this.OnModChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public string Title
+		{
+			get
+			{
+				return this._Title;
+			}
+			set
+			{
+				if ((this._Title != value))
+				{
+					this.OnTitleChanging(value);
+					this.SendPropertyChanging();
+					this._Title = value;
+					this.SendPropertyChanged("Title");
+					this.OnTitleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_JoinChannels", DbType="nvarchar(100)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public string JoinChannels
+		{
+			get
+			{
+				return this._JoinChannels;
+			}
+			set
+			{
+				if ((this._JoinChannels != value))
+				{
+					this.OnJoinChannelsChanging(value);
+					this.SendPropertyChanging();
+					this._JoinChannels = value;
+					this.SendPropertyChanged("JoinChannels");
+					this.OnJoinChannelsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AutohostMode", DbType="int NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public AutohostMode AutohostMode
+		{
+			get
+			{
+				return this._AutohostMode;
+			}
+			set
+			{
+				if ((this._AutohostMode != value))
+				{
+					this.OnAutohostModeChanging(value);
+					this.SendPropertyChanging();
+					this._AutohostMode = value;
+					this.SendPropertyChanged("AutohostMode");
+					this.OnAutohostModeChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
 		}
 	}
 }
