@@ -22,6 +22,8 @@ namespace ZeroKWeb.SpringieInterface
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
 
+        public AhConfig() {}
+
 
         public AhConfig(AutohostConfig db) {
             Login = db.Login;
