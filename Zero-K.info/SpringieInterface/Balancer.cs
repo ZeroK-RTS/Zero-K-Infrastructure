@@ -23,11 +23,17 @@ namespace ZeroKWeb.SpringieInterface
             if (mode != AutohostMode.Planetwars) return BalanceTeams(context, allyCount, clanWise);
             else
             {
+                var res = new BalanceTeamsResult();
                 context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
-                if (context.Players.Count < 1) return new BalanceTeamsResult();
+                if (context.Players.Count < 1) return res;
+                if (context.Players.Count > 18) {
+                    res.Message = "Too many people, cannot balance. Use !splitplayers";
+                    return res;
+                }
+
                 using (var db = new ZkDataContext())
                 {
-                    var res = new BalanceTeamsResult();
+                    
                     res.Message = "";
                     var idList = context.Players.Select(x => x.LobbyID).ToList();
                     var players = new List<Account>();
