@@ -13,6 +13,8 @@ using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
 using PlasmaShared.UnitSyncLib;
 using Springie.AutoHostNamespace;
+using ZkData;
+using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
 using Timer = System.Timers.Timer;
 
 #endregion
@@ -76,7 +78,9 @@ namespace Springie.autohost
                 };
 
             spring = new Spring(springPaths) { UseDedicatedServer = true };
-            tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, Program.main.Config.IpOverride);
+            bool isManaged= SpawnConfig == null && config.Mode != AutohostMode.None;
+
+            tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, isManaged? GlobalConst.ZkSpringieManagedCpu:GlobalConst.ZkLobbyUserCpu, Program.main.Config.IpOverride);
 
             pollTimer = new Timer(PollTimeout*1000);
             pollTimer.Enabled = false;
@@ -242,7 +246,7 @@ namespace Springie.autohost
                                     Respond(e,
                                             String.Format("Sorry, you do not have rights to execute {0}{1}",
                                                           command,
-                                                          (bossName != null ? ", ask boss admin " + bossName : "")));
+                                                          (!string.IsNullOrEmpty(bossName) ? ", ask boss admin " + bossName : "")));
                                     return false;
                                 }
                             }

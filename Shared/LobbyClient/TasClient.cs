@@ -10,6 +10,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Timers;
 using PlasmaShared;
+using ZkData;
 
 #endregion
 
@@ -187,8 +188,9 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> UserRemoved = delegate { };
         public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
 
-        public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, string ipOverride = null)
+        public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, int cpu, string ipOverride = null)
         {
+            this.cpu = cpu;
             this.appName = appName;
             this.guiThreadInvoker = guiThreadInvoker;
 
@@ -518,14 +520,14 @@ namespace LobbyClient
 
             UserPassword = password;
 
-            var mhz = "6666";
 
             var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
             var h = "0";
             if (nic != null) h = nic.GetPhysicalAddress().GetAddressBytes().GetHashCode().ToString("x").ToUpper();
-            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), mhz, localIp, appName, "\t" + h, "\ta sp eb");
+            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + h, "\ta sp eb");
         }
 
+        int cpu = GlobalConst.ZkLobbyUserCpu;
 
         public void OpenBattle(Battle nbattle)
         {

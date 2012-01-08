@@ -68,7 +68,7 @@ namespace CaTracker
 
 			recon.Enabled = false;
 
-			tas = new TasClient(null, "NightWatch");
+            tas = new TasClient(null, "NightWatch", GlobalConst.ZkLobbyUserCpu);
 			tas.ConnectionLost += tas_ConnectionLost;
 			tas.Connected += tas_Connected;
 			tas.LoginDenied += tas_LoginDenied;
@@ -176,6 +176,7 @@ namespace CaTracker
 
 		void tas_LoginAccepted(object sender, TasEventArgs e)
 		{
+            recon.Stop();
 			for (var i = 0; i < config.JoinChannels.Length; ++i) tas.JoinChannel(config.JoinChannels[i]);
 		}
 

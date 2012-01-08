@@ -16,6 +16,7 @@ using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
 using ZeroKLobby.VoiceCommand;
+using ZkData;
 using Application = System.Windows.Forms.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
 
@@ -219,7 +220,7 @@ namespace ZeroKLobby
                                           string.Format("ZK {0}",
                                                         ApplicationDeployment.IsNetworkDeployed
                                                             ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
-                                                            : Application.ProductVersion));
+                                                            : Application.ProductVersion), GlobalConst.ZkLobbyUserCpu);
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 
@@ -241,15 +242,16 @@ namespace ZeroKLobby
                 TasClient.PreviewSaid += (s, e) =>
                     {
                         var tas = (TasClient)s;
-                        if (tas.ExistingUsers[e.Data.UserName].BanMute || Conf.IgnoredUsers.Contains(e.Data.UserName))
+                        User user = null;
+                        tas.ExistingUsers.TryGetValue(e.Data.UserName, out user);
+                        if ((user != null && user.BanMute) || Conf.IgnoredUsers.Contains(e.Data.UserName))
                         {
                             e.Cancel = true;
                         }
 
 
-                        if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text.StartsWith("!join"))
+                        if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text.StartsWith("!join") && user != null)
                         {
-                            var user = tas.ExistingUsers[e.Data.UserName];
                             if (user.IsAdmin || user.IsBot || (tas.MyBattle != null && tas.MyBattle.Founder.Name == user.Name))
                             {
                                 e.Cancel = true;

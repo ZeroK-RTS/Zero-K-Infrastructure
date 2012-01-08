@@ -167,7 +167,7 @@ namespace ZeroKLobby.MicroLobby
 
 
         if (IsInGame) g.DrawImage(Resources.Boom, 10, 10, 50, 50);
-        if (Battle.IsOfficial()) g.DrawImage(Resources.star, 48,8,15,15); 
+        if (Battle.IsOfficial() && Battle.Founder.IsSpringieManaged) g.DrawImage(Resources.star, 48,8,15,15); 
         if (Battle.IsPassworded) drawIcon(Resources.Lock);
         if (Battle.IsReplay) drawIcon(Resources.replay);
         if (Battle.Rank > 0) drawIcon(Images.GetRank(Battle.Rank));

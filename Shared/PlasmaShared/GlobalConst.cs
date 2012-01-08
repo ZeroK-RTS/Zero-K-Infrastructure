@@ -2,6 +2,8 @@
 {
 	public static class GlobalConst
 	{
+	    public const int ZkSpringieManagedCpu = 6666;
+        public const int ZkLobbyUserCpu = 6667;
 	    public const bool GiveUnclannedInfluenceToClanned = false;
 	    public const int NotInvolvedIpSell = 20;
 	    public const string BaseImageUrl = "http://zero-k.info/img/";

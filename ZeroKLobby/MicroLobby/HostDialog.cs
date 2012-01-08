@@ -54,14 +54,14 @@ namespace ZeroKLobby.MicroLobby
 
     void HideAdvanced()
     {
-      Height = 420;
+      Height = 480;
       advancedOptionsGroup.Visible = false;
       showAdvancedButton.Text = "Show Advanced Options";
     }
 
     void ShowAdvanced()
     {
-      Height = 590;
+      Height = 650;
       advancedOptionsGroup.Visible = true;
       showAdvancedButton.Text = "Hide Advanced Options";
     }
@@ -122,6 +122,12 @@ namespace ZeroKLobby.MicroLobby
     void teamsBar_ValueChanged(object sender, EventArgs e)
     {
       teamsLabel.Text = String.Format("Teams ({0})", teamsBar.Value);
+    }
+
+    private void HostDialog_Load(object sender, EventArgs e)
+    {
+        
+        pictureBox1.Image = Resources.star;
     }
   }
 }
