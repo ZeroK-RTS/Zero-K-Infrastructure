@@ -91,13 +91,13 @@ namespace ZeroKWeb.SpringieInterface
 
             var sb = new StringBuilder();
 
-            sb.AppendLine("Original bins:");
-            PrintBins(juggledAccounts, bins, sb);
+            
 
             SetBinLists(bins, juggledAccounts);
             foreach (var b in bins) b.Assigned.Clear();
 
-            
+            sb.AppendLine("Original bins:");
+            PrintBins(juggledAccounts, bins, sb);
 
 
             List<Bin> todel = new List<Bin>();
@@ -136,7 +136,7 @@ namespace ZeroKWeb.SpringieInterface
                             }
                         }
                     }
-                } while (moved);
+                } while (false);
 
                 sb.AppendLine("h-pass bins:");
                 PrintBins(juggledAccounts, bins, sb);
@@ -151,9 +151,7 @@ namespace ZeroKWeb.SpringieInterface
                         var person = b.NormalPriority.FirstOrDefault();
                         if (person != 0)
                         {
-                            var acc = juggledAccounts[person];
                             var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
-
                             bool biggerBattleRule = false;
                             if (current != null)
                             {
@@ -172,7 +170,7 @@ namespace ZeroKWeb.SpringieInterface
                             }
                         }
                     }
-                } while (moved);
+                } while (false);
 
 
                 
