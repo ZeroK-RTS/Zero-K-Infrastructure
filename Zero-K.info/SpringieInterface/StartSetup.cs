@@ -38,7 +38,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 var accountIDsWithExtraComms = new List<int>();
                 // calculate to whom to send extra comms
-                if (mode == AutohostMode.Planetwars)
+                if (mode == AutohostMode.Planetwars || mode== AutohostMode.GameTeams)
                 {
                     var groupedByTeam = context.Players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyID).OrderByDescending(x => x.Count());
                     var biggest = groupedByTeam.FirstOrDefault();
@@ -68,6 +68,7 @@ namespace ZeroKWeb.SpringieInterface
                         var pu = new LuaTable();
                         var userUnlocksBanned = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanUnlocks);
                         var userCommandersBanned = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanCommanders);
+                        var userBanMuted = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute);
 
                         if (!userUnlocksBanned)
                         {
@@ -87,6 +88,8 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "level", Value = user.Level.ToString() });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "elo", Value = user.EffectiveElo.ToString() });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "avatar", Value = user.Avatar });
+                        if (userBanMuted) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "muted", Value = "1" });
+
 
                         if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "extracomm", Value = "1" });
 

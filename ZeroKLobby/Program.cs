@@ -240,6 +240,12 @@ namespace ZeroKLobby
                 TasClient.PreviewSaid += (s, e) =>
                     {
                         var tas = (TasClient)s;
+                        if (tas.ExistingUsers[e.Data.UserName].BanMute || Conf.IgnoredUsers.Contains(e.Data.UserName))
+                        {
+                            e.Cancel = true;
+                        }
+
+
                         if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text.StartsWith("!join"))
                         {
                             var user = tas.ExistingUsers[e.Data.UserName];

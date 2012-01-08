@@ -46,6 +46,8 @@ namespace NightWatch
           using (var db = new ZkDataContext()) {
               var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == e.Data.LobbyID);
               if (acc != null) {
+
+
                   var data = new Dictionary<string, string>() { 
                       {ProtocolExtension.Keys.Level.ToString() , acc.Level.ToString()},
                       {ProtocolExtension.Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString()},
@@ -59,6 +61,11 @@ namespace NightWatch
                   if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) data.Add(ProtocolExtension.Keys.BanLobby.ToString(), "1");
 
                   client.Extensions.Publish(e.Data.Name, data);
+
+                  if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) {
+                      client.AdminKickFromLobby(e.Data.Name, "Banned");
+                  }
+
               }
           }
 

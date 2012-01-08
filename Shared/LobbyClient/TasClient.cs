@@ -476,6 +476,11 @@ namespace LobbyClient
             con.SendCommand("KICKFROMBATTLE", username);
         }
 
+        public void AdminKickFromLobby(string username,string reason)
+        {
+            con.SendCommand("KICKUSER", username,reason);
+        }
+
         public void LeaveBattle()
         {
             if (MyBattle != null)

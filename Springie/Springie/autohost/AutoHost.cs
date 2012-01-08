@@ -97,7 +97,7 @@ namespace Springie.autohost
             tas.BattleLockChanged += tas_BattleLockChanged;
             tas.BattleOpened += tas_BattleOpened;
             tas.UserAdded += (o, u) => { if (u.Data.Name == GetAccountName()) Start(null, null); };
-
+            
             tas.RegistrationDenied += (s, e) =>
                 {
                     ErrorHandling.HandleException(null, "Registration denied: " + e.ServerParams[0]);
@@ -124,6 +124,12 @@ namespace Springie.autohost
             tas.LoginAccepted += tas_LoginAccepted;
             tas.Said += tas_Said;
             tas.MyBattleStarted += tas_MyStatusChangedToInGame;
+            tas.PreviewSaid += (s, e) =>
+            {
+                User user;
+                if (tas.ExistingUsers.TryGetValue(e.Data.UserName, out user) && user.BanMute) e.Cancel = true;
+            };
+
 
             linkProvider = new ResourceLinkProvider(this);
 
@@ -848,6 +854,11 @@ namespace Springie.autohost
         {
             if (e1.BattleID != tas.MyBattleID) return;
             var name = e1.UserName;
+
+            if (tas.ExistingUsers[name].BanLobby) {
+                tas.Kick(name);
+                return;
+            }
 
             var welc = config.Welcome;
             if (welc != "")
