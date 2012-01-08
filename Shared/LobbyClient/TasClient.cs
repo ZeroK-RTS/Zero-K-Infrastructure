@@ -1342,7 +1342,7 @@ namespace LobbyClient
                 if (n != lastSpectatorCount)
                 {
                     lastSpectatorCount = n;
-                    con.SendCommand("UPDATEBATTLEINFO", n, (MyBattle.IsLocked ? 1 : 0), MyBattle.MapHash, MyBattle.MapName);
+                    con.SendCommand("UPDATEBATTLEINFO", n, lockToChangeTo ? 1 : 0, mapChecksumToChangeTo,  mapToChangeTo);
                 }
             }
         }

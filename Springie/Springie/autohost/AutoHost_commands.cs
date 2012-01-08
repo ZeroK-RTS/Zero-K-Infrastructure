@@ -426,7 +426,7 @@ namespace Springie.autohost
 
         public void ComClearBox(TasSayEventArgs e, string[] words)
         {
-            if (words.Length == 0) foreach (var i in tas.MyBattle.Rectangles.Keys) tas.RemoveBattleRectangle(i);
+            if (words.Length == 0) foreach (var i in tas.MyBattle.Rectangles.Keys.ToList()) tas.RemoveBattleRectangle(i);
             else
             {
                 var numrect = 0;
@@ -852,7 +852,7 @@ namespace Springie.autohost
                             var botStatus = tas.MyBattleStatus.Clone();
                             botStatus.TeamNumber = b.TeamID;
                             botStatus.AllyNumber = b.AllyID;
-                            tas.AddBot(b.BotName, botStatus, botStatus.TeamColor, b.BotAI);
+                            tas.AddBot(b.BotName.Replace(" ", "_"), botStatus, botStatus.TeamColor, b.BotAI);
                         }
                     }
                 }

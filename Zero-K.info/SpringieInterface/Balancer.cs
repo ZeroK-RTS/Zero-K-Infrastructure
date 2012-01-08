@@ -42,7 +42,7 @@ namespace ZeroKWeb.SpringieInterface
                         res.Bots = context.Bots.ToList();
                         foreach (var p in res.Players) p.AllyID = 0;
                         foreach (var b in res.Bots) b.AllyID = 1;
-                        if (!res.Bots.Any()) res.Bots.Add(new BotTeam() { AllyID = 1, TeamID = 16, BotName = "Chicken: Normal (default)", BotAI = "Chicken: Normal", });
+                        if (!res.Bots.Any()) res.Bots.Add(new BotTeam() { AllyID = 1, TeamID = 16, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
                         break;
                     case AutohostMode.GameFFA:
                         var db = new ZkDataContext();
@@ -436,7 +436,7 @@ namespace ZeroKWeb.SpringieInterface
                 var pickedUser = maxUsers[rand.Next(maxUsers.Count)];
 
                 teamUsers[minid].Add(pickedUser);
-                teamSums[minid] = maxElo;
+                teamSums[minid] += pickedUser.Elo;
 
                 if (pickedUser.ClanID != null)
                 {

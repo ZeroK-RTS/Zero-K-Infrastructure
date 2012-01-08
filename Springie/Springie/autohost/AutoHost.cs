@@ -622,7 +622,7 @@ namespace Springie.autohost
             else if (Program.main.Config.GargamelMode) b.Nat = Battle.NatMode.FixedPorts;
             else b.Nat = Battle.NatMode.None; // else either no nat or fixed ports (for gargamel fake - to get client IPs)
             tas.OpenBattle(b);
-            if (SpawnConfig != null) tas.Say(TasClient.SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", false);
+            
         }
 
 
@@ -839,6 +839,8 @@ namespace Springie.autohost
                     tas.AddBot(slot.TeamName, ubs, slot.Color, slot.AiShortName);
                 }
             }
+            if (SpawnConfig != null) tas.Say(TasClient.SayPlace.User, SpawnConfig.Owner, "I'm here! Ready to serve you! Join me!", false);
+            else ServerVerifyMap(true);
         }
 
 
