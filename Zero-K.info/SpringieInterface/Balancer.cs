@@ -326,7 +326,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     var acc = db.Accounts.Where(x => x.LobbyID == u.LobbyID).FirstOrDefault();
 
-                    ranker.Add(new UsRank(ranker.Count, acc != null ? acc.EffectiveElo : 1500, (clanwise && acc != null) ? acc.ClanID : null));
+                    ranker.Add(new UsRank(u.LobbyID, acc != null ? acc.EffectiveElo : 1500, (clanwise && acc != null) ? acc.ClanID : null));
                 }
             }
             var totalPlayers = ranker.Count;
