@@ -41,6 +41,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private System.Threading.SendOrPostCallback GetClusterConfigsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetMapCommandsOperationCompleted;
+        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -98,6 +100,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
         public event GetClusterConfigsCompletedEventHandler GetClusterConfigsCompleted;
         
         /// <remarks/>
+        public event GetMapCommandsCompletedEventHandler GetMapCommandsCompleted;
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public PlayerJoinResult AutohostPlayerJoined(BattleContext context, int accountID) {
             object[] results = this.Invoke("AutohostPlayerJoined", new object[] {
@@ -130,24 +135,28 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/BalanceTeams", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public BalanceTeamsResult BalanceTeams(BattleContext context) {
+        public BalanceTeamsResult BalanceTeams(BattleContext context, int allyCount, bool clanWise) {
             object[] results = this.Invoke("BalanceTeams", new object[] {
-                        context});
+                        context,
+                        allyCount,
+                        clanWise});
             return ((BalanceTeamsResult)(results[0]));
         }
         
         /// <remarks/>
-        public void BalanceTeamsAsync(BattleContext context) {
-            this.BalanceTeamsAsync(context, null);
+        public void BalanceTeamsAsync(BattleContext context, int allyCount, bool clanWise) {
+            this.BalanceTeamsAsync(context, allyCount, clanWise, null);
         }
         
         /// <remarks/>
-        public void BalanceTeamsAsync(BattleContext context, object userState) {
+        public void BalanceTeamsAsync(BattleContext context, int allyCount, bool clanWise, object userState) {
             if ((this.BalanceTeamsOperationCompleted == null)) {
                 this.BalanceTeamsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnBalanceTeamsOperationCompleted);
             }
             this.InvokeAsync("BalanceTeams", new object[] {
-                        context}, this.BalanceTeamsOperationCompleted, userState);
+                        context,
+                        allyCount,
+                        clanWise}, this.BalanceTeamsOperationCompleted, userState);
         }
         
         private void OnBalanceTeamsOperationCompleted(object arg) {
@@ -278,6 +287,35 @@ namespace PlasmaShared.SpringieInterfaceReference {
             if ((this.GetClusterConfigsCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.GetClusterConfigsCompleted(this, new GetClusterConfigsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetMapCommands", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string GetMapCommands(string mapName) {
+            object[] results = this.Invoke("GetMapCommands", new object[] {
+                        mapName});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetMapCommandsAsync(string mapName) {
+            this.GetMapCommandsAsync(mapName, null);
+        }
+        
+        /// <remarks/>
+        public void GetMapCommandsAsync(string mapName, object userState) {
+            if ((this.GetMapCommandsOperationCompleted == null)) {
+                this.GetMapCommandsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetMapCommandsOperationCompleted);
+            }
+            this.InvokeAsync("GetMapCommands", new object[] {
+                        mapName}, this.GetMapCommandsOperationCompleted, userState);
+        }
+        
+        private void OnGetMapCommandsOperationCompleted(object arg) {
+            if ((this.GetMapCommandsCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetMapCommandsCompleted(this, new GetMapCommandsCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -1027,8 +1065,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private string mapNameField;
         
-        private string springieCommandsField;
-        
         private string messageField;
         
         /// <remarks/>
@@ -1038,16 +1074,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.mapNameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string SpringieCommands {
-            get {
-                return this.springieCommandsField;
-            }
-            set {
-                this.springieCommandsField = value;
             }
         }
         
@@ -1070,25 +1096,15 @@ namespace PlasmaShared.SpringieInterfaceReference {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class BalanceTeamsResult {
         
-        private PlayerTeam[] playersField;
-        
         private BotTeam[] botsField;
-        
-        private bool deleteBotsField;
         
         private bool canStartField;
         
+        private bool deleteBotsField;
+        
         private string messageField;
         
-        /// <remarks/>
-        public PlayerTeam[] Players {
-            get {
-                return this.playersField;
-            }
-            set {
-                this.playersField = value;
-            }
-        }
+        private PlayerTeam[] playersField;
         
         /// <remarks/>
         public BotTeam[] Bots {
@@ -1097,16 +1113,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.botsField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public bool DeleteBots {
-            get {
-                return this.deleteBotsField;
-            }
-            set {
-                this.deleteBotsField = value;
             }
         }
         
@@ -1121,12 +1127,32 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
+        public bool DeleteBots {
+            get {
+                return this.deleteBotsField;
+            }
+            set {
+                this.deleteBotsField = value;
+            }
+        }
+        
+        /// <remarks/>
         public string Message {
             get {
                 return this.messageField;
             }
             set {
                 this.messageField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PlayerTeam[] Players {
+            get {
+                return this.playersField;
+            }
+            set {
+                this.playersField = value;
             }
         }
     }
@@ -1409,6 +1435,32 @@ namespace PlasmaShared.SpringieInterfaceReference {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((AhConfig[])(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetMapCommandsCompletedEventHandler(object sender, GetMapCommandsCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetMapCommandsCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetMapCommandsCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
             }
         }
     }

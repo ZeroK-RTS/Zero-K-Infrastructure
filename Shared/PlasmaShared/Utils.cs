@@ -174,6 +174,7 @@ namespace PlasmaShared
 
 		public static string EscapePath(this string path)
 		{
+            if (string.IsNullOrEmpty(path)) return path;
 			var escaped = new StringBuilder();
 			foreach (var c in path)
 			{

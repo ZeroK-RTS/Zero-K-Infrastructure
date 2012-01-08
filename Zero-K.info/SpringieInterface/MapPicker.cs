@@ -148,11 +148,12 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 else
                 {
-                    var list =
-                        db.Resources.Where(x => x.FeaturedOrder != null && x.MapIsFfa != true && x.ResourceContentFiles.Any(y => y.LinkCount > 0)).
+                    /*var list =
+                        db.Resources.Where(x => x.TypeID == ResourceType.Map&& x.FeaturedOrder != null && x.MapIsFfa != true && x.ResourceContentFiles.Any(y => y.LinkCount > 0)).
                             ToList();
                     var r = new Random();
-                    res.MapName = list[r.Next(list.Count)].InternalName;
+                    res.MapName = list[r.Next(list.Count)].InternalName;*/
+                    res.MapName = context.Map;
                 }
             }
             return res;

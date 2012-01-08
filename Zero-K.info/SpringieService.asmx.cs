@@ -24,9 +24,9 @@ namespace ZeroKWeb
         }
 
         [WebMethod]
-        public BalanceTeamsResult BalanceTeams(BattleContext context, int allyCount, bool clanWise)
+        public BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise)
         {
-            return Balancer.BalanceTeams(context,allyCount,clanWise);
+            return Balancer.BalanceTeams(context,isGameStart, allyCount,clanWise);
         }
 
         [WebMethod]

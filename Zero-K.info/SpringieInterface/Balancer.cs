@@ -17,23 +17,29 @@ namespace ZeroKWeb.SpringieInterface
 
     public class Balancer
     {
-        public static BalanceTeamsResult BalanceTeams(BattleContext context, int allyCount, bool clanWise)
+        public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise)
         {
             var mode = context.GetMode();
-            if (mode != AutohostMode.Planetwars) return BalanceTeams(context, allyCount, clanWise);
+            if (mode != AutohostMode.Planetwars)
+            {
+                if (isGameStart) return new BalanceTeamsResult() { 
+                    CanStart = true
+                }; else return LegacyBalance(allyCount??2, clanWise??false,context);
+            }
             else
             {
                 var res = new BalanceTeamsResult();
                 context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
                 if (context.Players.Count < 1) return res;
-                if (context.Players.Count > 18) {
+                if (context.Players.Count > 18)
+                {
                     res.Message = "Too many people, cannot balance. Use !splitplayers";
                     return res;
                 }
 
                 using (var db = new ZkDataContext())
                 {
-                    
+
                     res.Message = "";
                     var idList = context.Players.Select(x => x.LobbyID).ToList();
                     var players = new List<Account>();
@@ -75,8 +81,7 @@ namespace ZeroKWeb.SpringieInterface
                     {
                         var teamID = 0;
                         for (var i = 0; i < players.Count; i++)
-                            res.Players.Add(new PlayerTeam()
-                                            { LobbyID = players[i].LobbyID ?? 0, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
+                            res.Players.Add(new PlayerTeam() { LobbyID = players[i].LobbyID ?? 0, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
                         var cnt = 1;
                         foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam() { AllyID = 1, BotAI = b.EffectBots, TeamID = teamID++, BotName = "Aliens" + cnt++ });
 
@@ -110,7 +115,7 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
 
-                    var sameTeamScore = new double[players.Count,players.Count];
+                    var sameTeamScore = new double[players.Count, players.Count];
                     for (var i = 1; i < players.Count; i++)
                     {
                         for (var j = 0; j < i; j++)
@@ -198,7 +203,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (team0count == 0 || team1count == 0) continue; // skip combination, empty team
 
                         // calculate score for team difference
-                        var teamDiffScore = -(20.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count)) -
+                        var teamDiffScore = -(20.0 * Math.Abs(team0count - team1count) / (double)(team0count + team1count)) -
                                             Math.Abs(team0count - team1count);
                         if (teamDiffScore < -10) continue; // max imabalance
 
@@ -210,11 +215,11 @@ namespace ZeroKWeb.SpringieInterface
 
                         // calculate score for elo difference
 
-                        team0Elo = team0Elo/team0count;
-                        team1Elo = team1Elo/team1count;
+                        team0Elo = team0Elo / team0count;
+                        team1Elo = team1Elo / team1count;
                         //team0Elo = team0Elo/team0Weight;
                         //team1Elo = team1Elo/team1Weight;
-                        var eloScore = -Math.Abs(team0Elo - team1Elo)/14;
+                        var eloScore = -Math.Abs(team0Elo - team1Elo) / 14;
                         if (eloScore < -17) continue;
 
                         if (team0Elo < team1Elo) balanceModifier += -eloScore;
@@ -222,7 +227,7 @@ namespace ZeroKWeb.SpringieInterface
 
                         // verify if ther eis sense in playing (no zero sum game ip abuse)
                         var majorityFactions = (from teamData in Enumerable.Range(0, players.Count).GroupBy(x => playerAssignments[x])
-                                                let majorityCount = Math.Ceiling(teamData.Count()/2.0)
+                                                let majorityCount = Math.Ceiling(teamData.Count() / 2.0)
                                                 select
                                                     teamData.GroupBy(x => players[x].FactionID).Where(x => x.Key != null && x.Count() >= majorityCount)
                                                     .Select(x => x.Key ?? 0)).ToList();
@@ -252,7 +257,7 @@ namespace ZeroKWeb.SpringieInterface
                                 }
                             }
                             if (cnt > 0) // player can be meaningfully ranked, he had at least one non zero relation
-                                compoScore += playerScoreMultiplier[i]*sum/cnt;
+                                compoScore += playerScoreMultiplier[i] * sum / cnt;
                         }
 
                         if (compoScore < 0) continue; // get meaningfull teams only   || compoScore < 0.5*absCompo
@@ -275,11 +280,11 @@ namespace ZeroKWeb.SpringieInterface
                         res.CanStart = false;
                         res.Message += "Cannot be balanced well at this point";
                     }
-                        /*else if (bestCompo < absCompo*0.5)
-                {
-                    res.BalancedTeams = null;
-                    res.Message += string.Format("Cannot be balanced well at this point - best composition: {0}, available: {1}", absCompo, bestCompo);
-                }*/
+                    /*else if (bestCompo < absCompo*0.5)
+            {
+                res.BalancedTeams = null;
+                res.Message += string.Format("Cannot be balanced well at this point - best composition: {0}, available: {1}", absCompo, bestCompo);
+            }*/
                     else
                     {
                         var differs = false;
@@ -287,8 +292,7 @@ namespace ZeroKWeb.SpringieInterface
                         {
                             var allyID = ((bestCombination & (1 << i)) > 0) ? 1 : 0;
                             if (!differs && allyID != context.Players.First(x => x.LobbyID == players[i].LobbyID).AllyID) differs = true;
-                            res.Players.Add(new PlayerTeam()
-                                            { LobbyID = players[i].LobbyID.Value, Name = players[i].Name, AllyID = allyID, TeamID = i });
+                            res.Players.Add(new PlayerTeam() { LobbyID = players[i].LobbyID.Value, Name = players[i].Name, AllyID = allyID, TeamID = i });
                         }
                         if (differs)
                         {
@@ -298,7 +302,7 @@ namespace ZeroKWeb.SpringieInterface
                                     bestTeamDiffs,
                                     bestElo,
                                     bestCompo,
-                                    Utils.GetWinChancePercent(bestElo*20));
+                                    Utils.GetWinChancePercent(bestElo * 20));
                         }
                         res.CanStart = true;
                     }
@@ -308,7 +312,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        static BalanceTeamsResult BalanceTeams(int teamCount, bool clanwise, BattleContext b)
+        static BalanceTeamsResult LegacyBalance(int teamCount, bool clanwise, BattleContext b)
         {
             var ret = new BalanceTeamsResult();
 

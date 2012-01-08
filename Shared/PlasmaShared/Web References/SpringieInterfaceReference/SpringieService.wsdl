@@ -66,6 +66,8 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="context" type="tns:BattleContext" />
+            <s:element minOccurs="1" maxOccurs="1" name="allyCount" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="clanWise" type="s:boolean" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -78,11 +80,11 @@
       </s:element>
       <s:complexType name="BalanceTeamsResult">
         <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="Players" type="tns:ArrayOfPlayerTeam" />
           <s:element minOccurs="0" maxOccurs="1" name="Bots" type="tns:ArrayOfBotTeam" />
-          <s:element minOccurs="1" maxOccurs="1" name="DeleteBots" type="s:boolean" />
           <s:element minOccurs="1" maxOccurs="1" name="CanStart" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="DeleteBots" type="s:boolean" />
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Players" type="tns:ArrayOfPlayerTeam" />
         </s:sequence>
       </s:complexType>
       <s:element name="GetRecommendedMap">
@@ -102,7 +104,6 @@
       <s:complexType name="RecommendedMapResult">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="1" name="MapName" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="SpringieCommands" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
         </s:sequence>
       </s:complexType>
@@ -260,6 +261,20 @@
           <s:element minOccurs="1" maxOccurs="1" name="Level" type="s:int" />
         </s:sequence>
       </s:complexType>
+      <s:element name="GetMapCommands">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="mapName" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetMapCommandsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetMapCommandsResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="AutohostPlayerJoinedSoapIn">
@@ -298,6 +313,12 @@
   <wsdl:message name="GetClusterConfigsSoapOut">
     <wsdl:part name="parameters" element="tns:GetClusterConfigsResponse" />
   </wsdl:message>
+  <wsdl:message name="GetMapCommandsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetMapCommands" />
+  </wsdl:message>
+  <wsdl:message name="GetMapCommandsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetMapCommandsResponse" />
+  </wsdl:message>
   <wsdl:portType name="SpringieServiceSoap">
     <wsdl:operation name="AutohostPlayerJoined">
       <wsdl:input message="tns:AutohostPlayerJoinedSoapIn" />
@@ -322,6 +343,10 @@
     <wsdl:operation name="GetClusterConfigs">
       <wsdl:input message="tns:GetClusterConfigsSoapIn" />
       <wsdl:output message="tns:GetClusterConfigsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetMapCommands">
+      <wsdl:input message="tns:GetMapCommandsSoapIn" />
+      <wsdl:output message="tns:GetMapCommandsSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="SpringieServiceSoap" type="tns:SpringieServiceSoap">
@@ -380,6 +405,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="GetMapCommands">
+      <soap:operation soapAction="http://tempuri.org/GetMapCommands" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="SpringieServiceSoap12" type="tns:SpringieServiceSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -430,6 +464,15 @@
     </wsdl:operation>
     <wsdl:operation name="GetClusterConfigs">
       <soap12:operation soapAction="http://tempuri.org/GetClusterConfigs" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetMapCommands">
+      <soap12:operation soapAction="http://tempuri.org/GetMapCommands" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
