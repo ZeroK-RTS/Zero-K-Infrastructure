@@ -5,7 +5,6 @@ using System.Data.Linq;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using MonoTorrent.Common;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 using ZkData;

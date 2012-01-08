@@ -50,7 +50,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>2.33.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -116,8 +116,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Speech" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
@@ -602,10 +600,6 @@
     <ProjectReference Include="..\LuaAdmin\LuaManagerLib\LuaManagerLib.csproj">
       <Project>{EA79A74E-0577-4F74-AE8D-6E259A594FBE}</Project>
       <Name>LuaManagerLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Shared\MonoTorrent\MonoTorrent.csproj">
-      <Project>{411A9E0E-FDC6-4E25-828A-0C2CD1CD96F8}</Project>
-      <Name>MonoTorrent</Name>
     </ProjectReference>
     <ProjectReference Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj">
       <Project>{F3F74776-46A9-4415-B76E-CEEC771C2ABA}</Project>

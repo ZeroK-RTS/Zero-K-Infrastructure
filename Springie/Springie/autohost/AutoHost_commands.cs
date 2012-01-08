@@ -602,8 +602,16 @@ namespace Springie.autohost
         SayBattle("cannot start, " + usname + " not ready and synced");
         return;
       }*/
-            if (SpawnConfig == null && RunServerBalance(true, null, null))
+            if (SpawnConfig == null)
             {
+                if (RunServerBalance(true, null, null))
+                {
+                    SayBattle("please wait, game is about to start");
+                    StopVote();
+                    tas.StartGame();
+                }
+            }
+            else {
                 SayBattle("please wait, game is about to start");
                 StopVote();
                 tas.StartGame();

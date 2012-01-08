@@ -85,13 +85,16 @@ namespace ZeroKLobby.MicroLobby
     }
     public static Font ModFont = new Font("Segoe UI", 8.25F, FontStyle.Regular);
     public int PlayerCount { get { return Battle.NonSpectatorCount; } }
+    public bool IsServerManaged { get; private set; }
 
-    public static Brush TextBrush = new SolidBrush(Color.Black);
+
+      public static Brush TextBrush = new SolidBrush(Color.Black);
     public static Font TitleFont = new Font("Segoe UI", 8.25F, FontStyle.Bold);
 
     public BattleIcon(Battle battle)
     {
       Battle = battle;
+      IsServerManaged = battle.Founder.IsSpringieManaged;
     }
 
     public void Dispose()

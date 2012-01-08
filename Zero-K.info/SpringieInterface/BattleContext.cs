@@ -14,6 +14,7 @@ namespace ZeroKWeb.SpringieInterface
         public string Mod;
         public List<PlayerTeam> Players = new List<PlayerTeam>();
         public List<BotTeam> Bots = new List<BotTeam>();
+        public AutohostMode Mode;
         public AutohostMode GetMode() {
             var db = new ZkDataContext();
             var name = AutohostName.TrimEnd('0','1','2','3','4','5','6','7','8','9');

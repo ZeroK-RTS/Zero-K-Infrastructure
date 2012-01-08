@@ -13,7 +13,8 @@
 
     <CollectionViewSource  x:Key="view">
       <CollectionViewSource.SortDescriptions>
-        <view:SortDescription PropertyName="PlayerCount" Direction="Descending"/>
+                <view:SortDescription PropertyName="IsServerManaged" Direction="Descending"/>
+                <view:SortDescription PropertyName="PlayerCount" Direction="Descending"/>
       </CollectionViewSource.SortDescriptions>
     </CollectionViewSource>
   </UserControl.Resources>

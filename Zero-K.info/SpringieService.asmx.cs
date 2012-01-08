@@ -65,6 +65,12 @@ namespace ZeroKWeb
             return db.Resources.Single(x => x.InternalName == mapName).MapSpringieCommands;
         }
 
+        [WebMethod]
+        public JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
+        {
+            return PlayerJuggler.JugglePlayers(autohosts);
+        }
+
 
     }
 }
