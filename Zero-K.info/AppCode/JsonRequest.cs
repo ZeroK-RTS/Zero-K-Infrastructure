@@ -20,6 +20,8 @@ namespace ZeroKWeb
             StreamWriter writer = new StreamWriter(request.GetRequestStream());
             writer.Write(ser.Serialize(data));
             writer.Close();
+            var ms = new MemoryStream();
+            request.GetResponse().GetResponseStream().CopyTo(ms);
         }
 
     }
