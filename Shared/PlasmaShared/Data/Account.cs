@@ -6,15 +6,76 @@ using System.Security.Principal;
 
 namespace ZkData
 {
-	partial class Account: IPrincipal, IIdentity
-	{
-		public int AvailableXP { get { return GetXpForLevel(Level) - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
+    partial class Account: IPrincipal, IIdentity
+    {
+        public enum GamePreference
+        {
+            Dislike = -1,
+            Neutral = 0,
+            Prefers = 1
+        }
 
-		public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
-
-		public double WeightEloMalus { get { return (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
-
+        Dictionary<AutohostMode, GamePreference> preferences;
+        public int AvailableXP { get { return GetXpForLevel(Level) - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
         public double EffectiveElo { get { return Elo + WeightEloMalus; } }
+        public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
+
+
+        public Dictionary<AutohostMode, GamePreference> Preferences
+        {
+            get
+            {
+                if (preferences != null) return preferences;
+                else
+                {
+                    preferences = new Dictionary<AutohostMode, GamePreference>();
+                    if (!string.IsNullOrEmpty(GamePreferences))
+                    {
+                        foreach (var line in GamePreferences.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            var parts = line.Split('=');
+                            preferences[(AutohostMode)int.Parse(parts[0])] = (GamePreference)int.Parse(parts[1]);
+                        }
+                    }
+                    foreach (AutohostMode v in Enum.GetValues(typeof(AutohostMode))) if (!preferences.ContainsKey(v)) preferences[v] = GamePreference.Neutral;
+                }
+                return preferences;
+            }
+        }
+        public double WeightEloMalus { get { return (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
+
+
+        public void CheckLevelUp()
+        {
+            if (XP > GetXpForLevel(Level + 1)) Level++;
+        }
+
+
+        public int GetDropshipCapacity()
+        {
+            return GlobalConst.DefaultDropshipCapacity +
+                   (Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
+        }
+
+
+        public int GetJumpGateCapacity()
+        {
+            return Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
+        }
+
+        public static int GetXpForLevel(int level)
+        {
+            if (level < 0) return 0;
+            return level*80 + 20*level*level;
+        }
+
+        partial void OnCreated()
+        {
+            FirstLogin = DateTime.UtcNow;
+            Elo = 1500;
+            EloWeight = 1;
+            DropshipCount = 1;
+        }
 
         partial void OnCreditsChanging(int value)
         {
@@ -22,6 +83,23 @@ namespace ZkData
             else CreditsExpense += Credits - value;
         }
 
+        partial void OnGamePreferencesChanged()
+        {
+            preferences = null;
+        }
+
+        partial void OnNameChanging(string value)
+        {
+            if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value))
+            {
+                List<string> aliases = null;
+                if (!string.IsNullOrEmpty(Aliases)) aliases = new List<string>(Aliases.Split(','));
+                else aliases = new List<string>();
+
+                if (!aliases.Contains(Name)) aliases.Add(Name);
+                Aliases = string.Join(",", aliases.ToArray());
+            }
+        }
 
         partial void OnValidate(ChangeAction action)
         {
@@ -36,65 +114,21 @@ namespace ZkData
             }
         }
 
-	    public void CheckLevelUp()
-		{
-			if (XP > GetXpForLevel(Level + 1)) Level++;
-		}
-
-
-		public int GetDropshipCapacity()
-		{
-			return GlobalConst.DefaultDropshipCapacity +
-			       (Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
-		}
-
-
-        public int GetJumpGateCapacity() {
-            return Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
+        partial void OnXPChanged()
+        {
+            CheckLevelUp();
         }
 
-	    public static int GetXpForLevel(int level)
-		{
-			if (level < 0) return 0;
-			return level*80 + 20*level*level;
-		}
+        public string AuthenticationType { get { return "LobbyServer"; } }
+        public bool IsAuthenticated { get { return true; } }
 
-		partial void OnCreated()
-		{
-			FirstLogin = DateTime.UtcNow;
-			Elo = 1500;
-			EloWeight = 1;
-			DropshipCount = 1;
-		}
+        public bool IsInRole(string role)
+        {
+            if (role == "LobbyAdmin") return IsLobbyAdministrator;
+            if (role == "ZkAdmin") return IsZeroKAdmin;
+            else return string.IsNullOrEmpty(role);
+        }
 
-		partial void OnNameChanging(string value)
-		{
-			if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(value))
-			{
-				List<string> aliases = null;
-				if (!string.IsNullOrEmpty(Aliases)) aliases = new List<string>(Aliases.Split(','));
-				else aliases = new List<string>();
-
-				if (!aliases.Contains(Name)) aliases.Add(Name);
-				Aliases = string.Join(",", aliases.ToArray());
-			}
-		}
-
-		partial void OnXPChanged()
-		{
-			CheckLevelUp();
-		}
-
-		public string AuthenticationType { get { return "LobbyServer"; } }
-		public bool IsAuthenticated { get { return true; } }
-
-		public bool IsInRole(string role)
-		{
-			if (role == "LobbyAdmin") return IsLobbyAdministrator;
-			if (role == "ZkAdmin") return IsZeroKAdmin;
-			else return string.IsNullOrEmpty(role);
-		}
-
-		public IIdentity Identity { get { return this; } }
-	}
+        public IIdentity Identity { get { return this; } }
+    }
 }

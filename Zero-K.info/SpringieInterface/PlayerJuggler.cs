@@ -56,7 +56,7 @@ namespace ZeroKWeb.SpringieInterface
                     //make one bin from biggest ah of other type
                     var biggest = grp.OrderByDescending(x => x.LobbyContext.Players.Count(y => !y.IsSpectator)).First();
                     var bin = new Bin() { Autohost = biggest };
-                    foreach (var ah in grp) bin.Assigned.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID)); // add all valid players from all ah to this bin
+                    foreach (var ah in autohosts.Where(x=>x.LobbyContext.GetMode() == biggest.LobbyContext.GetMode())) bin.Assigned.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID)); // add all valid players from all ahof this type to this bin
                     
                     bins.Add(bin); 
                 }
