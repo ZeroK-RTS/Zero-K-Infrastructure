@@ -103,9 +103,9 @@
 	@if (ZeroKWeb.Global.IsAccountAuthorized && ZeroKWeb.Global.Account.Level > 20)
 	{
 	
-     <div style='border: 1px dashed teal; padding: 10px; display:none'>
+     <div style='border: 1px dashed teal; padding: 10px;'>
          <b><a href="#" onclick="$('#divTag').toggle()" >TAG the MAP</a></b>
-         <div id="divTag">
+         <div id="divTag" style="display:none">
 		@if (m.TaggedByAccountID != null)
   {
 			@: - Last tagged by @m.Account.Name
