@@ -100,7 +100,7 @@ namespace ZeroKWeb.SpringieInterface
             PrintBins(juggledAccounts, bins, sb);
 
 
-            List<Bin> todel = new List<Bin>();
+            Bin todel = null;
             do
             {
 
@@ -138,8 +138,8 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 } while (moved);
 
-                sb.AppendLine("h-pass bins:");
-                PrintBins(juggledAccounts, bins, sb);
+                //sb.AppendLine("h-pass bins:");
+                //PrintBins(juggledAccounts, bins, sb);
 
 
                 // normal pass
@@ -172,17 +172,19 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 } while (moved);
 
-                sb.AppendLine("n-pass bins:");
-                PrintBins(juggledAccounts, bins, sb);
+                
 
 
                 
-                todel = bins.Where(x => x.Assigned.Count < x.MinPlayers).ToList();
-                foreach (var b in todel) bins.Remove(b);
-                
-                if (todel.Any()) SetBinLists(bins, juggledAccounts);
+                todel = bins.OrderBy(x=>BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.MinPlayers);
+                if (todel != null) {
+                    bins.Remove(todel);
+                    SetBinLists(bins, juggledAccounts);
+                    sb.AppendLine("removing bin " + todel.Mode);
+                    PrintBins(juggledAccounts, bins, sb);
+                }
 
-            } while (todel.Any());
+            } while (todel!=null);
 
             sb.AppendLine("Final bins:");
             PrintBins(juggledAccounts, bins, sb);
@@ -194,7 +196,7 @@ namespace ZeroKWeb.SpringieInterface
         static void PrintBins(Dictionary<int, Account> juggledAccounts, List<Bin> bins, StringBuilder sb)
         {
             foreach (var b in bins)
-                sb.AppendFormat("{0} {1}: {2}    - High: {3}   Low: {4}\n",
+                sb.AppendFormat("{0} {1}: {2}    - (High: {3})   (Low: {4})\n",
                                 b.Mode,
                                 b.Autohost.LobbyContext.AutohostName,
                                 string.Join(",", b.Assigned.Select(x => juggledAccounts[x].Name)),
@@ -279,9 +281,9 @@ namespace ZeroKWeb.SpringieInterface
                         case AutohostMode.GameFFA:
                             return 3;
                         case AutohostMode.Planetwars:
-                            return 4;
+                            return 6;
                         case AutohostMode.GameTeams:
-                            return 4;
+                            return 6;
                         case AutohostMode.GameChickens:
                             return 2;
                     }
