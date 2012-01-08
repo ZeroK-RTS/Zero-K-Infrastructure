@@ -29,11 +29,13 @@ namespace ZeroKWeb.SpringieInterface
             var ret = new JugglerResult();
             var bins = new List<Bin>();
             var db = new ZkDataContext();
-
+            var sb = new StringBuilder();
             var lobbyIds = new List<int?>();
 
             foreach (var ah in autohosts)
             {
+                sb.AppendLine("ah:" + ah);
+
                 if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
                     // game not running add all nonspecs
                 else
@@ -78,7 +80,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
 
-            var sb = new StringBuilder();
+            
 
             SetBinLists(bins, juggledAccounts);
             foreach (var b in bins) b.Assigned.Clear();
