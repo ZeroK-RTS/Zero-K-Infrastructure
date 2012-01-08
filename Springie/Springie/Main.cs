@@ -8,6 +8,7 @@ using System.Timers;
 using System.Xml.Serialization;
 using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.SpringieInterfaceReference;
 using Springie.autohost;
 
 namespace Springie
@@ -26,13 +27,12 @@ namespace Springie
 		readonly Timer timer;
 
 		public string RootWorkPath { get; private set; }
-		public SpringieServer SpringieServer = new SpringieServer();
 		public MainConfig Config;
 
         public PlasmaDownloader.PlasmaDownloader Downloader;
         public MetaDataCache MetaCache;
 
-		public Main(string path)
+	    public Main(string path)
 		{
 			RootWorkPath = path;
 			LoadConfig();
@@ -98,31 +98,38 @@ namespace Springie
 			f.Close();
 		}
 
-		public void SpawnAutoHost(string path, SpawnConfig spawnData)
+		public void SpawnAutoHost(AhConfig config, SpawnConfig spawnData)
 		{
 			lock (autoHosts)
 			{
-				var ah = new AutoHost(MetaCache, path, GetFreeHostingPort(), spawnData);
+				var ah = new AutoHost(MetaCache, config, GetFreeHostingPort(), spawnData);
 				autoHosts.Add(ah);
 			}
 		}
 
 
-		public void StartAll()
+		public void UpdateAll()
 		{
-			StopAll();
+	        var serv = new SpringieService();
+            var configs = serv.GetClusterConfigs(Config.ClusterNode);
 
-			var foldersWithConfig = Directory.GetDirectories(RootWorkPath).Where(x => File.Exists(Path.Combine(x, AutoHost.ConfigName)));
+            lock (autoHosts) {
+                foreach (var conf in configs)
+                {
+                    if (!autoHosts.Any(x=>x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
+                    else 
+                    {
+                        foreach (var ah in autoHosts.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
+                    }
+                }
+                var todel = autoHosts.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
+                foreach (var ah in todel) StopAutohost(ah);
+            }
+    	}
 
-			if (foldersWithConfig.Count() == 0) // no subfolders, start default instance
-				StartFromPath(RootWorkPath);
-			else foreach (var folder in foldersWithConfig) StartFromPath(folder);
-		}
 
-		public void StartFromPath(string path)
-		{
-			SpawnAutoHost(path, null);
-		}
+        
+
 
 
 		public void StopAll()
@@ -155,22 +162,22 @@ namespace Springie
 					deletionCandidate = spawnedToDel;
 
 					// autohosts which have clones
-					var keys = autoHosts.Where(x => x.config.AutoSpawnClone).Select(x => x.config.AccountName).Distinct().ToList();
+					var keys = autoHosts.Where(x => x.config.AutoSpawnClones).Select(x => x.config.Login).Distinct().ToList();
 					foreach (var key in keys)
 					{
 						// 0-1 players = empty
 						var empty =
 							autoHosts.Where(
 								x =>
-								x.SpawnConfig == null && x.config.AccountName == key && !x.spring.IsRunning &&
+								x.SpawnConfig == null && x.config.Login == key && !x.spring.IsRunning &&
 								(x.tas.MyBattle == null || (x.tas.MyBattle.Users.Count <= 1 && !x.tas.MyUser.IsInGame))).ToList();
 
 						if (empty.Count == 1) continue;
 
 						else if (empty.Count == 0)
 						{
-							var existing = autoHosts.Where(x => x.config.AccountName == key).First();
-							StartFromPath(existing.configPath);
+							var existing = autoHosts.Where(x => x.config.Login == key).First();
+                            SpawnAutoHost(existing.config, null);
 						}
 						else // more than 1 empty running, stop all but 1
 						{

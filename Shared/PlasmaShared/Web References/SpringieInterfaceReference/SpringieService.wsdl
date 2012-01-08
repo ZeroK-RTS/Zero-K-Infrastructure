@@ -92,6 +92,7 @@
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="context" type="tns:BattleContext" />
+            <s:element minOccurs="1" maxOccurs="1" name="pickNew" type="s:boolean" />
           </s:sequence>
         </s:complexType>
       </s:element>

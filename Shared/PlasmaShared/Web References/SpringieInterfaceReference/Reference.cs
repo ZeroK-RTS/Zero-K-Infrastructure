@@ -170,24 +170,26 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetRecommendedMap", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public RecommendedMapResult GetRecommendedMap(BattleContext context) {
+        public RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew) {
             object[] results = this.Invoke("GetRecommendedMap", new object[] {
-                        context});
+                        context,
+                        pickNew});
             return ((RecommendedMapResult)(results[0]));
         }
         
         /// <remarks/>
-        public void GetRecommendedMapAsync(BattleContext context) {
-            this.GetRecommendedMapAsync(context, null);
+        public void GetRecommendedMapAsync(BattleContext context, bool pickNew) {
+            this.GetRecommendedMapAsync(context, pickNew, null);
         }
         
         /// <remarks/>
-        public void GetRecommendedMapAsync(BattleContext context, object userState) {
+        public void GetRecommendedMapAsync(BattleContext context, bool pickNew, object userState) {
             if ((this.GetRecommendedMapOperationCompleted == null)) {
                 this.GetRecommendedMapOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetRecommendedMapOperationCompleted);
             }
             this.InvokeAsync("GetRecommendedMap", new object[] {
-                        context}, this.GetRecommendedMapOperationCompleted, userState);
+                        context,
+                        pickNew}, this.GetRecommendedMapOperationCompleted, userState);
         }
         
         private void OnGetRecommendedMapOperationCompleted(object arg) {

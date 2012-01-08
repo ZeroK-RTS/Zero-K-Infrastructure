@@ -109,6 +109,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>Migrated rules for Springie.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deployment|AnyCPU'">
     <OutputPath>bin\Deployment\</OutputPath>
@@ -143,9 +144,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -153,11 +152,10 @@
   <ItemGroup>
     <Compile Include="autohost\AutoHost.cs" />
     <Compile Include="autohost\AutoHost_commands.cs" />
-    <Compile Include="autohost\AutoHostConfig.cs" />
     <Compile Include="autohost\AutoManager.cs" />
     <Compile Include="autohost\CommandConfig.cs" />
+    <Compile Include="autohost\CommandList.cs" />
     <Compile Include="MainConfig.cs" />
-    <Compile Include="PlanetWars\PlanetWarsHandler.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -229,6 +227,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
   <PropertyGroup>
     <PostBuildEvent>

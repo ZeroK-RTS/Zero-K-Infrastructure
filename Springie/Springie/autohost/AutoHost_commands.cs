@@ -2,12 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using LobbyClient;
 using PlasmaShared.ContentService;
+using PlasmaShared.SpringieInterfaceReference;
 
 #endregion
 
@@ -45,36 +47,39 @@ namespace Springie.autohost
 
         public void ComSplitPlayers(TasSayEventArgs e, string[] words)
         {
-            if (tas.MyBattle != null) {
-                var target = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name.StartsWith(config.AccountName) && x.Founder.Name != GetAccountName() && x.NonSpectatorCount ==0);
+            if (tas.MyBattle != null)
+            {
+                var target = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name.StartsWith(config.Login) && x.Founder.Name != GetAccountName() && x.NonSpectatorCount == 0);
 
-                
+
                 if (target != null)
                 {
-                    
+
                     var plist =
-                        tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && !x.IsSpectator&& x.Name != tas.MyBattle.Founder.Name).ToList();
-                    var slist = tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && x.IsSpectator&& x.Name != tas.MyBattle.Founder.Name).ToList();
+                        tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && !x.IsSpectator && x.Name != tas.MyBattle.Founder.Name).ToList();
+                    var slist = tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && x.IsSpectator && x.Name != tas.MyBattle.Founder.Name).ToList();
 
                     // group people by clans - if he has no clan use lobbyid as clan name, order by average elo
-                    var groups = plist.GroupBy(x => !string.IsNullOrEmpty(x.LobbyUser.Clan) ? x.LobbyUser.Clan : x.LobbyUser.LobbyID.ToString()).OrderByDescending(x => x.Average(y => y.LobbyUser.EffectiveElo));
+                    var groups = plist.GroupBy(x => !String.IsNullOrEmpty(x.LobbyUser.Clan) ? x.LobbyUser.Clan : x.LobbyUser.LobbyID.ToString()).OrderByDescending(x => x.Average(y => y.LobbyUser.EffectiveElo));
 
-                    var moveCnt = plist.Count/2;
+                    var moveCnt = plist.Count / 2;
                     var moved = 0;
 
                     // take half players with top elo and move them - incuding specs from same clan
-                    foreach (var g in groups) {
+                    foreach (var g in groups)
+                    {
                         foreach (var p in g)
                         {
                             tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
                             if (!p.LobbyUser.IsZkLobbyUser) tas.Kick(p.Name);
                         }
-                        foreach (var p in slist.Where(x=>x.LobbyUser.Clan == g.Key)) {
+                        foreach (var p in slist.Where(x => x.LobbyUser.Clan == g.Key))
+                        {
                             tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
                             if (!p.LobbyUser.IsZkLobbyUser) tas.Kick(p.Name);
                         }
 
-                        moved+= g.Count();
+                        moved += g.Count();
                         if (moved > moveCnt) break;
                     }
                 }
@@ -126,7 +131,7 @@ namespace Springie.autohost
                 {
                     if (!u.IsSpectator)
                     {
-                        ranker.Add(new UsRank(ranker.Count, u.LobbyUser.EffectiveElo, clanwise ? (u.LobbyUser.Clan??"") :"", u));
+                        ranker.Add(new UsRank(ranker.Count, u.LobbyUser.EffectiveElo, clanwise ? (u.LobbyUser.Clan ?? "") : "", u));
                     }
                 }
                 var totalPlayers = ranker.Count;
@@ -159,13 +164,13 @@ namespace Springie.autohost
                 var cnt = 0;
                 while (ranker.Count > 0)
                 {
-                    var minsum = double.MaxValue;
+                    var minsum = Double.MaxValue;
                     var minid = 0;
                     for (var i = 0; i < teamCount; ++i)
                     {
                         var l = teamUsers[i];
                         // pick only current "row" and find the one with least sum
-                        if (l.Count == cnt/teamCount)
+                        if (l.Count == cnt / teamCount)
                         {
                             if (teamSums[i] < minsum)
                             {
@@ -190,12 +195,12 @@ namespace Springie.autohost
                     // we still dont have any candidates try to get anyone
                     if (candidates.Count == 0) candidates.AddRange(ranker);
 
-                    var maxElo = double.MinValue;
+                    var maxElo = Double.MinValue;
                     var maxUsers = new List<UsRank>();
                     // get candidate which increases team elo most (round elo to tens to add some randomness)
                     foreach (var c in candidates)
                     {
-                        var newElo = ((teamUsers[minid].Sum(x => x.Elo) + Math.Round(c.Elo/10)*10))/ (teamUsers.Count()+1);
+                        var newElo = ((teamUsers[minid].Sum(x => x.Elo) + Math.Round(c.Elo / 10) * 10)) / (teamUsers.Count() + 1);
                         if (newElo > maxElo)
                         {
                             maxUsers.Clear();
@@ -244,7 +249,7 @@ namespace Springie.autohost
 
                 t += ")";
 
-                SayBattle(string.Format("{0} players balanced {2} to {1} teams (ratings {3}",
+                SayBattle(String.Format("{0} players balanced {2} to {1} teams (ratings {3}",
                                         totalPlayers,
                                         teamCount,
                                         clanwise ? "respecting clans" : "",
@@ -267,7 +272,7 @@ namespace Springie.autohost
                         x => !x.IsSpectator && !hostedMod.MissionSlots.Any(y => y.IsHuman && y.TeamID == x.TeamNumber && y.AllyID == x.AllyNumber));
                 if (invalidUser != null)
                 {
-                    SayBattle(string.Format("User {0} is not in proper mission slot", invalidUser.Name));
+                    SayBattle(String.Format("User {0} is not in proper mission slot", invalidUser.Name));
                     return false;
                 }
 
@@ -275,7 +280,7 @@ namespace Springie.autohost
                 if (slot == null || !slot.IsRequired) return true;
                 else
                 {
-                    SayBattle(string.Format("Mission slot {0}/{1} (team {2}, id {3}) needs player",
+                    SayBattle(String.Format("Mission slot {0}/{1} (team {2}, id {3}) needs player",
                                             slot.AllyName,
                                             slot.TeamName,
                                             slot.AllyID,
@@ -321,13 +326,13 @@ namespace Springie.autohost
                 return;
             }
             int x, y, w, h;
-            if (!int.TryParse(words[0], out x) || !int.TryParse(words[1], out y) || !int.TryParse(words[2], out w) || !int.TryParse(words[3], out h))
+            if (!Int32.TryParse(words[0], out x) || !Int32.TryParse(words[1], out y) || !Int32.TryParse(words[2], out w) || !Int32.TryParse(words[3], out h))
             {
                 Respond(e, "All parameters must be numbers");
                 return;
             }
             var numrect = 0;
-            if (words.Length > 4) int.TryParse(words[4], out numrect);
+            if (words.Length > 4) Int32.TryParse(words[4], out numrect);
 
             if (numrect == 0)
             {
@@ -339,7 +344,7 @@ namespace Springie.autohost
                 }
                 numrect++;
             }
-            tas.AddBattleRectangle(numrect - 1, new BattleRect(x*2, y*2, (x + w)*2, (y + h)*2));
+            tas.AddBattleRectangle(numrect - 1, new BattleRect(x * 2, y * 2, (x + w) * 2, (y + h) * 2));
         }
 
         public void ComAlly(TasSayEventArgs e, string[] words)
@@ -350,7 +355,7 @@ namespace Springie.autohost
                 return;
             }
             var allyno = 0;
-            if (!int.TryParse(words[0], out allyno) || --allyno < 0 || allyno >= Spring.MaxAllies)
+            if (!Int32.TryParse(words[0], out allyno) || --allyno < 0 || allyno >= Spring.MaxAllies)
             {
                 Respond(e, "invalid ally number");
                 return;
@@ -368,12 +373,13 @@ namespace Springie.autohost
 
         public void ComBalance(TasSayEventArgs e, string[] words)
         {
-            if (PlanetWars != null) PlanetWars.BalanceTeams();
+            int teamCount;
+            if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
+            else teamCount = 2;
+
+            if (SpawnConfig == null) RunServerBalance(false, teamCount, false);
             else
             {
-                int teamCount;
-                if (words.Length > 0) int.TryParse(words[0], out teamCount);
-                else teamCount = 2;
                 ComFix(e, words);
                 BalanceTeams(teamCount, false);
             }
@@ -408,10 +414,14 @@ namespace Springie.autohost
         public void ComCBalance(TasSayEventArgs e, string[] words)
         {
             var teamCount = 2;
-            if (words.Length > 0) int.TryParse(words[0], out teamCount);
+            if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
             else teamCount = 2;
-            ComFix(e, words);
-            BalanceTeams(teamCount, true);
+            if (SpawnConfig == null) RunServerBalance(false, teamCount, true);
+            else
+            {
+                ComFix(e, words);
+                BalanceTeams(teamCount, true);
+            }
         }
 
         public void ComClearBox(TasSayEventArgs e, string[] words)
@@ -420,7 +430,7 @@ namespace Springie.autohost
             else
             {
                 var numrect = 0;
-                if (!int.TryParse(words[0], out numrect)) Respond(e, "paramater must by a number of rectangle");
+                if (!Int32.TryParse(words[0], out numrect)) Respond(e, "paramater must by a number of rectangle");
                 tas.RemoveBattleRectangle(numrect - 1);
             }
         }
@@ -436,11 +446,11 @@ namespace Springie.autohost
             else
             {
                 int perc;
-                int.TryParse(words[1], out perc);
+                Int32.TryParse(words[1], out perc);
                 if (perc < 0 || perc > 50) Respond(e, "second parameter must be between 0 and 50");
                 else
                 {
-                    var p = perc/100.0;
+                    var p = perc / 100.0;
                     if (words[0] == "a")
                     {
                         tas.AddBattleRectangle(0, new BattleRect(0, 0, p, p));
@@ -592,10 +602,9 @@ namespace Springie.autohost
         SayBattle("cannot start, " + usname + " not ready and synced");
         return;
       }*/
-            if (PlanetWars == null || PlanetWars.StartGame(e))
+            if (SpawnConfig == null && RunServerBalance(true, null, null))
             {
                 SayBattle("please wait, game is about to start");
-
                 StopVote();
                 tas.StartGame();
             }
@@ -628,16 +637,6 @@ namespace Springie.autohost
             tas.Kick(usrlist[0]);
         }
 
-        public void ComKickMinRank(TasSayEventArgs e, string[] words)
-        {
-            if (words.Length > 0 && (words[0] == "1" || words[0] == "0")) kickMinRank = (words[0] == "1");
-            else kickMinRank = !kickMinRank;
-
-            if (kickMinRank) SayBattle("automatic minrank kicking is now ENABLED");
-            else SayBattle("automatic minrank kicking is now DISABLED");
-
-            HandleMinRankKicking();
-        }
 
 
         public void ComManage(TasSayEventArgs e, string[] words, bool clanBased)
@@ -648,11 +647,11 @@ namespace Springie.autohost
                 return;
             }
             var min = 0;
-            int.TryParse(words[0], out min);
+            Int32.TryParse(words[0], out min);
             var max = min;
-            if (words.Length > 1) int.TryParse(words[1], out max);
+            if (words.Length > 1) Int32.TryParse(words[1], out max);
             var allyCount = 2;
-            if (words.Length > 2) int.TryParse(words[2], out allyCount);
+            if (words.Length > 2) Int32.TryParse(words[2], out allyCount);
             manager.Manage(min, max, allyCount, e, clanBased);
         }
 
@@ -670,7 +669,7 @@ namespace Springie.autohost
 
                     var t2elo = g.Average(x => x.LobbyUser.EffectiveElo);
                     Respond(e,
-                            string.Format("team {0} has {1}% chance to win over team {2}",
+                            String.Format("team {0} has {1}% chance to win over team {2}",
                                           oldg.Key + 1,
                                           PlasmaShared.Utils.GetWinChancePercent(t2elo - t1elo),
                                           g.Key + 1));
@@ -689,7 +688,7 @@ namespace Springie.autohost
             foreach (var u in b.Users) if (!u.IsSpectator) actUsers.Add(u);
 
             var teamCount = 0;
-            if (words.Length > 0) int.TryParse(words[0], out teamCount);
+            if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
             else teamCount = 2;
             if (teamCount < 2) teamCount = 2;
             if (teamCount > actUsers.Count) teamCount = 2;
@@ -702,7 +701,7 @@ namespace Springie.autohost
                 tas.ForceAlly(actUsers[index].Name, al);
                 actUsers.RemoveAt(index);
                 al++;
-                al = al%teamCount;
+                al = al % teamCount;
             }
             SayBattle("players assigned to " + teamCount + " random teams");
         }
@@ -777,19 +776,19 @@ namespace Springie.autohost
             else
             {
                 int perc;
-                int.TryParse(words[1], out perc);
+                Int32.TryParse(words[1], out perc);
                 if (perc < 0 || perc > 50) Respond(e, "second parameter must be between 0 and 50");
                 else
                 {
                     if (words[0] == "h")
                     {
-                        tas.AddBattleRectangle(0, new BattleRect(0, 0, 1.0, perc/100.0));
-                        tas.AddBattleRectangle(1, new BattleRect(0, 1.0 - perc/100.0, 1.0, 1.0));
+                        tas.AddBattleRectangle(0, new BattleRect(0, 0, 1.0, perc / 100.0));
+                        tas.AddBattleRectangle(1, new BattleRect(0, 1.0 - perc / 100.0, 1.0, 1.0));
                     }
                     else
                     {
-                        tas.AddBattleRectangle(0, new BattleRect(0, 0, perc/100.0, 1.0));
-                        tas.AddBattleRectangle(1, new BattleRect(1.0 - perc/100.0, 0, 1.0, 1.0));
+                        tas.AddBattleRectangle(0, new BattleRect(0, 0, perc / 100.0, 1.0));
+                        tas.AddBattleRectangle(1, new BattleRect(1.0 - perc / 100.0, 0, 1.0, 1.0));
                     }
                     tas.RemoveBattleRectangle(2);
                     tas.RemoveBattleRectangle(3);
@@ -817,448 +816,514 @@ namespace Springie.autohost
                     (spring.GameStarted != DateTime.MinValue ? started + " ago" : "never"));
         }
 
+        public bool RunServerBalance(bool isGameStart, int? allyTeams, bool? clanWise)
+        {
+            try
+            {
+                var serv = new SpringieService();
+                var balance = serv.BalanceTeams(tas.MyBattle.GetContext(), isGameStart, allyTeams, clanWise);
+                if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
+                if (balance.Players != null && balance.Players.Length > 0)
+                {
+                    foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
+                    foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
+                    foreach (var user in balance.Players.Where(x => !x.IsSpectator))
+                    {
+                        tas.ForceTeam(user.Name, user.TeamID);
+                        tas.ForceAlly(user.Name, user.AllyID);
+                    }
+                }
+
+                if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
+                if (balance.Bots != null)
+                {
+                    foreach (var b in balance.Bots)
+                    {
+                        var existing = tas.MyBattle.Bots.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
+                        if (existing != null)
+                        {
+                            var upd = existing.Clone();
+                            upd.AllyNumber = b.AllyID;
+                            upd.TeamNumber = b.TeamID;
+                            tas.UpdateBot(existing.Name, upd, existing.TeamColor);
+                        }
+                        else
+                        {
+                            var botStatus = tas.MyBattleStatus.Clone();
+                            botStatus.TeamNumber = b.TeamID;
+                            botStatus.AllyNumber = b.AllyID;
+                            tas.AddBot(b.BotName, botStatus, botStatus.TeamColor, b.BotAI);
+                        }
+                    }
+                }
+                return balance.CanStart;
+            }
+            catch (Exception ex)
+            {
+                SayBattle("Problem with ServerManage:" + ex, false);
+                Trace.TraceError(ex.ToString());
+                return false;
+            }
+        }
+
+
+        void ServerVerifyMap(bool pickNew)
+        {
+            try
+            {
+                if (tas.MyBattle != null && !spring.IsRunning)
+                {
+                    var serv = new SpringieService();
+                    var map = serv.GetRecommendedMap(tas.MyBattle.GetContext(),pickNew);
+
+                    if (map != null && map.MapName != null)
+                    {
+                        if (tas.MyBattle.MapName != map.MapName)
+                        {
+                            ComMap(TasSayEventArgs.Default, map.MapName);
+                            SayBattle(map.Message);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SayBattle("Problem with ServerManage:" + ex);
+                Trace.TraceError(ex.ToString());
+            }
+        }
+
+
         public void ComStart(TasSayEventArgs e, string[] words)
         {
-            if (DateTime.Now.Subtract(spring.GameEnded).TotalMinutes < 3 && spring.Duration > 6 * 60) {
+            if (DateTime.Now.Subtract(spring.GameEnded).TotalMinutes < 3 && spring.Duration > 6 * 60)
+            {
                 SayBattle("cannot start yet, give people some time to rest");
                 return;
             }
 
 
             List<string> usname;
-			if (!AllReadyAndSynced(out usname))
-			{
-				SayBattle("cannot start, " + Utils.Glue(usname.ToArray()) + " not ready and synced");
-				return;
-			}
+            if (!AllReadyAndSynced(out usname))
+            {
+                SayBattle("cannot start, " + Utils.Glue(usname.ToArray()) + " not ready and synced");
+                return;
+            }
 
-	
-			if (PlanetWars == null) {
-				int allyno;
-				int alliances;
-				if (!BalancedTeams(out allyno, out alliances)) {
-					SayBattle("cannot start, alliance " + (allyno + 1) + " not fair. Use !forcestart to override");
-					return;
-				}
-			} else
-			{
-				if (!PlanetWars.StartGame(e))
-				{
-					SayBattle("Cannot start planetwars game atm");
-					return;
-				}
-			}
 
-			SayBattle("please wait, game is about to start");
-			StopVote();
-			tas.StartGame();
-		}
+            if (SpawnConfig != null)
+            {
+                int allyno;
+                int alliances;
+                if (!BalancedTeams(out allyno, out alliances))
+                {
+                    SayBattle("cannot start, alliance " + (allyno + 1) + " not fair. Use !forcestart to override");
+                    return;
+                }
+            }
+            else
+            {
+                if (!RunServerBalance(true, null, null))
+                {
+                    SayBattle("Cannot start a game atm");
+                    return;
+                }
+            }
 
-		public void ComTeam(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length < 2)
-			{
-				Respond(e, "this command needs 2 parameters (team number and player name)");
-				return;
-			}
-			var teamno = 0;
-			if (!int.TryParse(words[0], out teamno) || --teamno < 0 || teamno >= Spring.MaxTeams)
-			{
-				Respond(e, "invalid team number");
-				return;
-			}
-			string[] usrs;
-			int[] idx;
-			if (FilterUsers(Utils.ShiftArray(words, -1), out usrs, out idx) == 0) Respond(e, "no such player found");
-			else
-			{
-				SayBattle("Forcing " + usrs[0] + " to team " + (teamno + 1));
-				tas.ForceTeam(usrs[0], teamno);
-			}
-		}
-
-		public void ComTeamColors(TasSayEventArgs e, string[] words)
-		{
-			if (hostedMod.IsMission)
-			{
-				ForceMissionColors();
-				return;
-			}
-
-			var players = tas.MyBattle.Users.Where(u => !u.IsSpectator).ToArray();
-			var alliances = players.GroupBy(u => u.AllyNumber).ToArray();
-			var teamCounts = alliances.Select(g => g.Count()).ToArray();
-			var colors = TeamColorMaker.GetTeamColors(teamCounts);
-			var changed = false;
-			for (var allianceIndex = 0; allianceIndex < alliances.Length; allianceIndex++)
-			{
-				var alliance = alliances[allianceIndex].ToArray();
-				for (var teamIndex = 0; teamIndex < alliance.Length; teamIndex++)
-				{
-					var user = alliance[teamIndex];
-					var newColor = (int)(MyCol)colors[allianceIndex][teamIndex];
-					if (user.TeamColor == newColor) continue;
-					tas.ForceColor(user.Name, newColor);
-					changed = true;
-				}
-			}
-			if (changed) SayBattle("team colors set");
-		}
-
-		internal static int Filter(string[] source, string[] words, out string[] resultVals, out int[] resultIndexes)
-		{
-			int i;
-
-			// search by direct index
-			if (words.Length == 1)
-			{
-				if (int.TryParse(words[0], out i))
-				{
-					if (i >= 0 && i < source.Length)
-					{
-						resultVals = new[] { source[i] };
-						resultIndexes = new[] { i };
-						return 1;
-					}
-				}
-			}
-
-      // search by direct word
-      var glued = Utils.Glue(words);
-      for (i = 0; i < source.Length; ++i) {
-        if (string.Compare(source[i], glued, true) == 0) {
-          resultVals = new[] { source[i] };
-          resultIndexes = new[] { i };
-          return 1;
+            SayBattle("please wait, game is about to start");
+            StopVote();
+            tas.StartGame();
         }
-      }
+
+        public void ComTeam(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length < 2)
+            {
+                Respond(e, "this command needs 2 parameters (team number and player name)");
+                return;
+            }
+            var teamno = 0;
+            if (!Int32.TryParse(words[0], out teamno) || --teamno < 0 || teamno >= Spring.MaxTeams)
+            {
+                Respond(e, "invalid team number");
+                return;
+            }
+            string[] usrs;
+            int[] idx;
+            if (FilterUsers(Utils.ShiftArray(words, -1), out usrs, out idx) == 0) Respond(e, "no such player found");
+            else
+            {
+                SayBattle("Forcing " + usrs[0] + " to team " + (teamno + 1));
+                tas.ForceTeam(usrs[0], teamno);
+            }
+        }
+
+        public void ComTeamColors(TasSayEventArgs e, string[] words)
+        {
+            if (hostedMod.IsMission)
+            {
+                ForceMissionColors();
+                return;
+            }
+
+            var players = tas.MyBattle.Users.Where(u => !u.IsSpectator).ToArray();
+            var alliances = players.GroupBy(u => u.AllyNumber).ToArray();
+            var teamCounts = alliances.Select(g => g.Count()).ToArray();
+            var colors = TeamColorMaker.GetTeamColors(teamCounts);
+            var changed = false;
+            for (var allianceIndex = 0; allianceIndex < alliances.Length; allianceIndex++)
+            {
+                var alliance = alliances[allianceIndex].ToArray();
+                for (var teamIndex = 0; teamIndex < alliance.Length; teamIndex++)
+                {
+                    var user = alliance[teamIndex];
+                    var newColor = (int)(MyCol)colors[allianceIndex][teamIndex];
+                    if (user.TeamColor == newColor) continue;
+                    tas.ForceColor(user.Name, newColor);
+                    changed = true;
+                }
+            }
+            if (changed) SayBattle("team colors set");
+        }
+
+        internal static int Filter(string[] source, string[] words, out string[] resultVals, out int[] resultIndexes)
+        {
+            int i;
+
+            // search by direct index
+            if (words.Length == 1)
+            {
+                if (Int32.TryParse(words[0], out i))
+                {
+                    if (i >= 0 && i < source.Length)
+                    {
+                        resultVals = new[] { source[i] };
+                        resultIndexes = new[] { i };
+                        return 1;
+                    }
+                }
+            }
+
+            // search by direct word
+            var glued = Utils.Glue(words);
+            for (i = 0; i < source.Length; ++i)
+            {
+                if (String.Compare(source[i], glued, true) == 0)
+                {
+                    resultVals = new[] { source[i] };
+                    resultIndexes = new[] { i };
+                    return 1;
+                }
+            }
 
 
-			var res = new List<string>();
-			var resi = new List<int>();
+            var res = new List<string>();
+            var resi = new List<int>();
 
-			for (i = 0; i < words.Length; ++i) words[i] = words[i].ToLower();
-			for (i = 0; i < source.Length; ++i)
-			{
-				if (source[i] + "" == "") continue;
-				var item = source[i];
-				var isok = true;
-				for (var j = 0; j < words.Length; ++j)
-				{
-					if (!item.ToLower().Contains(words[j]))
-					{
-						isok = false;
-						break;
-					}
-				}
-				if (isok)
-				{
-					res.Add(item);
-					resi.Add(i);
-				}
-			}
+            for (i = 0; i < words.Length; ++i) words[i] = words[i].ToLower();
+            for (i = 0; i < source.Length; ++i)
+            {
+                if (source[i] + "" == "") continue;
+                var item = source[i];
+                var isok = true;
+                for (var j = 0; j < words.Length; ++j)
+                {
+                    if (!item.ToLower().Contains(words[j]))
+                    {
+                        isok = false;
+                        break;
+                    }
+                }
+                if (isok)
+                {
+                    res.Add(item);
+                    resi.Add(i);
+                }
+            }
 
-			resultVals = res.ToArray();
-			resultIndexes = resi.ToArray();
+            resultVals = res.ToArray();
+            resultIndexes = resi.ToArray();
 
-			return res.Count;
-		}
+            return res.Count;
+        }
 
-		public int FilterMaps(string[] words, out string[] vals, out int[] indexes)
-		{
-			return FilterMaps(words, this, out vals, out indexes);
-		}
+        public int FilterMaps(string[] words, out string[] vals, out int[] indexes)
+        {
+            return FilterMaps(words, this, out vals, out indexes);
+        }
 
-		internal static int FilterMods(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
-		{
+        internal static int FilterMods(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
+        {
             var result = ah.cache.FindResourceData(words, ResourceType.Mod);
             vals = result.Select(x => x.InternalName).ToArray();
             indexes = result.Select(x => x.ResourceID).ToArray();
             return vals.Length;
-		}
+        }
 
 
-		internal static int FilterUsers(string[] words, TasClient tas, Spring spring, out string[] vals, out int[] indexes)
-		{
-			var b = tas.MyBattle;
-			var temp = new string[b.Users.Count];
-			var i = 0;
-			foreach (var u in b.Users) temp[i++] = u.Name;
-			return Filter(temp, words, out vals, out indexes);
-		}
+        internal static int FilterUsers(string[] words, TasClient tas, Spring spring, out string[] vals, out int[] indexes)
+        {
+            var b = tas.MyBattle;
+            var temp = new string[b.Users.Count];
+            var i = 0;
+            foreach (var u in b.Users) temp[i++] = u.Name;
+            return Filter(temp, words, out vals, out indexes);
+        }
 
 
-		public string GetOptionsString(TasSayEventArgs e, string[] words)
-		{
-			var s = Utils.Glue(words);
-			var result = "";
-			var pairs = s.Split(new[] { ',' });
-			if (pairs.Length == 0 || pairs[0].Length == 0)
-			{
-				Respond(e, "requires key=value format");
-				return "";
-			}
-			foreach (var pair in pairs)
-			{
-				var parts = pair.Split(new[] { '=' }, 2);
-				if (parts.Length != 2)
-				{
-					Respond(e, "requires key=value format");
-					return "";
-				}
-				var key = parts[0];
-				var val = parts[1];
+        public string GetOptionsString(TasSayEventArgs e, string[] words)
+        {
+            var s = Utils.Glue(words);
+            var result = "";
+            var pairs = s.Split(new[] { ',' });
+            if (pairs.Length == 0 || pairs[0].Length == 0)
+            {
+                Respond(e, "requires key=value format");
+                return "";
+            }
+            foreach (var pair in pairs)
+            {
+                var parts = pair.Split(new[] { '=' }, 2);
+                if (parts.Length != 2)
+                {
+                    Respond(e, "requires key=value format");
+                    return "";
+                }
+                var key = parts[0];
+                var val = parts[1];
 
-				var found = false;
+                var found = false;
                 var mod = hostedMod;
-				foreach (var o in mod.Options)
-				{
-					if (o.Key == key)
-					{
-						found = true;
-						string res;
-						if (o.GetPair(val, out res))
-						{
-							if (result != "") result += "\t";
-							result += res;
-						}
-						else Respond(e, "Value " + val + " is not valid for this option");
+                foreach (var o in mod.Options)
+                {
+                    if (o.Key == key)
+                    {
+                        found = true;
+                        string res;
+                        if (o.GetPair(val, out res))
+                        {
+                            if (result != "") result += "\t";
+                            result += res;
+                        }
+                        else Respond(e, "Value " + val + " is not valid for this option");
 
-						break;
-					}
-				}
-				if (!found)
-				{
-					Respond(e, "No option called " + key + " found");
-					return "";
-				}
-			}
-			return result;
-		}
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    Respond(e, "No option called " + key + " found");
+                    return "";
+                }
+            }
+            return result;
+        }
 
 
-		void ComAdmins(TasSayEventArgs e, string[] words)
-		{
-			tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-            foreach (var u in tas.ExistingUsers.Values.Where(x=>x.SpringieLevel > 1)) {
+        void ComAdmins(TasSayEventArgs e, string[] words)
+        {
+            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+            foreach (var u in tas.ExistingUsers.Values.Where(x => x.SpringieLevel > 1))
+            {
                 tas.Say(TasClient.SayPlace.User, e.UserName, " " + u.Name + " (level " + u.SpringieLevel + ")", false);
             }
-			tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-		}
+            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+        }
 
-		void ComHelp(TasSayEventArgs e, string[] words)
-		{
-			var ulevel = GetUserLevel(e);
-			tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-			foreach (var c in config.Commands) if (c.Level <= ulevel) tas.Say(TasClient.SayPlace.User, e.UserName, " !" + c.Name + " " + c.HelpText, false);
-			tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-		}
-
-
-		void ComHelpAll(TasSayEventArgs e, string[] words)
-		{
-			var copy = new List<CommandConfig>(config.Commands);
-			copy.Sort(delegate(CommandConfig a, CommandConfig b)
-				{
-					if (a.Level != b.Level) return a.Level.CompareTo(b.Level);
-					else return a.Name.CompareTo(b.Name);
-				});
-
-			tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-			foreach (var c in copy) tas.Say(TasClient.SayPlace.User, e.UserName, "Level " + c.Level + " --> !" + c.Name + " " + c.HelpText, false);
-			tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-		}
-
-		void ComListMaps(TasSayEventArgs e, string[] words)
-		{
-			string[] vals;
-			int[] indexes;
-			int count;
-			if ((count = FilterMaps(words, out vals, out indexes)) > 0)
-			{
-				if (count > MaxMapListLength)
-				{
-					Respond(e, string.Format("This has {0} results, please narrow down your search", count));
-					return;
-				}
-				tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-				for (var i = 0; i < vals.Length; ++i) tas.Say(TasClient.SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
-				tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-			}
-			else Respond(e, "no such map found");
-		}
-
-		void ComListMods(TasSayEventArgs e, string[] words)
-		{
-			string[] vals;
-			int[] indexes;
-			int count;
-			if ((count = FilterMods(words, out vals, out indexes)) > 0)
-			{
-				if (count > MaxMapListLength)
-				{
-					Respond(e, string.Format("This has {0} results, please narrow down your search", count));
-					return;
-				}
-				tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-				for (var i = 0; i < vals.Length; ++i) tas.Say(TasClient.SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
-				tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
-			}
-			else Respond(e, "no such mod found");
-		}
-
-		void ComListOptions(TasSayEventArgs e, string[] words)
-		{
-			var mod = hostedMod;
-			if (mod.Options.Length == 0) Respond(e, "this mod has no options");
-			else foreach (var opt in mod.Options) Respond(e, opt.ToString());
-		}
+        void ComHelp(TasSayEventArgs e, string[] words)
+        {
+            var ulevel = GetUserLevel(e);
+            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+            foreach (var c in Commands.Commands) if (c.Level <= ulevel) tas.Say(TasClient.SayPlace.User, e.UserName, " !" + c.Name + " " + c.HelpText, false);
+            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+        }
 
 
-		public void ComMap(TasSayEventArgs e, params string[] words)
-		{
-			if (words.Length == 0)
-			{
-				Respond(e, "You must specify a map name");
-				return;
-			}
-      if (spring.IsRunning)
-      {
-        Respond(e, "Cannot change map while the game is running");
-        return;
-      }
+        void ComHelpAll(TasSayEventArgs e, string[] words)
+        {
+            var copy = new List<CommandConfig>(Commands.Commands);
+            copy.Sort(delegate(CommandConfig a, CommandConfig b)
+                {
+                    if (a.Level != b.Level) return a.Level.CompareTo(b.Level);
+                    else return a.Name.CompareTo(b.Name);
+                });
 
-		  string[] vals;
-			int[] indexes;
-			if (FilterMaps(words, out vals, out indexes) > 0)
-			{
-				SayBattle("changing map to " + vals[0]);
-				var mapi = cache.GetResourceDataByInternalName(vals[0]);
+            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+            foreach (var c in copy) tas.Say(TasClient.SayPlace.User, e.UserName, "Level " + c.Level + " --> !" + c.Name + " " + c.HelpText, false);
+            tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+        }
+
+        void ComListMaps(TasSayEventArgs e, string[] words)
+        {
+            string[] vals;
+            int[] indexes;
+            int count;
+            if ((count = FilterMaps(words, out vals, out indexes)) > 0)
+            {
+                if (count > MaxMapListLength)
+                {
+                    Respond(e, String.Format("This has {0} results, please narrow down your search", count));
+                    return;
+                }
+                tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+                for (var i = 0; i < vals.Length; ++i) tas.Say(TasClient.SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
+                tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+            }
+            else Respond(e, "no such map found");
+        }
+
+        void ComListMods(TasSayEventArgs e, string[] words)
+        {
+            string[] vals;
+            int[] indexes;
+            int count;
+            if ((count = FilterMods(words, out vals, out indexes)) > 0)
+            {
+                if (count > MaxMapListLength)
+                {
+                    Respond(e, String.Format("This has {0} results, please narrow down your search", count));
+                    return;
+                }
+                tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+                for (var i = 0; i < vals.Length; ++i) tas.Say(TasClient.SayPlace.User, e.UserName, indexes[i] + ": " + vals[i], false);
+                tas.Say(TasClient.SayPlace.User, e.UserName, "---", false);
+            }
+            else Respond(e, "no such mod found");
+        }
+
+        void ComListOptions(TasSayEventArgs e, string[] words)
+        {
+            var mod = hostedMod;
+            if (mod.Options.Length == 0) Respond(e, "this mod has no options");
+            else foreach (var opt in mod.Options) Respond(e, opt.ToString());
+        }
+
+
+        public void ComMap(TasSayEventArgs e, params string[] words)
+        {
+            if (words.Length == 0)
+            {
+                Respond(e, "You must specify a map name");
+                return;
+            }
+            if (spring.IsRunning)
+            {
+                Respond(e, "Cannot change map while the game is running");
+                return;
+            }
+
+            string[] vals;
+            int[] indexes;
+            if (FilterMaps(words, out vals, out indexes) > 0)
+            {
+                SayBattle("changing map to " + vals[0]);
+                var mapi = cache.GetResourceDataByInternalName(vals[0]);
                 if (mapi != null)
                 {
-                    tas.ChangeMap(mapi.InternalName, mapi.SpringHashes.Where(x=>x.SpringVersion == springPaths.SpringVersion).Select(x=>x.SpringHash).FirstOrDefault());
+                    tas.ChangeMap(mapi.InternalName, mapi.SpringHashes.Where(x => x.SpringVersion == springPaths.SpringVersion).Select(x => x.SpringHash).FirstOrDefault());
                 }
-			}
-			else Respond(e, "Cannot find such map.");
-		}
+            }
+            else Respond(e, "Cannot find such map.");
+        }
 
 
-		void ComNotify(TasSayEventArgs e, string[] words)
-		{
-			if (!toNotify.Contains(e.UserName)) toNotify.Add(e.UserName);
-			Respond(e, "I will notify you when game ends");
-		}
+        void ComNotify(TasSayEventArgs e, string[] words)
+        {
+            if (!toNotify.Contains(e.UserName)) toNotify.Add(e.UserName);
+            Respond(e, "I will notify you when game ends");
+        }
 
 
-		void ComSetGameTitle(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0) Respond(e, "this command needs one parameter - new game title");
-			else
-			{
-				config.GameTitle = Utils.Glue(words);
-				SaveConfig();
-				Respond(e, "game title changed");
-			}
-		}
+        void ComSetGameTitle(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0) Respond(e, "this command needs one parameter - new game title");
+            else
+            {
+                config.Title = Utils.Glue(words);
+                Respond(e, "game title changed");
+            }
+        }
 
-		void ComSetMaxPlayers(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0) Respond(e, "this command needs one parameter - number of players");
-			else
-			{
-				int plr;
-				int.TryParse(words[0], out plr);
-				if (plr < 1) plr = 1;
-				if (plr > Spring.MaxTeams) plr = Spring.MaxTeams;
-				config.MaxPlayers = plr;
-				SaveConfig();
-				Respond(e, "server size changed");
-			}
-		}
-
-		void ComSetMinRank(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0) Respond(e, "this command needs one parameter - rank number");
-			else
-			{
-				int rank;
-				int.TryParse(words[0], out rank);
-				if (rank < 0) rank = 0;
-				if (rank > User.RankLimits.Length) rank = User.RankLimits.Length;
-				config.MinRank = rank;
-				SaveConfig();
-				Respond(e, "server rank changed");
-				HandleMinRankKicking();
-			}
-		}
+        void ComSetMaxPlayers(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0) Respond(e, "this command needs one parameter - number of players");
+            else
+            {
+                int plr;
+                Int32.TryParse(words[0], out plr);
+                if (plr < 1) plr = 1;
+                if (plr > Spring.MaxTeams) plr = Spring.MaxTeams;
+                config.MaxPlayers = plr;
+                Respond(e, "server size changed");
+            }
+        }
 
 
-		void ComSetOption(TasSayEventArgs e, string[] words)
-		{
-			var ret = GetOptionsString(e, words);
-			if (ret != "")
-			{
-				tas.SetScriptTag(ret);
-				Respond(e, "Options set");
-			}
-		}
+        void ComSetOption(TasSayEventArgs e, string[] words)
+        {
+            var ret = GetOptionsString(e, words);
+            if (ret != "")
+            {
+                tas.SetScriptTag(ret);
+                Respond(e, "Options set");
+            }
+        }
 
-		void ComSetPassword(TasSayEventArgs e, string[] words)
-		{
-			if (words.Length == 0)
-			{
-				config.Password = "";
-				Respond(e, "password remoded");
-			}
-			else
-			{
-				config.Password = words[0];
-				SaveConfig();
-				Respond(e, "password changed");
-			}
-		}
+        void ComSetPassword(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0)
+            {
+                config.Password = "";
+                Respond(e, "password remoded");
+            }
+            else
+            {
+                config.Password = words[0];
+                Respond(e, "password changed");
+            }
+        }
 
-		static int FilterMaps(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
-		{
+        static int FilterMaps(string[] words, AutoHost ah, out string[] vals, out int[] indexes)
+        {
             var result = ah.cache.FindResourceData(words, ResourceType.Map);
             vals = result.Select(x => x.InternalName).ToArray();
             indexes = result.Select(x => x.ResourceID).ToArray();
             return vals.Length;
-		}
+        }
 
-		public int FilterMods(string[] words, out string[] vals, out int[] indexes)
-		{
-			return FilterMods(words, this, out vals, out indexes);
-		}
-
-
-		int FilterUsers(string[] words, out string[] vals, out int[] indexes)
-		{
-			return FilterUsers(words, tas, spring, out vals, out indexes);
-		}
+        public int FilterMods(string[] words, out string[] vals, out int[] indexes)
+        {
+            return FilterMods(words, this, out vals, out indexes);
+        }
 
 
+        int FilterUsers(string[] words, out string[] vals, out int[] indexes)
+        {
+            return FilterUsers(words, tas, spring, out vals, out indexes);
+        }
 
-    void SayLines(TasSayEventArgs e, string what)
-		{
-			foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.User, e.UserName, line, false);
-		}
 
-		class UsRank
-		{
-			public string Clan;
-			public readonly double Elo;
-			public readonly int Id;
-			public readonly UserBattleStatus User;
-			
-			public UsRank(int id, double elo, string clan, UserBattleStatus user)
-			{
-				Id = id;
-				Elo = elo;
-				User = user;
-				Clan = clan;
-			}
-		}
+
+        void SayLines(TasSayEventArgs e, string what)
+        {
+            foreach (var line in what.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.User, e.UserName, line, false);
+        }
+
+        class UsRank
+        {
+            public string Clan;
+            public readonly double Elo;
+            public readonly int Id;
+            public readonly UserBattleStatus User;
+
+            public UsRank(int id, double elo, string clan, UserBattleStatus user)
+            {
+                Id = id;
+                Elo = elo;
+                User = user;
+                Clan = clan;
+            }
+        }
 
         void ComSetEngine(TasSayEventArgs e, string[] words)
         {
@@ -1267,7 +1332,8 @@ namespace Springie.autohost
                 Respond(e, "Specify engine version");
                 return;
             }
-            else {
+            else
+            {
                 var version = words[0];
                 requestedEngineChange = version;
                 Respond(e, "Preparing engine change to " + version);
@@ -1282,8 +1348,9 @@ namespace Springie.autohost
                 Respond(e, "This command needs 1 parameter (transmit text)");
                 return;
             }
-            if (spring.IsRunning) {
-                spring.SayGame(string.Format("[{0}]{1}", e.UserName, "!transmit " + Utils.Glue(words)));
+            if (spring.IsRunning)
+            {
+                spring.SayGame(String.Format("[{0}]{1}", e.UserName, "!transmit " + Utils.Glue(words)));
             }
         }
     }

@@ -99,10 +99,11 @@
 			}
 		</div>
 	}
-	<br class="clearfloat" />
+    <a href="#" onclick="$('#divTag').toggle()" >TAG the MAP</a>
+    <br class="clearfloat" />
 	@if (ZeroKWeb.Global.IsAccountAuthorized && ZeroKWeb.Global.Account.Level > 20)
 	{
-	<a href="#" onclick="$('#divTag').toggle()" >TAG the MAP</a>
+	
      <div style='border: 1px dashed teal; padding: 10px; display:none' id="divTag">
 		Tag this map
 		@if (m.TaggedByAccountID != null)

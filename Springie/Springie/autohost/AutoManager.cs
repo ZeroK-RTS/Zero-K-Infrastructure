@@ -80,7 +80,7 @@ namespace Springie.AutoHostNamespace
 			lock (timer)
 			{
 				timer.Stop();
-				var isPlanetwars = ah.config.PlanetWarsEnabled;
+				var isServerManaged = ah.SpawnConfig == null;
 				try
 				{
 					if (from > 0 && !spring.IsRunning)
@@ -99,7 +99,7 @@ namespace Springie.AutoHostNamespace
 								List<string> notReady;
 
 								var isReady = ah.AllReadyAndSynced(out notReady);
-								if ((!isPlanetwars && plrCnt%allyCount == 0) || ah.hostedMod.IsMission)
+								if ((!isServerManaged && plrCnt%allyCount == 0) || ah.hostedMod.IsMission)
 								{
 									// should we expect teams can be balanced 
 									int allyno;
@@ -117,7 +117,7 @@ namespace Springie.AutoHostNamespace
 									Thread.Sleep(1000);
 									if (!spring.IsRunning)
 									{
-										if (isPlanetwars)
+										if (isServerManaged)
 										{
 											ah.ComTeamColors(TasSayEventArgs.Default, new string[] { });
 											Thread.Sleep(1000);
@@ -149,7 +149,7 @@ namespace Springie.AutoHostNamespace
 										}
 									}
 
-									if (!isReady && (!isPlanetwars || allyCount == 2))
+									if (!isReady && (!isServerManaged || allyCount == 2))
 									{
 										if (now.Subtract(lastRing).TotalSeconds > RingEvery)
 										{

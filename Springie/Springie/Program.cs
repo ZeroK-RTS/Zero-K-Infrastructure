@@ -1,16 +1,20 @@
 #region using
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using LobbyClient;
 using PlasmaShared;
+using PlasmaShared.SpringieInterfaceReference;
 
 #endregion
 
@@ -26,6 +30,7 @@ namespace Springie
 
 		public static void Main(string[] args)
 		{
+
 			// setup unhandled exception handlers
 			if (!Debugger.IsAttached) AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			Thread.GetDomain().UnhandledException += Program_UnhandledException;
@@ -37,9 +42,16 @@ namespace Springie
 			var workPath = Application.StartupPath;
 			if (workPath == "") workPath = Directory.GetCurrentDirectory();
 			main = new Main(workPath);
-
-			main.StartAll();
-			while (true) Thread.Sleep(5000);
+            var lastUpdate = DateTime.Now;
+			main.UpdateAll();
+            while (true)
+            {
+                Thread.Sleep(5000);
+                if (DateTime.Now.Subtract(lastUpdate).TotalSeconds > 15) {
+                    main.UpdateAll();
+                    lastUpdate = DateTime.Now;
+                }
+            }
 		}
 
 		static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)

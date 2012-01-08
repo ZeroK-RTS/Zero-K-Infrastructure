@@ -15,18 +15,17 @@ namespace Springie
 		bool gargamelMode = true;
 		ProcessPriorityClass hostingProcessPriority = ProcessPriorityClass.AboveNormal;
 		bool redirectGameChat = true;
-		string serverHost = "springrts.com";
+		string serverHost = "lobby.springrts.com";
 		int serverPort = 8200;
-		int springCoreAffinity = 1;
-
-		public string ExecutableName { get { return executableName; } set { executableName = value; } }
-
-		public bool GargamelMode { get { return gargamelMode; } set { gargamelMode = value; } }
+	    public string ClusterNode { get; set; }
+        public string ExecutableName { get { return executableName; } set { executableName = value; } }
+	    public bool UseHolePunching { get; set; }
+	    public bool GargamelMode { get { return gargamelMode; } set { gargamelMode = value; } }
 		public int HostingPortStart = 8452;
-
-		public ProcessPriorityClass HostingProcessPriority { get { return hostingProcessPriority; } set { hostingProcessPriority = value; } }
+        public ProcessPriorityClass HostingProcessPriority { get { return hostingProcessPriority; } set { hostingProcessPriority = value; } }
 		public string IpOverride;
-		public int MaxInstances = 100;
+        public int MaxInstances = 100;
+
 
 	    public string DataDir { get; set; }
 
@@ -40,5 +39,9 @@ namespace Springie
 
 		public int RepoMasterRefresh { get { return 120; } }
 		public string PackageMasterUrl { get { return "http://repos.springrts.com/"; } }
+
+	    public MainConfig() {
+            ClusterNode = "omega";
+        }
 	} ;
 }

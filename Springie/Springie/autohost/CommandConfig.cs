@@ -36,7 +36,7 @@ namespace Springie.autohost
         [Description("How often can this command be executed (in seconds). 0 = no throttling, can execute at any time.")]
         public int Throttling { get; set; }
 
-        public CommandConfig() {}
+        public CommandConfig() { }
 
 
         public CommandConfig(string name, int level, string helpText, int throttling, TasSayEventArgs.Places[] listenTo)
@@ -45,7 +45,8 @@ namespace Springie.autohost
             this.listenTo = listenTo;
         }
 
-        public CommandConfig(string name, int level, string helpText, int throttling): this(name, level, helpText)
+        public CommandConfig(string name, int level, string helpText, int throttling)
+            : this(name, level, helpText)
         {
             Throttling = throttling;
         }
