@@ -135,26 +135,28 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/BalanceTeams", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public BalanceTeamsResult BalanceTeams(BattleContext context, int allyCount, bool clanWise) {
+        public BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] System.Nullable<int> allyCount, [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] System.Nullable<bool> clanWise) {
             object[] results = this.Invoke("BalanceTeams", new object[] {
                         context,
+                        isGameStart,
                         allyCount,
                         clanWise});
             return ((BalanceTeamsResult)(results[0]));
         }
         
         /// <remarks/>
-        public void BalanceTeamsAsync(BattleContext context, int allyCount, bool clanWise) {
-            this.BalanceTeamsAsync(context, allyCount, clanWise, null);
+        public void BalanceTeamsAsync(BattleContext context, bool isGameStart, System.Nullable<int> allyCount, System.Nullable<bool> clanWise) {
+            this.BalanceTeamsAsync(context, isGameStart, allyCount, clanWise, null);
         }
         
         /// <remarks/>
-        public void BalanceTeamsAsync(BattleContext context, int allyCount, bool clanWise, object userState) {
+        public void BalanceTeamsAsync(BattleContext context, bool isGameStart, System.Nullable<int> allyCount, System.Nullable<bool> clanWise, object userState) {
             if ((this.BalanceTeamsOperationCompleted == null)) {
                 this.BalanceTeamsOperationCompleted = new System.Threading.SendOrPostCallback(this.OnBalanceTeamsOperationCompleted);
             }
             this.InvokeAsync("BalanceTeams", new object[] {
                         context,
+                        isGameStart,
                         allyCount,
                         clanWise}, this.BalanceTeamsOperationCompleted, userState);
         }
@@ -691,6 +693,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
     [System.SerializableAttribute()]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public enum AutohostMode {
+        
+        /// <remarks/>
+        None,
         
         /// <remarks/>
         GameTeams,

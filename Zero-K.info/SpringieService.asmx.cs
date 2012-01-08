@@ -30,9 +30,9 @@ namespace ZeroKWeb
         }
 
         [WebMethod]
-        public RecommendedMapResult GetRecommendedMap(BattleContext context)
+        public RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew)
         {
-            return MapPicker.GetRecommendedMap(context);
+            return MapPicker.GetRecommendedMap(context,pickNew);
         }
 
 

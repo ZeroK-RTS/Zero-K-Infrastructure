@@ -28,7 +28,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        public static RecommendedMapResult GetRecommendedMap(BattleContext context)
+        public static RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew)
         {
             var mode = context.GetMode();
             var res = new RecommendedMapResult();
@@ -148,12 +148,32 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 else
                 {
-                    /*var list =
-                        db.Resources.Where(x => x.TypeID == ResourceType.Map&& x.FeaturedOrder != null && x.MapIsFfa != true && x.ResourceContentFiles.Any(y => y.LinkCount > 0)).
-                            ToList();
-                    var r = new Random();
-                    res.MapName = list[r.Next(list.Count)].InternalName;*/
-                    res.MapName = context.Map;
+                    if (!pickNew) res.MapName = context.Map;
+                    else {
+                        List<Resource> list= null;
+                        switch (mode)
+                        {
+                           case AutohostMode.GameTeams:
+                                list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens!=true).ToList();
+                                break;
+                            case AutohostMode.Game1v1:
+                                list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIs1v1==true&& x.MapIsFfa != true && x.MapIsChickens!=true).ToList();
+                                break;
+                            case AutohostMode.GameChickens:
+                                list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsChickens == true).ToList();
+                                break;
+                            case AutohostMode.GameFFA:
+                                list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true).ToList();
+                                break;
+                        }
+                        if (list != null)
+                        {
+                            var r = new Random();
+                            res.MapName = list[r.Next(list.Count)].InternalName;
+                        }
+                    }
+                    
+                    
                 }
             }
             return res;
