@@ -138,24 +138,24 @@ namespace Springie.autohost
 
         bool IVotable.Init(TasSayEventArgs e, string[] words)
         {
-            if (words.Length == 0)
+            if (words.Length > 0)
             {
-                AutoHost.Respond(tas, spring, e, "You must specify map name");
-                return false;
+                string[] vals;
+                int[] indexes;
+                if (ah.FilterMaps(words, out vals, out indexes) > 0)
+                {
+                    map = vals[0];
+                    ah.SayBattle("Do you want to change map to " + map + "? !vote 1 = yes, !vote 2 = no");
+                    return true;
+                }
+                else
+                {
+                    AutoHost.Respond(tas, spring, e, "Cannot find such map");
+                    return false;
+                }
             }
-
-            string[] vals;
-            int[] indexes;
-            if (ah.FilterMaps(words, out vals, out indexes) > 0)
-            {
-                map = vals[0];
-                ah.SayBattle("Do you want to change map to " + map + "? !vote 1 = yes, !vote 2 = no");
+            else {
                 return true;
-            }
-            else
-            {
-                AutoHost.Respond(tas, spring, e, "Cannot find such map");
-                return false;
             }
         }
 
@@ -174,8 +174,8 @@ namespace Springie.autohost
                 if (winVote == 1)
                 {
                     ah.SayBattle("vote successful - changing map to " + map);
-                    var mapi = ah.cache.GetResourceDataByInternalName(map);
-                    if (mapi != null) tas.ChangeMap(mapi.InternalName, mapi.SpringHashes.Where(x=>x.SpringVersion == ah.springPaths.SpringVersion).Select(x=>x.SpringHash).FirstOrDefault());
+                    ah.ComMap(TasSayEventArgs.Default,new string[]{map});
+                    
                 }
                 else ah.SayBattle("not enough votes, map stays");
                 return true;
