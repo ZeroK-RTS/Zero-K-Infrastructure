@@ -112,7 +112,7 @@ namespace ZeroKWeb.SpringieInterface
                     moved = false;
                     foreach (var b in bins.OrderBy(x => BinOrder.IndexOf(x.Mode)))
                     {
-                        var person = b.HighPriority.FirstOrDefault();
+                        var person = b.HighPriority.FirstOrDefault(x => !b.Assigned.Contains(x));
                         if (person != 0)
                         {
                             var acc = juggledAccounts[person];
@@ -136,7 +136,7 @@ namespace ZeroKWeb.SpringieInterface
                             }
                         }
                     }
-                } while (false);
+                } while (moved);
 
                 sb.AppendLine("h-pass bins:");
                 PrintBins(juggledAccounts, bins, sb);
@@ -148,7 +148,7 @@ namespace ZeroKWeb.SpringieInterface
                     moved = false;
                     foreach (var b in bins.OrderBy(x => BinOrder.IndexOf(x.Mode)))
                     {
-                        var person = b.NormalPriority.FirstOrDefault();
+                        var person = b.NormalPriority.FirstOrDefault(x => !b.Assigned.Contains(x));
                         if (person != 0)
                         {
                             var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
@@ -170,7 +170,10 @@ namespace ZeroKWeb.SpringieInterface
                             }
                         }
                     }
-                } while (false);
+                } while (moved);
+
+                sb.AppendLine("n-pass bins:");
+                PrintBins(juggledAccounts, bins, sb);
 
 
                 
@@ -198,7 +201,7 @@ namespace ZeroKWeb.SpringieInterface
                                 string.Join(",", b.HighPriority.Select(x => juggledAccounts[x].Name)),
                                 string.Join(",", b.NormalPriority.Select(x => juggledAccounts[x].Name))
                                 );
-            sb.AppendFormat("Free people: {0}\n",
+                sb.AppendFormat("Free people: {0}\n",
                             string.Join(",", juggledAccounts.Where(x => !bins.Any(y => y.Assigned.Contains(x.Key))).Select(x => x.Value.Name)));
         }
 
