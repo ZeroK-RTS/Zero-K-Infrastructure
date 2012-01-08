@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Specialized;
 using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
@@ -300,6 +301,9 @@ namespace ZeroKLobby
             var configFilename = GetFullConfigPath();
             lock (configLock)
             {
+                var cols = new StringCollection();
+                cols.AddRange(Conf.AutoJoinChannels.OfType<string>().Distinct().ToArray());
+                Conf.AutoJoinChannels = cols;
                 var xs = new XmlSerializer(typeof(Config));
                 var sb = new StringBuilder();
                 using (var stringWriter = new StringWriter(sb)) xs.Serialize(stringWriter, Conf);

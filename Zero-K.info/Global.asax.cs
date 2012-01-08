@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
@@ -77,7 +78,13 @@ namespace ZeroKWeb
 			if (Request[GlobalConst.LoginCookieName] != null)
 			{
 				var acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
-				if (acc != null) HttpContext.Current.User = acc;
+                if (acc != null)
+                {
+                    if (acc.Punishments.Any(x=>x.BanExpires > DateTime.UtcNow && x.BanSite)) {
+                        Response.Write("Banned!");
+                        Response.End();
+                    } else HttpContext.Current.User = acc;
+                }
 			}
 		}
 	}

@@ -168,5 +168,16 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
             return RedirectToAction("Detail", new { id = accountID });
         }
+
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult ChangePermissions(int accountID, int springieLevel, bool zkAdmin)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Single(x => x.AccountID == accountID);
+            acc.SpringieLevel = springieLevel;
+            acc.IsZeroKAdmin = zkAdmin;
+            db.SubmitChanges(); ;
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+        }
     }
 }

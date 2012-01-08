@@ -66,7 +66,7 @@
     
     @foreach (var punish in Model.Punishments) {
         <div>
-            <h3>PUNISHED: @punish.Reason</h3>
+            <h3>PENALTY: @punish.Reason</h3>
             @punish.Time.ToAgoString()<br />
             @Html.BBCode(punish.Punishment1)
         </div>
@@ -99,23 +99,31 @@
 		
     @if (Global.IsZeroKAdmin)
     {
-	    <div class="admin">
+        <a href="#" onclick="$('#userAdmin').toggle()">MODIFY USER</a>
+	    <div class="admin" id="userAdmin" style="display: none">
 	        <h3>Modify user @Model.Name</h3>
             AccountID: @Model.AccountID <br />
             LobbyID: @Model.LobbyID <br />
             <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new {accountID = Model.AccountID})">
                 Change lobby ID: @Html.TextBox("newLobbyID") <input type="submit" />
             </form>
-            <h4>Punishment</h4>
+            <h4>Permissions</h4>
+            <form method="post" action="@Url.Action("ChangePermissions", "Users", new {accountID = Model.AccountID})">
+                Springie level: @Html.TextBox("springieLevel", Model.SpringieLevel) 
+                Zero K admin: @Html.CheckBox("zkAdmin", Model.IsZeroKAdmin) <input type="submit" />
+            </form>
+
+
+            <h4>Penalties</h4>
             <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID})" method="post">
                 Reason: @Html.TextBox("reason")<br />
                 Delete XP: @Html.CheckBox("deleteXP")<br />
                 Delete influence: @Html.CheckBox("deleteInfluence")<br /><br />
-                Ban mute (not yet): @Html.CheckBox("banMute")<br />
+                Ban mute: @Html.CheckBox("banMute")<br />
                 Ban commanders: @Html.CheckBox("banCommanders")<br />
                 Ban unlocks: @Html.CheckBox("banUnlocks")<br />
-                Ban site (not yet): @Html.CheckBox("banSite")<br />
-                Ban lobby (not yet): @Html.CheckBox("banLobby")<br />
+                Ban site: @Html.CheckBox("banSite")<br />
+                Ban lobby: @Html.CheckBox("banLobby")<br />
                 Ban expires: <input type="text" name="banExpires" class="datepicker" value="@DateTime.UtcNow.AddDays(7)" /><br />
                                
                 <input type="submit" value="BAN" class="delete" /> 
