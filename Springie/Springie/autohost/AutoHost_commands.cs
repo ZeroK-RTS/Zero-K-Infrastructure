@@ -835,8 +835,10 @@ namespace Springie.autohost
                 }
 
                 if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
-                if (balance.Bots != null)
+                if (balance.Bots != null && balance.Bots.Length>0)
                 {
+                    foreach (var b in tas.MyBattle.Bots.Where(x=>!balance.Bots.Any(y=>y.BotName==x.Name && y.Owner==x.owner))) tas.RemoveBot(b.Name);
+
                     foreach (var b in balance.Bots)
                     {
                         var existing = tas.MyBattle.Bots.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
