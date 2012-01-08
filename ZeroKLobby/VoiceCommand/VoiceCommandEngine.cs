@@ -113,18 +113,13 @@ namespace ZeroKLobby.VoiceCommand
 
         void SpeechEngineSpeechRecognitionRejected(object sender, SpeechRecognitionRejectedEventArgs e)
         {
-            speechSynthesizer.SpeakAsync("What was that?");
         }
 
         void SpeechEngineSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
 			var rule = voiceRules.FirstOrDefault(g => e.Result.Grammar.Name == g.Name);
-			if (rule == null)
-			{
-				speechSynthesizer.SpeakAsync("What was that?");
-				return;
-			}
-			rule.Aknowledge(speechSynthesizer, e.Result);
+        	if (rule == null) return;
+        	rule.Aknowledge(speechSynthesizer, e.Result);
 			var table = rule.ToLua(e.Result);
 			client.Say(TasClient.SayPlace.User, client.MyBattle.Founder.Name, "!transmit voice" + table.Replace("\n", ""), false);
         }

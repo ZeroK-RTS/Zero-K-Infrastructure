@@ -35,8 +35,16 @@ namespace ZeroKLobby.VoiceCommand
 			}
 		}
 
+
 		public abstract void Aknowledge(SpeechSynthesizer speechSynthesizer, RecognitionResult result);
 		public abstract string ToLua(RecognitionResult result);
+
+		/// <summary>
+		/// Called with the widget sends a message to this voice rule.
+		/// </summary>
+		/// <param name="paramsString"></param>
+		/// <param name="load">New grammar to be loaded. Set to null to load no new rule.</param>
+		/// <param name="unload">Grammar to be unloaded. Set to null to unload no rule. </param>
 		public abstract void SpringLine(string paramsString, out Grammar load, out Grammar unload);
 	}
 }
