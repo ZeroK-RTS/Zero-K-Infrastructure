@@ -34,16 +34,18 @@ namespace ZeroKWeb.SpringieInterface
 
             foreach (var ah in autohosts)
             {
-                sb.AppendLine("ah:" + ah);
+                sb.AppendLine("ah:" + ah.LobbyContext.AutohostName);
 
                 if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
                     // game not running add all nonspecs
                 else
                 {
-                    lobbyIds.AddRange(
-                        ah.LobbyContext.Players.Where(
+                    var notPlaying = ah.LobbyContext.Players.Where(
                             x => !x.IsSpectator && !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator)).Select(
-                                x => (int?)x.LobbyID)); // game running, add all those that are not playing and are not specs
+                                x => (int?)x.LobbyID).ToList();
+                    // game running, add all those that are not playing and are not specs
+                    lobbyIds.AddRange(notPlaying);
+                    sb.AppendLine("not playing: " + string.Join(",", notPlaying));
                 }
             }
 
