@@ -8,13 +8,6 @@ namespace ZkData
 {
     partial class Account: IPrincipal, IIdentity
     {
-        public enum GamePreference
-        {
-            Dislike = -1,
-            Neutral = 0,
-            Prefers = 1
-        }
-
         Dictionary<AutohostMode, GamePreference> preferences;
         public int AvailableXP { get { return GetXpForLevel(Level) - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
         public double EffectiveElo { get { return Elo + WeightEloMalus; } }
@@ -130,5 +123,12 @@ namespace ZkData
         }
 
         public IIdentity Identity { get { return this; } }
+    }
+
+    public enum GamePreference
+    {
+        Dislike = -1,
+        Neutral = 0,
+        Prefers = 1
     }
 }
