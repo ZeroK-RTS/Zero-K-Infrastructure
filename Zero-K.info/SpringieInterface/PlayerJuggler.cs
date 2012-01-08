@@ -45,6 +45,16 @@ namespace ZeroKWeb.SpringieInterface
                                 x => (int?)x.LobbyID).ToList();
                     // game running, add all those that are not playing and are not specs
                     lobbyIds.AddRange(notPlaying);
+                    foreach (var u in ah.LobbyContext.Players) {
+                        sb.AppendLine(string.Format("lobby: {0} - {1}", u.Name, u.IsSpectator));
+                    }
+                    foreach (var u in ah.RunningGameStartContext.Players)
+                    {
+                        sb.AppendLine(string.Format("running: {0} - {1}", u.Name, u.IsSpectator));
+                    }
+
+
+                    sb.AppendLine(string.Format("running:{0}  lobby:{1}", ah.RunningGameStartContext.Players.Count, ah.LobbyContext.Players.Count));
                     sb.AppendLine("not playing: " + string.Join(",", notPlaying));
                 }
             }
