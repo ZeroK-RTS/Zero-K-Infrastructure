@@ -89,8 +89,15 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
 
+            var sb = new StringBuilder();
+
+            sb.AppendLine("Original bins:");
+            PrintBins(juggledAccounts, bins, sb);
+
             SetBinLists(bins, juggledAccounts);
             foreach (var b in bins) b.Assigned.Clear();
+
+            
 
 
             List<Bin> todel = new List<Bin>();
@@ -130,6 +137,9 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
                 } while (moved);
+
+                sb.AppendLine("h-pass bins:");
+                PrintBins(juggledAccounts, bins, sb);
 
 
                 // normal pass
@@ -173,17 +183,25 @@ namespace ZeroKWeb.SpringieInterface
 
             } while (todel.Any());
 
-            var sb = new StringBuilder();
-            foreach (var b in bins)
-                sb.AppendFormat("{0} {1}: {2}\n",
-                                b.Mode,
-                                b.Autohost.LobbyContext.AutohostName,
-                                string.Join(",", b.Assigned.Select(x => juggledAccounts[x].Name)));
-            sb.AppendFormat("Free people: {0}\n",
-                            string.Join(",", juggledAccounts.Where(x => !bins.Any(y => y.Assigned.Contains(x.Key))).Select(x => x.Value.Name)));
+            sb.AppendLine("Final bins:");
+            PrintBins(juggledAccounts, bins, sb);
 
             ret.Message = sb.ToString();
             return ret;
+        }
+
+        static void PrintBins(Dictionary<int, Account> juggledAccounts, List<Bin> bins, StringBuilder sb)
+        {
+            foreach (var b in bins)
+                sb.AppendFormat("{0} {1}: {2}    - High: {3}   Low: {4}\n",
+                                b.Mode,
+                                b.Autohost.LobbyContext.AutohostName,
+                                string.Join(",", b.Assigned.Select(x => juggledAccounts[x].Name)),
+                                string.Join(",", b.HighPriority.Select(x => juggledAccounts[x].Name)),
+                                string.Join(",", b.NormalPriority.Select(x => juggledAccounts[x].Name))
+                                );
+            sb.AppendFormat("Free people: {0}\n",
+                            string.Join(",", juggledAccounts.Where(x => !bins.Any(y => y.Assigned.Contains(x.Key))).Select(x => x.Value.Name)));
         }
 
         static void SetBinLists(List<Bin> bins, Dictionary<int, Account> juggledAccounts)
