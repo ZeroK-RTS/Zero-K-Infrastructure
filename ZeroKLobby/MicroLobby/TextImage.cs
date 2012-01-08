@@ -59,7 +59,7 @@ namespace ZeroKLobby.MicroLobby
               if (userName == Program.TasClient.UserName) return Resources.jimi;
               if (user.IsBot) return Resources.robot;
               if (Program.FriendManager.Friends.Contains(user.Name)) return Resources.Friend;
-              if (user.IsAdmin) return Resources.police;
+              if (user.IsAdmin|| user.IsZeroKAdmin) return Resources.police;
               if (user.EffectiveElo > 1800)  return Resources.napoleon;
               if (user.EffectiveElo > 1600) return Resources.soldier;
               if (user.EffectiveElo < 1400) return Resources.smurf;
@@ -76,7 +76,7 @@ namespace ZeroKLobby.MicroLobby
                 if (userName == Program.TasClient.UserName) return Jimi;
                 if (user.IsBot) return Robot;
                 if (Program.FriendManager.Friends.Contains(user.Name)) return Friend;
-                if (user.IsAdmin) return Police;
+                if (user.IsAdmin || user.IsZeroKAdmin) return Police;
                 if (user.EffectiveElo > 1800) return Napoleon;
                 if (user.EffectiveElo > 1600) return Soldier;
                 if (user.EffectiveElo < 1400) return Smurf;

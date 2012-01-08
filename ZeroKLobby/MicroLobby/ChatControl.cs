@@ -259,7 +259,7 @@ namespace ZeroKLobby.MicroLobby
 					isMatch = user.IsAway;
 					return true;
 				case "ADMIN":
-					isMatch = user.IsAdmin;
+					isMatch = user.IsAdmin || user.IsZeroKAdmin;
 					return true;
 				case "INGAME":
 					isMatch = user.IsInGame;

@@ -129,7 +129,8 @@ namespace ZeroKLobby.MicroLobby
       {
         if (user.Name == Program.TasClient.UserName) mes++;
         if (Program.FriendManager.Friends.Contains(user.Name)) friends++;
-        else if (Program.TasClient.ExistingUsers[user.Name].IsAdmin) admins++;
+        else if (user.LobbyUser.IsAdmin || user.LobbyUser.IsZeroKAdmin) admins++;
+        
       }
 
       // make sure there aren't more little dudes than non-specs in a battle

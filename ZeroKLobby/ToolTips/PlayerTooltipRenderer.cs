@@ -81,7 +81,7 @@ namespace ZeroKLobby
                 drawString("Bot");
                 newLine();
             }
-            if (user.IsAdmin)
+            if (user.IsAdmin || user.IsZeroKAdmin)
             {
 							drawImage(Resources.police, 16, 16);
                 drawString("Administrator");
@@ -149,7 +149,7 @@ namespace ZeroKLobby
             h += 16; // name
             h += 16; // flag
             if (user.IsBot) h += 16; // bot icon
-            if (user.IsAdmin) h += 16; // admin icon
+            if (user.IsAdmin || user.IsZeroKAdmin) h += 16; // admin icon
             if (Program.FriendManager.Friends.Contains(user.Name)) h += 16; // friend icon
             if (user.IsZkLobbyUser) h += 16; // SD icon
             if (!user.IsBot)

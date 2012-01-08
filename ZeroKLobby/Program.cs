@@ -252,7 +252,7 @@ namespace ZeroKLobby
 
                         if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text.StartsWith("!join") && user != null)
                         {
-                            if (user.IsAdmin || user.IsBot || (tas.MyBattle != null && tas.MyBattle.Founder.Name == user.Name))
+                            if (user.IsAdmin || user.IsZeroKAdmin || user.IsBot || (tas.MyBattle != null && tas.MyBattle.Founder.Name == user.Name))
                             {
                                 e.Cancel = true;
                                 var parts = e.Data.Text.Split(' ');
