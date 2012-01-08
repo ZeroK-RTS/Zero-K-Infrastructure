@@ -14,25 +14,14 @@ namespace ZeroKWeb.SpringieInterface
 
     public class PlayerJuggler
     {
-
-        static List<AutohostMode> BinOrder = new List<AutohostMode>
-                                             {
-                                                 AutohostMode.Game1v1,
-                                                 AutohostMode.GameFFA,
-                                                 AutohostMode.Planetwars,
-                                                 AutohostMode.GameTeams,
-                                                 AutohostMode.GameChickens
-                                             };
-
-
-        static void Move(List<Bin> bins, int lobbyID, Bin target)
-        {
-
-            foreach (var b in bins) b.Assigned.Remove(lobbyID);
-
-            if (!target.Assigned.Contains(lobbyID)) target.Assigned.Add(lobbyID);
-        }
-
+        static readonly List<AutohostMode> BinOrder = new List<AutohostMode>
+                                                      {
+                                                          AutohostMode.Game1v1,
+                                                          AutohostMode.GameFFA,
+                                                          AutohostMode.Planetwars,
+                                                          AutohostMode.GameTeams,
+                                                          AutohostMode.GameChickens
+                                                      };
 
 
         public static JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
@@ -91,20 +80,16 @@ namespace ZeroKWeb.SpringieInterface
 
             var sb = new StringBuilder();
 
-            
-
             SetBinLists(bins, juggledAccounts);
             foreach (var b in bins) b.Assigned.Clear();
 
             sb.AppendLine("Original bins:");
             PrintBins(juggledAccounts, bins, sb);
 
-
             Bin todel = null;
             do
             {
-
-                bool moved = false;
+                var moved = false;
 
                 // high priority pass
                 do
@@ -118,14 +103,10 @@ namespace ZeroKWeb.SpringieInterface
                             var acc = juggledAccounts[person];
                             var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
 
-                            
-                            bool biggerBattleRule = false;
+                            var biggerBattleRule = false;
                             if (current != null)
                             {
-                                if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count < current.MinPlayers)
-                                {
-                                    biggerBattleRule = b.Assigned.Count > current.Assigned.Count;
-                                }
+                                if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count < current.MinPlayers) biggerBattleRule = b.Assigned.Count > current.Assigned.Count;
                                 else if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) biggerBattleRule = true;
                             }
 
@@ -141,7 +122,6 @@ namespace ZeroKWeb.SpringieInterface
                 //sb.AppendLine("h-pass bins:");
                 //PrintBins(juggledAccounts, bins, sb);
 
-
                 // normal pass
                 do
                 {
@@ -152,14 +132,10 @@ namespace ZeroKWeb.SpringieInterface
                         if (person != 0)
                         {
                             var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
-                            bool biggerBattleRule = false;
+                            var biggerBattleRule = false;
                             if (current != null)
                             {
-
-                                if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count < current.MinPlayers)
-                                {
-                                    biggerBattleRule = b.Assigned.Count > current.Assigned.Count;
-                                }
+                                if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count < current.MinPlayers) biggerBattleRule = b.Assigned.Count > current.Assigned.Count;
                                 else if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) biggerBattleRule = true;
                             }
 
@@ -172,38 +148,75 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 } while (moved);
 
-                
-
-
-                
-                todel = bins.OrderBy(x=>BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.MinPlayers);
-                if (todel != null) {
+                todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.MinPlayers);
+                if (todel != null)
+                {
                     bins.Remove(todel);
                     SetBinLists(bins, juggledAccounts);
                     sb.AppendLine("removing bin " + todel.Mode);
                     PrintBins(juggledAccounts, bins, sb);
                 }
-
-            } while (todel!=null);
+            } while (todel != null);
 
             sb.AppendLine("Final bins:");
             PrintBins(juggledAccounts, bins, sb);
+
+            if (bins.Any())
+            {
+                ret.PlayerMoves = new List<JugglerMove>();
+                foreach (var b in bins)
+                {
+                    foreach (var a in b.Assigned)
+                    {
+                        var acc = juggledAccounts[a];
+                        var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name));
+                        if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName) ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
+                    }
+                }
+
+                ret.AutohostsToClose = new List<string>();
+                foreach (
+                    var ah in
+                        autohosts.Where(
+                            x =>
+                            x.RunningGameStartContext == null && !bins.Any(y => y.Autohost == x) && x.LobbyContext.Players.Any(y => !y.IsSpectator))) ret.AutohostsToClose.Add(ah.LobbyContext.AutohostName);
+            }
 
             ret.Message = sb.ToString();
             return ret;
         }
 
+        static Dictionary<int, GamePreference> GetCurrentPrefs(List<Bin> bins, Dictionary<int, Account> juggledAccounts)
+        {
+            var currentPrefs = new Dictionary<int, GamePreference>();
+            foreach (var a in juggledAccounts)
+            {
+                currentPrefs[a.Key] = GamePreference.Neutral; // no bin -> take any
+                var hisBin = bins.FirstOrDefault(x => x.Assigned.Contains(a.Key));
+                if (hisBin != null) currentPrefs[a.Key] = a.Value.Preferences[hisBin.Mode];
+            }
+            return currentPrefs;
+        }
+
+        static void Move(List<Bin> bins, int lobbyID, Bin target)
+        {
+            foreach (var b in bins) b.Assigned.Remove(lobbyID);
+
+            if (!target.Assigned.Contains(lobbyID)) target.Assigned.Add(lobbyID);
+        }
+
         static void PrintBins(Dictionary<int, Account> juggledAccounts, List<Bin> bins, StringBuilder sb)
         {
             foreach (var b in bins)
+            {
                 sb.AppendFormat("{0} {1}: {2}    - (High: {3})   (Low: {4})\n",
                                 b.Mode,
                                 b.Autohost.LobbyContext.AutohostName,
                                 string.Join(",", b.Assigned.Select(x => juggledAccounts[x].Name)),
                                 string.Join(",", b.HighPriority.Select(x => juggledAccounts[x].Name)),
-                                string.Join(",", b.NormalPriority.Select(x => juggledAccounts[x].Name))
-                                );
-                sb.AppendFormat("Free people: {0}\n",
+                                string.Join(",", b.NormalPriority.Select(x => juggledAccounts[x].Name)));
+            }
+            sb.AppendFormat("Free people: {0}\n",
                             string.Join(",", juggledAccounts.Where(x => !bins.Any(y => y.Assigned.Contains(x.Key))).Select(x => x.Value.Name)));
         }
 
@@ -240,26 +253,7 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             // set those who dont have any bin preference to be neutral with all bins
-            foreach (var a in juggledAccounts) {
-                if (!bins.Any(x => x.HighPriority.Contains(a.Key) || x.NormalPriority.Contains(a.Key))) {
-                    foreach (var b in bins) {
-                        b.NormalPriority.Add(a.Key);
-                    }
-                }
-            }
-
-        }
-
-        static Dictionary<int, GamePreference> GetCurrentPrefs(List<Bin> bins, Dictionary<int, Account> juggledAccounts)
-        {
-            var currentPrefs = new Dictionary<int, GamePreference>();
-            foreach (var a in juggledAccounts)
-            {
-                currentPrefs[a.Key] = GamePreference.Neutral; // no bin -> take any
-                var hisBin = bins.FirstOrDefault(x => x.Assigned.Contains(a.Key));
-                if (hisBin != null) currentPrefs[a.Key] = a.Value.Preferences[hisBin.Mode];
-            }
-            return currentPrefs;
+            foreach (var a in juggledAccounts) if (!bins.Any(x => x.HighPriority.Contains(a.Key) || x.NormalPriority.Contains(a.Key))) foreach (var b in bins) b.NormalPriority.Add(a.Key);
         }
 
         public class Bin
@@ -267,9 +261,6 @@ namespace ZeroKWeb.SpringieInterface
             public List<int> Assigned = new List<int>();
             public JugglerAutohost Autohost;
             public List<int> HighPriority = new List<int>();
-            public AutohostMode Mode;
-            public List<int> NormalPriority = new List<int>();
-
             public int MinPlayers
             {
                 get
@@ -281,15 +272,17 @@ namespace ZeroKWeb.SpringieInterface
                         case AutohostMode.GameFFA:
                             return 3;
                         case AutohostMode.Planetwars:
-                            return 6;
+                            return 4;
                         case AutohostMode.GameTeams:
-                            return 6;
+                            return 4;
                         case AutohostMode.GameChickens:
                             return 2;
                     }
                     return 0;
                 }
             }
+            public AutohostMode Mode;
+            public List<int> NormalPriority = new List<int>();
 
             public class PlayerEntry
             {
@@ -312,4 +305,3 @@ namespace ZeroKWeb.SpringieInterface
         public List<JugglerMove> PlayerMoves;
     }
 }
-
