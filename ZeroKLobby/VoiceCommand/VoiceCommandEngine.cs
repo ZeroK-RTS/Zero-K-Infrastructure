@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;
@@ -34,8 +35,25 @@ namespace ZeroKLobby.VoiceCommand
         	speechEngine.SetInputToDefaultAudioDevice();
             speechEngine.SpeechRecognized += SpeechEngineSpeechRecognized;
             speechEngine.SpeechRecognitionRejected += SpeechEngineSpeechRecognitionRejected;
-            client.MyBattleStarted += (s, e) => { if (!client.MyBattleStatus.IsSpectator) Start(); };
-            client.MyBattleEnded += (s, e) => Stop();
+            spring.SpringStarted += (s, e) => {
+                try
+                {
+                    if (!client.MyBattleStatus.IsSpectator) Start();
+                }
+                catch (Exception ex) {
+                    Trace.TraceError("Error in speech recognizer:{0}",ex);
+                }
+            };
+            spring.SpringExited += (s, e) =>
+            {
+                try
+                {
+                    Stop();
+                }
+                catch (Exception ex) {
+                    Trace.TraceError("Error in speech recognizer:{0}", ex);
+                }
+            };
             client.PreviewSaid += (s, e) =>
             {
                 if (client.MyBattle != null && e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.UserName == client.MyBattle.Founder.Name && e.Data.Text.StartsWith("!transmit ")) e.Cancel = true;
@@ -81,13 +99,16 @@ namespace ZeroKLobby.VoiceCommand
 
         public void Start()
         {
-			speechEngine.RecognizeAsyncStop();
-            speechEngine.RecognizeAsync(RecognizeMode.Multiple);
+            if (speechEngine.AudioState == AudioState.Stopped)
+            {
+                speechEngine.RecognizeAsyncStop();
+                speechEngine.RecognizeAsync(RecognizeMode.Multiple);
+            }
         }
 		
         public void Stop()
         {
-            speechEngine.RecognizeAsyncStop();
+            if (speechEngine.AudioState!= AudioState.Stopped) speechEngine.RecognizeAsyncStop();
         }
 
         void SpeechEngineSpeechRecognitionRejected(object sender, SpeechRecognitionRejectedEventArgs e)

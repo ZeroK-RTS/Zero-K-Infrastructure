@@ -48,6 +48,41 @@ namespace Fixer
           db.SubmitChanges();
       }
 
+
+      public static void SetFFATeams() {
+          var db = new ZkDataContext();
+          foreach (var m in db.Resources.Where(x => x.FeaturedOrder != null && x.TypeID == ResourceType.Map)) {
+              var lg = m.SpringBattlesByMapResourceID.Take(100).ToList();
+              double cnt = lg.Count;
+              if (cnt == 0) continue; ;
+              if (lg.Count(x => x.HasBots) / (double)cnt > 0.5)
+              {
+                  m.MapIsChickens = true;
+              }
+              
+                  if (lg.Count(x => x.PlayerCount == 2) / cnt > 0.4)
+                  {
+                      m.MapIs1v1 = true;
+                  }
+              
+                      var teams = m.SpringBattlesByMapResourceID.Take(100).GroupBy(x => x.SpringBattlePlayers.Where(y => !y.IsSpectator).Select(y => y.AllyNumber).Distinct().Count()).OrderByDescending(x => x.Count()).Select(x => x.Key).FirstOrDefault();
+                      if (teams > 2)
+                      {
+                          m.MapIsFfa = true;
+                          m.MapFFAMaxTeams = teams;
+                      }
+                      else
+                      {
+                      }
+
+              
+
+          }
+          db.SubmitChanges();
+
+      }
+
+
       public static void FixDemoFiles() {
           var db = new ZkDataContext();
           foreach (var sb in db.SpringBattles) {
@@ -60,7 +95,6 @@ namespace Fixer
 
       static void Main(string[] args)
     {
-          FixDemoFiles();
 
         return;
 

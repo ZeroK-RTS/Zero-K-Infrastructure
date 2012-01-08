@@ -45,9 +45,20 @@ namespace ZeroKLobby.Notifications
 			client = Program.TasClient;
 			spring = new Spring(Program.SpringPaths);
 			var speech = new ChatToSpeech(spring);
-			if (Program.Conf.EnableVoiceCommands) new VoiceCommandEngine(client, spring);
+            VoiceCommandEngine voice;
+            if (Program.Conf.EnableVoiceCommands)
+            {
+                try
+                {
+                    new VoiceCommandEngine(client, spring);
+                }
+                catch (Exception ex) {
+                    Trace.TraceError("Failed to init VoiceCommands:{0}",ex);
+                }
 
-			spring.SpringExited += (s, e) =>
+            }
+
+		    spring.SpringExited += (s, e) =>
 				{
 					client.ChangeMyUserStatus(isInGame:false);
 					client.ChangeMyBattleStatus(ready: true);

@@ -47,7 +47,6 @@ namespace ZeroKLobby
         public static string StartupPath = Path.GetDirectoryName(Path.GetFullPath(Application.ExecutablePath));
         public static TasClient TasClient { get; private set; }
         public static ToolTipHandler ToolTip;
-        public static VoiceCommandEngine VoiceCommandEngine { get; private set; }
 
         /// <summary>
         /// windows only: do we have admin token?
