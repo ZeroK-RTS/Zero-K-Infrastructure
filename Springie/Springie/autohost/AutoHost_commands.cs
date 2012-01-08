@@ -1201,14 +1201,15 @@ namespace Springie.autohost
 
         public void ComMap(TasSayEventArgs e, params string[] words)
         {
-            if (words.Length == 0)
-            {
-                Respond(e, "You must specify a map name");
-                return;
-            }
             if (spring.IsRunning)
             {
                 Respond(e, "Cannot change map while the game is running");
+                return;
+            }
+            if (words.Length == 0)
+            {
+                ServerVerifyMap(true);
+                //Respond(e, "You must specify a map name");
                 return;
             }
 
