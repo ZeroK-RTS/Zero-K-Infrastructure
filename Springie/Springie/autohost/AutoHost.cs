@@ -547,6 +547,14 @@ namespace Springie.autohost
                     ComTransmit(e, words);
                     break;
 
+                case "move":
+                    ComMove(e,words);
+                    break;
+
+                case "juggle":
+                    ComJuggle(e,words);
+                    break;
+
                 case "spawn":
                 {
                     var args = Utils.Glue(words);

@@ -48,8 +48,9 @@ namespace Springie
             while (true)
             {
                 Thread.Sleep(5000);
-                if (DateTime.Now.Subtract(lastUpdate).TotalSeconds > 15) {
+                if (DateTime.Now.Subtract(lastUpdate).TotalSeconds > 140) {
                     main.UpdateAll();
+                    main.JugglePlayers();
                     lastUpdate = DateTime.Now;
                 }
             }

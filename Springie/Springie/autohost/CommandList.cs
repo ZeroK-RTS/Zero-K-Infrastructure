@@ -241,6 +241,9 @@ namespace Springie.autohost
                                              TasSayEventArgs.Places.Channel
                                          }));
 
+            AddMissing(new CommandConfig("move", 3, "<who> <where> - moves player forcibly to a new autohost"));
+            AddMissing(new CommandConfig("juggle", 4, "- executes player juggler moving players between managed autohosts"));
+
             if (config != null && config.CommandLevels != null)
             {
                 foreach (var c in config.CommandLevels) {

@@ -45,6 +45,28 @@ namespace Springie.autohost
             return username.Count == 0;
         }
 
+        public void ComMove(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length < 2)
+            {
+                Respond(e, "<who> <to>");
+                return;
+            }
+            var name = words[0];
+            var target = words[1];
+
+            tas.Say(TasClient.SayPlace.User, name, "!join " + target, false);
+            User user;
+            if (tas.ExistingUsers.TryGetValue(name, out user) && !user.IsZkLobbyUser) tas.Kick(name);
+        }
+
+        public void ComJuggle(TasSayEventArgs e, string[] words)
+        {
+            Respond(e, Program.main.JugglePlayers());
+        }
+    
+
+
         public void ComSplitPlayers(TasSayEventArgs e, string[] words)
         {
             if (tas.MyBattle != null)
@@ -70,13 +92,11 @@ namespace Springie.autohost
                     {
                         foreach (var p in g)
                         {
-                            tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
-                            if (!p.LobbyUser.IsZkLobbyUser) tas.Kick(p.Name);
+                            ComMove(TasSayEventArgs.Default,new[]{p.Name, target.Founder.Name});
                         }
                         foreach (var p in slist.Where(x => x.LobbyUser.Clan == g.Key))
                         {
-                            tas.Say(TasClient.SayPlace.User, p.Name, "!join " + target.Founder.Name, false);
-                            if (!p.LobbyUser.IsZkLobbyUser) tas.Kick(p.Name);
+                            ComMove(TasSayEventArgs.Default, new[] { p.Name, target.Founder.Name });
                         }
 
                         moved += g.Count();

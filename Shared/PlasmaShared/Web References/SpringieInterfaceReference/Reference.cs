@@ -43,6 +43,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private System.Threading.SendOrPostCallback GetMapCommandsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback JugglePlayersOperationCompleted;
+        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -101,6 +103,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         public event GetMapCommandsCompletedEventHandler GetMapCommandsCompleted;
+        
+        /// <remarks/>
+        public event JugglePlayersCompletedEventHandler JugglePlayersCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -324,6 +329,35 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/JugglePlayers", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public JugglerResult JugglePlayers(JugglerAutohost[] autohosts) {
+            object[] results = this.Invoke("JugglePlayers", new object[] {
+                        autohosts});
+            return ((JugglerResult)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void JugglePlayersAsync(JugglerAutohost[] autohosts) {
+            this.JugglePlayersAsync(autohosts, null);
+        }
+        
+        /// <remarks/>
+        public void JugglePlayersAsync(JugglerAutohost[] autohosts, object userState) {
+            if ((this.JugglePlayersOperationCompleted == null)) {
+                this.JugglePlayersOperationCompleted = new System.Threading.SendOrPostCallback(this.OnJugglePlayersOperationCompleted);
+            }
+            this.InvokeAsync("JugglePlayers", new object[] {
+                        autohosts}, this.JugglePlayersOperationCompleted, userState);
+        }
+        
+        private void OnJugglePlayersOperationCompleted(object arg) {
+            if ((this.JugglePlayersCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.JugglePlayersCompleted(this, new JugglePlayersCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -359,6 +393,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         private PlayerTeam[] playersField;
         
         private BotTeam[] botsField;
+        
+        private AutohostMode modeField;
         
         /// <remarks/>
         public string AutohostName {
@@ -407,6 +443,16 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.botsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public AutohostMode Mode {
+            get {
+                return this.modeField;
+            }
+            set {
+                this.modeField = value;
             }
         }
     }
@@ -476,6 +522,117 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.teamIDField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.233")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class JugglerMove {
+        
+        private string nameField;
+        
+        private string targetAutohostField;
+        
+        /// <remarks/>
+        public string Name {
+            get {
+                return this.nameField;
+            }
+            set {
+                this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string TargetAutohost {
+            get {
+                return this.targetAutohostField;
+            }
+            set {
+                this.targetAutohostField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.233")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class JugglerResult {
+        
+        private string[] autohostsToCloseField;
+        
+        private string messageField;
+        
+        private JugglerMove[] playerMovesField;
+        
+        /// <remarks/>
+        public string[] AutohostsToClose {
+            get {
+                return this.autohostsToCloseField;
+            }
+            set {
+                this.autohostsToCloseField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Message {
+            get {
+                return this.messageField;
+            }
+            set {
+                this.messageField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public JugglerMove[] PlayerMoves {
+            get {
+                return this.playerMovesField;
+            }
+            set {
+                this.playerMovesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.233")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class JugglerAutohost {
+        
+        private BattleContext lobbyContextField;
+        
+        private BattleContext runningGameStartContextField;
+        
+        /// <remarks/>
+        public BattleContext LobbyContext {
+            get {
+                return this.lobbyContextField;
+            }
+            set {
+                this.lobbyContextField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public BattleContext RunningGameStartContext {
+            get {
+                return this.runningGameStartContextField;
+            }
+            set {
+                this.runningGameStartContextField = value;
             }
         }
     }
@@ -1468,6 +1625,32 @@ namespace PlasmaShared.SpringieInterfaceReference {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void JugglePlayersCompletedEventHandler(object sender, JugglePlayersCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class JugglePlayersCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal JugglePlayersCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public JugglerResult Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((JugglerResult)(this.results[0]));
             }
         }
     }

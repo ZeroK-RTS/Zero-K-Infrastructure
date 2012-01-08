@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -13,56 +14,171 @@ using Springie.autohost;
 
 namespace Springie
 {
-	/// <summary>
-	/// Holds and handles autohost instances
-	/// </summary>
-	/// 
-	public class Main
-	{
-		public const string ConfigMain = "main.xml";
+    /// <summary>
+    /// Holds and handles autohost instances
+    /// </summary>
+    /// 
+    public class Main
+    {
+        public const string ConfigMain = "main.xml";
 
-		readonly List<AutoHost> autoHosts = new List<AutoHost>();
-		List<AutoHost> deletionCandidate = new List<AutoHost>();
-	    public readonly SpringPaths paths;
-		readonly Timer timer;
+        readonly List<AutoHost> autoHosts = new List<AutoHost>();
+        List<AutoHost> deletionCandidate = new List<AutoHost>();
+        readonly Timer timer;
 
-		public string RootWorkPath { get; private set; }
-		public MainConfig Config;
+        public MainConfig Config;
 
         public PlasmaDownloader.PlasmaDownloader Downloader;
         public MetaDataCache MetaCache;
+        public string RootWorkPath { get; private set; }
+        public readonly SpringPaths paths;
 
-	    public Main(string path)
-		{
-			RootWorkPath = path;
-			LoadConfig();
-			SaveConfig();
-            paths = new SpringPaths(Path.GetDirectoryName(Config.ExecutableName),Config.SpringVersion, Config.DataDir);
-			if (!string.IsNullOrEmpty(Config.ExecutableName)) paths.OverrideDedicatedServer(Config.ExecutableName);
+        public Main(string path)
+        {
+            RootWorkPath = path;
+            LoadConfig();
+            SaveConfig();
+            paths = new SpringPaths(Path.GetDirectoryName(Config.ExecutableName), Config.SpringVersion, Config.DataDir);
+            if (!string.IsNullOrEmpty(Config.ExecutableName)) paths.OverrideDedicatedServer(Config.ExecutableName);
             paths.MakeFolders();
-            
+
             MetaCache = new MetaDataCache(paths, null);
-            
 
-			timer = new Timer(30000);
-			timer.Elapsed += timer_Elapsed;
-			timer.AutoReset = true;
-			timer.Start();
+            timer = new Timer(30000);
+            timer.Elapsed += timer_Elapsed;
+            timer.AutoReset = true;
+            timer.Start();
 
-			Downloader = new PlasmaDownloader.PlasmaDownloader(Config, null, paths);
-		}
+            Downloader = new PlasmaDownloader.PlasmaDownloader(Config, null, paths);
+        }
 
-		public int GetFreeHostingPort()
-		{
-			lock (autoHosts)
-			{
-				var usedPorts = autoHosts.ToDictionary(x => x.hostingPort);
-				var freePort = Enumerable.Range(Config.HostingPortStart, Config.MaxInstances).FirstOrDefault(x => !usedPorts.ContainsKey(x) && VerifyUdpSocket(x));
-				return freePort;
-			}
-		}
+        public int GetFreeHostingPort()
+        {
+            lock (autoHosts)
+            {
+                var usedPorts = autoHosts.ToDictionary(x => x.hostingPort);
+                var freePort =
+                    Enumerable.Range(Config.HostingPortStart, Config.MaxInstances).FirstOrDefault(x => !usedPorts.ContainsKey(x) && VerifyUdpSocket(x));
+                return freePort;
+            }
+        }
 
-        public static bool VerifyUdpSocket(int port) {
+        public string JugglePlayers()
+        {
+            try
+            {
+                var serv = new SpringieService();
+                JugglerAutohost[] data;
+                lock (autoHosts)
+                {
+                    data =
+                        autoHosts.Where(x => x.tas.MyBattle != null && x.SpawnConfig == null && x.config.Mode != AutohostMode.None).Select(
+                            x =>
+                            new JugglerAutohost()
+                            {
+                                LobbyContext = x.tas.MyBattle.GetContext(),
+                                RunningGameStartContext = x.spring.IsRunning ? x.spring.StartContext : null
+                            }).ToArray();
+                }
+                var ret = serv.JugglePlayers(data);
+                if (ret != null)
+                {
+                    if (ret.PlayerMoves != null)
+                    {
+                        foreach (var playermove in ret.PlayerMoves)
+                        {
+                            var ah = autoHosts.FirstOrDefault(x => x.tas.MyBattle != null && x.tas.MyBattle.Users.Any(y => y.Name == playermove.Name));
+                            if (ah != null) ah.ComMove(TasSayEventArgs.Default, new[] { playermove.Name, playermove.TargetAutohost });
+                        }
+                    }
+                    if (ret.AutohostsToClose != null)
+                    {
+                        foreach (var ahToKill in ret.AutohostsToClose)
+                        {
+                            var ah = autoHosts.FirstOrDefault(x => x.tas.UserName == ahToKill);
+                            if (ah != null) StopAutohost(ah);
+                        }
+                    }
+                    return ret.Message;
+                }
+            }
+            catch (Exception ex) {
+                Trace.TraceError("Error juggling: {0}",ex);
+                return ex.ToString();
+            }
+            return null;
+        }
+
+
+        public void LoadConfig()
+        {
+            Config = new MainConfig();
+            if (File.Exists(RootWorkPath + '/' + ConfigMain))
+            {
+                var s = new XmlSerializer(Config.GetType());
+                var r = File.OpenText(RootWorkPath + '/' + ConfigMain);
+                Config = (MainConfig)s.Deserialize(r);
+                r.Close();
+            }
+        }
+
+
+        public void SaveConfig()
+        {
+            var s = new XmlSerializer(Config.GetType());
+            var f = File.OpenWrite(RootWorkPath + '/' + ConfigMain);
+            f.SetLength(0);
+            s.Serialize(f, Config);
+            f.Close();
+        }
+
+        public void SpawnAutoHost(AhConfig config, SpawnConfig spawnData)
+        {
+            lock (autoHosts)
+            {
+                var ah = new AutoHost(MetaCache, config, GetFreeHostingPort(), spawnData);
+                autoHosts.Add(ah);
+            }
+        }
+
+
+        public void StopAll()
+        {
+            lock (autoHosts)
+            {
+                foreach (var ah in autoHosts) ah.Dispose();
+                autoHosts.Clear();
+            }
+        }
+
+        public void StopAutohost(AutoHost ah)
+        {
+            ah.Dispose();
+            lock (autoHosts)
+            {
+                autoHosts.Remove(ah);
+            }
+        }
+
+        public void UpdateAll()
+        {
+            var serv = new SpringieService();
+            var configs = serv.GetClusterConfigs(Config.ClusterNode);
+
+            lock (autoHosts)
+            {
+                foreach (var conf in configs)
+                {
+                    if (!autoHosts.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
+                    else foreach (var ah in autoHosts.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
+                }
+                var todel = autoHosts.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
+                foreach (var ah in todel) StopAutohost(ah);
+            }
+        }
+
+        public static bool VerifyUdpSocket(int port)
+        {
             try
             {
                 using (var sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
@@ -71,142 +187,73 @@ namespace Springie
                     sock.ExclusiveAddressUse = true;
                     sock.Bind(endpoint);
                 }
-            } catch {return false;}
-            return true;            
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
 
-
-	    public void LoadConfig()
-		{
-			Config = new MainConfig();
-			if (File.Exists(RootWorkPath + '/' + ConfigMain))
-			{
-				var s = new XmlSerializer(Config.GetType());
-				var r = File.OpenText(RootWorkPath + '/' + ConfigMain);
-				Config = (MainConfig)s.Deserialize(r);
-				r.Close();
-			}
-		}
-
-
-		public void SaveConfig()
-		{
-			var s = new XmlSerializer(Config.GetType());
-			var f = File.OpenWrite(RootWorkPath + '/' + ConfigMain);
-			f.SetLength(0);
-			s.Serialize(f, Config);
-			f.Close();
-		}
-
-		public void SpawnAutoHost(AhConfig config, SpawnConfig spawnData)
-		{
-			lock (autoHosts)
-			{
-				var ah = new AutoHost(MetaCache, config, GetFreeHostingPort(), spawnData);
-				autoHosts.Add(ah);
-			}
-		}
-
-
-		public void UpdateAll()
-		{
-	        var serv = new SpringieService();
-            var configs = serv.GetClusterConfigs(Config.ClusterNode);
-
-            lock (autoHosts) {
-                foreach (var conf in configs)
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                lock (autoHosts)
                 {
-                    if (!autoHosts.Any(x=>x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
-                    else 
+                    // spawned autohosts
+                    var spawnedToDel =
+                        autoHosts.Where(
+                            x => x.SpawnConfig != null && !x.spring.IsRunning && (x.tas.MyBattle == null || x.tas.MyBattle.Users.Count <= 1)).ToList();
+                    foreach (var ah in spawnedToDel.Where(x => deletionCandidate.Contains(x))) StopAutohost(ah); // delete those who are empty during 2 checks
+                    deletionCandidate = spawnedToDel;
+
+                    // autohosts which have clones
+                    var keys = autoHosts.Where(x => x.config.AutoSpawnClones).Select(x => x.config.Login).Distinct().ToList();
+                    foreach (var key in keys)
                     {
-                        foreach (var ah in autoHosts.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
+                        // 0-1 players = empty
+                        var empty =
+                            autoHosts.Where(
+                                x =>
+                                x.SpawnConfig == null && x.config.Login == key && !x.spring.IsRunning &&
+                                (x.tas.MyBattle == null || (x.tas.MyBattle.Users.Count <= 1 && !x.tas.MyUser.IsInGame))).ToList();
+
+                        if (empty.Count == 1) continue;
+
+                        else if (empty.Count == 0)
+                        {
+                            var existing = autoHosts.Where(x => x.config.Login == key).First();
+                            SpawnAutoHost(existing.config, null);
+                        }
+                        else // more than 1 empty running, stop all but 1
+                        {
+                            var minNumber = empty.Min(y => y.CloneNumber);
+                            foreach (var ah in empty.Where(x => x.CloneNumber != minNumber && x.SpawnConfig == null)) StopAutohost(ah);
+                        }
                     }
                 }
-                var todel = autoHosts.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
-                foreach (var ah in todel) StopAutohost(ah);
             }
-    	}
+            catch (Exception ex)
+            {
+                ErrorHandling.HandleException(ex, "While checking autohosts");
+            }
+        }
+    }
 
+    public class SpawnConfig
+    {
+        public string Mod;
+        public string Owner;
+        public string Password;
+        public string Title;
 
-        
-
-
-
-		public void StopAll()
-		{
-			lock (autoHosts)
-			{
-				foreach (var ah in autoHosts) ah.Dispose();
-				autoHosts.Clear();
-			}
-		}
-
-		public void StopAutohost(AutoHost ah)
-		{
-			ah.Dispose();
-			lock (autoHosts)
-			{
-				autoHosts.Remove(ah);
-			}
-		}
-
-		void timer_Elapsed(object sender, ElapsedEventArgs e)
-		{
-			try
-			{
-				lock (autoHosts)
-				{
-					// spawned autohosts
-					var spawnedToDel = autoHosts.Where(x => x.SpawnConfig != null && !x.spring.IsRunning && (x.tas.MyBattle == null || x.tas.MyBattle.Users.Count <= 1)).ToList();
-					foreach (var ah in spawnedToDel.Where(x => deletionCandidate.Contains(x))) StopAutohost(ah); // delete those who are empty during 2 checks
-					deletionCandidate = spawnedToDel;
-
-					// autohosts which have clones
-					var keys = autoHosts.Where(x => x.config.AutoSpawnClones).Select(x => x.config.Login).Distinct().ToList();
-					foreach (var key in keys)
-					{
-						// 0-1 players = empty
-						var empty =
-							autoHosts.Where(
-								x =>
-								x.SpawnConfig == null && x.config.Login == key && !x.spring.IsRunning &&
-								(x.tas.MyBattle == null || (x.tas.MyBattle.Users.Count <= 1 && !x.tas.MyUser.IsInGame))).ToList();
-
-						if (empty.Count == 1) continue;
-
-						else if (empty.Count == 0)
-						{
-							var existing = autoHosts.Where(x => x.config.Login == key).First();
-                            SpawnAutoHost(existing.config, null);
-						}
-						else // more than 1 empty running, stop all but 1
-						{
-							var minNumber = empty.Min(y => y.CloneNumber);
-							foreach (var ah in empty.Where(x => x.CloneNumber != minNumber && x.SpawnConfig == null)) StopAutohost(ah);
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				ErrorHandling.HandleException(ex, "While checking autohosts");
-			}
-		}
-	}
-
-	public class SpawnConfig
-	{
-		public string Mod;
-		public string Owner;
-		public string Password;
-		public string Title;
-
-		public SpawnConfig(string owner, Dictionary<string, string> config)
-		{
-			Owner = owner;
-			config.TryGetValue("password", out Password);
-			config.TryGetValue("mod", out Mod);
-			config.TryGetValue("title", out Title);
-		}
-	}
+        public SpawnConfig(string owner, Dictionary<string, string> config)
+        {
+            Owner = owner;
+            config.TryGetValue("password", out Password);
+            config.TryGetValue("mod", out Mod);
+            config.TryGetValue("title", out Title);
+        }
+    }
 }
