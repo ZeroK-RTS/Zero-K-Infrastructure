@@ -193,15 +193,15 @@ namespace ZeroKWeb.SpringieInterface
                         //res.Message += string.Format("{0} mult = {1} \n", players[i].Name, mult);
                     }
 
-                    var limit = 1 << (players.Count);
-                    var bestCombination = -1;
+                    var limit = (long)1 << (players.Count);
+                    long bestCombination = -1;
                     var bestScore = double.MinValue;
                     double bestCompo = 0;
                     double absCompo = 0;
                     double bestElo = 0;
                     double bestTeamDiffs = 0;
                     var playerAssignments = new int[players.Count];
-                    for (var combinator = 0; combinator < limit; combinator++)
+                    for (var combinator = (long)0; combinator < limit; combinator++)
                     {
                         //double team0Weight = 0;
                         double team0Elo = 0;
@@ -214,7 +214,7 @@ namespace ZeroKWeb.SpringieInterface
                         for (var i = 0; i < players.Count; i++)
                         {
                             var player = players[i];
-                            var team = (combinator & (1 << i)) > 0 ? 1 : 0;
+                            var team = (combinator & ((long)1 << i)) > 0 ? 1 : 0;
                             playerAssignments[i] = team;
                             if (team == 0)
                             {
