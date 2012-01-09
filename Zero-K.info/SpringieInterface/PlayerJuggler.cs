@@ -118,7 +118,7 @@ namespace ZeroKWeb.SpringieInterface
                                 var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
 
                                 var saveBattleRule = false;
-                                if (current != null && current != b) if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) saveBattleRule = true;
+                                if (current != null && current != b && acc.Preferences[current.Mode] <= acc.Preferences[b.Mode]) if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) saveBattleRule = true;
 
                                 if (current == null || saveBattleRule)
                                 {
