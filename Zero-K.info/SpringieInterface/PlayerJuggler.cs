@@ -58,7 +58,7 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var ah in grp)
                     {
                         var bin = new Bin() { Autohost = ah, Mode = ah.LobbyContext.GetMode() };
-                        bin.Assigned.AddRange(
+                        bin.ManuallyJoined.AddRange(
                             ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID));
                         bins.Add(bin);
                     }
@@ -70,7 +70,7 @@ namespace ZeroKWeb.SpringieInterface
                     var bin = new Bin() { Autohost = biggest, Mode = biggest.LobbyContext.GetMode() };
                     foreach (var ah in autohosts.Where(x => x.LobbyContext.GetMode() == bin.Mode))
                     {
-                        bin.Assigned.AddRange(
+                        bin.ManuallyJoined.AddRange(
                             ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID));
                         // add all valid players from all ahof this type to this bin
                     }
@@ -82,8 +82,6 @@ namespace ZeroKWeb.SpringieInterface
             
 
             SetBinLists(bins, juggledAccounts);
-            foreach (var b in bins) b.Assigned.Clear();
-
             sb.AppendLine("Original bins:");
             PrintBins(juggledAccounts, bins, sb);
 
@@ -98,23 +96,23 @@ namespace ZeroKWeb.SpringieInterface
                     moved = false;
                     foreach (var b in bins.OrderBy(x => BinOrder.IndexOf(x.Mode)))
                     {
-                        var person = b.HighPriority.FirstOrDefault(x => !b.Assigned.Contains(x));
-                        if (person != 0)
-                        {
+                        if (b.Assigned.Count >= b.MaxPlayers) continue;
+                        foreach (var person in b.HighPriority.Where(x => !b.Assigned.Contains(x))) {
+
                             var acc = juggledAccounts[person];
                             var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
 
                             var biggerBattleRule = false;
-                            if (current != null)
+                            if (current != null && current != b)
                             {
-                                if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count < current.MinPlayers) biggerBattleRule = b.Assigned.Count > current.Assigned.Count;
-                                else if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) biggerBattleRule = true;
+                                if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) biggerBattleRule = true;
                             }
 
-                            if (current == null || acc.Preferences[current.Mode] != GamePreference.Prefers || biggerBattleRule)
+                            if (current == null || acc.Preferences[current.Mode] != GamePreference.Like || biggerBattleRule)
                             {
                                 Move(bins, person, b);
                                 moved = true;
+                                break;
                             }
                         }
                     }
@@ -129,33 +127,38 @@ namespace ZeroKWeb.SpringieInterface
                     moved = false;
                     foreach (var b in bins.OrderBy(x => BinOrder.IndexOf(x.Mode)))
                     {
-                        var person = b.NormalPriority.FirstOrDefault(x => !b.Assigned.Contains(x));
-                        if (person != 0)
+                        if (b.Assigned.Count >= b.MaxPlayers) continue;
+                        foreach (var person in b.NormalPriority.Where(x => !b.Assigned.Contains(x)))
                         {
                             var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
                             var biggerBattleRule = false;
                             if (current != null)
                             {
-                                if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count < current.MinPlayers) biggerBattleRule = b.Assigned.Count > current.Assigned.Count;
-                                else if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) biggerBattleRule = true;
+                                if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) biggerBattleRule = true;
                             }
 
                             if (current == null || biggerBattleRule)
                             {
                                 Move(bins, person, b);
                                 moved = true;
+                                break;
                             }
                         }
                     }
                 } while (moved);
 
-                todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.MinPlayers);
+                // players who are not in bins or are in bins that have enough players
+                var freePlayers = juggledAccounts.Keys.Count(x=>!bins.Any(y=>y.Assigned.Count >= y.MinPlayers && y.Assigned.Contains(x)));
+                
+                todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => freePlayers < x.MinPlayers);
+                if (todel != null) todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.MinPlayers);
+
                 if (todel != null)
                 {
                     bins.Remove(todel);
-                    SetBinLists(bins, juggledAccounts);
                     sb.AppendLine("removing bin " + todel.Mode);
                     PrintBins(juggledAccounts, bins, sb);
+                    SetBinLists(bins, juggledAccounts);
                 }
             } while (todel != null);
 
@@ -193,7 +196,7 @@ namespace ZeroKWeb.SpringieInterface
             foreach (var a in juggledAccounts)
             {
                 currentPrefs[a.Key] = GamePreference.Neutral; // no bin -> take any
-                var hisBin = bins.FirstOrDefault(x => x.Assigned.Contains(a.Key));
+                var hisBin = bins.FirstOrDefault(x => x.ManuallyJoined.Contains(a.Key));
                 if (hisBin != null) currentPrefs[a.Key] = a.Value.Preferences[hisBin.Mode];
             }
             return currentPrefs;
@@ -229,6 +232,10 @@ namespace ZeroKWeb.SpringieInterface
             {
                 b.HighPriority.Clear();
                 b.NormalPriority.Clear();
+                if (b.Mode == AutohostMode.Game1v1) {
+                    b.Assigned = new List<int>(b.ManuallyJoined);
+                }
+                else b.Assigned.Clear(); 
 
                 foreach (var a in juggledAccounts)
                 {
@@ -236,15 +243,15 @@ namespace ZeroKWeb.SpringieInterface
 
                     if (b.Mode == AutohostMode.Planetwars && a.Value.Level < GlobalConst.MinPlanetWarsLevel) continue; // dont queue who cannot join PW
 
-                    if (b.Assigned.Contains(lobbyID)) // he is there already
+                    if (b.ManuallyJoined.Contains(lobbyID)) // was he there already
                     {
-                        if (a.Value.Preferences[b.Mode] != GamePreference.Dislike) b.HighPriority.Add(lobbyID); // if he disliked only add existing as neutral, otherwise high
+                        if (a.Value.Preferences[b.Mode] > GamePreference.Dislike) b.HighPriority.Add(lobbyID); // if he disliked only add existing as neutral, otherwise high
                         else b.NormalPriority.Add(lobbyID);
                     }
                     else
                     {
-                        if (b.Mode == AutohostMode.Game1v1 && b.Assigned.Count() >= 2) continue; // full 1v1
-                        if (b.Mode == AutohostMode.Game1v1 && b.Assigned.Count == 1 &&
+                        if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count() >= 2) continue; // full 1v1
+                        if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count == 1 &&
                             Math.Abs(a.Value.EffectiveElo - juggledAccounts[b.Assigned[0]].EffectiveElo) > 250) continue; //effective elo difference > 250 dont try to combine
 
                         if (a.Value.Preferences[b.Mode] > currentPrefs[lobbyID]) b.HighPriority.Add(lobbyID);
@@ -254,12 +261,13 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             // set those who dont have any bin preference to be neutral with all bins
-            foreach (var a in juggledAccounts) if (!bins.Any(x => x.HighPriority.Contains(a.Key) || x.NormalPriority.Contains(a.Key))) foreach (var b in bins) b.NormalPriority.Add(a.Key);
+            //foreach (var a in juggledAccounts) if (!bins.Any(x => x.HighPriority.Contains(a.Key) || x.NormalPriority.Contains(a.Key))) foreach (var b in bins) b.NormalPriority.Add(a.Key);
         }
 
         public class Bin
         {
             public List<int> Assigned = new List<int>();
+            public List<int> ManuallyJoined = new List<int>();
             public JugglerAutohost Autohost;
             public List<int> HighPriority = new List<int>();
             public int MinPlayers
@@ -284,6 +292,12 @@ namespace ZeroKWeb.SpringieInterface
             }
             public AutohostMode Mode;
             public List<int> NormalPriority = new List<int>();
+
+            public int MaxPlayers {
+                get {
+                    if (Mode == AutohostMode.Game1v1) return 2;
+                    else return 32;
+                } }
 
             public class PlayerEntry
             {

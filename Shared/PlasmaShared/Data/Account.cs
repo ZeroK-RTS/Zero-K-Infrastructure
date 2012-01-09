@@ -136,8 +136,9 @@ namespace ZkData
 
     public enum GamePreference
     {
+        Never = -2,
         Dislike = -1,
         Neutral = 0,
-        Prefers = 1
+        Like = 1
     }
 }
