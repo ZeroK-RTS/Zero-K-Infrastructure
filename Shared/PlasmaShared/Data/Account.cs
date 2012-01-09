@@ -35,6 +35,15 @@ namespace ZkData
                 return preferences;
             }
         }
+
+        public void SetPreferences(Dictionary<AutohostMode, GamePreference> data) {
+            var str = "";
+            foreach (var kvp in data) {
+                str += string.Format("{0}={1}\n", (int)kvp.Key, (int)kvp.Value);
+            }
+            GamePreferences = str;
+        }
+
         public double WeightEloMalus { get { return (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
 
 

@@ -1,4 +1,5 @@
 @model ZkData.Account
+@using PlasmaShared
 @using ZeroKWeb;
 @using ZkData;
 @{Page.Title = Model.Name + " user page";}
@@ -132,20 +133,59 @@
 	    </div>
     }
 	
-	<div id="usr_trophies" class="">
-		<h3>Trophies:</h3>
-		@foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count()))
-  {
-			<div class="fleft border" style="margin: 3px;">
-			  	<img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key" title="@award.First().AwardDescription.Split(',').First()"/>
-				<br />
-				<center>@award.Count()</center>
-			</div>
-  }
-		<br class="clearfloat" />
-	</div>
+    <div id="usr_trophies" class="">
+        <h3>Trophies:</h3>
+        @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count()))
+        {
+            <div class="fleft border" style="margin: 3px;">
+                <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key" title="@award.First().AwardDescription.Split(',').First()"/>
+                <br />
+                <center>@award.Count()</center>
+            </div>
+        }
+        <br class="clearfloat" />
+    </div>
+    
+    
+    <div id="usr_gamePreferences">
+        <h3>Game preferences</h3>
+
+        @if (Model.AccountID == Global.AccountID)
+        {
+            <form action="@Url.Action("GamePreferences", "My")" method="POST">
+                <table>
+                    @foreach (var kvp in Model.Preferences.Where(x=>x.Key != AutohostMode.None).OrderBy(x=>x.Key))
+                    {
+                        <tr>
+                            <td>
+                                @kvp.Key.Description() :
+                            </td>
+                            <td>
+                                <select name="preference">
+                                     @foreach (GamePreference o in Enum.GetValues(typeof(GamePreference)))
+                                     {
+                                         <option value="@o" @(kvp.Value == o?"selected='selected'":"")>@o</option>
+                                     }
+                                </select>
+                            </td>
+                        </tr>
+
+                    }
+                </table>
+                <input type="submit"/>
+            </form>
+        }
+        else {
+            <table>
+                    @foreach (var kvp in Model.Preferences.Where(x => x.Key != AutohostMode.None).OrderBy(x => x.Key)) {
+                        <tr><td>@kvp.Key.Description()</td><td>@kvp.Value.Description()</td></tr> 
+            }
+            </table>
+        }
+
+    </div>
 	
-	<div id="usr_technology" class="">
+    <div id="usr_technology" class="">
 		<h3>Technologies: </h3>
 		
 		@if (Model.AccountID == ZeroKWeb.Global.AccountID)

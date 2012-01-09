@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Linq.Mapping;
 using System.Linq;
 using System.Text;
@@ -28,6 +29,13 @@ namespace PlasmaShared
 						p => p.Attr != null && !p.Attr.IsDbGenerated);
 			foreach (var col in cols) col.Prop.SetValue(clone, col.Prop.GetValue(source, null), null);
 		}
+
+
+        public static string Description(this Enum e)
+        {
+            var da = (DescriptionAttribute[])(e.GetType().GetField(e.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false));
+            return da.Length > 0 ? da[0].Description : e.ToString();
+        }
 
 	}
 }
