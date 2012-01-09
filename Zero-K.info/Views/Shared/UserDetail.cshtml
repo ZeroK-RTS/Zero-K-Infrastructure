@@ -65,7 +65,7 @@
  }
 	<h2>@Html.PrintAccount(Model)</h2>
     
-    @foreach (var punish in Model.Punishments) {
+    @foreach (var punish in Model.Punishments.Where(x=>x.BanExpires > DateTime.UtcNow)) {
         <div>
             <h3>PENALTY: @punish.Reason</h3>
             @punish.Time.ToAgoString()<br />
