@@ -161,10 +161,10 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                ret.AutohostsToClose = new List<string>();
+                /*ret.AutohostsToClose = new List<string>();
                 foreach (var ah in
                     autohosts.Where(
-                        x => x.RunningGameStartContext == null && !bins.Any(y => y.Autohost == x) && x.LobbyContext.Players.Any(y => !y.IsSpectator))) ret.AutohostsToClose.Add(ah.LobbyContext.AutohostName);
+                        x => x.RunningGameStartContext == null && !bins.Any(y => y.Autohost == x) && x.LobbyContext.Players.Any(y => !y.IsSpectator))) ret.AutohostsToClose.Add(ah.LobbyContext.AutohostName);*/
             }
 
             ret.Message = sb.ToString();
