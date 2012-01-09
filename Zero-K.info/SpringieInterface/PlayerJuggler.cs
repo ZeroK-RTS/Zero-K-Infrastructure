@@ -53,9 +53,9 @@ namespace ZeroKWeb.SpringieInterface
                 autohosts.Where(x => x.RunningGameStartContext == null && x.LobbyContext != null && x.LobbyContext.Players.Any(y => !y.IsSpectator)).
                     GroupBy(x => x.LobbyContext.GetMode()))
             {
-                if (grp.Key == AutohostMode.Game1v1)
+                /*if (grp.Key == AutohostMode.Game1v1)
                 {
-                    // make bins from all 1v1 autohost
+                    // make bins from all 1v1 autohost*/
                     foreach (var ah in grp)
                     {
                         var bin = new Bin() { Autohost = ah, Mode = ah.LobbyContext.GetMode() };
@@ -63,7 +63,7 @@ namespace ZeroKWeb.SpringieInterface
                             ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID));
                         bins.Add(bin);
                     }
-                }
+                /*}
                 else
                 {
                     //make one bin from biggest ah of other type
@@ -77,7 +77,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
 
                     bins.Add(bin);
-                }
+                }*/
             }
 
             SetPriorities(bins, juggledAccounts);
