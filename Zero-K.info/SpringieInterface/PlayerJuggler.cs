@@ -97,8 +97,12 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var b in bins.OrderBy(x => BinOrder.IndexOf(x.Mode)))
                     {
                         if (b.Assigned.Count >= b.MaxPlayers) continue;
-                        foreach (var person in b.HighPriority.Where(x => !b.Assigned.Contains(x))) {
 
+                        var binElo = b.Assigned.Average(x => (double?)juggledAccounts[x].EffectiveElo);
+                        var persons = b.HighPriority.Where(x => !b.Assigned.Contains(x));
+                        if (binElo != null) persons = persons.OrderByDescending(x => Math.Abs(juggledAccounts[x].EffectiveElo - binElo.Value));
+
+                        foreach (var person in persons) {
                             var acc = juggledAccounts[person];
                             var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
 
@@ -108,7 +112,7 @@ namespace ZeroKWeb.SpringieInterface
                                 if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) biggerBattleRule = true;
                             }
 
-                            if (current == null || acc.Preferences[current.Mode] != GamePreference.Like || biggerBattleRule)
+                            if (current == null || acc.Preferences[current.Mode] < acc.Preferences[b.Mode] || biggerBattleRule)
                             {
                                 Move(bins, person, b);
                                 moved = true;
@@ -128,8 +132,13 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var b in bins.OrderBy(x => BinOrder.IndexOf(x.Mode)))
                     {
                         if (b.Assigned.Count >= b.MaxPlayers) continue;
-                        foreach (var person in b.NormalPriority.Where(x => !b.Assigned.Contains(x)))
+                        
+                        var binElo = b.Assigned.Average(x => (double?)juggledAccounts[x].EffectiveElo);
+                        var persons= b.NormalPriority.Where(x => !b.Assigned.Contains(x));
+                        if (binElo != null) persons = persons.OrderByDescending(x => Math.Abs(juggledAccounts[x].EffectiveElo - binElo.Value));
+                        foreach (var person in persons)
                         {
+                            var acc = juggledAccounts[person];
                             var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
                             var biggerBattleRule = false;
                             if (current != null)
@@ -137,7 +146,7 @@ namespace ZeroKWeb.SpringieInterface
                                 if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) biggerBattleRule = true;
                             }
 
-                            if (current == null || biggerBattleRule)
+                            if (current == null || acc.Preferences[current.Mode] < acc.Preferences[b.Mode] || biggerBattleRule)
                             {
                                 Move(bins, person, b);
                                 moved = true;
