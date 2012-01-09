@@ -256,11 +256,11 @@ namespace ZeroKWeb.SpringieInterface
                         case AutohostMode.GameFFA:
                             return 3;
                         case AutohostMode.Planetwars:
-                            return 4;
+                            return 6;
                         case AutohostMode.GameTeams:
                             return 4;
                         case AutohostMode.GameChickens:
-                            return 2;
+                            return 3;
                     }
                     return 0;
                 }
