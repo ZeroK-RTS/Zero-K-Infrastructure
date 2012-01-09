@@ -223,7 +223,7 @@ namespace ZeroKWeb.SpringieInterface
                     {
                         if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count() >= 2) continue; // full 1v1
                         if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count == 1 &&
-                            Math.Abs(a.Value.EffectiveElo - juggledAccounts[b.Assigned[0]].EffectiveElo) > 250) continue; //effective elo difference > 250 dont try to combine
+                            Math.Abs(a.Value.EffectiveElo - juggledAccounts[b.ManuallyJoined[0]].EffectiveElo) > 250) continue; //effective elo difference > 250 dont try to combine
 
                         if (battlePref > GamePreference.Never) b.PlayerPriority[lobbyID] = (int)battlePref;
                     }
