@@ -22,7 +22,7 @@ namespace Springie
     {
         public const string ConfigMain = "main.xml";
         const int ConfigUpdatePeriod = 240;
-        const int JugglePeriod = 120;
+        const int JugglePeriod = 61;
 
         readonly List<AutoHost> autoHosts = new List<AutoHost>();
         List<AutoHost> deletionCandidate = new List<AutoHost>();

@@ -478,6 +478,7 @@ namespace ZeroKWeb.SpringieInterface
                                         teamCount,
                                         clanwise ? "respecting clans" : "",
                                         t);
+            if (totalPlayers <= 1) ret.Message = "";
 
             return ret;
         }

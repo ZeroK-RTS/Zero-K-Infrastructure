@@ -141,16 +141,16 @@ namespace Springie.autohost
 
             Program.main.Downloader.PackagesChanged += Downloader_PackagesChanged;
 
-            timer = new Timer(20000);
+            timer = new Timer(15000);
             timer.Elapsed += (s, e) =>
                 {
                     timerTick++;
-                    if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick%3 == 0) CheckEngineBranch();
+                    if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick%4 == 0) CheckEngineBranch();
 
                     if (!spring.IsRunning)
                     {
                         if (SpawnConfig == null) ServerVerifyMap(false);
-                        if (SpawnConfig == null && timerTick%4 == 0) RunServerBalance(false, null, null);
+                        if (SpawnConfig == null && timerTick%3 == 0) RunServerBalance(false, null, null);
                     }
                 };
             timer.Start();
