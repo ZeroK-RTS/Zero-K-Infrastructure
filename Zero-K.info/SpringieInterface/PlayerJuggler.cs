@@ -80,6 +80,8 @@ namespace ZeroKWeb.SpringieInterface
                 }*/
             }
 
+            foreach (var b in bins.Where(x => x.MinPlayers > juggledAccounts.Count).ToList()) bins.Remove(b); // remove those that cant be possible handled
+
             SetPriorities(bins, juggledAccounts);
             
             sb.AppendLine("Original bins:");
@@ -131,11 +133,9 @@ namespace ZeroKWeb.SpringieInterface
                     } while (moved);
                 } while (true);
 
-                // players who are not in bins or are in bins that have enough players
-                var freePlayers = juggledAccounts.Keys.Count(x => !bins.Any(y => y.Assigned.Count >= y.MinPlayers && y.Assigned.Contains(x)));
-
-                todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => freePlayers < x.MinPlayers);
-                if (todel != null) todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.MinPlayers);
+                
+                // find first bin that cannot be started due to lack of people and remove it 
+                todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.MinPlayers);
 
                 if (todel != null)
                 {
