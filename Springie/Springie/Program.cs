@@ -24,9 +24,7 @@ namespace Springie
 	public static class Program
 	{
 		public static Main main;
-
-
-		public static DateTime startupTime = DateTime.Now;
+        public static DateTime startupTime = DateTime.Now;
 
 
 		public static void Main(string[] args)
@@ -43,16 +41,12 @@ namespace Springie
 			var workPath = Application.StartupPath;
 			if (workPath == "") workPath = Directory.GetCurrentDirectory();
 			main = new Main(workPath);
-            var lastUpdate = DateTime.Now;
+            
 			main.UpdateAll();
             while (true)
             {
                 Thread.Sleep(5000);
-                if (DateTime.Now.Subtract(lastUpdate).TotalSeconds > 140) {
-                    main.UpdateAll();
-                    main.JugglePlayers();
-                    lastUpdate = DateTime.Now;
-                }
+                main.PeriodicCheck();
             }
 		}
 

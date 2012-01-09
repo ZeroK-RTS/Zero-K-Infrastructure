@@ -117,10 +117,10 @@ namespace ZeroKWeb.SpringieInterface
                                 var acc = juggledAccounts[person];
                                 var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
 
-                                var biggerBattleRule = false;
-                                if (current != null && current != b) if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) biggerBattleRule = true;
+                                var saveBattleRule = false;
+                                if (current != null && current != b) if (b.Assigned.Count < b.MinPlayers && current.Assigned.Count >= current.MinPlayers + 1) saveBattleRule = true;
 
-                                if (current == null || biggerBattleRule)
+                                if (current == null || saveBattleRule)
                                 {
                                     Move(bins, person, b);
                                     moved = true;

@@ -21,9 +21,13 @@ namespace Springie
     public class Main
     {
         public const string ConfigMain = "main.xml";
+        const int ConfigUpdatePeriod = 240;
+        const int JugglePeriod = 120;
 
         readonly List<AutoHost> autoHosts = new List<AutoHost>();
         List<AutoHost> deletionCandidate = new List<AutoHost>();
+        DateTime lastConfigUpdate = DateTime.Now;
+        DateTime lastJuggle = DateTime.Now;
         readonly Timer timer;
 
         public MainConfig Config;
@@ -62,6 +66,7 @@ namespace Springie
                 return freePort;
             }
         }
+
 
         public string JugglePlayers()
         {
@@ -102,8 +107,9 @@ namespace Springie
                     return ret.Message;
                 }
             }
-            catch (Exception ex) {
-                Trace.TraceError("Error juggling: {0}",ex);
+            catch (Exception ex)
+            {
+                Trace.TraceError("Error juggling: {0}", ex);
                 return ex.ToString();
             }
             return null;
@@ -120,6 +126,25 @@ namespace Springie
                 Config = (MainConfig)s.Deserialize(r);
                 r.Close();
             }
+        }
+
+        public void PeriodicCheck()
+        {
+            if (DateTime.Now.Subtract(lastConfigUpdate).TotalSeconds > ConfigUpdatePeriod)
+            {
+                UpdateAll();
+                lastConfigUpdate = DateTime.Now;
+            }
+            if (DateTime.Now.Subtract(lastJuggle).TotalSeconds > JugglePeriod)
+            {
+                JugglePlayers();
+                lastJuggle = DateTime.Now;
+            }
+        }
+
+        public void RequestJuggle()
+        {
+            lastJuggle = DateTime.MinValue;
         }
 
 

@@ -149,7 +149,7 @@
     
     <div id="usr_gamePreferences">
         <h3>Game preferences</h3>
-
+        <a href="@Url.Action("Index", "Wiki", new { node="PlayerJuggler"})">what is this for?</a>
         @if (Model.AccountID == Global.AccountID)
         {
             <form action="@Url.Action("GamePreferences", "My")" method="POST">

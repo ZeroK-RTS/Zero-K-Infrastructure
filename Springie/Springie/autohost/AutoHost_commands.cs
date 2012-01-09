@@ -393,13 +393,13 @@ namespace Springie.autohost
 
         public void ComBalance(TasSayEventArgs e, string[] words)
         {
-            int teamCount;
+            int teamCount = 0;
             if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
-            else teamCount = 2;
-
-            if (SpawnConfig == null) RunServerBalance(false, teamCount, false);
+            
+            if (SpawnConfig == null) RunServerBalance(false, teamCount == 0? (int?)null : teamCount, false);
             else
             {
+                if (teamCount == 0) teamCount = 2;
                 ComFix(e, words);
                 BalanceTeams(teamCount, false);
             }

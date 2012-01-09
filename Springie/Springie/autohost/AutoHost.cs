@@ -824,7 +824,9 @@ namespace Springie.autohost
             }
             toNotify.Clear();
 
-            if (DateTime.Now.Subtract(spring.GameStarted).TotalMinutes >15) ServerVerifyMap(true);
+            if (SpawnConfig == null && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes >15) ServerVerifyMap(true);
+            if (SpawnConfig == null) Program.main.RequestJuggle();
+
         }
 
         void spring_SpringStarted(object sender, EventArgs e)

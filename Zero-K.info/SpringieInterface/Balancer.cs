@@ -465,7 +465,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (teamUsers[i].Count > 0)
                 {
                     if (i > 0) t += ":";
-                    t += (allynum + 1) + "=" + Math.Round(teamSums[i]/(teamUsers.Count() != 0? teamUsers.Count():1));
+                    t += (allynum + 1) + "=" + Math.Round(teamSums[i]/(teamUsers[i].Count() != 0? teamUsers[i].Count():1));
                 }
 
                 foreach (var u in teamUsers[i]) ret.Players.Single(x => x.LobbyID == u.LobbyId).AllyID = allynum;
