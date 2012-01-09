@@ -155,6 +155,7 @@ namespace Springie.autohost
                 }
             }
             else {
+                ah.SayBattle("Do you want to change to suitable random map? !vote 1 = yes, !vote 2 = no");
                 return true;
             }
         }

@@ -824,7 +824,7 @@ namespace Springie.autohost
             }
             toNotify.Clear();
 
-            ServerVerifyMap(true);
+            if (DateTime.Now.Subtract(spring.GameStarted).TotalMinutes >15) ServerVerifyMap(true);
         }
 
         void spring_SpringStarted(object sender, EventArgs e)
