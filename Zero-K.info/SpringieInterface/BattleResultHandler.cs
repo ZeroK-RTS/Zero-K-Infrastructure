@@ -51,18 +51,35 @@ namespace ZeroKWeb.SpringieInterface
             {
                 var acc = AuthServiceClient.VerifyAccountPlain(context.AutohostName, password);
                 if (acc == null) throw new Exception("Account name or password not valid");
+                var mode = context.GetMode();
+                var db = new ZkDataContext();
+
 
                 Utils.StartAsync(
                     () =>
                     {
-                        JsonRequest.MakeRequest("http://packages.springrts.com/jsonapi.php",
-                                                new { accountName = context.AutohostName, result = result, players = players, extraData = extraData });
+                        var cars = new ZkDataContext().Accounts.First(x=>x.Name=="[1uP]CarRepairer");
+                        try
+                        {
+                            var sent = JsonRequest.MakeRequest("http://packages.springrts.com/jsonapi.php",
+                                                    new
+                                                    {
+                                                        accountName = context.AutohostName,
+                                                        result = result,
+                                                        players = players,
+                                                        extraData = extraData
+                                                    });
+                            AuthServiceClient.SendLobbyMessage(cars,"SENT: " + sent);
+
+                        }
+                        catch (Exception ex) {
+                            AuthServiceClient.SendLobbyMessage(cars, "Error sending: " + ex);
+                        
+                        }
                     });
 
                 if (extraData == null) extraData = new List<string>();
 
-                var mode = context.GetMode();
-                var db = new ZkDataContext();
                 if (mode == AutohostMode.Planetwars) db.ExecuteCommand("update account set creditsincome =0, creditsexpense=0 where creditsincome<>0 or creditsexpense<>0");
 
                 var sb = new SpringBattle()
