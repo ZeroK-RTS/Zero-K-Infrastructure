@@ -46,12 +46,13 @@ namespace ZeroKWeb.SpringieInterface
                         {
                             if (res.Players.Count > 0)
                             {
-                                if (!isGameStart) res.Message = "Add some bot (computer player) as your enemy. Use button on bottom right. Chickens or CAI is recommended.";
-                                else
+                                res.Message = "Add some bot (computer player) as your enemy. Use button on bottom right. Chickens or CAI is recommended.";
+                                res.CanStart = false;
+                                /*else
                                 {
                                     res.Bots.Add(new BotTeam() { AllyID = 1, TeamID = 16, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
                                     res.Message = "Adding a normal chickens bot for you";
-                                }
+                                }*/
                             }
                         }
                         break;
