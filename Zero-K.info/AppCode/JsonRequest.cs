@@ -16,9 +16,11 @@ namespace ZeroKWeb
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "POST";
             request.ContentType = "application/json; charset=utf-8";
+            //request.ContentType = "text/html; charset=utf-8";
             var ser = new JavaScriptSerializer();
             StreamWriter writer = new StreamWriter(request.GetRequestStream());
             var serialized = ser.Serialize(data);
+            request.ContentLength = serialized.Length;
             writer.Write(serialized);
             writer.Close();
             var ms = new MemoryStream();
