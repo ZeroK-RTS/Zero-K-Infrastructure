@@ -167,7 +167,12 @@ namespace ZeroKWeb.SpringieInterface
                                 list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIs1v1==true&& x.MapIsFfa != true && x.MapIsChickens!=true).ToList();
                                 break;
                             case AutohostMode.GameChickens:
-                                list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsChickens == true).ToList();
+                                ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && (x.MapIsChickens == true || x.MapWaterLevel == 1));
+                                if (players > 16) ret = ret.Where(x => x.MapWidth > 20 || x.MapHeight > 20);
+                                else if (players > 6) ret = ret.Where(x => (x.MapWidth > 12 || x.MapHeight > 12) && (x.MapWidth <= 20 && x.MapHeight <= 20));
+                                else ret = ret.Where(x => x.MapHeight <= 12 && x.MapWidth <= 12);
+                                list= ret.ToList();
+
                                 break;
                             case AutohostMode.GameFFA:
                                 list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true && x.MapFFAMaxTeams == players).ToList();
