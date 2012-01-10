@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LobbyClient;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
@@ -90,7 +91,7 @@ namespace ZeroKWeb.SpringieInterface
             Bin todel = null;
             do 
             {
-                ResetAssigned(bins);
+                ResetAssigned(bins, juggledAccounts);
                 var priority = double.MaxValue;
 
                 do
@@ -195,12 +196,22 @@ namespace ZeroKWeb.SpringieInterface
                             string.Join(",", juggledAccounts.Where(x => !bins.Any(y => y.Assigned.Contains(x.Key))).Select(x => x.Value.Name)));
         }
 
-        static void ResetAssigned(List<Bin> bins)
+        static void ResetAssigned(List<Bin> bins, Dictionary<int, Account> juggledPlayers)
         {
             foreach (var b in bins)
             {
                 if (b.Mode == AutohostMode.Game1v1) b.Assigned = new List<int>(b.ManuallyJoined);
-                else b.Assigned.Clear();
+                else {
+                    b.Assigned.Clear();
+                    foreach (var id in b.ManuallyJoined)
+                    {
+                        User user;
+                        if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(juggledPlayers[id].Name, out user) && !user.IsZkLobbyUser) b.Assigned.Add(id);  // todo non zkl are not moveable yet, remove later
+                    }
+                }
+                
+                
+                
             }
         }
 
