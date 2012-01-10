@@ -20,8 +20,8 @@ namespace ZeroKWeb
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
             request.Method = "POST";
-            request.ContentType = "application/json; charset=utf-8";
-            //request.ContentType = "text/html; charset=utf-8";
+            //request.ContentType = "application/json; charset=utf-8";
+            request.ContentType = "text/html; charset=utf-8";
             request.ContentLength = serialized.Length;
 
             StreamWriter writer = new StreamWriter(request.GetRequestStream());
