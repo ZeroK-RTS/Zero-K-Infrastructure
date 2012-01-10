@@ -21,15 +21,30 @@ namespace ZeroKWeb
 
             request.Method = "POST";
             //request.ContentType = "application/json; charset=utf-8";
-            request.ContentType = "text/html; charset=utf-8";
+            //request.ContentType = "text/html; charset=utf-8";
+            request.ContentType = "application/x-www-form-urlencoded";
             request.ContentLength = serialized.Length;
 
-            StreamWriter writer = new StreamWriter(request.GetRequestStream());
 
+            /*
+            StreamWriter writer = new StreamWriter(request.GetRequestStream());
             writer.Write(serialized);
             writer.Close();
             var ms = new MemoryStream();
             request.GetResponse().GetResponseStream().CopyTo(ms);
+            */
+
+
+            //alternate method
+            ASCIIEncoding encoding = new ASCIIEncoding();
+            byte[] byte1 = encoding.GetBytes(serialized);
+            Stream newStream = request.GetRequestStream();
+            newStream.Write(byte1, 0, byte1.Length);
+            newStream.Close();
+
+
+
+            
             return serialized;
         }
 
