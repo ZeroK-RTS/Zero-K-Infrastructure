@@ -195,7 +195,11 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				{
 					try
 					{
-						if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced) if (Utils.VerifySpringInstalled()) lastScript = spring.StartGame(client, null, null, null);
+                        if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced) if (Utils.VerifySpringInstalled())
+                        {
+                            if (spring.IsRunning) spring.ExitGame();
+                            lastScript = spring.StartGame(client, null, null, null);
+                        }
 					}
 					catch (Exception ex)
 					{
@@ -410,7 +414,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				{
 					if (Utils.VerifySpringInstalled())
 					{
-						if (client.MyBattle != null) spring.StartGame(client, null, null, null);
+                        if (spring.IsRunning) spring.ExitGame();
+                        if (client.MyBattle != null) spring.StartGame(client, null, null, null);
 						else spring.StartGame(client, null, null, lastScript);
 						Program.NotifySection.RemoveBar(reconnectBar);
 					}
