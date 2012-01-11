@@ -54,7 +54,7 @@ namespace ZeroKWeb.SpringieInterface
                 var mode = context.GetMode();
                 var db = new ZkDataContext();
 
-
+                /*
                 Utils.StartAsync(
                     () =>
                     {
@@ -77,6 +77,7 @@ namespace ZeroKWeb.SpringieInterface
                         
                         }
                     });
+                 */
 
                 if (extraData == null) extraData = new List<string>();
 
