@@ -54,7 +54,7 @@ namespace ZeroKWeb.SpringieInterface
                 var mode = context.GetMode();
                 var db = new ZkDataContext();
 
-                /*
+                
                 Utils.StartAsync(
                     () =>
                     {
@@ -69,7 +69,7 @@ namespace ZeroKWeb.SpringieInterface
                                                         players = players,
                                                         extraData = extraData
                                                     });
-                            AuthServiceClient.SendLobbyMessage(cars,"SENT: " + sent);
+                            //AuthServiceClient.SendLobbyMessage(cars,"SENT: " + sent);
 
                         }
                         catch (Exception ex) {
@@ -77,7 +77,7 @@ namespace ZeroKWeb.SpringieInterface
                         
                         }
                     });
-                 */
+                
 
                 if (extraData == null) extraData = new List<string>();
 
