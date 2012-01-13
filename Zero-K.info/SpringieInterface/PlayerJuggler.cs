@@ -236,10 +236,14 @@ namespace ZeroKWeb.SpringieInterface
             {
                 b.PlayerPriority.Clear();
 
-                foreach (var a in juggledAccounts.ToList())
+                
+                
+                var list = new List<KeyValuePair<int,Account>>(juggledAccounts);
+                foreach (var a in list)
                 {
                     var lobbyID = a.Key;
                     var battlePref = a.Value.Preferences[b.Mode];
+
 
                     if (b.Mode == AutohostMode.Planetwars && a.Value.Level < GlobalConst.MinPlanetWarsLevel) continue; // dont queue who cannot join PW
 
