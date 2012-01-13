@@ -31,7 +31,7 @@ namespace ZkData
                         }
                     }
                     foreach (AutohostMode v in Enum.GetValues(typeof(AutohostMode))) if (!preferences.ContainsKey(v)) preferences[v] = GamePreference.Neutral;
-                    if (preferences.All(x=>x.Value == GamePreference.Never)) {
+                    if (preferences.Where(x=>x.Key != AutohostMode.None).All(x=>x.Value == GamePreference.Never)) {
                         foreach (var p in preferences) preferences[p.Key] = GamePreference.Neutral;
                     }
                 }

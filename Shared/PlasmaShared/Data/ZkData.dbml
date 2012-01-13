@@ -784,6 +784,7 @@
       <Column Name="Title" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="JoinChannels" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="AutohostMode" Type="AutohostMode" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="BattlePassword" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
     </Type>
   </Table>
 </Database>

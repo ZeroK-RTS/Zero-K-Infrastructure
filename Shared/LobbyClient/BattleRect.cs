@@ -49,6 +49,7 @@ namespace LobbyClient
             bottom = (double)Bottom / Max;
         }
 
+        
         static int LimitByMax(int input)
         {
             return Math.Min(Max, Math.Max(0, input));

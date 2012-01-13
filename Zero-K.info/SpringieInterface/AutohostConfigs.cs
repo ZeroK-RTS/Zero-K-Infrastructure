@@ -19,6 +19,7 @@ namespace ZeroKWeb.SpringieInterface
         public string AutoUpdateRapidTag;
         public string SpringVersion;
         public string AutoUpdateSpringBranch;
+        public string BattlePassword;
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
         public AhConfig() {}
@@ -38,6 +39,7 @@ namespace ZeroKWeb.SpringieInterface
             SpringVersion = db.SpringVersion;
             AutoUpdateSpringBranch = db.AutoUpdateSpringBranch;
             Mode = db.AutohostMode;
+            BattlePassword = db.BattlePassword;
             CommandLevels = (db.CommandLevels + "").Split('\n').Where(x => !string.IsNullOrEmpty(x)).Select(x =>
                 { 
                     var parts = x.Split('=');

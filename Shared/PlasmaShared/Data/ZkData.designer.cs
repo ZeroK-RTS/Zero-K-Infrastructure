@@ -19855,6 +19855,8 @@ namespace ZkData
 		
 		private AutohostMode _AutohostMode;
 		
+		private string _BattlePassword;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -19891,6 +19893,8 @@ namespace ZkData
     partial void OnJoinChannelsChanged();
     partial void OnAutohostModeChanging(AutohostMode value);
     partial void OnAutohostModeChanged();
+    partial void OnBattlePasswordChanging(string value);
+    partial void OnBattlePasswordChanged();
     #endregion
 		
 		public AutohostConfig()
@@ -20230,6 +20234,27 @@ namespace ZkData
 					this._AutohostMode = value;
 					this.SendPropertyChanged("AutohostMode");
 					this.OnAutohostModeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattlePassword", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public string BattlePassword
+		{
+			get
+			{
+				return this._BattlePassword;
+			}
+			set
+			{
+				if ((this._BattlePassword != value))
+				{
+					this.OnBattlePasswordChanging(value);
+					this.SendPropertyChanging();
+					this._BattlePassword = value;
+					this.SendPropertyChanged("BattlePassword");
+					this.OnBattlePasswordChanged();
 				}
 			}
 		}

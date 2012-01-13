@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Web.Services;
+using LobbyClient;
+using PlasmaShared;
 using ZeroKWeb.SpringieInterface;
 using ZkData;
 
@@ -68,7 +71,34 @@ namespace ZeroKWeb
         [WebMethod]
         public JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
         {
-            return PlayerJuggler.JugglePlayers(autohosts);
+            return new PlayerJuggler(autohosts).JugglePlayers();
+        }
+
+        [WebMethod]
+        public void StoreBoxes(BattleContext context, SerializableDictionary<int, BattleRect> rects) {
+            var db = new ZkDataContext();
+            var map = db.Resources.Single(x => x.InternalName == context.Map && x.TypeID == ResourceType.Map);
+            var orgCommands = map.MapSpringieCommands;
+            var newCommands = "!clearbox\n";
+            foreach (var r in rects.OrderBy(x => x.Key)) {
+                double left;
+                double top;
+                double right;
+                double bottom;
+                r.Value.ToFractions(out left, out top, out right,out bottom);
+                if (left != 0 || right != 0 || top != 0 || bottom != 0) {
+                    newCommands += string.Format("!addbox {0} {1} {2} {3} {4}\n", (int)(left * 100), (int)(top * 100), (int)((right - left) * 100), (int)((bottom - top) * 100), r.Key + 1);
+               }
+            }
+
+            if (!string.IsNullOrEmpty(orgCommands)) {
+                foreach (var line in orgCommands.Lines().Where(x => !string.IsNullOrEmpty(x))) {
+                    if (!line.StartsWith("!addbox ") && !line.StartsWith("!clearbox ") && !line.StartsWith("!corners ") && !line.StartsWith("!split "))
+                        newCommands += line + "\n";
+                }
+            }
+            map.MapSpringieCommands = newCommands;
+            db.SubmitChanges();
         }
 
 
