@@ -74,20 +74,26 @@ namespace ZeroKWeb
             return new PlayerJuggler(autohosts).JugglePlayers();
         }
 
+
+        public class RectInfo {
+            public BattleRect Rect;
+            public int Number;
+        }
+
         [WebMethod]
-        public void StoreBoxes(BattleContext context, SerializableDictionary<int, BattleRect> rects) {
+        public void StoreBoxes(BattleContext context, List<RectInfo> rects) {
             var db = new ZkDataContext();
             var map = db.Resources.Single(x => x.InternalName == context.Map && x.TypeID == ResourceType.Map);
             var orgCommands = map.MapSpringieCommands;
             var newCommands = "!clearbox\n";
-            foreach (var r in rects.OrderBy(x => x.Key)) {
+            foreach (var r in rects.OrderBy(x => x.Number)) {
                 double left;
                 double top;
                 double right;
                 double bottom;
-                r.Value.ToFractions(out left, out top, out right,out bottom);
+                r.Rect.ToFractions(out left, out top, out right,out bottom);
                 if (left != 0 || right != 0 || top != 0 || bottom != 0) {
-                    newCommands += string.Format("!addbox {0} {1} {2} {3} {4}\n", (int)(left * 100), (int)(top * 100), (int)((right - left) * 100), (int)((bottom - top) * 100), r.Key + 1);
+                    newCommands += string.Format("!addbox {0} {1} {2} {3} {4}\n", (int)(left * 100), (int)(top * 100), (int)((right - left) * 100), (int)((bottom - top) * 100), r.Number + 1);
                }
             }
 
