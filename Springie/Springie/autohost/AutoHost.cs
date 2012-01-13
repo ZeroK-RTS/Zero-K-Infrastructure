@@ -510,6 +510,10 @@ namespace Springie.autohost
                     ComForceSpectatorAfk(e, words);
                     break;
 
+                case "saveboxes":
+                    ComSaveBoxes(e, words);
+                    break;
+
                 case "cheats":
                     if (spring.IsRunning)
                     {
@@ -612,13 +616,13 @@ namespace Springie.autohost
 
             var title = config.Title.Replace("%1", MainConfig.SpringieVersion);
             var password = "*";
+            if (!string.IsNullOrEmpty(config.BattlePassword)) password = config.BattlePassword;
 
             if (SpawnConfig != null)
             {
                 modname = SpawnConfig.Mod;
                 title = SpawnConfig.Title;
-                if (String.IsNullOrEmpty(SpawnConfig.Password)) password = "*";
-                else password = SpawnConfig.Password;
+                if (!String.IsNullOrEmpty(SpawnConfig.Password)) password = SpawnConfig.Password;
             }
 
             //title = title + string.Format(" [engine{0}]", springPaths.SpringVersion);

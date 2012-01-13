@@ -8,8 +8,10 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using LobbyClient;
+using PlasmaShared;
 using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
+using BattleRect = LobbyClient.BattleRect;
 
 #endregion
 
@@ -1383,6 +1385,12 @@ namespace Springie.autohost
             {
                 spring.SayGame(String.Format("[{0}]{1}", e.UserName, "!transmit " + Utils.Glue(words)));
             }
+        }
+
+        void ComSaveBoxes(TasSayEventArgs tasSayEventArgs, string[] words)
+        {
+            var serv = new SpringieService();
+            //serv.StoreBoxes(tas.MyBattle.GetContext(), ser);
         }
     }
 }

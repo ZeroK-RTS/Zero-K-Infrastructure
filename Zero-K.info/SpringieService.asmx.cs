@@ -76,7 +76,10 @@ namespace ZeroKWeb
 
 
         public class RectInfo {
-            public BattleRect Rect;
+            public int X;
+            public int Y;
+            public int Width;
+            public int Height;
             public int Number;
         }
 
@@ -87,13 +90,8 @@ namespace ZeroKWeb
             var orgCommands = map.MapSpringieCommands;
             var newCommands = "!clearbox\n";
             foreach (var r in rects.OrderBy(x => x.Number)) {
-                double left;
-                double top;
-                double right;
-                double bottom;
-                r.Rect.ToFractions(out left, out top, out right,out bottom);
-                if (left != 0 || right != 0 || top != 0 || bottom != 0) {
-                    newCommands += string.Format("!addbox {0} {1} {2} {3} {4}\n", (int)(left * 100), (int)(top * 100), (int)((right - left) * 100), (int)((bottom - top) * 100), r.Number + 1);
+                if (r.X != 0 || r.Y != 0 || r.Width != 0 || r.Height != 0) {
+                    newCommands += string.Format("!addbox {0} {1} {2} {3} {4}\n",r.X,r.Y,r.Width,r.Height, r.Number + 1);
                }
             }
 

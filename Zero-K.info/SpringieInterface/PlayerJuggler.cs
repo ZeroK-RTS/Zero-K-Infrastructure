@@ -232,7 +232,7 @@ namespace ZeroKWeb.SpringieInterface
 
         void SetPriorities()
         {
-            foreach (var b in bins)
+            foreach (var b in bins.ToList())
             {
                 b.PlayerPriority.Clear();
 

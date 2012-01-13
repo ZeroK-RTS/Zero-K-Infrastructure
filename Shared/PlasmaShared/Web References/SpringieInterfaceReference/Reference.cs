@@ -45,6 +45,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private System.Threading.SendOrPostCallback JugglePlayersOperationCompleted;
         
+        private System.Threading.SendOrPostCallback StoreBoxesOperationCompleted;
+        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -106,6 +108,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         public event JugglePlayersCompletedEventHandler JugglePlayersCompleted;
+        
+        /// <remarks/>
+        public event StoreBoxesCompletedEventHandler StoreBoxesCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -358,6 +363,36 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/StoreBoxes", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void StoreBoxes(BattleContext context, RectInfo[] rects) {
+            this.Invoke("StoreBoxes", new object[] {
+                        context,
+                        rects});
+        }
+        
+        /// <remarks/>
+        public void StoreBoxesAsync(BattleContext context, RectInfo[] rects) {
+            this.StoreBoxesAsync(context, rects, null);
+        }
+        
+        /// <remarks/>
+        public void StoreBoxesAsync(BattleContext context, RectInfo[] rects, object userState) {
+            if ((this.StoreBoxesOperationCompleted == null)) {
+                this.StoreBoxesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnStoreBoxesOperationCompleted);
+            }
+            this.InvokeAsync("StoreBoxes", new object[] {
+                        context,
+                        rects}, this.StoreBoxesOperationCompleted, userState);
+        }
+        
+        private void OnStoreBoxesOperationCompleted(object arg) {
+            if ((this.StoreBoxesCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.StoreBoxesCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -384,27 +419,15 @@ namespace PlasmaShared.SpringieInterfaceReference {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class BattleContext {
         
-        private string autohostNameField;
-        
         private string mapField;
+        
+        private string autohostNameField;
         
         private string modField;
         
         private PlayerTeam[] playersField;
         
         private BotTeam[] botsField;
-        
-        private AutohostMode modeField;
-        
-        /// <remarks/>
-        public string AutohostName {
-            get {
-                return this.autohostNameField;
-            }
-            set {
-                this.autohostNameField = value;
-            }
-        }
         
         /// <remarks/>
         public string Map {
@@ -413,6 +436,16 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.mapField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string AutohostName {
+            get {
+                return this.autohostNameField;
+            }
+            set {
+                this.autohostNameField = value;
             }
         }
         
@@ -445,16 +478,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
                 this.botsField = value;
             }
         }
-        
-        /// <remarks/>
-        public AutohostMode Mode {
-            get {
-                return this.modeField;
-            }
-            set {
-                this.modeField = value;
-            }
-        }
     }
     
     /// <remarks/>
@@ -472,6 +495,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         private string nameField;
         
         private bool isSpectatorField;
+        
+        private bool isIngameField;
         
         private int teamIDField;
         
@@ -516,12 +541,112 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
+        public bool IsIngame {
+            get {
+                return this.isIngameField;
+            }
+            set {
+                this.isIngameField = value;
+            }
+        }
+        
+        /// <remarks/>
         public int TeamID {
             get {
                 return this.teamIDField;
             }
             set {
                 this.teamIDField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.233")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class BattleRect {
+        
+        private int bottomField;
+        
+        private int leftField;
+        
+        private int rightField;
+        
+        private int topField;
+        
+        /// <remarks/>
+        public int Bottom {
+            get {
+                return this.bottomField;
+            }
+            set {
+                this.bottomField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Left {
+            get {
+                return this.leftField;
+            }
+            set {
+                this.leftField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Right {
+            get {
+                return this.rightField;
+            }
+            set {
+                this.rightField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Top {
+            get {
+                return this.topField;
+            }
+            set {
+                this.topField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.233")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class RectInfo {
+        
+        private BattleRect rectField;
+        
+        private int numberField;
+        
+        /// <remarks/>
+        public BattleRect Rect {
+            get {
+                return this.rectField;
+            }
+            set {
+                this.rectField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Number {
+            get {
+                return this.numberField;
+            }
+            set {
+                this.numberField = value;
             }
         }
     }
@@ -702,6 +827,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private string autoUpdateSpringBranchField;
         
+        private string battlePasswordField;
+        
         private AutohostMode modeField;
         
         private CommandLevel[] commandLevelsField;
@@ -823,6 +950,16 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.autoUpdateSpringBranchField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string BattlePassword {
+            get {
+                return this.battlePasswordField;
+            }
+            set {
+                this.battlePasswordField = value;
             }
         }
         
@@ -1654,6 +1791,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
         }
     }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void StoreBoxesCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }
 
 #pragma warning restore 1591

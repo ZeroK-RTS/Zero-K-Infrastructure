@@ -12,12 +12,11 @@
       </s:element>
       <s:complexType name="BattleContext">
         <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="AutohostName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Map" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AutohostName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Players" type="tns:ArrayOfPlayerTeam" />
           <s:element minOccurs="0" maxOccurs="1" name="Bots" type="tns:ArrayOfBotTeam" />
-          <s:element minOccurs="1" maxOccurs="1" name="Mode" type="tns:AutohostMode" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="ArrayOfPlayerTeam">
@@ -31,6 +30,7 @@
           <s:element minOccurs="1" maxOccurs="1" name="AllyID" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="IsSpectator" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsIngame" type="s:boolean" />
           <s:element minOccurs="1" maxOccurs="1" name="TeamID" type="s:int" />
         </s:sequence>
       </s:complexType>
@@ -48,16 +48,6 @@
           <s:element minOccurs="1" maxOccurs="1" name="TeamID" type="s:int" />
         </s:sequence>
       </s:complexType>
-      <s:simpleType name="AutohostMode">
-        <s:restriction base="s:string">
-          <s:enumeration value="None" />
-          <s:enumeration value="GameTeams" />
-          <s:enumeration value="Planetwars" />
-          <s:enumeration value="Game1v1" />
-          <s:enumeration value="GameFFA" />
-          <s:enumeration value="GameChickens" />
-        </s:restriction>
-      </s:simpleType>
       <s:element name="AutohostPlayerJoinedResponse">
         <s:complexType>
           <s:sequence>
@@ -250,10 +240,21 @@
           <s:element minOccurs="0" maxOccurs="1" name="AutoUpdateRapidTag" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="SpringVersion" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="AutoUpdateSpringBranch" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="BattlePassword" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Mode" type="tns:AutohostMode" />
           <s:element minOccurs="0" maxOccurs="1" name="CommandLevels" type="tns:ArrayOfCommandLevel" />
         </s:sequence>
       </s:complexType>
+      <s:simpleType name="AutohostMode">
+        <s:restriction base="s:string">
+          <s:enumeration value="None" />
+          <s:enumeration value="GameTeams" />
+          <s:enumeration value="Planetwars" />
+          <s:enumeration value="Game1v1" />
+          <s:enumeration value="GameFFA" />
+          <s:enumeration value="GameChickens" />
+        </s:restriction>
+      </s:simpleType>
       <s:complexType name="ArrayOfCommandLevel">
         <s:sequence>
           <s:element minOccurs="0" maxOccurs="unbounded" name="CommandLevel" nillable="true" type="tns:CommandLevel" />
@@ -322,6 +323,36 @@
           <s:element minOccurs="0" maxOccurs="1" name="TargetAutohost" type="s:string" />
         </s:sequence>
       </s:complexType>
+      <s:element name="StoreBoxes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="context" type="tns:BattleContext" />
+            <s:element minOccurs="0" maxOccurs="1" name="rects" type="tns:ArrayOfRectInfo" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfRectInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="RectInfo" nillable="true" type="tns:RectInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="RectInfo">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Rect" type="tns:BattleRect" />
+          <s:element minOccurs="1" maxOccurs="1" name="Number" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="BattleRect">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Bottom" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Left" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Right" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Top" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="StoreBoxesResponse">
+        <s:complexType />
+      </s:element>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="AutohostPlayerJoinedSoapIn">
@@ -372,6 +403,12 @@
   <wsdl:message name="JugglePlayersSoapOut">
     <wsdl:part name="parameters" element="tns:JugglePlayersResponse" />
   </wsdl:message>
+  <wsdl:message name="StoreBoxesSoapIn">
+    <wsdl:part name="parameters" element="tns:StoreBoxes" />
+  </wsdl:message>
+  <wsdl:message name="StoreBoxesSoapOut">
+    <wsdl:part name="parameters" element="tns:StoreBoxesResponse" />
+  </wsdl:message>
   <wsdl:portType name="SpringieServiceSoap">
     <wsdl:operation name="AutohostPlayerJoined">
       <wsdl:input message="tns:AutohostPlayerJoinedSoapIn" />
@@ -404,6 +441,10 @@
     <wsdl:operation name="JugglePlayers">
       <wsdl:input message="tns:JugglePlayersSoapIn" />
       <wsdl:output message="tns:JugglePlayersSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="StoreBoxes">
+      <wsdl:input message="tns:StoreBoxesSoapIn" />
+      <wsdl:output message="tns:StoreBoxesSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="SpringieServiceSoap" type="tns:SpringieServiceSoap">
@@ -480,6 +521,15 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
+    <wsdl:operation name="StoreBoxes">
+      <soap:operation soapAction="http://tempuri.org/StoreBoxes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
   </wsdl:binding>
   <wsdl:binding name="SpringieServiceSoap12" type="tns:SpringieServiceSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
@@ -548,6 +598,15 @@
     </wsdl:operation>
     <wsdl:operation name="JugglePlayers">
       <soap12:operation soapAction="http://tempuri.org/JugglePlayers" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="StoreBoxes">
+      <soap12:operation soapAction="http://tempuri.org/StoreBoxes" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
