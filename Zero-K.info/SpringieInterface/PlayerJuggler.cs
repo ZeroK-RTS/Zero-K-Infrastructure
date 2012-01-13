@@ -99,7 +99,7 @@ namespace ZeroKWeb.SpringieInterface
 
             foreach (var b in bins.Where(x => x.MinPlayers > juggledAccounts.Count).ToList()) bins.Remove(b); // remove those that cant be possible handled
 
-            SetPriorities(bins, juggledAccounts);
+            SetPriorities();
             
             sb.AppendLine("Original bins:");
             PrintBins(sb);
@@ -230,7 +230,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts)
+        void SetPriorities()
         {
             foreach (var b in bins)
             {
