@@ -101,13 +101,19 @@ namespace ZeroKLobby.MicroLobby
 
     void okButton_Click(object sender, EventArgs e)
     {
-      Program.Conf.HasHosted = true;
+        if (string.IsNullOrEmpty(passwordBox.Text) || passwordBox.Text.Contains(' ')) {
+            MessageBox.Show("Password cannot be empty");
+            return;
+        }
+
+        Program.Conf.HasHosted = true;
       Program.Conf.HostBattle_MaxPlayers = maxPlayersBar.Value;
       Program.Conf.HostBattle_MinPlayers = minPlayersBar.Value;
       Program.Conf.HostBattle_Teams = teamsBar.Value;
       Program.Conf.HostBattle_Title = battleTitleBox.Text;
       Program.Conf.HostBattle_UseManage = enableManageBox.Checked;
       Program.Conf.HostBattle_SpringieCommands = springieCommandsBox.Text;
+        
       Program.SaveConfig();
 
       DialogResult = DialogResult.OK;

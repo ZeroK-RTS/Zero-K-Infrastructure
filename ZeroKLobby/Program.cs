@@ -226,6 +226,8 @@ namespace ZeroKLobby
 
                 ServerImages = new ServerImagesHandler(SpringPaths);
 
+                //DriverCheck.DoCheck();
+
                 // log, for debugging
                 TasClient.Connected += (s, e) => Trace.TraceInformation("TASC connected");
                 TasClient.LoginAccepted += (s, e) =>
