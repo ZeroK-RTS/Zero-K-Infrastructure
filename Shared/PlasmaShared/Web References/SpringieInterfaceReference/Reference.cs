@@ -20,6 +20,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
     using System.Web.Services.Protocols;
     using System.ComponentModel;
     using System.Xml.Serialization;
+    using System.Data;
     
     
     /// <remarks/>
@@ -44,6 +45,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         private System.Threading.SendOrPostCallback GetMapCommandsOperationCompleted;
         
         private System.Threading.SendOrPostCallback JugglePlayersOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback StoreBoxesOperationCompleted;
         
         private bool useDefaultCredentialsSetExplicitly;
         
@@ -106,6 +109,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         public event JugglePlayersCompletedEventHandler JugglePlayersCompleted;
+        
+        /// <remarks/>
+        public event StoreBoxesCompletedEventHandler StoreBoxesCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/AutohostPlayerJoined", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -358,6 +364,36 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/StoreBoxes", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void StoreBoxes(BattleContext context, SerializableDictionary rects) {
+            this.Invoke("StoreBoxes", new object[] {
+                        context,
+                        rects});
+        }
+        
+        /// <remarks/>
+        public void StoreBoxesAsync(BattleContext context, System.Data.DataSet rects) {
+            this.StoreBoxesAsync(context, rects, null);
+        }
+        
+        /// <remarks/>
+        public void StoreBoxesAsync(BattleContext context, System.Data.DataSet rects, object userState) {
+            if ((this.StoreBoxesOperationCompleted == null)) {
+                this.StoreBoxesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnStoreBoxesOperationCompleted);
+            }
+            this.InvokeAsync("StoreBoxes", new object[] {
+                        context,
+                        rects}, this.StoreBoxesOperationCompleted, userState);
+        }
+        
+        private void OnStoreBoxesOperationCompleted(object arg) {
+            if ((this.StoreBoxesCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.StoreBoxesCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -393,8 +429,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
         private PlayerTeam[] playersField;
         
         private BotTeam[] botsField;
-        
-        private AutohostMode modeField;
         
         /// <remarks/>
         public string AutohostName {
@@ -445,16 +479,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
                 this.botsField = value;
             }
         }
-        
-        /// <remarks/>
-        public AutohostMode Mode {
-            get {
-                return this.modeField;
-            }
-            set {
-                this.modeField = value;
-            }
-        }
     }
     
     /// <remarks/>
@@ -472,6 +496,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         private string nameField;
         
         private bool isSpectatorField;
+        
+        private bool isIngameField;
         
         private int teamIDField;
         
@@ -512,6 +538,16 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.isSpectatorField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool IsIngame {
+            get {
+                return this.isIngameField;
+            }
+            set {
+                this.isIngameField = value;
             }
         }
         
@@ -702,6 +738,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private string autoUpdateSpringBranchField;
         
+        private string battlePasswordField;
+        
         private AutohostMode modeField;
         
         private CommandLevel[] commandLevelsField;
@@ -823,6 +861,16 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.autoUpdateSpringBranchField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string BattlePassword {
+            get {
+                return this.battlePasswordField;
+            }
+            set {
+                this.battlePasswordField = value;
             }
         }
         
@@ -1654,6 +1702,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
         }
     }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void StoreBoxesCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }
 
 #pragma warning restore 1591
