@@ -236,7 +236,7 @@ namespace ZeroKWeb.SpringieInterface
             {
                 b.PlayerPriority.Clear();
 
-                foreach (var a in juggledAccounts)
+                foreach (var a in juggledAccounts.ToList())
                 {
                     var lobbyID = a.Key;
                     var battlePref = a.Value.Preferences[b.Mode];
