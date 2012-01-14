@@ -71,7 +71,7 @@ namespace ZeroKWeb
         [WebMethod]
         public JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
         {
-            return new PlayerJuggler(autohosts).JugglePlayers();
+            return PlayerJuggler.JugglePlayers(autohosts);
         }
 
 

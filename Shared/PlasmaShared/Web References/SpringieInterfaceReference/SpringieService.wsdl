@@ -338,16 +338,11 @@
       </s:complexType>
       <s:complexType name="RectInfo">
         <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Rect" type="tns:BattleRect" />
+          <s:element minOccurs="1" maxOccurs="1" name="X" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Y" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Width" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Height" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="Number" type="s:int" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="BattleRect">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Bottom" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="Left" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="Right" type="s:int" />
-          <s:element minOccurs="1" maxOccurs="1" name="Top" type="s:int" />
         </s:sequence>
       </s:complexType>
       <s:element name="StoreBoxesResponse">

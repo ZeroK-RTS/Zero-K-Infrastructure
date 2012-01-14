@@ -567,76 +567,55 @@ namespace PlasmaShared.SpringieInterfaceReference {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class BattleRect {
-        
-        private int bottomField;
-        
-        private int leftField;
-        
-        private int rightField;
-        
-        private int topField;
-        
-        /// <remarks/>
-        public int Bottom {
-            get {
-                return this.bottomField;
-            }
-            set {
-                this.bottomField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public int Left {
-            get {
-                return this.leftField;
-            }
-            set {
-                this.leftField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public int Right {
-            get {
-                return this.rightField;
-            }
-            set {
-                this.rightField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public int Top {
-            get {
-                return this.topField;
-            }
-            set {
-                this.topField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.233")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class RectInfo {
         
-        private BattleRect rectField;
+        private int xField;
+        
+        private int yField;
+        
+        private int widthField;
+        
+        private int heightField;
         
         private int numberField;
         
         /// <remarks/>
-        public BattleRect Rect {
+        public int X {
             get {
-                return this.rectField;
+                return this.xField;
             }
             set {
-                this.rectField = value;
+                this.xField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Y {
+            get {
+                return this.yField;
+            }
+            set {
+                this.yField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Width {
+            get {
+                return this.widthField;
+            }
+            set {
+                this.widthField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Height {
+            get {
+                return this.heightField;
+            }
+            set {
+                this.heightField = value;
             }
         }
         

@@ -23,25 +23,23 @@ namespace ZeroKWeb.SpringieInterface
                                                           AutohostMode.GameTeams,
                                                           AutohostMode.GameChickens
                                                       };
-        List<JugglerAutohost> autohosts;
-        Dictionary<int, Account> juggledAccounts;
-        List<Bin> bins;
-        Dictionary<int, bool> canBeMoved;
 
-        public PlayerJuggler(List<JugglerAutohost> autohosts) {
-            this.autohosts = autohosts;
 
+        public static bool CanMove(Account acc)
+        {
+            User user;
+            if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && !user.IsZkLobbyUser) return false;
+            return true;
         }
 
-
-        public JugglerResult JugglePlayers()
+        public static JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
         {
             var ret = new JugglerResult();
-            bins = new List<Bin>();
+            var bins = new List<Bin>();
             var db = new ZkDataContext();
             var sb = new StringBuilder();
             var lobbyIds = new List<int?>();
-
+            
             foreach (var ah in autohosts)
             {
                 if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
@@ -57,15 +55,8 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
 
-            juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID)).ToDictionary(x => x.LobbyID ?? 0);
-            canBeMoved = new Dictionary<int, bool>();
-            canBeMoved = juggledAccounts.ToDictionary(x=>x.Key, x=> {
-                                                                        User user;
-                                                                        Global.Nightwatch.Tas.ExistingUsers.TryGetValue(x.Value.Name,out user);    
-                                                                        return user == null || !user.IsZkLobbyUser;
-                });
-
-
+            var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID)).ToDictionary(x => x.LobbyID ?? 0);
+            
             foreach (var grp in
                 autohosts.Where(x => x.RunningGameStartContext == null && x.LobbyContext != null && x.LobbyContext.Players.Any(y => !y.IsSpectator)).
                     GroupBy(x => x.LobbyContext.GetMode()))
@@ -99,15 +90,15 @@ namespace ZeroKWeb.SpringieInterface
 
             foreach (var b in bins.Where(x => x.MinPlayers > juggledAccounts.Count).ToList()) bins.Remove(b); // remove those that cant be possible handled
 
-            SetPriorities();
+            SetPriorities(bins, juggledAccounts);
             
             sb.AppendLine("Original bins:");
-            PrintBins(sb);
+            PrintBins(juggledAccounts, bins, sb);
 
             Bin todel = null;
             do 
             {
-                ResetAssigned();
+                ResetAssigned(bins, juggledAccounts);
                 var priority = double.MaxValue;
 
                 do
@@ -128,7 +119,7 @@ namespace ZeroKWeb.SpringieInterface
                             if (b.Assigned.Count >= b.MaxPlayers) continue;
 
                             var binElo = b.Assigned.Average(x => (double?)juggledAccounts[x].EffectiveElo);
-                            var persons = b.PlayerPriority.Where(x => !b.Assigned.Contains(x.Key) && x.Value == priority && canBeMoved.ContainsKey(x.Key)).Select(x => x.Key);
+                            var persons = b.PlayerPriority.Where(x => !b.Assigned.Contains(x.Key) && x.Value == priority && CanMove(juggledAccounts[x.Key])).Select(x => x.Key);
                             if (binElo != null) persons = persons.OrderByDescending(x => Math.Abs(juggledAccounts[x].EffectiveElo - binElo.Value));
 
                             foreach (var person in persons)
@@ -141,7 +132,7 @@ namespace ZeroKWeb.SpringieInterface
 
                                 if (current == null || saveBattleRule)
                                 {
-                                    Move(person, b);
+                                    Move(bins, person, b);
                                     moved = true;
                                     break;
                                 }
@@ -158,12 +149,12 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     bins.Remove(todel);
                     sb.AppendLine("removing bin " + todel.Mode);
-                    PrintBins(sb);
+                    PrintBins(juggledAccounts, bins, sb);
                 }
             } while (todel != null);
 
             sb.AppendLine("Final bins:");
-            PrintBins(sb);
+            PrintBins(juggledAccounts, bins, sb);
 
             if (bins.Any())
             {
@@ -189,14 +180,14 @@ namespace ZeroKWeb.SpringieInterface
         }
 
 
-        void Move(int lobbyID, Bin target)
+        static void Move(List<Bin> bins, int lobbyID, Bin target)
         {
             foreach (var b in bins) b.Assigned.Remove(lobbyID);
 
             if (!target.Assigned.Contains(lobbyID)) target.Assigned.Add(lobbyID);
         }
 
-        void PrintBins(StringBuilder sb)
+        static void PrintBins(Dictionary<int, Account> juggledAccounts, List<Bin> bins, StringBuilder sb)
         {
             foreach (var b in bins)
             {
@@ -212,7 +203,7 @@ namespace ZeroKWeb.SpringieInterface
                             string.Join(",", juggledAccounts.Where(x => !bins.Any(y => y.Assigned.Contains(x.Key))).Select(x => x.Value.Name)));
         }
 
-        void ResetAssigned()
+        static void ResetAssigned(List<Bin> bins, Dictionary<int, Account> juggledPlayers)
         {
             foreach (var b in bins)
             {
@@ -221,7 +212,7 @@ namespace ZeroKWeb.SpringieInterface
                     b.Assigned.Clear();
                     foreach (var id in b.ManuallyJoined)
                     {
-                        if (!canBeMoved.ContainsKey(id))  b.Assigned.Add(id);  // todo non zkl are not moveable yet, remove later
+                        if (!CanMove(juggledPlayers[id]))  b.Assigned.Add(id);  // todo non zkl are not moveable yet, remove later
                     }
                 }
                 
@@ -230,20 +221,16 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        void SetPriorities()
+        static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts)
         {
-            foreach (var b in bins.ToList())
+            foreach (var b in bins)
             {
                 b.PlayerPriority.Clear();
 
-                
-                
-                var list = new List<KeyValuePair<int,Account>>(juggledAccounts);
-                foreach (var a in list)
+                foreach (var a in juggledAccounts)
                 {
                     var lobbyID = a.Key;
                     var battlePref = a.Value.Preferences[b.Mode];
-
 
                     if (b.Mode == AutohostMode.Planetwars && a.Value.Level < GlobalConst.MinPlanetWarsLevel) continue; // dont queue who cannot join PW
 
