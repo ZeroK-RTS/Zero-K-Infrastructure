@@ -97,7 +97,7 @@ namespace ZeroKWeb
 
             if (!string.IsNullOrEmpty(orgCommands)) {
                 foreach (var line in orgCommands.Lines().Where(x => !string.IsNullOrEmpty(x))) {
-                    if (!line.StartsWith("!addbox ") && !line.StartsWith("!clearbox ") && !line.StartsWith("!corners ") && !line.StartsWith("!split "))
+                    if (!line.StartsWith("!addbox") && !line.StartsWith("!clearbox") && !line.StartsWith("!corners") && !line.StartsWith("!split "))
                         newCommands += line + "\n";
                 }
             }

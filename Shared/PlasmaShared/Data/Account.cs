@@ -21,19 +21,20 @@ namespace ZkData
                 if (preferences != null) return preferences;
                 else
                 {
-                    preferences = new Dictionary<AutohostMode, GamePreference>();
+                    var temp = new Dictionary<AutohostMode, GamePreference>();
                     if (!string.IsNullOrEmpty(GamePreferences))
                     {
                         foreach (var line in GamePreferences.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                         {
                             var parts = line.Split('=');
-                            preferences[(AutohostMode)int.Parse(parts[0])] = (GamePreference)int.Parse(parts[1]);
+                            temp[(AutohostMode)int.Parse(parts[0])] = (GamePreference)int.Parse(parts[1]);
                         }
                     }
-                    foreach (AutohostMode v in Enum.GetValues(typeof(AutohostMode))) if (!preferences.ContainsKey(v)) preferences[v] = GamePreference.Neutral;
-                    if (preferences.Where(x=>x.Key != AutohostMode.None).All(x=>x.Value == GamePreference.Never)) {
-                        foreach (var p in preferences) preferences[p.Key] = GamePreference.Neutral;
+                    foreach (AutohostMode v in Enum.GetValues(typeof(AutohostMode))) if (!temp.ContainsKey(v)) temp[v] = GamePreference.Neutral;
+                    if (temp.Where(x=>x.Key != AutohostMode.None).All(x=>x.Value == GamePreference.Never)) {
+                        foreach (var p in temp) temp[p.Key] = GamePreference.Neutral;
                     }
+                    preferences = temp;
                 }
                 return preferences;
             }
