@@ -581,6 +581,7 @@ namespace Springie.autohost
                     }
                     if (string.IsNullOrEmpty(sc.Password)) {
                         Respond(e, "Please specify a password");
+                        return;
                     }
                     Program.main.SpawnAutoHost(config, sc);
                 }

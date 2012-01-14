@@ -270,7 +270,7 @@ namespace ZeroKLobby
                     var u = eventArgs.Data;
                     if (!string.IsNullOrEmpty(u.Clan)) TasClient.JoinChannel(u.Clan);
                     if (!string.IsNullOrEmpty(u.Faction)) TasClient.JoinChannel(u.Faction);
-                    TasClient.JoinChannel(TasClient.MyUser.Country);
+                    if (!string.IsNullOrEmpty(TasClient.MyUser.Country) && TasClient.MyUser.Country!="??") TasClient.JoinChannel(TasClient.MyUser.Country);
                 };
 
                 ConnectBar = new ConnectBar(TasClient);
