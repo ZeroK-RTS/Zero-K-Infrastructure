@@ -282,6 +282,8 @@ namespace ZeroKLobby
                 BattleBar = new BattleBar();
                 NewVersionBar = new NewVersionBar();
 
+                if (!Conf.DisableDriverCheck) PlasmaShared.Utils.StartAsync(DriverCheck.DoCheck);
+
                 if (Conf.ShowFriendsWindow == true)
                 {
                     MainWindow.frdWindow = new FriendsWindow();

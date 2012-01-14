@@ -13,6 +13,7 @@ namespace ZeroKLobby
          = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration");
 
             string graphicsCard = string.Empty;
+            string driver = string.Empty;
             foreach (ManagementObject mo in searcher.Get())
             {
                 foreach (PropertyData property in mo.Properties)
@@ -21,9 +22,20 @@ namespace ZeroKLobby
                     {
                         graphicsCard = property.Value.ToString();
                     }
+
+                    if (property.Name == "DriverVersion") {
+                        driver = property.Value.ToString();
+                    }
                 }
             }
-            Console.WriteLine(graphicsCard);
+
+            if (graphicsCard.Contains("ATI") || graphicsCard.Contains("AMD") || graphicsCard.Contains("Radeon")) {
+                if (!driver.Contains("8.831")) {
+                    Program.MainWindow.InvokeFunc(() => Utils.OpenWeb("http://zero-k.info/Wiki/AtiDrivers"));
+                }
+            }
+            if (graphicsCard.ToLower().Contains("intel")) Program.MainWindow.InvokeFunc(()=>Utils.OpenWeb("http://zero-k.info/Wiki/IntelDrivers"));
+
         }
     }
 }

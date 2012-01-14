@@ -65,6 +65,10 @@ namespace ZeroKLobby
         [Description("This is the filter entered in battle list by default")]
         public string BattleFilter { get; set; }
 
+        [DisplayName("Disable driver check")]
+        [Description("Don't warn about incompatible video card drivers")]
+        public bool DisableDriverCheck { get; set; }
+
         [Category("Chat")]
         [DisplayName("Color: Background")]
         [XmlIgnore]
