@@ -265,6 +265,14 @@ namespace ZeroKLobby
                         }
                     };
 
+                TasClient.MyExtensionsChanged += (sender, eventArgs) =>
+                {
+                    var u = eventArgs.Data;
+                    if (!string.IsNullOrEmpty(u.Clan)) TasClient.JoinChannel(u.Clan);
+                    if (!string.IsNullOrEmpty(u.Faction)) TasClient.JoinChannel(u.Faction);
+                    TasClient.JoinChannel(TasClient.MyUser.Country);
+                };
+
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();

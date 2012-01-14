@@ -187,6 +187,9 @@ namespace LobbyClient
         public event EventHandler<EventArgs<User>> UserAdded = delegate { };
         public event EventHandler<TasEventArgs> UserRemoved = delegate { };
         public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
+        public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
+        public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
+ 
 
         public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, int cpu, string ipOverride = null)
         {
@@ -220,6 +223,8 @@ namespace LobbyClient
                                                                          {
                                                                              u.SetExtension(data);
                                                                              UserStatusChanged(this, new TasEventArgs(u.Name, u.ToInt().ToString()));
+                                                                             if (user == username) MyExtensionsChanged(this, new EventArgs<User>(u));
+                                                                             UserExtensionsChanged(this, new EventArgs<User>(u));
                                                                          }
 
 
