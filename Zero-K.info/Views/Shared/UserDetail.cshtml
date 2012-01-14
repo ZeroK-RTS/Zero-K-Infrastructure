@@ -177,7 +177,7 @@
         }
         else {
             <table>
-                    @foreach (var kvp in Model.Preferences.Where(x => x.Key != AutohostMode.None).OrderBy(x => x.Key)) {
+                    @foreach (var kvp in Model.Preferences.Where(x => x.Key != AutohostMode.None).OrderBy(x => x.Key).ToList()) {
                         <tr><td>@kvp.Key.Description()</td><td>@kvp.Value.Description()</td></tr> 
             }
             </table>
