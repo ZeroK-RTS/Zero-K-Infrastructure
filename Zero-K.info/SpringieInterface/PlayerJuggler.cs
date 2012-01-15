@@ -121,8 +121,8 @@ namespace ZeroKWeb.SpringieInterface
                             var binElo = b.Assigned.Average(x => (double?)juggledAccounts[x].EffectiveElo);
                             var persons =
                                 b.PlayerPriority.Where(x => !b.Assigned.Contains(x.Key) && x.Value == priority && CanMove(juggledAccounts[x.Key])).
-                                    Select(x => x.Key);
-                            if (binElo != null) persons = persons.OrderByDescending(x => Math.Abs(juggledAccounts[x].EffectiveElo - binElo.Value));
+                                    Select(x => x.Key).ToList();
+                            if (binElo != null) persons = persons.OrderByDescending(x => Math.Abs(juggledAccounts[x].EffectiveElo - binElo.Value)).ToList();
 
                             foreach (var person in persons)
                             {
