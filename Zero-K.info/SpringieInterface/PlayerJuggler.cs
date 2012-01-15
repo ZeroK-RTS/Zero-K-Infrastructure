@@ -85,11 +85,14 @@ namespace ZeroKWeb.SpringieInterface
                 bins.AddRange(groupBins);
             }
 
-            foreach (var b in bins.Where(x => x.MinPlayers > juggledAccounts.Count).ToList()) bins.Remove(b); // remove those that cant be possible handled
-
+            
             SetPriorities(bins, juggledAccounts);
 
             sb.AppendLine("Original bins:");
+            PrintBins(juggledAccounts, bins, sb);
+
+            foreach (var b in bins.Where(x => x.MinPlayers > juggledAccounts.Count).ToList()) bins.Remove(b); // remove those that cant be possible handled
+            sb.AppendLine("First purge:");
             PrintBins(juggledAccounts, bins, sb);
 
             Bin todel = null;
