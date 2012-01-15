@@ -91,7 +91,7 @@ namespace ZeroKWeb.SpringieInterface
             sb.AppendLine("Original bins:");
             PrintBins(juggledAccounts, bins, sb);
 
-            foreach (var b in bins.Where(x => x.MinPlayers > juggledAccounts.Count).ToList()) bins.Remove(b); // remove those that cant be possible handled
+            foreach (var b in bins.Where(x => x.MinPlayers > x.PlayerPriority.Count).ToList()) bins.Remove(b); // remove those that cant be possible handled
             sb.AppendLine("First purge:");
             PrintBins(juggledAccounts, bins, sb);
 
