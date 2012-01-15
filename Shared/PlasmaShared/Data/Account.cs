@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Linq;
 using System.Linq;
 using System.Security.Principal;
@@ -30,9 +31,9 @@ namespace ZkData
                             preferences[(AutohostMode)int.Parse(parts[0])] = (GamePreference)int.Parse(parts[1]);
                         }
                     }
-                    foreach (AutohostMode v in Enum.GetValues(typeof(AutohostMode))) if (!preferences.ContainsKey(v)) preferences[v] = GamePreference.Neutral;
+                    foreach (AutohostMode v in Enum.GetValues(typeof(AutohostMode))) if (!preferences.ContainsKey(v)) preferences[v] = GamePreference.Like;
                     if (preferences.Where(x=>x.Key != AutohostMode.None).All(x=>x.Value == GamePreference.Never)) {
-                        foreach (var p in preferences.ToList()) preferences[p.Key] = GamePreference.Neutral;
+                        foreach (var p in preferences.ToList()) preferences[p.Key] = GamePreference.Like;
                     }
                 }
                 return preferences;
@@ -139,9 +140,13 @@ namespace ZkData
 
     public enum GamePreference
     {
+        [Description("0: Never")]
         Never = -2,
-        Dislike = -1,
-        Neutral = 0,
-        Like = 1
+        [Description("+1: Ok")]
+        Ok = -1,
+        [Description("+2: Like")]
+        Like = 0,
+        [Description("+3: Best")]
+        Best = 1
     }
 }

@@ -71,6 +71,8 @@ namespace ZeroKWeb.SpringieInterface
             else
             {
                 context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
+                res.CanStart = false;
+                res.DeleteBots = true;
                 if (context.Players.Count < 1) return res;
                 if (context.Players.Count > 18)
                 {

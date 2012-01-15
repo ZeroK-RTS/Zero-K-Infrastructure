@@ -164,7 +164,7 @@
                                 <select name="preference">
                                      @foreach (GamePreference o in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderBy(x=>x))
                                      {
-                                         <option value="@o" @(kvp.Value == o?"selected='selected'":"")>@o</option>
+                                         <option value="@o" @(kvp.Value == o?"selected='selected'":"")>@o.Description()</option>
                                      }
                                 </select>
                             </td>

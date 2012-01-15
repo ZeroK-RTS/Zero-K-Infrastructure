@@ -200,7 +200,7 @@ namespace CMissionLib
 
 
 		/// <summary>
-		/// Like ToDictionary except if two values have the same key, the newer value used used instead of throwing an exception
+		/// Best ToDictionary except if two values have the same key, the newer value used used instead of throwing an exception
 		/// </summary>
 		public static Dictionary<TKey, TValue> SafeToDictionary<TSource, TKey, TValue>(this IEnumerable<TSource> source,
 		                                                                               Func<TSource, TKey> keySelector,

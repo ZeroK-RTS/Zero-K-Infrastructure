@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
@@ -39,7 +40,7 @@ namespace ZeroKWeb.SpringieInterface
             var db = new ZkDataContext();
             var sb = new StringBuilder();
             var lobbyIds = new List<int?>();
-            
+
             foreach (var ah in autohosts)
             {
                 if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
@@ -56,47 +57,43 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID)).ToDictionary(x => x.LobbyID ?? 0);
-            
-            foreach (var grp in
-                autohosts.Where(x => x.RunningGameStartContext == null && x.LobbyContext != null && x.LobbyContext.Players.Any(y => !y.IsSpectator)).
-                    GroupBy(x => x.LobbyContext.GetMode()))
-            {
-                /*if (grp.Key == AutohostMode.Game1v1)
-                {
-                    // make bins from all 1v1 autohost*/
-                    foreach (var ah in grp)
-                    {
-                        var bin = new Bin() { Autohost = ah, Mode = ah.LobbyContext.GetMode() };
-                        bin.ManuallyJoined.AddRange(
-                            ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID));
-                        bins.Add(bin);
-                    }
-                /*}
-                else
-                {
-                    //make one bin from biggest ah of other type
-                    var biggest = grp.OrderByDescending(x => x.LobbyContext.Players.Count(y => !y.IsSpectator)).First();
-                    var bin = new Bin() { Autohost = biggest, Mode = biggest.LobbyContext.GetMode() };
-                    foreach (var ah in autohosts.Where(x => x.LobbyContext.GetMode() == bin.Mode))
-                    {
-                        bin.ManuallyJoined.AddRange(
-                            ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID));
-                        // add all valid players from all ahof this type to this bin
-                    }
 
-                    bins.Add(bin);
-                }*/
+            // make bins from non-running games with players by each type
+            foreach (var grp in
+                autohosts.Where(x => x.LobbyContext != null).GroupBy(x => x.LobbyContext.GetMode()))
+            {
+                List<Bin> groupBins = new List<Bin>();
+
+                foreach (var ah in grp.Where(x => x.RunningGameStartContext == null && x.LobbyContext.Players.Any(y => !y.IsSpectator)))
+                {
+                    var bin = new Bin() { Autohost = ah, Mode = grp.Key };
+                    bin.ManuallyJoined.AddRange(
+                        ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID));
+                    groupBins.Add(bin);
+                }
+
+                if (groupBins.Count == 0) { // no bins with players found, add empty one
+                    var firstEmpty = grp.First(x => x.RunningGameStartContext == null && x.LobbyContext.Players.All(y => y.IsSpectator));
+                    var bin = new Bin() { Autohost = firstEmpty, Mode = grp.Key };
+                    groupBins.Add(bin);
+                }
+                var biggest = groupBins.OrderByDescending(x => x.ManuallyJoined.Count).First();
+                foreach (var ah in grp.Where(x=>x.RunningGameStartContext != null)) { // iterate through running and assign players there to biggest bin of same class
+                    biggest.ManuallyJoined.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID));
+                }
+
+                bins.AddRange(groupBins);
             }
 
             foreach (var b in bins.Where(x => x.MinPlayers > juggledAccounts.Count).ToList()) bins.Remove(b); // remove those that cant be possible handled
 
             SetPriorities(bins, juggledAccounts);
-            
+
             sb.AppendLine("Original bins:");
             PrintBins(juggledAccounts, bins, sb);
 
             Bin todel = null;
-            do 
+            do
             {
                 ResetAssigned(bins, juggledAccounts);
                 var priority = double.MaxValue;
@@ -119,7 +116,9 @@ namespace ZeroKWeb.SpringieInterface
                             if (b.Assigned.Count >= b.MaxPlayers) continue;
 
                             var binElo = b.Assigned.Average(x => (double?)juggledAccounts[x].EffectiveElo);
-                            var persons = b.PlayerPriority.Where(x => !b.Assigned.Contains(x.Key) && x.Value == priority && CanMove(juggledAccounts[x.Key])).Select(x => x.Key);
+                            var persons =
+                                b.PlayerPriority.Where(x => !b.Assigned.Contains(x.Key) && x.Value == priority && CanMove(juggledAccounts[x.Key])).
+                                    Select(x => x.Key);
                             if (binElo != null) persons = persons.OrderByDescending(x => Math.Abs(juggledAccounts[x].EffectiveElo - binElo.Value));
 
                             foreach (var person in persons)
@@ -141,7 +140,6 @@ namespace ZeroKWeb.SpringieInterface
                     } while (moved);
                 } while (true);
 
-                
                 // find first bin that cannot be started due to lack of people and remove it 
                 todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.MinPlayers);
 
@@ -165,7 +163,28 @@ namespace ZeroKWeb.SpringieInterface
                     {
                         var acc = juggledAccounts[a];
                         var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name));
-                        if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName) ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
+                        if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName)
+                        {
+                            ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
+                            string reason = "because you weren't in a valid battle";
+                            if (origAh != null) {
+                                var origMode = origAh.LobbyContext.GetMode();
+                                if (acc.Preferences[origMode] < acc.Preferences[b.Mode])
+                                {
+                                    reason = string.Format("because you like {0} more than {1}", b.Mode.Description(), origMode.Description());
+                                }
+                                else {
+                                    if (!bins.Any(x => x.Autohost == origAh))
+                                    {
+                                        reason = string.Format("because your game is not yet possible due to lack of players");
+                                    }
+                                    else {
+                                        reason = string.Format("because you like {0} same as {1} and {0} was missing a player and you were the best match", b.Mode.Description(), origMode.Description());
+                                    }
+                                }
+                            }
+                            AuthServiceClient.SendLobbyMessage(acc, string.Format("You were moved to {0}, {1}. To change your preference, please go to home page.", b.Autohost.LobbyContext.AutohostName, reason));
+                        }
                     }
                 }
 
@@ -208,16 +227,11 @@ namespace ZeroKWeb.SpringieInterface
             foreach (var b in bins)
             {
                 if (b.Mode == AutohostMode.Game1v1) b.Assigned = new List<int>(b.ManuallyJoined);
-                else {
+                else
+                {
                     b.Assigned.Clear();
-                    foreach (var id in b.ManuallyJoined)
-                    {
-                        if (!CanMove(juggledPlayers[id]))  b.Assigned.Add(id);  // todo non zkl are not moveable yet, remove later
-                    }
+                    foreach (var id in b.ManuallyJoined) if (!CanMove(juggledPlayers[id])) b.Assigned.Add(id); // todo non zkl are not moveable yet, remove later
                 }
-                
-                
-                
             }
         }
 
