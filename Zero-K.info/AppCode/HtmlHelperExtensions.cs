@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -117,6 +118,33 @@ namespace System.Web.Mvc
                 return new MvcHtmlString(File.ReadAllText(path));
             }
         }
+
+        public static MvcHtmlString Print(this HtmlHelper helper, ForumThread thread)
+        {
+            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            var link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID });
+            link = string.Format("<a href='{0}' title='$thread${2}'>{1}",link, thread.Title, thread.ForumThreadID);
+            var lastRead = thread.ForumThreadLastReads.FirstOrDefault(x=>x.AccountID == Global.AccountID);
+
+            string format;
+            if (lastRead == null)
+            {
+                format = "<span><img src='/img/mail/mail-unread.png' height='15' /><i>{0}</i></span>";
+            }
+            else {
+                if (lastRead.LastRead >= thread.LastPost)
+                {
+                    format = "<span><img src='/img/mail/mail-read.png' height='15' />{0}</span>";
+                }
+                else {
+                    if (lastRead.LastPosted != null) format = "<span><img src='/img/mail/mail-new.png' height='15' /><b>{0}</b></span>";
+                    else format = "<span><img src='/img/mail/mail-unread.png' height='15' />{0}</span>";
+                }
+            }
+
+            return new MvcHtmlString(string.Format(format,link));
+        }
+
 
         public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node)
         {

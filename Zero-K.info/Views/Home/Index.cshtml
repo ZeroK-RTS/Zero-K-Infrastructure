@@ -132,19 +132,7 @@
   <h2><a href='/Forum'>Forums</a></h2>
   @foreach (var t in Model.NewThreads)
   {
-      var link = Html.ActionLink(t.ForumThread.Title, "Thread", "Forum", new { id = t.ForumThread.ForumThreadID }, new { title = "$thread$" + t.ForumThread.ForumThreadID });
-      if (t.WasWritten)
-      {
-			<span><img src="../../img/mail/mail-new.png" height="15" title="new message" /> <b>@link</b></span><br />
-      }
-      else if (t.WasRead)
-      { 
-			<span><img src="../../img/mail/mail-read.png" height="15" title="already read" /> <i>@link</i></span><br />
-      }
-      else
-      { 
-			<span><img src="../../img/mail/mail-unread.png" height="15" title="not read" /> @link</span><br />
-      }
+      @Html.Print(t.ForumThread)<br/>
   }
   </div>
 

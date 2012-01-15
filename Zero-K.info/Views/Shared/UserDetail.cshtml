@@ -242,8 +242,7 @@
 			<br />
 			@foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10))
    {
-				<small><img src="../../img/mail/mail-read.png" height="18" style="vertical-align:middle; margin: 1px;" />
-				<a href='@Url.Action("Thread", "Forum", new { id = t.ForumThreadID })' title='$thread$@t.ForumThreadID'>@t.Title</a></small>
+				<small>@Html.Print(t)</small>
 				<br />
    }
 		</div>
