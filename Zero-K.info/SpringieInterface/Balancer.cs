@@ -331,7 +331,7 @@ namespace ZeroKWeb.SpringieInterface
                         var differs = false;
                         for (var i = 0; i < players.Count; i++)
                         {
-                            var allyID = ((bestCombination & (1 << i)) > 0) ? 1 : 0;
+                            var allyID = ((bestCombination & ((long)1 << i)) > 0) ? 1 : 0;
                             if (!differs && allyID != context.Players.First(x => x.LobbyID == players[i].LobbyID).AllyID) differs = true;
                             res.Players.Add(new PlayerTeam()
                                             { LobbyID = players[i].LobbyID.Value, Name = players[i].Name, AllyID = allyID, TeamID = i });
