@@ -50,6 +50,7 @@ namespace ZeroKWeb.Controllers
 		public ActionResult Index()
 		{
 			var db = new ZkDataContext();
+            db.CommandTimeout = 300;
 
             var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var validAwards = db.SpringBattles.Where(x => x.StartTime >= monthStart && !x.ResourceByMapResourceID.InternalName.Contains("SpeedMetal")).SelectMany(x => x.AccountBattleAwards).GroupBy(x => x.AwardKey);
