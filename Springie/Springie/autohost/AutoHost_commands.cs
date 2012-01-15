@@ -1387,19 +1387,33 @@ namespace Springie.autohost
             }
         }
 
-        void ComSaveBoxes(TasSayEventArgs tasSayEventArgs, string[] words)
+        void ComSaveBoxes(TasSayEventArgs e, string[] words)
         {
-            var serv = new SpringieService();
-            serv.StoreBoxes(tas.MyBattle.GetContext(), tas.MyBattle.Rectangles.Select(x =>
-                    
-                {
-                    double left;
-                    double top;
-                    double right;
-                    double bottom;
-                    x.Value.ToFractions(out left, out top,out right, out bottom);
-                    return new RectInfo() { Number = x.Key, X = (int)(left * 100), Y = (int)(top * 100), Width = (int)((right - left) * 100), Height = (int)((bottom - top) * 100) };
-                }).ToArray());
+            try
+            {
+                var serv = new SpringieService();
+                serv.StoreBoxes(tas.MyBattle.GetContext(),
+                                tas.MyBattle.Rectangles.Select(x =>
+                                    {
+                                        double left;
+                                        double top;
+                                        double right;
+                                        double bottom;
+                                        x.Value.ToFractions(out left, out top, out right, out bottom);
+                                        return new RectInfo()
+                                               {
+                                                   Number = x.Key,
+                                                   X = (int)(left * 100),
+                                                   Y = (int)(top * 100),
+                                                   Width = (int)((right - left) * 100),
+                                                   Height = (int)((bottom - top) * 100)
+                                               };
+                                    }).ToArray());
+                Respond(e,"Saved");
+            }
+            catch (Exception ex) {
+                Respond(e, ex.ToString());
+            }
         }
     }
 }

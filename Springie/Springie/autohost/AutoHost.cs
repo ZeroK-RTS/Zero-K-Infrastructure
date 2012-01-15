@@ -979,9 +979,17 @@ namespace Springie.autohost
         {
             var b = tas.MyBattle;
             var mapName = b.MapName.ToLower();
-            var serv = new SpringieService();
-            var commands = serv.GetMapCommands(mapName);
-            if (!string.IsNullOrEmpty(commands)) foreach (var c in commands.Split('\n').Where(x => !string.IsNullOrEmpty(x))) RunCommand(c);
+
+            try
+            {
+                var serv = new SpringieService();
+                var commands = serv.GetMapCommands(mapName);
+                if (!string.IsNullOrEmpty(commands)) foreach (var c in commands.Split('\n').Where(x => !string.IsNullOrEmpty(x))) RunCommand(c);
+            }
+            catch (Exception ex) {
+                Trace.TraceError("Error procesing map commands: {0}",ex);
+            }
+
         }
 
         void tas_MyStatusChangedToInGame(object sender, TasEventArgs e)
@@ -1020,7 +1028,7 @@ namespace Springie.autohost
                 if (e.Place == TasSayEventArgs.Places.Normal)
                 {
                     if (com != "say" && com != "admins" && com != "help" && com != "helpall" && com != "springie" && com != "listoptions" &&
-                        com != "spawn" && com != "listbans" && com != "stats" && com != "predict" && com != "notify") SayBattle(String.Format("{0} executed by {1}", com, e.UserName));
+                        com != "spawn" && com != "listbans" && com != "stats" && com != "predict" && com != "notify" && com!="transmit") SayBattle(String.Format("{0} executed by {1}", com, e.UserName));
                 }
 
                 RunCommand(e, com, words);

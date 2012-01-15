@@ -187,18 +187,24 @@ namespace Springie
 
         public void UpdateAll()
         {
-            var serv = new SpringieService();
-            var configs = serv.GetClusterConfigs(Config.ClusterNode);
-
-            lock (autoHosts)
+            try
             {
-                foreach (var conf in configs)
+                var serv = new SpringieService();
+                var configs = serv.GetClusterConfigs(Config.ClusterNode);
+
+                lock (autoHosts)
                 {
-                    if (!autoHosts.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
-                    else foreach (var ah in autoHosts.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
+                    foreach (var conf in configs)
+                    {
+                        if (!autoHosts.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
+                        else foreach (var ah in autoHosts.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
+                    }
+                    var todel = autoHosts.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
+                    foreach (var ah in todel) StopAutohost(ah);
                 }
-                var todel = autoHosts.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
-                foreach (var ah in todel) StopAutohost(ah);
+            }
+            catch (Exception ex) {
+                Trace.TraceError("Error in periodic updates: {0}",ex);
             }
         }
 
