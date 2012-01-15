@@ -203,7 +203,7 @@ namespace ZeroKWeb.Controllers
 
 			foreach (var x in db.Missions) sb.AppendLine(Url.Action("Detail", "Missions", new { id = x.MissionID }, "http"));
 
-			foreach (var x in db.Resources) sb.AppendLine(Url.Action("Detail", "Maps", new { id = x.ResourceID }, "http"));
+			foreach (var x in db.Resources.Where(x=>x.TypeID == ResourceType.Map)) sb.AppendLine(Url.Action("Detail", "Maps", new { id = x.ResourceID }, "http"));
 
 			foreach (var x in db.ForumThreads) sb.AppendLine(Url.Action("Thread", "Forum", new { id = x.ForumThreadID }, "http"));
 

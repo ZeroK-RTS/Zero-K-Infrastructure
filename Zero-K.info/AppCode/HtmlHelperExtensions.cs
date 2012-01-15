@@ -123,26 +123,27 @@ namespace System.Web.Mvc
         {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             var link = url.Action("Thread", "Forum", new { id = thread.ForumThreadID });
-            link = string.Format("<a href='{0}' title='$thread${2}'>{1}",link, thread.Title, thread.ForumThreadID);
+            link = string.Format("<a href='{0}' title='$thread${1}'>",link, thread.ForumThreadID);
             var lastRead = thread.ForumThreadLastReads.FirstOrDefault(x=>x.AccountID == Global.AccountID);
 
             string format;
+            
             if (lastRead == null)
             {
-                format = "<span><img src='/img/mail/mail-unread.png' height='15' /><i>{0}</i></span>";
+                format = "<span>{0}<img src='/img/mail/mail-unread.png' height='15' /><i>{1}</i></a></span>";
             }
             else {
                 if (lastRead.LastRead >= thread.LastPost)
                 {
-                    format = "<span><img src='/img/mail/mail-read.png' height='15' />{0}</span>";
+                    format = "<span>{0}<img src='/img/mail/mail-read.png' height='15' />{1}</a></span>";
                 }
                 else {
-                    if (lastRead.LastPosted != null) format = "<span><img src='/img/mail/mail-new.png' height='15' /><b>{0}</b></span>";
-                    else format = "<span><img src='/img/mail/mail-unread.png' height='15' />{0}</span>";
+                    if (lastRead.LastPosted != null) format = "<span>{0}<img src='/img/mail/mail-new.png' height='15' /><b>{1}</b></a></span>";
+                    else format = "<span>{0}<img src='/img/mail/mail-unread.png' height='15' />{1}</a></span>";
                 }
             }
 
-            return new MvcHtmlString(string.Format(format,link));
+            return new MvcHtmlString(string.Format(format,link, thread.Title));
         }
 
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Linq.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web.Mvc;
@@ -224,8 +225,15 @@ namespace ZeroKWeb.Controllers
         var path = Server.MapPath("~/Resources/") + res.MetadataName;
         if (System.IO.File.Exists(path))
         {
-          data.MapInfo = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(System.IO.File.ReadAllBytes(path).Decompress()));
-          HttpContext.Application["mapinfo_" + res.ResourceID] = data.MapInfo;
+            try
+            {
+                data.MapInfo = (Map)new XmlSerializer(typeof(Map)).Deserialize(new MemoryStream(System.IO.File.ReadAllBytes(path).Decompress()));
+                HttpContext.Application["mapinfo_" + res.ResourceID] = data.MapInfo;
+            }
+            catch (Exception ex) {
+                Trace.TraceWarning("Failed to get map metedata {0}:{1}", res.MetadataName, ex);
+                data.MapInfo = new Map();
+            }
         }
       }
 
