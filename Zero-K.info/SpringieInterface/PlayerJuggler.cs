@@ -41,6 +41,8 @@ namespace ZeroKWeb.SpringieInterface
             var sb = new StringBuilder();
             var lobbyIds = new List<int?>();
 
+            Dictionary<int, AutohostMode> manuallyPrefered = new Dictionary<int, AutohostMode>();
+
             foreach (var ah in autohosts)
             {
                 if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
@@ -67,8 +69,9 @@ namespace ZeroKWeb.SpringieInterface
                 foreach (var ah in grp.Where(x => x.RunningGameStartContext == null && x.LobbyContext.Players.Any(y => !y.IsSpectator)))
                 {
                     var bin = new Bin() { Autohost = ah, Mode = grp.Key };
-                    bin.ManuallyJoined.AddRange(
-                        ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID));
+                    var toAdd = ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID).ToList();
+                    foreach (var u in toAdd) manuallyPrefered[u] = grp.Key;
+                    bin.ManuallyJoined.AddRange(toAdd);
                     groupBins.Add(bin);
                 }
 
@@ -79,14 +82,17 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 var biggest = groupBins.OrderByDescending(x => x.ManuallyJoined.Count).First();
                 foreach (var ah in grp.Where(x=>x.RunningGameStartContext != null)) { // iterate through running and assign players there to biggest bin of same class
-                    biggest.ManuallyJoined.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID));
+
+                    var toAdd = ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID).ToList();
+                    foreach (var u in toAdd) manuallyPrefered[u] = grp.Key;
+                    biggest.ManuallyJoined.AddRange(toAdd);
                 }
 
                 bins.AddRange(groupBins);
             }
 
             
-            SetPriorities(bins, juggledAccounts);
+            SetPriorities(bins, juggledAccounts, manuallyPrefered);
 
             sb.AppendLine("Original bins:");
             PrintBins(juggledAccounts, bins, sb);
@@ -238,7 +244,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts)
+        static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts, Dictionary<int, AutohostMode> manuallyPrefered)
         {
             foreach (var b in bins)
             {
@@ -248,6 +254,8 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     var lobbyID = a.Key;
                     var battlePref = a.Value.Preferences[b.Mode];
+                    AutohostMode manualPref;
+                    if (!manuallyPrefered.TryGetValue(lobbyID, out manualPref)) manualPref = AutohostMode.None;
 
                     if (b.Mode == AutohostMode.Planetwars && a.Value.Level < GlobalConst.MinPlanetWarsLevel) continue; // dont queue who cannot join PW
 
@@ -259,7 +267,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count == 1 &&
                             Math.Abs(a.Value.EffectiveElo - juggledAccounts[b.ManuallyJoined[0]].EffectiveElo) > 250) continue; //effective elo difference > 250 dont try to combine
 
-                        if (battlePref > GamePreference.Never) b.PlayerPriority[lobbyID] = (int)battlePref;
+                        if (battlePref > GamePreference.Never || manualPref == b.Mode) b.PlayerPriority[lobbyID] = (int)battlePref;
                     }
                 }
             }
