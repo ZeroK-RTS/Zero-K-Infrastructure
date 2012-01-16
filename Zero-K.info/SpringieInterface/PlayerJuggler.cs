@@ -128,6 +128,8 @@ namespace ZeroKWeb.SpringieInterface
                             var persons =
                                 b.PlayerPriority.Where(x => !b.Assigned.Contains(x.Key) && x.Value == priority && CanMove(juggledAccounts[x.Key])).
                                     Select(x => x.Key).ToList();
+                            if (b.Mode == AutohostMode.Game1v1 && binElo != null) persons.RemoveAll(x => Math.Abs(juggledAccounts[x].EffectiveElo - (binElo ?? 0)) > GlobalConst.JugglerMax1v1EloDifference);
+
                             if (binElo != null) persons = persons.OrderByDescending(x => Math.Abs(juggledAccounts[x].EffectiveElo - binElo.Value)).ToList();
 
                             foreach (var person in persons)
@@ -265,7 +267,7 @@ namespace ZeroKWeb.SpringieInterface
                     {
                         if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count() >= 2) continue; // full 1v1
                         if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count == 1 &&
-                            Math.Abs(a.Value.EffectiveElo - juggledAccounts[b.ManuallyJoined[0]].EffectiveElo) > 250) continue; //effective elo difference > 250 dont try to combine
+                            Math.Abs(a.Value.EffectiveElo - juggledAccounts[b.ManuallyJoined[0]].EffectiveElo) > GlobalConst.JugglerMax1v1EloDifference) continue; //effective elo difference > 250 dont try to combine
 
                         if (battlePref > GamePreference.Never || manualPref == b.Mode) b.PlayerPriority[lobbyID] = (int)battlePref;
                     }

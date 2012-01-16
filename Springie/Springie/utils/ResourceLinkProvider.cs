@@ -71,6 +71,7 @@ namespace Springie
 
         void ps_DownloadFileCompleted(object sender, DownloadFileCompletedEventArgs e)
         {
+            if (e.Error != null || e.UserState == null) return;
             var ev = (TasSayEventArgs)e.UserState;
             foreach (string s in e.links) ah.Respond(ev, s.Replace(" ","%20"));
         }

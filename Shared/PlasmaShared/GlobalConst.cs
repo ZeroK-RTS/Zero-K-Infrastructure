@@ -34,6 +34,7 @@
 		public const string NightwatchName = "Nightwatch";
 		public const string PasswordHashCookieName = "zk_passwordHash";
 		public const string LobbyAccessCookieName = "zk_lobby";
+        public const int JugglerMax1v1EloDifference = 250;
 
     public static bool IsZkMod(string name)
     {
