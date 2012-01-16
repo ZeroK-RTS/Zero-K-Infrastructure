@@ -88,6 +88,14 @@ namespace ZeroKWeb.SpringieInterface
                     biggest.ManuallyJoined.AddRange(toAdd);
                 }
 
+                // move to biggest bin if its not 1v1- just one bin/game type
+                if (grp.Key != AutohostMode.Game1v1) {
+                    foreach (var b in groupBins.Where(x => x != biggest)) {
+                        biggest.ManuallyJoined.AddRange(b.ManuallyJoined);
+                    }
+                    groupBins.RemoveAll(x => x != biggest);
+                }
+                
                 bins.AddRange(groupBins);
             }
 
@@ -205,6 +213,8 @@ namespace ZeroKWeb.SpringieInterface
                         x => x.RunningGameStartContext == null && !bins.Any(y => y.Autohost == x) && x.LobbyContext.Players.Any(y => !y.IsSpectator))) ret.AutohostsToClose.Add(ah.LobbyContext.AutohostName);*/
             }
 
+
+
             ret.Message = sb.ToString();
             return ret;
         }
@@ -286,9 +296,18 @@ namespace ZeroKWeb.SpringieInterface
                 get
                 {
                     if (Mode == AutohostMode.Game1v1) return 2;
-                    else return 32;
+                    else return 100;
                 }
             }
+
+            public int SplitPlayers {
+                get {
+                    if (Mode == AutohostMode.Game1v1) return 100;
+                    if (Mode == AutohostMode.Planetwars || Mode == AutohostMode.GameFFA) return 18;
+                    return 20;
+                } 
+            }
+
             public int MinPlayers
             {
                 get
