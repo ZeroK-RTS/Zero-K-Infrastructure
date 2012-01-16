@@ -73,7 +73,7 @@ namespace ZeroKWeb.SpringieInterface
                 context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
                 res.CanStart = false;
                 res.DeleteBots = true;
-                if (context.Players.Count < 1) return res;
+                if (context.Players.Count <= 1) return res;
                 if (context.Players.Count > 18)
                 {
                     res.Message = "Too many people, cannot balance. Use !splitplayers";
@@ -137,7 +137,7 @@ namespace ZeroKWeb.SpringieInterface
                         planet.AccountPlanets.Where(x => x.DropshipCount > 0 && x.Account.FactionID != null).Select(x => (x.Account.FactionID ?? 0)).
                             Distinct().ToList();
 
-                    if (context.Players.Count < 2) return new BalanceTeamsResult() { Message = "Not enough players" };
+                    if (context.Players.Count < 2) return new BalanceTeamsResult() { Message = "Not enough players", CanStart = false};
 
                     for (var i = 1; i < clans.Count; i++)
                     {
