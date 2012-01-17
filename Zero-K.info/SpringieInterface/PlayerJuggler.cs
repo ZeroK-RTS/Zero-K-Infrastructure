@@ -173,6 +173,8 @@ namespace ZeroKWeb.SpringieInterface
             sb.AppendLine("Final bins:");
             PrintBins(juggledAccounts, bins, sb);
 
+            // todo splitplayer too big bins
+
             if (bins.Any())
             {
                 ret.PlayerMoves = new List<JugglerMove>();

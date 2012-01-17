@@ -32,7 +32,9 @@ namespace ZeroKWeb
 				}
 				HttpContext.Current.Cache.Insert("spotlight", spotlights, null, DateTime.UtcNow.AddHours(1), Cache.NoSlidingExpiration);
 			}
-			return spotlights[new Random().Next(spotlights.Count)];
+            if (spotlights.Count > 0) return spotlights[new Random().Next(spotlights.Count)];
+            else return new UnitSpotlight();
+			
 		}
 
 		public class UnitSpotlight
