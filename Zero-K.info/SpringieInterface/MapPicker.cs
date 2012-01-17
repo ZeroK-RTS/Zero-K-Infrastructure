@@ -137,7 +137,7 @@ namespace ZeroKWeb.SpringieInterface
                             {
                                 AuthServiceClient.SendLobbyMessage(a,
                                                                    String.Format(
-                                                                       "Your clan's planet {0} is about to be attacked! Come defend it to PlanetWars spring://@join_player:{1} ",
+                                                                       "Your clan's planet {0} is about to be attacked, defend it! Come to PlanetWars spring://@join_player:{1} ",
                                                                        planet.Name,
                                                                        context.AutohostName));
                             }

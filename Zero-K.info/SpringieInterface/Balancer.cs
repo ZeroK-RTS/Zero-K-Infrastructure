@@ -46,7 +46,7 @@ namespace ZeroKWeb.SpringieInterface
                         {
                             if (res.Players.Count > 0)
                             {
-                                res.Message = "Add some bot (computer player) as your enemy. Use button on bottom right. Chickens or CAI is recommended.";
+                                res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
                                 res.CanStart = false;
                                 /*else
                                 {
