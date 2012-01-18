@@ -96,8 +96,6 @@ namespace Fixer
       static void Main(string[] args)
     {
 
-        return;
-
         //FixDemoEngineVersion();
 
       //ImportSpringiePlayers();
