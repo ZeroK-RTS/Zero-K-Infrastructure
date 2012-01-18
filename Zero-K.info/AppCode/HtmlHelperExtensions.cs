@@ -64,7 +64,7 @@ namespace System.Web.Mvc
 
             // format the img tags: [img]www.website.com/img/image.jpeg[/img]
             // becomes: <img src="www.website.com/img/image.jpeg" />
-            exp = new Regex(@"\[img\]([^\]]+)\[/img\]");
+            exp = new Regex(@"\[img\]([^\[]+)\[/img\]");
             str = exp.Replace(str, "<img src=\"$1\" />");
 
             // format img tags with alt: [img=www.website.com/img/image.jpeg]this is the alt text[/img]
