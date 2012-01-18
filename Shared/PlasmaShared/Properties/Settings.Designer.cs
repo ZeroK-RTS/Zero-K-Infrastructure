@@ -36,8 +36,8 @@ namespace PlasmaShared.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;" +
-            "User ID=zero-k;Password=zkdevpass1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=94.23.171.71,100;Initial Catalog=zero-k;Persist Security Info=True;Us" +
+            "er ID=zero-k;Password=zkdevpass1")]
         public string zero_kConnectionString {
             get {
                 return ((string)(this["zero_kConnectionString"]));

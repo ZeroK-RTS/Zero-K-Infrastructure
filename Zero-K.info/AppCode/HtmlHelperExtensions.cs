@@ -85,7 +85,7 @@ namespace System.Web.Mvc
             exp = new Regex(@"\[size\=([^\]]+)\]([^\]]+)\[/size\]");
             str = exp.Replace(str, "<font size=\"+$1\">$2</font>");
 
-            str = Regex.Replace(str, @"(^|[/w])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
+            str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
 
             // lastly, replace any new line characters with <br />
             str = str.Replace("\r\n", "<br />\r\n");
