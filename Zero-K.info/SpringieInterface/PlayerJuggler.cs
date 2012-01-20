@@ -28,6 +28,7 @@ namespace ZeroKWeb.SpringieInterface
 
         public static bool CanMove(Account acc)
         {
+            return true;
             User user;
             if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && !user.IsZkLobbyUser) return false;
             return true;
@@ -321,9 +322,9 @@ namespace ZeroKWeb.SpringieInterface
                         case AutohostMode.GameFFA:
                             return 4;
                         case AutohostMode.Planetwars:
-                            return 6;
+                            return 8;
                         case AutohostMode.GameTeams:
-                            return 6;
+                            return 8;
                         case AutohostMode.GameChickens:
                             return 4;
                     }
