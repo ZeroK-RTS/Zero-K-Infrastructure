@@ -244,6 +244,68 @@
             </Grid>
         </DataTemplate>
 
+        <!-- ======== HideGuiMessagePersistent Template ======== -->
+
+        <DataTemplate x:Key="hideGuiMessagePersistentTemplate">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">This action hides the current Persistent GUI Message, if any.</TextBlock>
+        </DataTemplate>
+
+        <!-- ======== AddObjective Template ======== -->
+
+        <DataTemplate x:Key="addObjectiveTemplate">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <GroupBox Header="Settings">
+                    <StackPanel>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">ID</Label>
+                            <TextBox DockPanel.Dock="Left" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
+                        </DockPanel>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Title</Label>
+                            <TextBox DockPanel.Dock="Left" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
+                        </DockPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>                        
+                            <Label>Description</Label>
+                            <TextBox Grid.Column="1" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
+                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="10" TextWrapping="Wrap" />
+                        </Grid>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Status</Label>
+                            <TextBox DockPanel.Dock="Left" Text="{Binding Status, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
+                        </DockPanel>
+                        <!-->
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Status</Label>
+                            <ComboBox x:Name ="StatusComboBox" DockPanel.Dock="Left" Text="Status" SelectedItem="{Binding Status}">
+                                <ComboBoxItem Name="Complete">Complete</ComboBoxItem>
+                                <ComboBoxItem Name="Incomplete">Incomplete</ComboBoxItem>
+                                <ComboBoxItem Name="Failed">Failed</ComboBoxItem>
+                            </ComboBox>
+                        </DockPanel>
+                        </!-->
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Description">
+                    <TextBlock TextWrapping="Wrap">
+                        This action creates a new objective with the specified ID. You can define the objective title and description.
+                        Objectives can be "Complete", "Incomplete" or "Failed". In the future these will be selected from a drop-down box.
+                    </TextBlock>
+                </GroupBox>
+            </Grid>
+        </DataTemplate>
+
         <!-- ======== UnitDestroyed Template ======== -->
 
         <DataTemplate x:Key="unitDestroyedTemplate">

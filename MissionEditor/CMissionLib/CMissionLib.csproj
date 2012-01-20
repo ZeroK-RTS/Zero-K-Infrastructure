@@ -72,6 +72,9 @@
   <ItemGroup>
     <Compile Include="Action.cs" />
     <Compile Include="Actions\AllowUnitTransfersAction.cs" />
+    <Compile Include="Actions\AddObjectiveAction.cs" />
+    <Compile Include="Actions\ModifyObjectiveAction.cs" />
+    <Compile Include="Actions\HideGuiMessagePersistentAction.cs" />
     <Compile Include="Actions\GuiMessagePersistentAction.cs" />
     <Compile Include="Actions\ExecuteRandomTriggerAction.cs" />
     <Compile Include="Actions\GiveFactoryOrdersAction.cs" />
@@ -122,6 +125,7 @@
     <Compile Include="Conditions\UnitIsVisibleCondition.cs" />
     <Compile Include="Conditions\UnitsAreInAreaCondition.cs" />
     <Compile Include="Conditions\UnitSelectedCondition.cs" />
+    <Compile Include="Objective.cs" />
     <Compile Include="Cylinder.cs" />
     <Compile Include="Actions\DefeatAction.cs" />
     <Compile Include="Actions\DummyAction.cs" />

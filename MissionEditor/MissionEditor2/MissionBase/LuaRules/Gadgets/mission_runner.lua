@@ -669,6 +669,7 @@ local function ExecuteTrigger(trigger, frame)
 			 action.logicType == "GuiMessagePersistentAction" or
 			 action.logicType == "HideGuiMessagePersistentAction" or
 			 action.logicType == "AddObjectiveAction" or
+			 action.logicType == "ModifyObjectiveAction" or
              action.logicType == "SoundAction" or 
              action.logicType == "SunriseAction" or 
              action.logicType == "SunsetAction" then
@@ -680,6 +681,9 @@ local function ExecuteTrigger(trigger, frame)
         end
 		if action.logicType == "AddObjectiveAction" then
 			objectives[action.args.id] = {title = action.args.title, description = action.args.description}
+		elseif action.logicType == "ModifyObjectiveAction" then
+			if objectives[action.args.id] then
+			end
 		end
       elseif action.logicType == "GiveOrdersAction" then
         Event = function()

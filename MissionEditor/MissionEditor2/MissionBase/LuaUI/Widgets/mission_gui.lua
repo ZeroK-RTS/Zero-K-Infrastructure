@@ -48,6 +48,18 @@ function MissionEvent(e)
       if WG.ShowPersistentMessageBox then
         WG.ShowPersistentMessageBox(e.message, e.width, e.height, e.fontSize, (e.image and "LuaUI/Images/"..e.image) or nil)
       end
+  elseif e.logicType == "HideGuiMessagePersistentAction" then
+      if WG.HidePersistentMessageBox then
+        WG.HidePersistentMessageBox()
+      end
+  elseif e.logicType == "AddObjectiveAction" then
+      if WG.AddObjective then
+        WG.AddObjective(e.id, e.title, e.description, nil, e.status)
+      end
+  elseif e.logicType == "ModifyObjectiveAction" then
+      if WG.ModifyObjective then
+        WG.ModifyObjective(e.id, e.title, e.description, nil, e.status)
+      end
   elseif e.logicType == "PauseAction" then
     Spring.SendCommands"pause"
   elseif e.logicType == "MarkerPointAction" then

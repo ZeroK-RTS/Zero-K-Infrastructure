@@ -126,6 +126,7 @@ namespace MissionEditor2
 				};
             String GuiMessagePersistentDesc = "Hello!\nI differ from the regular GUI message in that I can't pause the game, have no close button, and there can be only one of me!\nI require a Chili widget to work!";
 
+            addAction("Add Objective", () => new AddObjectiveAction("newObj"));
 			addAction("Allow Unit Transfers", () => new AllowUnitTransfersAction());
 			addAction("Cancel Countdown", () => new CancelCountdownAction(Mission.Countdowns.FirstOrDefault()));
 			addAction("Cause Defeat", () => new DefeatAction());
@@ -146,6 +147,7 @@ namespace MissionEditor2
 			addAction("Make Units Always Visible", () => new MakeUnitsAlwaysVisibleAction());
 			addAction("Modify Countdown", () => new ModifyCountdownAction(Mission.Countdowns.FirstOrDefault()));
 			addAction("Modify Counter", () => new ModifyCounterAction());
+            addAction("Modify Objective", () => new ModifyObjectiveAction("newObj"));
 			addAction("Modify Score", () => new ModifyScoreAction());
 			addAction("Modify Resources", () => new ModifyResourcesAction(Mission.Players.First()));
 			addAction("Modify Unit Health", () => new ModifyUnitHealthAction());
@@ -157,6 +159,7 @@ namespace MissionEditor2
 			addAction("Show Console Message", () => new ConsoleMessageAction("Hello!"));
 			addAction("Show GUI Message", () => new GuiMessageAction("Hello!"));
             addAction("Show GUI Message (Persistent)", () => new GuiMessagePersistentAction(GuiMessagePersistentDesc));
+            addAction("Hide GUI Message (Persistent)", () => new HideGuiMessagePersistentAction());
 			addAction("Show Marker Point", () => new MarkerPointAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
 			addAction("Start Countdown", () => new StartCountdownAction(GetNewCountdownName()));
 			addAction("Transfer Units", () => new TransferUnitsAction(Mission.Players.First()));
