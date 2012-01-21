@@ -101,7 +101,7 @@
 		</div>
 	}
     <br class="clearfloat" />
-	@if (ZeroKWeb.Global.IsAccountAuthorized && ZeroKWeb.Global.Account.Level > 20)
+	@if (ZeroKWeb.Global.IsAccountAuthorized && (ZeroKWeb.Global.Account.Level > 20 || ZeroKWeb.Global.Account.IsZeroKAdmin || ZeroKWeb.Global.Account.IsLobbyAdministrator))
 	{
 	
      <div style='border: 1px dashed teal; padding: 10px;'>
