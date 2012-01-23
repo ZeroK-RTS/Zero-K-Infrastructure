@@ -96,8 +96,7 @@ namespace ZeroKWeb.SpringieInterface
                     StartTime = result.StartTime,
                     Title = result.Title,
                     ReplayFileName = result.ReplayName,
-                    EngineVersion = result.EngineVersion ?? "0.82.7",
-                    // hack remove when fixed
+                    EngineVersion = result.EngineVersion,
                 };
                 db.SpringBattles.InsertOnSubmit(sb);
 
@@ -289,18 +288,21 @@ namespace ZeroKWeb.SpringieInterface
                     db.SubmitChanges();
 
                     // destroy existing dropships and prevent growth
-                    var noGrowAccount = new List<int>();
-                    foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
-                    {
-                        if (!sb.SpringBattlePlayers.Any(x => x.AccountID == ap.AccountID && !x.IsSpectator))
-                        {
-                            ap.Account.DropshipCount += ap.DropshipCount;
+					if (result.duration < 360)
+					{
+						var noGrowAccount = new List<int>();
+						foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
+						{
+							if (!sb.SpringBattlePlayers.Any(x => x.AccountID == ap.AccountID && !x.IsSpectator))
+							{
+								ap.Account.DropshipCount += ap.DropshipCount;
 
-                            // only destroy ships if player actually played
-                        }
-                        ap.DropshipCount = 0;
-                        noGrowAccount.Add(ap.AccountID);
-                    }
+								// only destroy ships if player actually played
+							}
+							ap.DropshipCount = 0;
+							noGrowAccount.Add(ap.AccountID);
+						}
+					}
 
                     // destroy pw structures
                     var handled = new List<string>();

@@ -21,16 +21,21 @@ namespace ZkData
 
 		public void CalculateElo()
 		{
-			if (IsEloProcessed || Duration < 360)
+            if (IsEloProcessed) //(IsEloProcessed || Duration < 360)
 			{
 				IsEloProcessed = true;
 				return;
 			}
 
-			if (IsMission || HasBots || PlayerCount < 2)
+            if (IsMission || HasBots || PlayerCount < 2)
 			{
 				WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
 				LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
+                if (Duration < 360)
+                {
+                    WinnerTeamXpChange = 0;
+                    LoserTeamXpChange = 0;
+                }
 
 				foreach (var a in SpringBattlePlayers.Where(x => !x.IsSpectator))
 				{
@@ -96,7 +101,15 @@ namespace ZkData
 			var sumW = winnerW + loserW;
 
 			WinnerTeamXpChange = (int)(20 + (300 + 600*(1 - eWin))/(3.0 + winners.Count));
-			WinnerTeamXpChange = WinnerTeamXpChange;
+			WinnerTeamXpChange = WinnerTeamXpChange;    // what the christ does this line even do
+            LoserTeamXpChange = (int)(20 + (200 + 400 * (1 - eLose)) / (2.0 + losers.Count));
+            LoserTeamXpChange = LoserTeamXpChange;  // again
+
+            if (Duration < 360)
+            {
+                WinnerTeamXpChange = 0;
+                LoserTeamXpChange = 0;
+            }
 
 			foreach (var r in winners)
 			{
@@ -114,9 +127,6 @@ namespace ZkData
 					if (r.Account.EloWeight > GlobalConst.EloWeightMax) r.Account.EloWeight = (float)GlobalConst.EloWeightMax;
 				}
 			}
-
-			LoserTeamXpChange = (int)(20 + (200 + 400*(1 - eLose))/(2.0 + losers.Count));
-			LoserTeamXpChange = LoserTeamXpChange;
 
 			foreach (var r in losers)
 			{
