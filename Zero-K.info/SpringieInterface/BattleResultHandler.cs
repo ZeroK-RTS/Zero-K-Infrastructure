@@ -288,7 +288,7 @@ namespace ZeroKWeb.SpringieInterface
                     db.SubmitChanges();
 
                     // destroy existing dropships and prevent growth
-					if (result.duration < 360)
+					if (result.duration > 360)
 					{
 						var noGrowAccount = new List<int>();
 						foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
