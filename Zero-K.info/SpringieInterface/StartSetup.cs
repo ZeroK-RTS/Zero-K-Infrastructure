@@ -38,7 +38,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 var accountIDsWithExtraComms = new List<int>();
                 // calculate to whom to send extra comms
-                if (mode == AutohostMode.Planetwars || mode== AutohostMode.GameTeams)
+                if (mode == AutohostMode.Planetwars || mode== AutohostMode.GameTeams || mode == AutohostMode.GameFFA)
                 {
                     var groupedByTeam = context.Players.Where(x => !x.IsSpectator).GroupBy(x => x.AllyID).OrderByDescending(x => x.Count());
                     var biggest = groupedByTeam.FirstOrDefault();
