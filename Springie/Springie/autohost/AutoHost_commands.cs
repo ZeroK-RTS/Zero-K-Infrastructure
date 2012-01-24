@@ -59,11 +59,11 @@ namespace Springie.autohost
 
             tas.Say(TasClient.SayPlace.User, name, "!join " + target, false);
             User user;
-            if (tas.ExistingUsers.TryGetValue(name, out user) && !user.IsZkLobbyUser)
+            /*if (tas.ExistingUsers.TryGetValue(name, out user) && !user.IsZkLobbyUser)
             {
                 tas.Kick(name);
                 tas.Say(TasClient.SayPlace.User, name, "Why were you kicked? You weren't, you were moved to different battle, but because your lobby SpringLobby didn't implement the !join command the only result is kick :(  It's open source please implement the !join command. If you use Zero-K lobby, TasClient, NotaLobby or CheeseLobby ignore this message you weremoved correctly :-)",false);
-            }
+            }*/
         }
 
         public void ComJuggle(TasSayEventArgs e, string[] words)

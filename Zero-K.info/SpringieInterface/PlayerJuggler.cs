@@ -52,7 +52,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     var notPlaying =
                         ah.LobbyContext.Players.Where(
-                            x => !x.IsSpectator && !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator)).Select(
+                            x => !x.IsSpectator && !x.IsIngame && !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator)).Select(
                                 x => (int?)x.LobbyID).ToList();
                     // game running, add all those that are not playing and are not specs
                     lobbyIds.AddRange(notPlaying);
