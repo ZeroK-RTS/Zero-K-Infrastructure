@@ -288,9 +288,9 @@ namespace ZeroKWeb.SpringieInterface
                     db.SubmitChanges();
 
                     // destroy existing dropships and prevent growth
-					if (result.duration > 360)
+                    var noGrowAccount = new List<int>();
+                    if (result.Duration > 360)
 					{
-						var noGrowAccount = new List<int>();
 						foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
 						{
 							if (!sb.SpringBattlePlayers.Any(x => x.AccountID == ap.AccountID && !x.IsSpectator))
