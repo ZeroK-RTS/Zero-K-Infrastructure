@@ -81,6 +81,7 @@ namespace ZkData
             Elo = 1500;
             EloWeight = 1;
             DropshipCount = 1;
+            SpringieLevel = 1;
         }
 
         partial void OnCreditsChanging(int value)
