@@ -66,7 +66,7 @@ namespace ZkData
 
         public int GetJumpGateCapacity()
         {
-            return Planets.SelectMany(x => x.PlanetStructures).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
+            return Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
         }
 
         public static int GetXpForLevel(int level)
