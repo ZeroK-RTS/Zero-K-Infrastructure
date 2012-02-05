@@ -125,7 +125,7 @@ namespace ZeroKWeb.Controllers
                 if (!StructureType.HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades not present");
 
                 var list = planet.PlanetStructures.Where(x => x.StructureTypeID == structureTypeID).ToList();
-                var toDestroy = list[1];
+                var toDestroy = list[0];
                 if (toDestroy.StructureType.IngameDestructionNewStructureTypeID != null)
                 {
                     db.PlanetStructures.DeleteOnSubmit(toDestroy);
