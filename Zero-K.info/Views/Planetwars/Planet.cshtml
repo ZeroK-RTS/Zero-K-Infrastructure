@@ -213,8 +213,8 @@
 				}
 			}
 			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
-				if (!StructureType.HasStructureOrUpgrades(db, planet, structureType)) {
-                    var linkText = String.Format("Destroy {0} - {1}", structureType.Name, structureType.Cost, structureType.Description);
+				if (StructureType.HasStructureOrUpgrades(db, planet, structureType)) {
+                    var linkText = String.Format("Destroy {0}", structureType.Name, structureType.Costn);
                     var question = String.Format("Confirm destruction of {0}?", structureType.Name);
 			<p>@Html.ActionLink(linkText, "DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID }, new { @onclick = String.Format("return confirm('{0}')", question) })</p>
                 }
