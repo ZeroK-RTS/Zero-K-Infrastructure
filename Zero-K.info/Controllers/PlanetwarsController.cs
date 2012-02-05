@@ -27,12 +27,13 @@ namespace ZeroKWeb.Controllers
             var avail = accessible ?Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
             avail = Math.Min(avail, acc.GetDropshipCapacity());
             var planet = db.Planets.Single(x => x.PlanetID == planetID);
+            if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
             if (!planet.TreatyAttackablePlanet(acc.Clan)) return Content("This is allied world");
 
             if (!accessible && planet.PlanetStructures.Any(x => !x.IsDestroyed && x.StructureType.EffectBlocksJumpgate == true)) return Content("Planetary defenses interdict your jumpgate");
 
             var defs = planet.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
-            var bombNeed = 3 + defs/3;
+            var bombNeed = GlobalConst.BaseShipsToBomb + defs / 3;
 
             var structs = planet.PlanetStructures.Where(x => !x.IsDestroyed && x.StructureType.IsIngameDestructible).ToList();
             if (avail >= bombNeed)
@@ -83,8 +84,9 @@ namespace ZeroKWeb.Controllers
             using (var db = new ZkDataContext())
             {
                 var planet = db.Planets.Single(p => p.PlanetID == planetID);
+                if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot build structures");
                 var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-                if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under control.");
+                if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under your control.");
                 var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
                 if (structureType == null) return Content("Structure type does not exist.");
                 if (!structureType.IsBuildable) return Content("Structure is not buildable.");
@@ -103,6 +105,62 @@ namespace ZeroKWeb.Controllers
                 SetPlanetOwners(db);
             }
 
+            return RedirectToAction("Planet", new { id = planetID });
+        }
+
+        [Auth]
+        public ActionResult DestroyStructure(int planetID, int structureTypeID)
+        {
+            using (var db = new ZkDataContext())
+            {
+                var planet = db.Planets.Single(p => p.PlanetID == planetID);
+                if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
+                var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+                if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under your control.");
+                var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
+                if (structureType == null) return Content("Structure type does not exist.");
+                if (!structureType.IsBuildable) return Content("Structure is not buildable.");
+
+                // assumes you can only build level 1 structures! if higher level structures can be built directly, we should check down the upgrade chain too
+                if (!StructureType.HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades not present");
+
+                var list = planet.PlanetStructures.Where(x => x.StructureTypeID == structureTypeID).ToList();
+                var toDestroy = list[1];
+                if (toDestroy.StructureType.IngameDestructionNewStructureTypeID != null)
+                {
+                    db.PlanetStructures.DeleteOnSubmit(toDestroy);
+                    db.PlanetStructures.InsertOnSubmit(new PlanetStructure()
+                    {
+                        PlanetID = planet.PlanetID,
+                        StructureTypeID = toDestroy.StructureType.IngameDestructionNewStructureTypeID.Value,
+                        //IsDestroyed = true
+                    });
+                }
+                else toDestroy.IsDestroyed = true;
+                db.SubmitChanges();
+
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} has demolished a {1} on {2}.", Global.Account, toDestroy.StructureType.Name, planet));
+                SetPlanetOwners(db);
+            }
+
+            return RedirectToAction("Planet", new { id = planetID });
+        }
+
+        [Auth]
+        public ActionResult RepairStructure(int planetID, int structureTypeID)
+        {
+            var db = new ZkDataContext();
+            var planet = db.Planets.Single(p => p.PlanetID == planetID);
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under control.");
+            var structure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
+            if (!structure.IsDestroyed) return Content("Can't repair a working structure.");
+            if (acc.Credits < structure.StructureType.Cost * GlobalConst.PlanetwarsRepairCost) return Content("Insufficient credits.");
+            acc.Credits -= (int)(structure.StructureType.Cost * GlobalConst.PlanetwarsRepairCost);
+            structure.IsDestroyed = false;
+            db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure.StructureType.Name, planet));
+            db.SubmitChanges();
+            SetPlanetOwners(db);
             return RedirectToAction("Planet", new { id = planetID });
         }
 
@@ -635,26 +693,6 @@ namespace ZeroKWeb.Controllers
             SetPlanetOwners(db);
             return RedirectToAction("Planet", new { id = offer.PlanetID });
         }
-
-
-        [Auth]
-        public ActionResult RepairStructure(int planetID, int structureTypeID)
-        {
-            var db = new ZkDataContext();
-            var planet = db.Planets.Single(p => p.PlanetID == planetID);
-            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under control.");
-            var structure = db.PlanetStructures.SingleOrDefault(s => s.PlanetID == planetID && s.StructureTypeID == structureTypeID);
-            if (!structure.IsDestroyed) return Content("Can't repair a working structure.");
-            if (acc.Credits < structure.StructureType.Cost*GlobalConst.PlanetwarsRepairCost) return Content("Insufficient credits.");
-            acc.Credits -= (int)(structure.StructureType.Cost*GlobalConst.PlanetwarsRepairCost);
-            structure.IsDestroyed = false;
-            db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure.StructureType.Name, planet));
-            db.SubmitChanges();
-            SetPlanetOwners(db);
-            return RedirectToAction("Planet", new { id = planetID });
-        }
-
 
         [Auth]
         public ActionResult SendDropships(int planetID, int count)
