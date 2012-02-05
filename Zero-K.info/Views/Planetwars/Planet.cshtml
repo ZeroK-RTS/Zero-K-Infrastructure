@@ -212,7 +212,7 @@
 					}
 				}
 			}
-			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable && !s.IsDestroyed)) {
+			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
 				if (StructureType.HasStructureOrUpgrades(db, planet, structureType)) {
                     var linkText = String.Format("Destroy {0}", structureType.Name, structureType.Cost);
                     var question = String.Format("Confirm destruction of {0}?", structureType.Name);
