@@ -43,6 +43,8 @@ namespace ZeroKWeb.SpringieInterface
 
             Dictionary<int, AutohostMode> manuallyPrefered = new Dictionary<int, AutohostMode>();
 
+            autohosts = autohosts.Where(x => !Global.Nightwatch.Tas.ExistingBattles.Values.Single(y => y.Founder.Name == x.LobbyContext.AutohostName).IsPassworded).ToList(); //only non pw battles
+
             foreach (var ah in autohosts)
             {
                 if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
