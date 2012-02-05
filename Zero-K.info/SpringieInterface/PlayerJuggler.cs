@@ -28,7 +28,6 @@ namespace ZeroKWeb.SpringieInterface
 
         public static bool CanMove(Account acc)
         {
-            //return true;
             User user;
             if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && !user.IsZkLobbyUser) return false;
             return true;
@@ -278,11 +277,15 @@ namespace ZeroKWeb.SpringieInterface
                         b.PlayerPriority[lobbyID] = (int)battlePref + 0.5; // player joined, he gets +0.5 for his normal preference;
                     else
                     {
-                        if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count() >= 2) continue; // full 1v1
-                        if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count == 1 &&
-                            Math.Abs(a.Value.EffectiveElo - juggledAccounts[b.ManuallyJoined[0]].EffectiveElo) > GlobalConst.JugglerMax1v1EloDifference) continue; //effective elo difference > 250 dont try to combine
+                        if (CanMove(a.Value))
+                        {
+                            if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count() >= 2) continue; // full 1v1
+                            if (b.Mode == AutohostMode.Game1v1 && b.ManuallyJoined.Count == 1 &&
+                                Math.Abs(a.Value.EffectiveElo - juggledAccounts[b.ManuallyJoined[0]].EffectiveElo) >
+                                GlobalConst.JugglerMax1v1EloDifference) continue; //effective elo difference > 250 dont try to combine
 
-                        if (battlePref > GamePreference.Never || manualPref == b.Mode) b.PlayerPriority[lobbyID] = (int)battlePref;
+                            if (battlePref > GamePreference.Never || manualPref == b.Mode) b.PlayerPriority[lobbyID] = (int)battlePref;
+                        }
                     }
                 }
             }
