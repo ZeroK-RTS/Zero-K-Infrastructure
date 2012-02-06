@@ -175,11 +175,33 @@ namespace ZeroKWeb.SpringieInterface
             sb.AppendLine("Final bins:");
             PrintBins(juggledAccounts, bins, sb);
 
-            // todo splitplayer too big bins
 
             if (bins.Any())
             {
                 ret.PlayerMoves = new List<JugglerMove>();
+                
+                // split too big bins -> move top players to another autohost
+                foreach (var b in bins.ToList())
+                {
+                    if (b.Assigned.Count > b.SplitPlayers)
+                    {
+                        sb.AppendLine("Splitting " + b.Autohost.LobbyContext.AutohostName);
+                        var splitTo =
+                            autohosts.FirstOrDefault(x => x.LobbyContext.GetMode() == b.Mode && x.RunningGameStartContext == null && x != b.Autohost); //find first one that isnt running and isnt bin -> no players for it planned
+                        if (splitTo != null)
+                        {
+                            sb.AppendLine("Splitting to " + splitTo.LobbyContext.AutohostName);
+                            var eloList = b.Assigned.Select(x => juggledAccounts[x]).OrderByDescending(x => x.EffectiveElo).ToList();
+                            var toMove = eloList.Take(eloList.Count / 2).ToList();
+                            var target = new Bin() { Autohost = splitTo, Mode = b.Mode };
+                            bins.Add(target);
+                            target.Assigned.AddRange(toMove.Select(x=>x.LobbyID??0));
+                            b.Assigned.RemoveAll(x => toMove.Any(y => y.LobbyID == x));
+                        }
+                    }
+                }
+
+
                 foreach (var b in bins)
                 {
                     foreach (var a in b.Assigned)
@@ -189,7 +211,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName)
                         {
                             ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
-                            string reason = "because you weren't in a valid battle";
+                            string reason = "because you weren't in a valid battle or your battle was split into two smaller";
                             if (origAh != null) {
                                 var origMode = origAh.LobbyContext.GetMode();
                                 if (acc.Preferences[origMode] < acc.Preferences[b.Mode])
@@ -209,6 +231,8 @@ namespace ZeroKWeb.SpringieInterface
                             AuthServiceClient.SendLobbyMessage(acc, string.Format("You were moved to {0}, {1}. To change your preferences, please go to home page. http://zero-k.info", b.Autohost.LobbyContext.AutohostName, reason));
                         }
                     }
+
+
                 }
 
                 /*ret.AutohostsToClose = new List<string>();
