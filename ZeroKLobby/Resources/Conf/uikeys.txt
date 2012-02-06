@@ -19,7 +19,7 @@ bind ctrl+r select AllMap+_Not_Builder_Not_Building+_ClearSelection_SelectAll+
 bind ctrl+s select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Radar+_ClearSelection_SelectAll+
 bind ctrl+t select AllMap+_Not_Builder_Not_Building_Transport_Aircraft+_ClearSelection_SelectAll+
 bind ctrl+v select AllMap+_Builder_Not_Building_Idle+_ClearSelection_SelectOne+
-bind ctrl+w select AllMap+_Not_Builder_Not_Building_Not_Transport_Not_Aircraft_Weapons_Not_WeaponRange_600+_ClearSelection_SelectAll+
+//bind ctrl+w select AllMap+_Not_Builder_Not_Building_Not_Transport_Not_Aircraft_Weapons_Not_WeaponRange_600+_ClearSelection_SelectAll+
 bind ctrl+x select Visible+_InPrevSel+_ClearSelection_SelectAll+
 bind ctrl+z select AllMap+_InPrevSel_Not_Builder+_ClearSelection_SelectAll+
 
