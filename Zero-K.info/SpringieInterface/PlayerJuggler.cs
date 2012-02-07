@@ -29,8 +29,8 @@ namespace ZeroKWeb.SpringieInterface
         public static bool CanMove(Account acc)
         {
             User user;
-            if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && !user.IsZkLobbyUser) return false;
-            return true;
+            if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && user.IsZkLobbyUser) return true;
+            return false;
         }
 
         public static JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
@@ -279,7 +279,7 @@ namespace ZeroKWeb.SpringieInterface
                 else
                 {
                     b.Assigned.Clear();
-                    foreach (var id in b.ManuallyJoined) if (!CanMove(juggledPlayers[id])) b.Assigned.Add(id); // todo non zkl are not moveable yet, remove later
+                    foreach (var id in b.ManuallyJoined) if (!CanMove(juggledPlayers[id])) b.Assigned.Add(id); 
                 }
             }
         }
