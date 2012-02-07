@@ -198,9 +198,12 @@ namespace ZeroKWeb.SpringieInterface
                             var eloList = b.Assigned.Select(x => juggledAccounts[x]).Where(CanMove).OrderBy(x => x.EffectiveElo).ToList();
                             var toMove = eloList.Take(b.Assigned.Count / 2).ToList();
                             var target = new Bin() { Autohost = splitTo, Mode = b.Mode };
-                            bins.Add(target);
-                            target.Assigned.AddRange(toMove.Select(x=>x.LobbyID??0));
-                            b.Assigned.RemoveAll(x => toMove.Any(y => y.LobbyID == x));
+                            if (toMove.Count >= target.MinPlayers)
+                            {
+                                bins.Add(target);
+                                target.Assigned.AddRange(toMove.Select(x => x.LobbyID ?? 0));
+                                b.Assigned.RemoveAll(x => toMove.Any(y => y.LobbyID == x));
+                            }
                         }
                     }
                 }
