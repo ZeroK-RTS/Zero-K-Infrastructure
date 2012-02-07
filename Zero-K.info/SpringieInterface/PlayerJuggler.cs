@@ -86,8 +86,12 @@ namespace ZeroKWeb.SpringieInterface
                 foreach (var ah in grp.Where(x=>x.RunningGameStartContext != null)) { // iterate through running and assign players there to biggest bin of same class
 
                     var toAdd = ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID).ToList();
-                    foreach (var u in toAdd) manuallyPrefered[u] = grp.Key;
-                    biggest.ManuallyJoined.AddRange(toAdd);
+                    foreach (var u in toAdd)
+                    {
+                        manuallyPrefered[u] = grp.Key;
+                        if (CanMove(juggledAccounts[u])) biggest.ManuallyJoined.AddRange(toAdd);
+                    }
+                    
                 }
 
                 // move to biggest bin if its not 1v1- just one bin/game type
