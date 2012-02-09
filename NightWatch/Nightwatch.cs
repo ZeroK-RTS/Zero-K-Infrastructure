@@ -90,7 +90,6 @@ namespace CaTracker
 			offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
 
-			new Shuffler(tas);
 			return true;
 		}
 

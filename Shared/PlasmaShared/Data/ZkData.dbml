@@ -99,6 +99,7 @@
       <Column Name="PwBombersUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwMetalProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwMetalUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />

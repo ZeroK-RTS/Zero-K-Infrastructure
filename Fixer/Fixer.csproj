@@ -70,6 +70,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NightWatch\NightWatch.csproj">
+      <Project>{6CE1E0F1-447C-4871-9246-CC7CCB359D89}</Project>
+      <Name>NightWatch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>

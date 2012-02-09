@@ -24,6 +24,16 @@ namespace NightWatch
     {
       this.client = client;
 
+      /*
+        this.client.Input += (s, e) =>
+      {
+          Console.WriteLine(e.Command +" "+ Utils.Glue(e.Args));
+      };
+      this.client.Output += (s, e) =>
+      {
+          Console.WriteLine(e.Data.Key + " " +Utils.Glue(e.Data.Value.Select(x=>x.ToString()).ToArray()));
+      };*/
+
       this.client.LoginAccepted += (s, e) => requests.Clear();
 
       this.client.TestLoginAccepted += (s, e) =>
@@ -68,11 +78,9 @@ namespace NightWatch
                       client.AdminKickFromLobby(e.Data.Name, "Banned");
                   }
               }
-              else {
-                  UpdateUser(e.Data.LobbyID, e.Data.Name, e.Data, null); // isspec is bot etc not set atm but at least we insert into db so we can request lobby version
-              }
+              
           }
-          client.RequestLobbyVersion(e.Data.Name);
+
       };
 
         // todo this executes for nothing after useradded sets extension -> avoid by splitting extension changed na duserstatuschanged
@@ -82,6 +90,20 @@ namespace NightWatch
           UpdateUser(user.LobbyID, user.Name, user, null);
           
         };
+
+      this.client.BattleUserJoined += (s, e) =>
+      {
+          var battle = client.ExistingBattles[e.BattleID];
+          if (battle.Founder.IsZkLobbyUser) {
+            var user = client.ExistingUsers[e.UserName];
+            var db = new ZkDataContext();
+            var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == user.LobbyID);
+            if (acc != null && (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays>1)) client.RequestLobbyVersion(user.Name);
+          }
+
+      };
+
+
 
       this.client.TestLoginDenied += (s, e) =>
         {
@@ -96,7 +118,11 @@ namespace NightWatch
               var acc = db.Accounts.FirstOrDefault(x => x.Name == e.Name);
               if (acc != null) {
                   acc.LobbyVersion = e.LobbyVersion;
+                  acc.LastLobbyVersionCheck = DateTime.UtcNow;
                   db.SubmitChanges();
+                  if (!acc.LobbyVersion.StartsWith("ZK")) { 
+                    client.Say(TasClient.SayPlace.User, e.Name, string.Format("WARNING: You are connected using {0} which is not fully compatible with this host. Please use Zero-K lobby. Download it from http://zero-k.info   NOTE: to play all Spring games/mods with Zero-K lobby, untick \"Official games\" on its multiplayer tab. Thank you!", e.LobbyVersion), false);
+                  }
               }
           }
       };
