@@ -45,7 +45,8 @@ namespace NightWatch
       {
           using (var db = new ZkDataContext()) {
               var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == e.Data.LobbyID);
-              if (acc != null) {
+              if (acc != null)
+              {
 
 
                   var data = new Dictionary<string, string>() { 
@@ -55,20 +56,23 @@ namespace NightWatch
                       {ProtocolExtension.Keys.Clan.ToString(), acc.Clan!= null ? acc.Clan.Shortcut:""},
                       {ProtocolExtension.Keys.Avatar.ToString(), acc.Avatar}};
                   if (acc.SpringieLevel != 1) data.Add(ProtocolExtension.Keys.SpringieLevel.ToString(), acc.SpringieLevel.ToString());
-                  if (acc.IsZeroKAdmin) data.Add(ProtocolExtension.Keys.ZkAdmin.ToString(),"1");
+                  if (acc.IsZeroKAdmin) data.Add(ProtocolExtension.Keys.ZkAdmin.ToString(), "1");
 
                   if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute)) data.Add(ProtocolExtension.Keys.BanMute.ToString(), "1");
                   if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) data.Add(ProtocolExtension.Keys.BanLobby.ToString(), "1");
 
                   client.Extensions.Publish(e.Data.Name, data);
 
-                  if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) {
+                  if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby))
+                  {
                       client.AdminKickFromLobby(e.Data.Name, "Banned");
                   }
-
+              }
+              else {
+                  UpdateUser(e.Data.LobbyID, e.Data.Name, e.Data, null); // isspec is bot etc not set atm but at least we insert into db so we can request lobby version
               }
           }
-
+          client.RequestLobbyVersion(e.Data.Name);
       };
 
         // todo this executes for nothing after useradded sets extension -> avoid by splitting extension changed na duserstatuschanged
@@ -76,6 +80,7 @@ namespace NightWatch
         {
           var user = client.ExistingUsers[e.ServerParams[0]];
           UpdateUser(user.LobbyID, user.Name, user, null);
+          
         };
 
       this.client.TestLoginDenied += (s, e) =>
@@ -84,6 +89,24 @@ namespace NightWatch
           if (requests.TryGetValue(client.MessageID, out entry)) entry.WaitHandle.Set();
           requests.TryRemove(client.MessageID, out entry);
         };
+
+      this.client.UserLobbyVersionRecieved += (s, e) =>
+      {
+          using (var db = new ZkDataContext()) {
+              var acc = db.Accounts.FirstOrDefault(x => x.Name == e.Name);
+              if (acc != null) {
+                  acc.LobbyVersion = e.LobbyVersion;
+                  db.SubmitChanges();
+              }
+          }
+      };
+
+      this.client.BattleFound += (s, e) =>
+      {
+          if (e.Data.Founder.IsZkLobbyUser && !e.Data.Founder.IsBot) {
+            client.SetBotMode(e.Data.Founder.Name,true);
+          }
+      };
     }
 
 

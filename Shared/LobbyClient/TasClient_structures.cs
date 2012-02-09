@@ -62,7 +62,32 @@ namespace LobbyClient
 	}
 
 
-	public class TasSayEventArgs: EventArgs
+    public class UserLobbyVersionEventArgs: EventArgs {
+        public string Name;
+        public string LobbyVersion;
+        public UserLobbyVersionEventArgs() {}
+
+        public UserLobbyVersionEventArgs(string name, string lobbyVersion)
+        {
+            Name = name;
+            LobbyVersion = lobbyVersion;
+        }
+    }
+
+    public class UserIPEventArgs: EventArgs {
+        public string Name;
+        public string IP;
+        public UserIPEventArgs() {}
+
+        public UserIPEventArgs(string name, string ip)
+        {
+            Name = name;
+            IP = ip;
+        }
+    }
+
+
+    public class TasSayEventArgs: EventArgs
 	{
 		public enum Origins
 		{

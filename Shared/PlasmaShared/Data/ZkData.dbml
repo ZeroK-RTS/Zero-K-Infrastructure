@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=planet-wars.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="PlasmaShared.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=94.23.171.71,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k" SettingsObjectName="PlasmaShared.Properties.Settings" SettingsPropertyName="zero_kConnectionString" Provider="System.Data.SqlClient" />
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
       <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -92,6 +92,13 @@
       <Column Name="Avatar" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="SpringieLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="GamePreferences" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="LobbyVersion" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
+      <Column Name="PwDropshipsProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwDropshipsUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwBombersProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwBombersUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwMetalProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwMetalUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />

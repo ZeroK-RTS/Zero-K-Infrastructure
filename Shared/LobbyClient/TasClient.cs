@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Timers;
 using PlasmaShared;
 using ZkData;
@@ -134,7 +135,7 @@ namespace LobbyClient
         public event EventHandler<EventArgs<Battle>> BattleEnded = delegate { }; // raised just after the battle is removed from the battle list
         public event EventHandler<EventArgs<Battle>> BattleEnding = delegate { }; // raised just before the battle is removed from the battle list
         public event EventHandler BattleForceQuit = delegate { }; // i was kicked from a battle (sent after LEFTBATTLE)
-        public event EventHandler<TasEventArgs> BattleFound = delegate { };
+        public event EventHandler<EventArgs<Battle>> BattleFound = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleInfoChanged = delegate { };
         public event EventHandler<EventArgs<Battle>> BattleJoined = delegate { };
         public event EventHandler<BattleInfoEventArgs> BattleLockChanged = delegate { };
@@ -189,6 +190,9 @@ namespace LobbyClient
         public event EventHandler<TasEventArgs> UserStatusChanged = delegate { };
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
         public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
+        public event EventHandler<UserLobbyVersionEventArgs> UserLobbyVersionRecieved = delegate { };
+        public event EventHandler<UserIPEventArgs> UserIPRecieved = delegate { }; 
+
  
 
         public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, int cpu, string ipOverride = null)
@@ -667,6 +671,18 @@ namespace LobbyClient
             con.SendCommand("SETSCRIPTTAGS", data);
         }
 
+        public void SetBotMode(string name, bool botMode) {
+            con.SendCommand("SETBOTMODE",name, botMode?"1":"0");
+        }
+
+        public void RequestLobbyVersion(string name) {
+            con.SendCommand("GETLOBBYVERSION", name); 
+        }
+
+        public void RequestUserIP(string name) {
+            con.SendCommand("GETIP",name);
+        }
+
         /// <summary>
         /// Starts game and automatically does hole punching if necessary
         /// </summary>
@@ -699,7 +715,27 @@ namespace LobbyClient
         }
 
 
-        
+        private void HandleSpecialServerMessages(string[] args) {
+            var text = Utils.Glue(args, 0);
+            var match = Regex.Match(text, "<([^>]+)> is using (.+)");
+            if (match.Success)
+            {
+                var name = match.Groups[1].Value;
+                var version = match.Groups[2].Value.Trim();
+                UserLobbyVersionRecieved(this, new UserLobbyVersionEventArgs() { Name = name, LobbyVersion = version});
+            }
+            else
+            {
+                match = Regex.Match(text, "<([^>]+)> is currently bound to (.+)");
+                if (match.Success) {
+                    var name = match.Groups[1].Value;
+                    var ip = match.Groups[2].Value.Trim();
+                    UserIPRecieved(this, new UserIPEventArgs() { Name = name, IP = ip});
+                }
+            }
+        }
+
+
         /// <summary>
         /// Primary method - processes commands from server
         /// </summary>
@@ -825,6 +861,7 @@ namespace LobbyClient
                         break;
 
                     case "SERVERMSG": // server message
+                        HandleSpecialServerMessages(args);
                         InvokeSaid(new TasSayEventArgs(TasSayEventArgs.Origins.Server,
                                                        TasSayEventArgs.Places.Server,
                                                        "",
@@ -1179,7 +1216,7 @@ namespace LobbyClient
                         newBattle.Users.Add(new UserBattleStatus(newBattle.Founder.Name, newBattle.Founder));
                         existingBattles[newBattle.BattleID] = newBattle;
                         newBattle.Founder.IsInBattleRoom = true;
-                        BattleFound(this, new TasEventArgs(args));
+                        BattleFound(this, new EventArgs<Battle>(newBattle));
                         break;
                     }
 

@@ -137,9 +137,9 @@ namespace ZeroKLobby.MicroLobby
             RemoveBattleIcon(e.Data);
         }
 
-        void TasClient_BattleFound(object sender, TasEventArgs e)
+        void TasClient_BattleFound(object sender, EventArgs<Battle> e)
         {
-            var battleID = Int32.Parse(e.ServerParams[0]);
+            var battleID = e.Data.BattleID;
             var battleIcon = AddBattle(battleID);
             BattleAdded(this, new EventArgs<BattleIcon>(battleIcon));
         }
