@@ -98,7 +98,7 @@ namespace NightWatch
             var user = client.ExistingUsers[e.UserName];
             var db = new ZkDataContext();
             var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == user.LobbyID);
-            if (acc != null && (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays>1)) client.RequestLobbyVersion(user.Name);
+            if (acc != null && (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays>3)) client.RequestLobbyVersion(user.Name);
           }
 
       };
