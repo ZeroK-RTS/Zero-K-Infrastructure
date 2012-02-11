@@ -133,6 +133,8 @@ namespace Springie.autohost
     public class VoteMap: AbstractPoll, IVotable
     {
         string map;
+		
+		bool randomMap;
 
         public VoteMap(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
@@ -140,6 +142,7 @@ namespace Springie.autohost
         {
             if (words.Length > 0)
             {
+				randomMap = false;
                 string[] vals;
                 int[] indexes;
                 if (ah.FilterMaps(words, out vals, out indexes) > 0)
@@ -155,6 +158,7 @@ namespace Springie.autohost
                 }
             }
             else {
+				randomMap = true;
                 ah.SayBattle("Do you want to change to suitable random map? !vote 1 = yes, !vote 2 = no");
                 return true;
             }
@@ -174,9 +178,16 @@ namespace Springie.autohost
             {
                 if (winVote == 1)
                 {
+					if (randomMap == true)
+					{
+					ah.SayBattle("vote successful - changing to a suitable random map");
+					ah.ServerVerifyMap(true);
+					}
+					else
+					{
                     ah.SayBattle("vote successful - changing map to " + map);
                     ah.ComMap(TasSayEventArgs.Default,new string[]{map});
-                    
+                    }
                 }
                 else ah.SayBattle("not enough votes, map stays");
                 return true;
