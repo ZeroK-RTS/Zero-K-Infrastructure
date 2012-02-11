@@ -1242,7 +1242,7 @@ namespace Springie.autohost
                 Respond(e, "Cannot change map while the game is running");
                 return;
             }
-            if (words.Length == 0)
+            if (words.All(String.IsNullOrEmpty))
             {
                 ServerVerifyMap(true);
                 //Respond(e, "You must specify a map name");
