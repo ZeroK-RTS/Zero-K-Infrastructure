@@ -377,8 +377,6 @@ namespace Springie.autohost
 
     public class VoteForceStart: AbstractPoll, IVotable
     {
-        int allowedAlly = -1;
-
         public VoteForceStart(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
         public bool Init(TasSayEventArgs e, string[] words)
@@ -386,18 +384,6 @@ namespace Springie.autohost
             if (!spring.IsRunning)
             {
                 ah.SayBattle("Do you want to force start game? !vote 1 = yes, !vote 2 = no");
-
-                // only smallest ally team can vote
-                Battle b = tas.MyBattle;
-                List<IGrouping<int, UserBattleStatus>> grouping =
-                    b.Users.Where(u => !u.IsSpectator).GroupBy(u => u.AllyNumber).OrderBy(g => g.Count()).ToList();
-                if (grouping.Count() == 2)
-                {
-                    allowedAlly = grouping[0].Key;
-                    initialUserCount = grouping[0].Count();
-                }
-                else allowedAlly = -1;
-
                 return true;
             }
             else
@@ -411,16 +397,6 @@ namespace Springie.autohost
         public bool Vote(TasSayEventArgs e, string[] words)
         {
             int vote;
-            if (allowedAlly != -1)
-            {
-                int ally = tas.MyBattle.Users.Where(u => u.Name == e.UserName && !u.IsSpectator).Select(u => u.AllyNumber).SingleOrDefault();
-                if (ally != allowedAlly)
-                {
-                    AutoHost.Respond(tas, spring, e, "Only smaller team can vote");
-                    return false;
-                }
-            }
-
             if (!RegisterVote(e, words, out vote))
             {
                 AutoHost.Respond(tas, spring, e, "You must vote valid option/not be a spectator");
