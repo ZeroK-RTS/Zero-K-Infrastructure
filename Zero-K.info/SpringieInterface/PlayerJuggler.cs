@@ -67,12 +67,19 @@ namespace ZeroKWeb.SpringieInterface
                 autohosts.Where(x => x.LobbyContext != null).GroupBy(x => x.LobbyContext.GetMode()))
             {
                 List<Bin> groupBins = new List<Bin>();
+                
+                // set manual preference for all juggleable people who are in games
+                foreach (var ah in grp) {
+                    foreach (var u in ah.LobbyContext.Players.Where(x=>juggledAccounts.ContainsKey(x.LobbyID))) {
+                        manuallyPrefered[u.LobbyID] = grp.Key;
+                    }
+                }
 
+                // make bins from existing battles that are not running and have some players
                 foreach (var ah in grp.Where(x => x.RunningGameStartContext == null && x.LobbyContext.Players.Any(y => !y.IsSpectator)))
                 {
                     var bin = new Bin() { Autohost = ah, Mode = grp.Key };
                     var toAdd = ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID).ToList();
-                    foreach (var u in toAdd) manuallyPrefered[u] = grp.Key;
                     bin.ManuallyJoined.AddRange(toAdd);
                     groupBins.Add(bin);
                 }
@@ -82,25 +89,10 @@ namespace ZeroKWeb.SpringieInterface
                     var bin = new Bin() { Autohost = firstEmpty, Mode = grp.Key };
                     groupBins.Add(bin);
                 }
+                
+                // remove all but biggest bin except for 1v1
                 var biggest = groupBins.OrderByDescending(x => x.ManuallyJoined.Count).First();
-                foreach (var ah in grp.Where(x=>x.RunningGameStartContext != null)) { // iterate through running and assign players there to biggest bin of same class
-
-                    var toAdd = ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID).ToList();
-                    foreach (var u in toAdd)
-                    {
-                        manuallyPrefered[u] = grp.Key;
-                        if (CanMove(juggledAccounts[u])) biggest.ManuallyJoined.AddRange(toAdd);
-                    }
-                    
-                }
-
-                // move to biggest bin if its not 1v1- just one bin/game type
-                if (grp.Key != AutohostMode.Game1v1) {
-                    foreach (var b in groupBins.Where(x => x != biggest)) {
-                        biggest.ManuallyJoined.AddRange(b.ManuallyJoined);
-                    }
-                    groupBins.RemoveAll(x => x != biggest);
-                }
+                if (grp.Key != AutohostMode.Game1v1) groupBins.RemoveAll(x => x != biggest);
                 
                 bins.AddRange(groupBins);
             }
@@ -300,14 +292,14 @@ namespace ZeroKWeb.SpringieInterface
                 foreach (var a in juggledAccounts)
                 {
                     var lobbyID = a.Key;
-                    var battlePref = a.Value.Preferences[b.Mode];
+                    var battlePref = (double)a.Value.Preferences[b.Mode];
                     AutohostMode manualPref;
-                    if (!manuallyPrefered.TryGetValue(lobbyID, out manualPref)) manualPref = AutohostMode.None;
+                    if (manuallyPrefered.TryGetValue(lobbyID, out manualPref) && manualPref == b.Mode) battlePref += 0.5; // player joined manually same type add 0.5
 
                     if (b.Mode == AutohostMode.Planetwars && a.Value.Level < GlobalConst.MinPlanetWarsLevel) continue; // dont queue who cannot join PW
-
+                    
                     if (b.ManuallyJoined.Contains(lobbyID)) // was he there already
-                        b.PlayerPriority[lobbyID] = (int)battlePref + 0.5; // player joined, he gets +0.5 for his normal preference;
+                        b.PlayerPriority[lobbyID] = battlePref; // player joined it already
                     else
                     {
                         if (CanMove(a.Value))
@@ -317,7 +309,7 @@ namespace ZeroKWeb.SpringieInterface
                                 Math.Abs(a.Value.EffectiveElo - juggledAccounts[b.ManuallyJoined[0]].EffectiveElo) >
                                 GlobalConst.JugglerMax1v1EloDifference) continue; //effective elo difference > 250 dont try to combine
 
-                            if (battlePref > GamePreference.Never || manualPref == b.Mode) b.PlayerPriority[lobbyID] = (int)battlePref;
+                            if (battlePref > (double)GamePreference.Never) b.PlayerPriority[lobbyID] = (int)battlePref;
                         }
                     }
                 }
