@@ -335,7 +335,7 @@ namespace ZeroKWeb.SpringieInterface
                 get {
                     if (Mode == AutohostMode.Game1v1) return 100;
                     if (Mode == AutohostMode.Planetwars || Mode == AutohostMode.GameFFA) return 18;
-                    return 20;
+                    return 24;
                 } 
             }
 
