@@ -22,6 +22,7 @@ namespace ZeroKWeb.SpringieInterface
                                                           AutohostMode.GameFFA,
                                                           AutohostMode.Planetwars,
                                                           AutohostMode.GameTeams,
+                                                          AutohostMode.SmallTeams,
                                                           AutohostMode.GameChickens
                                                       };
 
@@ -335,7 +336,8 @@ namespace ZeroKWeb.SpringieInterface
                 get {
                     if (Mode == AutohostMode.Game1v1) return 100;
                     if (Mode == AutohostMode.Planetwars || Mode == AutohostMode.GameFFA) return 18;
-                    return 30;
+                    if (Mode == AutohostMode.SmallTeams) return 8;
+                    return 24;
                 } 
             }
 
@@ -352,7 +354,9 @@ namespace ZeroKWeb.SpringieInterface
                         case AutohostMode.Planetwars:
                             return 6;
                         case AutohostMode.GameTeams:
-                            return 6;
+                            return 10;
+                        case AutohostMode.SmallTeams:
+                            return 4;
                         case AutohostMode.GameChickens:
                             return 4;
                     }

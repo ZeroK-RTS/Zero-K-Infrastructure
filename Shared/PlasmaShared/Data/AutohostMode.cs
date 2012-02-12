@@ -9,7 +9,7 @@ namespace ZkData
     public enum AutohostMode
     {
         None = 0,
-        [Description("Teams")]
+        [Description("Big teams (5v5+)")]
         GameTeams = 1,
         [Description("PlanetWars online campaign")]
         Planetwars = 2,
@@ -18,7 +18,9 @@ namespace ZkData
         [Description("FFA (free for all)")]
         GameFFA = 4,
         [Description("Cooperative (vs chickens/CAI)")]
-        GameChickens = 5
+        GameChickens = 5,
+        [Description("Small teams (2v2-4v4)")]
+        SmallTeams = 6,
     }
 
 }

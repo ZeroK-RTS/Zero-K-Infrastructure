@@ -155,6 +155,7 @@ namespace ZeroKWeb.SpringieInterface
                         switch (mode)
                         {
                            case AutohostMode.GameTeams:
+                           case AutohostMode.SmallTeams:
                                var ret =  db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens!=true);
                                if (players>16) ret = ret.Where(x => x.MapWidth > 20 || x.MapHeight > 20);
                                else if (players > 6) ret = ret.Where(x => (x.MapWidth > 12 || x.MapHeight > 12) && (x.MapWidth <= 20 && x.MapHeight <= 20));
