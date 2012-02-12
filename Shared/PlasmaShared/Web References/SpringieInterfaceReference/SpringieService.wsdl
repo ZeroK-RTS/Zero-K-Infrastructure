@@ -253,6 +253,7 @@
           <s:enumeration value="Game1v1" />
           <s:enumeration value="GameFFA" />
           <s:enumeration value="GameChickens" />
+          <s:enumeration value="SmallTeams" />
         </s:restriction>
       </s:simpleType>
       <s:complexType name="ArrayOfCommandLevel">

@@ -986,6 +986,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         GameChickens,
+        
+        /// <remarks/>
+        SmallTeams,
     }
     
     /// <remarks/>
