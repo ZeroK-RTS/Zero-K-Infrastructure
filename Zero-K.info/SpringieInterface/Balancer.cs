@@ -29,7 +29,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (!isGameStart) res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         break;
                     case AutohostMode.GameTeams:
-                        if (context.Players.Count > 24)
+                        if (context.Players.Count(x=>!x.IsSpectator) > 24)
                         {
                             res.Message = "Too many people, cannot balance. Wait for juggler to split you";
                             return res;
@@ -38,7 +38,7 @@ namespace ZeroKWeb.SpringieInterface
                         res.DeleteBots = true;
                         break;
                     case AutohostMode.SmallTeams:
-                        if (context.Players.Count > 8)
+                        if (context.Players.Count(x => !x.IsSpectator) > 8)
                         {
                             res.Message = "Too many people, cannot balance. Wait for juggler to split you";
                             return res;
