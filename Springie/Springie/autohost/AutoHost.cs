@@ -225,6 +225,11 @@ namespace Springie.autohost
                     {
                         if (c.ListenTo[i] == e.Place)
                         {
+                            // command is only for nonspecs
+                            if (!c.AllowSpecs) {
+                                if (tas.MyBattle == null || !tas.MyBattle.Users.Any(x => x.LobbyUser.Name == e.UserName && !x.IsSpectator)) return false;
+                            }
+
                             var reqLevel = c.Level;
                             var ulevel = GetUserLevel(e);
 

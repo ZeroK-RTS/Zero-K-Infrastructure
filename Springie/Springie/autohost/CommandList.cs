@@ -53,7 +53,7 @@ namespace Springie.autohost
                                          2,
                                          " - forces game start inside game",
                                          8,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }) { AllowSpecs = false});
             AddMissing(new CommandConfig("kick",
                                          3,
                                          "[<filters>..] - kicks a player",

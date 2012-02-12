@@ -28,6 +28,9 @@ namespace Springie.autohost
         [Description("From which places can you use this command. Normal = PM to server, Battle = battle lobby, Game = from running game.")]
         public TasSayEventArgs.Places[] ListenTo { get { return listenTo; } set { listenTo = value; } }
 
+        public bool AllowSpecs { get; set; }
+
+
         [ReadOnly(true)]
         [Category("Command")]
         public string Name { get; set; }
@@ -36,7 +39,9 @@ namespace Springie.autohost
         [Description("How often can this command be executed (in seconds). 0 = no throttling, can execute at any time.")]
         public int Throttling { get; set; }
 
-        public CommandConfig() { }
+        public CommandConfig() { 
+       
+        }
 
 
         public CommandConfig(string name, int level, string helpText, int throttling, TasSayEventArgs.Places[] listenTo)
@@ -56,6 +61,7 @@ namespace Springie.autohost
             Name = name;
             Level = level;
             HelpText = helpText;
+            AllowSpecs = true;
         }
     } ;
 }
