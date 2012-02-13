@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+ using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
 using PlasmaShared.SpringieInterfaceReference;
@@ -23,7 +23,7 @@ namespace Springie.autohost
                                          "<allycount> - assigns people to <allycount> rank balanced alliances, e.g. !balance - makes 2 random but balanced alliances",
                                          10));
 
-            AddMissing(new CommandConfig("start", 1, " - starts game", 5));
+            AddMissing(new CommandConfig("start", 0, " - starts game", 5));
 
             AddMissing(new CommandConfig("ring",
                                          0,
@@ -174,7 +174,7 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("listoptions", 1, " - lists all mod/map options", 5));
 
-            AddMissing(new CommandConfig("setoptions", 1, "<name>=<value>[,<name>=<value>] - applies mod/map options", 0));
+            AddMissing(new CommandConfig("setoptions", 2, "<name>=<value>[,<name>=<value>] - applies mod/map options", 0));
 
             AddMissing(new CommandConfig("votesetoptions", 1, "<name>=<value>[,<name>=<value>] - starts a vote to apply mod/map options", 0));
 
@@ -241,7 +241,7 @@ namespace Springie.autohost
                                              TasSayEventArgs.Places.Channel
                                          }));
 
-            AddMissing(new CommandConfig("saveboxes", 2, "- saves boxes for current map"));
+            AddMissing(new CommandConfig("saveboxes", 3, "- saves boxes for current map"));
             AddMissing(new CommandConfig("move", 3, "<who> <where> - moves player forcibly to a new autohost"));
             AddMissing(new CommandConfig("juggle", 4, "- executes player juggler moving players between managed autohosts"));
 
