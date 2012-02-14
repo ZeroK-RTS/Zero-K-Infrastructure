@@ -2,7 +2,11 @@ namespace CaTracker
 {
     public class Config
     {
+#if DEBUG
         string accountName = "NightwatchDev";
+#else 
+        string accountName = "Nightwatch";
+#endif
         string accountPassword = "secret";
         int attemptReconnectInterval = 60;
         bool attemptToRecconnect = true;
