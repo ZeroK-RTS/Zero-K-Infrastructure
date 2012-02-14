@@ -32,7 +32,8 @@
   <UpdateDocumentation>false</UpdateDocumentation>
   <CreateNestedEPClasses>false</CreateNestedEPClasses>
   <CreateRequiredOptionalInterfaces>false</CreateRequiredOptionalInterfaces>
-  <PersistConnectString>false</PersistConnectString>
+  <ConnectString>Data Source=94.23.171.71,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1</ConnectString>
+  <PersistConnectString>true</PersistConnectString>
   <IgnoreTables>
     <string>dbo.sysdiagrams</string>
   </IgnoreTables>

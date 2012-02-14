@@ -198,12 +198,6 @@ namespace ZkData
     partial void DeleteTreatyEffectPlanet(TreatyEffectPlanet instance);
     #endregion
 		
-		public ZkDataContext() : 
-				base(global::PlasmaShared.Properties.Settings.Default.zero_kConnectionString, mappingSource)
-		{
-			OnCreated();
-		}
-		
 		public ZkDataContext(string connection) : 
 				base(connection, mappingSource)
 		{
