@@ -65,7 +65,8 @@ namespace ZeroKWeb
             ResourceLinkProvider.GetLinksAndTorrent("Zero-K v0.8.14", out links, out tor, out dep, out rt, out fn);
             */
             Application["Nightwatch"] = new Nightwatch(Server.MapPath("/"));
-            if (!Debugger.IsAttached) Global.Nightwatch.Start();
+            //if (!Debugger.IsAttached) 
+                Global.Nightwatch.Start();
 
 			AreaRegistration.RegisterAllAreas();
 			RegisterRoutes(RouteTable.Routes);

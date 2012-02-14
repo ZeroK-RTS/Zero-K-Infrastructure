@@ -96,6 +96,11 @@ namespace Fixer
 
       static void Main(string[] args)
     {
+        var nw = new CaTracker.Nightwatch(@"c:\temp");
+        nw.Start();
+        Console.ReadLine();
+          
+          
 
           //FixDemoEngineVersion();
 

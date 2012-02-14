@@ -116,7 +116,7 @@ namespace ZkData
                 {
                     var rand = new Random();
                     var avatars = ZkData.Avatar.GetCachedList();
-                    Avatar = avatars[rand.Next(avatars.Count)].AvatarName;
+                    if (avatars.Any()) Avatar = avatars[rand.Next(avatars.Count)].AvatarName;
                 }
             }
         }

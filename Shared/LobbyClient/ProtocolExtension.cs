@@ -11,7 +11,11 @@ namespace LobbyClient
     /// </summary>
     public class ProtocolExtension
     {
-        const string ExtensionChannelName = "extension";
+#if DEBUG
+        const string ExtensionChannelName = "extension_dev";
+#else
+          const string ExtensionChannelName = "extension";
+#endif
 
 
         public enum Keys

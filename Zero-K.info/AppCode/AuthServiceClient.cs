@@ -43,7 +43,15 @@ namespace ZkData
         {
             if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(passwordHash)) return null;
             var db = new ZkDataContext();
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null);
+#if DEBUG
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.LobbyID != null);
+            
+#else
+            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.LobbyID != null && x.Password== passwordHash);
+#endif
+
+
+
             if (acc != null || Debugger.IsAttached) return acc;
             else return Global.Nightwatch.Auth.VerifyAccount(login, passwordHash);
         }
