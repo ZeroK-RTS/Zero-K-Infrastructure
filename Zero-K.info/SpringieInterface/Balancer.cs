@@ -35,7 +35,7 @@ namespace ZeroKWeb.SpringieInterface
                             res.Message = "Too many people, cannot balance. Wait for juggler to split you";
                             return res;
                         }
-                        else if (playerCount < 10) {
+                        else if (playerCount < 8) {
                             res.Message = "This room needs at least 10 people to start";
                             return res;
                         }
