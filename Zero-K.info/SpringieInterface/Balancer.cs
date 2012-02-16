@@ -21,6 +21,7 @@ namespace ZeroKWeb.SpringieInterface
         {
             var mode = context.GetMode();
             var res = new BalanceTeamsResult();
+            var playerCount = context.Players.Count(x=>!x.IsSpectator);
             if (mode != AutohostMode.Planetwars)
             {
                 switch (mode)
@@ -29,11 +30,16 @@ namespace ZeroKWeb.SpringieInterface
                         if (!isGameStart) res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         break;
                     case AutohostMode.GameTeams:
-                        if (context.Players.Count(x=>!x.IsSpectator) > 24)
+                        if (playerCount > 24)
                         {
                             res.Message = "Too many people, cannot balance. Wait for juggler to split you";
                             return res;
                         }
+                        else if (playerCount < 10) {
+                            res.Message = "This room needs at least 10 people to start";
+                            return res;
+                        }
+
                         res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         res.DeleteBots = true;
                         break;
@@ -43,6 +49,12 @@ namespace ZeroKWeb.SpringieInterface
                             res.Message = "Too many people, cannot balance. Wait for juggler to split you";
                             return res;
                         }
+                        else if (playerCount < 4)
+                        {
+                            res.Message = "This room needs at least 4 people to start";
+                            return res;
+                        }
+
                         res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         res.DeleteBots = true;
                         break;
@@ -71,6 +83,11 @@ namespace ZeroKWeb.SpringieInterface
                         }
                         break;
                     case AutohostMode.GameFFA:
+                        if (playerCount < 3) {
+                            res.Message = "This room needs at least 3 people to start";
+                            return res;
+                        }
+
                         var db = new ZkDataContext();
                         var map = db.Resources.Single(x => x.InternalName == context.Map);
                         if (isGameStart)
@@ -93,6 +110,11 @@ namespace ZeroKWeb.SpringieInterface
                     res.Message = "Too many people, cannot balance. Use !splitplayers";
                     return res;
                 }
+                else if (playerCount < 4) {
+                    res.Message = "This room needs at least 4 people to start";
+                    return res;
+                }
+
 
                 using (var db = new ZkDataContext())
                 {
