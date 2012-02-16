@@ -221,7 +221,7 @@
 	@if (Model.SpringBattlePlayers.Any())
  {
 		<div id="usr_recentbattles" class="fleft border">
-			<h3>Last battles</h3>
+			<h3>@Html.ActionLink("Last battles","Index","Battles")</h3>
 			<span>
 				@Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
 				watched, @Model.MissionRunCount missions 
@@ -237,7 +237,7 @@
 	@if (Model.ForumPosts.Any())
  {
 		<div id="usr_forumposts" class="fleft border">
-			<h3>Posted threads</h3>
+			<h3>@Html.ActionLink("Posted threads","Index","Forum")</h3>
 			<span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
 			<br />
 			@foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10))

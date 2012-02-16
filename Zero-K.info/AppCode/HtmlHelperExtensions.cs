@@ -182,14 +182,19 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattlePlayer battlePlayer)
         {
+            return PrintBattle(helper, battlePlayer.SpringBattle, battlePlayer.IsSpectator ? null : (bool?)battlePlayer.IsInVictoryTeam);
+        }
+
+        public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattle battle, bool? isVictory = null)
+        {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             var icon = "";
-            if (battlePlayer.IsInVictoryTeam) icon = "battlewon.png";
-            else if (battlePlayer.IsSpectator) icon = "spec.png";
+            if (isVictory == true) icon = "battlewon.png";
+            else if (isVictory == null) icon = "spec.png";
             else icon = "battlelost.png";
+
             icon = string.Format("<img src='/img/battles/{0}' class='vcenter' />", icon);
 
-            var battle = battlePlayer.SpringBattle;
 
             if (battle.IsMission) icon += " <img src='/img/battles/mission.png' alt='Mission' class='vcenter' />";
             if (battle.HasBots) icon += " <img src='/img/battles/robot.png' alt='Bots' class='vcenter' />";
@@ -204,6 +209,7 @@ namespace System.Web.Mvc
                                                 battle.PlayerCount,
                                                 PrintMap(helper, battle.ResourceByMapResourceID.InternalName),
                                                 icon));
+
         }
 
 
