@@ -33,10 +33,12 @@ namespace ZeroKWeb.SpringieInterface
                         if (playerCount > 24)
                         {
                             res.Message = "Too many people, cannot balance. Wait for juggler to split you";
+                            res.CanStart = false;
                             return res;
                         }
                         else if (playerCount < 8) {
                             res.Message = "This room needs at least 8 people to start";
+                            res.CanStart = false;
                             return res;
                         }
 
@@ -47,11 +49,13 @@ namespace ZeroKWeb.SpringieInterface
                         if (context.Players.Count(x => !x.IsSpectator) > 8)
                         {
                             res.Message = "Too many people, cannot balance. Wait for juggler to split you";
+                            res.CanStart = false;
                             return res;
                         }
                         else if (playerCount < 4)
                         {
                             res.Message = "This room needs at least 4 people to start";
+                            res.CanStart = false;
                             return res;
                         }
 
@@ -85,6 +89,7 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.GameFFA:
                         if (playerCount < 3) {
                             res.Message = "This room needs at least 3 people to start";
+                            res.CanStart = false;
                             return res;
                         }
 
@@ -108,10 +113,12 @@ namespace ZeroKWeb.SpringieInterface
                 if (context.Players.Count > 18)
                 {
                     res.Message = "Too many people, cannot balance. Use !splitplayers";
+                    res.CanStart = false;
                     return res;
                 }
                 else if (playerCount < 4) {
                     res.Message = "This room needs at least 4 people to start";
+                    res.CanStart = false;
                     return res;
                 }
 
