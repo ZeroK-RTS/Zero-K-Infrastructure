@@ -7,7 +7,6 @@
 	    public const bool GiveUnclannedInfluenceToClanned = false;
 	    public const int NotInvolvedIpSell = 20;
 	    public const string BaseImageUrl = "http://zero-k.info/img/";
-	    public const int MinPlanetWarsLevel = 2;
         public const int BaseInfluencePerBattle = 120;
         public const int InfluencePerGameSize = 20;
 	    public const double InfluenceTaxIncome = 1 / 25.0;
@@ -37,7 +36,6 @@
 		public const string NightwatchName = "Nightwatch";
 		public const string PasswordHashCookieName = "zk_passwordHash";
 		public const string LobbyAccessCookieName = "zk_lobby";
-        public const int JugglerMax1v1EloDifference = 250;
 
     public static bool IsZkMod(string name)
     {

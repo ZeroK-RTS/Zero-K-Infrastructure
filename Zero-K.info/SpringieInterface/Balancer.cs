@@ -20,8 +20,24 @@ namespace ZeroKWeb.SpringieInterface
         public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise)
         {
             var mode = context.GetMode();
+            var config = context.GetConfig();
             var res = new BalanceTeamsResult();
-            var playerCount = context.Players.Count(x=>!x.IsSpectator);
+            var playerCount = context.Players.Count(x => !x.IsSpectator);
+            if (isGameStart) {
+                if (playerCount < (config.MinToStart ?? 0)) {
+                    res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
+                    res.CanStart = false;
+                    return res;
+                }
+                else if (playerCount > (config.MaxToStart ?? 99)) {
+                    res.Message = string.Format("This host can only start with less than {0} people, wait for juggler to split you{1}", config.MaxToStart);
+                    res.CanStart = false;
+                    return res;
+                }
+
+            }
+
+
             if (mode != AutohostMode.Planetwars)
             {
                 switch (mode)
@@ -30,35 +46,10 @@ namespace ZeroKWeb.SpringieInterface
                         if (!isGameStart) res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         break;
                     case AutohostMode.GameTeams:
-                        if (playerCount > 24)
-                        {
-                            res.Message = "Too many people, cannot balance. Wait for juggler to split you";
-                            res.CanStart = false;
-                            return res;
-                        }
-                        else if (playerCount < 8) {
-                            res.Message = "This room needs at least 8 people to start";
-                            res.CanStart = false;
-                            return res;
-                        }
-
                         res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         res.DeleteBots = true;
                         break;
                     case AutohostMode.SmallTeams:
-                        if (context.Players.Count(x => !x.IsSpectator) > 8)
-                        {
-                            res.Message = "Too many people, cannot balance. Wait for juggler to split you";
-                            res.CanStart = false;
-                            return res;
-                        }
-                        else if (playerCount < 4)
-                        {
-                            res.Message = "This room needs at least 4 people to start";
-                            res.CanStart = false;
-                            return res;
-                        }
-
                         res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         res.DeleteBots = true;
                         break;
@@ -87,12 +78,6 @@ namespace ZeroKWeb.SpringieInterface
                         }
                         break;
                     case AutohostMode.GameFFA:
-                        if (playerCount < 3) {
-                            res.Message = "This room needs at least 3 people to start";
-                            res.CanStart = false;
-                            return res;
-                        }
-
                         var db = new ZkDataContext();
                         var map = db.Resources.Single(x => x.InternalName == context.Map);
                         if (isGameStart)
@@ -109,19 +94,7 @@ namespace ZeroKWeb.SpringieInterface
                 context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
                 res.CanStart = false;
                 res.DeleteBots = true;
-                if (context.Players.Count <= 1) return res;
-                if (context.Players.Count > 18)
-                {
-                    res.Message = "Too many people, cannot balance. Use !splitplayers";
-                    res.CanStart = false;
-                    return res;
-                }
-                else if (playerCount < 4) {
-                    res.Message = "This room needs at least 4 people to start";
-                    res.CanStart = false;
-                    return res;
-                }
-
+                if (playerCount <= 1) return res;
 
                 using (var db = new ZkDataContext())
                 {
@@ -145,12 +118,12 @@ namespace ZeroKWeb.SpringieInterface
                                                                    p.Clan.Shortcut,
                                                                    p.Name));
                         }*/
-                        if (p.Level < GlobalConst.MinPlanetWarsLevel)
+                        if (p.Level < config.MinLevel)
                         {
                             res.Message += string.Format("{0} cannot play, his level is {1}, minimum level is {2}\n",
                                                          p.Name,
                                                          p.Level,
-                                                         GlobalConst.MinPlanetWarsLevel);
+                                                         config.MinLevel);
                             AuthServiceClient.SendLobbyMessage(p,
                                                                string.Format(
                                                                    "Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level 5 to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots. You can observe this game however."));

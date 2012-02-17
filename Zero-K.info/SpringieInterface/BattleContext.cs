@@ -14,21 +14,20 @@ namespace ZeroKWeb.SpringieInterface
         public string Mod;
         public List<PlayerTeam> Players = new List<PlayerTeam>();
         public List<BotTeam> Bots = new List<BotTeam>();
-        private AutohostMode? mode;
-        
-        public AutohostMode GetMode() {
-            if (mode != null) return mode.Value;
+        private AutohostConfig config;
 
+        public AutohostConfig GetConfig() {
+            if (config != null) return config;
+            if (string.IsNullOrEmpty(AutohostName)) return null;
             var db = new ZkDataContext();
-            var name = AutohostName.TrimEnd('0','1','2','3','4','5','6','7','8','9');
+            var name = AutohostName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
             var entry = db.AutohostConfigs.SingleOrDefault(x => x.Login == name);
-            if (entry != null) mode = entry.AutohostMode;
-            else
-            {
-                if (AutohostName.StartsWith("PlanetWars")) mode =AutohostMode.Planetwars;
-                else mode = AutohostMode.None;
-            }
-            return mode.Value;
+            if (entry != null) config = entry;
+            return config;
+        }
+
+        public AutohostMode GetMode() {
+            if (GetConfig() != null) return GetConfig().AutohostMode;else return AutohostMode.None;
         }
     }
 

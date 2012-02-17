@@ -822,8 +822,17 @@
       <Column Name="[Mod]" Member="Mod" Storage="_Mod1" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="Title" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="JoinChannels" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
-      <Column Name="AutohostMode" Type="AutohostMode" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="BattlePassword" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="AutohostMode" Type="AutohostMode" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="MinToStart" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MaxToStart" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MinToJuggle" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MaxToJuggle" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="SplitBiggerThan" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MergeSmallerThan" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MaxEloDifference" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="DontMoveManuallyJoined" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="MinLevel" Type="System.Int32" DbType="int" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.RoleType" Member="RoleTypes">

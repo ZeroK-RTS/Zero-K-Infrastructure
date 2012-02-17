@@ -21128,9 +21128,27 @@ namespace ZkData
 		
 		private string _JoinChannels;
 		
+		private string _BattlePassword;
+		
 		private AutohostMode _AutohostMode;
 		
-		private string _BattlePassword;
+		private System.Nullable<int> _MinToStart;
+		
+		private System.Nullable<int> _MaxToStart;
+		
+		private System.Nullable<int> _MinToJuggle;
+		
+		private System.Nullable<int> _MaxToJuggle;
+		
+		private System.Nullable<int> _SplitBiggerThan;
+		
+		private System.Nullable<int> _MergeSmallerThan;
+		
+		private System.Nullable<int> _MaxEloDifference;
+		
+		private System.Nullable<bool> _DontMoveManuallyJoined;
+		
+		private System.Nullable<int> _MinLevel;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -21166,10 +21184,28 @@ namespace ZkData
     partial void OnTitleChanged();
     partial void OnJoinChannelsChanging(string value);
     partial void OnJoinChannelsChanged();
-    partial void OnAutohostModeChanging(AutohostMode value);
-    partial void OnAutohostModeChanged();
     partial void OnBattlePasswordChanging(string value);
     partial void OnBattlePasswordChanged();
+    partial void OnAutohostModeChanging(AutohostMode value);
+    partial void OnAutohostModeChanged();
+    partial void OnMinToStartChanging(System.Nullable<int> value);
+    partial void OnMinToStartChanged();
+    partial void OnMaxToStartChanging(System.Nullable<int> value);
+    partial void OnMaxToStartChanged();
+    partial void OnMinToJuggleChanging(System.Nullable<int> value);
+    partial void OnMinToJuggleChanged();
+    partial void OnMaxToJuggleChanging(System.Nullable<int> value);
+    partial void OnMaxToJuggleChanged();
+    partial void OnSplitBiggerThanChanging(System.Nullable<int> value);
+    partial void OnSplitBiggerThanChanged();
+    partial void OnMergeSmallerThanChanging(System.Nullable<int> value);
+    partial void OnMergeSmallerThanChanged();
+    partial void OnMaxEloDifferenceChanging(System.Nullable<int> value);
+    partial void OnMaxEloDifferenceChanged();
+    partial void OnDontMoveManuallyJoinedChanging(System.Nullable<bool> value);
+    partial void OnDontMoveManuallyJoinedChanged();
+    partial void OnMinLevelChanging(System.Nullable<int> value);
+    partial void OnMinLevelChanged();
     #endregion
 		
 		public AutohostConfig()
@@ -21492,8 +21528,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AutohostMode", DbType="int NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattlePassword", DbType="nvarchar(50)")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public string BattlePassword
+		{
+			get
+			{
+				return this._BattlePassword;
+			}
+			set
+			{
+				if ((this._BattlePassword != value))
+				{
+					this.OnBattlePasswordChanging(value);
+					this.SendPropertyChanging();
+					this._BattlePassword = value;
+					this.SendPropertyChanged("BattlePassword");
+					this.OnBattlePasswordChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AutohostMode", DbType="int NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
 		public AutohostMode AutohostMode
 		{
 			get
@@ -21513,23 +21570,191 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattlePassword", DbType="nvarchar(50)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
-		public string BattlePassword
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MinToStart", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		public System.Nullable<int> MinToStart
 		{
 			get
 			{
-				return this._BattlePassword;
+				return this._MinToStart;
 			}
 			set
 			{
-				if ((this._BattlePassword != value))
+				if ((this._MinToStart != value))
 				{
-					this.OnBattlePasswordChanging(value);
+					this.OnMinToStartChanging(value);
 					this.SendPropertyChanging();
-					this._BattlePassword = value;
-					this.SendPropertyChanged("BattlePassword");
-					this.OnBattlePasswordChanged();
+					this._MinToStart = value;
+					this.SendPropertyChanged("MinToStart");
+					this.OnMinToStartChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxToStart", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		public System.Nullable<int> MaxToStart
+		{
+			get
+			{
+				return this._MaxToStart;
+			}
+			set
+			{
+				if ((this._MaxToStart != value))
+				{
+					this.OnMaxToStartChanging(value);
+					this.SendPropertyChanging();
+					this._MaxToStart = value;
+					this.SendPropertyChanged("MaxToStart");
+					this.OnMaxToStartChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MinToJuggle", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		public System.Nullable<int> MinToJuggle
+		{
+			get
+			{
+				return this._MinToJuggle;
+			}
+			set
+			{
+				if ((this._MinToJuggle != value))
+				{
+					this.OnMinToJuggleChanging(value);
+					this.SendPropertyChanging();
+					this._MinToJuggle = value;
+					this.SendPropertyChanged("MinToJuggle");
+					this.OnMinToJuggleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxToJuggle", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		public System.Nullable<int> MaxToJuggle
+		{
+			get
+			{
+				return this._MaxToJuggle;
+			}
+			set
+			{
+				if ((this._MaxToJuggle != value))
+				{
+					this.OnMaxToJuggleChanging(value);
+					this.SendPropertyChanging();
+					this._MaxToJuggle = value;
+					this.SendPropertyChanged("MaxToJuggle");
+					this.OnMaxToJuggleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SplitBiggerThan", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		public System.Nullable<int> SplitBiggerThan
+		{
+			get
+			{
+				return this._SplitBiggerThan;
+			}
+			set
+			{
+				if ((this._SplitBiggerThan != value))
+				{
+					this.OnSplitBiggerThanChanging(value);
+					this.SendPropertyChanging();
+					this._SplitBiggerThan = value;
+					this.SendPropertyChanged("SplitBiggerThan");
+					this.OnSplitBiggerThanChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MergeSmallerThan", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
+		public System.Nullable<int> MergeSmallerThan
+		{
+			get
+			{
+				return this._MergeSmallerThan;
+			}
+			set
+			{
+				if ((this._MergeSmallerThan != value))
+				{
+					this.OnMergeSmallerThanChanging(value);
+					this.SendPropertyChanging();
+					this._MergeSmallerThan = value;
+					this.SendPropertyChanged("MergeSmallerThan");
+					this.OnMergeSmallerThanChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxEloDifference", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
+		public System.Nullable<int> MaxEloDifference
+		{
+			get
+			{
+				return this._MaxEloDifference;
+			}
+			set
+			{
+				if ((this._MaxEloDifference != value))
+				{
+					this.OnMaxEloDifferenceChanging(value);
+					this.SendPropertyChanging();
+					this._MaxEloDifference = value;
+					this.SendPropertyChanged("MaxEloDifference");
+					this.OnMaxEloDifferenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DontMoveManuallyJoined", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
+		public System.Nullable<bool> DontMoveManuallyJoined
+		{
+			get
+			{
+				return this._DontMoveManuallyJoined;
+			}
+			set
+			{
+				if ((this._DontMoveManuallyJoined != value))
+				{
+					this.OnDontMoveManuallyJoinedChanging(value);
+					this.SendPropertyChanging();
+					this._DontMoveManuallyJoined = value;
+					this.SendPropertyChanged("DontMoveManuallyJoined");
+					this.OnDontMoveManuallyJoinedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MinLevel", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
+		public System.Nullable<int> MinLevel
+		{
+			get
+			{
+				return this._MinLevel;
+			}
+			set
+			{
+				if ((this._MinLevel != value))
+				{
+					this.OnMinLevelChanging(value);
+					this.SendPropertyChanging();
+					this._MinLevel = value;
+					this.SendPropertyChanged("MinLevel");
+					this.OnMinLevelChanged();
 				}
 			}
 		}
