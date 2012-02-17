@@ -96,10 +96,13 @@ namespace Fixer
 
       static void Main(string[] args)
     {
-        var nw = new CaTracker.Nightwatch(@"c:\temp");
-        nw.Start();
-        Console.ReadLine();
-          
+        var db = new ZkDataContext();
+        var sb = db.SpringBattles.Where(x => x.StartTime > DateTime.UtcNow.AddDays(-7)).SelectMany(x => x.SpringBattlePlayers).Where(x => !x.IsSpectator).GroupBy(x => x.Account.LobbyVersion).Select(x => new { x.Key, Cnt = x.Count() }).OrderByDescending(x=>x.Cnt).ToList();
+
+          foreach (var kv in sb)
+          {
+              Console.WriteLine("{0} : {1}", kv.Key,kv.Cnt);
+          }
           
 
           //FixDemoEngineVersion();
