@@ -36,7 +36,7 @@ namespace ZeroKWeb.SpringieInterface
                             return res;
                         }
                         else if (playerCount < 8) {
-                            res.Message = "This room needs at least 10 people to start";
+                            res.Message = "This room needs at least 8 people to start";
                             return res;
                         }
 

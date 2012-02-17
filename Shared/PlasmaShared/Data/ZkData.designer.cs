@@ -196,6 +196,9 @@ namespace ZkData
     partial void InsertTreatyEffectPlanet(TreatyEffectPlanet instance);
     partial void UpdateTreatyEffectPlanet(TreatyEffectPlanet instance);
     partial void DeleteTreatyEffectPlanet(TreatyEffectPlanet instance);
+    partial void InsertAccountRole(AccountRole instance);
+    partial void UpdateAccountRole(AccountRole instance);
+    partial void DeleteAccountRole(AccountRole instance);
     #endregion
 		
 		public ZkDataContext(string connection) : 
@@ -667,6 +670,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<TreatyEffectPlanet>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AccountRole> AccountRoles
+		{
+			get
+			{
+				return this.GetTable<AccountRole>();
 			}
 		}
 	}
@@ -2330,6 +2341,10 @@ namespace ZkData
 		
 		private EntitySet<Commander> _Commanders;
 		
+		private EntitySet<Poll> _PollsByRoleTargetAccountID;
+		
+		private EntitySet<Poll> _PollsByCreatedAccountID;
+		
 		private EntitySet<PollVote> _PollVotes;
 		
 		private EntitySet<Planet> _Planets;
@@ -2355,6 +2370,10 @@ namespace ZkData
 		private EntitySet<FactionTreaty> _FactionTreatiesByProposingAccountID;
 		
 		private EntitySet<FactionTreaty> _FactionTreatiesByAcceptedAccountID;
+		
+		private EntitySet<AccountRole> _AccountRolesByAccountID;
+		
+		private EntitySet<AccountRole> _AccountRolesByAppointedByAccountID;
 		
 		private EntityRef<Clan> _Clan;
 		
@@ -3567,8 +3586,46 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PollVote", Storage="_PollVotes", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Poll", Storage="_PollsByRoleTargetAccountID", ThisKey="AccountID", OtherKey="RoleTargetAccountID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=55, EmitDefaultValue=false)]
+		public EntitySet<Poll> PollsByRoleTargetAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PollsByRoleTargetAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PollsByRoleTargetAccountID;
+			}
+			set
+			{
+				this._PollsByRoleTargetAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Poll1", Storage="_PollsByCreatedAccountID", ThisKey="AccountID", OtherKey="CreatedAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=56, EmitDefaultValue=false)]
+		public EntitySet<Poll> PollsByCreatedAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PollsByCreatedAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PollsByCreatedAccountID;
+			}
+			set
+			{
+				this._PollsByCreatedAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PollVote", Storage="_PollVotes", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=57, EmitDefaultValue=false)]
 		public EntitySet<PollVote> PollVotes
 		{
 			get
@@ -3587,7 +3644,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Planet", Storage="_Planets", ThisKey="AccountID", OtherKey="OwnerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=56, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=58, EmitDefaultValue=false)]
 		public EntitySet<Planet> Planets
 		{
 			get
@@ -3606,7 +3663,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer", Storage="_MarketOffersByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=57, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=59, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAccountID
 		{
 			get
@@ -3625,7 +3682,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_MarketOffer1", Storage="_MarketOffersByAcceptedAccountID", ThisKey="AccountID", OtherKey="AcceptedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=58, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=60, EmitDefaultValue=false)]
 		public EntitySet<MarketOffer> MarketOffersByAcceptedAccountID
 		{
 			get
@@ -3644,7 +3701,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountPlanet", Storage="_AccountPlanets", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=59, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=61, EmitDefaultValue=false)]
 		public EntitySet<AccountPlanet> AccountPlanets
 		{
 			get
@@ -3663,7 +3720,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_EventAccount", Storage="_EventAccounts", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=60, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=62, EmitDefaultValue=false)]
 		public EntitySet<EventAccount> EventAccounts
 		{
 			get
@@ -3682,7 +3739,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="AccountID", OtherKey="OwnerAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=61, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=63, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -3701,7 +3758,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=62, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=64, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -3720,7 +3777,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountRatingVote", Storage="_AccountRatingVotes", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=63, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=65, EmitDefaultValue=false)]
 		public EntitySet<AccountRatingVote> AccountRatingVotes
 		{
 			get
@@ -3739,7 +3796,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_News", Storage="_News", ThisKey="AccountID", OtherKey="AuthorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=64, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=66, EmitDefaultValue=false)]
 		public EntitySet<News> News
 		{
 			get
@@ -3758,7 +3815,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Punishment", Storage="_Punishments", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=65, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=67, EmitDefaultValue=false)]
 		public EntitySet<Punishment> Punishments
 		{
 			get
@@ -3777,7 +3834,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_FactionTreaty", Storage="_FactionTreatiesByProposingAccountID", ThisKey="AccountID", OtherKey="ProposingAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=66, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=68, EmitDefaultValue=false)]
 		public EntitySet<FactionTreaty> FactionTreatiesByProposingAccountID
 		{
 			get
@@ -3796,7 +3853,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_FactionTreaty1", Storage="_FactionTreatiesByAcceptedAccountID", ThisKey="AccountID", OtherKey="AcceptedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=67, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=69, EmitDefaultValue=false)]
 		public EntitySet<FactionTreaty> FactionTreatiesByAcceptedAccountID
 		{
 			get
@@ -3811,6 +3868,44 @@ namespace ZkData
 			set
 			{
 				this._FactionTreatiesByAcceptedAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountRole", Storage="_AccountRolesByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=70, EmitDefaultValue=false)]
+		public EntitySet<AccountRole> AccountRolesByAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountRolesByAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountRolesByAccountID;
+			}
+			set
+			{
+				this._AccountRolesByAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountRole1", Storage="_AccountRolesByAppointedByAccountID", ThisKey="AccountID", OtherKey="AppointedByAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=71, EmitDefaultValue=false)]
+		public EntitySet<AccountRole> AccountRolesByAppointedByAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountRolesByAppointedByAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountRolesByAppointedByAccountID;
+			}
+			set
+			{
+				this._AccountRolesByAppointedByAccountID.Assign(value);
 			}
 		}
 		
@@ -4070,6 +4165,30 @@ namespace ZkData
 			entity.AccountByAccountID = null;
 		}
 		
+		private void attach_PollsByRoleTargetAccountID(Poll entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByRoleTargetAccountID = this;
+		}
+		
+		private void detach_PollsByRoleTargetAccountID(Poll entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByRoleTargetAccountID = null;
+		}
+		
+		private void attach_PollsByCreatedAccountID(Poll entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByCreatedAccountID = this;
+		}
+		
+		private void detach_PollsByCreatedAccountID(Poll entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByCreatedAccountID = null;
+		}
+		
 		private void attach_PollVotes(PollVote entity)
 		{
 			this.SendPropertyChanging();
@@ -4226,6 +4345,30 @@ namespace ZkData
 			entity.AccountByAcceptedAccountID = null;
 		}
 		
+		private void attach_AccountRolesByAccountID(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAccountID = this;
+		}
+		
+		private void detach_AccountRolesByAccountID(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAccountID = null;
+		}
+		
+		private void attach_AccountRolesByAppointedByAccountID(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAppointedByAccountID = this;
+		}
+		
+		private void detach_AccountRolesByAppointedByAccountID(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAppointedByAccountID = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -4242,6 +4385,8 @@ namespace ZkData
 			this._AccountBattleAwards = new EntitySet<AccountBattleAward>(new Action<AccountBattleAward>(this.attach_AccountBattleAwards), new Action<AccountBattleAward>(this.detach_AccountBattleAwards));
 			this._AccountUnlocks = new EntitySet<AccountUnlock>(new Action<AccountUnlock>(this.attach_AccountUnlocks), new Action<AccountUnlock>(this.detach_AccountUnlocks));
 			this._Commanders = new EntitySet<Commander>(new Action<Commander>(this.attach_Commanders), new Action<Commander>(this.detach_Commanders));
+			this._PollsByRoleTargetAccountID = new EntitySet<Poll>(new Action<Poll>(this.attach_PollsByRoleTargetAccountID), new Action<Poll>(this.detach_PollsByRoleTargetAccountID));
+			this._PollsByCreatedAccountID = new EntitySet<Poll>(new Action<Poll>(this.attach_PollsByCreatedAccountID), new Action<Poll>(this.detach_PollsByCreatedAccountID));
 			this._PollVotes = new EntitySet<PollVote>(new Action<PollVote>(this.attach_PollVotes), new Action<PollVote>(this.detach_PollVotes));
 			this._Planets = new EntitySet<Planet>(new Action<Planet>(this.attach_Planets), new Action<Planet>(this.detach_Planets));
 			this._MarketOffersByAccountID = new EntitySet<MarketOffer>(new Action<MarketOffer>(this.attach_MarketOffersByAccountID), new Action<MarketOffer>(this.detach_MarketOffersByAccountID));
@@ -4255,6 +4400,8 @@ namespace ZkData
 			this._Punishments = new EntitySet<Punishment>(new Action<Punishment>(this.attach_Punishments), new Action<Punishment>(this.detach_Punishments));
 			this._FactionTreatiesByProposingAccountID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByProposingAccountID), new Action<FactionTreaty>(this.detach_FactionTreatiesByProposingAccountID));
 			this._FactionTreatiesByAcceptedAccountID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByAcceptedAccountID), new Action<FactionTreaty>(this.detach_FactionTreatiesByAcceptedAccountID));
+			this._AccountRolesByAccountID = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRolesByAccountID), new Action<AccountRole>(this.detach_AccountRolesByAccountID));
+			this._AccountRolesByAppointedByAccountID = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRolesByAppointedByAccountID), new Action<AccountRole>(this.detach_AccountRolesByAppointedByAccountID));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -12312,9 +12459,37 @@ namespace ZkData
 		
 		private bool _IsAnonymous;
 		
+		private System.Nullable<int> _RoleTypeID;
+		
+		private System.Nullable<int> _RoleTargetAccountID;
+		
+		private bool _RoleIsRemoval;
+		
+		private System.Nullable<int> _RestrictFactionID;
+		
+		private System.Nullable<int> _RestrictClanID;
+		
+		private System.Nullable<int> _CreatedAccountID;
+		
+		private System.Nullable<System.DateTime> _ExpireBy;
+		
+		private bool _IsHeadline;
+		
 		private EntitySet<PollVote> _PollVotes;
 		
 		private EntitySet<PollOption> _PollOptions;
+		
+		private EntitySet<AccountRole> _AccountRoles;
+		
+		private EntityRef<Account> _AccountByRoleTargetAccountID;
+		
+		private EntityRef<Faction> _Faction;
+		
+		private EntityRef<Clan> _Clan;
+		
+		private EntityRef<Account> _AccountByCreatedAccountID;
+		
+		private EntityRef<RoleType> _RoleType;
 		
 		private bool serializing;
 		
@@ -12328,6 +12503,22 @@ namespace ZkData
     partial void OnQuestionTextChanged();
     partial void OnIsAnonymousChanging(bool value);
     partial void OnIsAnonymousChanged();
+    partial void OnRoleTypeIDChanging(System.Nullable<int> value);
+    partial void OnRoleTypeIDChanged();
+    partial void OnRoleTargetAccountIDChanging(System.Nullable<int> value);
+    partial void OnRoleTargetAccountIDChanged();
+    partial void OnRoleIsRemovalChanging(bool value);
+    partial void OnRoleIsRemovalChanged();
+    partial void OnRestrictFactionIDChanging(System.Nullable<int> value);
+    partial void OnRestrictFactionIDChanged();
+    partial void OnRestrictClanIDChanging(System.Nullable<int> value);
+    partial void OnRestrictClanIDChanged();
+    partial void OnCreatedAccountIDChanging(System.Nullable<int> value);
+    partial void OnCreatedAccountIDChanged();
+    partial void OnExpireByChanging(System.Nullable<System.DateTime> value);
+    partial void OnExpireByChanged();
+    partial void OnIsHeadlineChanging(bool value);
+    partial void OnIsHeadlineChanged();
     #endregion
 		
 		public Poll()
@@ -12398,8 +12589,196 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleTypeID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<int> RoleTypeID
+		{
+			get
+			{
+				return this._RoleTypeID;
+			}
+			set
+			{
+				if ((this._RoleTypeID != value))
+				{
+					if (this._RoleType.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRoleTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._RoleTypeID = value;
+					this.SendPropertyChanged("RoleTypeID");
+					this.OnRoleTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleTargetAccountID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public System.Nullable<int> RoleTargetAccountID
+		{
+			get
+			{
+				return this._RoleTargetAccountID;
+			}
+			set
+			{
+				if ((this._RoleTargetAccountID != value))
+				{
+					if (this._AccountByRoleTargetAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRoleTargetAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._RoleTargetAccountID = value;
+					this.SendPropertyChanged("RoleTargetAccountID");
+					this.OnRoleTargetAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleIsRemoval", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public bool RoleIsRemoval
+		{
+			get
+			{
+				return this._RoleIsRemoval;
+			}
+			set
+			{
+				if ((this._RoleIsRemoval != value))
+				{
+					this.OnRoleIsRemovalChanging(value);
+					this.SendPropertyChanging();
+					this._RoleIsRemoval = value;
+					this.SendPropertyChanged("RoleIsRemoval");
+					this.OnRoleIsRemovalChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RestrictFactionID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public System.Nullable<int> RestrictFactionID
+		{
+			get
+			{
+				return this._RestrictFactionID;
+			}
+			set
+			{
+				if ((this._RestrictFactionID != value))
+				{
+					if (this._Faction.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRestrictFactionIDChanging(value);
+					this.SendPropertyChanging();
+					this._RestrictFactionID = value;
+					this.SendPropertyChanged("RestrictFactionID");
+					this.OnRestrictFactionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RestrictClanID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<int> RestrictClanID
+		{
+			get
+			{
+				return this._RestrictClanID;
+			}
+			set
+			{
+				if ((this._RestrictClanID != value))
+				{
+					if (this._Clan.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRestrictClanIDChanging(value);
+					this.SendPropertyChanging();
+					this._RestrictClanID = value;
+					this.SendPropertyChanged("RestrictClanID");
+					this.OnRestrictClanIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAccountID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<int> CreatedAccountID
+		{
+			get
+			{
+				return this._CreatedAccountID;
+			}
+			set
+			{
+				if ((this._CreatedAccountID != value))
+				{
+					if (this._AccountByCreatedAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAccountID = value;
+					this.SendPropertyChanged("CreatedAccountID");
+					this.OnCreatedAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ExpireBy", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public System.Nullable<System.DateTime> ExpireBy
+		{
+			get
+			{
+				return this._ExpireBy;
+			}
+			set
+			{
+				if ((this._ExpireBy != value))
+				{
+					this.OnExpireByChanging(value);
+					this.SendPropertyChanging();
+					this._ExpireBy = value;
+					this.SendPropertyChanged("ExpireBy");
+					this.OnExpireByChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsHeadline", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public bool IsHeadline
+		{
+			get
+			{
+				return this._IsHeadline;
+			}
+			set
+			{
+				if ((this._IsHeadline != value))
+				{
+					this.OnIsHeadlineChanging(value);
+					this.SendPropertyChanging();
+					this._IsHeadline = value;
+					this.SendPropertyChanged("IsHeadline");
+					this.OnIsHeadlineChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_PollVote", Storage="_PollVotes", ThisKey="PollID", OtherKey="PollID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<PollVote> PollVotes
 		{
 			get
@@ -12418,7 +12797,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_PollOption", Storage="_PollOptions", ThisKey="PollID", OtherKey="PollID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<PollOption> PollOptions
 		{
 			get
@@ -12433,6 +12812,195 @@ namespace ZkData
 			set
 			{
 				this._PollOptions.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_AccountRole", Storage="_AccountRoles", ThisKey="PollID", OtherKey="ElectedByPollID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		public EntitySet<AccountRole> AccountRoles
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountRoles.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountRoles;
+			}
+			set
+			{
+				this._AccountRoles.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Poll", Storage="_AccountByRoleTargetAccountID", ThisKey="RoleTargetAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByRoleTargetAccountID
+		{
+			get
+			{
+				return this._AccountByRoleTargetAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByRoleTargetAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByRoleTargetAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByRoleTargetAccountID.Entity = null;
+						previousValue.PollsByRoleTargetAccountID.Remove(this);
+					}
+					this._AccountByRoleTargetAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.PollsByRoleTargetAccountID.Add(this);
+						this._RoleTargetAccountID = value.AccountID;
+					}
+					else
+					{
+						this._RoleTargetAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountByRoleTargetAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_Poll", Storage="_Faction", ThisKey="RestrictFactionID", OtherKey="FactionID", IsForeignKey=true)]
+		public Faction Faction
+		{
+			get
+			{
+				return this._Faction.Entity;
+			}
+			set
+			{
+				Faction previousValue = this._Faction.Entity;
+				if (((previousValue != value) 
+							|| (this._Faction.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Faction.Entity = null;
+						previousValue.Polls.Remove(this);
+					}
+					this._Faction.Entity = value;
+					if ((value != null))
+					{
+						value.Polls.Add(this);
+						this._RestrictFactionID = value.FactionID;
+					}
+					else
+					{
+						this._RestrictFactionID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Faction");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Poll", Storage="_Clan", ThisKey="RestrictClanID", OtherKey="ClanID", IsForeignKey=true)]
+		public Clan Clan
+		{
+			get
+			{
+				return this._Clan.Entity;
+			}
+			set
+			{
+				Clan previousValue = this._Clan.Entity;
+				if (((previousValue != value) 
+							|| (this._Clan.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Clan.Entity = null;
+						previousValue.Polls.Remove(this);
+					}
+					this._Clan.Entity = value;
+					if ((value != null))
+					{
+						value.Polls.Add(this);
+						this._RestrictClanID = value.ClanID;
+					}
+					else
+					{
+						this._RestrictClanID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Clan");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Poll1", Storage="_AccountByCreatedAccountID", ThisKey="CreatedAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByCreatedAccountID
+		{
+			get
+			{
+				return this._AccountByCreatedAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByCreatedAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByCreatedAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByCreatedAccountID.Entity = null;
+						previousValue.PollsByCreatedAccountID.Remove(this);
+					}
+					this._AccountByCreatedAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.PollsByCreatedAccountID.Add(this);
+						this._CreatedAccountID = value.AccountID;
+					}
+					else
+					{
+						this._CreatedAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountByCreatedAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_Poll", Storage="_RoleType", ThisKey="RoleTypeID", OtherKey="RoleTypeID", IsForeignKey=true)]
+		public RoleType RoleType
+		{
+			get
+			{
+				return this._RoleType.Entity;
+			}
+			set
+			{
+				RoleType previousValue = this._RoleType.Entity;
+				if (((previousValue != value) 
+							|| (this._RoleType.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._RoleType.Entity = null;
+						previousValue.Polls.Remove(this);
+					}
+					this._RoleType.Entity = value;
+					if ((value != null))
+					{
+						value.Polls.Add(this);
+						this._RoleTypeID = value.RoleTypeID;
+					}
+					else
+					{
+						this._RoleTypeID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("RoleType");
+				}
 			}
 		}
 		
@@ -12480,10 +13048,28 @@ namespace ZkData
 			entity.Poll = null;
 		}
 		
+		private void attach_AccountRoles(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.Poll = this;
+		}
+		
+		private void detach_AccountRoles(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.Poll = null;
+		}
+		
 		private void Initialize()
 		{
 			this._PollVotes = new EntitySet<PollVote>(new Action<PollVote>(this.attach_PollVotes), new Action<PollVote>(this.detach_PollVotes));
 			this._PollOptions = new EntitySet<PollOption>(new Action<PollOption>(this.attach_PollOptions), new Action<PollOption>(this.detach_PollOptions));
+			this._AccountRoles = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRoles), new Action<AccountRole>(this.detach_AccountRoles));
+			this._AccountByRoleTargetAccountID = default(EntityRef<Account>);
+			this._Faction = default(EntityRef<Faction>);
+			this._Clan = default(EntityRef<Clan>);
+			this._AccountByCreatedAccountID = default(EntityRef<Account>);
+			this._RoleType = default(EntityRef<RoleType>);
 			OnCreated();
 		}
 		
@@ -13567,6 +14153,8 @@ namespace ZkData
 		
 		private EntitySet<ForumThread> _ForumThreads;
 		
+		private EntitySet<Poll> _Polls;
+		
 		private EntitySet<TreatyOffer> _TreatyOffersByOfferingClanID;
 		
 		private EntitySet<TreatyOffer> _TreatyOffersByTargetClanID;
@@ -13922,8 +14510,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Poll", Storage="_Polls", ThisKey="ClanID", OtherKey="RestrictClanID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		public EntitySet<Poll> Polls
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Polls.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Polls;
+			}
+			set
+			{
+				this._Polls.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByOfferingClanID
 		{
 			get
@@ -13942,7 +14549,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_TreatyOffersByTargetClanID", ThisKey="ClanID", OtherKey="TargetClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByTargetClanID
 		{
 			get
@@ -13961,7 +14568,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_EventClan", Storage="_EventClans", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<EventClan> EventClans
 		{
 			get
@@ -13980,7 +14587,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="ClanID", OtherKey="OwnerClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -13999,7 +14606,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -14163,6 +14770,18 @@ namespace ZkData
 			entity.Clan = null;
 		}
 		
+		private void attach_Polls(Poll entity)
+		{
+			this.SendPropertyChanging();
+			entity.Clan = this;
+		}
+		
+		private void detach_Polls(Poll entity)
+		{
+			this.SendPropertyChanging();
+			entity.Clan = null;
+		}
+		
 		private void attach_TreatyOffersByOfferingClanID(TreatyOffer entity)
 		{
 			this.SendPropertyChanging();
@@ -14227,6 +14846,7 @@ namespace ZkData
 		{
 			this._Accounts = new EntitySet<Account>(new Action<Account>(this.attach_Accounts), new Action<Account>(this.detach_Accounts));
 			this._ForumThreads = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreads), new Action<ForumThread>(this.detach_ForumThreads));
+			this._Polls = new EntitySet<Poll>(new Action<Poll>(this.attach_Polls), new Action<Poll>(this.detach_Polls));
 			this._TreatyOffersByOfferingClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByOfferingClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByOfferingClanID));
 			this._TreatyOffersByTargetClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByTargetClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByTargetClanID));
 			this._EventClans = new EntitySet<EventClan>(new Action<EventClan>(this.attach_EventClans), new Action<EventClan>(this.detach_EventClans));
@@ -19374,6 +19994,8 @@ namespace ZkData
 		
 		private EntitySet<Account> _Accounts;
 		
+		private EntitySet<Poll> _Polls;
+		
 		private EntitySet<Clan> _Clans;
 		
 		private EntitySet<FactionTreaty> _FactionTreatiesByProposingFactionID;
@@ -19383,6 +20005,8 @@ namespace ZkData
 		private EntitySet<TreatyEffect> _TreatyEffectsByGivingFactionID;
 		
 		private EntitySet<TreatyEffect> _TreatyEffectsByReceivingFactionID;
+		
+		private EntitySet<AccountRole> _AccountRoles;
 		
 		private bool serializing;
 		
@@ -19623,8 +20247,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_Clan", Storage="_Clans", ThisKey="FactionID", OtherKey="FactionID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_Poll", Storage="_Polls", ThisKey="FactionID", OtherKey="RestrictFactionID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		public EntitySet<Poll> Polls
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Polls.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Polls;
+			}
+			set
+			{
+				this._Polls.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_Clan", Storage="_Clans", ThisKey="FactionID", OtherKey="FactionID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<Clan> Clans
 		{
 			get
@@ -19643,7 +20286,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_FactionTreaty", Storage="_FactionTreatiesByProposingFactionID", ThisKey="FactionID", OtherKey="ProposingFactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<FactionTreaty> FactionTreatiesByProposingFactionID
 		{
 			get
@@ -19662,7 +20305,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_FactionTreaty1", Storage="_FactionTreatiesByAcceptingFactionID", ThisKey="FactionID", OtherKey="AcceptingFactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<FactionTreaty> FactionTreatiesByAcceptingFactionID
 		{
 			get
@@ -19681,7 +20324,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_TreatyEffect", Storage="_TreatyEffectsByGivingFactionID", ThisKey="FactionID", OtherKey="GivingFactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<TreatyEffect> TreatyEffectsByGivingFactionID
 		{
 			get
@@ -19700,7 +20343,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_TreatyEffect1", Storage="_TreatyEffectsByReceivingFactionID", ThisKey="FactionID", OtherKey="ReceivingFactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<TreatyEffect> TreatyEffectsByReceivingFactionID
 		{
 			get
@@ -19715,6 +20358,25 @@ namespace ZkData
 			set
 			{
 				this._TreatyEffectsByReceivingFactionID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_AccountRole", Storage="_AccountRoles", ThisKey="FactionID", OtherKey="FactionID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		public EntitySet<AccountRole> AccountRoles
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountRoles.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountRoles;
+			}
+			set
+			{
+				this._AccountRoles.Assign(value);
 			}
 		}
 		
@@ -19745,6 +20407,18 @@ namespace ZkData
 		}
 		
 		private void detach_Accounts(Account entity)
+		{
+			this.SendPropertyChanging();
+			entity.Faction = null;
+		}
+		
+		private void attach_Polls(Poll entity)
+		{
+			this.SendPropertyChanging();
+			entity.Faction = this;
+		}
+		
+		private void detach_Polls(Poll entity)
 		{
 			this.SendPropertyChanging();
 			entity.Faction = null;
@@ -19810,14 +20484,28 @@ namespace ZkData
 			entity.FactionByReceivingFactionID = null;
 		}
 		
+		private void attach_AccountRoles(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.Faction = this;
+		}
+		
+		private void detach_AccountRoles(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.Faction = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Accounts = new EntitySet<Account>(new Action<Account>(this.attach_Accounts), new Action<Account>(this.detach_Accounts));
+			this._Polls = new EntitySet<Poll>(new Action<Poll>(this.attach_Polls), new Action<Poll>(this.detach_Polls));
 			this._Clans = new EntitySet<Clan>(new Action<Clan>(this.attach_Clans), new Action<Clan>(this.detach_Clans));
 			this._FactionTreatiesByProposingFactionID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByProposingFactionID), new Action<FactionTreaty>(this.detach_FactionTreatiesByProposingFactionID));
 			this._FactionTreatiesByAcceptingFactionID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByAcceptingFactionID), new Action<FactionTreaty>(this.detach_FactionTreatiesByAcceptingFactionID));
 			this._TreatyEffectsByGivingFactionID = new EntitySet<TreatyEffect>(new Action<TreatyEffect>(this.attach_TreatyEffectsByGivingFactionID), new Action<TreatyEffect>(this.detach_TreatyEffectsByGivingFactionID));
 			this._TreatyEffectsByReceivingFactionID = new EntitySet<TreatyEffect>(new Action<TreatyEffect>(this.attach_TreatyEffectsByReceivingFactionID), new Action<TreatyEffect>(this.detach_TreatyEffectsByReceivingFactionID));
+			this._AccountRoles = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRoles), new Action<AccountRole>(this.detach_AccountRoles));
 			OnCreated();
 		}
 		
@@ -20910,6 +21598,12 @@ namespace ZkData
 		
 		private int _PollDurationDays;
 		
+		private EntitySet<Poll> _Polls;
+		
+		private EntitySet<AccountRole> _AccountRoles;
+		
+		private bool serializing;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -21197,6 +21891,44 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_Poll", Storage="_Polls", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		public EntitySet<Poll> Polls
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Polls.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._Polls;
+			}
+			set
+			{
+				this._Polls.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_AccountRole", Storage="_AccountRoles", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		public EntitySet<AccountRole> AccountRoles
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountRoles.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountRoles;
+			}
+			set
+			{
+				this._AccountRoles.Assign(value);
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -21217,8 +21949,34 @@ namespace ZkData
 			}
 		}
 		
+		private void attach_Polls(Poll entity)
+		{
+			this.SendPropertyChanging();
+			entity.RoleType = this;
+		}
+		
+		private void detach_Polls(Poll entity)
+		{
+			this.SendPropertyChanging();
+			entity.RoleType = null;
+		}
+		
+		private void attach_AccountRoles(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.RoleType = this;
+		}
+		
+		private void detach_AccountRoles(AccountRole entity)
+		{
+			this.SendPropertyChanging();
+			entity.RoleType = null;
+		}
+		
 		private void Initialize()
 		{
+			this._Polls = new EntitySet<Poll>(new Action<Poll>(this.attach_Polls), new Action<Poll>(this.detach_Polls));
+			this._AccountRoles = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRoles), new Action<AccountRole>(this.detach_AccountRoles));
 			OnCreated();
 		}
 		
@@ -21227,6 +21985,20 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 	
@@ -22842,6 +23614,462 @@ namespace ZkData
 		{
 			this._Planet = default(EntityRef<Planet>);
 			this._TreatyEffect = default(EntityRef<TreatyEffect>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountRole")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountRole : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private int _RoleTypeID;
+		
+		private System.DateTime _Inauguration;
+		
+		private System.Nullable<System.DateTime> _Dismissal;
+		
+		private bool _IsActive;
+		
+		private System.Nullable<int> _AppointedByAccountID;
+		
+		private System.Nullable<int> _FactionID;
+		
+		private System.Nullable<int> _ElectedByPollID;
+		
+		private EntityRef<Account> _AccountByAccountID;
+		
+		private EntityRef<RoleType> _RoleType;
+		
+		private EntityRef<Account> _AccountByAppointedByAccountID;
+		
+		private EntityRef<Faction> _Faction;
+		
+		private EntityRef<Poll> _Poll;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnRoleTypeIDChanging(int value);
+    partial void OnRoleTypeIDChanged();
+    partial void OnInaugurationChanging(System.DateTime value);
+    partial void OnInaugurationChanged();
+    partial void OnDismissalChanging(System.Nullable<System.DateTime> value);
+    partial void OnDismissalChanged();
+    partial void OnIsActiveChanging(bool value);
+    partial void OnIsActiveChanged();
+    partial void OnAppointedByAccountIDChanging(System.Nullable<int> value);
+    partial void OnAppointedByAccountIDChanged();
+    partial void OnFactionIDChanging(System.Nullable<int> value);
+    partial void OnFactionIDChanged();
+    partial void OnElectedByPollIDChanging(System.Nullable<int> value);
+    partial void OnElectedByPollIDChanged();
+    #endregion
+		
+		public AccountRole()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._AccountByAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RoleTypeID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int RoleTypeID
+		{
+			get
+			{
+				return this._RoleTypeID;
+			}
+			set
+			{
+				if ((this._RoleTypeID != value))
+				{
+					if (this._RoleType.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRoleTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._RoleTypeID = value;
+					this.SendPropertyChanged("RoleTypeID");
+					this.OnRoleTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Inauguration", DbType="datetime NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public System.DateTime Inauguration
+		{
+			get
+			{
+				return this._Inauguration;
+			}
+			set
+			{
+				if ((this._Inauguration != value))
+				{
+					this.OnInaugurationChanging(value);
+					this.SendPropertyChanging();
+					this._Inauguration = value;
+					this.SendPropertyChanged("Inauguration");
+					this.OnInaugurationChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Dismissal", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<System.DateTime> Dismissal
+		{
+			get
+			{
+				return this._Dismissal;
+			}
+			set
+			{
+				if ((this._Dismissal != value))
+				{
+					this.OnDismissalChanging(value);
+					this.SendPropertyChanging();
+					this._Dismissal = value;
+					this.SendPropertyChanged("Dismissal");
+					this.OnDismissalChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsActive", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public bool IsActive
+		{
+			get
+			{
+				return this._IsActive;
+			}
+			set
+			{
+				if ((this._IsActive != value))
+				{
+					this.OnIsActiveChanging(value);
+					this.SendPropertyChanging();
+					this._IsActive = value;
+					this.SendPropertyChanged("IsActive");
+					this.OnIsActiveChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AppointedByAccountID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public System.Nullable<int> AppointedByAccountID
+		{
+			get
+			{
+				return this._AppointedByAccountID;
+			}
+			set
+			{
+				if ((this._AppointedByAccountID != value))
+				{
+					if (this._AccountByAppointedByAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAppointedByAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AppointedByAccountID = value;
+					this.SendPropertyChanged("AppointedByAccountID");
+					this.OnAppointedByAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FactionID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public System.Nullable<int> FactionID
+		{
+			get
+			{
+				return this._FactionID;
+			}
+			set
+			{
+				if ((this._FactionID != value))
+				{
+					if (this._Faction.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnFactionIDChanging(value);
+					this.SendPropertyChanging();
+					this._FactionID = value;
+					this.SendPropertyChanged("FactionID");
+					this.OnFactionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ElectedByPollID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<int> ElectedByPollID
+		{
+			get
+			{
+				return this._ElectedByPollID;
+			}
+			set
+			{
+				if ((this._ElectedByPollID != value))
+				{
+					if (this._Poll.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnElectedByPollIDChanging(value);
+					this.SendPropertyChanging();
+					this._ElectedByPollID = value;
+					this.SendPropertyChanged("ElectedByPollID");
+					this.OnElectedByPollIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountRole", Storage="_AccountByAccountID", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByAccountID
+		{
+			get
+			{
+				return this._AccountByAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByAccountID.Entity = null;
+						previousValue.AccountRolesByAccountID.Remove(this);
+					}
+					this._AccountByAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.AccountRolesByAccountID.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("AccountByAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_AccountRole", Storage="_RoleType", ThisKey="RoleTypeID", OtherKey="RoleTypeID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public RoleType RoleType
+		{
+			get
+			{
+				return this._RoleType.Entity;
+			}
+			set
+			{
+				RoleType previousValue = this._RoleType.Entity;
+				if (((previousValue != value) 
+							|| (this._RoleType.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._RoleType.Entity = null;
+						previousValue.AccountRoles.Remove(this);
+					}
+					this._RoleType.Entity = value;
+					if ((value != null))
+					{
+						value.AccountRoles.Add(this);
+						this._RoleTypeID = value.RoleTypeID;
+					}
+					else
+					{
+						this._RoleTypeID = default(int);
+					}
+					this.SendPropertyChanged("RoleType");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountRole1", Storage="_AccountByAppointedByAccountID", ThisKey="AppointedByAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByAppointedByAccountID
+		{
+			get
+			{
+				return this._AccountByAppointedByAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByAppointedByAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByAppointedByAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByAppointedByAccountID.Entity = null;
+						previousValue.AccountRolesByAppointedByAccountID.Remove(this);
+					}
+					this._AccountByAppointedByAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.AccountRolesByAppointedByAccountID.Add(this);
+						this._AppointedByAccountID = value.AccountID;
+					}
+					else
+					{
+						this._AppointedByAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountByAppointedByAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_AccountRole", Storage="_Faction", ThisKey="FactionID", OtherKey="FactionID", IsForeignKey=true)]
+		public Faction Faction
+		{
+			get
+			{
+				return this._Faction.Entity;
+			}
+			set
+			{
+				Faction previousValue = this._Faction.Entity;
+				if (((previousValue != value) 
+							|| (this._Faction.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Faction.Entity = null;
+						previousValue.AccountRoles.Remove(this);
+					}
+					this._Faction.Entity = value;
+					if ((value != null))
+					{
+						value.AccountRoles.Add(this);
+						this._FactionID = value.FactionID;
+					}
+					else
+					{
+						this._FactionID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Faction");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Poll_AccountRole", Storage="_Poll", ThisKey="ElectedByPollID", OtherKey="PollID", IsForeignKey=true)]
+		public Poll Poll
+		{
+			get
+			{
+				return this._Poll.Entity;
+			}
+			set
+			{
+				Poll previousValue = this._Poll.Entity;
+				if (((previousValue != value) 
+							|| (this._Poll.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Poll.Entity = null;
+						previousValue.AccountRoles.Remove(this);
+					}
+					this._Poll.Entity = value;
+					if ((value != null))
+					{
+						value.AccountRoles.Add(this);
+						this._ElectedByPollID = value.PollID;
+					}
+					else
+					{
+						this._ElectedByPollID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Poll");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._AccountByAccountID = default(EntityRef<Account>);
+			this._RoleType = default(EntityRef<RoleType>);
+			this._AccountByAppointedByAccountID = default(EntityRef<Account>);
+			this._Faction = default(EntityRef<Faction>);
+			this._Poll = default(EntityRef<Poll>);
 			OnCreated();
 		}
 		

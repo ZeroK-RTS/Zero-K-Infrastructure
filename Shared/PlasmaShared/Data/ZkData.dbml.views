@@ -8,5 +8,19 @@
       <Ordinal>-1</Ordinal>
       <EntitiesOfInterest />
     </DBMLView>
+    <DBMLView>
+      <ViewName />
+      <LayoutFileName>.views_001.layout</LayoutFileName>
+      <Selected>false</Selected>
+      <Ordinal>1</Ordinal>
+      <EntitiesOfInterest>
+        <string>Clan</string>
+        <string>Faction</string>
+        <string>Poll</string>
+        <string>PollOption</string>
+        <string>PollVote</string>
+        <string>RoleType</string>
+      </EntitiesOfInterest>
+    </DBMLView>
   </Views>
 </DBMLViews>

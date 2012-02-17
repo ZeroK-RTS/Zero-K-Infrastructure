@@ -361,4 +361,9 @@
   <ItemGroup>
     <None Include="Web References\SpringieInterfaceReference\SpringieService.disco" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Data\ZkData.dbml.views_001.layout">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

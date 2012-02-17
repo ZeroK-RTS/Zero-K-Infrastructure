@@ -1,0 +1,36 @@
+﻿@model ZkData.RoleType 
+@{
+    List<string> factoids = new List<string>();
+    if (Model.IsClanOnly)
+    {
+        factoids.Add("clan based");
+    }
+    if (Model.RightAppointRoles) {
+        factoids.Add("can appoint roles");
+    }
+    if (Model.RightBomberQuota != 0) {
+        factoids.Add(string.Format("bomber quota {0:F0}%",  Model.RightBomberQuota*100));
+    }
+    if (Model.RightDropshipQuota !=0) {
+        factoids.Add(string.Format("dropship quota {0:F0}%", Model.RightBomberQuota * 100));
+    }
+    if (Model.RightMetalQuota != 0)
+    {
+        factoids.Add(string.Format("metal quota {0:F0}%", Model.RightBomberQuota * 100));
+    }
+    if (Model.RightSetEnergyPriority)
+    {
+        factoids.Add("can set energy priorities");
+    }
+    if (Model.RightDiplomacy)
+    {
+        factoids.Add("can control diplomacy");
+    }
+    if (Model.RightEditTexts) {
+        factoids.Add("controls texts");
+    }
+}
+<span title="@Model.Description  (@string.Join(", ", factoids))">
+<b>@Model.Name</b>
+</span>
+

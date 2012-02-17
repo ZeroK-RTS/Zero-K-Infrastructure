@@ -4,8 +4,13 @@
 @using ZkData;
 @{Page.Title = Model.Name + " user page";}
  
-@* @{Html.RenderAction("Index", "Poll", new { pollID = 13 });} *@
- 
+@if (Model.AccountID == Global.AccountID)
+{
+    foreach (var p in Global.Account.ValidPolls().Where(x=>x.IsHeadline))
+    {
+        Html.RenderAction("Index", "Poll", new { pollID = p.PollID });
+    }
+}
 
 @{
 	var badge_width = 60;
@@ -203,22 +208,24 @@
 		</div-->
 	</div>
 
-	<div id="usr_commanders" class="">
-		<h3>Commanders: </h3>
+    <div id="usr_commanders" class="">
+        <h3>Commanders: </h3>
 		
-		@if (Model.AccountID == ZeroKWeb.Global.AccountID)
-  {
-			<a href='@Url.Action("Commanders", "My")'>Configure Commanders</a>
-  } 
-		<br />
-		@foreach (var comm in Model.Commanders)
-  {
-			<span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID'/><br />@comm.Name</center></span>
-  }
-		<br class="clearfloat" />
-	</div>
+        @if (Model.AccountID == ZeroKWeb.Global.AccountID)
+        {
+            <a href='@Url.Action("Commanders", "My")'>Configure Commanders</a>
+        } 
+        <br />
+        @foreach (var comm in Model.Commanders)
+        {
+            <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID'/><br />@comm.Name</center></span>
+        }
+        <br class="clearfloat" />
+    </div>
+    
+    <h3>@Html.ActionLink("Poll votes", "UserVotes", "Poll", new { id = Model.AccountID },null)</h3>
 	
-	@if (Model.SpringBattlePlayers.Any())
+    @if (Model.SpringBattlePlayers.Any())
  {
 		<div id="usr_recentbattles" class="fleft border">
 			<h3>@Html.ActionLink("Last battles","Index","Battles")</h3>

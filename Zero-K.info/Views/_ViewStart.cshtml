@@ -1,3 +1,11 @@
 ﻿@{
-	Layout = "~/Views/Shared/_SiteLayout.cshtml";
+    if (ViewContext.IsChildAction)
+    {
+        Layout = null;
+    } else if (ViewContext.HttpContext.Request.IsAjaxRequest()) {
+        Layout = "~/Views/Shared/_AjaxLayout.cshtml";
+    } else 
+    {
+        Layout = "~/Views/Shared/_SiteLayout.cshtml";
+    }
 }

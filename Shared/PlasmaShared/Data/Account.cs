@@ -57,6 +57,12 @@ namespace ZkData
         }
 
 
+        public IEnumerable<Poll> ValidPolls(ZkDataContext db = null) {
+            if (db ==null) db = new ZkDataContext();
+            return db.Polls.Where(x => (x.ExpireBy == null || x.ExpireBy < DateTime.UtcNow) && (x.RestrictClanID == null || x.RestrictClanID == ClanID) && (x.RestrictFactionID == null || x.RestrictFactionID == FactionID));
+        }
+
+
         public int GetDropshipCapacity()
         {
             return GlobalConst.DefaultDropshipCapacity +

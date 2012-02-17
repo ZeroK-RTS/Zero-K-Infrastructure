@@ -1,0 +1,47 @@
+﻿@using ZeroKWeb
+@model ZkData.Account
+<h2>Voting details for @Html.PrintAccount(Model)</h2>
+
+@foreach (var p in Model.ValidPolls().OrderByDescending(x=>x.PollID))
+{
+    @Html.Partial("PollView", p)
+
+    if (Global.IsZeroKAdmin && p.ExpireBy == null) {
+        <div class="admin">
+        @Html.ActionLink("start/stop displaying on home", "SwapHeadline", new { pollID = p.PollID })<br />
+        </div>
+    }
+
+    if (!p.IsAnonymous)
+    {
+        var vote = p.PollVotes.FirstOrDefault(x => x.AccountID == Model.AccountID);
+        if (vote != null)
+        {
+            if (!p.IsAnonymous)
+            {
+                <span>Voted: @vote.PollOption.OptionText</span>
+            }
+            else
+            {
+                <span>Voted</span>
+            }
+
+        }
+    }
+}
+
+@if (Global.IsZeroKAdmin)
+{
+    <div class="admin">
+        <h3>Add a new poll</h3>
+        <form action="@Url.Action("NewPoll")" method="POST">
+            Is anonymous: <input type="checkbox" name="isAnonymous" value="true" /><br/>
+            Question: <br/>
+            <input type="text" name="question" style="width:600px"/><br/>
+            Answers (one per line):<br/>
+            <textarea name="answers" rows="6" style="width:600px"></textarea><br/>
+            <input type="submit" value="add" class="delete" />
+
+        </form>
+    </div>
+}

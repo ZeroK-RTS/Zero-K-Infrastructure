@@ -11,34 +11,44 @@
 @using (Ajax.BeginForm("PollVote", new { pollID = @p.PollID }, new AjaxOptions() { UpdateTargetId = "pollForm", InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" }))
 {
 
-  <div id="pollForm">
-    <h4>@p.QuestionText@(p.IsAnonymous?" (anonymous)":"")</h4>
-	<small>
-    <table>
-      @foreach (var option in p.PollOptions)
-      { 
-        <tr>
-          <td>
-            <input type="submit" name="option@(option.OptionID)" value="Vote" 
-						title="@(p.IsAnonymous? "":"$polloption$" +option.OptionID)" 
+    <div id="pollForm">
+        @if (Model.Clan != null) {
+            <h3>@Html.PrintClan(Model.Clan) election</h3>
+        }
+        @if (Model.Faction != null) {
+            <h3>@Html.PrintFaction(Model.Faction) election</h3>
+        }
+        @if (Model.RoleType != null) {
+            <h3>@Html.PrintAccount(Model.AccountByRoleTargetAccountID) @(Model.RoleIsRemoval ? "recall from" :"elect as") @Html.DisplayFor(x=>x.RoleType)</h3>
+        }
+
+
+        <h4>@p.QuestionText@(p.IsAnonymous?" (anonymous)":"")</h4>
+        <small>
+            <table>
+                @foreach (var option in p.PollOptions)
+                { 
+                    <tr>
+                        <td>
+                            <input type="submit" name="option@(option.OptionID)" value="Vote" 
+                                   title="@(p.IsAnonymous? "":"$polloption$" +option.OptionID)" 
 						
-						/>
-          </td>
-          <td>
-            @option.OptionText
-          </td>
-          <td>
-            @Math.Round(100.0 * option.Votes / maxVotes)% (@option.Votes)
-          </td>
-          <td>
-            <img src='/img/bar_blue_poll.png' alt="@Math.Round(100.0 * option.Votes / maxVotes)%" width='@(150 * option.Votes / maxVotes)' height='10px'/>
-          </td>
-        </tr>
-      }
-      <tr><td align="center">-----</td><td align="center">(Total votes: @maxVotes)</td><td align="center">-----</td>
-      </tr>
-    </table>
-	</small>
-  </div>
-  
+                                />
+                        </td>
+                        <td>
+                            @option.OptionText
+                        </td>
+                        <td>
+                            @Math.Round(100.0 * option.Votes / maxVotes)% (@option.Votes)
+                        </td>
+                        <td>
+                            <img src='/img/bar_blue_poll.png' alt="@Math.Round(100.0 * option.Votes / maxVotes)%" width='@(150 * option.Votes / maxVotes)' height='10px'/>
+                        </td>
+                    </tr>
+                }
+                <tr><td align="center">-----</td><td align="center">(Total votes: @maxVotes)</td><td align="center">-----</td>
+                </tr>
+            </table>
+        </small>
+    </div>
 }
