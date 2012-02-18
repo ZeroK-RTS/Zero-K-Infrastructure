@@ -242,11 +242,11 @@ namespace ZeroKWeb.SpringieInterface
                         sb.AppendLine("Splitting to " + splitTo.LobbyContext.AutohostName);
                         var eloList = b.Assigned.Select(x => juggledAccounts[x]).Where(CanMove).OrderBy(x => x.EffectiveElo).ToList();
                         var toMove = eloList.Take(b.Assigned.Count/2).ToList();
-                        var target = new Bin(splitTo);
-                        if (toMove.Count >= target.Config.MinToJuggle)
+                        if (toMove.Count >= b.Config.MinToJuggle)
                         {
-                            bins.Add(target);
+                            var target = new Bin(splitTo);
                             target.Assigned.AddRange(toMove.Select(x => x.LobbyID ?? 0));
+                            bins.Add(target);
                             b.Assigned.RemoveAll(x => toMove.Any(y => y.LobbyID == x));
                         }
                     }
@@ -302,7 +302,7 @@ namespace ZeroKWeb.SpringieInterface
                     var lobbyID = a.Key;
                     var battlePref = (double)a.Value.Preferences[b.Mode];
                     AutohostMode manualPref;
-                    if (manuallyPrefered.TryGetValue(lobbyID, out manualPref) && manualPref == b.Mode) battlePref += 0.5; // player joined manually same type add 0.5
+                    //if (manuallyPrefered.TryGetValue(lobbyID, out manualPref) && manualPref == b.Mode) battlePref += 0.5; // player joined manually same type add 0.5
 
                     if (b.Config.MinLevel != null && a.Value.Level < b.Config.MinLevel) continue; // dont queue who cannot join PW
                     
