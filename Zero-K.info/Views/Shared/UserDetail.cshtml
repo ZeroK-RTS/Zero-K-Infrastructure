@@ -270,10 +270,36 @@
 	<div id="usr_planetwars" class="border relative">
 	<h3>Faction: </h3>
     @Html.PrintFaction(Model.Faction)
+    
+    @if (Model.AccountID == Global.AccountID && !Model.PollsByRoleTargetAccountID.Any(x=>x.ExpireBy < DateTime.UtcNow)) {
+        <span>Nominate yourself for a post of faction: </span>
+        <small>
+        @foreach (var role in new ZkDataContext().RoleTypes.Where(x=>!x.IsClanOnly)) {
+            
+            <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" class="delete">
+                @Html.DisplayFor(x => role)
+            </a>
+         }
+         ,&nbsp;</small>
+    }
+
+    
     <h3>Clan: </h3>
 	@Html.PrintClan(Model.Clan)
+        @if (Model.AccountID == Global.AccountID && !Model.PollsByRoleTargetAccountID.Any(x=>x.ExpireBy < DateTime.UtcNow)) {
+        <span>Nominate yourself for a post of clan: </span>
+        <small>
+        @foreach (var role in new ZkDataContext().RoleTypes.Where(x=>x.IsClanOnly)) {
+            
+            <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" class="delete">
+                @Html.DisplayFor(x => role)
+            </a>
+         }
+         ,&nbsp;</small>
+    }
 
-	<h3>Credits:</h3>
+    
+    <h3>Credits:</h3>
 	@Model.Credits.ToString("C0") (+@Model.CreditsIncome, -@Model.CreditsExpense)
 	<br />
 	@if (Global.Account != null && Global.AccountID != Model.AccountID)
@@ -317,9 +343,9 @@
 	
 	<h3>PlanetWars events</h3>
 	@Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
-	@Html.ActionLink("Trade", "Trade", "PlanetWars", new { id = Model.AccountID}, null)
+	@Html.ActionLink("Trade", "Trade", "PlanetWars", new { id = Model.AccountID }, null)
 
-	<span style="position: absolute; font-family:Skir; top: 5%; right: 5%; font-size: 500%; color: #222; opacity: .75;">PlanetWars</span>
+	<span style="position: absolute; font-family:Skir; top: 5%; right: 5%; font-size: 500%; color: #222; opacity: .75; z-index: -20">PlanetWars</span>
 	</div>
 	
 

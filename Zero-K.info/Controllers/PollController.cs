@@ -17,6 +17,45 @@ namespace ZeroKWeb.Controllers
             return PartialView("PollView", poll);
         }
 
+        [Auth(Role = AuthRole.ZkAdmin)]
+        public ActionResult NewPoll(string question, string answers, bool? isAnonymous)
+        {
+            var p = new Poll() { CreatedAccountID = Global.AccountID, IsHeadline = true, QuestionText = question, IsAnonymous = isAnonymous == true, };
+            var db = new ZkDataContext();
+
+            foreach (var a in answers.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) p.PollOptions.Add(new PollOption() { OptionText = a });
+
+            db.Polls.InsertOnSubmit(p);
+            db.SubmitChanges();
+            return RedirectToAction("UserVotes", new { id = Global.AccountID });
+        }
+
+        [Auth()]
+        public ActionResult NominateRole(int roleTypeID, bool isRemoval = false)
+        {
+            var db = new ZkDataContext();
+            var rt = db.RoleTypes.Single(x => x.RoleTypeID == roleTypeID);
+
+            var p = new Poll()
+                    {
+                        CreatedAccountID = Global.AccountID,
+                        RoleTargetAccountID = Global.AccountID,
+                        ExpireBy = DateTime.UtcNow.AddDays(rt.PollDurationDays),
+                        IsAnonymous = true,
+                        IsHeadline = true,
+                        RoleIsRemoval = isRemoval,
+                        RoleType = rt,
+                        RestrictClanID = rt.IsClanOnly ? Global.Account.ClanID : null,
+                        RestrictFactionID = rt.IsClanOnly ? null : Global.Account.FactionID,
+                        QuestionText = string.Format("Do you want {0} to become your {1}?", Global.Account.Name, rt.Name)
+                    };
+            p.PollOptions.Add(new PollOption() { OptionText = "Yes" });
+            p.PollOptions.Add(new PollOption() { OptionText = "No" });
+            db.Polls.InsertOnSubmit(p);
+            db.SubmitChanges();
+            return RedirectToAction("Detail", "Users", new { id = Global.AccountID });
+        }
+
         [Auth]
         public ActionResult PollVote(int pollID)
         {
@@ -43,43 +82,22 @@ namespace ZeroKWeb.Controllers
             return PartialView("PollView", poll);
         }
 
-        public ActionResult UserVotes(int id) {
-            var db = new ZkDataContext();
-            var acc = db.Accounts.Single(x => x.AccountID == id);
-            return View("PollUserVotes", acc);
-        }
-
-        [Auth(Role = AuthRole.ZkAdmin)]
-        public ActionResult NewPoll(string question, string answers, bool? isAnonymous)
-        {
-            var p = new Poll()
-            {
-                CreatedAccountID = Global.AccountID,
-                IsHeadline = true,
-                QuestionText = question,
-                IsAnonymous = isAnonymous == true,
-            };
-            var db = new ZkDataContext();
-
-            foreach (var a in answers.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) {
-                p.PollOptions.Add(new PollOption() { OptionText = a});
-            }
-
-            db.Polls.InsertOnSubmit(p);
-            db.SubmitChanges();
-            return RedirectToAction("UserVotes", new { id = Global.AccountID });
-
-        }
-
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult SwapHeadline(int pollid)
         {
-            
             var db = new ZkDataContext();
             var p = db.Polls.Single(x => x.PollID == pollid);
             p.IsHeadline = !p.IsHeadline;
-            db.SubmitChanges(); ;
+            db.SubmitChanges();
+            ;
             return RedirectToAction("UserVotes", new { id = Global.AccountID });
+        }
+
+        public ActionResult UserVotes(int id)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Single(x => x.AccountID == id);
+            return View("PollUserVotes", acc);
         }
     }
 }
