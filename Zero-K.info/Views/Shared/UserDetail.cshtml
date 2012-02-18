@@ -274,7 +274,7 @@
     @if (Model.AccountID == Global.AccountID && !Model.PollsByRoleTargetAccountID.Any(x=>x.ExpireBy < DateTime.UtcNow)) {
         <span>Nominate yourself for a post of faction: </span>
         <small>
-        @foreach (var role in new ZkDataContext().RoleTypes.Where(x=>!x.IsClanOnly)) {
+        @foreach (var role in new ZkDataContext().RoleTypes.Where(x=>!x.IsClanOnly )) {
             
             <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" class="delete">
                 @Html.DisplayFor(x => role)

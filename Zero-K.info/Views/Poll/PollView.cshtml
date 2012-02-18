@@ -1,17 +1,18 @@
  @using ZkData
 @model Poll
 @{
-  var p = Model;
+    var p = Model;
+    var divID = "pollForm" + p.PollID;
   var maxVotes = p.PollOptions.Sum(x => x.Votes);
   if (maxVotes == 0) {
 	maxVotes = 1;
   }
   
   }
-@using (Ajax.BeginForm("PollVote", new { pollID = @p.PollID }, new AjaxOptions() { UpdateTargetId = "pollForm", InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" }))
+@using (Ajax.BeginForm("PollVote", new { pollID = @p.PollID }, new AjaxOptions() { UpdateTargetId = divID, InsertionMode = InsertionMode.Replace, HttpMethod = "post", LoadingElementId = "ajaxScrollProgress" }))
 {
 
-    <div id="pollForm">
+    <div id="@divID">
         @if (Model.Clan != null) {
             <h3>@Html.PrintClan(Model.Clan) election</h3>
         }

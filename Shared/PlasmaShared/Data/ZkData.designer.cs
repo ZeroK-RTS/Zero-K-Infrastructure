@@ -19998,6 +19998,8 @@ namespace ZkData
 		
 		private EntitySet<Clan> _Clans;
 		
+		private EntitySet<RoleType> _RoleTypes;
+		
 		private EntitySet<FactionTreaty> _FactionTreatiesByProposingFactionID;
 		
 		private EntitySet<FactionTreaty> _FactionTreatiesByAcceptingFactionID;
@@ -20285,8 +20287,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_FactionTreaty", Storage="_FactionTreatiesByProposingFactionID", ThisKey="FactionID", OtherKey="ProposingFactionID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_RoleType", Storage="_RoleTypes", ThisKey="FactionID", OtherKey="RestrictFactionID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		public EntitySet<RoleType> RoleTypes
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._RoleTypes.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._RoleTypes;
+			}
+			set
+			{
+				this._RoleTypes.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_FactionTreaty", Storage="_FactionTreatiesByProposingFactionID", ThisKey="FactionID", OtherKey="ProposingFactionID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<FactionTreaty> FactionTreatiesByProposingFactionID
 		{
 			get
@@ -20305,7 +20326,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_FactionTreaty1", Storage="_FactionTreatiesByAcceptingFactionID", ThisKey="FactionID", OtherKey="AcceptingFactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<FactionTreaty> FactionTreatiesByAcceptingFactionID
 		{
 			get
@@ -20324,7 +20345,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_TreatyEffect", Storage="_TreatyEffectsByGivingFactionID", ThisKey="FactionID", OtherKey="GivingFactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<TreatyEffect> TreatyEffectsByGivingFactionID
 		{
 			get
@@ -20343,7 +20364,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_TreatyEffect1", Storage="_TreatyEffectsByReceivingFactionID", ThisKey="FactionID", OtherKey="ReceivingFactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<TreatyEffect> TreatyEffectsByReceivingFactionID
 		{
 			get
@@ -20362,7 +20383,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_AccountRole", Storage="_AccountRoles", ThisKey="FactionID", OtherKey="FactionID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<AccountRole> AccountRoles
 		{
 			get
@@ -20436,6 +20457,18 @@ namespace ZkData
 			entity.Faction = null;
 		}
 		
+		private void attach_RoleTypes(RoleType entity)
+		{
+			this.SendPropertyChanging();
+			entity.Faction = this;
+		}
+		
+		private void detach_RoleTypes(RoleType entity)
+		{
+			this.SendPropertyChanging();
+			entity.Faction = null;
+		}
+		
 		private void attach_FactionTreatiesByProposingFactionID(FactionTreaty entity)
 		{
 			this.SendPropertyChanging();
@@ -20501,6 +20534,7 @@ namespace ZkData
 			this._Accounts = new EntitySet<Account>(new Action<Account>(this.attach_Accounts), new Action<Account>(this.detach_Accounts));
 			this._Polls = new EntitySet<Poll>(new Action<Poll>(this.attach_Polls), new Action<Poll>(this.detach_Polls));
 			this._Clans = new EntitySet<Clan>(new Action<Clan>(this.attach_Clans), new Action<Clan>(this.detach_Clans));
+			this._RoleTypes = new EntitySet<RoleType>(new Action<RoleType>(this.attach_RoleTypes), new Action<RoleType>(this.detach_RoleTypes));
 			this._FactionTreatiesByProposingFactionID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByProposingFactionID), new Action<FactionTreaty>(this.detach_FactionTreatiesByProposingFactionID));
 			this._FactionTreatiesByAcceptingFactionID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByAcceptingFactionID), new Action<FactionTreaty>(this.detach_FactionTreatiesByAcceptingFactionID));
 			this._TreatyEffectsByGivingFactionID = new EntitySet<TreatyEffect>(new Action<TreatyEffect>(this.attach_TreatyEffectsByGivingFactionID), new Action<TreatyEffect>(this.detach_TreatyEffectsByGivingFactionID));
@@ -21823,9 +21857,13 @@ namespace ZkData
 		
 		private int _PollDurationDays;
 		
+		private System.Nullable<int> _RestrictFactionID;
+		
 		private EntitySet<Poll> _Polls;
 		
 		private EntitySet<AccountRole> _AccountRoles;
+		
+		private EntityRef<Faction> _Faction;
 		
 		private bool serializing;
 		
@@ -21857,6 +21895,8 @@ namespace ZkData
     partial void OnRightSetEnergyPriorityChanged();
     partial void OnPollDurationDaysChanging(int value);
     partial void OnPollDurationDaysChanged();
+    partial void OnRestrictFactionIDChanging(System.Nullable<int> value);
+    partial void OnRestrictFactionIDChanged();
     #endregion
 		
 		public RoleType()
@@ -22116,8 +22156,33 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RestrictFactionID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public System.Nullable<int> RestrictFactionID
+		{
+			get
+			{
+				return this._RestrictFactionID;
+			}
+			set
+			{
+				if ((this._RestrictFactionID != value))
+				{
+					if (this._Faction.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnRestrictFactionIDChanging(value);
+					this.SendPropertyChanging();
+					this._RestrictFactionID = value;
+					this.SendPropertyChanged("RestrictFactionID");
+					this.OnRestrictFactionIDChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_Poll", Storage="_Polls", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<Poll> Polls
 		{
 			get
@@ -22136,7 +22201,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_AccountRole", Storage="_AccountRoles", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<AccountRole> AccountRoles
 		{
 			get
@@ -22151,6 +22216,40 @@ namespace ZkData
 			set
 			{
 				this._AccountRoles.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Faction_RoleType", Storage="_Faction", ThisKey="RestrictFactionID", OtherKey="FactionID", IsForeignKey=true)]
+		public Faction Faction
+		{
+			get
+			{
+				return this._Faction.Entity;
+			}
+			set
+			{
+				Faction previousValue = this._Faction.Entity;
+				if (((previousValue != value) 
+							|| (this._Faction.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Faction.Entity = null;
+						previousValue.RoleTypes.Remove(this);
+					}
+					this._Faction.Entity = value;
+					if ((value != null))
+					{
+						value.RoleTypes.Add(this);
+						this._RestrictFactionID = value.FactionID;
+					}
+					else
+					{
+						this._RestrictFactionID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Faction");
+				}
 			}
 		}
 		
@@ -22202,6 +22301,7 @@ namespace ZkData
 		{
 			this._Polls = new EntitySet<Poll>(new Action<Poll>(this.attach_Polls), new Action<Poll>(this.detach_Polls));
 			this._AccountRoles = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRoles), new Action<AccountRole>(this.detach_AccountRoles));
+			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
 		}
 		

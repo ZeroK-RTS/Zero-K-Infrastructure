@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
       <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -773,6 +774,7 @@
       <Association Name="Faction_TreatyEffect" Member="TreatyEffectsByGivingFactionID" ThisKey="FactionID" OtherKey="GivingFactionID" Type="TreatyEffect" />
       <Association Name="Faction_TreatyEffect1" Member="TreatyEffectsByReceivingFactionID" ThisKey="FactionID" OtherKey="ReceivingFactionID" Type="TreatyEffect" />
       <Association Name="Faction_AccountRole" Member="AccountRoles" ThisKey="FactionID" OtherKey="FactionID" Type="AccountRole" />
+      <Association Name="Faction_RoleType" Member="RoleTypes" ThisKey="FactionID" OtherKey="RestrictFactionID" Type="RoleType" IsForeignKey="false" />
     </Type>
   </Table>
   <Table Name="dbo.Punishment" Member="Punishments">
@@ -849,8 +851,10 @@
       <Column Name="RightEditTexts" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="RightSetEnergyPriority" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="PollDurationDays" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="RestrictFactionID" Member="RestrictFactionID" Type="System.Int32" DbType="int" IsDbGenerated="false" CanBeNull="true" IsPrimaryKey="false" />
       <Association Name="RoleType_Poll" Member="Polls" ThisKey="RoleTypeID" OtherKey="RoleTypeID" Type="Poll" />
       <Association Name="RoleType_AccountRole" Member="AccountRoles" ThisKey="RoleTypeID" OtherKey="RoleTypeID" Type="AccountRole" />
+      <Association Name="Faction_RoleType" Member="Faction" ThisKey="RestrictFactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.FactionTreaty" Member="FactionTreaties">
