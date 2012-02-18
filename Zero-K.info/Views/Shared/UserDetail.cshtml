@@ -6,7 +6,7 @@
  
 @if (Model.AccountID == Global.AccountID)
 {
-    foreach (var p in Global.Account.ValidPolls().Where(x=>x.IsHeadline))
+    foreach (var p in Global.Account.ValidPolls().Where(x=>x.IsHeadline && !x.PollVotes.Any(y=>y.AccountID == Global.AccountID)))
     {
         Html.RenderAction("Index", "Poll", new { pollID = p.PollID });
     }
