@@ -35,6 +35,9 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var rt = db.RoleTypes.Single(x => x.RoleTypeID == roleTypeID);
+            if (rt.RestrictFactionID != null && rt.RestrictFactionID!= Global.FactionID) throw new ApplicationException("Invalid faction");
+            if (Global.FactionID == 0) throw new ApplicationException("No faction");
+            if (rt.IsClanOnly && Global.ClanID == 0) throw new ApplicationException("No clan");
 
             var p = new Poll()
                     {

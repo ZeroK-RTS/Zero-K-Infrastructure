@@ -381,51 +381,7 @@ namespace ZeroKWeb.Controllers
             }
         }
 
-        [Auth]
-        public ActionResult Give(int? planetID, int? giveInfluence, int? giveCredits, int targetAccountID)
-        {
-            var db = new ZkDataContext();
-            var me = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            var target = db.Accounts.Single(x => x.AccountID == targetAccountID);
-            //if (me.ClanID == null || me.FactionID != target.FactionID) return Content("Must be in same faction");
-            if (giveCredits > 0)
-            {
-                var creds = Math.Min(giveCredits ?? 0, me.Credits);
-                me.Credits -= creds;
-                target.Credits += creds;
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} credits to {2}", me, creds, target));
-            }
-            if (planetID > 0 && giveInfluence > 0)
-            {
-                var mePlanet = me.AccountPlanets.Single(x => x.PlanetID == planetID);
-                var infl = Math.Min(giveInfluence ?? 0, mePlanet.Influence);
-                var targetPlanet = target.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
-                if (targetPlanet == null)
-                {
-                    targetPlanet = new AccountPlanet() { AccountID = target.AccountID, PlanetID = planetID.Value };
-                    db.AccountPlanets.InsertOnSubmit(targetPlanet);
-                }
-                mePlanet.Influence -= infl;
-                targetPlanet.Influence += infl;
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} gives {1} influence on {2} to {3}", me, infl, mePlanet.Planet, target));
-
-                if (me.ClanID != null && target.ClanID != null)
-                {
-                    var offer = me.Clan.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == target.ClanID);
-                    if (offer == null)
-                    {
-                        offer = new TreatyOffer() { OfferingClanID = me.ClanID.Value, TargetClanID = target.ClanID.Value };
-                        db.TreatyOffers.InsertOnSubmit(offer);
-                    }
-                    offer.InfluenceGiven += infl;
-                }
-            }
-            db.SubmitChanges();
-            SetPlanetOwners(db);
-            db.SubmitChanges();
-            return RedirectToAction("Detail", "Users", new { id = targetAccountID });
-        }
-
+     
         public ActionResult Index(int? galaxyID = null)
         {
             var db = new ZkDataContext();
