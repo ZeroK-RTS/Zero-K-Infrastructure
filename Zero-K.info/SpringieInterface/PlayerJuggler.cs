@@ -37,6 +37,9 @@ namespace ZeroKWeb.SpringieInterface
         public static JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
         {
             var ret = new JugglerResult();
+            ret.Message = "off for now";
+            return ret;
+
             var bins = new List<Bin>();
             var db = new ZkDataContext();
             var sb = new StringBuilder();
