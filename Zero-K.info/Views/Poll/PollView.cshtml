@@ -13,18 +13,28 @@
 {
 
     <div id="@divID">
-        @if (Model.Clan != null) {
-            <h3>@Html.PrintClan(Model.Clan) election</h3>
+        @if (Model.RoleType != null)
+        {
+            <h4>@(Model.RoleIsRemoval ? "Recall" : "Elect") @Html.PrintAccount(Model.AccountByRoleTargetAccountID)    
+                @if (Model.Clan != null)
+                {
+                    @Html.PrintClan(Model.Clan)
+                }
+                else
+                {
+                    @Html.PrintFaction(Model.Faction, false)
+                }
+                @Html.DisplayFor(x => x.RoleType) ?<br />
+                @p.QuestionText
+            </h4>
         }
-        @if (Model.Faction != null) {
-            <h3>@Html.PrintFaction(Model.Faction) election</h3>
+        else
+        {
+            <h4>@p.QuestionText</h4>
         }
-        @if (Model.RoleType != null) {
-            <h3>@Html.PrintAccount(Model.AccountByRoleTargetAccountID) @(Model.RoleIsRemoval ? "recall from" :"elect as") @Html.DisplayFor(x=>x.RoleType)</h3>
+        @if (p.IsAnonymous) {
+            <span>(anonymous poll)</span>
         }
-
-
-        <h4>@p.QuestionText@(p.IsAnonymous?" (anonymous)":"")</h4>
         <small>
             <table>
                 @foreach (var option in p.PollOptions)

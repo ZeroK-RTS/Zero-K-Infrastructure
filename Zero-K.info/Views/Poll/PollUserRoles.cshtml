@@ -1,0 +1,25 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.Account
+  
+@if (Model.AccountID == Global.AccountID && Model.FactionID != null && !Model.PollsByRoleTargetAccountID.Any(x => x.ExpireBy < DateTime.UtcNow))
+{
+    foreach (var grp in new ZkDataContext().RoleTypes.Where(x => (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID)).GroupBy(x => x.IsClanOnly)) {
+
+        if (!grp.Key)
+        {
+            <span>Nominate yourself for a post of faction: </span>
+        }
+        else {
+            <span>Nominate yourself for a post of clan: </span>
+        }
+        <small>
+        @foreach (var role in grp)
+        {
+            <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick="var text=prompt('What is your slogan?','vote me!'); $(this).attr('href', $(this).attr('href')+'&text=' + text);">
+                @Html.DisplayFor(x => role)
+            </a>@:,&nbsp;
+        }
+       </small><br/>
+    }
+}

@@ -31,7 +31,7 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth()]
-        public ActionResult NominateRole(int roleTypeID, bool isRemoval = false)
+        public ActionResult NominateRole(int roleTypeID, string text, bool isRemoval = false)
         {
             var db = new ZkDataContext();
             var rt = db.RoleTypes.Single(x => x.RoleTypeID == roleTypeID);
@@ -50,7 +50,7 @@ namespace ZeroKWeb.Controllers
                         RoleType = rt,
                         RestrictClanID = rt.IsClanOnly ? Global.Account.ClanID : null,
                         RestrictFactionID = rt.IsClanOnly ? null : Global.Account.FactionID,
-                        QuestionText = string.Format("Do you want {0} to become your {1}?", Global.Account.Name, rt.Name)
+                        QuestionText = text
                     };
             p.PollOptions.Add(new PollOption() { OptionText = "Yes" });
             p.PollOptions.Add(new PollOption() { OptionText = "No" });

@@ -149,20 +149,23 @@ namespace ZeroKWeb.Controllers
             {
                 var influence = db.AccountPlanets.Where(x => x.AccountID == accountID).Sum(x => (int?)x.Influence);
 
-                str.AppendFormat("Removed {0} planetwars Influence\n", influence);
+                str.AppendFormat("Removed {0} planetwars Influence\r\n", influence);
                 foreach (var entry in db.AccountPlanets.Where(x => x.AccountID == accountID)) entry.Influence = 0;
             }
 
             if (deleteXP)
             {
-                str.AppendFormat("Removed {0} XP\n", acc.XP);
+                str.AppendFormat("Removed {0} XP\r\n", acc.XP);
                 acc.Commanders.Clear();
                 acc.AccountUnlocks.Clear();
                 acc.XP = 0;
             }
-            if (banCommanders) str.AppendFormat("Banned from using customized commanders\n");
-            if (banUnlocks) str.AppendFormat("Banned from using unlocks\n");
-            if (banExpires.HasValue) str.AppendFormat("Ban expires on {0} GMT\n", banExpires);
+            if (banCommanders) str.AppendFormat("commanders blocked\r\n");
+            if (banUnlocks) str.AppendFormat("unlocks blocked\r\n");
+            if (banMute) str.AppendFormat("muted\r\n");
+            if (banSite) str.AppendFormat("site blocked\r\n");
+            if (banLobby) str.AppendFormat("lobby blocked\r\n");
+            if (banExpires.HasValue) str.AppendFormat("Expires on {0} GMT\r\n", banExpires);
             punishment.Punishment1 = str.ToString();
 
             db.SubmitChanges();

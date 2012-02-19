@@ -268,39 +268,17 @@
     <br class="clearfloat" />
 
 	<div id="usr_planetwars" class="border relative">
-	<h3>Faction: </h3>
+	
+    <h3>Faction: </h3>
     @Html.PrintFaction(Model.Faction)
     
-    @if (Model.AccountID == Global.AccountID && Model.FactionID != null && !Model.PollsByRoleTargetAccountID.Any(x=>x.ExpireBy < DateTime.UtcNow)) {
-        <span>Nominate yourself for a post of faction: </span>
-        <small>
-        @foreach (var role in new ZkDataContext().RoleTypes.Where(x=>!x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID))) {
-            
-            <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" class="delete">
-                @Html.DisplayFor(x => role)
-            </a>
-         }
-         ,&nbsp;</small>
-    }
-
-    
     <h3>Clan: </h3>
-	@Html.PrintClan(Model.Clan)
-        @if (Model.AccountID == Global.AccountID && Model.ClanID!=null && !Model.PollsByRoleTargetAccountID.Any(x=>x.ExpireBy < DateTime.UtcNow)) {
-        <span>Nominate yourself for a post of clan: </span>
-        <small>
-        @foreach (var role in new ZkDataContext().RoleTypes.Where(x => x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID)))
-        {
-            
-            <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" class="delete">
-                @Html.DisplayFor(x => role)
-            </a>
-         }
-         ,&nbsp;</small>
-    }
-
+    @Html.PrintClan(Model.Clan)
     
-    <h3>Credits:</h3>
+    <br/>
+    @Html.Partial("~/Views/Poll/PollUserRoles.cshtml", Model)
+    
+        <h3>Credits:</h3>
 	@Model.Credits.ToString("C0") (+@Model.CreditsIncome, -@Model.CreditsExpense)
 	<br />
 	

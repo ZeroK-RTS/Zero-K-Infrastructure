@@ -2,17 +2,12 @@
 @model ZkData.Account
 <h2>Voting details for @Html.PrintAccount(Model)</h2>
 
-@foreach (var p in Model.ValidPolls().OrderByDescending(x=>x.PollID))
+@foreach (var p in Model.ValidPolls().OrderByDescending(x => x.PollID))
 {
+    <div style="@(p.IsHeadline ? " border: 1px solid green" : ""); margin:2px; padding:1px">
     @Html.Partial("PollView", p)
 
-    if (Global.IsZeroKAdmin && p.ExpireBy == null) {
-        <div class="admin">
-        @Html.ActionLink("start/stop displaying on home", "SwapHeadline", new { pollID = p.PollID })<br />
-        </div>
-    }
-
-    if (!p.IsAnonymous)
+    @if (!p.IsAnonymous)
     {
         var vote = p.PollVotes.FirstOrDefault(x => x.AccountID == Model.AccountID);
         if (vote != null)
@@ -25,9 +20,16 @@
             {
                 <span>Voted</span>
             }
-
         }
     }
+
+    @if (Global.IsZeroKAdmin && p.ExpireBy == null)
+    {   
+
+            <br/>
+            @Html.ActionLink(p.IsHeadline ? "STOP displaying" : "start displaying", "SwapHeadline", new { pollID = p.PollID })<br />
+    }
+    </div>
 }
 
 @if (Global.IsZeroKAdmin)
@@ -37,9 +39,9 @@
         <form action="@Url.Action("NewPoll")" method="POST">
             Is anonymous: <input type="checkbox" name="isAnonymous" value="true" /><br/>
             Question: <br/>
-            <input type="text" name="question" style="width:600px"/><br/>
+            <input type="text" name="question" style="width: 600px"/><br/>
             Answers (one per line):<br/>
-            <textarea name="answers" rows="6" style="width:600px"></textarea><br/>
+            <textarea name="answers" rows="6" style="width: 600px"></textarea><br/>
             <input type="submit" value="add" class="delete" />
 
         </form>
