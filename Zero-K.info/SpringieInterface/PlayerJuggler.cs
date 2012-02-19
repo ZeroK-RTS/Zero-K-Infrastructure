@@ -302,7 +302,7 @@ namespace ZeroKWeb.SpringieInterface
                     var lobbyID = a.Key;
                     var battlePref = (double)a.Value.Preferences[b.Mode];
                     AutohostMode manualPref;
-                    //if (manuallyPrefered.TryGetValue(lobbyID, out manualPref) && manualPref == b.Mode) battlePref += 0.5; // player joined manually same type add 0.5
+                    if (manuallyPrefered.TryGetValue(lobbyID, out manualPref) && manualPref == b.Mode) battlePref += 0.5; // player joined manually same type add 0.5
 
                     if (b.Config.MinLevel != null && a.Value.Level < b.Config.MinLevel) continue; // dont queue who cannot join PW
                     
@@ -319,7 +319,7 @@ namespace ZeroKWeb.SpringieInterface
                                 if (Math.Abs(a.Value.EffectiveElo - avgElo) > b.Config.MaxEloDifference) continue; //effective elo difference > 250 dont try to combine
                             }
 
-                            if (battlePref > (double)GamePreference.Never) b.PlayerPriority[lobbyID] = (int)battlePref;
+                            if (battlePref > (double)GamePreference.Never+0.6) b.PlayerPriority[lobbyID] = (int)battlePref;
                         }
                     }
                 }
