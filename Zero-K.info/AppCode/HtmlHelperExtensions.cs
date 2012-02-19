@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web.Mvc.Html;
 using ZeroKWeb;
 using ZkData;
 
@@ -33,6 +34,7 @@ namespace System.Web.Mvc
                 new MvcHtmlString(string.Format("<img src='/img/avatars/{0}.png' class='avatar'>", account.Avatar));
         }
 
+        // todo all calls must provide helper!
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str)
         {
             if (str == null) return null;
@@ -90,6 +92,13 @@ namespace System.Web.Mvc
             // lastly, replace any new line characters with <br />
             str = str.Replace("\r\n", "<br />\r\n");
 
+            if (helper != null)
+            { // todo remove condition in the future
+                exp = new Regex(@"\[poll\]([0-9]+)\[/poll\]");
+                str = exp.Replace(str, m => helper.Action("Index", "Poll", new { pollID = m.Groups[1].Value }).ToHtmlString());
+            }
+
+            
             return new MvcHtmlString(str);
         }
 
