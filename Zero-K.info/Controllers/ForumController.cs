@@ -91,9 +91,13 @@ namespace ZeroKWeb.Controllers
 					var mission = db.Missions.Single(x => x.MissionID == missionID);
 					thread.Title = "Mission " +mission.Name;
 				}
+                if (thread != null && resourceID != null) {
+                    var map = db.Resources.Single(x => x.ResourceID == resourceID);
+                    thread.Title = "Map " + map.InternalName;
+                }
 
 
-				if (threadID == null && categoryID.HasValue) // new thread
+			    if (threadID == null && categoryID.HasValue) // new thread
 				{
 					var cat = db.ForumCategories.Single(x => x.ForumCategoryID == categoryID.Value);
 					if (cat.IsLocked) return Content("Thread is locked");

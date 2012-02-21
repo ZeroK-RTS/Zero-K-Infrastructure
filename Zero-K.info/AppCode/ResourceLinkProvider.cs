@@ -250,9 +250,12 @@ namespace ZeroKWeb
 
             valids = valids.Distinct().ToList();
 
-            content.LinkCount = valids.Count;
-            content.Resource.LastLinkCheck = DateTime.UtcNow;
-            content.Links = string.Join("\n", valids.ToArray());
+            lock (content)
+            {
+                content.LinkCount = valids.Count;
+                content.Resource.LastLinkCheck = DateTime.UtcNow;
+                content.Links = string.Join("\n", valids.ToArray());
+            }
         }
 
         [XmlRpcUrl("http://api.springfiles.com/xmlrpc.php")]

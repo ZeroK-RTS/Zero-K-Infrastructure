@@ -12,7 +12,14 @@
                         <td>@Html.AccountAvatar(p.Account)
                         </td>
                         <td valign='top'>
-                            <small>@p.Created.ToAgoString()</small>
+                            <small>@p.Created.ToAgoString()
+                                @if (p.ForumPostEdits.Any())
+                                {
+                                    var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
+                                    <br/>
+                                    <a href="@Url.Action("EditHistory", new { forumPostID = p.ForumPostID })">(edited @lastEdit.EditTime.ToAgoString())</a>
+                                }
+                            </small>
                         </td>
                     </tr>
                     @if (Global.IsZeroKAdmin)
@@ -27,13 +34,7 @@
                     {
                         <tr><td colspan="2">@Html.ActionLink("Edit", "NewPost", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })</td></tr>
                     }
-                    @if (p.ForumPostEdits.Any())
-                    {
-                        var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
-                        <tr><td colspan="2">
-                                <small>Edited:<br/><a href="@Url.Action("EditHistory", new {forumPostID = p.ForumPostID })">@lastEdit.EditTime.ToAgoString()</a> (@Html.PrintAccount(lastEdit.Account))</small>
-                            </td></tr>
-                    }
+                    
 
                 </table>
             </td>
