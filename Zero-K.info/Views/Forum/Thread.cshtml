@@ -41,36 +41,7 @@ Pages:
 <b>@Html.ActionLink((i+1).ToString(), "Thread", new {threadID = Model.CurrentThread.ForumThreadID, page = i})</b>
 }
 
-@foreach (var p in Model.Posts) {
-  <table width='100%'>
-    <tr class="forumRow">
-      <td width='222px' class="forumPostHead" valign="top" >
-        @Html.PrintAccount(p.Account)<br />
-        <table>
-          <tr>
-            <td>@Html.AccountAvatar(p.Account)
-            </td>
-            <td valign='top'>
-              <small>@p.Created.ToAgoString()</small>
-            </td>
-          </tr>
-            @if (ZeroKWeb.Global.IsZeroKAdmin) {
-              <tr>
-                <td>
-                  <a href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'>Del. post</a>
-                </td>
-              </tr>
-            }
-
-        </table>
-      </td>
-      <td valign="top" class="forumPostText">
-        <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
-        @Html.BBCode(p.Text)
-      </td>
-    </tr>
-  </table>
-}
+@Html.Partial("~/Views/Forum/PostList.cshtml", Model.Posts)
 
 @if (!Model.CurrentThread.IsLocked) {
   <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>

@@ -199,6 +199,12 @@ namespace ZkData
     partial void InsertAccountRole(AccountRole instance);
     partial void UpdateAccountRole(AccountRole instance);
     partial void DeleteAccountRole(AccountRole instance);
+    partial void InsertRoleTypeHierarchy(RoleTypeHierarchy instance);
+    partial void UpdateRoleTypeHierarchy(RoleTypeHierarchy instance);
+    partial void DeleteRoleTypeHierarchy(RoleTypeHierarchy instance);
+    partial void InsertForumPostEdit(ForumPostEdit instance);
+    partial void UpdateForumPostEdit(ForumPostEdit instance);
+    partial void DeleteForumPostEdit(ForumPostEdit instance);
     #endregion
 		
 		public ZkDataContext(string connection) : 
@@ -678,6 +684,22 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<AccountRole>();
+			}
+		}
+		
+		public System.Data.Linq.Table<RoleTypeHierarchy> RoleTypeHierarchies
+		{
+			get
+			{
+				return this.GetTable<RoleTypeHierarchy>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ForumPostEdit> ForumPostEdits
+		{
+			get
+			{
+				return this.GetTable<ForumPostEdit>();
 			}
 		}
 	}
@@ -2375,6 +2397,8 @@ namespace ZkData
 		
 		private EntitySet<AccountRole> _AccountRolesByAppointedByAccountID;
 		
+		private EntitySet<ForumPostEdit> _ForumPostEdits;
+		
 		private EntityRef<Clan> _Clan;
 		
 		private EntityRef<Faction> _Faction;
@@ -3909,6 +3933,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPostEdit", Storage="_ForumPostEdits", ThisKey="AccountID", OtherKey="EditorAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=72, EmitDefaultValue=false)]
+		public EntitySet<ForumPostEdit> ForumPostEdits
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ForumPostEdits.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ForumPostEdits;
+			}
+			set
+			{
+				this._ForumPostEdits.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Clan", ThisKey="ClanID", OtherKey="ClanID", IsForeignKey=true)]
 		public Clan Clan
 		{
@@ -4369,6 +4412,18 @@ namespace ZkData
 			entity.AccountByAppointedByAccountID = null;
 		}
 		
+		private void attach_ForumPostEdits(ForumPostEdit entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_ForumPostEdits(ForumPostEdit entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -4402,6 +4457,7 @@ namespace ZkData
 			this._FactionTreatiesByAcceptedAccountID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByAcceptedAccountID), new Action<FactionTreaty>(this.detach_FactionTreatiesByAcceptedAccountID));
 			this._AccountRolesByAccountID = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRolesByAccountID), new Action<AccountRole>(this.detach_AccountRolesByAccountID));
 			this._AccountRolesByAppointedByAccountID = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRolesByAppointedByAccountID), new Action<AccountRole>(this.detach_AccountRolesByAppointedByAccountID));
+			this._ForumPostEdits = new EntitySet<ForumPostEdit>(new Action<ForumPostEdit>(this.attach_ForumPostEdits), new Action<ForumPostEdit>(this.detach_ForumPostEdits));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -8179,9 +8235,13 @@ namespace ZkData
 		
 		private int _ForumThreadID;
 		
+		private EntitySet<ForumPostEdit> _ForumPostEdits;
+		
 		private EntityRef<Account> _Account;
 		
 		private EntityRef<ForumThread> _ForumThread;
+		
+		private bool serializing;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -8317,6 +8377,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumPost_ForumPostEdit", Storage="_ForumPostEdits", ThisKey="ForumPostID", OtherKey="ForumPostID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		public EntitySet<ForumPostEdit> ForumPostEdits
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ForumPostEdits.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._ForumPostEdits;
+			}
+			set
+			{
+				this._ForumPostEdits.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPost", Storage="_Account", ThisKey="AuthorAccountID", OtherKey="AccountID", IsForeignKey=true)]
 		public Account Account
 		{
@@ -8405,8 +8484,21 @@ namespace ZkData
 			}
 		}
 		
+		private void attach_ForumPostEdits(ForumPostEdit entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumPost = this;
+		}
+		
+		private void detach_ForumPostEdits(ForumPostEdit entity)
+		{
+			this.SendPropertyChanging();
+			entity.ForumPost = null;
+		}
+		
 		private void Initialize()
 		{
+			this._ForumPostEdits = new EntitySet<ForumPostEdit>(new Action<ForumPostEdit>(this.attach_ForumPostEdits), new Action<ForumPostEdit>(this.detach_ForumPostEdits));
 			this._Account = default(EntityRef<Account>);
 			this._ForumThread = default(EntityRef<ForumThread>);
 			OnCreated();
@@ -8417,6 +8509,20 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 	
@@ -21841,6 +21947,16 @@ namespace ZkData
 		
 		private bool _IsClanOnly;
 		
+		private bool _IsOnePersonOnly;
+		
+		private System.Nullable<int> _RestrictFactionID;
+		
+		private bool _IsVoteable;
+		
+		private int _PollDurationDays;
+		
+		private System.Nullable<int> _AppointedByRoleTypeID;
+		
 		private bool _RightAppointRoles;
 		
 		private double _RightDropshipQuota;
@@ -21855,15 +21971,17 @@ namespace ZkData
 		
 		private bool _RightSetEnergyPriority;
 		
-		private int _PollDurationDays;
-		
-		private System.Nullable<int> _RestrictFactionID;
-		
 		private EntitySet<Poll> _Polls;
 		
 		private EntitySet<AccountRole> _AccountRoles;
 		
+		private EntitySet<RoleTypeHierarchy> _RoleTypeHierarchiesByMasterRoleTypeID;
+		
+		private EntitySet<RoleTypeHierarchy> _RoleTypeHierarchiesBySlaveRoleTypeID;
+		
 		private EntityRef<Faction> _Faction;
+		
+		private EntityRef<RoleType> _ParentRoleType;
 		
 		private bool serializing;
 		
@@ -21879,6 +21997,16 @@ namespace ZkData
     partial void OnDescriptionChanged();
     partial void OnIsClanOnlyChanging(bool value);
     partial void OnIsClanOnlyChanged();
+    partial void OnIsOnePersonOnlyChanging(bool value);
+    partial void OnIsOnePersonOnlyChanged();
+    partial void OnRestrictFactionIDChanging(System.Nullable<int> value);
+    partial void OnRestrictFactionIDChanged();
+    partial void OnIsVoteableChanging(bool value);
+    partial void OnIsVoteableChanged();
+    partial void OnPollDurationDaysChanging(int value);
+    partial void OnPollDurationDaysChanged();
+    partial void OnAppointedByRoleTypeIDChanging(System.Nullable<int> value);
+    partial void OnAppointedByRoleTypeIDChanged();
     partial void OnRightAppointRolesChanging(bool value);
     partial void OnRightAppointRolesChanged();
     partial void OnRightDropshipQuotaChanging(double value);
@@ -21893,10 +22021,6 @@ namespace ZkData
     partial void OnRightEditTextsChanged();
     partial void OnRightSetEnergyPriorityChanging(bool value);
     partial void OnRightSetEnergyPriorityChanged();
-    partial void OnPollDurationDaysChanging(int value);
-    partial void OnPollDurationDaysChanged();
-    partial void OnRestrictFactionIDChanging(System.Nullable<int> value);
-    partial void OnRestrictFactionIDChanged();
     #endregion
 		
 		public RoleType()
@@ -21988,176 +22112,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightAppointRoles", DbType="bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsOnePersonOnly", DbType="bit NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public bool RightAppointRoles
+		public bool IsOnePersonOnly
 		{
 			get
 			{
-				return this._RightAppointRoles;
+				return this._IsOnePersonOnly;
 			}
 			set
 			{
-				if ((this._RightAppointRoles != value))
+				if ((this._IsOnePersonOnly != value))
 				{
-					this.OnRightAppointRolesChanging(value);
+					this.OnIsOnePersonOnlyChanging(value);
 					this.SendPropertyChanging();
-					this._RightAppointRoles = value;
-					this.SendPropertyChanged("RightAppointRoles");
-					this.OnRightAppointRolesChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightDropshipQuota", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public double RightDropshipQuota
-		{
-			get
-			{
-				return this._RightDropshipQuota;
-			}
-			set
-			{
-				if ((this._RightDropshipQuota != value))
-				{
-					this.OnRightDropshipQuotaChanging(value);
-					this.SendPropertyChanging();
-					this._RightDropshipQuota = value;
-					this.SendPropertyChanged("RightDropshipQuota");
-					this.OnRightDropshipQuotaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightBomberQuota", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public double RightBomberQuota
-		{
-			get
-			{
-				return this._RightBomberQuota;
-			}
-			set
-			{
-				if ((this._RightBomberQuota != value))
-				{
-					this.OnRightBomberQuotaChanging(value);
-					this.SendPropertyChanging();
-					this._RightBomberQuota = value;
-					this.SendPropertyChanged("RightBomberQuota");
-					this.OnRightBomberQuotaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightMetalQuota", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public double RightMetalQuota
-		{
-			get
-			{
-				return this._RightMetalQuota;
-			}
-			set
-			{
-				if ((this._RightMetalQuota != value))
-				{
-					this.OnRightMetalQuotaChanging(value);
-					this.SendPropertyChanging();
-					this._RightMetalQuota = value;
-					this.SendPropertyChanged("RightMetalQuota");
-					this.OnRightMetalQuotaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightDiplomacy", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public bool RightDiplomacy
-		{
-			get
-			{
-				return this._RightDiplomacy;
-			}
-			set
-			{
-				if ((this._RightDiplomacy != value))
-				{
-					this.OnRightDiplomacyChanging(value);
-					this.SendPropertyChanging();
-					this._RightDiplomacy = value;
-					this.SendPropertyChanged("RightDiplomacy");
-					this.OnRightDiplomacyChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightEditTexts", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public bool RightEditTexts
-		{
-			get
-			{
-				return this._RightEditTexts;
-			}
-			set
-			{
-				if ((this._RightEditTexts != value))
-				{
-					this.OnRightEditTextsChanging(value);
-					this.SendPropertyChanging();
-					this._RightEditTexts = value;
-					this.SendPropertyChanged("RightEditTexts");
-					this.OnRightEditTextsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightSetEnergyPriority", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public bool RightSetEnergyPriority
-		{
-			get
-			{
-				return this._RightSetEnergyPriority;
-			}
-			set
-			{
-				if ((this._RightSetEnergyPriority != value))
-				{
-					this.OnRightSetEnergyPriorityChanging(value);
-					this.SendPropertyChanging();
-					this._RightSetEnergyPriority = value;
-					this.SendPropertyChanged("RightSetEnergyPriority");
-					this.OnRightSetEnergyPriorityChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PollDurationDays", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
-		public int PollDurationDays
-		{
-			get
-			{
-				return this._PollDurationDays;
-			}
-			set
-			{
-				if ((this._PollDurationDays != value))
-				{
-					this.OnPollDurationDaysChanging(value);
-					this.SendPropertyChanging();
-					this._PollDurationDays = value;
-					this.SendPropertyChanged("PollDurationDays");
-					this.OnPollDurationDaysChanged();
+					this._IsOnePersonOnly = value;
+					this.SendPropertyChanged("IsOnePersonOnly");
+					this.OnIsOnePersonOnlyChanged();
 				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RestrictFactionID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public System.Nullable<int> RestrictFactionID
 		{
 			get
@@ -22181,8 +22158,222 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsVoteable", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public bool IsVoteable
+		{
+			get
+			{
+				return this._IsVoteable;
+			}
+			set
+			{
+				if ((this._IsVoteable != value))
+				{
+					this.OnIsVoteableChanging(value);
+					this.SendPropertyChanging();
+					this._IsVoteable = value;
+					this.SendPropertyChanged("IsVoteable");
+					this.OnIsVoteableChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PollDurationDays", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public int PollDurationDays
+		{
+			get
+			{
+				return this._PollDurationDays;
+			}
+			set
+			{
+				if ((this._PollDurationDays != value))
+				{
+					this.OnPollDurationDaysChanging(value);
+					this.SendPropertyChanging();
+					this._PollDurationDays = value;
+					this.SendPropertyChanged("PollDurationDays");
+					this.OnPollDurationDaysChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AppointedByRoleTypeID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<int> AppointedByRoleTypeID
+		{
+			get
+			{
+				return this._AppointedByRoleTypeID;
+			}
+			set
+			{
+				if ((this._AppointedByRoleTypeID != value))
+				{
+					if (this._ParentRoleType.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAppointedByRoleTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._AppointedByRoleTypeID = value;
+					this.SendPropertyChanged("AppointedByRoleTypeID");
+					this.OnAppointedByRoleTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightAppointRoles", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public bool RightAppointRoles
+		{
+			get
+			{
+				return this._RightAppointRoles;
+			}
+			set
+			{
+				if ((this._RightAppointRoles != value))
+				{
+					this.OnRightAppointRolesChanging(value);
+					this.SendPropertyChanging();
+					this._RightAppointRoles = value;
+					this.SendPropertyChanged("RightAppointRoles");
+					this.OnRightAppointRolesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightDropshipQuota", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public double RightDropshipQuota
+		{
+			get
+			{
+				return this._RightDropshipQuota;
+			}
+			set
+			{
+				if ((this._RightDropshipQuota != value))
+				{
+					this.OnRightDropshipQuotaChanging(value);
+					this.SendPropertyChanging();
+					this._RightDropshipQuota = value;
+					this.SendPropertyChanged("RightDropshipQuota");
+					this.OnRightDropshipQuotaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightBomberQuota", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public double RightBomberQuota
+		{
+			get
+			{
+				return this._RightBomberQuota;
+			}
+			set
+			{
+				if ((this._RightBomberQuota != value))
+				{
+					this.OnRightBomberQuotaChanging(value);
+					this.SendPropertyChanging();
+					this._RightBomberQuota = value;
+					this.SendPropertyChanged("RightBomberQuota");
+					this.OnRightBomberQuotaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightMetalQuota", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public double RightMetalQuota
+		{
+			get
+			{
+				return this._RightMetalQuota;
+			}
+			set
+			{
+				if ((this._RightMetalQuota != value))
+				{
+					this.OnRightMetalQuotaChanging(value);
+					this.SendPropertyChanging();
+					this._RightMetalQuota = value;
+					this.SendPropertyChanged("RightMetalQuota");
+					this.OnRightMetalQuotaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightDiplomacy", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public bool RightDiplomacy
+		{
+			get
+			{
+				return this._RightDiplomacy;
+			}
+			set
+			{
+				if ((this._RightDiplomacy != value))
+				{
+					this.OnRightDiplomacyChanging(value);
+					this.SendPropertyChanging();
+					this._RightDiplomacy = value;
+					this.SendPropertyChanged("RightDiplomacy");
+					this.OnRightDiplomacyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightEditTexts", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public bool RightEditTexts
+		{
+			get
+			{
+				return this._RightEditTexts;
+			}
+			set
+			{
+				if ((this._RightEditTexts != value))
+				{
+					this.OnRightEditTextsChanging(value);
+					this.SendPropertyChanging();
+					this._RightEditTexts = value;
+					this.SendPropertyChanged("RightEditTexts");
+					this.OnRightEditTextsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightSetEnergyPriority", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public bool RightSetEnergyPriority
+		{
+			get
+			{
+				return this._RightSetEnergyPriority;
+			}
+			set
+			{
+				if ((this._RightSetEnergyPriority != value))
+				{
+					this.OnRightSetEnergyPriorityChanging(value);
+					this.SendPropertyChanging();
+					this._RightSetEnergyPriority = value;
+					this.SendPropertyChanged("RightSetEnergyPriority");
+					this.OnRightSetEnergyPriorityChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_Poll", Storage="_Polls", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<Poll> Polls
 		{
 			get
@@ -22201,7 +22392,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_AccountRole", Storage="_AccountRoles", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<AccountRole> AccountRoles
 		{
 			get
@@ -22216,6 +22407,44 @@ namespace ZkData
 			set
 			{
 				this._AccountRoles.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleTypeHierarchy", Storage="_RoleTypeHierarchiesByMasterRoleTypeID", ThisKey="RoleTypeID", OtherKey="MasterRoleTypeID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		public EntitySet<RoleTypeHierarchy> RoleTypeHierarchiesByMasterRoleTypeID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._RoleTypeHierarchiesByMasterRoleTypeID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._RoleTypeHierarchiesByMasterRoleTypeID;
+			}
+			set
+			{
+				this._RoleTypeHierarchiesByMasterRoleTypeID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleTypeHierarchy1", Storage="_RoleTypeHierarchiesBySlaveRoleTypeID", ThisKey="RoleTypeID", OtherKey="SlaveRoleTypeID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		public EntitySet<RoleTypeHierarchy> RoleTypeHierarchiesBySlaveRoleTypeID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._RoleTypeHierarchiesBySlaveRoleTypeID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._RoleTypeHierarchiesBySlaveRoleTypeID;
+			}
+			set
+			{
+				this._RoleTypeHierarchiesBySlaveRoleTypeID.Assign(value);
 			}
 		}
 		
@@ -22249,6 +22478,30 @@ namespace ZkData
 						this._RestrictFactionID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Faction");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleType", Storage="_ParentRoleType", ThisKey="AppointedByRoleTypeID", OtherKey="RoleTypeID", IsForeignKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		public RoleType ParentRoleType
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._ParentRoleType.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._ParentRoleType.Entity;
+			}
+			set
+			{
+				if ((this._ParentRoleType.Entity != value))
+				{
+					this.SendPropertyChanging();
+					this._ParentRoleType.Entity = value;
+					this.SendPropertyChanged("ParentRoleType");
 				}
 			}
 		}
@@ -22297,11 +22550,38 @@ namespace ZkData
 			entity.RoleType = null;
 		}
 		
+		private void attach_RoleTypeHierarchiesByMasterRoleTypeID(RoleTypeHierarchy entity)
+		{
+			this.SendPropertyChanging();
+			entity.RoleTypeByMasterRoleTypeID = this;
+		}
+		
+		private void detach_RoleTypeHierarchiesByMasterRoleTypeID(RoleTypeHierarchy entity)
+		{
+			this.SendPropertyChanging();
+			entity.RoleTypeByMasterRoleTypeID = null;
+		}
+		
+		private void attach_RoleTypeHierarchiesBySlaveRoleTypeID(RoleTypeHierarchy entity)
+		{
+			this.SendPropertyChanging();
+			entity.RoleTypeBySlaveRoleTypeID = this;
+		}
+		
+		private void detach_RoleTypeHierarchiesBySlaveRoleTypeID(RoleTypeHierarchy entity)
+		{
+			this.SendPropertyChanging();
+			entity.RoleTypeBySlaveRoleTypeID = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Polls = new EntitySet<Poll>(new Action<Poll>(this.attach_Polls), new Action<Poll>(this.detach_Polls));
 			this._AccountRoles = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRoles), new Action<AccountRole>(this.detach_AccountRoles));
+			this._RoleTypeHierarchiesByMasterRoleTypeID = new EntitySet<RoleTypeHierarchy>(new Action<RoleTypeHierarchy>(this.attach_RoleTypeHierarchiesByMasterRoleTypeID), new Action<RoleTypeHierarchy>(this.detach_RoleTypeHierarchiesByMasterRoleTypeID));
+			this._RoleTypeHierarchiesBySlaveRoleTypeID = new EntitySet<RoleTypeHierarchy>(new Action<RoleTypeHierarchy>(this.attach_RoleTypeHierarchiesBySlaveRoleTypeID), new Action<RoleTypeHierarchy>(this.detach_RoleTypeHierarchiesBySlaveRoleTypeID));
 			this._Faction = default(EntityRef<Faction>);
+			this._ParentRoleType = default(EntityRef<RoleType>);
 			OnCreated();
 		}
 		
@@ -24395,6 +24675,522 @@ namespace ZkData
 			this._AccountByAppointedByAccountID = default(EntityRef<Account>);
 			this._Faction = default(EntityRef<Faction>);
 			this._Poll = default(EntityRef<Poll>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.RoleTypeHierarchy")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class RoleTypeHierarchy : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _MasterRoleTypeID;
+		
+		private int _SlaveRoleTypeID;
+		
+		private bool _CanAppoint;
+		
+		private bool _CanRecall;
+		
+		private EntityRef<RoleType> _RoleTypeByMasterRoleTypeID;
+		
+		private EntityRef<RoleType> _RoleTypeBySlaveRoleTypeID;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnMasterRoleTypeIDChanging(int value);
+    partial void OnMasterRoleTypeIDChanged();
+    partial void OnSlaveRoleTypeIDChanging(int value);
+    partial void OnSlaveRoleTypeIDChanged();
+    partial void OnCanAppointChanging(bool value);
+    partial void OnCanAppointChanged();
+    partial void OnCanRecallChanging(bool value);
+    partial void OnCanRecallChanged();
+    #endregion
+		
+		public RoleTypeHierarchy()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MasterRoleTypeID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int MasterRoleTypeID
+		{
+			get
+			{
+				return this._MasterRoleTypeID;
+			}
+			set
+			{
+				if ((this._MasterRoleTypeID != value))
+				{
+					if (this._RoleTypeByMasterRoleTypeID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnMasterRoleTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._MasterRoleTypeID = value;
+					this.SendPropertyChanged("MasterRoleTypeID");
+					this.OnMasterRoleTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_SlaveRoleTypeID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int SlaveRoleTypeID
+		{
+			get
+			{
+				return this._SlaveRoleTypeID;
+			}
+			set
+			{
+				if ((this._SlaveRoleTypeID != value))
+				{
+					if (this._RoleTypeBySlaveRoleTypeID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnSlaveRoleTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._SlaveRoleTypeID = value;
+					this.SendPropertyChanged("SlaveRoleTypeID");
+					this.OnSlaveRoleTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanAppoint", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public bool CanAppoint
+		{
+			get
+			{
+				return this._CanAppoint;
+			}
+			set
+			{
+				if ((this._CanAppoint != value))
+				{
+					this.OnCanAppointChanging(value);
+					this.SendPropertyChanging();
+					this._CanAppoint = value;
+					this.SendPropertyChanged("CanAppoint");
+					this.OnCanAppointChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanRecall", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool CanRecall
+		{
+			get
+			{
+				return this._CanRecall;
+			}
+			set
+			{
+				if ((this._CanRecall != value))
+				{
+					this.OnCanRecallChanging(value);
+					this.SendPropertyChanging();
+					this._CanRecall = value;
+					this.SendPropertyChanged("CanRecall");
+					this.OnCanRecallChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleTypeHierarchy", Storage="_RoleTypeByMasterRoleTypeID", ThisKey="MasterRoleTypeID", OtherKey="RoleTypeID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public RoleType RoleTypeByMasterRoleTypeID
+		{
+			get
+			{
+				return this._RoleTypeByMasterRoleTypeID.Entity;
+			}
+			set
+			{
+				RoleType previousValue = this._RoleTypeByMasterRoleTypeID.Entity;
+				if (((previousValue != value) 
+							|| (this._RoleTypeByMasterRoleTypeID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._RoleTypeByMasterRoleTypeID.Entity = null;
+						previousValue.RoleTypeHierarchiesByMasterRoleTypeID.Remove(this);
+					}
+					this._RoleTypeByMasterRoleTypeID.Entity = value;
+					if ((value != null))
+					{
+						value.RoleTypeHierarchiesByMasterRoleTypeID.Add(this);
+						this._MasterRoleTypeID = value.RoleTypeID;
+					}
+					else
+					{
+						this._MasterRoleTypeID = default(int);
+					}
+					this.SendPropertyChanged("RoleTypeByMasterRoleTypeID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleTypeHierarchy1", Storage="_RoleTypeBySlaveRoleTypeID", ThisKey="SlaveRoleTypeID", OtherKey="RoleTypeID", IsForeignKey=true)]
+		public RoleType RoleTypeBySlaveRoleTypeID
+		{
+			get
+			{
+				return this._RoleTypeBySlaveRoleTypeID.Entity;
+			}
+			set
+			{
+				RoleType previousValue = this._RoleTypeBySlaveRoleTypeID.Entity;
+				if (((previousValue != value) 
+							|| (this._RoleTypeBySlaveRoleTypeID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._RoleTypeBySlaveRoleTypeID.Entity = null;
+						previousValue.RoleTypeHierarchiesBySlaveRoleTypeID.Remove(this);
+					}
+					this._RoleTypeBySlaveRoleTypeID.Entity = value;
+					if ((value != null))
+					{
+						value.RoleTypeHierarchiesBySlaveRoleTypeID.Add(this);
+						this._SlaveRoleTypeID = value.RoleTypeID;
+					}
+					else
+					{
+						this._SlaveRoleTypeID = default(int);
+					}
+					this.SendPropertyChanged("RoleTypeBySlaveRoleTypeID");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._RoleTypeByMasterRoleTypeID = default(EntityRef<RoleType>);
+			this._RoleTypeBySlaveRoleTypeID = default(EntityRef<RoleType>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ForumPostEdit")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class ForumPostEdit : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _ForumPostEditID;
+		
+		private int _ForumPostID;
+		
+		private int _EditorAccountID;
+		
+		private string _OriginalText;
+		
+		private string _NewText;
+		
+		private System.DateTime _EditTime;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<ForumPost> _ForumPost;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnForumPostEditIDChanging(int value);
+    partial void OnForumPostEditIDChanged();
+    partial void OnForumPostIDChanging(int value);
+    partial void OnForumPostIDChanged();
+    partial void OnEditorAccountIDChanging(int value);
+    partial void OnEditorAccountIDChanged();
+    partial void OnOriginalTextChanging(string value);
+    partial void OnOriginalTextChanged();
+    partial void OnNewTextChanging(string value);
+    partial void OnNewTextChanged();
+    partial void OnEditTimeChanging(System.DateTime value);
+    partial void OnEditTimeChanged();
+    #endregion
+		
+		public ForumPostEdit()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumPostEditID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int ForumPostEditID
+		{
+			get
+			{
+				return this._ForumPostEditID;
+			}
+			set
+			{
+				if ((this._ForumPostEditID != value))
+				{
+					this.OnForumPostEditIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumPostEditID = value;
+					this.SendPropertyChanged("ForumPostEditID");
+					this.OnForumPostEditIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumPostID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int ForumPostID
+		{
+			get
+			{
+				return this._ForumPostID;
+			}
+			set
+			{
+				if ((this._ForumPostID != value))
+				{
+					if (this._ForumPost.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnForumPostIDChanging(value);
+					this.SendPropertyChanging();
+					this._ForumPostID = value;
+					this.SendPropertyChanged("ForumPostID");
+					this.OnForumPostIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EditorAccountID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int EditorAccountID
+		{
+			get
+			{
+				return this._EditorAccountID;
+			}
+			set
+			{
+				if ((this._EditorAccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnEditorAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._EditorAccountID = value;
+					this.SendPropertyChanged("EditorAccountID");
+					this.OnEditorAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OriginalText", DbType="nvarchar(max)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public string OriginalText
+		{
+			get
+			{
+				return this._OriginalText;
+			}
+			set
+			{
+				if ((this._OriginalText != value))
+				{
+					this.OnOriginalTextChanging(value);
+					this.SendPropertyChanging();
+					this._OriginalText = value;
+					this.SendPropertyChanged("OriginalText");
+					this.OnOriginalTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_NewText", DbType="nvarchar(max)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public string NewText
+		{
+			get
+			{
+				return this._NewText;
+			}
+			set
+			{
+				if ((this._NewText != value))
+				{
+					this.OnNewTextChanging(value);
+					this.SendPropertyChanging();
+					this._NewText = value;
+					this.SendPropertyChanged("NewText");
+					this.OnNewTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EditTime", DbType="datetime NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public System.DateTime EditTime
+		{
+			get
+			{
+				return this._EditTime;
+			}
+			set
+			{
+				if ((this._EditTime != value))
+				{
+					this.OnEditTimeChanging(value);
+					this.SendPropertyChanging();
+					this._EditTime = value;
+					this.SendPropertyChanged("EditTime");
+					this.OnEditTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPostEdit", Storage="_Account", ThisKey="EditorAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.ForumPostEdits.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.ForumPostEdits.Add(this);
+						this._EditorAccountID = value.AccountID;
+					}
+					else
+					{
+						this._EditorAccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="ForumPost_ForumPostEdit", Storage="_ForumPost", ThisKey="ForumPostID", OtherKey="ForumPostID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public ForumPost ForumPost
+		{
+			get
+			{
+				return this._ForumPost.Entity;
+			}
+			set
+			{
+				ForumPost previousValue = this._ForumPost.Entity;
+				if (((previousValue != value) 
+							|| (this._ForumPost.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._ForumPost.Entity = null;
+						previousValue.ForumPostEdits.Remove(this);
+					}
+					this._ForumPost.Entity = value;
+					if ((value != null))
+					{
+						value.ForumPostEdits.Add(this);
+						this._ForumPostID = value.ForumPostID;
+					}
+					else
+					{
+						this._ForumPostID = default(int);
+					}
+					this.SendPropertyChanged("ForumPost");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._ForumPost = default(EntityRef<ForumPost>);
 			OnCreated();
 		}
 		

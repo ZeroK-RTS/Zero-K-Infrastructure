@@ -1,0 +1,46 @@
+﻿@using ZeroKWeb
+@model IEnumerable<ZkData.ForumPost>
+
+@foreach (var p in Model)
+{
+    <table width='100%'>
+        <tr class="forumRow">
+            <td width='222px' class="forumPostHead" valign="top" >
+                @Html.PrintAccount(p.Account)<br />
+                <table>
+                    <tr>
+                        <td>@Html.AccountAvatar(p.Account)
+                        </td>
+                        <td valign='top'>
+                            <small>@p.Created.ToAgoString()</small>
+                        </td>
+                    </tr>
+                    @if (Global.IsZeroKAdmin)
+                    {
+                        <tr>
+                            <td colspan="2">
+                                <a href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'>Del. post</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
+                    {
+                        <tr><td colspan="2">@Html.ActionLink("Edit", "NewPost", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })</td></tr>
+                    }
+                    @if (p.ForumPostEdits.Any())
+                    {
+                        var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
+                        <tr><td colspan="2">
+                                <small>Edited:<br/><a href="@Url.Action("EditHistory", new {forumPostID = p.ForumPostID })">@lastEdit.EditTime.ToAgoString()</a> (@Html.PrintAccount(lastEdit.Account))</small>
+                            </td></tr>
+                    }
+
+                </table>
+            </td>
+            <td valign="top" class="forumPostText">
+                <a name="post@(p.ForumPostID)" id="post@(p.ForumPostID)"></a>
+                @Html.BBCode(p.Text)
+            </td>
+        </tr>
+    </table>
+}

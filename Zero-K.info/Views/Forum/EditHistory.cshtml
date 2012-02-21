@@ -1,0 +1,17 @@
+﻿@model ZkData.ForumPost
+
+@{
+    ViewBag.Title = "Post edit history";
+}
+<h2>@ViewBag.Title</h2>
+
+<table>
+<thead><tr><th>Editor</th><th>Original</th><th>New text</th></tr></thead>    
+<tbody>
+@foreach (var edit in Model.ForumPostEdits.OrderBy(x => x.EditTime)) {
+    <tr class="forumRow"><td>@Html.PrintAccount(edit.Account)<br/>@edit.EditTime.ToAgoString()</td><td valign="top" class="forumPostText">@edit.OriginalText</td><td valign="top" class="forumPostText">@edit.NewText</td></tr>
+
+}
+</tbody>
+</table>
+

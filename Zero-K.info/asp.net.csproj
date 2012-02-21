@@ -319,6 +319,8 @@
     <Content Include="Views\Shared\_AjaxLayout.cshtml" />
     <Content Include="Views\Poll\PollUserVotes.cshtml" />
     <Content Include="Views\Poll\PollUserRoles.cshtml" />
+    <Content Include="Views\Forum\PostList.cshtml" />
+    <Content Include="Views\Forum\EditHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

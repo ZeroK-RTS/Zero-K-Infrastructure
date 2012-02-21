@@ -12,34 +12,14 @@
 }
 
 
-<form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID })">
+<form method="post" action="@Url.Action("SubmitPost", "Forum", new { threadID = Model.CurrentThread != null ? (int?)Model.CurrentThread.ForumThreadID : null, categoryID = Model.CurrentCategory.ForumCategoryID, forumPostID = Model.EditedPost != null ? (int?)Model.EditedPost.ForumPostID : null })">
 @if (Model.CurrentThread == null) {
   @:Title: <input type="text" name="title" cols="50"/><br/>
 }
 
-<textarea name="text" rows="8" cols="80"></textarea><br />
+<textarea name="text" rows="8" cols="80">@(Model.EditedPost != null ? Model.EditedPost.Text:null)</textarea><br />
 <input  class="textbutton" type="submit" value="Submit Post" />
 </form>
-@if (Model.LastPosts != null) {
-  foreach (var p in Model.LastPosts) {
-    <table width='100%'>
-      <tr class="forumRow">
-        <td class="forumPostHead" valign="top" >
-          @Html.PrintAccount(p.Account)<br />
-          <table>
-            <tr>
-              <td>@Html.AccountAvatar(p.Account)
-              </td>
-              <td valign='top'>
-                <small>@p.Created.ToAgoString()</small>
-              </td>
-            </tr>
-          </table>
-        </td>
-        <td class="forumPostText" valign="top">
-          @Html.BBCode(p.Text)
-        </td>
-      </tr>
-    </table>
-  }
+@if (Model.LastPosts != null && Model.CurrentThread != null) {
+  @Html.Partial("~/Views/Forum/PostList.cshtml", Model.CurrentThread.ForumPosts.OrderBy(x => x.ForumPostID))
 }
