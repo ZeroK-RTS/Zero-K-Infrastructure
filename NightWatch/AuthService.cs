@@ -99,7 +99,7 @@ namespace NightWatch
             var user = client.ExistingUsers[e.UserName];
             var db = new ZkDataContext();
             var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == user.LobbyID);
-            var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == founder.Name);
+            var aconf = db.AutohostConfigs.FirstOrDefault(x => founder.Name.Contains(x.Login));
             if (acc != null && (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays>3) && aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
           }
 
