@@ -845,7 +845,7 @@ namespace Springie.autohost
         void spring_SpringStarted(object sender, EventArgs e)
         {
             tas.ChangeLock(false);
-            if (hostedMod.IsMission) using (var service = new ContentService() { Proxy = null }) foreach (var u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRunAsync(u.Name, hostedMod.Name);
+            if (hostedMod.IsMission) using (var service = new ContentService() { Proxy = null }) foreach (var u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRunAsync(u.Name, hostedMod.ShortName);
         }
 
 

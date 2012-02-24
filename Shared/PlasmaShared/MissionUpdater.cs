@@ -18,7 +18,7 @@ namespace PlasmaShared
     {
         const string MissionFileUrl = "http://zero-k.info/Missions/File/{0}";
 
-        string GetModInfo(string missionNameWithVersion, string modName)
+        string GetModInfo(string missionNameWithVersion, string modName, string nameWithoutVersion)
         {
             const bool hideFromModList = false;
             var sb = new StringBuilder();
@@ -26,8 +26,8 @@ namespace PlasmaShared
             sb.AppendFormat("  name          =	[[{0}]],\n", missionNameWithVersion);
             sb.AppendFormat("  description   =	[[{0}]],\n", "Mission Mutator"); // the real description might break archivecache.lua
             sb.AppendFormat("  modtype       =	[[{0}]],\n", hideFromModList ? 0 : 1);
-            /*sb.AppendFormat("  shortname     =	[[{0}]],\n", mod.ShortName);
-            sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);*/
+            sb.AppendFormat("  shortname     =	[[{0}]],\n", nameWithoutVersion);
+            /*sb.AppendFormat("  shortgame     =	[[{0}]],\n", mod.ShortGame);*/
             //sb.AppendFormat("  shortbasename =	[[{0}]],\n", mod.ShortBaseName);
             sb.AppendLine("  depend = {");
             sb.AppendFormat("    [[{0}]]\n", modName);
@@ -44,10 +44,12 @@ namespace PlasmaShared
             File.WriteAllBytes(tempName, file);
             using (var zf = new ZipFile(tempName))
             {
-                zf.UpdateEntry("modinfo.lua", Encoding.UTF8.GetBytes(GetModInfo(mission.NameWithVersion, mission.Mod)));
+                zf.UpdateEntry("modinfo.lua", Encoding.UTF8.GetBytes(GetModInfo(mission.NameWithVersion, mission.Mod, mission.Name)));
                 FixScript(mission, zf, "script.txt");
                 var script = FixScript(mission, zf, GlobalConst.MissionScriptFileName);
                 modInfo.MissionScript = script;
+                modInfo.ShortName = mission.Name;
+                modInfo.Name = mission.NameWithVersion;
                 zf.Save();
             }
             mission.Mutator = new Binary(File.ReadAllBytes(tempName));

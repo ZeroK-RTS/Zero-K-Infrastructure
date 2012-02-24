@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 namespace ZkData
 {
@@ -62,6 +63,11 @@ namespace ZkData
         {
             ModifiedTime = DateTime.UtcNow;
             CreatedTime = DateTime.UtcNow;
+        }
+
+        public static string GetNameWithoutVersion(string missionName)
+        {
+            return Regex.Replace(missionName, " r[0-9]+", "");
         }
     }
 }

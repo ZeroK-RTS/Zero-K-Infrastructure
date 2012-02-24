@@ -408,7 +408,7 @@ namespace LobbyClient
                                         else Trace.TraceError("Error sending score: {0}", e.Error);
                                     }
                                 };
-                            service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword), modName, score, gameframe/30);
+                            service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword),  modName, score, gameframe/30);
                         }
                     }
 

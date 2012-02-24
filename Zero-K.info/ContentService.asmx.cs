@@ -164,6 +164,7 @@ namespace ZeroKWeb
         [WebMethod]
         public void NotifyMissionRun(string login, string missionName)
         {
+            missionName = Mission.GetNameWithoutVersion(missionName);
             using (var db = new ZkDataContext())
             using (var scope = new TransactionScope())
             {
@@ -210,6 +211,8 @@ namespace ZeroKWeb
         [WebMethod]
         public void SubmitMissionScore(string login, string passwordHash, string missionName, int score, int gameSeconds)
         {
+            missionName = Mission.GetNameWithoutVersion(missionName);
+
             using (var db = new ZkDataContext())
             {
                 var acc = AuthServiceClient.VerifyAccountHashed(login, passwordHash);
