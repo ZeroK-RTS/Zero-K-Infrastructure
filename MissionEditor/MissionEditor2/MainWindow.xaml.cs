@@ -401,8 +401,8 @@ namespace MissionEditor2
 			try
 			{
 				var missionFile = "testmission.sdz";
-				var writeablePath = unitSync.WritableDataDirectory;
-				var missionPath = writeablePath + "\\mods\\" + missionFile;
+                var writeablePath = unitSync.WritableDataDirectory;
+				var missionPath = writeablePath + "\\games\\" + missionFile;
 				scriptFile = writeablePath + "\\script.txt";
 				Mission.Name = Mission.Name + " Test";
 				File.WriteAllText(scriptFile, Mission.GetScript());
