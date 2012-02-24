@@ -277,7 +277,7 @@ namespace CMissionLib
 				File.WriteAllText("mission.lua", luaMissionData);
 			}
 			var textEncoding = Encoding.GetEncoding("iso-8859-1"); // ASCIIEncoding()
-			using (var zip = new ZipFile())
+			using (var zip = new ZipFile(Path.ChangeExtension(Path.GetTempFileName(),"zip")))
 			{
 				if (!String.IsNullOrEmpty(ContentFolderPath) && Directory.Exists(ContentFolderPath)) zip.SafeAddDirectory(ContentFolderPath);
 
