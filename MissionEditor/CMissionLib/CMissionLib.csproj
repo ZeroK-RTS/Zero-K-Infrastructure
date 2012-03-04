@@ -73,6 +73,7 @@
     <Compile Include="Action.cs" />
     <Compile Include="Actions\AllowUnitTransfersAction.cs" />
     <Compile Include="Actions\AddObjectiveAction.cs" />
+    <Compile Include="Actions\CustomAction2.cs" />
     <Compile Include="Actions\ModifyObjectiveAction.cs" />
     <Compile Include="Actions\HideGuiMessagePersistentAction.cs" />
     <Compile Include="Actions\GuiMessagePersistentAction.cs" />

@@ -41,6 +41,35 @@
             </Grid>
         </DataTemplate>
 
+        <!-- ======== CustomAction2 Template ======== -->
+
+        <DataTemplate x:Key="customAction2Template">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <GroupBox Header="Settings">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="1">Code</Label>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CodeStr, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
+                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="20" TextWrapping="Wrap" />
+                    </Grid>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Description">
+                    This action executes the Lua code entered.
+                </GroupBox>
+            </Grid>
+        </DataTemplate>        
+        
         <!-- ======== GameStartedCondition Template ======== -->
 
         <DataTemplate x:Key="gameStartedConditionTemplate">

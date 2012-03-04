@@ -35,6 +35,7 @@ namespace MissionEditor2
 			else if (item is SendScoreAction) resourceName = "sendScoreTemplate";
 			else if (item is WaitAction) resourceName = "waitActionTemplate";
 			else if (item is AllowUnitTransfersAction) resourceName = "allowUnitTransfersTemplate";
+            else if (item is CustomAction2) resourceName = "customAction2Template";
 
 			if (resourceName != null) return (DataTemplate)Application.Current.MainWindow.FindResource(resourceName);
 		

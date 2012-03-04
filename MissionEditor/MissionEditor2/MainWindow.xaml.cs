@@ -135,6 +135,7 @@ namespace MissionEditor2
 			addAction("Cause Victory", () => new VictoryAction());
 			addAction("Create Units", () => new CreateUnitsAction());
 			addAction("Custom Action", () => new CustomAction());
+            addAction("Custom Action (alternate)", () => new CustomAction2());
 			addAction("Destroy Units", () => new DestroyUnitsAction());
 			addAction("Disable Triggers", () => new DisableTriggersAction());
 			addAction("Display Counters", () => new DisplayCountersAction());

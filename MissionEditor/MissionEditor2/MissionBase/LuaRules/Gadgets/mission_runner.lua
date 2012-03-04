@@ -380,6 +380,11 @@ local function ExecuteTrigger(trigger, frame)
             -- fill in your custom actions
           end
         end
+	  elseif action.logicType == "CustomAction2" then
+        Event = function()
+          local func = loadstring(action.args.codeStr)
+		  func()
+        end
       elseif action.logicType == "DestroyUnitsAction" then
         Event = function()
           for unitID in pairs(FindUnitsInGroup(action.args.group)) do
