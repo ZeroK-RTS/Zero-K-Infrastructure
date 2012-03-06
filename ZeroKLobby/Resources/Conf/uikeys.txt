@@ -1,13 +1,160 @@
-unbindaction aiselect
-unbindaction controlunit
-unbindaction groupselect
-unbindaction groupadd
-unbindaction trackmode 
-unbindaction track
-unbindaction specteam
-unbindaction pastetext
 
-unbind any+j mouse2
+unbindall          // clear the defaults
+unbind enter chat  // clear the defaults
+
+fakemeta  space
+
+bind          backspace  mousestate
+bind     Ctrl+backspace  togglecammode
+bind    Shift+backspace  togglecammode
+bind      Any+backspace  edit_backspace
+bind            Any+tab  toggleoverview
+bind            Any+tab  edit_complete
+bind          Alt+enter  chatally
+bind          Alt+enter  chatswitchally
+bind         Ctrl+enter  chatall
+bind         Ctrl+enter  chatswitchall
+bind        Shift+enter  chatspec
+bind        Shift+enter  chatswitchspec
+bind          Any+enter  chat
+bind          Any+enter  edit_return
+bind              pause  pause
+bind                esc  crudemenu
+bind          shift+esc  exitwindow
+bind     Ctrl+Shift+esc  quitforce
+bind         Any+escape  edit_escape
+bind              Any++  speedup
+bind                  ,  prevmenu
+bind            Shift+,  decguiopacity
+bind              Any+-  slowdown
+bind                  .  nextmenu
+bind            Shift+.  incguiopacity
+bind                  0  specteam 9
+bind             Ctrl+0  specteam 19
+bind              Any+0  group0
+bind                  1  specteam 0
+bind             Ctrl+1  specteam 10
+bind              Any+1  group1
+bind                  2  specteam 1
+bind             Ctrl+2  specteam 11
+bind              Any+2  group2
+bind                  3  specteam 2
+bind             Ctrl+3  specteam 12
+bind              Any+3  group3
+bind                  4  specteam 3
+bind             Ctrl+4  specteam 13
+bind              Any+4  group4
+bind                  5  specteam 4
+bind             Ctrl+5  specteam 14
+bind              Any+5  group5
+bind                  6  specteam 5
+bind             Ctrl+6  specteam 15
+bind              Any+6  group6
+bind                  7  specteam 6
+bind             Ctrl+7  specteam 16
+bind              Any+7  group7
+bind                  8  specteam 7
+bind             Ctrl+8  specteam 17
+bind              Any+8  group8
+bind                  9  specteam 8
+bind             Ctrl+9  specteam 18
+bind              Any+9  group9
+bind                  ;  toggleradarandjammer
+bind              Any+=  speedup
+bind                  [  buildfacing inc
+bind            Shift+[  buildfacing inc
+bind              Any+\  drawinmap
+bind                  ]  buildfacing dec
+bind            Shift+]  buildfacing dec
+bind              Any+`  drawinmap
+bind                  a  attack
+bind              Alt+a  areaattack
+bind            Shift+a  attack
+bind        Alt+Shift+a  areaattack
+bind              Alt+b  debug
+bind              any+b  markingmenu
+bind                  d  manualfire
+bind                C+d  selfd
+bind            Shift+d  manualfire
+bind       Ctrl+Shift+d  selfd queued
+bind                  e  reclaim
+bind            Shift+e  reclaim
+bind                  f  fight
+bind              Alt+f  forcestart
+bind            Shift+f  fight
+bind                  g  guard
+bind            Shift+g  guard
+bind                  h  sharedialog
+bind              Any+i  gameinfo
+bind                  k  cloak
+bind            Shift+k  cloak
+bind                  l  togglelos
+bind                  l  loadunits
+bind            Shift+l  loadunits
+bind                  m  move
+bind            Shift+m  move
+bind              Alt+o  singlestep
+bind                  p  patrol
+bind            Shift+p  patrol
+bind            Shift+q  groupclear
+bind                  r  repair
+bind            Shift+r  repair
+bind                  s  stop
+bind            Shift+s  stop
+bind                  u  unloadunits
+bind            Shift+u  unloadunits
+bind             Ctrl+v  pastetext
+bind                  w  wait
+bind            Shift+w  wait queued
+bind                  x  onoff
+bind            Shift+x  onoff
+bind              Any+x  buildspacing dec
+bind              Any+z  buildspacing inc
+bind         Any+delete  edit_delete
+bind         Any+delete  slowdown
+bind           Any+0xa7  drawinmap
+bind        Any+numpad-  slowdown
+bind        Any+numpad+  speedup
+bind             Any+up  edit_prev_line
+bind             Any+up  moveforward
+bind           Any+down  edit_next_line
+bind           Any+down  moveback
+bind          Alt+right  edit_end
+bind         Ctrl+right  edit_next_word
+bind          Any+right  edit_next_char
+bind          Any+right  moveright
+bind           Alt+left  edit_home
+bind          Ctrl+left  edit_prev_word
+bind           Any+left  edit_prev_char
+bind           Any+left  moveleft
+bind         Any+insert  speedup
+bind               home  increaseviewradius
+bind           Any+home  edit_home
+bind                end  decreaseviewradius
+bind            Any+end  edit_end
+bind         Any+pageup  moveup
+bind       Any+pagedown  movedown
+bind                 f1  showelevation
+bind               C+f1  viewfps
+bind                 f2  showpathtraversability
+bind               C+f2  viewta
+bind                 f3  lastmsgpos
+bind               C+f3  viewtw
+bind                 f4  showmetalmap
+bind               C+f4  viewrot
+bind               C+f5  viewfree
+bind             Any+f5  HideInterface
+bind             Any+f6  NoSound
+bind             Any+f7  DynamicSky
+bind      Ctrl+Shift+f8  savegame
+bind                 f9  luaui showhealthbars
+bind             Any+f9  showhealthbars
+bind     Ctrl+Shift+f10  createvideo
+bind                f11  epic_chili_widget_selector_widgetlist
+bind              C+f11  luaui tweakgui
+bind                f12  screenshot
+bind          Any+shift  movefast
+bind           Any+ctrl  moveslow
 
 bind ctrl+a select AllMap++_ClearSelection_SelectAll+
 bind ctrl+b select AllMap+_Builder_Not_Building_Not_Transport_Idle+_ClearSelection_SelectAll+
@@ -36,26 +183,6 @@ bind j jump
 bind shift+j jump
 bind alt+t track
 
-bind meta+1  specteam 0  
-bind meta+2  specteam 1
-bind meta+3  specteam 2
-bind meta+4  specteam 3
-bind meta+5  specteam 4
-bind meta+6  specteam 5
-bind meta+7  specteam 6
-bind meta+8  specteam 7
-bind meta+9  specteam 8
-bind meta+0  specteam 9
-bind alt+meta+1  specteam 10
-bind alt+meta+2  specteam 11
-bind alt+meta+3  specteam 12
-bind alt+meta+4  specteam 13
-bind alt+meta+5  specteam 14
-bind alt+meta+6  specteam 15
-bind alt+meta+7  specteam 16
-bind alt+meta+8  specteam 17
-bind alt+meta+9  specteam 18
-bind alt+meta+0  specteam 19
 
 //
 //  DEFAULT UIKEYS.TXT FOR SPRING (0.73)
