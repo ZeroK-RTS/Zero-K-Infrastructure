@@ -315,7 +315,6 @@
     <Content Include="Views\Home\Download.cshtml" />
     <Content Include="Views\News\NewsDetail.cshtml" />
     <Content Include="Views\Shared\FactionList.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\RoleType.cshtml" />
     <Content Include="Views\Shared\_AjaxLayout.cshtml" />
     <Content Include="Views\Poll\PollUserVotes.cshtml" />
     <Content Include="Views\Poll\PollUserRoles.cshtml" />

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Timers;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using CaTracker;
+using ZeroKWeb.Controllers;
 using ZkData;
 
 namespace ZeroKWeb
@@ -16,10 +18,14 @@ namespace ZeroKWeb
 
 	public class MvcApplication: HttpApplication
 	{
-		public MvcApplication()
+	    Timer timer;
+
+	    public MvcApplication()
 		{
 			PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
 			this.Error += MvcApplication_Error;
+            
+            
         }
 
      
@@ -64,6 +70,18 @@ namespace ZeroKWeb
 		    string fn;
             ResourceLinkProvider.GetLinksAndTorrent("Zero-K v0.8.14", out links, out tor, out dep, out rt, out fn);
             */
+
+            PollController.AutoClosePolls();
+
+            timer = new Timer(60000 * 30);
+            timer.AutoReset = true;
+            timer.Elapsed += (sender, args) =>
+            {
+                PollController.AutoClosePolls();
+
+            };
+            timer.Start();
+
             Application["Nightwatch"] = new Nightwatch(Server.MapPath("/"));
             //if (!Debugger.IsAttached) 
                 Global.Nightwatch.Start();

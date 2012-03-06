@@ -237,6 +237,44 @@ namespace System.Web.Mvc
             }
         }
 
+        public static MvcHtmlString PrintRoleType(this HtmlHelper helper, RoleType rt) {
+
+            List<string> factoids = new List<string>();
+            if (rt.IsClanOnly)
+            {
+                factoids.Add("clan based");
+            }
+            if (rt.RightAppointRoles)
+            {
+                factoids.Add("can appoint roles");
+            }
+            if (rt.RightBomberQuota != 0)
+            {
+                factoids.Add(string.Format("bomber quota {0:F0}%", rt.RightBomberQuota * 100));
+            }
+            if (rt.RightDropshipQuota != 0)
+            {
+                factoids.Add(string.Format("dropship quota {0:F0}%", rt.RightDropshipQuota * 100));
+            }
+            if (rt.RightMetalQuota != 0)
+            {
+                factoids.Add(string.Format("metal quota {0:F0}%", rt.RightMetalQuota * 100));
+            }
+            if (rt.RightSetEnergyPriority)
+            {
+                factoids.Add("can set energy priorities");
+            }
+            if (rt.RightDiplomacy)
+            {
+                factoids.Add("can control diplomacy");
+            }
+            if (rt.RightEditTexts)
+            {
+                factoids.Add("controls texts");
+            }
+            return new MvcHtmlString(string.Format("<span title=\"{0}  ({1})\"><b>{2}</b></span>", rt.Description, string.Join(",",factoids), rt.Name));
+        }
+
         public static MvcHtmlString PrintFaction(this HtmlHelper helper, Faction fac, bool big = true)
         {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);

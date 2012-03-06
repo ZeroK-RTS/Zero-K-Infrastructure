@@ -103,7 +103,13 @@ namespace ZeroKWeb
                 {
                     var fac = (Faction)arg;
                     args[i] = HtmlHelperExtensions.PrintFaction(null, fac, false);
+                    
                 }
+                else if (arg is RoleType) {
+                    var rt = (RoleType)arg;
+                    args[i] = HtmlHelperExtensions.PrintRoleType(null, rt);
+                }
+
             }
             ev.Text = string.Format(format, args);
             return ev;
