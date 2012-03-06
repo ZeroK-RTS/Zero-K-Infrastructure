@@ -18,8 +18,6 @@ namespace ZeroKWeb
 
 	public class MvcApplication: HttpApplication
 	{
-	    Timer timer;
-
 	    public MvcApplication()
 		{
 			PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
@@ -71,16 +69,8 @@ namespace ZeroKWeb
             ResourceLinkProvider.GetLinksAndTorrent("Zero-K v0.8.14", out links, out tor, out dep, out rt, out fn);
             */
 
-            PollController.AutoClosePolls();
+            
 
-            timer = new Timer(60000 * 30);
-            timer.AutoReset = true;
-            timer.Elapsed += (sender, args) =>
-            {
-                PollController.AutoClosePolls();
-
-            };
-            timer.Start();
 
             Application["Nightwatch"] = new Nightwatch(Server.MapPath("/"));
             //if (!Debugger.IsAttached) 
@@ -92,10 +82,17 @@ namespace ZeroKWeb
 		    
 		}
 
+        DateTime lastPollCheck = DateTime.MinValue;
+
 		void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e)
 		{
-			
-			if (Request[GlobalConst.LoginCookieName] != null)
+            if (DateTime.UtcNow.Subtract(lastPollCheck).TotalMinutes > 15)
+            {
+                PollController.AutoClosePolls();
+                lastPollCheck = DateTime.UtcNow;
+            }
+
+		    if (Request[GlobalConst.LoginCookieName] != null)
 			{
 				var acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
                 if (acc != null)
