@@ -4,7 +4,7 @@
   
 @if (Model.AccountID == Global.AccountID && Model.FactionID != null && !Model.PollsByRoleTargetAccountID.Any(x => x.ExpireBy > DateTime.UtcNow))
 {
-    foreach (var grp in new ZkDataContext().RoleTypes.Where(x => (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID) && x.IsVoteable).GroupBy(x => x.IsClanOnly)) {
+    foreach (var grp in new ZkDataContext().RoleTypes.Where(x => (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID) && x.IsVoteable && !Model.AccountRolesByAccountID.Any(y=>y.RoleTypeID== x.RoleTypeID)).GroupBy(x => x.IsClanOnly)) {
 
         if (!grp.Key)
         {
