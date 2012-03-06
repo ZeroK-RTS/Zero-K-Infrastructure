@@ -43,8 +43,9 @@ namespace ZeroKWeb.Controllers
                         if (entry != null)
                         {
                             acc.AccountRolesByAccountID.Remove(entry);
-                            Global.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no);
-                            //AuthServiceClient.SendLobbyMessage(acc,string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
+                            db.Events.InsertOnSubmit(Global.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no));
+                            
+                            AuthServiceClient.SendLobbyMessage(acc,string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
                         }
                     }
                     else
@@ -73,22 +74,22 @@ namespace ZeroKWeb.Controllers
                                         };
                             acc.AccountRolesByAccountID.Add(entry);
                             if (previous == null)
-                                Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote - {3} for, {4} against",
+                                db.Events.InsertOnSubmit(Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote - {3} for, {4} against",
                                                    acc,
                                                    (object)p.Clan ?? p.Faction,
                                                    p.RoleType,
                                                    yes,
-                                                   no);
-                            else
-                                Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote, replacing {3} - {4} for, {5} against",
+                                                   no));
+
+                            else db.Events.InsertOnSubmit(Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote, replacing {3} - {4} for, {5} against",
                                                    acc,
                                                    (object)p.Clan ?? p.Faction,
                                                    p.RoleType,
                                                    previous,
                                                    yes,
-                                                   no);
+                                                   no));
 
-                            // AuthServiceClient.SendLobbyMessage(acc, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
+                             AuthServiceClient.SendLobbyMessage(acc, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
                         }
                     }
                 }
