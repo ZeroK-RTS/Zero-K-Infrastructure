@@ -44,26 +44,52 @@ namespace ZeroKWeb.Controllers
                         {
                             acc.AccountRolesByAccountID.Remove(entry);
                             Global.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no);
-                            AuthServiceClient.SendLobbyMessage(acc,string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
+                            //AuthServiceClient.SendLobbyMessage(acc,string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
                         }
                     }
                     else
                     {
-                        Account previous = null;
-                        if (p.RoleType.IsOnePersonOnly)
+                        if (!acc.AccountRolesByAccountID.Any(x => x.RoleTypeID == p.RoleTypeID))
                         {
-                            var entries = db.AccountRoles.Where(x => x.RoleTypeID == p.RoleTypeID).ToList();
-                            
-                            if (entries.Any())
+                            Account previous = null;
+                            if (p.RoleType.IsOnePersonOnly)
                             {
-                                previous = entries.First().AccountByAccountID;
-                                db.AccountRoles.DeleteAllOnSubmit(entries);
+                                var entries = db.AccountRoles.Where(x => x.RoleTypeID == p.RoleTypeID && x.Faction == p.Faction && x.Clan == p.Clan).ToList();
+
+                                if (entries.Any())
+                                {
+                                    previous = entries.First().AccountByAccountID;
+                                    db.AccountRoles.DeleteAllOnSubmit(entries);
+                                }
                             }
+
+                            var entry = new AccountRole()
+                                        {
+                                            AccountByAccountID = acc,
+                                            Inauguration = DateTime.UtcNow,
+                                            Clan = p.Clan,
+                                            Faction = p.Faction,
+                                            RoleType = p.RoleType
+                                        };
+                            acc.AccountRolesByAccountID.Add(entry);
+                            if (previous == null)
+                                Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote - {3} for, {4} against",
+                                                   acc,
+                                                   (object)p.Clan ?? p.Faction,
+                                                   p.RoleType,
+                                                   yes,
+                                                   no);
+                            else
+                                Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote, replacing {3} - {4} for, {5} against",
+                                                   acc,
+                                                   (object)p.Clan ?? p.Faction,
+                                                   p.RoleType,
+                                                   previous,
+                                                   yes,
+                                                   no);
+
+                            // AuthServiceClient.SendLobbyMessage(acc, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
                         }
-                        var entry = new AccountRole() { AccountByAccountID = acc, Inauguration = DateTime.UtcNow, Clan = p.Clan, Faction = p.Faction, RoleType = p.RoleType };
-                        acc.AccountRolesByAccountID.Add(entry);
-                        if (previous == null) Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no); else Global.CreateEvent("{0} was elected for the {1} role of {2} by a vote, replacing {3} - {4} for, {5} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, previous, yes, no);
-                        AuthServiceClient.SendLobbyMessage(acc, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
                     }
                 }
                 
