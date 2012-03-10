@@ -1,11 +1,8 @@
-
 unbindall          // clear the defaults
 unbind enter chat  // clear the defaults
 
 fakemeta  space
 
-bind                esc  quitmenu
-bind          Shift+esc  quitforce
 bind          backspace  mousestate
 bind     Ctrl+backspace  togglecammode
 bind    Shift+backspace  togglecammode
