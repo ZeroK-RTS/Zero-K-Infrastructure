@@ -39,7 +39,7 @@ namespace ZeroKLobby
         {
             this.path = path;
             Configure(false, DefaultLevel);
-            if (!Program.Conf.ResetUiKeysHack3)
+            if (!Program.Conf.ResetUiKeysHack4)
             {
                 foreach (var f in FileInfos.Where(x => x.RelativePath == "uikeys.txt" || x.RelativePath == "selectkeys.txt"))
                 {
@@ -48,7 +48,7 @@ namespace ZeroKLobby
                     if (data == null) data = ReadResourceString(f.Resource);
                     File.WriteAllText(target, data);
                 }
-                Program.Conf.ResetUiKeysHack3 = true;
+                Program.Conf.ResetUiKeysHack4 = true;
                 Program.SaveConfig();
             }
         }
