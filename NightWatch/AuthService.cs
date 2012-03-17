@@ -98,7 +98,7 @@ namespace NightWatch
                             client.Say(TasClient.SayPlace.User,
                                        user.Name,
                                        string.Format(
-                                           "ALERT! You need {0} engine to play here. Simply join the game with Zero-K lobby ( http://zero-k.info/Wiki/Download ) OR get the engine from http://springrts.com/dl/buildbot/default/ OR build it on your Linux: http://springrts.com/wiki/Building_Spring_on_Linux",
+                                           "ALERT! YOU WILL DESYNC!! You NEED SPRING ENGINE {0} to play here. Simply join the game with Zero-K lobby ( http://zero-k.info/Wiki/Download ) OR get the engine from http://springrts.com/dl/buildbot/default/ OR build it on your Linux: http://springrts.com/wiki/Building_Spring_on_Linux ",
                                            battle.EngineVersion),
                                        false);
                         }
