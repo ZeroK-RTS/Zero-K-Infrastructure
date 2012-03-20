@@ -53,6 +53,15 @@ namespace ZeroKLobby
             }
         }
 
+        public void Reset() {
+            foreach (var f in FileInfos) {
+                var target = Path.Combine(path, f.RelativePath);
+                if (File.Exists(target)) File.Delete(target);
+            }
+            Configure(true,DefaultLevel);
+        }
+
+
         public void Configure(bool overwrite, int level)
         {
             foreach (var f in FileInfos)
@@ -120,10 +129,10 @@ namespace ZeroKLobby
                 foreach (var line in File.ReadAllLines(targetFile))
                 {
                     var finalLine = line;
-                    var match = Regex.Match(line, f.KeyValueRegex);
-                    if (match.Success && match.Groups[1].Value == key)
+                    var match = Regex.Match(line, f.KeyValueRegex, RegexOptions.IgnoreCase);
+                    if (match.Success && string.Equals(match.Groups[1].Value.Trim(),key, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        foundValue = match.Groups[2].Value;
+                        foundValue = match.Groups[2].Value.Trim();
                         if (newValue != null) finalLine = string.Format(f.KeyValueFormat, key, newValue);
                     }
                     targetLines.Add(finalLine);

@@ -16,7 +16,7 @@ namespace ZeroKLobby.MicroLobby
 		{
 			InitializeComponent();
 
-			feedbackButton.MouseUp += feedbackButton_MouseUp;
+
 			helpButton.MouseUp += helpButton_MouseUp;
 
 			var isDesigner = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working
@@ -31,18 +31,9 @@ namespace ZeroKLobby.MicroLobby
 			cmDisplay.MenuItems.Add(new MenuItem("Edit cmdcolors (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "cmdcolors.txt"))));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit ctrlpanel settings (advanced)",
 			                                     (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "ctrlpanel.txt"))));
+            cmDisplay.MenuItems.Add(new MenuItem("Edit UI keys (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
 
-			// keybindings
-			cmKeybinds = new ContextMenu();
-
-			cmKeybinds.MenuItems.Add(new MenuItem("Edit UI keys (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
-			cmKeybinds.MenuItems.Add(new MenuItem("Run SelectionEditor",
-			                                      (o, x) =>
-			                                      	{
-			                                      		var editor = Utils.MakePath(Path.GetDirectoryName(Program.SpringPaths.Executable), "SelectionEditor.exe");
-			                                      		if (File.Exists(editor)) Utils.SafeStart(editor);
-			                                      		else Utils.SafeStart(Utils.MakePath(cfRoot, "selectkeys.txt"));
-			                                      	}));
+			
 		}
 
 
@@ -134,25 +125,13 @@ namespace ZeroKLobby.MicroLobby
 		}
 
 
-	    [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
-		void feedbackButton_MouseUp(object sender, MouseEventArgs ea)
-		{
-			var menu = new ContextMenu();
-			var joinItem = new MenuItem("Chat with us in the Zero-K development channel");
-			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/zkdev";
-			menu.MenuItems.Add(joinItem);
-			var siteItem = new MenuItem("Leave us a message on the Zero-K development site");
-			siteItem.Click += siteFeatureRequestItem_Click;
-			menu.MenuItems.Add(siteItem);
-			menu.Show(feedbackButton, ea.Location);
-		}
 
 		[SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		void helpButton_MouseUp(object sender, MouseEventArgs ea)
 		{
 			var menu = new ContextMenu();
-			var joinItem = new MenuItem("Ask in the developer channel (#zkdev)");
-			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/zkdev";
+			var joinItem = new MenuItem("Ask in the ZK channel (#zk)");
+			joinItem.Click += (s, e) => NavigationControl.Instance.Path = "chat/channel/zk";
 			menu.MenuItems.Add(joinItem);
 			var helpForumItem = new MenuItem("Ask in the Help Forum");
 			helpForumItem.Click += helpForumItem_Click;
@@ -214,6 +193,35 @@ namespace ZeroKLobby.MicroLobby
         private void btnRapid_Click(object sender, EventArgs e)
         {
             Program.MainWindow.navigationControl.Path = "rapid";
+        }
+
+        private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+
+            btnRestart.Visible = true;
+
+        }
+
+
+        private void btnRestart_Click(object sender, EventArgs e)
+        {
+            Program.SaveConfig();
+            Application.Restart(); 
+        }
+
+        private void btnDefaults_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Do you want to reset configuration to defaults and delete cached content?", "Local data reset", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) {
+                Program.EngineConfigurator.Reset();
+                var path = Program.SpringPaths.WritableDirectory;
+                Directory.Delete(Utils.MakePath(path,"cache"),true);
+                Directory.Delete(Utils.MakePath(path, "pool"), true);
+                Directory.Delete(Utils.MakePath(path, "packages"), true);
+                Directory.Delete(Utils.MakePath(path, "LuaUI"), true);
+                Directory.Delete(Utils.MakePath(path, "temp"), true);
+                Application.Restart();
+            
+            }
         }
 
 	}

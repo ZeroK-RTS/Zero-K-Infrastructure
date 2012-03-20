@@ -30,9 +30,9 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-            this.btnKeybindings = new System.Windows.Forms.Button();
             this.btnDisplay = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnRestart = new System.Windows.Forms.Button();
             this.btnRapid = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnWidgets = new System.Windows.Forms.Button();
@@ -48,10 +48,10 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.feedbackButton = new System.Windows.Forms.Button();
             this.logButton = new System.Windows.Forms.Button();
             this.helpButton = new System.Windows.Forms.Button();
             this.problemButton = new System.Windows.Forms.Button();
+            this.btnDefaults = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -77,17 +77,7 @@
             this.propertyGrid1.Name = "propertyGrid1";
             this.propertyGrid1.Size = new System.Drawing.Size(553, 146);
             this.propertyGrid1.TabIndex = 0;
-            // 
-            // btnKeybindings
-            // 
-            this.btnKeybindings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.btnKeybindings.Location = new System.Drawing.Point(245, 103);
-            this.btnKeybindings.Name = "btnKeybindings";
-            this.btnKeybindings.Size = new System.Drawing.Size(87, 23);
-            this.btnKeybindings.TabIndex = 14;
-            this.btnKeybindings.Text = "Adv. Keys";
-            this.btnKeybindings.UseVisualStyleBackColor = true;
-            this.btnKeybindings.Click += new System.EventHandler(this.btnKeybindings_Click);
+            this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
             // 
             // btnDisplay
             // 
@@ -96,12 +86,14 @@
             this.btnDisplay.Name = "btnDisplay";
             this.btnDisplay.Size = new System.Drawing.Size(89, 23);
             this.btnDisplay.TabIndex = 13;
-            this.btnDisplay.Text = "Adv. Graphics";
+            this.btnDisplay.Text = "Adv. Settings";
             this.btnDisplay.UseVisualStyleBackColor = true;
             this.btnDisplay.Click += new System.EventHandler(this.btnDisplay_Click);
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnDefaults);
+            this.panel1.Controls.Add(this.btnRestart);
             this.panel1.Controls.Add(this.btnRapid);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.btnWidgets);
@@ -117,22 +109,33 @@
             this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.feedbackButton);
             this.panel1.Controls.Add(this.logButton);
             this.panel1.Controls.Add(this.helpButton);
             this.panel1.Controls.Add(this.problemButton);
             this.panel1.Controls.Add(this.groupBox1);
             this.panel1.Controls.Add(this.btnDisplay);
-            this.panel1.Controls.Add(this.btnKeybindings);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(562, 380);
             this.panel1.TabIndex = 15;
             // 
+            // btnRestart
+            // 
+            this.btnRestart.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.btnRestart.ForeColor = System.Drawing.Color.Red;
+            this.btnRestart.Location = new System.Drawing.Point(69, 171);
+            this.btnRestart.Name = "btnRestart";
+            this.btnRestart.Size = new System.Drawing.Size(130, 23);
+            this.btnRestart.TabIndex = 34;
+            this.btnRestart.Text = "RESTART LOBBY";
+            this.btnRestart.UseVisualStyleBackColor = true;
+            this.btnRestart.Visible = false;
+            this.btnRestart.Click += new System.EventHandler(this.btnRestart_Click);
+            // 
             // btnRapid
             // 
-            this.btnRapid.Location = new System.Drawing.Point(188, 171);
+            this.btnRapid.Location = new System.Drawing.Point(257, 171);
             this.btnRapid.Name = "btnRapid";
             this.btnRapid.Size = new System.Drawing.Size(75, 23);
             this.btnRapid.TabIndex = 33;
@@ -151,7 +154,7 @@
             // 
             // btnWidgets
             // 
-            this.btnWidgets.Location = new System.Drawing.Point(94, 171);
+            this.btnWidgets.Location = new System.Drawing.Point(342, 171);
             this.btnWidgets.Name = "btnWidgets";
             this.btnWidgets.Size = new System.Drawing.Size(75, 23);
             this.btnWidgets.TabIndex = 31;
@@ -208,7 +211,7 @@
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(338, 103);
+            this.btnBrowse.Location = new System.Drawing.Point(342, 103);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(124, 23);
             this.btnBrowse.TabIndex = 25;
@@ -280,15 +283,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // feedbackButton
-            // 
-            this.feedbackButton.Location = new System.Drawing.Point(220, 142);
-            this.feedbackButton.Name = "feedbackButton";
-            this.feedbackButton.Size = new System.Drawing.Size(211, 23);
-            this.feedbackButton.TabIndex = 16;
-            this.feedbackButton.Text = "Tell us what you\'d like to see in Zero-K";
-            this.feedbackButton.UseVisualStyleBackColor = true;
-            // 
             // logButton
             // 
             this.logButton.Location = new System.Drawing.Point(20, 103);
@@ -301,7 +295,7 @@
             // 
             // helpButton
             // 
-            this.helpButton.Location = new System.Drawing.Point(19, 142);
+            this.helpButton.Location = new System.Drawing.Point(20, 142);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(86, 23);
             this.helpButton.TabIndex = 15;
@@ -310,13 +304,23 @@
             // 
             // problemButton
             // 
-            this.problemButton.Location = new System.Drawing.Point(111, 142);
+            this.problemButton.Location = new System.Drawing.Point(123, 142);
             this.problemButton.Name = "problemButton";
             this.problemButton.Size = new System.Drawing.Size(103, 23);
             this.problemButton.TabIndex = 17;
             this.problemButton.Text = "Report a Problem";
             this.problemButton.UseVisualStyleBackColor = true;
             this.problemButton.Click += new System.EventHandler(this.problemButton_Click);
+            // 
+            // btnDefaults
+            // 
+            this.btnDefaults.Location = new System.Drawing.Point(257, 103);
+            this.btnDefaults.Name = "btnDefaults";
+            this.btnDefaults.Size = new System.Drawing.Size(75, 23);
+            this.btnDefaults.TabIndex = 35;
+            this.btnDefaults.Text = "Defaults";
+            this.btnDefaults.UseVisualStyleBackColor = true;
+            this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
             // 
             // SettingsTab
             // 
@@ -337,10 +341,8 @@
 
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PropertyGrid propertyGrid1;
-        private System.Windows.Forms.Button btnKeybindings;
         private System.Windows.Forms.Button btnDisplay;
-		private System.Windows.Forms.Panel panel1;
-    private System.Windows.Forms.Button feedbackButton;
+        private System.Windows.Forms.Panel panel1;
     private System.Windows.Forms.Button logButton;
     private System.Windows.Forms.Button helpButton;
     private System.Windows.Forms.Button problemButton;
@@ -359,5 +361,7 @@
         private System.Windows.Forms.Button btnRapid;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnWidgets;
+        private System.Windows.Forms.Button btnRestart;
+        private System.Windows.Forms.Button btnDefaults;
     }
 }
