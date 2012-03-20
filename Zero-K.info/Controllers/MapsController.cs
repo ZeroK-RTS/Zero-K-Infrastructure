@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Data.Linq.SqlClient;
 using System.Diagnostics;
@@ -120,8 +120,8 @@ namespace ZeroKWeb.Controllers
       if (sea.HasValue) ret = ret.Where(x => x.MapWaterLevel == sea);
       if (hills.HasValue) ret = ret.Where(x => x.MapHills == hills);
       if (assymetrical.HasValue) ret = ret.Where(x => x.MapIsAssymetrical == assymetrical);
-      if (elongated == true) ret = ret.Where(x => x.MapSizeRatio < 0.5 || x.MapSizeRatio > 2);
-      else if (elongated == false) ret = ret.Where(x => x.MapSizeRatio >= 0.5 && x.MapSizeRatio <= 2);
+      if (elongated == true) ret = ret.Where(x => x.MapSizeRatio <= 0.5 || x.MapSizeRatio >= 2);
+      else if (elongated == false) ret = ret.Where(x => x.MapSizeRatio > 0.5 && x.MapSizeRatio < 2);
       if (size == 1) ret = ret.Where(x => x.MapHeight <= 12 && x.MapWidth <= 12);
       else if (size == 2) ret = ret.Where(x => (x.MapWidth > 12 || x.MapHeight > 12) && (x.MapWidth <= 20 && x.MapHeight <= 20));
       else if (size == 3) ret = ret.Where(x => x.MapWidth > 20 || x.MapHeight > 20);
