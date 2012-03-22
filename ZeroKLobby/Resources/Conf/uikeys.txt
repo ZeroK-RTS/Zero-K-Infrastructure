@@ -70,7 +70,8 @@ bind                  a  attack
 bind              Alt+a  areaattack
 bind            Shift+a  attack
 bind        Alt+Shift+a  areaattack
-bind              Alt+b  debug
+bind              Alt+n  debug
+bind              Alt+b  debugcolvol
 bind              any+b  markingmenu
 bind                  d  manualfire
 bind                C+d  selfd
