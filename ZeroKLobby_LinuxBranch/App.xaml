@@ -1,0 +1,23 @@
+﻿<Application x:Class="ZeroKLobby.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             Startup="Application_Startup" DispatcherUnhandledException="Application_DispatcherUnhandledException" Exit="Application_Exit">
+  
+  <Application.Resources>
+    
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ResourceDicts\Common.xaml" />
+        <ResourceDictionary Source="ResourceDicts\SakButton.xaml" />
+        <ResourceDictionary Source="ResourceDicts\ZkCheckbox.xaml" />
+        <ResourceDictionary Source="ResourceDicts\ZkButton.xaml" />
+        <ResourceDictionary Source="ResourceDicts\ZkTextbox.xaml" />
+				<ResourceDictionary Source="ResourceDicts\SpinningDonut.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+
+  </Application.Resources>
+</Application>

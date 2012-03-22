@@ -1,0 +1,805 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AA5F8640-FBBC-4007-9589-6C7CD26D4867}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ZeroKLobby</RootNamespace>
+    <AssemblyName>Zero-K</AssemblyName>
+    <ApplicationIcon>ZK_logo_square.ico</ApplicationIcon>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ManifestCertificateThumbprint>FC2212B55F1B9944395B70DF91CE4D38FC17189D</ManifestCertificateThumbprint>
+    <ManifestKeyFile>SpringDownloader_TemporaryKey.pfx</ManifestKeyFile>
+    <GenerateManifests>true</GenerateManifests>
+    <SignManifests>false</SignManifests>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <TargetZone>Custom</TargetZone>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <StartupObject>ZeroKLobby.App</StartupObject>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <PublishUrl>ftp://zero-k.info/zero-k.info/www/lobby/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
+    <UpdateInterval>1</UpdateInterval>
+    <UpdateIntervalUnits>Hours</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>true</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>http://zero-k.info/lobby/</InstallUrl>
+    <SupportUrl>http://zero-k.info/</SupportUrl>
+    <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
+    <ProductName>Zero-K</ProductName>
+    <PublisherName>Zero-K</PublisherName>
+    <MinimumRequiredVersion>2.39.0.0</MinimumRequiredVersion>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>publish.htm</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <TrustUrlParameters>true</TrustUrlParameters>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>2.39.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CodeAnalysisRuleSet>..\rules.ruleset</CodeAnalysisRuleSet>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LinuxDebug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;LINUX</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deployment|AnyCPU'">
+    <OutputPath>bin\Deployment\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisLogFile>bin\release\Zero-K.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>true</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Speech" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AcceptAgreementForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AcceptAgreementForm.Designer.cs">
+      <DependentUpon>AcceptAgreementForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ActionHandler.cs" />
+    <Compile Include="AdvertiserWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AdvertiserWindow.designer.cs">
+      <DependentUpon>AdvertiserWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ChatToSpeech.cs" />
+    <Compile Include="Controls\HeaderButton.cs" />
+    <Compile Include="DriverCheck.cs" />
+    <Compile Include="EngineConfigurator.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="INavigatable.cs" />
+    <Compile Include="KnownGames.cs" />
+    <Compile Include="Lines\SelfJoinedBattleLine.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BattleList.xaml.cs">
+      <DependentUpon>BattleList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\BrowserControl.xaml.cs">
+      <DependentUpon>BrowserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ChatControl2.xaml.cs">
+      <DependentUpon>ChatControl2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ChatTab2.xaml.cs">
+      <DependentUpon>ChatTab2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\Floe\ChatBox.cs" />
+    <Compile Include="MicroLobby\Floe\ChatBoxBase.cs" />
+    <Compile Include="MicroLobby\Floe\ChatDecoration.cs" />
+    <Compile Include="MicroLobby\Floe\ChatFormatter.cs" />
+    <Compile Include="MicroLobby\Floe\ChatLine.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPalette.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter_Rendering.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter_Scrolling.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter_Searching.cs" />
+    <Compile Include="MicroLobby\Floe\ChatPresenter_Selecting.cs" />
+    <Compile Include="MicroLobby\Floe\Constants.cs" />
+    <Compile Include="MicroLobby\Floe\Enums.cs" />
+    <Compile Include="MicroLobby\FriendsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\FriendsWindow.Designer.cs">
+      <DependentUpon>FriendsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\FriendsWindowAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\FriendsWindowAdd.Designer.cs">
+      <DependentUpon>FriendsWindowAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NavigationControl.xaml.cs">
+      <DependentUpon>NavigationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\ReplayBar.xaml.cs">
+      <DependentUpon>ReplayBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\MissionBar.xaml.cs">
+      <DependentUpon>MissionBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\NotifySection.xaml.cs">
+      <DependentUpon>NotifySection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\SinglePlayerBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\SinglePlayerBar.Designer.cs">
+      <DependentUpon>SinglePlayerBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Flags.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Flags.resx</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="MicroLobby\ContextMenus.cs" />
+    <Compile Include="Lines\ChimeLine.cs" />
+    <Compile Include="Lines\FriendJoinedBattleLine.cs" />
+    <Compile Include="Lines\TopicLine.cs" />
+    <Compile Include="MicroLobby\AutoJoinManager.cs" />
+    <Compile Include="MicroLobby\GdiListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\GdiListBoxItem.cs" />
+    <Compile Include="MicroLobby\HostDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\HostDialog.Designer.cs">
+      <DependentUpon>HostDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ModStore.cs" />
+    <Compile Include="MicroLobby\ServerTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ServerTab.Designer.cs">
+      <DependentUpon>ServerTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\SettingsTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\SettingsTab.Designer.cs">
+      <DependentUpon>SettingsTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\SpringieCommand.cs" />
+    <Compile Include="MicroLobby\TextImage.cs" />
+    <Compile Include="MicroLobby\ModOptionsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\MyCol.cs" />
+    <Compile Include="Notifications\GenericBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\GenericBar.Designer.cs">
+      <DependentUpon>GenericBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\NewVersionBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\NewVersionBar.Designer.cs">
+      <DependentUpon>NewVersionBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\ScannerBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\ScannerBar.Designer.cs">
+      <DependentUpon>ScannerBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Ranks.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Ranks.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ServerImagesHandler.cs" />
+    <Compile Include="TabItemHeaderSelector.cs" />
+    <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
+    <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\AskBattlePasswordForm.Designer.cs">
+      <DependentUpon>AskBattlePasswordForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ChatBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\HistoryManager.cs" />
+    <Compile Include="Lines\BroadcastLine.cs" />
+    <Compile Include="Lines\ChannelMessageLine.cs" />
+    <Compile Include="Lines\FromServerLine.cs" />
+    <Compile Include="Lines\HistoryLine.cs" />
+    <Compile Include="Lines\IChatLine.cs" />
+    <Compile Include="Lines\JoinLine.cs" />
+    <Compile Include="Lines\LeaveLine.cs" />
+    <Compile Include="Lines\SaidExLine.cs" />
+    <Compile Include="Lines\SaidLine.cs" />
+    <Compile Include="Lines\ServerMessageLine.cs" />
+    <Compile Include="Lines\ToServerLine.cs" />
+    <Compile Include="MicroLobby\BattleChatControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\BattleIcon.cs" />
+    <Compile Include="MicroLobby\BattleIconManager.cs" />
+    <Compile Include="MicroLobby\DudeRenderer.cs" />
+    <Compile Include="MicroLobby\FriendManager.cs" />
+    <Compile Include="MicroLobby\GameInfo.cs" />
+    <Compile Include="MicroLobby\TextColor.cs" />
+    <Compile Include="MicroLobby\TextWindow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\TextWindow.designer.cs">
+      <DependentUpon>TextWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\Images.cs" />
+    <Compile Include="MicroLobby\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\PrivateMessageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\PrivateMessageControl.Designer.cs">
+      <DependentUpon>PrivateMessageControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\SayCommandHandler.cs" />
+    <Compile Include="MicroLobby\SendBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ToolTabs.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\ConnectBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\INotifyBar.cs" />
+    <Compile Include="Notifications\DownloadBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\DownloadBar.designer.cs">
+      <DependentUpon>DownloadBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\PlayerListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="LuaMgr\CommentWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LuaMgr\CommentWindow.Designer.cs">
+      <DependentUpon>CommentWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LuaMgr\ListViewTagData.cs" />
+    <Compile Include="LuaMgr\RateWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LuaMgr\RateWindow.Designer.cs">
+      <DependentUpon>RateWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LuaMgr\WidgetHandler.cs" />
+    <Compile Include="MicroLobby\ChatControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\ChatControl.Designer.cs">
+      <DependentUpon>ChatControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\PopupNotify.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Notifications\BattleBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\BattleBar.Designer.cs">
+      <DependentUpon>BattleBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ToolTips\IToolTipRenderer.cs" />
+    <Compile Include="ToolTips\MapTooltipRenderer.cs" />
+    <Compile Include="ToolTips\PlayerTooltipRenderer.cs" />
+    <Compile Include="MicroLobby\PlayerListItem.cs" />
+    <Compile Include="Notifications\WarningBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\WarningBar.Designer.cs">
+      <DependentUpon>WarningBar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\ScrollMessageFilter.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="LuaMgr\Changelog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LuaMgr\Changelog.designer.cs">
+      <DependentUpon>Changelog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LuaMgr\FileManager.cs" />
+    <Compile Include="LuaMgr\FilesDisplay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LuaMgr\FilesDisplay.designer.cs">
+      <DependentUpon>FilesDisplay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LuaMgr\ImageGallery.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LuaMgr\ListViewSorter.cs" />
+    <Compile Include="LuaMgr\LuaMgrResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LuaMgrResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="LuaMgr\LuaMgrTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LuaMgr\LuaMgrTab.Designer.cs">
+      <DependentUpon>LuaMgrTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LuaMgr\PresetInstaller.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LuaMgr\PresetInstaller.Designer.cs">
+      <DependentUpon>PresetInstaller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Config.cs" />
+    <Compile Include="ErrorHandling.cs" />
+    <Compile Include="FormLog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLog.Designer.cs">
+      <DependentUpon>FormLog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MapDownloader\DownloaderTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MapDownloader\DownloaderTab.Designer.cs">
+      <DependentUpon>DownloaderTab.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\NotifyBarContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\NotifyBarContainer.Designer.cs">
+      <DependentUpon>NotifyBarContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UrlSecurityZone.cs" />
+    <Compile Include="UserToIconConverter.cs" />
+    <Compile Include="VoiceCommand\BuildUnitRule.cs" />
+    <Compile Include="VoiceCommand\FactoryPauseRule.cs" />
+    <Compile Include="VoiceCommand\Pluralizer.cs" />
+    <Compile Include="VoiceCommand\VoiceCommandEngine.cs" />
+    <Compile Include="VoiceCommand\VoiceRule.cs" />
+    <Compile Include="WindowsApi.cs" />
+    <EmbeddedResource Include="AdvertiserWindow.resx">
+      <DependentUpon>AdvertiserWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Flags.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Flags.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LuaMgr\CommentWindow.resx">
+      <DependentUpon>CommentWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LuaMgr\RateWindow.resx">
+      <DependentUpon>RateWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ChatControl.resx">
+      <DependentUpon>ChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\FriendsWindow.resx">
+      <DependentUpon>FriendsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\FriendsWindowAdd.resx">
+      <DependentUpon>FriendsWindowAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ModOptionsControl.resx">
+      <DependentUpon>ModOptionsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\PlayerListBox.resx">
+      <DependentUpon>PlayerListBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\PopupNotify.resx">
+      <DependentUpon>PopupNotify.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\BattleBar.resx">
+      <DependentUpon>BattleBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormLog.resx">
+      <DependentUpon>FormLog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LuaMgr\Changelog.resx">
+      <DependentUpon>Changelog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LuaMgr\FilesDisplay.resx">
+      <DependentUpon>FilesDisplay.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LuaMgr\ImageGallery.resx">
+      <DependentUpon>ImageGallery.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LuaMgr\LuaMgrResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LuaMgrResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LuaMgr\LuaMgrTab.resx">
+      <DependentUpon>LuaMgrTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LuaMgr\PresetInstaller.resx">
+      <DependentUpon>PresetInstaller.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MapDownloader\DownloaderTab.resx">
+      <DependentUpon>DownloaderTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\NotifyBarContainer.resx">
+      <DependentUpon>NotifyBarContainer.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\ScannerBar.resx">
+      <DependentUpon>ScannerBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\SinglePlayerBar.resx">
+      <DependentUpon>SinglePlayerBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Ranks.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Ranks.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ToolTips\TextTooltipRenderer.cs" />
+    <Compile Include="ToolTips\ToolTipForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ToolTips\ToolTipHandler.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="Web References\ModStats\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.4.5">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 4.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\LobbyClient\LobbyClient.csproj">
+      <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
+      <Name>LobbyClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LuaAdmin\LuaManagerLib\LuaManagerLib.csproj">
+      <Project>{EA79A74E-0577-4F74-AE8D-6E259A594FBE}</Project>
+      <Name>LuaManagerLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj">
+      <Project>{F3F74776-46A9-4415-B76E-CEEC771C2ABA}</Project>
+      <Name>PlasmaDownloader</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Shared\PlasmaShared\PlasmaShared.csproj">
+      <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
+      <Name>PlasmaShared</Name>
+    </ProjectReference>
+    <ProjectReference Include="XSystem.WinControls\XSystem.WinControls.csproj">
+      <Project>{860641CF-A2D9-4BC6-A061-A97AE72249F8}</Project>
+      <Name>XSystem.WinControls</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\star.png" />
+    <Resource Include="Images\add.png" />
+    <Content Include="lua5.1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="LuaMgr\doc\changelog.txt" />
+    <Resource Include="Resources\Conf\cmdcolors.txt" />
+    <Resource Include="Resources\Conf\selectkeys.txt" />
+    <Resource Include="Resources\Conf\uikeys.txt" />
+    <Resource Include="Resources\Conf\lups.cfg" />
+    <Resource Include="Resources\Conf\lups.cfg0" />
+    <Resource Include="Resources\Conf\lups.cfg1" />
+    <Resource Include="Resources\Conf\springsettings.cfg0" />
+    <Resource Include="Resources\Conf\springsettings.cfg1" />
+    <Resource Include="Resources\Conf\springsettings.cfg3" />
+    <Resource Include="Resources\Conf\springsettings.cfg4" />
+    <Resource Include="Resources\Conf\lups.cfg2" />
+    <Resource Include="Resources\Conf\springsettings.cfg2" />
+    <None Include="Resources\Flags\in.png" />
+    <Resource Include="Resources\search.png" />
+    <Resource Include="Resources\battle.png" />
+    <Resource Include="Resources\chat.png" />
+    <Resource Include="Resources\game.png" />
+    <None Include="Resources\ZK_logo_square.png" />
+    <Resource Include="ZK_logo_square.ico" />
+    <None Include="Properties\app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="MicroLobby\HostDialog.resx">
+      <DependentUpon>HostDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\GenericBar.resx">
+      <DependentUpon>GenericBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\NewVersionBar.resx">
+      <DependentUpon>NewVersionBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\SettingsTab.resx">
+      <DependentUpon>SettingsTab.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\TextWindow.resources" />
+    <EmbeddedResource Include="Notifications\WarningBar.resx">
+      <DependentUpon>WarningBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\ConnectBar.resx">
+      <DependentUpon>ConnectBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\AskBattlePasswordForm.resx">
+      <DependentUpon>AskBattlePasswordForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AcceptAgreementForm.resx">
+      <DependentUpon>AcceptAgreementForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\PrivateMessageControl.resx">
+      <DependentUpon>PrivateMessageControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\DownloadBar.resx">
+    </EmbeddedResource>
+    <None Include="SpringDownloader_TemporaryKey.pfx" />
+    <None Include="Web References\ModStats\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ModStats\StatsCollector.disco" />
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ModStats\StatsCollector.wsdl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://planet-wars.eu/ModStats/StatsCollector.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\ModStats\</RelPath>
+      <UpdateFromURL>http://planet-wars.eu/ModStats/StatsCollector.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>SpringDownloader_ModStats_StatsCollector</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="BattleList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MicroLobby\BrowserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MicroLobby\ChatControl2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MicroLobby\ChatTab2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NavigationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Notifications\ReplayBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Notifications\MissionBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Notifications\NotifySection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDicts\Common.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDicts\SakButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDicts\SpinningDonut.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDicts\ZkButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDicts\ZkCheckbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResourceDicts\ZkTextbox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="MSHTML">
+      <Guid>{3050F1C5-98B5-11CF-BB82-00AA00BDCE0B}</Guid>
+      <VersionMajor>4</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NightWatch\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
