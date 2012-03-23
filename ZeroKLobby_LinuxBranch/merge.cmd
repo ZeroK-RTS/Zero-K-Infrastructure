@@ -1,2 +1,0 @@
-ilmerge /out:c:\inetpub\wwwroot\download\CaDownloader.exe CaDownloader.exe CaUpdaterLib.dll ICSharpCode.SharpZipLib.dll MonoTorrent.dll SpringLib.dll MyDownloader.Core.dll MyDownloader.Extension.dll
-mt -manifest "../caupdater/cadownloader.exe.manifest" -outputresource:"c:\inetpub\wwwroot\download\CaDownloader.exe"
