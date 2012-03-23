@@ -3,6 +3,20 @@ unbind enter chat  // clear the defaults
 
 fakemeta  space
 
+bind ctrl+a select AllMap++_ClearSelection_SelectAll+
+bind ctrl+b select AllMap+_Builder_Not_Building_Not_Transport_Idle+_ClearSelection_SelectAll+
+bind ctrl+e select PrevSelection+_Not_RelativeHealth_30+_ClearSelection_SelectAll+
+bind ctrl+f select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Weapons_Not_NameContain_Vamp_Not_Radar+_ClearSelection_SelectAll+
+bind ctrl+g select AllMap+_NameContain_Vamp+_ClearSelection_SelectAll+
+bind ctrl+i select PrevSelection+_Idle+_ClearSelection_SelectAll+
+bind ctrl+r select AllMap+_Not_Builder_Not_Building+_ClearSelection_SelectAll+
+bind ctrl+s select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Radar+_ClearSelection_SelectAll+
+bind ctrl+t select AllMap+_Not_Builder_Not_Building_Transport_Aircraft+_ClearSelection_SelectAll+
+bind ctrl+v select AllMap+_Builder_Not_Building_Idle+_ClearSelection_SelectOne+
+//bind ctrl+w select AllMap+_Not_Builder_Not_Building_Not_Transport_Not_Aircraft_Weapons_Not_WeaponRange_600+_ClearSelection_SelectAll+
+bind ctrl+x select Visible+_InPrevSel+_ClearSelection_SelectAll+
+bind ctrl+z select AllMap+_InPrevSel_Not_Builder+_ClearSelection_SelectAll+
+
 bind          backspace  mousestate
 bind     Ctrl+backspace  togglecammode
 bind    Shift+backspace  togglecammode
@@ -28,6 +42,7 @@ bind            Shift+,  decguiopacity
 bind              Any+-  slowdown
 bind                  .  nextmenu
 bind            Shift+.  incguiopacity
+
 bind                  0  specteam 9
 bind             Ctrl+0  specteam 19
 bind              Any+0  group0
@@ -58,6 +73,7 @@ bind              Any+8  group8
 bind                  9  specteam 8
 bind             Ctrl+9  specteam 18
 bind              Any+9  group9
+
 bind                  ;  toggleradarandjammer
 bind              Any+=  speedup
 bind                  [  buildfacing inc
@@ -66,6 +82,7 @@ bind              Any+\  drawinmap
 bind                  ]  buildfacing dec
 bind            Shift+]  buildfacing dec
 bind              Any+`  drawinmap
+
 bind                  a  attack
 bind              Alt+a  areaattack
 bind            Shift+a  attack
@@ -73,10 +90,14 @@ bind        Alt+Shift+a  areaattack
 bind              Alt+n  debug
 bind              Alt+b  debugcolvol
 bind              any+b  markingmenu
-bind                  d  manualfire
 bind                C+d  selfd
-bind            Shift+d  manualfire
 bind       Ctrl+Shift+d  selfd queued
+bind              any+d  mouselessmarkingmenu
+bind             ctrl+c selectcomm
+bind                  c manualfire
+bind            Shift+c manualfire
+bind                  c oneclickwep
+bind            Shift+c oneclickwep
 bind                  e  reclaim
 bind            Shift+e  reclaim
 bind                  f  fight
@@ -106,6 +127,7 @@ bind            Shift+u  unloadunits
 bind             Ctrl+v  pastetext
 bind                  w  wait
 bind            Shift+w  wait queued
+bind             ctrl+w  areamex
 bind                  x  onoff
 bind            Shift+x  onoff
 bind              Any+x  buildspacing dec
@@ -156,32 +178,13 @@ bind                f12  screenshot
 bind          Any+shift  movefast
 bind           Any+ctrl  moveslow
 
-bind ctrl+a select AllMap++_ClearSelection_SelectAll+
-bind ctrl+b select AllMap+_Builder_Not_Building_Not_Transport_Idle+_ClearSelection_SelectAll+
-bind ctrl+e select PrevSelection+_Not_RelativeHealth_30+_ClearSelection_SelectAll+
-bind ctrl+f select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Weapons_Not_NameContain_Vamp_Not_Radar+_ClearSelection_SelectAll+
-bind ctrl+g select AllMap+_NameContain_Vamp+_ClearSelection_SelectAll+
-bind ctrl+i select PrevSelection+_Idle+_ClearSelection_SelectAll+
-bind ctrl+r select AllMap+_Not_Builder_Not_Building+_ClearSelection_SelectAll+
-bind ctrl+s select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Radar+_ClearSelection_SelectAll+
-bind ctrl+t select AllMap+_Not_Builder_Not_Building_Transport_Aircraft+_ClearSelection_SelectAll+
-bind ctrl+v select AllMap+_Builder_Not_Building_Idle+_ClearSelection_SelectOne+
-//bind ctrl+w select AllMap+_Not_Builder_Not_Building_Not_Transport_Not_Aircraft_Weapons_Not_WeaponRange_600+_ClearSelection_SelectAll+
-bind ctrl+x select Visible+_InPrevSel+_ClearSelection_SelectAll+
-bind ctrl+z select AllMap+_InPrevSel_Not_Builder+_ClearSelection_SelectAll+
-
-bind ctrl+c selectcomm
-
-bind d oneclickwep
-bind shift+d oneclickwep
-
-bind alt+b debug
-bind t resurrect
+bind   alt+t track
+bind       t resurrect
 bind shift+t resurrect
-bind alt+v controlunit
-bind j jump
+bind   alt+v controlunit
+bind       j jump
 bind shift+j jump
-bind alt+t track
+
 
 
 //
