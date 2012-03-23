@@ -79,11 +79,11 @@ bind              any+b  markingmenu
 bind                C+d  selfd
 bind       Ctrl+Shift+d  selfd queued
 bind              any+d  mouselessmarkingmenu
-bind             ctrl+c selectcomm
-bind                  c manualfire
-bind            Shift+c manualfire
-bind                  c oneclickwep
-bind            Shift+c oneclickwep
+bind             ctrl+c  selectcomm
+bind                  c  manualfire
+bind            Shift+c  manualfire
+bind                  c  oneclickwep
+bind            Shift+c  oneclickwep
 bind                  e  reclaim
 bind            Shift+e  reclaim
 bind                  f  fight
@@ -164,12 +164,12 @@ bind                f12  screenshot
 bind          Any+shift  movefast
 bind           Any+ctrl  moveslow
 
-bind   alt+t track
-bind       t resurrect
-bind shift+t resurrect
-bind   alt+v controlunit
-bind       j jump
-bind shift+j jump
+bind              alt+t  track
+bind                  t  resurrect
+bind            shift+t  resurrect
+bind              alt+v  controlunit
+bind                  j  jump
+bind            shift+j  jump
 
 
 bind ctrl+a select AllMap++_ClearSelection_SelectAll+
