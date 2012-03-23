@@ -3,20 +3,6 @@ unbind enter chat  // clear the defaults
 
 fakemeta  space
 
-bind ctrl+a select AllMap++_ClearSelection_SelectAll+
-bind ctrl+b select AllMap+_Builder_Not_Building_Not_Transport_Idle+_ClearSelection_SelectAll+
-bind ctrl+e select PrevSelection+_Not_RelativeHealth_30+_ClearSelection_SelectAll+
-bind ctrl+f select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Weapons_Not_NameContain_Vamp_Not_Radar+_ClearSelection_SelectAll+
-bind ctrl+g select AllMap+_NameContain_Vamp+_ClearSelection_SelectAll+
-bind ctrl+i select PrevSelection+_Idle+_ClearSelection_SelectAll+
-bind ctrl+r select AllMap+_Not_Builder_Not_Building+_ClearSelection_SelectAll+
-bind ctrl+s select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Radar+_ClearSelection_SelectAll+
-bind ctrl+t select AllMap+_Not_Builder_Not_Building_Transport_Aircraft+_ClearSelection_SelectAll+
-bind ctrl+v select AllMap+_Builder_Not_Building_Idle+_ClearSelection_SelectOne+
-//bind ctrl+w select AllMap+_Not_Builder_Not_Building_Not_Transport_Not_Aircraft_Weapons_Not_WeaponRange_600+_ClearSelection_SelectAll+
-bind ctrl+x select Visible+_InPrevSel+_ClearSelection_SelectAll+
-bind ctrl+z select AllMap+_InPrevSel_Not_Builder+_ClearSelection_SelectAll+
-
 bind          backspace  mousestate
 bind     Ctrl+backspace  togglecammode
 bind    Shift+backspace  togglecammode
@@ -186,6 +172,19 @@ bind       j jump
 bind shift+j jump
 
 
+bind ctrl+a select AllMap++_ClearSelection_SelectAll+
+bind ctrl+b select AllMap+_Builder_Not_Building_Not_Transport_Idle+_ClearSelection_SelectAll+
+bind ctrl+e select PrevSelection+_Not_RelativeHealth_30+_ClearSelection_SelectAll+
+bind ctrl+f select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Weapons_Not_NameContain_Vamp_Not_Radar+_ClearSelection_SelectAll+
+bind ctrl+g select AllMap+_NameContain_Vamp+_ClearSelection_SelectAll+
+bind ctrl+i select PrevSelection+_Idle+_ClearSelection_SelectAll+
+bind ctrl+r select AllMap+_Not_Builder_Not_Building+_ClearSelection_SelectAll+
+bind ctrl+s select AllMap+_Not_Builder_Not_Building_Not_Transport_Aircraft_Radar+_ClearSelection_SelectAll+
+bind ctrl+t select AllMap+_Not_Builder_Not_Building_Transport_Aircraft+_ClearSelection_SelectAll+
+bind ctrl+v select AllMap+_Builder_Not_Building_Idle+_ClearSelection_SelectOne+
+//bind ctrl+w select AllMap+_Not_Builder_Not_Building_Not_Transport_Not_Aircraft_Weapons_Not_WeaponRange_600+_ClearSelection_SelectAll+
+bind ctrl+x select Visible+_InPrevSel+_ClearSelection_SelectAll+
+bind ctrl+z select AllMap+_InPrevSel_Not_Builder+_ClearSelection_SelectAll+
 
 //
 //  DEFAULT UIKEYS.TXT FOR SPRING (0.73)
