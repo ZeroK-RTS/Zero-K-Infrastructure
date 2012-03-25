@@ -78,12 +78,12 @@ bind              Alt+b  debugcolvol
 bind              any+b  markingmenu
 bind                C+d  selfd
 bind       Ctrl+Shift+d  selfd queued
-bind              any+d  mouselessmarkingmenu
 bind             ctrl+c  selectcomm
-bind                  c  manualfire
-bind            Shift+c  manualfire
-bind                  c  oneclickwep
-bind            Shift+c  oneclickwep
+bind                  c  mouselessmarkingmenu
+bind                  d  manualfire
+bind            Shift+d  manualfire
+bind                  d  oneclickwep
+bind            Shift+d  oneclickwep
 bind                  e  reclaim
 bind            Shift+e  reclaim
 bind                  f  fight
