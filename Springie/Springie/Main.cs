@@ -21,7 +21,7 @@ namespace Springie
     public class Main
     {
         public const string ConfigMain = "main.xml";
-        const int ConfigUpdatePeriod = 240;
+        const int ConfigUpdatePeriod = 60;
         const int JugglePeriod = 61;
 
         readonly List<AutoHost> autoHosts = new List<AutoHost>();
