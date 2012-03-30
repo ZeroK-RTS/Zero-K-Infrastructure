@@ -124,7 +124,7 @@ namespace ZeroKWeb.Controllers
       else if (elongated == false) ret = ret.Where(x => x.MapSizeRatio > 0.5 && x.MapSizeRatio < 2);
       // Diagonal of a map used to determine size; 16 and below are considered small, bigger than 24 is large
       if (size == 1) ret = ret.Where(x => Math.sqrt(Math.pow(x.MapHeight, 2) + Math.pow(x.MapWidth, 2)) <= 16);
-      else if (size == 2) ret = ret.Where(x => Math.sqrt(Math.pow(x.MapHeight, 2) + Math.pow(x.MapWidth, 2)) > 16 && Math.sqrt(Math.pow(x.MapHeight, 2) + Math.pow(x.MapWidth, 2)) <= 24));
+      else if (size == 2) ret = ret.Where(x => Math.sqrt(Math.pow(x.MapHeight, 2) + Math.pow(x.MapWidth, 2)) > 16 && Math.sqrt(Math.pow(x.MapHeight, 2) + Math.pow(x.MapWidth, 2)) <= 24);
       else if (size == 3) ret = ret.Where(x => Math.sqrt(Math.pow(x.MapHeight, 2) + Math.pow(x.MapWidth, 2)) > 24);
 			if (is1v1.HasValue) ret = ret.Where(x => x.MapIs1v1 == is1v1);
 			if (chicken.HasValue) ret = ret.Where(x => x.MapIsChickens == chicken);
