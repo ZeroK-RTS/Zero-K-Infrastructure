@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -157,9 +157,9 @@ namespace ZeroKWeb.SpringieInterface
                            case AutohostMode.GameTeams:
                            case AutohostMode.SmallTeams:
                                var ret =  db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens!=true);
-                               if (players>16) ret = ret.Where(x => x.MapWidth > 20 || x.MapHeight > 20);
-                               else if (players > 6) ret = ret.Where(x => (x.MapWidth > 12 || x.MapHeight > 12) && (x.MapWidth <= 20 && x.MapHeight <= 20));
-                               else ret = ret.Where(x => x.MapHeight <= 12 && x.MapWidth <= 12);
+                               if (players > 16) ret = ret.Where(x => x.MapDiagonal > 24);
+                               else if (players > 6) ret = ret.Where(x => x.MapDiagonal <= 24 && x.MapDiagonal > 16);
+                               else ret = ret.Where(x => x.MapDiagonal <= 16);
                                 list = ret.ToList();
 
 
@@ -169,9 +169,9 @@ namespace ZeroKWeb.SpringieInterface
                                 break;
                             case AutohostMode.GameChickens:
                                 ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && (x.MapIsChickens == true || x.MapWaterLevel == 1));
-                                if (players > 16) ret = ret.Where(x => x.MapWidth > 20 || x.MapHeight > 20);
-                                else if (players > 6) ret = ret.Where(x => (x.MapWidth > 12 || x.MapHeight > 12) && (x.MapWidth <= 20 && x.MapHeight <= 20));
-                                else ret = ret.Where(x => x.MapHeight <= 12 && x.MapWidth <= 12);
+                                if (players > 16) ret = ret.Where(x => x.MapDiagonal > 24);
+                                else if (players > 6) ret = ret.Where(x => x.MapDiagonal <= 24 && x.MapDiagonal > 16);
+                                else ret = ret.Where(x => x.MapDiagonal <= 16);
                                 list= ret.ToList();
 
                                 break;
