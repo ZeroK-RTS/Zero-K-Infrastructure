@@ -11,7 +11,7 @@ namespace ZkData
   {
     public double MapDiagonal
     {
-      get { return Math.Sqrt(MapWidth*MapWidth + MapHeight*MapHeight); }
+      get { return Math.Sqrt((MapWidth*MapWidth + MapHeight*MapHeight)??0); }
     }
     
     public enum WaterLevel
