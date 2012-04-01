@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -9,6 +9,11 @@ namespace ZkData
 {
   partial class Resource
   {
+    public double MapDiagonal
+    {
+      get { return Math.Sqrt(MapWidth*MapWidth + MapHeight*MapHeight); }
+    }
+    
     public enum WaterLevel
     {
       Land = 1,
@@ -39,7 +44,7 @@ namespace ZkData
 
   	public int PlanetWarsIconSize
   	{
-			get { return (int)(25 + (MapWidth ?? 0 + MapHeight ?? 0)*1); } }
+			get { return (int)(25 + MapDiagonal); } }
 
     public Size ScaledImageSize(int maxSize)
     {
