@@ -171,6 +171,20 @@ namespace NightWatch
 										}
 									}
 								}
+                                else if (e.Text.Equals("!listsubscriptions"))
+                                {
+                                    using (var db = new ZkDataContext())
+                                    {
+                                        var subscriptionList = "No channels subscribed.";
+                                        var subs = db.LobbyChannelSubscriptions.Where(x => x.Name == e.UserName).OrderBy(x => x.Channel).Select(x => new { x.Channel });
+                                        if (subs != null)
+                                        {
+                                            subscriptionList = "Subscribed to: " + String.Join(", ", subs);
+                                        }
+                                        client.Say(TasClient.SayPlace.User, user.Name, subscriptionList, false);
+                                    }
+                                }
+
 							}
 						}
 						catch (Exception ex)
