@@ -176,7 +176,7 @@ namespace NightWatch
                                     using (var db = new ZkDataContext())
                                     {
                                         var subscriptionList = "No channels subscribed.";
-                                        var subs = db.LobbyChannelSubscriptions.Where(x => x.Name == e.UserName).OrderBy(x => x.Channel).Select(x => new { x.Channel });
+                                        var subs = db.LobbyChannelSubscriptions.Where(x => x.Name == e.UserName).OrderBy(x => x.Channel).Select(x => x.Channel );
                                         if (subs != null)
                                         {
                                             subscriptionList = "Subscribed to: " + String.Join(", ", subs);
