@@ -97,7 +97,7 @@
                     Text="Filter" />
                 <asp:GridView ID="gridUnits" runat="server" AllowPaging="True" AllowSorting="True"
                     CellPadding="4" DataSourceID="LinqDataSourceUnits" ForeColor="#333333" GridLines="None"
-                    AutoGenerateColumns="False" onrowcommand="gridUnits_RowCommand">
+                    AutoGenerateColumns="False" onrowcommand="gridUnits_RowCommand" >
                     <RowStyle BackColor="#E3EAEB" />
                     <FooterStyle BackColor="#1C5E55" Font-Bold="True" ForeColor="White" />
                     <PagerStyle BackColor="#666666" ForeColor="White" HorizontalAlign="Center" />
@@ -151,10 +151,16 @@
                 
                 <asp:Panel ID="Panel1" runat="server" Visible="false">
             <table><tr>
+                       
             <td valign="top">Top victims:
-            <asp:GridView ID="gridVictims" runat="server" BackColor="White" 
+            <asp:hiddenfield runat="server" ID="victimsUnitKey"/>
+            <asp:LinqDataSource ID="LinqDataSourceVictims" runat="server" ContextTypeName="" OnSelecting="LinqDataSourceVictims_Selecting"
+            TableName="">
+        </asp:LinqDataSource>
+
+            <asp:GridView ID="gridVictims" runat="server" BackColor="White" AllowSorting="True" AllowPaging="True" PageSize="15"
                     BorderColor="#DEDFDE" BorderStyle="None" BorderWidth="1px" CellPadding="4" 
-                    ForeColor="Black" GridLines="Vertical" AutoGenerateColumns="False">
+                    ForeColor="Black" GridLines="Vertical" AutoGenerateColumns="False" datasourceid="LinqDataSourceVictims">
                 <RowStyle BackColor="#F7F7DE" />
                 <Columns>
                         <asp:TemplateField HeaderText="Victim" SortExpression="Name">
@@ -182,9 +188,12 @@
             </asp:GridView>
             </td>
             <td valign="top">Top killers:
-            <asp:GridView ID="gridKillers" runat="server" BackColor="White" 
+            <asp:LinqDataSource ID="LinqDataSourceKillers" runat="server" ContextTypeName="" OnSelecting="LinqDataSourceKillers_Selecting"
+            TableName="">
+        </asp:LinqDataSource>
+            <asp:GridView ID="gridKillers" runat="server" BackColor="White"  AllowSorting="True" Allowpaging="True" PageSize="15"
                     BorderColor="#DEDFDE" BorderStyle="None" BorderWidth="1px" CellPadding="4" 
-                    ForeColor="Black" GridLines="Vertical" AutoGenerateColumns="False">
+                    ForeColor="Black" GridLines="Vertical" AutoGenerateColumns="False" datasourceid="LinqDataSourceKillers">
                 <RowStyle BackColor="#F7F7DE" />
                 <FooterStyle BackColor="#CCCC99" />
                 <PagerStyle BackColor="#F7F7DE" ForeColor="Black" HorizontalAlign="Right" />

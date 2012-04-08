@@ -95,51 +95,9 @@ namespace ModStats
 		protected void gridUnits_RowCommand(object sender, GridViewCommandEventArgs e)
 		{
 			if (e.CommandName == "victims") {
-				string key = (string) e.CommandArgument;
+				victimsUnitKey.Value = (string) e.CommandArgument;
 				Panel1.Visible = true;
-
-
-				var costHp = (from g in GamesFilter(false)
-				              from u in g.Units
-				              where u.Unit1 == key
-				              select u).Average(u => (double?) u.Cost/u.Health);
-
-				var ret = from g in GamesFilter(false)
-				          from d in g.Damages
-				          where d.AttackerUnit == key
-				          group d by d.VictimUnit
-				          into grp 
-						  let Damage = grp.Sum(x => (double?) x.Damage1)
-
-							  let DamageReverse = GamesFilter(false).SelectMany(x => x.Damages).Where(x => x.VictimUnit == key && x.AttackerUnit == grp.Key).Sum(
-								x => (double?)x.Damage1)
-							  let grpCostHp = (from g in GamesFilter(false) from u in g.Units where u.Unit1 == grp.Key select u).Average(u => (double?)u.Cost / u.Health)
-							  let Ratio = (DamageReverse * costHp) != 0 ? (Damage * grpCostHp) / (DamageReverse * costHp) : null
-						  
-						  orderby Damage descending select new {Name = grp.Key, Damage, Ratio, CostDamaged = Damage*grpCostHp };
-
-				gridVictims.DataSource = ret.Take(15);
-
-
 				gridVictims.DataBind();
-
-				var ret2 = from g in GamesFilter(false)
-				           from d in g.Damages
-				           where d.VictimUnit == key
-				           group d by d.AttackerUnit
-						   into grp 
-							
-							let Damage = grp.Sum(x => (double?) x.Damage1)
-				           	let DamageReverse = GamesFilter(false).SelectMany(x => x.Damages).Where(x => x.AttackerUnit == key && x.VictimUnit == grp.Key).Sum(
-				           	x => (double?) x.Damage1)
-							let grpCostHp = (from g in GamesFilter(false) from u in g.Units where u.Unit1 == grp.Key select u).Average(u => (double?)u.Cost / u.Health)
-							   let Ratio = (DamageReverse * grpCostHp) != 0 ? (Damage * costHp) / (DamageReverse * grpCostHp) : null
-
-						   
-						   orderby Damage descending select new {Name = grp.Key, Damage, Ratio};
-
-
-				gridKillers.DataSource = ret2.Take(15);
 				gridKillers.DataBind();
 			}
 		}
@@ -373,5 +331,59 @@ namespace ModStats
 		}
 
 		#endregion
+
+	    protected void LinqDataSourceVictims_Selecting(object sender, LinqDataSourceSelectEventArgs e)
+	    {
+            var costHp = (from g in GamesFilter(false)
+                          from u in g.Units
+                          where u.Unit1 == victimsUnitKey.Value
+                          select u).Average(u => (double?)u.Cost / u.Health);
+
+            var ret = from g in GamesFilter(false)
+                      from d in g.Damages
+                      where d.AttackerUnit == victimsUnitKey.Value
+                      group d by d.VictimUnit
+                          into grp
+                          let Damage = grp.Sum(x => (double?)x.Damage1)
+
+                          let DamageReverse = GamesFilter(false).SelectMany(x => x.Damages).Where(x => x.VictimUnit == victimsUnitKey.Value && x.AttackerUnit == grp.Key).Sum(
+                            x => (double?)x.Damage1)
+                          let grpCostHp = (from g in GamesFilter(false) from u in g.Units where u.Unit1 == grp.Key select u).Average(u => (double?)u.Cost / u.Health)
+                          let Ratio = (DamageReverse * costHp) != 0 ? (Damage * grpCostHp) / (DamageReverse * costHp) : null
+
+                          orderby Ratio descending
+                          select new { Name = grp.Key, Damage, Ratio, CostDamaged = Damage * grpCostHp };
+
+            e.Result = ret;
+	    }
+
+        
+        protected void LinqDataSourceKillers_Selecting(object sender, LinqDataSourceSelectEventArgs e)
+	    {
+            
+            var costHp = (from g in GamesFilter(false)
+                          from u in g.Units
+                          where u.Unit1 == victimsUnitKey.Value
+                          select u).Average(u => (double?)u.Cost / u.Health);
+
+            var ret2 = from g in GamesFilter(false)
+                       from d in g.Damages
+                       where d.VictimUnit == victimsUnitKey.Value
+                       group d by d.AttackerUnit
+                           into grp
+
+                           let Damage = grp.Sum(x => (double?)x.Damage1)
+                           let DamageReverse = GamesFilter(false).SelectMany(x => x.Damages).Where(x => x.AttackerUnit == victimsUnitKey.Value && x.VictimUnit == grp.Key).Sum(
+                           x => (double?)x.Damage1)
+                           let grpCostHp = (from g in GamesFilter(false) from u in g.Units where u.Unit1 == grp.Key select u).Average(u => (double?)u.Cost / u.Health)
+                           let Ratio = (DamageReverse * grpCostHp) != 0 ? (Damage * costHp) / (DamageReverse * grpCostHp) : null
+
+
+                           orderby Ratio descending
+                           select new { Name = grp.Key, Damage, Ratio };
+
+            e.Result = ret2;
+
+	    }
 	}
 }
