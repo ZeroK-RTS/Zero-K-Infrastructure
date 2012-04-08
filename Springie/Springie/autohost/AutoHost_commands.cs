@@ -935,7 +935,7 @@ namespace Springie.autohost
             var secondsFromLastGame = DateTime.Now.Subtract(spring.GameEnded).TotalSeconds;
             if (secondsFromLastGame < 180 && spring.Duration > 6 * 60)
             {
-                SayBattle(string.Format("cannot start yet, give people some time to rest - wait {0} seconds", 180-secondsFromLastGame));
+                SayBattle(string.Format("cannot start yet, give people some time to rest - wait {0} seconds", Math.Round(180-secondsFromLastGame)));
                 return;
             }
 
