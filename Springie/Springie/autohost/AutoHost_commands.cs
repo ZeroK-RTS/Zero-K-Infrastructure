@@ -1297,6 +1297,21 @@ namespace Springie.autohost
         }
 
 
+        void ComResetOptions(TasSayEventArgs e, string[] words) {
+            foreach (var opt in tas.MyBattle.ModOptions) {
+                var entry = hostedMod.Options.FirstOrDefault(x => x.Key.ToLower() == opt.Key.ToLower());
+                if (entry != null && entry.Default != opt.Value) {
+                    string str;
+                    entry.GetPair(entry.Default, out str);
+                    tas.SetScriptTag(str);
+                }
+
+            }
+
+            Respond(e, "Game options reset to defaults");
+        }
+
+
         void ComSetOption(TasSayEventArgs e, string[] words)
         {
             var ret = GetOptionsString(e, words);

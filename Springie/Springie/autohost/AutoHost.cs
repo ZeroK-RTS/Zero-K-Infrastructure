@@ -437,6 +437,10 @@ namespace Springie.autohost
                     ComAlly(e, words);
                     break;
 
+                case "resetoptions":
+                    ComResetOptions(e,words);
+                    break;
+
                 case "helpall":
                     ComHelpAll(e, words);
                     break;
@@ -980,6 +984,8 @@ namespace Springie.autohost
         {
             var b = tas.MyBattle;
             var mapName = b.MapName.ToLower();
+
+            if (SpawnConfig == null) ComResetOptions(TasSayEventArgs.Default, new string[]{});
 
             try
             {

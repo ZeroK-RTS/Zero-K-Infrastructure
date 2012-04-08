@@ -175,6 +175,8 @@ namespace Springie.autohost
             AddMissing(new CommandConfig("listoptions", 1, " - lists all mod/map options", 5));
 
             AddMissing(new CommandConfig("setoptions", 2, "<name>=<value>[,<name>=<value>] - applies mod/map options", 0));
+            
+            AddMissing(new CommandConfig("resetoptions", 0, " - sets default mod/map options", 0));
 
             AddMissing(new CommandConfig("votesetoptions", 1, "<name>=<value>[,<name>=<value>] - starts a vote to apply mod/map options", 0));
 

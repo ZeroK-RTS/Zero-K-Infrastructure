@@ -1114,6 +1114,7 @@ namespace LobbyClient
                         var user = args[1];
                         Battle battle;
                         if (!existingBattles.TryGetValue(battleID, out battle)) break;
+                        if (!existingUsers.ContainsKey(user)) break;
                         battle.RemoveUser(user);
                         battle.ScriptTags.Clear();
                         var userName = args[1];
