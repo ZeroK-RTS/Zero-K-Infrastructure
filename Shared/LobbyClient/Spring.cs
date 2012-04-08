@@ -591,7 +591,6 @@ namespace LobbyClient
                     {
                         foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator))
                         {
-                            Kick(kvp.Key);
                             client.ForceSpectator(kvp.Key);
                         }
                         ForceStart();
