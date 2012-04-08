@@ -149,6 +149,7 @@ namespace ZeroKLobby
                 //HttpWebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
                 Utils.RegisterProtocol();
+                Utils.SetIeCompatibility();
                 if (ApplicationDeployment.IsNetworkDeployed) Trace.TraceInformation("Starting with version {0}", ApplicationDeployment.CurrentDeployment.CurrentVersion);
                 else
                 {
