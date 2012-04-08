@@ -587,7 +587,7 @@ namespace LobbyClient
                 if (isHosting && IsRunning && battleResult.IngameStartTime == null)
                 {
                     // force start after 180s
-                    if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 240)
+                    if (DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds > 180)
                     {
                         foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator))
                         {
