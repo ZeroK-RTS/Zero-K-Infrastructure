@@ -932,9 +932,10 @@ namespace Springie.autohost
 
         public void ComStart(TasSayEventArgs e, string[] words)
         {
-            if (DateTime.Now.Subtract(spring.GameEnded).TotalMinutes < 3 && spring.Duration > 6 * 60)
+            var secondsFromLastGame = DateTime.Now.Subtract(spring.GameEnded).TotalSeconds;
+            if (secondsFromLastGame < 180 && spring.Duration > 6 * 60)
             {
-                SayBattle("cannot start yet, give people some time to rest");
+                SayBattle(string.Format("cannot start yet, give people some time to rest - wait {0} seconds", 180-secondsFromLastGame));
                 return;
             }
 
