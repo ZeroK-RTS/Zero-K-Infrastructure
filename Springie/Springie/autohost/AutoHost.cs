@@ -584,10 +584,6 @@ namespace Springie.autohost
                         Respond(e, "Please specify at least mod name: !spawn mod=zk:stable");
                         return;
                     }
-                    if (string.IsNullOrEmpty(sc.Password)) {
-                        Respond(e, "Please specify a password");
-                        return;
-                    }
                     Program.main.SpawnAutoHost(config, sc);
                 }
                     break;
