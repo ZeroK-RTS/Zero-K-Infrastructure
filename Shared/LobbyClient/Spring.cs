@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
 using PlasmaShared;
@@ -385,36 +386,52 @@ namespace LobbyClient
 
                     if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
-                    if (line.StartsWith("LuaRules: >> ID: ") && !isCheating && battleResult.IsMission)
+                    if (line.Contains("ID: ") && !isCheating && battleResult.IsMission)
                     {
-                        // game score
-                        var data = Encoding.ASCII.GetString(Convert.FromBase64String(line.Substring(17)));
-                        var parts = data.Split('/');
-                        var score = 0;
-                        if (parts.Length > 1)
+                        var match = Regex.Match(line, "ID: ([^ ]+)");
+                        if (match.Success)
                         {
-                            score = Convert.ToInt32(parts[1]);
-                            gameframe = Convert.ToInt32(parts[0]);
-                        }
-                        else score = Convert.ToInt32(data);
+                            try
+                            {
+                                // game score
+                                var data = Encoding.ASCII.GetString(Convert.FromBase64String(match.Groups[1].Value));
 
-                        using (var service = new ContentService { Proxy = null })
-                        {
-                            service.SubmitMissionScoreCompleted += (s, e) =>
+
+                                var parts = data.Split('/');
+                                var score = 0;
+                                if (parts.Length > 1)
                                 {
-                                    if (e.Error != null)
-                                    {
-                                        if (e.Error is WebException) Trace.TraceWarning("Error sending score: {0}", e.Error);
-                                        else Trace.TraceError("Error sending score: {0}", e.Error);
-                                    }
-                                };
-                            service.SubmitMissionScoreAsync(lobbyUserName, Utils.HashLobbyPassword(lobbyPassword),  modName, score, gameframe/30);
+                                    score = Convert.ToInt32(parts[1]);
+                                    gameframe = Convert.ToInt32(parts[0]);
+                                }
+                                else score = Convert.ToInt32(data);
+
+                                using (var service = new ContentService { Proxy = null })
+                                {
+                                    service.SubmitMissionScoreCompleted += (s, e) =>
+                                        {
+                                            if (e.Error != null)
+                                            {
+                                                if (e.Error is WebException) Trace.TraceWarning("Error sending score: {0}", e.Error);
+                                                else Trace.TraceError("Error sending score: {0}", e.Error);
+                                            }
+                                        };
+                                    service.SubmitMissionScoreAsync(lobbyUserName,
+                                                                    Utils.HashLobbyPassword(lobbyPassword),
+                                                                    modName,
+                                                                    score,
+                                                                    gameframe / 30);
+                                }
+                            }
+                            catch (Exception ex) {
+                                Trace.TraceError(string.Format("Error sending mission score: {0}", ex));
+                            }
                         }
                     }
 
                     // obsolete, hnalded by pm messages if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
-                    if (line.StartsWith("Cheating!")) isCheating = true;
+                    if (line.StartsWith("Cheating!") || line.StartsWith("Cheating is enabled!")) isCheating = true;
 
                     if (line.StartsWith("Error") || line.StartsWith("LuaRules") || line.StartsWith("Internal error") || line.StartsWith("LuaCOB") ||
                         (line.StartsWith("Failed to load") && !line.Contains("duplicate name"))) hasError = true;
