@@ -32,7 +32,8 @@ namespace LobbyClient
         {
             Channel,
             Battle,
-            User
+            User,
+            BattlePrivate
         };
 
         StringBuilder agreementText;
@@ -645,6 +646,10 @@ namespace LobbyClient
                     case SayPlace.Battle:
                         if (args.IsEmote) con.SendCommand("SAYBATTLEEX", args.Text);
                         else con.SendCommand("SAYBATTLE", args.Text);
+                        break;
+                    case SayPlace.BattlePrivate:
+                        if (args.IsEmote) con.SendCommand("SAYBATTLEPRIVATEEX", channel, args.Text);
+                        else con.SendCommand("SAYBATTLEPRIVATE", channel, args.Text);
                         break;
                 }
             }

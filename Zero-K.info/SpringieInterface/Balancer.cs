@@ -30,7 +30,7 @@ namespace ZeroKWeb.SpringieInterface
                     return res;
                 }
                 else if (playerCount > (config.MaxToStart ?? 99)) {
-                    res.Message = string.Format("This host can only start with less than {0} people, wait for juggler to split you{1}", config.MaxToStart);
+                    res.Message = string.Format("This host can only start with less than {0} people, wait for juggler to split you", config.MaxToStart);
                     res.CanStart = false;
                     return res;
                 }

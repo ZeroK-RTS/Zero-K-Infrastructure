@@ -284,7 +284,7 @@ namespace Springie.autohost
             var emote = false;
             if (e.Place == TasSayEventArgs.Places.Battle)
             {
-                p = TasClient.SayPlace.Battle;
+                p = TasClient.SayPlace.BattlePrivate;
                 emote = true;
             }
             if (e.Place == TasSayEventArgs.Places.Game && spring.IsRunning) spring.SayGame(text);
@@ -600,6 +600,11 @@ namespace Springie.autohost
             SayBattle(text, true);
         }
 
+        public void SayBattlePrivate(string user, string text)
+        {
+            if (!String.IsNullOrEmpty(text)) foreach (var line in text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) tas.Say(TasClient.SayPlace.BattlePrivate, user, text, true);
+        }
+
         public void SayBattle(string text, bool ingame)
         {
             if (!String.IsNullOrEmpty(text)) foreach (var line in text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)) SayBattle(tas, spring, line, ingame);
@@ -893,15 +898,15 @@ namespace Springie.autohost
                 welc = welc.Replace("%1", name);
                 welc = welc.Replace("%2", GetUserLevel(name).ToString());
                 welc = welc.Replace("%3", MainConfig.SpringieVersion);
-                SayBattle(welc, false);
+                SayBattlePrivate(name, welc);
             }
             if (spring.IsRunning)
             {
                 spring.AddUser(e1.UserName, e1.ScriptPassword);
                 var started = DateTime.Now.Subtract(spring.GameStarted);
                 started = new TimeSpan((int)started.TotalHours, started.Minutes, started.Seconds);
-                SayBattle(String.Format("GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT TILL IT ENDS! Running for {0}", started), false);
-                SayBattle("If you say !notify, I will PM you when game ends.", false);
+                SayBattlePrivate(name, String.Format("GAME IS CURRENTLY IN PROGRESS, PLEASE WAIT TILL IT ENDS! Running for {0}", started));
+                SayBattlePrivate(name, "If you say !notify, I will PM you when game ends.");
             }
 
             if (SpawnConfig == null)
