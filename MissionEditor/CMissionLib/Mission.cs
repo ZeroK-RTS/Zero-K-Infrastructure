@@ -43,7 +43,7 @@ namespace CMissionLib
 		string modName;
 		string name;
 		ObservableCollection<Player> players = new ObservableCollection<Player>();
-		string rapidTag;
+		string rapidTag = "zk:stable";
 		ObservableCollection<Region> regions = new ObservableCollection<Region>();
 		string scoringMethod = "";
 		int startingEnergy = 1000;
