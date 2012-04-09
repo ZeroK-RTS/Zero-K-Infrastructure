@@ -227,6 +227,7 @@ namespace ZeroKWeb.SpringieInterface
                         var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name));
                         if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName)
                         {
+                            if (origAh == null) tas.Say(TasClient.SayPlace.User, acc.Name, "!join " + b.Autohost.LobbyContext.AutohostName,false);
                             ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
                             string reason = "because you weren't in a valid battle or your battle was split into two smaller";
                             if (origAh != null) {
