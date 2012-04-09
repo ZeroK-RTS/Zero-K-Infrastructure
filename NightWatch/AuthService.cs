@@ -49,19 +49,6 @@ namespace NightWatch
                     requests.TryRemove(client.MessageID, out entry);
                 };
 
-            this.client.UserRemoved += (s, e) =>
-            {
-                using (var db = new ZkDataContext())
-                {
-                    User user;
-                    client.ExistingUsers.TryGetValue(e.ServerParams[0], out user);
-                    var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == user.LobbyID);
-                    if (acc != null) {
-                        acc.MatchMakingActive = false;
-                    }
-                    db.SubmitChanges();
-                }
-            };
 
             this.client.UserAdded += (s, e) =>
                 {

@@ -171,12 +171,12 @@ namespace ZeroKLobby.Notifications
             cs.SetJugglerConfigAsync(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword, conf);
         }
 
-        void Deactivate()
+        public void Deactivate()
         {
             Program.NotifySection.RemoveBar(this);
             SendMyConfig(false);
             timer.Enabled = false;
-            ActionHandler.CloseChannel("quickmatch");
+            client.LeaveChannel("quickmatch");
         }
 
         public void AddedToContainer(NotifyBarContainer container)

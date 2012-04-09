@@ -480,6 +480,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		public void CloseClicked(NotifyBarContainer container)
 		{
 			Stop();
+            Program.JugglerBar.Deactivate();
 		}
 
 		public void DetailClicked(NotifyBarContainer container)
