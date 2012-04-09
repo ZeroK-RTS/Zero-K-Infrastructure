@@ -40,7 +40,7 @@
                 <Button.Content>
                     <DockPanel VerticalAlignment="Stretch" Width="90">
                         <Image Source="/Zero-K;component/Images/add.png" HorizontalAlignment="Left" Width="15" Height="15" />
-                        <TextBlock Cursor="Hand" TextAlignment="Center" Text="MatchMaking" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
+                        <TextBlock Cursor="Hand" TextAlignment="Center" Text="QuickMatch" VerticalAlignment="Center" HorizontalAlignment="Center"></TextBlock>
                     </DockPanel>
                 </Button.Content>
             </Button>

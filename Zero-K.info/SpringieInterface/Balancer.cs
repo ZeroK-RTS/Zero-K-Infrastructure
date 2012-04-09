@@ -45,11 +45,9 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.None:
                         if (!isGameStart) res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         break;
-                    case AutohostMode.GameTeams:
-                        res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
-                        res.DeleteBots = true;
-                        break;
+                    case AutohostMode.MediumTeams:
                     case AutohostMode.SmallTeams:
+                    case AutohostMode.BigTeams:
                         res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         res.DeleteBots = true;
                         break;

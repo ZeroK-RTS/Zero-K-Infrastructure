@@ -143,7 +143,7 @@ namespace ZeroKLobby.MicroLobby
 
     public static bool IsIgnoredChannel(string channelName)
     {
-      return channelName == "quickmatch" || channelName == "quickmatching";
+        return false;
     }
 
     public void OpenChannel(string channelName)

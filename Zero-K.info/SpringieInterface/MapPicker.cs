@@ -154,7 +154,8 @@ namespace ZeroKWeb.SpringieInterface
                         var players = context.Players.Count(x => !x.IsSpectator);
                         switch (mode)
                         {
-                           case AutohostMode.GameTeams:
+                           case AutohostMode.BigTeams:
+                           case AutohostMode.MediumTeams:
                            case AutohostMode.SmallTeams:
                                var ret =  db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens!=true);
                                 if (players > 16) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth)??0) > 24);

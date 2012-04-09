@@ -45,7 +45,8 @@ namespace ZeroKWeb.SpringieInterface
         static readonly List<AutohostMode> BinOrder = new List<AutohostMode>
                                                       {
                                                           AutohostMode.Planetwars,
-                                                          AutohostMode.GameTeams,
+                                                          AutohostMode.BigTeams,
+                                                          AutohostMode.MediumTeams,
                                                           AutohostMode.SmallTeams,
                                                           AutohostMode.GameFFA,
                                                           AutohostMode.GameChickens,
@@ -240,7 +241,7 @@ namespace ZeroKWeb.SpringieInterface
                                     }
                                 }
                             }
-                            // hack AuthServiceClient.SendLobbyMessage(acc, string.Format("You were moved to {0}, {1}. To change your preferences, please go to home page. http://zero-k.info", b.Autohost.LobbyContext.AutohostName, reason));
+                            // AuthServiceClient.SendLobbyMessage(acc, string.Format("You were moved to {0}, {1}. To change your preferences, please go to home page. http://zero-k.info", b.Autohost.LobbyContext.AutohostName, reason));
                         }
                     }
 

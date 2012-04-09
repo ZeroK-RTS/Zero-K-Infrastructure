@@ -27,6 +27,13 @@ namespace ZeroKLobby.MicroLobby
 		public event EventHandler<EventArgs<string>> ChatLine { add { sendBox.LineEntered += value; } remove { sendBox.LineEntered -= value; } }
 		public GameInfo GameInfo { get; set; }
 
+	    public class ChannelLineArgs:EventArgs {
+            public string Channel;
+            public IChatLine Line;
+        }
+
+        public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
+
 		public ChatControl() {}
 
 		public Storyboard FlashAnimation { get; set; }
@@ -148,6 +155,7 @@ namespace ZeroKLobby.MicroLobby
 			if ((line is SaidLine && Program.Conf.IgnoredUsers.Contains(((SaidLine)line).AuthorName)) ||
 			    (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName))) return;
 			ChatBox.AddLine(line);
+            ChannelLineAdded(this, new ChannelLineArgs() { Channel = ChannelName, Line = line});
 			HistoryManager.LogLine(ChannelName, line);
 		}
 
