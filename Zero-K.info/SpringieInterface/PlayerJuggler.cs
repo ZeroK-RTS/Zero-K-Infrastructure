@@ -93,6 +93,10 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             var roomLessLobbyID = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
+            foreach (var ah in autohosts) { // safeguard - remove those known to be playing
+                if (ah.RunningGameStartContext != null)
+                    foreach (var id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator).Select(x => x.LobbyID)) roomLessLobbyID.Remove(id);
+            }
 
             var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID) || (roomLessLobbyID.Contains(x.LobbyID) && x.MatchMakingActive)).ToDictionary(x => x.LobbyID ?? 0);
 
