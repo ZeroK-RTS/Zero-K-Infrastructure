@@ -100,7 +100,7 @@ namespace ZeroKWeb.SpringieInterface
             foreach (var ah in autohosts) { // safeguard - remove those known to be playing or speccing
                 if (ah.RunningGameStartContext != null)
                     foreach (var id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator && x.IsIngame).Select(x => x.LobbyID)) roomLessLobbyID.Remove(id);
-                if (ah.LobbyContext != null) foreach (var id in ah.LobbyContext.Players.Where(x => x.IsSpectator || x.IsIngame).Select(x=>x.LobbyID)) roomLessLobbyID.Remove(id);
+                if (ah.LobbyContext != null) foreach (var id in ah.LobbyContext.Players.Where(x => x.IsIngame).Select(x=>x.LobbyID)) roomLessLobbyID.Remove(id);
             }
 
             var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID) || (roomLessLobbyID.Contains(x.LobbyID) && x.MatchMakingActive)).ToDictionary(x => x.LobbyID ?? 0);
