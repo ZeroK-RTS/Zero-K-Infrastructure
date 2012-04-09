@@ -908,7 +908,7 @@ namespace PlasmaShared.ContentService {
         None,
         
         /// <remarks/>
-        GameTeams,
+        MediumTeams,
         
         /// <remarks/>
         Planetwars,
@@ -924,6 +924,9 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         SmallTeams,
+        
+        /// <remarks/>
+        BigTeams,
     }
     
     /// <remarks/>

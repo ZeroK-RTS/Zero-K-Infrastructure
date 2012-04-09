@@ -323,12 +323,13 @@
       <s:simpleType name="AutohostMode">
         <s:restriction base="s:string">
           <s:enumeration value="None" />
-          <s:enumeration value="GameTeams" />
+          <s:enumeration value="MediumTeams" />
           <s:enumeration value="Planetwars" />
           <s:enumeration value="Game1v1" />
           <s:enumeration value="GameFFA" />
           <s:enumeration value="GameChickens" />
           <s:enumeration value="SmallTeams" />
+          <s:enumeration value="BigTeams" />
         </s:restriction>
       </s:simpleType>
       <s:element name="GetJugglerConfig">

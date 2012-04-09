@@ -150,7 +150,10 @@ namespace Springie.autohost
                     if (!spring.IsRunning)
                     {
                         if (SpawnConfig == null) ServerVerifyMap(false);
-                        if (SpawnConfig == null && timerTick%3 == 0) RunServerBalance(false, null, null);
+                        bool shouldStart = false;
+                        if (SpawnConfig == null && timerTick%3 == 0) shouldStart = RunServerBalance(false, null, null);
+                        // autostart if all ok  
+                        // if (config.Mode != AutohostMode.None && shouldStart) ComStart(TasSayEventArgs.Default, new string[]{});
                     }
                 };
             timer.Start();
