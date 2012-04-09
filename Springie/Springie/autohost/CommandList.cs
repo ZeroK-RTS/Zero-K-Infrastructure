@@ -25,6 +25,8 @@ namespace Springie.autohost
 
             AddMissing(new CommandConfig("start", 0, " - starts game", 5));
 
+            AddMissing(new CommandConfig("postpone", 0, " - postpones automated game start by 5 minutes", 5));
+
             AddMissing(new CommandConfig("ring",
                                          0,
                                          "[<filters>..] - rings all unready or specific player(s), e.g. !ring - rings unready, !ring icho - rings Licho",

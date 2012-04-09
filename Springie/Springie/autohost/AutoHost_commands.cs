@@ -65,7 +65,13 @@ namespace Springie.autohost
         {
             Respond(e, Program.main.JugglePlayers());
         }
-    
+
+        DateTime postponeUntil;
+
+        public void ComPostpone(TasSayEventArgs e, string[] words) {
+            Respond(e, "Automated start postponed by 5 minutes");
+            postponeUntil = DateTime.Now.AddMinutes(5);
+        }
 
 
         public void ComSplitPlayers(TasSayEventArgs e, string[] words)
