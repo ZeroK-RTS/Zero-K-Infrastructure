@@ -345,7 +345,7 @@ namespace ZeroKWeb.SpringieInterface
                                 if (Math.Abs(a.Value.EffectiveElo - avgElo) > b.Config.MaxEloDifference) continue; //effective elo difference > 250 dont try to combine
                             }
 
-                            if (battlePref > (double)GamePreference.Never+0.6) b.PlayerPriority[lobbyID] = (int)battlePref;
+                            if (battlePref > (double)GamePreference.Never) b.PlayerPriority[lobbyID] = (int)battlePref;
                         }
                     }
                 }
@@ -353,7 +353,7 @@ namespace ZeroKWeb.SpringieInterface
 
             var state  = new JugglerState();
             state.TotalPlayers = juggledAccounts.Count;
-            foreach (var grp in bins.GroupBy(x => x.Mode).Select(x => new { Mode = x.Key, Count = x.Sum(y => y.PlayerPriority.Count(z => z.Value >= (double)GamePreference.Like)) })) {
+            foreach (var grp in bins.GroupBy(x => x.Mode).Select(x => new { Mode = x.Key, Count = x.Sum(y => y.PlayerPriority.Count(z => z.Value > (double)GamePreference.Never)) })) {
                 state.ModeCounts.Add(new JugglerState.ModePair() {Mode = grp.Mode, Count = grp.Count});
             }
             LastState = state;

@@ -438,9 +438,12 @@ namespace ZeroKLobby.MicroLobby
     {
       var channelName = e.ServerParams[0];
       var chatControl = GetChannelControl(channelName);
-      chatControl.Reset();
-      chatControl.Dispose();
-      CloseTab(channelName);
+      if (chatControl != null)
+      {
+          chatControl.Reset();
+          chatControl.Dispose();
+      }
+        CloseTab(channelName);
     }
 
     void TasClient_ConnectionLost(object sender, TasEventArgs e)

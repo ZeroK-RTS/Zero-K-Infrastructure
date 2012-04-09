@@ -28,6 +28,10 @@ namespace ZeroKLobby.Notifications
             InitializeComponent();
             this.client = client;
 
+            var info = "Set your game type preferences for QuickMatch. System can move you to other room, if you like that type more than type of currently joined room";
+
+            Program.ToolTip.SetText(this,info);
+
             var cnt = 0;
             int xOffset = 0, yOffset = 0;
             foreach (var mode in Enum.GetValues(typeof(AutohostMode)).OfType<AutohostMode>().Where(x => x != AutohostMode.None))
@@ -43,13 +47,18 @@ namespace ZeroKLobby.Notifications
                 foreach (var pref in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderByDescending(z => (int)z)) item.ComboBox.Items.Add(new CbItem() { Value = pref });
                 item.ComboBox.SelectedValueChanged += (sender, args) => { if (!suppressChangeEvent) SendMyConfig(true); };
 
+                Program.ToolTip.SetText(item.ComboBox,info);
+
                 Controls.Add(item.ComboBox);
                 item.Label = new Label() { Left = xOffset + 185, Top = yOffset, Width = 20 };
                 Controls.Add(item.Label);
 
+                Program.ToolTip.SetText(item.Label,"How many waiting people are OK with that type of game");
+
                 cnt++;
             }
-
+            
+            
             GetJugglerState();
             GetMyConfig();
 
@@ -74,6 +83,9 @@ namespace ZeroKLobby.Notifications
                     if (client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
                 }
             };
+
+            
+            
 
             timer = new Timer();
             timer.Interval = 30000;
@@ -117,7 +129,7 @@ namespace ZeroKLobby.Notifications
                         foreach (var entry in res.ModeCounts)
                         {
                             InfoItems item;
-                            if (Items.TryGetValue(entry.Mode.ToString(), out item)) item.Label.Text = entry.Count.ToString();
+                            if (Items.TryGetValue(entry.Mode.ToString(), out item)) item.Label.Text = "(" +entry.Count.ToString() +")";
                         }
                     }
                 };

@@ -325,9 +325,12 @@ namespace ZeroKLobby
     {
       if (ChangeDesiredSpectatorState(false))
       {
-        var newStatus = Program.TasClient.MyBattleStatus.Clone();
-        newStatus.IsSpectator = false;
-        Program.TasClient.SendMyBattleStatus(newStatus);
+          if (Program.TasClient.MyBattle != null)
+          {
+              var newStatus = Program.TasClient.MyBattleStatus.Clone();
+              newStatus.IsSpectator = false;
+              Program.TasClient.SendMyBattleStatus(newStatus);
+          }
       }
     }
 

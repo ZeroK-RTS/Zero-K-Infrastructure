@@ -258,6 +258,7 @@ namespace ZeroKLobby
                                 var parts = e.Data.Text.Split(' ');
                                 var battleID = tas.ExistingBattles.Values.Where(x => x.Founder.Name == parts[1]).First().BattleID;
                                 var password = parts.Length > 2 ? parts[2] : null;
+                                ActionHandler.UnSpec();
                                 ActionHandler.JoinBattle(battleID, password);
                             }
                         }
