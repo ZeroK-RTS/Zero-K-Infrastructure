@@ -144,16 +144,23 @@ namespace Springie.autohost
             timer = new Timer(15000);
             timer.Elapsed += (s, e) =>
                 {
-                    timerTick++;
-                    if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick%4 == 0) CheckEngineBranch();
-
-                    if (!spring.IsRunning)
+                    try
                     {
-                        if (SpawnConfig == null) ServerVerifyMap(false);
-                        bool shouldStart = false;
-                        if (SpawnConfig == null && timerTick%3 == 0) shouldStart = RunServerBalance(false, null, null);
-                        // autostart if all ok  
-                         if (config.Mode != AutohostMode.None && shouldStart &&  DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 3 && DateTime.Now > postponeUntil) ComStart(TasSayEventArgs.Default, new string[]{});
+                        timerTick++;
+                        if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick % 4 == 0) CheckEngineBranch();
+
+                        if (!spring.IsRunning)
+                        {
+                            if (SpawnConfig == null) ServerVerifyMap(false);
+                            bool shouldStart = false;
+                            if (SpawnConfig == null && timerTick % 3 == 0) shouldStart = RunServerBalance(false, null, null);
+                            // autostart if all ok  
+                            if (config.Mode != AutohostMode.None && shouldStart && !spring.IsRunning &&
+                                DateTime.Now.Subtract(spring.GameEnded).TotalMinutes > 3 && DateTime.Now > postponeUntil) ComStart(TasSayEventArgs.Default, new string[] { });
+                        }
+                    }
+                    catch (Exception ex) {
+                        Trace.TraceError(ex.ToString());
                     }
                 };
             timer.Start();
