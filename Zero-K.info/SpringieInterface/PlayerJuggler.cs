@@ -326,7 +326,7 @@ namespace ZeroKWeb.SpringieInterface
                 else
                 {
                     b.Assigned.Clear();
-                    foreach (var id in b.ManuallyJoined) if (!CanMove(juggledPlayers[id])) b.Assigned.Add(id); 
+                    foreach (var id in b.ManuallyJoined) b.Assigned.Add(id); 
                 }
             }
         }
