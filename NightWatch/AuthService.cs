@@ -73,6 +73,9 @@ namespace NightWatch
                             client.Extensions.Publish(e.Data.Name, data);
 
                             if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(e.Data.Name, "Banned");
+
+                            acc.MatchMakingActive = false;
+                            db.SubmitChanges();
                         }
                     }
                 };
@@ -161,7 +164,6 @@ namespace NightWatch
                     db.Accounts.InsertOnSubmit(acc);
                 }
 
-                acc.MatchMakingActive = false;
                 acc.LobbyID = lobbyID;
                 acc.Name = name;
                 if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;

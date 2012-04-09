@@ -1,115 +1,206 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
 using PlasmaShared.ContentService;
+using AutohostMode = ZkData.AutohostMode;
+using GamePreference = ZkData.GamePreference;
 
 namespace ZeroKLobby.Notifications
 {
-    public partial class JugglerBar : UserControl, INotifyBar
+    public partial class JugglerBar: UserControl, INotifyBar
     {
+        readonly Dictionary<string, InfoItems> Items = new Dictionary<string, InfoItems>();
         TasClient client;
         public NotifyBarContainer BarContainer { get; private set; }
 
-        Dictionary<string, InfoItems> Items = new Dictionary<string, InfoItems>();
-
-        public class CbItem {
-            public ZkData.GamePreference Value;
-            public override string ToString()
-            {
-                return Value.Description();
-            }
-        }
+        private bool suppressChangeEvent = false;
 
         public JugglerBar(TasClient client)
         {
             InitializeComponent();
             this.client = client;
-            var cs = new ContentService();
 
-            int cnt = 0;
             
-            foreach (ZkData.AutohostMode mode in Enum.GetValues(typeof(ZkData.AutohostMode)).OfType<ZkData.AutohostMode>().Where(x=>x!= ZkData.AutohostMode.None)) {
-                var item = new InfoItems();
-                Items.Add(mode.ToString(),item);
-                int y = 0 + (cnt%3)*24;
-                int x = 80 + (cnt/3)*250;
-                item.ComboBox = new ComboBox() { Left = x + 125, Width=60, Top = y, DropDownStyle = ComboBoxStyle.DropDownList};
-                foreach (ZkData.GamePreference pref in Enum.GetValues(typeof(ZkData.GamePreference)).OfType<ZkData.GamePreference>().OrderByDescending(z=>(int)z)) {
-                    item.ComboBox.Items.Add(new CbItem() { Value = pref });
-                }
+            var cnt = 0;
 
-                this.Controls.Add(item.ComboBox);
-                item.Label = new Label() { Left = x+ 145, Top = y};
-                this.Controls.Add(item.Label);
-                this.Controls.Add(new Label() { Left = x+ 0, Width = 120, TextAlign =ContentAlignment.TopRight ,Top = y, Text = mode.Description()});
+            foreach (var mode in Enum.GetValues(typeof(AutohostMode)).OfType<AutohostMode>().Where(x => x != AutohostMode.None))
+            {
+                var item = new InfoItems();
+                Items.Add(mode.ToString(), item);
+                var y = 0 + (cnt%3)*24;
+                var x = 0 + (cnt/3)*230;
+                Controls.Add(new Label() { Left = x + 0, Width = 160, TextAlign = ContentAlignment.TopRight, Top = y, Text = mode.Description() });
+                item.ComboBox = new ComboBox() { Left = x + 165, Width = 60, Top = y, DropDownStyle = ComboBoxStyle.DropDownList };
+                foreach (var pref in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderByDescending(z => (int)z)) item.ComboBox.Items.Add(new CbItem() { Value = pref });
+                item.ComboBox.SelectedValueChanged += (sender, args) => { if (!suppressChangeEvent) SendMyConfig(true); };
+
+                Controls.Add(item.ComboBox);
+                item.Label = new Label() { Left = x + 225, Top = y, Width = 20 };
+                Controls.Add(item.Label);
+
                 cnt++;
             }
 
+            GetJugglerState();
+            GetMyConfig();
+
+
+            client.BattleJoined += (sender, args) =>
+            {
+                if (args.Data.Founder.IsSpringieManaged)
+                {
+                    Activate();
+                    BarContainer.btnStop.Enabled = false;
+                }
+            };
+
+            client.BattleClosed += (sender, args) =>
+            {
+                if (BarContainer != null) BarContainer.btnStop.Enabled = true;
+            };
+
+            this.timer = new Timer();
+            timer.Interval = 30000;
+            timer.Tick += (sender, args) => GetJugglerState();
+
+        }
+
+        public void Activate() {
+            if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
+            SendMyConfig(false);
+            timer.Enabled = true;
+        }
+
+
+        JugglerState lastState;
+        Timer timer;
+
+        public void GetJugglerState() {
+            var cs = new ContentService();
             cs.GetJugglerStateCompleted += (sender, args) =>
             {
                 if (!args.Cancelled && args.Error == null)
                 {
                     var res = args.Result;
-                    if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
-                    lbInfo.Text = "Players: " + res.TotalPlayers;
-                    foreach (var entry in res.ModeCounts) {
-                        Items[entry.Mode.ToString()].Label.Text = entry.Count.ToString();
+                    lastState = res;
+                    if (BarContainer != null) BarContainer.btnDetail.Text = "MatchMaking " + res.TotalPlayers + " players";
+                    foreach (var entry in res.ModeCounts)
+                    {
+                        InfoItems item;
+                        if (Items.TryGetValue(entry.Mode.ToString(), out item)) item.Label.Text = entry.Count.ToString();
                     }
-
-
                 }
-
             };
             cs.GetJugglerStateAsync();
 
-            cs.GetJugglerConfigCompleted += (sender, args) => {
-                if (!args.Cancelled && args.Error == null) {
+        }
+
+        public void GetMyConfig() {
+            var cs2 = new ContentService();
+            cs2.GetJugglerConfigCompleted += (sender, args) =>
+            {
+                if (!args.Cancelled && args.Error == null)
+                {
+                    suppressChangeEvent = true;
                     var res = args.Result;
-                    cbMatchMake.Checked = res.Active;
-                    foreach (var entry in res.Preferences) {
-                        var cb = Items[entry.Mode.ToString()].ComboBox;
-                        cb.SelectedItem = cb.Items.OfType<CbItem>().FirstOrDefault(x => (int)x.Value == (int)entry.Preference);
+                    foreach (var entry in res.Preferences)
+                    {
+                        InfoItems item;
+                        if (Items.TryGetValue(entry.Mode.ToString(), out item))
+                        {
+                            var cb = item.ComboBox;
+                            cb.SelectedItem = cb.Items.OfType<CbItem>().FirstOrDefault(x => x.Value.ToString() == entry.Preference.ToString());
+                        }
                     }
-
-
+                    suppressChangeEvent = false;
                 }
-
             };
-            if (Program.TasClient.MyUser != null) cs.GetJugglerConfig(Program.TasClient.MyUser.LobbyID);
+
+            cs2.GetJugglerConfigAsync(Program.Conf.LobbyPlayerName);
+       
+        }
+
+
+        public void SendMyConfig(bool sendPreferences)
+        {
+            var conf = new JugglerConfig();
+            conf.Active = Program.NotifySection.Bars.Contains(this);
+            if (sendPreferences)
+            {
+                var prefs = new List<PreferencePair>();
+                foreach (var item in Items)
+                {
+                    var cb = (CbItem)item.Value.ComboBox.SelectedItem;;
+                    if (cb != null)
+                    {
+                        var comboValue = cb.Value;
+                        var preference =
+                            Enum.GetValues(typeof(PlasmaShared.ContentService.GamePreference)).OfType<PlasmaShared.ContentService.GamePreference>().
+                                FirstOrDefault(x => x.ToString() == comboValue.ToString());
+                        var autohostMode =
+                            Enum.GetValues(typeof(PlasmaShared.ContentService.AutohostMode)).OfType<PlasmaShared.ContentService.AutohostMode>().
+                                FirstOrDefault(x => x.ToString() == item.Key);
+
+                        prefs.Add(new PreferencePair() { Mode = autohostMode, Preference = preference });
+                    }
+                }
+                conf.Preferences = prefs.ToArray();
+            }
+
+            var cs = new ContentService();
+            cs.SetJugglerConfig(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword, conf);
         }
 
         public void AddedToContainer(NotifyBarContainer container)
         {
             BarContainer = container;
-            container.btnDetail.Text = "MatchMaking";
-            container.btnDetail.Enabled = false;
+            container.btnDetail.Text = "MatchMaking ";
+            if (lastState != null) container.btnDetail.Text+= lastState.TotalPlayers +  " players"; ;
         }
 
         public void CloseClicked(NotifyBarContainer container)
         {
-            Program.NotifySection.RemoveBar(this);
+            if (client.MyBattle == null || !client.MyBattle.Founder.IsSpringieManaged)
+            {
+                Deactivate();
+            }
         }
 
-        public void DetailClicked(NotifyBarContainer container)
+        void Deactivate()
         {
-            
+            Program.NotifySection.RemoveBar(this);
+            SendMyConfig(false);
+            timer.Enabled = false;
+        }
+
+        public void DetailClicked(NotifyBarContainer container) {
+            GetMyConfig();
+            GetJugglerState();
         }
 
         public Control GetControl()
         {
             return this;
         }
+
+        public class CbItem
+        {
+            public GamePreference Value;
+
+            public override string ToString()
+            {
+                return Value.Description();
+            }
+        }
     }
 
-    class InfoItems {
-        public Label Label;
+    class InfoItems
+    {
         public ComboBox ComboBox;
+        public Label Label;
     }
 }

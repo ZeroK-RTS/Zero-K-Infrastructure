@@ -286,5 +286,10 @@ namespace ZeroKLobby
 
 
         */
+
+      void btnMatchMaking_Click(object sender, RoutedEventArgs e)
+      {
+          Program.JugglerBar.Activate();
+      }
   }
 }

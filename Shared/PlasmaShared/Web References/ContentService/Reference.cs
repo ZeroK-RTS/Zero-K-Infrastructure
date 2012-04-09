@@ -672,24 +672,24 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetJugglerConfig", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public JugglerConfig GetJugglerConfig(int lobbyID) {
+        public JugglerConfig GetJugglerConfig(string login) {
             object[] results = this.Invoke("GetJugglerConfig", new object[] {
-                        lobbyID});
+                        login});
             return ((JugglerConfig)(results[0]));
         }
         
         /// <remarks/>
-        public void GetJugglerConfigAsync(int lobbyID) {
-            this.GetJugglerConfigAsync(lobbyID, null);
+        public void GetJugglerConfigAsync(string login) {
+            this.GetJugglerConfigAsync(login, null);
         }
         
         /// <remarks/>
-        public void GetJugglerConfigAsync(int lobbyID, object userState) {
+        public void GetJugglerConfigAsync(string login, object userState) {
             if ((this.GetJugglerConfigOperationCompleted == null)) {
                 this.GetJugglerConfigOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetJugglerConfigOperationCompleted);
             }
             this.InvokeAsync("GetJugglerConfig", new object[] {
-                        lobbyID}, this.GetJugglerConfigOperationCompleted, userState);
+                        login}, this.GetJugglerConfigOperationCompleted, userState);
         }
         
         private void OnGetJugglerConfigOperationCompleted(object arg) {
@@ -905,6 +905,9 @@ namespace PlasmaShared.ContentService {
     public enum AutohostMode {
         
         /// <remarks/>
+        None,
+        
+        /// <remarks/>
         GameTeams,
         
         /// <remarks/>
@@ -921,9 +924,6 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         SmallTeams,
-        
-        /// <remarks/>
-        None,
     }
     
     /// <remarks/>
@@ -933,13 +933,13 @@ namespace PlasmaShared.ContentService {
     public enum GamePreference {
         
         /// <remarks/>
-        Like,
-        
-        /// <remarks/>
         Never,
         
         /// <remarks/>
         Ok,
+        
+        /// <remarks/>
+        Like,
         
         /// <remarks/>
         Best,

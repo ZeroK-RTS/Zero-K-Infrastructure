@@ -322,19 +322,19 @@
       </s:complexType>
       <s:simpleType name="AutohostMode">
         <s:restriction base="s:string">
+          <s:enumeration value="None" />
           <s:enumeration value="GameTeams" />
           <s:enumeration value="Planetwars" />
           <s:enumeration value="Game1v1" />
           <s:enumeration value="GameFFA" />
           <s:enumeration value="GameChickens" />
           <s:enumeration value="SmallTeams" />
-          <s:enumeration value="None" />
         </s:restriction>
       </s:simpleType>
       <s:element name="GetJugglerConfig">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="lobbyID" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -364,9 +364,9 @@
       </s:complexType>
       <s:simpleType name="GamePreference">
         <s:restriction base="s:string">
-          <s:enumeration value="Like" />
           <s:enumeration value="Never" />
           <s:enumeration value="Ok" />
+          <s:enumeration value="Like" />
           <s:enumeration value="Best" />
         </s:restriction>
       </s:simpleType>
