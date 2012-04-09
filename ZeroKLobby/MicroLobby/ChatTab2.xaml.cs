@@ -227,6 +227,9 @@ namespace ZeroKLobby.MicroLobby
     ChatControl CreateChannelControl(string channelName)
     {
       if (IsIgnoredChannel(channelName)) return null;
+      var existing = GetChannelControl(channelName);
+      if (existing != null) return existing;
+
       var chatControl = new ChatControl(channelName) { Dock = DockStyle.Fill };
       var gameInfo = KnownGames.List.FirstOrDefault(x => x.Channel == channelName);
       chatControl.GameInfo = gameInfo;

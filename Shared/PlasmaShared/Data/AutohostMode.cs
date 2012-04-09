@@ -28,7 +28,7 @@ namespace ZkData
         [Description("Small teams (2v2-4v4)")]
         SmallTeams = 6,
         
-        [Description("Big teams (7v7+)")]
+        [Description("Big teams (5v5+)")]
         BigTeams = 7,
     }
 
