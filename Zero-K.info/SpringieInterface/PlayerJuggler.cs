@@ -367,7 +367,7 @@ namespace ZeroKWeb.SpringieInterface
 
             var state  = new JugglerState();
             state.TotalPlayers = juggledAccounts.Count;
-            foreach (var grp in bins.GroupBy(x => x.Mode).Select(x => new { Mode = x.Key, Count = x.Sum(y => y.PlayerPriority.Count(z => z.Value > (double)GamePreference.Never)) })) {
+            foreach (var grp in bins.GroupBy(x => x.Mode).Select(x => new { Mode = x.Key, Count = x.Sum(y => y.PlayerPriority.Count(z => z.Value >= (double)GamePreference.Like)) })) {
                 state.ModeCounts.Add(new JugglerState.ModePair() {Mode = grp.Mode, Count = grp.Count});
             }
             LastState = state;
