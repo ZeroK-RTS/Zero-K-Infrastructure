@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace NightWatch
@@ -52,7 +53,7 @@ namespace NightWatch
 
             this.client.UserAdded += (s, e) =>
                 {
-                    Task.Factory.StartNew(() =>
+                    Utils.StartAsync(() =>
                         {
                             using (var db = new ZkDataContext())
                             {
@@ -84,9 +85,9 @@ namespace NightWatch
             // todo this executes for nothing after useradded sets extension -> avoid by splitting extension changed na duserstatuschanged
             this.client.UserStatusChanged += (s, e) =>
                 {
-                    Task.Factory.StartNew(() =>
+                    var user = client.ExistingUsers[e.ServerParams[0]];
+                    Utils.StartAsync(() =>
                         {
-                            var user = client.ExistingUsers[e.ServerParams[0]];
                             UpdateUser(user.LobbyID, user.Name, user, null);
                         });
                 };
@@ -110,7 +111,7 @@ namespace NightWatch
                                        false);
                         }
 
-                        Task.Factory.StartNew(() =>
+                        Utils.StartAsync(() =>
                             {
                                 using (var db = new ZkDataContext())
                                 {
@@ -134,7 +135,7 @@ namespace NightWatch
 
             this.client.UserLobbyVersionRecieved += (s, e) =>
                 {
-                    Task.Factory.StartNew(() =>
+                    Utils.StartAsync(() =>
                         {
                             using (var db = new ZkDataContext())
                             {
@@ -167,7 +168,7 @@ namespace NightWatch
         {
             Account acc = null;
             using (var db = new ZkDataContext())
-            using (var scope = new TransactionScope())
+            //using (var scope = new TransactionScope())
             {
                 acc = db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
                 if (acc == null)
@@ -190,7 +191,7 @@ namespace NightWatch
                 }
 
                 db.SubmitChanges();
-                scope.Complete();
+              //  scope.Complete();
             }
             return acc;
         }
