@@ -18,6 +18,8 @@ using BalanceTeamsResult = ZeroKWeb.SpringieInterface.BalanceTeamsResult;
 using BattlePlayerResult = ZeroKWeb.SpringieInterface.BattlePlayerResult;
 using BattleResult = ZeroKWeb.SpringieInterface.BattleResult;
 using BotTeam = ZeroKWeb.SpringieInterface.BotTeam;
+using JugglerConfig = ZeroKWeb.SpringieInterface.JugglerConfig;
+using JugglerState = ZeroKWeb.SpringieInterface.JugglerState;
 using ProgramType = ZkData.ProgramType;
 using RecommendedMapResult = ZeroKWeb.SpringieInterface.RecommendedMapResult;
 using ResourceType = ZkData.ResourceType;
@@ -287,8 +289,8 @@ namespace ZeroKWeb
 
 
         [WebMethod]
-        public JugglerConfig GetJugglerConfig(int lobbyID) {
-            return PlayerJuggler.GetPlayerConfig(lobbyID);
+        public JugglerConfig GetJugglerConfig(string login) {
+            return PlayerJuggler.GetPlayerConfig(login);
         }
 
         [WebMethod]

@@ -59,6 +59,12 @@ namespace PlasmaShared.ContentService {
         
         private System.Threading.SendOrPostCallback VerifyAccountDataOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetJugglerStateOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GetJugglerConfigOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback SetJugglerConfigOperationCompleted;
+        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -141,6 +147,15 @@ namespace PlasmaShared.ContentService {
         
         /// <remarks/>
         public event VerifyAccountDataCompletedEventHandler VerifyAccountDataCompleted;
+        
+        /// <remarks/>
+        public event GetJugglerStateCompletedEventHandler GetJugglerStateCompleted;
+        
+        /// <remarks/>
+        public event GetJugglerConfigCompletedEventHandler GetJugglerConfigCompleted;
+        
+        /// <remarks/>
+        public event SetJugglerConfigCompletedEventHandler SetJugglerConfigCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DownloadFile", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -629,6 +644,94 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetJugglerState", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public JugglerState GetJugglerState() {
+            object[] results = this.Invoke("GetJugglerState", new object[0]);
+            return ((JugglerState)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetJugglerStateAsync() {
+            this.GetJugglerStateAsync(null);
+        }
+        
+        /// <remarks/>
+        public void GetJugglerStateAsync(object userState) {
+            if ((this.GetJugglerStateOperationCompleted == null)) {
+                this.GetJugglerStateOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetJugglerStateOperationCompleted);
+            }
+            this.InvokeAsync("GetJugglerState", new object[0], this.GetJugglerStateOperationCompleted, userState);
+        }
+        
+        private void OnGetJugglerStateOperationCompleted(object arg) {
+            if ((this.GetJugglerStateCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetJugglerStateCompleted(this, new GetJugglerStateCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetJugglerConfig", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public JugglerConfig GetJugglerConfig(int lobbyID) {
+            object[] results = this.Invoke("GetJugglerConfig", new object[] {
+                        lobbyID});
+            return ((JugglerConfig)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetJugglerConfigAsync(int lobbyID) {
+            this.GetJugglerConfigAsync(lobbyID, null);
+        }
+        
+        /// <remarks/>
+        public void GetJugglerConfigAsync(int lobbyID, object userState) {
+            if ((this.GetJugglerConfigOperationCompleted == null)) {
+                this.GetJugglerConfigOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetJugglerConfigOperationCompleted);
+            }
+            this.InvokeAsync("GetJugglerConfig", new object[] {
+                        lobbyID}, this.GetJugglerConfigOperationCompleted, userState);
+        }
+        
+        private void OnGetJugglerConfigOperationCompleted(object arg) {
+            if ((this.GetJugglerConfigCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetJugglerConfigCompleted(this, new GetJugglerConfigCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SetJugglerConfig", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void SetJugglerConfig(string login, string password, JugglerConfig config) {
+            this.Invoke("SetJugglerConfig", new object[] {
+                        login,
+                        password,
+                        config});
+        }
+        
+        /// <remarks/>
+        public void SetJugglerConfigAsync(string login, string password, JugglerConfig config) {
+            this.SetJugglerConfigAsync(login, password, config, null);
+        }
+        
+        /// <remarks/>
+        public void SetJugglerConfigAsync(string login, string password, JugglerConfig config, object userState) {
+            if ((this.SetJugglerConfigOperationCompleted == null)) {
+                this.SetJugglerConfigOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetJugglerConfigOperationCompleted);
+            }
+            this.InvokeAsync("SetJugglerConfig", new object[] {
+                        login,
+                        password,
+                        config}, this.SetJugglerConfigOperationCompleted, userState);
+        }
+        
+        private void OnSetJugglerConfigOperationCompleted(object arg) {
+            if ((this.SetJugglerConfigCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.SetJugglerConfigCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -758,6 +861,185 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.springVersionField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class PreferencePair {
+        
+        private AutohostMode modeField;
+        
+        private GamePreference preferenceField;
+        
+        /// <remarks/>
+        public AutohostMode Mode {
+            get {
+                return this.modeField;
+            }
+            set {
+                this.modeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public GamePreference Preference {
+            get {
+                return this.preferenceField;
+            }
+            set {
+                this.preferenceField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public enum AutohostMode {
+        
+        /// <remarks/>
+        GameTeams,
+        
+        /// <remarks/>
+        Planetwars,
+        
+        /// <remarks/>
+        Game1v1,
+        
+        /// <remarks/>
+        GameFFA,
+        
+        /// <remarks/>
+        GameChickens,
+        
+        /// <remarks/>
+        SmallTeams,
+        
+        /// <remarks/>
+        None,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public enum GamePreference {
+        
+        /// <remarks/>
+        Like,
+        
+        /// <remarks/>
+        Never,
+        
+        /// <remarks/>
+        Ok,
+        
+        /// <remarks/>
+        Best,
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class JugglerConfig {
+        
+        private bool activeField;
+        
+        private PreferencePair[] preferencesField;
+        
+        /// <remarks/>
+        public bool Active {
+            get {
+                return this.activeField;
+            }
+            set {
+                this.activeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PreferencePair[] Preferences {
+            get {
+                return this.preferencesField;
+            }
+            set {
+                this.preferencesField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class ModePair {
+        
+        private AutohostMode modeField;
+        
+        private int countField;
+        
+        /// <remarks/>
+        public AutohostMode Mode {
+            get {
+                return this.modeField;
+            }
+            set {
+                this.modeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int Count {
+            get {
+                return this.countField;
+            }
+            set {
+                this.countField = value;
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
+    public partial class JugglerState {
+        
+        private ModePair[] modeCountsField;
+        
+        private int totalPlayersField;
+        
+        /// <remarks/>
+        public ModePair[] ModeCounts {
+            get {
+                return this.modeCountsField;
+            }
+            set {
+                this.modeCountsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int TotalPlayers {
+            get {
+                return this.totalPlayersField;
+            }
+            set {
+                this.totalPlayersField = value;
             }
         }
     }
@@ -1270,6 +1552,62 @@ namespace PlasmaShared.ContentService {
             }
         }
     }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetJugglerStateCompletedEventHandler(object sender, GetJugglerStateCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetJugglerStateCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetJugglerStateCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public JugglerState Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((JugglerState)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void GetJugglerConfigCompletedEventHandler(object sender, GetJugglerConfigCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetJugglerConfigCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetJugglerConfigCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public JugglerConfig Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((JugglerConfig)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
+    public delegate void SetJugglerConfigCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }
 
 #pragma warning restore 1591

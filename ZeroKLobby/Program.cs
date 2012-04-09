@@ -15,7 +15,6 @@ using LobbyClient;
 using PlasmaShared;
 using ZeroKLobby.MicroLobby;
 using ZeroKLobby.Notifications;
-using ZeroKLobby.VoiceCommand;
 using ZkData;
 using Application = System.Windows.Forms.Application;
 using MessageBox = System.Windows.Forms.MessageBox;
@@ -37,6 +36,7 @@ namespace ZeroKLobby
         public static PlasmaDownloader.PlasmaDownloader Downloader { get; private set; }
         public static EngineConfigurator EngineConfigurator { get; set; }
         public static FriendManager FriendManager;
+        public static JugglerBar JugglerBar { get; private set; }
         public static MainWindow MainWindow { get; private set; }
         public static ModStore ModStore { get; private set; }
         public static NotifySection NotifySection { get { return MainWindow.NotifySection; } }
@@ -221,7 +221,8 @@ namespace ZeroKLobby
                                           string.Format("ZK {0}",
                                                         ApplicationDeployment.IsNetworkDeployed
                                                             ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
-                                                            : Application.ProductVersion), GlobalConst.ZkLobbyUserCpu);
+                                                            : Application.ProductVersion),
+                                          GlobalConst.ZkLobbyUserCpu);
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 
@@ -247,11 +248,7 @@ namespace ZeroKLobby
                         var tas = (TasClient)s;
                         User user = null;
                         tas.ExistingUsers.TryGetValue(e.Data.UserName, out user);
-                        if ((user != null && user.BanMute) || Conf.IgnoredUsers.Contains(e.Data.UserName))
-                        {
-                            e.Cancel = true;
-                        }
-
+                        if ((user != null && user.BanMute) || Conf.IgnoredUsers.Contains(e.Data.UserName)) e.Cancel = true;
 
                         if (e.Data.Place == TasSayEventArgs.Places.Normal && e.Data.Text.StartsWith("!join") && user != null)
                         {
@@ -267,16 +264,17 @@ namespace ZeroKLobby
                     };
 
                 TasClient.MyExtensionsChanged += (sender, eventArgs) =>
-                {
-                    var u = eventArgs.Data;
-                    if (!string.IsNullOrEmpty(u.Clan)) TasClient.JoinChannel(u.Clan);
-                    if (!string.IsNullOrEmpty(u.Faction)) TasClient.JoinChannel(u.Faction);
-                    if (!string.IsNullOrEmpty(TasClient.MyUser.Country) && TasClient.MyUser.Country!="??") TasClient.JoinChannel(TasClient.MyUser.Country);
-                };
+                    {
+                        var u = eventArgs.Data;
+                        if (!string.IsNullOrEmpty(u.Clan)) TasClient.JoinChannel(u.Clan);
+                        if (!string.IsNullOrEmpty(u.Faction)) TasClient.JoinChannel(u.Faction);
+                        if (!string.IsNullOrEmpty(TasClient.MyUser.Country) && TasClient.MyUser.Country != "??") TasClient.JoinChannel(TasClient.MyUser.Country);
+                    };
 
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();
                 ToolTip = new ToolTipHandler();
+                JugglerBar = new JugglerBar(TasClient);
 
                 Application.AddMessageFilter(ToolTip);
 

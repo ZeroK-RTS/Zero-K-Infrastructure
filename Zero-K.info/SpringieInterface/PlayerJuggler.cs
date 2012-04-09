@@ -392,10 +392,10 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        public static JugglerConfig GetPlayerConfig(int lobbyID)
+        public static JugglerConfig GetPlayerConfig(string login)
         {
             var db = new ZkDataContext();
-            var acc = db.Accounts.First(x => x.LobbyID == lobbyID);
+            var acc = db.Accounts.First(x => x.Name == login);
             var ret = new JugglerConfig();
             ret.Active = acc.MatchMakingActive;
             foreach (var pref in acc.Preferences) {
