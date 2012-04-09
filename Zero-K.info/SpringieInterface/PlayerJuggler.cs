@@ -57,8 +57,8 @@ namespace ZeroKWeb.SpringieInterface
         public static bool CanMove(Account acc)
         {
             User user;
-            if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && !user.IsZkLobbyUser) return false;
-            else return true;
+            if (string.IsNullOrEmpty(acc.LobbyVersion) || !acc.LobbyVersion.Contains("SpringLobby")) return true;
+            else return false;
         }
 
         public static JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
@@ -85,7 +85,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     var notPlaying =
                         ah.LobbyContext.Players.Where(
-                            x => !x.IsSpectator && !x.IsIngame && !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator)).Select(
+                            x => !x.IsSpectator && !x.IsIngame && !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator && y.IsIngame )).Select(
                                 x => (int?)x.LobbyID).ToList();
                     // game running, add all those that are not playing and are not specs
                     lobbyIds.AddRange(notPlaying);
@@ -95,8 +95,8 @@ namespace ZeroKWeb.SpringieInterface
             var roomLessLobbyID = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
             foreach (var ah in autohosts) { // safeguard - remove those known to be playing or speccing
                 if (ah.RunningGameStartContext != null)
-                    foreach (var id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator).Select(x => x.LobbyID)) roomLessLobbyID.Remove(id);
-                if (ah.LobbyContext != null) foreach (var id in ah.LobbyContext.Players.Where(x => x.IsSpectator).Select(x=>x.LobbyID)) roomLessLobbyID.Remove(id);
+                    foreach (var id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator && x.IsIngame).Select(x => x.LobbyID)) roomLessLobbyID.Remove(id);
+                if (ah.LobbyContext != null) foreach (var id in ah.LobbyContext.Players.Where(x => x.IsSpectator || x.IsIngame).Select(x=>x.LobbyID)) roomLessLobbyID.Remove(id);
             }
 
             var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID) || (roomLessLobbyID.Contains(x.LobbyID) && x.MatchMakingActive)).ToDictionary(x => x.LobbyID ?? 0);
@@ -230,24 +230,6 @@ namespace ZeroKWeb.SpringieInterface
                         {
                             if (origAh == null) tas.Say(TasClient.SayPlace.User, acc.Name, "!join " + b.Autohost.LobbyContext.AutohostName,false);
                             ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
-                            string reason = "because you weren't in a valid battle or your battle was split into two smaller";
-                            if (origAh != null) {
-                                var origMode = origAh.LobbyContext.GetMode();
-                                if (acc.Preferences[origMode] < acc.Preferences[b.Mode])
-                                {
-                                    reason = string.Format("because you like {0} more than {1}", b.Mode.Description(), origMode.Description());
-                                }
-                                else {
-                                    if (!bins.Any(x => x.Autohost == origAh))
-                                    {
-                                        reason = string.Format("because your game is not yet possible due to lack of players");
-                                    }
-                                    else {
-                                        reason = string.Format("because you like {0} same as {1} and {0} was missing a player and you were the best match", b.Mode.Description(), origMode.Description());
-                                    }
-                                }
-                            }
-                            // AuthServiceClient.SendLobbyMessage(acc, string.Format("You were moved to {0}, {1}. To change your preferences, please go to home page. http://zero-k.info", b.Autohost.LobbyContext.AutohostName, reason));
                         }
                     }
 

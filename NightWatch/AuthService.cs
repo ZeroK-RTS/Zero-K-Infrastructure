@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Transactions;
 using LobbyClient;
 using ZkData;
@@ -49,41 +50,45 @@ namespace NightWatch
                     requests.TryRemove(client.MessageID, out entry);
                 };
 
-
             this.client.UserAdded += (s, e) =>
                 {
-                    using (var db = new ZkDataContext())
-                    {
-                        var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == e.Data.LobbyID);
-                        if (acc != null)
+                    Task.Factory.StartNew(() =>
                         {
-                            var data = new Dictionary<string, string>()
-                                       {
-                                           { ProtocolExtension.Keys.Level.ToString(), acc.Level.ToString() },
-                                           { ProtocolExtension.Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString() },
-                                           { ProtocolExtension.Keys.Faction.ToString(), acc.Faction != null ? acc.Faction.Shortcut : "" },
-                                           { ProtocolExtension.Keys.Clan.ToString(), acc.Clan != null ? acc.Clan.Shortcut : "" },
-                                           { ProtocolExtension.Keys.Avatar.ToString(), acc.Avatar }
-                                       };
-                            if (acc.SpringieLevel != 1) data.Add(ProtocolExtension.Keys.SpringieLevel.ToString(), acc.SpringieLevel.ToString());
-                            if (acc.IsZeroKAdmin) data.Add(ProtocolExtension.Keys.ZkAdmin.ToString(), "1");
+                            using (var db = new ZkDataContext())
+                            {
+                                var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == e.Data.LobbyID);
+                                if (acc != null)
+                                {
+                                    var data = new Dictionary<string, string>()
+                                               {
+                                                   { ProtocolExtension.Keys.Level.ToString(), acc.Level.ToString() },
+                                                   { ProtocolExtension.Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString() },
+                                                   { ProtocolExtension.Keys.Faction.ToString(), acc.Faction != null ? acc.Faction.Shortcut : "" },
+                                                   { ProtocolExtension.Keys.Clan.ToString(), acc.Clan != null ? acc.Clan.Shortcut : "" },
+                                                   { ProtocolExtension.Keys.Avatar.ToString(), acc.Avatar }
+                                               };
+                                    if (acc.SpringieLevel != 1) data.Add(ProtocolExtension.Keys.SpringieLevel.ToString(), acc.SpringieLevel.ToString());
+                                    if (acc.IsZeroKAdmin) data.Add(ProtocolExtension.Keys.ZkAdmin.ToString(), "1");
 
-                            if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute)) data.Add(ProtocolExtension.Keys.BanMute.ToString(), "1");
-                            if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) data.Add(ProtocolExtension.Keys.BanLobby.ToString(), "1");
+                                    if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute)) data.Add(ProtocolExtension.Keys.BanMute.ToString(), "1");
+                                    if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) data.Add(ProtocolExtension.Keys.BanLobby.ToString(), "1");
 
-                            client.Extensions.Publish(e.Data.Name, data);
+                                    client.Extensions.Publish(e.Data.Name, data);
 
-                            if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(e.Data.Name, "Banned");
-
-                        }
-                    }
+                                    if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(e.Data.Name, "Banned");
+                                }
+                            }
+                        });
                 };
 
             // todo this executes for nothing after useradded sets extension -> avoid by splitting extension changed na duserstatuschanged
             this.client.UserStatusChanged += (s, e) =>
                 {
-                    var user = client.ExistingUsers[e.ServerParams[0]];
-                    UpdateUser(user.LobbyID, user.Name, user, null);
+                    Task.Factory.StartNew(() =>
+                        {
+                            var user = client.ExistingUsers[e.ServerParams[0]];
+                            UpdateUser(user.LobbyID, user.Name, user, null);
+                        });
                 };
 
             this.client.BattleUserJoined += (s, e) =>
@@ -105,13 +110,18 @@ namespace NightWatch
                                        false);
                         }
 
-                        var db = new ZkDataContext();
-                        var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == user.LobbyID);
-                        var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-                        var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
-                        if (acc != null &&
-                            (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
-                            aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
+                        Task.Factory.StartNew(() =>
+                            {
+                                using (var db = new ZkDataContext())
+                                {
+                                    var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == user.LobbyID);
+                                    var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+                                    var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
+                                    if (acc != null &&
+                                        (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
+                                        aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
+                                }
+                            });
                     }
                 };
 
@@ -124,25 +134,28 @@ namespace NightWatch
 
             this.client.UserLobbyVersionRecieved += (s, e) =>
                 {
-                    using (var db = new ZkDataContext())
-                    {
-                        var acc = db.Accounts.FirstOrDefault(x => x.Name == e.Name);
-                        if (acc != null)
+                    Task.Factory.StartNew(() =>
                         {
-                            acc.LobbyVersion = e.LobbyVersion;
-                            acc.LastLobbyVersionCheck = DateTime.UtcNow;
-                            db.SubmitChanges();
-                            if (!acc.LobbyVersion.StartsWith("ZK"))
+                            using (var db = new ZkDataContext())
                             {
-                                client.Say(TasClient.SayPlace.User,
-                                           e.Name,
-                                           string.Format(
-                                               "WARNING: You are connected using {0} which is not fully compatible with this host. Please use Zero-K lobby. Download it from http://zero-k.info   NOTE: to play all Spring games/mods with Zero-K lobby, untick \"Official games\" on its multiplayer tab. Thank you!",
-                                               e.LobbyVersion),
-                                           false);
+                                var acc = db.Accounts.FirstOrDefault(x => x.Name == e.Name);
+                                if (acc != null)
+                                {
+                                    acc.LobbyVersion = e.LobbyVersion;
+                                    acc.LastLobbyVersionCheck = DateTime.UtcNow;
+                                    db.SubmitChanges();
+                                    if (!acc.LobbyVersion.StartsWith("ZK"))
+                                    {
+                                        client.Say(TasClient.SayPlace.User,
+                                                   e.Name,
+                                                   string.Format(
+                                                       "WARNING: You are connected using {0} which is not fully compatible with this host. Please use Zero-K lobby. Download it from http://zero-k.info   NOTE: to play all Spring games/mods with Zero-K lobby, untick \"Official games\" on its multiplayer tab. Thank you!",
+                                                       e.LobbyVersion),
+                                                   false);
+                                    }
+                                }
                             }
-                        }
-                    }
+                        });
                 };
 
             this.client.BattleFound +=

@@ -16,7 +16,7 @@ namespace CaTracker
 
         void tas_Said(object sender, TasSayEventArgs e)
         {
-            if (e.Place == TasSayEventArgs.Places.Normal)
+            if (e.Place == TasSayEventArgs.Places.Normal && e.UserName != tas.UserName && e.Channel != tas.UserName)
             {
                 if (e.Text.StartsWith("!move"))
                 {

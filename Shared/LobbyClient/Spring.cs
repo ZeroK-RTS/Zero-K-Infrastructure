@@ -225,6 +225,7 @@ namespace LobbyClient
                         try
                         {
                             StartContext = client.MyBattle.GetContext();
+                            foreach (var p in StartContext.Players) p.IsIngame = false;
                             startSetup = service.GetSpringBattleStartSetup(StartContext);
                         }
                         catch (Exception ex)
@@ -545,10 +546,12 @@ namespace LobbyClient
                 switch (e.EventType)
                 {
                     case Talker.SpringEventType.PLAYER_JOINED:
+                        if (StartContext != null) foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName)) p.IsIngame = true;
                         if (PlayerJoined != null) PlayerJoined(this, new SpringLogEventArgs(e.PlayerName));
                         break;
 
                     case Talker.SpringEventType.PLAYER_LEFT:
+                        if (StartContext != null) foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName)) p.IsIngame = false;
                         if (e.Param == 0 && PlayerDisconnected != null) PlayerDisconnected(this, new SpringLogEventArgs(e.PlayerName));
                         if (PlayerLeft != null) PlayerLeft(this, new SpringLogEventArgs(e.PlayerName));
 
@@ -572,6 +575,7 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_GAMEOVER:
+                        if (StartContext != null)  foreach (var p in StartContext.Players) p.IsIngame = false;
                         gameEndedOk = true;
                         battleResult.Duration = (int)DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds;
                         if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
@@ -586,6 +590,7 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_QUIT:
+                        if (StartContext != null) foreach (var p in StartContext.Players) p.IsIngame = false;
                         //Program.main.AutoHost.SayBattle("dbg quit ");
                         //if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
                         break;
