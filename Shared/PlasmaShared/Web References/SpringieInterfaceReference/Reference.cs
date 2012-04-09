@@ -419,9 +419,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class BattleContext {
         
-        private string mapField;
-        
         private string autohostNameField;
+        
+        private string mapField;
         
         private string modField;
         
@@ -430,22 +430,22 @@ namespace PlasmaShared.SpringieInterfaceReference {
         private BotTeam[] botsField;
         
         /// <remarks/>
-        public string Map {
-            get {
-                return this.mapField;
-            }
-            set {
-                this.mapField = value;
-            }
-        }
-        
-        /// <remarks/>
         public string AutohostName {
             get {
                 return this.autohostNameField;
             }
             set {
                 this.autohostNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Map {
+            get {
+                return this.mapField;
+            }
+            set {
+                this.mapField = value;
             }
         }
         
@@ -973,7 +973,7 @@ namespace PlasmaShared.SpringieInterfaceReference {
         None,
         
         /// <remarks/>
-        GameTeams,
+        MediumTeams,
         
         /// <remarks/>
         Planetwars,
@@ -989,6 +989,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         SmallTeams,
+        
+        /// <remarks/>
+        BigTeams,
     }
     
     /// <remarks/>

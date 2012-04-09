@@ -258,9 +258,7 @@ namespace ZeroKWeb.SpringieInterface
 
             ret.Message = sb.ToString();
             
-            return new JugglerResult();
-            
-            //return ret;
+            return ret;
         }
 
         static void SplitBins(List<JugglerAutohost> autohosts, Dictionary<int, Account> juggledAccounts, StringBuilder sb, List<Bin> bins)
