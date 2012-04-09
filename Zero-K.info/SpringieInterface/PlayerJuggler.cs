@@ -57,8 +57,8 @@ namespace ZeroKWeb.SpringieInterface
         public static bool CanMove(Account acc)
         {
             User user;
-            if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && user.IsZkLobbyUser) return true;
-            return false;
+            if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && !user.IsZkLobbyUser) return false;
+            else return true;
         }
 
         public static JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
@@ -75,7 +75,7 @@ namespace ZeroKWeb.SpringieInterface
             
             var tas = Global.Nightwatch.Tas;
 
-            autohosts = autohosts.Where(x => !tas.ExistingBattles.Values.Single(y => y.Founder.Name == x.LobbyContext.AutohostName).IsPassworded).ToList(); //only non pw battles
+            autohosts = autohosts.Where(x => !tas.ExistingBattles.Values.Any(y=>y.Founder.Name == x.LobbyContext.AutohostName && y.IsPassworded)).ToList(); //only non pw battles
 
             foreach (var ah in autohosts)
             {
