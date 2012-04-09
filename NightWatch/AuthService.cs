@@ -161,6 +161,7 @@ namespace NightWatch
                     db.Accounts.InsertOnSubmit(acc);
                 }
 
+                acc.MatchMakingActive = false;
                 acc.LobbyID = lobbyID;
                 acc.Name = name;
                 if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;

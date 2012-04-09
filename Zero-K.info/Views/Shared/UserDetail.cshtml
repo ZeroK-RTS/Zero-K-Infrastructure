@@ -152,45 +152,49 @@
     </div>
     
     
-@*
-    <h3><a href="#" onclick="$('#usr_gamePreferences').toggle()">Game preferences</a></h3>
-    <div id="usr_gamePreferences" style="display: none">
-        <a href="@Url.Action("Index", "Wiki", new { node="PlayerJuggler"})">what is this for?</a>
-        @if (Model.AccountID == Global.AccountID)
-        {
-            <form action="@Url.Action("GamePreferences", "My")" method="POST">
-                <table>
-                    @foreach (var kvp in Model.Preferences.Where(x=>x.Key != AutohostMode.None).OrderBy(x=>x.Key))
-                    {
-                        <tr>
-                            <td>
-                                @kvp.Key.Description() :
-                            </td>
-                            <td>
-                                <select name="preference">
-                                     @foreach (GamePreference o in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderBy(x=>x))
-                                     {
-                                         <option value="@o" @(kvp.Value == o?"selected='selected'":"")>@o.Description()</option>
-                                     }
-                                </select>
-                            </td>
-                        </tr>
+    @if (!Global.IsLobbyAccess)
+    {
+        <h3><a href="#" onclick="$('#usr_gamePreferences').toggle()">Game preferences</a></h3>
+        <div id="usr_gamePreferences" style="display: none">
+            <a href="@Url.Action("Index", "Wiki", new { node = "PlayerJuggler" })">what is this for?</a>
+            @if (Model.AccountID == Global.AccountID)
+            {
+                <form action="@Url.Action("GamePreferences", "My")" method="POST">
+                    <table>
+                        @foreach (var kvp in Model.Preferences.Where(x => x.Key != AutohostMode.None).OrderBy(x => x.Key))
+                        {
+                            <tr>
+                                <td>
+                                    @kvp.Key.Description() :
+                                </td>
+                                <td>
+                                    <select name="preference">
+                                        @foreach (GamePreference o in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderBy(x => x))
+                                        {
+                                            <option value="@o" @(kvp.Value == o ? "selected='selected'" : "")>@o.Description()</option>
+                                        }
+                                    </select>
+                                </td>
+                            </tr>
 
+                        }
+                    </table>
+                    <input type="submit"/>
+                </form>
+            }
+            else
+            {
+                <table>
+                    @foreach (var kvp in Model.Preferences.Where(x => x.Key != AutohostMode.None).OrderBy(x => x.Key))
+                    {
+                        <tr><td>@kvp.Key.Description()</td><td>@kvp.Value.Description()</td></tr>
                     }
                 </table>
-                <input type="submit"/>
-            </form>
-        }
-        else {
-            <table>
-                    @foreach (var kvp in Model.Preferences.Where(x => x.Key != AutohostMode.None).OrderBy(x => x.Key)) {
-                        <tr><td>@kvp.Key.Description()</td><td>@kvp.Value.Description()</td></tr> 
             }
-            </table>
-        }
 
-    </div>
-	*@
+        </div>
+    }
+
 
     <div id="usr_technology" class="">
 		<h3>Technologies: </h3>

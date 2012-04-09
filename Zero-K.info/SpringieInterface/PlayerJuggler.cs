@@ -14,8 +14,34 @@ namespace ZeroKWeb.SpringieInterface
         public BattleContext RunningGameStartContext;
     }
 
+    public class JugglerConfig
+    {
+        public bool Active;
+        public List<PreferencePair> Preferences = new List<PreferencePair>();
+
+        public class PreferencePair
+        {
+            public AutohostMode Mode;
+            public GamePreference Preference;
+        }
+    }
+
+    public class JugglerState
+    {
+        public List<ModePair> ModeCounts = new List<ModePair>();
+        public int TotalPlayers = 0;
+
+        public class ModePair
+        {
+            public AutohostMode Mode;
+            public int Count;
+        }
+    }
+
     public class PlayerJuggler
     {
+        public static JugglerState LastState = new JugglerState();
+
         static readonly List<AutohostMode> BinOrder = new List<AutohostMode>
                                                       {
                                                           AutohostMode.Planetwars,
@@ -37,8 +63,7 @@ namespace ZeroKWeb.SpringieInterface
         public static JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
         {
             var ret = new JugglerResult();
-            ret.Message = "off for now";
-            return ret;
+            
 
             var bins = new List<Bin>();
             var db = new ZkDataContext();
@@ -46,8 +71,10 @@ namespace ZeroKWeb.SpringieInterface
             var lobbyIds = new List<int?>();
 
             Dictionary<int, AutohostMode> manuallyPrefered = new Dictionary<int, AutohostMode>();
+            
+            var tas = Global.Nightwatch.Tas;
 
-            autohosts = autohosts.Where(x => !Global.Nightwatch.Tas.ExistingBattles.Values.Single(y => y.Founder.Name == x.LobbyContext.AutohostName).IsPassworded).ToList(); //only non pw battles
+            autohosts = autohosts.Where(x => !tas.ExistingBattles.Values.Single(y => y.Founder.Name == x.LobbyContext.AutohostName).IsPassworded).ToList(); //only non pw battles
 
             foreach (var ah in autohosts)
             {
@@ -64,7 +91,9 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
 
-            var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID)).ToDictionary(x => x.LobbyID ?? 0);
+            var roomLessLobbyID = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
+
+            var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID) || (roomLessLobbyID.Contains(x.LobbyID) && x.MatchMakingActive)).ToDictionary(x => x.LobbyID ?? 0);
 
             // make bins from non-running games with players by each type
             foreach (var grp in
@@ -211,7 +240,7 @@ namespace ZeroKWeb.SpringieInterface
                                     }
                                 }
                             }
-                            AuthServiceClient.SendLobbyMessage(acc, string.Format("You were moved to {0}, {1}. To change your preferences, please go to home page. http://zero-k.info", b.Autohost.LobbyContext.AutohostName, reason));
+                            // hack AuthServiceClient.SendLobbyMessage(acc, string.Format("You were moved to {0}, {1}. To change your preferences, please go to home page. http://zero-k.info", b.Autohost.LobbyContext.AutohostName, reason));
                         }
                     }
 
@@ -227,7 +256,10 @@ namespace ZeroKWeb.SpringieInterface
 
 
             ret.Message = sb.ToString();
-            return ret;
+            
+            return new JugglerResult();
+            
+            //return ret;
         }
 
         static void SplitBins(List<JugglerAutohost> autohosts, Dictionary<int, Account> juggledAccounts, StringBuilder sb, List<Bin> bins)
@@ -327,6 +359,13 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
             }
+
+            var state  = new JugglerState();
+            state.TotalPlayers = juggledAccounts.Count;
+            foreach (var grp in bins.GroupBy(x => x.Mode).Select(x => new { Mode = x.Key, Count = x.Sum(y => y.PlayerPriority.Count(z => z.Value > (double)GamePreference.Never)) })) {
+                state.ModeCounts.Add(new JugglerState.ModePair() {Mode = grp.Mode, Count = grp.Count});
+            }
+            LastState = state;
         }
 
 
@@ -351,6 +390,32 @@ namespace ZeroKWeb.SpringieInterface
                 public Account Account;
                 public Bin CurrentBin;
             }
+        }
+
+        public static JugglerConfig GetPlayerConfig(int lobbyID)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.First(x => x.LobbyID == lobbyID);
+            var ret = new JugglerConfig();
+            ret.Active = acc.MatchMakingActive;
+            foreach (var pref in acc.Preferences) {
+                ret.Preferences.Add(new JugglerConfig.PreferencePair() { Mode = pref.Key, Preference = pref.Value});
+            }
+            return ret;
+        }
+
+        public static void SetPlayerConfig(string login, string password, JugglerConfig config)
+        {
+            var acc = AuthServiceClient.VerifyAccountPlain(login, password);
+            var db = new ZkDataContext();
+            acc = db.Accounts.Single(x => x.AccountID == acc.AccountID);
+            acc.MatchMakingActive = config.Active;
+            var prefs = acc.Preferences;
+            foreach (var item in config.Preferences) {
+                prefs[item.Mode] = item.Preference;
+            }
+            acc.SetPreferences(prefs);
+            db.SubmitChanges(); 
         }
     }
 

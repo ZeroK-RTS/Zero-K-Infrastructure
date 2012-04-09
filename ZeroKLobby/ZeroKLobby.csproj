@@ -50,7 +50,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>2.39.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -192,6 +192,12 @@
     </Compile>
     <Compile Include="NavigationControl.xaml.cs">
       <DependentUpon>NavigationControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Notifications\JugglerBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\JugglerBar.Designer.cs">
+      <DependentUpon>JugglerBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Notifications\ReplayBar.xaml.cs">
       <DependentUpon>ReplayBar.xaml</DependentUpon>
@@ -520,6 +526,9 @@
     <EmbeddedResource Include="MapDownloader\DownloaderTab.resx">
       <DependentUpon>DownloaderTab.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\JugglerBar.resx">
+      <DependentUpon>JugglerBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\NotifyBarContainer.resx">
       <DependentUpon>NotifyBarContainer.cs</DependentUpon>

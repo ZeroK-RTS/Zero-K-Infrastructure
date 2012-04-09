@@ -279,6 +279,24 @@ namespace ZeroKWeb
             return true;
         }
 
+
+        [WebMethod]
+        public JugglerState GetJugglerState() {
+            return PlayerJuggler.LastState;
+        }
+
+
+        [WebMethod]
+        public JugglerConfig GetJugglerConfig(int lobbyID) {
+            return PlayerJuggler.GetPlayerConfig(lobbyID);
+        }
+
+        [WebMethod]
+        public void SetJugglerConfig(string login, string password, JugglerConfig config) {
+            PlayerJuggler.SetPlayerConfig(login, password, config);
+        }
+
+
         string GetUserIP()
         {
             var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
