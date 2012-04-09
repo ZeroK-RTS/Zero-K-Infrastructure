@@ -153,7 +153,7 @@ namespace Springie.autohost
                         bool shouldStart = false;
                         if (SpawnConfig == null && timerTick%3 == 0) shouldStart = RunServerBalance(false, null, null);
                         // autostart if all ok  
-                        // if (config.Mode != AutohostMode.None && shouldStart) ComStart(TasSayEventArgs.Default, new string[]{});
+                         if (config.Mode != AutohostMode.None && shouldStart &&  DateTime.Now.Subtract(spring.GameStarted).TotalMinutes > 3) ComStart(TasSayEventArgs.Default, new string[]{});
                     }
                 };
             timer.Start();
