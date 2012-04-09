@@ -143,7 +143,7 @@ namespace ZeroKLobby.Notifications
         public void SendMyConfig(bool sendPreferences)
         {
             var conf = new JugglerConfig();
-            conf.Active = Program.NotifySection.Bars.Contains(this);
+            conf.Active = Program.NotifySection.Bars.Contains(this) && client.MyBattle == null;
             if (sendPreferences)
             {
                 var prefs = new List<PreferencePair>();
