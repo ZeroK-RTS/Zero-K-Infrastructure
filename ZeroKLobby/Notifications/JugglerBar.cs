@@ -17,7 +17,6 @@ namespace ZeroKLobby.Notifications
         readonly Dictionary<string, InfoItems> Items = new Dictionary<string, InfoItems>();
         readonly TasClient client;
         JugglerState lastState;
-        readonly ChatBox picoChat;
 
         bool suppressChangeEvent = false;
         readonly Timer timer;
@@ -36,8 +35,8 @@ namespace ZeroKLobby.Notifications
             int xOffset = 0, yOffset = 0;
             foreach (var mode in Enum.GetValues(typeof(AutohostMode)).OfType<AutohostMode>().Where(x => x != AutohostMode.None))
             {
-                xOffset = 0 + (cnt/3)*205;
-                yOffset = 0 + (cnt%3)*24;
+                xOffset = 0 + (cnt/2)*210;
+                yOffset = 0 + (cnt%2)*21;
                 var item = new InfoItems();
                 Items.Add(mode.ToString(), item);
 
@@ -50,7 +49,7 @@ namespace ZeroKLobby.Notifications
                 Program.ToolTip.SetText(item.ComboBox,info);
 
                 Controls.Add(item.ComboBox);
-                item.Label = new Label() { Left = xOffset + 185, Top = yOffset, Width = 20 };
+                item.Label = new Label() { Left = xOffset + 185, Top = yOffset, Width = 25 };
                 Controls.Add(item.Label);
 
                 Program.ToolTip.SetText(item.Label,"How many waiting people are OK with that type of game");
@@ -86,30 +85,18 @@ namespace ZeroKLobby.Notifications
 
             timer = new Timer();
             timer.Interval = 30000;
-            timer.Tick += (sender, args) => GetJugglerState();
+            timer.Tick += (sender, args) => {
+                GetJugglerState();
+            };
 
-            picoChat = new ChatBox() { Left = xOffset + 208, Top = 0 };
-            picoChat.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
-            picoChat.Width = Width - picoChat.Left - 3;
-            picoChat.Height = Height - picoChat.Top - 10;
-            picoChat.BorderStyle = BorderStyle.FixedSingle;
-
-            picoChat.Font = new Font(Program.Conf.ChatFont.FontFamily, Program.Conf.ChatFont.Size*0.8f);
-            picoChat.ShowHistory = false;
-            picoChat.ShowJoinLeave = false;
-            picoChat.HideScroll = false;
-            ChatControl.ChannelLineAdded += (sender, args) => { if (args.Channel == "quickmatch") picoChat.AddLine(args.Line); };
-            picoChat.MouseClick += (s, e) => NavigationControl.Instance.Path = "chat/channel/quickmatch";
-
-            Controls.Add(picoChat);
         }
 
         public void Activate()
         {
             if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
             SendMyConfig(false);
+            GetMyConfig();
             timer.Enabled = true;
-            client.JoinChannel("quickmatch");
         }
 
 
@@ -196,14 +183,14 @@ namespace ZeroKLobby.Notifications
             Program.NotifySection.RemoveBar(this);
             SendMyConfig(false);
             timer.Enabled = false;
-            client.LeaveChannel("quickmatch");
         }
 
         public void AddedToContainer(NotifyBarContainer container)
         {
             BarContainer = container;
             container.btnDetail.Text = "QuickMatch ";
-            if (lastState != null) container.btnDetail.Text += lastState.TotalPlayers + " players";
+            if (lastState != null) container.btnDetail.Text += "("+lastState.TotalPlayers + ")";
+            container.btnDetail.Enabled = false;
             ;
         }
 
