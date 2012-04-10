@@ -224,6 +224,8 @@ namespace ZeroKWeb.SpringieInterface
             if (bins.Any())
             {
                 SplitBins(autohosts, juggledAccounts, sb, bins);
+                sb.AppendLine("After split:");
+                PrintBins(juggledAccounts, bins,sb);
 
                 ret.PlayerMoves = new List<JugglerMove>();
                 
@@ -259,9 +261,9 @@ namespace ZeroKWeb.SpringieInterface
         static void SplitBins(List<JugglerAutohost> autohosts, Dictionary<int, Account> juggledAccounts, StringBuilder sb, List<Bin> bins)
         {
             // split too big bins -> move top players to another autohost
-            foreach (var b in bins.ToList())
+            foreach (var b in new List<Bin>(bins))
             {
-                if (b.Assigned.Count > b.Config.SplitBiggerThan)
+                if (b.Assigned.Count > (b.Config.SplitBiggerThan??99))
                 {
                     sb.AppendLine("Splitting " + b.Autohost.LobbyContext.AutohostName);
                     var splitTo = autohosts.FirstOrDefault(x => x.LobbyContext.GetMode() == b.Mode && x.RunningGameStartContext == null && x != b.Autohost);
