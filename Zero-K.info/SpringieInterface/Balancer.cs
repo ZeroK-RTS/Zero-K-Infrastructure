@@ -19,25 +19,39 @@ namespace ZeroKWeb.SpringieInterface
     {
         public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise)
         {
-            var mode = context.GetMode();
+            
             var config = context.GetConfig();
-            var res = new BalanceTeamsResult();
             var playerCount = context.Players.Count(x => !x.IsSpectator);
-            if (!isGameStart) {
-                if (playerCount < (config.MinToStart ?? 0)) {
+            
+            var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
+            
+            if (!isGameStart)
+            {
+                if (playerCount < (config.MinToStart ?? 0))
+                {
                     //res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
                     res.CanStart = false;
                     //return res;
                 }
-                else if (playerCount > (config.MaxToStart ?? 99) || playerCount > (config.SplitBiggerThan??99)) {
+                else if (playerCount > (config.MaxToStart ?? 99) || playerCount > (config.SplitBiggerThan ?? 99))
+                {
                     //res.Message = string.Format("This host can only start with less than {0} people, wait for juggler to split you", Math.Min(config.MaxToStart??0, config.SplitBiggerThan??0));
                     res.CanStart = false;
                     //return res;
                 }
-
             }
+            return res;
+        }
 
-
+        static BalanceTeamsResult PerformBalance(BattleContext context,
+                                                 bool isGameStart,
+                                                 int? allyCount,
+                                                 bool? clanWise,
+                                                 AutohostConfig config,
+                                                 int playerCount)
+        {
+            BalanceTeamsResult res = new BalanceTeamsResult();
+            var mode = context.GetMode();
             if (mode != AutohostMode.Planetwars)
             {
                 switch (mode)
@@ -58,7 +72,7 @@ namespace ZeroKWeb.SpringieInterface
 
                     case AutohostMode.GameChickens:
                         res.Players = context.Players.ToList();
-                        res.Bots = context.Bots.Where(x=>x.Owner!= context.AutohostName).ToList();
+                        res.Bots = context.Bots.Where(x => x.Owner != context.AutohostName).ToList();
                         foreach (var p in res.Players) p.AllyID = 0;
                         foreach (var b in res.Bots) b.AllyID = 1;
                         if (!res.Bots.Any())
@@ -118,10 +132,7 @@ namespace ZeroKWeb.SpringieInterface
                         }*/
                         if (p.Level < config.MinLevel)
                         {
-                            res.Message += string.Format("{0} cannot play, his level is {1}, minimum level is {2}\n",
-                                                         p.Name,
-                                                         p.Level,
-                                                         config.MinLevel);
+                            res.Message += string.Format("{0} cannot play, his level is {1}, minimum level is {2}\n", p.Name, p.Level, config.MinLevel);
                             AuthServiceClient.SendLobbyMessage(p,
                                                                string.Format(
                                                                    "Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level 5 to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots. You can observe this game however."));
@@ -136,9 +147,7 @@ namespace ZeroKWeb.SpringieInterface
                     if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots)))
                     {
                         var teamID = 0;
-                        for (var i = 0; i < players.Count; i++)
-                            res.Players.Add(new PlayerTeam()
-                                            { LobbyID = players[i].LobbyID ?? 0, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
+                        for (var i = 0; i < players.Count; i++) res.Players.Add(new PlayerTeam() { LobbyID = players[i].LobbyID ?? 0, Name = players[i].Name, AllyID = 0, TeamID = teamID++ });
                         var cnt = 1;
                         foreach (var b in planet.PlanetStructures.Select(x => x.StructureType).Where(x => !string.IsNullOrEmpty(x.EffectBots))) res.Bots.Add(new BotTeam() { AllyID = 1, BotAI = b.EffectBots, TeamID = teamID++, BotName = "Aliens" + cnt++ });
 
@@ -148,10 +157,10 @@ namespace ZeroKWeb.SpringieInterface
 
                     var planetFactionId = planet.Account != null ? planet.Account.FactionID ?? 0 : 0;
                     var attackerFactions =
-                        planet.AccountPlanets.Where(x => x.DropshipCount > 0 && x.Account.FactionID != null).Select(x => (x.Account.FactionID ?? 0)).
-                            Distinct().ToList();
+                        planet.AccountPlanets.Where(x => x.DropshipCount > 0 && x.Account.FactionID != null).Select(x => (x.Account.FactionID ?? 0)).Distinct()
+                            .ToList();
 
-                    if (context.Players.Count < 2) return new BalanceTeamsResult() { Message = "Not enough players", CanStart = false};
+                    if (context.Players.Count < 2) return new BalanceTeamsResult() { Message = "Not enough players", CanStart = false };
 
                     for (var i = 1; i < clans.Count; i++)
                     {
@@ -197,9 +206,7 @@ namespace ZeroKWeb.SpringieInterface
                                             (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -3;
                                 }
                             }
-                            else if (f1 != f2)
-                                if ((planetFactionId == f1 && attackerFactions.Contains(f2)) ||
-                                    (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -3;
+                            else if (f1 != f2) if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -3;
 
                             sameTeamScore[i, j] = points;
                             sameTeamScore[j, i] = points;
@@ -260,8 +267,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (team0count == 0 || team1count == 0) continue; // skip combination, empty team
 
                         // calculate score for team difference
-                        var teamDiffScore = -(20.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count)) -
-                                            Math.Abs(team0count - team1count);
+                        var teamDiffScore = -(20.0*Math.Abs(team0count - team1count)/(double)(team0count + team1count)) - Math.Abs(team0count - team1count);
                         if (teamDiffScore < -10) continue; // max imabalance
 
                         double balanceModifier = 0;
@@ -286,8 +292,8 @@ namespace ZeroKWeb.SpringieInterface
                         var majorityFactions = (from teamData in Enumerable.Range(0, players.Count).GroupBy(x => playerAssignments[x])
                                                 let majorityCount = Math.Ceiling(teamData.Count()/2.0)
                                                 select
-                                                    teamData.GroupBy(x => players[x].FactionID).Where(x => x.Key != null && x.Count() >= majorityCount)
-                                                    .Select(x => x.Key ?? 0)).ToList();
+                                                    teamData.GroupBy(x => players[x].FactionID).Where(x => x.Key != null && x.Count() >= majorityCount).Select
+                                                    (x => x.Key ?? 0)).ToList();
                         if (majorityFactions.Count == 2 && majorityFactions[0].Intersect(majorityFactions[1]).Any()) continue; // winning either side would be benefitial for some majority faction
 
                         // calculate score for meaningfull teams
@@ -349,18 +355,16 @@ namespace ZeroKWeb.SpringieInterface
                         {
                             var allyID = ((bestCombination & ((long)1 << i)) > 0) ? 1 : 0;
                             if (!differs && allyID != context.Players.First(x => x.LobbyID == players[i].LobbyID).AllyID) differs = true;
-                            res.Players.Add(new PlayerTeam()
-                                            { LobbyID = players[i].LobbyID.Value, Name = players[i].Name, AllyID = allyID, TeamID = i });
+                            res.Players.Add(new PlayerTeam() { LobbyID = players[i].LobbyID.Value, Name = players[i].Name, AllyID = allyID, TeamID = i });
                         }
                         if (differs)
                         {
                             res.Message +=
-                                string.Format(
-                                    "Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
-                                    bestTeamDiffs,
-                                    bestElo,
-                                    bestCompo,
-                                    Utils.GetWinChancePercent(bestElo*20));
+                                string.Format("Winning combination  score: {0:0.##} team difference,  {1:0.##} elo,  {2:0.##} composition. Win chance {3}%",
+                                              bestTeamDiffs,
+                                              bestElo,
+                                              bestCompo,
+                                              Utils.GetWinChancePercent(bestElo*20));
                         }
                         res.CanStart = true;
                     }
