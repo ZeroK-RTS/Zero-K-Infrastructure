@@ -80,7 +80,7 @@ namespace Springie.autohost
             spring = new Spring(springPaths) { UseDedicatedServer = true };
             bool isManaged= SpawnConfig == null && config.Mode != AutohostMode.None;
 
-            tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, isManaged? GlobalConst.ZkSpringieManagedCpu:GlobalConst.ZkLobbyUserCpu, Program.main.Config.IpOverride);
+            tas = new TasClient(null, "Springie " + MainConfig.SpringieVersion, isManaged? GlobalConst.ZkSpringieManagedCpu:GlobalConst.ZkLobbyUserCpu, false, Program.main.Config.IpOverride);
 
             pollTimer = new Timer(PollTimeout*1000);
             pollTimer.Enabled = false;

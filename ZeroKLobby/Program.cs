@@ -222,7 +222,7 @@ namespace ZeroKLobby
                                                         ApplicationDeployment.IsNetworkDeployed
                                                             ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString()
                                                             : Application.ProductVersion),
-                                          GlobalConst.ZkLobbyUserCpu);
+                                          GlobalConst.ZkLobbyUserCpu, true);
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 

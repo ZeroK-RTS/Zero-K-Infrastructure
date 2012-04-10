@@ -196,7 +196,7 @@ namespace LobbyClient
 
  
 
-        public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, int cpu, string ipOverride = null)
+        public TasClient(Invoker<Invoker> guiThreadInvoker, string appName, int cpu, bool invokeUserStatusChangedOnExtensions = false, string ipOverride = null)
         {
             this.cpu = cpu;
             this.appName = appName;
@@ -227,7 +227,7 @@ namespace LobbyClient
                                                                          if (ExistingUsers.TryGetValue(user, out u))
                                                                          {
                                                                              u.SetExtension(data);
-                                                                             UserStatusChanged(this, new TasEventArgs(u.Name, u.ToInt().ToString()));
+                                                                             if (invokeUserStatusChangedOnExtensions) UserStatusChanged(this, new TasEventArgs(u.Name, u.ToInt().ToString()));
                                                                              if (user == username) MyExtensionsChanged(this, new EventArgs<User>(u));
                                                                              UserExtensionsChanged(this, new EventArgs<User>(u));
                                                                          }
