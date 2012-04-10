@@ -67,11 +67,8 @@ namespace ZeroKLobby.Notifications
                     if (args.Data.Founder.IsSpringieManaged)
                     {
                         Activate();
-                        BarContainer.btnStop.Enabled = false;
                     }
                 };
-
-            client.BattleClosed += (sender, args) => { if (BarContainer != null) BarContainer.btnStop.Enabled = true; };
 
             client.BattleMyUserStatusChanged += (sender, args) =>
             {
@@ -212,7 +209,7 @@ namespace ZeroKLobby.Notifications
 
         public void CloseClicked(NotifyBarContainer container)
         {
-            if (client.MyBattle == null || !client.MyBattle.Founder.IsSpringieManaged) Deactivate();
+            Deactivate();
         }
 
         public void DetailClicked(NotifyBarContainer container)
