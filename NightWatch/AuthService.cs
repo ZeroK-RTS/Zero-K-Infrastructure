@@ -83,10 +83,15 @@ namespace NightWatch
             this.client.UserStatusChanged += (s, e) =>
                 {
                     var user = client.ExistingUsers[e.ServerParams[0]];
-                    Utils.StartAsync(() =>
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
                         {
                             UpdateUser(user.LobbyID, user.Name, user, null);
-                        });
+                        }
+                        catch {
+                        }
+                    });
                 };
 
             this.client.BattleUserJoined += (s, e) =>
@@ -130,8 +135,6 @@ namespace NightWatch
 
             this.client.UserLobbyVersionRecieved += (s, e) =>
                 {
-                    Utils.StartAsync(() =>
-                        {
                             using (var db = new ZkDataContext())
                             {
                                 var acc = db.Accounts.FirstOrDefault(x => x.Name == e.Name);
@@ -151,7 +154,6 @@ namespace NightWatch
                                     }
                                 }
                             }
-                        });
                 };
 
             this.client.BattleFound +=
