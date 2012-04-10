@@ -23,16 +23,16 @@ namespace ZeroKWeb.SpringieInterface
             var config = context.GetConfig();
             var res = new BalanceTeamsResult();
             var playerCount = context.Players.Count(x => !x.IsSpectator);
-            if (isGameStart) {
+            if (!isGameStart) {
                 if (playerCount < (config.MinToStart ?? 0)) {
-                    res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
+                    //res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
                     res.CanStart = false;
-                    return res;
+                    //return res;
                 }
                 else if (playerCount > (config.MaxToStart ?? 99) || playerCount > (config.SplitBiggerThan??99)) {
-                    res.Message = string.Format("This host can only start with less than {0} people, wait for juggler to split you", Math.Min(config.MaxToStart??0, config.SplitBiggerThan??0));
+                    //res.Message = string.Format("This host can only start with less than {0} people, wait for juggler to split you", Math.Min(config.MaxToStart??0, config.SplitBiggerThan??0));
                     res.CanStart = false;
-                    return res;
+                    //return res;
                 }
 
             }
