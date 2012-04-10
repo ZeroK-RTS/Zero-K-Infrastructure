@@ -182,7 +182,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 					             	SyncStatus = HasAllResources()
 					             			? SyncStatuses.Synced
 					             			: SyncStatuses.Unsynced,
-					             	IsSpectator = !cbReady.Checked,
+					             	IsSpectator = desiredSpectatorState,
 					             	Side = cbSide.SelectedIndex >= 0 ? cbSide.SelectedIndex : 0,
 					             	TeamColor = Program.Conf.DefaultPlayerColorInt,
 												IsReady = true,
@@ -217,6 +217,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
 						if (client.MyBattleStatus.IsSpectator && cbReady.Checked) // i was spectated
 							ChangeGuiSpectatorWithoutEvent(true);
+                        if (!client.MyBattleStatus.IsSpectator && !cbReady.Checked) ChangeGuiSpectatorWithoutEvent(false);//i was unspectated
 					}
 				};
 
@@ -284,6 +285,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			picoChat.MouseClick += (s, e) => NavigationControl.Instance.Path = "chat/battle";
 		}
 
+        private bool desiredSpectatorState = false;
+
 		/// <summary>
 		/// Changes user's desired spectator state of battle
 		/// </summary>
@@ -293,6 +296,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		{
 			if (cbReady.Enabled && cbReady.Visible)
 			{
+                desiredSpectatorState = state;
 				ChangeGuiSpectatorWithoutEvent(state);
 				return true;
 			}
