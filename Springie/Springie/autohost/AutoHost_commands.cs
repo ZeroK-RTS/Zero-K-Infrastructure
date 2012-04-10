@@ -855,6 +855,7 @@ namespace Springie.autohost
         {
             try
             {
+                if (tas.MyBattle == null) return false;
                 var serv = new SpringieService();
                 var balance = serv.BalanceTeams(tas.MyBattle.GetContext(), isGameStart, allyTeams, clanWise);
                 if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
@@ -913,7 +914,7 @@ namespace Springie.autohost
                     var serv = new SpringieService();
                     var map = serv.GetRecommendedMap(tas.MyBattle.GetContext(),pickNew);
 
-                    if (map != null && map.MapName != null)
+                    if (map != null && map.MapName != null && tas.MyBattle!=null)
                     {
                         if (tas.MyBattle.MapName != map.MapName)
                         {

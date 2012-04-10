@@ -53,8 +53,6 @@ namespace NightWatch
 
             this.client.UserAdded += (s, e) =>
                 {
-                    Utils.StartAsync(() =>
-                        {
                             using (var db = new ZkDataContext())
                             {
                                 var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == e.Data.LobbyID);
@@ -79,8 +77,7 @@ namespace NightWatch
                                     if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(e.Data.Name, "Banned");
                                 }
                             }
-                        });
-                };
+                        };
 
             // todo this executes for nothing after useradded sets extension -> avoid by splitting extension changed na duserstatuschanged
             this.client.UserStatusChanged += (s, e) =>
@@ -111,8 +108,6 @@ namespace NightWatch
                                        false);
                         }
 
-                        Utils.StartAsync(() =>
-                            {
                                 using (var db = new ZkDataContext())
                                 {
                                     var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == user.LobbyID);
@@ -122,7 +117,7 @@ namespace NightWatch
                                         (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
                                         aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
                                 }
-                            });
+
                     }
                 };
 
@@ -168,7 +163,7 @@ namespace NightWatch
         {
             Account acc = null;
             using (var db = new ZkDataContext())
-            //using (var scope = new TransactionScope())
+            using (var scope = new TransactionScope())
             {
                 acc = db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
                 if (acc == null)
@@ -191,7 +186,7 @@ namespace NightWatch
                 }
 
                 db.SubmitChanges();
-              //  scope.Complete();
+                scope.Complete();
             }
             return acc;
         }

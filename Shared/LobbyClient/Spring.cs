@@ -61,6 +61,8 @@ namespace LobbyClient
 
         readonly SpringPaths paths;
 
+        public DateTime GameExited { get; private set; }
+
 
         Process process;
         string scriptPath;
@@ -534,6 +536,7 @@ namespace LobbyClient
                 Trace.TraceWarning("Error saving infolog: {0}", ex);
             }
 
+            GameExited = DateTime.Now;
             if (SpringExited != null) SpringExited(this, new EventArgs<bool>(isCrash));
         }
 

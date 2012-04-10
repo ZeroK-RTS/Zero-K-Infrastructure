@@ -62,14 +62,11 @@ namespace LobbyClient
 
         public void Publish(string name, Dictionary<string, string> data)
         {
-            lock (this)
-            {
-                Dictionary<string, string> dict;
-                publishedUserAttributes.TryGetValue(name, out dict);
-                dict = dict ?? new Dictionary<string, string>();
-                foreach (var kvp in data) dict[kvp.Key] = kvp.Value;
-                publishedUserAttributes[name] = dict;
-            }
+            Dictionary<string, string> dict;
+            publishedUserAttributes.TryGetValue(name, out dict);
+            dict = dict ?? new Dictionary<string, string>();
+            foreach (var kvp in data) dict[kvp.Key] = kvp.Value;
+            publishedUserAttributes[name] = dict;
             tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);
         }
 
@@ -106,21 +103,15 @@ namespace LobbyClient
 
         void tas_ChannelUserAdded(object sender, TasEventArgs e)
         {
-            lock (this)
-            {
-                if (e.ServerParams[0] == ExtensionChannelName && e.ServerParams[1] != tas.UserName) foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], FormatMessage(kvp.Key, kvp.Value), false);
-            }
+            if (e.ServerParams[0] == ExtensionChannelName && e.ServerParams[1] != tas.UserName) foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], FormatMessage(kvp.Key, kvp.Value), false);
         }
 
         void tas_PreviewChannelJoined(object sender, CancelEventArgs<TasEventArgs> e)
         {
-            lock (this)
+            if (e.Data.ServerParams[0] == ExtensionChannelName)
             {
-                if (e.Data.ServerParams[0] == ExtensionChannelName)
-                {
-                    e.Cancel = true;
-                    foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
-                }
+                e.Cancel = true;
+                foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
             }
         }
 

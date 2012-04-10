@@ -128,9 +128,12 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 if (groupBins.Count == 0) { // no bins with players found, add empty one
-                    var firstEmpty = grp.First(x => x.RunningGameStartContext == null && x.LobbyContext.Players.All(y => y.IsSpectator));
-                    var bin = new Bin(firstEmpty);
-                    groupBins.Add(bin);
+                    var firstEmpty = grp.FirstOrDefault(x => x.RunningGameStartContext == null && x.LobbyContext.Players.All(y => y.IsSpectator));
+                    if (firstEmpty != null)
+                    {
+                        var bin = new Bin(firstEmpty);
+                        groupBins.Add(bin);
+                    }
                 }
                 
                 // remove all but biggest below merge limit
