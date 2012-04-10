@@ -46,7 +46,11 @@ namespace Springie
             while (true)
             {
                 Thread.Sleep(5000);
-                main.PeriodicCheck();
+                try
+                {
+                    main.PeriodicCheck();
+                }
+                catch (Exception ex) {}
             }
 		}
 

@@ -146,6 +146,7 @@ namespace Springie.autohost
                 {
                     try
                     {
+                        timer.Stop();
                         timerTick++;
                         if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick % 4 == 0) CheckEngineBranch();
 
@@ -159,8 +160,12 @@ namespace Springie.autohost
                                 DateTime.Now.Subtract(spring.GameExited).TotalMinutes > 3 && DateTime.Now > postponeUntil) ComStart(TasSayEventArgs.Default, new string[] { });
                         }
                     }
-                    catch (Exception ex) {
+                    catch (Exception ex)
+                    {
                         Trace.TraceError(ex.ToString());
+                    }
+                    finally {
+                        timer.Start();
                     }
                 };
             timer.Start();
@@ -799,16 +804,22 @@ namespace Springie.autohost
 
         void pollTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (activePoll != null) activePoll.TimeEnd();
-            StopVote();
-
-            if (!spring.IsRunning && delayedModChange != null)
+            try
             {
-                var mod = delayedModChange;
-                delayedModChange = null;
-                SayBattle("Updating to latest mod version: " + mod);
-                ComRehost(TasSayEventArgs.Default, new[] { mod });
+                pollTimer.Stop();
+                if (activePoll != null) activePoll.TimeEnd();
+                StopVote();
+
+                if (!spring.IsRunning && delayedModChange != null)
+                {
+                    var mod = delayedModChange;
+                    delayedModChange = null;
+                    SayBattle("Updating to latest mod version: " + mod);
+                    ComRehost(TasSayEventArgs.Default, new[] { mod });
+                }
             }
+            catch { }
+            finally {pollTimer.Start();}
         }
 
         void spring_GameOver(object sender, SpringLogEventArgs e)

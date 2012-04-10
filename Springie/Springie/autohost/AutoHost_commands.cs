@@ -856,45 +856,49 @@ namespace Springie.autohost
             try
             {
                 if (tas.MyBattle == null) return false;
-                var serv = new SpringieService();
-                var balance = serv.BalanceTeams(tas.MyBattle.GetContext(), isGameStart, allyTeams, clanWise);
-                if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
-                if (balance.Players != null && balance.Players.Length > 0)
+                using (var serv = new SpringieService())
                 {
-                    foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
-                    foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
-                    foreach (var user in balance.Players.Where(x => !x.IsSpectator))
+                    serv.Timeout = 10000;
+                    var balance = serv.BalanceTeams(tas.MyBattle.GetContext(), isGameStart, allyTeams, clanWise);
+                    if (!string.IsNullOrEmpty(balance.Message)) SayBattle(balance.Message, false);
+                    if (balance.Players != null && balance.Players.Length > 0)
                     {
-                        tas.ForceTeam(user.Name, user.TeamID);
-                        tas.ForceAlly(user.Name, user.AllyID);
-                    }
-                }
-
-                if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
-                if (balance.Bots != null && balance.Bots.Length>0)
-                {
-                    foreach (var b in tas.MyBattle.Bots.Where(x=>!balance.Bots.Any(y=>y.BotName==x.Name && y.Owner==x.owner))) tas.RemoveBot(b.Name);
-
-                    foreach (var b in balance.Bots)
-                    {
-                        var existing = tas.MyBattle.Bots.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
-                        if (existing != null)
+                        foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && !balance.Players.Any(y => y.Name == x.Name))) tas.ForceSpectator(user.Name); // spec those that werent in response
+                        foreach (var user in balance.Players.Where(x => x.IsSpectator)) tas.ForceSpectator(user.Name);
+                        foreach (var user in balance.Players.Where(x => !x.IsSpectator))
                         {
-                            var upd = existing.Clone();
-                            upd.AllyNumber = b.AllyID;
-                            upd.TeamNumber = b.TeamID;
-                            tas.UpdateBot(existing.Name, upd, existing.TeamColor);
-                        }
-                        else
-                        {
-                            var botStatus = tas.MyBattleStatus.Clone();
-                            botStatus.TeamNumber = b.TeamID;
-                            botStatus.AllyNumber = b.AllyID;
-                            tas.AddBot(b.BotName.Replace(" ", "_"), botStatus, botStatus.TeamColor, b.BotAI);
+                            tas.ForceTeam(user.Name, user.TeamID);
+                            tas.ForceAlly(user.Name, user.AllyID);
                         }
                     }
+
+                    if (balance.DeleteBots) foreach (var b in tas.MyBattle.Bots) tas.RemoveBot(b.Name);
+                    if (balance.Bots != null && balance.Bots.Length > 0)
+                    {
+                        foreach (var b in tas.MyBattle.Bots.Where(x => !balance.Bots.Any(y => y.BotName == x.Name && y.Owner == x.owner))) tas.RemoveBot(b.Name);
+
+                        foreach (var b in balance.Bots)
+                        {
+                            var existing = tas.MyBattle.Bots.FirstOrDefault(x => x.owner == b.Owner && x.Name == b.BotName);
+                            if (existing != null)
+                            {
+                                var upd = existing.Clone();
+                                upd.AllyNumber = b.AllyID;
+                                upd.TeamNumber = b.TeamID;
+                                tas.UpdateBot(existing.Name, upd, existing.TeamColor);
+                            }
+                            else
+                            {
+                                var botStatus = tas.MyBattleStatus.Clone();
+                                botStatus.TeamNumber = b.TeamID;
+                                botStatus.AllyNumber = b.AllyID;
+                                tas.AddBot(b.BotName.Replace(" ", "_"), botStatus, botStatus.TeamColor, b.BotAI);
+                            }
+                        }
+                    }
+
+                    return balance.CanStart;
                 }
-                return balance.CanStart;
             }
             catch (Exception ex)
             {
@@ -911,15 +915,18 @@ namespace Springie.autohost
             {
                 if (tas.MyBattle != null && !spring.IsRunning)
                 {
-                    var serv = new SpringieService();
-                    var map = serv.GetRecommendedMap(tas.MyBattle.GetContext(),pickNew);
-
-                    if (map != null && map.MapName != null && tas.MyBattle!=null)
+                    using (var serv = new SpringieService())
                     {
-                        if (tas.MyBattle.MapName != map.MapName)
+                        serv.Timeout = 5000;
+                        var map = serv.GetRecommendedMap(tas.MyBattle.GetContext(), pickNew);
+
+                        if (map != null && map.MapName != null && tas.MyBattle != null)
                         {
-                            ComMap(TasSayEventArgs.Default, map.MapName);
-                            SayBattle(map.Message);
+                            if (tas.MyBattle.MapName != map.MapName)
+                            {
+                                ComMap(TasSayEventArgs.Default, map.MapName);
+                                SayBattle(map.Message);
+                            }
                         }
                     }
                 }

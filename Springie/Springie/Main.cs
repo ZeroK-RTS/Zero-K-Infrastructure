@@ -72,39 +72,43 @@ namespace Springie
         {
             try
             {
-                var serv = new SpringieService();
-                JugglerAutohost[] data;
-                lock (autoHosts)
+                using (var serv = new SpringieService())
                 {
-                    data =
-                        autoHosts.Where(x => x.tas.MyBattle != null && x.SpawnConfig == null && x.config.Mode != AutohostMode.None).Select(
-                            x =>
-                            new JugglerAutohost()
+                    serv.Timeout = 8000;
+                    JugglerAutohost[] data;
+                    lock (autoHosts)
+                    {
+                        data =
+                            autoHosts.Where(x => x.tas.MyBattle != null && x.SpawnConfig == null && x.config.Mode != AutohostMode.None).Select(
+                                x =>
+                                new JugglerAutohost()
+                                {
+                                    LobbyContext = x.tas.MyBattle.GetContext(),
+                                    RunningGameStartContext = x.spring.IsRunning ? x.spring.StartContext : null
+                                }).ToArray();
+                    }
+                    var ret = serv.JugglePlayers(data);
+                    if (ret != null)
+                    {
+                        if (ret.PlayerMoves != null)
+                        {
+                            foreach (var playermove in ret.PlayerMoves)
                             {
-                                LobbyContext = x.tas.MyBattle.GetContext(),
-                                RunningGameStartContext = x.spring.IsRunning ? x.spring.StartContext : null
-                            }).ToArray();
-                }
-                var ret = serv.JugglePlayers(data);
-                if (ret != null)
-                {
-                    if (ret.PlayerMoves != null)
-                    {
-                        foreach (var playermove in ret.PlayerMoves)
-                        {
-                            var ah = autoHosts.FirstOrDefault(x => x.tas.MyBattle != null && x.tas.MyBattle.Users.Any(y => y.Name == playermove.Name));
-                            if (ah != null) ah.ComMove(TasSayEventArgs.Default, new[] { playermove.Name, playermove.TargetAutohost });
+                                var ah =
+                                    autoHosts.FirstOrDefault(x => x.tas.MyBattle != null && x.tas.MyBattle.Users.Any(y => y.Name == playermove.Name));
+                                if (ah != null) ah.ComMove(TasSayEventArgs.Default, new[] { playermove.Name, playermove.TargetAutohost });
+                            }
                         }
-                    }
-                    if (ret.AutohostsToClose != null)
-                    {
-                        foreach (var ahToKill in ret.AutohostsToClose)
+                        if (ret.AutohostsToClose != null)
                         {
-                            var ah = autoHosts.FirstOrDefault(x => x.tas.UserName == ahToKill);
-                            if (ah != null) StopAutohost(ah);
+                            foreach (var ahToKill in ret.AutohostsToClose)
+                            {
+                                var ah = autoHosts.FirstOrDefault(x => x.tas.UserName == ahToKill);
+                                if (ah != null) StopAutohost(ah);
+                            }
                         }
+                        return ret.Message;
                     }
-                    return ret.Message;
                 }
             }
             catch (Exception ex)
@@ -189,18 +193,21 @@ namespace Springie
         {
             try
             {
-                var serv = new SpringieService();
-                var configs = serv.GetClusterConfigs(Config.ClusterNode);
-
-                lock (autoHosts)
+                using (var serv = new SpringieService())
                 {
-                    foreach (var conf in configs)
+                    serv.Timeout = 5000;
+                    var configs = serv.GetClusterConfigs(Config.ClusterNode);
+
+                    lock (autoHosts)
                     {
-                        if (!autoHosts.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
-                        else foreach (var ah in autoHosts.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
+                        foreach (var conf in configs)
+                        {
+                            if (!autoHosts.Any(x => x.config.Login == conf.Login)) SpawnAutoHost(conf, null);
+                            else foreach (var ah in autoHosts.Where(x => x.config.Login == conf.Login && x.SpawnConfig == null)) ah.config = conf;
+                        }
+                        var todel = autoHosts.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
+                        foreach (var ah in todel) StopAutohost(ah);
                     }
-                    var todel = autoHosts.Where(x => !configs.Any(y => y.Login == x.config.Login)).ToList();
-                    foreach (var ah in todel) StopAutohost(ah);
                 }
             }
             catch (Exception ex) {
@@ -230,6 +237,7 @@ namespace Springie
         {
             try
             {
+                timer.Stop(); ;
                 lock (autoHosts)
                 {
                     // spawned autohosts
@@ -268,6 +276,9 @@ namespace Springie
             catch (Exception ex)
             {
                 ErrorHandling.HandleException(ex, "While checking autohosts");
+            }
+            finally {
+                timer.Start(); 
             }
         }
     }
