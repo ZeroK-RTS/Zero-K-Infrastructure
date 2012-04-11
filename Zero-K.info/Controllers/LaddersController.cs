@@ -11,6 +11,7 @@ namespace ZeroKWeb.Controllers
 {
 	public class LaddersController: Controller
 	{
+        [OutputCache(Duration = 60 * 60 * 24, VaryByParam = "none")] // Cache for a day
 		public ActionResult Games()
 		{
 			var db = new ZkDataContext();
@@ -41,7 +42,7 @@ namespace ZeroKWeb.Controllers
 			chart.AddSeries("minutes/player", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.MinutesPerPlayer), legend: "dps");
 			chart.AddSeries("new players", "Line", xValue: data.Select(x => x.Day), yValues: data.Select(x => x.FirstGamePlayers), legend: "dps");
 
-			return File(chart.GetBytes(), "image/jpeg");
+            return File(chart.GetBytes("png"), "image/png");
 		}
 
 		//
