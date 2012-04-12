@@ -161,7 +161,7 @@ namespace NightWatch
         Account UpdateUser(int lobbyID, string name, User user, string hashedPassword)
         {
             Account acc = null;
-            using (var db = new ZkDataContext())
+            var db = new ZkDataContext();
             using (var scope = new TransactionScope())
             {
                 acc = db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
@@ -229,7 +229,11 @@ namespace NightWatch
                 }
             }
             else // looby timeout, use database
-                using (var db = new ZkDataContext()) return db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == hashedPassword && x.LobbyID != null);
+            {
+
+                var db = new ZkDataContext();
+                return db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == hashedPassword && x.LobbyID != null);
+            }
         }
 
         public CurrentLobbyStats GetCurrentStats()
