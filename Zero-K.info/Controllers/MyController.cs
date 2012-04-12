@@ -258,6 +258,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
 	    public ActionResult GamePreferences(List<GamePreference> preference)
 	    {
+
 	        var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             
