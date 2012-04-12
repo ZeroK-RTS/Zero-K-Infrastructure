@@ -11,7 +11,6 @@ namespace ZeroKWeb.Controllers
 {
 	public class LaddersController: Controller
 	{
-        [OutputCache(Duration = 60 * 60 * 24, VaryByParam = "none")] // Cache for a day
 		public ActionResult Games()
 		{
 			var db = new ZkDataContext();
