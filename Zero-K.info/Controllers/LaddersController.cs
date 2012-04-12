@@ -13,7 +13,8 @@ namespace ZeroKWeb.Controllers
 	{
 		public ActionResult Games()
 		{
-			var db = new ZkDataContext();
+			
+            var db = new ZkDataContext();
 			var data = from bat in db.SpringBattles
 			           where bat.StartTime.Date < DateTime.Now.Date  && bat.StartTime.Date > new DateTime(2011,2,3)
 			           group bat by bat.StartTime.Date
