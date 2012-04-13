@@ -57,6 +57,7 @@ namespace ZeroKWeb.SpringieInterface
         public static bool CanMove(Account acc)
         {
             User user;
+            if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && user.IsZkLobbyUser) return true;
             if (string.IsNullOrEmpty(acc.LobbyVersion) || !acc.LobbyVersion.Contains("SpringLobby")) return true;
             else return false;
         }
