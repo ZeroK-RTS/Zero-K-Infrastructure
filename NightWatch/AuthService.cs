@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using LobbyClient;
+using PlasmaShared;
 using ZkData;
 
 namespace NightWatch
@@ -19,7 +20,6 @@ namespace NightWatch
         int messageId;
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
 
-        object userUpdatesLock = new object();
 
         public AuthService(TasClient client)
         {
@@ -83,28 +83,13 @@ namespace NightWatch
             this.client.UserStatusChanged += (s, e) =>
                 {
                     var user = client.ExistingUsers[e.ServerParams[0]];
-                    Task.Factory.StartNew(() =>
+                    Utils.StartAsync(() => {
+                        using (var db = new ZkDataContext())
                         {
-                            try
-                            {
-                                Monitor.Enter(userUpdatesLock);
-                                using (var db = new ZkDataContext())
-                                {
-                                    db.ObjectTrackingEnabled = false;
-                                    UpdateUser(user.LobbyID, user.Name, user, null, db);
-                                }
-
-                            }
-                            catch
-                            {
-                            }
-                            finally {
-                            Monitor.Exit(userUpdatesLock);
-                            }
-
-
-                        },
-                                          TaskCreationOptions.LongRunning);
+                            db.ObjectTrackingEnabled = false;
+                            UpdateUser(user.LobbyID, user.Name, user, null, db);
+                        }
+                    });
                 };
 
             this.client.BattleUserJoined += (s, e) =>
