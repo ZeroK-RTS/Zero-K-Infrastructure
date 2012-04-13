@@ -86,7 +86,6 @@ namespace NightWatch
                     Utils.StartAsync(() => {
                         using (var db = new ZkDataContext())
                         {
-                            db.ObjectTrackingEnabled = false;
                             UpdateUser(user.LobbyID, user.Name, user, null, db);
                         }
                     });
