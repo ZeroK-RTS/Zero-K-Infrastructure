@@ -5,7 +5,6 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Transactions;
 using LobbyClient;
 using ZkData;
 
@@ -19,6 +18,8 @@ namespace NightWatch
 
         int messageId;
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
+
+        object userUpdatesLock = new object();
 
         public AuthService(TasClient client)
         {
@@ -78,19 +79,32 @@ namespace NightWatch
                     }
                 };
 
-
             // todo this executes for nothing after useradded sets extension -> avoid by splitting extension changed na duserstatuschanged
             this.client.UserStatusChanged += (s, e) =>
                 {
                     var user = client.ExistingUsers[e.ServerParams[0]];
                     Task.Factory.StartNew(() =>
-                    {
-                        try
                         {
-                            UpdateUser(user.LobbyID, user.Name, user, null);
-                        }
-                        catch { };
-                    }, TaskCreationOptions.LongRunning);
+                            try
+                            {
+                                Monitor.Enter(userUpdatesLock);
+                                using (var db = new ZkDataContext())
+                                {
+                                    db.ObjectTrackingEnabled = false;
+                                    UpdateUser(user.LobbyID, user.Name, user, null, db);
+                                }
+
+                            }
+                            catch
+                            {
+                            }
+                            finally {
+                            Monitor.Exit(userUpdatesLock);
+                            }
+
+
+                        },
+                                          TaskCreationOptions.LongRunning);
                 };
 
             this.client.BattleUserJoined += (s, e) =>
@@ -159,31 +173,31 @@ namespace NightWatch
         }
 
 
-        Account UpdateUser(int lobbyID, string name, User user, string hashedPassword)
+        Account UpdateUser(int lobbyID, string name, User user, string hashedPassword, ZkDataContext db = null)
         {
             Account acc = null;
-            var db = new ZkDataContext();
-                acc = db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
-                if (acc == null)
-                {
-                    acc = new Account();
-                    db.Accounts.InsertOnSubmit(acc);
-                }
+            if (db == null) db = new ZkDataContext();
+            acc = db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
+            if (acc == null)
+            {
+                acc = new Account();
+                db.Accounts.InsertOnSubmit(acc);
+            }
 
-                acc.LobbyID = lobbyID;
-                acc.Name = name;
-                if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
-                acc.LastLogin = DateTime.UtcNow;
+            acc.LobbyID = lobbyID;
+            acc.Name = name;
+            if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
+            acc.LastLogin = DateTime.UtcNow;
 
-                if (user != null) // user was online, we can update his data
-                {
-                    acc.IsBot = user.IsBot;
-                    acc.IsLobbyAdministrator = user.IsAdmin;
-                    acc.Country = user.Country;
-                    acc.LobbyTimeRank = user.Rank;
-                }
+            if (user != null) // user was online, we can update his data
+            {
+                acc.IsBot = user.IsBot;
+                acc.IsLobbyAdministrator = user.IsAdmin;
+                acc.Country = user.Country;
+                acc.LobbyTimeRank = user.Rank;
+            }
 
-                db.SubmitChanges();
+            db.SubmitChanges();
             return acc;
         }
 
@@ -227,7 +241,6 @@ namespace NightWatch
             }
             else // looby timeout, use database
             {
-
                 var db = new ZkDataContext();
                 return db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == hashedPassword && x.LobbyID != null);
             }
