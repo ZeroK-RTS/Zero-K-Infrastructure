@@ -82,14 +82,7 @@ namespace NightWatch
             this.client.UserStatusChanged += (s, e) =>
                 {
                     var user = client.ExistingUsers[e.ServerParams[0]];
-                    Task.Factory.StartNew(() =>
-                        {
-                            try
-                            {
-                                UpdateUser(user.LobbyID, user.Name, user, null);
-                            }
-                            catch {}
-                        });
+                    UpdateUser(user.LobbyID, user.Name, user, null);
                 };
 
             this.client.BattleUserJoined += (s, e) =>
@@ -162,8 +155,6 @@ namespace NightWatch
         {
             Account acc = null;
             var db = new ZkDataContext();
-            using (var scope = new TransactionScope())
-            {
                 acc = db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
                 if (acc == null)
                 {
@@ -185,8 +176,6 @@ namespace NightWatch
                 }
 
                 db.SubmitChanges();
-                scope.Complete();
-            }
             return acc;
         }
 
