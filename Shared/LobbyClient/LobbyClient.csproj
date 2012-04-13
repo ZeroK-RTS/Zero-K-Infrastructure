@@ -8,7 +8,7 @@
     <ProjectGuid>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>LobbyClient</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>

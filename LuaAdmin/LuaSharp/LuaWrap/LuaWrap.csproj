@@ -8,7 +8,7 @@
     <ProjectGuid>{76D7F266-456D-4A7C-916E-E35D057E5F98}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>LuaWrap</RootNamespace>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AssemblyName>LuaWrap</AssemblyName>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

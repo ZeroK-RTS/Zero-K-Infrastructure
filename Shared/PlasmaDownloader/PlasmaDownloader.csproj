@@ -8,7 +8,7 @@
     <ProjectGuid>{F3F74776-46A9-4415-B76E-CEEC771C2ABA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>PlasmaDownloader</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <RootNamespace>PlasmaDownloader</RootNamespace>
     <FileUpgradeFlags>
     </FileUpgradeFlags>

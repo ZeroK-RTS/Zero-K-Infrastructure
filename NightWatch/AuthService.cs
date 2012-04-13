@@ -82,7 +82,10 @@ namespace NightWatch
             this.client.UserStatusChanged += (s, e) =>
                 {
                     var user = client.ExistingUsers[e.ServerParams[0]];
-                    UpdateUser(user.LobbyID, user.Name, user, null);
+                    Task.Factory.StartNew(() =>
+                    {
+                        UpdateUser(user.LobbyID, user.Name, user, null);
+                    }, TaskCreationOptions.LongRunning);
                 };
 
             this.client.BattleUserJoined += (s, e) =>

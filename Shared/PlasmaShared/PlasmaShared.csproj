@@ -8,7 +8,7 @@
     <ProjectGuid>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>PlasmaShared</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <RootNamespace>PlasmaShared</RootNamespace>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
