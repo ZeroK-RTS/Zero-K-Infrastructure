@@ -85,7 +85,11 @@ namespace NightWatch
                     var user = client.ExistingUsers[e.ServerParams[0]];
                     Task.Factory.StartNew(() =>
                     {
-                        UpdateUser(user.LobbyID, user.Name, user, null);
+                        try
+                        {
+                            UpdateUser(user.LobbyID, user.Name, user, null);
+                        }
+                        catch { };
                     }, TaskCreationOptions.LongRunning);
                 };
 

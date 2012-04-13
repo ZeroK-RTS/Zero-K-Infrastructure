@@ -129,7 +129,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Web.Services" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PlasmaShared\PlasmaShared.csproj">
