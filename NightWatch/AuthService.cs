@@ -78,6 +78,7 @@ namespace NightWatch
                     }
                 };
 
+
             // todo this executes for nothing after useradded sets extension -> avoid by splitting extension changed na duserstatuschanged
             this.client.UserStatusChanged += (s, e) =>
                 {
