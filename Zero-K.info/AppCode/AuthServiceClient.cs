@@ -47,10 +47,8 @@ namespace ZkData
             var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.LobbyID != null);
             
 #else
-            var acc = db.Accounts.FirstOrDefault(x => x.Name == login && x.LobbyID != null && x.Password== passwordHash);
+            var acc = Account.AccountVerify(db, login, passwordHash);
 #endif
-
-
 
             if (acc != null || Debugger.IsAttached) return acc;
             else return Global.Nightwatch.Auth.VerifyAccount(login, passwordHash);

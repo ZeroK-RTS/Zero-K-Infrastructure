@@ -55,7 +55,7 @@ namespace NightWatch
                 {
                     using (var db = new ZkDataContext())
                     {
-                        var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == e.Data.LobbyID);
+                        var acc = Account.AccountByLobbyID(db, e.Data.LobbyID);
                         if (acc != null)
                         {
                             var data = new Dictionary<string, string>()
@@ -111,7 +111,7 @@ namespace NightWatch
 
                         using (var db = new ZkDataContext())
                         {
-                            var acc = db.Accounts.FirstOrDefault(x => x.LobbyID == user.LobbyID);
+                            var acc = Account.AccountByLobbyID(db, user.LobbyID);
                             var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
                             var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
                             if (acc != null &&
@@ -132,7 +132,7 @@ namespace NightWatch
                 {
                     using (var db = new ZkDataContext())
                     {
-                        var acc = db.Accounts.FirstOrDefault(x => x.Name == e.Name);
+                        var acc = Account.AccountByName(db,e.Name);
                         if (acc != null)
                         {
                             acc.LobbyVersion = e.LobbyVersion;
@@ -160,7 +160,7 @@ namespace NightWatch
         {
             Account acc = null;
             if (db == null) db = new ZkDataContext();
-            acc = db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID);
+            acc = Account.AccountByLobbyID(db, lobbyID);
             if (acc == null)
             {
                 acc = new Account();
@@ -221,12 +221,7 @@ namespace NightWatch
                     var acc = UpdateUser(info.LobbyID, info.CorrectName, info.User, hashedPassword);
                     return acc;
                 }
-            }
-            else // looby timeout, use database
-            {
-                var db = new ZkDataContext();
-                return db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == hashedPassword && x.LobbyID != null);
-            }
+            } return null;// timeout
         }
 
         public CurrentLobbyStats GetCurrentStats()

@@ -22,7 +22,7 @@ namespace ZeroKWeb.SpringieInterface
             if (mode == AutohostMode.Planetwars)
             {
                 var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
-                var account = db.Accounts.FirstOrDefault(x => x.LobbyID == accountID);
+                var account = Account.AccountByLobbyID(db,accountID); // accountID is in fact lobbyID
 
                 // conscription
                 /*
