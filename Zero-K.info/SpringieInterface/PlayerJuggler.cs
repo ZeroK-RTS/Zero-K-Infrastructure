@@ -391,8 +391,6 @@ namespace ZeroKWeb.SpringieInterface
 
         public static JugglerConfig GetPlayerConfig(string login)
         {
-            return new JugglerConfig();
-            
             using (var db = new ZkDataContext())
             {
                 var acc = db.Accounts.First(x => x.Name == login);
