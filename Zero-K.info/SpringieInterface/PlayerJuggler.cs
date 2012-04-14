@@ -41,7 +41,6 @@ namespace ZeroKWeb.SpringieInterface
                                 try
                                 {
                                     using (var db = new ZkDataContext())
-                                    using (var scope = new TransactionScope())
                                     {
                                         var acc = Account.AccountByName(db, args.UserName);
                                         acc.MatchMakingActive = config.Active;
@@ -49,7 +48,6 @@ namespace ZeroKWeb.SpringieInterface
                                         foreach (var item in config.Preferences) prefs[item.Mode] = item.Preference;
                                         acc.SetPreferences(prefs);
                                         db.SubmitChanges();
-                                        scope.Complete();
                                     }
                                     Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(config, args.UserName);
                                 }

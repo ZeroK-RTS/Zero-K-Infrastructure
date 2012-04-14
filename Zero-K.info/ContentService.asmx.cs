@@ -138,13 +138,10 @@ namespace ZeroKWeb
         public void NotifyMissionRun(string login, string missionName)
         {
             missionName = Mission.GetNameWithoutVersion(missionName);
-            using (var db = new ZkDataContext())
-            using (var scope = new TransactionScope())
-            {
+            using (var db = new ZkDataContext()){
                 db.Missions.Single(x => x.Name == missionName).MissionRunCount++;
                 Account.AccountByName(db,login).MissionRunCount++;
                 db.SubmitChanges();
-                scope.Complete();
             }
         }
 
