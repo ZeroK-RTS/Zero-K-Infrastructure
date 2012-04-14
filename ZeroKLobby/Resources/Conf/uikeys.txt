@@ -143,14 +143,14 @@ bind            Any+end  edit_end
 bind         Any+pageup  moveup
 bind       Any+pagedown  movedown
 bind                 f1  showelevation
-bind               C+f1  viewfps
+//bind               C+f1  viewfps
 bind                 f2  showpathtraversability
 bind               C+f2  viewta
 bind                 f3  lastmsgpos
-bind               C+f3  viewtw
+//bind               C+f3  viewtw
 bind                 f4  showmetalmap
-bind               C+f4  viewrot
-bind               C+f5  viewfree
+//bind               C+f4  viewrot
+//bind               C+f5  viewfree
 bind             Any+f5  HideInterface
 bind             Any+f6  NoSound
 bind             Any+f7  DynamicSky
@@ -184,7 +184,9 @@ bind ctrl+t select AllMap+_Not_Builder_Not_Building_Transport_Aircraft+_ClearSel
 bind ctrl+v select AllMap+_Builder_Not_Building_Idle+_ClearSelection_SelectOne+
 //bind ctrl+w select AllMap+_Not_Builder_Not_Building_Not_Transport_Not_Aircraft_Weapons_Not_WeaponRange_600+_ClearSelection_SelectAll+
 bind ctrl+x select Visible+_InPrevSel+_ClearSelection_SelectAll+
-bind ctrl+z select AllMap+_InPrevSel_Not_Builder+_ClearSelection_SelectAll+
+bind ctrl+z select AllMap+_InPrevSel+_ClearSelection_SelectAll+
+
+// bind ctrl+z select AllMap+_InPrevSel_Not_Builder+_ClearSelection_SelectAll+
 
 //
 //  DEFAULT UIKEYS.TXT FOR SPRING (0.73)
