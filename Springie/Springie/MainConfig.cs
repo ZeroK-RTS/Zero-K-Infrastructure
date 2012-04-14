@@ -26,6 +26,7 @@ namespace Springie
 		public string IpOverride;
         public int MaxInstances = 100;
 
+        public int RestartCounter { get; set; }
 
 	    public string DataDir { get; set; }
 

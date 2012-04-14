@@ -41,6 +41,8 @@ namespace Springie
         {
             RootWorkPath = path;
             LoadConfig();
+            Config.RestartCounter++;
+            if (Config.RestartCounter > 3) Config.RestartCounter = 0;
             SaveConfig();
             paths = new SpringPaths(Path.GetDirectoryName(Config.ExecutableName), Config.SpringVersion, Config.DataDir);
             if (!string.IsNullOrEmpty(Config.ExecutableName)) paths.OverrideDedicatedServer(Config.ExecutableName);
@@ -62,7 +64,7 @@ namespace Springie
             {
                 var usedPorts = autoHosts.ToDictionary(x => x.hostingPort);
                 var freePort =
-                    Enumerable.Range(Config.HostingPortStart, Config.MaxInstances).FirstOrDefault(x => !usedPorts.ContainsKey(x) && VerifyUdpSocket(x));
+                    Enumerable.Range(Config.HostingPortStart + Config.RestartCounter * 100, Config.MaxInstances).FirstOrDefault(x => !usedPorts.ContainsKey(x) && VerifyUdpSocket(x));
                 return freePort;
             }
         }
