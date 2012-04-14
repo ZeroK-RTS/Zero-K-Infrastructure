@@ -23,8 +23,11 @@ namespace ZeroKWeb
         public MvcApplication()
         {
             ZkDataContext.DataContextCreated += context => {
-                List<ZkDataContext> dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
-                if (dbs != null) dbs.Add(context);
+                if (HttpContext.Current != null)
+                {
+                    List<ZkDataContext> dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
+                    if (dbs != null) dbs.Add(context);
+                }
             };
             this.BeginRequest += (sender, args) => {
                 HttpContext.Current.Items[DbListKey] = new List<ZkDataContext>();
