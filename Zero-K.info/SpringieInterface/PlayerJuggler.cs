@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using LobbyClient;
-using PlasmaShared;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
@@ -14,34 +14,9 @@ namespace ZeroKWeb.SpringieInterface
         public BattleContext RunningGameStartContext;
     }
 
-    public class JugglerConfig
-    {
-        public bool Active;
-        public List<PreferencePair> Preferences = new List<PreferencePair>();
-
-        public class PreferencePair
-        {
-            public AutohostMode Mode;
-            public GamePreference Preference;
-        }
-    }
-
-    public class JugglerState
-    {
-        public List<ModePair> ModeCounts = new List<ModePair>();
-        public int TotalPlayers = 0;
-
-        public class ModePair
-        {
-            public AutohostMode Mode;
-            public int Count;
-        }
-    }
 
     public class PlayerJuggler
     {
-        public static JugglerState LastState = new JugglerState();
-
         static readonly List<AutohostMode> BinOrder = new List<AutohostMode>
                                                       {
                                                           AutohostMode.Planetwars,
@@ -52,6 +27,48 @@ namespace ZeroKWeb.SpringieInterface
                                                           AutohostMode.GameChickens,
                                                           AutohostMode.Game1v1,
                                                       };
+
+        static PlayerJuggler()
+        {
+            Global.Nightwatch.Tas.Extensions.JugglerConfigReceived += (args, config) =>
+                {
+                    if (args.UserName != GlobalConst.NightwatchName)
+                    {
+                        Task.Factory.StartNew(() =>
+                            {
+                                using (var db = new ZkDataContext())
+                                {
+                                    var acc = Account.AccountByName(db, args.UserName);
+                                    acc.MatchMakingActive = config.Active;
+                                    var prefs = acc.Preferences;
+                                    foreach (var item in config.Preferences) prefs[item.Mode] = item.Preference;
+                                    acc.SetPreferences(prefs);
+                                    db.SubmitChanges();
+                                }
+                            },TaskCreationOptions.LongRunning);
+                    }
+                };
+
+            Global.Nightwatch.Tas.ChannelUserAdded += (sender, args) => {
+                var name = args.ServerParams[1];
+                var chan = args.ServerParams[0];
+                if (chan == ProtocolExtension.ExtensionChannelName && name != GlobalConst.NightwatchName) 
+                Task.Factory.StartNew(() =>
+                {
+                    using (var db = new ZkDataContext())
+                    {
+                        var conf = new ProtocolExtension.JugglerConfig();
+                        var acc = Account.AccountByName(db, name);
+                        conf.Active = acc.MatchMakingActive;
+                        var prefs = new List<ProtocolExtension.JugglerConfig.PreferencePair>();
+                        foreach (var item in acc.Preferences) prefs.Add(new ProtocolExtension.JugglerConfig.PreferencePair(){Mode = item.Key, Preference = item.Value});
+                        Global.Nightwatch.Tas.Extensions.SendPlayerJugglerConfig(conf, name);
+                    }
+
+                }, TaskCreationOptions.LongRunning);
+
+            };
+        }
 
 
         public static bool CanMove(Account acc)
@@ -65,18 +82,19 @@ namespace ZeroKWeb.SpringieInterface
         public static JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
         {
             var ret = new JugglerResult();
-            
 
             var bins = new List<Bin>();
             var db = new ZkDataContext();
             var sb = new StringBuilder();
             var lobbyIds = new List<int?>();
 
-            Dictionary<int, AutohostMode> manuallyPrefered = new Dictionary<int, AutohostMode>();
-            
+            var manuallyPrefered = new Dictionary<int, AutohostMode>();
+
             var tas = Global.Nightwatch.Tas;
 
-            autohosts = autohosts.Where(x => !tas.ExistingBattles.Values.Any(y=>y.Founder.Name == x.LobbyContext.AutohostName && y.IsPassworded)).ToList(); //only non pw battles
+            autohosts =
+                autohosts.Where(x => !tas.ExistingBattles.Values.Any(y => y.Founder.Name == x.LobbyContext.AutohostName && y.IsPassworded)).ToList();
+            //only non pw battles
 
             foreach (var ah in autohosts)
             {
@@ -86,49 +104,51 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     var notPlaying =
                         ah.LobbyContext.Players.Where(
-                            x => !x.IsSpectator && !x.IsIngame && !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator && y.IsIngame )).Select(
+                            x =>
+                            !x.IsSpectator && !x.IsIngame &&
+                            !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator && y.IsIngame)).Select(
                                 x => (int?)x.LobbyID).ToList();
                     // game running, add all those that are not playing and are not specs
                     lobbyIds.AddRange(notPlaying);
                 }
             }
 
-            foreach (var id in new List<int?>(lobbyIds)) {
-                if (tas.ExistingUsers.Values.Any(x => x.LobbyID == id && x.IsInGame)) lobbyIds.Remove(id);
-            }
-            
+            foreach (var id in new List<int?>(lobbyIds)) if (tas.ExistingUsers.Values.Any(x => x.LobbyID == id && x.IsInGame)) lobbyIds.Remove(id);
+
             var roomLessLobbyID = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
-            foreach (var ah in autohosts) { // safeguard - remove those known to be playing or speccing
-                if (ah.RunningGameStartContext != null)
-                    foreach (var id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator && x.IsIngame).Select(x => x.LobbyID)) roomLessLobbyID.Remove(id);
-                if (ah.LobbyContext != null) foreach (var id in ah.LobbyContext.Players.Where(x => x.IsIngame).Select(x=>x.LobbyID)) roomLessLobbyID.Remove(id);
+            foreach (var ah in autohosts)
+            {
+                // safeguard - remove those known to be playing or speccing
+                if (ah.RunningGameStartContext != null) foreach (var id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator && x.IsIngame).Select(x => x.LobbyID)) roomLessLobbyID.Remove(id);
+                if (ah.LobbyContext != null) foreach (var id in ah.LobbyContext.Players.Where(x => x.IsIngame).Select(x => x.LobbyID)) roomLessLobbyID.Remove(id);
             }
 
-            var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID) || (roomLessLobbyID.Contains(x.LobbyID) && x.MatchMakingActive)).ToDictionary(x => x.LobbyID ?? 0);
+            var juggledAccounts =
+                db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID) || (roomLessLobbyID.Contains(x.LobbyID) && x.MatchMakingActive)).ToDictionary(
+                    x => x.LobbyID ?? 0);
 
             // make bins from non-running games with players by each type
             foreach (var grp in
                 autohosts.Where(x => x.LobbyContext != null).GroupBy(x => x.LobbyContext.GetMode()))
             {
-                List<Bin> groupBins = new List<Bin>();
-                
+                var groupBins = new List<Bin>();
+
                 // set manual preference for all juggleable people who are in games
-                foreach (var ah in grp) {
-                    foreach (var u in ah.LobbyContext.Players.Where(x=>juggledAccounts.ContainsKey(x.LobbyID))) {
-                        manuallyPrefered[u.LobbyID] = grp.Key;
-                    }
-                }
+                foreach (var ah in grp) foreach (var u in ah.LobbyContext.Players.Where(x => juggledAccounts.ContainsKey(x.LobbyID))) manuallyPrefered[u.LobbyID] = grp.Key;
 
                 // make bins from existing battles that are not running and have some players
                 foreach (var ah in grp.Where(x => x.RunningGameStartContext == null && x.LobbyContext.Players.Any(y => !y.IsSpectator)))
                 {
                     var bin = new Bin(ah);
-                    var toAdd = ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID).ToList();
+                    var toAdd =
+                        ah.LobbyContext.Players.Where(x => !x.IsSpectator && juggledAccounts.ContainsKey(x.LobbyID)).Select(x => x.LobbyID).ToList();
                     bin.ManuallyJoined.AddRange(toAdd);
                     groupBins.Add(bin);
                 }
 
-                if (groupBins.Count == 0) { // no bins with players found, add empty one
+                if (groupBins.Count == 0)
+                {
+                    // no bins with players found, add empty one
                     var firstEmpty = grp.FirstOrDefault(x => x.RunningGameStartContext == null && x.LobbyContext.Players.All(y => y.IsSpectator));
                     if (firstEmpty != null)
                     {
@@ -136,15 +156,14 @@ namespace ZeroKWeb.SpringieInterface
                         groupBins.Add(bin);
                     }
                 }
-                
+
                 // remove all but biggest below merge limit
                 var biggest = groupBins.OrderByDescending(x => x.ManuallyJoined.Count).First();
-                groupBins.RemoveAll(x => x != biggest && x.ManuallyJoined.Count < (x.Config.MergeSmallerThan??0));
-                
+                groupBins.RemoveAll(x => x != biggest && x.ManuallyJoined.Count < (x.Config.MergeSmallerThan ?? 0));
+
                 bins.AddRange(groupBins);
             }
 
-            
             SetPriorities(bins, juggledAccounts, manuallyPrefered);
 
             sb.AppendLine("Original bins:");
@@ -181,7 +200,7 @@ namespace ZeroKWeb.SpringieInterface
                             var persons =
                                 b.PlayerPriority.Where(x => !b.Assigned.Contains(x.Key) && x.Value == priority && CanMove(juggledAccounts[x.Key])).
                                     Select(x => x.Key).ToList();
-                            
+
                             if (b.Config.MaxEloDifference != null && binElo != null) persons.RemoveAll(x => Math.Abs(juggledAccounts[x].EffectiveElo - (binElo ?? 0)) > b.Config.MaxEloDifference);
 
                             if (binElo != null) persons = persons.OrderByDescending(x => Math.Abs(juggledAccounts[x].EffectiveElo - binElo.Value)).ToList();
@@ -205,8 +224,6 @@ namespace ZeroKWeb.SpringieInterface
                     } while (moved);
                 } while (true);
 
-
-                
                 // find first bin that cannot be started due to lack of people and remove it 
                 todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.Config.MinToJuggle);
 
@@ -221,15 +238,14 @@ namespace ZeroKWeb.SpringieInterface
             sb.AppendLine("Final bins:");
             PrintBins(juggledAccounts, bins, sb);
 
-
             if (bins.Any())
             {
                 SplitBins(autohosts, juggledAccounts, sb, bins);
                 sb.AppendLine("After split:");
-                PrintBins(juggledAccounts, bins,sb);
+                PrintBins(juggledAccounts, bins, sb);
 
                 ret.PlayerMoves = new List<JugglerMove>();
-                
+
                 foreach (var b in bins)
                 {
                     foreach (var a in b.Assigned)
@@ -238,12 +254,10 @@ namespace ZeroKWeb.SpringieInterface
                         var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name));
                         if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName)
                         {
-                            if (origAh == null) tas.Say(TasClient.SayPlace.User, acc.Name, "!join " + b.Autohost.LobbyContext.AutohostName,false);
+                            if (origAh == null) tas.Say(TasClient.SayPlace.User, acc.Name, "!join " + b.Autohost.LobbyContext.AutohostName, false);
                             ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
                         }
                     }
-
-
                 }
 
                 /*ret.AutohostsToClose = new List<string>();
@@ -252,38 +266,9 @@ namespace ZeroKWeb.SpringieInterface
                         x => x.RunningGameStartContext == null && !bins.Any(y => y.Autohost == x) && x.LobbyContext.Players.Any(y => !y.IsSpectator))) ret.AutohostsToClose.Add(ah.LobbyContext.AutohostName);*/
             }
 
-
-
             ret.Message = sb.ToString();
-            
-            return ret;
-        }
 
-        static void SplitBins(List<JugglerAutohost> autohosts, Dictionary<int, Account> juggledAccounts, StringBuilder sb, List<Bin> bins)
-        {
-            // split too big bins -> move top players to another autohost
-            foreach (var b in new List<Bin>(bins))
-            {
-                if (b.Assigned.Count > (b.Config.SplitBiggerThan??99))
-                {
-                    sb.AppendLine("Splitting " + b.Autohost.LobbyContext.AutohostName);
-                    var splitTo = autohosts.FirstOrDefault(x => x.LobbyContext.GetMode() == b.Mode && x.RunningGameStartContext == null && x != b.Autohost);
-                        //find first one that isnt running and isnt bin -> no players for it planned
-                    if (splitTo != null)
-                    {
-                        sb.AppendLine("Splitting to " + splitTo.LobbyContext.AutohostName);
-                        var eloList = b.Assigned.Select(x => juggledAccounts[x]).Where(CanMove).OrderBy(x => x.EffectiveElo).ToList();
-                        var toMove = eloList.Take(b.Assigned.Count/2).ToList();
-                        if (toMove.Count >= b.Config.MinToJuggle)
-                        {
-                            var target = new Bin(splitTo);
-                            target.Assigned.AddRange(toMove.Select(x => x.LobbyID ?? 0));
-                            bins.Add(target);
-                            b.Assigned.RemoveAll(x => toMove.Any(y => y.LobbyID == x));
-                        }
-                    }
-                }
-            }
+            return ret;
         }
 
 
@@ -318,7 +303,7 @@ namespace ZeroKWeb.SpringieInterface
                 else
                 {
                     b.Assigned.Clear();
-                    foreach (var id in b.ManuallyJoined) b.Assigned.Add(id); 
+                    foreach (var id in b.ManuallyJoined) b.Assigned.Add(id);
                 }
             }
         }
@@ -337,7 +322,7 @@ namespace ZeroKWeb.SpringieInterface
                     if (manuallyPrefered.TryGetValue(lobbyID, out manualPref) && manualPref == b.Mode) battlePref += 0.5; // player joined manually same type add 0.5
 
                     if (b.Config.MinLevel != null && a.Value.Level < b.Config.MinLevel) continue; // dont queue who cannot join PW
-                    
+
                     if (b.ManuallyJoined.Contains(lobbyID)) // was he there already
                         b.PlayerPriority[lobbyID] = battlePref; // player joined it already
                     else
@@ -345,9 +330,9 @@ namespace ZeroKWeb.SpringieInterface
                         if (CanMove(a.Value))
                         {
                             if (b.Config.MaxToJuggle != null && b.ManuallyJoined.Count() >= b.Config.MaxToJuggle) continue; // full 1v1
-                            if (b.Config.MaxEloDifference != null && b.ManuallyJoined.Count >=1)
+                            if (b.Config.MaxEloDifference != null && b.ManuallyJoined.Count >= 1)
                             {
-                                var avgElo = b.ManuallyJoined.Average(x=>juggledAccounts[x].EffectiveElo);
+                                var avgElo = b.ManuallyJoined.Average(x => juggledAccounts[x].EffectiveElo);
                                 if (Math.Abs(a.Value.EffectiveElo - avgElo) > b.Config.MaxEloDifference) continue; //effective elo difference > 250 dont try to combine
                             }
 
@@ -357,12 +342,41 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
 
-            var state  = new JugglerState();
+            var state = new ProtocolExtension.JugglerState();
             state.TotalPlayers = juggledAccounts.Count;
-            foreach (var grp in bins.GroupBy(x => x.Mode).Select(x => new { Mode = x.Key, Count = x.Sum(y => y.PlayerPriority.Count(z => z.Value > (double)GamePreference.Never)) })) {
-                state.ModeCounts.Add(new JugglerState.ModePair() {Mode = grp.Mode, Count = grp.Count});
+            foreach (var grp in
+                bins.GroupBy(x => x.Mode).Select(
+                    x => new { Mode = x.Key, Count = x.Sum(y => y.PlayerPriority.Count(z => z.Value > (double)GamePreference.Never)) })) state.ModeCounts.Add(new ProtocolExtension.JugglerState.ModePair() { Mode = grp.Mode, Count = grp.Count });
+
+            Global.Nightwatch.Tas.Extensions.PublishJugglerState(state);
+        }
+
+        static void SplitBins(List<JugglerAutohost> autohosts, Dictionary<int, Account> juggledAccounts, StringBuilder sb, List<Bin> bins)
+        {
+            // split too big bins -> move top players to another autohost
+            foreach (var b in new List<Bin>(bins))
+            {
+                if (b.Assigned.Count > (b.Config.SplitBiggerThan ?? 99))
+                {
+                    sb.AppendLine("Splitting " + b.Autohost.LobbyContext.AutohostName);
+                    var splitTo =
+                        autohosts.FirstOrDefault(x => x.LobbyContext.GetMode() == b.Mode && x.RunningGameStartContext == null && x != b.Autohost);
+                    //find first one that isnt running and isnt bin -> no players for it planned
+                    if (splitTo != null)
+                    {
+                        sb.AppendLine("Splitting to " + splitTo.LobbyContext.AutohostName);
+                        var eloList = b.Assigned.Select(x => juggledAccounts[x]).Where(CanMove).OrderBy(x => x.EffectiveElo).ToList();
+                        var toMove = eloList.Take(b.Assigned.Count/2).ToList();
+                        if (toMove.Count >= b.Config.MinToJuggle)
+                        {
+                            var target = new Bin(splitTo);
+                            target.Assigned.AddRange(toMove.Select(x => x.LobbyID ?? 0));
+                            bins.Add(target);
+                            b.Assigned.RemoveAll(x => toMove.Any(y => y.LobbyID == x));
+                        }
+                    }
+                }
             }
-            LastState = state;
         }
 
 
@@ -370,9 +384,9 @@ namespace ZeroKWeb.SpringieInterface
         {
             public List<int> Assigned = new List<int>();
             public JugglerAutohost Autohost;
+            public AutohostConfig Config;
             public List<int> ManuallyJoined = new List<int>();
             public AutohostMode Mode;
-            public AutohostConfig Config;
             public Dictionary<int, double> PlayerPriority = new Dictionary<int, double>();
 
             public Bin(JugglerAutohost autohost)
@@ -386,39 +400,6 @@ namespace ZeroKWeb.SpringieInterface
             {
                 public Account Account;
                 public Bin CurrentBin;
-            }
-        }
-
-        public static JugglerConfig GetPlayerConfig(string login)
-        {
-            using (var db = new ZkDataContext())
-            {
-                var acc = Account.AccountByName(db,login);
-                var ret = new JugglerConfig();
-                ret.Active = acc.MatchMakingActive;
-                foreach (var pref in acc.Preferences)
-                {
-                    ret.Preferences.Add(new JugglerConfig.PreferencePair() { Mode = pref.Key, Preference = pref.Value });
-                }
-                return ret;
-            }
-        }
-
-        public static void SetPlayerConfig(string login, string password, JugglerConfig config)
-        {
-            using (var db = new ZkDataContext())
-            {
-                var acc = AuthServiceClient.VerifyAccountPlain(login, password);
-
-                acc = db.Accounts.Single(x => x.AccountID == acc.AccountID);
-                acc.MatchMakingActive = config.Active;
-                var prefs = acc.Preferences;
-                foreach (var item in config.Preferences)
-                {
-                    prefs[item.Mode] = item.Preference;
-                }
-                acc.SetPreferences(prefs);
-                db.SubmitChanges();
             }
         }
     }

@@ -18,8 +18,6 @@ using BalanceTeamsResult = ZeroKWeb.SpringieInterface.BalanceTeamsResult;
 using BattlePlayerResult = ZeroKWeb.SpringieInterface.BattlePlayerResult;
 using BattleResult = ZeroKWeb.SpringieInterface.BattleResult;
 using BotTeam = ZeroKWeb.SpringieInterface.BotTeam;
-using JugglerConfig = ZeroKWeb.SpringieInterface.JugglerConfig;
-using JugglerState = ZeroKWeb.SpringieInterface.JugglerState;
 using ProgramType = ZkData.ProgramType;
 using RecommendedMapResult = ZeroKWeb.SpringieInterface.RecommendedMapResult;
 using ResourceType = ZkData.ResourceType;
@@ -252,23 +250,6 @@ namespace ZeroKWeb
             var acc = AuthServiceClient.VerifyAccountPlain(login, password);
             if (acc == null) return false;
             return true;
-        }
-
-
-        [WebMethod]
-        public JugglerState GetJugglerState() {
-            return PlayerJuggler.LastState;
-        }
-
-
-        [WebMethod]
-        public JugglerConfig GetJugglerConfig(string login) {
-            return PlayerJuggler.GetPlayerConfig(login);
-        }
-
-        [WebMethod]
-        public void SetJugglerConfig(string login, string password, JugglerConfig config) {
-            PlayerJuggler.SetPlayerConfig(login, password, config);
         }
 
 

@@ -5,21 +5,17 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
-using PlasmaShared.ContentService;
 using ZeroKLobby.MicroLobby;
-using AutohostMode = ZkData.AutohostMode;
-using GamePreference = ZkData.GamePreference;
+using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
     public partial class JugglerBar: UserControl, INotifyBar
     {
-        readonly Dictionary<string, InfoItems> Items = new Dictionary<string, InfoItems>();
+        readonly Dictionary<AutohostMode, InfoItems> Items = new Dictionary<AutohostMode, InfoItems>();
         readonly TasClient client;
-        JugglerState lastState;
-
+        ProtocolExtension.JugglerState lastState;
         bool suppressChangeEvent = false;
-        readonly Timer timer;
         public NotifyBarContainer BarContainer { get; private set; }
 
         public JugglerBar(TasClient client)
@@ -38,7 +34,7 @@ namespace ZeroKLobby.Notifications
                 xOffset = 0 + (cnt/2)*210;
                 yOffset = 0 + (cnt%2)*21;
                 var item = new InfoItems();
-                Items.Add(mode.ToString(), item);
+                Items.Add(mode, item);
 
                 Controls.Add(new Label()
                              { Left = xOffset + 0, Width = 120, TextAlign = ContentAlignment.TopRight, Top = yOffset, Text = mode.Description() });
@@ -57,10 +53,6 @@ namespace ZeroKLobby.Notifications
                 cnt++;
             }
             
-            
-            GetJugglerState();
-            GetMyConfig();
-
             client.BattleJoined += (sender, args) =>
                 {
                     if (args.Data.Founder.IsSpringieManaged)
@@ -80,109 +72,77 @@ namespace ZeroKLobby.Notifications
                 }
             };
 
-            
-            
 
-            timer = new Timer();
-            timer.Interval = 30000;
-            timer.Tick += (sender, args) => {
-                GetJugglerState();
+            client.Extensions.JugglerStateReceived += (args, state) =>
+            {
+                lastState = state;
+                if (BarContainer != null) BarContainer.btnDetail.Text = "QuickMatch " + state.TotalPlayers + " players";
+                foreach (var entry in state.ModeCounts)
+                {
+                    InfoItems item;
+                    if (Items.TryGetValue(entry.Mode, out item)) item.Label.Text = "(" + entry.Count.ToString() + ")";
+                }
             };
 
+            client.LoginAccepted += (sender, args) =>
+            {
+                SendMyConfig(false);
+            };
         }
+
 
         public void Activate()
         {
             if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
             SendMyConfig(false);
-            GetMyConfig();
-            timer.Enabled = true;
         }
 
 
-        public void GetJugglerState()
-        {
-            var cs = new ContentService();
-            cs.GetJugglerStateCompleted += (sender, args) =>
+        private void UpdateMyConfig(ProtocolExtension.JugglerConfig res ) {
+            suppressChangeEvent = true;
+            foreach (var entry in res.Preferences)
+            {
+                InfoItems item;
+                if (Items.TryGetValue(entry.Mode, out item))
                 {
-                    if (!args.Cancelled && args.Error == null)
-                    {
-                        var res = args.Result;
-                        lastState = res;
-                        if (BarContainer != null) BarContainer.btnDetail.Text = "QuickMatch " + res.TotalPlayers + " players";
-                        foreach (var entry in res.ModeCounts)
-                        {
-                            InfoItems item;
-                            if (Items.TryGetValue(entry.Mode.ToString(), out item)) item.Label.Text = "(" +entry.Count.ToString() +")";
-                        }
-                    }
-                };
-            cs.GetJugglerStateAsync();
-        }
-
-        public void GetMyConfig()
-        {
-            var cs2 = new ContentService();
-            cs2.GetJugglerConfigCompleted += (sender, args) =>
-                {
-                    if (!args.Cancelled && args.Error == null)
-                    {
-                        suppressChangeEvent = true;
-                        var res = args.Result;
-                        foreach (var entry in res.Preferences)
-                        {
-                            InfoItems item;
-                            if (Items.TryGetValue(entry.Mode.ToString(), out item))
-                            {
-                                var cb = item.ComboBox;
-                                cb.SelectedItem = cb.Items.OfType<CbItem>().FirstOrDefault(x => x.Value.ToString() == entry.Preference.ToString());
-                            }
-                        }
-                        suppressChangeEvent = false;
-                        if (res.Active) Activate();
-                    }
-                };
-
-            cs2.GetJugglerConfigAsync(Program.Conf.LobbyPlayerName);
+                    var cb = item.ComboBox;
+                    cb.SelectedItem = cb.Items.OfType<CbItem>().FirstOrDefault(x => x.Value == entry.Preference);
+                }
+            }
+            suppressChangeEvent = false;
+            if (res.Active && !Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
+            if (!res.Active && Program.NotifySection.Bars.Contains(this)) Program.NotifySection.RemoveBar(this);
         }
 
 
-        public void SendMyConfig(bool sendPreferences)
+        private void SendMyConfig(bool sendPreferences)
         {
-            var conf = new JugglerConfig();
+            var conf = new ProtocolExtension.JugglerConfig();
             conf.Active = Program.NotifySection.Bars.Contains(this);
             if (sendPreferences)
             {
-                var prefs = new List<PreferencePair>();
+                var prefs = new List<ProtocolExtension.JugglerConfig.PreferencePair>();
                 foreach (var item in Items)
                 {
                     var cb = (CbItem)item.Value.ComboBox.SelectedItem;
                     ;
                     if (cb != null)
                     {
-                        var comboValue = cb.Value;
-                        var preference =
-                            Enum.GetValues(typeof(PlasmaShared.ContentService.GamePreference)).OfType<PlasmaShared.ContentService.GamePreference>().
-                                FirstOrDefault(x => x.ToString() == comboValue.ToString());
-                        var autohostMode =
-                            Enum.GetValues(typeof(PlasmaShared.ContentService.AutohostMode)).OfType<PlasmaShared.ContentService.AutohostMode>().
-                                FirstOrDefault(x => x.ToString() == item.Key);
+                        var preference = cb.Value;
+                        var autohostMode = item.Key;
 
-                        prefs.Add(new PreferencePair() { Mode = autohostMode, Preference = preference });
+                        prefs.Add(new ProtocolExtension.JugglerConfig.PreferencePair() { Mode = autohostMode, Preference = preference });
                     }
                 }
-                conf.Preferences = prefs.ToArray();
+                conf.Preferences = prefs;
             }
-
-            var cs = new ContentService();
-            cs.SetJugglerConfigAsync(Program.Conf.LobbyPlayerName, Program.Conf.LobbyPlayerPassword, conf);
+            client.Extensions.SendMyJugglerConfig(conf);
         }
 
         public void Deactivate()
         {
             Program.NotifySection.RemoveBar(this);
             SendMyConfig(false);
-            timer.Enabled = false;
         }
 
         public void AddedToContainer(NotifyBarContainer container)
@@ -191,7 +151,6 @@ namespace ZeroKLobby.Notifications
             container.btnDetail.Text = "QuickMatch ";
             if (lastState != null) container.btnDetail.Text += "("+lastState.TotalPlayers + ")";
             container.btnDetail.Enabled = false;
-            ;
         }
 
         public void CloseClicked(NotifyBarContainer container)
@@ -201,8 +160,6 @@ namespace ZeroKLobby.Notifications
 
         public void DetailClicked(NotifyBarContainer container)
         {
-            GetMyConfig();
-            GetJugglerState();
         }
 
         public Control GetControl()
