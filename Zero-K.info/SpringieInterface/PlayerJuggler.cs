@@ -391,28 +391,35 @@ namespace ZeroKWeb.SpringieInterface
 
         public static JugglerConfig GetPlayerConfig(string login)
         {
-            var db = new ZkDataContext();
-            var acc = db.Accounts.First(x => x.Name == login);
-            var ret = new JugglerConfig();
-            ret.Active = acc.MatchMakingActive;
-            foreach (var pref in acc.Preferences) {
-                ret.Preferences.Add(new JugglerConfig.PreferencePair() { Mode = pref.Key, Preference = pref.Value});
+            using (var db = new ZkDataContext())
+            {
+                var acc = db.Accounts.First(x => x.Name == login);
+                var ret = new JugglerConfig();
+                ret.Active = acc.MatchMakingActive;
+                foreach (var pref in acc.Preferences)
+                {
+                    ret.Preferences.Add(new JugglerConfig.PreferencePair() { Mode = pref.Key, Preference = pref.Value });
+                }
+                return ret;
             }
-            return ret;
         }
 
         public static void SetPlayerConfig(string login, string password, JugglerConfig config)
         {
-            var acc = AuthServiceClient.VerifyAccountPlain(login, password);
-            var db = new ZkDataContext();
-            acc = db.Accounts.Single(x => x.AccountID == acc.AccountID);
-            acc.MatchMakingActive = config.Active;
-            var prefs = acc.Preferences;
-            foreach (var item in config.Preferences) {
-                prefs[item.Mode] = item.Preference;
+            using (var db = new ZkDataContext())
+            {
+                var acc = AuthServiceClient.VerifyAccountPlain(login, password);
+
+                acc = db.Accounts.Single(x => x.AccountID == acc.AccountID);
+                acc.MatchMakingActive = config.Active;
+                var prefs = acc.Preferences;
+                foreach (var item in config.Preferences)
+                {
+                    prefs[item.Mode] = item.Preference;
+                }
+                acc.SetPreferences(prefs);
+                db.SubmitChanges();
             }
-            acc.SetPreferences(prefs);
-            db.SubmitChanges(); 
         }
     }
 
