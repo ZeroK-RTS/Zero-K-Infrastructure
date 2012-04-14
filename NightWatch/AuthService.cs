@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Transactions;
 using LobbyClient;
-using PlasmaShared;
 using ZkData;
 
 namespace NightWatch
@@ -83,12 +82,17 @@ namespace NightWatch
             this.client.UserStatusChanged += (s, e) =>
                 {
                     var user = client.ExistingUsers[e.ServerParams[0]];
-                    Utils.StartAsync(() => {
-                        using (var db = new ZkDataContext())
+                    Task.Factory.StartNew(() =>
                         {
-                            UpdateUser(user.LobbyID, user.Name, user, null, db);
-                        }
-                    });
+                            try
+                            {
+                                using (var db = new ZkDataContext()) UpdateUser(user.LobbyID, user.Name, user, null, db);
+                            }
+                            catch (Exception ex)
+                            {
+                                Trace.TraceError(ex.ToString());
+                            }
+                        });
                 };
 
             this.client.BattleUserJoined += (s, e) =>
@@ -133,12 +137,12 @@ namespace NightWatch
                 {
                     using (var db = new ZkDataContext())
                     {
-                        var acc = Account.AccountByName(db,e.Name);
+                        var acc = Account.AccountByName(db, e.Name);
                         if (acc != null)
                         {
                             acc.LobbyVersion = e.LobbyVersion;
                             acc.LastLobbyVersionCheck = DateTime.UtcNow;
-                            db.SubmitChanges();
+                            db.SubmitAndMergeChanges();
                             if (!acc.LobbyVersion.StartsWith("ZK"))
                             {
                                 client.Say(TasClient.SayPlace.User,
@@ -161,31 +165,29 @@ namespace NightWatch
         {
             Account acc = null;
             if (db == null) db = new ZkDataContext();
-            using (var scope = new TransactionScope())
+
+            acc = Account.AccountByLobbyID(db, lobbyID);
+            if (acc == null)
             {
-                acc = Account.AccountByLobbyID(db, lobbyID);
-                if (acc == null)
-                {
-                    acc = new Account();
-                    db.Accounts.InsertOnSubmit(acc);
-                }
-
-                acc.LobbyID = lobbyID;
-                acc.Name = name;
-                if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
-                acc.LastLogin = DateTime.UtcNow;
-
-                if (user != null) // user was online, we can update his data
-                {
-                    acc.IsBot = user.IsBot;
-                    acc.IsLobbyAdministrator = user.IsAdmin;
-                    acc.Country = user.Country;
-                    acc.LobbyTimeRank = user.Rank;
-                }
-
-                db.SubmitChanges();
-                scope.Complete();
+                acc = new Account();
+                db.Accounts.InsertOnSubmit(acc);
             }
+
+            acc.LobbyID = lobbyID;
+            acc.Name = name;
+            if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
+            acc.LastLogin = DateTime.UtcNow;
+
+            if (user != null) // user was online, we can update his data
+            {
+                acc.IsBot = user.IsBot;
+                acc.IsLobbyAdministrator = user.IsAdmin;
+                acc.Country = user.Country;
+                acc.LobbyTimeRank = user.Rank;
+            }
+
+            db.SubmitAndMergeChanges();
+
             return acc;
         }
 
@@ -226,7 +228,8 @@ namespace NightWatch
                     var acc = UpdateUser(info.LobbyID, info.CorrectName, info.User, hashedPassword);
                     return acc;
                 }
-            } return null;// timeout
+            }
+            return null; // timeout
         }
 
         public CurrentLobbyStats GetCurrentStats()

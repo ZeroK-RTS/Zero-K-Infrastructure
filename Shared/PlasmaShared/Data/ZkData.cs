@@ -54,5 +54,27 @@ namespace ZkData
 #endif
             DataContextCreated(this);
         }
+
+
+        public void SubmitAndMergeChanges() {
+            try
+            {
+                SubmitChanges(ConflictMode.ContinueOnConflict);
+            }
+
+            catch (ChangeConflictException e)
+            {
+             // Automerge database values for members that client
+                // has not modified.
+                foreach (ObjectChangeConflict occ in ChangeConflicts)
+                {
+                    occ.Resolve(RefreshMode.KeepChanges);
+                }
+                
+                // Submit succeeds on second try.
+                SubmitChanges();
+            }
+        
+        }
 	}
 }

@@ -47,7 +47,7 @@ namespace ZeroKWeb.SpringieInterface
                                         var prefs = acc.Preferences;
                                         foreach (var item in config.Preferences) prefs[item.Mode] = item.Preference;
                                         acc.SetPreferences(prefs);
-                                        db.SubmitChanges();
+                                        db.SubmitAndMergeChanges();
                                     }
                                     Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(config, args.UserName);
                                 }
