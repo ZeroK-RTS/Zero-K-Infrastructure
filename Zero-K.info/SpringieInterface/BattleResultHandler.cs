@@ -53,31 +53,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (acc == null) throw new Exception("Account name or password not valid");
                 var mode = context.GetMode();
                 var db = new ZkDataContext();
-
-                
-                Utils.StartAsync(
-                    () =>
-                    {
-                        var cars = new ZkDataContext().Accounts.First(x=>x.Name=="[1uP]CarRepairer");
-                        try
-                        {
-                            var sent = JsonRequest.MakeRequest("http://packages.springrts.com/jsonapi.php",
-                                                    new
-                                                    {
-                                                        accountName = context.AutohostName,
-                                                        result = result,
-                                                        players = players,
-                                                        extraData = extraData
-                                                    });
-                            //AuthServiceClient.SendLobbyMessage(cars,"SENT: " + sent);
-
-                        }
-                        catch (Exception ex) {
-                            AuthServiceClient.SendLobbyMessage(cars, "Error sending: " + ex);
-                        
-                        }
-                    });
-                
+              
 
                 if (extraData == null) extraData = new List<string>();
 

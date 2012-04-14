@@ -81,11 +81,11 @@ namespace ZeroKWeb.Controllers
             Account user = null;
             if (int.TryParse(id, out idint))
             {
-                user = db.Accounts.FirstOrDefault(x => x.AccountID == idint);
+                user = Account.AccountByAccountID(db, idint);
             }
             if (user == null)
             {
-                user = db.Accounts.FirstOrDefault(x => x.Name == id);
+                user = Account.AccountByName(db,id);
             }
             return View("UserDetail", user);
         }
@@ -108,10 +108,10 @@ namespace ZeroKWeb.Controllers
             Account user = null;
             if (int.TryParse(id, out idint))
             {
-                user = db.Accounts.FirstOrDefault(x => x.LobbyID == idint);
+                user = Account.AccountByLobbyID(db,idint);
             }
             if (user == null) {
-                user = db.Accounts.FirstOrDefault(x => x.Name == id);
+                user = Account.AccountByName(db,id);
             }
 
             return View("UserDetail", user);

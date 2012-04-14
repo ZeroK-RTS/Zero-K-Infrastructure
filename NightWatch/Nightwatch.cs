@@ -86,8 +86,7 @@ namespace CaTracker
 			}
 
             Auth = new AuthService(tas);
-
-			offlineMessages = new OfflineMessages(tas);
+            offlineMessages = new OfflineMessages(tas);
             playerMover = new PlayerMover(tas);
 
 			return true;

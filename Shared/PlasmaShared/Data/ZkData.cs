@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Data.Linq;
 using System.IO;
 using System.Web;
 using JetBrains.Annotations;
@@ -10,7 +11,8 @@ namespace ZkData
 	partial class ZkDataContext
 	{
 #if DEBUG
-        private static string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-dev;Integrated Security=True";
+        //private static string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-dev;Integrated Security=True";
+        private static string ConnectionString = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1";
 #else 
         private static string ConnectionString= Settings.Default.zero_kConnectionString;
 
