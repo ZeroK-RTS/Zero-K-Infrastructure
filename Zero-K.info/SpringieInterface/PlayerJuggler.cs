@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using LobbyClient;
 using ZkData;
 
@@ -36,15 +38,23 @@ namespace ZeroKWeb.SpringieInterface
                     {
                         Task.Factory.StartNew(() =>
                             {
-                                using (var db = new ZkDataContext())
+                                try
                                 {
-                                    var acc = Account.AccountByName(db, args.UserName);
-                                    acc.MatchMakingActive = config.Active;
-                                    var prefs = acc.Preferences;
-                                    foreach (var item in config.Preferences) prefs[item.Mode] = item.Preference;
-                                    acc.SetPreferences(prefs);
-                                    db.SubmitChanges();
+                                    using (var db = new ZkDataContext())
+                                    using (var scope = new TransactionScope())
+                                    {
+                                        var acc = Account.AccountByName(db, args.UserName);
+                                        acc.MatchMakingActive = config.Active;
+                                        var prefs = acc.Preferences;
+                                        foreach (var item in config.Preferences) prefs[item.Mode] = item.Preference;
+                                        acc.SetPreferences(prefs);
+                                        db.SubmitChanges();
+                                        scope.Complete();
+                                    }
                                     Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(config, args.UserName);
+                                }
+                                catch (Exception ex) {
+                                    Trace.TraceError(ex.ToString());
                                 }
                             },TaskCreationOptions.LongRunning);
                     }
