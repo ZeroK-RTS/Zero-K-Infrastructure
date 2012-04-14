@@ -66,13 +66,19 @@ namespace ZeroKWeb.SpringieInterface
                 if (chan == ProtocolExtension.ExtensionChannelName && name != GlobalConst.NightwatchName) 
                 Task.Factory.StartNew(() =>
                 {
-                    using (var db = new ZkDataContext())
+                    try
                     {
-                        var conf = new ProtocolExtension.JugglerConfig();
-                        var acc = Account.AccountByName(db, name);
-                        conf.Active = acc.MatchMakingActive;
-                        foreach (var item in acc.Preferences) conf.Preferences.Add(new ProtocolExtension.JugglerConfig.PreferencePair(){Mode = item.Key, Preference = item.Value});
-                        Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(conf, name);
+                        using (var db = new ZkDataContext())
+                        {
+                            var conf = new ProtocolExtension.JugglerConfig();
+                            var acc = Account.AccountByName(db, name);
+                            conf.Active = acc.MatchMakingActive;
+                            foreach (var item in acc.Preferences) conf.Preferences.Add(new ProtocolExtension.JugglerConfig.PreferencePair() { Mode = item.Key, Preference = item.Value });
+                            Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(conf, name);
+                        }
+                    }
+                    catch (Exception ex) {
+                        Trace.TraceError(ex.ToString());
                     }
 
                 }, TaskCreationOptions.LongRunning);
