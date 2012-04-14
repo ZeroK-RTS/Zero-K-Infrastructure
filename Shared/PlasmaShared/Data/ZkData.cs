@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.IO;
+using System.Web;
 using JetBrains.Annotations;
 using PlasmaShared.Properties;
 
@@ -18,6 +19,7 @@ namespace ZkData
         private static bool WasDbChecked = false;
         private static object locker = new object();
 
+        public static Action<ZkDataContext> DataContextCreated = context => { };
 
         public ZkDataContext() : base(ConnectionString) {
 #if DEBUG
@@ -30,6 +32,7 @@ namespace ZkData
                 }
             }
 #endif
+            DataContextCreated(this);
         }
 	}
 }

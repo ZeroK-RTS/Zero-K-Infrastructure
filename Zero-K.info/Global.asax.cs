@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
@@ -17,11 +18,35 @@ namespace ZeroKWeb
     {
         DateTime lastPollCheck = DateTime.UtcNow;
 
+        const string DbListKey = "ZkDataContextList";
+
         public MvcApplication()
         {
+            ZkDataContext.DataContextCreated += context => {
+                List<ZkDataContext> dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
+                if (dbs != null) dbs.Add(context);
+            };
+            this.BeginRequest += (sender, args) => {
+                HttpContext.Current.Items[DbListKey] = new List<ZkDataContext>();
+            };
+            this.EndRequest += (sender, args) => {
+                List<ZkDataContext> dbs = HttpContext.Current.Items[DbListKey] as List<ZkDataContext>;
+                if (dbs != null) {
+                    foreach (var db in dbs) {
+                        try
+                        {
+                            db.Dispose();
+                        }
+                        catch { };
+                    }
+                }
+            };
+
             PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
+            
             Error += MvcApplication_Error;
         }
+
 
 
         public static void RegisterRoutes(RouteCollection routes)
