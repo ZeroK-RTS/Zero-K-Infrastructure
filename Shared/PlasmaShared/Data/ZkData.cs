@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Data.Linq;
 using System.IO;
 using System.Web;
 using JetBrains.Annotations;
@@ -19,10 +20,13 @@ namespace ZkData
         private static bool WasDbChecked = false;
         private static object locker = new object();
 
+        public static readonly DataLoadOptions Options = new DataLoadOptions();
+
         public static Action<ZkDataContext> DataContextCreated = context => { };
 
         public ZkDataContext() : base(ConnectionString) {
 #if DEBUG
+            
             if (!WasDbChecked)
             {
                 lock (locker)
@@ -32,6 +36,7 @@ namespace ZkData
                 }
             }
 #endif
+            this.LoadOptions = Options;
             DataContextCreated(this);
         }
 	}
