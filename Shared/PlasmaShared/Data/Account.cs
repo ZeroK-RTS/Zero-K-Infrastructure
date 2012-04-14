@@ -15,23 +15,6 @@ namespace ZkData
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
 
 
-        public static Func<ZkDataContext, int, Account> AccountByAccountID = CompiledQuery.Compile<ZkDataContext, int, Account>(
-            (db, accountID) => db.Accounts.SingleOrDefault(x=>x.AccountID==accountID)
-            );
-
-        public static Func<ZkDataContext, int, Account> AccountByLobbyID = CompiledQuery.Compile<ZkDataContext, int, Account>(
-            (db, lobbyID) => db.Accounts.FirstOrDefault(x => x.LobbyID == lobbyID)
-            );
-
-        public static Func<ZkDataContext, string, Account> AccountByName = CompiledQuery.Compile<ZkDataContext, string, Account>(
-            (db, name) => db.Accounts.FirstOrDefault(x => x.Name == name && x.LobbyID != null)
-            );
-
-        public static Func<ZkDataContext, string, string, Account> AccountVerify = CompiledQuery.Compile<ZkDataContext, string,string, Account>(
-            (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name== login && x.Password == passwordHash && x.LobbyID==null)
-            );
-
-
         public Dictionary<AutohostMode, GamePreference> Preferences
         {
             get

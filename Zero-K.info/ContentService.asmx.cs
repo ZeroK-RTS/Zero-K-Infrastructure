@@ -71,11 +71,38 @@ namespace ZeroKWeb
             return ret.OrderByDescending(x => -x.FeaturedOrder).Take(400).Select(x => new PlasmaServer.ResourceData(x)).ToList();
         }
 
-       
+        [WebMethod]
+        public EloInfo GetEloByAccountID(int accountID)
+        {
+            var db = new ZkDataContext();
+            var user = db.Accounts.FirstOrDefault(x => x.LobbyID == accountID);
+            var ret = new EloInfo();
+            if (user != null)
+            {
+                ret.Elo = user.EffectiveElo;
+                ret.Weight = user.EloWeight;
+            }
+            return ret;
+        }
+
+        [WebMethod]
+        public EloInfo GetEloByName(string name)
+        {
+            var db = new ZkDataContext();
+            var user = db.Accounts.FirstOrDefault(x => x.Name == name && x.LobbyID != null && !x.IsDeleted);
+            var ret = new EloInfo();
+            if (user != null)
+            {
+                ret.Elo = user.EffectiveElo;
+                ret.Weight = user.EloWeight;
+            }
+            return ret;
+        }
+
         [WebMethod]
         public List<string> GetEloTop10()
         {
-            using (var db = new ZkDataContext())
+            var db = new ZkDataContext();
             return
                 db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(
                     x => x.Elo).Select(x => x.Name).Take(10).ToList();
@@ -144,7 +171,7 @@ namespace ZeroKWeb
             using (var scope = new TransactionScope())
             {
                 db.Missions.Single(x => x.Name == missionName).MissionRunCount++;
-                Account.AccountByName(db,login).MissionRunCount++;
+                db.Accounts.First(x => x.Name == login && x.LobbyID != null).MissionRunCount++;
                 db.SubmitChanges();
                 scope.Complete();
             }

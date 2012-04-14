@@ -393,7 +393,7 @@ namespace ZeroKWeb.SpringieInterface
         {
             using (var db = new ZkDataContext())
             {
-                var acc = Account.AccountByName(db,login);
+                var acc = db.Accounts.First(x => x.Name == login);
                 var ret = new JugglerConfig();
                 ret.Active = acc.MatchMakingActive;
                 foreach (var pref in acc.Preferences)
