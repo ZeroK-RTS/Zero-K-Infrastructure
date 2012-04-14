@@ -161,7 +161,8 @@ namespace NightWatch
         {
             Account acc = null;
             if (db == null) db = new ZkDataContext();
-
+            using (var scope = new TransactionScope())
+            {
                 acc = Account.AccountByLobbyID(db, lobbyID);
                 if (acc == null)
                 {
@@ -183,6 +184,8 @@ namespace NightWatch
                 }
 
                 db.SubmitChanges();
+                scope.Complete();
+            }
             return acc;
         }
 
