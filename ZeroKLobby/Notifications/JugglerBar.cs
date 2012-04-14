@@ -88,6 +88,11 @@ namespace ZeroKLobby.Notifications
             {
                 SendMyConfig(false);
             };
+
+            client.Extensions.JugglerConfigReceived += (args, config) =>
+            {
+                if (args.UserName == GlobalConst.NightwatchName) UpdateMyConfig(config);
+            };
         }
 
 

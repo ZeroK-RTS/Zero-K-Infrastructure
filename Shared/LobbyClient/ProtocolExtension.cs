@@ -56,10 +56,13 @@ namespace LobbyClient
             BanLobby
         }
 
-        readonly Action<string, Dictionary<string, string>> notifyUserExtensionChange;
+        readonly Action<string, Dictionary<string, string>> notifyUserExtensionChange = (s, dictionary) => { };
 
 
         readonly Dictionary<string, Dictionary<string, string>> publishedUserAttributes = new Dictionary<string, Dictionary<string, string>>();
+
+        readonly Dictionary<string, JugglerConfig>  publishedJugglerConfigs = new Dictionary<string,JugglerConfig>();
+
 
         readonly TasClient tas;
 
@@ -127,7 +130,16 @@ namespace LobbyClient
 
         void tas_ChannelUserAdded(object sender, TasEventArgs e)
         {
-            if (e.ServerParams[0] == ExtensionChannelName && e.ServerParams[1] != tas.UserName) foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], FormatMessage(kvp.Key, kvp.Value), false);
+            if (e.ServerParams[0] == ExtensionChannelName && e.ServerParams[1] != tas.UserName)
+            {
+                foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], FormatMessage(kvp.Key, kvp.Value), false);
+
+                JugglerConfig config;
+                if (publishedJugglerConfigs.TryGetValue(e.ServerParams[1], out config)) {
+                    tas.Say(TasClient.SayPlace.User, e.ServerParams[1], EncodeJson(config), false);
+                }
+
+            }
         }
 
         void tas_PreviewChannelJoined(object sender, CancelEventArgs<TasEventArgs> e)
@@ -136,14 +148,16 @@ namespace LobbyClient
             {
                 e.Cancel = true;
                 foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
+                foreach (var kvp in publishedJugglerConfigs) tas.Say(TasClient.SayPlace.User, kvp.Key, EncodeJson(kvp.Value),false);
             }
         }
 
         private static string EncodeJson(object data) {
 
             var json = fastJSON.JSON.Instance;
+            json.UseSerializerExtension = false;
             var payload = json.ToJSON(data);
-            return string.Format("JSON {0} {1}", data.GetType().Name, payload);
+            return string.Format("!JSON {0} {1}", data.GetType().Name, payload);
         }
 
         public void PublishJugglerState(JugglerState state) {
@@ -154,7 +168,8 @@ namespace LobbyClient
             tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, EncodeJson(config), false);
         }
 
-        public void SendPlayerJugglerConfig(JugglerConfig config, string name) {
+        public void PublishPlayerJugglerConfig(JugglerConfig config, string name) {
+            publishedJugglerConfigs[name] = config;
             tas.Say(TasClient.SayPlace.User, name, EncodeJson(config),false);
         }
 
@@ -168,8 +183,9 @@ namespace LobbyClient
             try
             {
                 var json = fastJSON.JSON.Instance;
+                json.UseSerializerExtension = false;
                 var parts = data.Split(new char[] { ' ' }, 3);
-                if (parts[0] != "JSON") return null;
+                if (parts[0] != "!JSON") return null;
                 var payload = parts[2];
                 switch (parts[1])
                 {
@@ -201,10 +217,8 @@ namespace LobbyClient
 
         void tas_PreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> e)
         {
-            if (e.Data.UserName == GlobalConst.NightwatchName &&
-                ((e.Data.Place == TasSayEventArgs.Places.Channel && e.Data.Channel == ExtensionChannelName) ||
-                 (e.Data.Place == TasSayEventArgs.Places.Normal)))
-            {
+            if (e.Data.Channel== GlobalConst.NightwatchName || e.Data.UserName == GlobalConst.NightwatchName || e.Data.Channel == ExtensionChannelName || tas.UserName == GlobalConst.NightwatchName)
+            { 
                 var parts = e.Data.Text.Split(new char[] { ' ' }, 3);
                 if (parts.Length == 3 && parts[0] == "USER_EXT")
                 {
@@ -221,7 +235,8 @@ namespace LobbyClient
                     userAttributes[name] = dict;
                     notifyUserExtensionChange(name, dict);
                 }
-                else if (parts.Length >=3 && parts[0] == "JSON") {
+                else if (parts.Length >=3 && parts[0] == "!JSON") {
+                    e.Cancel = true;
                     DecodeJson(e.Data.Text, e.Data);
                 }
             }

@@ -44,6 +44,7 @@ namespace ZeroKWeb.SpringieInterface
                                     foreach (var item in config.Preferences) prefs[item.Mode] = item.Preference;
                                     acc.SetPreferences(prefs);
                                     db.SubmitChanges();
+                                    Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(config, args.UserName);
                                 }
                             },TaskCreationOptions.LongRunning);
                     }
@@ -60,9 +61,8 @@ namespace ZeroKWeb.SpringieInterface
                         var conf = new ProtocolExtension.JugglerConfig();
                         var acc = Account.AccountByName(db, name);
                         conf.Active = acc.MatchMakingActive;
-                        var prefs = new List<ProtocolExtension.JugglerConfig.PreferencePair>();
-                        foreach (var item in acc.Preferences) prefs.Add(new ProtocolExtension.JugglerConfig.PreferencePair(){Mode = item.Key, Preference = item.Value});
-                        Global.Nightwatch.Tas.Extensions.SendPlayerJugglerConfig(conf, name);
+                        foreach (var item in acc.Preferences) conf.Preferences.Add(new ProtocolExtension.JugglerConfig.PreferencePair(){Mode = item.Key, Preference = item.Value});
+                        Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(conf, name);
                     }
 
                 }, TaskCreationOptions.LongRunning);

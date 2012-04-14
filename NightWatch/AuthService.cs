@@ -5,6 +5,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using LobbyClient;
 using PlasmaShared;
 using ZkData;
@@ -160,27 +161,31 @@ namespace NightWatch
         {
             Account acc = null;
             if (db == null) db = new ZkDataContext();
-            acc = Account.AccountByLobbyID(db, lobbyID);
-            if (acc == null)
+            using (var scope = new TransactionScope())
             {
-                acc = new Account();
-                db.Accounts.InsertOnSubmit(acc);
+                acc = Account.AccountByLobbyID(db, lobbyID);
+                if (acc == null)
+                {
+                    acc = new Account();
+                    db.Accounts.InsertOnSubmit(acc);
+                }
+
+                acc.LobbyID = lobbyID;
+                acc.Name = name;
+                if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
+                acc.LastLogin = DateTime.UtcNow;
+
+                if (user != null) // user was online, we can update his data
+                {
+                    acc.IsBot = user.IsBot;
+                    acc.IsLobbyAdministrator = user.IsAdmin;
+                    acc.Country = user.Country;
+                    acc.LobbyTimeRank = user.Rank;
+                }
+
+                db.SubmitChanges();
+                scope.Complete();
             }
-
-            acc.LobbyID = lobbyID;
-            acc.Name = name;
-            if (!string.IsNullOrEmpty(hashedPassword)) acc.Password = hashedPassword;
-            acc.LastLogin = DateTime.UtcNow;
-
-            if (user != null) // user was online, we can update his data
-            {
-                acc.IsBot = user.IsBot;
-                acc.IsLobbyAdministrator = user.IsAdmin;
-                acc.Country = user.Country;
-                acc.LobbyTimeRank = user.Rank;
-            }
-
-            db.SubmitChanges();
             return acc;
         }
 
