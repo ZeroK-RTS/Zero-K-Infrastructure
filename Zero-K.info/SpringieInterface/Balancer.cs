@@ -39,6 +39,8 @@ namespace ZeroKWeb.SpringieInterface
                     res.CanStart = false;
                     //return res;
                 }
+                if (context.Players.Count(x => !x.IsSpectator) % 2 == 1) res.CanStart = false;
+                if (config.AutohostMode == AutohostMode.Game1v1 || config.AutohostMode == AutohostMode.GameFFA) res.CanStart = false;
             }
             return res;
         }

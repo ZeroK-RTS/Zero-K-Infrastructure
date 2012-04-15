@@ -92,7 +92,7 @@ namespace NightWatch
                             {
                                 Trace.TraceError(ex.ToString());
                             }
-                        });
+                        }, TaskCreationOptions.LongRunning);
                 };
 
             this.client.BattleUserJoined += (s, e) =>
