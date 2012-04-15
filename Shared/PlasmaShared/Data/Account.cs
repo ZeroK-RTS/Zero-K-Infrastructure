@@ -28,7 +28,7 @@ namespace ZkData
             );
 
         public static Func<ZkDataContext, string, string, Account> AccountVerify = CompiledQuery.Compile<ZkDataContext, string,string, Account>(
-            (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name== login && x.Password == passwordHash && x.LobbyID==null)
+            (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name== login && x.Password == passwordHash && x.LobbyID!=null)
             );
 
 
