@@ -7,6 +7,7 @@ using System.Linq;
 using LobbyClient;
 using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
+using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
 
 #endregion
 
@@ -541,7 +542,7 @@ namespace Springie.autohost
         SayBattle("cannot start, " + usname + " not ready and synced");
         return;
       }*/
-            if (SpawnConfig == null)
+            if (SpawnConfig == null && config != null && config.Mode == AutohostMode.Planetwars)
             {
                 if (RunServerBalance(true, null, null))
                 {
