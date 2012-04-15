@@ -23,6 +23,8 @@ namespace ZeroKWeb.SpringieInterface
             var config = context.GetConfig();
             var playerCount = context.Players.Count(x => !x.IsSpectator);
             
+            if (clanWise == null && (config.AutohostMode == AutohostMode.MediumTeams || config.AutohostMode == AutohostMode.BigTeams || config.AutohostMode == AutohostMode.SmallTeams)) clanWise = true;
+
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
             
             if (!isGameStart)
