@@ -75,11 +75,9 @@ bind            Shift+a  attack
 bind        Alt+Shift+a  areaattack
 bind              Alt+n  debug
 bind              Alt+b  debugcolvol
-bind              any+b  markingmenu
 bind                C+d  selfd
 bind       Ctrl+Shift+d  selfd queued
 bind             ctrl+c  selectcomm
-bind                  c  mouselessmarkingmenu
 bind                  d  manualfire
 bind            Shift+d  manualfire
 bind                  d  oneclickwep
