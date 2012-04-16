@@ -881,10 +881,13 @@ namespace Springie.autohost
             }
             else
             {
-                if (!RunServerBalance(true, null, null))
+                if (config != null && config.Mode != AutohostMode.None)
                 {
-                    SayBattle("Cannot start a game atm");
-                    return;
+                    if (!RunServerBalance(true, null, null))
+                    {
+                        SayBattle("Cannot start a game atm");
+                        return;
+                    }
                 }
             }
 
