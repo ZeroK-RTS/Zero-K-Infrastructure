@@ -27,7 +27,7 @@ namespace ZeroKLobby
         bool connectOnStartup = true;
         Color fadeColor = Color.Gray;
         StringCollection friends = new StringCollection(); // lacks events for adding friends immediatly
-        int idleTime = 10;
+        int idleTime = 5;
         StringCollection ignoredUsers = new StringCollection();
         string lobbyPlayerName;
         string lobbyPlayerPassword;
@@ -60,9 +60,8 @@ namespace ZeroKLobby
         [Description("Auto-Update Widgets")]
         [DisplayName("Auto-Update Widgets")]
         public bool AutoUpdateWidgets { get; set; }
-        [Category("General")]
-        [DisplayName("Default filter for battlelist")]
-        [Description("This is the filter entered in battle list by default")]
+        
+        [Browsable(false)]
         public string BattleFilter { get; set; }
 
         [DisplayName("Disable driver check")]
@@ -237,10 +236,9 @@ namespace ZeroKLobby
         }
 
 
-        [Category("General")]
-        [DisplayName("Spring Path override")]
-        [Description("Path to spring - this is set automatically, kept for override only")]
+        [Browsable(false)]
         public string ManualSpringPath { get { return manualSpringPath; } set { manualSpringPath = value; } }
+
         [Category("General")]
         [DisplayName("Minimize to tray")]
         [Description("Minimize to system tray instead of taskbar")]
@@ -253,9 +251,7 @@ namespace ZeroKLobby
         public int NoticeColorInt = Color.Red.ToArgb();
 
 
-        [Category("General")]
-        [DisplayName("Show Empty Battles")]
-        [Description("Show battles with no players in the battle list.")]
+        [Browsable(false)]
         public bool ShowEmptyBattles { get { return showEmptyBattles; } set { showEmptyBattles = value; } }
         [Category("Chat")]
         [DisplayName("Show Friends Window")]
@@ -269,9 +265,7 @@ namespace ZeroKLobby
         public bool ShowHourlyChimes { get { return showHourlyChimes; } set { showHourlyChimes = value; } }
         [Browsable(true)]
         public bool ShowNonJoinableBattles { get { return showNonJoinableBattles; } set { showNonJoinableBattles = value; } }
-        [Category("General")]
-        [DisplayName("Show Official Battles")]
-        [Description("Show official game battles on official servers")]
+        [Browsable(false)]
         public bool ShowOfficialBattles { get { return showOfficialBattles; } set { showOfficialBattles = value; } }
 
         [Category("General")]

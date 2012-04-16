@@ -616,7 +616,11 @@ namespace LobbyClient
                     {
                         foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator))
                         {
-                            client.ForceSpectator(kvp.Key);
+                            User user;
+                            if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
+                            {
+                                client.ForceSpectator(kvp.Key);
+                            }
                         }
                         ForceStart();
                     }
@@ -625,8 +629,12 @@ namespace LobbyClient
                         //warn people after 60s 
                         foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator))
                         {
-                            client.Ring(kvp.Key);
-                            client.Say(TasClient.SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
+                            User user;
+                            if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
+                            {
+                                client.Ring(kvp.Key);
+                                client.Say(TasClient.SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
+                            }
                         }
                         SayGame(string.Format("Game will be force started in {0} seconds",
                                               Math.Max(20, 240 - Math.Round(DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds))));
