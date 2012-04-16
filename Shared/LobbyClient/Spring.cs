@@ -334,8 +334,15 @@ namespace LobbyClient
                 count++;
                 gamePrivateMessages[e.Text] = count;
                 if (count != 2) return; // only send if count matches 2 exactly
-
-                statsData.Add(e.Text.Substring(9));
+                
+                var text = e.Text.Substring(9);
+                if (text.StartsWith("READY:")) {
+                    var name = text.Substring(6);
+                    BattlePlayerResult entry;
+                    if (statsPlayers.TryGetValue(name, out entry)) entry.IsIngameReady = true;   
+                }
+                
+                statsData.Add(text);
             }
 
             catch (Exception ex)
@@ -616,11 +623,11 @@ namespace LobbyClient
                     {
                         foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator))
                         {
-                            User user;
-                            if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
-                            {
+                            //User user;
+                            //if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
+                            //{
                                 client.ForceSpectator(kvp.Key);
-                            }
+                            //}
                         }
                         ForceStart();
                     }
@@ -629,12 +636,12 @@ namespace LobbyClient
                         //warn people after 60s 
                         foreach (var kvp in statsPlayers.Where(x => !x.Value.IsIngameReady && !x.Value.IsSpectator))
                         {
-                            User user;
-                            if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
-                            {
+                            //User user;
+                            //if (client.ExistingUsers.TryGetValue(kvp.Key, out user) && user.IsAway)
+                            //{
                                 client.Ring(kvp.Key);
                                 client.Say(TasClient.SayPlace.User, kvp.Key, "Please ready up ingame, game starting soon", false);
-                            }
+                            //}
                         }
                         SayGame(string.Format("Game will be force started in {0} seconds",
                                               Math.Max(20, 240 - Math.Round(DateTime.UtcNow.Subtract(battleResult.StartTime).TotalSeconds))));
