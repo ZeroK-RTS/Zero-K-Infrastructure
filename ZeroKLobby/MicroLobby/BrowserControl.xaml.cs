@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,7 +20,7 @@ namespace ZeroKLobby.MicroLobby
     readonly List<string> navigatedPlaces = new List<string>();
     bool navigating = false;
     string navigatingTo = null;
-
+      
     public BrowserControl()
     {
       try
@@ -31,7 +33,7 @@ namespace ZeroKLobby.MicroLobby
       }
       if (Process.GetCurrentProcess().ProcessName == "devenv") return;
       InitializeComponent();
-    }
+     }
 
 
     public string PathHead { get { return "http://"; } }
@@ -82,12 +84,51 @@ namespace ZeroKLobby.MicroLobby
 
     void WebBrowser_Navigated(object sender, NavigationEventArgs e)
     {
+        SetSilent(WebBrowser, true);
       navigating = false;
       navigatingTo = null;
       if (navigatedIndex == navigatedPlaces.Count) navigatedPlaces.Add(e.Uri.ToString());
       else navigatedPlaces[navigatedIndex] = e.Uri.ToString();
       navigatedIndex++;
 			Program.MainWindow.navigationControl.BusyLoading = false;
+    }
+
+    public static void SetSilent(WebBrowser browser, bool silent)
+    {
+        try
+        {
+            if (browser == null) throw new ArgumentNullException("browser");
+
+            // get an IWebBrowser2 from the document
+            IOleServiceProvider sp = browser.Document as IOleServiceProvider;
+            if (sp != null)
+            {
+                Guid IID_IWebBrowserApp = new Guid("0002DF05-0000-0000-C000-000000000046");
+                Guid IID_IWebBrowser2 = new Guid("D30C1661-CDAF-11d0-8A3E-00C04FC9E26E");
+
+                object webBrowser;
+                sp.QueryService(ref IID_IWebBrowserApp, ref IID_IWebBrowser2, out webBrowser);
+                if (webBrowser != null)
+                {
+                    webBrowser.GetType().InvokeMember("Silent",
+                                                      BindingFlags.Instance | BindingFlags.Public | BindingFlags.PutDispProperty,
+                                                      null,
+                                                      webBrowser,
+                                                      new object[] { silent });
+                }
+            }
+        }
+        catch (Exception ex ){
+            Trace.TraceError("Failed to set browser as silent: {0}",ex);
+        }
+    }
+
+
+    [ComImport, Guid("6D5140C1-7436-11CE-8034-00AA006009FA"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    private interface IOleServiceProvider
+    {
+        [PreserveSig]
+        int QueryService([In] ref Guid guidService, [In] ref Guid riid, [MarshalAs(UnmanagedType.IDispatch)] out object ppvObject);
     }
 
     void WebBrowser_Navigating(object sender, NavigatingCancelEventArgs e)
