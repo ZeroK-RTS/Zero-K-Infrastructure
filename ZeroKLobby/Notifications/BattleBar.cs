@@ -69,7 +69,12 @@ namespace ZeroKLobby.Notifications
 
 					if (e.Data) {
 						Program.MainWindow.InvokeFunc(() => {
-						                                    	if (MessageBox.Show("Do you want me to set Low details?", "Spring engine has crashed, update your video and audio drivers please!", MessageBoxButtons.YesNo) == DialogResult.Yes) Program.EngineConfigurator.Configure(true, 0);
+                            if (MessageBox.Show("Do you want me to set Low details?", "Spring engine has crashed, update your video and audio drivers please!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            {
+                                Program.Conf.UseSafeMode = true;
+                                Program.EngineConfigurator.Configure(true, 0);
+
+                            }
 						});
 					
 					}
@@ -198,7 +203,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
                         if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced) if (Utils.VerifySpringInstalled())
                         {
                             if (spring.IsRunning) spring.ExitGame();
-                            lastScript = spring.StartGame(client, null, null, null);
+                            lastScript = spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode);
                         }
 					}
 					catch (Exception ex)
@@ -419,8 +424,8 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 					if (Utils.VerifySpringInstalled())
 					{
                         if (spring.IsRunning) spring.ExitGame();
-                        if (client.MyBattle != null) spring.StartGame(client, null, null, null);
-						else spring.StartGame(client, null, null, lastScript);
+                        if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode);
+                        else spring.StartGame(client, null, null, lastScript, Program.Conf.UseSafeMode);
 						Program.NotifySection.RemoveBar(reconnectBar);
 					}
 				};

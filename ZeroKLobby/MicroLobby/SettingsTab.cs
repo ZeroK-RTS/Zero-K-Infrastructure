@@ -47,6 +47,7 @@ namespace ZeroKLobby.MicroLobby
             tbResx.Text = Program.EngineConfigurator.GetConfigValue("XResolution");
             tbResy.Text = Program.EngineConfigurator.GetConfigValue("YResolution");
             refreshingConfig = false;
+            cbSafeMode.Checked = Program.Conf.UseSafeMode;
 		}
 
 
@@ -55,6 +56,7 @@ namespace ZeroKLobby.MicroLobby
             Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
             Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
             Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);
+            Program.Conf.UseSafeMode = cbSafeMode.Checked;
         }
 
 	    public string PathHead { get { return "settings"; } }
@@ -222,6 +224,11 @@ namespace ZeroKLobby.MicroLobby
                 Application.Restart();
             
             }
+        }
+
+        private void cbSafeMode_CheckedChanged(object sender, EventArgs e)
+        {
+            Program.Conf.UseSafeMode = cbSafeMode.Checked;
         }
 
 	}

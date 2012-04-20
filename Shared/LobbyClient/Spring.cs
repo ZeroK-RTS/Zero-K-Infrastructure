@@ -184,7 +184,7 @@ namespace LobbyClient
         /// <param name="userName">lobby user name - used to submit score</param>
         /// <param name="passwordHash">lobby password hash - used to submit score</param>
         /// <returns>generates script</returns>
-        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride)
+        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false)
         {
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException("Spring or dedicated server executable not found");
 
@@ -283,6 +283,8 @@ namespace LobbyClient
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
                 }
 
+
+                if (useSafeMode) process.StartInfo.Arguments += string.Format(" --safemode");
                 process.StartInfo.Arguments += string.Format(" \"{0}\"", scriptPath);
                 //Trace.TraceInformation("{0} {1}", process.StartInfo.FileName, process.StartInfo.Arguments);
 

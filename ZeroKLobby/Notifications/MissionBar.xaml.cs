@@ -76,7 +76,7 @@ namespace ZeroKLobby.Notifications
               spring.StartGame(Program.TasClient,
                                null,
                                null,
-                               modInfo.MissionScript);
+                               modInfo.MissionScript, Program.Conf.UseSafeMode);
 
               var cs = new ContentService() { Proxy = null };
               cs.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, missionName);

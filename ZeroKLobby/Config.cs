@@ -345,7 +345,8 @@ namespace ZeroKLobby
         public string AdLines = "Faster, smarter, nicer! \r\n";
         [Browsable(false)]
         public string AdPreffix = "Join ZK \r\njoin zero-k. \r\nJoin ZK. \r\n";
-        
+        [Browsable(false)]
+        public bool UseSafeMode { get; set; }
     }
 
 
