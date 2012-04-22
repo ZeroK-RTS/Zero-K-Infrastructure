@@ -343,7 +343,10 @@ namespace LobbyClient
                     BattlePlayerResult entry;
                     if (statsPlayers.TryGetValue(name, out entry)) entry.IsIngameReady = true;   
                 }
-                
+                if (text == "FORCE") {
+                    ForceStart();
+                }
+
                 statsData.Add(text);
             }
 
