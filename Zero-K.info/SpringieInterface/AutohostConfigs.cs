@@ -15,6 +15,7 @@ namespace ZeroKWeb.SpringieInterface
         public string Map;
         public string Mod;
         public int MaxPlayers;
+        public int? SplitBiggerThan;
         public bool AutoSpawnClones;
         public string AutoUpdateRapidTag;
         public string SpringVersion;
@@ -37,6 +38,7 @@ namespace ZeroKWeb.SpringieInterface
             AutoSpawnClones = db.AutoSpawn;
             AutoUpdateRapidTag = db.AutoUpdateRapidTag;
             SpringVersion = db.SpringVersion;
+            SplitBiggerThan = db.SplitBiggerThan;
             AutoUpdateSpringBranch = db.AutoUpdateSpringBranch;
             Mode = db.AutohostMode;
             BattlePassword = db.BattlePassword;
