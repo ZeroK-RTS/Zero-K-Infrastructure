@@ -855,6 +855,10 @@ namespace Springie.autohost
 
         public void ComStart(TasSayEventArgs e, string[] words)
         {
+            if (spring.IsRunning) {
+                Respond(e, "Game already running");
+                return;
+            }
             var secondsFromLastGame = DateTime.Now.Subtract(spring.GameEnded).TotalSeconds;
             if (secondsFromLastGame < 180 && spring.Duration > 6*60)
             {
@@ -883,11 +887,14 @@ namespace Springie.autohost
             {
                 if (config != null && config.Mode != AutohostMode.None)
                 {
+                    if (JuggleIfNeeded()) return;
+
                     if (!RunServerBalance(true, null, null))
                     {
                         SayBattle("Cannot start a game atm");
                         return;
                     }
+
                 }
             }
 

@@ -12,8 +12,8 @@
       </s:element>
       <s:complexType name="BattleContext">
         <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="AutohostName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Map" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="AutohostName" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Players" type="tns:ArrayOfPlayerTeam" />
           <s:element minOccurs="0" maxOccurs="1" name="Bots" type="tns:ArrayOfBotTeam" />
@@ -165,14 +165,14 @@
       </s:element>
       <s:complexType name="BattleResult">
         <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Map" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="Duration" type="s:int" />
           <s:element minOccurs="0" maxOccurs="1" name="EngineBattleID" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="EngineVersion" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="IngameStartTime" nillable="true" type="s:dateTime" />
           <s:element minOccurs="1" maxOccurs="1" name="IsBots" type="s:boolean" />
           <s:element minOccurs="1" maxOccurs="1" name="IsMission" type="s:boolean" />
-          <s:element minOccurs="0" maxOccurs="1" name="Map" type="s:string" />
-          <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="ReplayName" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="StartTime" type="s:dateTime" />
           <s:element minOccurs="0" maxOccurs="1" name="Title" type="s:string" />
@@ -236,6 +236,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="Map" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Mod" type="s:string" />
           <s:element minOccurs="1" maxOccurs="1" name="MaxPlayers" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SplitBiggerThan" nillable="true" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="AutoSpawnClones" type="s:boolean" />
           <s:element minOccurs="0" maxOccurs="1" name="AutoUpdateRapidTag" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="SpringVersion" type="s:string" />
