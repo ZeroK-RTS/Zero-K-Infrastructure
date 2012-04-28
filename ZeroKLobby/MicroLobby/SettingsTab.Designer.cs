@@ -32,6 +32,7 @@
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.btnDisplay = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.cbSafeMode = new System.Windows.Forms.CheckBox();
             this.btnDefaults = new System.Windows.Forms.Button();
             this.btnRestart = new System.Windows.Forms.Button();
             this.btnRapid = new System.Windows.Forms.Button();
@@ -52,7 +53,7 @@
             this.logButton = new System.Windows.Forms.Button();
             this.helpButton = new System.Windows.Forms.Button();
             this.problemButton = new System.Windows.Forms.Button();
-            this.cbSafeMode = new System.Windows.Forms.CheckBox();
+            this.cbMinimapProjectiles = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -93,6 +94,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.cbMinimapProjectiles);
             this.panel1.Controls.Add(this.cbSafeMode);
             this.panel1.Controls.Add(this.btnDefaults);
             this.panel1.Controls.Add(this.btnRestart);
@@ -121,6 +123,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(562, 380);
             this.panel1.TabIndex = 15;
+            // 
+            // cbSafeMode
+            // 
+            this.cbSafeMode.AutoSize = true;
+            this.cbSafeMode.Location = new System.Drawing.Point(448, 55);
+            this.cbSafeMode.Name = "cbSafeMode";
+            this.cbSafeMode.Size = new System.Drawing.Size(77, 17);
+            this.cbSafeMode.TabIndex = 36;
+            this.cbSafeMode.Text = "Safe mode";
+            this.cbSafeMode.UseVisualStyleBackColor = true;
+            this.cbSafeMode.CheckedChanged += new System.EventHandler(this.cbSafeMode_CheckedChanged);
             // 
             // btnDefaults
             // 
@@ -324,16 +337,16 @@
             this.problemButton.UseVisualStyleBackColor = true;
             this.problemButton.Click += new System.EventHandler(this.problemButton_Click);
             // 
-            // cbSafeMode
+            // cbMinimapProjectiles
             // 
-            this.cbSafeMode.AutoSize = true;
-            this.cbSafeMode.Location = new System.Drawing.Point(448, 55);
-            this.cbSafeMode.Name = "cbSafeMode";
-            this.cbSafeMode.Size = new System.Drawing.Size(77, 17);
-            this.cbSafeMode.TabIndex = 36;
-            this.cbSafeMode.Text = "Safe mode";
-            this.cbSafeMode.UseVisualStyleBackColor = true;
-            this.cbSafeMode.CheckedChanged += new System.EventHandler(this.cbSafeMode_CheckedChanged);
+            this.cbMinimapProjectiles.AutoSize = true;
+            this.cbMinimapProjectiles.Location = new System.Drawing.Point(338, 80);
+            this.cbMinimapProjectiles.Name = "cbMinimapProjectiles";
+            this.cbMinimapProjectiles.Size = new System.Drawing.Size(115, 17);
+            this.cbMinimapProjectiles.TabIndex = 37;
+            this.cbMinimapProjectiles.Text = "Minimap projectiles";
+            this.cbMinimapProjectiles.UseVisualStyleBackColor = true;
+            this.cbMinimapProjectiles.CheckedChanged += new System.EventHandler(this.settingsControlChanged);
             // 
             // SettingsTab
             // 
@@ -377,5 +390,6 @@
         private System.Windows.Forms.Button btnRestart;
         private System.Windows.Forms.Button btnDefaults;
         private System.Windows.Forms.CheckBox cbSafeMode;
+        private System.Windows.Forms.CheckBox cbMinimapProjectiles;
     }
 }

@@ -165,6 +165,8 @@ namespace ZeroKLobby
         public StringCollection IgnoredUsers { get { return ignoredUsers; } set { ignoredUsers = value; } }
         public bool IsFirstRun = true;
 
+        [Browsable(false)]
+        public bool AtiMinimapRenderingChecked { get; set; }
 
         [Category("Chat")]
         [DisplayName("Color: Joins")]

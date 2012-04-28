@@ -33,6 +33,12 @@ namespace ZeroKLobby.MicroLobby
 			                                     (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "ctrlpanel.txt"))));
             cmDisplay.MenuItems.Add(new MenuItem("Edit UI keys (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
 
+            Program.ToolTip.SetText(cbMinimapProjectiles,"Draws weapon projectiles on minimap - can cause huge circles on ATI video cards");
+
+            Program.ToolTip.SetText(cbSafeMode,"Use safe mode - all effects reduce to minimum, use if the game is crashing");
+
+            Program.ToolTip.SetText(cbHwCursor,"HW cursor moves faster with no lag, but it can become invisible on some machines");
+
 			
 		}
 
@@ -44,6 +50,7 @@ namespace ZeroKLobby.MicroLobby
 			propertyGrid1.SelectedObject = Program.Conf;
             cbWindowed.Checked = Program.EngineConfigurator.GetConfigValue("Fullscreen") == "0";
             cbHwCursor.Checked = Program.EngineConfigurator.GetConfigValue("HardwareCursor") == "1";
+            cbMinimapProjectiles.Checked = Program.EngineConfigurator.GetConfigValue("MiniMapDrawProjectiles") == "1";
             tbResx.Text = Program.EngineConfigurator.GetConfigValue("XResolution");
             tbResy.Text = Program.EngineConfigurator.GetConfigValue("YResolution");
             refreshingConfig = false;
@@ -54,6 +61,7 @@ namespace ZeroKLobby.MicroLobby
 	    public void SaveConfig() {
             Program.EngineConfigurator.SetConfigValue("Fullscreen", cbWindowed.Checked?"0":"1");
             Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
+            Program.EngineConfigurator.SetConfigValue("MiniMapDrawProjectiles", cbMinimapProjectiles.Checked ? "1":"0");
             Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
             Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
@@ -229,6 +237,7 @@ namespace ZeroKLobby.MicroLobby
         private void cbSafeMode_CheckedChanged(object sender, EventArgs e)
         {
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
+            Program.SaveConfig();
         }
 
 	}

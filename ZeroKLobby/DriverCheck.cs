@@ -29,12 +29,19 @@ namespace ZeroKLobby
                 }
             }
 
-            if (graphicsCard.Contains("ATI") || graphicsCard.Contains("AMD") || graphicsCard.Contains("Radeon")) {
+
+            if (graphicsCard.Contains("ATI") || graphicsCard.Contains("AMD") || graphicsCard.Contains("Radeon"))
+            {
                 if (!driver.Contains("8.831") && !driver.Contains("8.892"))
                 {
                     Program.MainWindow.InvokeFunc(() => Utils.OpenWeb("http://zero-k.info/Wiki/AtiDrivers"));
                 }
+                if (!Program.Conf.AtiMinimapRenderingChecked) {
+                    Program.EngineConfigurator.SetConfigValue("MiniMapDrawProjectiles", "0");
+                    Program.Conf.AtiMinimapRenderingChecked = true;
+                }
             }
+           
             if (graphicsCard.ToLower().Contains("intel")) Program.MainWindow.InvokeFunc(()=>Utils.OpenWeb("http://zero-k.info/Wiki/IntelDrivers"));
 
         }
