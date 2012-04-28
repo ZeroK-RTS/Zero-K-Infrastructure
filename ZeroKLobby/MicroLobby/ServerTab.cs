@@ -34,15 +34,25 @@ namespace ZeroKLobby.MicroLobby
 
         void TasClient_Input(object sender, TasInputArgs e)
         {
-            if (Program.Conf.DebugServer) 
-            textBox.AddLine(new FromServerLine(e.Command, e.Args));
-            // File.AppendAllText("C:\\serverlog.txt", new FromServerLine(e.Command, e.Args).Text.StripAllCodes() + Environment.NewLine);
+            try
+            {
+                if (Program.Conf.EnableServerConsole) textBox.AddLine(new FromServerLine(e.Command, e.Args));
+                // File.AppendAllText("C:\\serverlog.txt", new FromServerLine(e.Command, e.Args).Text.StripAllCodes() + Environment.NewLine);
+            }
+            catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
+            }
         }
 
         void TasClient_Output(object sender, EventArgs<KeyValuePair<string, object[]>> e)
         {
-            if (Program.Conf.DebugServer) 
-            textBox.AddLine(new ToServerLine(e.Data.Key, e.Data.Value.Select(a => a.ToString()).ToArray()));
+            try
+            {
+                if (Program.Conf.EnableServerConsole) textBox.AddLine(new ToServerLine(e.Data.Key, e.Data.Value.Select(a => a.ToString()).ToArray()));
+            }
+            catch (Exception ex) {
+                Trace.TraceError(ex.ToString());
+            }
         }
 
 		public string PathHead { get { return "server"; } }

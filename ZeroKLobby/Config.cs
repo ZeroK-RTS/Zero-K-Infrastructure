@@ -102,10 +102,8 @@ namespace ZeroKLobby
         [Description("This path will be used for downloaded maps, games, logs, settings etc.")]
         public string DataFolder { get; set; }
 
-        [Category("Connection")]
-        [DisplayName("Debuggin - store server messages")]
-        [Description("Stores server message - server address to view them")]
-        public bool DebugServer { get; set; }
+        [Browsable(false)] // hidden because it crashes tasc connection
+        public bool EnableServerConsole { get; set; }
 
 
         [Browsable(false)]
