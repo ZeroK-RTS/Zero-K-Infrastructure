@@ -217,7 +217,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				{
 					if (client.MyBattleStatus != null)
 					{
-						barContainer.btnDetail.Enabled = client.MyBattleStatus.IsReady && client.MyBattleStatus.SyncStatus == SyncStatuses.Synced &&
+						barContainer.btnDetail.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced &&
 						                                 !client.MyBattle.IsInGame;
 
 						if (client.MyBattleStatus.IsSpectator && cbReady.Checked) // i was spectated

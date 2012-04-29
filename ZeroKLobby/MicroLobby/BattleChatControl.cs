@@ -22,7 +22,8 @@ namespace ZeroKLobby.MicroLobby
 		List<MissionSlot> missionSlots;
 		public static event EventHandler<EventArgs<IChatLine>> BattleLine = delegate { };
 
-		public BattleChatControl(): base("Battle")
+
+	    public BattleChatControl(): base("Battle")
 		{
 			Program.TasClient.Said += TasClient_Said;
 			Program.TasClient.BattleJoined += TasClient_BattleJoined;
