@@ -114,7 +114,8 @@ namespace ZeroKWeb.Controllers
         public ActionResult Logs(int id)
         {
             using (var db = new ZkDataContext()) {
-                return Content(System.IO.File.ReadAllText(string.Format(GlobalConst.InfologPathFormat, db.SpringBattles.Single(x => x.SpringBattleID == id).EngineGameID)));
+                var bat = db.SpringBattles.Single(x => x.SpringBattleID == id);
+                return Content(System.IO.File.ReadAllText(string.Format(GlobalConst.InfologPathFormat, bat.EngineGameID)), "text/plain");//,string.Format("infolog_{0}.txt", bat.SpringBattleID)
             }
             
         }
