@@ -90,13 +90,14 @@ namespace ZeroKWeb.Controllers
             return View("UserDetail", user);
         }
 
-        public ActionResult Index(string name, string alias)
+        public ActionResult Index(string name, string alias, string ip)
         {
             var db = new ZkDataContext();
             var ret = db.Accounts.AsQueryable();
 
             if (!string.IsNullOrEmpty(name)) ret = ret.Where(x => x.Name.Contains(name));
             if (!string.IsNullOrEmpty(alias)) ret = ret.Where(x => x.Aliases.Contains(alias));
+            if (!string.IsNullOrEmpty(ip)) ret = ret.Where(x => x.AccountIPS.Any(y => y.IP == ip));
 
             return View("UserList", ret.Take(100));
         }
