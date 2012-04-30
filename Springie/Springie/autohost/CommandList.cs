@@ -137,6 +137,16 @@ namespace Springie.autohost
                                          "<number> - votes for given option (works from battle only), e.g. !vote 1",
                                          0,
                                          new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+            AddMissing(new CommandConfig("y",
+                                         0,
+                                         "- votes for given option 1 (works from battle only), e.g. !y; !vote 1",
+                                         0,
+                                         new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+            AddMissing(new CommandConfig("n",
+                                         0,
+                                         "- votes for given option 2 (works from battle only), e.g. !n; !vote 1",
+                                         0,
+                                         new[] { TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
             AddMissing(new CommandConfig("rehost", 3, "[<modname>..] - rehosts game, e.g. !rehost abosol 2.23 - rehosts AA2.23"));
             AddMissing(new CommandConfig("voterehost",
