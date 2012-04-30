@@ -111,6 +111,7 @@ namespace ZeroKWeb.Controllers
                 return View(result);
         }
 
+        [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult Logs(int id)
         {
             using (var db = new ZkDataContext()) {

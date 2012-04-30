@@ -1,4 +1,5 @@
-﻿@model ZkData.SpringBattle
+﻿@using ZeroKWeb
+@model ZkData.SpringBattle
 @{
     Page.Title = "Battle " + Model.SpringBattleID + " detail";
     //hack to make thin maps a bit thicker
@@ -139,7 +140,14 @@
     </script> 
     <g:plusone size="medium"></g:plusone>
 </div>
-Logs: @Html.ActionLink("Logs", "Logs", "Battles",new { id = Model.SpringBattleID}, null)
+
+@if (Global.IsZeroKAdmin)
+{
+    <div class="admin" >
+        Logs: @Html.ActionLink("Logs", "Logs", "Battles", new { id = Model.SpringBattleID }, null)
+    </div>
+}
+
 <br />
 @if (Model.EventSpringBattles.Any())
 {
