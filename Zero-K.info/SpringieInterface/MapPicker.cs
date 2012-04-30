@@ -1,7 +1,6 @@
- using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
@@ -14,20 +13,6 @@ namespace ZeroKWeb.SpringieInterface
 
     public class MapPicker
     {
-        public class PlanetPickEntry
-        {
-            readonly Planet planet;
-            readonly int weight;
-            public Planet Planet { get { return planet; } }
-            public int Weight { get { return weight; } }
-
-            public PlanetPickEntry(Planet planet, int weight)
-            {
-                this.planet = planet;
-                this.weight = weight;
-            }
-        }
-
         public static RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew)
         {
             var mode = context.GetMode();
@@ -36,7 +21,8 @@ namespace ZeroKWeb.SpringieInterface
             {
                 if (mode == AutohostMode.Planetwars)
                 {
-                    var playerAccounts = context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(z => z.LobbyID == x.LobbyID)).ToList();
+                    var playerAccounts =
+                        context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(z => z.LobbyID == x.LobbyID)).ToList();
                     var playerAccountIDs = playerAccounts.Select(x => x.AccountID).ToList();
 
                     var facGroups =
@@ -65,15 +51,15 @@ namespace ZeroKWeb.SpringieInterface
                             ToList();
                     var maxc = valids.Max(x => (int?)x.Ships) ?? 0;
 
-                    List<MapPicker.PlanetPickEntry> targets = null;
+                    List<PlanetPickEntry> targets = null;
                     // if there are no dropships target unclaimed and biggest clan planets - INSURGENTS
                     if (maxc == 0)
                     {
                         targets =
                             gal.Planets.Where(x => x.Account != null && biggestFactionIDs.Contains(x.Account.FactionID)).Select(
                                 x =>
-                                new MapPicker.PlanetPickEntry(x,
-                                                    Math.Max(1, (2000 - x.AccountPlanets.Sum(y => (int?)y.Influence + y.ShadowInfluence) ?? 0) / 200) -
+                                new PlanetPickEntry(x,
+                                                    Math.Max(1, (2000 - x.AccountPlanets.Sum(y => (int?)y.Influence + y.ShadowInfluence) ?? 0)/200) -
                                                     (x.PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectDropshipDefense) ??
                                                      0))).ToList();
 
@@ -87,14 +73,15 @@ namespace ZeroKWeb.SpringieInterface
                                      biggestFactionIDs.Contains(y.PlanetByPlanetID2.Account.FactionID) ||
                                      (y.PlanetID2 == x.PlanetID && y.PlanetByPlanetID1.Account != null &&
                                       biggestFactionIDs.Contains(y.PlanetByPlanetID1.Account.FactionID))))).Select(
-                                          x => new MapPicker.PlanetPickEntry(x, 16 + (x.AccountPlanets.Sum(y => (int?)y.Influence) ?? 0) / 50)));
+                                          x => new PlanetPickEntry(x, 16 + (x.AccountPlanets.Sum(y => (int?)y.Influence) ?? 0)/50)));
 
-                        if (!targets.Any()) targets = gal.Planets.Select(x => new MapPicker.PlanetPickEntry(x, 1)).ToList();
+                        if (!targets.Any()) targets = gal.Planets.Select(x => new PlanetPickEntry(x, 1)).ToList();
                     }
-                    else targets = valids.Where(x => x.Ships == maxc).Select(x => new MapPicker.PlanetPickEntry(x.Planet, 1)).ToList();
+                    else targets = valids.Where(x => x.Ships == maxc).Select(x => new PlanetPickEntry(x.Planet, 1)).ToList();
                     // target valid planets with most dropships
 
-                    var r = new Random(context.AutohostName.GetHashCode() + gal.Turn); // randomizer based on autohost name + turn to always return same
+                    var r = new Random(context.AutohostName.GetHashCode() + gal.Turn);
+                        // randomizer based on autohost name + turn to always return same
 
                     Planet planet = null;
                     var sumw = targets.Sum(x => x.Weight);
@@ -148,52 +135,101 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 else
                 {
-                    if (!pickNew) res.MapName = context.Map;
-                    else {
-                        List<Resource> list= null;
-                        var players = context.Players.Count(x => !x.IsSpectator);
-                        switch (mode)
-                        {
-                           case AutohostMode.BigTeams:
-                           case AutohostMode.MediumTeams:
-                           case AutohostMode.SmallTeams:
-                               var ret =  db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens!=true);
-                                if (players > 16) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth)??0) > 24);
-                                else if (players > 6) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth)??0) > 16 && Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth)??0) <= 24);
-                                else ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth)??0) <= 16);
-                                list = ret.ToList();
-
-
-                                break;
-                            case AutohostMode.Game1v1:
-                                list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIs1v1==true&& x.MapIsFfa != true && x.MapIsChickens!=true).ToList();
-                                break;
-                            case AutohostMode.GameChickens:
-                                ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && (x.MapIsChickens == true || x.MapWaterLevel == 1));
-                                if (players > 16) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth)??0) > 24);
-                                else if (players > 6) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth)??0) > 16 && Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth)??0) <= 24);
-                                else ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth)??0) <= 16);
-                                list= ret.ToList();
-
-                                break;
-                            case AutohostMode.GameFFA:
-                                list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true && x.MapFFAMaxTeams == players).ToList();
-                                if (!list.Any()) list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true && (players%x.MapFFAMaxTeams==0)).ToList();
-                                if (!list.Any()) list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true).ToList();
-
-                                break;
-                        }
-                        if (list != null)
-                        {
-                            var r = new Random();
-                            res.MapName = list[r.Next(list.Count)].InternalName;
+                    if (!pickNew)
+                    {
+                        if (mode == AutohostMode.None ||
+                            db.Resources.Any(x => x.InternalName == context.Map && x.FeaturedOrder != null && x.TypeID == ResourceType.Map))
+                        { // autohost is not managed or has valid featured map
+                            res.MapName = context.Map;
+                            return res;
                         }
                     }
-                    
-                    
+                    List<Resource> list = null;
+                    var players = context.Players.Count(x => !x.IsSpectator);
+                    switch (mode)
+                    {
+                        case AutohostMode.BigTeams:
+                        case AutohostMode.MediumTeams:
+                        case AutohostMode.SmallTeams:
+                            var ret =
+                                db.Resources.Where(
+                                    x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true);
+                            if (players > 16) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 24);
+                            else if (players > 6)
+                            {
+                                ret =
+                                    ret.Where(
+                                        x =>
+                                        Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 16 &&
+                                        Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 24);
+                            }
+                            else ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 16);
+                            list = ret.ToList();
+
+                            break;
+                        case AutohostMode.Game1v1:
+                            list =
+                                db.Resources.Where(
+                                    x =>
+                                    x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIs1v1 == true && x.MapIsFfa != true &&
+                                    x.MapIsChickens != true).ToList();
+                            break;
+                        case AutohostMode.GameChickens:
+                            ret =
+                                db.Resources.Where(
+                                    x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && (x.MapIsChickens == true || x.MapWaterLevel == 1));
+                            if (players > 16) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 24);
+                            else if (players > 6)
+                            {
+                                ret =
+                                    ret.Where(
+                                        x =>
+                                        Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 16 &&
+                                        Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 24);
+                            }
+                            else ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 16);
+                            list = ret.ToList();
+
+                            break;
+                        case AutohostMode.GameFFA:
+                            list =
+                                db.Resources.Where(
+                                    x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true && x.MapFFAMaxTeams == players)
+                                    .ToList();
+                            if (!list.Any())
+                            {
+                                list =
+                                    db.Resources.Where(
+                                        x =>
+                                        x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true &&
+                                        (players%x.MapFFAMaxTeams == 0)).ToList();
+                            }
+                            if (!list.Any()) list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa == true).ToList();
+
+                            break;
+                    }
+                    if (list != null)
+                    {
+                        var r = new Random();
+                        res.MapName = list[r.Next(list.Count)].InternalName;
+                    }
                 }
             }
             return res;
+        }
+
+        public class PlanetPickEntry
+        {
+            readonly Planet planet;
+            readonly int weight;
+            public Planet Planet { get { return planet; } }
+            public int Weight { get { return weight; } }
+
+            public PlanetPickEntry(Planet planet, int weight)
+            {
+                this.planet = planet;
+                this.weight = weight;
+            }
         }
     }
 }

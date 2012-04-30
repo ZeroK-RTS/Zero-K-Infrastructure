@@ -393,11 +393,11 @@ namespace Springie.autohost
                     break;
 
                 case "y":
-                    RegisterVote(e, new[] { '1' });
+                    RegisterVote(e, new[] { "1" });
                     break;
 
                 case "n":
-                    RegisterVote(e, new[] { '2' });
+                    RegisterVote(e, new[] {"2" });
                     break;
 
                 case "votemap":
