@@ -392,6 +392,14 @@ namespace Springie.autohost
                     RegisterVote(e, words);
                     break;
 
+                case "y":
+                    RegisterVote(e, new[] { '1' });
+                    break;
+
+                case "n":
+                    RegisterVote(e, new[] { '2' });
+                    break;
+
                 case "votemap":
                     StartVote(new VoteMap(tas, spring, this), e, words);
                     break;
