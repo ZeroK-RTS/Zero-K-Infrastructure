@@ -20,6 +20,13 @@ namespace ZeroKWeb
 
         const string DbListKey = "ZkDataContextList";
 
+        string GetUserIP()
+        {
+            var ip = Context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+            if (string.IsNullOrEmpty(ip) || ip.Equals("unknown", StringComparison.OrdinalIgnoreCase)) ip = Context.Request.ServerVariables["REMOTE_ADDR"];
+            return ip;
+        }
+
         public MvcApplication()
         {
             ZkDataContext.DataContextCreated += context => {
@@ -99,6 +106,7 @@ namespace ZeroKWeb
             if (Request[GlobalConst.LoginCookieName] != null)
             {
                 var acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
+                var ip = GetUserIP();
                 if (acc != null)
                 {
                     if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanSite))
@@ -107,6 +115,15 @@ namespace ZeroKWeb
                         Response.End();
                     }
                     else HttpContext.Current.User = acc;
+                }
+                if (!string.IsNullOrEmpty(ip))
+                {
+                    using (var db = new ZkDataContext())
+                        if (db.Punishments.Any(x => x.BanIP == ip && x.BanSite && x.BanExpires > DateTime.UtcNow))
+                        {
+                            Response.Write("Banned!");
+                            Response.End();
+                        }
                 }
             }
         }

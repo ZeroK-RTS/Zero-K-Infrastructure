@@ -127,6 +127,7 @@ namespace ZeroKWeb.Controllers
                                    bool banSite,
                                    bool banLobby,
                                    bool banUnlocks,
+                                    string banIP,
                                    DateTime? banExpires)
         {
             var db = new ZkDataContext();
@@ -140,7 +141,8 @@ namespace ZeroKWeb.Controllers
                                     BanSite = banSite,
                                     BanLobby = banLobby,
                                     BanExpires = banExpires,
-                                    BanUnlocks = banUnlocks
+                                    BanUnlocks = banUnlocks,
+                                    BanIP = banIP
                                 };
             acc.Punishments.Add(punishment);
 

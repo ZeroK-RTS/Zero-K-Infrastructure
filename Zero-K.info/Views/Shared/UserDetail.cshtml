@@ -110,6 +110,7 @@
 	        <h3>Modify user @Model.Name</h3>
             AccountID: @Model.AccountID <br />
             LobbyID: @Model.LobbyID <br />
+            IP: @string.Join(", ",Model.AccountIPS.OrderByDescending(x=>x.LastLogin).Select(x=> string.Format("<{0}> {1}x {2}-{3} ", x.IP, x.LoginCount, x.FirstLogin, x.LastLogin)))
             <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new {accountID = Model.AccountID})">
                 Change lobby ID: @Html.TextBox("newLobbyID") <input type="submit" />
             </form>
@@ -122,12 +123,14 @@
 
             <h4>Penalties</h4>
             <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID})" method="post">
-                Reason: @Html.TextBox("reason")<br />
+                Reason: @Html.TextBox("reason")<br /><br/>
+                
                 Delete XP: @Html.CheckBox("deleteXP")<br />
                 Delete influence: @Html.CheckBox("deleteInfluence")<br /><br />
                 Ban mute: @Html.CheckBox("banMute")<br />
                 Ban commanders: @Html.CheckBox("banCommanders")<br />
-                Ban unlocks: @Html.CheckBox("banUnlocks")<br />
+                Ban unlocks: @Html.CheckBox("banUnlocks")<br /><br/>
+                IP: @Html.CheckBox("banIP")<br />
                 Ban site: @Html.CheckBox("banSite")<br />
                 Ban lobby: @Html.CheckBox("banLobby")<br />
                 Ban expires: <input type="text" name="banExpires" class="datepicker" value="@DateTime.UtcNow.AddDays(7)" /><br />

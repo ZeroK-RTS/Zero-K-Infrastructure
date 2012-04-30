@@ -684,6 +684,7 @@ namespace LobbyClient
             con.SendCommand("GETLOBBYVERSION", name); 
         }
 
+
         public void RequestUserIP(string name) {
             con.SendCommand("GETIP",name);
         }

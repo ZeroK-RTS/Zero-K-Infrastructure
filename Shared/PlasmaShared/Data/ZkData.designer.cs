@@ -190,9 +190,6 @@ namespace ZkData
     partial void InsertTreatyEffect(TreatyEffect instance);
     partial void UpdateTreatyEffect(TreatyEffect instance);
     partial void DeleteTreatyEffect(TreatyEffect instance);
-    partial void InsertEffectType(EffectType instance);
-    partial void UpdateEffectType(EffectType instance);
-    partial void DeleteEffectType(EffectType instance);
     partial void InsertTreatyEffectPlanet(TreatyEffectPlanet instance);
     partial void UpdateTreatyEffectPlanet(TreatyEffectPlanet instance);
     partial void DeleteTreatyEffectPlanet(TreatyEffectPlanet instance);
@@ -205,6 +202,12 @@ namespace ZkData
     partial void InsertForumPostEdit(ForumPostEdit instance);
     partial void UpdateForumPostEdit(ForumPostEdit instance);
     partial void DeleteForumPostEdit(ForumPostEdit instance);
+    partial void InsertAccountIP(AccountIP instance);
+    partial void UpdateAccountIP(AccountIP instance);
+    partial void DeleteAccountIP(AccountIP instance);
+    partial void InsertTreatyEffectType(TreatyEffectType instance);
+    partial void UpdateTreatyEffectType(TreatyEffectType instance);
+    partial void DeleteTreatyEffectType(TreatyEffectType instance);
     #endregion
 		
 		public ZkDataContext(string connection) : 
@@ -663,14 +666,6 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<EffectType> EffectTypes
-		{
-			get
-			{
-				return this.GetTable<EffectType>();
-			}
-		}
-		
 		public System.Data.Linq.Table<TreatyEffectPlanet> TreatyEffectPlanets
 		{
 			get
@@ -700,6 +695,22 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<ForumPostEdit>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AccountIP> AccountIPS
+		{
+			get
+			{
+				return this.GetTable<AccountIP>();
+			}
+		}
+		
+		public System.Data.Linq.Table<TreatyEffectType> TreatyEffectTypes
+		{
+			get
+			{
+				return this.GetTable<TreatyEffectType>();
 			}
 		}
 	}
@@ -2399,6 +2410,8 @@ namespace ZkData
 		
 		private EntitySet<ForumPostEdit> _ForumPostEdits;
 		
+		private EntitySet<AccountIP> _AccountIPS;
+		
 		private EntityRef<Clan> _Clan;
 		
 		private EntityRef<Faction> _Faction;
@@ -3956,6 +3969,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountIP", Storage="_AccountIPS", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=73, EmitDefaultValue=false)]
+		public EntitySet<AccountIP> AccountIPS
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountIPS.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountIPS;
+			}
+			set
+			{
+				this._AccountIPS.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Clan", ThisKey="ClanID", OtherKey="ClanID", IsForeignKey=true)]
 		public Clan Clan
 		{
@@ -4416,6 +4448,18 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_AccountIPS(AccountIP entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountIPS(AccountIP entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -4449,6 +4493,7 @@ namespace ZkData
 			this._FactionTreatiesByAcceptedAccountID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByAcceptedAccountID), new Action<FactionTreaty>(this.detach_FactionTreatiesByAcceptedAccountID));
 			this._AccountRolesByAccountID = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRolesByAccountID), new Action<AccountRole>(this.detach_AccountRolesByAccountID));
 			this._ForumPostEdits = new EntitySet<ForumPostEdit>(new Action<ForumPostEdit>(this.attach_ForumPostEdits), new Action<ForumPostEdit>(this.detach_ForumPostEdits));
+			this._AccountIPS = new EntitySet<AccountIP>(new Action<AccountIP>(this.attach_AccountIPS), new Action<AccountIP>(this.detach_AccountIPS));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -23036,7 +23081,7 @@ namespace ZkData
 		
 		private EntityRef<Faction> _FactionByReceivingFactionID;
 		
-		private EntityRef<EffectType> _EffectType;
+		private EntityRef<TreatyEffectType> _TreatyEffectType;
 		
 		private bool serializing;
 		
@@ -23094,7 +23139,7 @@ namespace ZkData
 			{
 				if ((this._EffectTypeID != value))
 				{
-					if (this._EffectType.HasLoadedOrAssignedValue)
+					if (this._TreatyEffectType.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -23265,26 +23310,26 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EffectType_TreatyEffect", Storage="_EffectType", ThisKey="EffectTypeID", OtherKey="EffectTypeID", IsForeignKey=true)]
-		public EffectType EffectType
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TreatyEffectType_TreatyEffect", Storage="_TreatyEffectType", ThisKey="EffectTypeID", OtherKey="EffectTypeID", IsForeignKey=true)]
+		public TreatyEffectType TreatyEffectType
 		{
 			get
 			{
-				return this._EffectType.Entity;
+				return this._TreatyEffectType.Entity;
 			}
 			set
 			{
-				EffectType previousValue = this._EffectType.Entity;
+				TreatyEffectType previousValue = this._TreatyEffectType.Entity;
 				if (((previousValue != value) 
-							|| (this._EffectType.HasLoadedOrAssignedValue == false)))
+							|| (this._TreatyEffectType.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._EffectType.Entity = null;
+						this._TreatyEffectType.Entity = null;
 						previousValue.TreatyEffects.Remove(this);
 					}
-					this._EffectType.Entity = value;
+					this._TreatyEffectType.Entity = value;
 					if ((value != null))
 					{
 						value.TreatyEffects.Add(this);
@@ -23294,7 +23339,7 @@ namespace ZkData
 					{
 						this._EffectTypeID = default(int);
 					}
-					this.SendPropertyChanged("EffectType");
+					this.SendPropertyChanged("TreatyEffectType");
 				}
 			}
 		}
@@ -23336,683 +23381,7 @@ namespace ZkData
 			this._TreatyEffectPlanets = new EntitySet<TreatyEffectPlanet>(new Action<TreatyEffectPlanet>(this.attach_TreatyEffectPlanets), new Action<TreatyEffectPlanet>(this.detach_TreatyEffectPlanets));
 			this._FactionByGivingFactionID = default(EntityRef<Faction>);
 			this._FactionByReceivingFactionID = default(EntityRef<Faction>);
-			this._EffectType = default(EntityRef<EffectType>);
-			OnCreated();
-		}
-		
-		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnDeserializing(StreamingContext context)
-		{
-			this.Initialize();
-		}
-		
-		[global::System.Runtime.Serialization.OnSerializingAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnSerializing(StreamingContext context)
-		{
-			this.serializing = true;
-		}
-		
-		[global::System.Runtime.Serialization.OnSerializedAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnSerialized(StreamingContext context)
-		{
-			this.serializing = false;
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.EffectType")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class EffectType : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _EffectTypeID;
-		
-		private string _Name;
-		
-		private string _Description;
-		
-		private bool _HasValue;
-		
-		private System.Nullable<double> _MinValue;
-		
-		private System.Nullable<double> _MaxValue;
-		
-		private bool _IsPlanetBased;
-		
-		private bool _IsOneTimeOnly;
-		
-		private System.Nullable<bool> _EffectBalanceSameSide;
-		
-		private System.Nullable<bool> _EffectPreventInfluenceSpread;
-		
-		private System.Nullable<bool> _EffectPreventDropshipAttack;
-		
-		private System.Nullable<bool> _EffectPreventBomberAttack;
-		
-		private System.Nullable<bool> _EffectAllowDropshipPass;
-		
-		private System.Nullable<bool> _EffectAllowBomberPass;
-		
-		private System.Nullable<bool> _EffectGiveMetal;
-		
-		private System.Nullable<bool> _EffectGiveDropships;
-		
-		private System.Nullable<bool> _EffectGiveBombers;
-		
-		private System.Nullable<bool> _EffectGiveEnergy;
-		
-		private System.Nullable<bool> _EffectShareTechs;
-		
-		private System.Nullable<bool> _EffectGiveJumpgatePoints;
-		
-		private System.Nullable<bool> _EffectBindingForTurns;
-		
-		private System.Nullable<bool> _EffectPreventIngamePwStructureDestruction;
-		
-		private System.Nullable<bool> _EffectGiveInfluence;
-		
-		private EntitySet<TreatyEffect> _TreatyEffects;
-		
-		private bool serializing;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnEffectTypeIDChanging(int value);
-    partial void OnEffectTypeIDChanged();
-    partial void OnNameChanging(string value);
-    partial void OnNameChanged();
-    partial void OnDescriptionChanging(string value);
-    partial void OnDescriptionChanged();
-    partial void OnHasValueChanging(bool value);
-    partial void OnHasValueChanged();
-    partial void OnMinValueChanging(System.Nullable<double> value);
-    partial void OnMinValueChanged();
-    partial void OnMaxValueChanging(System.Nullable<double> value);
-    partial void OnMaxValueChanged();
-    partial void OnIsPlanetBasedChanging(bool value);
-    partial void OnIsPlanetBasedChanged();
-    partial void OnIsOneTimeOnlyChanging(bool value);
-    partial void OnIsOneTimeOnlyChanged();
-    partial void OnEffectBalanceSameSideChanging(System.Nullable<bool> value);
-    partial void OnEffectBalanceSameSideChanged();
-    partial void OnEffectPreventInfluenceSpreadChanging(System.Nullable<bool> value);
-    partial void OnEffectPreventInfluenceSpreadChanged();
-    partial void OnEffectPreventDropshipAttackChanging(System.Nullable<bool> value);
-    partial void OnEffectPreventDropshipAttackChanged();
-    partial void OnEffectPreventBomberAttackChanging(System.Nullable<bool> value);
-    partial void OnEffectPreventBomberAttackChanged();
-    partial void OnEffectAllowDropshipPassChanging(System.Nullable<bool> value);
-    partial void OnEffectAllowDropshipPassChanged();
-    partial void OnEffectAllowBomberPassChanging(System.Nullable<bool> value);
-    partial void OnEffectAllowBomberPassChanged();
-    partial void OnEffectGiveMetalChanging(System.Nullable<bool> value);
-    partial void OnEffectGiveMetalChanged();
-    partial void OnEffectGiveDropshipsChanging(System.Nullable<bool> value);
-    partial void OnEffectGiveDropshipsChanged();
-    partial void OnEffectGiveBombersChanging(System.Nullable<bool> value);
-    partial void OnEffectGiveBombersChanged();
-    partial void OnEffectGiveEnergyChanging(System.Nullable<bool> value);
-    partial void OnEffectGiveEnergyChanged();
-    partial void OnEffectShareTechsChanging(System.Nullable<bool> value);
-    partial void OnEffectShareTechsChanged();
-    partial void OnEffectGiveJumpgatePointsChanging(System.Nullable<bool> value);
-    partial void OnEffectGiveJumpgatePointsChanged();
-    partial void OnEffectBindingForTurnsChanging(System.Nullable<bool> value);
-    partial void OnEffectBindingForTurnsChanged();
-    partial void OnEffectPreventIngamePwStructureDestructionChanging(System.Nullable<bool> value);
-    partial void OnEffectPreventIngamePwStructureDestructionChanged();
-    partial void OnEffectGiveInfluenceChanging(System.Nullable<bool> value);
-    partial void OnEffectGiveInfluenceChanged();
-    #endregion
-		
-		public EffectType()
-		{
-			this.Initialize();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectTypeID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int EffectTypeID
-		{
-			get
-			{
-				return this._EffectTypeID;
-			}
-			set
-			{
-				if ((this._EffectTypeID != value))
-				{
-					this.OnEffectTypeIDChanging(value);
-					this.SendPropertyChanging();
-					this._EffectTypeID = value;
-					this.SendPropertyChanged("EffectTypeID");
-					this.OnEffectTypeIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(50) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public string Name
-		{
-			get
-			{
-				return this._Name;
-			}
-			set
-			{
-				if ((this._Name != value))
-				{
-					this.OnNameChanging(value);
-					this.SendPropertyChanging();
-					this._Name = value;
-					this.SendPropertyChanged("Name");
-					this.OnNameChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="nvarchar(200) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public string Description
-		{
-			get
-			{
-				return this._Description;
-			}
-			set
-			{
-				if ((this._Description != value))
-				{
-					this.OnDescriptionChanging(value);
-					this.SendPropertyChanging();
-					this._Description = value;
-					this.SendPropertyChanged("Description");
-					this.OnDescriptionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HasValue", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public bool HasValue
-		{
-			get
-			{
-				return this._HasValue;
-			}
-			set
-			{
-				if ((this._HasValue != value))
-				{
-					this.OnHasValueChanging(value);
-					this.SendPropertyChanging();
-					this._HasValue = value;
-					this.SendPropertyChanged("HasValue");
-					this.OnHasValueChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MinValue", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public System.Nullable<double> MinValue
-		{
-			get
-			{
-				return this._MinValue;
-			}
-			set
-			{
-				if ((this._MinValue != value))
-				{
-					this.OnMinValueChanging(value);
-					this.SendPropertyChanging();
-					this._MinValue = value;
-					this.SendPropertyChanged("MinValue");
-					this.OnMinValueChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxValue", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public System.Nullable<double> MaxValue
-		{
-			get
-			{
-				return this._MaxValue;
-			}
-			set
-			{
-				if ((this._MaxValue != value))
-				{
-					this.OnMaxValueChanging(value);
-					this.SendPropertyChanging();
-					this._MaxValue = value;
-					this.SendPropertyChanged("MaxValue");
-					this.OnMaxValueChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsPlanetBased", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public bool IsPlanetBased
-		{
-			get
-			{
-				return this._IsPlanetBased;
-			}
-			set
-			{
-				if ((this._IsPlanetBased != value))
-				{
-					this.OnIsPlanetBasedChanging(value);
-					this.SendPropertyChanging();
-					this._IsPlanetBased = value;
-					this.SendPropertyChanged("IsPlanetBased");
-					this.OnIsPlanetBasedChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsOneTimeOnly", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public bool IsOneTimeOnly
-		{
-			get
-			{
-				return this._IsOneTimeOnly;
-			}
-			set
-			{
-				if ((this._IsOneTimeOnly != value))
-				{
-					this.OnIsOneTimeOnlyChanging(value);
-					this.SendPropertyChanging();
-					this._IsOneTimeOnly = value;
-					this.SendPropertyChanged("IsOneTimeOnly");
-					this.OnIsOneTimeOnlyChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBalanceSameSide", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public System.Nullable<bool> EffectBalanceSameSide
-		{
-			get
-			{
-				return this._EffectBalanceSameSide;
-			}
-			set
-			{
-				if ((this._EffectBalanceSameSide != value))
-				{
-					this.OnEffectBalanceSameSideChanging(value);
-					this.SendPropertyChanging();
-					this._EffectBalanceSameSide = value;
-					this.SendPropertyChanged("EffectBalanceSameSide");
-					this.OnEffectBalanceSameSideChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPreventInfluenceSpread", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public System.Nullable<bool> EffectPreventInfluenceSpread
-		{
-			get
-			{
-				return this._EffectPreventInfluenceSpread;
-			}
-			set
-			{
-				if ((this._EffectPreventInfluenceSpread != value))
-				{
-					this.OnEffectPreventInfluenceSpreadChanging(value);
-					this.SendPropertyChanging();
-					this._EffectPreventInfluenceSpread = value;
-					this.SendPropertyChanged("EffectPreventInfluenceSpread");
-					this.OnEffectPreventInfluenceSpreadChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPreventDropshipAttack", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public System.Nullable<bool> EffectPreventDropshipAttack
-		{
-			get
-			{
-				return this._EffectPreventDropshipAttack;
-			}
-			set
-			{
-				if ((this._EffectPreventDropshipAttack != value))
-				{
-					this.OnEffectPreventDropshipAttackChanging(value);
-					this.SendPropertyChanging();
-					this._EffectPreventDropshipAttack = value;
-					this.SendPropertyChanged("EffectPreventDropshipAttack");
-					this.OnEffectPreventDropshipAttackChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPreventBomberAttack", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
-		public System.Nullable<bool> EffectPreventBomberAttack
-		{
-			get
-			{
-				return this._EffectPreventBomberAttack;
-			}
-			set
-			{
-				if ((this._EffectPreventBomberAttack != value))
-				{
-					this.OnEffectPreventBomberAttackChanging(value);
-					this.SendPropertyChanging();
-					this._EffectPreventBomberAttack = value;
-					this.SendPropertyChanged("EffectPreventBomberAttack");
-					this.OnEffectPreventBomberAttackChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectAllowDropshipPass", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
-		public System.Nullable<bool> EffectAllowDropshipPass
-		{
-			get
-			{
-				return this._EffectAllowDropshipPass;
-			}
-			set
-			{
-				if ((this._EffectAllowDropshipPass != value))
-				{
-					this.OnEffectAllowDropshipPassChanging(value);
-					this.SendPropertyChanging();
-					this._EffectAllowDropshipPass = value;
-					this.SendPropertyChanged("EffectAllowDropshipPass");
-					this.OnEffectAllowDropshipPassChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectAllowBomberPass", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
-		public System.Nullable<bool> EffectAllowBomberPass
-		{
-			get
-			{
-				return this._EffectAllowBomberPass;
-			}
-			set
-			{
-				if ((this._EffectAllowBomberPass != value))
-				{
-					this.OnEffectAllowBomberPassChanging(value);
-					this.SendPropertyChanging();
-					this._EffectAllowBomberPass = value;
-					this.SendPropertyChanged("EffectAllowBomberPass");
-					this.OnEffectAllowBomberPassChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveMetal", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
-		public System.Nullable<bool> EffectGiveMetal
-		{
-			get
-			{
-				return this._EffectGiveMetal;
-			}
-			set
-			{
-				if ((this._EffectGiveMetal != value))
-				{
-					this.OnEffectGiveMetalChanging(value);
-					this.SendPropertyChanging();
-					this._EffectGiveMetal = value;
-					this.SendPropertyChanged("EffectGiveMetal");
-					this.OnEffectGiveMetalChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveDropships", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
-		public System.Nullable<bool> EffectGiveDropships
-		{
-			get
-			{
-				return this._EffectGiveDropships;
-			}
-			set
-			{
-				if ((this._EffectGiveDropships != value))
-				{
-					this.OnEffectGiveDropshipsChanging(value);
-					this.SendPropertyChanging();
-					this._EffectGiveDropships = value;
-					this.SendPropertyChanged("EffectGiveDropships");
-					this.OnEffectGiveDropshipsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveBombers", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
-		public System.Nullable<bool> EffectGiveBombers
-		{
-			get
-			{
-				return this._EffectGiveBombers;
-			}
-			set
-			{
-				if ((this._EffectGiveBombers != value))
-				{
-					this.OnEffectGiveBombersChanging(value);
-					this.SendPropertyChanging();
-					this._EffectGiveBombers = value;
-					this.SendPropertyChanged("EffectGiveBombers");
-					this.OnEffectGiveBombersChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveEnergy", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
-		public System.Nullable<bool> EffectGiveEnergy
-		{
-			get
-			{
-				return this._EffectGiveEnergy;
-			}
-			set
-			{
-				if ((this._EffectGiveEnergy != value))
-				{
-					this.OnEffectGiveEnergyChanging(value);
-					this.SendPropertyChanging();
-					this._EffectGiveEnergy = value;
-					this.SendPropertyChanged("EffectGiveEnergy");
-					this.OnEffectGiveEnergyChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectShareTechs", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
-		public System.Nullable<bool> EffectShareTechs
-		{
-			get
-			{
-				return this._EffectShareTechs;
-			}
-			set
-			{
-				if ((this._EffectShareTechs != value))
-				{
-					this.OnEffectShareTechsChanging(value);
-					this.SendPropertyChanging();
-					this._EffectShareTechs = value;
-					this.SendPropertyChanged("EffectShareTechs");
-					this.OnEffectShareTechsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveJumpgatePoints", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
-		public System.Nullable<bool> EffectGiveJumpgatePoints
-		{
-			get
-			{
-				return this._EffectGiveJumpgatePoints;
-			}
-			set
-			{
-				if ((this._EffectGiveJumpgatePoints != value))
-				{
-					this.OnEffectGiveJumpgatePointsChanging(value);
-					this.SendPropertyChanging();
-					this._EffectGiveJumpgatePoints = value;
-					this.SendPropertyChanged("EffectGiveJumpgatePoints");
-					this.OnEffectGiveJumpgatePointsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBindingForTurns", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
-		public System.Nullable<bool> EffectBindingForTurns
-		{
-			get
-			{
-				return this._EffectBindingForTurns;
-			}
-			set
-			{
-				if ((this._EffectBindingForTurns != value))
-				{
-					this.OnEffectBindingForTurnsChanging(value);
-					this.SendPropertyChanging();
-					this._EffectBindingForTurns = value;
-					this.SendPropertyChanged("EffectBindingForTurns");
-					this.OnEffectBindingForTurnsChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPreventIngamePwStructureDestruction", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
-		public System.Nullable<bool> EffectPreventIngamePwStructureDestruction
-		{
-			get
-			{
-				return this._EffectPreventIngamePwStructureDestruction;
-			}
-			set
-			{
-				if ((this._EffectPreventIngamePwStructureDestruction != value))
-				{
-					this.OnEffectPreventIngamePwStructureDestructionChanging(value);
-					this.SendPropertyChanging();
-					this._EffectPreventIngamePwStructureDestruction = value;
-					this.SendPropertyChanged("EffectPreventIngamePwStructureDestruction");
-					this.OnEffectPreventIngamePwStructureDestructionChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveInfluence", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
-		public System.Nullable<bool> EffectGiveInfluence
-		{
-			get
-			{
-				return this._EffectGiveInfluence;
-			}
-			set
-			{
-				if ((this._EffectGiveInfluence != value))
-				{
-					this.OnEffectGiveInfluenceChanging(value);
-					this.SendPropertyChanging();
-					this._EffectGiveInfluence = value;
-					this.SendPropertyChanged("EffectGiveInfluence");
-					this.OnEffectGiveInfluenceChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="EffectType_TreatyEffect", Storage="_TreatyEffects", ThisKey="EffectTypeID", OtherKey="EffectTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
-		public EntitySet<TreatyEffect> TreatyEffects
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._TreatyEffects.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._TreatyEffects;
-			}
-			set
-			{
-				this._TreatyEffects.Assign(value);
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_TreatyEffects(TreatyEffect entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectType = this;
-		}
-		
-		private void detach_TreatyEffects(TreatyEffect entity)
-		{
-			this.SendPropertyChanging();
-			entity.EffectType = null;
-		}
-		
-		private void Initialize()
-		{
-			this._TreatyEffects = new EntitySet<TreatyEffect>(new Action<TreatyEffect>(this.attach_TreatyEffects), new Action<TreatyEffect>(this.detach_TreatyEffects));
+			this._TreatyEffectType = default(EntityRef<TreatyEffectType>);
 			OnCreated();
 		}
 		
@@ -25074,6 +24443,899 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountIP")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountIP : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private string _IP;
+		
+		private int _LoginCount;
+		
+		private System.DateTime _FirstLogin;
+		
+		private System.DateTime _LastLogin;
+		
+		private EntityRef<Account> _Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnIPChanging(string value);
+    partial void OnIPChanged();
+    partial void OnLoginCountChanging(int value);
+    partial void OnLoginCountChanged();
+    partial void OnFirstLoginChanging(System.DateTime value);
+    partial void OnFirstLoginChanged();
+    partial void OnLastLoginChanging(System.DateTime value);
+    partial void OnLastLoginChanged();
+    #endregion
+		
+		public AccountIP()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IP", DbType="nvarchar(50) NOT NULL", CanBeNull=false, IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string IP
+		{
+			get
+			{
+				return this._IP;
+			}
+			set
+			{
+				if ((this._IP != value))
+				{
+					this.OnIPChanging(value);
+					this.SendPropertyChanging();
+					this._IP = value;
+					this.SendPropertyChanged("IP");
+					this.OnIPChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoginCount", DbType="int NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int LoginCount
+		{
+			get
+			{
+				return this._LoginCount;
+			}
+			set
+			{
+				if ((this._LoginCount != value))
+				{
+					this.OnLoginCountChanging(value);
+					this.SendPropertyChanging();
+					this._LoginCount = value;
+					this.SendPropertyChanged("LoginCount");
+					this.OnLoginCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstLogin", DbType="datetime NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.DateTime FirstLogin
+		{
+			get
+			{
+				return this._FirstLogin;
+			}
+			set
+			{
+				if ((this._FirstLogin != value))
+				{
+					this.OnFirstLoginChanging(value);
+					this.SendPropertyChanging();
+					this._FirstLogin = value;
+					this.SendPropertyChanged("FirstLogin");
+					this.OnFirstLoginChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastLogin", DbType="datetime NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public System.DateTime LastLogin
+		{
+			get
+			{
+				return this._LastLogin;
+			}
+			set
+			{
+				if ((this._LastLogin != value))
+				{
+					this.OnLastLoginChanging(value);
+					this.SendPropertyChanging();
+					this._LastLogin = value;
+					this.SendPropertyChanged("LastLogin");
+					this.OnLastLoginChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountIP", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountIPS.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountIPS.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TreatyEffectType")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class TreatyEffectType : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _EffectTypeID;
+		
+		private string _Name;
+		
+		private string _Description;
+		
+		private bool _HasValue;
+		
+		private System.Nullable<double> _MinValue;
+		
+		private System.Nullable<double> _MaxValue;
+		
+		private bool _IsPlanetBased;
+		
+		private bool _IsOneTimeOnly;
+		
+		private System.Nullable<bool> _EffectBalanceSameSide;
+		
+		private System.Nullable<bool> _EffectPreventInfluenceSpread;
+		
+		private System.Nullable<bool> _EffectPreventDropshipAttack;
+		
+		private System.Nullable<bool> _EffectPreventBomberAttack;
+		
+		private System.Nullable<bool> _EffectAllowDropshipPass;
+		
+		private System.Nullable<bool> _EffectAllowBomberPass;
+		
+		private System.Nullable<bool> _EffectGiveMetal;
+		
+		private System.Nullable<bool> _EffectGiveDropships;
+		
+		private System.Nullable<bool> _EffectGiveBombers;
+		
+		private System.Nullable<bool> _EffectGiveEnergy;
+		
+		private System.Nullable<bool> _EffectShareTechs;
+		
+		private System.Nullable<bool> _EffectGiveJumpgatePoints;
+		
+		private System.Nullable<bool> _EffectBindingForTurns;
+		
+		private System.Nullable<bool> _EffectPreventIngamePwStructureDestruction;
+		
+		private System.Nullable<bool> _EffectGiveInfluence;
+		
+		private EntitySet<TreatyEffect> _TreatyEffects;
+		
+		private bool serializing;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnEffectTypeIDChanging(int value);
+    partial void OnEffectTypeIDChanged();
+    partial void OnNameChanging(string value);
+    partial void OnNameChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    partial void OnHasValueChanging(bool value);
+    partial void OnHasValueChanged();
+    partial void OnMinValueChanging(System.Nullable<double> value);
+    partial void OnMinValueChanged();
+    partial void OnMaxValueChanging(System.Nullable<double> value);
+    partial void OnMaxValueChanged();
+    partial void OnIsPlanetBasedChanging(bool value);
+    partial void OnIsPlanetBasedChanged();
+    partial void OnIsOneTimeOnlyChanging(bool value);
+    partial void OnIsOneTimeOnlyChanged();
+    partial void OnEffectBalanceSameSideChanging(System.Nullable<bool> value);
+    partial void OnEffectBalanceSameSideChanged();
+    partial void OnEffectPreventInfluenceSpreadChanging(System.Nullable<bool> value);
+    partial void OnEffectPreventInfluenceSpreadChanged();
+    partial void OnEffectPreventDropshipAttackChanging(System.Nullable<bool> value);
+    partial void OnEffectPreventDropshipAttackChanged();
+    partial void OnEffectPreventBomberAttackChanging(System.Nullable<bool> value);
+    partial void OnEffectPreventBomberAttackChanged();
+    partial void OnEffectAllowDropshipPassChanging(System.Nullable<bool> value);
+    partial void OnEffectAllowDropshipPassChanged();
+    partial void OnEffectAllowBomberPassChanging(System.Nullable<bool> value);
+    partial void OnEffectAllowBomberPassChanged();
+    partial void OnEffectGiveMetalChanging(System.Nullable<bool> value);
+    partial void OnEffectGiveMetalChanged();
+    partial void OnEffectGiveDropshipsChanging(System.Nullable<bool> value);
+    partial void OnEffectGiveDropshipsChanged();
+    partial void OnEffectGiveBombersChanging(System.Nullable<bool> value);
+    partial void OnEffectGiveBombersChanged();
+    partial void OnEffectGiveEnergyChanging(System.Nullable<bool> value);
+    partial void OnEffectGiveEnergyChanged();
+    partial void OnEffectShareTechsChanging(System.Nullable<bool> value);
+    partial void OnEffectShareTechsChanged();
+    partial void OnEffectGiveJumpgatePointsChanging(System.Nullable<bool> value);
+    partial void OnEffectGiveJumpgatePointsChanged();
+    partial void OnEffectBindingForTurnsChanging(System.Nullable<bool> value);
+    partial void OnEffectBindingForTurnsChanged();
+    partial void OnEffectPreventIngamePwStructureDestructionChanging(System.Nullable<bool> value);
+    partial void OnEffectPreventIngamePwStructureDestructionChanged();
+    partial void OnEffectGiveInfluenceChanging(System.Nullable<bool> value);
+    partial void OnEffectGiveInfluenceChanged();
+    #endregion
+		
+		public TreatyEffectType()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectTypeID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int EffectTypeID
+		{
+			get
+			{
+				return this._EffectTypeID;
+			}
+			set
+			{
+				if ((this._EffectTypeID != value))
+				{
+					this.OnEffectTypeIDChanging(value);
+					this.SendPropertyChanging();
+					this._EffectTypeID = value;
+					this.SendPropertyChanged("EffectTypeID");
+					this.OnEffectTypeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Name", DbType="nvarchar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public string Name
+		{
+			get
+			{
+				return this._Name;
+			}
+			set
+			{
+				if ((this._Name != value))
+				{
+					this.OnNameChanging(value);
+					this.SendPropertyChanging();
+					this._Name = value;
+					this.SendPropertyChanged("Name");
+					this.OnNameChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="nvarchar(200) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HasValue", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool HasValue
+		{
+			get
+			{
+				return this._HasValue;
+			}
+			set
+			{
+				if ((this._HasValue != value))
+				{
+					this.OnHasValueChanging(value);
+					this.SendPropertyChanging();
+					this._HasValue = value;
+					this.SendPropertyChanged("HasValue");
+					this.OnHasValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MinValue", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public System.Nullable<double> MinValue
+		{
+			get
+			{
+				return this._MinValue;
+			}
+			set
+			{
+				if ((this._MinValue != value))
+				{
+					this.OnMinValueChanging(value);
+					this.SendPropertyChanging();
+					this._MinValue = value;
+					this.SendPropertyChanged("MinValue");
+					this.OnMinValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MaxValue", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public System.Nullable<double> MaxValue
+		{
+			get
+			{
+				return this._MaxValue;
+			}
+			set
+			{
+				if ((this._MaxValue != value))
+				{
+					this.OnMaxValueChanging(value);
+					this.SendPropertyChanging();
+					this._MaxValue = value;
+					this.SendPropertyChanged("MaxValue");
+					this.OnMaxValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsPlanetBased", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public bool IsPlanetBased
+		{
+			get
+			{
+				return this._IsPlanetBased;
+			}
+			set
+			{
+				if ((this._IsPlanetBased != value))
+				{
+					this.OnIsPlanetBasedChanging(value);
+					this.SendPropertyChanging();
+					this._IsPlanetBased = value;
+					this.SendPropertyChanged("IsPlanetBased");
+					this.OnIsPlanetBasedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsOneTimeOnly", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public bool IsOneTimeOnly
+		{
+			get
+			{
+				return this._IsOneTimeOnly;
+			}
+			set
+			{
+				if ((this._IsOneTimeOnly != value))
+				{
+					this.OnIsOneTimeOnlyChanging(value);
+					this.SendPropertyChanging();
+					this._IsOneTimeOnly = value;
+					this.SendPropertyChanged("IsOneTimeOnly");
+					this.OnIsOneTimeOnlyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBalanceSameSide", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public System.Nullable<bool> EffectBalanceSameSide
+		{
+			get
+			{
+				return this._EffectBalanceSameSide;
+			}
+			set
+			{
+				if ((this._EffectBalanceSameSide != value))
+				{
+					this.OnEffectBalanceSameSideChanging(value);
+					this.SendPropertyChanging();
+					this._EffectBalanceSameSide = value;
+					this.SendPropertyChanged("EffectBalanceSameSide");
+					this.OnEffectBalanceSameSideChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPreventInfluenceSpread", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		public System.Nullable<bool> EffectPreventInfluenceSpread
+		{
+			get
+			{
+				return this._EffectPreventInfluenceSpread;
+			}
+			set
+			{
+				if ((this._EffectPreventInfluenceSpread != value))
+				{
+					this.OnEffectPreventInfluenceSpreadChanging(value);
+					this.SendPropertyChanging();
+					this._EffectPreventInfluenceSpread = value;
+					this.SendPropertyChanged("EffectPreventInfluenceSpread");
+					this.OnEffectPreventInfluenceSpreadChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPreventDropshipAttack", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public System.Nullable<bool> EffectPreventDropshipAttack
+		{
+			get
+			{
+				return this._EffectPreventDropshipAttack;
+			}
+			set
+			{
+				if ((this._EffectPreventDropshipAttack != value))
+				{
+					this.OnEffectPreventDropshipAttackChanging(value);
+					this.SendPropertyChanging();
+					this._EffectPreventDropshipAttack = value;
+					this.SendPropertyChanged("EffectPreventDropshipAttack");
+					this.OnEffectPreventDropshipAttackChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPreventBomberAttack", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public System.Nullable<bool> EffectPreventBomberAttack
+		{
+			get
+			{
+				return this._EffectPreventBomberAttack;
+			}
+			set
+			{
+				if ((this._EffectPreventBomberAttack != value))
+				{
+					this.OnEffectPreventBomberAttackChanging(value);
+					this.SendPropertyChanging();
+					this._EffectPreventBomberAttack = value;
+					this.SendPropertyChanged("EffectPreventBomberAttack");
+					this.OnEffectPreventBomberAttackChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectAllowDropshipPass", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		public System.Nullable<bool> EffectAllowDropshipPass
+		{
+			get
+			{
+				return this._EffectAllowDropshipPass;
+			}
+			set
+			{
+				if ((this._EffectAllowDropshipPass != value))
+				{
+					this.OnEffectAllowDropshipPassChanging(value);
+					this.SendPropertyChanging();
+					this._EffectAllowDropshipPass = value;
+					this.SendPropertyChanged("EffectAllowDropshipPass");
+					this.OnEffectAllowDropshipPassChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectAllowBomberPass", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public System.Nullable<bool> EffectAllowBomberPass
+		{
+			get
+			{
+				return this._EffectAllowBomberPass;
+			}
+			set
+			{
+				if ((this._EffectAllowBomberPass != value))
+				{
+					this.OnEffectAllowBomberPassChanging(value);
+					this.SendPropertyChanging();
+					this._EffectAllowBomberPass = value;
+					this.SendPropertyChanged("EffectAllowBomberPass");
+					this.OnEffectAllowBomberPassChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveMetal", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public System.Nullable<bool> EffectGiveMetal
+		{
+			get
+			{
+				return this._EffectGiveMetal;
+			}
+			set
+			{
+				if ((this._EffectGiveMetal != value))
+				{
+					this.OnEffectGiveMetalChanging(value);
+					this.SendPropertyChanging();
+					this._EffectGiveMetal = value;
+					this.SendPropertyChanged("EffectGiveMetal");
+					this.OnEffectGiveMetalChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveDropships", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public System.Nullable<bool> EffectGiveDropships
+		{
+			get
+			{
+				return this._EffectGiveDropships;
+			}
+			set
+			{
+				if ((this._EffectGiveDropships != value))
+				{
+					this.OnEffectGiveDropshipsChanging(value);
+					this.SendPropertyChanging();
+					this._EffectGiveDropships = value;
+					this.SendPropertyChanged("EffectGiveDropships");
+					this.OnEffectGiveDropshipsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveBombers", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public System.Nullable<bool> EffectGiveBombers
+		{
+			get
+			{
+				return this._EffectGiveBombers;
+			}
+			set
+			{
+				if ((this._EffectGiveBombers != value))
+				{
+					this.OnEffectGiveBombersChanging(value);
+					this.SendPropertyChanging();
+					this._EffectGiveBombers = value;
+					this.SendPropertyChanged("EffectGiveBombers");
+					this.OnEffectGiveBombersChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveEnergy", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		public System.Nullable<bool> EffectGiveEnergy
+		{
+			get
+			{
+				return this._EffectGiveEnergy;
+			}
+			set
+			{
+				if ((this._EffectGiveEnergy != value))
+				{
+					this.OnEffectGiveEnergyChanging(value);
+					this.SendPropertyChanging();
+					this._EffectGiveEnergy = value;
+					this.SendPropertyChanged("EffectGiveEnergy");
+					this.OnEffectGiveEnergyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectShareTechs", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		public System.Nullable<bool> EffectShareTechs
+		{
+			get
+			{
+				return this._EffectShareTechs;
+			}
+			set
+			{
+				if ((this._EffectShareTechs != value))
+				{
+					this.OnEffectShareTechsChanging(value);
+					this.SendPropertyChanging();
+					this._EffectShareTechs = value;
+					this.SendPropertyChanged("EffectShareTechs");
+					this.OnEffectShareTechsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveJumpgatePoints", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		public System.Nullable<bool> EffectGiveJumpgatePoints
+		{
+			get
+			{
+				return this._EffectGiveJumpgatePoints;
+			}
+			set
+			{
+				if ((this._EffectGiveJumpgatePoints != value))
+				{
+					this.OnEffectGiveJumpgatePointsChanging(value);
+					this.SendPropertyChanging();
+					this._EffectGiveJumpgatePoints = value;
+					this.SendPropertyChanged("EffectGiveJumpgatePoints");
+					this.OnEffectGiveJumpgatePointsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBindingForTurns", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		public System.Nullable<bool> EffectBindingForTurns
+		{
+			get
+			{
+				return this._EffectBindingForTurns;
+			}
+			set
+			{
+				if ((this._EffectBindingForTurns != value))
+				{
+					this.OnEffectBindingForTurnsChanging(value);
+					this.SendPropertyChanging();
+					this._EffectBindingForTurns = value;
+					this.SendPropertyChanged("EffectBindingForTurns");
+					this.OnEffectBindingForTurnsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPreventIngamePwStructureDestruction", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		public System.Nullable<bool> EffectPreventIngamePwStructureDestruction
+		{
+			get
+			{
+				return this._EffectPreventIngamePwStructureDestruction;
+			}
+			set
+			{
+				if ((this._EffectPreventIngamePwStructureDestruction != value))
+				{
+					this.OnEffectPreventIngamePwStructureDestructionChanging(value);
+					this.SendPropertyChanging();
+					this._EffectPreventIngamePwStructureDestruction = value;
+					this.SendPropertyChanged("EffectPreventIngamePwStructureDestruction");
+					this.OnEffectPreventIngamePwStructureDestructionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveInfluence", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
+		public System.Nullable<bool> EffectGiveInfluence
+		{
+			get
+			{
+				return this._EffectGiveInfluence;
+			}
+			set
+			{
+				if ((this._EffectGiveInfluence != value))
+				{
+					this.OnEffectGiveInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._EffectGiveInfluence = value;
+					this.SendPropertyChanged("EffectGiveInfluence");
+					this.OnEffectGiveInfluenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TreatyEffectType_TreatyEffect", Storage="_TreatyEffects", ThisKey="EffectTypeID", OtherKey="EffectTypeID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		public EntitySet<TreatyEffect> TreatyEffects
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._TreatyEffects.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._TreatyEffects;
+			}
+			set
+			{
+				this._TreatyEffects.Assign(value);
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_TreatyEffects(TreatyEffect entity)
+		{
+			this.SendPropertyChanging();
+			entity.TreatyEffectType = this;
+		}
+		
+		private void detach_TreatyEffects(TreatyEffect entity)
+		{
+			this.SendPropertyChanging();
+			entity.TreatyEffectType = null;
+		}
+		
+		private void Initialize()
+		{
+			this._TreatyEffects = new EntitySet<TreatyEffect>(new Action<TreatyEffect>(this.attach_TreatyEffects), new Action<TreatyEffect>(this.detach_TreatyEffects));
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 }

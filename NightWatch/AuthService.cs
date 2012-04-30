@@ -79,6 +79,37 @@ namespace NightWatch
                     }
                 };
 
+
+            this.client.UserIPRecieved += (sender, args) => {
+                Task.Factory.StartNew(() => {
+                    try
+                    {
+                        using (var db = new ZkDataContext())
+                        {
+                            var acc = Account.AccountByName(db, args.Name);
+                            if (acc != null) {
+                                if (db.Punishments.Any(x=>x.BanIP == args.IP && x.BanExpires>DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(args.Name, "Banned");
+
+                                var entry = acc.AccountIPS.FirstOrDefault(x => x.IP == args.IP);
+                                if (entry == null) {
+                                    entry = new AccountIP() { AccountID = acc.AccountID, IP = args.IP, FirstLogin = DateTime.UtcNow};
+                                    db.AccountIPS.InsertOnSubmit(entry);
+                                }
+                                entry.LoginCount++;
+                                entry.LastLogin = DateTime.UtcNow;
+                            }
+                            db.SubmitChanges();
+                        }
+                    }
+                    catch (Exception ex) {
+                        Trace.TraceError("Error getting user IP: {0}",ex);
+                    }
+                });
+            };
+
+
+            
+
             this.client.UserStatusChanged += (s, e) =>
                 {
                     var user = client.ExistingUsers[e.ServerParams[0]];
@@ -87,6 +118,7 @@ namespace NightWatch
                             try
                             {
                                 using (var db = new ZkDataContext()) UpdateUser(user.LobbyID, user.Name, user, null, db);
+                                client.RequestUserIP(user.Name);
                             }
                             catch (Exception ex)
                             {
