@@ -110,6 +110,14 @@ namespace ZeroKWeb.Controllers
             else
                 return View(result);
         }
+
+        public ActionResult Logs(int id)
+        {
+            using (var db = new ZkDataContext()) {
+                return Content(System.IO.File.ReadAllText(string.Format(GlobalConst.InfologPathFormat, db.SpringBattles.Single(x => x.SpringBattleID == id).EngineGameID)));
+            }
+            
+        }
     }
 
     public struct BattleQuickInfo {

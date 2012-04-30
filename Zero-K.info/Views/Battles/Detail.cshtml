@@ -133,12 +133,13 @@
 </div>
 <br />
 <div id="shares">Share the battle now on:<br />
-<a name="fb_share"></a> 
-<script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" 
-        type="text/javascript">
-</script> 
-<g:plusone size="medium"></g:plusone>
+    <a name="fb_share"></a> 
+    <script src="http://static.ak.fbcdn.net/connect.php/js/FB.Share" 
+            type="text/javascript">
+    </script> 
+    <g:plusone size="medium"></g:plusone>
 </div>
+Logs: @Html.ActionLink("Logs", "Logs", "Battles", new { id = Model.SpringBattleID})
 <br />
 @if (Model.EventSpringBattles.Any())
 {
