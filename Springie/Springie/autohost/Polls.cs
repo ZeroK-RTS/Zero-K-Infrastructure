@@ -3,11 +3,74 @@
 using System.Collections.Generic;
 using System.Linq;
 using LobbyClient;
+using PlasmaShared.SpringieInterfaceReference;
 
 #endregion
 
 namespace Springie.autohost
 {
+    public class VoteResign: AbstractPoll, IVotable
+    {
+        BattleContext context;
+        readonly Dictionary<string, int> userVotes = new Dictionary<string, int>();
+        PlayerTeam voteStarter;
+        int winCount = 0;
+        public VoteResign(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
+
+
+        public bool Init(TasSayEventArgs e, string[] words)
+        {
+            if (spring.IsRunning)
+            {
+                context = spring.StartContext;
+                voteStarter = context.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
+                if (voteStarter != null)
+                {
+                    ah.SayBattle(string.Format("Do you want to resign team {0}? !vote 1 = yes, !vote 2 = no", voteStarter.AllyID + 1));
+                    winCount = context.Players.Count(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator)/2 + 1;
+                    return true;
+                }
+            }
+            AutoHost.Respond(tas, spring, e, "You cannot resign now");
+            return false;
+        }
+
+        public bool Vote(TasSayEventArgs e, string[] words)
+        {
+            if (spring.IsRunning)
+            {
+                var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName);
+                if (entry == null || entry.IsSpectator || entry.AllyID != voteStarter.AllyID) ah.Respond(e, string.Format("Only team {0} can vote", voteStarter.AllyID + 1));
+                else
+                {
+                    int num;
+                    int.TryParse(words[0], out num);
+                    if (num == 1 || num == 2)
+                    {
+                        userVotes[e.UserName] = num;
+                        ah.SayBattle(string.Format("option {0} has {1} of {2} votes", num, userVotes.Count(x => x.Value == num), winCount));
+                    }
+                }
+            }
+
+            var yesCnt = userVotes.Count(x => x.Value == 1);
+            var noCnt = userVotes.Count(x => x.Value == 2);
+            var success = yesCnt > noCnt && (yesCnt >= winCount || yesCnt > 1);
+            var endPoll = hackEndTimeVote || yesCnt >= winCount || noCnt >= winCount;
+            if (endPoll)
+            {
+                if (success)
+                {
+                    ah.SayBattle("vote successful - resigning");
+                    if (spring.IsRunning) foreach (var p in context.Players.Where(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator)) spring.Kick(p.Name);
+                }
+                else ah.SayBattle("not enough votes");
+                return true;
+            }
+            else return false;
+        }
+    }
+
     public interface IVotable
     {
         bool Init(TasSayEventArgs e, string[] words);
@@ -17,8 +80,6 @@ namespace Springie.autohost
 
     public abstract class AbstractPoll
     {
-        public virtual double Ratio { get { return 0.5; } }
-
         protected AutoHost ah;
         protected int defaultWinVote = 1;
         protected bool hackEndTimeVote;
@@ -30,6 +91,7 @@ namespace Springie.autohost
 
         protected List<string> users = new List<string>();
         protected List<int> votes = new List<int>();
+        public virtual double Ratio { get { return 0.5; } }
 
         public AbstractPoll() {}
 
@@ -40,10 +102,10 @@ namespace Springie.autohost
             this.ah = ah;
 
             initialUserCount = 0;
-            Battle b = tas.MyBattle;
+            var b = tas.MyBattle;
             if (b != null)
             {
-                foreach (UserBattleStatus us in b.Users)
+                foreach (var us in b.Users)
                 {
                     if (us.Name != tas.UserName)
                     {
@@ -65,20 +127,20 @@ namespace Springie.autohost
         protected bool CheckEnd(out int winVote)
         {
             var sums = new int[options];
-            foreach (int val in votes) if (val > 0 && val <= options) sums[val - 1]++;
+            foreach (var val in votes) if (val > 0 && val <= options) sums[val - 1]++;
 
-            int votesLeft = votes.FindAll(delegate(int t) { return (t == 0); }).Count;
-            bool canDecide = false;
+            var votesLeft = votes.FindAll(delegate(int t) { return (t == 0); }).Count;
+            var canDecide = false;
             var winLimit = (int)(initialUserCount*Ratio);
 
-            int max = 0;
-            int maxCount = 0;
-            for (int i = 0; i < sums.Length; ++i) if (sums[i] > max) max = sums[i];
-            for (int i = 0; i < sums.Length; ++i) if (sums[i] == max) maxCount++;
+            var max = 0;
+            var maxCount = 0;
+            for (var i = 0; i < sums.Length; ++i) if (sums[i] > max) max = sums[i];
+            for (var i = 0; i < sums.Length; ++i) if (sums[i] == max) maxCount++;
 
-            for (int i = 0; i < sums.Length; ++i)
+            for (var i = 0; i < sums.Length; ++i)
             {
-                string text = string.Format("option {0} has {1} of {2} votes", i + 1, sums[i], winLimit + 1);
+                var text = string.Format("option {0} has {1} of {2} votes", i + 1, sums[i], winLimit + 1);
 
                 if (!hackEndTimeVote && i + 1 == lastVote) ah.SayBattle(text);
 
@@ -111,11 +173,11 @@ namespace Springie.autohost
                 // vote within parameters, lets register it
                 lastVote = vote;
 
-                int ind = users.IndexOf(e.UserName);
-                Battle b = tas.MyBattle;
+                var ind = users.IndexOf(e.UserName);
+                var b = tas.MyBattle;
                 if (b != null)
                 {
-                    int bidx = b.GetUserIndex(e.UserName);
+                    var bidx = b.GetUserIndex(e.UserName);
                     if (bidx > -1) if (b.Users[bidx].IsSpectator) return false;
                     if (ind == -1)
                     {
@@ -128,12 +190,12 @@ namespace Springie.autohost
             }
             return false;
         }
-    } ;
+    };
 
     public class VoteMap: AbstractPoll, IVotable
     {
         string map;
-		
+
         public VoteMap(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
         bool IVotable.Init(TasSayEventArgs e, string[] words)
@@ -154,7 +216,8 @@ namespace Springie.autohost
                     return false;
                 }
             }
-            else {
+            else
+            {
                 ah.SayBattle("Do you want to change to suitable random map? !vote 1 = yes, !vote 2 = no");
                 return true;
             }
@@ -194,9 +257,8 @@ namespace Springie.autohost
 
     public class VoteKick: AbstractPoll, IVotable
     {
-        public override double Ratio { get { return 0.66; } }
-
         string player;
+        public override double Ratio { get { return 0.66; } }
 
         public VoteKick(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
@@ -248,55 +310,63 @@ namespace Springie.autohost
     }
 
 
-    public class VoteSpec : AbstractPoll, IVotable
+    public class VoteSpec: AbstractPoll, IVotable
     {
-      string player;
+        string player;
 
-      public VoteSpec(TasClient tas, Spring spring, AutoHost ah) : base(tas, spring, ah) { }
+        public VoteSpec(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
-      public bool Init(TasSayEventArgs e, string[] words)
-      {
-        if (words.Length == 0) {
-          AutoHost.Respond(tas, spring, e, "You must specify player name");
-          return false;
+        public bool Init(TasSayEventArgs e, string[] words)
+        {
+            if (words.Length == 0)
+            {
+                AutoHost.Respond(tas, spring, e, "You must specify player name");
+                return false;
+            }
+
+            string[] players;
+            int[] indexes;
+            if (AutoHost.FilterUsers(words, tas, spring, out players, out indexes) > 0)
+            {
+                player = players[0];
+                ah.SayBattle("Do you want to spectate " + player + "? !vote 1 = yes, !vote 2 = no");
+                return true;
+            }
+            else
+            {
+                AutoHost.Respond(tas, spring, e, "Cannot find such player");
+                return false;
+            }
         }
 
-        string[] players;
-        int[] indexes;
-        if (AutoHost.FilterUsers(words, tas, spring, out players, out indexes) > 0) {
-          player = players[0];
-          ah.SayBattle("Do you want to spectate " + player + "? !vote 1 = yes, !vote 2 = no");
-          return true;
-        } else {
-          AutoHost.Respond(tas, spring, e, "Cannot find such player");
-          return false;
-        }
-      }
+        public bool Vote(TasSayEventArgs e, string[] words)
+        {
+            int vote;
+            if (!RegisterVote(e, words, out vote))
+            {
+                AutoHost.Respond(tas, spring, e, "You must vote valid option/not be a spectator");
+                return false;
+            }
 
-      public bool Vote(TasSayEventArgs e, string[] words)
-      {
-        int vote;
-        if (!RegisterVote(e, words, out vote)) {
-          AutoHost.Respond(tas, spring, e, "You must vote valid option/not be a spectator");
-          return false;
+            int winVote;
+            if (CheckEnd(out winVote))
+            {
+                if (winVote == 1)
+                {
+                    ah.SayBattle("vote successful - speccing " + player);
+                    ah.ComForceSpectator(TasSayEventArgs.Default, new[] { player });
+                }
+                else ah.SayBattle("not enough votes, player stays");
+                return true;
+            }
+            else return false;
         }
-
-        int winVote;
-        if (CheckEnd(out winVote)) {
-          if (winVote == 1) {
-            ah.SayBattle("vote successful - speccing " + player);
-            ah.ComForceSpectator(TasSayEventArgs.Default, new[] { player });
-          } else ah.SayBattle("not enough votes, player stays");
-          return true;
-        } else return false;
-      }
     }
 
 
-    public class VoteSplitPlayers : AbstractPoll, IVotable
+    public class VoteSplitPlayers: AbstractPoll, IVotable
     {
-
-        public VoteSplitPlayers(TasClient tas, Spring spring, AutoHost ah) : base(tas, spring, ah) { }
+        public VoteSplitPlayers(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
         public bool Init(TasSayEventArgs e, string[] words)
         {
@@ -476,7 +546,7 @@ namespace Springie.autohost
             {
                 string[] mods;
                 int[] indexes;
-                if (AutoHost.FilterMods(words, ah,out mods, out indexes) == 0)
+                if (AutoHost.FilterMods(words, ah, out mods, out indexes) == 0)
                 {
                     AutoHost.Respond(tas, spring, e, "cannot find such mod");
                     return false;
@@ -514,7 +584,6 @@ namespace Springie.autohost
             else return false;
         }
     }
-
 
 
     public class VoteBoss: AbstractPoll, IVotable
@@ -625,5 +694,4 @@ namespace Springie.autohost
             else return false;
         }
     }
-
 }

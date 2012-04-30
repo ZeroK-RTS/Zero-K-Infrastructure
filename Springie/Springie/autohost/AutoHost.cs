@@ -404,6 +404,14 @@ namespace Springie.autohost
                     StartVote(new VoteSpec(tas, spring, this), e, words);
                     break;
 
+                case "resign":
+                    ComResign(e, words);
+                    break;
+
+                case "voteresign":
+                    StartVote(new VoteResign(tas, spring, this), e, words);
+                    break;
+
                 case "voteforcestart":
                     StartVote(new VoteForceStart(tas, spring, this), e, words);
                     break;

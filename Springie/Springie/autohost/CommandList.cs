@@ -74,6 +74,12 @@ namespace Springie.autohost
                                          0,
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
+            AddMissing(new CommandConfig("resign",
+                                                     3,
+                                                     " - resigns the game",
+                                                     0,
+                                                     new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+
             AddMissing(new CommandConfig("lock", 1, " - locks the game"));
 
             AddMissing(new CommandConfig("unlock", 1, " - unlocks the game"));
@@ -119,6 +125,12 @@ namespace Springie.autohost
                                          " - starts vote to exit game",
                                          0,
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+
+            AddMissing(new CommandConfig("voteresign",
+                                                     0,
+                                                     " - starts a vote to resign game",
+                                                     0,
+                                                     new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
             AddMissing(new CommandConfig("vote",
                                          0,
