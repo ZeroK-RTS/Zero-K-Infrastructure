@@ -110,7 +110,7 @@
 	        <h3>Modify user @Model.Name</h3>
             AccountID: @Model.AccountID <br />
             LobbyID: @Model.LobbyID <br />
-            IP: @string.Join(", ",Model.AccountIPS.OrderByDescending(x=>x.LastLogin).Select(x=> string.Format("<{0}> {1}x {2}-{3} ", x.IP, x.LoginCount, x.FirstLogin, x.LastLogin)))
+            IP: @string.Join(", ",Model.AccountIPS.OrderByDescending(x=>x.LastLogin).Select(x=> string.Format("[ <{0}> count:{1} first:{2} last:{3} ] ", x.IP, x.LoginCount, x.FirstLogin, x.LastLogin)))
             <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new {accountID = Model.AccountID})">
                 Change lobby ID: @Html.TextBox("newLobbyID") <input type="submit" />
             </form>
@@ -130,7 +130,7 @@
                 Ban mute: @Html.CheckBox("banMute")<br />
                 Ban commanders: @Html.CheckBox("banCommanders")<br />
                 Ban unlocks: @Html.CheckBox("banUnlocks")<br /><br/>
-                IP: @Html.CheckBox("banIP")<br />
+                IP: @Html.TextBox("banIP")<br />
                 Ban site: @Html.CheckBox("banSite")<br />
                 Ban lobby: @Html.CheckBox("banLobby")<br />
                 Ban expires: <input type="text" name="banExpires" class="datepicker" value="@DateTime.UtcNow.AddDays(7)" /><br />
