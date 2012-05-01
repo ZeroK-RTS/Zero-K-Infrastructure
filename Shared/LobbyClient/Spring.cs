@@ -150,7 +150,7 @@ namespace LobbyClient
         }
 
 				public void ResignPlayer(string name) {
-					if (IsRunning) talker.SendText(string.Format("/luarules resignteam {0}", talker.TranslateNameToPlayerID(name)));
+					if (IsRunning) talker.SendText(string.Format("/luarules resignteam {0}", name));
 				}
 
 
