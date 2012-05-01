@@ -571,6 +571,7 @@ namespace LobbyClient
                     case Talker.SpringEventType.PLAYER_JOINED:
 										if (StartContext != null) foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName)) {
 											connectedPlayers[p.Name] = true;
+											p.IsIngame = true;
 										}
                 		if (PlayerJoined != null) PlayerJoined(this, new SpringLogEventArgs(e.PlayerName));
                         break;
@@ -578,6 +579,7 @@ namespace LobbyClient
                     case Talker.SpringEventType.PLAYER_LEFT:
 												if (StartContext != null) foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName)) {
 													connectedPlayers[p.Name] = false;
+													p.IsIngame = false;
 												}
                 				if (e.Param == 0 && PlayerDisconnected != null) PlayerDisconnected(this, new SpringLogEventArgs(e.PlayerName));
                         if (PlayerLeft != null) PlayerLeft(this, new SpringLogEventArgs(e.PlayerName));
