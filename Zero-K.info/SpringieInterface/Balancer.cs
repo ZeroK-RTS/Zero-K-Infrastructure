@@ -67,7 +67,7 @@ namespace ZeroKWeb.SpringieInterface
 
 					foreach (var grp in context.Players.GroupBy(x => ipByLobbyID[x.LobbyID]).Where(x => x.Count() > 1))
 					{
-						res.Message += string.Format("These people are in same location: {0}\n", string.Join(", ", grp.Select(x => x.Name)));
+						res.Message += string.Format("\nThese people are in same location: {0}", string.Join(", ", grp.Select(x => x.Name)));
 					}
 
 				}
