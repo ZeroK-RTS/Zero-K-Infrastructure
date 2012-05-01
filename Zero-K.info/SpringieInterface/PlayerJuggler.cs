@@ -110,16 +110,17 @@ namespace ZeroKWeb.SpringieInterface
                 autohosts.Where(x => !tas.ExistingBattles.Values.Any(y => y.Founder.Name == x.LobbyContext.AutohostName && y.IsPassworded)).ToList();
             //only non pw battles
 
+						var ingames = tas.ExistingUsers.Where(x => x.Value.IsInGame).Select(x => x.Value.LobbyID).ToDictionary(x=>x);
             foreach (var ah in autohosts)
             {
-                if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
+							if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
                     // game not running add all nonspecs
                 else
                 {
                     var notPlaying =
                         ah.LobbyContext.Players.Where(
                             x =>
-                            !x.IsSpectator && !x.IsIngame &&
+                            !x.IsSpectator && !x.IsIngame && !ingames.ContainsKey(x.LobbyID) && 
                             !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator && y.IsIngame)).Select(
                                 x => (int?)x.LobbyID).ToList();
                     // game running, add all those that are not playing and are not specs
