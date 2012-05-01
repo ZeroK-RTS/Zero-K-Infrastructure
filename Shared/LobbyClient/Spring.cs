@@ -149,7 +149,12 @@ namespace LobbyClient
             }
         }
 
-        public void ForceStart()
+				public void ResignTeam(int teamID) {
+					if (IsRunning) talker.SendText(string.Format("/luarules resignteam {0}", teamID));
+				}
+
+
+    	public void ForceStart()
         {
             if (IsRunning) talker.SendText("/forcestart");
         }

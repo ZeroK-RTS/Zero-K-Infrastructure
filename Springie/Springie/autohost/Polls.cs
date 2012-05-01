@@ -62,7 +62,7 @@ namespace Springie.autohost
                 if (success)
                 {
                     ah.SayBattle("vote successful - resigning");
-                    if (spring.IsRunning) foreach (var p in context.Players.Where(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator)) spring.Kick(p.Name);
+                    if (spring.IsRunning) foreach (var p in context.Players.Where(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator)) spring.ResignTeam(p.TeamID);
                 }
                 else ah.SayBattle("not enough votes");
                 return true;

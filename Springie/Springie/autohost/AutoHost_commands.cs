@@ -887,8 +887,6 @@ namespace Springie.autohost
             {
                 if (config != null && config.Mode != AutohostMode.None)
                 {
-                    if (JuggleIfNeeded()) return;
-
                     if (!RunServerBalance(true, null, null))
                     {
                         SayBattle("Cannot start a game atm");
@@ -1435,7 +1433,7 @@ namespace Springie.autohost
                 var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
                 if (entry != null) {
                     SayBattle("Resigning");
-                    foreach (var u in spring.StartContext.Players.Where(x=>x.AllyID== entry.AllyID && !x.IsSpectator)) spring.Kick(u.Name);
+                    foreach (var u in spring.StartContext.Players.Where(x=>x.AllyID== entry.AllyID && !x.IsSpectator)) spring.ResignTeam(u.TeamID);
                     return;
                 }
             }
