@@ -43,13 +43,13 @@ namespace ZeroKWeb.SpringieInterface
 			}
 
 			if (isGameStart) {
-				VerifySpecCheaters(context);
+				VerifySpecCheaters(context, res);
 			}
-
+			
 			return res;
 		}
 
-		private static void VerifySpecCheaters(BattleContext context) {
+		private static void VerifySpecCheaters(BattleContext context, BalanceTeamsResult res) {
 			try {
 				// find specs with same IP as some player and kick them
 				using (var db = new ZkDataContext()) {
@@ -67,7 +67,7 @@ namespace ZeroKWeb.SpringieInterface
 
 					foreach (var grp in context.Players.GroupBy(x => ipByLobbyID[x.LobbyID]).Where(x => x.Count() > 1))
 					{
-						Global.Nightwatch.Tas.Say(TasClient.SayPlace.Battle, "", "These people are in same location: " + string.Join(", ", grp.Select(x => x.Name)), true);
+						res.Message += string.Format("These people are in same location: {0}\n", string.Join(", ", grp.Select(x => x.Name)));
 					}
 
 				}
