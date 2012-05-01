@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using PlasmaShared;
 using ZkData;
@@ -44,6 +45,32 @@ namespace ZeroKWeb.SpringieInterface
                 if (playerCount % 2 == 1 && playerCount < 10) res.CanStart = false;
                 if (config.AutohostMode == AutohostMode.Game1v1 || config.AutohostMode == AutohostMode.GameFFA || config.AutohostMode == AutohostMode.None) res.CanStart = false;
             }
+
+            if (isGameStart)
+            {
+                try
+                {
+                    // find specs with same IP as some player and kick them
+                    using (var db = new ZkDataContext())
+                    {
+                        var ids = context.Players.Select(y => (int?)y.LobbyID).ToList();
+                        var ipByLobbyID = db.Accounts.Where(x => ids.Contains(x.LobbyID)).ToDictionary(x => x.LobbyID,
+                                                                                                       x =>
+                                                                                                       x.AccountIPS.OrderByDescending(y => y.LastLogin)
+                                                                                                           .First().IP); // lobbyid -> ip mapping
+                        foreach (var p in context.Players.Where(x => x.IsSpectator))
+                        {
+                            var ip = ipByLobbyID[p.LobbyID];
+                            if (context.Players.Any(x => !x.IsSpectator && ipByLobbyID[x.LobbyID] == ip)) Global.Nightwatch.Tas.AdminKickFromLobby(p.Name, "Spectators from same location as players are not allowed!");
+                        }
+                    }
+                }
+                catch (Exception ex) {
+                    Trace.TraceError("Error checking speccheaters: {0}",ex);
+                }
+            }
+
+
             return res;
         }
 
