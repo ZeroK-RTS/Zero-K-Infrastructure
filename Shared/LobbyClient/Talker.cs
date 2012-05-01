@@ -180,5 +180,9 @@ namespace LobbyClient
       public byte PlayerNumber;
       public string Text;
     }
+
+  	public int TranslateNameToPlayerID(string name) {
+			return initialPlayers.FindIndex(x => x.Name == name);
+  	}
   }
 }

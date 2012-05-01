@@ -372,7 +372,6 @@ namespace LobbyClient
 
         void ScriptAddTeam(StringBuilder script, int teamNum, List<StartPos> positions, int userNum, UserBattleStatus status)
         {
-            BotBattleStatus b;
             // BOT TEAM
             script.AppendFormat("  [TEAM{0}]\n", teamNum);
             script.AppendLine("  {");

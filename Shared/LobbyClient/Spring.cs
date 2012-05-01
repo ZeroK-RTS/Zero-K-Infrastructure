@@ -149,8 +149,8 @@ namespace LobbyClient
             }
         }
 
-				public void ResignTeam(int teamID) {
-					if (IsRunning) talker.SendText(string.Format("/luarules resignteam {0}", teamID));
+				public void ResignPlayer(string name) {
+					if (IsRunning) talker.SendText(string.Format("/luarules resignteam {0}", talker.TranslateNameToPlayerID(name)));
 				}
 
 
@@ -178,6 +178,8 @@ namespace LobbyClient
 
 
         public BattleContext StartContext { get; private set; }
+
+				Dictionary<string,bool> connectedPlayers = new Dictionary<string, bool>();
 
         /// <summary>
         /// Starts spring game
@@ -232,7 +234,8 @@ namespace LobbyClient
                         try
                         {
                             StartContext = client.MyBattle.GetContext();
-                            foreach (var p in StartContext.Players) p.IsIngame = false;
+														connectedPlayers.Clear();
+                            foreach (var p in StartContext.Players) p.IsIngame = true;
                             startSetup = service.GetSpringBattleStartSetup(StartContext);
                         }
                         catch (Exception ex)
@@ -566,13 +569,17 @@ namespace LobbyClient
                 switch (e.EventType)
                 {
                     case Talker.SpringEventType.PLAYER_JOINED:
-                        if (StartContext != null) foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName)) p.IsIngame = true;
-                        if (PlayerJoined != null) PlayerJoined(this, new SpringLogEventArgs(e.PlayerName));
+										if (StartContext != null) foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName)) {
+											connectedPlayers[p.Name] = true;
+										}
+                		if (PlayerJoined != null) PlayerJoined(this, new SpringLogEventArgs(e.PlayerName));
                         break;
 
                     case Talker.SpringEventType.PLAYER_LEFT:
-                        if (StartContext != null) foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName)) p.IsIngame = false;
-                        if (e.Param == 0 && PlayerDisconnected != null) PlayerDisconnected(this, new SpringLogEventArgs(e.PlayerName));
+												if (StartContext != null) foreach (var p in StartContext.Players.Where(x => x.Name == e.PlayerName)) {
+													connectedPlayers[p.Name] = false;
+												}
+                				if (e.Param == 0 && PlayerDisconnected != null) PlayerDisconnected(this, new SpringLogEventArgs(e.PlayerName));
                         if (PlayerLeft != null) PlayerLeft(this, new SpringLogEventArgs(e.PlayerName));
 
                         break;
@@ -606,7 +613,10 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_STARTPLAYING:
-                        battleResult.IngameStartTime = DateTime.UtcNow;
+												foreach (var p in StartContext.Players) {
+													bool state;
+													if (!connectedPlayers.TryGetValue(p.Name, out state) || !state) p.IsIngame = false;
+												}
                         break;
 
                     case Talker.SpringEventType.SERVER_QUIT:

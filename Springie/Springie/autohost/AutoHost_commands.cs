@@ -1433,7 +1433,7 @@ namespace Springie.autohost
                 var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
                 if (entry != null) {
                     SayBattle("Resigning");
-                    foreach (var u in spring.StartContext.Players.Where(x=>x.AllyID== entry.AllyID && !x.IsSpectator)) spring.ResignTeam(u.TeamID);
+                    foreach (var u in spring.StartContext.Players.Where(x=>x.AllyID== entry.AllyID && !x.IsSpectator)) spring.ResignPlayer(u.Name);
                     return;
                 }
             }
