@@ -112,7 +112,7 @@ namespace ZeroKWeb.SpringieInterface
 
             foreach (var ah in autohosts)
             {
-                if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator && !x.IsIngame).Select(x => (int?)x.LobbyID));
+                if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
                     // game not running add all nonspecs
                 else
                 {
@@ -126,8 +126,6 @@ namespace ZeroKWeb.SpringieInterface
                     lobbyIds.AddRange(notPlaying);
                 }
             }
-
-            foreach (var id in new List<int?>(lobbyIds)) if (tas.ExistingUsers.Values.Any(x => x.LobbyID == id && x.IsInGame)) lobbyIds.Remove(id);
 
             var roomLessLobbyID = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
             foreach (var ah in autohosts)
