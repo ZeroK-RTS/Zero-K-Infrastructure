@@ -58,12 +58,13 @@ namespace ZeroKWeb.SpringieInterface
 
 					var mode = context.GetMode();
 					// kick same ip specs for starred and non chickens
-					if (mode != AutohostMode.None && mode != AutohostMode.GameChickens) {
+					/*
+                    if (mode != AutohostMode.None && mode != AutohostMode.GameChickens) {
 						foreach (var p in context.Players.Where(x => x.IsSpectator)) {
 							var ip = ipByLobbyID[p.LobbyID];
 							if (context.Players.Any(x => !x.IsSpectator && ipByLobbyID[x.LobbyID] == ip)) Global.Nightwatch.Tas.AdminKickFromLobby(p.Name, "Spectators from same location as players are not allowed here!");
 						}
-					}
+					}*/
 
 					foreach (var grp in context.Players.GroupBy(x => ipByLobbyID[x.LobbyID]).Where(x => x.Count() > 1))
 					{
