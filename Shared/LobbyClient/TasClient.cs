@@ -612,6 +612,12 @@ namespace LobbyClient
             con.SendCommand("RING", username);
         }
 
+        public void ForceJoinBattle(string name, int battleID, string password = null) {
+            //con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
+            con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
+            con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
+        }
+
         /// <summary>
         /// Say something through chat system
         /// </summary>

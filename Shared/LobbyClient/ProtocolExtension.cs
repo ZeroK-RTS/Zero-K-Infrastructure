@@ -40,6 +40,13 @@ namespace LobbyClient
                 public AutohostMode Mode;
                 public GamePreference Preference;
             }
+
+            public JugglerConfig(Account acc) {
+                Active = acc.MatchMakingActive;
+                foreach (var item in acc.Preferences) Preferences.Add(new PreferencePair() { Mode = item.Key, Preference = item.Value });
+            }
+
+            public JugglerConfig() {}
         }
 
 

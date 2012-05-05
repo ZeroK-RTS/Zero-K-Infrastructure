@@ -65,7 +65,7 @@ namespace ZeroKLobby.Notifications
             {
                 if (client.MyBattleStatus.IsSpectator)
                 {
-                    if (Program.NotifySection.Bars.Contains(this)) Deactivate();
+                    // if (Program.NotifySection.Bars.Contains(this)) Deactivate();
                 }
                 else {
                     if (client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();

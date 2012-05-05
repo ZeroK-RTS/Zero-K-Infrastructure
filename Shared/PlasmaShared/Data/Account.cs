@@ -63,6 +63,7 @@ namespace ZkData
                 str += string.Format("{0}={1}\n", (int)kvp.Key, (int)kvp.Value);
             }
             GamePreferences = str;
+            preferences = null;
         }
 
         public double WeightEloMalus { get { return (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }

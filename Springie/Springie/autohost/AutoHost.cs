@@ -93,6 +93,7 @@ namespace Springie.autohost
             spring.SpringExited += spring_SpringExited;
             spring.SpringStarted += spring_SpringStarted;
             spring.PlayerSaid += spring_PlayerSaid;
+            spring.BattleStarted += spring_BattleStarted;
 
             tas.BattleUserLeft += tas_BattleUserLeft;
             tas.UserStatusChanged += tas_UserStatusChanged;
@@ -169,6 +170,11 @@ namespace Springie.autohost
                     }
                 };
             timer.Start();
+        }
+
+        void spring_BattleStarted(object sender, EventArgs e)
+        {
+            StopVote();
         }
 
         public void Dispose()
@@ -753,12 +759,12 @@ namespace Springie.autohost
 
 
         public bool JuggleIfNeeded() {
-            if (tas.MyBattle != null && !spring.IsRunning && config != null && SpawnConfig == null && config.SplitBiggerThan != null)
+            if (tas.MyBattle != null && !spring.IsRunning && config != null && SpawnConfig == null)
             {
                 var count = tas.MyBattle.Users.Count(x => !x.IsSpectator);
-                if (count > config.SplitBiggerThan)
+                if (count > (config.SplitBiggerThan??99) || (count> 0 && count<(config.MinToJuggle??0)))
                 {
-                    SayBattle("Game too big, juggling");
+                    SayBattle("Player count not ok, juggling");
                     Program.main.JugglePlayers();
                     return true;
                 }
@@ -890,6 +896,7 @@ namespace Springie.autohost
 
         void spring_SpringExited(object sender, EventArgs e)
         {
+            StopVote();
             tas.ChangeLock(false);
             tas.ChangeMyUserStatus(false, false);
             var b = tas.MyBattle;
@@ -909,6 +916,7 @@ namespace Springie.autohost
         {
             tas.ChangeLock(false);
             if (hostedMod.IsMission) using (var service = new ContentService() { Proxy = null }) foreach (var u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRunAsync(u.Name, hostedMod.ShortName);
+            StopVote();
         }
 
 

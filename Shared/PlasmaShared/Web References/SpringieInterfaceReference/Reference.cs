@@ -814,6 +814,10 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private CommandLevel[] commandLevelsField;
         
+        private System.Nullable<int> minToJuggleField;
+        
+        private System.Nullable<int> mergeSmallerThanField;
+        
         /// <remarks/>
         public string Login {
             get {
@@ -972,6 +976,28 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.commandLevelsField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public System.Nullable<int> MinToJuggle {
+            get {
+                return this.minToJuggleField;
+            }
+            set {
+                this.minToJuggleField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public System.Nullable<int> MergeSmallerThan {
+            get {
+                return this.mergeSmallerThanField;
+            }
+            set {
+                this.mergeSmallerThanField = value;
             }
         }
     }

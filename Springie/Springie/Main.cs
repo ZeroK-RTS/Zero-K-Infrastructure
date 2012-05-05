@@ -23,6 +23,7 @@ namespace Springie
         public const string ConfigMain = "main.xml";
         const int ConfigUpdatePeriod = 60;
         const int JugglePeriod = 61;
+        const int MinJuggleDelay = 5;
 
         readonly List<AutoHost> autoHosts = new List<AutoHost>();
         List<AutoHost> deletionCandidate = new List<AutoHost>();
@@ -36,6 +37,7 @@ namespace Springie
         public MetaDataCache MetaCache;
         public string RootWorkPath { get; private set; }
         public readonly SpringPaths paths;
+        private bool forceJuggleNext;
 
         public Main(string path)
         {
@@ -74,6 +76,13 @@ namespace Springie
         {
             try
             {
+                var lastJuggleAgo = DateTime.Now.Subtract(lastJuggle).TotalSeconds;
+                if (lastJuggleAgo < MinJuggleDelay) {
+                    forceJuggleNext = true;
+                    return null;
+                }
+                lastJuggle = DateTime.Now;
+                forceJuggleNext = false;
                 using (var serv = new SpringieService())
                 {
                     serv.Timeout = 8000;
@@ -94,12 +103,14 @@ namespace Springie
                     {
                         if (ret.PlayerMoves != null)
                         {
+                            /*
                             foreach (var playermove in ret.PlayerMoves)
                             {
                                 var ah =
                                     autoHosts.FirstOrDefault(x => x.tas.MyBattle != null && x.tas.MyBattle.Users.Any(y => y.Name == playermove.Name));
                                 if (ah != null) ah.ComMove(TasSayEventArgs.Default, new[] { playermove.Name, playermove.TargetAutohost });
                             }
+                             */
                         }
                         if (ret.AutohostsToClose != null)
                         {
@@ -141,10 +152,9 @@ namespace Springie
                 UpdateAll();
                 lastConfigUpdate = DateTime.Now;
             }
-            if (DateTime.Now.Subtract(lastJuggle).TotalSeconds > JugglePeriod)
+            if (DateTime.Now.Subtract(lastJuggle).TotalSeconds > JugglePeriod || forceJuggleNext)
             {
                 JugglePlayers();
-                lastJuggle = DateTime.Now;
             }
         }
 

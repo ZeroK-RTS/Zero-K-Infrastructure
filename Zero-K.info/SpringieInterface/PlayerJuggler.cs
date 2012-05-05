@@ -68,10 +68,9 @@ namespace ZeroKWeb.SpringieInterface
                     {
                         using (var db = new ZkDataContext())
                         {
-                            var conf = new ProtocolExtension.JugglerConfig();
                             var acc = Account.AccountByName(db, name);
-                            conf.Active = acc.MatchMakingActive;
-                            foreach (var item in acc.Preferences) conf.Preferences.Add(new ProtocolExtension.JugglerConfig.PreferencePair() { Mode = item.Key, Preference = item.Value });
+                            var conf = new ProtocolExtension.JugglerConfig(acc);
+                            
                             Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(conf, name);
                         }
                     }
@@ -85,8 +84,11 @@ namespace ZeroKWeb.SpringieInterface
         }
 
 
+
         public static bool CanMove(Account acc)
         {
+            return true;
+            
             User user;
             if (Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && user.IsZkLobbyUser) return true;
             if (string.IsNullOrEmpty(acc.LobbyVersion) || !acc.LobbyVersion.Contains("SpringLobby")) return true;
@@ -176,6 +178,20 @@ namespace ZeroKWeb.SpringieInterface
 
                 bins.AddRange(groupBins);
             }
+
+
+            // those who manually joined a game and have preference set to never -> upgrade prefernece to ok
+            foreach (var kvp in manuallyPrefered) {
+                var acc = juggledAccounts[kvp.Key];
+                if (acc.Preferences[kvp.Value] <= GamePreference.Never) {
+                   acc.Preferences[kvp.Value] =  GamePreference.Ok;
+                   acc.SetPreferences(acc.Preferences);
+                   tas.Extensions.PublishPlayerJugglerConfig(new ProtocolExtension.JugglerConfig(acc), acc.Name );
+                }
+            }
+            db.SubmitChanges();
+
+
 
             SetPriorities(bins, juggledAccounts, manuallyPrefered);
 
@@ -267,8 +283,13 @@ namespace ZeroKWeb.SpringieInterface
                         var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name));
                         if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName)
                         {
-                            if (origAh == null) tas.Say(TasClient.SayPlace.User, acc.Name, "!join " + b.Autohost.LobbyContext.AutohostName, false);
                             ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
+                            tas.Say(TasClient.SayPlace.User, acc.Name, "!join " + b.Autohost.LobbyContext.AutohostName, false);
+                            var battle = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == b.Autohost.LobbyContext.AutohostName);
+                            User user;
+                            if (battle != null && Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && !user.IsZkLobbyUser) {
+                                tas.ForceJoinBattle(acc.Name,  battle.BattleID);
+                            }
                         }
                     }
                 }
