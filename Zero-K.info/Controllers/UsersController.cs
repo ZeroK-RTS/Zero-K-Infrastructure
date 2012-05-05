@@ -161,6 +161,7 @@ namespace ZeroKWeb.Controllers
                 str.AppendFormat("Removed {0} XP\r\n", acc.XP);
                 db.Commanders.DeleteAllOnSubmit(acc.Commanders);
                 db.AccountUnlocks.DeleteAllOnSubmit(acc.AccountUnlocks);
+                acc.Level = 0;
                 acc.XP = 0;
             }
             if (banCommanders) str.AppendFormat("commanders blocked\r\n");
