@@ -1121,10 +1121,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
     public partial class BattleResult {
         
-        private string mapField;
-        
-        private string modField;
-        
         private int durationField;
         
         private string engineBattleIDField;
@@ -1137,31 +1133,15 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private bool isMissionField;
         
+        private string mapField;
+        
+        private string modField;
+        
         private string replayNameField;
         
         private System.DateTime startTimeField;
         
         private string titleField;
-        
-        /// <remarks/>
-        public string Map {
-            get {
-                return this.mapField;
-            }
-            set {
-                this.mapField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public string Mod {
-            get {
-                return this.modField;
-            }
-            set {
-                this.modField = value;
-            }
-        }
         
         /// <remarks/>
         public int Duration {
@@ -1221,6 +1201,26 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.isMissionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Map {
+            get {
+                return this.mapField;
+            }
+            set {
+                this.mapField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Mod {
+            get {
+                return this.modField;
+            }
+            set {
+                this.modField = value;
             }
         }
         

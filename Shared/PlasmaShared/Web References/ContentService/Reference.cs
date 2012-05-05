@@ -33,10 +33,6 @@ namespace PlasmaShared.ContentService {
         
         private System.Threading.SendOrPostCallback FindResourceDataOperationCompleted;
         
-        private System.Threading.SendOrPostCallback GetEloByAccountIDOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback GetEloByNameOperationCompleted;
-        
         private System.Threading.SendOrPostCallback GetEloTop10OperationCompleted;
         
         private System.Threading.SendOrPostCallback GetResourceDataOperationCompleted;
@@ -59,11 +55,7 @@ namespace PlasmaShared.ContentService {
         
         private System.Threading.SendOrPostCallback VerifyAccountDataOperationCompleted;
         
-        private System.Threading.SendOrPostCallback GetJugglerStateOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback GetJugglerConfigOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback SetJugglerConfigOperationCompleted;
+        private System.Threading.SendOrPostCallback GetAccountInfoOperationCompleted;
         
         private bool useDefaultCredentialsSetExplicitly;
         
@@ -110,12 +102,6 @@ namespace PlasmaShared.ContentService {
         public event FindResourceDataCompletedEventHandler FindResourceDataCompleted;
         
         /// <remarks/>
-        public event GetEloByAccountIDCompletedEventHandler GetEloByAccountIDCompleted;
-        
-        /// <remarks/>
-        public event GetEloByNameCompletedEventHandler GetEloByNameCompleted;
-        
-        /// <remarks/>
         public event GetEloTop10CompletedEventHandler GetEloTop10Completed;
         
         /// <remarks/>
@@ -149,13 +135,7 @@ namespace PlasmaShared.ContentService {
         public event VerifyAccountDataCompletedEventHandler VerifyAccountDataCompleted;
         
         /// <remarks/>
-        public event GetJugglerStateCompletedEventHandler GetJugglerStateCompleted;
-        
-        /// <remarks/>
-        public event GetJugglerConfigCompletedEventHandler GetJugglerConfigCompleted;
-        
-        /// <remarks/>
-        public event SetJugglerConfigCompletedEventHandler SetJugglerConfigCompleted;
+        public event GetAccountInfoCompletedEventHandler GetAccountInfoCompleted;
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/DownloadFile", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -219,64 +199,6 @@ namespace PlasmaShared.ContentService {
             if ((this.FindResourceDataCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.FindResourceDataCompleted(this, new FindResourceDataCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetEloByAccountID", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public EloInfo GetEloByAccountID(int accountID) {
-            object[] results = this.Invoke("GetEloByAccountID", new object[] {
-                        accountID});
-            return ((EloInfo)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void GetEloByAccountIDAsync(int accountID) {
-            this.GetEloByAccountIDAsync(accountID, null);
-        }
-        
-        /// <remarks/>
-        public void GetEloByAccountIDAsync(int accountID, object userState) {
-            if ((this.GetEloByAccountIDOperationCompleted == null)) {
-                this.GetEloByAccountIDOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEloByAccountIDOperationCompleted);
-            }
-            this.InvokeAsync("GetEloByAccountID", new object[] {
-                        accountID}, this.GetEloByAccountIDOperationCompleted, userState);
-        }
-        
-        private void OnGetEloByAccountIDOperationCompleted(object arg) {
-            if ((this.GetEloByAccountIDCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetEloByAccountIDCompleted(this, new GetEloByAccountIDCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetEloByName", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public EloInfo GetEloByName(string name) {
-            object[] results = this.Invoke("GetEloByName", new object[] {
-                        name});
-            return ((EloInfo)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void GetEloByNameAsync(string name) {
-            this.GetEloByNameAsync(name, null);
-        }
-        
-        /// <remarks/>
-        public void GetEloByNameAsync(string name, object userState) {
-            if ((this.GetEloByNameOperationCompleted == null)) {
-                this.GetEloByNameOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetEloByNameOperationCompleted);
-            }
-            this.InvokeAsync("GetEloByName", new object[] {
-                        name}, this.GetEloByNameOperationCompleted, userState);
-        }
-        
-        private void OnGetEloByNameOperationCompleted(object arg) {
-            if ((this.GetEloByNameCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetEloByNameCompleted(this, new GetEloByNameCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -644,90 +566,33 @@ namespace PlasmaShared.ContentService {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetJugglerState", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public JugglerState GetJugglerState() {
-            object[] results = this.Invoke("GetJugglerState", new object[0]);
-            return ((JugglerState)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void GetJugglerStateAsync() {
-            this.GetJugglerStateAsync(null);
-        }
-        
-        /// <remarks/>
-        public void GetJugglerStateAsync(object userState) {
-            if ((this.GetJugglerStateOperationCompleted == null)) {
-                this.GetJugglerStateOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetJugglerStateOperationCompleted);
-            }
-            this.InvokeAsync("GetJugglerState", new object[0], this.GetJugglerStateOperationCompleted, userState);
-        }
-        
-        private void OnGetJugglerStateOperationCompleted(object arg) {
-            if ((this.GetJugglerStateCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetJugglerStateCompleted(this, new GetJugglerStateCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetJugglerConfig", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public JugglerConfig GetJugglerConfig(string login) {
-            object[] results = this.Invoke("GetJugglerConfig", new object[] {
-                        login});
-            return ((JugglerConfig)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void GetJugglerConfigAsync(string login) {
-            this.GetJugglerConfigAsync(login, null);
-        }
-        
-        /// <remarks/>
-        public void GetJugglerConfigAsync(string login, object userState) {
-            if ((this.GetJugglerConfigOperationCompleted == null)) {
-                this.GetJugglerConfigOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetJugglerConfigOperationCompleted);
-            }
-            this.InvokeAsync("GetJugglerConfig", new object[] {
-                        login}, this.GetJugglerConfigOperationCompleted, userState);
-        }
-        
-        private void OnGetJugglerConfigOperationCompleted(object arg) {
-            if ((this.GetJugglerConfigCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GetJugglerConfigCompleted(this, new GetJugglerConfigCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/SetJugglerConfig", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public void SetJugglerConfig(string login, string password, JugglerConfig config) {
-            this.Invoke("SetJugglerConfig", new object[] {
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/GetAccountInfo", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public AccountInfo GetAccountInfo(string login, string password) {
+            object[] results = this.Invoke("GetAccountInfo", new object[] {
                         login,
-                        password,
-                        config});
+                        password});
+            return ((AccountInfo)(results[0]));
         }
         
         /// <remarks/>
-        public void SetJugglerConfigAsync(string login, string password, JugglerConfig config) {
-            this.SetJugglerConfigAsync(login, password, config, null);
+        public void GetAccountInfoAsync(string login, string password) {
+            this.GetAccountInfoAsync(login, password, null);
         }
         
         /// <remarks/>
-        public void SetJugglerConfigAsync(string login, string password, JugglerConfig config, object userState) {
-            if ((this.SetJugglerConfigOperationCompleted == null)) {
-                this.SetJugglerConfigOperationCompleted = new System.Threading.SendOrPostCallback(this.OnSetJugglerConfigOperationCompleted);
+        public void GetAccountInfoAsync(string login, string password, object userState) {
+            if ((this.GetAccountInfoOperationCompleted == null)) {
+                this.GetAccountInfoOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetAccountInfoOperationCompleted);
             }
-            this.InvokeAsync("SetJugglerConfig", new object[] {
+            this.InvokeAsync("GetAccountInfo", new object[] {
                         login,
-                        password,
-                        config}, this.SetJugglerConfigOperationCompleted, userState);
+                        password}, this.GetAccountInfoOperationCompleted, userState);
         }
         
-        private void OnSetJugglerConfigOperationCompleted(object arg) {
-            if ((this.SetJugglerConfigCompleted != null)) {
+        private void OnGetAccountInfoOperationCompleted(object arg) {
+            if ((this.GetAccountInfoCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.SetJugglerConfigCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+                this.GetAccountInfoCompleted(this, new GetAccountInfoCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -781,6 +646,8 @@ namespace PlasmaShared.ContentService {
         
         private SpringHashEntry[] springHashesField;
         
+        private System.Nullable<float> featuredOrderField;
+        
         /// <remarks/>
         public string[] Dependencies {
             get {
@@ -830,6 +697,17 @@ namespace PlasmaShared.ContentService {
                 this.springHashesField = value;
             }
         }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public System.Nullable<float> FeaturedOrder {
+            get {
+                return this.featuredOrderField;
+            }
+            set {
+                this.featuredOrderField = value;
+            }
+        }
     }
     
     /// <remarks/>
@@ -871,178 +749,221 @@ namespace PlasmaShared.ContentService {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class PreferencePair {
+    public partial class AccountInfo {
         
-        private AutohostMode modeField;
+        private string nameField;
         
-        private GamePreference preferenceField;
+        private int lobbyIDField;
+        
+        private int zeroKAccountIDField;
+        
+        private int zeroKLevelField;
+        
+        private int clanIDField;
+        
+        private string clanNameField;
+        
+        private string countryField;
+        
+        private string aliasesField;
+        
+        private int lobbyTimeRankField;
+        
+        private bool isLobbyAdminField;
+        
+        private bool isZeroKAdminField;
+        
+        private string avatarField;
+        
+        private float eloField;
+        
+        private double effectiveEloField;
+        
+        private float eloWeightField;
+        
+        private string factionNameField;
+        
+        private int factionIDField;
+        
+        private int springieLevelField;
         
         /// <remarks/>
-        public AutohostMode Mode {
+        public string Name {
             get {
-                return this.modeField;
+                return this.nameField;
             }
             set {
-                this.modeField = value;
+                this.nameField = value;
             }
         }
         
         /// <remarks/>
-        public GamePreference Preference {
+        public int LobbyID {
             get {
-                return this.preferenceField;
+                return this.lobbyIDField;
             }
             set {
-                this.preferenceField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public enum AutohostMode {
-        
-        /// <remarks/>
-        None,
-        
-        /// <remarks/>
-        MediumTeams,
-        
-        /// <remarks/>
-        Planetwars,
-        
-        /// <remarks/>
-        Game1v1,
-        
-        /// <remarks/>
-        GameFFA,
-        
-        /// <remarks/>
-        GameChickens,
-        
-        /// <remarks/>
-        SmallTeams,
-        
-        /// <remarks/>
-        BigTeams,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
-    [System.SerializableAttribute()]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public enum GamePreference {
-        
-        /// <remarks/>
-        Never,
-        
-        /// <remarks/>
-        Ok,
-        
-        /// <remarks/>
-        Like,
-        
-        /// <remarks/>
-        Best,
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class JugglerConfig {
-        
-        private bool activeField;
-        
-        private PreferencePair[] preferencesField;
-        
-        /// <remarks/>
-        public bool Active {
-            get {
-                return this.activeField;
-            }
-            set {
-                this.activeField = value;
+                this.lobbyIDField = value;
             }
         }
         
         /// <remarks/>
-        public PreferencePair[] Preferences {
+        public int ZeroKAccountID {
             get {
-                return this.preferencesField;
+                return this.zeroKAccountIDField;
             }
             set {
-                this.preferencesField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class ModePair {
-        
-        private AutohostMode modeField;
-        
-        private int countField;
-        
-        /// <remarks/>
-        public AutohostMode Mode {
-            get {
-                return this.modeField;
-            }
-            set {
-                this.modeField = value;
+                this.zeroKAccountIDField = value;
             }
         }
         
         /// <remarks/>
-        public int Count {
+        public int ZeroKLevel {
             get {
-                return this.countField;
+                return this.zeroKLevelField;
             }
             set {
-                this.countField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class JugglerState {
-        
-        private ModePair[] modeCountsField;
-        
-        private int totalPlayersField;
-        
-        /// <remarks/>
-        public ModePair[] ModeCounts {
-            get {
-                return this.modeCountsField;
-            }
-            set {
-                this.modeCountsField = value;
+                this.zeroKLevelField = value;
             }
         }
         
         /// <remarks/>
-        public int TotalPlayers {
+        public int ClanID {
             get {
-                return this.totalPlayersField;
+                return this.clanIDField;
             }
             set {
-                this.totalPlayersField = value;
+                this.clanIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string ClanName {
+            get {
+                return this.clanNameField;
+            }
+            set {
+                this.clanNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Country {
+            get {
+                return this.countryField;
+            }
+            set {
+                this.countryField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Aliases {
+            get {
+                return this.aliasesField;
+            }
+            set {
+                this.aliasesField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int LobbyTimeRank {
+            get {
+                return this.lobbyTimeRankField;
+            }
+            set {
+                this.lobbyTimeRankField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool IsLobbyAdmin {
+            get {
+                return this.isLobbyAdminField;
+            }
+            set {
+                this.isLobbyAdminField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool IsZeroKAdmin {
+            get {
+                return this.isZeroKAdminField;
+            }
+            set {
+                this.isZeroKAdminField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string Avatar {
+            get {
+                return this.avatarField;
+            }
+            set {
+                this.avatarField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public float Elo {
+            get {
+                return this.eloField;
+            }
+            set {
+                this.eloField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public double EffectiveElo {
+            get {
+                return this.effectiveEloField;
+            }
+            set {
+                this.effectiveEloField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public float EloWeight {
+            get {
+                return this.eloWeightField;
+            }
+            set {
+                this.eloWeightField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string FactionName {
+            get {
+                return this.factionNameField;
+            }
+            set {
+                this.factionNameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int FactionID {
+            get {
+                return this.factionIDField;
+            }
+            set {
+                this.factionIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public int SpringieLevel {
+            get {
+                return this.springieLevelField;
+            }
+            set {
+                this.springieLevelField = value;
             }
         }
     }
@@ -1112,39 +1033,6 @@ namespace PlasmaShared.ContentService {
             }
             set {
                 this.startScriptField = value;
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Xml", "4.0.30319.450")]
-    [System.SerializableAttribute()]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://tempuri.org/")]
-    public partial class EloInfo {
-        
-        private double eloField;
-        
-        private double weightField;
-        
-        /// <remarks/>
-        public double Elo {
-            get {
-                return this.eloField;
-            }
-            set {
-                this.eloField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public double Weight {
-            get {
-                return this.weightField;
-            }
-            set {
-                this.weightField = value;
             }
         }
     }
@@ -1272,58 +1160,6 @@ namespace PlasmaShared.ContentService {
             get {
                 this.RaiseExceptionIfNecessary();
                 return ((ResourceData[])(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    public delegate void GetEloByAccountIDCompletedEventHandler(object sender, GetEloByAccountIDCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetEloByAccountIDCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetEloByAccountIDCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public EloInfo Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((EloInfo)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    public delegate void GetEloByNameCompletedEventHandler(object sender, GetEloByNameCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetEloByNameCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetEloByNameCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public EloInfo Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((EloInfo)(this.results[0]));
             }
         }
     }
@@ -1558,59 +1394,29 @@ namespace PlasmaShared.ContentService {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    public delegate void GetJugglerStateCompletedEventHandler(object sender, GetJugglerStateCompletedEventArgs e);
+    public delegate void GetAccountInfoCompletedEventHandler(object sender, GetAccountInfoCompletedEventArgs e);
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetJugglerStateCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+    public partial class GetAccountInfoCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
         
         private object[] results;
         
-        internal GetJugglerStateCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+        internal GetAccountInfoCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }
         
         /// <remarks/>
-        public JugglerState Result {
+        public AccountInfo Result {
             get {
                 this.RaiseExceptionIfNecessary();
-                return ((JugglerState)(this.results[0]));
+                return ((AccountInfo)(this.results[0]));
             }
         }
     }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    public delegate void GetJugglerConfigCompletedEventHandler(object sender, GetJugglerConfigCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetJugglerConfigCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetJugglerConfigCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public JugglerConfig Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((JugglerConfig)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.0.30319.1")]
-    public delegate void SetJugglerConfigCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }
 
 #pragma warning restore 1591

@@ -59,6 +59,7 @@
           <s:element minOccurs="1" maxOccurs="1" name="ResourceID" type="s:int" />
           <s:element minOccurs="1" maxOccurs="1" name="ResourceType" type="tns:ResourceType" />
           <s:element minOccurs="0" maxOccurs="1" name="SpringHashes" type="tns:ArrayOfSpringHashEntry" />
+          <s:element minOccurs="1" maxOccurs="1" name="FeaturedOrder" nillable="true" type="s:float" />
         </s:sequence>
       </s:complexType>
       <s:complexType name="ArrayOfSpringHashEntry">
@@ -72,40 +73,6 @@
           <s:element minOccurs="0" maxOccurs="1" name="SpringVersion" type="s:string" />
         </s:sequence>
       </s:complexType>
-      <s:element name="GetEloByAccountID">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="accountID" type="s:int" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="GetEloByAccountIDResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetEloByAccountIDResult" type="tns:EloInfo" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="EloInfo">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Elo" type="s:double" />
-          <s:element minOccurs="1" maxOccurs="1" name="Weight" type="s:double" />
-        </s:sequence>
-      </s:complexType>
-      <s:element name="GetEloByName">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="name" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="GetEloByNameResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetEloByNameResult" type="tns:EloInfo" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
       <s:element name="GetEloTop10">
         <s:complexType />
       </s:element>
@@ -293,96 +260,43 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="GetJugglerState">
-        <s:complexType />
-      </s:element>
-      <s:element name="GetJugglerStateResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetJugglerStateResult" type="tns:JugglerState" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="JugglerState">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="1" name="ModeCounts" type="tns:ArrayOfModePair" />
-          <s:element minOccurs="1" maxOccurs="1" name="TotalPlayers" type="s:int" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfModePair">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="ModePair" nillable="true" type="tns:ModePair" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ModePair">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Mode" type="tns:AutohostMode" />
-          <s:element minOccurs="1" maxOccurs="1" name="Count" type="s:int" />
-        </s:sequence>
-      </s:complexType>
-      <s:simpleType name="AutohostMode">
-        <s:restriction base="s:string">
-          <s:enumeration value="None" />
-          <s:enumeration value="MediumTeams" />
-          <s:enumeration value="Planetwars" />
-          <s:enumeration value="Game1v1" />
-          <s:enumeration value="GameFFA" />
-          <s:enumeration value="GameChickens" />
-          <s:enumeration value="SmallTeams" />
-          <s:enumeration value="BigTeams" />
-        </s:restriction>
-      </s:simpleType>
-      <s:element name="GetJugglerConfig">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="GetJugglerConfigResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetJugglerConfigResult" type="tns:JugglerConfig" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:complexType name="JugglerConfig">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Active" type="s:boolean" />
-          <s:element minOccurs="0" maxOccurs="1" name="Preferences" type="tns:ArrayOfPreferencePair" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="ArrayOfPreferencePair">
-        <s:sequence>
-          <s:element minOccurs="0" maxOccurs="unbounded" name="PreferencePair" nillable="true" type="tns:PreferencePair" />
-        </s:sequence>
-      </s:complexType>
-      <s:complexType name="PreferencePair">
-        <s:sequence>
-          <s:element minOccurs="1" maxOccurs="1" name="Mode" type="tns:AutohostMode" />
-          <s:element minOccurs="1" maxOccurs="1" name="Preference" type="tns:GamePreference" />
-        </s:sequence>
-      </s:complexType>
-      <s:simpleType name="GamePreference">
-        <s:restriction base="s:string">
-          <s:enumeration value="Never" />
-          <s:enumeration value="Ok" />
-          <s:enumeration value="Like" />
-          <s:enumeration value="Best" />
-        </s:restriction>
-      </s:simpleType>
-      <s:element name="SetJugglerConfig">
+      <s:element name="GetAccountInfo">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
             <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="config" type="tns:JugglerConfig" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="SetJugglerConfigResponse">
-        <s:complexType />
+      <s:element name="GetAccountInfoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAccountInfoResult" type="tns:AccountInfo" />
+          </s:sequence>
+        </s:complexType>
       </s:element>
+      <s:complexType name="AccountInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LobbyID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ZeroKAccountID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ZeroKLevel" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ClanID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="ClanName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Country" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Aliases" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LobbyTimeRank" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsLobbyAdmin" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="IsZeroKAdmin" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Avatar" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Elo" type="s:float" />
+          <s:element minOccurs="1" maxOccurs="1" name="EffectiveElo" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="EloWeight" type="s:float" />
+          <s:element minOccurs="0" maxOccurs="1" name="FactionName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="FactionID" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="SpringieLevel" type="s:int" />
+        </s:sequence>
+      </s:complexType>
     </s:schema>
   </wsdl:types>
   <wsdl:message name="DownloadFileSoapIn">
@@ -396,18 +310,6 @@
   </wsdl:message>
   <wsdl:message name="FindResourceDataSoapOut">
     <wsdl:part name="parameters" element="tns:FindResourceDataResponse" />
-  </wsdl:message>
-  <wsdl:message name="GetEloByAccountIDSoapIn">
-    <wsdl:part name="parameters" element="tns:GetEloByAccountID" />
-  </wsdl:message>
-  <wsdl:message name="GetEloByAccountIDSoapOut">
-    <wsdl:part name="parameters" element="tns:GetEloByAccountIDResponse" />
-  </wsdl:message>
-  <wsdl:message name="GetEloByNameSoapIn">
-    <wsdl:part name="parameters" element="tns:GetEloByName" />
-  </wsdl:message>
-  <wsdl:message name="GetEloByNameSoapOut">
-    <wsdl:part name="parameters" element="tns:GetEloByNameResponse" />
   </wsdl:message>
   <wsdl:message name="GetEloTop10SoapIn">
     <wsdl:part name="parameters" element="tns:GetEloTop10" />
@@ -475,23 +377,11 @@
   <wsdl:message name="VerifyAccountDataSoapOut">
     <wsdl:part name="parameters" element="tns:VerifyAccountDataResponse" />
   </wsdl:message>
-  <wsdl:message name="GetJugglerStateSoapIn">
-    <wsdl:part name="parameters" element="tns:GetJugglerState" />
+  <wsdl:message name="GetAccountInfoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAccountInfo" />
   </wsdl:message>
-  <wsdl:message name="GetJugglerStateSoapOut">
-    <wsdl:part name="parameters" element="tns:GetJugglerStateResponse" />
-  </wsdl:message>
-  <wsdl:message name="GetJugglerConfigSoapIn">
-    <wsdl:part name="parameters" element="tns:GetJugglerConfig" />
-  </wsdl:message>
-  <wsdl:message name="GetJugglerConfigSoapOut">
-    <wsdl:part name="parameters" element="tns:GetJugglerConfigResponse" />
-  </wsdl:message>
-  <wsdl:message name="SetJugglerConfigSoapIn">
-    <wsdl:part name="parameters" element="tns:SetJugglerConfig" />
-  </wsdl:message>
-  <wsdl:message name="SetJugglerConfigSoapOut">
-    <wsdl:part name="parameters" element="tns:SetJugglerConfigResponse" />
+  <wsdl:message name="GetAccountInfoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAccountInfoResponse" />
   </wsdl:message>
   <wsdl:portType name="ContentServiceSoap">
     <wsdl:operation name="DownloadFile">
@@ -501,14 +391,6 @@
     <wsdl:operation name="FindResourceData">
       <wsdl:input message="tns:FindResourceDataSoapIn" />
       <wsdl:output message="tns:FindResourceDataSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="GetEloByAccountID">
-      <wsdl:input message="tns:GetEloByAccountIDSoapIn" />
-      <wsdl:output message="tns:GetEloByAccountIDSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="GetEloByName">
-      <wsdl:input message="tns:GetEloByNameSoapIn" />
-      <wsdl:output message="tns:GetEloByNameSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetEloTop10">
       <wsdl:input message="tns:GetEloTop10SoapIn" />
@@ -554,17 +436,9 @@
       <wsdl:input message="tns:VerifyAccountDataSoapIn" />
       <wsdl:output message="tns:VerifyAccountDataSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="GetJugglerState">
-      <wsdl:input message="tns:GetJugglerStateSoapIn" />
-      <wsdl:output message="tns:GetJugglerStateSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="GetJugglerConfig">
-      <wsdl:input message="tns:GetJugglerConfigSoapIn" />
-      <wsdl:output message="tns:GetJugglerConfigSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="SetJugglerConfig">
-      <wsdl:input message="tns:SetJugglerConfigSoapIn" />
-      <wsdl:output message="tns:SetJugglerConfigSoapOut" />
+    <wsdl:operation name="GetAccountInfo">
+      <wsdl:input message="tns:GetAccountInfoSoapIn" />
+      <wsdl:output message="tns:GetAccountInfoSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="ContentServiceSoap" type="tns:ContentServiceSoap">
@@ -580,24 +454,6 @@
     </wsdl:operation>
     <wsdl:operation name="FindResourceData">
       <soap:operation soapAction="http://tempuri.org/FindResourceData" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetEloByAccountID">
-      <soap:operation soapAction="http://tempuri.org/GetEloByAccountID" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetEloByName">
-      <soap:operation soapAction="http://tempuri.org/GetEloByName" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -704,26 +560,8 @@
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetJugglerState">
-      <soap:operation soapAction="http://tempuri.org/GetJugglerState" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetJugglerConfig">
-      <soap:operation soapAction="http://tempuri.org/GetJugglerConfig" style="document" />
-      <wsdl:input>
-        <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SetJugglerConfig">
-      <soap:operation soapAction="http://tempuri.org/SetJugglerConfig" style="document" />
+    <wsdl:operation name="GetAccountInfo">
+      <soap:operation soapAction="http://tempuri.org/GetAccountInfo" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
       </wsdl:input>
@@ -745,24 +583,6 @@
     </wsdl:operation>
     <wsdl:operation name="FindResourceData">
       <soap12:operation soapAction="http://tempuri.org/FindResourceData" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetEloByAccountID">
-      <soap12:operation soapAction="http://tempuri.org/GetEloByAccountID" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetEloByName">
-      <soap12:operation soapAction="http://tempuri.org/GetEloByName" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
@@ -869,26 +689,8 @@
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetJugglerState">
-      <soap12:operation soapAction="http://tempuri.org/GetJugglerState" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="GetJugglerConfig">
-      <soap12:operation soapAction="http://tempuri.org/GetJugglerConfig" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-    <wsdl:operation name="SetJugglerConfig">
-      <soap12:operation soapAction="http://tempuri.org/SetJugglerConfig" style="document" />
+    <wsdl:operation name="GetAccountInfo">
+      <soap12:operation soapAction="http://tempuri.org/GetAccountInfo" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
       </wsdl:input>
