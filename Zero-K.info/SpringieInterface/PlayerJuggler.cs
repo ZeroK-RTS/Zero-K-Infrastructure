@@ -399,14 +399,19 @@ namespace ZeroKWeb.SpringieInterface
                     if (splitTo != null)
                     {
                         sb.AppendLine("Splitting to " + splitTo.LobbyContext.AutohostName);
-                        var eloList = b.Assigned.Select(x => juggledAccounts[x]).Where(CanMove).OrderBy(x => x.EffectiveElo).ToList();
-                        var toMove = eloList.Take(b.Assigned.Count/2).ToList();
-                        if (toMove.Count >= b.Config.MinToJuggle)
-                        {
-                            var target = new Bin(splitTo);
-                            target.Assigned.AddRange(toMove.Select(x => x.LobbyID ?? 0));
-                            bins.Add(target);
-                            b.Assigned.RemoveAll(x => toMove.Any(y => y.LobbyID == x));
+                        var target = new Bin(splitTo);
+                        bins.Add(target);
+
+                        int moved = 0;
+                        int toMove = b.Assigned.Count / 2;
+
+                        // split while keeping clan groups together
+
+                        foreach (var clanGrp in b.Assigned.Select(x => juggledAccounts[x]).Where(CanMove).GroupBy(x => x.ClanID ?? x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
+                            target.Assigned.AddRange(clanGrp.Select(x=>x.LobbyID??0));
+                            b.Assigned.RemoveAll(x => clanGrp.Any(y => y.LobbyID == x));
+                            moved += clanGrp.Count();
+                            if (moved >= toMove) break;
                         }
                     }
                 }
