@@ -23,8 +23,8 @@ namespace ZeroKWeb.SpringieInterface
         public string BattlePassword;
         public AutohostMode Mode;
         public CommandLevel[] CommandLevels;
-        private int? MinToJuggle;
-        private int? MergeSmallerThan;
+        public int? MinToJuggle;
+        public int? MergeSmallerThan;
         public AhConfig() {}
 
 
