@@ -764,7 +764,6 @@ namespace Springie.autohost
                 var count = tas.MyBattle.Users.Count(x => !x.IsSpectator);
                 if (count > (config.SplitBiggerThan??99) || (count> 0 && count<(config.MinToJuggle??0)))
                 {
-                    SayBattle("Player count not ok, juggling");
                     Program.main.JugglePlayers();
                     return true;
                 }
