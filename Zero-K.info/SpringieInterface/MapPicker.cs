@@ -114,8 +114,8 @@ namespace ZeroKWeb.SpringieInterface
 				}
 				else {
 					if (!pickNew) {
-						// autohost is not managed or has valid featured map
-						if (mode == AutohostMode.None || db.Resources.Any(x => x.InternalName == context.Map && x.FeaturedOrder != null && x.TypeID == ResourceType.Map)) {
+						// autohost is not managed or has valid featured map - check disabled
+						if (true || mode == AutohostMode.None || db.Resources.Any(x => x.InternalName == context.Map && x.FeaturedOrder != null && x.TypeID == ResourceType.Map)) {
 							res.MapName = context.Map;
 							return res;
 						}

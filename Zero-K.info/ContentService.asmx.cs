@@ -249,6 +249,54 @@ namespace ZeroKWeb
             return true;
         }
 
+        public class AccountInfo {
+            public string Name;
+            public int LobbyID;
+            public int ZeroKAccountID;
+            public int ZeroKLevel;
+            public int ClanID;
+            public string ClanName;
+            public string Country;
+            public string Aliases;
+            public int LobbyTimeRank;
+            public bool IsLobbyAdmin;
+            public bool IsZeroKAdmin;
+            public string Avatar;
+            public float Elo;
+            public double EffectiveElo;
+            public float EloWeight;
+            public string FactionName;
+            public int FactionID;
+            public int SpringieLevel;
+        }
+
+        [WebMethod]
+        public AccountInfo GetAccountInfo(string login, string password) {
+            var acc = AuthServiceClient.VerifyAccountPlain(login, password);
+            if (acc == null) return null;
+            else return new AccountInfo()
+            {
+                Name = acc.Name,
+                LobbyID = acc.LobbyID??0,
+                Country = acc.Country,
+                Aliases = acc.Aliases,
+                ZeroKAccountID = acc.AccountID,
+                ZeroKLevel = acc.Level,
+                ClanID = acc.ClanID??0,
+                ClanName = acc.Clan != null? acc.Clan.ClanName : null,
+                LobbyTimeRank    = acc.LobbyTimeRank,
+                IsLobbyAdmin = acc.IsLobbyAdministrator,
+                IsZeroKAdmin= acc.IsZeroKAdmin,
+                Avatar = acc.Avatar,
+                Elo =acc.Elo,
+                EffectiveElo = acc.EffectiveElo,
+                EloWeight = acc.EloWeight,
+                FactionID = acc.FactionID??0,
+                FactionName = acc.Faction != null? acc.Faction.Name:null,
+                SpringieLevel = acc.SpringieLevel
+            };
+        }
+
 
         string GetUserIP()
         {
