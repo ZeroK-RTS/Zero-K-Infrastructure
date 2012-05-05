@@ -179,7 +179,7 @@ namespace ZeroKWeb.SpringieInterface
                 bins.AddRange(groupBins);
             }
 
-
+            /*
             // those who manually joined a game and have preference set to never -> upgrade prefernece to ok
             foreach (var kvp in manuallyPrefered) {
                 var acc = juggledAccounts[kvp.Key];
@@ -190,7 +190,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
             db.SubmitChanges();
-
+            */
 
 
             SetPriorities(bins, juggledAccounts, manuallyPrefered);
