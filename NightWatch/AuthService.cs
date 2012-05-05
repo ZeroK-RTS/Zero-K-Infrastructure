@@ -100,6 +100,7 @@ namespace NightWatch
                             }
                             db.SubmitChanges();
                         }
+                        if (System.Net.Dns.GetHostEntry(args.IP).HostName.Contains("anchorfree.com")) client.AdminKickFromLobby(args.Name,"Bye!");
                     }
                     catch (Exception ex) {
                         Trace.TraceError("Error getting user IP: {0}",ex);
