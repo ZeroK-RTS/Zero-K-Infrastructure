@@ -256,7 +256,7 @@ namespace ZeroKWeb.Controllers
 		}
 
         [Auth]
-	    public ActionResult GamePreferences(List<GamePreference> preference)
+	    public ActionResult GamePreferences(List<GamePreference> preference, string active)
 	    {
 
 	        var db = new ZkDataContext();
@@ -266,6 +266,7 @@ namespace ZeroKWeb.Controllers
             for (int i = 0; i < keys.Count(); i++) {
                 acc.Preferences[keys[i]] = preference[i];
             }
+            acc.MatchMakingActive = !string.IsNullOrEmpty(active);
             acc.SetPreferences(acc.Preferences);
             db.SubmitChanges();
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
