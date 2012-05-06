@@ -407,7 +407,7 @@ namespace ZeroKWeb.SpringieInterface
 
                         // split while keeping clan groups together
 
-                        foreach (var clanGrp in b.Assigned.Select(x => juggledAccounts[x]).Where(CanMove).GroupBy(x => x.ClanID ?? x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
+                        foreach (var clanGrp in b.Assigned.Select(x => juggledAccounts[x]).Where(CanMove).GroupBy(x => x.ClanID ?? x.LobbyID).OrderByDescending(x => x.Average(y => y.EffectiveElo))) {
                             target.Assigned.AddRange(clanGrp.Select(x=>x.LobbyID??0));
                             b.Assigned.RemoveAll(x => clanGrp.Any(y => y.LobbyID == x));
                             moved += clanGrp.Count();
