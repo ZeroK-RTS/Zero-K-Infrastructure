@@ -48,8 +48,8 @@ namespace ZeroKWeb.SpringieInterface
                                         foreach (var item in config.Preferences) prefs[item.Mode] = item.Preference;
                                         acc.SetPreferences(prefs);
                                         db.SubmitAndMergeChanges();
+                                        SendAccountConfig(acc);
                                     }
-                                    Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(config, args.UserName);
                                 }
                                 catch (Exception ex) {
                                     Trace.TraceError(ex.ToString());
@@ -69,9 +69,7 @@ namespace ZeroKWeb.SpringieInterface
                         using (var db = new ZkDataContext())
                         {
                             var acc = Account.AccountByName(db, name);
-                            var conf = new ProtocolExtension.JugglerConfig(acc);
-                            
-                            Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(conf, name);
+                            SendAccountConfig(acc);
                         }
                     }
                     catch (Exception ex) {
@@ -81,6 +79,11 @@ namespace ZeroKWeb.SpringieInterface
                 }, TaskCreationOptions.LongRunning);
 
             };
+
+        }
+
+        public static void SendAccountConfig(Account acc) {
+            Global.Nightwatch.Tas.Extensions.PublishPlayerJugglerConfig(new ProtocolExtension.JugglerConfig(acc), acc.Name);                
         }
 
 
@@ -351,7 +354,7 @@ namespace ZeroKWeb.SpringieInterface
                 foreach (var a in juggledAccounts)
                 {
                     var lobbyID = a.Key;
-                    var battlePref = (double)a.Value.Preferences[b.Mode];
+                    var battlePref = a.Value.MatchMakingActive ? (double)a.Value.Preferences[b.Mode] : (double)GamePreference.Never;
                     AutohostMode manualPref;
                     if (manuallyPrefered.TryGetValue(lobbyID, out manualPref) && manualPref == b.Mode) battlePref += 0.5; // player joined manually same type add 0.5
 

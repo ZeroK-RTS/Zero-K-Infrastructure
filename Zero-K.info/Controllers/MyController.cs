@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Web.Mvc;
+using ZeroKWeb.SpringieInterface;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -269,6 +270,7 @@ namespace ZeroKWeb.Controllers
             acc.MatchMakingActive = !string.IsNullOrEmpty(active);
             acc.SetPreferences(acc.Preferences);
             db.SubmitChanges();
+            PlayerJuggler.SendAccountConfig(acc);
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
 
 	    }
