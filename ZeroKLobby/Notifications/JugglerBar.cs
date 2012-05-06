@@ -57,7 +57,7 @@ namespace ZeroKLobby.Notifications
                 {
                     if (args.Data.Founder.IsSpringieManaged)
                     {
-                        Activate();
+                        // Activate();
                     }
                 };
 
@@ -65,10 +65,10 @@ namespace ZeroKLobby.Notifications
             {
                 if (client.MyBattleStatus.IsSpectator)
                 {
-                    if (Program.NotifySection.Bars.Contains(this)) Deactivate();
+                    // if (Program.NotifySection.Bars.Contains(this)) Deactivate();
                 }
                 else {
-                    if (client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
+                    // if (client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
                 }
             };
 
@@ -98,8 +98,13 @@ namespace ZeroKLobby.Notifications
 
         public void Activate()
         {
-            if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
-            SendMyConfig(false);
+            //if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
+            SendMyConfig(false, true);
+        }
+
+        public void SwitchState() {
+            if (!Program.NotifySection.Bars.Contains(this)) Activate();
+            else Deactivate();
         }
 
 
@@ -120,10 +125,10 @@ namespace ZeroKLobby.Notifications
         }
 
 
-        private void SendMyConfig(bool sendPreferences)
+        private void SendMyConfig(bool sendPreferences, bool? activate = null)
         {
             var conf = new ProtocolExtension.JugglerConfig();
-            conf.Active = Program.NotifySection.Bars.Contains(this);
+            conf.Active = activate ?? Program.NotifySection.Bars.Contains(this);
             if (sendPreferences)
             {
                 var prefs = new List<ProtocolExtension.JugglerConfig.PreferencePair>();
@@ -146,8 +151,8 @@ namespace ZeroKLobby.Notifications
 
         public void Deactivate()
         {
-            Program.NotifySection.RemoveBar(this);
-            SendMyConfig(false);
+            //Program.NotifySection.RemoveBar(this);
+            SendMyConfig(false, false);
         }
 
         public void AddedToContainer(NotifyBarContainer container)

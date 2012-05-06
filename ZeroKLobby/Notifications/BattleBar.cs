@@ -559,6 +559,12 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			menu.Show(battleExtras, new Point(0, 0));
 		}
 
+        private void btnQuickMatch_Click(object sender, EventArgs e)
+        {
+            
+            Program.JugglerBar.SwitchState();
+        }
+
 
 	}
 

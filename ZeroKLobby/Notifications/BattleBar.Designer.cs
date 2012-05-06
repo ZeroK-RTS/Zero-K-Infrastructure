@@ -38,6 +38,7 @@ namespace ZeroKLobby.Notifications
             this.cbReady = new System.Windows.Forms.CheckBox();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnQuickMatch = new System.Windows.Forms.Button();
             this.battleExtras = new System.Windows.Forms.Button();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
@@ -48,9 +49,9 @@ namespace ZeroKLobby.Notifications
             // 
             this.cbSide.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSide.FormattingEnabled = true;
-            this.cbSide.Location = new System.Drawing.Point(10, 21);
+            this.cbSide.Location = new System.Drawing.Point(74, 1);
             this.cbSide.Name = "cbSide";
-            this.cbSide.Size = new System.Drawing.Size(114, 21);
+            this.cbSide.Size = new System.Drawing.Size(64, 21);
             this.cbSide.TabIndex = 4;
             this.cbSide.Visible = false;
             this.cbSide.SelectedIndexChanged += new System.EventHandler(this.cbSide_SelectedIndexChanged);
@@ -79,7 +80,7 @@ namespace ZeroKLobby.Notifications
             this.cbReady.AutoSize = true;
             this.cbReady.ImageIndex = 2;
             this.cbReady.ImageList = this.imageList1;
-            this.cbReady.Location = new System.Drawing.Point(10, 6);
+            this.cbReady.Location = new System.Drawing.Point(3, 3);
             this.cbReady.Name = "cbReady";
             this.cbReady.Size = new System.Drawing.Size(73, 17);
             this.cbReady.TabIndex = 13;
@@ -99,6 +100,7 @@ namespace ZeroKLobby.Notifications
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnQuickMatch);
             this.panel1.Controls.Add(this.battleExtras);
             this.panel1.Controls.Add(this.cbSide);
             this.panel1.Controls.Add(this.lbPlayers);
@@ -111,11 +113,21 @@ namespace ZeroKLobby.Notifications
             this.panel1.Size = new System.Drawing.Size(888, 76);
             this.panel1.TabIndex = 15;
             // 
+            // btnQuickMatch
+            // 
+            this.btnQuickMatch.Location = new System.Drawing.Point(3, 20);
+            this.btnQuickMatch.Name = "btnQuickMatch";
+            this.btnQuickMatch.Size = new System.Drawing.Size(73, 20);
+            this.btnQuickMatch.TabIndex = 15;
+            this.btnQuickMatch.Text = "QuickMatch";
+            this.btnQuickMatch.UseVisualStyleBackColor = true;
+            this.btnQuickMatch.Click += new System.EventHandler(this.btnQuickMatch_Click);
+            // 
             // battleExtras
             // 
-            this.battleExtras.Location = new System.Drawing.Point(10, 42);
+            this.battleExtras.Location = new System.Drawing.Point(3, 45);
             this.battleExtras.Name = "battleExtras";
-            this.battleExtras.Size = new System.Drawing.Size(94, 23);
+            this.battleExtras.Size = new System.Drawing.Size(94, 20);
             this.battleExtras.TabIndex = 14;
             this.battleExtras.Text = "Add bots/config";
             this.battleExtras.UseVisualStyleBackColor = true;
@@ -131,14 +143,14 @@ namespace ZeroKLobby.Notifications
             this.picoChat.Font = new System.Drawing.Font("Verdana", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.picoChat.HideScroll = false;
             this.picoChat.IRCForeColor = 0;
-            this.picoChat.Location = new System.Drawing.Point(130, 5);
+            this.picoChat.Location = new System.Drawing.Point(144, 5);
             this.picoChat.Name = "picoChat";
             this.picoChat.NoColorMode = false;
             this.picoChat.ShowHistory = true;
             this.picoChat.ShowJoinLeave = false;
             this.picoChat.ShowUnreadLine = true;
             this.picoChat.SingleLine = false;
-            this.picoChat.Size = new System.Drawing.Size(443, 63);
+            this.picoChat.Size = new System.Drawing.Size(429, 63);
             this.picoChat.TabIndex = 12;
             this.picoChat.TextFilter = null;
             this.picoChat.TotalDisplayLines = 0;
@@ -170,5 +182,6 @@ namespace ZeroKLobby.Notifications
 				private System.Windows.Forms.ImageList imageList1;
 				private System.Windows.Forms.Panel panel1;
 				private System.Windows.Forms.Button battleExtras;
+                private System.Windows.Forms.Button btnQuickMatch;
     }
 }
