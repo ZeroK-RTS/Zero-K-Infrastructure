@@ -119,7 +119,7 @@ namespace ZeroKWeb.SpringieInterface
                                     comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
 
                                     foreach (var m in
-                                        c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i).OrderBy(x => x.Unlock.UnlockType).ThenBy(
+                                        c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(x => x.Unlock.UnlockType).ThenBy(
                                             x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
                                 }
                             }
