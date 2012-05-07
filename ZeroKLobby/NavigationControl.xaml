@@ -49,7 +49,9 @@
         <ZeroKLobby:BattleList x:Name="battleTab"/>
       </TabItem>
       <TabItem>
-          <MicroLobby:ChatTab2 x:Name="chatTab" />
+        <WindowsFormsHost>
+          <MicroLobby:ChatTab x:Name="chatTab" />
+        </WindowsFormsHost>
       </TabItem>
       <TabItem>
         <WindowsFormsHost Background="{StaticResource {x:Static SystemColors.WindowBrushKey}}">

@@ -159,11 +159,11 @@
     <Compile Include="MicroLobby\BrowserControl.xaml.cs">
       <DependentUpon>BrowserControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MicroLobby\ChatControl2.xaml.cs">
-      <DependentUpon>ChatControl2.xaml</DependentUpon>
+    <Compile Include="MicroLobby\ChatTab.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MicroLobby\ChatTab2.xaml.cs">
-      <DependentUpon>ChatTab2.xaml</DependentUpon>
+    <Compile Include="MicroLobby\ChatTab.designer.cs">
+      <DependentUpon>ChatTab.cs</DependentUpon>
     </Compile>
     <Compile Include="MicroLobby\Floe\ChatBox.cs" />
     <Compile Include="MicroLobby\Floe\ChatBoxBase.cs" />
@@ -278,7 +278,6 @@
       <DependentUpon>Ranks.resx</DependentUpon>
     </Compile>
     <Compile Include="ServerImagesHandler.cs" />
-    <Compile Include="TabItemHeaderSelector.cs" />
     <Compile Include="ToolTips\BattleTooltipRenderer.cs" />
     <Compile Include="MicroLobby\AskBattlePasswordForm.cs">
       <SubType>Form</SubType>
@@ -421,6 +420,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ChatControl.resx">
       <DependentUpon>ChatControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\ChatTab.resx">
+      <DependentUpon>ChatTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\FriendsWindow.resx">
       <DependentUpon>FriendsWindow.cs</DependentUpon>
@@ -645,14 +647,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MicroLobby\BrowserControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MicroLobby\ChatControl2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MicroLobby\ChatTab2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

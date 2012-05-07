@@ -52,7 +52,7 @@ namespace ZeroKLobby
     readonly List<string> lastPaths = new List<string>();
     public WebBrowser Browser { get { return browserControl.WebBrowser; } }
     public ObservableCollection<ButtonInfo> Buttons { get; set; }
-    public ChatTab2 ChatTab { get { return chatTab; } }
+    public ChatTab ChatTab { get { return chatTab; } }
     public static NavigationControl Instance { get; private set; }
     public bool IsBrowserTabSelected { get { return tabControl.SelectedContent is BrowserControl; } }
 
@@ -107,12 +107,6 @@ namespace ZeroKLobby
 
     public WindowsFormsHost GetWindowsFormsHostOfCurrentTab()
     {
-      if (tabControl.SelectedContent is ChatTab2)
-      {
-        var ct = (ChatTab2)tabControl.SelectedContent;
-        return ct.winformsHost;
-      }
-
       return tabControl.SelectedContent as WindowsFormsHost;
     }
 
