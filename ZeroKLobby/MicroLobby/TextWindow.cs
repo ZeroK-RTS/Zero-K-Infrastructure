@@ -517,11 +517,11 @@ namespace ZeroKLobby.MicroLobby
         }
 
 
-			public static Color ColorInvert(Color colorIn)
-			{
-				return Color.FromArgb(colorIn.A, (colorIn.R + 128) % 256, (colorIn.G +
+            public static Color ColorInvert(Color colorIn)
+            {
+                return Color.FromArgb(colorIn.A, (colorIn.R + 128) % 256, (colorIn.G +
 128) % 256, (colorIn.B + 128) % 256);
-			}
+            }
 
         /// <summary>
         /// Format the text for each line to show in the Text Window
@@ -1012,8 +1012,8 @@ namespace ZeroKLobby.MicroLobby
                                                     i = 0;
                                                     if (highlight)
                                                     {
-                                                    		curForeColor = 0;
-                                                    		curBackColor = 2;
+                                                            curForeColor = 0;
+                                                            curBackColor = 2;
                                                     }
                                                     else
                                                     {
@@ -1036,7 +1036,7 @@ namespace ZeroKLobby.MicroLobby
                                     {
                                         textSize = (int)g.MeasureString(buildString.ToString(), font, 0, sf).Width + 1;
                                         var r = new Rectangle((int)startX, startY, textSize + 1, LineSize + 1);
-																				using (var brush = new SolidBrush(TextColor.GetColor(curBackColor)))  g.FillRectangle(brush, r);
+                                                                                using (var brush = new SolidBrush(TextColor.GetColor(curBackColor)))  g.FillRectangle(brush, r);
                                     }
                                     // TextRenderer.DrawText(g, buildString.ToString(), font, new Point((int)startX, startY), TextColor.GetColor(curForeColor), TextColor.GetColor(curBackColor));
                                     using (var brush = new SolidBrush(TextColor.GetColor(curForeColor))) {
