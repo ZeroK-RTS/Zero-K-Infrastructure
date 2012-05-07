@@ -537,10 +537,6 @@
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>
     </ProjectReference>
-    <ProjectReference Include="XSystem.WinControls\XSystem.WinControls.csproj">
-      <Project>{860641CF-A2D9-4BC6-A061-A97AE72249F8}</Project>
-      <Name>XSystem.WinControls</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\star.png" />

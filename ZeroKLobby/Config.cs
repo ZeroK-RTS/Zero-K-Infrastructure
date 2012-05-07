@@ -43,10 +43,6 @@ namespace ZeroKLobby
         int springServerPort = 8200;
 
 
-        [Category("Widgets")]
-        [Description("Auto-Install Widgets")]
-        [DisplayName("Auto-Install Widgets")]
-        public bool AutoInstallWidgets { get; set; }
         [Category("Chat")]
         [DisplayName("Automatically Joined Channels")]
         [Description("Zero-K lobby will automatically join these channels when connecting.")]

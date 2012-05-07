@@ -37,7 +37,6 @@
             this.btnRestart = new System.Windows.Forms.Button();
             this.btnRapid = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.btnWidgets = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.tbResy = new System.Windows.Forms.TextBox();
             this.tbResx = new System.Windows.Forms.TextBox();
@@ -100,7 +99,6 @@
             this.panel1.Controls.Add(this.btnRestart);
             this.panel1.Controls.Add(this.btnRapid);
             this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.btnWidgets);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.tbResy);
             this.panel1.Controls.Add(this.tbResx);
@@ -176,16 +174,6 @@
             this.label3.Size = new System.Drawing.Size(36, 13);
             this.label3.TabIndex = 32;
             this.label3.Text = "Tools:";
-            // 
-            // btnWidgets
-            // 
-            this.btnWidgets.Location = new System.Drawing.Point(342, 171);
-            this.btnWidgets.Name = "btnWidgets";
-            this.btnWidgets.Size = new System.Drawing.Size(75, 23);
-            this.btnWidgets.TabIndex = 31;
-            this.btnWidgets.Text = "Widgets";
-            this.btnWidgets.UseVisualStyleBackColor = true;
-            this.btnWidgets.Click += new System.EventHandler(this.btnWidgets_Click);
             // 
             // label2
             // 
@@ -386,7 +374,6 @@
         private System.Windows.Forms.CheckBox cbHwCursor;
         private System.Windows.Forms.Button btnRapid;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button btnWidgets;
         private System.Windows.Forms.Button btnRestart;
         private System.Windows.Forms.Button btnDefaults;
         private System.Windows.Forms.CheckBox cbSafeMode;
