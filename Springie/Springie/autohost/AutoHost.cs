@@ -761,7 +761,7 @@ namespace Springie.autohost
         public bool JuggleIfNeeded() {
             if (tas.MyBattle != null && !spring.IsRunning && config != null && SpawnConfig == null)
             {
-                var count = tas.MyBattle.Users.Count(x => !x.IsSpectator);
+                var count = tas.MyBattle.Users.Count(x => !x.IsSpectator && x.SyncStatus != SyncStatuses.Unknown);
                 if (count > (config.SplitBiggerThan??99) || (count> 0 && count<(config.MinToJuggle??0)))
                 {
                     Program.main.JugglePlayers();
