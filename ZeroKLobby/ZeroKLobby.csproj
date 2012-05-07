@@ -349,20 +349,6 @@
     <Compile Include="MicroLobby\PlayerListBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="LuaMgr\CommentWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LuaMgr\CommentWindow.Designer.cs">
-      <DependentUpon>CommentWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LuaMgr\ListViewTagData.cs" />
-    <Compile Include="LuaMgr\RateWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LuaMgr\RateWindow.Designer.cs">
-      <DependentUpon>RateWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LuaMgr\WidgetHandler.cs" />
     <Compile Include="MicroLobby\ChatControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -390,40 +376,6 @@
     </Compile>
     <Compile Include="MicroLobby\ScrollMessageFilter.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="LuaMgr\Changelog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LuaMgr\Changelog.designer.cs">
-      <DependentUpon>Changelog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LuaMgr\FileManager.cs" />
-    <Compile Include="LuaMgr\FilesDisplay.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LuaMgr\FilesDisplay.designer.cs">
-      <DependentUpon>FilesDisplay.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LuaMgr\ImageGallery.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LuaMgr\ListViewSorter.cs" />
-    <Compile Include="LuaMgr\LuaMgrResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>LuaMgrResources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="LuaMgr\LuaMgrTab.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LuaMgr\LuaMgrTab.Designer.cs">
-      <DependentUpon>LuaMgrTab.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LuaMgr\PresetInstaller.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LuaMgr\PresetInstaller.Designer.cs">
-      <DependentUpon>PresetInstaller.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -467,12 +419,6 @@
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LuaMgr\CommentWindow.resx">
-      <DependentUpon>CommentWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LuaMgr\RateWindow.resx">
-      <DependentUpon>RateWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ChatControl.resx">
       <DependentUpon>ChatControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -496,31 +442,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="FormLog.resx">
       <DependentUpon>FormLog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LuaMgr\Changelog.resx">
-      <DependentUpon>Changelog.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LuaMgr\FilesDisplay.resx">
-      <DependentUpon>FilesDisplay.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LuaMgr\ImageGallery.resx">
-      <DependentUpon>ImageGallery.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LuaMgr\LuaMgrResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LuaMgrResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LuaMgr\LuaMgrTab.resx">
-      <DependentUpon>LuaMgrTab.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LuaMgr\PresetInstaller.resx">
-      <DependentUpon>PresetInstaller.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="MapDownloader\DownloaderTab.resx">
@@ -608,10 +529,6 @@
       <Project>{C91CC692-53FC-40B7-8B9A-2A57EDEE331E}</Project>
       <Name>LobbyClient</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LuaAdmin\LuaManagerLib\LuaManagerLib.csproj">
-      <Project>{EA79A74E-0577-4F74-AE8D-6E259A594FBE}</Project>
-      <Name>LuaManagerLib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Shared\PlasmaDownloader\PlasmaDownloader.csproj">
       <Project>{F3F74776-46A9-4415-B76E-CEEC771C2ABA}</Project>
       <Name>PlasmaDownloader</Name>
@@ -631,7 +548,6 @@
     <Content Include="lua5.1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="LuaMgr\doc\changelog.txt" />
     <Resource Include="Resources\Conf\cmdcolors.txt" />
     <Resource Include="Resources\Conf\selectkeys.txt" />
     <Resource Include="Resources\Conf\uikeys.txt" />
