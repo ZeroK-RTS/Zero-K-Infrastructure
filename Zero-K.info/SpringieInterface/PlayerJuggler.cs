@@ -285,14 +285,15 @@ namespace ZeroKWeb.SpringieInterface
             sb.AppendLine("Final bins:");
             PrintBins(juggledAccounts, bins, sb);
 
+            ret.PlayerMoves = new List<JugglerMove>();
+
             if (bins.Any())
             {
                 SplitBins(autohosts, juggledAccounts, sb, bins);
                 sb.AppendLine("After split:");
                 PrintBins(juggledAccounts, bins, sb);
 
-                ret.PlayerMoves = new List<JugglerMove>();
-
+                
                 foreach (var b in bins)
                 {
                     foreach (var a in b.Assigned)
@@ -315,6 +316,7 @@ namespace ZeroKWeb.SpringieInterface
 
             ret.Message = sb.ToString();
 
+            
             LastPlayerMoves = new List<JugglerMove>(ret.PlayerMoves);
 
             return ret;
