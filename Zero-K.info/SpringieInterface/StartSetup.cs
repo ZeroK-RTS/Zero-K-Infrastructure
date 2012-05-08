@@ -97,30 +97,37 @@ namespace ZeroKWeb.SpringieInterface
 
                         if (!userCommandersBanned)
                         {
-                            foreach (var c in user.Commanders)
+                            foreach (var c in user.Commanders.Where(x=>x.Unlock !=null))
                             {
-                                var morphTable = new LuaTable();
-                                pc["[\"" + c.Name + "\"]"] = morphTable;
-                                for (var i = 1; i <= 4; i++)
+                                try
                                 {
-                                    var key = "c" + user.AccountID + "_" + c.CommanderID + "_" + i;
-                                    morphTable.Add(key);
 
-                                    var comdef = new LuaTable();
-                                    commanderTypes[key] = comdef;
+                                    var morphTable = new LuaTable();
+                                    pc["[\"" + c.Name + "\"]"] = morphTable;
+                                    for (var i = 1; i <= 4; i++)
+                                    {
+                                        var key = string.Format("c{0}_{1}_{2}", user.AccountID, c.CommanderID, i);
+                                        morphTable.Add(key);
 
-                                    comdef["chassis"] = c.Unlock.Code + i;
+                                        var comdef = new LuaTable();
+                                        commanderTypes[key] = comdef;
 
-                                    var modules = new LuaTable();
-                                    comdef["modules"] = modules;
+                                        comdef["chassis"] = c.Unlock.Code + i;
 
-                                    comdef["cost"] = c.GetTotalMorphLevelCost(i);
+                                        var modules = new LuaTable();
+                                        comdef["modules"] = modules;
 
-                                    comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
+                                        comdef["cost"] = c.GetTotalMorphLevelCost(i);
 
-                                    foreach (var m in
-                                        c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(x => x.Unlock.UnlockType).ThenBy(
-                                            x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
+                                        comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
+
+                                        foreach (var m in
+                                            c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(
+                                                x => x.Unlock)) modules.Add(m.Code);
+                                    }
+                                }
+                                catch (Exception ex) {
+                                    throw new ApplicationException(string.Format("Error processing commander: {0} - {1} of player {2} - {3}",c.CommanderID, c.Name, user.AccountID, user.Name));
                                 }
                             }
                         }
