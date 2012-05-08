@@ -32,7 +32,7 @@ namespace CaTracker
                             var to = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == parts[2]);
                             if (from != null && to != null)
                             {
-                                foreach (var b in from.Users) if (!b.LobbyUser.IsInGame) tas.Say(TasClient.SayPlace.User, b.Name, "!join " + parts[2], false);
+                                foreach (var b in from.Users) if (!b.LobbyUser.IsInGame) tas.ForceJoinBattle(b.Name, to.BattleID);
                             }
                             else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid battle host name", false);
                         }
@@ -59,7 +59,7 @@ namespace CaTracker
                                 //tas.Say(TasClient.SayPlace.User, e.UserName, list.ToString(), false);
                                 foreach (var b in toMove)
                                 {
-                                    tas.Say(TasClient.SayPlace.User, b.Name, "!join " + parts[2], false);
+                                    tas.ForceJoinBattle(b.Name, to.BattleID);
                                 }
                             }
                             else tas.Say(TasClient.SayPlace.User, e.UserName, "Not a valid battle host name", false);

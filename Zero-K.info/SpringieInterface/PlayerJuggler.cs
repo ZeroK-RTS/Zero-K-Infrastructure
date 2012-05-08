@@ -287,12 +287,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName)
                         {
                             ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
-                            tas.Say(TasClient.SayPlace.User, acc.Name, "!join " + b.Autohost.LobbyContext.AutohostName, false);
-                            var battle = tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == b.Autohost.LobbyContext.AutohostName);
-                            User user;
-                            if (battle != null && Global.Nightwatch.Tas.ExistingUsers.TryGetValue(acc.Name, out user) && !user.IsZkLobbyUser) {
-                                tas.ForceJoinBattle(acc.Name,  battle.BattleID);
-                            }
+                            tas.ForceJoinBattle(acc.Name,  b.Autohost.LobbyContext.AutohostName);
                         }
                     }
                 }

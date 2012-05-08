@@ -648,7 +648,7 @@ namespace Springie.autohost
             var target = words[1];
 
             tas.Say(TasClient.SayPlace.BattlePrivate, name, string.Format("You are being moved to {0} by QuickMatch", target), true);
-            tas.Say(TasClient.SayPlace.User, name, "!join " + target, false);
+            tas.ForceJoinBattle(name, target);
         }
 
         public void ComPostpone(TasSayEventArgs e, string[] words)

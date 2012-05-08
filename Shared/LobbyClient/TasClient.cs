@@ -612,10 +612,29 @@ namespace LobbyClient
             con.SendCommand("RING", username);
         }
 
+
+        public void ForceJoinBattle(string name, string battleHostName, string password = null) {
+            var battle = ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == battleHostName);
+            if (battle != null) ForceJoinBattle(name, battle.BattleID, password);
+        }
+
+
         public void ForceJoinBattle(string name, int battleID, string password = null) {
-            //con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
-            con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
-            con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
+            User user;
+            Battle battle;
+            existingUsers.TryGetValue(name, out user);
+            existingBattles.TryGetValue(battleID, out battle);
+            if (user != null && battle != null) {
+                if (user.IsZkLobbyUser)
+                {
+                    Say(SayPlace.User, user.Name, "!join " + battle.Founder.Name, false);
+                }
+                else {
+                    //con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
+                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
+                    con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
+                }
+            }
         }
 
         /// <summary>
