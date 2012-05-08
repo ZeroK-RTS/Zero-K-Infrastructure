@@ -133,21 +133,23 @@ namespace ZeroKWeb.SpringieInterface
 
                     text.AppendFormat("Battle on http://zero-k.info/PlanetWars/Planet/{0} has ended\n", planet.PlanetID);
 
-                    // handle infelunce
-                    Faction ownerFaction = null;
-                    Clan ownerClan = null;
+                    // handle influence
+                    Faction attacker = null;
+                    Faction defender = null;
+                    //Clan ownerClan = null;
                     var involvedClans = new List<Clan>();
                     if (planet.Account != null)
                     {
-                        ownerClan = planet.Account.Clan;
-                        ownerFaction = planet.Account.Faction;
-                        if (ownerClan != null) involvedClans.Add(ownerClan); // planet ownerinvolved
+                        //ownerClan = planet.Account.Clan;
+                        defender = planet.Account.Faction;
+                        //attacker = ??
+                        //if (ownerClan != null) involvedClans.Add(ownerClan); // planet ownerinvolved
                     }
 
                     // ship owners -> involved
                     var activePlayerIds =
                         sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account.FactionID != null).Select(x => x.AccountID).ToList();
-                    var wasShipAttacked = false;
+                    bool wasShipAttacked = false;
                     foreach (
                         var c in
                             planet.AccountPlanets.Where(
@@ -159,17 +161,17 @@ namespace ZeroKWeb.SpringieInterface
                     }
                     if (!wasShipAttacked) involvedClans.Clear(); // insurgency no involved
 
-                    var clanTechIp =
-                        sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).
-                            ToDictionary(x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count() * 6.0 / z.Count());
+                    var factionTechIP = sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).
+                            ToDictionary(x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count() * 6.0 / z.Count()); // FIXME make techs in db be by faction not clan!
 
                     var planetDefs = (planet.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
                     var totalShips = (planet.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0);
                     double shipMultiplier = 1;
                     if (totalShips > 0 && totalShips >= planetDefs) shipMultiplier = (totalShips - planetDefs) / (double)totalShips;
 
+                    /*
                     var ownerMalus = 0;
-                    if (ownerFaction != null)
+                    if (defender != null)
                     {
                         var entries = planet.GetFactionInfluences();
                         if (entries.Count() > 1)
@@ -178,13 +180,15 @@ namespace ZeroKWeb.SpringieInterface
                             ownerMalus = Math.Min((int)((diff / 100.0) * (diff / 100.0)), 70);
                         }
                     }
+                    */
 
                     // malus for ships
+                    /*
                     foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam && x.Account.FactionID != null))
                     {
                         var ships = planet.AccountPlanets.Where(x => x.AccountID == p.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
                         if (ships <= 0) continue;
-                        p.Influence = ships * GlobalConst.PlanetwarsInvadingShipLostMalus;
+                        p.Influence = ships * GlobalConst.InfluenceMalusPerShip;
                         var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == p.AccountID);
                         if (entry == null)
                         {
@@ -202,18 +206,37 @@ namespace ZeroKWeb.SpringieInterface
 
                         text.AppendFormat("{0} lost {1} influence at {2} because of {3} ships\n", p.Account.Name, p.Influence ?? 0, planet.Name, ships);
                     }
+                    */
 
-                    foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.FactionID != null))
+                    // determine which players are involved and count them
+                    int numInvolved = 0;
+                    int numInvolvedWinner = 0;
+                    int numShips = 0;
+                    var involvedPlayers = new List<SpringBattlePlayer>();
+                    foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && (x.Account.FactionID == attacker.FactionID || x.Account.FactionID == defender.FactionID)))
                     {
-                        var techBonus = p.Account.ClanID != null ? (int)clanTechIp[p.Account.ClanID] : 0;
-                        var gapMalus = 0;
-                        var shipBonus = 0;
-                        if (ownerFaction != null && p.Account.Faction == ownerFaction) gapMalus = ownerMalus;
-                        p.Influence += (techBonus - gapMalus);
+                        numInvolved++;
+                        involvedPlayers.Add(p);
+                        if (p.IsInVictoryTeam)
+                        {
+                            numShips = numShips += planet.AccountPlanets.Where(x => x.AccountID == p.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
+                            numInvolvedWinner++;
+                        }
+                    }
 
-                        var ships = planet.AccountPlanets.Where(x => x.AccountID == p.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
-                        shipBonus = (int)Math.Round(ships * GlobalConst.PlanetwarsInvadingShipBonus * shipMultiplier);
-                        p.Influence += shipBonus;
+                    // FIXME: doesn't take techs into account!
+                    double totalInfluence = GlobalConst.BaseInfluencePerBattle + (numShips * GlobalConst.InfluencePerShip * shipMultiplier) + (numInvolved * GlobalConst.InfluencePerInvolvedPlayer);
+
+                    foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && involvedPlayers.Contains(x)))
+                    {
+                        // this is for the benefit of the after-action text report
+                        var techBonus = p.Account.ClanID != null ? (int)factionTechIP[p.Account.ClanID] : 0;
+                        //var gapMalus = 0;
+                        var shipBonus = (numShips * GlobalConst.InfluencePerShip * shipMultiplier / numInvolvedWinner);
+                        //if (defender != null && p.Account.Faction == defender) gapMalus = ownerMalus;
+                        //p.Influence += (techBonus - gapMalus);
+
+                        p.Influence += (int)Math.Round(totalInfluence/numInvolvedWinner);
 
                         if (p.Influence < 0) p.Influence = 0;
 
@@ -227,36 +250,43 @@ namespace ZeroKWeb.SpringieInterface
                         var infl = p.Influence ?? 0;
 
                         // is involved - is same faction as involved clan, or same clan as involved clan or allied to involved clan
-                        var isInvolved = !involvedClans.Any() ||
+                        /*
+                        bool isInvolved = !involvedClans.Any() ||
                                          involvedClans.Any(x => x.FactionID == p.Account.FactionID || x.ClanID == p.Account.ClanID) ||
                                          (p.Account.Clan != null &&
                                           involvedClans.Any(x => x.GetEffectiveTreaty(p.Account.Clan).AllyStatus == AllyStatus.Alliance));
+                         */
 
                         // store influence
-                        var soldStr = "";
+                        var soldStr = "";   // TODO remove?
+                        entry.Influence += infl;
+                        
+                        /*
                         if (isInvolved) entry.Influence += infl;
+                        
                         else
                         {
                             p.Account.Credits += infl * GlobalConst.NotInvolvedIpSell;
                             soldStr = string.Format("sold for ${0} to locals because wasn't directly involved", infl * GlobalConst.NotInvolvedIpSell);
                         }
+                        */
 
-                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} {5} {6}) influence at {2} from {3} {7}",
+                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} got {1} ({4} {5}) influence at {2} from {3} {6}",
                                                                     p.Account,
                                                                     p.Influence ?? 0,
                                                                     planet,
                                                                     sb,
                                                                     techBonus > 0 ? "+" + techBonus + " from techs" : "",
-                                                                    gapMalus > 0 ? "-" + gapMalus + " from domination" : "",
+                                                                    //gapMalus > 0 ? "-" + gapMalus + " from domination" : "",
                                                                     shipBonus > 0 ? "+" + shipBonus + " from ships" : "",
                                                                     soldStr));
 
-                        text.AppendFormat("{0} got {1} ({3} {4} {5}) influence at {2} {6}\n",
+                        text.AppendFormat("{0} got {1} ({3} {4}) influence at {2} {5}\n",
                                           p.Account.Name,
                                           p.Influence ?? 0,
                                           planet.Name,
                                           techBonus > 0 ? "+" + techBonus + " from techs" : "",
-                                          gapMalus > 0 ? "-" + gapMalus + " from domination" : "",
+                                          //gapMalus > 0 ? "-" + gapMalus + " from domination" : "",
                                           shipBonus > 0 ? "+" + shipBonus + " from ships" : "",
                                           soldStr);
                     }
@@ -281,6 +311,7 @@ namespace ZeroKWeb.SpringieInterface
 					}
 
                     // destroy pw structures
+                    // TODO: support for "no destroy PW structures treaty?"
                     var handled = new List<string>();
                     foreach (var line in extraData.Where(x => x.StartsWith("structurekilled")))
                     {
@@ -307,13 +338,15 @@ namespace ZeroKWeb.SpringieInterface
                                 else s.IsDestroyed = true;
                                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}",
                                                                             s.StructureType.Name,
-                                                                            ownerClan,
+                                                                            defender,
                                                                             planet,
                                                                             sb));
                             }
                         }
                     }
                     db.SubmitChanges();
+
+                    // TODO correct IP after battle
 
                     // destroy structures (usually defenses)
                     foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
@@ -343,6 +376,16 @@ namespace ZeroKWeb.SpringieInterface
                     Galaxy.RemoveOrphanedShips(db);
                     db.SubmitChanges();
 
+                    //  TODO: IP squeeze if overflow
+                    db = new ZkDataContext();
+                    foreach (var faction in
+                        planet.AccountPlanets.Where(x => x.Account.FactionID != null && x.Influence > 0).GroupBy(x => x.Account.FactionID))
+                    {
+                          
+                    }
+                    db.SubmitChanges();
+                    
+
                     // income + decay
                     foreach (var entry in gal.Planets.Where(x => x.OwnerAccountID != null))
                     {
@@ -361,6 +404,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (myFactionSumInflunece == 0) myFactionSumInflunece = 1;
                         foreach (var myFacAcc in myFactionInfluences) myFacAcc.Acc.Credits += (int)Math.Ceiling(mineIncome / 2.0 * myFacAcc.Influence / (double)myFactionSumInflunece);
 
+                        /*
                         if (corruption > 0)
                         {
                             foreach (var facEntries in entry.AccountPlanets.GroupBy(x => x.Account.Faction).Where(x => x.Key != null))
@@ -373,6 +417,7 @@ namespace ZeroKWeb.SpringieInterface
                                 }
                             }
                         }
+                         */
                     }
 
                     // taxincome - based on influences
@@ -408,6 +453,7 @@ namespace ZeroKWeb.SpringieInterface
                     gal.Turn++;
                     db.SubmitChanges();
 
+                    /*
                     // give unclanned influence to clanned
                     if (GlobalConst.GiveUnclannedInfluenceToClanned)
                     {
@@ -430,7 +476,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
 
                     // transfer ceasefire/alliance influences
-                    if (ownerClan != null)
+                    if (defender != null)
                     {
                         db = new ZkDataContext();
                         planet = db.Planets.Single(x => x.PlanetID == planet.PlanetID);
@@ -476,7 +522,8 @@ namespace ZeroKWeb.SpringieInterface
                         }
                         db.SubmitChanges();
                     }
-
+                    */
+                     
                     db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
                     PlanetwarsController.SetPlanetOwners(db, sb);
                     gal = db.Galaxies.Single(x => x.IsDefault);
