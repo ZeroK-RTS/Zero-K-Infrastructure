@@ -101,7 +101,7 @@ namespace ZeroKWeb.SpringieInterface
                             {
                                 try
                                 {
-
+                                    if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x=>!Char.IsLetterOrDigit(x) && x!= ' ')) c.Name = c.CommanderID.ToString();
                                     var morphTable = new LuaTable();
                                     pc["[\"" + c.Name + "\"]"] = morphTable;
                                     for (var i = 1; i <= 4; i++)
@@ -127,7 +127,7 @@ namespace ZeroKWeb.SpringieInterface
                                     }
                                 }
                                 catch (Exception ex) {
-                                    throw new ApplicationException(string.Format("Error processing commander: {0} - {1} of player {2} - {3}",c.CommanderID, c.Name, user.AccountID, user.Name));
+                                    throw new ApplicationException(string.Format("Error processing commander: {0} - {1} of player {2} - {3}",c.CommanderID, c.Name, user.AccountID, user.Name),ex);
                                 }
                             }
                         }
