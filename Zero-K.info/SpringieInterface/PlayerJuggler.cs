@@ -29,10 +29,14 @@ namespace ZeroKWeb.SpringieInterface
                                                           AutohostMode.GameChickens,
                                                           AutohostMode.Game1v1,
                                                       };
+        private static List<JugglerMove> LastPlayerMoves
+            ;
 
         static PlayerJuggler()
         {
-            Global.Nightwatch.Tas.Extensions.JugglerConfigReceived += (args, config) =>
+            TasClient tas = Global.Nightwatch.Tas;  
+
+            tas.Extensions.JugglerConfigReceived += (args, config) =>
                 {
                     if (args.UserName != GlobalConst.NightwatchName)
                     {
@@ -58,7 +62,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 };
 
-            Global.Nightwatch.Tas.ChannelUserAdded += (sender, args) => {
+            tas.ChannelUserAdded += (sender, args) => {
                 var name = args.ServerParams[1];
                 var chan = args.ServerParams[0];
                 if (chan == ProtocolExtension.ExtensionChannelName && name != GlobalConst.NightwatchName) 
@@ -78,6 +82,17 @@ namespace ZeroKWeb.SpringieInterface
 
                 }, TaskCreationOptions.LongRunning);
 
+            };
+
+            tas.BattleUserJoined += (sender, args) =>
+            {
+                var entry = LastPlayerMoves.FirstOrDefault(x => x.Name == args.UserName);
+                if (entry != null) {
+                    Battle joinedBattle;
+                    if (tas.ExistingBattles.TryGetValue(args.BattleID, out joinedBattle) && joinedBattle.Founder.Name == entry.OriginalAutohost) {
+                        tas.ForceJoinBattle(args.UserName, entry.TargetAutohost);
+                    }
+                }
             };
 
         }
@@ -286,7 +301,7 @@ namespace ZeroKWeb.SpringieInterface
                         var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name));
                         if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName)
                         {
-                            ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName });
+                            ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName, OriginalAutohost = origAh.LobbyContext.AutohostName});
                             tas.ForceJoinBattle(acc.Name,  b.Autohost.LobbyContext.AutohostName);
                         }
                     }
@@ -299,6 +314,8 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             ret.Message = sb.ToString();
+
+            LastPlayerMoves = new List<JugglerMove>(ret.PlayerMoves);
 
             return ret;
         }
@@ -445,6 +462,7 @@ namespace ZeroKWeb.SpringieInterface
     {
         public string Name;
         public string TargetAutohost;
+        public string OriginalAutohost;
     }
 
     public class JugglerResult
