@@ -301,7 +301,7 @@ namespace ZeroKWeb.SpringieInterface
                         var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name));
                         if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName)
                         {
-                            ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName, OriginalAutohost = origAh.LobbyContext.AutohostName});
+                            ret.PlayerMoves.Add(new JugglerMove() { Name = acc.Name, TargetAutohost = b.Autohost.LobbyContext.AutohostName, OriginalAutohost = origAh != null ?  origAh.LobbyContext.AutohostName:null});
                             tas.ForceJoinBattle(acc.Name,  b.Autohost.LobbyContext.AutohostName);
                         }
                     }
