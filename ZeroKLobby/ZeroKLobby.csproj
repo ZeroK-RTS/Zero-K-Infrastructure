@@ -156,6 +156,18 @@
     <Compile Include="BattleList.xaml.cs">
       <DependentUpon>BattleList.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MicroLobby\BattleListControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\BattleListControl.Designer.cs">
+      <DependentUpon>BattleListControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MicroLobby\BattleListTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\BattleListTab.Designer.cs">
+      <DependentUpon>BattleListTab.cs</DependentUpon>
+    </Compile>
     <Compile Include="MicroLobby\BrowserControl.xaml.cs">
       <DependentUpon>BrowserControl.xaml</DependentUpon>
     </Compile>
@@ -417,6 +429,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Flags.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\BattleListTab.resx">
+      <DependentUpon>BattleListTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\ChatControl.resx">
       <DependentUpon>ChatControl.cs</DependentUpon>

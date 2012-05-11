@@ -46,10 +46,12 @@
         </Style>
       </TabControl.ItemContainerStyle>
       <TabItem>
-        <ZeroKLobby:BattleList x:Name="battleTab"/>
-      </TabItem>
+                <WindowsFormsHost Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+                <MicroLobby:BattleListTab />
+            </WindowsFormsHost>
+        </TabItem>
       <TabItem>
-        <WindowsFormsHost>
+        <WindowsFormsHost Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
           <MicroLobby:ChatTab x:Name="chatTab" />
         </WindowsFormsHost>
       </TabItem>
