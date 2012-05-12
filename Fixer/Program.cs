@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
+using LobbyClient;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
@@ -20,6 +21,8 @@ namespace Fixer
 {
   public static class Program
   {
+
+
 
       public static void FixHashes() {
           var db = new ZkDataContext();
@@ -96,6 +99,8 @@ namespace Fixer
 
       static void Main(string[] args)
     {
+        var id = TasClient.GetUserID();
+        return;
 
         var db = new ZkDataContext();
         var sb = db.SpringBattles.Where(x => x.StartTime > DateTime.UtcNow.AddDays(-7)).SelectMany(x => x.SpringBattlePlayers).Where(x => !x.IsSpectator).GroupBy(x => x.Account.LobbyVersion).Select(x => new { x.Key, Cnt = x.Count() }).OrderByDescending(x=>x.Cnt).ToList();

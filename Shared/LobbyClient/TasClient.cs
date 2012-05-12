@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -10,6 +11,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Timers;
+using Ionic.Zlib;
 using PlasmaShared;
 using ZkData;
 
@@ -524,11 +526,14 @@ namespace LobbyClient
             con.SendCommand("CHANNELS");
         }
 
-        public string GetUserID() {
+        public static string GetUserID() {
             var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
-            string h = "0";
-            if (nic != null) h= nic.GetPhysicalAddress().GetAddressBytes().GetHashCode().ToString("x").ToUpper();
-            return h;
+            string data = "0";
+            if (nic != null) {
+                data = string.Join(":", nic.GetPhysicalAddress().GetAddressBytes()) + "lobby.springrts.com";
+            }
+            var crc = new CRC32();
+            return crc.GetCrc32(new MemoryStream(Encoding.ASCII.GetBytes(data))).ToString();
         }
 
 
