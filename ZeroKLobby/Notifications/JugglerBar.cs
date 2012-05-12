@@ -57,7 +57,7 @@ namespace ZeroKLobby.Notifications
                 {
                     if (args.Data.Founder.IsSpringieManaged)
                     {
-                        // Activate();
+                         Activate();
                     }
                 };
 
@@ -65,10 +65,10 @@ namespace ZeroKLobby.Notifications
             {
                 if (client.MyBattleStatus.IsSpectator)
                 {
-                    // if (Program.NotifySection.Bars.Contains(this)) Deactivate();
+                    if (Program.NotifySection.Bars.Contains(this)) Deactivate();
                 }
                 else {
-                    // if (client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
+                    if (client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
                 }
             };
 
@@ -96,14 +96,18 @@ namespace ZeroKLobby.Notifications
         }
 
 
+        public bool IsActive
+        {
+            get { return Program.NotifySection.Bars.Contains(this); }
+        }
+
         public void Activate()
         {
-            //if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
-            SendMyConfig(false, true);
+            if (!IsActive) SendMyConfig(false, true);
         }
 
         public void SwitchState() {
-            if (!Program.NotifySection.Bars.Contains(this)) Activate();
+            if (!IsActive) Activate();
             else Deactivate();
         }
 
@@ -151,8 +155,7 @@ namespace ZeroKLobby.Notifications
 
         public void Deactivate()
         {
-            //Program.NotifySection.RemoveBar(this);
-            SendMyConfig(false, false);
+            if (IsActive) SendMyConfig(false, false);
         }
 
         public void AddedToContainer(NotifyBarContainer container)

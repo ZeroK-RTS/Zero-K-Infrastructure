@@ -524,17 +524,21 @@ namespace LobbyClient
             con.SendCommand("CHANNELS");
         }
 
+        public string GetUserID() {
+            var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
+            string h = "0";
+            if (nic != null) h= nic.GetPhysicalAddress().GetAddressBytes().GetHashCode().ToString("x").ToUpper();
+            return h;
+        }
+
+
         public void Login(string userName, string password)
         {
             if (con == null) throw new TasClientException("Not connected");
 
             UserPassword = password;
 
-
-            var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
-            var h = "0";
-            if (nic != null) h = nic.GetPhysicalAddress().GetAddressBytes().GetHashCode().ToString("x").ToUpper();
-            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + h, "\ta sp eb");
+            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetUserID(), "\ta sp eb");
         }
 
         int cpu = GlobalConst.ZkLobbyUserCpu;
@@ -1331,9 +1335,8 @@ namespace LobbyClient
                         RegistrationAccepted(this, new TasEventArgs(args));
                         break;
 
-                    case "AQUIREUSERID":
-                        con.SendCommand("USERID",
-                                        NetworkInterface.GetAllNetworkInterfaces().First().GetPhysicalAddress().GetHashCode().ToString("x").ToUpper());
+                    case "ACQUIREUSERID":
+                        con.SendCommand("USERID", GetUserID());
                         break;
                     case "ADDSTARTRECT":
                     {
