@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿//defines the GUI definition in MainWindow.xaml used for each condition/action
+
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using CMissionLib;
@@ -27,7 +29,8 @@ namespace MissionEditor2
             else if (item is GuiMessageAction) resourceName = "guiMessageTemplate";
             else if (item is GuiMessagePersistentAction) resourceName = "guiMessagePersistentTemplate";
             else if (item is HideGuiMessagePersistentAction) resourceName = "hideGuiMessagePersistentTemplate";
-            else if (item is AddObjectiveAction || item is ModifyObjectiveAction) resourceName = "addObjectiveTemplate";
+            else if (item is AddObjectiveAction) resourceName = "addObjectiveTemplate";
+            else if (item is ModifyObjectiveAction) resourceName = "modifyObjectiveTemplate";
 			else if (item is UnitDestroyedCondition) resourceName = "unitDestroyedTemplate";
 			else if (item is DummyCondition || item is DummyAction || item is ConditionsFolder || item is ActionsFolder) resourceName = "dummyTemplate";
 			else if (item is SunriseAction) resourceName = "sunriseTemplate";

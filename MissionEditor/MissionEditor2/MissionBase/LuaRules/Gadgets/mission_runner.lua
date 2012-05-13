@@ -374,6 +374,7 @@ local function ExecuteTrigger(trigger, frame)
     local frame = frame or (Spring.GetGameFrame() + 1) -- events will take place at this frame
     for _, action in ipairs(trigger.logic) do
       local Event
+      --Spring.Echo(action.logicType, action.name)
       if action.logicType == "CustomAction" then
         Event = function()
           if action.name == "my custom action name" then
@@ -571,6 +572,7 @@ local function ExecuteTrigger(trigger, frame)
         end
       elseif action.logicType == "CreateUnitsAction" then
         Event = function()
+          local gameframe = Spring.GetGameFrame()
           for _, unit in ipairs(action.args.units) do
             if Spring.GetTeamInfo(unit.player) then
               if unit.isGhost then
@@ -593,8 +595,33 @@ local function ExecuteTrigger(trigger, frame)
                     cardinalHeading = "w"
                   end
                 end
-                local unitID
+                
+                -- ZK mex placement
+                if ud.customParams.ismex and GG.metalSpots then
+                  local function GetClosestMetalSpot(x, z)
+                    local bestSpot
+                    local bestDist = math.huge
+                    local bestIndex 
+                    for i = 1, #GG.metalSpots do
+                            local spot = GG.metalSpots[i]
+                            local dx, dz = x - spot.x, z - spot.z
+                            local dist = dx*dx + dz*dz
+                            if dist < bestDist then
+                                    bestSpot = spot
+                                    bestDist = dist
+                                    bestIndex = i
+                            end
+                    end
+                    return bestSpot
+                  end
+                  
+                  local bestSpot = GetClosestMetalSpot(unit.x, unit.y )
+                  unit.x, unit.y = bestSpot.x, bestSpot.z
+                end
+                
+                local unitID, drop
                 if GG.DropUnit then
+                  drop = true
                   unitID = GG.DropUnit(unit.unitDefName, unit.x, 0, unit.y, cardinalHeading, unit.player)
                 else
                   unitID = Spring.CreateUnit(unit.unitDefName, unit.x, 0, unit.y, cardinalHeading, unit.player)
@@ -602,7 +629,11 @@ local function ExecuteTrigger(trigger, frame)
                 if unitID then
                   if not isBuilding then
                     local heading = (unit.heading - 180)/360 * 2 * math.pi
-                    Spring.SetUnitRotation(unitID, 0, heading, 0)
+                    if drop and gameframe > 1 then
+                      Spring.MoveCtrl.SetRotation(unitID, 0, heading, 0)
+                    else
+                      Spring.SetUnitRotation(unitID, 0, heading, 0)
+                    end
                   end
                   createdUnits[unitID] = true
                   if unit.groups and next(unit.groups) then

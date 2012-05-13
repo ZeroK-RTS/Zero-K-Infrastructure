@@ -1,4 +1,6 @@
-﻿<Window x:Class="MissionEditor2.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+﻿<!-- ======== this file defines the GUI in the main window for trigger/condition/action parameters
+    and maybe some other stuff as well ======== -->
+<Window x:Class="MissionEditor2.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:MissionEditor2" xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock" xmlns:Actions="clr-namespace:CMissionLib.Actions;assembly=CMissionLib"
         xmlns:CMissionLib="clr-namespace:CMissionLib;assembly=CMissionLib" Title="{Binding Mission.Name, RelativeSource={RelativeSource Self}}" Height="600" Width="1000"
         Name="window" DataContext="{Binding RelativeSource={RelativeSource Self}}" WindowState="Maximized" Loaded="window_Loaded" UseLayoutRounding="True">
@@ -329,7 +331,63 @@
                 <GroupBox Grid.Row="1" Header="Description">
                     <TextBlock TextWrapping="Wrap">
                         This action creates a new objective with the specified ID. You can define the objective title and description.
-                        Objectives can be "Complete", "Incomplete" or "Failed". In the future these will be selected from a drop-down box.
+                        Objective status can be "Complete", "Incomplete" or "Failed". In the future these will be selected from a drop-down box.
+                    </TextBlock>
+                </GroupBox>
+            </Grid>
+        </DataTemplate>
+
+        <!-- ======== ModifyObjective Template ======== -->
+
+        <DataTemplate x:Key="modifyObjectiveTemplate">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <GroupBox Header="Settings">
+                    <StackPanel>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">ID</Label>
+                            <TextBox DockPanel.Dock="Left" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
+                        </DockPanel>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Title</Label>
+                            <TextBox DockPanel.Dock="Left" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
+                        </DockPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label>Description</Label>
+                            <TextBox Grid.Column="1" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
+                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="10" TextWrapping="Wrap" />
+                        </Grid>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Status</Label>
+                            <TextBox DockPanel.Dock="Left" Text="{Binding Status, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
+                        </DockPanel>
+                        <!-->
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Status</Label>
+                            <ComboBox x:Name ="StatusComboBox" DockPanel.Dock="Left" Text="Status" SelectedItem="{Binding Status}">
+                                <ComboBoxItem Name="Complete">Complete</ComboBoxItem>
+                                <ComboBoxItem Name="Incomplete">Incomplete</ComboBoxItem>
+                                <ComboBoxItem Name="Failed">Failed</ComboBoxItem>
+                            </ComboBox>
+                        </DockPanel>
+                        </!-->
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Description">
+                    <TextBlock TextWrapping="Wrap">
+                        This action modifies the objective with the specified ID. You can define the objective title and description.
+                        Objective status can be "Complete", "Incomplete" or "Failed". In the future these will be selected from a drop-down box.
                     </TextBlock>
                 </GroupBox>
             </Grid>
