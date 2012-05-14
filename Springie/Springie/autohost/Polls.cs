@@ -27,7 +27,13 @@ namespace Springie.autohost
                 if (voteStarter != null)
                 {
                     ah.SayBattle(string.Format("Do you want to resign team {0}? !vote 1 = yes, !vote 2 = no", voteStarter.AllyID + 1));
-                    winCount = context.Players.Count(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator)/2 + 1;
+                    int cnt = 0;
+                    foreach (var p in context.Players.Where(x => x.AllyID == voteStarter.AllyID && !x.IsSpectator)) {
+                        if (p.IsIngame || tas.MyBattle.Users.Any(x=>x.Name == p.Name)) {
+                            if (!tas.ExistingUsers[p.Name].IsAway) cnt++;
+                        }
+                    }
+                    winCount = cnt /2 + 1;
                     return true;
                 }
             }
@@ -55,7 +61,7 @@ namespace Springie.autohost
 
             var yesCnt = userVotes.Count(x => x.Value == 1);
             var noCnt = userVotes.Count(x => x.Value == 2);
-            var success = yesCnt > noCnt && (yesCnt >= winCount || yesCnt > 1);
+            var success = yesCnt >= winCount;
             var endPoll = hackEndTimeVote || yesCnt >= winCount || noCnt >= winCount;
             if (endPoll)
             {
@@ -111,7 +117,7 @@ namespace Springie.autohost
                     {
                         users.Add(us.Name);
                         votes.Add(0);
-                        if (!us.IsSpectator) initialUserCount++;
+                        if (!us.IsSpectator && !us.LobbyUser.IsAway) initialUserCount++;
                     }
                 }
             }
@@ -149,7 +155,7 @@ namespace Springie.autohost
                     winVote = i + 1;
                     return true;
                 }
-                if (hackEndTimeVote && sums[i] >= 2 && sums[i] == max && maxCount == 1)
+                if (hackEndTimeVote && sums[i] >= winLimit && sums[i] == max && maxCount == 1)
                 {
                     winVote = i + 1;
                     return true;
@@ -258,7 +264,7 @@ namespace Springie.autohost
     public class VoteKick: AbstractPoll, IVotable
     {
         string player;
-        public override double Ratio { get { return 0.66; } }
+        public override double Ratio { get { return 0.5; } }
 
         public VoteKick(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
@@ -486,7 +492,7 @@ namespace Springie.autohost
 
     public class VoteExit: AbstractPoll, IVotable
     {
-        public override double Ratio { get { return 0.66; } }
+        public override double Ratio { get { return 0.5; } }
         public VoteExit(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
         public bool Init(TasSayEventArgs e, string[] words)
