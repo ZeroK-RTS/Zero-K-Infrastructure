@@ -43,7 +43,7 @@ namespace LobbyClient
 
             public JugglerConfig(Account acc) {
                 Active = acc.MatchMakingActive;
-                foreach (var item in acc.Preferences.Where(x=>x.Key != AutohostMode.MediumTeams && x.Key != AutohostMode.Planetwars)) Preferences.Add(new PreferencePair() { Mode = item.Key, Preference = item.Value });
+                foreach (var item in acc.Preferences) Preferences.Add(new PreferencePair() { Mode = item.Key, Preference = item.Value });
             }
 
             public JugglerConfig() {}
