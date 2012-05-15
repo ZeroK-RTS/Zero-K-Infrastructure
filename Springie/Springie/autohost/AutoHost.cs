@@ -906,7 +906,7 @@ namespace Springie.autohost
             }
             toNotify.Clear();
 
-            if (SpawnConfig == null && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes >15) ServerVerifyMap(true);
+            if (SpawnConfig == null && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes >5) ServerVerifyMap(true);
             if (SpawnConfig == null) Program.main.RequestJuggle();
 
         }
