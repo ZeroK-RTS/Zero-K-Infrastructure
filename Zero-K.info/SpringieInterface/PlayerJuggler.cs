@@ -137,14 +137,16 @@ namespace ZeroKWeb.SpringieInterface
                     // game not running add all nonspecs
                 else
                 {
-                    var notPlaying =
+                    /*var notPlaying =
                         ah.LobbyContext.Players.Where(
                             x =>
                             !x.IsSpectator && !x.IsIngame && !ingames.ContainsKey(x.LobbyID) && 
                             !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator && y.IsIngame)).Select(
                                 x => (int?)x.LobbyID).ToList();
                     // game running, add all those that are not playing and are not specs
-                    lobbyIds.AddRange(notPlaying);
+                     lobbyIds.AddRange(notPlaying);*/
+
+
                 }
             }
 
