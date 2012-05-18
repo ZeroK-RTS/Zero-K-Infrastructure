@@ -25,7 +25,7 @@ namespace ZkData
         [Description("Cooperative (vs AI)")]
         GameChickens = 5,
         
-        [Description("Small teams (2v2-7v7)")]
+        [Description("Small teams (2v2-5v5)")]
         SmallTeams = 6,
         
         [Description("Big teams (5v5+)")]
