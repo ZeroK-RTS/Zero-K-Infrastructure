@@ -26,9 +26,7 @@ namespace ZeroKLobby.Notifications
 		Battle previousBattle;
 
 		readonly Random random = new Random();
-		GenericBar reconnectBar;
-
-		readonly Spring spring;
+        readonly Spring spring;
 		bool suppressSideChangeEvent;
 		readonly Timer timer = new Timer();
 
@@ -63,9 +61,6 @@ namespace ZeroKLobby.Notifications
 					client.ChangeMyUserStatus(isInGame:false);
 					client.ChangeMyBattleStatus(ready: true);
 
-					Program.MainWindow.Dispatcher.Invoke(new Action(() => {
-						barContainer.btnDetail.Enabled = true;
-					}));
 
 					if (e.Data) {
 						Program.MainWindow.InvokeFunc(() => {
@@ -78,8 +73,6 @@ namespace ZeroKLobby.Notifications
 						});
 					
 					}
-
-					if (e.Data || IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 				};
 
 			spring.SpringStarted += (s, e) =>
@@ -96,6 +89,7 @@ namespace ZeroKLobby.Notifications
 			client.BattleJoined += (s, e) =>
 				{
 					if (!isVisible) ManualBattleStarted();
+                    if (IsHostGameRunning()) barContainer.btnDetail.Text = "Rejoin"; else barContainer.btnDetail.Text = "Start";
 					//client.ChangeMyUserStatus(false, false);
 					var battle = client.MyBattle;
 					lastBattleFounder = battle.Founder.Name;
@@ -147,8 +141,6 @@ namespace ZeroKLobby.Notifications
 			cbSide.DrawMode = DrawMode.OwnerDrawFixed;
 			cbSide.DrawItem += cbSide_DrawItem;
 
-			client.MyBattleHostExited += (s, e) => RemoveReconnectBar();
-
 			client.MyBattleMapChanged += (s, e) =>
 				{
 					if (client.MyBattle != null && !Program.SpringScanner.HasResource(client.MyBattle.MapName))
@@ -159,7 +151,12 @@ namespace ZeroKLobby.Notifications
 					RefreshTooltip();
 				};
 
-			client.RequestBattleStatus += (s, e) =>
+            client.MyBattleHostExited += (s, e) => {
+                barContainer.btnDetail.Text = "Start";
+            };
+
+            
+            client.RequestBattleStatus += (s, e) =>
 				{
 					var battle = client.MyBattle;
 
@@ -192,7 +189,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 					             	TeamColor = Program.Conf.DefaultPlayerColorInt,
 												IsReady = true,
 					             };
-					if (status.SyncStatus == SyncStatuses.Synced && IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 					client.SendMyBattleStatus(status);
 				};
 
@@ -200,6 +196,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				{
 					try
 					{
+                        this.barContainer.btnDetail.Text = "Rejoin";
                         if (client.MyBattleStatus.SyncStatus == SyncStatuses.Synced) if (Utils.VerifySpringInstalled())
                         {
                             if (spring.IsRunning) spring.ExitGame();
@@ -217,10 +214,9 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				{
 					if (client.MyBattleStatus != null)
 					{
-						barContainer.btnDetail.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced &&
-						                                 !client.MyBattle.IsInGame;
+						barContainer.btnDetail.Enabled = client.MyBattleStatus.SyncStatus == SyncStatuses.Synced;
 
-						if (client.MyBattleStatus.IsSpectator && cbReady.Checked) // i was spectated
+                        if (client.MyBattleStatus.IsSpectator && cbReady.Checked) // i was spectated
 							ChangeGuiSpectatorWithoutEvent(true);
                         if (!client.MyBattleStatus.IsSpectator && !cbReady.Checked) ChangeGuiSpectatorWithoutEvent(false);//i was unspectated
 					}
@@ -228,6 +224,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 
 			client.BattleClosed += (s, e) =>
 				{
+                    this.barContainer.btnDetail.Text = "Start";
 					if (gameBox.Image != null) gameBox.Image.Dispose();
 					gameBox.Image = null;
 					cbSide.Visible = false;
@@ -398,7 +395,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 				{
 					// if didnt have map and have now, set it
 					newStatus.SyncStatus = SyncStatuses.Synced;
-					if (IsHostGameRunning()) Program.MainWindow.InvokeFunc(CreateReconnectBar);
 				}
 			}
 
@@ -411,26 +407,15 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			if (newStatus != currentStatus) client.SendMyBattleStatus(newStatus);
 		}
 
-		void CreateReconnectBar()
-		{
-			RemoveReconnectBar();
-			reconnectBar = new GenericBar()
-			               {
-			               	DetailButtonLabel = "Rejoin",
-			               	Text = "Wanna (re)join running game? Click left to connect!  WARNING: THIS WILL REPLAY GAME - IT WILL LAG FOR SEVERAL MINUTES"
-			               };
-			reconnectBar.DetailButtonClicked += (s2, e2) =>
-				{
-					if (Utils.VerifySpringInstalled())
-					{
-                        if (spring.IsRunning) spring.ExitGame();
-                        if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode);
-                        else spring.StartGame(client, null, null, lastScript, Program.Conf.UseSafeMode);
-						Program.NotifySection.RemoveBar(reconnectBar);
-					}
-				};
-			Program.NotifySection.AddBar(reconnectBar);
-		}
+        public void Rejoin() {
+            if (Utils.VerifySpringInstalled())
+            {
+                if (spring.IsRunning) spring.ExitGame();
+                if (client.MyBattle != null) spring.StartGame(client, null, null, null, Program.Conf.UseSafeMode);
+                else spring.StartGame(client, null, null, lastScript, Program.Conf.UseSafeMode);
+            }
+        }
+
 
 		bool IsHostGameRunning()
 		{
@@ -462,15 +447,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 			else Program.ToolTip.SetText(gameBox, null);
 		}
 
-		void RemoveReconnectBar()
-		{
-			if (reconnectBar != null)
-			{
-				reconnectBar.UnsubscribeEvents(this);
-				Program.NotifySection.RemoveBar(reconnectBar);
-				reconnectBar = null;
-			}
-		}
 
 		public Control GetControl()
 		{
@@ -495,7 +471,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		public void DetailClicked(NotifyBarContainer container)
 		{
 			NavigationControl.Instance.Path = "chat/battle";
-			client.Say(TasClient.SayPlace.Battle, "", "!start", false);
+            if (IsHostGameRunning()) Rejoin(); else client.Say(TasClient.SayPlace.Battle, "", "!start", false);
 		}
 
 		void BattleIconManager_BattleChanged(object sender, EventArgs<BattleIcon> e)

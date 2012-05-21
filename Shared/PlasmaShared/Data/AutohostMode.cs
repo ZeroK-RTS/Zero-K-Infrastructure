@@ -10,10 +10,10 @@ namespace ZkData
     {
         None = 0,
         
-        [Description("Medium teams (disabled)")]
+        [Description("-")]
         MediumTeams = 1,
         
-        [Description("PlanetWars (disabled)")]
+        [Description("-")]
         Planetwars = 2,
         
         [Description("1v1")]
@@ -28,7 +28,7 @@ namespace ZkData
         [Description("Small teams (2v2-5v5)")]
         SmallTeams = 6,
         
-        [Description("Big teams (5v5+)")]
+        [Description("Big teams (5v5-16v16)")]
         BigTeams = 7,
     }
 

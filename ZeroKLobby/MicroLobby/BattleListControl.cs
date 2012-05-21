@@ -253,7 +253,7 @@ namespace ZeroKLobby.MicroLobby
         }
 
         readonly Regex filterOrSplit = new Regex(@"\||\bOR\b");
-        bool showOfficial;
+        bool showOfficial = true;
 
         void FilterBattles()
         {
