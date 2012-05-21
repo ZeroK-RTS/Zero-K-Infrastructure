@@ -349,7 +349,9 @@ namespace ZeroKLobby.MicroLobby
 
         void Sort()
         {
-            if (sortByPlayers) view = view.OrderByDescending(bi => bi.Battle.NonSpectatorCount).ToList();
+            var ret = view.OrderByDescending(x => x.IsServerManaged);
+            if (sortByPlayers) ret = ret.ThenByDescending(bi => bi.Battle.NonSpectatorCount);
+            view = ret.ToList();
         }
 
         void UpdateTooltip(Battle battle)

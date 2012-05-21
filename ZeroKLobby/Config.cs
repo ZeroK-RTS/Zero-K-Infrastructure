@@ -168,6 +168,8 @@ namespace ZeroKLobby
         public Color JoinColor { get { return Color.FromArgb(JoinColorInt); } set { JoinColorInt = value.ToArgb(); } }
         [Browsable(false)]
         public int JoinColorInt = Color.FromArgb(42, 140, 42).ToArgb();
+        
+        [Browsable(false)]
         public WindowState LastWindowState { get; set; }
 
         [Category("Chat")]
@@ -264,10 +266,6 @@ namespace ZeroKLobby
         [Browsable(false)]
         public bool ShowOfficialBattles { get { return showOfficialBattles; } set { showOfficialBattles = value; } }
 
-        [Category("General")]
-        [DisplayName("Sort Battles by Players")]
-        [Description("Show battles with the most players first.")]
-        public bool SortBattlesByPlayers { get; set; }
         [Category("Connection")]
         [DisplayName("Spring Server Address")]
         [Description("Hostname of spring server")]

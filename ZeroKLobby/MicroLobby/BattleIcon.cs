@@ -107,7 +107,7 @@ namespace ZeroKLobby.MicroLobby
 
     public bool HitTest(int x, int y)
     {
-      return x > 3 && x < 64 + 3 && y > 3 && y < 64 + 3;
+      return x > 3 && x < 290 && y > 3 && y < 64 + 3;
     }
 
     public void SetPlayers()
