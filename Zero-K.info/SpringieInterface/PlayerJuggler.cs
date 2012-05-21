@@ -193,7 +193,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 // remove all but biggest below merge limit
-                var biggest = groupBins.OrderByDescending(x => x.ManuallyJoined.Count).First();
+                var biggest = groupBins.OrderByDescending(x => x.ManuallyJoined.Count).FirstOrDefault();
                 groupBins.RemoveAll(x => x != biggest && x.ManuallyJoined.Count < (x.Config.MergeSmallerThan ?? 0));
 
                 bins.AddRange(groupBins);
