@@ -93,7 +93,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (entry != null) {
                     Battle joinedBattle;
                     tas.Say(TasClient.SayPlace.Channel, "juggler", string.Format("last entry {0}: {1} -> {2}", entry.Name, entry.OriginalAutohost, entry.TargetAutohost), false);
-                    if (tas.ExistingBattles.TryGetValue(args.BattleID, out joinedBattle) && joinedBattle.Founder.Name == entry.OriginalAutohost) {
+                    if (tas.ExistingBattles.TryGetValue(args.BattleID, out joinedBattle) && joinedBattle.Founder.Name != entry.TargetAutohost) {
                         tas.ForceJoinBattle(args.UserName, entry.TargetAutohost);
                     }
                 }
