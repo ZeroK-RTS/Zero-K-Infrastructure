@@ -83,7 +83,6 @@ namespace ZeroKWeb.SpringieInterface
                     var entry = LastPlayerMoves.FirstOrDefault(x => x.Name == args.UserName);
                     if (entry != null) {
                         Battle joinedBattle;
-                        tas.Say(TasClient.SayPlace.Channel, "juggler", string.Format("last entry {0}: {1} -> {2}", entry.Name, entry.OriginalAutohost, entry.TargetAutohost), false);
                         if (tas.ExistingBattles.TryGetValue(args.BattleID, out joinedBattle) && joinedBattle.Founder.Name != entry.TargetAutohost && entry.OriginalAutohost != null) if (joinedBattle.Founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') == entry.OriginalAutohost.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')) tas.ForceJoinBattle(args.UserName, entry.TargetAutohost);
                     }
                 };
@@ -261,7 +260,7 @@ namespace ZeroKWeb.SpringieInterface
             LastPlayerMoves =  new List<JugglerMove>(); // this is needed to prevent fighting when commands are executed below
 
             if (bins.Any()) {
-                SplitBins(autohosts, juggledAccounts, sb, bins);
+                SplitBins(autohosts, juggledAccounts, sb, bins, ret.PlayerMoves);
                 sb.AppendLine("After split:");
                 PrintBins(juggledAccounts, bins, sb);
 
@@ -372,7 +371,7 @@ namespace ZeroKWeb.SpringieInterface
             Global.Nightwatch.Tas.Extensions.PublishJugglerState(state);
         }
 
-        private static void SplitBins(List<JugglerAutohost> autohosts, Dictionary<int, Account> juggledAccounts, StringBuilder sb, List<Bin> bins) {
+        private static void SplitBins(List<JugglerAutohost> autohosts, Dictionary<int, Account> juggledAccounts, StringBuilder sb, List<Bin> bins, List<JugglerMove> playerMoves ) {
             // split too big bins -> move top players to another autohost
             foreach (var b in new List<Bin>(bins)) {
                 if (b.Assigned.Count > (b.Config.SplitBiggerThan ?? 99)) {
@@ -395,6 +394,25 @@ namespace ZeroKWeb.SpringieInterface
                             moved += clanGrp.Count();
                             if (moved >= toMove) break;
                         }
+
+                        foreach (var acc in b.Assigned) {
+                            playerMoves.Add(new JugglerMove() { Name = juggledAccounts[acc].Name,
+                            OriginalAutohost = b.Autohost.LobbyContext.AutohostName,
+                            TargetAutohost =  b.Autohost.LobbyContext.AutohostName
+                            });
+                        }
+
+                        foreach (var acc in target.Assigned)
+                        {
+                            playerMoves.Add(new JugglerMove()
+                            {
+                                Name = juggledAccounts[acc].Name,
+                                OriginalAutohost = b.Autohost.LobbyContext.AutohostName,
+                                TargetAutohost = target.Autohost.LobbyContext.AutohostName
+                            });
+                        }
+
+
                     }
                 }
             }
