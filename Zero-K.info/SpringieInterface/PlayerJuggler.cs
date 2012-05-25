@@ -36,8 +36,7 @@ namespace ZeroKWeb.SpringieInterface
         {
             TasClient tas = Global.Nightwatch.Tas;  
 
-            tas.JoinChannel("juggler");
-
+            
             tas.Extensions.JugglerConfigReceived += (args, config) =>
                 {
                     if (args.UserName != GlobalConst.NightwatchName)
@@ -100,6 +99,12 @@ namespace ZeroKWeb.SpringieInterface
                         }
                     }
                 }
+            };
+
+
+            tas.LoginAccepted += (sender, args) =>
+            {
+                tas.JoinChannel("juggler");
             };
 
         }
