@@ -36,6 +36,8 @@ namespace ZeroKWeb.SpringieInterface
         {
             TasClient tas = Global.Nightwatch.Tas;  
 
+            tas.JoinChannel("juggler");
+
             tas.Extensions.JugglerConfigReceived += (args, config) =>
                 {
                     if (args.UserName != GlobalConst.NightwatchName)
@@ -86,9 +88,11 @@ namespace ZeroKWeb.SpringieInterface
 
             tas.BattleUserJoined += (sender, args) =>
             {
+                tas.Say(TasClient.SayPlace.Channel, "juggler",string.Format("{0} joined {1}", args.UserName, args.BattleID), false);
                 var entry = LastPlayerMoves.FirstOrDefault(x => x.Name == args.UserName);
                 if (entry != null) {
                     Battle joinedBattle;
+                    tas.Say(TasClient.SayPlace.Channel, "juggler", string.Format("last entry {0}: {1} -> {2}", entry.Name, entry.OriginalAutohost, entry.TargetAutohost), false);
                     if (tas.ExistingBattles.TryGetValue(args.BattleID, out joinedBattle) && joinedBattle.Founder.Name == entry.OriginalAutohost) {
                         tas.ForceJoinBattle(args.UserName, entry.TargetAutohost);
                     }
@@ -320,6 +324,8 @@ namespace ZeroKWeb.SpringieInterface
 
             
             LastPlayerMoves = new List<JugglerMove>(ret.PlayerMoves);
+
+            tas.Say(TasClient.SayPlace.Channel, "juggler", ret.Message, false);
 
             return ret;
         }
