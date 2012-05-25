@@ -87,12 +87,11 @@ namespace ZeroKWeb.SpringieInterface
 
             tas.BattleUserJoined += (sender, args) =>
             {
-                tas.Say(TasClient.SayPlace.Channel, "juggler",string.Format("{0} joined {1}", args.UserName, args.BattleID), false);
                 var entry = LastPlayerMoves.FirstOrDefault(x => x.Name == args.UserName);
                 if (entry != null) {
                     Battle joinedBattle;
                     tas.Say(TasClient.SayPlace.Channel, "juggler", string.Format("last entry {0}: {1} -> {2}", entry.Name, entry.OriginalAutohost, entry.TargetAutohost), false);
-                    if (tas.ExistingBattles.TryGetValue(args.BattleID, out joinedBattle) && joinedBattle.Founder.Name != entry.TargetAutohost) {
+                    if (tas.ExistingBattles.TryGetValue(args.BattleID, out joinedBattle) && joinedBattle.Founder.Name != entry.TargetAutohost && entry.OriginalAutohost != null) {
                         if (joinedBattle.Founder.Name.TrimEnd('0','1','2','3','4','5','6','7','8','9')== entry.OriginalAutohost.TrimEnd('0','1','2','3','4','5','6','7','8','9'))
                         {
                             tas.ForceJoinBattle(args.UserName, entry.TargetAutohost);
@@ -106,6 +105,8 @@ namespace ZeroKWeb.SpringieInterface
             {
                 tas.JoinChannel("juggler");
             };
+
+            tas.JoinChannel("juggler");
 
         }
 
