@@ -94,7 +94,10 @@ namespace ZeroKWeb.SpringieInterface
                     Battle joinedBattle;
                     tas.Say(TasClient.SayPlace.Channel, "juggler", string.Format("last entry {0}: {1} -> {2}", entry.Name, entry.OriginalAutohost, entry.TargetAutohost), false);
                     if (tas.ExistingBattles.TryGetValue(args.BattleID, out joinedBattle) && joinedBattle.Founder.Name != entry.TargetAutohost) {
-                        tas.ForceJoinBattle(args.UserName, entry.TargetAutohost);
+                        if (joinedBattle.Founder.Name.TrimEnd('0','1','2','3','4','5','6','7','8','9')== entry.OriginalAutohost.TrimEnd('0','1','2','3','4','5','6','7','8','9'))
+                        {
+                            tas.ForceJoinBattle(args.UserName, entry.TargetAutohost);
+                        }
                     }
                 }
             };
