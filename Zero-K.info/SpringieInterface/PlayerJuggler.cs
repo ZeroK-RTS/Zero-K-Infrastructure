@@ -322,10 +322,15 @@ namespace ZeroKWeb.SpringieInterface
 
             ret.Message = sb.ToString();
 
-            
+            tas.Say(TasClient.SayPlace.Channel, "juggler", ret.Message, false);
+
             LastPlayerMoves = new List<JugglerMove>(ret.PlayerMoves);
 
-            tas.Say(TasClient.SayPlace.Channel, "juggler", ret.Message, false);
+            foreach (var entry in LastPlayerMoves) {
+                tas.Say(TasClient.SayPlace.Channel, "juggler", string.Format("{0}: {1}->{2}", entry.Name, entry.OriginalAutohost, entry.TargetAutohost), false);
+            }
+
+
 
             return ret;
         }
