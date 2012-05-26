@@ -121,50 +121,57 @@ namespace ZeroKWeb.SpringieInterface
 
 			// this cycle performs actual user adding to teams
 			var cnt = 0;
+            
 			while (ranker.Count > 0) {
-				var minsum = Double.MaxValue;
-				var minid = 0;
-				for (var i = 0; i < teamCount; ++i) {
-					var l = teamUsers[i];
-					// pick only current "row" and find the one with least sum
-					if (l.Count == cnt/teamCount) {
-						var teamAvg = teamSums[i]/teamUsers[i].Count;
-                        if (teamCount < minsum) {
-							minid = i;
-							minsum = teamAvg;
-						}
-					}
-				}
+                List<int> lowPlayerTeams = new List<int>();
+                // pick only current "row" and find the one with least sum
+                for (var i = 0; i < teamCount; ++i) if (teamUsers[i].Count == cnt/teamCount) lowPlayerTeams.Add(i);
 
-				var candidates = new List<UsRank>();
+                var bestEloDif = double.MaxValue;
+                UsRank bestPlayer = null;
+                int bestTeam = 0;
 
-				// get list of clans assigned to other teams
-				var assignedClans = new List<int>();
-				for (var i = 0; i < teamClans.Length; ++i) {
-					if (i != minid) assignedClans.AddRange(teamClans[i]);
-				}
+                foreach (var teamid in lowPlayerTeams) {
+                    var candidates = new List<UsRank>();
+                    
+                    // first try to get some with same clan
+                    if (teamClans[teamid].Count > 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && teamClans[teamid].Contains(x.ClanID.Value)));
 
-				// first try to get some with same clan
-				if (teamClans[minid].Count > 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && teamClans[minid].Contains(x.ClanID.Value)));
+                    // we still dont have any candidates try to get anyone
+                    if (candidates.Count == 0) candidates.AddRange(ranker);
 
-				// we dont have any candidates try to get clanner from unassigned clan
-				if (candidates.Count == 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && !assignedClans.Contains(x.ClanID.Value)));
+                    // get candidate which most elo
+                    var testedUser = candidates.OrderBy(x => x.Elo).First();
 
-				// we still dont have any candidates try to get anyone
-				if (candidates.Count == 0) candidates.AddRange(ranker);
+                    double otherTeamsAvgElo = 0;
+                    int teamCnt = 0;
+                        double teamSum = 0;
+                        for (int i = 0; i < teamCount; i++) {
+                            if (i != teamid && teamUsers[i].Count > 0) {
+                                teamSum += teamSums[i] / teamUsers[i].Count;
+                                teamCnt++;
+                            }
+                        }
 
-				// get candidate which increases team elo most (round elo to tens to add some randomness)
-				var pickedUser = candidates.OrderBy(x=>x.Elo).First();
+                        if (teamCnt > 0) {
+                           otherTeamsAvgElo = teamSum/ teamCnt;
+                        }
+                    
+                    var eloDif = Math.Abs(otherTeamsAvgElo - (teamSums[teamid] + testedUser.Elo) / (teamUsers[teamid].Count + 1.0));
+                    if (eloDif < bestEloDif) {
+                        bestPlayer = testedUser;
+                        bestTeam = teamid;
+                    }
+                }
 
-				teamUsers[minid].Add(pickedUser);
-				teamSums[minid] += pickedUser.Elo;
+                teamUsers[bestTeam].Add(bestPlayer);
+				teamSums[bestTeam] += bestPlayer.Elo;
 
-				if (pickedUser.ClanID != null) {
+				if (bestPlayer.ClanID != null) {
 					// if we work with clans add user's clan to clan list for his team
-					if (!teamClans[minid].Contains(pickedUser.ClanID.Value)) teamClans[minid].Add(pickedUser.ClanID.Value);
+					if (!teamClans[bestTeam].Contains(bestPlayer.ClanID.Value)) teamClans[bestTeam].Add(bestPlayer.ClanID.Value);
 				}
-
-				ranker.Remove(pickedUser);
+                ranker.Remove(bestPlayer);
 
 				cnt++;
 			}
@@ -177,6 +184,7 @@ namespace ZeroKWeb.SpringieInterface
 
 			var t = "";
 
+            var lastTeamElo = 0.0;
 			for (var i = 0; i < teamCount; ++i) {
 				// permute one alliance
 				var rdindex = rand.Next(allys.Count);
@@ -186,6 +194,9 @@ namespace ZeroKWeb.SpringieInterface
 				if (teamUsers[i].Count > 0) {
 					if (i > 0) t += ":";
 					t += (allynum + 1) + "=" + Math.Round(teamSums[i]/(teamUsers[i].Count() != 0 ? teamUsers[i].Count() : 1));
+                    var teamElo = teamSums[0] / teamUsers[i].Count;
+                    if (lastTeamElo != 0) t += string.Format(" ({0}%)", PlasmaShared.Utils.GetWinChancePercent(Math.Abs(teamElo - lastTeamElo)));
+                    lastTeamElo = teamElo;
 				}
 
 				foreach (var u in teamUsers[i]) {
