@@ -128,9 +128,10 @@ namespace ZeroKWeb.SpringieInterface
 					var l = teamUsers[i];
 					// pick only current "row" and find the one with least sum
 					if (l.Count == cnt/teamCount) {
-						if (teamSums[i] < minsum) {
+						var teamAvg = teamSums[i]/teamUsers[i].Count;
+                        if (teamCount < minsum) {
 							minid = i;
-							minsum = teamSums[i];
+							minsum = teamAvg;
 						}
 					}
 				}
@@ -152,19 +153,8 @@ namespace ZeroKWeb.SpringieInterface
 				// we still dont have any candidates try to get anyone
 				if (candidates.Count == 0) candidates.AddRange(ranker);
 
-				var maxElo = Double.MinValue;
-				var maxUsers = new List<UsRank>();
 				// get candidate which increases team elo most (round elo to tens to add some randomness)
-				foreach (var c in candidates) {
-					var newElo = ((teamUsers[minid].Sum(x => x.Elo) + Math.Round(c.Elo/10)*10))/(teamUsers.Count() + 1);
-					if (newElo > maxElo) {
-						maxUsers.Clear();
-						maxUsers.Add(c);
-						maxElo = newElo;
-					}
-					else if (newElo == maxElo) maxUsers.Add(c);
-				}
-				var pickedUser = maxUsers[rand.Next(maxUsers.Count)];
+				var pickedUser = candidates.OrderBy(x=>x.Elo).First();
 
 				teamUsers[minid].Add(pickedUser);
 				teamSums[minid] += pickedUser.Elo;
