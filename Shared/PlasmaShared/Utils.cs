@@ -29,6 +29,82 @@ namespace PlasmaShared
 		}
 
 
+        public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source,
+    Func<TSource, TKey> selector)
+        {
+            return source.MinBy(selector, Comparer<TKey>.Default);
+        }
+
+        public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> selector, IComparer<TKey> comparer)
+        {
+            using (IEnumerator<TSource> sourceIterator = source.GetEnumerator())
+            {
+                if (!sourceIterator.MoveNext())
+                {
+                    throw new InvalidOperationException("Sequence was empty");
+                }
+                TSource min = sourceIterator.Current;
+                TKey minKey = selector(min);
+                while (sourceIterator.MoveNext())
+                {
+                    TSource candidate = sourceIterator.Current;
+                    TKey candidateProjected = selector(candidate);
+                    if (comparer.Compare(candidateProjected, minKey) < 0)
+                    {
+                        min = candidate;
+                        minKey = candidateProjected;
+                    }
+                }
+                return min;
+            }
+        }
+
+        public static TSource MaxBy<TSource, TKey>(this IEnumerable<TSource> source,
+           Func<TSource, TKey> selector, IComparer<TKey> comparer)
+        {
+            using (IEnumerator<TSource> sourceIterator = source.GetEnumerator())
+            {
+                if (!sourceIterator.MoveNext())
+                {
+                    throw new InvalidOperationException("Sequence was empty");
+                }
+                TSource min = sourceIterator.Current;
+                TKey minKey = selector(min);
+                while (sourceIterator.MoveNext())
+                {
+                    TSource candidate = sourceIterator.Current;
+                    TKey candidateProjected = selector(candidate);
+                    if (comparer.Compare(candidateProjected, minKey) > 0)
+                    {
+                        min = candidate;
+                        minKey = candidateProjected;
+                    }
+                }
+                return min;
+            }
+        }
+
+        public static double StdDev(this IEnumerable<double> values)
+        {
+            // ref: http://warrenseen.com/blog/2006/03/13/how-to-calculate-standard-deviation/
+            double mean = 0.0;
+            double sum = 0.0;
+            double stdDev = 0.0;
+            int n = 0;
+            foreach (double val in values)
+            {
+                n++;
+                double delta = val - mean;
+                mean += delta / n;
+                sum += delta * (val - mean);
+            }
+            if (1 < n)
+                stdDev = Math.Sqrt(sum / (n - 1));
+
+            return stdDev;
+        }
+
 		public static bool CanRead(string filename)
 		{
 			if (!File.Exists(filename)) return true;

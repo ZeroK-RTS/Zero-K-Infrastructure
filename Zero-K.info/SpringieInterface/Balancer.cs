@@ -20,30 +20,27 @@ namespace ZeroKWeb.SpringieInterface
 
     public class Balancer
     {
+        private List<BalanceItem> balanceItems;
+
+        private double bestStdDev = double.MaxValue;
+        private List<BalanceTeam> bestTeams;
+        private readonly List<BalanceTeam> teams = new List<BalanceTeam>();
+
         public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise) {
             var config = context.GetConfig();
             var playerCount = context.Players.Count(x => !x.IsSpectator);
 
             // game is managed, is bigger than split limit and wants to start -> split into two and issue starts
-            if (isGameStart && context.GetMode() != AutohostMode.None && config.SplitBiggerThan != null && config.SplitBiggerThan < playerCount)
-            {
+            if (isGameStart && context.GetMode() != AutohostMode.None && config.SplitBiggerThan != null && config.SplitBiggerThan < playerCount) {
                 new Thread(() =>
-                {
-                    try
                     {
-                        SplitAutohost(context);
-                    }
-                    catch { };
-                }).Start();
-                return new BalanceTeamsResult()
-                {
-                    CanStart = false,
-                    Message = string.Format("Game too big - splitting into two - max players is {0} here", config.SplitBiggerThan)
-                };
+                        try {
+                            SplitAutohost(context);
+                        } catch {}
+                        ;
+                    }).Start();
+                return new BalanceTeamsResult() { CanStart = false, Message = string.Format("Game too big - splitting into two - max players is {0} here", config.SplitBiggerThan) };
             }
-
-
-
 
             if (clanWise == null && (config.AutohostMode == AutohostMode.MediumTeams || config.AutohostMode == AutohostMode.BigTeams || config.AutohostMode == AutohostMode.SmallTeams)) clanWise = true;
 
@@ -69,170 +66,146 @@ namespace ZeroKWeb.SpringieInterface
             return res;
         }
 
-        private static BalanceTeamsResult LegacyBalance(int teamCount, bool clanwise, BattleContext b) {
+        public List<BalanceTeam> CloneTeams(List<BalanceTeam> t) {
+            return new List<BalanceTeam>(t.Select(x => x.Clone()));
+        }
+
+
+        private bool IsBadCombination(int itemIndex) {
+            var maxSize = Math.Ceiling(balanceItems.Count/(double)teams.Count);
+            if (teams.Any(x => x.Count > maxSize)) return false; // team too big cancel recursion
+            if (bestStdDev == Double.MaxValue) return true; // nothing found yet, keep searching
+            if (itemIndex == balanceItems.Count - 1) return true; // we are at the end, nothing to test deep
+
+            // check if future players can improve balance
+
+            var avgElos = new List<double>(); // list of avg team elos - '0' item is worst team elo
+            var worstTeam = teams.MinBy(x => x.AvgElo);
+            avgElos.Add(worstTeam.AvgElo);
+            avgElos.AddRange(teams.Where(x => x != worstTeam).Select(x => x.AvgElo));
+            var eloSum = worstTeam.EloSum;
+            var eloCnt = worstTeam.Count;
+
+            // does adding best players to worst team improve stddev ? If not - do not bother to check combos
+            foreach (var item in balanceItems.Skip(itemIndex).OrderByDescending(x => x.EloSum / x.Count)) {
+                eloSum += item.EloSum;
+                eloCnt += item.Count;
+                avgElos[0] = eloSum / eloCnt;
+                if (avgElos.StdDev() < bestStdDev) return true;
+            }
+
+            return false;
+        }
+
+
+        private BalanceTeamsResult LegacyBalance(int teamCount, bool clanwise, BattleContext b) {
             var ret = new BalanceTeamsResult();
 
-            ret.CanStart = true;
-            ret.Players = b.Players.ToList();
-            var db = new ZkDataContext();
-            var ranker = new List<UsRank>();
-            foreach (var u in b.Players) {
-                if (!u.IsSpectator) {
-                    var acc = db.Accounts.Where(x => x.LobbyID == u.LobbyID).FirstOrDefault();
+            try
+            {
+                ret.CanStart = true;
+                ret.Players = b.Players.ToList();
 
-                    ranker.Add(new UsRank(u.LobbyID, acc != null ? acc.EffectiveElo : 1500, (clanwise && acc != null) ? acc.ClanID : null));
+                var db = new ZkDataContext();
+                var accs = db.Accounts.Where(x => b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList().Contains(x.LobbyID)).ToList();
+                if (accs.Count < 1)
+                {
+                    ret.CanStart = false;
+                    return ret;
                 }
-            }
-            var totalPlayers = ranker.Count;
-
-            var rand = new Random();
-
-            if (teamCount < 1) teamCount = 1;
-            if (teamCount > ranker.Count) teamCount = ranker.Count;
-
-            var teamUsers = new List<UsRank>[teamCount];
-            for (var i = 0; i < teamUsers.Length; ++i) {
-                teamUsers[i] = new List<UsRank>();
-            }
-            var teamSums = new double[teamCount];
-
-            var teamClans = new List<int>[teamCount];
-            for (var i = 0; i < teamClans.Length; ++i) {
-                teamClans[i] = new List<int>();
-            }
-
-            var clans = "";
-            // remove clans that have less than 2 members - those are irelevant
-            foreach (var u in ranker) {
-                if (u.ClanID != null) {
-                    if (ranker.FindAll(delegate(UsRank x) { return x.ClanID == u.ClanID; }).Count < 2) u.ClanID = null;
-                    else clans += u.ClanID + ", ";
-                }
-            }
-
-            // this cycle performs actual user adding to teams
-            var cnt = 0;
-
-            while (ranker.Count > 0) {
-                var lowPlayerTeams = new List<int>();
-                // pick only current "row" and find the one with least sum
-                for (var i = 0; i < teamCount; ++i) {
-                    if (teamUsers[i].Count == cnt/teamCount) lowPlayerTeams.Add(i);
-                }
-
-                var bestEloDif = double.MaxValue;
-                UsRank bestPlayer = null;
-                var bestTeam = 0;
-
-                foreach (var teamid in lowPlayerTeams) {
-                    var candidates = new List<UsRank>();
-
-                    // get list of clans assigned to other teams
-                    var assignedClans = new List<int>();
-                    for (var i = 0; i < teamClans.Length; ++i) {
-                        if (i != teamid) assignedClans.AddRange(teamClans[i]);
+                balanceItems = new List<BalanceItem>();
+                if (clanwise)
+                {
+                    foreach (var clanGrp in accs.GroupBy(x => x.ClanID ?? x.LobbyID))
+                    {
+                        balanceItems.Add(new BalanceItem(clanGrp.ToArray()));
                     }
+                }
+                else
+                {
+                    foreach (var acc in accs)
+                    {
+                        balanceItems.Add(new BalanceItem(acc));
+                    }
+                }
 
-                    // first try to get some with same clan
-                    if (clanwise && teamClans[teamid].Count > 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && teamClans[teamid].Contains(x.ClanID.Value)));
+                if (teamCount < 1) teamCount = 1;
+                if (teamCount > balanceItems.Count) teamCount = balanceItems.Count;
 
-                    // get unassigned clanner
-                    //if (clanwise && candidates.Count == 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && !assignedClans.Contains(x.ClanID.Value)));
+                if (teamCount == 1)
+                {
+                    foreach (var p in ret.Players)
+                    {
+                        p.AllyID = 0;
+                    }
+                    return ret;
+                }
 
-                    // we still dont have any candidates try to get anyone
-                    if (candidates.Count == 0) candidates.AddRange(ranker);
+                for (var i = 0; i < teamCount; i++)
+                {
+                    teams.Add(new BalanceTeam());
+                }
 
-                    // get candidate which most elo
-                    var testedUser = candidates.OrderBy(x => x.Elo).First();
+                RecursiveBalance(0);
 
-                    double otherTeamsAvgElo = 0;
-                    var teamCnt = 0;
-                    double teamSum = 0;
-                    for (var i = 0; i < teamCount; i++) {
-                        if (i != teamid && teamUsers[i].Count > 0) {
-                            teamSum += teamSums[i]/teamUsers[i].Count;
-                            teamCnt++;
+                if (bestTeams == null)
+                {
+                    ret.CanStart = false;
+                    ret.Message = string.Format("Failed to balance {0}", (clanwise ? "- too many people from same clan?" : ""));
+                }
+                else
+                {
+                    bestTeams = bestTeams.Shuffle(); // permute
+
+                    var text = "";
+
+                    var lastTeamElo = 0.0;
+                    var allyNum = 0;
+                    foreach (var team in bestTeams)
+                    {
+                        if (allyNum > 0) text += " : ";
+                        text += string.Format("{0}={1}", (allyNum + 1), team.AvgElo);
+                        if (allyNum > 0) text += string.Format(" ({0}%)", Utils.GetWinChancePercent(lastTeamElo - team.AvgElo));
+                        lastTeamElo = team.AvgElo;
+
+                        foreach (var u in team.Items.SelectMany(x => x.LobbyId))
+                        {
+                            ret.Players.Single(x => x.LobbyID == u).AllyID = allyNum;
                         }
+                        allyNum++;
                     }
+                    text += ")";
 
-                    if (teamCnt > 0) otherTeamsAvgElo = teamSum/teamCnt;
-
-                    var eloDif = Math.Abs(otherTeamsAvgElo - (teamSums[teamid] + testedUser.Elo)/(teamUsers[teamid].Count + 1.0));
-                    if (eloDif < bestEloDif) {
-                        bestPlayer = testedUser;
-                        bestTeam = teamid;
-                    }
+                    ret.Message = String.Format("{0} players balanced {2} to {1} teams (ratings {3}", accs.Count, teamCount, clanwise ? "respecting clans" : "", text);
                 }
 
-                teamUsers[bestTeam].Add(bestPlayer);
-                teamSums[bestTeam] += bestPlayer.Elo;
-
-                if (bestPlayer.ClanID != null) {
-                    // if we work with clans add user's clan to clan list for his team
-                    if (!teamClans[bestTeam].Contains(bestPlayer.ClanID.Value)) teamClans[bestTeam].Add(bestPlayer.ClanID.Value);
-                }
-                ranker.Remove(bestPlayer);
-
-                cnt++;
             }
-
-            // alliances for allinace permutations
-            var allys = new List<int>();
-            for (var i = 0; i < teamCount; ++i) {
-                allys.Add(i);
+            catch (Exception ex) {
+                ret.Message = ex.ToString();
+                ret.CanStart = false;
             }
-
-            var t = "";
-
-            var lastTeamElo = 0.0;
-            for (var i = 0; i < teamCount; ++i) {
-                // permute one alliance
-                var rdindex = rand.Next(allys.Count);
-                var allynum = allys[rdindex];
-                allys.RemoveAt(rdindex);
-
-                if (teamUsers[i].Count > 0) {
-                    if (i > 0) t += ":";
-                    t += (allynum + 1) + "=" + Math.Round(teamSums[i]/(teamUsers[i].Count() != 0 ? teamUsers[i].Count() : 1));
-                    var teamElo = teamSums[i]/teamUsers[i].Count;
-                    if (lastTeamElo != 0) t += string.Format(" ({0}%)", Utils.GetWinChancePercent(lastTeamElo - teamElo));
-                    lastTeamElo = teamElo;
-                }
-
-                foreach (var u in teamUsers[i]) {
-                    ret.Players.Single(x => x.LobbyID == u.LobbyId).AllyID = allynum;
-                }
-            }
-
-            t += ")";
-
-            ret.Message = String.Format("{0} players balanced {2} to {1} teams (ratings {3}", totalPlayers, teamCount, clanwise ? "respecting clans" : "", t);
-            if (totalPlayers <= 1) ret.Message = "";
 
             return ret;
         }
-
-        // split too big bins -> move top players to another autohost
 
 
         private static BalanceTeamsResult PerformBalance(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise, AutohostConfig config, int playerCount) {
             var res = new BalanceTeamsResult();
             var mode = context.GetMode();
 
-
             if (mode != AutohostMode.Planetwars) {
                 switch (mode) {
                     case AutohostMode.None:
-                        if (!isGameStart) res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
+                        if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         break;
                     case AutohostMode.MediumTeams:
                     case AutohostMode.SmallTeams:
                     case AutohostMode.BigTeams:
-                        res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
+                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         res.DeleteBots = true;
                         break;
                     case AutohostMode.Game1v1:
-                        res = LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
+                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         res.DeleteBots = true;
                         break;
 
@@ -261,9 +234,9 @@ namespace ZeroKWeb.SpringieInterface
                         var db = new ZkDataContext();
                         var map = db.Resources.Single(x => x.InternalName == context.Map);
                         if (isGameStart) {
-                            if (map.MapFFAMaxTeams != null) res = LegacyBalance(map.MapFFAMaxTeams.Value, false, context);
+                            if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(map.MapFFAMaxTeams.Value, false, context);
                         }
-                        else res = LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, false, context);
+                        else res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, false, context);
                         break;
                 }
                 return res;
@@ -511,19 +484,39 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
+        private void RecursiveBalance(int itemIndex) {
+            if (IsBadCombination(itemIndex)) return;
+
+            var item = balanceItems[itemIndex];
+
+            foreach (var team in teams) {
+                team.AddItem(item);
+
+                if (itemIndex == balanceItems.Count - 1) // end of recursion
+                {
+                    var stdDev = teams.Select(x => x.AvgElo).StdDev();
+                    if (stdDev < bestStdDev) {
+                        bestStdDev = stdDev;
+                        bestTeams = CloneTeams(teams);
+                    }
+                }
+                else RecursiveBalance(itemIndex + 1);
+
+                team.RemoveItem(item);
+            }
+        }
+
         private static void SplitAutohost(BattleContext context) {
             var tas = Global.Nightwatch.Tas;
-            try
-            {
+            try {
                 //find first one that isnt running and is using same mode (by name)
                 var splitTo =
                     tas.ExistingBattles.Values.FirstOrDefault(
                         x =>
-                        !x.Founder.IsInGame && x.NonSpectatorCount == 0 && x.Founder.Name != context.AutohostName && !x.IsPassworded && 
+                        !x.Founder.IsInGame && x.NonSpectatorCount == 0 && x.Founder.Name != context.AutohostName && !x.IsPassworded &&
                         x.Founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') == context.AutohostName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
 
-                if (splitTo != null)
-                {
+                if (splitTo != null) {
                     // set same map 
                     tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
 
@@ -533,14 +526,15 @@ namespace ZeroKWeb.SpringieInterface
                     var toMove = new List<Account>();
 
                     // split while keeping clan groups together
-                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderByDescending(x => x.Average(y => y.EffectiveElo)))
-                    {
+                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderByDescending(x => x.Average(y => y.EffectiveElo))) {
                         toMove.AddRange(clanGrp);
-                        if (toMove.Count >= users.Count / 2) break;
+                        if (toMove.Count >= users.Count/2) break;
                     }
 
                     PlayerJuggler.SuppressJuggler = true;
-                    foreach (var m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
+                    foreach (var m in toMove) {
+                        tas.ForceJoinBattle(m.Name, splitTo.BattleID);
+                    }
                     Thread.Sleep(5000);
                     tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                     tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
@@ -552,9 +546,8 @@ namespace ZeroKWeb.SpringieInterface
                     tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
                     PlayerJuggler.SuppressJuggler = false;
                 }
-            }
-            catch (Exception ex) {
-                tas.Say(TasClient.SayPlace.User, "Licho[0K]", ex.ToString(),false);
+            } catch (Exception ex) {
+                tas.Say(TasClient.SayPlace.User, "Licho[0K]", ex.ToString(), false);
             }
         }
 
@@ -585,16 +578,49 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        private class UsRank
+        public class BalanceItem
         {
-            public int? ClanID;
-            public readonly double Elo;
-            public readonly int LobbyId;
+            public readonly int Count;
+            public readonly double EloSum;
+            public readonly List<int> LobbyId;
 
-            public UsRank(int id, double elo, int? clanID) {
-                LobbyId = id;
-                Elo = elo;
-                ClanID = clanID;
+            public BalanceItem(params Account[] accounts) {
+                LobbyId = accounts.Select(x => x.LobbyID ?? 0).ToList();
+                EloSum = accounts.Sum(x => x.EffectiveElo);
+                Count = accounts.Count();
+            }
+        }
+
+        public class BalanceTeam
+        {
+            public double EloSum { get; private set; }
+            public double AvgElo { get; private set; }
+            public int Count { get; private set; }
+            public List<BalanceItem> Items = new List<BalanceItem>();
+
+            public void AddItem(BalanceItem item) {
+                Items.Add(item);
+                EloSum += item.EloSum;
+                Count += item.Count;
+                if (Count > 0) AvgElo = EloSum/Count;
+                else AvgElo = 0;
+            }
+
+            public BalanceTeam Clone() {
+                var clone = new BalanceTeam();
+                clone.Items = new List<BalanceItem>(Items);
+                clone.AvgElo = AvgElo;
+                clone.EloSum = EloSum;
+                clone.Count = Count;
+                return clone;
+            }
+
+            public void RemoveItem(BalanceItem item) {
+                Items.Remove(item);
+                EloSum -= item.EloSum;
+                Count -= item.Count;
+                if (Count > 0) AvgElo = EloSum/Count;
+                else AvgElo = 0;
             }
         }
     }
