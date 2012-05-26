@@ -153,7 +153,7 @@ namespace Springie.autohost
                         timerTick++;
                         if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick % 4 == 0) CheckEngineBranch();
 
-                        if (!spring.IsRunning)
+                        if (!spring.IsRunning && config.Mode != AutohostMode.None)
                         {
                             if (SpawnConfig == null) ServerVerifyMap(false);
                             bool shouldStart = false;
