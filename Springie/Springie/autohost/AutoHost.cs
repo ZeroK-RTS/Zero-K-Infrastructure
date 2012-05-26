@@ -53,6 +53,8 @@ namespace Springie.autohost
         public SpringPaths springPaths;
         public TasClient tas;
 
+        static Dictionary<AutohostMode, DateTime> lastEnded = new Dictionary<AutohostMode, DateTime>();
+
         public AutoHost(MetaDataCache cache, AhConfig config, int hostingPort, SpawnConfig spawn)
         {
             this.config = config;
@@ -893,6 +895,9 @@ namespace Springie.autohost
         }
 
 
+        const int GameDelayMinDuration = 6 * 60;
+        const int GameDelayRestTime = 3 * 60;
+
         void spring_SpringExited(object sender, EventArgs e)
         {
             StopVote();
@@ -905,6 +910,13 @@ namespace Springie.autohost
                 tas.Say(TasClient.SayPlace.User, s, "** Game just ended, join me! **", false);
             }
             toNotify.Clear();
+
+            // set last game ended per mode
+            if (SpawnConfig == null && config!= null && config.Mode != AutohostMode.None) {
+                DateTime time;
+                lastEnded.TryGetValue(config.Mode, out time);
+                if (time < spring.GameEnded && spring.Duration > GameDelayMinDuration) lastEnded[config.Mode] = spring.GameEnded;
+            }
 
             if (SpawnConfig == null && DateTime.Now.Subtract(spring.GameStarted).TotalMinutes >5) ServerVerifyMap(true);
             if (SpawnConfig == null) Program.main.RequestJuggle();
