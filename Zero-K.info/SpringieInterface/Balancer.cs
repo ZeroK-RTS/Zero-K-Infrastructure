@@ -77,26 +77,14 @@ namespace ZeroKWeb.SpringieInterface
             if (bestStdDev == Double.MaxValue) return true; // nothing found yet, keep searching
             if (itemIndex == balanceItems.Count - 1) return true; // we are at the end so its ok
 
-            return true;
-            // check if future players can improve balance
-            /*
-            var avgElos = new List<double>(); // list of avg team elos - '0' item is worst team elo
-            var worstTeam = teams.MinBy(x => x.AvgElo);
-            avgElos.Add(worstTeam.AvgElo);
-            avgElos.AddRange(teams.Where(x => x != worstTeam).Select(x => x.AvgElo));
-            var eloSum = worstTeam.EloSum;
-            var eloCnt = worstTeam.Count;
-
+            var copy = CloneTeams(teams);
             // does adding best players to worst team improve stddev ? If not - do not bother to check combos
             foreach (var item in balanceItems.Skip(itemIndex).OrderByDescending(x => x.EloSum / x.Count)) {
-                eloSum += item.EloSum;
-                eloCnt += item.Count;
-                avgElos[0] = eloSum / eloCnt;
-                if (avgElos.StdDev() < bestStdDev) return true;
+                copy.MinBy(x=>x.AvgElo).AddItem(item);
             }
-             * */
 
-            return false;
+            if (copy.Select(x=>x.AvgElo).StdDev() > bestStdDev) return false;
+            else return true;
         }
 
 
