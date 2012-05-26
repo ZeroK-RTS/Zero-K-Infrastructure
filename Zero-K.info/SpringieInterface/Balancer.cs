@@ -77,8 +77,6 @@ namespace ZeroKWeb.SpringieInterface
             if (bestStdDev == Double.MaxValue) return true; // nothing found yet, keep searching
             if (itemIndex == balanceItems.Count - 1) return true; // we are at the end so its ok
 
-            return true; ;
-
             // check if future players can improve balance
 
             var avgElos = new List<double>(); // list of avg team elos - '0' item is worst team elo
@@ -166,7 +164,7 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var team in bestTeams)
                     {
                         if (allyNum > 0) text += " : ";
-                        text += string.Format("{0}={1}", (allyNum + 1), team.AvgElo);
+                        text += string.Format("{0}={1}", (allyNum + 1), Math.Round(team.AvgElo));
                         if (allyNum > 0) text += string.Format(" ({0}%)", Utils.GetWinChancePercent(lastTeamElo - team.AvgElo));
                         lastTeamElo = team.AvgElo;
 

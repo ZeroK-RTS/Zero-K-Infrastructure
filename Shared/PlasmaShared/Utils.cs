@@ -85,7 +85,7 @@ namespace PlasmaShared
             }
         }
 
-        public static double StdDev(this IEnumerable<double> values)
+        /*public static double StdDev(this IEnumerable<double> values)
         {
             double ret = 0;
             int count = values.Count();
@@ -101,10 +101,10 @@ namespace PlasmaShared
                 ret = Math.Sqrt(sum / count);
             }
             return ret;
-        }
+        }*/
 
 
-        /*
+        
         public static double StdDev(this IEnumerable<double> values)
         {
             // ref: http://warrenseen.com/blog/2006/03/13/how-to-calculate-standard-deviation/
@@ -124,7 +124,7 @@ namespace PlasmaShared
 
             return stdDev;
         }
-        */
+        
 
 
 		public static bool CanRead(string filename)
