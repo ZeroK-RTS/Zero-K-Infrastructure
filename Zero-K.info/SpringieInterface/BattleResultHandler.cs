@@ -626,8 +626,9 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
+                text.AppendLine(sb.Title);
                 text.AppendLine(string.Format("View full battle details and demo at http://zero-k.info/Battles/Detail/{0}", sb.SpringBattleID));
-
+                
 
                 // create debriefing room, join players there and output message
                 var channelName = "B" + sb.SpringBattleID;
@@ -642,7 +643,7 @@ namespace ZeroKWeb.SpringieInterface
                 tas.Say(TasClient.SayPlace.Channel, channelName, text.ToString(), true);
                 tas.LeaveChannel(channelName);
 
-                return text.ToString();
+                return string.Format("Debriefing in #{0} - spring://chat/channel/{0}  ", channelName);
             }
             catch (Exception ex)
             {
