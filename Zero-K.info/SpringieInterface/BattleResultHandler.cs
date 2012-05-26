@@ -626,7 +626,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                text.AppendLine(sb.Title);
+                text.AppendLine(string.Format("Debriefing room for a battle at {0}", context.Map));
                 text.AppendLine(string.Format("View full battle details and demo at http://zero-k.info/Battles/Detail/{0}", sb.SpringBattleID));
                 
 
