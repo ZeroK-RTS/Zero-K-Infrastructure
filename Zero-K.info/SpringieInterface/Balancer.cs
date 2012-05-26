@@ -195,7 +195,7 @@ namespace ZeroKWeb.SpringieInterface
 					if (i > 0) t += ":";
 					t += (allynum + 1) + "=" + Math.Round(teamSums[i]/(teamUsers[i].Count() != 0 ? teamUsers[i].Count() : 1));
                     var teamElo = teamSums[i] / teamUsers[i].Count;
-                    if (lastTeamElo != 0) t += string.Format(" ({0}%)", Utils.GetWinChancePercent(Math.Abs(teamElo - lastTeamElo)));
+                    if (lastTeamElo != 0) t += string.Format(" ({0}%)", Utils.GetWinChancePercent(teamElo - lastTeamElo));
                     lastTeamElo = teamElo;
 				}
 
