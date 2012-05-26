@@ -540,10 +540,10 @@ namespace ZeroKWeb.SpringieInterface
 
                     PlayerJuggler.SuppressJuggler = true;
                     foreach (var m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
-                    Thread.Sleep(5000);
+                    Thread.Sleep(8000);
                     tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                     tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                    Thread.Sleep(1000);
+                    Thread.Sleep(2000);
                     PlayerJuggler.SuppressJuggler = false;
                 }
             }
