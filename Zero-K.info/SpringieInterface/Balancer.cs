@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using LobbyClient;
 using PlasmaShared;
 using ZkData;
 
@@ -21,6 +23,26 @@ namespace ZeroKWeb.SpringieInterface
         public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise) {
             var config = context.GetConfig();
             var playerCount = context.Players.Count(x => !x.IsSpectator);
+
+            // game is managed, is bigger than split limit and wants to start -> split into two and issue starts
+            if (isGameStart && context.GetMode() != AutohostMode.None && config.SplitBiggerThan != null && config.SplitBiggerThan < playerCount)
+            {
+                new Thread(() =>
+                {
+                    try
+                    {
+                        SplitAutohost(context);
+                    }
+                    catch { };
+                }).Start();
+                return new BalanceTeamsResult()
+                {
+                    CanStart = false
+                };
+            }
+
+
+
 
             if (clanWise == null && (config.AutohostMode == AutohostMode.MediumTeams || config.AutohostMode == AutohostMode.BigTeams || config.AutohostMode == AutohostMode.SmallTeams)) clanWise = true;
 
@@ -189,9 +211,14 @@ namespace ZeroKWeb.SpringieInterface
             return ret;
         }
 
+        // split too big bins -> move top players to another autohost
+
+
         private static BalanceTeamsResult PerformBalance(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise, AutohostConfig config, int playerCount) {
             var res = new BalanceTeamsResult();
             var mode = context.GetMode();
+
+
             if (mode != AutohostMode.Planetwars) {
                 switch (mode) {
                     case AutohostMode.None:
@@ -483,13 +510,55 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
+        private static void SplitAutohost(BattleContext context) {
+            var tas = Global.Nightwatch.Tas;
+            try
+            {
+                //find first one that isnt running and is using same mode (by name)
+                var splitTo =
+                    tas.ExistingBattles.Values.FirstOrDefault(
+                        x =>
+                        !x.Founder.IsInGame && x.NonSpectatorCount == 0 && x.Founder.Name != context.AutohostName &&
+                        x.Founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') == context.AutohostName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'));
+
+                if (splitTo != null)
+                {
+                    // set same map 
+                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
+
+                    var db = new ZkDataContext();
+                    var ids = context.Players.Where(y => !y.IsSpectator).Select(x => (int?)x.LobbyID).ToList();
+                    var users = db.Accounts.Where(x => ids.Contains(x.LobbyID)).ToList();
+                    var toMove = new List<Account>();
+
+                    // split while keeping clan groups together
+                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderByDescending(x => x.Average(y => y.EffectiveElo)))
+                    {
+                        toMove.AddRange(clanGrp);
+                        if (toMove.Count >= users.Count / 2) break;
+                    }
+
+                    PlayerJuggler.SuppressJuggler = true;
+                    foreach (var m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
+                    Thread.Sleep(5000);
+                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
+                    tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
+                    Thread.Sleep(1000);
+                    PlayerJuggler.SuppressJuggler = false;
+                }
+            }
+            catch (Exception ex) {
+                tas.Say(TasClient.SayPlace.User, "Licho[0K]", ex.ToString(),false);
+            }
+        }
+
         private static void VerifySpecCheaters(BattleContext context, BalanceTeamsResult res) {
             try {
                 // find specs with same IP as some player and kick them
                 using (var db = new ZkDataContext()) {
                     var ids = context.Players.Select(y => (int?)y.LobbyID).ToList();
                     var ipByLobbyID = db.Accounts.Where(x => ids.Contains(x.LobbyID)).ToDictionary(x => x.LobbyID, x => x.AccountIPS.OrderByDescending(y => y.LastLogin).First().IP);
-                        // lobbyid -> ip mapping
+                    // lobbyid -> ip mapping
 
                     var mode = context.GetMode();
                     // kick same ip specs for starred and non chickens

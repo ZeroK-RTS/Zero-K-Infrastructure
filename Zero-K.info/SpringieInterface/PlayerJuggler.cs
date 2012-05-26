@@ -18,6 +18,8 @@ namespace ZeroKWeb.SpringieInterface
 
     public class PlayerJuggler
     {
+        public static bool SuppressJuggler = false;
+
         private static readonly List<AutohostMode> BinOrder = new List<AutohostMode>
                                                                   {
                                                                       AutohostMode.Planetwars,
@@ -28,7 +30,6 @@ namespace ZeroKWeb.SpringieInterface
                                                                       AutohostMode.GameChickens,
                                                                       AutohostMode.Game1v1,
                                                                   };
-        private static List<JugglerMove> LastPlayerMoves;
 
         static PlayerJuggler() {
             var tas = Global.Nightwatch.Tas;
@@ -78,15 +79,6 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 };
 
-            tas.BattleUserJoined += (sender, args) =>
-                {
-                    var entry = LastPlayerMoves.FirstOrDefault(x => x.Name == args.UserName);
-                    if (entry != null) {
-                        Battle joinedBattle;
-                        if (tas.ExistingBattles.TryGetValue(args.BattleID, out joinedBattle) && joinedBattle.Founder.Name != entry.TargetAutohost && entry.OriginalAutohost != null) if (joinedBattle.Founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9') == entry.OriginalAutohost.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')) tas.ForceJoinBattle(args.UserName, entry.TargetAutohost);
-                    }
-                };
-
             tas.LoginAccepted += (sender, args) => { tas.JoinChannel("juggler"); };
 
             tas.JoinChannel("juggler");
@@ -95,6 +87,8 @@ namespace ZeroKWeb.SpringieInterface
 
         public static JugglerResult JugglePlayers(List<JugglerAutohost> autohosts) {
             var ret = new JugglerResult();
+            if (SuppressJuggler) return ret;// supressed dont do anything
+
 
             var bins = new List<Bin>();
             var db = new ZkDataContext();
@@ -258,13 +252,7 @@ namespace ZeroKWeb.SpringieInterface
 
             ret.PlayerMoves = new List<JugglerMove>();
 
-            LastPlayerMoves =  new List<JugglerMove>(); // this is needed to prevent fighting when commands are executed below
-
             if (bins.Any()) {
-                SplitBins(autohosts, juggledAccounts, sb, bins, ret.PlayerMoves);
-                sb.AppendLine("After split:");
-                PrintBins(juggledAccounts, bins, sb);
-
                 foreach (var b in bins) {
                     foreach (var a in b.Assigned) {
                         var acc = juggledAccounts[a];
@@ -288,14 +276,7 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             ret.Message = sb.ToString();
-
             tas.Say(TasClient.SayPlace.Channel, "juggler", ret.Message, false);
-
-            LastPlayerMoves = new List<JugglerMove>(ret.PlayerMoves);
-
-            foreach (var entry in LastPlayerMoves) {
-                tas.Say(TasClient.SayPlace.Channel, "juggler", string.Format("{0}: {1}->{2}", entry.Name, entry.OriginalAutohost, entry.TargetAutohost), false);
-            }
 
             return ret;
         }
@@ -372,54 +353,6 @@ namespace ZeroKWeb.SpringieInterface
             Global.Nightwatch.Tas.Extensions.PublishJugglerState(state);
         }
 
-        private static void SplitBins(List<JugglerAutohost> autohosts, Dictionary<int, Account> juggledAccounts, StringBuilder sb, List<Bin> bins, List<JugglerMove> playerMoves ) {
-            // split too big bins -> move top players to another autohost
-            foreach (var b in new List<Bin>(bins)) {
-                if (b.Assigned.Count > (b.Config.SplitBiggerThan ?? 99)) {
-                    sb.AppendLine("Splitting " + b.Autohost.LobbyContext.AutohostName);
-                    var splitTo = autohosts.FirstOrDefault(x => x.LobbyContext.GetMode() == b.Mode && x.RunningGameStartContext == null && x != b.Autohost);
-                    //find first one that isnt running and isnt bin -> no players for it planned
-                    if (splitTo != null) {
-                        sb.AppendLine("Splitting to " + splitTo.LobbyContext.AutohostName);
-                        var target = new Bin(splitTo);
-                        bins.Add(target);
-
-                        var moved = 0;
-                        var toMove = b.Assigned.Count/2;
-
-                        // split while keeping clan groups together
-
-                        foreach (var clanGrp in b.Assigned.Select(x => juggledAccounts[x]).GroupBy(x => x.ClanID ?? x.LobbyID).OrderByDescending(x => x.Average(y => y.EffectiveElo))) {
-                            target.Assigned.AddRange(clanGrp.Select(x => x.LobbyID ?? 0));
-                            b.Assigned.RemoveAll(x => clanGrp.Any(y => y.LobbyID == x));
-                            moved += clanGrp.Count();
-                            if (moved >= toMove) break;
-                        }
-
-                        foreach (var acc in b.Assigned) {
-                            playerMoves.Add(new JugglerMove() { Name = juggledAccounts[acc].Name,
-                            OriginalAutohost = b.Autohost.LobbyContext.AutohostName,
-                            TargetAutohost =  b.Autohost.LobbyContext.AutohostName
-                            });
-                        }
-
-                        foreach (var acc in target.Assigned)
-                        {
-                            playerMoves.Add(new JugglerMove()
-                            {
-                                Name = juggledAccounts[acc].Name,
-                                OriginalAutohost = b.Autohost.LobbyContext.AutohostName,
-                                TargetAutohost = target.Autohost.LobbyContext.AutohostName
-                            });
-                        }
-
-                        // set same map 
-                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.User,  target.Autohost.LobbyContext.AutohostName,"!map " + b.Autohost.LobbyContext.Map, false );
-
-                    }
-                }
-            }
-        }
 
 
         public class Bin
