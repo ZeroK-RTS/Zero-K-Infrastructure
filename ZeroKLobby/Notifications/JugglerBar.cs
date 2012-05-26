@@ -12,6 +12,8 @@ namespace ZeroKLobby.Notifications
 {
     public partial class JugglerBar: UserControl, INotifyBar
     {
+        public const bool AutoPopup = false;
+
         readonly Dictionary<AutohostMode, InfoItems> Items = new Dictionary<AutohostMode, InfoItems>();
         readonly TasClient client;
         ProtocolExtension.JugglerState lastState;
@@ -55,9 +57,9 @@ namespace ZeroKLobby.Notifications
             
             client.BattleJoined += (sender, args) =>
                 {
-                    if (args.Data.Founder.IsSpringieManaged)
+                    if (AutoPopup && args.Data.Founder.IsSpringieManaged)
                     {
-                         Activate();
+                        Activate();
                     }
                 };
 
@@ -68,7 +70,7 @@ namespace ZeroKLobby.Notifications
                     if (Program.NotifySection.Bars.Contains(this)) Deactivate();
                 }
                 else {
-                    if (client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
+                    if (AutoPopup && client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
                 }
             };
 
