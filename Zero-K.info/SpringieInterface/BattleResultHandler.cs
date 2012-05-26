@@ -643,7 +643,8 @@ namespace ZeroKWeb.SpringieInterface
                 tas.Say(TasClient.SayPlace.Channel, channelName, text.ToString(), true);
                 tas.LeaveChannel(channelName);
 
-                return string.Format("Debriefing in #{0} - spring://chat/channel/{0}  ", channelName);
+                text.Append(string.Format("Debriefing in #{0} - spring://chat/channel/{0}  ", channelName));
+                return text.ToString();
             }
             catch (Exception ex)
             {
