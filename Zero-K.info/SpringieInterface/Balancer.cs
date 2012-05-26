@@ -77,6 +77,9 @@ namespace ZeroKWeb.SpringieInterface
             if (bestStdDev == Double.MaxValue) return true; // nothing found yet, keep searching
             if (itemIndex == balanceItems.Count - 1) return true; // we are at the end, nothing to test deep
 
+
+            return true;
+
             // check if future players can improve balance
 
             var avgElos = new List<double>(); // list of avg team elos - '0' item is worst team elo
