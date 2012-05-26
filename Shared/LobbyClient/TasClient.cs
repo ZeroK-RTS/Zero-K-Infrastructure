@@ -646,6 +646,12 @@ namespace LobbyClient
             }
         }
 
+        public void ForceJoinChannel(string user, string channel, string password= null)
+        {
+            if (string.IsNullOrEmpty(password)) con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1}", user,channel));
+            else con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1} {2}", user,channel,password));
+        }
+
         /// <summary>
         /// Say something through chat system
         /// </summary>

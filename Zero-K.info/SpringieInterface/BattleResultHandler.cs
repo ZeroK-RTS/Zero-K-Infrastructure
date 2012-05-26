@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Web;
+using LobbyClient;
 using PlasmaShared;
 using ZeroKWeb.Controllers;
 using ZkData;
@@ -626,6 +627,21 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 text.AppendLine(string.Format("View full battle details and demo at http://zero-k.info/Battles/Detail/{0}", sb.SpringBattleID));
+
+
+                // create debriefing room, join players there and output message
+                var channelName = "B" + sb.SpringBattleID;
+                var joinplayers = new List<string>();
+                joinplayers.AddRange(context.Players.Select(x=>x.Name)); // add those who were there at start
+                joinplayers.AddRange(sb.SpringBattlePlayers.Select(x => x.Account.Name)); // add those who played
+                var tas = Global.Nightwatch.Tas;
+                var bat=  tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == context.AutohostName); // add those in lobby atm
+                if (bat != null) joinplayers.AddRange(bat.Users.Select(x=>x.Name));
+                foreach (var jp in joinplayers.Distinct()) tas.ForceJoinChannel(jp, channelName);
+                tas.JoinChannel(channelName); // join nightwatch and say it
+                tas.Say(TasClient.SayPlace.Channel, channelName, text.ToString(), true);
+                tas.LeaveChannel(channelName);
+
                 return text.ToString();
             }
             catch (Exception ex)
