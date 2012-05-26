@@ -71,14 +71,13 @@ namespace ZeroKWeb.SpringieInterface
         }
 
 
-        private bool IsBadCombination(int itemIndex) {
+        private bool IsOkCombination(int itemIndex) {
             var maxSize = Math.Ceiling(balanceItems.Count/(double)teams.Count);
             if (teams.Any(x => x.Count > maxSize)) return false; // team too big cancel recursion
             if (bestStdDev == Double.MaxValue) return true; // nothing found yet, keep searching
-            if (itemIndex == balanceItems.Count - 1) return true; // we are at the end, nothing to test deep
+            if (itemIndex == balanceItems.Count - 1) return true; // we are at the end so its ok
 
-
-            return true;
+            return true; ;
 
             // check if future players can improve balance
 
@@ -488,7 +487,7 @@ namespace ZeroKWeb.SpringieInterface
         }
 
         private void RecursiveBalance(int itemIndex) {
-            if (IsBadCombination(itemIndex)) return;
+            if (!IsOkCombination(itemIndex)) return;
 
             var item = balanceItems[itemIndex];
 
