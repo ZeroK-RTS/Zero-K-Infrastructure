@@ -77,8 +77,9 @@ namespace ZeroKWeb.SpringieInterface
             if (bestStdDev == Double.MaxValue) return true; // nothing found yet, keep searching
             if (itemIndex == balanceItems.Count - 1) return true; // we are at the end so its ok
 
+            return true;
             // check if future players can improve balance
-
+            /*
             var avgElos = new List<double>(); // list of avg team elos - '0' item is worst team elo
             var worstTeam = teams.MinBy(x => x.AvgElo);
             avgElos.Add(worstTeam.AvgElo);
@@ -93,6 +94,7 @@ namespace ZeroKWeb.SpringieInterface
                 avgElos[0] = eloSum / eloCnt;
                 if (avgElos.StdDev() < bestStdDev) return true;
             }
+             * */
 
             return false;
         }
