@@ -135,7 +135,7 @@ namespace ZeroKWeb.SpringieInterface
                     var candidates = new List<UsRank>();
                     
                     // first try to get some with same clan
-                    if (teamClans[teamid].Count > 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && teamClans[teamid].Contains(x.ClanID.Value)));
+                    if (clanwise && teamClans[teamid].Count > 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && teamClans[teamid].Contains(x.ClanID.Value)));
 
                     // we still dont have any candidates try to get anyone
                     if (candidates.Count == 0) candidates.AddRange(ranker);
@@ -194,8 +194,8 @@ namespace ZeroKWeb.SpringieInterface
 				if (teamUsers[i].Count > 0) {
 					if (i > 0) t += ":";
 					t += (allynum + 1) + "=" + Math.Round(teamSums[i]/(teamUsers[i].Count() != 0 ? teamUsers[i].Count() : 1));
-                    var teamElo = teamSums[0] / teamUsers[i].Count;
-                    if (lastTeamElo != 0) t += string.Format(" ({0}%)", PlasmaShared.Utils.GetWinChancePercent(Math.Abs(teamElo - lastTeamElo)));
+                    var teamElo = teamSums[i] / teamUsers[i].Count;
+                    if (lastTeamElo != 0) t += string.Format(" ({0}%)", Utils.GetWinChancePercent(Math.Abs(teamElo - lastTeamElo)));
                     lastTeamElo = teamElo;
 				}
 
