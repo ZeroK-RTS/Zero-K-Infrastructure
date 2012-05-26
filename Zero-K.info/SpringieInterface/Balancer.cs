@@ -37,7 +37,8 @@ namespace ZeroKWeb.SpringieInterface
                 }).Start();
                 return new BalanceTeamsResult()
                 {
-                    CanStart = false
+                    CanStart = false,
+                    Message = string.Format("Game too big - splitting into two - max players is {0} here", config.SplitBiggerThan)
                 };
             }
 
