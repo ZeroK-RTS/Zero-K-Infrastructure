@@ -412,6 +412,8 @@ namespace ZeroKWeb.SpringieInterface
                             });
                         }
 
+                        // set same map 
+                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.User,  target.Autohost.LobbyContext.AutohostName,"!map " + b.Autohost.LobbyContext.Map, false );
 
                     }
                 }
