@@ -161,8 +161,9 @@ namespace ZeroKWeb.SpringieInterface
                     groupBins.Add(bin);
                 }
 
-                if (groupBins.Count == 0) {
-                    // no bins with players found, add empty one
+                
+                if (groupBins.Count == 0 || groupBins.All(x=>x.Config.MaxToJuggle != null && x.Autohost.LobbyContext.Players.Count(y=>!y.IsSpectator)>= x.Config.MaxToJuggle)) {
+                    // no bins with players found or all full, add empty one
                     var firstEmpty = grp.FirstOrDefault(x => x.RunningGameStartContext == null && x.LobbyContext.Players.All(y => y.IsSpectator));
                     if (firstEmpty != null) {
                         var bin = new Bin(firstEmpty);
@@ -230,7 +231,7 @@ namespace ZeroKWeb.SpringieInterface
                                 var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
 
                                 var saveBattleRule = false;
-                                if (current != null && current != b && acc.Preferences[current.Mode] <= acc.Preferences[b.Mode]) if (b.Assigned.Count < b.Config.MinToJuggle && current.Assigned.Count >= current.Config.MinToJuggle + 1) saveBattleRule = true;
+                                if (current != null && current != b && !manuallyPrefered.ContainsKey(person) && acc.Preferences[current.Mode] <= acc.Preferences[b.Mode]) if (b.Assigned.Count < b.Config.MinToJuggle && current.Assigned.Count >= current.Config.MinToJuggle + 1) saveBattleRule = true;
 
                                 if (current == null || saveBattleRule) {
                                     Move(bins, person, b);
