@@ -74,9 +74,14 @@ namespace ZeroKWeb.SpringieInterface
         private bool IsOkCombination(int itemIndex) {
             var maxSize = Math.Ceiling(balanceItems.Count/(double)teams.Count);
             if (teams.Any(x => x.Count > maxSize)) return false; // team too big cancel recursion
+            return true;
+            
             if (bestStdDev == Double.MaxValue) return true; // nothing found yet, keep searching
             if (itemIndex == balanceItems.Count - 1) return true; // we are at the end so its ok
 
+            
+
+            /*
             var copy = CloneTeams(teams);
             // does adding best players to worst team improve stddev ? If not - do not bother to check combos
             foreach (var item in balanceItems.Skip(itemIndex).OrderByDescending(x => x.EloSum / x.Count)) {
@@ -85,6 +90,7 @@ namespace ZeroKWeb.SpringieInterface
 
             if (copy.Select(x=>x.AvgElo).StdDev() > bestStdDev) return false;
             else return true;
+             */
         }
 
 
