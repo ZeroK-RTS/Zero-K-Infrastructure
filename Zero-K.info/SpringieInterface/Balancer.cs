@@ -114,7 +114,7 @@ namespace ZeroKWeb.SpringieInterface
                     if (clanwise && teamClans[teamid].Count > 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && teamClans[teamid].Contains(x.ClanID.Value)));
 
                     // get unassigned clanner
-                    if (clanwise && candidates.Count == 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && !assignedClans.Contains(x.ClanID.Value)));
+                    //if (clanwise && candidates.Count == 0) candidates.AddRange(ranker.Where(x => x.ClanID != null && !assignedClans.Contains(x.ClanID.Value)));
 
                     // we still dont have any candidates try to get anyone
                     if (candidates.Count == 0) candidates.AddRange(ranker);
