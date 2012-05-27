@@ -116,9 +116,11 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 for (var i = 0; i < teamCount; i++) teams.Add(new BalanceTeam());
-                
 
+                var sw = new Stopwatch();
+                sw.Start();
                 RecursiveBalance(0);
+                sw.Stop();
 
                 if (bestTeams == null) {
                     ret.CanStart = false;
@@ -127,7 +129,7 @@ namespace ZeroKWeb.SpringieInterface
                 else {
                     bestTeams = bestTeams.Shuffle(); // permute
 
-                    var text = "";
+                    var text = "(ratings ";
 
                     var lastTeamElo = 0.0;
                     var allyNum = 0;
@@ -144,7 +146,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                     text += ")";
 
-                    ret.Message = String.Format("{0} players balanced {2} to {1} teams (ratings {3}", accs.Count, teamCount, clanwise ? "respecting clans" : "", text);
+                    ret.Message = String.Format("{0} players balanced {2} to {1} teams {3}. {4} combinations checked, spent {5}ms of CPU time", accs.Count, teamCount, clanwise ? "respecting clans" : "", text, iterationsChecked, sw.ElapsedMilliseconds);
                 }
             } catch (Exception ex) {
                 ret.Message = ex.ToString();
@@ -450,7 +452,10 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
+        int iterationsChecked;
+
         private void RecursiveBalance(int itemIndex) {
+            iterationsChecked++;
             if (itemIndex < balanceItems.Count) 
             {
                 var item = balanceItems[itemIndex];

@@ -124,6 +124,25 @@ namespace PlasmaShared
 
             return stdDev;
         }
+
+        public static double StdDevSquared(this IEnumerable<double> values)
+        {
+            double mean = 0.0;
+            double sum = 0.0;
+            double stdDev = 0.0;
+            int n = 0;
+            foreach (double val in values)
+            {
+                n++;
+                double delta = val - mean;
+                mean += delta / n;
+                sum += delta * (val - mean);
+            }
+            if (n > 1) stdDev = sum / (n - 1);
+
+            return stdDev;
+        }
+        
         
 
 
