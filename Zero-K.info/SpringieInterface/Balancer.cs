@@ -123,6 +123,7 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var team in teams) {
                         team.EloSum = 0;
                         team.Count = 0;
+                        team.Items.Clear(); 
                     }
                     for (int i =0; i< teamAssignments.Count;i++) {
                         var ta= teamAssignments[i];
@@ -454,7 +455,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        long iterationsChecked;
+        long iterationsChecked = 0;
 
         private void RecursiveBalance(int itemIndex) {
             if (iterationsChecked > HaltAfterIterations) return;
