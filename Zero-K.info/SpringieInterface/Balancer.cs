@@ -23,8 +23,9 @@ namespace ZeroKWeb.SpringieInterface
         private List<BalanceItem> balanceItems;
 
         private double bestStdDev = double.MaxValue;
+        private List<BalanceTeam> bestTeams;
         private int maxTeamSize;
-        private List<BalanceTeam> teams = new List<BalanceTeam>();
+        private readonly List<BalanceTeam> teams = new List<BalanceTeam>();
 
         public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise) {
             var config = context.GetConfig();
@@ -66,6 +67,14 @@ namespace ZeroKWeb.SpringieInterface
             return res;
         }
 
+        public static List<BalanceTeam> CloneTeams(List<BalanceTeam> t) {
+            return new List<BalanceTeam>(t.Select(x => x.Clone()));
+        }
+
+        public static double GetTeamsDeviation(List<BalanceTeam> t) {
+            if (t.Count == 2) return Math.Abs(t[0].AvgElo - t[1].AvgElo);
+            else return t.Select(x => x.AvgElo).StdDev();
+        }
 
         private BalanceTeamsResult LegacyBalance(int teamCount, bool clanwise, BattleContext b) {
             var ret = new BalanceTeamsResult();
@@ -107,36 +116,24 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 for (var i = 0; i < teamCount; i++) teams.Add(new BalanceTeam());
-                teamAssignments = new List<int>();
-                for (var i = 0; i < balanceItems.Count; i++) teamAssignments.Add(-1);
 
                 var sw = new Stopwatch();
                 sw.Start();
                 RecursiveBalance(0);
                 sw.Stop();
 
-                if (bestTeamAssignments == null) {
+                if (bestTeams == null) {
                     ret.CanStart = false;
                     ret.Message = string.Format("Failed to balance {0}", (clanwise ? "- too many people from same clan? Use !balance and !forcestart" : ". Use !random and !forcestart"));
                 }
                 else {
-                    foreach (var team in teams) {
-                        team.EloSum = 0;
-                        team.Count = 0;
-                        team.Items.Clear(); 
-                    }
-                    for (int i =0; i< teamAssignments.Count;i++) {
-                        var ta= teamAssignments[i];
-                        var item = balanceItems[i];
-                        teams[ta].AddItem(item);
-                    }
-                    teams = teams.Shuffle(); // permute
+                    bestTeams = bestTeams.Shuffle(); // permute
 
                     var text = "(ratings ";
 
                     var lastTeamElo = 0.0;
                     var allyNum = 0;
-                    foreach (var team in teams) {
+                    foreach (var team in bestTeams) {
                         if (allyNum > 0) text += " : ";
                         text += string.Format("{0}={1}", (allyNum + 1), Math.Round(team.AvgElo));
                         if (allyNum > 0) text += string.Format(" ({0}%)", Utils.GetWinChancePercent(lastTeamElo - team.AvgElo));
@@ -455,33 +452,33 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        long iterationsChecked = 0;
+        long iterationsChecked;
 
         private void RecursiveBalance(int itemIndex) {
-            if (iterationsChecked > HaltAfterIterations) return;
-            
+            if (iterationsChecked > 2000000) return;
+
             if (itemIndex < balanceItems.Count) 
             {
                 var item = balanceItems[itemIndex];
 
-                for (var teamid = 0; teamid < teams.Count; teamid++) {
-                    var team = teams[teamid];
-                    if (team.Count + item.Count <= maxTeamSize) {
-                        teamAssignments[itemIndex] = teamid;
-                        team.AddItemElo(item);
+                foreach (var team in teams)
+                {
+                    if (team.Count + item.Count <= maxTeamSize)
+                    {
+                        team.AddItem(item);
                         RecursiveBalance(itemIndex + 1);
-                        team.RemoveItemElo(item);
+                        team.RemoveItem(item);
                     }
                 }
             }
             else
-            {   // end of recursion
+            {// end of recursion
                 iterationsChecked++;
-                var stdDev = teams.Select(x => x.AvgElo).StdDev();
+                var stdDev = GetTeamsDeviation(teams);
                 if (stdDev < bestStdDev)
                 {
                     bestStdDev = stdDev;
-                    bestTeamAssignments = new List<int>(teamAssignments);
+                    bestTeams = CloneTeams(teams);
                 }
             }
         }
@@ -571,35 +568,36 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        List<int> teamAssignments;
-        List<int> bestTeamAssignments;
-
-
-        const int HaltAfterIterations = 4000000;
-
         public class BalanceTeam
         {
-            public double AvgElo {
-                get { return EloSum / Count; }
-            }
-            public int Count { get; set; }
-            public double EloSum { get; set; }
+            public double AvgElo { get; private set; }
+            public int Count { get; private set; }
+            public double EloSum { get; private set; }
             public List<BalanceItem> Items = new List<BalanceItem>();
-
-
-            public void AddItemElo(BalanceItem item) {
-                EloSum += item.EloSum;
-                Count += item.Count;
-            }
-
-            public void RemoveItemElo(BalanceItem item) {
-                EloSum -= item.EloSum;
-                Count -= item.Count;
-            }
 
             public void AddItem(BalanceItem item) {
                 Items.Add(item);
-                AddItemElo(item);
+                EloSum += item.EloSum;
+                Count += item.Count;
+                if (Count > 0) AvgElo = EloSum/Count;
+                else AvgElo = 0;
+            }
+
+            public BalanceTeam Clone() {
+                var clone = new BalanceTeam();
+                clone.Items = new List<BalanceItem>(Items);
+                clone.AvgElo = AvgElo;
+                clone.EloSum = EloSum;
+                clone.Count = Count;
+                return clone;
+            }
+
+            public void RemoveItem(BalanceItem item) {
+                Items.Remove(item);
+                EloSum -= item.EloSum;
+                Count -= item.Count;
+                if (Count > 0) AvgElo = EloSum/Count;
+                else AvgElo = 0;
             }
         }
     }
