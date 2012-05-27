@@ -97,7 +97,7 @@ namespace ZeroKWeb.SpringieInterface
                     return ret;
                 }
 
-                maxTeamSize = (int)Math.Ceiling(accs.Count / (double)teams.Count);
+                maxTeamSize = (int)Math.Ceiling(accs.Count / (double)teamCount);
 
                 balanceItems = new List<BalanceItem>();
                 if (clanwise) {
