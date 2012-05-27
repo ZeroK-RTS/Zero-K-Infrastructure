@@ -119,7 +119,7 @@ namespace PlasmaShared
                 mean += delta / n;
                 sum += delta * (val - mean);
             }
-            if (1 < n)
+            if (n > 1)
                 stdDev = Math.Sqrt(sum / (n - 1));
 
             return stdDev;

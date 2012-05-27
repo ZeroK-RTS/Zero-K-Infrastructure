@@ -24,6 +24,7 @@ namespace ZeroKWeb.SpringieInterface
 
         private double bestStdDev = double.MaxValue;
         private List<BalanceTeam> bestTeams;
+        private int maxTeamSize;
         private readonly List<BalanceTeam> teams = new List<BalanceTeam>();
 
         public static BalanceTeamsResult BalanceTeams(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise) {
@@ -66,61 +67,36 @@ namespace ZeroKWeb.SpringieInterface
             return res;
         }
 
-        public List<BalanceTeam> CloneTeams(List<BalanceTeam> t) {
+        public static List<BalanceTeam> CloneTeams(List<BalanceTeam> t) {
             return new List<BalanceTeam>(t.Select(x => x.Clone()));
         }
 
-
-        private bool IsOkCombination(int itemIndex) {
-            var maxSize = Math.Ceiling(balanceItems.Count/(double)teams.Count);
-            if (teams.Any(x => x.Count > maxSize)) return false; // team too big cancel recursion
-            return true;
-            
-            if (bestStdDev == Double.MaxValue) return true; // nothing found yet, keep searching
-            if (itemIndex == balanceItems.Count - 1) return true; // we are at the end so its ok
-
-            
-
-            /*
-            var copy = CloneTeams(teams);
-            // does adding best players to worst team improve stddev ? If not - do not bother to check combos
-            foreach (var item in balanceItems.Skip(itemIndex).OrderByDescending(x => x.EloSum / x.Count)) {
-                copy.MinBy(x=>x.AvgElo).AddItem(item);
-            }
-
-            if (copy.Select(x=>x.AvgElo).StdDev() > bestStdDev) return false;
-            else return true;
-             */
+        public static double GetTeamsDeviation(List<BalanceTeam> t) {
+            if (t.Count == 2) return Math.Abs(t[0].AvgElo - t[1].AvgElo);
+            else return t.Select(x => x.AvgElo).StdDev();
         }
-
 
         private BalanceTeamsResult LegacyBalance(int teamCount, bool clanwise, BattleContext b) {
             var ret = new BalanceTeamsResult();
 
-            try
-            {
+            try {
                 ret.CanStart = true;
                 ret.Players = b.Players.ToList();
 
                 var db = new ZkDataContext();
                 var accs = db.Accounts.Where(x => b.Players.Where(y => !y.IsSpectator).Select(y => (int?)y.LobbyID).ToList().Contains(x.LobbyID)).ToList();
-                if (accs.Count < 1)
-                {
+                if (accs.Count < 1) {
                     ret.CanStart = false;
                     return ret;
                 }
                 balanceItems = new List<BalanceItem>();
-                if (clanwise)
-                {
-                    foreach (var clanGrp in accs.GroupBy(x => x.ClanID ?? x.LobbyID))
-                    {
+                if (clanwise) {
+                    foreach (var clanGrp in accs.GroupBy(x => x.ClanID ?? x.LobbyID)) {
                         balanceItems.Add(new BalanceItem(clanGrp.ToArray()));
                     }
                 }
-                else
-                {
-                    foreach (var acc in accs)
-                    {
+                else {
+                    foreach (var acc in accs) {
                         balanceItems.Add(new BalanceItem(acc));
                     }
                 }
@@ -128,44 +104,39 @@ namespace ZeroKWeb.SpringieInterface
                 if (teamCount < 1) teamCount = 1;
                 if (teamCount > balanceItems.Count) teamCount = balanceItems.Count;
 
-                if (teamCount == 1)
-                {
-                    foreach (var p in ret.Players)
-                    {
+                if (teamCount == 1) {
+                    foreach (var p in ret.Players) {
                         p.AllyID = 0;
                     }
                     return ret;
                 }
 
-                for (var i = 0; i < teamCount; i++)
-                {
+                for (var i = 0; i < teamCount; i++) {
                     teams.Add(new BalanceTeam());
                 }
 
+                maxTeamSize = (int)Math.Ceiling(accs.Count/(double)teams.Count);
+
                 RecursiveBalance(0);
 
-                if (bestTeams == null)
-                {
+                if (bestTeams == null) {
                     ret.CanStart = false;
-                    ret.Message = string.Format("Failed to balance {0}", (clanwise ? "- too many people from same clan?" : ""));
+                    ret.Message = string.Format("Failed to balance {0}", (clanwise ? "- too many people from same clan? Use !balance and !forcestart" : ". Use !random and !forcestart"));
                 }
-                else
-                {
+                else {
                     bestTeams = bestTeams.Shuffle(); // permute
 
                     var text = "";
 
                     var lastTeamElo = 0.0;
                     var allyNum = 0;
-                    foreach (var team in bestTeams)
-                    {
+                    foreach (var team in bestTeams) {
                         if (allyNum > 0) text += " : ";
                         text += string.Format("{0}={1}", (allyNum + 1), Math.Round(team.AvgElo));
                         if (allyNum > 0) text += string.Format(" ({0}%)", Utils.GetWinChancePercent(lastTeamElo - team.AvgElo));
                         lastTeamElo = team.AvgElo;
 
-                        foreach (var u in team.Items.SelectMany(x => x.LobbyId))
-                        {
+                        foreach (var u in team.Items.SelectMany(x => x.LobbyId)) {
                             ret.Players.Single(x => x.LobbyID == u).AllyID = allyNum;
                         }
                         allyNum++;
@@ -174,9 +145,7 @@ namespace ZeroKWeb.SpringieInterface
 
                     ret.Message = String.Format("{0} players balanced {2} to {1} teams (ratings {3}", accs.Count, teamCount, clanwise ? "respecting clans" : "", text);
                 }
-
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 ret.Message = ex.ToString();
                 ret.CanStart = false;
             }
@@ -481,24 +450,24 @@ namespace ZeroKWeb.SpringieInterface
         }
 
         private void RecursiveBalance(int itemIndex) {
-            if (!IsOkCombination(itemIndex)) return;
-
             var item = balanceItems[itemIndex];
 
             foreach (var team in teams) {
-                team.AddItem(item);
+                if (team.Count + item.Count <= maxTeamSize) {
+                    team.AddItem(item);
 
-                if (itemIndex == balanceItems.Count - 1) // end of recursion
-                {
-                    var stdDev = teams.Select(x => x.AvgElo).StdDev();
-                    if (stdDev < bestStdDev) {
-                        bestStdDev = stdDev;
-                        bestTeams = CloneTeams(teams);
+                    if (itemIndex == balanceItems.Count - 1) // end of recursion
+                    {
+                        var stdDev = GetTeamsDeviation(teams);
+                        if (stdDev < bestStdDev) {
+                            bestStdDev = stdDev;
+                            bestTeams = CloneTeams(teams);
+                        }
                     }
-                }
-                else RecursiveBalance(itemIndex + 1);
+                    else RecursiveBalance(itemIndex + 1);
 
-                team.RemoveItem(item);
+                    team.RemoveItem(item);
+                }
             }
         }
 
@@ -589,9 +558,9 @@ namespace ZeroKWeb.SpringieInterface
 
         public class BalanceTeam
         {
-            public double EloSum { get; private set; }
             public double AvgElo { get; private set; }
             public int Count { get; private set; }
+            public double EloSum { get; private set; }
             public List<BalanceItem> Items = new List<BalanceItem>();
 
             public void AddItem(BalanceItem item) {
