@@ -503,7 +503,7 @@ namespace ZeroKWeb.SpringieInterface
                     var toMove = new List<Account>();
 
                     // split while keeping clan groups together
-                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderByDescending(x => x.Average(y => y.EffectiveElo))) {
+                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
                         toMove.AddRange(clanGrp);
                         if (toMove.Count >= users.Count/2) break;
                     }

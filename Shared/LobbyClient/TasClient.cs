@@ -634,15 +634,15 @@ namespace LobbyClient
             existingUsers.TryGetValue(name, out user);
             existingBattles.TryGetValue(battleID, out battle);
             if (user != null && battle != null) {
-                if (user.IsZkLobbyUser)
+                /*if (user.IsZkLobbyUser)
                 {
                     Say(SayPlace.User, user.Name, "!join " + battle.Founder.Name, false);
                 }
-                else {
+                else {*/
                     //con.SendCommand("FORCEJOINBATTLE", name, battleID, password);
                     con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVEBATTLE", name));
                     con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOINBATTLE {1}", name, battleID));
-                }
+                //}
             }
         }
 
