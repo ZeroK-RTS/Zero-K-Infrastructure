@@ -40,7 +40,7 @@ namespace ZeroKWeb.SpringieInterface
                         } catch {}
                         ;
                     }).Start();
-                return new BalanceTeamsResult() { CanStart = false, Message = string.Format("Game too big - splitting into two - max players is {0} here", config.SplitBiggerThan) };
+                return new BalanceTeamsResult() { CanStart = false, Message = string.Format("Game too big - splitting into two - max players is {0} here. Use !forcestart instead of !start to override.", config.SplitBiggerThan) };
             }
 
             if (clanWise == null && (config.AutohostMode == AutohostMode.BigTeams || config.AutohostMode == AutohostMode.SmallTeams)) clanWise = true;
