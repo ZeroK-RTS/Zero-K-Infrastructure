@@ -120,8 +120,14 @@ namespace ZeroKWeb.SpringieInterface
                     ret.Message = string.Format("Failed to balance {0}", (clanwise ? "- too many people from same clan? Use !balance and !forcestart" : ". Use !random and !forcestart"));
                 }
                 else {
+                    foreach (var team in teams) {
+                        team.EloSum = 0;
+                        team.Count = 0;
+                    }
                     for (int i =0; i< teamAssignments.Count;i++) {
-                        teams[teamAssignments[i]].Items.Add(balanceItems[i]);
+                        var ta= teamAssignments[i];
+                        var item = balanceItems[i];
+                        teams[ta].AddItem(item);
                     }
                     teams = teams.Shuffle(); // permute
 
@@ -571,8 +577,8 @@ namespace ZeroKWeb.SpringieInterface
             public double AvgElo {
                 get { return EloSum / Count; }
             }
-            public int Count { get; private set; }
-            public double EloSum { get; private set; }
+            public int Count { get; set; }
+            public double EloSum { get; set; }
             public List<BalanceItem> Items = new List<BalanceItem>();
 
 
@@ -584,6 +590,11 @@ namespace ZeroKWeb.SpringieInterface
             public void RemoveItemElo(BalanceItem item) {
                 EloSum -= item.EloSum;
                 Count -= item.Count;
+            }
+
+            public void AddItem(BalanceItem item) {
+                Items.Add(item);
+                AddItemElo(item);
             }
         }
     }
