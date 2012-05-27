@@ -477,7 +477,7 @@ namespace ZeroKWeb.SpringieInterface
             else
             {   // end of recursion
                 iterationsChecked++;
-                var stdDev = teams.Select(x => x.AvgElo).StdDevSquared();
+                var stdDev = teams.Select(x => x.AvgElo).StdDev();
                 if (stdDev < bestStdDev)
                 {
                     bestStdDev = stdDev;
