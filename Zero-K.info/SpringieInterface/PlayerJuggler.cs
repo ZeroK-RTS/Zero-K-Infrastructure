@@ -24,7 +24,6 @@ namespace ZeroKWeb.SpringieInterface
                                                                   {
                                                                       AutohostMode.Planetwars,
                                                                       AutohostMode.BigTeams,
-                                                                      AutohostMode.MediumTeams,
                                                                       AutohostMode.SmallTeams,
                                                                       AutohostMode.GameFFA,
                                                                       AutohostMode.GameChickens,

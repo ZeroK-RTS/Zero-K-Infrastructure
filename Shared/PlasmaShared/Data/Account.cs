@@ -45,11 +45,14 @@ namespace ZkData
                         foreach (var line in GamePreferences.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
                         {
                             var parts = line.Split('=');
-                            preferences[(AutohostMode)int.Parse(parts[0])] = (GamePreference)int.Parse(parts[1]);
+
+                            var mode = (AutohostMode)int.Parse(parts[0]);
+                            var preference=  (GamePreference)int.Parse(parts[1]);
+                            if (Enum.IsDefined(typeof(AutohostMode), mode) && Enum.IsDefined(typeof(GamePreference),preference)) preferences[mode] = preference;
                         }
                     }
                     foreach (AutohostMode v in Enum.GetValues(typeof(AutohostMode))) if (!preferences.ContainsKey(v)) {
-                        if (v == AutohostMode.MediumTeams || v== AutohostMode.SmallTeams || v  == AutohostMode.BigTeams || v == AutohostMode.GameChickens) 
+                        if (v== AutohostMode.SmallTeams || v == AutohostMode.GameChickens || v== AutohostMode.GameFFA) 
                             preferences[v] = GamePreference.Like;
                         else preferences[v] = GamePreference.Never;
                     }

@@ -99,6 +99,10 @@ namespace Fixer
 
       static void Main(string[] args)
     {
+        var test2 = Enum.IsDefined(typeof(AutohostMode), 2);
+          var test = (AutohostMode)1;
+          if (test2) Console.WriteLine(test.Description());
+
         var id = TasClient.GetUserID();
         return;
 

@@ -43,7 +43,7 @@ namespace ZeroKWeb.SpringieInterface
                 return new BalanceTeamsResult() { CanStart = false, Message = string.Format("Game too big - splitting into two - max players is {0} here", config.SplitBiggerThan) };
             }
 
-            if (clanWise == null && (config.AutohostMode == AutohostMode.MediumTeams || config.AutohostMode == AutohostMode.BigTeams || config.AutohostMode == AutohostMode.SmallTeams)) clanWise = true;
+            if (clanWise == null && (config.AutohostMode == AutohostMode.BigTeams || config.AutohostMode == AutohostMode.SmallTeams)) clanWise = true;
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
 
@@ -166,7 +166,6 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.None:
                         if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         break;
-                    case AutohostMode.MediumTeams:
                     case AutohostMode.SmallTeams:
                     case AutohostMode.BigTeams:
                         res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);

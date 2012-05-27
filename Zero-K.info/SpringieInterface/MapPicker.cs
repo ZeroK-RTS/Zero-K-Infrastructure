@@ -115,18 +115,19 @@ namespace ZeroKWeb.SpringieInterface
 				else {
 					if (!pickNew) {
 						// autohost is not managed or has valid featured map - check disabled
-						if (true || mode == AutohostMode.None || db.Resources.Any(x => x.InternalName == context.Map && x.FeaturedOrder != null && x.TypeID == ResourceType.Map)) {
-							res.MapName = context.Map;
-							return res;
-						}
+    					res.MapName = context.Map;
+						return res;
 					}
 					List<Resource> list = null;
 					var players = context.Players.Count(x => !x.IsSpectator);
 					switch (mode) {
 						case AutohostMode.BigTeams:
-						case AutohostMode.MediumTeams:
+                            var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial == true);
+                            list = ret.ToList();
+                            break;
+
 						case AutohostMode.SmallTeams:
-							var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true);
+							ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial != true);
 							if (players > 16) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 24);
 							else if (players > 6) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 16 && Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 24);
 							else ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 16);
