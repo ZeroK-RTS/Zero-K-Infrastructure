@@ -89,10 +89,20 @@ namespace ZeroKWeb.SpringieInterface
                     ret.CanStart = false;
                     return ret;
                 }
+                if (teamCount < 1) teamCount = 1;
+                if (teamCount > accs.Count) teamCount = accs.Count;
+                if (teamCount == 1)
+                {
+                    foreach (var p in ret.Players) p.AllyID = 0;
+                    return ret;
+                }
+
+                maxTeamSize = (int)Math.Ceiling(accs.Count / (double)teams.Count);
+
                 balanceItems = new List<BalanceItem>();
                 if (clanwise) {
                     var clanGroups = accs.GroupBy(x => x.ClanID ?? x.LobbyID).ToList();
-                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > Math.Ceiling(accs.Count / (double)teamCount)))
+                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize))
                     {
                         clanwise = false;
                     }
@@ -104,21 +114,8 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var acc in accs) balanceItems.Add(new BalanceItem(acc));
                 }
 
-                if (teamCount < 1) teamCount = 1;
-                if (teamCount > balanceItems.Count) teamCount = balanceItems.Count;
-
-                if (teamCount == 1) {
-                    foreach (var p in ret.Players) {
-                        p.AllyID = 0;
-                    }
-                    return ret;
-                }
-
-                for (var i = 0; i < teamCount; i++) {
-                    teams.Add(new BalanceTeam());
-                }
-
-                maxTeamSize = (int)Math.Ceiling(accs.Count/(double)teams.Count);
+                for (var i = 0; i < teamCount; i++) teams.Add(new BalanceTeam());
+                
 
                 RecursiveBalance(0);
 
