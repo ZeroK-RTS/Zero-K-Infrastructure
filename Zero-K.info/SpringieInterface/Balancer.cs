@@ -516,11 +516,10 @@ namespace ZeroKWeb.SpringieInterface
                     tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                     tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
                     Thread.Sleep(2000);
-                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
-                    tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                    Thread.Sleep(2000);
-                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
-                    tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
+                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
+                    tas.Say(TasClient.SayPlace.User, context.AutohostName, "!cbalance", false);
+                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
+                    tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
                     PlayerJuggler.SuppressJuggler = false;
                 }
             } catch (Exception ex) {
