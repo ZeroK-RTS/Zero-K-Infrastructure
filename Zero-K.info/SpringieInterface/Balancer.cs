@@ -107,11 +107,12 @@ namespace ZeroKWeb.SpringieInterface
                         clanwise = false;
                     }
                     else {
-                        foreach (var clanGrp in clanGroups) balanceItems.Add(new BalanceItem(clanGrp.ToArray()));
+                        balanceItems.AddRange(clanGroups.Select(x=>new BalanceItem(x.ToArray())));
                     }
                 }
                 if (!clanwise) {
-                    foreach (var acc in accs) balanceItems.Add(new BalanceItem(acc));
+                    balanceItems.Clear();
+                    balanceItems.AddRange(accs.Select(x=>new BalanceItem(x)));
                 }
 
                 for (var i = 0; i < teamCount; i++) teams.Add(new BalanceTeam());
@@ -450,23 +451,27 @@ namespace ZeroKWeb.SpringieInterface
         }
 
         private void RecursiveBalance(int itemIndex) {
-            var item = balanceItems[itemIndex];
+            if (itemIndex < balanceItems.Count) 
+            {
+                var item = balanceItems[itemIndex];
 
-            foreach (var team in teams) {
-                if (team.Count + item.Count <= maxTeamSize) {
-                    team.AddItem(item);
-
-                    if (itemIndex == balanceItems.Count - 1) // end of recursion
+                foreach (var team in teams)
+                {
+                    if (team.Count + item.Count <= maxTeamSize)
                     {
-                        var stdDev = GetTeamsDeviation(teams);
-                        if (stdDev < bestStdDev) {
-                            bestStdDev = stdDev;
-                            bestTeams = CloneTeams(teams);
-                        }
+                        team.AddItem(item);
+                        RecursiveBalance(itemIndex + 1);
+                        team.RemoveItem(item);
                     }
-                    else RecursiveBalance(itemIndex + 1);
-
-                    team.RemoveItem(item);
+                }
+            }
+            else
+            {// end of recursion
+                var stdDev = GetTeamsDeviation(teams);
+                if (stdDev < bestStdDev)
+                {
+                    bestStdDev = stdDev;
+                    bestTeams = CloneTeams(teams);
                 }
             }
         }
@@ -552,7 +557,7 @@ namespace ZeroKWeb.SpringieInterface
             public BalanceItem(params Account[] accounts) {
                 LobbyId = accounts.Select(x => x.LobbyID ?? 0).ToList();
                 EloSum = accounts.Sum(x => x.EffectiveElo);
-                Count = accounts.Count();
+                Count = accounts.Length;
             }
         }
 
