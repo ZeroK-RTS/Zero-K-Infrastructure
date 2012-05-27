@@ -515,11 +515,15 @@ namespace ZeroKWeb.SpringieInterface
                     Thread.Sleep(5000);
                     tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                     tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                    Thread.Sleep(2000);
-                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
-                    tas.Say(TasClient.SayPlace.User, context.AutohostName, "!cbalance", false);
-                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
-                    tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
+                    Thread.Sleep(3000);
+                    if (!tas.ExistingUsers[splitTo.Founder.Name].IsInGame) {
+                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
+                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
+                    }
+                    if (!tas.ExistingUsers[context.AutohostName].IsInGame) {
+                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!cbalance", false);
+                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
+                    }
                     PlayerJuggler.SuppressJuggler = false;
                 }
             } catch (Exception ex) {
