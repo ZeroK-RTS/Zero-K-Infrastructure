@@ -65,12 +65,13 @@ namespace ZeroKLobby.Notifications
 
             client.BattleMyUserStatusChanged += (sender, args) =>
             {
-                if (client.MyBattleStatus.IsSpectator)
-                {
-                    if (Program.NotifySection.Bars.Contains(this)) Deactivate();
-                }
-                else {
-                    if (AutoPopup && client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
+                if (AutoPopup) {
+                    if (client.MyBattleStatus.IsSpectator) {
+                        if (Program.NotifySection.Bars.Contains(this)) Deactivate();
+                    }
+                    else {
+                        if (client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
+                    }
                 }
             };
 
