@@ -91,14 +91,17 @@ namespace ZeroKWeb.SpringieInterface
                 }
                 balanceItems = new List<BalanceItem>();
                 if (clanwise) {
-                    foreach (var clanGrp in accs.GroupBy(x => x.ClanID ?? x.LobbyID)) {
-                        balanceItems.Add(new BalanceItem(clanGrp.ToArray()));
+                    var clanGroups = accs.GroupBy(x => x.ClanID ?? x.LobbyID).ToList();
+                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > Math.Ceiling(accs.Count / (double)teamCount)))
+                    {
+                        clanwise = false;
+                    }
+                    else {
+                        foreach (var clanGrp in clanGroups) balanceItems.Add(new BalanceItem(clanGrp.ToArray()));
                     }
                 }
-                else {
-                    foreach (var acc in accs) {
-                        balanceItems.Add(new BalanceItem(acc));
-                    }
+                if (!clanwise) {
+                    foreach (var acc in accs) balanceItems.Add(new BalanceItem(acc));
                 }
 
                 if (teamCount < 1) teamCount = 1;
