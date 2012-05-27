@@ -458,7 +458,6 @@ namespace ZeroKWeb.SpringieInterface
 
         private void RecursiveBalance(int itemIndex) {
             if (iterationsChecked > HaltAfterIterations) return;
-            if (bestStdDev < HaltAfterDeviation) return;
             
             if (itemIndex < balanceItems.Count) 
             {
@@ -575,8 +574,7 @@ namespace ZeroKWeb.SpringieInterface
         List<int> bestTeamAssignments;
 
 
-        const int HaltAfterIterations = 10000000;
-        const double HaltAfterDeviation = 200;
+        const int HaltAfterIterations = 4000000;
 
         public class BalanceTeam
         {
