@@ -454,10 +454,12 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        int iterationsChecked;
+        long iterationsChecked;
 
         private void RecursiveBalance(int itemIndex) {
-            iterationsChecked++;
+            if (iterationsChecked > HaltAfterIterations) return;
+            if (bestStdDev < HaltAfterDeviation) return;
+            
             if (itemIndex < balanceItems.Count) 
             {
                 var item = balanceItems[itemIndex];
@@ -473,7 +475,8 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
             else
-            {// end of recursion
+            {   // end of recursion
+                iterationsChecked++;
                 var stdDev = teams.Select(x => x.AvgElo).StdDevSquared();
                 if (stdDev < bestStdDev)
                 {
@@ -571,6 +574,9 @@ namespace ZeroKWeb.SpringieInterface
         List<int> teamAssignments;
         List<int> bestTeamAssignments;
 
+
+        const int HaltAfterIterations = 10000000;
+        const double HaltAfterDeviation = 200;
 
         public class BalanceTeam
         {
