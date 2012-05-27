@@ -108,7 +108,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 for (var i = 0; i < teamCount; i++) teams.Add(new BalanceTeam());
                 teamAssignments = new List<int>();
-                for (var i = 0; i < balanceItems.Count; i++) teamAssignments[i] = -1;
+                for (var i = 0; i < balanceItems.Count; i++) teamAssignments.Add(-1);
 
                 var sw = new Stopwatch();
                 sw.Start();
