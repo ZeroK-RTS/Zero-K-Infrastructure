@@ -586,7 +586,7 @@ local function ExecuteTrigger(trigger, frame)
                 local ud = UnitDefNames[unit.unitDefName]
                 local isBuilding = ud.isBuilding or ud.isFactory or not ud.canMove
                 local cardinalHeading = "n"
-                if isBuilding then
+                --if isBuilding then
                   if unit.heading > 45 and unit.heading <= 135 then
                     cardinalHeading = "e"
                   elseif unit.heading > 135 and unit.heading <= 225 then
@@ -594,7 +594,7 @@ local function ExecuteTrigger(trigger, frame)
                   elseif unit.heading > 225 and unit.heading <= 315 then
                     cardinalHeading = "w"
                   end
-                end
+                --end
                 
                 -- ZK mex placement
                 if ud.customParams.ismex and GG.metalSpots then
@@ -620,11 +620,12 @@ local function ExecuteTrigger(trigger, frame)
                 end
                 
                 local unitID, drop
+                local height = Spring.GetGroundHeight(unit.x, unit.y)
                 if GG.DropUnit then
                   drop = true
-                  unitID = GG.DropUnit(unit.unitDefName, unit.x, 0, unit.y, cardinalHeading, unit.player)
+                  unitID = GG.DropUnit(unit.unitDefName, unit.x, height, unit.y, cardinalHeading, unit.player)
                 else
-                  unitID = Spring.CreateUnit(unit.unitDefName, unit.x, 0, unit.y, cardinalHeading, unit.player)
+                  unitID = Spring.CreateUnit(unit.unitDefName, unit.x, height, unit.y, cardinalHeading, unit.player)
                 end
                 if unitID then
                   if not isBuilding then
@@ -651,32 +652,29 @@ local function ExecuteTrigger(trigger, frame)
       elseif action.logicType == "DefeatAction" then
         Event = function()
           Spring.Echo("defeating")
-		  -- kill all human players
-		  local aiAllyTeams = {}
-          for _, unitID in ipairs(Spring.GetAllUnits()) do
-            local unitTeam = Spring.GetUnitTeam(unitID)
-            local _, _, _, isAI, _,allyTeam = Spring.GetTeamInfo(unitTeam)
-            if not isAI then
-              SpecialTransferUnit(unitID, gaiaTeamID, false)
-			else
-			  aiAllyTeams[#aiAllyTeams+1] = allyTeam
-			end
+	  local aiAllyTeams = {}
+          local teams = Spring.GetTeamList()
+          for i=1,#teams do
+            local unitTeam = teams[i]
+            local _, _, _, isAI, _, allyTeam = Spring.GetTeamInfo(unitTeam)
+            if isAI then
+              aiAllyTeams[#aiAllyTeams+1] = allyTeam
+            end
           end
-		  Spring.GameOver(aiAllyTeams)
+	  Spring.GameOver(aiAllyTeams)
         end
       elseif action.logicType == "VictoryAction" then
         Event = function()
-		  local humanAllyTeams = {}
-          for _, unitID in ipairs(Spring.GetAllUnits()) do
-            local unitTeam = Spring.GetUnitTeam(unitID)
+	  local humanAllyTeams = {}
+          local teams = Spring.GetTeamList()
+          for i=1,#teams do
+            local unitTeam = teams[i]
             local _, _, _, isAI, _, allyTeam = Spring.GetTeamInfo(unitTeam)
-            if isAI then
-              SpecialTransferUnit(unitID, gaiaTeamID, false)
-			else
-			  humanAllyTeams[#humanAllyTeams+1] = allyTeam
+            if not isAI then
+              humanAllyTeams[#humanAllyTeams+1] = allyTeam
             end
           end
-		  Spring.GameOver(humanAllyTeams)
+	  Spring.GameOver(humanAllyTeams)
         end
       elseif action.logicType == "LockUnitsAction" then
         Event = function()
@@ -702,10 +700,10 @@ local function ExecuteTrigger(trigger, frame)
              action.logicType == "MarkerPointAction" or 
              action.logicType == "SetCameraPointTargetAction" or 
              action.logicType == "GuiMessageAction" or
-			 action.logicType == "GuiMessagePersistentAction" or
-			 action.logicType == "HideGuiMessagePersistentAction" or
-			 action.logicType == "AddObjectiveAction" or
-			 action.logicType == "ModifyObjectiveAction" or
+             action.logicType == "GuiMessagePersistentAction" or
+             action.logicType == "HideGuiMessagePersistentAction" or
+             action.logicType == "AddObjectiveAction" or
+             action.logicType == "ModifyObjectiveAction" or
              action.logicType == "SoundAction" or 
              action.logicType == "SunriseAction" or 
              action.logicType == "SunsetAction" then
@@ -1195,6 +1193,22 @@ function gadget:Initialize()
         gadgetHandler:UpdateCallIn(callIn)
     end
 end
+
+--[[
+function gadget:UnitEnteredLos(unitID, unitTeam, allyTeam, unitDefID)
+  for i=1,#triggers do
+    for j=1,#triggers[i].logic do
+      local condition = triggers[i].logic[j]
+      if condition.logicType == "UnitEnteredLosCondition" then
+        if not next(condition.args.players) or ArrayContains(condition.args.players, teamID) then
+          ExecuteTrigger(trigger)
+          break
+        end
+      end
+    end
+  end
+end
+]]--
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
