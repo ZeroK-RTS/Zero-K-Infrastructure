@@ -167,10 +167,13 @@ namespace ZeroKWeb.SpringieInterface
                         if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         break;
                     case AutohostMode.SmallTeams:
-                    case AutohostMode.BigTeams:
-                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
-                        res.DeleteBots = true;
-                        break;
+                    case AutohostMode.BigTeams: {
+                        var db = new ZkDataContext();
+                        var map = db.Resources.Single(x => x.InternalName == context.Map);
+                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, false, context);
+                        else res = new Balancer().LegacyBalance(allyCount ?? 2, false, context);
+                        return res;
+                    }
                     case AutohostMode.Game1v1:
                         res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
                         res.DeleteBots = true;
@@ -197,13 +200,13 @@ namespace ZeroKWeb.SpringieInterface
                             }
                         }
                         break;
-                    case AutohostMode.GameFFA:
+                    case AutohostMode.GameFFA: {
                         var db = new ZkDataContext();
                         var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (isGameStart) {
-                            if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(map.MapFFAMaxTeams.Value, false, context);
-                        }
+                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, false, context);
                         else res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, false, context);
+                        return res;
+                    }
                         break;
                 }
                 return res;

@@ -122,7 +122,7 @@ namespace ZeroKWeb.SpringieInterface
 					var players = context.Players.Count(x => !x.IsSpectator);
 					switch (mode) {
 						case AutohostMode.BigTeams:
-                            var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial == true);
+                            var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null);
                             list = ret.ToList();
                             break;
 
