@@ -172,6 +172,7 @@ namespace ZeroKWeb.SpringieInterface
                         var map = db.Resources.Single(x => x.InternalName == context.Map);
                         if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, false, context);
                         else res = new Balancer().LegacyBalance(allyCount ?? 2, false, context);
+						res.DeleteBots = true;
                         return res;
                     }
                     case AutohostMode.Game1v1:
