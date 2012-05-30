@@ -15,8 +15,11 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(string id = "trem") {
             var db = new ModStatsDb();
             var unit = id;
-            var gameFilter = db.Games.OrderByDescending(x=>x.GameID);
+            var gameFilter = db.Games;
             var results = new List<MonthEntry>();
+
+            ViewBag.Unit = unit;
+
 
             if (!db.Units.Any(x => x.Unit1 == unit)) return Content("Unit not found");
 
@@ -24,7 +27,7 @@ namespace ZeroKWeb.Controllers
                 var gameIds = m.Select(x => x.GameID).ToList();
                 var units = db.Units.Where(x=>gameIds.Contains(x.GameID));
                 var damages = db.Damages.Where(x => gameIds.Contains(x.GameID));
-                var totalSpending = units.Sum(x => (double?)x.Cost*x.Created);
+                var totalSpending = units.Where(x=>x.Unit1== unit).Sum(x => (double?)x.Cost*x.Created);
                 if (totalSpending == 0) continue;
                 ;
                 var unitCostHealth = units.GroupBy(x => x.Unit1).ToDictionary(x => x.Key, x => x.Select(y => (double?)y.Cost/y.Health).FirstOrDefault());
@@ -42,13 +45,9 @@ namespace ZeroKWeb.Controllers
             }
 
             var data = results.OrderBy(x => x.Month).ToList();
-            var chart = new Chart(1500, 700, ChartTheme.Blue);
+            if (!data.Any()) return Content("Set empty");
+            return View("UnitStatsDetail", data);
             
-            chart.AddTitle(string.Format("{0} effectivity", unit));
-            chart.AddSeries("Cost damaged/lost", "Line", xValue: data.Select(x => x.Month), yValues: data.Select(x => x.CostDamagedLost));
-            chart.AddSeries("Cost damaged/invest", "Line", xValue: data.Select(x => x.Month), yValues: data.Select(x => x.CostDamagedInvest ?? 0), legend: "ma");
-
-            return File(chart.GetBytes("png"), "image/png");
         }
     }
 

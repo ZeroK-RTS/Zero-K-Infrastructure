@@ -61,6 +61,7 @@
     <Reference Include="DbLinq.MySql">
       <HintPath>..\Libs\DbLinq.MySql.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data">
       <HintPath>..\Libs\MySql.Data.dll</HintPath>
     </Reference>
@@ -337,6 +338,7 @@
     <Content Include="Views\Poll\PollUserRoles.cshtml" />
     <Content Include="Views\Forum\PostList.cshtml" />
     <Content Include="Views\Forum\EditHistory.cshtml" />
+    <Content Include="Views\UnitStats\UnitStatsDetail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

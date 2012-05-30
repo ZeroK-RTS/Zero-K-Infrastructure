@@ -1,0 +1,31 @@
+﻿@model List<ZeroKWeb.Controllers.MonthEntry>
+
+@{
+    ViewBag.Title = "Unit stats detail " + ViewBag.Unit;
+}
+
+<h2>Unit stats detail @ViewBag.Unit</h2>
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", { packages: ["corechart"] });
+        google.setOnLoadCallback(drawChart);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+          ['Month', 'Cost damaged/lost', 'Cost damaged/invest'],
+
+          @foreach (var e in Model) {
+                @: ['@e.Month.ToString("d")', @e.CostDamagedLost, @e.CostDamagedInvest],
+          }
+
+        ]);
+
+            var options = {
+                title: '@ViewBag.Unit performance over time'
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
