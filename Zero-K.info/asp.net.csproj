@@ -86,6 +86,12 @@
   <ItemGroup>
     <Compile Include="AppCode\Auth.cs" />
     <Compile Include="AppCode\AuthServiceClient.cs" />
+    <Compile Include="AppCode\ModStatsDb.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModStatsDb.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="SpringieInterface\AutohostConfigs.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
     <Compile Include="AppCode\Global.cs" />
@@ -278,6 +284,17 @@
     <Content Include="Styles\style.css" />
     <Content Include="UnlocksAdmin.aspx" />
     <Content Include="Views\Maps\PlanetImageSelect.cshtml" />
+    <None Include="AppCode\ModStatsDb.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>ModStatsDb.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="AppCode\DataClasses1.dbml.views">
+      <DependentUpon>ModStatsDb.dbml</DependentUpon>
+    </None>
+    <None Include="AppCode\ModStatsDb.dbml.views">
+      <DependentUpon>ModStatsDb.dbml</DependentUpon>
+    </None>
     <None Include="PetitaMedium.eot" />
     <None Include="PetitaMedium.ttf" />
     <None Include="RevoPop.eot" />
@@ -394,6 +411,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\News\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="AppCode\ModStatsDb.dbml.layout">
+      <DependentUpon>ModStatsDb.dbml</DependentUpon>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

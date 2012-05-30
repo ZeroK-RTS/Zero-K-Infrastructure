@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="DataClasses1">
+  <DataContextMoniker Name="/ModStatsDb" />
+  <nestedChildShapes>
+    <classShape Id="276c99c7-2b2e-45d9-906d-8b423c833802" absoluteBounds="3.5, 1, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/ModStatsDb/Damage" />
+      <nestedChildShapes>
+        <elementListCompartment Id="2b58fc06-5894-40d2-831b-c2e0df7ec616" absoluteBounds="3.515, 1.46, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="000bc3ce-b3ac-450d-bfbc-d3b1b11a1f4d" absoluteBounds="3.5, 3.625, 2, 1.9631982421875005">
+      <DataClassMoniker Name="/ModStatsDb/Unit" />
+      <nestedChildShapes>
+        <elementListCompartment Id="fdae9097-89d1-401a-a5ab-09172ec4586a" absoluteBounds="3.515, 4.085, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="8859ed6d-0fb7-4cad-8d78-3178a0f614e6" absoluteBounds="0.75, 1.875, 2, 2.7324039713541666">
+      <DataClassMoniker Name="/ModStatsDb/Game" />
+      <nestedChildShapes>
+        <elementListCompartment Id="0ce60bb4-59be-4219-a4d5-ddf519c745a9" absoluteBounds="0.765, 2.335, 1.9700000000000002, 2.1724039713541665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <associationConnector edgePoints="[(2.75 : 2.32294840494792); (3.5 : 2.32294840494792)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/ModStatsDb/Game/Game_Damage" />
+      <nodes>
+        <classShapeMoniker Id="8859ed6d-0fb7-4cad-8d78-3178a0f614e6" />
+        <classShapeMoniker Id="276c99c7-2b2e-45d9-906d-8b423c833802" />
+      </nodes>
+    </associationConnector>
+    <associationConnector edgePoints="[(2.75 : 4.11620198567708); (3.5 : 4.11620198567708)]" fixedFrom="Algorithm" fixedTo="Algorithm">
+      <AssociationMoniker Name="/ModStatsDb/Game/Game_Unit" />
+      <nodes>
+        <classShapeMoniker Id="8859ed6d-0fb7-4cad-8d78-3178a0f614e6" />
+        <classShapeMoniker Id="000bc3ce-b3ac-450d-bfbc-d3b1b11a1f4d" />
+      </nodes>
+    </associationConnector>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>
