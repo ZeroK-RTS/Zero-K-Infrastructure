@@ -11,7 +11,7 @@ namespace ZeroKWeb.Controllers
     {
         //
         // GET: /UnitStats/
-
+        [OutputCache(Duration = 3600*24*14, VaryByParam = "id")]
         public ActionResult Index(string id = "trem") {
             var db = new ModStatsDb();
             var unit = id;
