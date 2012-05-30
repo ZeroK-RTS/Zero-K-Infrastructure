@@ -15,7 +15,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult Index(string id = "trem") {
             var db = new ModStatsDb();
             var unit = id;
-            var gameFilter = db.Games;
+            var gameFilter = db.Games.Where(x=>x.Teams == 2);
             var results = new List<MonthEntry>();
 
             ViewBag.Unit = unit;
