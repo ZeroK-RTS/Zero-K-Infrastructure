@@ -176,6 +176,21 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", new { id = accountID });
         }
 
+	[Auth(Role = AuthRole.ZkAdmin)]
+	public ActionResult ChangeHideCountry(int accountID, bool hideCountry)
+	{
+	    var db = new ZkDataContext();
+	    var acc = db.Accounts.Single(x => x.AccountID == accountID);
+	    
+	    if (hideCountry) { 
+		acc.Country = "ZZ";
+	    }
+	    Global.Nightwatch.Tas.SendCommand("HIDECOUNTRYSET", acc.Name, hideCountry);
+	    db.SubmitChanges();
+	    
+	    return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+	}
+      
         [Auth(Role = AuthRole.ZkAdmin)]
         public ActionResult ChangePermissions(int accountID, int springieLevel, bool zkAdmin)
         {

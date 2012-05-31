@@ -114,6 +114,7 @@
             <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new {accountID = Model.AccountID})">
                 Change lobby ID: @Html.TextBox("newLobbyID") <input type="submit" />
             </form>
+            Hide country flag: <form method="post" action="@Url.Action("ChangeHideCountry", new {accountID = Model.AccountID})">@Html.CheckBox("hideCountry") <input type="submit" /></form><br /> 
             <h4>Permissions</h4>
             <form method="post" action="@Url.Action("ChangePermissions", "Users", new {accountID = Model.AccountID})">
                 Springie level: @Html.TextBox("springieLevel", Model.SpringieLevel) 
