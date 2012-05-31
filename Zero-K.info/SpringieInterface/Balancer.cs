@@ -71,9 +71,15 @@ namespace ZeroKWeb.SpringieInterface
             return new List<BalanceTeam>(t.Select(x => x.Clone()));
         }
 
-        public static double GetTeamsDeviation(List<BalanceTeam> t) {
+        public static double GetTeamsDifference(List<BalanceTeam> t) {
             if (t.Count == 2) return Math.Abs(t[0].AvgElo - t[1].AvgElo);
-            else return t.Select(x => x.AvgElo).StdDev();
+            double min = Double.MaxValue;
+            double max = Double.MinValue;
+            foreach (var team in t) {
+                if (team.AvgElo > max) max = team.AvgElo;
+                if (team.AvgElo < min) min = team.AvgElo;
+            }
+            return max - min;
         }
 
         private BalanceTeamsResult LegacyBalance(int teamCount, bool clanwise, BattleContext b) {
@@ -121,6 +127,11 @@ namespace ZeroKWeb.SpringieInterface
                 sw.Start();
                 RecursiveBalance(0);
                 sw.Stop();
+
+                if (clanwise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference)) {
+                    return new Balancer().LegacyBalance(teamCount, false, b); // cbalance failed, rebalance using normal
+                }
+
 
                 if (bestTeams == null) {
                     ret.CanStart = false;
@@ -456,6 +467,7 @@ namespace ZeroKWeb.SpringieInterface
         }
 
         long iterationsChecked;
+        const double MaxCbalanceDifference = 150;
 
         private void RecursiveBalance(int itemIndex) {
             if (iterationsChecked > 2000000) return;
@@ -477,7 +489,7 @@ namespace ZeroKWeb.SpringieInterface
             else
             {// end of recursion
                 iterationsChecked++;
-                var stdDev = GetTeamsDeviation(teams);
+                var stdDev = GetTeamsDifference(teams);
                 if (stdDev < bestStdDev)
                 {
                     bestStdDev = stdDev;
