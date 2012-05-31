@@ -101,14 +101,11 @@ namespace ZeroKWeb.SpringieInterface
                     var awardType = partsSpace[1];
                     var awardText = partsSpace[2];
 
-                    var player = sb.SpringBattlePlayers.First(x => x.Account.Name == name && x.Account.LobbyID != null);
-                    db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
-                    {
-                        AccountID = player.AccountID,
-                        SpringBattleID = sb.SpringBattleID,
-                        AwardKey = awardType,
-                        AwardDescription = awardText
-                    });
+                    var player = sb.SpringBattlePlayers.FirstOrDefault(x => x.Account.Name == name && x.Account.LobbyID != null);
+                    if (player != null) {
+                        db.AccountBattleAwards.InsertOnSubmit(new AccountBattleAward()
+                                                                  { AccountID = player.AccountID, SpringBattleID = sb.SpringBattleID, AwardKey = awardType, AwardDescription = awardText });
+                    }
                 }
                 db.SubmitChanges();
 
