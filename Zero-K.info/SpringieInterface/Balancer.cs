@@ -170,13 +170,13 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.BigTeams: {
                         var db = new ZkDataContext();
                         var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, false, context);
-                        else res = new Balancer().LegacyBalance(allyCount ?? 2, false, context);
+                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise ?? true, context);
+                        else res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? true, context);
 						res.DeleteBots = true;
                         return res;
                     }
                     case AutohostMode.Game1v1:
-                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
+                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? true, context);
                         res.DeleteBots = true;
                         break;
 
@@ -204,8 +204,8 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.GameFFA: {
                         var db = new ZkDataContext();
                         var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, false, context);
-                        else res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, false, context);
+                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise ?? true, context);
+                        else res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, clanWise ?? true, context);
                         return res;
                     }
                         break;
