@@ -183,7 +183,7 @@ namespace ZeroKWeb.Controllers
 	    var acc = db.Accounts.Single(x => x.AccountID == accountID);
 	    
 	    if (hideCountry) { 
-		acc.Country = "ZZ";
+		acc.Country = "??";
 	    }
 	    Global.Nightwatch.Tas.SetHideCountry(acc.Name, hideCountry);
 	    db.SubmitChanges();
