@@ -282,6 +282,7 @@ namespace LobbyClient
             if (lck != lockToChangeTo) UpdateBattleInfo(lck, mapToChangeTo, mapChecksumToChangeTo);
         }
 
+
         public void ChangeMap(string name, int checksum)
         {
             {

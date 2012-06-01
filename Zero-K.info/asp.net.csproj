@@ -186,6 +186,7 @@
     <Content Include="Img\artifact_3.png" />
     <Content Include="Img\artifact_4.png" />
     <Content Include="Img\artifact_empty.png" />
+    <Content Include="Img\bg_bluehex.gif" />
     <Content Include="Img\blank.png" />
     <Content Include="Img\border-1.png" />
     <Content Include="Img\border.png" />
