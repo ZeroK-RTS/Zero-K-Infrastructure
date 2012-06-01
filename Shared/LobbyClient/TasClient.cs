@@ -711,6 +711,10 @@ namespace LobbyClient
             con.SendCommand("", text);
         }
 
+        public void SetHideCountry(string name, bool state) {
+            con.SendCommand("HIDECOUNTRYSET", name, state ? "1" : "0");
+        }
+
         public void SetScriptTag(string data)
         {
             con.SendCommand("SETSCRIPTTAGS", data);
