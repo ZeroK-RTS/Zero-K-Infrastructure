@@ -155,6 +155,19 @@
     <Compile Include="autohost\AutoManager.cs" />
     <Compile Include="autohost\CommandConfig.cs" />
     <Compile Include="autohost\CommandList.cs" />
+    <Compile Include="autohost\Polls\AbstractPoll.cs" />
+    <Compile Include="autohost\Polls\IVotable.cs" />
+    <Compile Include="autohost\Polls\VoteBoss.cs" />
+    <Compile Include="autohost\Polls\VoteExit.cs" />
+    <Compile Include="autohost\Polls\VoteForce.cs" />
+    <Compile Include="autohost\Polls\VoteForceStart.cs" />
+    <Compile Include="autohost\Polls\VoteKick.cs" />
+    <Compile Include="autohost\Polls\VoteMap.cs" />
+    <Compile Include="autohost\Polls\VoteRehost.cs" />
+    <Compile Include="autohost\Polls\VoteResign.cs" />
+    <Compile Include="autohost\Polls\VoteSetOptions.cs" />
+    <Compile Include="autohost\Polls\VoteSpec.cs" />
+    <Compile Include="autohost\Polls\VoteSplitPlayers.cs" />
     <Compile Include="MainConfig.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -162,7 +175,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="utils\ResourceLinkProvider.cs" />
-    <Compile Include="autohost\Polls.cs" />
     <Compile Include="ErrorHandling.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Program.cs" />

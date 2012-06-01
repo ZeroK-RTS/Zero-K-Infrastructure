@@ -100,17 +100,18 @@ namespace Springie.autohost
                                          0,
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
-            AddMissing(new CommandConfig("votesplitplayers",
+            /*AddMissing(new CommandConfig("votesplitplayers",
                                          0,
                                          "- starts vote to split the game into 2",
                                          0,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));*/
 
+            /*
             AddMissing(new CommandConfig("splitplayers",
                                          2,
                                          " - splots players to 2 hosts based on their elo",
                                          2,
-                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));*/
 
             AddMissing(new CommandConfig("voteforcestart", 0, " - starts vote to force game to start in lobby"));
 

@@ -1047,6 +1047,9 @@ namespace Springie.autohost
             var temp = new string[b.Users.Count];
             var i = 0;
             foreach (var u in b.Users) temp[i++] = u.Name;
+            if (spring.IsRunning) foreach (var u in spring.StartContext.Players) {
+                if (!temp.Contains(u.Name)) temp[i++] = u.Name;
+            }
             return Filter(temp, words, out vals, out indexes);
         }
 

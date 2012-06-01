@@ -13,6 +13,7 @@ using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
 using PlasmaShared.UnitSyncLib;
 using Springie.AutoHostNamespace;
+using Springie.autohost.Polls;
 using ZkData;
 using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
 using Timer = System.Timers.Timer;
@@ -155,7 +156,7 @@ namespace Springie.autohost
 
                         if (!spring.IsRunning && config.Mode != AutohostMode.None)
                         {
-                            if (SpawnConfig == null) ServerVerifyMap(false);
+                            // if (SpawnConfig == null) ServerVerifyMap(false); -- automatically verify if map is valid
                             bool shouldStart = false;
                             if (SpawnConfig == null && timerTick % 3 == 0) shouldStart = RunServerBalance(false, null, null);
                             // autostart if all ok  
@@ -287,11 +288,11 @@ namespace Springie.autohost
             return false;
         }
 
-        public void RegisterVote(TasSayEventArgs e, string[] words)
+        public void RegisterVote(TasSayEventArgs e, bool vote)
         {
             if (activePoll != null)
             {
-                if (activePoll.Vote(e, words)) StopVote();
+                if (activePoll.Vote(e, vote)) StopVote();
             }
             else Respond(e, "There is no poll going on, start some first");
         }
@@ -397,15 +398,15 @@ namespace Springie.autohost
                     break;
 
                 case "vote":
-                    RegisterVote(e, words);
+                    RegisterVote(e, words.Length < 1 || words[0] != "2");
                     break;
 
                 case "y":
-                    RegisterVote(e, new[] { "1" });
+                    RegisterVote(e, true);
                     break;
 
                 case "n":
-                    RegisterVote(e, new[] {"2" });
+                    RegisterVote(e, false);
                     break;
 
                 case "votemap":
@@ -715,7 +716,7 @@ namespace Springie.autohost
                     Respond(e, "Another poll already in progress, please wait");
                     return;
                 }
-                if (vote.Init(e, words))
+                if (vote.Setup(e, words))
                 {
                     activePoll = vote;
                     pollTimer.Interval = PollTimeout*1000;
@@ -846,7 +847,7 @@ namespace Springie.autohost
             try
             {
                 pollTimer.Stop();
-                if (activePoll != null) activePoll.TimeEnd();
+                if (activePoll != null) activePoll.End();
                 StopVote();
 
                 if (!spring.IsRunning && delayedModChange != null)
