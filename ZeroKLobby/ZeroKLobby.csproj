@@ -45,13 +45,13 @@
     <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
     <ProductName>Zero-K</ProductName>
     <PublisherName>Zero-K</PublisherName>
-    <MinimumRequiredVersion>2.56.0.0</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.57.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>2</ApplicationRevision>
-    <ApplicationVersion>2.56.0.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>2.57.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -284,6 +284,12 @@
     <Compile Include="Notifications\ScannerBar.Designer.cs">
       <DependentUpon>ScannerBar.cs</DependentUpon>
     </Compile>
+    <Compile Include="Notifications\VoteBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Notifications\VoteBar.Designer.cs">
+      <DependentUpon>VoteBar.cs</DependentUpon>
+    </Compile>
     <Compile Include="Ranks.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -477,6 +483,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\SinglePlayerBar.resx">
       <DependentUpon>SinglePlayerBar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Notifications\VoteBar.resx">
+      <DependentUpon>VoteBar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Ranks.resx">
       <Generator>ResXFileCodeGenerator</Generator>

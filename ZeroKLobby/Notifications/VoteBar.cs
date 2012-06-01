@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using LobbyClient;
+
+namespace ZeroKLobby.Notifications
+{
+    public partial class VoteBar : UserControl, INotifyBar
+    {
+        NotifyBarContainer container;
+        private TasClient tas;
+
+        public VoteBar()
+        {
+            InitializeComponent();
+            tas = Program.TasClient;
+            tas.PreviewSaid += (sender, args) =>
+            {
+                if (tas.MyBattle != null && args.Data.Place == TasSayEventArgs.Places.Battle && args.Data.UserName == tas.MyBattle.Founder.Name && args.Data.Text.StartsWith("Poll: ")) {
+                    var match = Regex.Match(args.Data.Text, "Poll: ([^\\[]+)\\[([^\\]]+)\\]");
+                    if (match.Success) {
+                        
+                        var data = match.Groups[2].Value;
+                        var question = match.Groups[1].Value;
+                        if (data.Contains("END:")) {
+                            Program.NotifySection.RemoveBar(this);
+                        } else
+                        {
+                            if (!Program.NotifySection.Bars.Contains(this))
+                            {
+                                Program.NotifySection.AddBar(this);
+                                Program.MainWindow.NotifyUser("chat/battle", string.Format("Poll: {0}", question), true, true);
+                            }
+                            else {
+                                args.Cancel = true;
+                            }
+
+                            lbQuestion.Text = question;
+                            var m2 = Regex.Match(data, "!y=([0-9]+)/([0-9]+), !n=([0-9]+)/([0-9]+)");
+                            if (m2.Success) {
+                                var yes = int.Parse(m2.Groups[1].Value);
+                                var yesMax = int.Parse(m2.Groups[2].Value);
+                                var no = int.Parse(m2.Groups[3].Value);
+                                var noMax = int.Parse(m2.Groups[4].Value);
+                                lbYes.Text = string.Format("{0}/{1}",  yes, yesMax);
+                                lbNo.Text = string.Format("{0}/{1}", no, noMax);
+                                pbYes.Maximum = yesMax;
+                                pbYes.Value = yes;
+                                pbNo.Maximum = noMax;
+                                pbNo.Value = no;
+                            }
+                            args.Cancel = true;
+                        }
+                    }
+                }
+            };
+            tas.BattleClosed += (sender, args) =>
+            {
+                Program.NotifySection.RemoveBar(this);
+            };
+        }
+
+        public void AddedToContainer(NotifyBarContainer container) {
+            
+            this.container = container;
+            container.btnDetail.Enabled = false;
+            container.btnDetail.Text = "Vote";
+        }
+
+        public void CloseClicked(NotifyBarContainer container) {
+            Program.NotifySection.RemoveBar(this);
+        }
+
+        public void DetailClicked(NotifyBarContainer container) {
+            
+            
+        }
+
+        public Control GetControl() {
+            return this;
+        }
+
+        private void btnYes_Click(object sender, EventArgs e)
+        {
+            tas.Say(TasClient.SayPlace.Battle, "","!y", false);
+        }
+
+        private void btnNo_Click(object sender, EventArgs e)
+        {
+            tas.Say(TasClient.SayPlace.Battle, "", "!n", false);
+        }
+    }
+}

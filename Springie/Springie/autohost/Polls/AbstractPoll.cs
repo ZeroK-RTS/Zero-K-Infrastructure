@@ -38,14 +38,14 @@ namespace Springie.autohost.Polls
                 Question = question;
                 if (WinCount <= 0) WinCount = tas.MyBattle != null ? tas.MyBattle.NonSpectatorCount/2 : 1;
                 if (WinCount <= 0) WinCount = 1;
-                tas.Say(TasClient.SayPlace.Battle, "", string.Format("Poll: {0} [!y=0/{1}, !n=0/{1}]", Question, WinCount), true);
+                ah.SayBattle(string.Format("Poll: {0} [!y=0/{1}, !n=0/{1}]", Question, WinCount));
                 return true;
             }
             else return false;
         }
 
         public void End() {
-            tas.Say(TasClient.SayPlace.Battle, "", string.Format("Poll: {0} [END:FAILED]", Question), true);
+            ah.SayBattle(string.Format("Poll: {0} [END:FAILED]", Question));
         }
 
 
@@ -54,9 +54,9 @@ namespace Springie.autohost.Polls
                 userVotes[e.UserName] = vote;
                 var yes = userVotes.Count(x => x.Value == true);
                 var no = userVotes.Count(x => x.Value == false);
-                tas.Say(TasClient.SayPlace.Battle, "", string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Question, yes, no, WinCount), true);
+                ah.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Question, yes, no, WinCount));
                 if (yes >= WinCount) {
-                    tas.Say(TasClient.SayPlace.Battle, "", string.Format("Poll: {0} [END:SUCCESS]", Question), true);
+                    ah.SayBattle(string.Format("Poll: {0} [END:SUCCESS]", Question));
                     SuccessAction();
                     return true;
                 }
