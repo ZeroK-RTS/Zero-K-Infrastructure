@@ -292,7 +292,10 @@ namespace Springie.autohost
         {
             if (activePoll != null)
             {
-                if (activePoll.Vote(e, vote)) StopVote();
+                if (activePoll.Vote(e, vote)) {
+                    pollTimer.Enabled = false;
+                    activePoll = null;
+                }
             }
             else Respond(e, "There is no poll going on, start some first");
         }

@@ -23,11 +23,11 @@ namespace ZeroKLobby.Notifications
             tas.Said += (sender, args) =>
             {
                 if (tas.MyBattle != null && args.Place == TasSayEventArgs.Places.Battle && args.UserName == tas.MyBattle.Founder.Name && args.Text.StartsWith("Poll:")) {
-                    var match = Regex.Match(args.Text, "Poll: ([^\\[]+)\\[([^\\]]+)\\]");
-                    if (match.Success) {
-                        
-                        var data = match.Groups[2].Value;
-                        var question = match.Groups[1].Value;
+                    var lid = args.Text.LastIndexOf("[");
+                    
+                    if (lid != -1) {
+                        var question = args.Text.Substring(6, lid - 6);
+                        var data = args.Text.Substring(lid + 1);
                         if (data.Contains("END:")) {
                             Program.NotifySection.RemoveBar(this);
                         } else
