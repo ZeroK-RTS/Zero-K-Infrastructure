@@ -20,10 +20,10 @@ namespace ZeroKLobby.Notifications
         {
             InitializeComponent();
             tas = Program.TasClient;
-            tas.PreviewSaid += (sender, args) =>
+            tas.Said += (sender, args) =>
             {
-                if (tas.MyBattle != null && args.Data.Place == TasSayEventArgs.Places.Battle && args.Data.UserName == tas.MyBattle.Founder.Name && args.Data.Text.StartsWith("Poll: ")) {
-                    var match = Regex.Match(args.Data.Text, "Poll: ([^\\[]+)\\[([^\\]]+)\\]");
+                if (tas.MyBattle != null && args.Place == TasSayEventArgs.Places.Battle && args.UserName == tas.MyBattle.Founder.Name && args.Text.StartsWith("Poll:")) {
+                    var match = Regex.Match(args.Text, "Poll: ([^\\[]+)\\[([^\\]]+)\\]");
                     if (match.Success) {
                         
                         var data = match.Groups[2].Value;
@@ -36,9 +36,6 @@ namespace ZeroKLobby.Notifications
                             {
                                 Program.NotifySection.AddBar(this);
                                 if (!tas.MyUser.IsInGame) Program.MainWindow.NotifyUser("chat/battle", string.Format("Poll: {0}", question), true, true);
-                            }
-                            else {
-                                args.Cancel = true;
                             }
 
                             lbQuestion.Text = question;
@@ -55,7 +52,6 @@ namespace ZeroKLobby.Notifications
                                 pbNo.Maximum = noMax;
                                 pbNo.Value = no;
                             }
-                            args.Cancel = true;
                         }
                     }
                 }

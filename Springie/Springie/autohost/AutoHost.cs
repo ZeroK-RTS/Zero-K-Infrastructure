@@ -737,6 +737,7 @@ namespace Springie.autohost
 
         public void StopVote()
         {
+            if (activePoll != null) activePoll.End();
             pollTimer.Enabled = false;
             activePoll = null;
         }

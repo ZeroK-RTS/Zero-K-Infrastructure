@@ -42,7 +42,7 @@
             this.pbYes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbYes.ForeColor = System.Drawing.Color.LimeGreen;
-            this.pbYes.Location = new System.Drawing.Point(86, 25);
+            this.pbYes.Location = new System.Drawing.Point(120, 27);
             this.pbYes.Name = "pbYes";
             this.pbYes.Size = new System.Drawing.Size(310, 15);
             this.pbYes.TabIndex = 0;
@@ -52,28 +52,24 @@
             this.pbNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pbNo.ForeColor = System.Drawing.Color.Red;
-            this.pbNo.Location = new System.Drawing.Point(86, 46);
+            this.pbNo.Location = new System.Drawing.Point(120, 48);
             this.pbNo.Name = "pbNo";
             this.pbNo.Size = new System.Drawing.Size(310, 15);
             this.pbNo.TabIndex = 1;
             // 
             // lbYes
             // 
-            this.lbYes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbYes.AutoSize = true;
-            this.lbYes.Location = new System.Drawing.Point(402, 25);
+            this.lbYes.Location = new System.Drawing.Point(64, 29);
             this.lbYes.Name = "lbYes";
-            this.lbYes.Size = new System.Drawing.Size(35, 13);
+            this.lbYes.Size = new System.Drawing.Size(50, 13);
             this.lbYes.TabIndex = 3;
             this.lbYes.Text = "label1";
             // 
             // lbNo
             // 
-            this.lbNo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbNo.AutoSize = true;
-            this.lbNo.Location = new System.Drawing.Point(402, 48);
+            this.lbNo.Location = new System.Drawing.Point(64, 50);
             this.lbNo.Name = "lbNo";
-            this.lbNo.Size = new System.Drawing.Size(35, 13);
+            this.lbNo.Size = new System.Drawing.Size(50, 13);
             this.lbNo.TabIndex = 4;
             this.lbNo.Text = "label2";
             // 
