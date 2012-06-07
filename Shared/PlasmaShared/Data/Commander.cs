@@ -10,7 +10,7 @@ namespace ZkData
                 switch (level) {
                     case 5:
                         cost += Unlock.MetalCostMorph5 ?? 0;
-                        break;
+                        goto case 4;
                     case 4:
                         cost += Unlock.MetalCostMorph4 ?? 0;
                         goto case 3;
