@@ -43,7 +43,11 @@ Points: @u.XpCost<br/>
   @:Morph 4 cost: @Html.PrintMetalCost(u.MetalCostMorph4)<br/>
 }
 
-@if (u.MorphLevel > 0) {
+@if (u.MetalCostMorph5.HasValue) {
+  @:Morph 5 cost: @Html.PrintMetalCost(u.MetalCostMorph5)<br/>
+}
+
+    @if (u.MorphLevel > 0) {
   @:Commander morph: @u.MorphLevel<br/>
 }
 

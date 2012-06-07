@@ -8,6 +8,9 @@ namespace ZkData
             var cost = 0;
             if (Unlock != null) {
                 switch (level) {
+                    case 5:
+                        cost += Unlock.MetalCostMorph5 ?? 0;
+                        break;
                     case 4:
                         cost += Unlock.MetalCostMorph4 ?? 0;
                         goto case 3;

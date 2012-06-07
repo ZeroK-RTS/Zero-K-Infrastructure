@@ -49,7 +49,8 @@ namespace ZeroKWeb
                      MetalCost = GetInt(tbMetalCost.Text),
                      MetalCostMorph2 = GetInt(tbMorph2.Text),
                      MetalCostMorph3 = GetInt(tbMorph3.Text),
-                     MetalCostMorph4 = GetInt(tbMorph4.Text)
+                     MetalCostMorph4 = GetInt(tbMorph4.Text),
+                     MetalCostMorph5 = GetInt(tbMorph5.Text)
                    };
       db.Unlocks.InsertOnSubmit(unlock);
       db.SubmitChanges();
