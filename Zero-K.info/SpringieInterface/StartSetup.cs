@@ -104,7 +104,7 @@ namespace ZeroKWeb.SpringieInterface
                                     if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x=>!Char.IsLetterOrDigit(x) && x!= ' ')) c.Name = c.CommanderID.ToString();
                                     var morphTable = new LuaTable();
                                     pc["[\"" + c.Name + "\"]"] = morphTable;
-                                    for (var i = 1; i <= 4; i++)
+                                    for (var i = 1; i <= GlobalConst.NumCommanderLevels; i++)
                                     {
                                         var key = string.Format("c{0}_{1}_{2}", user.AccountID, c.CommanderID, i);
                                         morphTable.Add(key);

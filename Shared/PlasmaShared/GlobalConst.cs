@@ -10,6 +10,7 @@
 	    public const string BaseImageUrl = "http://zero-k.info/img/";
 	    public const double EloWeightMalusFactor = -50;
 		public const int CommanderProfileCount = 6;
+        public const int NumCommanderLevels = 5;
 
 		public const int XpForMissionOrBots = 25;
 		public const int XpForMissionOrBotsVictory = 50;
