@@ -165,6 +165,7 @@ namespace ZeroKLobby
                 LoadConfig();
 
                 SpringPaths = new SpringPaths(Conf.ManualSpringPath, null, Conf.DataFolder);
+
                 Conf.DataFolder = SpringPaths.WritableDirectory;
                 SpringPaths.MakeFolders();
 

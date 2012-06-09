@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Newtonsoft.Json;
 using PlasmaShared;
 using ZkData;
 
@@ -13,7 +14,7 @@ namespace LobbyClient
     public class ProtocolExtension
     {
 #if DEBUG
-        public const string ExtensionChannelName = "extension_dev";
+        public const string ExtensionChannelName = "extension_dev"; 
 #else
         public const string ExtensionChannelName = "extension";
 #endif
@@ -161,9 +162,7 @@ namespace LobbyClient
 
         private static string EncodeJson(object data) {
 
-            var json = fastJSON.JSON.Instance;
-            json.UseSerializerExtension = false;
-            var payload = json.ToJSON(data);
+            var payload = JsonConvert.SerializeObject(data);
             return string.Format("!JSON {0} {1}", data.GetType().Name, payload);
         }
 
@@ -189,8 +188,6 @@ namespace LobbyClient
         private object DecodeJson(string data, TasSayEventArgs e) {
             try
             {
-                var json = fastJSON.JSON.Instance;
-                json.UseSerializerExtension = false;
                 var parts = data.Split(new char[] { ' ' }, 3);
                 if (parts[0] != "!JSON") return null;
                 var payload = parts[2];
@@ -198,14 +195,14 @@ namespace LobbyClient
                 {
                     case "JugglerState":
                         {
-                            var state = json.ToObject<JugglerState>(payload);
+                            var state = JsonConvert.DeserializeObject<JugglerState>(payload);
                             JugglerStateReceived(e, state);
 
                         }
                         break;
                     case "JugglerConfig":
                         {
-                            var config = json.ToObject<JugglerConfig>(payload);
+                            var config = JsonConvert.DeserializeObject<JugglerConfig>(payload);
                             JugglerConfigReceived(e, config);
                         }
 

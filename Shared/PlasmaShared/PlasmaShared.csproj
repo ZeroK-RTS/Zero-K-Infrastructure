@@ -162,11 +162,6 @@
     <Compile Include="Diagrams\Vector.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="EventExtensions.cs" />
-    <Compile Include="FastJson\Getters.cs" />
-    <Compile Include="FastJson\JSON.cs" />
-    <Compile Include="FastJson\JsonParser.cs" />
-    <Compile Include="FastJson\JsonSerializer.cs" />
-    <Compile Include="FastJson\SafeDictionary.cs" />
     <Compile Include="GlobalConst.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="IMissionService.cs" />
@@ -220,6 +215,9 @@
   <ItemGroup>
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\..\Libs\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\Libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

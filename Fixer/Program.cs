@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml.Serialization;
 using LobbyClient;
+using Newtonsoft.Json;
 using PlasmaShared;
 using PlasmaShared.UnitSyncLib;
 using ZkData;
@@ -99,11 +100,14 @@ namespace Fixer
 
       static void Main(string[] args)
     {
-        var test2 = Enum.IsDefined(typeof(AutohostMode), 2);
-          var test = (AutohostMode)1;
-          if (test2) Console.WriteLine(test.Description());
+            var test = new Dictionary<string, EngineConfigEntry>();
+           
+          test["key"] = new EngineConfigEntry() { declarationFile = "file", declarationLine = 123, defaultValue = "val"};
+          var data = JsonConvert.SerializeObject(test);
+              var obj1 = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(data);
+              var obj2 = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(File.ReadAllText(@"c:\temp\test.txt"));
 
-        var id = TasClient.GetUserID();
+
         return;
 
         var db = new ZkDataContext();

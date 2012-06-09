@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Timers;
+using Newtonsoft.Json;
 using PlasmaShared;
 using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
@@ -41,6 +42,18 @@ namespace LobbyClient
             this.username = username;
         }
     };
+
+
+    public class EngineConfigEntry
+    {
+        public string declarationFile;
+        public int declarationLine;
+        public string defaultValue;
+        public double? maximumValue;
+        public double? minimumValue;
+        public string safemodeValue;
+        public string type;
+    }
 
     /// <summary>
     /// represents one install location of spring game
@@ -104,6 +117,7 @@ namespace LobbyClient
         }
         public BattleContext StartContext { get; private set; }
         public bool UseDedicatedServer;
+        public event EventHandler BattleStarted = (sender, args) => { };
 
         public event EventHandler<SpringLogEventArgs> GameOver; // game has ended
         public event LogLine LogLineAdded = delegate { };
@@ -112,7 +126,6 @@ namespace LobbyClient
         public event EventHandler<SpringLogEventArgs> PlayerLeft;
         public event EventHandler<SpringLogEventArgs> PlayerLost; // player lost the game
         public event EventHandler<SpringLogEventArgs> PlayerSaid;
-        public event EventHandler BattleStarted = (sender, args) => { };
         //public event EventHandler<> 
         /// <summary>
         /// Data is true if exit was crash
@@ -153,6 +166,28 @@ namespace LobbyClient
 
         public void ForceStart() {
             if (IsRunning) talker.SendText("/forcestart");
+        }
+
+        public Dictionary<string, EngineConfigEntry> GetEngineConfigOptions() {
+            var sb = new StringBuilder();
+            var p = new Process();
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.Arguments += string.Format("--list-config-vars");
+            p.StartInfo.EnvironmentVariables["SPRING_DATADIR"] = paths.WritableDirectory;
+            p.StartInfo.EnvironmentVariables.Remove("SPRING_ISOLATED");
+            p.StartInfo.FileName = paths.Executable;
+            p.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
+            p.StartInfo.RedirectStandardOutput = true;
+            p.OutputDataReceived += (sender, args) => sb.AppendLine(args.Data);
+            p.Start();
+            p.BeginOutputReadLine();
+            p.WaitForExit(3000);
+
+            var text = sb.ToString();
+            text = text.Substring(text.IndexOf('\n') + 1); // skip the first line with useless crap
+            var data = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(text);
+            return data;
         }
 
         public bool IsPlayerReady(string name) {
