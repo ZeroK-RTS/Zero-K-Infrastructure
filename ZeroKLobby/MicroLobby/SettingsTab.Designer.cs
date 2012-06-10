@@ -32,7 +32,6 @@
             this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
             this.btnDisplay = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.cbSimpleMinimapColor = new System.Windows.Forms.CheckBox();
             this.cbMinimapProjectiles = new System.Windows.Forms.CheckBox();
             this.cbSafeMode = new System.Windows.Forms.CheckBox();
             this.btnDefaults = new System.Windows.Forms.Button();
@@ -98,7 +97,6 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.cbSimpleMinimapColor);
             this.panel1.Controls.Add(this.cbMinimapProjectiles);
             this.panel1.Controls.Add(this.cbSafeMode);
             this.panel1.Controls.Add(this.btnDefaults);
@@ -128,18 +126,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(749, 468);
             this.panel1.TabIndex = 15;
-            // 
-            // cbSimpleMinimapColor
-            // 
-            this.cbSimpleMinimapColor.AutoSize = true;
-            this.cbSimpleMinimapColor.Location = new System.Drawing.Point(597, 97);
-            this.cbSimpleMinimapColor.Margin = new System.Windows.Forms.Padding(4);
-            this.cbSimpleMinimapColor.Name = "cbSimpleMinimapColor";
-            this.cbSimpleMinimapColor.Size = new System.Drawing.Size(163, 21);
-            this.cbSimpleMinimapColor.TabIndex = 38;
-            this.cbSimpleMinimapColor.Text = "Simple minimap color";
-            this.cbSimpleMinimapColor.UseVisualStyleBackColor = true;
-            this.cbSimpleMinimapColor.CheckedChanged += new System.EventHandler(this.settingsControlChanged);
             // 
             // cbMinimapProjectiles
             // 
@@ -172,7 +158,7 @@
             this.btnDefaults.Name = "btnDefaults";
             this.btnDefaults.Size = new System.Drawing.Size(100, 28);
             this.btnDefaults.TabIndex = 35;
-            this.btnDefaults.Text = "Defaults";
+            this.btnDefaults.Text = "Delete All";
             this.btnDefaults.UseVisualStyleBackColor = true;
             this.btnDefaults.Click += new System.EventHandler(this.btnDefaults_Click);
             // 
@@ -419,6 +405,5 @@
         private System.Windows.Forms.Button btnDefaults;
         private System.Windows.Forms.CheckBox cbSafeMode;
         private System.Windows.Forms.CheckBox cbMinimapProjectiles;
-        private System.Windows.Forms.CheckBox cbSimpleMinimapColor;
     }
 }

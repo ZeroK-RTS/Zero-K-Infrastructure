@@ -25,8 +25,9 @@ namespace ZeroKLobby.MicroLobby
 			var cfRoot = Program.SpringPaths.WritableDirectory;
 
 			cmDisplay = new ContextMenu();
-			cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)",
-			                                     (o, x) => Utils.SafeStart("notepad.exe", Program.SpringPaths.GetSpringConfigPath())));
+			//cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)",(o, x) => Utils.SafeStart("notepad.exe", Program.SpringPaths.GetSpringConfigPath())));
+            cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)",(o, x) => {SpringsettingForm window1 = new SpringsettingForm(); window1.ShowDialog();}));
+
 			cmDisplay.MenuItems.Add(new MenuItem("Edit LUPS settings (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "lups.cfg"))));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit cmdcolors (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "cmdcolors.txt"))));
 			cmDisplay.MenuItems.Add(new MenuItem("Edit ctrlpanel settings (advanced)",
@@ -34,8 +35,6 @@ namespace ZeroKLobby.MicroLobby
             cmDisplay.MenuItems.Add(new MenuItem("Edit UI keys (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
 
             Program.ToolTip.SetText(cbMinimapProjectiles,"Draws weapon projectiles on minimap - can cause huge circles on ATI video cards");
-
-            Program.ToolTip.SetText(cbSimpleMinimapColor, "Draw simplified minimap color - draw simple red and blue for alliance in minimap");
 
             Program.ToolTip.SetText(cbSafeMode,"Use safe mode - all effects reduce to minimum, use if the game is crashing");
 
@@ -53,7 +52,6 @@ namespace ZeroKLobby.MicroLobby
             cbWindowed.Checked = Program.EngineConfigurator.GetConfigValue("Fullscreen") == "0";
             cbHwCursor.Checked = Program.EngineConfigurator.GetConfigValue("HardwareCursor") == "1";
             cbMinimapProjectiles.Checked = Program.EngineConfigurator.GetConfigValue("MiniMapDrawProjectiles") != "0";
-            cbSimpleMinimapColor.Checked = Program.EngineConfigurator.GetConfigValue("SimpleMiniMapColors") == "1";
             tbResx.Text = Program.EngineConfigurator.GetConfigValue("XResolution");
             tbResy.Text = Program.EngineConfigurator.GetConfigValue("YResolution");
             refreshingConfig = false;
@@ -65,7 +63,6 @@ namespace ZeroKLobby.MicroLobby
             Program.EngineConfigurator.SetConfigValue("Fullscreen", cbWindowed.Checked?"0":"1");
             Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
             Program.EngineConfigurator.SetConfigValue("MiniMapDrawProjectiles", cbMinimapProjectiles.Checked ? "1":"0");
-            Program.EngineConfigurator.SetConfigValue("SimpleMiniMapColors", cbSimpleMinimapColor.Checked ? "1":"0");
             Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
             Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
@@ -221,7 +218,7 @@ namespace ZeroKLobby.MicroLobby
 
         private void btnDefaults_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Do you want to reset configuration to defaults and delete cached content?", "Local data reset", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) {
+            if (MessageBox.Show("Do you want to reset configuration to defaults and delete all cached content?", "Local data reset", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes) {
                 Program.EngineConfigurator.Reset();
                 var path = Program.SpringPaths.WritableDirectory;
                 Directory.Delete(Utils.MakePath(path,"cache"),true);

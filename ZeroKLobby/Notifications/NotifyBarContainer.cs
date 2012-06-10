@@ -23,10 +23,10 @@ namespace ZeroKLobby.Notifications
             float formDPIvertical = formGraphics.DpiY; //get current DPI
             float scaleDownRatio = 96 / formDPIvertical; //get scaleDown ratio (to counter-act DPI virtualization/scaling)
             //--
-            float newHeight = control.Height + 8; //get old height + margin
-            newHeight = newHeight*scaleDownRatio; //multiply the scaledown to old height
+            float newHeight = control.Height; //get old height
+            newHeight = newHeight*scaleDownRatio; //multiply the scaledown for old height
 
-            Height = (int) newHeight; // apply height (the margin will again be automatically be scaled up according to Window's DPI) 
+            Height = (int) newHeight + 8; // apply height + margin (the height will again be automatically be scaled up according to Window's DPI) 
             tableLayoutPanel1.Controls.Add(control, 1, 0);
             control.Dock = DockStyle.Fill;
             Dock = DockStyle.Top;

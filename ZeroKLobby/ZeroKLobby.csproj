@@ -202,6 +202,12 @@
     <Compile Include="MicroLobby\FriendsWindowAdd.Designer.cs">
       <DependentUpon>FriendsWindowAdd.cs</DependentUpon>
     </Compile>
+    <Compile Include="MicroLobby\SpringsettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MicroLobby\SpringsettingForm.Designer.cs">
+      <DependentUpon>SpringsettingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="NavigationControl.xaml.cs">
       <DependentUpon>NavigationControl.xaml</DependentUpon>
     </Compile>
@@ -459,6 +465,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\PopupNotify.resx">
       <DependentUpon>PopupNotify.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MicroLobby\SpringsettingForm.resx">
+      <DependentUpon>SpringsettingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Notifications\BattleBar.resx">
       <DependentUpon>BattleBar.cs</DependentUpon>

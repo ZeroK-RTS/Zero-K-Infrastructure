@@ -46,6 +46,7 @@ namespace LobbyClient
 
     public class EngineConfigEntry
     {
+        public string description;
         public string declarationFile;
         public int declarationLine;
         public string defaultValue;
