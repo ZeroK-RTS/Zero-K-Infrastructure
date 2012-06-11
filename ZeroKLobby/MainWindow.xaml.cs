@@ -122,6 +122,9 @@ namespace ZeroKLobby
 
         public Control GetHoveredControl()
         {
+            var lastForm = System.Windows.Forms.Application.OpenForms.OfType<Form>().LastOrDefault(x=>!(x is ToolTipForm));
+            if (lastForm != null) return lastForm.GetHoveredControl();
+
             var c = GetHoveredControlOfWindowsFormsHost(navigationControl.GetWindowsFormsHostOfCurrentTab());
             if (c != null) return c;
             else
@@ -211,22 +214,7 @@ namespace ZeroKLobby
         {
             if (host != null)
             {
-                var parentControl = host.Child;
-                var screenPoint = Control.MousePosition;
-                var parentPoint = parentControl.PointToClient(screenPoint);
-
-                if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
-                Control child;
-                while (
-                    (child =
-                     parentControl.GetChildAtPoint(parentPoint,
-                                                   GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent)) !=
-                    null)
-                {
-                    parentControl = child;
-                    parentPoint = parentControl.PointToClient(screenPoint);
-                }
-                return parentControl;
+                return host.Child.GetHoveredControl();
             }
             return null;
         }

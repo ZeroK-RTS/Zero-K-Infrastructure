@@ -25,14 +25,15 @@ namespace ZeroKLobby.MicroLobby
 			var cfRoot = Program.SpringPaths.WritableDirectory;
 
 			cmDisplay = new ContextMenu();
-			//cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)",(o, x) => Utils.SafeStart("notepad.exe", Program.SpringPaths.GetSpringConfigPath())));
-            cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (advanced)",(o, x) => {SpringsettingForm window1 = new SpringsettingForm(); window1.ShowDialog();}));
+			
+            cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (GUI)",(o, x) => {SpringsettingForm window1 = new SpringsettingForm(); window1.ShowDialog();}));
+            cmDisplay.MenuItems.Add(new MenuItem("Edit engine settings (manually)", (o, x) => Utils.SafeStart("notepad.exe", Program.SpringPaths.GetSpringConfigPath())));
 
-			cmDisplay.MenuItems.Add(new MenuItem("Edit LUPS settings (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "lups.cfg"))));
-			cmDisplay.MenuItems.Add(new MenuItem("Edit cmdcolors (advanced)", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "cmdcolors.txt"))));
-			cmDisplay.MenuItems.Add(new MenuItem("Edit ctrlpanel settings (advanced)",
+			cmDisplay.MenuItems.Add(new MenuItem("Edit LUPS settings", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "lups.cfg"))));
+			cmDisplay.MenuItems.Add(new MenuItem("Edit cmdcolors", (o, x) => Utils.SafeStart("notepad.exe", Utils.MakePath(cfRoot, "cmdcolors.txt"))));
+			cmDisplay.MenuItems.Add(new MenuItem("Edit ctrlpanel settings",
 			                                     (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "ctrlpanel.txt"))));
-            cmDisplay.MenuItems.Add(new MenuItem("Edit UI keys (advanced)", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
+            cmDisplay.MenuItems.Add(new MenuItem("Edit UI keys", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
 
             Program.ToolTip.SetText(cbMinimapProjectiles,"Draws weapon projectiles on minimap - can cause huge circles on ATI video cards");
 

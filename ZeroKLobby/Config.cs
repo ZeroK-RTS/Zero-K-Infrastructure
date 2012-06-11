@@ -23,6 +23,7 @@ namespace ZeroKLobby
         public const string LogFile = "ZeroKLobbyErrors.txt";
         public const string ReportUrl = "http://cadownloader.licho.eu/error.php";
 
+
         StringCollection autoJoinChannels = new StringCollection() { KnownGames.GetDefaultGame().Channel };
         bool connectOnStartup = true;
         Color fadeColor = Color.Gray;
@@ -32,7 +33,6 @@ namespace ZeroKLobby
         string lobbyPlayerName;
         string lobbyPlayerPassword;
         string manualSpringPath = @"C:\Program Files\Spring";
-        List<string> selectedGames = new List<string>();
         bool showEmptyBattles = true;
         bool showHourlyChimes = true;
         bool showNonJoinableBattles = true;
@@ -52,11 +52,7 @@ namespace ZeroKLobby
         public StringCollection AutoJoinChannels { get { return autoJoinChannels; } set { autoJoinChannels = value; } }
 
 
-        [Category("Widgets")]
-        [Description("Auto-Update Widgets")]
-        [DisplayName("Auto-Update Widgets")]
-        public bool AutoUpdateWidgets { get; set; }
-        
+       
         [Browsable(false)]
         public string BattleFilter { get; set; }
 

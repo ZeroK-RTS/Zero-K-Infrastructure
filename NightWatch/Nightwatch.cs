@@ -30,7 +30,6 @@ namespace CaTracker
 
         public TasClient Tas { get { return tas; } }
         public static Config config;
-        ServiceHost host;
         OfflineMessages offlineMessages;
         string webRoot;
         PlayerMover playerMover;

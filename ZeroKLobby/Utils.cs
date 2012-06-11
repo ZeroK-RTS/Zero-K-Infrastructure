@@ -345,5 +345,25 @@ namespace ZeroKLobby
             var commandKey = openKey.CreateSubKey("command");
             commandKey.SetValue("", string.Format("\"{0}\" \"%1\"", executableName));
         }
+
+        public static Control GetHoveredControl(this Control parent) {
+            var parentControl = parent;
+            var screenPoint = Control.MousePosition;
+            var parentPoint = parentControl.PointToClient(screenPoint);
+
+            if (!parentControl.DisplayRectangle.Contains(parentPoint)) return null;
+            Control child;
+            while (
+                (child =
+                 parentControl.GetChildAtPoint(parentPoint,
+                                               GetChildAtPointSkip.Disabled | GetChildAtPointSkip.Invisible | GetChildAtPointSkip.Transparent)) !=
+                null)
+            {
+                parentControl = child;
+                parentPoint = parentControl.PointToClient(screenPoint);
+            }
+            return parentControl;
+
+        }
     }
 }

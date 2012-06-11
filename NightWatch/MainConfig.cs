@@ -10,7 +10,7 @@ namespace CaTracker
         string accountPassword = "secret";
         int attemptReconnectInterval = 60;
         bool attemptToRecconnect = true;
-        string[] joinChannels = new string[] { "main","zk" };
+        string[] joinChannels = new[] { "main","zk" };
 
         string serverHost = "springrts.com";
 
@@ -21,6 +21,7 @@ namespace CaTracker
         public int AttemptReconnectInterval { get { return attemptReconnectInterval; } set { attemptReconnectInterval = value; } }
         public bool AttemptToRecconnect { get { return attemptToRecconnect; } set { attemptToRecconnect = value; } }
 
+        
 
         public string[] JoinChannels { get { return joinChannels; } set { joinChannels = value; } }
         public string ServerHost { get { return serverHost; } set { serverHost = value; } }
