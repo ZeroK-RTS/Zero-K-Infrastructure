@@ -45,13 +45,13 @@
     <ErrorReportUrl>http://code.google.com/p/zero-k/issues/entry</ErrorReportUrl>
     <ProductName>Zero-K</ProductName>
     <PublisherName>Zero-K</PublisherName>
-    <MinimumRequiredVersion>2.60.0.0</MinimumRequiredVersion>
+    <MinimumRequiredVersion>2.61.0.0</MinimumRequiredVersion>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
     <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>2.60.0.%2a</ApplicationVersion>
+    <ApplicationVersion>2.61.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -66,7 +66,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>..\rules.ruleset</CodeAnalysisRuleSet>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <UseVSHostingProcess>false</UseVSHostingProcess>

@@ -181,12 +181,16 @@ namespace System.Web.Mvc
                     clanStr = string.Format("<img src='{0}' width='16'/>", account.Faction.GetImageUrl());
                 }
 
+                var clampedLevel = account.Level / 10 + 1;
+                if (clampedLevel < 1) clampedLevel = 1;
+                if (clampedLevel > 9) clampedLevel = 9;
+
                 return
                     new MvcHtmlString(
                         string.Format(
                             "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{6}<a href='/Users/Detail/{2}' style='color:{3}' title='<b>Aliases:</b> {4}'>{5}</a>",
                             account.Country != "??" ? account.Country : "unknown",
-                            account.Level / 10 + 1,
+                            clampedLevel,
                             account.AccountID,
                             colorize ? Faction.FactionColor(account.Faction, Global.FactionID) : "",
                             account.Aliases,
