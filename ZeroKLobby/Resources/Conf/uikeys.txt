@@ -3,7 +3,6 @@ unbind enter chat  // clear the defaults
 
 fakemeta  space
 
-bind          backspace  mousestate
 bind     Ctrl+backspace  togglecammode
 bind    Shift+backspace  togglecammode
 bind      Any+backspace  edit_backspace
