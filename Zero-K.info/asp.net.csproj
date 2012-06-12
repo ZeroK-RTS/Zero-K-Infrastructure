@@ -21,6 +21,10 @@
     </FileUpgradeFlags>
     <OldToolsVersion>4.0</OldToolsVersion>
     <UpgradeBackupLocation />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -345,6 +349,7 @@
     <Content Include="Views\Forum\PostList.cshtml" />
     <Content Include="Views\Forum\EditHistory.cshtml" />
     <Content Include="Views\UnitStats\UnitStatsDetail.cshtml" />
+    <Content Include="Views\Home\UserTooltip.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

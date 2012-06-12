@@ -188,12 +188,11 @@ namespace System.Web.Mvc
                 return
                     new MvcHtmlString(
                         string.Format(
-                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{6}<a href='/Users/Detail/{2}' style='color:{3}' title='<b>Aliases:</b> {4}'>{5}</a>",
+                            "<img src='/img/flags/{0}.png' class='flag' height='11' width='16' alt='{0}'/><img src='/img/ranks/{1}.png'  class='icon16' alt='rank' />{5}<a href='/Users/Detail/{2}' style='color:{3}' nicetitle='$user${2}'>{4}</a>",
                             account.Country != "??" ? account.Country : "unknown",
                             clampedLevel,
                             account.AccountID,
                             colorize ? Faction.FactionColor(account.Faction, Global.FactionID) : "",
-                            account.Aliases,
                             account.Name,clanStr));
             }
         }

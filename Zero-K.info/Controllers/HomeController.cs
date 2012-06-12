@@ -112,6 +112,9 @@ namespace ZeroKWeb.Controllers
 
 				case "planetDropships":
 					return PartialView("PlanetDropships", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])));
+
+                case "user":
+                    return PartialView("UserTooltip", db.Accounts.Single(x => x.AccountID == int.Parse(args[1])));
 			}
 			return Content(ret);
 		}
