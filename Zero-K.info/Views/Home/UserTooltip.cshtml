@@ -2,7 +2,7 @@
 @{
     var u = Model;
 }
-<b>@Html.PrintAccount(u)</b><br/>
+<span style="float:left;">@Html.AccountAvatar(u)</span><b>@Html.PrintAccount(u)</b><br/>
 <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
 <b>Elo:</b> @Math.Round(@u.EffectiveElo)
 <b>Level:</b> @u.Level<br/>

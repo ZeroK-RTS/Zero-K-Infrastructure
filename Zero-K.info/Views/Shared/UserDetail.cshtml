@@ -68,6 +68,7 @@
 		</div>
 	</div>
  }
+    <span style="float:left;">@Html.AccountAvatar(Model)</span>
 	<h2>@Html.PrintAccount(Model)</h2>
     
     @foreach (var punish in Model.Punishments.Where(x=>x.BanExpires > DateTime.UtcNow)) {
