@@ -13,7 +13,7 @@ namespace Springie.autohost.Polls
         {
             winCount = 0;
             question = null;
-			if (spring.IsRunning)
+            if (spring.IsRunning)
             {
                 AutoHost.Respond(tas, spring, e, "Cannot change map while the game is running");
                 return false;
