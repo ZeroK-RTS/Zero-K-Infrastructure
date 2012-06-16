@@ -64,7 +64,10 @@ namespace ZeroKLobby.Notifications
 
 					if (e.Data) {
 						Program.MainWindow.InvokeFunc(() => {
-                            if (MessageBox.Show("Do you want me to set Low details?", "Spring engine has crashed, update your video and audio drivers please!", MessageBoxButtons.YesNo) == DialogResult.Yes)
+
+                            MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button2;
+                            MessageBoxIcon icon = MessageBoxIcon.None;
+                            if (MessageBox.Show("Do you want me to set Low details?", "Spring engine has crashed, update your video and audio drivers please!", MessageBoxButtons.YesNo, icon, defaultButton) == DialogResult.Yes)
                             {
                                 Program.Conf.UseSafeMode = true;
                                 Program.EngineConfigurator.Configure(true, 0);
