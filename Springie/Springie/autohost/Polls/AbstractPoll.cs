@@ -36,7 +36,7 @@ namespace Springie.autohost.Polls
             if (PerformInit(e, words, out question, out winCount)) {
                 WinCount = winCount;
                 Question = question;
-                if (WinCount <= 0) WinCount = tas.MyBattle != null ? tas.MyBattle.NonSpectatorCount/2 : 1;
+                if (WinCount <= 0) WinCount = tas.MyBattle != null ? (tas.MyBattle.NonSpectatorCount/2 + 1) : 1;
                 if (WinCount <= 0) WinCount = 1;
                 ah.SayBattle(string.Format("Poll: {0} [!y=0/{1}, !n=0/{1}]", Question, WinCount));
                 return true;
