@@ -21,7 +21,7 @@ namespace ZkData
 
 		public void CalculateElo()
 		{
-            if (IsEloProcessed) //(IsEloProcessed || Duration < 360)
+            if (IsEloProcessed || Duration < GlobalConst.MinDurationForElo)
 			{
 				IsEloProcessed = true;
 				return;
@@ -31,7 +31,7 @@ namespace ZkData
 			{
 				WinnerTeamXpChange = GlobalConst.XpForMissionOrBotsVictory;
 				LoserTeamXpChange = GlobalConst.XpForMissionOrBots;
-                if (Duration < 360)
+                if (Duration < GlobalConst.MinDurationForXP)
                 {
                     WinnerTeamXpChange = 0;
                     LoserTeamXpChange = 0;
