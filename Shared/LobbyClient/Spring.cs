@@ -577,14 +577,25 @@ namespace LobbyClient
                         break;
 
                     case Talker.SpringEventType.SERVER_GAMEOVER:
-                        if (StartContext != null) {
-                            foreach (var p in StartContext.Players) {
-                                p.IsIngame = false;
+                        
+                        if (battleResult.IngameStartTime != null)
+                        {
+                            if (StartContext != null)
+                            {
+                                foreach (var p in StartContext.Players)
+                                {
+                                    p.IsIngame = false;
+                                }
                             }
+                            gameEndedOk = true;
+                            battleResult.Duration = (int)DateTime.UtcNow.Subtract(battleResult.IngameStartTime ?? battleResult.StartTime).TotalSeconds;
+                            if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
+                        }  else 
+                        {
+                            //gameover before gamestart
+                            client.Say(TasClient.SayPlace.Battle, "", "DEBUG: recieved GAMEOVER before STARTPLAYING!", true);
                         }
-                        gameEndedOk = true;
-                        battleResult.Duration = (int)DateTime.UtcNow.Subtract(battleResult.IngameStartTime ?? battleResult.StartTime).TotalSeconds;
-                        if (GameOver != null) GameOver(this, new SpringLogEventArgs(e.PlayerName));
+
                         break;
 
                     case Talker.SpringEventType.PLAYER_READY:

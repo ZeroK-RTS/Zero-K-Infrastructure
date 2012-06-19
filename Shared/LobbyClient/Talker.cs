@@ -122,7 +122,7 @@ namespace LobbyClient
       {
         var endpoint = new IPEndPoint(IPAddress.Loopback, 0);
         var data = udp.Receive(ref endpoint);
-        if (endpoint.Port != loopbackPort) springTalkPort = endpoint.Port;
+        springTalkPort = endpoint.Port;
         if (data.Length > 0)
         {
           var sea = new SpringEventArgs();

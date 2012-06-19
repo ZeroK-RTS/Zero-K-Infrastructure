@@ -862,6 +862,12 @@ namespace Springie.autohost
                 Respond(e, "Game already running");
                 return;
             }
+            if (activePoll != null)
+            {
+                Respond(e, "Poll is active");
+                return;
+            }
+
             var secondsFromLastGame = spring.Duration >= GameDelayMinDuration ? DateTime.Now.Subtract(spring.GameEnded).TotalSeconds: GameDelayRestTime + 9999;
             if (config != null && SpawnConfig == null && config.Mode != AutohostMode.None) {
                 DateTime groupLast;
