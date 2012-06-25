@@ -107,24 +107,22 @@ namespace ZeroKWeb
             {
                 var acc = AuthServiceClient.VerifyAccountHashed(Request[GlobalConst.LoginCookieName], Request[GlobalConst.PasswordHashCookieName]);
                 var ip = GetUserIP();
-                if (acc != null)
+
+                using (var db = new ZkDataContext())
                 {
-                    if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanSite))
+                    var res = db.Punishments.Where(x=>x.BanExpires > DateTime.UtcNow && x.BanSite);
+                    if (acc != null) res = res.Where(x=>x.AccountID == acc.AccountID);
+                    if (!string.IsNullOrEmpty(ip)) res  = res.Where(x=>x.BanIP == ip);
+                    var penalty = res.FirstOrDefault();
+                    if (penalty != null)
                     {
-                        Response.Write("Banned!");
+                        Response.Write("You are banned!\n");
+                        Response.Write(string.Format("Ban expires: {0}UTC\n", penalty.BanExpires));
+                        Response.Write(string.Format("Reason: {0}\n", penalty.Reason));
                         Response.End();
                     }
-                    else HttpContext.Current.User = acc;
                 }
-                if (!string.IsNullOrEmpty(ip))
-                {
-                    using (var db = new ZkDataContext())
-                        if (db.Punishments.Any(x => x.BanIP == ip && x.BanSite && x.BanExpires > DateTime.UtcNow))
-                        {
-                            Response.Write("Banned!");
-                            Response.End();
-                        }
-                }
+                if (acc != null) HttpContext.Current.User = acc;
             }
         }
     }
