@@ -80,6 +80,7 @@ namespace NightWatch
                                 }
                                 entry.LoginCount++;
                                 entry.LastLogin = DateTime.UtcNow;
+
                             }
                             db.SubmitChanges();
                         }

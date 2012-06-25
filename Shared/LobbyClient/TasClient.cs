@@ -527,7 +527,7 @@ namespace LobbyClient
             con.SendCommand("CHANNELS");
         }
 
-        public static string GetUserID() {
+        public static string GetMyUserID() {
             var nic = NetworkInterface.GetAllNetworkInterfaces().FirstOrDefault();
             string data = "0";
             if (nic != null) {
@@ -544,7 +544,7 @@ namespace LobbyClient
 
             UserPassword = password;
 
-            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetUserID(), "\ta sp eb");
+            con.SendCommand("LOGIN", userName, Utils.HashLobbyPassword(password), cpu, localIp, appName, "\t" + GetMyUserID(), "\ta sp eb");
         }
 
         int cpu = GlobalConst.ZkLobbyUserCpu;
@@ -1352,7 +1352,7 @@ namespace LobbyClient
                         break;
 
                     case "ACQUIREUSERID":
-                        con.SendCommand("USERID", GetUserID());
+                        con.SendCommand("USERID", GetMyUserID());
                         break;
                     case "ADDSTARTRECT":
                     {
