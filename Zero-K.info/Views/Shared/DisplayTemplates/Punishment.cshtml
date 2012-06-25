@@ -1,0 +1,45 @@
+﻿@using ZeroKWeb
+@model ZkData.Punishment
+@{
+    var p = Model;
+}
+<div>
+    <h3>PENALTY: @p.Reason</h3>
+    @p.Time.ToAgoString()<br />
+    Issued by: @Html.PrintAccount(p.AccountByCreatedAccountID)<br />
+    @if (p.DeleteInfluence)
+    {
+        <span>PlanetWars influence deleted</span><br />
+    }
+    @if (p.DeleteXP)
+    {
+        <span>XP deleted</span><br />
+    }
+    @if (p.BanCommanders)
+    {
+        <span>Commanders blocked</span><br />
+    }
+    @if (p.BanUnlocks)
+    {
+        <span>Unlocks blocked</span><br />
+    }
+    @if (p.BanMute)
+    {
+        <span>Muted</span><br />
+    }
+    @if (p.BanSite)
+    {
+        <span>Site blocked</span><br />
+    }
+    @if (p.BanLobby)
+    {
+        <span>Lobby blocked</span><br />
+    }
+    @if (Global.IsZeroKAdmin)
+    {
+        <span>IP block: @p.BanIP</span><br />
+        <span>UserID block: @p.UserID</span><br />
+    }
+    Expires on: @p.BanExpires
+</div>
+

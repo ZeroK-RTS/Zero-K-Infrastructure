@@ -71,17 +71,11 @@
     <span style="float:left;">@Html.AccountAvatar(Model)</span>
 	<h2>@Html.PrintAccount(Model)</h2>
     
-    @foreach (var punish in Model.PunishmentsByAccountID.Where(x=>x.BanExpires > DateTime.UtcNow)) {
-        <div>
-            <h3>PENALTY: @punish.Reason</h3>
-            @punish.Time.ToAgoString()<br />
-            Issued by: @Html.PrintAccount(punish.AccountByCreatedAccountID)<br />
-            @Html.BBCode(punish.Punishment1)
-        </div>
+    @foreach (var p in Model.PunishmentsByAccountID.Where(x=>x.BanExpires > DateTime.UtcNow)) {
+        @Html.DisplayFor(x=>p)
     }
 
-
-	<a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
+    <a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
 	@if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
  {
 			<div>
@@ -121,6 +115,24 @@
                 </tbody>
                 </table><br/>
             
+            UserID: <table><thead><tr><th>ID</th><th>Count</th><th>First</th><th>Last</th></tr></thead>
+                    <tbody>
+                @foreach (var x in Model.AccountUserIDS.OrderByDescending(x=>x.LastLogin))
+                {
+                    <tr><td>@x.UserID</td><td>@x.LoginCount</td><td>@x.FirstLogin</td><td>@x.LastLogin</td></tr>
+                }
+                </tbody>
+                    </table><br/>
+            @if (Model.PunishmentsByAccountID.Any())
+            {
+                <h2>Old penalties</h2>
+                foreach (var p in Model.PunishmentsByAccountID.Where(x=>x.BanExpires < DateTime.UtcNow))
+                {
+                    @Html.DisplayFor(x=>p)
+                }
+            }
+
+            
 
             <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new {accountID = Model.AccountID})">
                 Change lobby ID: @Html.TextBox("newLobbyID") <input type="submit" />
@@ -143,6 +155,7 @@
                 Ban commanders: @Html.CheckBox("banCommanders")<br />
                 Ban unlocks: @Html.CheckBox("banUnlocks")<br /><br/>
                 IP: @Html.TextBox("banIP")<br />
+                UserID: @Html.TextBox("banUserID")<br />
                 Ban site: @Html.CheckBox("banSite")<br />
                 Ban lobby: @Html.CheckBox("banLobby")<br />
                 Ban expires: <input type="text" name="banExpires" class="datepicker" value="@DateTime.UtcNow.AddDays(7)" /><br />

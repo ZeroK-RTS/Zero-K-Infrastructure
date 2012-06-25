@@ -20844,6 +20844,10 @@ namespace ZkData
 		
 		private System.Nullable<int> _CreatedAccountID;
 		
+		private bool _DeleteInfluence;
+		
+		private bool _DeleteXP;
+		
 		private EntityRef<Account> _AccountByAccountID;
 		
 		private EntityRef<Account> _AccountByCreatedAccountID;
@@ -20878,6 +20882,10 @@ namespace ZkData
     partial void OnUserIDChanged();
     partial void OnCreatedAccountIDChanging(System.Nullable<int> value);
     partial void OnCreatedAccountIDChanged();
+    partial void OnDeleteInfluenceChanging(bool value);
+    partial void OnDeleteInfluenceChanged();
+    partial void OnDeleteXPChanging(bool value);
+    partial void OnDeleteXPChanged();
     #endregion
 		
 		public Punishment()
@@ -21162,6 +21170,48 @@ namespace ZkData
 					this._CreatedAccountID = value;
 					this.SendPropertyChanged("CreatedAccountID");
 					this.OnCreatedAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteInfluence", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public bool DeleteInfluence
+		{
+			get
+			{
+				return this._DeleteInfluence;
+			}
+			set
+			{
+				if ((this._DeleteInfluence != value))
+				{
+					this.OnDeleteInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._DeleteInfluence = value;
+					this.SendPropertyChanged("DeleteInfluence");
+					this.OnDeleteInfluenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DeleteXP", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		public bool DeleteXP
+		{
+			get
+			{
+				return this._DeleteXP;
+			}
+			set
+			{
+				if ((this._DeleteXP != value))
+				{
+					this.OnDeleteXPChanging(value);
+					this.SendPropertyChanging();
+					this._DeleteXP = value;
+					this.SendPropertyChanged("DeleteXP");
+					this.OnDeleteXPChanged();
 				}
 			}
 		}

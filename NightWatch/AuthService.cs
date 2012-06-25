@@ -74,7 +74,7 @@ namespace NightWatch
                         {
                             if (db.Punishments.Any(x => x.UserID == args.ID && x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(args.Name, "Banned");
                             Account acc = Account.AccountByName(db, args.Name);
-                            if (acc != null)
+                            if (acc != null && args.ID != 0)
                             {
                                 AccountUserID entry = acc.AccountUserIDS.FirstOrDefault(x => x.UserID == args.ID);
                                 if (entry == null)

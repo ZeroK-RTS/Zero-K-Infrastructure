@@ -797,6 +797,8 @@
       <Column Name="BanIP" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
       <Column Name="UserID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="CreatedAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="DeleteInfluence" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="DeleteXP" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="Account_Punishment" Member="AccountByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_Punishment1" Member="AccountByCreatedAccountID" ThisKey="CreatedAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>

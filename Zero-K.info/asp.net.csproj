@@ -351,6 +351,7 @@
     <Content Include="Views\Forum\EditHistory.cshtml" />
     <Content Include="Views\UnitStats\UnitStatsDetail.cshtml" />
     <Content Include="Views\Home\UserTooltip.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\Punishment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
