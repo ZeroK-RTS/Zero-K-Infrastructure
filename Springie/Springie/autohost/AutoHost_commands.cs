@@ -1050,13 +1050,12 @@ namespace Springie.autohost
         internal static int FilterUsers(string[] words, TasClient tas, Spring spring, out string[] vals, out int[] indexes)
         {
             var b = tas.MyBattle;
-            var temp = new string[b.Users.Count];
             var i = 0;
-            foreach (var u in b.Users) temp[i++] = u.Name;
+            var temp = b.Users.Select(u => u.Name).ToList();
             if (spring.IsRunning) foreach (var u in spring.StartContext.Players) {
-                if (!temp.Contains(u.Name)) temp[i++] = u.Name;
+                if (!temp.Contains(u.Name)) temp.Add(u.Name);
             }
-            return Filter(temp, words, out vals, out indexes);
+            return Filter(temp.ToArray(), words, out vals, out indexes);
         }
 
 
