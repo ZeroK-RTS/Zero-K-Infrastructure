@@ -385,7 +385,7 @@ namespace Springie.autohost
                     break;
 
                 case "kick":
-                    ComKick(e, words);
+                        ComKick(e, words);
                     break;
 
                 case "exit":
