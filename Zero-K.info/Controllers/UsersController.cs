@@ -171,7 +171,7 @@ namespace ZeroKWeb.Controllers
             if (banSite) str.AppendFormat("site blocked\r\n");
             if (banLobby) str.AppendFormat("lobby blocked\r\n");
             if (banExpires.HasValue) str.AppendFormat("Expires on {0} GMT\r\n", banExpires);
-            punishment.Punishment1 = str.ToString();
+//            punishment.Punishment1 = str.ToString();
             
             db.SubmitChanges();
 

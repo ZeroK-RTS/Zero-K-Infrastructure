@@ -786,7 +786,6 @@
     <Type Name="Punishment">
       <Column Name="PunishmentID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="Punishment" Member="Punishment1" Type="System.String" DbType="nvarchar(1000) NOT NULL" CanBeNull="false" />
       <Column Name="Reason" Type="System.String" DbType="nvarchar(1000) NOT NULL" CanBeNull="false" />
       <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="BanExpires" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
@@ -796,7 +795,7 @@
       <Column Name="BanSite" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BanLobby" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BanIP" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
-      <Column Name="BanSecretID" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
+      <Column Name="UserID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="CreatedAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Account_Punishment" Member="AccountByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_Punishment1" Member="AccountByCreatedAccountID" ThisKey="CreatedAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />

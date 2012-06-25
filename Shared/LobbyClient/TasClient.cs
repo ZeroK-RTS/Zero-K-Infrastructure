@@ -194,7 +194,8 @@ namespace LobbyClient
         public event EventHandler<EventArgs<User>> UserExtensionsChanged = delegate { };
         public event EventHandler<EventArgs<User>> MyExtensionsChanged = delegate { };
         public event EventHandler<UserLobbyVersionEventArgs> UserLobbyVersionRecieved = delegate { };
-        public event EventHandler<UserIPEventArgs> UserIPRecieved = delegate { }; 
+        public event EventHandler<UserIPEventArgs> UserIPRecieved = delegate { };
+        public event EventHandler<UserIDEventArgs> UserIDRecieved = delegate { }; 
 
  
 
@@ -734,6 +735,12 @@ namespace LobbyClient
             con.SendCommand("GETIP",name);
         }
 
+        public void RequestUserID(string name)
+        {
+            con.SendCommand("GETUSERID", name);
+        }
+
+
         /// <summary>
         /// Starts game and automatically does hole punching if necessary
         /// </summary>
@@ -783,7 +790,19 @@ namespace LobbyClient
                     var ip = match.Groups[2].Value.Trim();
                     UserIPRecieved(this, new UserIPEventArgs() { Name = name, IP = ip});
                 }
+                else
+                {
+                    match = Regex.Match(text, "<([^>]+)> is (.+)");
+                    if (match.Success)
+                    {
+                        var name = match.Groups[1].Value;
+                        int id;
+                        if (int.TryParse(match.Groups[2].Value.Trim(), out id)) UserIDRecieved(this, new UserIDEventArgs() { Name = name, ID = id });
+                    }
+
+                }
             }
+            
         }
 
 

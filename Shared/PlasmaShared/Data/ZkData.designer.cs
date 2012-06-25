@@ -20822,8 +20822,6 @@ namespace ZkData
 		
 		private int _AccountID;
 		
-		private string _Punishment1;
-		
 		private string _Reason;
 		
 		private System.DateTime _Time;
@@ -20842,7 +20840,7 @@ namespace ZkData
 		
 		private string _BanIP;
 		
-		private string _BanSecretID;
+		private System.Nullable<int> _UserID;
 		
 		private System.Nullable<int> _CreatedAccountID;
 		
@@ -20858,8 +20856,6 @@ namespace ZkData
     partial void OnPunishmentIDChanged();
     partial void OnAccountIDChanging(int value);
     partial void OnAccountIDChanged();
-    partial void OnPunishment1Changing(string value);
-    partial void OnPunishment1Changed();
     partial void OnReasonChanging(string value);
     partial void OnReasonChanged();
     partial void OnTimeChanging(System.DateTime value);
@@ -20878,8 +20874,8 @@ namespace ZkData
     partial void OnBanLobbyChanged();
     partial void OnBanIPChanging(string value);
     partial void OnBanIPChanged();
-    partial void OnBanSecretIDChanging(string value);
-    partial void OnBanSecretIDChanged();
+    partial void OnUserIDChanging(System.Nullable<int> value);
+    partial void OnUserIDChanged();
     partial void OnCreatedAccountIDChanging(System.Nullable<int> value);
     partial void OnCreatedAccountIDChanged();
     #endregion
@@ -20935,29 +20931,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="Punishment", Storage="_Punishment1", DbType="nvarchar(1000) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public string Punishment1
-		{
-			get
-			{
-				return this._Punishment1;
-			}
-			set
-			{
-				if ((this._Punishment1 != value))
-				{
-					this.OnPunishment1Changing(value);
-					this.SendPropertyChanging();
-					this._Punishment1 = value;
-					this.SendPropertyChanged("Punishment1");
-					this.OnPunishment1Changed();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Reason", DbType="nvarchar(1000) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public string Reason
 		{
 			get
@@ -20978,7 +20953,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Time]", Storage="_Time", DbType="datetime NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
 		public System.DateTime Time
 		{
 			get
@@ -20999,7 +20974,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BanExpires", DbType="datetime")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public System.Nullable<System.DateTime> BanExpires
 		{
 			get
@@ -21020,7 +20995,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BanMute", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public bool BanMute
 		{
 			get
@@ -21041,7 +21016,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BanCommanders", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
 		public bool BanCommanders
 		{
 			get
@@ -21062,7 +21037,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BanUnlocks", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public bool BanUnlocks
 		{
 			get
@@ -21083,7 +21058,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BanSite", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public bool BanSite
 		{
 			get
@@ -21104,7 +21079,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BanLobby", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public bool BanLobby
 		{
 			get
@@ -21125,7 +21100,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BanIP", DbType="nvarchar(1000)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public string BanIP
 		{
 			get
@@ -21145,29 +21120,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BanSecretID", DbType="nvarchar(1000)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
-		public string BanSecretID
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public System.Nullable<int> UserID
 		{
 			get
 			{
-				return this._BanSecretID;
+				return this._UserID;
 			}
 			set
 			{
-				if ((this._BanSecretID != value))
+				if ((this._UserID != value))
 				{
-					this.OnBanSecretIDChanging(value);
+					this.OnUserIDChanging(value);
 					this.SendPropertyChanging();
-					this._BanSecretID = value;
-					this.SendPropertyChanged("BanSecretID");
-					this.OnBanSecretIDChanged();
+					this._UserID = value;
+					this.SendPropertyChanged("UserID");
+					this.OnUserIDChanged();
 				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAccountID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
 		public System.Nullable<int> CreatedAccountID
 		{
 			get

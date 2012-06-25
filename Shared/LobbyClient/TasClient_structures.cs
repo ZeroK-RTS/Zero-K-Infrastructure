@@ -86,6 +86,20 @@ namespace LobbyClient
         }
     }
 
+    public class UserIDEventArgs : EventArgs
+    {
+        public string Name;
+        public int ID;
+        public UserIDEventArgs() { }
+
+        public UserIDEventArgs(string name, int id)
+        {
+            Name = name;
+            ID = id;
+        }
+    }
+
+
 
     public class TasSayEventArgs: EventArgs
 	{

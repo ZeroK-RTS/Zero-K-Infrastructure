@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,10 +17,9 @@ namespace NightWatch
         const int AuthServiceTestLoginWait = 8000;
         readonly TasClient client;
 
-        public static string[] blockedHosts = new[] { "anchorfree.com", "leaseweb.com","uk2net.com" };
-
         int messageId;
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
+        public static string[] blockedHosts = new[] { "anchorfree.com", "leaseweb.com", "uk2net.com" };
 
 
         public AuthService(TasClient client)
@@ -57,69 +56,103 @@ namespace NightWatch
                 {
                     using (var db = new ZkDataContext())
                     {
-                        var acc = Account.AccountByLobbyID(db, e.Data.LobbyID);
+                        Account acc = Account.AccountByLobbyID(db, e.Data.LobbyID);
                         if (acc != null) this.client.Extensions.PublishAccountData(acc);
+                        client.RequestUserIP(e.Data.Name);
+                        client.RequestUserID(e.Data.Name);
+
                     }
                 };
 
-
-            this.client.UserIPRecieved += (sender, args) => {
-                Task.Factory.StartNew(() => {
+            this.client.UserIDRecieved += (sender, args) =>
+            {
+                Task.Factory.StartNew(() =>
+                {
                     try
                     {
                         using (var db = new ZkDataContext())
                         {
-                            var acc = Account.AccountByName(db, args.Name);
-                            if (acc != null) {
-                                if (db.Punishments.Any(x=>x.BanIP == args.IP && x.BanExpires>DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(args.Name, "Banned");
-
-                                var entry = acc.AccountIPS.FirstOrDefault(x => x.IP == args.IP);
-                                if (entry == null) {
-                                    entry = new AccountIP() { AccountID = acc.AccountID, IP = args.IP, FirstLogin = DateTime.UtcNow};
-                                    db.AccountIPS.InsertOnSubmit(entry);
+                            if (db.Punishments.Any(x => x.UserID == args.ID && x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(args.Name, "Banned");
+                            Account acc = Account.AccountByName(db, args.Name);
+                            if (acc != null)
+                            {
+                                AccountUserID entry = acc.AccountUserIDS.FirstOrDefault(x => x.UserID == args.ID);
+                                if (entry == null)
+                                {
+                                    entry = new AccountUserID { AccountID = acc.AccountID, UserID = args.ID, FirstLogin = DateTime.UtcNow };
+                                    db.AccountUserIDS.InsertOnSubmit(entry);
                                 }
                                 entry.LoginCount++;
                                 entry.LastLogin = DateTime.UtcNow;
-
                             }
                             db.SubmitChanges();
                         }
-                        var hostname = System.Net.Dns.GetHostEntry(args.IP).HostName;
-                        if (blockedHosts.Any(hostname.Contains)) client.AdminKickFromLobby(args.Name,"Bye!");
                     }
-                    catch (Exception ex) {
-                        Trace.TraceError("Error getting user IP: {0}",ex);
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Error getting user ID: {0}", ex);
                     }
                 });
             };
 
-
-            
+            this.client.UserIPRecieved += (sender, args) =>
+                {
+                    Task.Factory.StartNew(() =>
+                        {
+                            try
+                            {
+                                using (var db = new ZkDataContext())
+                                {
+                                    if (db.Punishments.Any(x => x.BanIP == args.IP && x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(args.Name, "Banned");
+                                    Account acc = Account.AccountByName(db, args.Name);
+                                    if (acc != null)
+                                    {
+                                        AccountIP entry = acc.AccountIPS.FirstOrDefault(x => x.IP == args.IP);
+                                        if (entry == null)
+                                        {
+                                            entry = new AccountIP { AccountID = acc.AccountID, IP = args.IP, FirstLogin = DateTime.UtcNow };
+                                            db.AccountIPS.InsertOnSubmit(entry);
+                                        }
+                                        entry.LoginCount++;
+                                        entry.LastLogin = DateTime.UtcNow;
+                                    }
+                                    db.SubmitChanges();
+                                }
+                                string hostname = Dns.GetHostEntry(args.IP).HostName;
+                                if (blockedHosts.Any(hostname.Contains)) client.AdminKickFromLobby(args.Name, "Bye!");
+                            }
+                            catch (Exception ex)
+                            {
+                                Trace.TraceError("Error getting user IP: {0}", ex);
+                            }
+                        });
+                };
 
             this.client.UserStatusChanged += (s, e) =>
                 {
-                    var user = client.ExistingUsers[e.ServerParams[0]];
+                    User user = client.ExistingUsers[e.ServerParams[0]];
                     Task.Factory.StartNew(() =>
                         {
                             try
                             {
                                 using (var db = new ZkDataContext()) UpdateUser(user.LobbyID, user.Name, user, null, db);
-                                client.RequestUserIP(user.Name);
+                                
                             }
                             catch (Exception ex)
                             {
                                 Trace.TraceError(ex.ToString());
                             }
-                        }, TaskCreationOptions.LongRunning);
+                        },
+                                          TaskCreationOptions.LongRunning);
                 };
 
             this.client.BattleUserJoined += (s, e) =>
                 {
-                    var battle = client.ExistingBattles[e.BattleID];
-                    var founder = battle.Founder;
+                    Battle battle = client.ExistingBattles[e.BattleID];
+                    User founder = battle.Founder;
                     if (founder.IsZkLobbyUser)
                     {
-                        var user = client.ExistingUsers[e.UserName];
+                        User user = client.ExistingUsers[e.UserName];
 
                         if (!user.IsZkLobbyUser && battle.EngineVersion != client.ServerSpringVersion &&
                             battle.EngineVersion != client.ServerSpringVersion + ".0")
@@ -134,9 +167,9 @@ namespace NightWatch
 
                         using (var db = new ZkDataContext())
                         {
-                            var acc = Account.AccountByLobbyID(db, user.LobbyID);
-                            var name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-                            var aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
+                            Account acc = Account.AccountByLobbyID(db, user.LobbyID);
+                            string name = founder.Name.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+                            AutohostConfig aconf = db.AutohostConfigs.FirstOrDefault(x => x.Login == name);
                             if (acc != null &&
                                 (acc.LastLobbyVersionCheck == null || DateTime.UtcNow.Subtract(acc.LastLobbyVersionCheck.Value).TotalDays > 3) &&
                                 aconf.AutohostMode != 0) client.RequestLobbyVersion(user.Name);
@@ -155,7 +188,7 @@ namespace NightWatch
                 {
                     using (var db = new ZkDataContext())
                     {
-                        var acc = Account.AccountByName(db, e.Name);
+                        Account acc = Account.AccountByName(db, e.Name);
                         if (acc != null)
                         {
                             acc.LobbyVersion = e.LobbyVersion;
@@ -216,7 +249,7 @@ namespace NightWatch
             if (client.ExistingUsers.TryGetValue(account.Name, out ex)) client.Say(TasClient.SayPlace.User, account.Name, text, false);
             else
             {
-                var message = new LobbyMessage()
+                var message = new LobbyMessage
                               {
                                   SourceLobbyID = client.MyUser.LobbyID,
                                   SourceName = client.MyUser.Name,
@@ -235,7 +268,7 @@ namespace NightWatch
 
         public Account VerifyAccount(string login, string hashedPassword)
         {
-            var info = requests[Interlocked.Increment(ref messageId)] = new RequestInfo();
+            RequestInfo info = requests[Interlocked.Increment(ref messageId)] = new RequestInfo();
 
             client.SendRaw(string.Format("#{0} TESTLOGIN {1} {2}", messageId, login, hashedPassword));
             if (info.WaitHandle.WaitOne(AuthServiceTestLoginWait))
@@ -243,7 +276,7 @@ namespace NightWatch
                 if (info.LobbyID == 0) return null; // not verified/invalid login or password
                 else
                 {
-                    var acc = UpdateUser(info.LobbyID, info.CorrectName, info.User, hashedPassword);
+                    Account acc = UpdateUser(info.LobbyID, info.CorrectName, info.User, hashedPassword);
                     return acc;
                 }
             }
@@ -253,12 +286,12 @@ namespace NightWatch
         public CurrentLobbyStats GetCurrentStats()
         {
             var ret = new CurrentLobbyStats();
-            foreach (var u in client.ExistingUsers.Values) if (!u.IsBot && !u.IsInGame && !u.IsInBattleRoom) ret.UsersIdle++;
+            foreach (User u in client.ExistingUsers.Values) if (!u.IsBot && !u.IsInGame && !u.IsInBattleRoom) ret.UsersIdle++;
 
-            foreach (var b in client.ExistingBattles.Values)
+            foreach (Battle b in client.ExistingBattles.Values)
             {
                 if (!GlobalConst.IsZkMod(b.ModName)) continue;
-                foreach (var u in b.Users.Select(x => x.LobbyUser))
+                foreach (User u in b.Users.Select(x => x.LobbyUser))
                 {
                     if (u.IsBot) continue;
                     if (u.IsInGame) ret.UsersFighting++;
