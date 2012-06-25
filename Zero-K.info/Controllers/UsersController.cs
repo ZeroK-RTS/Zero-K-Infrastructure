@@ -152,7 +152,7 @@ namespace ZeroKWeb.Controllers
                                    bool banLobby,
                                    bool banUnlocks,
                                    string banIP,
-                                   int banUserID,
+                                   int? banUserID,
                                    DateTime? banExpires)
         {
             var db = new ZkDataContext();
@@ -173,6 +173,7 @@ namespace ZeroKWeb.Controllers
                                  CreatedAccountID = Global.AccountID,
                                  UserID = banUserID
                              };
+            
             acc.PunishmentsByAccountID.Add(punishment);
 
             db.SubmitChanges();
