@@ -99,9 +99,12 @@
 	<br class="clearfloat" />
 	</div>
 		
-    <div class="admin">
-        @Html.ActionLink("Admin user", "AdminUserDetail","Users", new{id = Model.AccountID}, null)
-    </div>
+    @if (Global.IsZeroKAdmin)
+    {
+        <div class="admin">
+            @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
+        </div>
+    }
 	
     <div id="usr_trophies" class="">
         <h3>Trophies:</h3>
