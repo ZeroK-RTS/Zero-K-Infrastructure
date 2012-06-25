@@ -82,6 +82,14 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
+        [Auth(Role= AuthRole.ZkAdmin)]
+        public ActionResult AdminUserDetail(int id)
+        {
+            var db = new ZkDataContext();
+            var user = Account.AccountByAccountID(db, id);
+            return View("AdminUserDetail", user);
+        }
+
 
         public ActionResult Detail(string id)
         {

@@ -1,0 +1,116 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.Account
+<div class="admin" id="userAdmin" style="display: none">
+    <h1>Admin user @Model.Name</h1>
+    AccountID: @Model.AccountID
+    <br />
+    LobbyID: @Model.LobbyID
+    <br />
+    IP:
+    <table>
+        <thead>
+            <tr>
+                <th>IP</th>
+                <th>Count</th>
+                <th>First</th>
+                <th>Last</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (AccountIP x in Model.AccountIPS.OrderByDescending(x => x.LastLogin))
+            {
+                <tr>
+                    <td>@x.IP</td>
+                    <td>@x.LoginCount</td>
+                    <td>@x.FirstLogin</td>
+                    <td>@x.LastLogin</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    UserID:
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Count</th>
+                <th>First</th>
+                <th>Last</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (AccountUserID x in Model.AccountUserIDS.OrderByDescending(x => x.LastLogin))
+            {
+                <tr>
+                    <td>@x.UserID</td>
+                    <td>@x.LoginCount</td>
+                    <td>@x.FirstLogin</td>
+                    <td>@x.LastLogin</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    
+    @{
+        var myIPs = Model.AccountIPS.Select(x => x.IP).ToList();
+        var myIDs = Model.AccountUserIDS.Select(x => x.UserID).ToList();
+        var smurfs = new ZkDataContext().Accounts.Where(x => x.AccountID != Model.AccountID && (x.AccountIPS.Any(y => myIPs.Contains(y.IP)) || x.AccountUserIDS.Any(y => myIDs.Contains(y.UserID))));
+    }
+    <h2>Smurfs</h2>
+    @foreach (var ac in smurfs)
+    {
+        @Html.PrintAccount(ac)<br />
+    }
+
+    @if (Model.PunishmentsByAccountID.Any())
+    {
+        <h2>Old penalties</h2>
+        foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires < DateTime.UtcNow))
+        {
+            @Html.DisplayFor(x => p)
+        }
+    }
+
+
+    <h2>Modify user settings</h2>
+    <form method="post" action="@Url.Action("ChangeLobbyID", "Users", new { accountID = Model.AccountID })">
+        Change lobby ID: @Html.TextBox("newLobbyID")
+        <input type="submit" />
+    </form>
+    Hide country flag: <form method="post" action="@Url.Action("ChangeHideCountry", "Users", new { accountID = Model.AccountID })">@Html.CheckBox("hideCountry")<input type="submit"/></form>
+    <br />
+    <h2>Modify user permissions</h2>
+    <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
+        Springie level: @Html.TextBox("springieLevel", Model.SpringieLevel)
+        Zero K admin: @Html.CheckBox("zkAdmin", Model.IsZeroKAdmin)
+        <input type="submit" />
+    </form>
+
+
+    <h2>Issue a penalty</h2>
+    <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
+        Reason: @Html.TextBox("reason")<br />
+        <br />
+
+        Delete XP: @Html.CheckBox("deleteXP")<br />
+        Delete influence: @Html.CheckBox("deleteInfluence")<br />
+        <br />
+        Ban mute: @Html.CheckBox("banMute")<br />
+        Ban commanders: @Html.CheckBox("banCommanders")<br />
+        Ban unlocks: @Html.CheckBox("banUnlocks")<br />
+        <br />
+        IP: @Html.TextBox("banIP")<br />
+        UserID: @Html.TextBox("banUserID")<br />
+        Ban site: @Html.CheckBox("banSite")<br />
+        Ban lobby: @Html.CheckBox("banLobby")<br />
+        Ban expires:
+        <input type="text" name="banExpires" class="datepicker" value="@DateTime.UtcNow.AddDays(7)" /><br />
+
+        <input type="submit" value="BAN" class="delete" />
+
+    </form>
+</div>
+}
