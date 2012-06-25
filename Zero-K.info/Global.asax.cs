@@ -110,10 +110,9 @@ namespace ZeroKWeb
 
                 using (var db = new ZkDataContext())
                 {
-                    var res = db.Punishments.Where(x=>x.BanExpires > DateTime.UtcNow && x.BanSite);
-                    if (acc != null) res = res.Where(x=>x.AccountID == acc.AccountID);
-                    if (!string.IsNullOrEmpty(ip)) res  = res.Where(x=>x.BanIP == ip);
-                    var penalty = res.FirstOrDefault();
+                    if (ip == "") ip = null;
+                    var id = acc != null ? acc.AccountID : 0;
+                    var penalty = db.Punishments.FirstOrDefault(x => x.BanExpires > DateTime.UtcNow && x.BanSite && (x.AccountID == id || (ip != null && x.BanIP == ip)));
                     if (penalty != null)
                     {
                         Response.Write("You are banned!\n");
