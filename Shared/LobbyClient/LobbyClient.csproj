@@ -127,11 +127,14 @@
     <EmbeddedResource Include="Resources\CountryNames.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.5, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL" />
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\..\Libs\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\Libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data.Linq" />
     <Reference Include="System.Web.Services" />
   </ItemGroup>
   <ItemGroup>

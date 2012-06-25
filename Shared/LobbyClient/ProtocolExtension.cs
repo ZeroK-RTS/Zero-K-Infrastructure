@@ -14,7 +14,7 @@ namespace LobbyClient
     public class ProtocolExtension
     {
 #if DEBUG
-        public const string ExtensionChannelName = "extension_dev"; 
+        public const string ExtensionChannelName = "extension_dev";
 #else
         public const string ExtensionChannelName = "extension";
 #endif
@@ -36,18 +36,19 @@ namespace LobbyClient
             public bool Active;
             public List<PreferencePair> Preferences = new List<PreferencePair>();
 
+            public JugglerConfig(Account acc)
+            {
+                Active = acc.MatchMakingActive;
+                foreach (var item in acc.Preferences) Preferences.Add(new PreferencePair { Mode = item.Key, Preference = item.Value });
+            }
+
+            public JugglerConfig() {}
+
             public class PreferencePair
             {
                 public AutohostMode Mode;
                 public GamePreference Preference;
             }
-
-            public JugglerConfig(Account acc) {
-                Active = acc.MatchMakingActive;
-                foreach (var item in acc.Preferences) Preferences.Add(new PreferencePair() { Mode = item.Key, Preference = item.Value });
-            }
-
-            public JugglerConfig() {}
         }
 
 
@@ -69,7 +70,7 @@ namespace LobbyClient
 
         readonly Dictionary<string, Dictionary<string, string>> publishedUserAttributes = new Dictionary<string, Dictionary<string, string>>();
 
-        readonly Dictionary<string, JugglerConfig>  publishedJugglerConfigs = new Dictionary<string,JugglerConfig>();
+        readonly Dictionary<string, JugglerConfig> publishedJugglerConfigs = new Dictionary<string, JugglerConfig>();
 
 
         readonly TasClient tas;
@@ -95,6 +96,31 @@ namespace LobbyClient
             return dict ?? new Dictionary<string, string>();
         }
 
+        public void PublishAccountData(Account acc)
+        {
+            if (acc != null && tas.ExistingUsers.ContainsKey(acc.Name))
+            {
+                var data = new Dictionary<string, string>
+                           {
+                               { Keys.Level.ToString(), acc.Level.ToString() },
+                               { Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString() },
+                               { Keys.Faction.ToString(), acc.Faction != null ? acc.Faction.Shortcut : "" },
+                               { Keys.Clan.ToString(), acc.Clan != null ? acc.Clan.Shortcut : "" },
+                               { Keys.Avatar.ToString(), acc.Avatar },
+                               { Keys.SpringieLevel.ToString(), acc.SpringieLevel.ToString() }
+                           };
+                if (acc.IsZeroKAdmin) data.Add(Keys.ZkAdmin.ToString(), "1");
+
+                if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute)) data.Add(Keys.BanMute.ToString(), "1");
+                if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) data.Add(Keys.BanLobby.ToString(), "1");
+
+                tas.Extensions.Publish(acc.Name, data);
+
+                if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) tas.AdminKickFromLobby(acc.Name, "Banned");
+            }
+        }
+
+
         public void Publish(string name, Dictionary<string, string> data)
         {
             Dictionary<string, string> dict;
@@ -110,8 +136,8 @@ namespace LobbyClient
             var ret = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(data))
             {
-                var parts = data.Split('|');
-                for (var i = 0; i < parts.Length; i += 2) ret[Unescape(parts[i])] = Unescape(parts[i + 1]);
+                string[] parts = data.Split('|');
+                for (int i = 0; i < parts.Length; i += 2) ret[Unescape(parts[i])] = Unescape(parts[i + 1]);
             }
             return ret;
         }
@@ -143,10 +169,7 @@ namespace LobbyClient
                 foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], FormatMessage(kvp.Key, kvp.Value), false);
 
                 JugglerConfig config;
-                if (publishedJugglerConfigs.TryGetValue(e.ServerParams[1], out config)) {
-                    tas.Say(TasClient.SayPlace.User, e.ServerParams[1], EncodeJson(config), false);
-                }
-
+                if (publishedJugglerConfigs.TryGetValue(e.ServerParams[1], out config)) tas.Say(TasClient.SayPlace.User, e.ServerParams[1], EncodeJson(config), false);
             }
         }
 
@@ -156,27 +179,30 @@ namespace LobbyClient
             {
                 e.Cancel = true;
                 foreach (var kvp in publishedUserAttributes) tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(kvp.Key, kvp.Value), false);
-                foreach (var kvp in publishedJugglerConfigs) tas.Say(TasClient.SayPlace.User, kvp.Key, EncodeJson(kvp.Value),false);
+                foreach (var kvp in publishedJugglerConfigs) tas.Say(TasClient.SayPlace.User, kvp.Key, EncodeJson(kvp.Value), false);
             }
         }
 
-        private static string EncodeJson(object data) {
-
-            var payload = JsonConvert.SerializeObject(data);
+        static string EncodeJson(object data)
+        {
+            string payload = JsonConvert.SerializeObject(data);
             return string.Format("!JSON {0} {1}", data.GetType().Name, payload);
         }
 
-        public void PublishJugglerState(JugglerState state) {
-            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, EncodeJson(state),false);
+        public void PublishJugglerState(JugglerState state)
+        {
+            tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, EncodeJson(state), false);
         }
 
-        public void SendMyJugglerConfig(JugglerConfig config) {
+        public void SendMyJugglerConfig(JugglerConfig config)
+        {
             tas.Say(TasClient.SayPlace.User, GlobalConst.NightwatchName, EncodeJson(config), false);
         }
 
-        public void PublishPlayerJugglerConfig(JugglerConfig config, string name) {
+        public void PublishPlayerJugglerConfig(JugglerConfig config, string name)
+        {
             publishedJugglerConfigs[name] = config;
-            tas.Say(TasClient.SayPlace.User, name, EncodeJson(config),false);
+            tas.Say(TasClient.SayPlace.User, name, EncodeJson(config), false);
         }
 
 
@@ -184,52 +210,50 @@ namespace LobbyClient
         public Action<TasSayEventArgs, JugglerConfig> JugglerConfigReceived = (args, config) => { };
 
 
-
-        private object DecodeJson(string data, TasSayEventArgs e) {
+        object DecodeJson(string data, TasSayEventArgs e)
+        {
             try
             {
-                var parts = data.Split(new char[] { ' ' }, 3);
+                string[] parts = data.Split(new[] { ' ' }, 3);
                 if (parts[0] != "!JSON") return null;
-                var payload = parts[2];
+                string payload = parts[2];
                 switch (parts[1])
                 {
                     case "JugglerState":
-                        {
-                            var state = JsonConvert.DeserializeObject<JugglerState>(payload);
-                            JugglerStateReceived(e, state);
-
-                        }
+                    {
+                        var state = JsonConvert.DeserializeObject<JugglerState>(payload);
+                        JugglerStateReceived(e, state);
+                    }
                         break;
                     case "JugglerConfig":
-                        {
-                            var config = JsonConvert.DeserializeObject<JugglerConfig>(payload);
-                            JugglerConfigReceived(e, config);
-                        }
+                    {
+                        var config = JsonConvert.DeserializeObject<JugglerConfig>(payload);
+                        JugglerConfigReceived(e, config);
+                    }
 
                         break;
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Trace.TraceError(ex.ToString());
             }
             return null;
         }
 
 
-        private 
-
-
         void tas_PreviewSaid(object sender, CancelEventArgs<TasSayEventArgs> e)
         {
-            if (e.Data.Channel== GlobalConst.NightwatchName || e.Data.UserName == GlobalConst.NightwatchName || e.Data.Channel == ExtensionChannelName || tas.UserName == GlobalConst.NightwatchName)
-            { 
-                var parts = e.Data.Text.Split(new char[] { ' ' }, 3);
+            if (e.Data.Channel == GlobalConst.NightwatchName || e.Data.UserName == GlobalConst.NightwatchName ||
+                e.Data.Channel == ExtensionChannelName || tas.UserName == GlobalConst.NightwatchName)
+            {
+                string[] parts = e.Data.Text.Split(new[] { ' ' }, 3);
                 if (parts.Length == 3 && parts[0] == "USER_EXT")
                 {
                     e.Cancel = true;
 
-                    var name = parts[1];
-                    var data = Deserialize(parts[2]);
+                    string name = parts[1];
+                    Dictionary<string, string> data = Deserialize(parts[2]);
 
                     Dictionary<string, string> dict;
                     userAttributes.TryGetValue(name, out dict);
@@ -239,7 +263,8 @@ namespace LobbyClient
                     userAttributes[name] = dict;
                     notifyUserExtensionChange(name, dict);
                 }
-                else if (parts.Length >=3 && parts[0] == "!JSON") {
+                else if (parts.Length >= 3 && parts[0] == "!JSON")
+                {
                     e.Cancel = true;
                     DecodeJson(e.Data.Text, e.Data);
                 }

@@ -126,12 +126,14 @@
       <Association Name="Account_PlanetInfluenceHistory" Member="PlanetInfluenceHistories" ThisKey="AccountID" OtherKey="AccountID" Type="PlanetInfluenceHistory" />
       <Association Name="Account_AccountRatingVote" Member="AccountRatingVotes" ThisKey="AccountID" OtherKey="AccountID" Type="AccountRatingVote" />
       <Association Name="Account_News" Member="News" ThisKey="AccountID" OtherKey="AuthorAccountID" Type="News" />
-      <Association Name="Account_Punishment" Member="Punishments" ThisKey="AccountID" OtherKey="AccountID" Type="Punishment" />
+      <Association Name="Account_Punishment" Member="PunishmentsByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Punishment" />
+      <Association Name="Account_Punishment1" Member="PunishmentsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="Punishment" />
       <Association Name="Account_FactionTreaty" Member="FactionTreatiesByProposingAccountID" ThisKey="AccountID" OtherKey="ProposingAccountID" Type="FactionTreaty" />
       <Association Name="Account_FactionTreaty1" Member="FactionTreatiesByAcceptedAccountID" ThisKey="AccountID" OtherKey="AcceptedAccountID" Type="FactionTreaty" />
       <Association Name="Account_AccountRole" Member="AccountRolesByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="AccountRole" />
       <Association Name="Account_ForumPostEdit" Member="ForumPostEdits" ThisKey="AccountID" OtherKey="EditorAccountID" Type="ForumPostEdit" />
       <Association Name="Account_AccountIP" Member="AccountIPS" ThisKey="AccountID" OtherKey="AccountID" Type="AccountIP" />
+      <Association Name="Account_AccountUserID" Member="AccountUserIDS" ThisKey="AccountID" OtherKey="AccountID" Type="AccountUserID" />
       <Association Name="Clan_Account" Member="Clan" ThisKey="ClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
       <Association Name="Faction_Account" Member="Faction" ThisKey="FactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
     </Type>
@@ -795,7 +797,9 @@
       <Column Name="BanLobby" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BanIP" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
       <Column Name="BanSecretID" Type="System.String" DbType="nvarchar(1000)" CanBeNull="true" />
-      <Association Name="Account_Punishment" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Column Name="CreatedAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Association Name="Account_Punishment" Member="AccountByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Account_Punishment1" Member="AccountByCreatedAccountID" ThisKey="CreatedAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.Avatar" Member="Avatars">
@@ -974,6 +978,16 @@
       <Column Name="EffectPreventIngamePwStructureDestruction" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectGiveInfluence" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Association Name="TreatyEffectType_TreatyEffect" Member="TreatyEffects" ThisKey="EffectTypeID" OtherKey="EffectTypeID" Type="TreatyEffect" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AccountUserID" Member="AccountUserIDS">
+    <Type Name="AccountUserID">
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="LoginCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Association Name="Account_AccountUserID" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
 </Database>

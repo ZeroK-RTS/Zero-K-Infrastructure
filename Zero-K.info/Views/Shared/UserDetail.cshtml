@@ -71,10 +71,11 @@
     <span style="float:left;">@Html.AccountAvatar(Model)</span>
 	<h2>@Html.PrintAccount(Model)</h2>
     
-    @foreach (var punish in Model.Punishments.Where(x=>x.BanExpires > DateTime.UtcNow)) {
+    @foreach (var punish in Model.PunishmentsByAccountID.Where(x=>x.BanExpires > DateTime.UtcNow)) {
         <div>
             <h3>PENALTY: @punish.Reason</h3>
             @punish.Time.ToAgoString()<br />
+            Issued by: @Html.PrintAccount(punish.AccountByCreatedAccountID)<br />
             @Html.BBCode(punish.Punishment1)
         </div>
     }

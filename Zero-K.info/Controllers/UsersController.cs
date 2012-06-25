@@ -143,9 +143,10 @@ namespace ZeroKWeb.Controllers
                                     BanLobby = banLobby,
                                     BanExpires = banExpires,
                                     BanUnlocks = banUnlocks,
-                                    BanIP = banIP
+                                    BanIP = banIP,
+                                    CreatedAccountID = Global.AccountID
                                 };
-            acc.Punishments.Add(punishment);
+            acc.PunishmentsByAccountID.Add(punishment);
 
             var str = new StringBuilder();
             if (deleteInfluence)
@@ -171,8 +172,11 @@ namespace ZeroKWeb.Controllers
             if (banLobby) str.AppendFormat("lobby blocked\r\n");
             if (banExpires.HasValue) str.AppendFormat("Expires on {0} GMT\r\n", banExpires);
             punishment.Punishment1 = str.ToString();
-
+            
             db.SubmitChanges();
+
+            Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
+
             return RedirectToAction("Detail", new { id = accountID });
         }
 

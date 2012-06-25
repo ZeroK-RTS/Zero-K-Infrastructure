@@ -58,26 +58,7 @@ namespace NightWatch
                     using (var db = new ZkDataContext())
                     {
                         var acc = Account.AccountByLobbyID(db, e.Data.LobbyID);
-                        if (acc != null)
-                        {
-                            var data = new Dictionary<string, string>()
-                                       {
-                                           { ProtocolExtension.Keys.Level.ToString(), acc.Level.ToString() },
-                                           { ProtocolExtension.Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString() },
-                                           { ProtocolExtension.Keys.Faction.ToString(), acc.Faction != null ? acc.Faction.Shortcut : "" },
-                                           { ProtocolExtension.Keys.Clan.ToString(), acc.Clan != null ? acc.Clan.Shortcut : "" },
-                                           { ProtocolExtension.Keys.Avatar.ToString(), acc.Avatar }
-                                       };
-                            if (acc.SpringieLevel != 1) data.Add(ProtocolExtension.Keys.SpringieLevel.ToString(), acc.SpringieLevel.ToString());
-                            if (acc.IsZeroKAdmin) data.Add(ProtocolExtension.Keys.ZkAdmin.ToString(), "1");
-
-                            if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute)) data.Add(ProtocolExtension.Keys.BanMute.ToString(), "1");
-                            if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) data.Add(ProtocolExtension.Keys.BanLobby.ToString(), "1");
-
-                            client.Extensions.Publish(e.Data.Name, data);
-
-                            if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(e.Data.Name, "Banned");
-                        }
+                        if (acc != null) this.client.Extensions.PublishAccountData(acc);
                     }
                 };
 

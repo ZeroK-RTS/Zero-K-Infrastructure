@@ -208,6 +208,9 @@ namespace ZkData
     partial void InsertTreatyEffectType(TreatyEffectType instance);
     partial void UpdateTreatyEffectType(TreatyEffectType instance);
     partial void DeleteTreatyEffectType(TreatyEffectType instance);
+    partial void InsertAccountUserID(AccountUserID instance);
+    partial void UpdateAccountUserID(AccountUserID instance);
+    partial void DeleteAccountUserID(AccountUserID instance);
     #endregion
 		
 		public ZkDataContext(string connection) : 
@@ -711,6 +714,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<TreatyEffectType>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AccountUserID> AccountUserIDS
+		{
+			get
+			{
+				return this.GetTable<AccountUserID>();
 			}
 		}
 	}
@@ -2400,7 +2411,9 @@ namespace ZkData
 		
 		private EntitySet<News> _News;
 		
-		private EntitySet<Punishment> _Punishments;
+		private EntitySet<Punishment> _PunishmentsByAccountID;
+		
+		private EntitySet<Punishment> _PunishmentsByCreatedAccountID;
 		
 		private EntitySet<FactionTreaty> _FactionTreatiesByProposingAccountID;
 		
@@ -2411,6 +2424,8 @@ namespace ZkData
 		private EntitySet<ForumPostEdit> _ForumPostEdits;
 		
 		private EntitySet<AccountIP> _AccountIPS;
+		
+		private EntitySet<AccountUserID> _AccountUserIDS;
 		
 		private EntityRef<Clan> _Clan;
 		
@@ -3874,27 +3889,46 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Punishment", Storage="_Punishments", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Punishment", Storage="_PunishmentsByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=68, EmitDefaultValue=false)]
-		public EntitySet<Punishment> Punishments
+		public EntitySet<Punishment> PunishmentsByAccountID
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._Punishments.HasLoadedOrAssignedValues == false)))
+							&& (this._PunishmentsByAccountID.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._Punishments;
+				return this._PunishmentsByAccountID;
 			}
 			set
 			{
-				this._Punishments.Assign(value);
+				this._PunishmentsByAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Punishment1", Storage="_PunishmentsByCreatedAccountID", ThisKey="AccountID", OtherKey="CreatedAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=69, EmitDefaultValue=false)]
+		public EntitySet<Punishment> PunishmentsByCreatedAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PunishmentsByCreatedAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PunishmentsByCreatedAccountID;
+			}
+			set
+			{
+				this._PunishmentsByCreatedAccountID.Assign(value);
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_FactionTreaty", Storage="_FactionTreatiesByProposingAccountID", ThisKey="AccountID", OtherKey="ProposingAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=69, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=70, EmitDefaultValue=false)]
 		public EntitySet<FactionTreaty> FactionTreatiesByProposingAccountID
 		{
 			get
@@ -3913,7 +3947,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_FactionTreaty1", Storage="_FactionTreatiesByAcceptedAccountID", ThisKey="AccountID", OtherKey="AcceptedAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=70, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=71, EmitDefaultValue=false)]
 		public EntitySet<FactionTreaty> FactionTreatiesByAcceptedAccountID
 		{
 			get
@@ -3932,7 +3966,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountRole", Storage="_AccountRolesByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=71, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=72, EmitDefaultValue=false)]
 		public EntitySet<AccountRole> AccountRolesByAccountID
 		{
 			get
@@ -3951,7 +3985,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_ForumPostEdit", Storage="_ForumPostEdits", ThisKey="AccountID", OtherKey="EditorAccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=72, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=73, EmitDefaultValue=false)]
 		public EntitySet<ForumPostEdit> ForumPostEdits
 		{
 			get
@@ -3970,7 +4004,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountIP", Storage="_AccountIPS", ThisKey="AccountID", OtherKey="AccountID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=73, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=74, EmitDefaultValue=false)]
 		public EntitySet<AccountIP> AccountIPS
 		{
 			get
@@ -3985,6 +4019,25 @@ namespace ZkData
 			set
 			{
 				this._AccountIPS.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountUserID", Storage="_AccountUserIDS", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=75, EmitDefaultValue=false)]
+		public EntitySet<AccountUserID> AccountUserIDS
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AccountUserIDS.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AccountUserIDS;
+			}
+			set
+			{
+				this._AccountUserIDS.Assign(value);
 			}
 		}
 		
@@ -4388,16 +4441,28 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
-		private void attach_Punishments(Punishment entity)
+		private void attach_PunishmentsByAccountID(Punishment entity)
 		{
 			this.SendPropertyChanging();
-			entity.Account = this;
+			entity.AccountByAccountID = this;
 		}
 		
-		private void detach_Punishments(Punishment entity)
+		private void detach_PunishmentsByAccountID(Punishment entity)
 		{
 			this.SendPropertyChanging();
-			entity.Account = null;
+			entity.AccountByAccountID = null;
+		}
+		
+		private void attach_PunishmentsByCreatedAccountID(Punishment entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByCreatedAccountID = this;
+		}
+		
+		private void detach_PunishmentsByCreatedAccountID(Punishment entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByCreatedAccountID = null;
 		}
 		
 		private void attach_FactionTreatiesByProposingAccountID(FactionTreaty entity)
@@ -4460,6 +4525,18 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_AccountUserIDS(AccountUserID entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_AccountUserIDS(AccountUserID entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -4488,12 +4565,14 @@ namespace ZkData
 			this._PlanetInfluenceHistories = new EntitySet<PlanetInfluenceHistory>(new Action<PlanetInfluenceHistory>(this.attach_PlanetInfluenceHistories), new Action<PlanetInfluenceHistory>(this.detach_PlanetInfluenceHistories));
 			this._AccountRatingVotes = new EntitySet<AccountRatingVote>(new Action<AccountRatingVote>(this.attach_AccountRatingVotes), new Action<AccountRatingVote>(this.detach_AccountRatingVotes));
 			this._News = new EntitySet<News>(new Action<News>(this.attach_News), new Action<News>(this.detach_News));
-			this._Punishments = new EntitySet<Punishment>(new Action<Punishment>(this.attach_Punishments), new Action<Punishment>(this.detach_Punishments));
+			this._PunishmentsByAccountID = new EntitySet<Punishment>(new Action<Punishment>(this.attach_PunishmentsByAccountID), new Action<Punishment>(this.detach_PunishmentsByAccountID));
+			this._PunishmentsByCreatedAccountID = new EntitySet<Punishment>(new Action<Punishment>(this.attach_PunishmentsByCreatedAccountID), new Action<Punishment>(this.detach_PunishmentsByCreatedAccountID));
 			this._FactionTreatiesByProposingAccountID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByProposingAccountID), new Action<FactionTreaty>(this.detach_FactionTreatiesByProposingAccountID));
 			this._FactionTreatiesByAcceptedAccountID = new EntitySet<FactionTreaty>(new Action<FactionTreaty>(this.attach_FactionTreatiesByAcceptedAccountID), new Action<FactionTreaty>(this.detach_FactionTreatiesByAcceptedAccountID));
 			this._AccountRolesByAccountID = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRolesByAccountID), new Action<AccountRole>(this.detach_AccountRolesByAccountID));
 			this._ForumPostEdits = new EntitySet<ForumPostEdit>(new Action<ForumPostEdit>(this.attach_ForumPostEdits), new Action<ForumPostEdit>(this.detach_ForumPostEdits));
 			this._AccountIPS = new EntitySet<AccountIP>(new Action<AccountIP>(this.attach_AccountIPS), new Action<AccountIP>(this.detach_AccountIPS));
+			this._AccountUserIDS = new EntitySet<AccountUserID>(new Action<AccountUserID>(this.attach_AccountUserIDS), new Action<AccountUserID>(this.detach_AccountUserIDS));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -20765,7 +20844,11 @@ namespace ZkData
 		
 		private string _BanSecretID;
 		
-		private EntityRef<Account> _Account;
+		private System.Nullable<int> _CreatedAccountID;
+		
+		private EntityRef<Account> _AccountByAccountID;
+		
+		private EntityRef<Account> _AccountByCreatedAccountID;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -20797,6 +20880,8 @@ namespace ZkData
     partial void OnBanIPChanged();
     partial void OnBanSecretIDChanging(string value);
     partial void OnBanSecretIDChanged();
+    partial void OnCreatedAccountIDChanging(System.Nullable<int> value);
+    partial void OnCreatedAccountIDChanged();
     #endregion
 		
 		public Punishment()
@@ -20837,7 +20922,7 @@ namespace ZkData
 			{
 				if ((this._AccountID != value))
 				{
-					if (this._Account.HasLoadedOrAssignedValue)
+					if (this._AccountByAccountID.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -21081,36 +21166,95 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Punishment", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
-		public Account Account
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreatedAccountID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public System.Nullable<int> CreatedAccountID
 		{
 			get
 			{
-				return this._Account.Entity;
+				return this._CreatedAccountID;
 			}
 			set
 			{
-				Account previousValue = this._Account.Entity;
+				if ((this._CreatedAccountID != value))
+				{
+					if (this._AccountByCreatedAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnCreatedAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._CreatedAccountID = value;
+					this.SendPropertyChanged("CreatedAccountID");
+					this.OnCreatedAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Punishment", Storage="_AccountByAccountID", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Account AccountByAccountID
+		{
+			get
+			{
+				return this._AccountByAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByAccountID.Entity;
 				if (((previousValue != value) 
-							|| (this._Account.HasLoadedOrAssignedValue == false)))
+							|| (this._AccountByAccountID.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._Account.Entity = null;
-						previousValue.Punishments.Remove(this);
+						this._AccountByAccountID.Entity = null;
+						previousValue.PunishmentsByAccountID.Remove(this);
 					}
-					this._Account.Entity = value;
+					this._AccountByAccountID.Entity = value;
 					if ((value != null))
 					{
-						value.Punishments.Add(this);
+						value.PunishmentsByAccountID.Add(this);
 						this._AccountID = value.AccountID;
 					}
 					else
 					{
 						this._AccountID = default(int);
 					}
-					this.SendPropertyChanged("Account");
+					this.SendPropertyChanged("AccountByAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_Punishment1", Storage="_AccountByCreatedAccountID", ThisKey="CreatedAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByCreatedAccountID
+		{
+			get
+			{
+				return this._AccountByCreatedAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByCreatedAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByCreatedAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByCreatedAccountID.Entity = null;
+						previousValue.PunishmentsByCreatedAccountID.Remove(this);
+					}
+					this._AccountByCreatedAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.PunishmentsByCreatedAccountID.Add(this);
+						this._CreatedAccountID = value.AccountID;
+					}
+					else
+					{
+						this._CreatedAccountID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("AccountByCreatedAccountID");
 				}
 			}
 		}
@@ -21137,7 +21281,8 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			this._Account = default(EntityRef<Account>);
+			this._AccountByAccountID = default(EntityRef<Account>);
+			this._AccountByCreatedAccountID = default(EntityRef<Account>);
 			OnCreated();
 		}
 		
@@ -25361,6 +25506,223 @@ namespace ZkData
 		public void OnSerialized(StreamingContext context)
 		{
 			this.serializing = false;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AccountUserID")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AccountUserID : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AccountID;
+		
+		private int _UserID;
+		
+		private int _LoginCount;
+		
+		private System.DateTime _FirstLogin;
+		
+		private System.DateTime _LastLogin;
+		
+		private EntityRef<Account> _Account;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnUserIDChanging(int value);
+    partial void OnUserIDChanged();
+    partial void OnLoginCountChanging(int value);
+    partial void OnLoginCountChanged();
+    partial void OnFirstLoginChanging(System.DateTime value);
+    partial void OnFirstLoginChanged();
+    partial void OnLastLoginChanging(System.DateTime value);
+    partial void OnLastLoginChanged();
+    #endregion
+		
+		public AccountUserID()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UserID", DbType="int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int UserID
+		{
+			get
+			{
+				return this._UserID;
+			}
+			set
+			{
+				if ((this._UserID != value))
+				{
+					this.OnUserIDChanging(value);
+					this.SendPropertyChanging();
+					this._UserID = value;
+					this.SendPropertyChanged("UserID");
+					this.OnUserIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LoginCount", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int LoginCount
+		{
+			get
+			{
+				return this._LoginCount;
+			}
+			set
+			{
+				if ((this._LoginCount != value))
+				{
+					this.OnLoginCountChanging(value);
+					this.SendPropertyChanging();
+					this._LoginCount = value;
+					this.SendPropertyChanged("LoginCount");
+					this.OnLoginCountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FirstLogin", DbType="datetime NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.DateTime FirstLogin
+		{
+			get
+			{
+				return this._FirstLogin;
+			}
+			set
+			{
+				if ((this._FirstLogin != value))
+				{
+					this.OnFirstLoginChanging(value);
+					this.SendPropertyChanging();
+					this._FirstLogin = value;
+					this.SendPropertyChanged("FirstLogin");
+					this.OnFirstLoginChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LastLogin", DbType="datetime NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public System.DateTime LastLogin
+		{
+			get
+			{
+				return this._LastLogin;
+			}
+			set
+			{
+				if ((this._LastLogin != value))
+				{
+					this.OnLastLoginChanging(value);
+					this.SendPropertyChanging();
+					this._LastLogin = value;
+					this.SendPropertyChanged("LastLogin");
+					this.OnLastLoginChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AccountUserID", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.AccountUserIDS.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.AccountUserIDS.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
 		}
 	}
 }

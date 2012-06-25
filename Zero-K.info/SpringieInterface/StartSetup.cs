@@ -66,9 +66,9 @@ namespace ZeroKWeb.SpringieInterface
                         ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { LobbyID = p.LobbyID, Parameters = userParams });
 
                         var pu = new LuaTable();
-                        var userUnlocksBanned = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanUnlocks);
-                        var userCommandersBanned = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanCommanders);
-                        var userBanMuted = user.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute);
+                        var userUnlocksBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanUnlocks);
+                        var userCommandersBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanCommanders);
+                        var userBanMuted = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute);
 
                         if (!userUnlocksBanned)
                         {

@@ -109,7 +109,7 @@ namespace ZeroKWeb
                 var ip = GetUserIP();
                 if (acc != null)
                 {
-                    if (acc.Punishments.Any(x => x.BanExpires > DateTime.UtcNow && x.BanSite))
+                    if (acc.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanSite))
                     {
                         Response.Write("Banned!");
                         Response.End();
