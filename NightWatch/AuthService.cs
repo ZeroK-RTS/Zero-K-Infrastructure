@@ -72,8 +72,11 @@ namespace NightWatch
                     {
                         using (var db = new ZkDataContext())
                         {
-                            if (db.Punishments.Any(x => x.UserID == args.ID && x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(args.Name, "Banned");
                             Account acc = Account.AccountByName(db, args.Name);
+                            var penalty = Punishment.GetActivePunishment(acc != null ? acc.AccountID : 0, null, args.ID, x => x.BanLobby, db);
+                            
+                            if (penalty != null) client.AdminKickFromLobby(args.Name, string.Format("Banned until {0}, reason: {1}", penalty.BanExpires, penalty.Reason));
+                            
                             if (acc != null && args.ID != 0)
                             {
                                 AccountUserID entry = acc.AccountUserIDS.FirstOrDefault(x => x.UserID == args.ID);
@@ -103,8 +106,10 @@ namespace NightWatch
                             {
                                 using (var db = new ZkDataContext())
                                 {
-                                    if (db.Punishments.Any(x => x.BanIP == args.IP && x.BanExpires > DateTime.UtcNow && x.BanLobby)) client.AdminKickFromLobby(args.Name, "Banned");
                                     Account acc = Account.AccountByName(db, args.Name);
+
+                                    var penalty = Punishment.GetActivePunishment(acc != null ? acc.AccountID : 0, args.IP, null, x => x.BanLobby, db);
+                                    if (penalty != null) client.AdminKickFromLobby(args.Name, string.Format("Banned until {0}, reason: {1}", penalty.BanExpires, penalty.Reason));
                                     if (acc != null)
                                     {
                                         AccountIP entry = acc.AccountIPS.FirstOrDefault(x => x.IP == args.IP);

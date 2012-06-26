@@ -2,7 +2,7 @@
 @using ZkData
 @model ZkData.Account
 <div class="admin">
-    <h1>Admin user @Model.Name</h1>
+    <h1>Administer @Html.PrintAccount(@Model)</h1>
     AccountID: @Model.AccountID
     <br />
     LobbyID: @Model.LobbyID
