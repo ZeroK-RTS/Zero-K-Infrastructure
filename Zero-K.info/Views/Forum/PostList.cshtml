@@ -20,21 +20,17 @@
                                     <a href="@Url.Action("EditHistory", new { forumPostID = p.ForumPostID })">(edited @lastEdit.EditTime.ToAgoString())</a>
                                 }
                             </small>
-                        </td>
-                    </tr>
+
                     @if (Global.IsZeroKAdmin)
                     {
-                        <tr>
-                            <td colspan="2">
-                                <a href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="../../img/delete_trashcan.png" height="22" /> </a>
-                            </td>
-                        </tr>
+                         <a href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'> <img src="../../img/delete_trashcan.png" height="22"/> </a>
                     }
                     @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
                     {
-                        <tr><td colspan="2">@Html.ActionLink("Edit", "NewPost", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })</td></tr>
+                        @Html.ActionLink("Edit", "NewPost", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID }) <img src="../../img/edit_pencil.png" height="22"/>
                     }
-                    
+                        </td>
+                    </tr>
 
                 </table>
             </td>
