@@ -62,7 +62,7 @@
     <h2>Smurfs</h2>
     @foreach (var ac in smurfs)
     {
-        @Html.PrintAccount(ac)<br />
+        <span>@Html.PrintAccount(ac)  -  @Html.ActionLink("admin", "AdminUserDetail", new{id=ac.AccountID})</span><br />
     }
 
     @if (Model.PunishmentsByAccountID.Any())
@@ -102,8 +102,8 @@
         Ban commanders: @Html.CheckBox("banCommanders")<br />
         Ban unlocks: @Html.CheckBox("banUnlocks")<br />
         <br />
-        IP: @Html.TextBox("banIP")<br />
-        UserID: @Html.TextBox("banUserID")<br />
+        IP: @Html.TextBox("banIP", Model.AccountIPS.OrderByDescending(x=>x.LastLogin).Select(x=>x.IP).FirstOrDefault())<br />
+        UserID: @Html.TextBox("banUserID", Model.AccountUserIDS.OrderByDescending(x=>x.LastLogin).Select(x=>(int?)x.UserID).FirstOrDefault())<br />
         Ban site: @Html.CheckBox("banSite")<br />
         Ban lobby: @Html.CheckBox("banLobby")<br />
         Ban expires:

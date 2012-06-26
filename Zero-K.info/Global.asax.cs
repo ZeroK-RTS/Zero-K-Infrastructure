@@ -116,7 +116,7 @@ namespace ZeroKWeb
                     if (penalty != null)
                     {
                         Response.Write("You are banned!\n");
-                        Response.Write(string.Format("Ban expires: {0}UTC\n", penalty.BanExpires));
+                        Response.Write(string.Format("Ban expires: {0} UTC\n", penalty.BanExpires));
                         Response.Write(string.Format("Reason: {0}\n", penalty.Reason));
                         Response.End();
                     }
