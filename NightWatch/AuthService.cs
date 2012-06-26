@@ -15,7 +15,7 @@ namespace NightWatch
     public class AuthService: IAuthService
     {
         const int AuthServiceTestLoginWait = 8000;
-        const string ModeratorChannel = "zkadmin";
+        public const string ModeratorChannel = "zkadmin";
 
         readonly TasClient client;
 
@@ -62,7 +62,7 @@ namespace NightWatch
                         if (acc != null)
                         {
                             this.client.Extensions.PublishAccountData(acc);
-                            if (acc.SpringieLevel > 1) client.ForceJoinChannel(e.Data.Name, ModeratorChannel);
+                            if (acc.SpringieLevel > 1 || acc.IsZeroKAdmin) client.ForceJoinChannel(e.Data.Name, ModeratorChannel);
                         }
                         client.RequestUserIP(e.Data.Name);
                         client.RequestUserID(e.Data.Name);
@@ -223,12 +223,37 @@ namespace NightWatch
 
             this.client.ChannelUserAdded += (sender, args) =>
                 {
-                    var channel = args.ServerParams[0];
-                    var user = args.ServerParams[1];
-                    if (channel == ModeratorChannel)
+                    try
                     {
-                        if (client.ExistingUsers[user].SpringieLevel <= 1) client.AdminKickFromLobby(user,"Sorry this channel is only for moderators");
+                        var channel = args.ServerParams[0];
+                        var user = args.ServerParams[1];
+                        if (channel == ModeratorChannel)
+                        {
+                            var u = client.ExistingUsers[user];
+                            if (u.SpringieLevel <= 1 && !u.IsZeroKAdmin) client.AdminKickFromLobby(user, "Sorry this channel is only for moderators");
+                        }
+                    } catch (Exception ex)
+                    {
+                        Trace.TraceError("Error procesisng channel user added: {0}",ex);
                     }
+                };
+            this.client.ChannelUserRemoved += (sender, args) =>
+                {
+                    try
+                    {
+                        var channel = args.ServerParams[0];
+                        var user = args.ServerParams[1];
+                        if (channel == ModeratorChannel)
+                        {
+                            var u = client.ExistingUsers[user];
+                            if (u.SpringieLevel > 1 || u.IsZeroKAdmin) client.ForceJoinChannel(user, ModeratorChannel);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.TraceError("Error procesisng channel user added: {0}", ex);
+                    }
+
                 };
         }
 

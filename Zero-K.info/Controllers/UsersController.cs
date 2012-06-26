@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using LobbyClient;
+using NightWatch;
 using ZkData;
 
 namespace ZeroKWeb.Controllers
@@ -181,6 +183,24 @@ namespace ZeroKWeb.Controllers
             Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
 
             return RedirectToAction("Detail", new { id = accountID });
+        }
+
+        [Auth]
+        public ActionResult ReportToAdmin(int id)
+        {
+            var db = new ZkDataContext();
+            var acc = Account.AccountByAccountID(db, id);
+            return View("ReportToAdmin", acc);
+        }
+
+        [Auth]
+        public ActionResult ReportToAdminSubmit(int accountID, string text)
+        {
+            var db = new ZkDataContext();
+            var acc = Account.AccountByAccountID(db, accountID);
+            var str = string.Format("{0} reports abuse of {1} : {2}", Global.Account.Name, acc.Name, text);
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+            return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
     }
 }

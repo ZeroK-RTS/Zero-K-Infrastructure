@@ -353,6 +353,7 @@
     <Content Include="Views\Home\UserTooltip.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\Punishment.cshtml" />
     <Content Include="Views\Users\AdminUserDetail.cshtml" />
+    <Content Include="Views\Users\ReportToAdmin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
