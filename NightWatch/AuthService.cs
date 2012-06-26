@@ -230,7 +230,7 @@ namespace NightWatch
                         if (channel == ModeratorChannel)
                         {
                             var u = client.ExistingUsers[user];
-                            if (u.SpringieLevel <= 1 && !u.IsZeroKAdmin) client.AdminKickFromLobby(user, "Sorry this channel is only for moderators");
+                            if (u.SpringieLevel <= 1 && !u.IsZeroKAdmin) client.ForceLeaveChannel(user, ModeratorChannel);
                         }
                     } catch (Exception ex)
                     {

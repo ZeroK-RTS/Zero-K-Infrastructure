@@ -654,6 +654,12 @@ namespace LobbyClient
             else con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1} {2}", user,channel,password));
         }
 
+        public void ForceLeaveChannel(string user, string channel)
+        {
+            con.SendCommand(string.Format("FORGEREVERSEMSG {0} LEAVE {1}", user, channel));
+        }
+
+
         /// <summary>
         /// Say something through chat system
         /// </summary>

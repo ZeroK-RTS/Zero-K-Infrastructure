@@ -80,7 +80,7 @@ namespace ZeroKWeb.Controllers
             acc.SpringieLevel = springieLevel;
             acc.IsZeroKAdmin = zkAdmin;
             db.SubmitChanges();
-            ;
+            Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
