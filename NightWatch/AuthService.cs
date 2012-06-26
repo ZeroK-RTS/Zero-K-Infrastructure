@@ -15,6 +15,8 @@ namespace NightWatch
     public class AuthService: IAuthService
     {
         const int AuthServiceTestLoginWait = 8000;
+        const string ModeratorChannel = "zkadmin";
+
         readonly TasClient client;
 
         int messageId;
@@ -57,10 +59,14 @@ namespace NightWatch
                     using (var db = new ZkDataContext())
                     {
                         Account acc = Account.AccountByLobbyID(db, e.Data.LobbyID);
-                        if (acc != null) this.client.Extensions.PublishAccountData(acc);
+                        if (acc != null)
+                        {
+                            this.client.Extensions.PublishAccountData(acc);
+                            if (acc.SpringieLevel > 1) client.ForceJoinChannel(e.Data.Name, ModeratorChannel);
+                        }
                         client.RequestUserIP(e.Data.Name);
                         client.RequestUserID(e.Data.Name);
-
+                        
                     }
                 };
 
@@ -214,6 +220,16 @@ namespace NightWatch
 
             this.client.BattleFound +=
                 (s, e) => { if (e.Data.Founder.IsZkLobbyUser && !e.Data.Founder.IsBot) client.SetBotMode(e.Data.Founder.Name, true); };
+
+            this.client.ChannelUserAdded += (sender, args) =>
+                {
+                    var channel = args.ServerParams[0];
+                    var user = args.ServerParams[1];
+                    if (channel == ModeratorChannel)
+                    {
+                        if (client.ExistingUsers[user].SpringieLevel <= 1) client.AdminKickFromLobby(user,"Sorry this channel is only for moderators");
+                    }
+                };
         }
 
 
