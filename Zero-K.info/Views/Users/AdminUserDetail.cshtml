@@ -100,7 +100,7 @@
 
     <h2>Issue a penalty</h2>
     <form action="@Url.Action("Punish", "Users", new { accountID = Model.AccountID })" method="post">
-        Reason: @Html.TextBox("reason")<br />
+        Reason: @Html.TextBox("reason","You are too ugly")<br />
         <br />
 
         Delete XP: @Html.CheckBox("deleteXP")<br />
