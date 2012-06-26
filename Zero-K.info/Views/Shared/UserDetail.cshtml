@@ -68,6 +68,14 @@
 		</div>
 	</div>
  }
+    <p class="fright" align="right">
+    <a href="@Url.Action("ReportToAdmin","Users", new{id = Model.AccountID})" nicetitle="Report abuse to administrators">Report Player<img src="/img/abuse.png" height="32"/></a>
+    </br>
+    <a href="http://zero-k.info/Wiki/CodeOfConduct" nicetitle="Code of Conduct"><b><img src="/img/conduct.png" height="32"/></a></b>
+    </p>
+    
+    <p class="fleft"> 
+    
     <span style="float:left;">@Html.AccountAvatar(Model)</span>
 	<h2>@Html.PrintAccount(Model)</h2>
     
@@ -97,10 +105,8 @@
 		<b class="fleft"> Level @(Model.Level + 1) </b>
 	</div>
 	<br class="clearfloat" />
-	</div>
-
-    <a href="@Url.Action("ReportToAdmin","Users", new{id = Model.AccountID})" nicetitle="Form to contact administrators to deal with players breaking rules and similar issues"><b>Report abuse</b></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="http://zero-k.info/Wiki/CodeOfConduct">Code of Conduct</a><br/>
-		
+	</div>	
+    </p> 
     @if (Global.IsZeroKAdmin)
     {
         <div class="admin">

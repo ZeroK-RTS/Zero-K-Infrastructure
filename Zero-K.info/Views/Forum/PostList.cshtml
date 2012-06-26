@@ -21,10 +21,11 @@
                                 }
                             </small>
 
-					@if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
+                    </br>
+                    @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
                     {
                         <a nicetitle='Edit the post' href='@Url.Action("NewPost", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22"/></a>
-					}
+                    }
 
                     @if (Global.IsZeroKAdmin)
                     {
