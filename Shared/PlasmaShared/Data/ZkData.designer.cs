@@ -211,6 +211,9 @@ namespace ZkData
     partial void InsertAccountUserID(AccountUserID instance);
     partial void UpdateAccountUserID(AccountUserID instance);
     partial void DeleteAccountUserID(AccountUserID instance);
+    partial void InsertAbuseReport(AbuseReport instance);
+    partial void UpdateAbuseReport(AbuseReport instance);
+    partial void DeleteAbuseReport(AbuseReport instance);
     #endregion
 		
 		public ZkDataContext(string connection) : 
@@ -722,6 +725,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<AccountUserID>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AbuseReport> AbuseReports
+		{
+			get
+			{
+				return this.GetTable<AbuseReport>();
 			}
 		}
 	}
@@ -1287,7 +1298,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mutator", DbType="varbinary(max)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mutator", DbType="varbinary(max)", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public System.Data.Linq.Binary Mutator
 		{
@@ -2426,6 +2437,10 @@ namespace ZkData
 		private EntitySet<AccountIP> _AccountIPS;
 		
 		private EntitySet<AccountUserID> _AccountUserIDS;
+		
+		private EntitySet<AbuseReport> _AbuseReportsByAccountID;
+		
+		private EntitySet<AbuseReport> _AbuseReportsByReporterAccountID;
 		
 		private EntityRef<Clan> _Clan;
 		
@@ -4041,6 +4056,44 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AbuseReport", Storage="_AbuseReportsByAccountID", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=76, EmitDefaultValue=false)]
+		public EntitySet<AbuseReport> AbuseReportsByAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AbuseReportsByAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AbuseReportsByAccountID;
+			}
+			set
+			{
+				this._AbuseReportsByAccountID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AbuseReport1", Storage="_AbuseReportsByReporterAccountID", ThisKey="AccountID", OtherKey="ReporterAccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=77, EmitDefaultValue=false)]
+		public EntitySet<AbuseReport> AbuseReportsByReporterAccountID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._AbuseReportsByReporterAccountID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._AbuseReportsByReporterAccountID;
+			}
+			set
+			{
+				this._AbuseReportsByReporterAccountID.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Clan", ThisKey="ClanID", OtherKey="ClanID", IsForeignKey=true)]
 		public Clan Clan
 		{
@@ -4537,6 +4590,30 @@ namespace ZkData
 			entity.Account = null;
 		}
 		
+		private void attach_AbuseReportsByAccountID(AbuseReport entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAccountID = this;
+		}
+		
+		private void detach_AbuseReportsByAccountID(AbuseReport entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByAccountID = null;
+		}
+		
+		private void attach_AbuseReportsByReporterAccountID(AbuseReport entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByReporterAccountID = this;
+		}
+		
+		private void detach_AbuseReportsByReporterAccountID(AbuseReport entity)
+		{
+			this.SendPropertyChanging();
+			entity.AccountByReporterAccountID = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -4573,6 +4650,8 @@ namespace ZkData
 			this._ForumPostEdits = new EntitySet<ForumPostEdit>(new Action<ForumPostEdit>(this.attach_ForumPostEdits), new Action<ForumPostEdit>(this.detach_ForumPostEdits));
 			this._AccountIPS = new EntitySet<AccountIP>(new Action<AccountIP>(this.attach_AccountIPS), new Action<AccountIP>(this.detach_AccountIPS));
 			this._AccountUserIDS = new EntitySet<AccountUserID>(new Action<AccountUserID>(this.attach_AccountUserIDS), new Action<AccountUserID>(this.detach_AccountUserIDS));
+			this._AbuseReportsByAccountID = new EntitySet<AbuseReport>(new Action<AbuseReport>(this.attach_AbuseReportsByAccountID), new Action<AbuseReport>(this.detach_AbuseReportsByAccountID));
+			this._AbuseReportsByReporterAccountID = new EntitySet<AbuseReport>(new Action<AbuseReport>(this.attach_AbuseReportsByReporterAccountID), new Action<AbuseReport>(this.detach_AbuseReportsByReporterAccountID));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -25740,6 +25819,264 @@ namespace ZkData
 		private void Initialize()
 		{
 			this._Account = default(EntityRef<Account>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AbuseReport")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class AbuseReport : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _AbuseReportID;
+		
+		private int _AccountID;
+		
+		private int _ReporterAccountID;
+		
+		private System.DateTime _Time;
+		
+		private string _Text;
+		
+		private EntityRef<Account> _AccountByAccountID;
+		
+		private EntityRef<Account> _AccountByReporterAccountID;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnAbuseReportIDChanging(int value);
+    partial void OnAbuseReportIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnReporterAccountIDChanging(int value);
+    partial void OnReporterAccountIDChanged();
+    partial void OnTimeChanging(System.DateTime value);
+    partial void OnTimeChanged();
+    partial void OnTextChanging(string value);
+    partial void OnTextChanged();
+    #endregion
+		
+		public AbuseReport()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AbuseReportID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int AbuseReportID
+		{
+			get
+			{
+				return this._AbuseReportID;
+			}
+			set
+			{
+				if ((this._AbuseReportID != value))
+				{
+					this.OnAbuseReportIDChanging(value);
+					this.SendPropertyChanging();
+					this._AbuseReportID = value;
+					this.SendPropertyChanged("AbuseReportID");
+					this.OnAbuseReportIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._AccountByAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ReporterAccountID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int ReporterAccountID
+		{
+			get
+			{
+				return this._ReporterAccountID;
+			}
+			set
+			{
+				if ((this._ReporterAccountID != value))
+				{
+					if (this._AccountByReporterAccountID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnReporterAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._ReporterAccountID = value;
+					this.SendPropertyChanged("ReporterAccountID");
+					this.OnReporterAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Time]", Storage="_Time", DbType="datetime NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.DateTime Time
+		{
+			get
+			{
+				return this._Time;
+			}
+			set
+			{
+				if ((this._Time != value))
+				{
+					this.OnTimeChanging(value);
+					this.SendPropertyChanging();
+					this._Time = value;
+					this.SendPropertyChanged("Time");
+					this.OnTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="nvarchar(max) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public string Text
+		{
+			get
+			{
+				return this._Text;
+			}
+			set
+			{
+				if ((this._Text != value))
+				{
+					this.OnTextChanging(value);
+					this.SendPropertyChanging();
+					this._Text = value;
+					this.SendPropertyChanged("Text");
+					this.OnTextChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AbuseReport", Storage="_AccountByAccountID", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByAccountID
+		{
+			get
+			{
+				return this._AccountByAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByAccountID.Entity = null;
+						previousValue.AbuseReportsByAccountID.Remove(this);
+					}
+					this._AccountByAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.AbuseReportsByAccountID.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("AccountByAccountID");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_AbuseReport1", Storage="_AccountByReporterAccountID", ThisKey="ReporterAccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account AccountByReporterAccountID
+		{
+			get
+			{
+				return this._AccountByReporterAccountID.Entity;
+			}
+			set
+			{
+				Account previousValue = this._AccountByReporterAccountID.Entity;
+				if (((previousValue != value) 
+							|| (this._AccountByReporterAccountID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._AccountByReporterAccountID.Entity = null;
+						previousValue.AbuseReportsByReporterAccountID.Remove(this);
+					}
+					this._AccountByReporterAccountID.Entity = value;
+					if ((value != null))
+					{
+						value.AbuseReportsByReporterAccountID.Add(this);
+						this._ReporterAccountID = value.AccountID;
+					}
+					else
+					{
+						this._ReporterAccountID = default(int);
+					}
+					this.SendPropertyChanged("AccountByReporterAccountID");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._AccountByAccountID = default(EntityRef<Account>);
+			this._AccountByReporterAccountID = default(EntityRef<Account>);
 			OnCreated();
 		}
 		

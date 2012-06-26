@@ -134,6 +134,8 @@
       <Association Name="Account_ForumPostEdit" Member="ForumPostEdits" ThisKey="AccountID" OtherKey="EditorAccountID" Type="ForumPostEdit" />
       <Association Name="Account_AccountIP" Member="AccountIPS" ThisKey="AccountID" OtherKey="AccountID" Type="AccountIP" />
       <Association Name="Account_AccountUserID" Member="AccountUserIDS" ThisKey="AccountID" OtherKey="AccountID" Type="AccountUserID" />
+      <Association Name="Account_AbuseReport" Member="AbuseReportsByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="AbuseReport" />
+      <Association Name="Account_AbuseReport1" Member="AbuseReportsByReporterAccountID" ThisKey="AccountID" OtherKey="ReporterAccountID" Type="AbuseReport" />
       <Association Name="Clan_Account" Member="Clan" ThisKey="ClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
       <Association Name="Faction_Account" Member="Faction" ThisKey="FactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
     </Type>
@@ -989,6 +991,17 @@
       <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Association Name="Account_AccountUserID" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AbuseReport" Member="AbuseReports">
+    <Type Name="AbuseReport">
+      <Column Name="AbuseReportID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="ReporterAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="Text" Type="System.String" DbType="nvarchar(max) NOT NULL" CanBeNull="false" />
+      <Association Name="Account_AbuseReport" Member="AccountByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Account_AbuseReport1" Member="AccountByReporterAccountID" ThisKey="ReporterAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

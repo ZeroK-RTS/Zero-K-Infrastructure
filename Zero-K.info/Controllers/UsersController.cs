@@ -81,6 +81,8 @@ namespace ZeroKWeb.Controllers
             acc.IsZeroKAdmin = zkAdmin;
             db.SubmitChanges();
             Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
+            
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("Permissions changed for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
         }
 
@@ -182,6 +184,8 @@ namespace ZeroKWeb.Controllers
 
             Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
 
+            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, string.Format("New penalty for {0} {1}  ", acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http")), true);
+
             return RedirectToAction("Detail", new { id = accountID });
         }
 
@@ -198,8 +202,21 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = Account.AccountByAccountID(db, accountID);
-            var str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, Url.Action("Detail","Users",new{id=Global.AccountID}, "http"), acc.Name, Url.Action("Detail","Users",new{id=acc.AccountID}, "http"), text);
+            
+            db.AbuseReports.InsertOnSubmit(new AbuseReport()
+                                           {
+                                               
+                                               AccountID = acc.AccountID,
+                                               ReporterAccountID = Global.AccountID,
+                                               Time = DateTime.UtcNow,
+                                               Text = text
+                                           });
+            db.SubmitAndMergeChanges();
+
+            var str = string.Format("{0} {1} reports abuse by {2} {3} : {4}", Global.Account.Name, Url.Action("Detail", "Users", new { id = Global.AccountID }, "http"), acc.Name, Url.Action("Detail", "Users", new { id = acc.AccountID }, "http"), text);
+
             Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, AuthService.ModeratorChannel, str, true);
+
             return Content("Thank you. Your issue was reported. Moderators will now look into it.");
         }
     }

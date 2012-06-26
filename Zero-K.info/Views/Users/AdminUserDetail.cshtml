@@ -64,7 +64,15 @@
     {
         <span>@Html.PrintAccount(ac)  -  @Html.ActionLink("admin", "AdminUserDetail", new{id=ac.AccountID})</span><br />
     }
-
+    
+    <h2>Abuse reports</h2>
+    <table>
+    @foreach (var a in Model.AbuseReportsByAccountID)
+    {
+        <tr><td>@a.Time</td><td>@Html.PrintAccount(a.AccountByReporterAccountID)</td><td>@Html.BBCode(a.Text)</td></tr>
+    }
+    </table>
+    
     @if (Model.PunishmentsByAccountID.Any())
     {
         <h2>Old penalties</h2>
