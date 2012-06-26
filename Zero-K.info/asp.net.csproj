@@ -191,6 +191,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ContentService.asmx" />
+    <Content Include="Img\abuse.png" />
     <Content Include="Img\artifact_1.png" />
     <Content Include="Img\artifact_2.png" />
     <Content Include="Img\artifact_3.png" />
@@ -201,6 +202,8 @@
     <Content Include="Img\border-1.png" />
     <Content Include="Img\border.png" />
     <Content Include="Img\bullet.png" />
+    <Content Include="Img\delete_trashcan.png" />
+    <Content Include="Img\edit_pencil.png" />
     <Content Include="Img\factions\Ascended.png" />
     <Content Include="Img\factions\Ascended_ship.png" />
     <Content Include="Img\factions\Cybernetic.png" />
