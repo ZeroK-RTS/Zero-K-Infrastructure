@@ -38,7 +38,10 @@ namespace NightWatch
           Console.WriteLine(e.Data.Key + " " +Utils.Glue(e.Data.Value.Select(x=>x.ToString()).ToArray()));
       };*/
 
-            this.client.LoginAccepted += (s, e) => requests.Clear();
+            this.client.LoginAccepted += (s, e) =>
+                { requests.Clear();
+                    client.JoinChannel(ModeratorChannel);
+                };
 
             this.client.TestLoginAccepted += (s, e) =>
                 {
