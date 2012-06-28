@@ -2,48 +2,51 @@
 @model ZeroKWeb.Controllers.ForumController.ThreadResult
 
 @{
-  Page.Title = Model.CurrentThread.Title +  " - forum thread";
+    Page.Title = Model.CurrentThread.Title + " - forum thread";
 }
-
-@if (Model.GoToPost > 0) {
- <script language="javascript" type="text/javascript">
-   $(document).ready(function () {
-        document.getElementById("post@(Model.GoToPost)").scrollIntoView();
-    });
-</script>
+@if (Model.GoToPost > 0)
+{
+    <script language="javascript" type="text/javascript">
+        $(document).ready(function () {
+            document.getElementById("post@(Model.GoToPost)").scrollIntoView();
+        });
+    </script>
 }
-
-
 @{Html.RenderPartial("ForumPath", Model.Path);}
 
 <h3>@Html.ActionLink(Model.CurrentThread.Title, "Thread", new { id = Model.CurrentThread.ForumThreadID })</h3>
 
-@if (!Model.CurrentThread.IsLocked) {
- <br /><h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3><br />
+@if (!Model.CurrentThread.IsLocked)
+{
+    <br />
+    <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+    <br />
 }
-@if (Global.IsZeroKAdmin) {
-	var db = new ZkData.ZkDataContext();
-	<div class="admin">
-	<form action="@Url.Action("MoveThread", new{threadID = Model.CurrentThread.ForumThreadID})" method="post">
-	<select name="newcat">
-		@foreach (var c in db.ForumCategories.Where(x=>!x.IsClans && !x.IsMaps && !x.IsMissions && !x.IsPlanets && !x.IsSpringBattles)) {
-			<option value="@c.ForumCategoryID">@c.Title</option>
-	}
-		</select>
-	<input type="submit" value="move" />
-	</form>
-	</div>
-}
-	
+@if (Global.IsZeroKAdmin)
+{
+    var db = new ZkData.ZkDataContext();
+    <div class="admin">
+        <form action="@Url.Action("AdminThread", new { threadID = Model.CurrentThread.ForumThreadID })" method="post">
+            <select name="newcat">
+                @foreach (var c in db.ForumCategories.Where(x => !x.IsClans && !x.IsMaps && !x.IsMissions && !x.IsPlanets && !x.IsSpringBattles))
+                {
+                    <option value="@c.ForumCategoryID" @(c.ForumCategoryID == Model.CurrentThread.ForumCategoryID ? "selected='selected'":"")>@c.Title</option>
+                }
+            </select>
+            Pinned: @Html.CheckBox("isPinned", Model.CurrentThread.IsPinned)<br/>
+            Locked: @Html.CheckBox("isLocked", Model.CurrentThread.IsLocked)<br/>
 
+            <input type="submit" value="move" />
+        </form>
+    </div>
+}
 Pages: 
-@for (int i = 0; i < Model.PageCount; i++) {
-<b>@Html.ActionLink((i+1).ToString(), "Thread", new {threadID = Model.CurrentThread.ForumThreadID, page = i})</b>
+@for (int i = 0; i < Model.PageCount; i++)
+{
+    <b>@Html.ActionLink((i + 1).ToString(), "Thread", new { threadID = Model.CurrentThread.ForumThreadID, page = i })</b>
 }
-
 @Html.Partial("~/Views/Forum/PostList.cshtml", Model.Posts)
-
-@if (!Model.CurrentThread.IsLocked) {
-  <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
+@if (!Model.CurrentThread.IsLocked)
+{
+    <h3 class="textbutton">@Html.ActionLink("Post comment", "NewPost", new { threadID = Model.CurrentThread.ForumThreadID })</h3>
 }
-

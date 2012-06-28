@@ -38,7 +38,7 @@ namespace ZeroKWeb.Controllers
 
 			//if (res.CurrentCategory != null && res.CurrentCategory.IsMissions) res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID) && !Global.IsLimitedMode || x.Missions.ModRapidTag.StartsWith("zk:")).OrderByDescending(x => x.LastPost);
 			//else
-			res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x => x.LastPost);
+			res.Threads = db.ForumThreads.Where(x => Equals(x.ForumCategoryID, categoryID)).OrderByDescending(x=>x.IsPinned).ThenByDescending(x => x.LastPost);
 
 			return View(res);
 		}
@@ -263,11 +263,13 @@ namespace ZeroKWeb.Controllers
 		}
 
 		[Auth]
-		public ActionResult MoveThread(int threadID, int newcat)
+		public ActionResult AdminThread(int threadID, int newcat, bool isPinned, bool isLocked)
 		{
 			var db = new ZkDataContext();
 			var thread = db.ForumThreads.Single(x => x.ForumThreadID == threadID);
 			thread.ForumCategoryID = newcat;
+		    thread.IsPinned = isPinned;
+		    thread.IsLocked = isLocked;
 			db.SubmitChanges();
 			return RedirectToAction("Index", new { categoryID = newcat });
 		}
