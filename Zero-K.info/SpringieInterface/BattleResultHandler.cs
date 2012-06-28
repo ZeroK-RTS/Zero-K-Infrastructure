@@ -634,7 +634,12 @@ namespace ZeroKWeb.SpringieInterface
                 joinplayers.AddRange(sb.SpringBattlePlayers.Select(x => x.Account.Name)); // add those who played
                 var tas = Global.Nightwatch.Tas;
                 var bat=  tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == context.AutohostName); // add those in lobby atm
-                if (bat != null) joinplayers.AddRange(bat.Users.Select(x=>x.Name));
+                
+                if (bat != null)
+                {
+                    var inbatPlayers = bat.Users.Select(x => x.Name).ToList();
+                    joinplayers.RemoveAll(x=>inbatPlayers.Contains(x));
+                }
                 foreach (var jp in joinplayers.Distinct().Where(x=>x!=context.AutohostName)) tas.ForceJoinChannel(jp, channelName);
                 tas.JoinChannel(channelName); // join nightwatch and say it
                 tas.Say(TasClient.SayPlace.Channel, channelName, text.ToString(), true);
