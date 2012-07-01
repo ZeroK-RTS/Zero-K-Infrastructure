@@ -93,11 +93,12 @@ namespace ZeroKWeb
 
             Mission prev = db.Missions.SingleOrDefault(x => x.MissionID == mission.MissionID || (x.Name == mission.Name && x.AccountID == acc.AccountID)); // previous mission by id or name + account
 			if (prev == null && db.Missions.Any(x =>x.Name == mission.Name)) throw new ApplicationException("Mission name must be unique");
-			/*var map = db.Resources.SingleOrDefault(x => x.InternalName == mission.Map && x.TypeID == ZkData.ResourceType.Map);
+			var map = db.Resources.SingleOrDefault(x => x.InternalName == mission.Map && x.TypeID == ZkData.ResourceType.Map);
 			if (map == null) throw new ApplicationException("Map name is unknown");
 			var mod = db.Resources.SingleOrDefault(x => x.InternalName == mission.Mod && x.TypeID == ZkData.ResourceType.Mod);
-			if (mod == null) throw new ApplicationException("Mod name is unknown");*/
-			if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != prev.MissionID)) throw new ApplicationException("Name already taken by other mod/map");
+			if (mod == null) throw new ApplicationException("Mod name is unknown");
+			throw new ApplicationException("STOP -1");
+			if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != null)) throw new ApplicationException("Name already taken by other mod/map");
 
             throw new ApplicationException("STOP 0");
             modInfo.MissionMap = mission.Map;
