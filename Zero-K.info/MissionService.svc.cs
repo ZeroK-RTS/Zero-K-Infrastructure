@@ -100,6 +100,7 @@ namespace ZeroKWeb
 			if (mod == null) throw new ApplicationException("Mod name is unknown");
 			if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != prev.MissionID)) throw new ApplicationException("Name already taken by other mod/map");
 
+            throw new ApplicationException("STOP 0");
             modInfo.MissionMap = mission.Map;
             
 
