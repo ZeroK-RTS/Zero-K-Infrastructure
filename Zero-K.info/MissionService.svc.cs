@@ -83,6 +83,8 @@ namespace ZeroKWeb
 
 		public void SendMission(Mission mission, List<MissionSlot> slots, string author, string password, Mod modInfo)
 		{
+            if (mission == null) throw new ApplicationException("Mission is null");
+
 			Account acc = null;
 			var db = new ZkDataContext();
 			if (Debugger.IsAttached) acc = db.Accounts.SingleOrDefault(x => x.Name == "Testor303");
