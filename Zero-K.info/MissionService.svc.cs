@@ -102,7 +102,7 @@ namespace ZeroKWeb
 			//if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != null)) throw new ApplicationException("Name already taken by other mod/map");
 
             modInfo.MissionMap = mission.Map;
-            throw new ApplicationException("STOP 0");
+            //throw new ApplicationException("STOP 0");
 
 			if (prev != null)
 			{
