@@ -135,7 +135,7 @@ namespace ZeroKWeb
 			mission.ModifiedTime = DateTime.UtcNow;
 			mission.IsDeleted = true;
 			mission.IsCoop = slots.Where(x => x.IsHuman).GroupBy(x => x.AllyID).Count() == 1;
-            throw new ApplicationException("STOP 1");
+            //throw new ApplicationException("STOP 1");
 
 			db.SubmitChanges();
             throw new ApplicationException("STOP 2");
