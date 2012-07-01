@@ -92,7 +92,6 @@ namespace ZeroKWeb
 
 
             Mission prev = db.Missions.SingleOrDefault(x => x.MissionID == mission.MissionID || (x.Name == mission.Name && x.AccountID == acc.AccountID)); // previous mission by id or name + account
-            throw new ApplicationException("STOP -1");
 			if (prev == null && db.Missions.Any(x =>x.Name == mission.Name)) throw new ApplicationException("Mission name must be unique");
 			/*var map = db.Resources.SingleOrDefault(x => x.InternalName == mission.Map && x.TypeID == ZkData.ResourceType.Map);
 			if (map == null) throw new ApplicationException("Map name is unknown");
