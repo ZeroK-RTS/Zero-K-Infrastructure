@@ -132,7 +132,7 @@ namespace ZeroKWeb
 			mission.MinHumans = slots.Count(x => x.IsHuman && x.IsRequired);
 			mission.MaxHumans = slots.Count(x => x.IsHuman);
 			mission.ModifiedTime = DateTime.UtcNow;
-			mission.IsDeleted = true;
+			//mission.IsDeleted = true; //what?! why?
 			mission.IsCoop = slots.Where(x => x.IsHuman).GroupBy(x => x.AllyID).Count() == 1;
 
 			db.SubmitChanges();
