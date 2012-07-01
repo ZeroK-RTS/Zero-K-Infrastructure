@@ -132,16 +132,21 @@ namespace ZeroKWeb
 			mission.MinHumans = slots.Count(x => x.IsHuman && x.IsRequired);
 			mission.MaxHumans = slots.Count(x => x.IsHuman);
 			mission.ModifiedTime = DateTime.UtcNow;
-			//mission.IsDeleted = true; //what?! why?
+			mission.IsDeleted = true;
 			mission.IsCoop = slots.Where(x => x.IsHuman).GroupBy(x => x.AllyID).Count() == 1;
+            throw new ApplicationException("STOP 1");
 
 			db.SubmitChanges();
+            throw new ApplicationException("STOP 2");
 
             var updater = new MissionUpdater();
+            throw new ApplicationException("STOP 3");
             updater.UpdateMission(db, mission, modInfo);
+            throw new ApplicationException("STOP 4");
 
 			mission.IsDeleted = false;
 			db.SubmitChanges();
+            throw new ApplicationException("STOP 5");
 		}
 	}
 }
