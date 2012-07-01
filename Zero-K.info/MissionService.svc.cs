@@ -147,7 +147,6 @@ namespace ZeroKWeb
 
 			mission.IsDeleted = false;
 			db.SubmitChanges();
-            throw new ApplicationException("STOP 5");
 		}
 	}
 }
