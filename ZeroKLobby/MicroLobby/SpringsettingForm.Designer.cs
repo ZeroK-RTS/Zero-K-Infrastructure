@@ -38,12 +38,13 @@
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.AutoScroll = true;
+            this.panel1.BackColor = System.Drawing.SystemColors.Window;
             this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(498, 523);
             this.panel1.TabIndex = 0;
@@ -53,7 +54,7 @@
             // 
             this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.applyButton.Location = new System.Drawing.Point(0, 526);
-            this.applyButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.applyButton.Margin = new System.Windows.Forms.Padding(2);
             this.applyButton.MaximumSize = new System.Drawing.Size(58, 41);
             this.applyButton.MinimumSize = new System.Drawing.Size(58, 41);
             this.applyButton.Name = "applyButton";
@@ -67,7 +68,7 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cancelButton.Location = new System.Drawing.Point(58, 526);
-            this.cancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this.cancelButton.MaximumSize = new System.Drawing.Size(58, 41);
             this.cancelButton.MinimumSize = new System.Drawing.Size(58, 41);
             this.cancelButton.Name = "cancelButton";
@@ -81,7 +82,7 @@
             // 
             this.engineDefaultButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.engineDefaultButton.Location = new System.Drawing.Point(117, 526);
-            this.engineDefaultButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.engineDefaultButton.Margin = new System.Windows.Forms.Padding(2);
             this.engineDefaultButton.MaximumSize = new System.Drawing.Size(56, 41);
             this.engineDefaultButton.MinimumSize = new System.Drawing.Size(58, 41);
             this.engineDefaultButton.Name = "engineDefaultButton";
@@ -129,7 +130,7 @@
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.applyButton);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "SpringsettingForm";
             this.Text = "Springsetting.cfg";
             this.Load += new System.EventHandler(this.SpringsettingForm_Load);

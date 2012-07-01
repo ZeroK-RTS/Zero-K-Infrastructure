@@ -86,7 +86,7 @@ namespace ZeroKLobby.MicroLobby
                     var truncatedCPlusPlusPath = Regex.Match(cPlusPlusFile, @"build/([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&amp;\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?", RegexOptions.IgnoreCase);
                     //Reference: http://www.dotnetperls.com/regex-match, http://weblogs.asp.net/farazshahkhan/archive/2008/08/09/regex-to-find-url-within-text-and-make-them-as-link.aspx
 
-                    var hyperLink = "https://github.com/spring/spring/blob/develop/" + truncatedCPlusPlusPath.Groups[1].Value + "#" + settingsOptions[kvp.Key].declarationLine;
+                    var hyperLink = "https://github.com/spring/spring/blob/develop/" + truncatedCPlusPlusPath.Groups[1].Value + "#L" + settingsOptions[kvp.Key].declarationLine;
 
                     var link = new LinkLabel.Link(); //Reference: http://www.dotnetperls.com/linklabel
                     link.LinkData = hyperLink;
