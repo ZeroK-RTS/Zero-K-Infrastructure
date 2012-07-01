@@ -99,10 +99,9 @@ namespace ZeroKWeb
 			if (map == null) throw new ApplicationException("Map name is unknown");
 			var mod = db.Resources.SingleOrDefault(x => x.InternalName == mission.Mod && x.TypeID == ZkData.ResourceType.Mod);
 			if (mod == null) throw new ApplicationException("Mod name is unknown");
-			throw new ApplicationException("STOP -1");
-			if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != null)) throw new ApplicationException("Name already taken by other mod/map");
+			//if (db.Resources.Any(x => x.InternalName == mission.Name && x.MissionID != null)) throw new ApplicationException("Name already taken by other mod/map");
 
-            throw new ApplicationException("STOP 0");
+            //throw new ApplicationException("STOP 0");
             modInfo.MissionMap = mission.Map;
             
 
@@ -137,15 +136,15 @@ namespace ZeroKWeb
 			mission.ModifiedTime = DateTime.UtcNow;
 			mission.IsDeleted = true;
 			mission.IsCoop = slots.Where(x => x.IsHuman).GroupBy(x => x.AllyID).Count() == 1;
-            throw new ApplicationException("STOP 1");
+            //throw new ApplicationException("STOP 1");
 
 			db.SubmitChanges();
-            throw new ApplicationException("STOP 2");
+            //throw new ApplicationException("STOP 2");
 
             var updater = new MissionUpdater();
-            throw new ApplicationException("STOP 3");
+            //throw new ApplicationException("STOP 3");
             updater.UpdateMission(db, mission, modInfo);
-            throw new ApplicationException("STOP 4");
+            //throw new ApplicationException("STOP 4");
 
 			mission.IsDeleted = false;
 			db.SubmitChanges();
