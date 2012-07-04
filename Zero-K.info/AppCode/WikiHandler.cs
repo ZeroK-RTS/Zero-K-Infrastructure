@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Net;
 using System.Web;
 using System.Web.Caching;
@@ -14,6 +14,7 @@ namespace ZeroKWeb
 				if (entry != null) return entry;
 
 				var wc = new WebClient();
+        wc.Encoding = Encoding.UTF8;
 				if (String.IsNullOrEmpty(node)) node = "Manual";
 
 				var ret = wc.DownloadString("http://code.google.com/p/zero-k/wiki/" + node);
