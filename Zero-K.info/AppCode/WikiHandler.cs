@@ -3,36 +3,81 @@ using System.Net;
 using System.Web;
 using System.Web.Caching;
 using System.Text;
+using System.Globalization;
 
 namespace ZeroKWeb
 {
-	public class WikiHandler
-	{
-		public static string LoadWiki(string node)
-		{
-			try {
-				var entry = HttpContext.Current.Cache.Get("wiki_" + node) as string;
-				if (entry != null) return entry;
+    public class WikiHandler
+    {
+        public static CultureInfo ResolveCulture()
+        {
+            string[] languages = System.Web.HttpContext.Current.Request.UserLanguages;
 
-				var wc = new WebClient();
-        wc.Encoding = Encoding.UTF8;
-				if (String.IsNullOrEmpty(node)) node = "Manual";
+            if (languages == null || languages.Length == 0)
+                return null;
 
-				var ret = wc.DownloadString("http://code.google.com/p/zero-k/wiki/" + node);
+            try
+            {
+                string language = languages[0].ToLowerInvariant().Trim();
+                return CultureInfo.CreateSpecificCulture(language);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+        }
 
-				var idx = ret.IndexOf("<div id=\"wikicontent\"");
-				var idx2 = ret.LastIndexOf("</td>");
+        public static RegionInfo ResolveCountry()
+        {
+            CultureInfo culture = ResolveCulture();
+            if (culture != null)
+                return new RegionInfo(culture.LCID);
 
-				if (idx > -1 && idx2 > -1) ret = ret.Substring(idx, idx2 - idx);
+            return null;
+        }
 
-				ret = ret.Replace("href=\"/p/zero-k/wiki/", "href =\"/Wiki/");
-				ret = ret.Replace("href=\"/", "href=\"http://code.google.com/");
+        public static string FormatWiki(string str)
+        { 
+            var idx = str.IndexOf("<div id=\"wikicontent\"");
+            var idx2 = str.LastIndexOf("</td>");
 
-				HttpContext.Current.Cache.Insert("wiki_" + node, ret, null, DateTime.UtcNow.AddMinutes(15), Cache.NoSlidingExpiration);
-				return ret;
-			} catch (Exception ex) {
-				return string.Format("Error loading {0} : {1}", node, ex.Message);
-			}
-		}
-	}
+             if (idx > -1 && idx2 > -1) str = str.Substring(idx, idx2 - idx);
+
+             str = str.Replace("href=\"/p/zero-k/wiki/", "href =\"/Wiki/");
+             str = str.Replace("href=\"/", "href=\"http://code.google.com/");
+
+            return str;
+        }
+
+        public static string TryLoadWiki(string node, string language = "")
+    		{
+            string key = "wiki_" + node + "_" + (String.IsNullOrEmpty(language) ? "en" : language);
+            var entry = System.Web.HttpContext.Current.Cache.Get(key) as string;
+            if (entry != null) return entry;
+
+            var wc = new WebClient();
+            wc.Headers[HttpRequestHeader.AcceptLanguage] = language;
+            wc.Encoding = Encoding.UTF8;
+             if (String.IsNullOrEmpty(node)) node = "Manual";
+
+            var url = "http://code.google.com/p/zero-k/wiki/" + node;
+             var ret = FormatWiki(wc.DownloadString(url));
+
+            HttpContext.Current.Cache.Insert(key, ret, null, DateTime.UtcNow.AddMinutes(15), Cache.NoSlidingExpiration);
+            return ret;
+        }
+
+        public static string LoadWiki(string node)
+        {
+            try
+            {
+                RegionInfo ri = ResolveCountry();
+                return TryLoadWiki(node, ri == null ? "" : ri.TwoLetterISORegionName);
+            }
+            catch (System.Exception ex)
+            {
+                return string.Format("Error loading {0} : {1}", node, ex.Message);
+            }
+        }
+    }
 }
