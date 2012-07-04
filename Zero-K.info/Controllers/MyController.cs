@@ -276,8 +276,7 @@ namespace ZeroKWeb.Controllers
 	    }
 				
 		[Auth]
-		[OutputCache(Location = OutputCacheLocation.None)]
-	    public ActionResult LanguageSwitch(string language)
+	    public ActionResult LanguageChange(string language)
 		{
 			var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
