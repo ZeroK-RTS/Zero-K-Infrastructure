@@ -274,5 +274,16 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
 
 	    }
+		
+		[Auth]
+	    public ActionResult LanguageSwitch(string language)
+		{
+			var db = new ZkDataContext();
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            
+            System.Web.HttpContext.Current.Session["manualLanguage"] = language;
+			
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
+		}
 	}
 }
