@@ -5,6 +5,7 @@ using System.Web.Caching;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
+using ZkData;
 
 namespace ZeroKWeb
 {
@@ -39,9 +40,15 @@ namespace ZeroKWeb
 
         public static string ResolveLanguage()
         {
-            string manualLanguage = (string)HttpContext.Current.Session["manualLanguage"];
-            if (!String.IsNullOrEmpty(manualLanguage))
-                return manualLanguage;
+			if (Global.IsAccountAuthorized)
+			{
+				var db = new ZkDataContext();
+				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);            
+				string manualLanguage = acc == null ? null : acc.Country.ToLower();
+				
+				if (!String.IsNullOrEmpty(manualLanguage))
+					return manualLanguage;
+			}
 
             RegionInfo ri = ResolveCountry();
             if (ri != null && !String.IsNullOrEmpty(ri.TwoLetterISORegionName))

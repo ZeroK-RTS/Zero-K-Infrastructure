@@ -281,7 +281,10 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             
-            return RedirectToAction("Detail"+acc.Country, "Users", new { id = acc.AccountID });
+			acc.Country = language.ToUpper();
+			db.SubmitChanges();
+			
+            return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
 		}
 	}
 }
