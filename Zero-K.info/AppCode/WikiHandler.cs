@@ -4,6 +4,7 @@ using System.Web;
 using System.Web.Caching;
 using System.Text;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace ZeroKWeb
 {
@@ -11,7 +12,7 @@ namespace ZeroKWeb
     {
         public static CultureInfo ResolveCulture()
         {
-            string[] languages = System.Web.HttpContext.Current.Request.UserLanguages;
+            string[] languages = HttpContext.Current.Request.UserLanguages;
 
             if (languages == null || languages.Length == 0)
                 return null;
@@ -36,8 +37,21 @@ namespace ZeroKWeb
             return null;
         }
 
+        public static string ResolveLanguage()
+        {
+            string manualLanguage = (string)HttpContext.Current.Session["manualLanguage"];
+            if (!String.IsNullOrEmpty(manualLanguage))
+                return manualLanguage;
+
+            RegionInfo ri = ResolveCountry();
+            if (ri != null && !String.IsNullOrEmpty(ri.TwoLetterISORegionName))
+                return ri.TwoLetterISORegionName;
+
+            return "en";
+        }
+
         public static string FormatWiki(string str)
-        { 
+        {
             var idx = str.IndexOf("<div id=\"wikicontent\"");
             var idx2 = str.LastIndexOf("</td>");
 
@@ -50,9 +64,9 @@ namespace ZeroKWeb
         }
 
         public static string TryLoadWiki(string node, string language = "")
-    	{
+        {
             string key = "wiki_" + node + "_" + (String.IsNullOrEmpty(language) ? "en" : language);
-            var entry = System.Web.HttpContext.Current.Cache.Get(key) as string;
+            var entry = HttpContext.Current.Cache.Get(key) as string;
             if (entry != null) return entry;
 
             var wc = new WebClient();
@@ -70,9 +84,8 @@ namespace ZeroKWeb
         public static string LoadWiki(string node)
         {
             try
-            {                         
-                RegionInfo ri = ResolveCountry();
-                return TryLoadWiki(node, ri == null ? "" : ri.TwoLetterISORegionName);
+            {
+                return TryLoadWiki(node, ResolveLanguage());
             }
             catch (System.Exception ex)
             {
