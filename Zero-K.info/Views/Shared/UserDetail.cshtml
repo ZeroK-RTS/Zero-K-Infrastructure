@@ -158,6 +158,15 @@
                     </table>
                     <input type="submit"/>
                 </form>
+				
+				<form action="@Url.Action("LanguageSwitch", "My")" method="POST">
+                    Select preferrable language:
+					<select name="language">
+						<option value="en" selected='selected'>English</option>
+						<option value="ru">Russian</option>
+					</select>
+                    <input type="submit"/>
+                </form>
             }
             else
             {
