@@ -274,9 +274,9 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
 
 	    }
-		
-		
+				
 		[Auth]
+		[OutputCache(Location = OutputCacheLocation.None)]
 	    public ActionResult LanguageSwitch(string language)
 		{
 			var db = new ZkDataContext();
