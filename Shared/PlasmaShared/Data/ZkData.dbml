@@ -25,7 +25,7 @@
       <Column Name="ScoringMethod" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
       <Column Name="TopScoreLine" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="MissionEditorVersion" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
-      <Column Name="SpringVersion" Type="System.String" DbType="NVarChar(20)" CanBeNull="true" />
+      <Column Name="SpringVersion" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="Revision" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="Script" Type="System.String" DbType="nvarchar(max) NOT NULL" CanBeNull="false" IsDelayLoaded="true" />
       <Column Name="TokenCondition" Type="System.String" DbType="varchar(500)" CanBeNull="true" />
@@ -100,6 +100,7 @@
       <Column Name="PwMetalUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="MatchMakingActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />
