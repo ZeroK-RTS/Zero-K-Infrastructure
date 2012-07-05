@@ -165,7 +165,7 @@
 					<select name="language">
 						@foreach (UserLanguage o in Enum.GetValues(typeof(UserLanguage)).OfType<UserLanguage>().OrderBy(x => x))
                         {
-                            <option value="@o" @(Model.Language == o.ToString() ? "selected='selected'" : "")>@o.Description()</option>
+                            <option value="@o" @(Model.Language == o.ToString() || (String.IsNullOrEmpty(Model.Language) && o == UserLanguage.auto)? "selected='selected'" : "")>@o.Description()</option>
                         }
 					</select>
                     <input type="submit"/>

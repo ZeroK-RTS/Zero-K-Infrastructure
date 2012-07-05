@@ -184,6 +184,8 @@ namespace ZkData
 
     public enum UserLanguage
     {
+        [Description("Auto, let the system decide")]
+        auto,
         [Description("English")]
         en,
         [Description("Йа креведко!")]

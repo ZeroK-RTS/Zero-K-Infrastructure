@@ -281,7 +281,8 @@ namespace ZeroKWeb.Controllers
 			var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             
-			acc.Language = language.ToLower();
+            language = language.ToLower();
+			acc.Language = language == "auto" ? "" : language;
 			db.SubmitChanges();
 			
             return RedirectToAction("Detail", "Users", new { id = acc.AccountID });
