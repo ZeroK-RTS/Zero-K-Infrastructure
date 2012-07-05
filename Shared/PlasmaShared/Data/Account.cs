@@ -181,4 +181,12 @@ namespace ZkData
         [Description("+3: Best")]
         Best = 1
     }
+
+    public enum UserLanguage
+    {
+        [Description("English")]
+        en,
+        [Description("Йа креведко!")]
+        ru
+    }
 }

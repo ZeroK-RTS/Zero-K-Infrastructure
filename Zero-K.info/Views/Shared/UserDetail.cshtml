@@ -161,10 +161,12 @@
                 </form>
 				
 				<form action="@Url.Action("LanguageChange", "My")" method="POST">
-                    Select preferrable language():
+                    Select preferrable language:
 					<select name="language">
-						<option value="en" selected='selected'>English</option>
-						<option value="ru">Russian</option>
+						@foreach (UserLanguage o in Enum.GetValues(typeof(UserLanguage)).OfType<UserLanguage>().OrderBy(x => x))
+                        {
+                            <option value="@o" @(Model.Language == o.ToString() ? "selected='selected'" : "")>@o.Description()</option>
+                        }
 					</select>
                     <input type="submit"/>
                 </form>

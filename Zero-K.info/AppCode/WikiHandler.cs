@@ -46,7 +46,7 @@ namespace ZeroKWeb
 			{
 				var db = new ZkDataContext();
 				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);            
-				string manualLanguage = acc == null ? null : acc.Country.ToLower();
+				string manualLanguage = acc == null ? null : acc.Language;
 				
 				if (!String.IsNullOrEmpty(manualLanguage))
 					return manualLanguage;
