@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Web;
 using System.Web.Mvc;
+using System.Globalization;
+using System.Linq;
 using CaTracker;
 using ZkData;
 
@@ -54,11 +56,73 @@ namespace ZeroKWeb
             }
         }
 
+        private static CultureInfo ResolveCulture()
+        {
+            if (HttpContext.Current == null)
+                return null;
+
+            string[] languages = HttpContext.Current.Request.UserLanguages;
+
+            if (languages == null || languages.Length == 0)
+                return null;
+
+            try
+            {
+                string language = languages[0].ToLowerInvariant().Trim();
+                return CultureInfo.CreateSpecificCulture(language);
+            }
+            catch (ArgumentException)
+            {
+                return null;
+            }
+        }
+
+
+        private static RegionInfo ResolveCountry()
+        {
+            CultureInfo culture = ResolveCulture();
+            if (culture != null)
+                return new RegionInfo(culture.LCID);
+
+            return null;
+        }
+
+        private static string ResolveLanguage()
+        {
+            if (IsAccountAuthorized)
+            {
+                var db = new ZkDataContext();
+                var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+                string manualLanguage = acc == null ? null : acc.Language;
+
+                if (!String.IsNullOrEmpty(manualLanguage))
+                    return manualLanguage;
+            }
+
+            RegionInfo ri = ResolveCountry();
+            if (ri != null && !String.IsNullOrEmpty(ri.TwoLetterISORegionName))
+                return ri.TwoLetterISORegionName;
+
+            return "en";
+        }
+
         public static bool IsAccountAuthorized { get { return HttpContext.Current.User as Account != null; } }
 
         public static bool IsLobbyAccess { get { return HttpContext.Current.Request.Cookies[GlobalConst.LobbyAccessCookieName] != null; } }
         public static bool IsLobbyAdmin { get { return IsAccountAuthorized && Account.IsLobbyAdministrator; } }
         public static bool IsZeroKAdmin { get { return IsAccountAuthorized && Account.IsZeroKAdmin; } }
+
+        public static string DisplayLanguage { get { return ResolveLanguage(); } }
+        public static UserLanguage DisplayLanguageAsEnum { get {
+            try
+            {
+                return (UserLanguage)Enum.Parse(typeof(UserLanguage), DisplayLanguage, true); 
+            }
+            catch (System.Exception ex)
+            {
+                return UserLanguage.auto;
+            }            
+        } }
 
         public static Event CreateEvent(string format, params object[] args)
         {

@@ -11,54 +11,7 @@ using ZkData;
 namespace ZeroKWeb
 {
     public class WikiHandler
-    {
-        public static CultureInfo ResolveCulture()
-        {
-            string[] languages = HttpContext.Current.Request.UserLanguages;
-
-            if (languages == null || languages.Length == 0)
-                return null;
-
-            try
-            {
-                string language = languages[0].ToLowerInvariant().Trim();
-                return CultureInfo.CreateSpecificCulture(language);
-            }
-            catch (ArgumentException)
-            {
-                return null;
-            }
-        }
-
-		
-        public static RegionInfo ResolveCountry()
-        {
-            CultureInfo culture = ResolveCulture();
-            if (culture != null)
-                return new RegionInfo(culture.LCID);
-
-            return null;
-        }
-
-        public static string ResolveLanguage()
-        {
-			if (Global.IsAccountAuthorized)
-			{
-				var db = new ZkDataContext();
-				var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);            
-				string manualLanguage = acc == null ? null : acc.Language;
-				
-				if (!String.IsNullOrEmpty(manualLanguage))
-					return manualLanguage;
-			}
-
-            RegionInfo ri = ResolveCountry();
-            if (ri != null && !String.IsNullOrEmpty(ri.TwoLetterISORegionName))
-                return ri.TwoLetterISORegionName;
-
-            return "en";
-        }
-
+    {       
         public static string FormatWiki(string str)
         {
             var idx = str.IndexOf("<div id=\"wikicontent\"");
@@ -94,7 +47,7 @@ namespace ZeroKWeb
         {
             try
             {
-                return TryLoadWiki(node, ResolveLanguage());
+                return TryLoadWiki(node, Global.DisplayLanguage);
             }
             catch (System.Exception ex)
             {

@@ -170,6 +170,16 @@
 					</select>
                     <input type="submit"/>
                 </form>
+                
+                
+                var notes = typeof(UserLanguage).GetMember(Global.DisplayLanguageAsEnum.ToString())[0].GetCustomAttributes(typeof(UserLanguageNoteAttribute), false);
+                if (notes.Length > 0)
+                {
+                    <br />
+                    @Html.Raw(((UserLanguageNoteAttribute)notes[0]).Note);
+                    <br /><br />
+                }
+
             }
             else
             {
@@ -220,9 +230,9 @@
     
 	
     @if (Model.SpringBattlePlayers.Any())
- {
+    {
 		<div id="usr_recentbattles" class="fleft border">
-			<h3>@Html.ActionLink("Last battles","Index","Battles")</h3>
+			<h3>@Html.ActionLink("Last battles", "Index", "Battles")</h3>
 			<span>
 				@Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
 				watched, @Model.MissionRunCount missions 
@@ -233,12 +243,12 @@
 				<small>@Html.PrintBattle(b)</small><br />
    }
 		</div>
- }
+    }
 	
 	@if (Model.ForumPosts.Any())
  {
 		<div id="usr_forumposts" class="fleft border">
-			<h3>@Html.ActionLink("Posted threads","Index","Forum")</h3>
+			<h3>@Html.ActionLink("Posted threads", "Index", "Forum")</h3>
 			<span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
 			<br />
 			@foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10))
@@ -253,7 +263,8 @@
      <div class="fleft border">
          <h3>@Html.ActionLink("Poll votes", "UserVotes", "Poll", new { id = Model.AccountID }, null)</h3>
          <ul>
-        @foreach (var pv in Model.PollVotes.Where(x=>!x.Poll.IsAnonymous).OrderByDescending(x => x.PollID).Take(5)) {
+        @foreach (var pv in Model.PollVotes.Where(x => !x.Poll.IsAnonymous).OrderByDescending(x => x.PollID).Take(5))
+        {
             <li><small>@pv.Poll.QuestionText : <b>@pv.PollOption.OptionText</b></small></li>
         }
         </ul>
