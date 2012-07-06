@@ -16,17 +16,23 @@ namespace ZeroKWeb
         private static Regex reLinks = new Regex(@"(<a.*?>.*?</a>)", RegexOptions.Singleline);
 
         // ZOMG! this is crazy mix of shit-code awesomeness! Dont look too much here, u can break u eyes!
-        private static void StripPieces(string fromHeader, string fromContent, string to, string source, out string header, out string content)
+        private static void StripPieces(
+            string fromHeader, string fromAuthor, string fromContent, string to,
+            string source, out string header, out string content, out string author)
         {
             header = "";
             content = "";
+            author = "";
             var iHeader = source.IndexOf(fromHeader);
+            var iAuthor = source.IndexOf(fromAuthor);
+            var iAuthorEnd = source.IndexOf("</div>", iAuthor) + 6;
             var iContent = source.IndexOf(fromContent);
             var iTo = source.LastIndexOf(to);
 
             if (iHeader > -1 && iContent > -1)
             {
                 header = source.Substring(iHeader, iContent - iHeader);
+                author = source.Substring(iAuthor, iAuthorEnd - iAuthor).Replace("/u/", "http://code.google.com/u/");
 
                 List<string> links = new List<string>();
                 foreach (Match m in reLinks.Matches(header))
@@ -46,16 +52,28 @@ namespace ZeroKWeb
         {
             piece = piece.Replace("href=\"/p/zero-k/wiki/", "href =\"/Wiki/");
             piece = piece.Replace("href=\"/", "href=\"http://code.google.com/");
-            return piece;
+            return piece.Trim();
         }
 
-        private static string FormatWiki(string str)
+        private static string FormatWiki(string node, string language, string body)
         {
-            string header;
+            string availableLanguages;            
+            string author;
             string content;
-            StripPieces("<div id=\"wikiheader\"", "<div id=\"wikicontent\"", "</td>", str, out header, out content);
+            StripPieces("<div id=\"wikiheader\"", "<div id=\"wikiauthor\"", "<div id=\"wikicontent\"", "</td>", body, out availableLanguages, out content, out author);
+            availableLanguages = FixPiece(availableLanguages);
+            availableLanguages = String.IsNullOrEmpty(availableLanguages) ? "page doesn't translated" : availableLanguages;
+            content = FixPiece(content);
 
-            return FixPiece(header) + "<br />" + FixPiece(content);
+            string wikiLink = "http://code.google.com/p/zero-k/wiki/" + node + (String.IsNullOrEmpty(language) ? "" : "?wl=" + language);
+
+            return 
+                "<div>" + 
+                "<span style='float: left; width: 32%; text-align: left;'>" + availableLanguages + "</span>" +
+                "<span style='float: left; width: 32%; text-align: center;'><a href='" + wikiLink + "'>edit</a></span>" +
+                "<span style='float: left; width: 32%; text-align: right;'>" + author + "</span>" + 
+                "</div><div style='clear: both;'></div><br />" + 
+                content;
         }
 
         private static string TryLoadWiki(string node, string language = "")
@@ -70,7 +88,7 @@ namespace ZeroKWeb
             if (String.IsNullOrEmpty(node)) node = "Manual";
 
             var url = "http://code.google.com/p/zero-k/wiki/" + node;
-            var ret = FormatWiki(wc.DownloadString(url));
+            var ret = FormatWiki(node, language, wc.DownloadString(url));
 
             HttpContext.Current.Cache.Insert(key, ret, null, DateTime.UtcNow.AddMinutes(15), Cache.NoSlidingExpiration);
             return ret;
