@@ -164,7 +164,7 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString IncludeWiki(this HtmlHelper helper, string node)
         {
-            return new MvcHtmlString(WikiHandler.LoadWiki(node));
+            return new MvcHtmlString(WikiHandler.LoadWiki(node, "", false));
         }
 
         public static MvcHtmlString PrintAccount(this HtmlHelper helper, Account account, bool colorize = true)

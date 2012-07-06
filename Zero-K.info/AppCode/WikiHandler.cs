@@ -55,7 +55,7 @@ namespace ZeroKWeb
             return piece.Trim();
         }
 
-        private static string FormatWiki(string node, string language, string body)
+        private static string FormatWiki(string node, string language, string body, bool isOnlyBody = false)
         {
             string availableLanguages;            
             string author;
@@ -67,6 +67,9 @@ namespace ZeroKWeb
 
             string wikiLink = "http://code.google.com/p/zero-k/wiki/" + node + (String.IsNullOrEmpty(language) ? "" : "?wl=" + language);
 
+            if (isOnlyBody)
+                return content;
+
             return 
                 "<div>" + 
                 "<span style='float: left; width: 32%; text-align: left;'>" + availableLanguages + "</span>" +
@@ -76,7 +79,7 @@ namespace ZeroKWeb
                 content;
         }
 
-        private static string TryLoadWiki(string node, string language = "")
+        private static string TryLoadWiki(string node, string language = "", bool isOnlyBody = false)
         {
             string key = "wiki_" + node + "_" + (String.IsNullOrEmpty(language) ? "en" : language);
             var entry = HttpContext.Current.Cache.Get(key) as string;
@@ -88,19 +91,19 @@ namespace ZeroKWeb
             if (String.IsNullOrEmpty(node)) node = "Manual";
 
             var url = "http://code.google.com/p/zero-k/wiki/" + node;
-            var ret = FormatWiki(node, language, wc.DownloadString(url));
+            var ret = FormatWiki(node, language, wc.DownloadString(url), isOnlyBody);
 
             HttpContext.Current.Cache.Insert(key, ret, null, DateTime.UtcNow.AddMinutes(15), Cache.NoSlidingExpiration);
             return ret;
         }
 
-        public static string LoadWiki(string node, string forceLanguage = "")
+        public static string LoadWiki(string node, string forceLanguage = "", bool isOnlyBody = false)
         {
             try
             {
                 if (String.IsNullOrEmpty(forceLanguage))
-                    return TryLoadWiki(node, Global.DisplayLanguage);
-                return TryLoadWiki(node, forceLanguage);
+                    return TryLoadWiki(node, Global.DisplayLanguage, isOnlyBody);
+                return TryLoadWiki(node, forceLanguage, isOnlyBody);
             }
             catch (System.Exception ex)
             {
