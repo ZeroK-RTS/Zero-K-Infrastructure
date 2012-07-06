@@ -7,9 +7,9 @@ namespace ZeroKWeb.Controllers
   {
     //
     // GET: /Wiki/
-    public ActionResult Index(string node, bool minimal = false)
+    public ActionResult Index(string node, string language = "", bool minimal = false)
     {
-      string ret = WikiHandler.LoadWiki(node);
+      string ret = WikiHandler.LoadWiki(node, language);
 
       if (minimal) return Content(ret);
       else return View(new WikiData() { Content = new MvcHtmlString(ret), Node = node});

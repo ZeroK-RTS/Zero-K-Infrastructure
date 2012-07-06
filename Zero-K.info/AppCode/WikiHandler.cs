@@ -6,26 +6,59 @@ using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ZkData;
 
 namespace ZeroKWeb
 {
     public class WikiHandler
-    {       
-        public static string FormatWiki(string str)
+    {
+        private static Regex reLinks = new Regex(@"(<a.*?>.*?</a>)", RegexOptions.Singleline);
+
+        // ZOMG! this is crazy mix of shit-code awesomeness! Dont look too much here, u can break u eyes!
+        private static void StripPieces(string fromHeader, string fromContent, string to, string source, out string header, out string content)
         {
-            var idx = str.IndexOf("<div id=\"wikicontent\"");
-            var idx2 = str.LastIndexOf("</td>");
+            header = "";
+            content = "";
+            var iHeader = source.IndexOf(fromHeader);
+            var iContent = source.IndexOf(fromContent);
+            var iTo = source.LastIndexOf(to);
 
-            if (idx > -1 && idx2 > -1) str = str.Substring(idx, idx2 - idx);
+            if (iHeader > -1 && iContent > -1)
+            {
+                header = source.Substring(iHeader, iContent - iHeader);
 
-            str = str.Replace("href=\"/p/zero-k/wiki/", "href =\"/Wiki/");
-            str = str.Replace("href=\"/", "href=\"http://code.google.com/");
+                List<string> links = new List<string>();
+                foreach (Match m in reLinks.Matches(header))
+                {
+                    string link = m.Groups[1].Value;
+                    if (link.Contains("/p/zero-k/wiki/"))
+                        links.Add(link.Replace("wl=", "language="));
+                }
+                header = String.Join(", ", links);
+            }
 
-            return str;
+            if (iContent > -1 && iTo > -1)
+                content = source.Substring(iContent, iTo - iContent);
+        }
+        
+        private static string FixPiece(string piece)
+        {
+            piece = piece.Replace("href=\"/p/zero-k/wiki/", "href =\"/Wiki/");
+            piece = piece.Replace("href=\"/", "href=\"http://code.google.com/");
+            return piece;
         }
 
-        public static string TryLoadWiki(string node, string language = "")
+        private static string FormatWiki(string str)
+        {
+            string header;
+            string content;
+            StripPieces("<div id=\"wikiheader\"", "<div id=\"wikicontent\"", "</td>", str, out header, out content);
+
+            return FixPiece(header) + "<br />" + FixPiece(content);
+        }
+
+        private static string TryLoadWiki(string node, string language = "")
         {
             string key = "wiki_" + node + "_" + (String.IsNullOrEmpty(language) ? "en" : language);
             var entry = HttpContext.Current.Cache.Get(key) as string;
@@ -43,11 +76,13 @@ namespace ZeroKWeb
             return ret;
         }
 
-        public static string LoadWiki(string node)
+        public static string LoadWiki(string node, string forceLanguage = "")
         {
             try
             {
-                return TryLoadWiki(node, Global.DisplayLanguage);
+                if (String.IsNullOrEmpty(forceLanguage))
+                    return TryLoadWiki(node, Global.DisplayLanguage);
+                return TryLoadWiki(node, forceLanguage);
             }
             catch (System.Exception ex)
             {
