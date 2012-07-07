@@ -32,7 +32,7 @@ namespace ZeroKLobby.Notifications
                             Program.NotifySection.RemoveBar(this);
                         } else
                         {
-                            if (!Program.NotifySection.Bars.Contains(this))
+                            if (!Program.NotifySection.Bars.Contains(this) && !tas.MyBattleStatus.IsSpectator)
                             {
                                 Program.NotifySection.AddBar(this);
                                 if (!tas.MyUser.IsInGame) Program.MainWindow.NotifyUser("chat/battle", string.Format("Poll: {0}", question), true, true);
