@@ -228,7 +228,7 @@ namespace ZeroKLobby
 
                 SayCommandHandler = new SayCommandHandler(TasClient);
 
-                ServerImages = new ServerImagesHandler(SpringPaths);
+                ServerImages = new ServerImagesHandler(SpringPaths, TasClient);
 
                 //DriverCheck.DoCheck();
 

@@ -66,25 +66,6 @@ namespace ZeroKLobby
             if (!Directory.Exists(path)) Directory.CreateDirectory(path);
         }
 
-        public static Tuple<Image, string> GetClanOrFactionImage(User user)
-        {
-            Image ret = null;
-            string rets = null;
-            if (!string.IsNullOrEmpty(user.Clan))
-            {
-                var clanImg = Program.ServerImages.GetImage(string.Format("Clans/{0}.png", user.Clan));
-                ret = clanImg;
-                rets = user.Clan + " " + user.Faction;
-            }
-            else if (!string.IsNullOrEmpty(user.Faction))
-            {
-                var facImg = Program.ServerImages.GetImage(string.Format("Factions/{0}.png", user.Faction));
-                ret = facImg;
-                rets = user.Faction;
-            }
-            return Tuple.Create(ret, rets);
-        }
-
         public static Color GetFactionColor(string faction)
         {
             if (FactionColors.ContainsKey(faction)) return FactionColors[faction];

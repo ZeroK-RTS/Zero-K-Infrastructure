@@ -57,7 +57,7 @@ namespace ZeroKLobby
 
             if (!user.IsBot)
             {
-                var clan = Utils.GetClanOrFactionImage(user);
+                var clan = ServerImagesHandler.GetClanOrFactionImage(user);
                 if (clan.Item1 != null)
                 {
                     drawImage(clan.Item1, 16, 16);
@@ -126,7 +126,7 @@ namespace ZeroKLobby
                 }
                 if (!string.IsNullOrEmpty(user.Avatar))
                 {
-                    var image = Program.ServerImages.GetImage(string.Format("Avatars/{0}.png", user.Avatar));
+                    var image = Program.ServerImages.GetAvatarImage(user);
                     if (image != null) g.DrawImage(image, 302 - 65, 0, 64, 64);
                 }
 
