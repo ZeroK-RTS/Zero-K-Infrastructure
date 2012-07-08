@@ -327,7 +327,8 @@ namespace ZeroKWeb.SpringieInterface
                     if (manuallyPrefered.TryGetValue(lobbyID, out manualPref) && manualPref == b.Mode) battlePref += 0.5; // player joined manually same type add 0.5
 
                     if (b.Config.MinLevel != null && a.Value.Level < b.Config.MinLevel) continue; // dont queue who cannot join PW
-
+                    if (b.Config.MinElo != null && a.Value.EffectiveElo < b.Config.MinElo) continue; // dont queue those who cannot join high skill host
+                    
                     if (b.ManuallyJoined.Contains(lobbyID)) // was he there already
                         b.PlayerPriority[lobbyID] = battlePref; // player joined it already
                     else {

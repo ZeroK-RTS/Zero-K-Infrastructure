@@ -249,11 +249,16 @@ namespace ZeroKWeb.SpringieInterface
                                                                    p.Clan.Shortcut,
                                                                    p.Name));
                         }*/
-                        if (p.Level < config.MinLevel) {
+                        if (config.MinLevel != null && p.Level < config.MinLevel) {
                             res.Message += string.Format("{0} cannot play, his level is {1}, minimum level is {2}\n", p.Name, p.Level, config.MinLevel);
                             AuthServiceClient.SendLobbyMessage(p,
                                                                string.Format(
-                                                                   "Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level 5 to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots. You can observe this game however."));
+                                                                   "Sorry, minimum level is {0} on this host. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots. You can spectate/observe this game however.", config.MinLevel));
+                        } else if (config.MinElo != null && p.EffectiveElo < config.MinElo) {
+                            res.Message += string.Format("{0} cannot play, his elo is {1}, minimum elo is {2}\n", p.Name, p.EffectiveElo, config.MinElo);
+                            AuthServiceClient.SendLobbyMessage(p,
+                                                               string.Format(
+                                                                   "Sorry, minimum elo skill is {0} on this host. You can spectate/observe this game however.", config.MinElo));
                         }
                         else players.Add(p);
                     }

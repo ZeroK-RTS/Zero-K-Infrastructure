@@ -846,6 +846,7 @@
       <Column Name="MaxEloDifference" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="DontMoveManuallyJoined" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="MinLevel" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="MinElo" Type="System.Int32" DbType="int" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.RoleType" Member="RoleTypes">

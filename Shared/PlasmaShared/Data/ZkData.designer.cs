@@ -21625,6 +21625,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _MinLevel;
 		
+		private System.Nullable<int> _MinElo;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -21681,6 +21683,8 @@ namespace ZkData
     partial void OnDontMoveManuallyJoinedChanged();
     partial void OnMinLevelChanging(System.Nullable<int> value);
     partial void OnMinLevelChanged();
+    partial void OnMinEloChanging(System.Nullable<int> value);
+    partial void OnMinEloChanged();
     #endregion
 		
 		public AutohostConfig()
@@ -22230,6 +22234,27 @@ namespace ZkData
 					this._MinLevel = value;
 					this.SendPropertyChanged("MinLevel");
 					this.OnMinLevelChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MinElo", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
+		public System.Nullable<int> MinElo
+		{
+			get
+			{
+				return this._MinElo;
+			}
+			set
+			{
+				if ((this._MinElo != value))
+				{
+					this.OnMinEloChanging(value);
+					this.SendPropertyChanging();
+					this._MinElo = value;
+					this.SendPropertyChanged("MinElo");
+					this.OnMinEloChanged();
 				}
 			}
 		}
