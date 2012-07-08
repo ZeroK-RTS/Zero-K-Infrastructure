@@ -522,20 +522,25 @@ namespace ZeroKWeb.SpringieInterface
                     var users = db.Accounts.Where(x => ids.Contains(x.LobbyID)).ToList();
                     var toMove = new List<Account>();
 
+                    var moveCount = Math.Ceiling(users.Count/2.0);
+                    if (users.Count % 2 ==0 && users.Count % 4 != 0) { // in case of say 18 people, move 10 nubs out, keep 8 pros
+                        moveCount = users.Count/2 + 1;
+                    }
+
                     // split while keeping clan groups together
                     foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
                         toMove.AddRange(clanGrp);
-                        if (toMove.Count >= users.Count/2) break;
+                        if (toMove.Count >= moveCount) break;
                     }
 
                     PlayerJuggler.SuppressJuggler = true;
                     foreach (var m in toMove) {
                         tas.ForceJoinBattle(m.Name, splitTo.BattleID);
                     }
-                    Thread.Sleep(5000);
+                    Thread.Sleep(4000);
                     tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                     tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                    Thread.Sleep(3000);
+                    Thread.Sleep(2000);
                     if (!tas.ExistingUsers[splitTo.Founder.Name].IsInGame) {
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
