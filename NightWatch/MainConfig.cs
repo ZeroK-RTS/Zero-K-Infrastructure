@@ -2,7 +2,7 @@ namespace CaTracker
 {
     public class Config
     {
-#if DEBUG
+#if !DEPLOY
         string accountName = "NightwatchDev";
 #else 
         string accountName = "Nightwatch";

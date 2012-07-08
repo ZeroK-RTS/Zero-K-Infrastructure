@@ -13,11 +13,7 @@ namespace LobbyClient
     /// </summary>
     public class ProtocolExtension
     {
-#if DEBUG
-        public const string ExtensionChannelName = "extension_dev";
-#else
         public const string ExtensionChannelName = "extension";
-#endif
 
         public class JugglerState
         {
