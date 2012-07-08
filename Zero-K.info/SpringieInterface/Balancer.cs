@@ -537,10 +537,10 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var m in toMove) {
                         tas.ForceJoinBattle(m.Name, splitTo.BattleID);
                     }
-                    Thread.Sleep(4000);
+                    Thread.Sleep(5000);
                     tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                     tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                    Thread.Sleep(2000);
+                    Thread.Sleep(3000);
                     if (!tas.ExistingUsers[splitTo.Founder.Name].IsInGame) {
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);

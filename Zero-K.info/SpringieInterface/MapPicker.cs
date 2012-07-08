@@ -15,6 +15,7 @@ namespace ZeroKWeb.SpringieInterface
 	{
 		public static RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew) {
 			var mode = context.GetMode();
+		    var config = context.GetConfig();
 			var res = new RecommendedMapResult();
 			using (var db = new ZkDataContext()) {
 				if (mode == AutohostMode.Planetwars) {
@@ -120,6 +121,7 @@ namespace ZeroKWeb.SpringieInterface
 					}
 					List<Resource> list = null;
 					var players = context.Players.Count(x => !x.IsSpectator);
+                    if (config != null && config.SplitBiggerThan != null && players > config.SplitBiggerThan) players = players/2; // expect the split
 					switch (mode) {
 						case AutohostMode.BigTeams:
                             var ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial == true);
