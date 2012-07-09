@@ -113,7 +113,7 @@ namespace ZeroKWeb.SpringieInterface
 
 					db.SubmitChanges();
 				}
-				else {
+				else { 
 					if (!pickNew) {
 						// autohost is not managed or has valid featured map - check disabled
     					res.MapName = context.Map;
