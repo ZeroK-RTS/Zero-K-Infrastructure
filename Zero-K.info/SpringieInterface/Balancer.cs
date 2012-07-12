@@ -167,61 +167,96 @@ namespace ZeroKWeb.SpringieInterface
             return ret;
         }
 
+        private static void SpecPlayerOnCondition(PlayerTeam player, Account account, string userMessage)
+        {
+            player.IsSpectator = true;
+            AuthServiceClient.SendLobbyMessage(account, userMessage);
+        }
+
+        private static void CheckPlayersMinimumConditions(BattleContext battleContext, ZkDataContext dataContext, AutohostConfig config, ref string actionsDescription)
+        {
+            foreach (var p in battleContext.Players.Select(x => new { player = x, account = dataContext.Accounts.First(y => y.LobbyID == x.LobbyID) }))
+            {
+                if (config.MinLevel != null && p.account.Level < config.MinLevel)
+                {                    
+                    SpecPlayerOnCondition(p.player, p.account, string.Format(
+                        "Sorry, minimum level is {0} on this host. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots. You can spectate/observe this game however.", config.MinLevel));
+                    actionsDescription += string.Format("{0} cannot play, his level is {1}, minimum level is {2}\n", p.account.Name, p.account.Level, config.MinLevel);
+                }
+                else if (config.MinElo != null && p.account.EffectiveElo < config.MinElo)
+                {
+                    SpecPlayerOnCondition(p.player, p.account, string.Format(
+                        "Sorry, minimum elo skill is {0} on this host. You can spectate/observe this game however.", config.MinElo));
+                    actionsDescription += string.Format("{0} cannot play, his elo is {1}, minimum elo is {2}\n", p.account.Name, p.account.EffectiveElo, config.MinElo);
+                }
+            }
+        }
 
         private static BalanceTeamsResult PerformBalance(BattleContext context, bool isGameStart, int? allyCount, bool? clanWise, AutohostConfig config, int playerCount) {
             var res = new BalanceTeamsResult();
             var mode = context.GetMode();
 
-            if (mode != AutohostMode.Planetwars) {
-                switch (mode) {
-                    case AutohostMode.None:
-                        if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
-                        break;
-                    case AutohostMode.SmallTeams:
-                    case AutohostMode.BigTeams: {
-                        var db = new ZkDataContext();
-                        var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise ?? true, context);
-                        else res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? true, context);
-						res.DeleteBots = true;
-                        return res;
-                    }
-                    case AutohostMode.Game1v1:
-                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? true, context);
-                        res.DeleteBots = true;
-                        break;
+            if (mode != AutohostMode.Planetwars) 
+            {
+                using (var db = new ZkDataContext()) 
+                {
+                    CheckPlayersMinimumConditions(context, db, config, ref res.Message);
 
-                    case AutohostMode.GameChickens:
-                        res.Players = context.Players.ToList();
-                        res.Bots = context.Bots.Where(x => x.Owner != context.AutohostName).ToList();
-                        foreach (var p in res.Players) {
-                            p.AllyID = 0;
-                        }
-                        foreach (var b in res.Bots) {
-                            b.AllyID = 1;
-                        }
-                        if (!res.Bots.Any()) {
-                            if (res.Players.Count > 0) {
-                                res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
-                                res.CanStart = false;
-                                /*else
-                                {
-                                    res.Bots.Add(new BotTeam() { AllyID = 1, TeamID = 16, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
-                                    res.Message = "Adding a normal chickens bot for you";
-                                }*/
+                    switch (mode) 
+                    {
+                        case AutohostMode.None:
+                            {
+                                if (!isGameStart)
+                                    res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
+                            }                            
+                            break;
+                        case AutohostMode.SmallTeams:
+                        case AutohostMode.BigTeams:
+                            {
+                                var map = db.Resources.Single(x => x.InternalName == context.Map);
+                                if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise ?? true, context);
+                                else res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? true, context);
+                                res.DeleteBots = true;
+                                return res;
                             }
-                        }
-                        break;
-                    case AutohostMode.GameFFA: {
-                        var db = new ZkDataContext();
-                        var map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise ?? true, context);
-                        else res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, clanWise ?? true, context);
-                        return res;
+                        case AutohostMode.Game1v1:
+                            {
+                                res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? true, context);
+                                res.DeleteBots = true;
+                            }                            
+                            break;
+
+                        case AutohostMode.GameChickens:
+                            {
+                                res.Players = context.Players.ToList();
+                                res.Bots = context.Bots.Where(x => x.Owner != context.AutohostName).ToList();
+                                foreach (var p in res.Players)
+                                    p.AllyID = 0;
+                                foreach (var b in res.Bots)
+                                    b.AllyID = 1;
+
+                                if (!res.Bots.Any() && res.Players.Count > 0)
+                                {
+                                    res.Message = "Add some bot (computer player) as your enemy. Use button on bottom left. Chicken or CAI is recommended.";
+                                    res.CanStart = false;
+                                    /*else
+                                    {
+                                        res.Bots.Add(new BotTeam() { AllyID = 1, TeamID = 16, BotName = "default_Chicken", BotAI = "Chicken: Normal", });
+                                        res.Message = "Adding a normal chickens bot for you";
+                                    }*/
+                                }
+                            }                            
+                            break;
+                        case AutohostMode.GameFFA:
+                            {
+                                var map = db.Resources.Single(x => x.InternalName == context.Map);
+                                if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise ?? true, context);
+                                else res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, clanWise ?? true, context);
+                                return res;
+                            }
                     }
-                        break;
+                    return res;
                 }
-                return res;
             }
             else {
                 context.Players = context.Players.Where(x => !x.IsSpectator).ToList();
@@ -552,7 +587,7 @@ namespace ZeroKWeb.SpringieInterface
                     PlayerJuggler.SuppressJuggler = false;
                 }
             } catch (Exception ex) {
-                tas.Say(TasClient.SayPlace.User, "Licho", ex.ToString(), false);
+                tas.Say(TasClient.SayPlace.User, "Licho[0K]", ex.ToString(), false);
             }
         }
 
@@ -603,11 +638,12 @@ namespace ZeroKWeb.SpringieInterface
             public double EloSum { get; private set; }
             public List<BalanceItem> Items = new List<BalanceItem>();
 
-            public void AddItem(BalanceItem item) {
+            public void AddItem(BalanceItem item)
+            {
                 Items.Add(item);
                 EloSum += item.EloSum;
                 Count += item.Count;
-                if (Count > 0) AvgElo = EloSum/Count;
+                if (Count > 0) AvgElo = EloSum / Count;
                 else AvgElo = 0;
             }
 
