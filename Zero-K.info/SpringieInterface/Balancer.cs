@@ -552,7 +552,7 @@ namespace ZeroKWeb.SpringieInterface
                     PlayerJuggler.SuppressJuggler = false;
                 }
             } catch (Exception ex) {
-                tas.Say(TasClient.SayPlace.User, "Licho[0K]", ex.ToString(), false);
+                tas.Say(TasClient.SayPlace.User, "Licho", ex.ToString(), false);
             }
         }
 
