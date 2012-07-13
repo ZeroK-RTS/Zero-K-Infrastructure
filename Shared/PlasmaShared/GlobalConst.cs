@@ -40,7 +40,7 @@
         public const bool ClanFreePlanets = false;
         public const double CeasefireMaxInfluenceBalanceRatio = 1.5;
         public const int BaseShipsToBomb = 3;
-        public const int MaxClanSkilledSize = 20;
+        public const int MaxClanSkilledSize = 16;
         public const int ClanLeaveLimit = 100;
         public const int PlanetwarsColonizationCredits = 1000;
 
