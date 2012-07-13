@@ -421,11 +421,11 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private string mapField;
         
+        private PlayerTeam[] playersField;
+        
         private string autohostNameField;
         
         private string modField;
-        
-        private PlayerTeam[] playersField;
         
         private BotTeam[] botsField;
         
@@ -436,6 +436,16 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.mapField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public PlayerTeam[] Players {
+            get {
+                return this.playersField;
+            }
+            set {
+                this.playersField = value;
             }
         }
         
@@ -460,16 +470,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
         }
         
         /// <remarks/>
-        public PlayerTeam[] Players {
-            get {
-                return this.playersField;
-            }
-            set {
-                this.playersField = value;
-            }
-        }
-        
-        /// <remarks/>
         public BotTeam[] Bots {
             get {
                 return this.botsField;
@@ -490,11 +490,11 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private int lobbyIDField;
         
+        private bool isSpectatorField;
+        
         private int allyIDField;
         
         private string nameField;
-        
-        private bool isSpectatorField;
         
         private bool isIngameField;
         
@@ -507,6 +507,16 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.lobbyIDField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public bool IsSpectator {
+            get {
+                return this.isSpectatorField;
+            }
+            set {
+                this.isSpectatorField = value;
             }
         }
         
@@ -527,16 +537,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.nameField = value;
-            }
-        }
-        
-        /// <remarks/>
-        public bool IsSpectator {
-            get {
-                return this.isSpectatorField;
-            }
-            set {
-                this.isSpectatorField = value;
             }
         }
         
@@ -640,6 +640,8 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         private string nameField;
         
+        private string originalAutohostField;
+        
         private string targetAutohostField;
         
         /// <remarks/>
@@ -649,6 +651,16 @@ namespace PlasmaShared.SpringieInterfaceReference {
             }
             set {
                 this.nameField = value;
+            }
+        }
+        
+        /// <remarks/>
+        public string OriginalAutohost {
+            get {
+                return this.originalAutohostField;
+            }
+            set {
+                this.originalAutohostField = value;
             }
         }
         
@@ -1012,9 +1024,6 @@ namespace PlasmaShared.SpringieInterfaceReference {
         None,
         
         /// <remarks/>
-        MediumTeams,
-        
-        /// <remarks/>
         Planetwars,
         
         /// <remarks/>
@@ -1031,6 +1040,9 @@ namespace PlasmaShared.SpringieInterfaceReference {
         
         /// <remarks/>
         BigTeams,
+        
+        /// <remarks/>
+        Experienced,
     }
     
     /// <remarks/>
