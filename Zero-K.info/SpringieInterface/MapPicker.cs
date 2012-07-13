@@ -129,6 +129,7 @@ namespace ZeroKWeb.SpringieInterface
                             break;
 
 						case AutohostMode.SmallTeams:
+                            case AutohostMode.Experienced:
 							ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial != true);
 							if (players > 16) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 24);
 							else if (players > 6) ret = ret.Where(x => Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) > 16 && Math.Sqrt((x.MapHeight*x.MapHeight + x.MapWidth*x.MapWidth) ?? 0) <= 24);

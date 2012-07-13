@@ -27,6 +27,8 @@ namespace ZkData
         
         [Description("Sily maps")]
         BigTeams = 7,
+        [Description("Experienced players")]
+        Experienced = 8
     }
 
 }
