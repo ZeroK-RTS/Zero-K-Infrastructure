@@ -83,7 +83,7 @@ namespace ZeroKWeb
         protected void Application_Start()
         {
             Application["Nightwatch"] = new Nightwatch(Server.MapPath("/"));
-            if (!Debugger.IsAttached) Global.Nightwatch.Start();
+            Global.Nightwatch.Start();
 
             AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);

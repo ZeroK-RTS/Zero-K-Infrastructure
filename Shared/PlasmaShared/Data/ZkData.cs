@@ -25,11 +25,10 @@ namespace ZkData
     partial class ZkDataContext
 	{
 #if DEBUG
-        //private static string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-dev;Integrated Security=True";
-        private static string ConnectionString = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1";
+        private static string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-dev;Integrated Security=True";
+        //private static string ConnectionString = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1";
 #else 
         private static string ConnectionString= Settings.Default.zero_kConnectionString;
-
 #endif
 
         private static bool WasDbChecked = false;
