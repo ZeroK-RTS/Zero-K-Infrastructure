@@ -83,25 +83,6 @@
 	  <a onclick="window.location='http://zero-k.info/Wiki/Download';"><span class="downloadbutton"><span class="buttonSpan"></span><!--<img src="/img/downloadBlue.png" alt="Download" width="45" height="45" style="vertical-align:middle;" />--> Download</span></a>
   }
 
-  @if (ZeroKWeb.Global.IsAccountAuthorized)
-  {
-      <div class="border">
-      <h3>Tools</h3>
-      @if (Global.IsLobbyAccess)
-      {
-          Html.RenderPartial("GoogleSiteSearch");
-          @* <p><a href="http://zero-k.info/tools/mailer/sendMail.php"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>  *@
-      }
-      else
-      {
-@*          <p><a href="http://zero-k.info/tools/mailer/sendMail.php" target="_blank"><img src="http://zero-k.info/tools/mailer/mailer_s.png" alt="sendmail" /> Invite your friends now!</a></p>*@
-      }
-        @if (Global.Account.Country == "de" || Global.Account.Country == "at" || Global.Account.Country == "ch")
-        {
-      <p><a href="http://zero-k.info/Forum?categoryID=12" title="German Forum"><img src="/img/flags/de.png" alt="Germany" /> Deutschsprachiges Forum</a></p>}
-      <p><a href="http://zero-k.info/Wiki/Manual"><img src="http://zero-k.info/img/manual.png" alt="manual" width="24" height="24" /> The Zero-K manual</a></p>
-      </div>
-  }
 
   <div id="unit" class="border relative text-left">
     <img src="/img/unitpics/@(s.Unitname).png" width="64" height="51" class="fright" />

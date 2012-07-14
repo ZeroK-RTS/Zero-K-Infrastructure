@@ -1,9 +1,8 @@
 #menu table{width:100%;}
-#menu td {vertical-align:middle}
+#menu td { vertical-align: middle;}
 
 div#menu a /*menu bar*/
 {
-	padding: 1px 10px;
 	text-align: center; 
 	font-family: sm, sans-serif;
 	font-size: 13px;
@@ -31,10 +30,9 @@ div#menu a:hover span
 	font-family: sans-serif;
 	font-weight: bold;
 	opacity: .9;
-	
 }
 
-ul.menu {list-style-type: none; padding:5px; margin-left: 0;} /*toplevel menu*/
+ul.menu {list-style-type: none; padding: 0;margin: 10px; } /*toplevel menu*/
 
 ul.menu li > ul {display:none;} /*list menu*/
 
@@ -43,10 +41,8 @@ ul.menu li:hover > ul /*dropdown part*/
 	display:block;
 	position:absolute;
 	background: #000 url("../img/border-1.png") repeat-x scroll 50% 0;
-	padding: 0;
-	padding-top: 3px;
-	margin: 0;
-	margin-top: -3px;
+	padding: 5px;
+    margin: 0px;
 	border: 1px solid #2a8eaf;
 	border-top: none;
 	border-radius: 3px;

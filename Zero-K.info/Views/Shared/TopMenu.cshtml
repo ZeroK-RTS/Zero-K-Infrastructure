@@ -1,87 +1,82 @@
-﻿  <table>
-    <tr>
-      <td>
-        <a href="/">Home</a>
-      </td>
-      @* link to a thank you page maybe*@
-      <td>
-        <ul class="menu">
-          <li><a href="/Wiki/Download">Download</a>
-            @*<ul>
-              <li><a href="/Wiki/Download#Windows">Windows</a></li>
-              <li><a href="/Wiki/Download#Linux">Linux<span>This will now be the only game you ever
-                play</span></a></li>
-              <!-- <li><a href="/Wiki/Download#Mac">Mac</a></li> -->
-              <li><a href="http://code.google.com/p/zero-k/source/checkout">Sources<span>You awesome,
-                intelligent man-beast, you...</span></a></li>
-            </ul>*@
-          </li>
-        </ul>
-      </td>
-      <td>
-        <ul class="menu">
-          <li><a href="/Wiki/Media">Media</a>
-            @*<ul class="menu-border">
-              <li><a href="/Wiki/Media#Screenshots">Screenshots<span>Take a picture, it lasts longer</span></a></li>
-              <li><a href="/Wiki/Media#Videos">Video<span>A video says a thousand pictures</span></a></li>
-              <li><a target="_new" href="http://trac.caspring.org/wiki/ConceptArt">Concept Art</a></li>
-            </ul>*@
-          </li>
-        </ul>
-      </td>
-      <td>
-        <ul class="menu">
-          <li><a href="/Wiki/Manual">Manual</a>
-            <ul class="menu-border">
-              <li><a href="/Wiki/Manual">Index</a></li>
-              <li><a href="/Wiki/NewbieGuide">Newbie guide<span>Don't know where to begin? Click
-                here.</span></a></li>
-              <li><a href="/Static/UnitGuide">Units</a></li>
-              <li><a href="/Wiki/EconomyGuide">Economy</a></li>
-              <li><a href="/Wiki/Terraforming">Terraforming<span>Let's go play in the dirt!</span></a></li>
-              <li><a href="/Wiki/FAQ">FAQ<span>Frequently Asked Questions</span></a></li>
-            </ul>
-          </li>
-        </ul>
-      </td>
-      <td>
-        <ul class="menu">
-          <li><a href="/PlanetWars">Extras</a>
-            <ul class="menu-border">
-              <li><a href="/PlanetWars">PlanetWars<span>Multiplayer online campaign</span></a></li>
-              <li><a href="/Missions">Missions</a></li>
-              <li><a href="/Maps">Maps</a></li>
-              <li><a href="/Ladders">Ladders</a></li>
-              <li><a href="/Battles">Replays</a></li>
-              <li><a href="/Users">Users</a></li>
-              <li><a href="/Wiki/Fanart">Fanart<span>Show the world your favorite game ;-)</span></a></li>
-            </ul>
-          </li>
-        </ul>
-      </td>
-      <td>
-        <ul class="menu">
-          <li><a href="/Forum">Forum</a>
-        </ul>
-      </td>
-      <td>
-        <ul class="menu">
-          <li><a target="_new" href="http://code.google.com/p/zero-k/">Improve</a>
-            <ul class="menu-border">
-              <li><a target="_new" href="http://code.google.com/p/zero-k/">Development site</a>
-                <li><a target="_new" href="http://code.google.com/p/zero-k/issues/entry">Bugs?<span>Let
-                  us know so we can <b>squash them!</b></span></a></li>
-                <li><a target="_new" href="http://code.google.com/p/zero-k/wiki/Developing">Make the
-                  game with us</a></li>
-                <li><a href="/Wiki/Donate">Donate<span>Help us cover server cost
-                  :-)</span></a></li>
-                <li><a href="/Wiki/Credits">Credits</a></li>
-            </ul>
-          </li>
-        </ul>
-      </td>
-      <td width="100%">
-        @{Html.RenderPartial("GoogleSiteSearch");}
-      </td>
-    </tr>
+﻿@using ZeroKWeb
+  <table>
+      <tr>
+          <td>
+              <ul class="menu">
+                  <li><a href="@Url.Action("Index", "Home")">Home</a>
+                      <ul>
+                          <li><a href="@Url.Action("Index", "Home")">Home</a></li>
+                          <li><a href="@Url.Action("UnlockList", "My")">Unlocks</a></li>
+                          <li><a href="@Url.Action("Commanders", "My")">Commanders</a></li>
+                          <li><a href="@Url.Action("UserVotes", "Poll", new{id = Global.AccountID})">Polls</a></li>
+                      </ul>
+                  </li>
+              </ul>
+          </td>
+          <td>
+              <ul class="menu">
+                  <li><a href="/Wiki/Download">Play</a>
+                      <ul>
+                          <li><a href="/Wiki/Download">Download Zero-K<span>Download the game, it's free! :)</span></a></li>
+                          <li><a href="@Url.Action("Index", "Missions")">Missions<span>Single player missions</span></a></li>
+                          <li><a href="@Url.Action("Index", "Maps")">Maps<span>Thousands of maps to pick</span></a></li>
+                          <li><a href="@Url.Action("Index", "Battles")">Replays<span>All your past victories, stored here!</span></a></li>
+                      </ul>
+                  </li>
+              </ul>
+          </td>
+          <td>
+              <ul class="menu">
+                  <li><a href="/Wiki/Media">Media</a>
+                      <ul>
+                          <li><a href="/Wiki/Media">Media</a></li>
+                          <li><a href="/Wiki/Fanart">Fanart<span>Show the world your favorite game ;-)</span></a></li>
+                          <li><a target="_new" href="http://trac.caspring.org/wiki/ConceptArt">Concept Art</a></li>
+                      </ul>
+                  </li>
+              </ul>
+          </td>
+          <td>
+              <ul class="menu">
+                  <li><a href="/Wiki/Manual">Manual</a>
+                      <ul>
+                          <li><a href="/Wiki/Manual">Index</a></li>
+                          <li><a href="/Wiki/NewbieGuide">Newbie guide<span>Don't know where to begin? Click
+                                                                          here.</span></a></li>
+                          <li><a href="/Static/UnitGuide">Units</a></li>
+                          <li><a href="/Wiki/EconomyGuide">Economy</a></li>
+                          <li><a href="/Wiki/Terraforming">Terraforming<span>Let's go play in the dirt!</span></a></li>
+                          <li><a href="/Wiki/FAQ">FAQ<span>Frequently Asked Questions</span></a></li>
+                      </ul>
+                  </li>
+              </ul>
+          </td>
+          <td>
+              <ul class="menu">
+                  <li><a href="@Url.Action("Index", "Planetwars")">PlanetWars</a>
+                      <ul>
+                          <li><a href="@Url.Action("Index", "Planetwars")">PlanetWars<span>Multiplayer online campaign</span></a></li>
+                          <li><a href="@Url.Action("ClanList", "Planetwars")">Clans<span>Play with your friends or make friends while playing :)</span></a></li>
+                      </ul>
+                  </li>
+              </ul>
+          </td>
+          <td>
+              <ul class="menu">
+                  <li><a href="@Url.Action("Index", "Forum")">Community</a>
+                      <ul>
+                          <li><a href="@Url.Action("Index", "Forum")">Forum<span>Discuss, ask for help, have fun!</span></a></li>
+                          <li><a href="@Url.Action("Index", "Ladders")">Ladders</a></li>
+                          <li><a href="@Url.Action("Index", "Users")">Users<span>Find a player</span></a></li>
+                          <li><a target="_new" href="http://code.google.com/p/zero-k/wiki/Developing">Develop<span>Make the game with us</span></a></li>
+                          <li><a href="/Wiki/Donate">Donate<span>Help us cover server cost :-)</span></a></li>
+                          <li><a href="/Wiki/Credits">Credits<span>Makers of Zero-K</span></a></li>
+                      </ul>
+                  </li>
+              </ul>
+          </td>
+          <td width="100%">
+              @{ Html.RenderPartial("GoogleSiteSearch"); }
+          </td>
+      </tr>
   </table>

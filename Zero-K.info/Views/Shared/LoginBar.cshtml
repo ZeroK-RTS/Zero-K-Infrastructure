@@ -26,9 +26,7 @@
     @Html.PrintAccount(Global.Account)
     <input type="hidden" name="referer" value="@Request.Url" />
     <b>@Html.ActionLink("PlanetWars", "Index", "Planetwars")</b> Clan: @Html.PrintClan(Global.Clan)
-    | Credits: @Global.Account.Credits.ToString("C0") (+@Global.Account.CreditsIncome, -@Global.Account.CreditsExpense) | @Html.ActionLink("Trade", "Trade", "Planetwars", new { id = Global.AccountID }, null)
-    | Influence: @Html.PrintInfluence(Global.Clan, Global.Account.AccountPlanets.Sum(x => (int?)x.Influence) ?? 0, Global.Account.AccountPlanets.Sum(x => (int?)x.ShadowInfluence) ?? 0)
-    | Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()
+    | Credits: @Global.Account.Credits.ToString("C0") (+@Global.Account.CreditsIncome, -@Global.Account.CreditsExpense) | Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()
     <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 25px;
         height: 25px; vertical-align: middle;" alt="Logout" title="Logout" />
     </form>

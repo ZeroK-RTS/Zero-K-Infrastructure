@@ -1,37 +1,42 @@
 @using ZeroKWeb
-<!DOCTYPE html>
+<!doctype html>
 <html>
     <head>
         <meta name="description" content="Zero-K is a FREE multiplatform, open-source RTS game which aims to be dynamic, action-packed, hassle-free and fun." />
         <meta name="keywords" content="zk, 0k, Zero K, zero-k, game, rts, Real Time Strategy, awesome, robot, mech, online, space, 4x, free, open source, foss, spring, planetwars, planet wars" />
         <meta property="fb:page_id" content="182143538491008" />
         <title>
-            @if (!string.IsNullOrEmpty(Page.Title))
-            {
+            @if (!string.IsNullOrEmpty(Page.Title)) {
                 @Page.Title<text> - </text>
             }
             Zero-K free rts open source	game</title>
-            <!--Google Button-->
-        <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-            <!-- Google Box -->
+        <!--Google Button-->
+        <script type="text/javascript" src="https://apis.google.com/js/plusone.js"> </script>
+        <!-- Google Box -->
         <link href="https://plus.google.com/101714190573821742332" rel="publisher" />
         <script type="text/javascript">
             window.___gcfg = { lang: 'en' };
-            (function () {
+            (function() {
                 var po = document.createElement("script");
-                po.type = "text/javascript"; po.async = true; po.src = "https://apis.google.com/js/plusone.js";
+                po.type = "text/javascript";
+                po.async = true;
+                po.src = "https://apis.google.com/js/plusone.js";
                 var s = document.getElementsByTagName("script")[0];
                 s.parentNode.insertBefore(po, s);
-            })();</script>
+            })();
+        </script>
 
         <!--Google +1-->
-<script type="text/javascript">
-    (function () {
-        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-        po.src = 'https://apis.google.com/js/plusone.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-    })();
-</script>
+        <script type="text/javascript">
+            (function() {
+                var po = document.createElement('script');
+                po.type = 'text/javascript';
+                po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(po, s);
+            })();
+        </script>
         <link rel="icon" href='@Href("~/img/favicon.png")'/>
         <link rel="Stylesheet" href='@Href("~/Styles/style.css")' type="text/css" />
         <link rel="Stylesheet" href='@Href("~/Styles/jquery.qtip.min.css")' type="text/css" />
@@ -50,31 +55,26 @@
         <script type="text/javascript" src='@Href("~/Scripts/nicetitle.js")' > </script>
         <script type="text/javascript" src='@Href("~/Scripts/raphael-min.js")' > </script>
         @RenderSection("head", false)
-        @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1")
-        {
+        @if (!Global.IsLobbyAccess && ViewBag.Minimal != true && Request["minimalDesign"] != "1") {
             //******should instead check cookie for design mode and choose style accordingly******
-            if (ViewBag.StaticBackground == true)
-            {
+            if (ViewBag.StaticBackground == true) {
                 <style type="text/css">
-                    html
-                    {
-                        background: #000 url("/img/bg_bluehex.gif") fixed;
-                    }
+                    html { background: #000 url("/img/bg_bluehex.gif") fixed; }
                 </style>
             }
-            else
-            {
-                var files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
+            else {
+                string[] files = Directory.GetFiles(Server.MapPath("~/img/screenshots"));
                 // What we're doing here is generating a number unique to each date
                 // We use this to seed the RNG so that it picks a new background once per day
-                var date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
+                int date = Convert.ToInt32(DateTime.Now.ToString("MMddyyyy"));
                 var random = new Random(date);
-                var file = Path.GetFileName(files[random.Next(files.Length)]);
+                string file = Path.GetFileName(files[random.Next(files.Length)]);
                 <style type="text/css">
                     html {
                         background: #000 url("/img/screenshots/@file") no-repeat scroll 50% 0;
                         background-attachment: fixed;
-                    }</style>
+                    }
+                </style>
             }
         }
     </head>
@@ -93,12 +93,11 @@
                 var s = document.getElementsByTagName('script')[0];
                 s.parentNode.insertBefore(ga, s);
             })();
-	</script>
+        </script>
 
         <div id='ajaxScrollProgress' class="border">
             Loading...<img src='/img/Loader.gif' class="vcenter"/></div>
-        @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1")
-        {
+        @if (!Global.IsLobbyAccess && ViewBag.Minimal == null && Request["minimalDesign"] != "1") {
             <div id="fadetoblack">
             </div>
             <div id="mainContentWrapper" class="wrapper">
@@ -106,8 +105,7 @@
                     <a href="/">
                         <img src="/img/zk_logo.png" height="150px" alt="Zero K" /></a>
                 </div>
-                <!close header>
-                <div id="menu" class="border">
+                <div class="border" id="menu" style="padding: 0">
                     @Html.Partial("TopMenu")
                 </div>
                 <!close navigation>
@@ -116,31 +114,27 @@
                 </div>
                 <!close login>
 
-                <div id="renderbody" @if (ViewBag.NoBorder == null)
-                                     {
+                <div id="renderbody" @if (ViewBag.NoBorder == null) {
                                          <text>class="border"</text>
-                                     } @if (ViewBag.OpaqueBody == true)
-                                       {
+                                     } @if (ViewBag.OpaqueBody == true) {
                                            <text> style="opacity: 1"</text>
                                        }>
                     @RenderBody()
                 </div>
-                @if (Global.IsAccountAuthorized)
-                {
+                @if (Global.IsAccountAuthorized) {
                     <div>
                         <br/>
                         <h3>Advertisement</h3>
-                        <script type="text/javascript"><!--
-        google_ad_client = "ca-pub-9694351454481658";
-        /* podelne */
-        google_ad_slot = "9206337938";
-        google_ad_width = 728;
-        google_ad_height = 90;
-//-->
-</script>
+                        <script type="text/javascript">
+                            google_ad_client = "ca-pub-9694351454481658";
+                            /* podelne */
+                            google_ad_slot = "9206337938";
+                            google_ad_width = 728;
+                            google_ad_height = 90;
+
+                        </script>
                         <script type="text/javascript"
-                                src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
+                                src="http://pagead2.googlesyndication.com/pagead/show_ads.js"> </script>
                     </div>
                 }
 
@@ -150,37 +144,31 @@
                 </div>
                 <!close footer>
             </div>
-@*<!close wrapper>*@        }
-        else
-        {
+@*<!close wrapper>*@
+        }
+        else {
             <div id="simplestyle">
-                @if (!Global.IsLobbyAccess)
-                {
-                    <div id="menu" class="border">
-                        @Html.Partial("TopMenu")
-                    </div>
-                }
+                <div class="border" id="menu" style="padding:0">
+                    @Html.Partial("TopMenu")
+                </div>
                 <div class="border relative" style="padding: 0 10px 0 10px;" >
                     @Html.Partial("LoginBar")
                 </div>
                 @RenderBody()
             </div>
             <br/>
-            if (Global.IsAccountAuthorized)
-            {
+            if (Global.IsAccountAuthorized) {
                 <div>
                     <h3>Advertisement</h3>
-                    <script type="text/javascript"><!--
-        google_ad_client = "ca-pub-9694351454481658";
-        /* podelne */
-        google_ad_slot = "9206337938";
-        google_ad_width = 728;
-        google_ad_height = 90;
-//-->
+                    <script type="text/javascript"> 
+                        google_ad_client = "ca-pub-9694351454481658";
+                        /* podelne */
+                        google_ad_slot = "9206337938";
+                        google_ad_width = 728;
+                        google_ad_height = 90;
 </script>
                     <script type="text/javascript"
-                            src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script></div>
+                            src="http://pagead2.googlesyndication.com/pagead/show_ads.js"> </script></div>
             }
         }
 

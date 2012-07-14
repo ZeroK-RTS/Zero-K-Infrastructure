@@ -1,10 +1,9 @@
-@font-face 
-{
-    src: url( ../SM.eot ); /*eot because IE doesn't render ttf :( */
+@font-face {
     font-family: sm;
-    src: local("sm"), url( ../SM.ttf ) format("truetype");
+    src: url('../SM.eot'); /* IE9 Compat Modes */
+    src: url('../SM.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../SM.ttf') format('truetype'); /* Safari, Android, iOS */
 }
-
 @font-face 
 {
     src: url( ../tomorrow.eot );
