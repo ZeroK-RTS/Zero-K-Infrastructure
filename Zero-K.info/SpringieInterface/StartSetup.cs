@@ -57,7 +57,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                foreach (var p in context.Players.Where(x => !x.IsSpectator))
+                foreach (var p in context.Players)
                 {
                     var user = db.Accounts.FirstOrDefault(x => x.LobbyID == p.LobbyID);
                     if (user != null)
@@ -65,75 +65,78 @@ namespace ZeroKWeb.SpringieInterface
                         var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
                         ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { LobbyID = p.LobbyID, Parameters = userParams });
 
-                        var pu = new LuaTable();
-                        var userUnlocksBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanUnlocks);
-                        var userCommandersBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanCommanders);
                         var userBanMuted = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanMute);
-
-                        if (!userUnlocksBanned)
-                        {
-                            if (mode != AutohostMode.Planetwars || user.ClanID == null) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
-                            else
-                            {
-                                foreach (var unlock in
-                                    user.AccountUnlocks.Select(x => x.Unlock).Union(Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock))) pu.Add(unlock.Code);
-                            }
-                        }
-
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair()
-                                       { Key = "faction", Value = user.Faction != null ? user.Faction.Shortcut : "" });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair()
-                                       { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
+                        if (userBanMuted) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "muted", Value = "1" });
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "faction", Value = user.Faction != null ? user.Faction.Shortcut : "" });
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "level", Value = user.Level.ToString() });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "elo", Value = user.EffectiveElo.ToString() });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "avatar", Value = user.Avatar });
-                        if (userBanMuted) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "muted", Value = "1" });
 
 
-                        if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "extracomm", Value = "1" });
+                        if (!p.IsSpectator) {
+                            var pu = new LuaTable();
+                            var userUnlocksBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanUnlocks);
+                            var userCommandersBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanCommanders);
 
-                        var pc = new LuaTable();
 
-                        if (!userCommandersBanned)
-                        {
-                            foreach (var c in user.Commanders.Where(x=>x.Unlock !=null))
-                            {
-                                try
-                                {
-                                    if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x=>!Char.IsLetterOrDigit(x) && x!= ' ')) c.Name = c.CommanderID.ToString();
-                                    var morphTable = new LuaTable();
-                                    pc["[\"" + c.Name + "\"]"] = morphTable;
-                                    for (var i = 1; i <= GlobalConst.NumCommanderLevels; i++)
-                                    {
-                                        var key = string.Format("c{0}_{1}_{2}", user.AccountID, c.CommanderID, i);
-                                        morphTable.Add(key);
-
-                                        var comdef = new LuaTable();
-                                        commanderTypes[key] = comdef;
-
-                                        comdef["chassis"] = c.Unlock.Code + i;
-
-                                        var modules = new LuaTable();
-                                        comdef["modules"] = modules;
-
-                                        comdef["cost"] = c.GetTotalMorphLevelCost(i);
-
-                                        comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
-
-                                        foreach (var m in
-                                            c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(
-                                                x => x.Unlock)) modules.Add(m.Code);
-                                    }
-                                }
-                                catch (Exception ex) {
-                                    throw new ApplicationException(string.Format("Error processing commander: {0} - {1} of player {2} - {3}",c.CommanderID, c.Name, user.AccountID, user.Name),ex);
+                            if (!userUnlocksBanned) {
+                                if (mode != AutohostMode.Planetwars || user.ClanID == null) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
+                                else {
+                                    foreach (var unlock in
+                                        user.AccountUnlocks.Select(x => x.Unlock).Union(Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock))) pu.Add(unlock.Code);
                                 }
                             }
-                        }
-                        else userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "jokecomm", Value = "1" });
 
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "commanders", Value = pc.ToBase64String() });
+                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "unlocks", Value = pu.ToBase64String() });
+
+
+
+                            if (accountIDsWithExtraComms.Contains(user.AccountID)) userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "extracomm", Value = "1" });
+
+                            var pc = new LuaTable();
+
+                            if (!userCommandersBanned) {
+                                foreach (var c in user.Commanders.Where(x => x.Unlock != null)) {
+                                    try {
+                                        if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x => !Char.IsLetterOrDigit(x) && x != ' ')) c.Name = c.CommanderID.ToString();
+                                        var morphTable = new LuaTable();
+                                        pc["[\"" + c.Name + "\"]"] = morphTable;
+                                        for (var i = 1; i <= GlobalConst.NumCommanderLevels; i++) {
+                                            var key = string.Format("c{0}_{1}_{2}", user.AccountID, c.CommanderID, i);
+                                            morphTable.Add(key);
+
+                                            var comdef = new LuaTable();
+                                            commanderTypes[key] = comdef;
+
+                                            comdef["chassis"] = c.Unlock.Code + i;
+
+                                            var modules = new LuaTable();
+                                            comdef["modules"] = modules;
+
+                                            comdef["cost"] = c.GetTotalMorphLevelCost(i);
+
+                                            comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
+
+                                            foreach (var m in
+                                                c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(
+                                                    x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
+                                        }
+                                    } catch (Exception ex) {
+                                        throw new ApplicationException(
+                                            string.Format("Error processing commander: {0} - {1} of player {2} - {3}",
+                                                          c.CommanderID,
+                                                          c.Name,
+                                                          user.AccountID,
+                                                          user.Name),
+                                            ex);
+                                    }
+                                }
+                            }
+                            else userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "jokecomm", Value = "1" });
+
+                            userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "commanders", Value = pc.ToBase64String() });
+                        }
                     }
                 }
 
