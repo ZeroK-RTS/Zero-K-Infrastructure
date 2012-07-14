@@ -20,8 +20,9 @@ namespace ZeroKLobby.Notifications
         {
             InitializeComponent();
             tas = Program.TasClient;
-            tas.Said += (sender, args) =>
-            {
+            tas.PreviewSaid += (sender, e) =>
+                {
+                var args = e.Data;
                 if (tas.MyBattle != null && args.Place == TasSayEventArgs.Places.Battle && args.UserName == tas.MyBattle.Founder.Name && args.Text.StartsWith("Poll:")) {
                     var lid = args.Text.LastIndexOf("[");
                     
@@ -36,6 +37,8 @@ namespace ZeroKLobby.Notifications
                             {
                                 Program.NotifySection.AddBar(this);
                                 if (!tas.MyUser.IsInGame && !tas.MyBattleStatus.IsSpectator) Program.MainWindow.NotifyUser("chat/battle", string.Format("Poll: {0}", question), true, true);
+                            } else {
+                                e.Cancel = true; // vote bar already visible, dont spam vote text again
                             }
 
                             lbQuestion.Text = question;
