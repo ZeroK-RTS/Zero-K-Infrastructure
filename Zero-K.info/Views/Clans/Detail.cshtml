@@ -198,7 +198,7 @@
  }
 
 
-@Html.ActionLink("Back to clan list", "ClanList")
+@Html.ActionLink("Back to clan list", "Index","Clans")
 @{if (File.Exists(Server.MapPath(c.GetBGImageUrl())))
   { /*<script>
         function loadClanBGImage() {
@@ -255,7 +255,7 @@
 
 @if (isMember && Global.Account.HasClanRights) { //has rights
   <br />
-  @Html.ActionLink("Modify clan information", "CreateClan", new { id = c.ClanID })
+    @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
 }
 
 <div id="tabs">
@@ -360,10 +360,10 @@
 				}
     </div>
     <div id="events">
-        @Html.Action("Events", new { clanID = c.ClanID, partial = true })
+        @Html.Action("Events", "Planetwars", new { clanID = c.ClanID, partial = true })
     </div>
 </div>
-@Html.ActionLink("Back to clan list", "ClanList")
+@Html.ActionLink("Back to clan list", "Index","Clans")
 <hr />
 @if (isMember)
 {

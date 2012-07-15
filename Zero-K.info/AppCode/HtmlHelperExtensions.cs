@@ -175,7 +175,7 @@ namespace System.Web.Mvc
                 var clanStr = "";
                 var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
                 if (account.Clan != null) {
-                    clanStr = string.Format("<a href='{1}'><img src='{0}' width='16'/></a>", account.Clan.GetImageUrl(), url.Action("Clan", "PlanetWars", new { id= account.ClanID}));
+                    clanStr = string.Format("<a href='{1}'><img src='{0}' width='16'/></a>", account.Clan.GetImageUrl(), url.Action("Detail", "Clans", new { id= account.ClanID}));
                 }
                 else if (account.Faction != null) {
                     clanStr = string.Format("<img src='{0}' width='16'/>", account.Faction.GetImageUrl());
@@ -235,11 +235,11 @@ namespace System.Web.Mvc
         public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan, bool colorize = true)
         {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
-            if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>No Clan</a>", url.Action("ClanList", "Planetwars")));
+            if (clan == null) return new MvcHtmlString(string.Format("<a href='{0}'>No Clan</a>", url.Action("Index", "Clans")));
             {
                 return
                     new MvcHtmlString(string.Format("<a href='{0}'><img src='{1}' width='16'><span style='color:{2}'>{3}</span></a>",
-                                                    url.Action("Clan", "Planetwars", new { id = clan.ClanID }),
+                                                    url.Action("Detail", "Clans", new { id = clan.ClanID }),
                                                     clan.GetImageUrl(),
                                                     colorize ? Clan.ClanColor(clan, Global.ClanID) : "",
                                                     clan.Shortcut));

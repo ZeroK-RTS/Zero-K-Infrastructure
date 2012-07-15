@@ -5,12 +5,12 @@
   Page.Title = "List of PlanetWars clans";
 }
 <script type="text/javascript" language="javascript">
-  $(document).ready(function () {
-    $('#clanTable').tablesorter({
-      sortList: [[3, 1]]
+    $(document).ready(function () {
+        $('#clanTable').tablesorter({
+            sortList: [[3, 1]]
+        });
+
     });
-    
-  }); 
 </script>
 @Html.Partial("FactionList")
 <br />
@@ -18,7 +18,7 @@
 @if (Global.Clan == null) {
 <div>
 To take a full part in <a href='@Url.Action("Index", "Planetwars")'>PlanetWars</a> join a clan. <br />
-You can also @Html.ActionLink("create new clan", "CreateClan", "Planetwars")<br />
+You can also @Html.ActionLink("create new clan", "Create", "Clans")<br />
 Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
 </div>
 }
@@ -57,7 +57,7 @@ Clan size is normally limited to @GlobalConst.MaxClanSkilledSize people.
 
   @foreach (var c in Model) {
     <tr>
-    <td><a href='@Url.Action("Clan", new {id= c.ClanID})'><img src='@c.GetImageUrl()' />@c.ClanName</a></td>
+    <td><a href='@Url.Action("Detail", new {id= c.ClanID})'><img src='@c.GetImageUrl()' />@c.ClanName</a></td>
       <td>@Html.PrintFaction(c.Faction)</td>
 	  <td>@Html.PrintClan(c)</td>
       <td>@c.Accounts.Sum(x=>x.Planets.Count())</td>

@@ -1412,7 +1412,6 @@ namespace LobbyClient
                     new ApplicationException(string.Format("Error while processing command {0} {1}: {2}", command, Utils.Glue(args), e.Message), e);
 
                 Trace.TraceError("TASC error {0}", newEx);
-                if (Debugger.IsAttached) throw newEx;
             }
         }
 

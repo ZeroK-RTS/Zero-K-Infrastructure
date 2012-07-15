@@ -27,7 +27,7 @@
             </tr>
             <tr>
                 <td valign='top'>
-                    <form method="post" action="@Url.Action("OfferTreaty", new { targetClanID = Model.ClanID })">
+                    <form method="post" action="@Url.Action("OfferTreaty","Clans", new { targetClanID = Model.ClanID })">
                         @Html.PrintTreaty(our)<br />
                         Status: @Html.DropDownList("ourStatus", Enum.GetValues(typeof(AllyStatus)).OfType<AllyStatus>().Select(x => new SelectListItem() { Text = x.ToString(), Value = ((int)x).ToString(), Selected = our.AllyStatus == x }))
                         Research: @Html.CheckBox("ourResearch", our.IsResearchAgreement)<input type="submit" value="offer"/><br />
@@ -69,7 +69,7 @@
                     {
                         if (Global.Account.HasClanRights)
                         {
-                            <form method="post" action="@Url.Action("OfferTreaty", new { targetClanID = them.ClanID })">
+                            <form method="post" action="@Url.Action("OfferTreaty", "Clans",new { targetClanID = them.ClanID })">
                                 @Html.PrintTreaty(our)<br />
                                 Status: @Html.DropDownList("ourStatus", Enum.GetValues(typeof(AllyStatus)).OfType<AllyStatus>().Select(x => new SelectListItem() { Text = x.ToString(), Value = ((int)x).ToString(), Selected = our.AllyStatus == x }))
                                 Research: @Html.CheckBox("ourResearch", our.IsResearchAgreement)<input type="submit" value="offer"/><br />

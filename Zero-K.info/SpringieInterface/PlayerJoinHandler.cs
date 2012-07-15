@@ -36,7 +36,7 @@ namespace ZeroKWeb.SpringieInterface
                     db.SubmitChanges();
                     AuthServiceClient.SendLobbyMessage(account,
                                                        string.Format(
-                                                           "You must be in a faction to play PlanetWars.  You were conscripted by {0}. To change your faction go to http://zero-k.info/PlanetWars/ClanList ",
+                                                           "You must be in a faction to play PlanetWars.  You were conscripted by {0}. To change your faction go to http://zero-k.info/Clans ",
                                                            fac.Name));
                     return string.Format("Sending {0} to {1}", account.Name, fac.Name);
                 }
@@ -50,10 +50,10 @@ namespace ZeroKWeb.SpringieInterface
 
                 if (account.Clan == null)
                 {
-                    //AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
+                    //AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Clans");
                     res.PrivateMessage =
                         string.Format(
-                            "{0} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Planetwars/ClanList",
+                            "{0} this is competetive PlanetWars campaign server. Join a clan to conquer the galaxy http://zero-k.info/Clans",
                             account.Name);
                     return res;
                 }

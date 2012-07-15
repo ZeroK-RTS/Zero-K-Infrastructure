@@ -103,6 +103,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ModStatsDb.dbml</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\ClansController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="SpringieInterface\AutohostConfigs.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
@@ -359,6 +360,7 @@
     <Content Include="Views\Shared\DisplayTemplates\Punishment.cshtml" />
     <Content Include="Views\Users\AdminUserDetail.cshtml" />
     <Content Include="Views\Users\ReportToAdmin.cshtml" />
+    <Content Include="Views\Clans\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
@@ -391,10 +393,9 @@
     <Content Include="Views\Ladders\ladders.cshtml" />
     <Content Include="Views\Home\NotLoggedIn.cshtml" />
     <Content Include="Views\Shared\LoginBar.cshtml" />
-    <Content Include="Views\Planetwars\ClanList.cshtml" />
-    <Content Include="Views\Planetwars\Clan.cshtml" />
-    <Content Include="Views\Planetwars\CreateClan.cshtml" />
-    <Content Include="Views\Planetwars\JoinClan.cshtml" />
+    <Content Include="Views\Clans\Detail.cshtml" />
+    <Content Include="Views\Clans\Create.cshtml" />
+    <Content Include="Views\Clans\JoinClan.cshtml" />
     <Content Include="Views\Planetwars\Planet.cshtml" />
     <Content Include="Views\Shared\GoogleSiteSearch.cshtml" />
     <Content Include="Views\Shared\TopMenu.cshtml" />
@@ -404,7 +405,7 @@
     <Content Include="Views\Shared\PlanetSummary.cshtml" />
     <Content Include="Views\Home\PlanetTooltip.cshtml" />
     <Content Include="Views\Shared\PlanetDropships.cshtml" />
-    <Content Include="Views\Planetwars\ClanDiplomacy.cshtml" />
+    <Content Include="Views\Clans\ClanDiplomacy.cshtml" />
     <Content Include="Views\Planetwars\Trade.cshtml" />
     <Content Include="Views\Shared\TradeOffer.cshtml" />
     <Content Include="Views\Battles\BattleTileList.cshtml" />

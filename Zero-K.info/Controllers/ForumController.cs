@@ -189,7 +189,7 @@ namespace ZeroKWeb.Controllers
 				if (missionID.HasValue) return RedirectToAction("Detail", "Missions", new { id = missionID });
 				else if (resourceID.HasValue) return RedirectToAction("Detail", "Maps", new { id = resourceID });
 				else if (springBattleID.HasValue) return RedirectToAction("Detail", "Battles", new { id = springBattleID });
-				else if (clanID.HasValue) return RedirectToAction("Clan", "Planetwars", new { id = clanID });
+				else if (clanID.HasValue) return RedirectToAction("Detail", "Clans", new { id = clanID });
 				else if (planetID.HasValue) return RedirectToAction("Planet", "Planetwars", new { id = planetID });
 				else return RedirectToAction("Thread", new { id = thread.ForumThreadID });
 			}
@@ -205,7 +205,7 @@ namespace ZeroKWeb.Controllers
 				if (cat.IsMissions) return RedirectToAction("Detail", "Missions", new { id = t.Missions.MissionID });
 				if (cat.IsMaps) return RedirectToAction("Detail", "Maps", new { id = t.Resources.ResourceID });
 				if (cat.IsSpringBattles) return RedirectToAction("Detail", "Battles", new { id = t.SpringBattles.SpringBattleID });
-				if (cat.IsClans) return RedirectToAction("Clan", "Planetwars", new { id = t.RestrictedClanID});
+				if (cat.IsClans) return RedirectToAction("Detail", "Clans", new { id = t.RestrictedClanID});
 				if (cat.IsPlanets) return RedirectToAction("Planet", "Planetwars", new { id = t.Planets.PlanetID});
 			}
 

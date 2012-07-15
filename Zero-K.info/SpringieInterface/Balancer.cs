@@ -273,8 +273,8 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var p in idList.Select(x => db.Accounts.First(y => y.LobbyID == x))) {
                         /*if (p.ClanID == null)
                         {
-                            //res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Planetwars/ClanList\n", p.Name);
-                            //AuthServiceClient.SendLobbyMessage(p, "To play here, join a clan first http://zero-k.info/Planetwars/ClanList");
+                            //res.Message += string.Format("{0} cannot play, must join a clan first http://zero-k.info/Clans\n", p.Name);
+                            //AuthServiceClient.SendLobbyMessage(p, "To play here, join a clan first http://zero-k.info/Clans");
                         }*/
                         /*if (p.Clan != null && !p.Name.Contains(p.Clan.Shortcut))
                         {
