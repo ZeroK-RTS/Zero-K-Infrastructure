@@ -59,7 +59,6 @@ bind                  9  specteam 8
 bind             Ctrl+9  specteam 18
 bind              Any+9  group9
 
-bind                  ;  toggleradarandjammer
 bind              Any+=  speedup
 bind                  [  buildfacing inc
 bind            Shift+[  buildfacing inc
