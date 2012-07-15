@@ -24,30 +24,37 @@ namespace ZkData
 
     partial class ZkDataContext
 	{
-#if DEBUG
-        private static string ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-dev;Integrated Security=True";
-        //private static string ConnectionString = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1";
-#else 
-        private static string ConnectionString= Settings.Default.zero_kConnectionString;
-#endif
-
-        private static bool WasDbChecked = false;
-        private static object locker = new object();
+        private static string ConnectionStringLocal = @"Data Source=.\SQLEXPRESS;Initial Catalog=zero-k-dev;Integrated Security=True";
         
+#if !DEPLOY
+        private static string ConnectionStringLive = @"Data Source=omega.licho.eu,100;Initial Catalog=zero-k;Persist Security Info=True;User ID=zero-k;Password=zkdevpass1";
+#else 
+        private static string ConnectionStringLive = Settings.Default.zero_kConnectionString;
+#endif 
+
+
+        private static bool wasDbChecked = false;
+        private static object locker = new object();
+
+#if DEBUG
+        public static bool UseLiveDb = false;
+#else 
+        public static bool UseLiveDb = true;
+#endif
 
         private static readonly MappingSource mapping = new StableMappingSource(typeof(ZkDataContext));
 
 
         public static Action<ZkDataContext> DataContextCreated = context => { };
 
-        public ZkDataContext() : base(ConnectionString, mapping) {
+        public ZkDataContext(bool? useLiveDb = null) : base(useLiveDb != null ? (useLiveDb.Value ? ConnectionStringLive : ConnectionStringLocal):(UseLiveDb ? ConnectionStringLive : ConnectionStringLocal), mapping) {
 #if DEBUG
-            if (!WasDbChecked)
+            if (!wasDbChecked)
             {
                 lock (locker)
                 {
                     if (!DatabaseExists()) CreateDatabase();
-                    WasDbChecked = true;
+                    wasDbChecked = true;
                 }
             }
 #endif

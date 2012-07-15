@@ -33,7 +33,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult Create()
         {
-            if (Global.Account.Clan == null || (Global.Account.HasClanRights)) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
+            if (Global.Account.Clan == null || Global.Account.HasClanRole(x=>x.RightEditTexts)) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
             else return Content("You already have clan and you dont have rights to it");
         }
 
@@ -59,27 +59,35 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult ChangePlayerRights(int clanID, int accountID)
         {
-            var db = new ZkDataContext();
+            // hack rights!
+
+            return Content("phail");
+            /*var db = new ZkDataContext();
             var clan = db.Clans.Single(c => clanID == c.ClanID);
-            if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
+            if (!(Global.Account.HasClanRole().HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
             var kickee = db.Accounts.Single(a => a.AccountID == accountID);
             if (kickee.IsClanFounder) return Content("Clan founders can't be modified.");
             kickee.HasClanRights = !kickee.HasClanRights;
             var ev = Global.CreateEvent("{0} {1} {2} rights to clan {3}", Global.Account, kickee.HasClanRights ? "gave" : "took", kickee, clan);
             db.Events.InsertOnSubmit(ev);
             db.SubmitChanges();
-            return RedirectToAction("Detail", new { id = clanID });
+            return RedirectToAction("Detail", new { id = clanID });*/
+
         }
 
 
-        public static Clan PerformLeaveClan(int accountID) {
-            var db = new ZkDataContext();
+        public static Clan PerformLeaveClan(int accountID, ZkDataContext db = null) {
+            if (db == null) db = new ZkDataContext();
             var clan = db.Clans.Single(x => x.ClanID == accountID);
             if (clan.Accounts.Count() > GlobalConst.ClanLeaveLimit) return null; // "This clan is too big to leave";
             var acc = db.Accounts.Single(x => x.AccountID == accountID);
-            acc.IsClanFounder = false;
-            acc.HasClanRights = false;
+            
+            // remove roles
+            foreach (var role in acc.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).ToList()) acc.AccountRolesByAccountID.Remove(role);
+            
+            // remove planets
             acc.Planets.Clear();
+            
             foreach (var entry in acc.AccountPlanets)
             {
                 entry.DropshipCount = 0;
@@ -92,7 +100,6 @@ namespace ZeroKWeb.Controllers
                 clan.IsDeleted = true;
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} is disbanded", clan));
             }
-            else if (!clan.Accounts.Any(x => x.IsClanFounder)) clan.Accounts.OrderByDescending(x => x.HasClanRights).First().IsClanFounder = true;
             db.SubmitChanges();
             return clan;
         }
@@ -133,12 +140,9 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var clan = db.Clans.Single(c => clanID == c.ClanID);
-            // todo: disallow kicking after the round starts
-            if (!(Global.Account.HasClanRights && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
-            var kickee = db.Accounts.Single(a => a.AccountID == accountID);
-            if (kickee.IsClanFounder) return Content("Clan founders can't be kicked.");
-            foreach (var p in kickee.Planets.ToList()) p.OwnerAccountID = null; // disown his planets
-            kickee.ClanID = null;
+            // hack use something different than appoint roles for kicking!
+            if (!(Global.Account.HasClanRole(x=>x.RightEditTexts) && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
+            PerformLeaveClan(accountID);
             db.SubmitChanges();
             PlanetwarsController.SetPlanetOwners();
             return RedirectToAction("Detail", new { id = clanID });
@@ -153,7 +157,7 @@ namespace ZeroKWeb.Controllers
                 var created = clan.ClanID == 0; // existing clan vs creation
                 if (!created)
                 {
-                    if (!Global.Account.HasClanRights || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
+                    if (!Global.Account.HasClanRole(x=>x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
                     var orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
                     orgClan.ClanName = clan.ClanName;
                     orgClan.LeaderTitle = clan.LeaderTitle;
@@ -196,8 +200,6 @@ namespace ZeroKWeb.Controllers
                 {
                     var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                     acc.ClanID = clan.ClanID;
-                    acc.IsClanFounder = true;
-                    acc.HasClanRights = true;
                     acc.FactionID = clan.FactionID;
                     db.SubmitChanges();
                     db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
@@ -211,6 +213,8 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult OfferTreaty(int targetClanID, AllyStatus ourStatus, bool ourResearch)
         {
+            // hack complete
+            /*
             if (!Global.Account.HasClanRights || Global.Clan == null) return Content("You don't have rights to do this");
             var db = new ZkDataContext();
             var clan = db.Clans.Single(x => x.ClanID == Global.ClanID);
@@ -254,7 +258,8 @@ namespace ZeroKWeb.Controllers
             }
             db.SubmitChanges();
 
-            return RedirectToAction("ClanDiplomacy", "Clans", new { id = clan.ClanID });
+            return RedirectToAction("ClanDiplomacy", "Clans", new { id = clan.ClanID });*/
+            return Content("phail");
         }
 
     }

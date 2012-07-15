@@ -121,22 +121,13 @@
 		<li><a href="#minimap"><span>Navigation</span></a></li>
 	</ul>
 	<div id="influence">
-        @if (Global.Account != null && Global.Account.Clan != null && Global.Clan.CanMakeHomeworld&& Global.Account.Clan.HomeworldPlanetID == null  && (Global.Account.HasClanRights || Global.Account.IsClanFounder) && Model.HomeworldClan == null) {
-            @Html.ActionLink("Establish homeworld", "EstablishHomeworld", new { planetID = Model.PlanetID }, new { title="Creates permanent homeworld using your clan's influence spread across unowned planets"})<br />
-        }
-        @if (Model.HomeworldClan != null) {
-            <b>Homeworld of @Html.PrintClan(Model.HomeworldClan)</b><br />
-        }
-        @*@if (Model.HomeworldClan != null && Global.Account != null && Global.Account.Clan != null && (Global.Account.HasClanRights || Global.Account.IsClanFounder)&&Model.HomeworldClan.ClanID == Global.Account.ClanID) {
-            @Html.ActionLink("Consolidate home influence", "ConsolidateHomeworld", null, new { title="Strengthens homeworld by moving influence from unowned planets here"})
-        }*@
         
         @Html.Partial("InfluenceList", Model.AccountPlanets)
 	</div>
 	<div id="dropships">
 		@Html.Partial("PlanetDropships", Model)
 		@if (Global.IsAccountAuthorized) {
-		if (Global.Account.DropshipCount <= 0) {
+		if (Global.Account.GetDropshipsAvailable() <= 0) {
 			<span>You have no free starships - fight more battles</span>
 		} else {
 			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(new ZkDataContext(), Global.ClanID).Select(x => x.PlanetID).ToList();
@@ -146,7 +137,7 @@
 			var bombNeed = 3 + defs / 3;
 			var enemyShips = Model.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID).Sum(x => x.DropshipCount);
 			if (isAccessible || jumpgates > 0) {
-				var avail = isAccessible ? Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
+				var avail = isAccessible ? Global.Account.GetDropshipsAvailable() : Math.Min(jumpgates, Global.Account.GetDropshipsAvailable());
 			<form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
 			Invade planet (@avail) @(!isAccessible ? "JUMPGATE" : ""):
 			<input type="text" name="count" />
@@ -177,13 +168,11 @@
 	}
 		@if (Model.Account != null && Global.ClanID == Model.Account.ClanID) {
 			<h2>Construction</h2>
-		foreach (var structure in Model.PlanetStructures.Where(s => s.IsDestroyed)) {
-			if (structure.StructureType.Cost*GlobalConst.PlanetwarsRepairCost > Global.Account.Credits) {
-			<p>@String.Format("Repair {0} (requires {1:C0})", structure.StructureType.Name, structure.StructureType.Cost * GlobalConst.PlanetwarsRepairCost)</p>
-			} else {
+		foreach (var structure in Model.PlanetStructures.Where(s => !s.IsDestroyed)) {
+		
 				var linkText = String.Format("Repair {0} ({1:C0})", structure.StructureType.Name, structure.StructureType.Cost);
 			<p>@Html.ActionLink(linkText, "RepairStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
-			}
+			
 		}
 
 		if (Model.OwnerAccountID == Global.AccountID) {
@@ -191,7 +180,7 @@
 
 				var upgrade = structure.StructureType.ParentStructureTypeByUpgradesToStructureID;
 				if (upgrade != null) {
-					if (upgrade.Cost > Global.Account.Credits) {
+					if (upgrade.Cost > Global.Account.GetMetalAvailable()) {
 			<p>@String.Format("Upgrade {0} to {1} (requires {2:C0}) - {3}", structure.StructureType.Name, upgrade.Name, upgrade.Cost, upgrade.Description)</p>
 					} else {
 						var linkText = String.Format("Upgrade {0} to {1} ({2:C0}) - {3}", structure.StructureType.Name, upgrade.Name, upgrade.Cost, upgrade.Description);
@@ -204,7 +193,7 @@
 			var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
 			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
 				if (!StructureType.HasStructureOrUpgrades(db, planet, structureType)) {
-					if (structureType.Cost > Global.Account.Credits) {
+					if (structureType.Cost > Global.Account.GetMetalAvailable()) {
 			<p>@String.Format("Build {0} (requires {1:C0}) - {2}", structureType.Name, structureType.Cost, structureType.Description)</p>
 					} else {
 						var linkText = String.Format("Build {0} ({1:C0}) - {2}", structureType.Name, structureType.Cost, structureType.Description);

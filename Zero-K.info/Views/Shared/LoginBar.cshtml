@@ -26,7 +26,7 @@
     @Html.PrintAccount(Global.Account)
     <input type="hidden" name="referer" value="@Request.Url" />
     <b>@Html.ActionLink("PlanetWars", "Index", "Planetwars")</b> Clan: @Html.PrintClan(Global.Clan)
-    | Credits: @Global.Account.Credits.ToString("C0") (+@Global.Account.CreditsIncome, -@Global.Account.CreditsExpense) | Ships: @(Global.Account.DropshipCount)/@Global.Account.GetDropshipCapacity()
+    | Metal: @Global.Account.GetMetalAvailable().ToString("C0")  | Ships: @(Global.Account.GetDropshipsAvailable()) /  @Global.Account.GetDropshipCapacity()
     <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 25px;
         height: 25px; vertical-align: middle;" alt="Logout" title="Logout" />
     </form>

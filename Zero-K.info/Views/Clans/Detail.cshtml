@@ -227,8 +227,8 @@
       <h3>@Html.PrintClan(c)</h3>
       <img  src='@c.GetImageUrl()'/><br />
       Influence: <b>@Html.PrintInfluence(Model, infl.Sum(x => x.Influence), infl.Sum(x => x.ShadowInfluence))</b><br />
-      Credits: <b>@c.Accounts.Sum(x => x.Credits)</b><br />
-      @(c.LeaderTitle ?? "leader"): @Html.PrintAccount(c.Accounts.Single(x => x.IsClanFounder))
+      @*Credits: <b>@c.Accounts.Sum(x => x.Credits)</b><br />
+      @(c.LeaderTitle ?? "leader"): @Html.PrintAccount(c.Accounts.Single(x => x.IsClanFounder))*@
     </td>
     <td>
     <span style='float:right'><img src='@Model.Faction.GetImageUrl()'/></span>

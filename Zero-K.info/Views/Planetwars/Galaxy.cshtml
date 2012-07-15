@@ -102,27 +102,6 @@
 }
 </div>
 
-<div id="victory_eco" class="fleft border" style="min-height: 60px;">
-<b>Economic victory (80% of galaxy assets in $):</b>
-@{
-	var credEntries = db.Factions.Select(x => new { Fac = x, Creds = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0), Assets = (x.Accounts.Sum(y => (int?)y.Credits) ?? 0) + x.Accounts.SelectMany(y => y.Planets).SelectMany(y => y.PlanetStructures).Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.Cost) ?? 0 }).OrderByDescending(x => x.Assets).ToList();
-	var creds = credEntries.OrderByDescending(x=>x.Creds).FirstOrDefault();
-    var total = @Math.Round((credEntries.Sum(x => x.Assets)-creds.Assets) * 0.8);
-
-	if (creds != null)
-	{
-        var ratio_money = @creds.Creds / @total;
-		<span><b>@Html.PrintFaction(creds.Fac)</b></span>
-	<br />
-		<img src="/img/progressl_base.png" height="17" class="fleft" />
-		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_money))" />
-		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_money)))" />
-		<img src="/img/progressr_base.png" height="17" class="fleft" />
-		<span class="fleft">$@creds.Creds / $@total</span>
-		<br class="clearfloat" />
-	}
-}
-</div>
 
 <div id="victory_tech" class="fleft border" style="min-height: 60px;">
 <b>Technologic victory (all artefacts and techs):</b>

@@ -16,8 +16,11 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Planetwars/
         [Auth]
-        public ActionResult BombPlanet(int planetID)
-        {
+        public ActionResult BombPlanet(int planetID) {
+            return Content("phail");
+            // hack
+            /*
+
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
 
@@ -76,11 +79,14 @@ namespace ZeroKWeb.Controllers
             db.SubmitChanges();
             SetPlanetOwners();
             return RedirectToAction("Planet", new { id = planetID });
+             * */
         }
 
         [Auth]
         public ActionResult BuildStructure(int planetID, int structureTypeID)
         {
+            // hack
+            /*
             using (var db = new ZkDataContext())
             {
                 var planet = db.Planets.Single(p => p.PlanetID == planetID);
@@ -104,7 +110,7 @@ namespace ZeroKWeb.Controllers
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding.StructureType.Name, planet));
                 SetPlanetOwners(db);
             }
-
+            */
             return RedirectToAction("Planet", new { id = planetID });
         }
 
@@ -149,6 +155,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult RepairStructure(int planetID, int structureTypeID)
         {
+            /*
             var db = new ZkDataContext();
             var planet = db.Planets.Single(p => p.PlanetID == planetID);
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
@@ -161,71 +168,13 @@ namespace ZeroKWeb.Controllers
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} has repaired a {1} on {2}.", Global.Account, structure.StructureType.Name, planet));
             db.SubmitChanges();
             SetPlanetOwners(db);
-            return RedirectToAction("Planet", new { id = planetID });
-        }
+            */
+             // hack
+             return RedirectToAction("Planet", new { id = planetID });
 
-        [Auth]
-        public ActionResult CancelMarketOrder(int planetID, int offerID)
-        {
-            var db = new ZkDataContext();
-            var offer = db.MarketOffers.SingleOrDefault(o => o.OfferID == offerID);
-            if (offer == null) return Content("Error: offer does not exist");
-            if (offer.AccountID != Global.AccountID) return Content("Error: can't cancel other people's offers");
-            db.MarketOffers.DeleteOnSubmit(offer);
-            db.SubmitChanges();
-            return RedirectToAction("Trade", new { id = Global.AccountID });
         }
 
 
-
-
-
-        [Auth]
-        public ActionResult ConsolidateHomeworld()
-        {
-            return Content("Disabled");
-            var db = new ZkDataContext();
-            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            var planet = acc.Clan.HomeworldPlanet;
-            if (acc.HasClanRights || acc.IsClanFounder)
-            {
-                var moved = MoveInfluenceToHome(db, planet, acc);
-                if (moved > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} consolidated {1} of {2} influence on {3}", acc, moved, acc.Clan, planet));
-                db.SubmitChanges();
-                SetPlanetOwners();
-                return Content("Done, influence consolidated");
-            }
-            else return Content("No permissions");
-        }
-
-
-        [Auth]
-        public ActionResult EstablishHomeworld(int planetid)
-        {
-            var db = new ZkDataContext();
-            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            var planet = db.Planets.Single(x => x.PlanetID == planetid);
-
-            if (planet.AccountPlanets.Any(x => x.Influence > 0 && x.Account.FactionID != acc.FactionID)) return Content("Planet contains influence of other faction");
-
-            if ((acc.HasClanRights || acc.IsClanFounder) && acc.Clan.HomeworldPlanetID == null && planet.HomeworldClan == null && acc.Clan.CanMakeHomeworld&& 
-                (planet.OwnerAccountID == null || planet.Account.ClanID == acc.ClanID) &&
-                !planet.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true))
-            {
-                var entry = planet.AccountPlanets.SingleOrDefault(x => x.AccountID == acc.AccountID);
-                if (entry == null) {
-                    entry = new AccountPlanet() { PlanetID = planet.PlanetID, AccountID = acc.AccountID};
-                    db.AccountPlanets.InsertOnSubmit(entry);
-                }
-                acc.Clan.HomeworldPlanetID = planet.PlanetID;
-                entry.Influence += 501; // needed to overcome 500 based militia
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} established {1} homeworld on {2}!", acc, acc.Clan, planet));
-                db.SubmitChanges();
-                SetPlanetOwners();
-                return Content("Done, welcome to your new home");
-            }
-            else return Content("Cannot make homeworld here");
-        }
 
 
         public ActionResult Events(int? planetID,
@@ -433,67 +382,6 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult QuickTransaction(int offerID, int quantity)
-        {
-            var db = new ZkDataContext();
-            var offer = db.MarketOffers.SingleOrDefault(o => o.OfferID == offerID);
-            if (offer == null) return Content("Offer does not exist");
-            if (offer.AcceptedAccountID != null) return Content("This transaction was already completed.");
-
-            var seller = offer.IsSell ? offer.AccountByAccountID : db.Accounts.Single(a => a.AccountID == Global.AccountID);
-            var buyer = offer.IsSell ? db.Accounts.Single(a => a.AccountID == Global.AccountID) : offer.AccountByAccountID;
-
-            if (offer.Price*quantity > buyer.Credits) return Content("Insufficient credits");
-
-            var sellerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == seller.AccountID);
-            if (sellerAccountPlanet == null) return Content("Seller has nothing to sell");
-
-            var sellerInfluence = sellerAccountPlanet.Influence;
-            if (sellerInfluence < quantity) return Content("Seller has not enough to sell");
-
-            var buyerAccountPlanet = offer.Planet.AccountPlanets.SingleOrDefault(ap => ap.AccountID == buyer.AccountID);
-            if (buyerAccountPlanet == null)
-            {
-                buyerAccountPlanet = new AccountPlanet { AccountID = buyer.AccountID, PlanetID = offer.PlanetID };
-                db.AccountPlanets.InsertOnSubmit(buyerAccountPlanet);
-                db.SubmitChanges();
-            }
-
-            buyer.Credits -= quantity*offer.Price;
-            seller.Credits += quantity*offer.Price;
-
-            buyerAccountPlanet.Influence += quantity;
-            sellerAccountPlanet.Influence -= quantity;
-
-            // record transaction, for history
-            db.MarketOffers.InsertOnSubmit(new MarketOffer
-                                           {
-                                               AcceptedAccountID = seller.AccountID,
-                                               AccountID = buyer.AccountID,
-                                               DateAccepted = DateTime.UtcNow,
-                                               IsSell = false,
-                                               Price = offer.Price,
-                                               DatePlaced = offer.DatePlaced,
-                                               Quantity = quantity,
-                                               PlanetID = offer.PlanetID,
-                                           });
-
-            db.Events.InsertOnSubmit(Global.CreateEvent("{0} has purchased {1} influence from {2} on {3} for {4} each.",
-                                                        buyer,
-                                                        quantity,
-                                                        seller,
-                                                        offer.Planet,
-                                                        offer.Price));
-
-            offer.Quantity -= quantity;
-            if (offer.Quantity == 0) db.MarketOffers.DeleteOnSubmit(offer);
-            db.SubmitChanges();
-            ResolveMarketTransactions(db);
-            SetPlanetOwners(db);
-            return RedirectToAction("Planet", new { id = offer.PlanetID });
-        }
-
-        [Auth]
         public ActionResult SendDropships(int planetID, int count)
         {
             var db = new ZkDataContext();
@@ -691,40 +579,8 @@ namespace ZeroKWeb.Controllers
             if (havePlanetsChangedHands) SetPlanetOwners(db, sb); // we need another cycle because of shadow influence chain reactions
         }
 
-        [Auth]
-        public ActionResult SubmitBuyOrder(int planetID, int quantity, int price)
-        {
-            return SubmitMarketOrder(planetID, quantity, price, false);
-        }
 
-
-
-        [Auth]
-        public ActionResult SubmitMarketOrder(int planetID, int quantity, int price, bool isSell)
-        {
-            var db = new ZkDataContext();
-            if (price > GlobalConst.InfluenceSystemBuyPrice*3 || price < GlobalConst.InfluenceSystemSellPrice) return Content(string.Format("Price must be between {0} and {1}.", GlobalConst.InfluenceSystemSellPrice, GlobalConst.InfluenceSystemBuyPrice*3));
-            db.MarketOffers.InsertOnSubmit(new MarketOffer
-                                           {
-                                               AccountID = Global.AccountID,
-                                               DatePlaced = DateTime.UtcNow,
-                                               IsSell = isSell,
-                                               PlanetID = planetID,
-                                               Quantity = quantity,
-                                               Price = price,
-                                           });
-            db.Events.InsertOnSubmit(Global.CreateEvent("{0} {1} {2} influence for {3}/unit at {4}",
-                                                        Global.Account,
-                                                        isSell ? "offers" : "asks for",
-                                                        quantity,
-                                                        price,
-                                                        db.Planets.Single(x => x.PlanetID == planetID)));
-            db.SubmitChanges();
-            ResolveMarketTransactions(db);
-            return RedirectToAction("Trade", new {id = Global.AccountID});
-        }
-
-
+       
         [Auth]
         public ActionResult SubmitRenamePlanet(int planetID, string newName)
         {
@@ -742,21 +598,6 @@ namespace ZeroKWeb.Controllers
                 scope.Complete();
                 return RedirectToAction("Planet", new { id = planet.PlanetID });
             }
-        }
-
-        [Auth]
-        public ActionResult SubmitSellOrder(int planetID, int quantity, int price)
-        {
-            return SubmitMarketOrder(planetID, quantity, price, true);
-        }
-
-        public ActionResult Trade(int? id)
-        {
-            if (id == null) id = Global.AccountID;
-            var db = new ZkDataContext();
-            var user = db.Accounts.SingleOrDefault(u => u.AccountID == id);
-            if (user == null) return Content("User does not exist");
-            return View(user);
         }
 
         [Auth]

@@ -98,26 +98,15 @@ namespace Fixer
       }
 
 
-      static void Main(string[] args)
-    {
-            var test = new Dictionary<string, EngineConfigEntry>();
-           
-          test["key"] = new EngineConfigEntry() { declarationFile = "file", declarationLine = 123, defaultValue = "val"};
-          var data = JsonConvert.SerializeObject(test);
-              var obj1 = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(data);
-              var obj2 = JsonConvert.DeserializeObject<Dictionary<string, EngineConfigEntry>>(File.ReadAllText(@"c:\temp\test.txt"));
+      static void Main(string[] args) {
+          var db = new ZkDataContext();
+          var acc = db.Accounts.First(x => x.Name == "Licho");
+          var q = acc.GetQuota(x => x.PwMetalProduced, x => x.PwMetalUsed, x => x.RightMetalQuota);
 
 
-        return;
 
-        var db = new ZkDataContext();
-        var sb = db.SpringBattles.Where(x => x.StartTime > DateTime.UtcNow.AddDays(-7)).SelectMany(x => x.SpringBattlePlayers).Where(x => !x.IsSpectator).GroupBy(x => x.Account.LobbyVersion).Select(x => new { x.Key, Cnt = x.Count() }).OrderByDescending(x=>x.Cnt).ToList();
 
-          foreach (var kv in sb)
-          {
-              Console.WriteLine("{0} : {1}", kv.Key,kv.Cnt);
-          }
-          
+          return;
 
           //FixDemoEngineVersion();
 

@@ -84,7 +84,7 @@ namespace ZkData
                         var isAccessible = accessible.Contains(planetEntry.Planet);
                         var maxCount = isAccessible ? capacity : jumpgates;
                         if (planetEntry.DropshipCount > maxCount) {
-                            accountShips.Key.DropshipCount += planetEntry.DropshipCount - maxCount;
+                            accountShips.Key.Faction.Dropships += planetEntry.DropshipCount - maxCount;
                             planetEntry.DropshipCount = maxCount;
                         }
                     }

@@ -632,14 +632,6 @@ namespace ZkData
 			}
 		}
 		
-		public System.Data.Linq.Table<ClanBackup> ClanBackups
-		{
-			get
-			{
-				return this.GetTable<ClanBackup>();
-			}
-		}
-		
 		public System.Data.Linq.Table<AutohostConfig> AutohostConfigs
 		{
 			get
@@ -1298,7 +1290,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mutator", DbType="varbinary(max)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mutator", DbType="varbinary(max)", UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public System.Data.Linq.Binary Mutator
 		{
@@ -3120,7 +3112,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsIncome", DbType="float NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsIncome", DbType="float NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
 		public double CreditsIncome
 		{
@@ -3141,7 +3133,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsExpense", DbType="float NOT NULL", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CreditsExpense", DbType="float NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
 		public double CreditsExpense
 		{
@@ -21496,73 +21488,6 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
-		}
-	}
-	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ClanBackup")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class ClanBackup
-	{
-		
-		private string _ClanID;
-		
-		private string _Shortcut;
-		
-		private string _FactionID;
-		
-		public ClanBackup()
-		{
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ClanID", DbType="varchar(50)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public string ClanID
-		{
-			get
-			{
-				return this._ClanID;
-			}
-			set
-			{
-				if ((this._ClanID != value))
-				{
-					this._ClanID = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Shortcut", DbType="varchar(50)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public string Shortcut
-		{
-			get
-			{
-				return this._Shortcut;
-			}
-			set
-			{
-				if ((this._Shortcut != value))
-				{
-					this._Shortcut = value;
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FactionID", DbType="varchar(50)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public string FactionID
-		{
-			get
-			{
-				return this._FactionID;
-			}
-			set
-			{
-				if ((this._FactionID != value))
-				{
-					this._FactionID = value;
-				}
-			}
 		}
 	}
 	

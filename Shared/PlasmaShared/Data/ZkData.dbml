@@ -86,8 +86,8 @@
       <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="CreditsIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" UpdateCheck="Never" />
-      <Column Name="CreditsExpense" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="CreditsIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="CreditsExpense" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Avatar" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="SpringieLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="GamePreferences" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
@@ -809,13 +809,6 @@
   <Table Name="dbo.Avatar" Member="Avatars">
     <Type Name="Avatar">
       <Column Name="AvatarName" Type="System.String" DbType="nvarchar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-    </Type>
-  </Table>
-  <Table Name="dbo.ClanBackup" Member="ClanBackups">
-    <Type Name="ClanBackup">
-      <Column Name="ClanID" Type="System.String" DbType="varchar(50)" CanBeNull="true" />
-      <Column Name="Shortcut" Type="System.String" DbType="varchar(50)" CanBeNull="true" />
-      <Column Name="FactionID" Type="System.String" DbType="varchar(50)" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.AutohostConfig" Member="AutohostConfigs">
