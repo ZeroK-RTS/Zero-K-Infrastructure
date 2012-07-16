@@ -99,25 +99,6 @@ namespace Fixer
 
 
       static void Main(string[] args) {
-          var db = new ZkDataContext();
-          db.AccountRoles.DeleteAllOnSubmit(db.AccountRoles);
-          db.SubmitAndMergeChanges();
-          var leader = db.RoleTypes.First(x => x.RightKickPeople);
-            foreach (var acc in db.Accounts.Where(x=>x.IsClanFounder && x.ClanID != null)) {
-                
-                                   var entry = new AccountRole() {RoleType= leader,Inauguration = DateTime.UtcNow};
-                                   entry.ClanID = acc.ClanID;
-                                   entry.AccountID = acc.AccountID;
-                acc.AccountRolesByAccountID.Add(entry);
-
-                
-            }
-            db.SubmitAndMergeChanges();      
-          
-
-
-
-          return;
 
           //FixDemoEngineVersion();
 
@@ -135,28 +116,6 @@ namespace Fixer
         //TestPrediction();
     }
 
-      static void PickHomworldOwners()
-      {
-
-          var db = new ZkDataContext();
-          foreach (var a in db.Accounts.Where(x=>x.ClanID != null && x.Clan.FactionID != x.FactionID)) {
-              a.FactionID = a.Clan.FactionID;
-          }
-          db.SubmitChanges();
-
-
-          db.ExecuteCommand("update clan set homeworldplanetid=null");
-          foreach (var f in db.SpringBattles.Where(x => x.StartTime >= DateTime.Now.AddDays(-14)).SelectMany(x => x.SpringBattlePlayers).Where(x=>x.Account.Clan!= null).GroupBy(x => x.Account.Clan.Faction)) {
-              foreach (var topclan in f.GroupBy(x=>x.Account.Clan).OrderByDescending(x => x.Count()).Take(4))
-              {
-                  topclan.Key.CanMakeHomeworld = true;
-                  Console.WriteLine("{0}  :   {1}", f.Key.Name, topclan.Key.ClanName);
-
-              }
-          
-          }
-          db.SubmitChanges();
-      }
 
       static void FixDemoEngineVersion()
       {
@@ -246,21 +205,6 @@ namespace Fixer
 			{
 				db.CommandTimeout = 300;
 
-                if (setPlanetOwners && db.AccountPlanets.Any(x => x.Influence > 0))
-                {
-                    db.ExecuteCommand("update clan set canmakehomeworld=0");
-                    foreach (
-                        var clan in
-                            db.Clans.Where(x => !x.IsDeleted).OrderByDescending(
-                                x =>
-                                x.Accounts.SelectMany(y => y.AccountPlanets).Sum(y => y.Influence + y.ShadowInfluence)*15 +
-                                x.Accounts.Sum(y => y.Credits)).Take(20))
-                    {
-                        clan.CanMakeHomeworld = true;
-                    }
-                    db.SubmitChanges();
-                }
-
 			    var gal = db.Galaxies.Single(x => x.GalaxyID == galaxyID);
                 foreach (var p in gal.Planets)
                 {
@@ -270,7 +214,6 @@ namespace Fixer
                 db.SubmitChanges();
 
                 db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0");
-                db.ExecuteCommand("update clan set homeworldplanetid=null");
                 if (resetclans) db.ExecuteCommand("update account set clanid=null,isclanfounder=0, hasclanrights=0");
 				db.ExecuteCommand("delete from event");
 				db.ExecuteCommand("delete from planetinfluencehistory");

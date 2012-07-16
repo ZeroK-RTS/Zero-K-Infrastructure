@@ -14445,8 +14445,6 @@ namespace ZkData
 		
 		private string _Shortcut;
 		
-		private string _LeaderTitle;
-		
 		private System.Nullable<int> _ForumThreadID;
 		
 		private bool _IsDeleted;
@@ -14454,8 +14452,6 @@ namespace ZkData
 		private int _FactionID;
 		
 		private System.Nullable<int> _HomeworldPlanetID;
-		
-		private bool _CanMakeHomeworld;
 		
 		private EntitySet<Account> _Accounts;
 		
@@ -14499,8 +14495,6 @@ namespace ZkData
     partial void OnSecretTopicChanged();
     partial void OnShortcutChanging(string value);
     partial void OnShortcutChanged();
-    partial void OnLeaderTitleChanging(string value);
-    partial void OnLeaderTitleChanged();
     partial void OnForumThreadIDChanging(System.Nullable<int> value);
     partial void OnForumThreadIDChanged();
     partial void OnIsDeletedChanging(bool value);
@@ -14509,8 +14503,6 @@ namespace ZkData
     partial void OnFactionIDChanged();
     partial void OnHomeworldPlanetIDChanging(System.Nullable<int> value);
     partial void OnHomeworldPlanetIDChanged();
-    partial void OnCanMakeHomeworldChanging(bool value);
-    partial void OnCanMakeHomeworldChanged();
     #endregion
 		
 		public Clan()
@@ -14644,29 +14636,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LeaderTitle", DbType="nvarchar(50)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public string LeaderTitle
-		{
-			get
-			{
-				return this._LeaderTitle;
-			}
-			set
-			{
-				if ((this._LeaderTitle != value))
-				{
-					this.OnLeaderTitleChanging(value);
-					this.SendPropertyChanging();
-					this._LeaderTitle = value;
-					this.SendPropertyChanged("LeaderTitle");
-					this.OnLeaderTitleChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ForumThreadID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
 		public System.Nullable<int> ForumThreadID
 		{
 			get
@@ -14691,7 +14662,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDeleted", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
 		public bool IsDeleted
 		{
 			get
@@ -14712,7 +14683,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_FactionID", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public int FactionID
 		{
 			get
@@ -14737,7 +14708,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HomeworldPlanetID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public System.Nullable<int> HomeworldPlanetID
 		{
 			get
@@ -14761,29 +14732,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CanMakeHomeworld", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
-		public bool CanMakeHomeworld
-		{
-			get
-			{
-				return this._CanMakeHomeworld;
-			}
-			set
-			{
-				if ((this._CanMakeHomeworld != value))
-				{
-					this.OnCanMakeHomeworldChanging(value);
-					this.SendPropertyChanging();
-					this._CanMakeHomeworld = value;
-					this.SendPropertyChanged("CanMakeHomeworld");
-					this.OnCanMakeHomeworldChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Accounts", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public EntitySet<Account> Accounts
 		{
 			get
@@ -14802,7 +14752,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_ForumThread", Storage="_ForumThreads", ThisKey="ClanID", OtherKey="RestrictedClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<ForumThread> ForumThreads
 		{
 			get
@@ -14821,7 +14771,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Poll", Storage="_Polls", ThisKey="ClanID", OtherKey="RestrictClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<Poll> Polls
 		{
 			get
@@ -14840,7 +14790,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByOfferingClanID
 		{
 			get
@@ -14859,7 +14809,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_TreatyOffersByTargetClanID", ThisKey="ClanID", OtherKey="TargetClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<TreatyOffer> TreatyOffersByTargetClanID
 		{
 			get
@@ -14878,7 +14828,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_EventClan", Storage="_EventClans", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<EventClan> EventClans
 		{
 			get
@@ -14897,7 +14847,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="ClanID", OtherKey="OwnerClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -14916,7 +14866,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetInfluenceHistory", Storage="_PlanetInfluenceHistories", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<PlanetInfluenceHistory> PlanetInfluenceHistories
 		{
 			get
@@ -14935,7 +14885,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_AccountRole", Storage="_AccountRoles", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<AccountRole> AccountRoles
 		{
 			get

@@ -306,19 +306,6 @@ namespace ZeroKWeb.Controllers
         }
 
 
-        [Auth]
-        public ActionResult NotifCanEstablishHomeworld() {
-            var db = new ZkDataContext();
-            foreach (var c in db.Clans.Where(x => x.CanMakeHomeworld)) {
-                foreach (var a in c.Accounts)
-                {
-                    AuthServiceClient.SendLobbyMessage(a, string.Format("New PlanetWars season will start soon. Your clan can SELECT HOMEWORLD already! Tell founder/person with rights to click on any planet and pick it as your homeworld"));
-                }
-            
-            }
-            return Content("");
-        }
-
 
         [Auth]
         public ActionResult JoinFaction(int id)
@@ -342,11 +329,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (acc.Clan != null) ClansController.PerformLeaveClan(Global.AccountID);
-            foreach (var pa in acc.AccountPlanets)
-            {
-                pa.Influence = 0;
-                pa.ShadowInfluence = 0;
-            }
+            db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID);
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
             db.SubmitChanges();
             db.Dispose();

@@ -51,31 +51,14 @@ namespace ZeroKWeb.Controllers
             return View(clan);
         }
 
-        [Auth]
-        public ActionResult ChangePlayerRights(int clanID, int accountID)
-        {
-            // hack rights!
-
-            return Content("phail");
-            /*var db = new ZkDataContext();
-            var clan = db.Clans.Single(c => clanID == c.ClanID);
-            if (!(Global.Account.HasClanRole().HasClanRights && clan.ClanID == Global.Account.ClanID || Global.Account.IsZeroKAdmin)) return Content("Unauthorized");
-            var kickee = db.Accounts.Single(a => a.AccountID == accountID);
-            if (kickee.IsClanFounder) return Content("Clan founders can't be modified.");
-            kickee.HasClanRights = !kickee.HasClanRights;
-            var ev = Global.CreateEvent("{0} {1} {2} rights to clan {3}", Global.Account, kickee.HasClanRights ? "gave" : "took", kickee, clan);
-            db.Events.InsertOnSubmit(ev);
-            db.SubmitChanges();
-            return RedirectToAction("Detail", new { id = clanID });*/
-
-        }
 
 
         public static Clan PerformLeaveClan(int accountID, ZkDataContext db = null) {
             if (db == null) db = new ZkDataContext();
-            var clan = db.Clans.Single(x => x.ClanID == accountID);
-            if (clan.Accounts.Count() > GlobalConst.ClanLeaveLimit) return null; // "This clan is too big to leave";
             var acc = db.Accounts.Single(x => x.AccountID == accountID);
+            var clan = acc.Clan;
+            if (clan.Accounts.Count() > GlobalConst.ClanLeaveLimit) return null; // "This clan is too big to leave";
+            
             
             // remove roles
             foreach (var role in acc.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).ToList()) acc.AccountRolesByAccountID.Remove(role);
@@ -154,7 +137,6 @@ namespace ZeroKWeb.Controllers
                     if (!Global.Account.HasClanRight(x=>x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
                     var orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
                     orgClan.ClanName = clan.ClanName;
-                    orgClan.LeaderTitle = clan.LeaderTitle;
                     orgClan.Shortcut = clan.Shortcut;
                     orgClan.Description = clan.Description;
                     orgClan.SecretTopic = clan.SecretTopic;
@@ -165,7 +147,7 @@ namespace ZeroKWeb.Controllers
                 else
                 {
                     if (Global.Clan != null) return Content("You already have a clan");
-                    if (Global.FactionID != clan.FactionID) return Content("Clan must belong to same faction");
+                    if (Global.FactionID != 0 && Global.FactionID != clan.FactionID) return Content("Clan must belong to same faction you are in");
                     
                     db.Clans.InsertOnSubmit(clan);
                 }
@@ -208,57 +190,6 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", new { id = clan.ClanID });
         }
 
-        [Auth]
-        public ActionResult OfferTreaty(int targetClanID, AllyStatus ourStatus, bool ourResearch)
-        {
-            // hack complete
-            /*
-            if (!Global.Account.HasClanRights || Global.Clan == null) return Content("You don't have rights to do this");
-            var db = new ZkDataContext();
-            var clan = db.Clans.Single(x => x.ClanID == Global.ClanID);
-            var targetClan = db.Clans.Single(x => x.ClanID == targetClanID);
-            var oldEffect = clan.GetEffectiveTreaty(targetClan);
-            var entry = clan.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == targetClanID);
-            if (entry == null)
-            {
-                entry = new TreatyOffer() { OfferingClanID = clan.ClanID, TargetClanID = targetClanID };
-                db.TreatyOffers.InsertOnSubmit(entry);
-            }
-            entry.AllyStatus = ourStatus;
-            entry.IsResearchAgreement = ourResearch;
-            var theirEntry = targetClan.TreatyOffersByOfferingClanID.SingleOrDefault(x => x.TargetClanID == clan.ClanID);
-            if (theirEntry == null)
-            {
-                theirEntry = new TreatyOffer() { OfferingClanID = targetClanID, TargetClanID = clan.ClanID };
-                db.TreatyOffers.InsertOnSubmit(theirEntry);
-            }
-            if (ourStatus < theirEntry.AllyStatus) theirEntry.AllyStatus = ourStatus;
-
-            db.SubmitChanges();
-            db.Events.InsertOnSubmit(Global.CreateEvent("{0} offers {1}, research: {2} to {3}", clan, ourStatus, ourResearch, targetClan));
-
-            foreach (var acc in targetClan.Accounts)
-            {
-                AuthServiceClient.SendLobbyMessage(acc, string.Format("{0} wants {1}, research: {2}. Check diplomacy at: http://zero-k.info/Clan/Detail/{3}", clan.ClanName, ourStatus, ourResearch, clan.ClanID));
-            }
-
-            var newEffect = clan.GetEffectiveTreaty(targetClan);
-
-            if (newEffect.AllyStatus != oldEffect.AllyStatus || newEffect.IsResearchAgreement != oldEffect.IsResearchAgreement)
-            {
-                db.Events.InsertOnSubmit(Global.CreateEvent("New effective treaty between {0} and {1}: {2}->{3}, research {4}->{5}",
-                                                            clan,
-                                                            targetClan,
-                                                            oldEffect.AllyStatus,
-                                                            newEffect.AllyStatus,
-                                                            oldEffect.IsResearchAgreement,
-                                                            newEffect.IsResearchAgreement));
-            }
-            db.SubmitChanges();
-
-            return RedirectToAction("ClanDiplomacy", "Clans", new { id = clan.ClanID });*/
-            return Content("phail");
-        }
 
     }
 }
