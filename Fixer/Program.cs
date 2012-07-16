@@ -200,7 +200,7 @@ namespace Fixer
 
     }
 
-      public static void PurgeGalaxy(int galaxyID, bool resetclans = false, bool setPlanetOwners = false) {
+      public static void PurgeGalaxy(int galaxyID, bool resetclans = false) {
 			using (var db = new ZkDataContext())
 			{
 				db.CommandTimeout = 300;
@@ -213,14 +213,14 @@ namespace Fixer
                 }
                 db.SubmitChanges();
 
-                db.ExecuteCommand("update account set dropshipcount=1, credits=0, wasgivencredits=0");
-                if (resetclans) db.ExecuteCommand("update account set clanid=null,isclanfounder=0, hasclanrights=0");
+                db.ExecuteCommand("update account set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0");
+                if (resetclans) db.ExecuteCommand("update account set clanid=null");
 				db.ExecuteCommand("delete from event");
 				db.ExecuteCommand("delete from planetinfluencehistory");
 				db.ExecuteCommand("delete from planetownerhistory");
+                db.ExecuteCommand("delete from planetstructure");
+                db.ExecuteCommand("delete from planetfaction");
 				db.ExecuteCommand("delete from accountplanet");
-				db.ExecuteCommand("delete from marketoffer");
-				db.ExecuteCommand("delete from treatyoffer");
 				
 				db.ExecuteCommand("delete from forumthread where forumcategoryid={0}", db.ForumCategories.Single(x => x.IsPlanets).ForumCategoryID);
 

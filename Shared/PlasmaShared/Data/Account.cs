@@ -212,6 +212,19 @@ namespace ZkData
         partial void OnXPChanged() {
             CheckLevelUp();
         }
+
+
+        /// <summary>
+        /// Todo distribute among clan and faction members
+        /// </summary>
+        public void ResetQuotas() {
+            PwBombersProduced = 0;
+            PwBombersUsed = 0;
+            PwDropshipsProduced = 0;
+            PwDropshipsUsed = 0;
+            PwMetalProduced = 0;
+            PwMetalUsed = 0;
+        }
     }
 
     public enum GamePreference
