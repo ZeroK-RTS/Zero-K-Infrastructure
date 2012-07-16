@@ -43,6 +43,11 @@ namespace ZeroKWeb.SpringieInterface
                 return new BalanceTeamsResult() { CanStart = false, Message = string.Format("Game too big - splitting into two - max players is {0} here. Use !forcestart instead of !start to override.", config.SplitBiggerThan) };
             }
 
+            // dont allow to start alone
+            if (context.Players.Count()<=1 && !context.Bots.Any()) {
+                return new BalanceTeamsResult() { CanStart = false, Message = "Cannot play alone, you can add bots using button on bottom left." };
+            }
+
             if (clanWise == null && (config.AutohostMode == AutohostMode.BigTeams || config.AutohostMode == AutohostMode.SmallTeams || config.AutohostMode == AutohostMode.Experienced)) clanWise = true;
 
             var res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);

@@ -22256,6 +22256,8 @@ namespace ZkData
 		
 		private bool _RightSetEnergyPriority;
 		
+		private bool _RightKickPeople;
+		
 		private EntitySet<Poll> _Polls;
 		
 		private EntitySet<AccountRole> _AccountRoles;
@@ -22306,6 +22308,8 @@ namespace ZkData
     partial void OnRightEditTextsChanged();
     partial void OnRightSetEnergyPriorityChanging(bool value);
     partial void OnRightSetEnergyPriorityChanged();
+    partial void OnRightKickPeopleChanging(bool value);
+    partial void OnRightKickPeopleChanged();
     #endregion
 		
 		public RoleType()
@@ -22657,8 +22661,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightKickPeople", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public bool RightKickPeople
+		{
+			get
+			{
+				return this._RightKickPeople;
+			}
+			set
+			{
+				if ((this._RightKickPeople != value))
+				{
+					this.OnRightKickPeopleChanging(value);
+					this.SendPropertyChanging();
+					this._RightKickPeople = value;
+					this.SendPropertyChanged("RightKickPeople");
+					this.OnRightKickPeopleChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_Poll", Storage="_Polls", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<Poll> Polls
 		{
 			get
@@ -22677,7 +22702,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_AccountRole", Storage="_AccountRoles", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<AccountRole> AccountRoles
 		{
 			get
@@ -22696,7 +22721,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleTypeHierarchy", Storage="_RoleTypeHierarchiesByMasterRoleTypeID", ThisKey="RoleTypeID", OtherKey="MasterRoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<RoleTypeHierarchy> RoleTypeHierarchiesByMasterRoleTypeID
 		{
 			get
@@ -22715,7 +22740,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleTypeHierarchy1", Storage="_RoleTypeHierarchiesBySlaveRoleTypeID", ThisKey="RoleTypeID", OtherKey="SlaveRoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<RoleTypeHierarchy> RoleTypeHierarchiesBySlaveRoleTypeID
 		{
 			get
@@ -22768,7 +22793,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleType", Storage="_ParentRoleType", ThisKey="AppointedByRoleTypeID", OtherKey="RoleTypeID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public RoleType ParentRoleType
 		{
 			get

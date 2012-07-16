@@ -100,9 +100,20 @@ namespace Fixer
 
       static void Main(string[] args) {
           var db = new ZkDataContext();
-          var acc = db.Accounts.First(x => x.Name == "Licho");
-          var q = acc.GetQuota(x => x.PwMetalProduced, x => x.PwMetalUsed, x => x.RightMetalQuota);
+          db.AccountRoles.DeleteAllOnSubmit(db.AccountRoles);
+          db.SubmitAndMergeChanges();
+          var leader = db.RoleTypes.First(x => x.RightKickPeople);
+            foreach (var acc in db.Accounts.Where(x=>x.IsClanFounder && x.ClanID != null)) {
+                
+                                   var entry = new AccountRole() {RoleType= leader,Inauguration = DateTime.UtcNow};
+                                   entry.ClanID = acc.ClanID;
+                                   entry.AccountID = acc.AccountID;
+                acc.AccountRolesByAccountID.Add(entry);
 
+                
+            }
+            db.SubmitAndMergeChanges();      
+          
 
 
 

@@ -105,7 +105,7 @@ namespace ZkData
         public double GetMetalQuota() {
             return GetQuota(x => x.PwMetalProduced, x => x.PwMetalUsed, x => x.RightMetalQuota);
         }
-
+                        
         public double GetBomberQuota()
         {
             return GetQuota(x => x.PwBombersProduced, x => x.PwBombersUsed, x => x.RightBomberQuota);
@@ -114,21 +114,22 @@ namespace ZkData
 
         public double GetQuota(Func<Account, double> producedSelector, Func<Account, double> usedSelector, Func<RoleType, double?> quotaSelector)
         {
-            double? clanMetalQ = AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector);
-            double? factionMetalQ = AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector); ;
-
             double total = producedSelector(this) - usedSelector(this);
 
-            if (clanMetalQ != null && Clan != null)
-            {
-                double clanMetalSum = Clan.Accounts.Where(x => x.AccountID != AccountID).Sum(x => producedSelector(x) - usedSelector(x));
-                total += clanMetalSum * clanMetalQ.Value;
-            }
-            if (factionMetalQ != null && Faction != null)
-            {
-                double factionMetalSum =
-                    Faction.Accounts.Where(x => x.AccountID != AccountID && (ClanID == null || x.ClanID != ClanID)).Sum(x=>producedSelector(x) - usedSelector(x));
-                total += factionMetalSum * factionMetalQ.Value;
+            if (Faction != null) {
+
+                double? clanQratio = AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector);
+                double? factionQratio = AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector);
+
+
+                if (clanQratio != null || factionQratio != null) {
+
+                    foreach (var m in Faction.Accounts.Where(x=>x.AccountID != AccountID)) {
+                        var ratio = factionQratio ?? 0;
+                        if (m.ClanID == ClanID) ratio = Math.Max(ratio, clanQratio ?? 0);
+                        total += ratio*(producedSelector(m) - usedSelector(m));
+                    }
+                }
             }
 
             return Math.Floor(total);

@@ -405,7 +405,6 @@
     <Content Include="Views\Shared\PlanetSummary.cshtml" />
     <Content Include="Views\Home\PlanetTooltip.cshtml" />
     <Content Include="Views\Shared\PlanetDropships.cshtml" />
-    <Content Include="Views\Clans\ClanDiplomacy.cshtml" />
     <Content Include="Views\Battles\BattleTileList.cshtml" />
     <Content Include="Views\Planetwars\Minimap.cshtml" />
     <Content Include="Views\Shared\InfluenceList.cshtml" />

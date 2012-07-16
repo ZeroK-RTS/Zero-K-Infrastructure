@@ -14,15 +14,13 @@ namespace ZeroKWeb.SpringieInterface
 
     public class PlayerJoinHandler
     {
-        public static PlayerJoinResult AutohostPlayerJoined(BattleContext context, int accountID)
-        {
+        public static PlayerJoinResult AutohostPlayerJoined(BattleContext context, int accountID) {
             var res = new PlayerJoinResult();
             var db = new ZkDataContext();
-            var mode = context.GetMode();
-            if (mode == AutohostMode.Planetwars)
-            {
-                var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
-                var account = Account.AccountByLobbyID(db,accountID); // accountID is in fact lobbyID
+            AutohostMode mode = context.GetMode();
+            if (mode == AutohostMode.Planetwars) {
+                Planet planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
+                Account account = Account.AccountByLobbyID(db, accountID); // accountID is in fact lobbyID
 
                 // conscription
                 /*
@@ -42,14 +40,14 @@ namespace ZeroKWeb.SpringieInterface
                 }
                  */
 
-                if (account.Level < context.GetConfig().MinLevel)
-                {
+                if (account.Level < context.GetConfig().MinLevel) {
                     AuthServiceClient.SendLobbyMessage(account,
-                                                       string.Format("Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can observe this game however.", context.GetConfig().MinLevel));
+                                                       string.Format(
+                                                           "Sorry, PlanetWars is competive online campaign for experienced players. You need to be at least level {0} to play here. To increase your level, play more games on other hosts or open multiplayer game and play against computer AI bots.  You can observe this game however.",
+                                                           context.GetConfig().MinLevel));
                 }
 
-                if (account.Clan == null)
-                {
+                if (account.Clan == null) {
                     //AuthServiceClient.SendLobbyMessage(account, "To play here, join a clan first http://zero-k.info/Clans");
                     res.PrivateMessage =
                         string.Format(
@@ -67,12 +65,20 @@ namespace ZeroKWeb.SpringieInterface
                                                            account.Name));
                     return string.Format("{0} cannot play, name must contain clan tag {1}", account.Name, account.Clan.Shortcut);
                 }*/
-                var owner = "";
+                string owner = "";
                 if (planet.Account != null) owner = planet.Account.Name;
-                res.PublicMessage = string.Format("Greetings {0} {1} of {2}, welcome to {3} planet {4} http://zero-k.info/PlanetWars/Planet/{5}",
-                                                  account.IsClanFounder ? account.Clan.LeaderTitle : "",
+                string facRoles = string.Join(",",
+                                              account.AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType.Name).ToList());
+                if (!string.IsNullOrEmpty(facRoles)) facRoles += " of " + account.Faction.Name + ", ";
+
+                string clanRoles = string.Join(",",
+                                               account.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType.Name).ToList());
+                if (!string.IsNullOrEmpty(clanRoles)) clanRoles += " of " + account.Clan.ClanName;
+
+                res.PublicMessage = string.Format("Greetings {0} {1}{2}, welcome to {3} planet {4} http://zero-k.info/PlanetWars/Planet/{5}",
                                                   account.Name,
-                                                  account.IsClanFounder ? account.Clan.ClanName : account.Clan.Shortcut,
+                                                  facRoles,
+                                                  clanRoles,
                                                   owner,
                                                   planet.Name,
                                                   planet.PlanetID);

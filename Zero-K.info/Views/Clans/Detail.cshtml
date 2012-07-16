@@ -253,7 +253,7 @@
   @Html.BBCode(c.SecretTopic)
 }
 
-@if (isMember && Global.Account.HasClanRights) { //has rights
+@if (isMember && Global.Account.HasClanRight(x=>x.RightEditTexts)) { //has rights
   <br />
     @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
 }
@@ -282,16 +282,6 @@
     <div id="diplomacy">
         <div id="diplomacyMap"></div>
         <div id="diplomacyMapLegend"></div>
-        <h3><a href='@Url.Action("ClanDiplomacy", new { id = Model.ClanID })'>Diplomacy</a></h3>
-        @foreach (var them in new ZkDataContext().AccountPlanets.GroupBy(x => x.Account.Clan).Where(x => x.Key != null && x.Key.ClanID != Model.ClanID && !x.Key.IsDeleted).Select(x => new { Clan = x.Key, Influence = x.Sum(y=>y.Influence)}).Where(x=>x.Influence>0).OrderByDescending(x=>x.Influence).Select(x=>x.Clan))
-        {
-            var effective = them.GetEffectiveTreaty(Model);
-            if (effective.AllyStatus != AllyStatus.Neutral || effective.IsResearchAgreement)
-            {
-           <span>@Html.PrintClan(them) - @Html.PrintTreaty(effective)</span> <br />
-            }
-        }
-		@Html.Partial("ClanDiplomacy")
     </div>
 
     <div id="members">
@@ -302,7 +292,6 @@
           <th>Income</th>
           <th>Expense</th>
           <th>Starships </th>
-          <th></th>
           <th></th>
           @foreach (var a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence))) {
             <tr>
@@ -318,18 +307,10 @@
               <td>@a.CreditsExpense</td>
               <td>@a.DropshipCount</td>
               <td>
-                @{
-						var role = "";
-						if (a.IsClanFounder) { role = "F"; } else if (a.HasClanRights) { role = "R"; }
-                }
-                @role
-              </td>
-              <td>
-                @if (isMember && Global.Account.HasClanRights && !a.IsClanFounder) { //has rights
+                @if (isMember && Global.Account.HasClanRight(x=>x.RightKickPeople)) { //has rights
                   @:&nbsp
-                  // todo: disallow kicking after the round starts
-									var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
-                  @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) }) @:|@Html.ActionLink(a.HasClanRights ? "rights" : "rights", "ChangePlayerRights", new { clanID = c.ClanID, accountID = a.AccountID })
+			        var question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
+                  @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
                                                                                                                 
 								}
               </td>

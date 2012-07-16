@@ -24,16 +24,11 @@ namespace ZeroKWeb.Controllers
             return View(db.Clans.Where(x => !x.IsDeleted));
         }
 
-        public ActionResult ClanDiplomacy(int id)
-        {
-            return View("ClanDiplomacy", new ZkDataContext().Clans.Single(x => x.ClanID == id));
-        }
-
 
         [Auth]
         public ActionResult Create()
         {
-            if (Global.Account.Clan == null || Global.Account.HasClanRole(x=>x.RightEditTexts)) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
+            if (Global.Account.Clan == null || Global.Account.HasClanRight(x=>x.RightEditTexts)) return View(Global.Clan ?? new Clan() { FactionID = Global.FactionID });
             else return Content("You already have clan and you dont have rights to it");
         }
 
@@ -140,8 +135,7 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var clan = db.Clans.Single(c => clanID == c.ClanID);
-            // hack use something different than appoint roles for kicking!
-            if (!(Global.Account.HasClanRole(x=>x.RightEditTexts) && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
+            if (!(Global.Account.HasClanRight(x=>x.RightKickPeople) && clan.ClanID == Global.Account.ClanID)) return Content("Unauthorized");
             PerformLeaveClan(accountID);
             db.SubmitChanges();
             PlanetwarsController.SetPlanetOwners();
@@ -157,7 +151,7 @@ namespace ZeroKWeb.Controllers
                 var created = clan.ClanID == 0; // existing clan vs creation
                 if (!created)
                 {
-                    if (!Global.Account.HasClanRole(x=>x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
+                    if (!Global.Account.HasClanRight(x=>x.RightEditTexts) || clan.ClanID != Global.Account.ClanID) return Content("Unauthorized");
                     var orgClan = db.Clans.Single(x => x.ClanID == clan.ClanID);
                     orgClan.ClanName = clan.ClanName;
                     orgClan.LeaderTitle = clan.LeaderTitle;
@@ -172,6 +166,7 @@ namespace ZeroKWeb.Controllers
                 {
                     if (Global.Clan != null) return Content("You already have a clan");
                     if (Global.FactionID != clan.FactionID) return Content("Clan must belong to same faction");
+                    
                     db.Clans.InsertOnSubmit(clan);
                 }
                 if (string.IsNullOrEmpty(clan.ClanName) || string.IsNullOrEmpty(clan.Shortcut)) return Content("Name and shortcut cannot be empty!");
@@ -201,6 +196,9 @@ namespace ZeroKWeb.Controllers
                     var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                     acc.ClanID = clan.ClanID;
                     acc.FactionID = clan.FactionID;
+                    var leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople);
+                    if (leader != null) acc.AccountRolesByAccountID.Add(new AccountRole(){AccountID =  acc.AccountID, Clan = clan, RoleType = leader, Inauguration = DateTime.UtcNow});
+
                     db.SubmitChanges();
                     db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
                     db.SubmitChanges();

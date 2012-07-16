@@ -860,6 +860,7 @@
       <Column Name="RightDiplomacy" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="RightEditTexts" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="RightSetEnergyPriority" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="RightKickPeople" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="RoleType_Poll" Member="Polls" ThisKey="RoleTypeID" OtherKey="RoleTypeID" Type="Poll" />
       <Association Name="RoleType_AccountRole" Member="AccountRoles" ThisKey="RoleTypeID" OtherKey="RoleTypeID" Type="AccountRole" />
       <Association Name="RoleType_RoleTypeHierarchy" Member="RoleTypeHierarchiesByMasterRoleTypeID" ThisKey="RoleTypeID" OtherKey="MasterRoleTypeID" Type="RoleTypeHierarchy" />
