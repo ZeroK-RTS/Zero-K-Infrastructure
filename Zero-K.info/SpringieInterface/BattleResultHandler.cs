@@ -122,6 +122,12 @@ namespace ZeroKWeb.SpringieInterface
                     db.SubmitChanges();
                 }
 
+                try {
+                    foreach (var a in sb.SpringBattlePlayers.Where(x=>!x.IsSpectator).Select(x => x.Account)) Global.Nightwatch.Tas.Extensions.PublishAccountData(a);
+                } catch (Exception ex) {
+                    Trace.TraceError("error updating extension data: {0}",ex);
+                }
+
                 var text = new StringBuilder();
 
                 if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Any())
@@ -579,20 +585,11 @@ namespace ZeroKWeb.SpringieInterface
                                 PlanetID = p.PlanetID,
                                 OwnerAccountID = p.OwnerAccountID,
                                 OwnerClanID = p.OwnerAccountID != null ? p.Account.ClanID : null,
+                                OwnerFactionID = p.OwnerFactionID,
                                 Turn = gal.Turn
                             });
 
-                            foreach (var pi in p.AccountPlanets.Where(x => x.Account.ClanID != null))
-                            {
-                                db.PlanetInfluenceHistories.InsertOnSubmit(new PlanetInfluenceHistory()
-                                {
-                                    PlanetID = p.PlanetID,
-                                    AccountID = pi.AccountID,
-                                    ClanID = pi.Account.ClanID,
-                                    Influence = pi.Influence + pi.ShadowInfluence,
-                                    Turn = gal.Turn
-                                });
-                            }
+                           
                         }
 
                         db.SubmitChanges();

@@ -127,6 +127,7 @@
     <Compile Include="Data\Avatar.cs" />
     <Compile Include="Data\Clan.cs" />
     <Compile Include="Data\Commander.cs" />
+    <Compile Include="Data\EnergyPriority.cs" />
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Faction.cs" />
     <Compile Include="Data\ForumPost.cs" />
@@ -366,6 +367,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Data\ZkData.dbml.views_001.layout">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\ZkData.dbml.views_002.layout">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Data\ZkData.dbml.views_def.layout">
       <DependentUpon>ZkData.dbml</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>

@@ -4,7 +4,7 @@
     <DBMLView>
       <ViewName>(Default)</ViewName>
       <LayoutFileName>.views_def.layout</LayoutFileName>
-      <Selected>true</Selected>
+      <Selected>false</Selected>
       <Ordinal>-1</Ordinal>
       <EntitiesOfInterest />
     </DBMLView>
@@ -20,6 +20,32 @@
         <string>PollOption</string>
         <string>PollVote</string>
         <string>RoleType</string>
+      </EntitiesOfInterest>
+    </DBMLView>
+    <DBMLView>
+      <ViewName>PW</ViewName>
+      <LayoutFileName>.views_002.layout</LayoutFileName>
+      <Selected>true</Selected>
+      <Ordinal>2</Ordinal>
+      <EntitiesOfInterest>
+        <string>Account</string>
+        <string>AccountPlanet</string>
+        <string>AccountRole</string>
+        <string>Clan</string>
+        <string>Faction</string>
+        <string>FactionTreaty</string>
+        <string>Galaxy</string>
+        <string>Planet</string>
+        <string>PlanetFaction</string>
+        <string>PlanetOwnerHistory</string>
+        <string>PlanetStructure</string>
+        <string>RoleType</string>
+        <string>RoleTypeHierarchy</string>
+        <string>StructureType</string>
+        <string>TreatyEffect</string>
+        <string>TreatyEffectPlanet</string>
+        <string>TreatyEffectType</string>
+        <string>TreatyOffer</string>
       </EntitiesOfInterest>
     </DBMLView>
   </Views>
