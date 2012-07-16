@@ -104,6 +104,7 @@
       <DependentUpon>ModStatsDb.dbml</DependentUpon>
     </Compile>
     <Compile Include="Controllers\ClansController.cs" />
+    <Compile Include="Controllers\FactionsController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="SpringieInterface\AutohostConfigs.cs" />
     <Compile Include="SpringieInterface\Balancer.cs" />
@@ -362,6 +363,7 @@
     <Content Include="Views\Users\ReportToAdmin.cshtml" />
     <Content Include="Views\Clans\Index.cshtml" />
     <Content Include="Views\Clans\Tooltip.cshtml" />
+    <Content Include="Views\Factions\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

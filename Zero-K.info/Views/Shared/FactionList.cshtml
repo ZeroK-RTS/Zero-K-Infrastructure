@@ -1,38 +1,13 @@
 ﻿@using ZeroKWeb
 @using ZkData
-<h3>Factions (<a href='http://zero-k.info/Wiki/PlanetWarsFactions'>about</a>)</h3>
 @{
     var db = new ZkDataContext();
-    var facs = db.Factions.Select(x => new { Faction = x, PlayerCount = x.Accounts.Count(), Influence = x.Accounts.SelectMany(y => y.AccountPlanets).Sum(y => (int?)y.Influence + y.ShadowInfluence), Planets = x.Accounts.SelectMany(y => y.Planets).Count() });
 }
 
-@foreach (var f in facs.OrderBy(x => x.Planets))
+@foreach (var f in db.Factions.OrderBy(x => x.Planets.Count()))
 {
-    <div style='float: left'>
-        <table><tr><td><img src='@f.Faction.GetImageUrl()' style='float: left'/></td>
-                   <td>
-                       <span style='color: @f.Faction.Color; font-size:120%;'>@f.Faction.Name</span>
-                       @if (Global.Account != null)
-                       {
-                           if (Global.Account.FactionID == null)
-                           {
-                               @Html.ActionLink("Join!", "JoinFaction", "Planetwars", new { id = f.Faction.FactionID }, null)
-                           }
-                           else if (Global.Account.FactionID == f.Faction.FactionID)
-                                {
-                                    @Html.ActionLink("Leave (erases influence)", "LeaveFaction", "Planetwars", null, new { @class = "delete" })
-                                }
-                       }
-                       <table>
-                           <tr><td>Planets:</td><td>@f.Planets</td></tr>
-                           <tr><td>Commanders:</td><td>@f.PlayerCount</td></tr>
-                           <tr><td>Influence:</td><td>@f.Influence</td></tr>
-                       </table>
-                   </td>
-    
-               </tr>
-        </table>
-        
-    
-    </div>
+    <div style="float:left;">
+    @Html.Partial("~/Views/Factions/FactionBox.cshtml", f)
+   </div>
 }
+<span style="clear:both"></span>

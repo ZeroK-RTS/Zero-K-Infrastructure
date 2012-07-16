@@ -33,7 +33,7 @@
                     <img  src='@c.GetImageUrl()'/><br />
                 </td>
                 <td>
-                    <span style='float: right'><img src='@Model.Faction.GetImageUrl()'/></span>
+                    <span style='float: right'>@Html.Partial("~/Views/Factions/FactionBox.cshtml", @Model.Faction)</span>
                     <div style='font-size: 80%; margin: 10px;'>
                         @Html.BBCode(c.Description)
                     </div>

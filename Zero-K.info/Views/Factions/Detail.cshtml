@@ -1,0 +1,13 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.Faction
+
+<a href="@Url.Action("Index")">back to faction list</a>
+@{
+    Page.Title = "Faction " + Model.Name;
+    Faction f = Model;
+}
+
+@Html.Partial("FactionBox", f)
+
+@Html.IncludeWiki("Faction" + f.Shortcut)

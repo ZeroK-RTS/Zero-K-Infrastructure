@@ -37,7 +37,8 @@ namespace ZkData
         private static object locker = new object();
 
 #if DEBUG
-        public static bool UseLiveDb = false;
+        //public static bool UseLiveDb = false;
+        public static bool UseLiveDb = true;
 #else 
         public static bool UseLiveDb = true;
 #endif
