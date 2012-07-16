@@ -1,0 +1,31 @@
+﻿@using ZkData
+@model ZkData.Clan
+@{
+    var c = Model;
+}
+<h3>@c.ClanName</h3>
+<table>
+    <tr>
+        <td>
+            <h3>@Html.PrintClan(c)</h3>
+            <img  src='@c.GetImageUrl()'/><br />
+        </td>
+        <td>
+            <span style='float: right'>
+                <img src='@Model.Faction.GetImageUrl()'/></span>
+            <div style='font-size: 80%; margin: 10px;'>
+                @Html.BBCode(c.Description)
+            </div>
+        </td>
+    </tr>
+</table>
+<table>
+    @foreach (Account a in c.Accounts)
+    {
+        <tr>
+            <td>
+                @Html.PrintAccount(a)
+            </td>
+        </tr>
+    }
+</table>

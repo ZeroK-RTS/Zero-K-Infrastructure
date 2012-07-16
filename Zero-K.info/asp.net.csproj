@@ -361,6 +361,7 @@
     <Content Include="Views\Users\AdminUserDetail.cshtml" />
     <Content Include="Views\Users\ReportToAdmin.cshtml" />
     <Content Include="Views\Clans\Index.cshtml" />
+    <Content Include="Views\Clans\Tooltip.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

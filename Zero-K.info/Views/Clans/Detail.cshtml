@@ -22,17 +22,13 @@
 @Html.ActionLink("Back to clan list", "Index", "Clans")
 
 @if (File.Exists(Server.MapPath(c.GetBGImageUrl()))) {
-    bgStyle = "";
-
+    bgStyle = string.Format("background-attachment: fixed; background: url({0}) no-repeat scroll 400px 0", c.GetBGImageUrl());
 }
-    <div id="clanBlock" style="background-attachment: fixed; background: url(@c.GetBGImageUrl()) no-repeat scroll 400px 0">
+    <div id="clanBlock" style="@bgStyle">
         <h2>@c.ClanName</h2>
         <table>
             <tr>
                 <td>
-                    @{
-                        IEnumerable<AccountPlanet> infl = Model.Accounts.SelectMany(x => x.AccountPlanets);
-                    }
                     <h3>@Html.PrintClan(c)</h3>
                     <img  src='@c.GetImageUrl()'/><br />
                 </td>
