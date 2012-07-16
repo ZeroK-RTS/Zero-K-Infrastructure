@@ -26,7 +26,7 @@
 		</td>
 	</tr>
 </table>
-@if (Model.OwnerAccountID == Global.AccountID && Global.Clan != null && Global.Clan.HomeworldPlanetID == Model.PlanetID) {
+@if (Model.OwnerAccountID == Global.AccountID && Global.Clan != null) {
 	<form method="post" action="@Url.Action("SubmitRenamePlanet")">
 	<input type="hidden" name="planetID" value="@Model.PlanetID"/>
 	<input type="text" name="newName" value="@Model.Name"/>

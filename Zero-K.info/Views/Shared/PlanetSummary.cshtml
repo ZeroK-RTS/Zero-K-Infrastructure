@@ -22,11 +22,6 @@
             <td>Governor:</td>
             <td>@Html.PrintAccount(Model.Account)  @Html.PrintClan(Model.Account != null ? Model.Account.Clan : null)</td>
         </tr>
-        if (Model.HomeworldClan != null)
-        {
-            <tr><td><b>Homeworld </b></td><td>
-                                              <b>@Html.PrintClan(Model.HomeworldClan)</b></td></tr>
-        }
         <tr>
             <td>Bonuses:</td>
             <td><span style='color: @(link == 0 ? "red" : "")'>@(link*100)%</span> link
