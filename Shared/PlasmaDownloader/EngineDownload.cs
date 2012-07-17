@@ -40,6 +40,10 @@ namespace PlasmaDownloader
                                             EngineDownloadPath,
                                             Name));
 
+                    paths.Add(string.Format("{0}buildbot/default/post_release/{1}/spring_{{post_release}}{1}_minimal-portable+dedicated.zip",
+                                            EngineDownloadPath,
+                                            Name));
+
                     for (var i = 9; i >= -1; i--)
                     {
                         var version = Name;

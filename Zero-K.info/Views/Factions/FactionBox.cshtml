@@ -14,7 +14,7 @@
             @Html.ActionLink("Join!", "JoinFaction", "Factions", new { id = f.FactionID }, null)
         }
         else if (Global.Account.FactionID == f.FactionID) {
-            @Html.ActionLink("Leave (erases influence)", "LeaveFaction", "Factions", null, new { @class = "delete" })
+            @Html.ActionLink("Leave", "LeaveFaction", "Factions", null, new { @class = "delete" })
         }
     }
     <table>
