@@ -22701,7 +22701,7 @@ namespace ZkData
 		
 		private bool _IsSuspended;
 		
-		private System.Nullable<int> _EnactedTurn;
+		private System.Nullable<int> _TurnsRemaining;
 		
 		private EntityRef<Faction> _FactionByProposingFactionID;
 		
@@ -22729,8 +22729,8 @@ namespace ZkData
     partial void OnIsEnactedChanged();
     partial void OnIsSuspendedChanging(bool value);
     partial void OnIsSuspendedChanged();
-    partial void OnEnactedTurnChanging(System.Nullable<int> value);
-    partial void OnEnactedTurnChanged();
+    partial void OnTurnsRemainingChanging(System.Nullable<int> value);
+    partial void OnTurnsRemainingChanged();
     #endregion
 		
 		public FactionTreaty()
@@ -22901,23 +22901,23 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EnactedTurn", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TurnsRemaining", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
-		public System.Nullable<int> EnactedTurn
+		public System.Nullable<int> TurnsRemaining
 		{
 			get
 			{
-				return this._EnactedTurn;
+				return this._TurnsRemaining;
 			}
 			set
 			{
-				if ((this._EnactedTurn != value))
+				if ((this._TurnsRemaining != value))
 				{
-					this.OnEnactedTurnChanging(value);
+					this.OnTurnsRemainingChanging(value);
 					this.SendPropertyChanging();
-					this._EnactedTurn = value;
-					this.SendPropertyChanged("EnactedTurn");
-					this.OnEnactedTurnChanged();
+					this._TurnsRemaining = value;
+					this.SendPropertyChanged("TurnsRemaining");
+					this.OnTurnsRemainingChanged();
 				}
 			}
 		}
@@ -24747,8 +24747,6 @@ namespace ZkData
 		
 		private System.Nullable<bool> _EffectGiveJumpgatePoints;
 		
-		private System.Nullable<bool> _EffectBindingForTurns;
-		
 		private System.Nullable<bool> _EffectPreventIngamePwStructureDestruction;
 		
 		private System.Nullable<bool> _EffectGiveInfluence;
@@ -24801,8 +24799,6 @@ namespace ZkData
     partial void OnEffectShareTechsChanged();
     partial void OnEffectGiveJumpgatePointsChanging(System.Nullable<bool> value);
     partial void OnEffectGiveJumpgatePointsChanged();
-    partial void OnEffectBindingForTurnsChanging(System.Nullable<bool> value);
-    partial void OnEffectBindingForTurnsChanged();
     partial void OnEffectPreventIngamePwStructureDestructionChanging(System.Nullable<bool> value);
     partial void OnEffectPreventIngamePwStructureDestructionChanged();
     partial void OnEffectGiveInfluenceChanging(System.Nullable<bool> value);
@@ -25234,29 +25230,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBindingForTurns", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
-		public System.Nullable<bool> EffectBindingForTurns
-		{
-			get
-			{
-				return this._EffectBindingForTurns;
-			}
-			set
-			{
-				if ((this._EffectBindingForTurns != value))
-				{
-					this.OnEffectBindingForTurnsChanging(value);
-					this.SendPropertyChanging();
-					this._EffectBindingForTurns = value;
-					this.SendPropertyChanged("EffectBindingForTurns");
-					this.OnEffectBindingForTurnsChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPreventIngamePwStructureDestruction", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
 		public System.Nullable<bool> EffectPreventIngamePwStructureDestruction
 		{
 			get
@@ -25277,7 +25252,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveInfluence", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
 		public System.Nullable<bool> EffectGiveInfluence
 		{
 			get
@@ -25298,7 +25273,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="TreatyEffectType_TreatyEffect", Storage="_TreatyEffects", ThisKey="EffectTypeID", OtherKey="EffectTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<TreatyEffect> TreatyEffects
 		{
 			get

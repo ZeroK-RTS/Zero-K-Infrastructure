@@ -13,6 +13,21 @@
 @Html.IncludeWiki("Faction" + f.Shortcut)
 
 
+<br/>
+<h3>Resources</h3>
+<table>
+    <tr>
+        <td>Metal:</td><td>@f.Metal</td>
+    </tr>    
+    <tr>
+        <td>Dropships:</td><td>@f.Dropships</td>
+    </tr>    
+    <tr>
+        <td>Bombers:</td><td>@f.Bombers</td>
+    </tr>    
+
+</table>
+
 <h3>Faction roles</h3>
 @foreach (var rt in new ZkDataContext().RoleTypes.Where(x=>!x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == f.FactionID)).OrderBy(x=>x.DisplayOrder)) {
     @Html.PrintRoleType(rt)

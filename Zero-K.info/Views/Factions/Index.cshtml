@@ -1,9 +1,19 @@
-﻿@model dynamic
+﻿@using ZkData
+@model dynamic
 
 @{
     Page.Title = "Factions";
 }
+<h3>Read more about <a href="/Wiki/PlanetWarsFactions">history of factions</a></h3>
 
-@Html.Partial("FactionList")
+@foreach (var f in new ZkDataContext().Factions.OrderBy(x => x.Planets.Count()))
+{
+    <span>
+        @Html.Partial("~/Views/Factions/FactionBox.cshtml", f)
+    </span>
+    @Html.IncludeWiki("Faction"+ f.Shortcut)
+    <div style="clear:both"></div>
+    <br />   
+}
 
-@Html.IncludeWiki("PlanetWarsFactions")
+
