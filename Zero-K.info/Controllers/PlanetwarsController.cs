@@ -590,7 +590,7 @@ namespace ZeroKWeb.Controllers
             if (myAccount.CanRecall(targetAccount, role)) {
                 db.AccountRoles.DeleteAllOnSubmit(db.AccountRoles.Where(x=>x.AccountID == accountID && x.RoleTypeID == roletypeID));
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} was recalled from the {1} role of {2} by {3}", targetAccount, role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction, role, myAccount));
-                //AuthServiceClient.SendLobbyMessage(targetAccount, string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
+                AuthServiceClient.SendLobbyMessage(targetAccount, string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
                 db.SubmitAndMergeChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }  else {
@@ -626,7 +626,7 @@ namespace ZeroKWeb.Controllers
                 db.AccountRoles.InsertOnSubmit(entry);
                 if (previous != null) db.Events.InsertOnSubmit(Global.CreateEvent("{0} was appointed to the {1} role of {2} by {3} - replacing {4}", targetAccount, role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction, role, myAccount, previous));
                 else db.Events.InsertOnSubmit(Global.CreateEvent("{0} was appointed to the {1} role of {2} by {3}", targetAccount, role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction, role, myAccount));
-                //AuthServiceClient.SendLobbyMessage(targetAccount, string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
+                AuthServiceClient.SendLobbyMessage(targetAccount, string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
                 db.SubmitAndMergeChanges();
                 return RedirectToAction("Detail", "Users", new { id = accountID });
             }

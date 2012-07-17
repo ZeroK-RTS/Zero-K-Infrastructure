@@ -7,7 +7,7 @@
     Clan c = Model;
     bool isMember = c.Accounts.Any(y => y.AccountID == Global.AccountID);
     Page.Title = Model.ClanName + " - " + Model.Shortcut + " clan detail";
-    var bgStyle = "";
+    string bgStyle = "";
 }
 
 
@@ -24,42 +24,54 @@
 @if (File.Exists(Server.MapPath(c.GetBGImageUrl()))) {
     bgStyle = string.Format("background-attachment: fixed; background: url({0}) no-repeat scroll 400px 0", c.GetBGImageUrl());
 }
-    <div id="clanBlock" style="@bgStyle">
-        <h2>@c.ClanName</h2>
-        <table>
-            <tr>
-                <td>
-                    <h3>@Html.PrintClan(c)</h3>
-                    <img  src='@c.GetImageUrl()'/><br />
-                </td>
-                <td>
-                    <span style='float: right'>@Html.Partial("~/Views/Factions/FactionBox.cshtml", @Model.Faction)</span>
-                    <div style='font-size: 80%; margin: 10px;'>
-                        @Html.BBCode(c.Description)
-                    </div>
-                </td>
-            </tr>
-        </table>
-        @if (c.CanJoin(Global.Account)) {
-            @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })<br />
-        }
+<div id="clanBlock" style="@bgStyle">
+    <h2>@c.ClanName</h2>
+    <table>
+        <tr>
+            <td>
+                <h3>@Html.PrintClan(c)</h3>
+                <img  src='@c.GetImageUrl()'/><br />
+            </td>
+            <td>
+                <span style='float: right'>@Html.Partial("~/Views/Factions/FactionBox.cshtml", @Model.Faction)</span>
+                <div style='font-size: 80%; margin: 10px;'>
+                    @Html.BBCode(c.Description)
+                </div>
+            </td>
+        </tr>
+    </table>
+    @if (c.CanJoin(Global.Account)) {
+        @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })<br />
+    }
 
 
-        @if (isMember && Model.Accounts.Count() <= GlobalConst.ClanLeaveLimit) {
-            @Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
-        }
-        @if (isMember) {
-            <b>Secret topic:</b>
-            <br />
-            @Html.BBCode(c.SecretTopic)
-        }
+    @if (isMember && Model.Accounts.Count() <= GlobalConst.ClanLeaveLimit) {
+        @Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
+    }
+    @if (isMember) {
+        <b>Secret topic:</b>
+        <br />
+        @Html.BBCode(c.SecretTopic)
+    }
 
-        @if (isMember && Global.Account.HasClanRight(x => x.RightEditTexts)) {
-            //has rights
-            <br />
-            @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
-        }
+    @if (isMember && Global.Account.HasClanRight(x => x.RightEditTexts)) {
+        //has rights
+        <br />
+        @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
+    }
     
+    <h3>Faction roles</h3>
+    @foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == Model.FactionID))) {
+        @Html.PrintRoleType(rt)
+        foreach (AccountRole acc in rt.AccountRoles.Where(x => x.AccountByAccountID.ClanID == Model.ClanID)) {
+            @Html.PrintAccount(acc.AccountByAccountID)
+            if (Global.Account.CanRecall(acc.AccountByAccountID, acc.RoleType)) {
+                <a href="@Url.Action("RecallRole", "Planetwars", new { accountID = acc.AccountID, roleTypeID = acc.RoleTypeID })">(recall)</a>
+            }
+            <span>, &nbsp;</span>
+        }
+
+        <h3>Members</h3>
         <table>
             <th>Name </th>
             <th></th>
@@ -86,34 +98,37 @@
             }
         </table>
 
+        <br/>
+    }
 
-        <div id="tabs">
-            <ul>
-                <li><a href="#events"><span>Events</span></a></li>            
-                <li><a href="#starships"><span>Starships</span></a></li>
-            </ul>
-            <div id="events">
-                @Html.Action("Events", "Planetwars", new { clanID = c.ClanID, partial = true })
-            </div>
 
-            <div id="starships">
-                <span nowrap="nowrap">@Model.Accounts.Sum(x => x.DropshipCount)/@(Model.Accounts.Count()*GlobalConst.DefaultDropshipCapacity + Model.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity))
-                    ready to deploy</span>
-                <table>
-                    @foreach (var p in Model.Accounts.SelectMany(x => x.AccountPlanets).GroupBy(x => x.Planet).Select(x => new { planet = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) {
-                        <tr>
-                            <td>@Html.PrintPlanet(p.planet)</td>
-                            <td>
-                                <img src='@Model.Faction.GetShipImageUrl()' />@p.dropships</td>
-                        </tr>
-                    }
-                </table>
-            </div>
+    <div id="tabs">
+        <ul>
+            <li><a href="#events"><span>Events</span></a></li>            
+            <li><a href="#starships"><span>Starships</span></a></li>
+        </ul>
+        <div id="events">
+            @Html.Action("Events", "Planetwars", new { clanID = c.ClanID, partial = true })
         </div>
-        @Html.ActionLink("Back to clan list", "Index", "Clans")
-        <hr />
-        @if (isMember) {
-            Html.RenderPartial("CommentList", new CommentList { Thread = Model.ForumThread, ActionData = new { clanID = c.ClanID, threadID = Model.ForumThreadID } });
-        }
 
+        <div id="starships">
+            <span nowrap="nowrap">@Model.Accounts.Sum(x => x.DropshipCount)/@(Model.Accounts.Count()*GlobalConst.DefaultDropshipCapacity + Model.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity))
+                ready to deploy</span>
+            <table>
+                @foreach (var p in Model.Accounts.SelectMany(x => x.AccountPlanets).GroupBy(x => x.Planet).Select(x => new { planet = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) {
+                    <tr>
+                        <td>@Html.PrintPlanet(p.planet)</td>
+                        <td>
+                            <img src='@Model.Faction.GetShipImageUrl()' />@p.dropships</td>
+                    </tr>
+                }
+            </table>
+        </div>
     </div>
+    @Html.ActionLink("Back to clan list", "Index", "Clans")
+    <hr />
+    @if (isMember) {
+        Html.RenderPartial("CommentList", new CommentList { Thread = Model.ForumThread, ActionData = new { clanID = c.ClanID, threadID = Model.ForumThreadID } });
+    }
+
+</div>

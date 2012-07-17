@@ -61,9 +61,10 @@ namespace ZeroKWeb.Controllers
             
             
             // remove roles
-            foreach (var role in acc.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).ToList()) acc.AccountRolesByAccountID.Remove(role);
-            
-            db.Polls.DeleteAllOnSubmit(acc.PollsByRoleTargetAccountID); // delete active polls
+            db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).ToList());
+
+            // delete active polls
+            db.Polls.DeleteAllOnSubmit(acc.PollsByRoleTargetAccountID); 
 
             // remove planets
             acc.Planets.Clear();
