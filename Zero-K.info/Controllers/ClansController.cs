@@ -190,6 +190,20 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Detail", new { id = clan.ClanID });
         }
 
+        public ActionResult JsonGetClanList() {
+            var db = new ZkDataContext();
+            return Json(db.Clans.Where(x => !x.IsDeleted).Select(x=> new {Name = x.ClanName, ID= x.ClanID, Shortcut = x.Shortcut, Description = x.Description, HasPassword=  x.Password != null }).ToList(), JsonRequestBehavior.AllowGet);
+        }
+
+        /*
+        public ActionResult JsonJoinClan(string login, string password, int clanID)
+        {
+            var db = new ZkDataContext();
+            var clan = db.Clans.First(x => x.ClanID == clanID && x.Password == null);
+            var acc = db.Accounts.First(x=>x.AccountID == AuthServiceClient.VerifyAccountPlain(login, password).AccountID);
+            PerformLeaveClan(acc.AccountID, db);
+            return Json(db.Clans.Where(x => !x.IsDeleted).ToList(), JsonRequestBehavior.AllowGet);
+        }*/
 
     }
 }
