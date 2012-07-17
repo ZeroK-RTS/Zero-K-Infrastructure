@@ -581,6 +581,61 @@ namespace ZeroKWeb.Controllers
                 this.clanInfluence = clanInfluence;
             }
         }
+
+        public ActionResult RecallRole(int accountID, int roletypeID) {
+            var db = new ZkDataContext();
+            var targetAccount = db.Accounts.Single(x => x.AccountID == accountID);
+            var myAccount = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            var role = db.RoleTypes.Single(x => x.RoleTypeID == roletypeID);
+            if (myAccount.CanRecall(targetAccount, role)) {
+                db.AccountRoles.DeleteAllOnSubmit(db.AccountRoles.Where(x=>x.AccountID == accountID && x.RoleTypeID == roletypeID));
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} was recalled from the {1} role of {2} by {3}", targetAccount, role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction, role, myAccount));
+                //AuthServiceClient.SendLobbyMessage(targetAccount, string.Format("You were recalled from the function of {0} by {1}", role.Name, myAccount.Name));
+                db.SubmitAndMergeChanges();
+                return RedirectToAction("Detail", "Users", new { id = accountID });
+            }  else {
+                return Content("Cannot recall");
+            }
+        }
+
+        public ActionResult AppointRole(int accountID, int roletypeID)
+        {
+            var db = new ZkDataContext();
+            var targetAccount = db.Accounts.Single(x => x.AccountID == accountID);
+            var myAccount = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            var role = db.RoleTypes.Single(x => x.RoleTypeID == roletypeID);
+            if (myAccount.CanAppoint(targetAccount, role)) {
+                Account previous = null;
+                if (role.IsOnePersonOnly)
+                {
+                    var entries = db.AccountRoles.Where(x => x.RoleTypeID == role.RoleTypeID && (x.FactionID == myAccount.FactionID || x.ClanID == myAccount.ClanID)).ToList();
+                    if (entries.Any())
+                    {
+                        previous = entries.First().AccountByAccountID;
+                        db.AccountRoles.DeleteAllOnSubmit(entries);
+                    }
+                }
+                var entry = new AccountRole()
+                {
+                    AccountID = accountID,
+                    Inauguration = DateTime.UtcNow,
+                    Clan = role.IsClanOnly ? myAccount.Clan : null,
+                    Faction = !role.IsClanOnly ? myAccount.Faction : null,
+                    RoleTypeID = roletypeID,
+                };
+                db.AccountRoles.InsertOnSubmit(entry);
+                if (previous != null) db.Events.InsertOnSubmit(Global.CreateEvent("{0} was appointed to the {1} role of {2} by {3} - replacing {4}", targetAccount, role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction, role, myAccount, previous));
+                else db.Events.InsertOnSubmit(Global.CreateEvent("{0} was appointed to the {1} role of {2} by {3}", targetAccount, role.IsClanOnly ? (object)myAccount.Clan : myAccount.Faction, role, myAccount));
+                //AuthServiceClient.SendLobbyMessage(targetAccount, string.Format("You were appointed for the function of {0} by {1}", role.Name, myAccount.Name));
+                db.SubmitAndMergeChanges();
+                return RedirectToAction("Detail", "Users", new { id = accountID });
+            }
+            else
+            {
+                return Content("Cannot recall");
+            }
+        }
+
     }
 
     public class EventsResult

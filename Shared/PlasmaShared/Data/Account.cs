@@ -182,6 +182,29 @@ namespace ZkData
             SpringieLevel = 1;
         }
 
+        public bool CanAppoint(Account targetAccount, RoleType roleType) {
+            if (targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID) && (roleType.RestrictFactionID == null || roleType.RestrictFactionID == FactionID))
+            {
+                return AccountRolesByAccountID.Any(x => x.RoleType.RoleTypeHierarchiesByMasterRoleTypeID.Any(y => y.CanAppoint && y.SlaveRoleTypeID == roleType.RoleTypeID));
+            }
+            else return false;
+        }
+
+        public bool CanRecall(Account targetAccount, RoleType roleType)
+        {
+            if (targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID))
+            {
+                return AccountRolesByAccountID.Any(x => x.RoleType.RoleTypeHierarchiesByMasterRoleTypeID.Any(y => y.CanRecall && y.SlaveRoleTypeID == roleType.RoleTypeID));
+            }
+            else return false;
+        }
+
+        public bool CanVoteRecall(Account targetAccount, RoleType roleType) {
+            if (roleType.IsVoteable && targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID)) return true;
+            else return false;
+        }
+
+
 
         partial void OnGamePreferencesChanged() {
             preferences = null;

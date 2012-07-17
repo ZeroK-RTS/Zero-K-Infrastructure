@@ -11,3 +11,19 @@
 @Html.Partial("FactionBox", f)
 
 @Html.IncludeWiki("Faction" + f.Shortcut)
+
+
+<h3>Faction roles</h3>
+@foreach (var rt in new ZkDataContext().RoleTypes.Where(x=>!x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == f.FactionID))) {
+    @Html.PrintRoleType(rt)
+    foreach (var acc in rt.AccountRoles.Where(x=>x.AccountByAccountID.FactionID == f.FactionID)) {
+        @Html.PrintAccount(acc.AccountByAccountID)
+         if (Global.Account.CanRecall(acc.AccountByAccountID, acc.RoleType)) {
+             <a href="@Url.Action("RecallRole", "Planetwars", new { accountID = acc.AccountID, roleTypeID = acc.RoleTypeID })">(recall)</a>
+        }
+        <span>, &nbsp;</span>
+
+    }
+
+    <br/>
+}

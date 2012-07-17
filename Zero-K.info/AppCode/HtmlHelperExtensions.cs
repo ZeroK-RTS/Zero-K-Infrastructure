@@ -253,9 +253,20 @@ namespace System.Web.Mvc
             {
                 factoids.Add("clan based");
             }
-            if (rt.RightAppointRoles)
+            if (rt.IsOnePersonOnly)
             {
-                factoids.Add("can appoint roles");
+                factoids.Add("only one person can hold this");
+            }
+
+            if (rt.IsVoteable) {
+                factoids.Add("is voteable");
+            }
+            if (rt.RoleTypeHierarchiesByMasterRoleTypeID.Any(x=>x.CanAppoint))
+            {
+                factoids.Add("appoints: " + string.Join(",", rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x=>x.CanAppoint).Select(x=>x.RoleTypeBySlaveRoleTypeID.Name)));
+            }
+            if (rt.RoleTypeHierarchiesByMasterRoleTypeID.Any(x=>x.CanRecall)) {
+                factoids.Add("recalls: " + string.Join(",", rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x => x.CanAppoint).Select(x => x.RoleTypeBySlaveRoleTypeID.Name)));
             }
             if (rt.RightBomberQuota != 0)
             {
@@ -281,7 +292,7 @@ namespace System.Web.Mvc
             {
                 factoids.Add("controls texts");
             }
-            return new MvcHtmlString(string.Format("<span title=\"{0}  ({1})\"><b>{2}</b></span>", rt.Description, string.Join(",",factoids), rt.Name));
+            return new MvcHtmlString(string.Format("<span title=\"<b>{0}</b><ul>{1}</ul>\"><b>{2}</b></span>", rt.Description, string.Join("",factoids.Select(x=>"<li>" + x + "</li>")), rt.Name));
         }
 
         public static MvcHtmlString PrintFaction(this HtmlHelper helper, Faction fac, bool big = true)
@@ -289,15 +300,15 @@ namespace System.Web.Mvc
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             if (fac != null)
             {
-                if (big) return new MvcHtmlString(string.Format("<img src='{0}'/>", fac.GetImageUrl()));
+                if (big) return new MvcHtmlString(string.Format("<a href='{1}'><img src='{0}'/></a>", fac.GetImageUrl(), url.Action("Detail", "Factions", new { id = fac.FactionID })));
                 else
                 {
                     return
                         new MvcHtmlString(string.Format(
-                            "<span style='color:{0}'><img src='{1}'  style='width:16px;height:16px'/>{2}</span>",
+                            "<a href='{3}'><span style='color:{0}'><img src='{1}'  style='width:16px;height:16px'/>{2}</span></a>",
                             fac.Color,
                             fac.GetImageUrl(),
-                            fac.Shortcut));
+                            fac.Shortcut, url.Action("Detail","Factions", new{id = fac.FactionID})));
                 }
             }
             else return new MvcHtmlString("");

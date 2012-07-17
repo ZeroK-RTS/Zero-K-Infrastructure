@@ -1,30 +1,44 @@
 ﻿@using ZeroKWeb
 @using ZkData
 @model ZkData.Account
-  
-@if (Model.AccountID == Global.AccountID && Model.FactionID != null && !Model.PollsByRoleTargetAccountID.Any(x => x.ExpireBy > DateTime.UtcNow))
+
+@foreach (var entry in Model.AccountRolesByAccountID) {
+    <span>
+        @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction,false))
+    </span>
+    if (Global.Account.CanVoteRecall(entry.AccountByAccountID, entry.RoleType)) {
+        <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = entry.RoleTypeID, isRemoval = true })" onclick="var text = prompt('What is the reason?', 'He failed us!'); $(this).attr('href', $(this).attr('href') + '&text=' + text);">(vote out)</a>
+     }
+      <span>&nbsp;</span>
+     if (Global.Account.CanRecall(entry.AccountByAccountID, entry.RoleType)) {
+         <a href="@Url.Action("RecallRole", "Planetwars", new { accountID = entry.AccountID, roleTypeID = entry.RoleTypeID })">(recall)</a>
+     }
+    <br/>
+}
+@if (Model.FactionID != null && Model.FactionID == Global.FactionID)
 {
-    foreach (var grp in new ZkDataContext().RoleTypes.Where(x => (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID) && x.IsVoteable).GroupBy(x => x.IsClanOnly)) {
+    foreach (var grp in new ZkDataContext().RoleTypes.Where(x => (x.RestrictFactionID == null || x.RestrictFactionID == Global.FactionID) && !x.AccountRoles.Any(y=>y.AccountID == Model.AccountID)).GroupBy(x => x.IsClanOnly)) {
         
         if (!grp.Key)
         {
-            <span>Nominate yourself for a post of faction: </span>
+            <span>Possible faction roles: </span>
         }
         else {
-            <span>Nominate yourself for a post of clan: </span>
+            <span>Possible clan roles: </span>
         }
         <small>
         @foreach (var role in grp)
         {
-            var hasRole = role.AccountRoles.Any(y => y.AccountID == Model.AccountID);
-            if (!hasRole)
-            {
+            @Html.PrintRoleType(role)
 
-                <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick="var text = prompt('What is your slogan?', 'vote me!'); $(this).attr('href', $(this).attr('href') + '&text=' + text);">
-                    @Html.PrintRoleType(role)
-                </a>
-                @:,&nbsp;
+            if (role.IsVoteable && Global.AccountID == Model.AccountID) {
+            <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = role.RoleTypeID })" onclick="var text = prompt('What is your slogan?', 'vote me!'); $(this).attr('href', $(this).attr('href') + '&text=' + text);">(nominate)</a>    
             }
+            if (Global.Account.CanAppoint(Model, role)) {
+                <a href="@Url.Action("AppointRole","Planetwars", new {accountID = Model.AccountID, roleTypeID = role.RoleTypeID})">(appoint)</a>
+            }
+
+            <span>,&nbsp;&nbsp;</span>
         }
        </small><br/>
     }

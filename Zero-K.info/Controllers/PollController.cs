@@ -106,6 +106,9 @@ namespace ZeroKWeb.Controllers
         public ActionResult NominateRole(int roleTypeID, string text, bool isRemoval = false)
         {
             var db = new ZkDataContext();
+            var pollActive = Global.Account.PollsByRoleTargetAccountID.Any(x => x.ExpireBy > DateTime.UtcNow);
+            if (pollActive) return Content("Poll already active, wait until it ends");
+
             var rt = db.RoleTypes.Single(x => x.RoleTypeID == roleTypeID);
             if (rt.RestrictFactionID != null && rt.RestrictFactionID!= Global.FactionID) throw new ApplicationException("Invalid faction");
             if (Global.FactionID == 0) throw new ApplicationException("No faction");

@@ -137,8 +137,10 @@ namespace ZeroKWeb
                 {
                     var acc = (Account)arg;
                     args[i] = HtmlHelperExtensions.PrintAccount(null, acc, false);
-                    if (acc.AccountID != 0) ev.EventAccounts.Add(new EventAccount() { AccountID = acc.AccountID });
-                    else ev.EventAccounts.Add(new EventAccount() { Account = acc });
+                    if (acc.AccountID != 0) {
+                        if (!ev.EventAccounts.Any(x=>x.AccountID == acc.AccountID)) ev.EventAccounts.Add(new EventAccount() { AccountID = acc.AccountID });
+                    }
+                    else if (!ev.EventAccounts.Any(x=>x.Account == acc)) ev.EventAccounts.Add(new EventAccount() { Account = acc });
                 }
                 else if (arg is Clan)
                 {
@@ -175,6 +177,8 @@ namespace ZeroKWeb
                 }
 
             }
+
+
             ev.Text = string.Format(format, args);
             return ev;
         }

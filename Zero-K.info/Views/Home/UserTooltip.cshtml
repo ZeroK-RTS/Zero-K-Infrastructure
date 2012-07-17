@@ -1,4 +1,5 @@
-﻿@model ZkData.Account
+﻿@using ZeroKWeb
+@model ZkData.Account
 @{
     var u = Model;
 }
@@ -6,6 +7,12 @@
 <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
 <b>Elo:</b> @Math.Round(@u.EffectiveElo)
 <b>Level:</b> @u.Level<br/>
+<br/>
+@foreach (var entry in Model.AccountRolesByAccountID) {
+    <span>
+        @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction,false))
+    </span><br/>
+}<br/>
 @if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
  {
 			<span>
@@ -13,6 +20,9 @@
 				@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
 			</span>
  }
+
+
+
 <div id="usr_trophies" class="">
     <h3>Trophies:</h3>
     @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count()))
@@ -25,6 +35,7 @@
     }
     <br class="clearfloat" />
 </div><br />
+
 
 @if (!string.IsNullOrEmpty(u.Aliases)) {
     <b>Aliases: </b>@u.Aliases<br />
