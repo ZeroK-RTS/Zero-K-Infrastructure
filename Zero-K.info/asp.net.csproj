@@ -353,7 +353,7 @@
     <Content Include="Views\Shared\FactionList.cshtml" />
     <Content Include="Views\Shared\_AjaxLayout.cshtml" />
     <Content Include="Views\Poll\PollUserVotes.cshtml" />
-    <Content Include="Views\Poll\PollUserRoles.cshtml" />
+    <Content Include="Views\Users\UserRoleList.cshtml" />
     <Content Include="Views\Forum\PostList.cshtml" />
     <Content Include="Views\Forum\EditHistory.cshtml" />
     <Content Include="Views\UnitStats\UnitStatsDetail.cshtml" />

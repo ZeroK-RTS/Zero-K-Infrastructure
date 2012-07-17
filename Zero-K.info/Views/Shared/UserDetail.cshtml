@@ -282,7 +282,7 @@
     @Html.PrintClan(Model.Clan)
     
     <br/>
-    @Html.Partial("~/Views/Poll/PollUserRoles.cshtml", Model)
+    @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
     
         <h3>Credits:</h3>
 	@Model.Credits.ToString("C0") (+@Model.CreditsIncome, -@Model.CreditsExpense)

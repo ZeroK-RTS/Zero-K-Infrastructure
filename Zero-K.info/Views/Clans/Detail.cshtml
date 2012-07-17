@@ -33,7 +33,7 @@
                 <img  src='@c.GetImageUrl()'/><br />
             </td>
             <td>
-                <span style='float: right'>@Html.Partial("~/Views/Factions/FactionBox.cshtml", @Model.Faction)</span>
+                <span style='float: right'>@Html.PrintFaction(Model.Faction)</span>
                 <div style='font-size: 80%; margin: 10px;'>
                     @Html.BBCode(c.Description)
                 </div>
@@ -60,46 +60,42 @@
         @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
     }
     
-    <h3>Faction roles</h3>
+    <br/>
     @foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == Model.FactionID))) {
         @Html.PrintRoleType(rt)
         foreach (AccountRole acc in rt.AccountRoles.Where(x => x.AccountByAccountID.ClanID == Model.ClanID)) {
             @Html.PrintAccount(acc.AccountByAccountID)
-            if (Global.Account.CanRecall(acc.AccountByAccountID, acc.RoleType)) {
-                <a href="@Url.Action("RecallRole", "Planetwars", new { accountID = acc.AccountID, roleTypeID = acc.RoleTypeID })">(recall)</a>
-            }
+            @Html.DisplayFor(x => acc)
             <span>, &nbsp;</span>
         }
-
-        <h3>Members</h3>
-        <table>
-            <th>Name </th>
-            <th></th>
-            @foreach (Account a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence))) {
-                <tr>
-                    <td>
-                        @Html.PrintAccount(a)
-                    </td>
-                    <td>
-                        @if (isMember && Global.Account.HasClanRight(x => x.RightKickPeople)) {
-                            //has rights
-                            @:&nbsp
-                            string question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
-                            @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
-                        }
-                    </td>
-                </tr>
-                foreach (Planet p in a.Planets) {
-                    <tr>
-                        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>@Html.PrintPlanet(p)</small> </td>
-                        <td></td>
-                    </tr>
-                }
-            }
-        </table>
-
-        <br/>
     }
+    <br/>
+
+    <table>
+        @foreach (Account a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence))) {
+            <tr>
+                <td>
+                    @Html.PrintAccount(a)
+                </td>
+                <td>
+                    @if (isMember && Global.Account.HasClanRight(x => x.RightKickPeople)) {
+                        @:&nbsp
+                        string question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
+                        @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+                    }
+                </td>
+            </tr>
+            foreach (Planet p in a.Planets) {
+                <tr>
+                    <td><small>@Html.PrintPlanet(p)</small> </td>
+                    <td></td>
+                </tr>
+            }
+        }
+    </table>
+
+    <br/>
+    
 
 
     <div id="tabs">

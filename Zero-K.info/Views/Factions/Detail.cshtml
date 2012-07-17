@@ -18,9 +18,7 @@
     @Html.PrintRoleType(rt)
     foreach (var acc in rt.AccountRoles.Where(x=>x.AccountByAccountID.FactionID == f.FactionID)) {
         @Html.PrintAccount(acc.AccountByAccountID)
-         if (Global.Account.CanRecall(acc.AccountByAccountID, acc.RoleType)) {
-             <a href="@Url.Action("RecallRole", "Planetwars", new { accountID = acc.AccountID, roleTypeID = acc.RoleTypeID })">(recall)</a>
-        }
+        @Html.DisplayFor(x=>acc)
         <span>, &nbsp;</span>
     }
     <br/>

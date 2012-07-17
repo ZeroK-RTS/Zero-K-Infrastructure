@@ -4,15 +4,9 @@
 
 @foreach (var entry in Model.AccountRolesByAccountID) {
     <span>
-        @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction,false))
+        @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction, false))
     </span>
-    if (Global.Account.CanVoteRecall(entry.AccountByAccountID, entry.RoleType)) {
-        <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = entry.RoleTypeID, isRemoval = true })" onclick="var text = prompt('What is the reason?', 'He failed us!'); $(this).attr('href', $(this).attr('href') + '&text=' + text);">(vote out)</a>
-     }
-      <span>&nbsp;</span>
-     if (Global.Account.CanRecall(entry.AccountByAccountID, entry.RoleType)) {
-         <a href="@Url.Action("RecallRole", "Planetwars", new { accountID = entry.AccountID, roleTypeID = entry.RoleTypeID })">(recall)</a>
-     }
+    @Html.DisplayFor(x => entry)
     <br/>
 }
 @if (Model.FactionID != null && Model.FactionID == Global.FactionID)

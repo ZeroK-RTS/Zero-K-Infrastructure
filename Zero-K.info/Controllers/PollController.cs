@@ -103,7 +103,7 @@ namespace ZeroKWeb.Controllers
 
 
         [Auth()]
-        public ActionResult NominateRole(int roleTypeID, string text, bool isRemoval = false)
+        public ActionResult NominateRole(int roleTypeID, string text, bool isRemoval = false, int? removalAccountID = null)
         {
             var db = new ZkDataContext();
             var pollActive = Global.Account.PollsByRoleTargetAccountID.Any(x => x.ExpireBy > DateTime.UtcNow);
@@ -115,10 +115,20 @@ namespace ZeroKWeb.Controllers
             if (rt.IsClanOnly && Global.ClanID == 0) throw new ApplicationException("No clan");
             if (!rt.IsVoteable) throw new ApplicationException("Cannot be voted");
 
+            int targetID = Global.AccountID;
+            if (isRemoval) {
+                var target = db.Accounts.Single(x => x.AccountID == removalAccountID);
+                if (Global.Account.CanVoteRecall(target, rt)) {
+                    targetID = removalAccountID.Value;
+                } else {
+                    return Content("Cannot recall him/her");
+                }
+            }
+
             var p = new Poll()
                     {
                         CreatedAccountID = Global.AccountID,
-                        RoleTargetAccountID = Global.AccountID,
+                        RoleTargetAccountID = targetID,
                         ExpireBy = DateTime.UtcNow.AddDays(rt.PollDurationDays),
                         IsAnonymous = true,
                         IsHeadline = true,
