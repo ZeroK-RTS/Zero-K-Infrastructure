@@ -22005,8 +22005,6 @@ namespace ZkData
 		
 		private System.Nullable<int> _AppointedByRoleTypeID;
 		
-		private bool _RightAppointRoles;
-		
 		private double _RightDropshipQuota;
 		
 		private double _RightBomberQuota;
@@ -22020,6 +22018,8 @@ namespace ZkData
 		private bool _RightSetEnergyPriority;
 		
 		private bool _RightKickPeople;
+		
+		private int _DisplayOrder;
 		
 		private EntitySet<Poll> _Polls;
 		
@@ -22057,8 +22057,6 @@ namespace ZkData
     partial void OnPollDurationDaysChanged();
     partial void OnAppointedByRoleTypeIDChanging(System.Nullable<int> value);
     partial void OnAppointedByRoleTypeIDChanged();
-    partial void OnRightAppointRolesChanging(bool value);
-    partial void OnRightAppointRolesChanged();
     partial void OnRightDropshipQuotaChanging(double value);
     partial void OnRightDropshipQuotaChanged();
     partial void OnRightBomberQuotaChanging(double value);
@@ -22073,6 +22071,8 @@ namespace ZkData
     partial void OnRightSetEnergyPriorityChanged();
     partial void OnRightKickPeopleChanging(bool value);
     partial void OnRightKickPeopleChanged();
+    partial void OnDisplayOrderChanging(int value);
+    partial void OnDisplayOrderChanged();
     #endregion
 		
 		public RoleType()
@@ -22277,29 +22277,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightAppointRoles", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
-		public bool RightAppointRoles
-		{
-			get
-			{
-				return this._RightAppointRoles;
-			}
-			set
-			{
-				if ((this._RightAppointRoles != value))
-				{
-					this.OnRightAppointRolesChanging(value);
-					this.SendPropertyChanging();
-					this._RightAppointRoles = value;
-					this.SendPropertyChanged("RightAppointRoles");
-					this.OnRightAppointRolesChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightDropshipQuota", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public double RightDropshipQuota
 		{
 			get
@@ -22320,7 +22299,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightBomberQuota", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public double RightBomberQuota
 		{
 			get
@@ -22341,7 +22320,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightMetalQuota", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
 		public double RightMetalQuota
 		{
 			get
@@ -22362,7 +22341,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightDiplomacy", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
 		public bool RightDiplomacy
 		{
 			get
@@ -22383,7 +22362,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightEditTexts", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
 		public bool RightEditTexts
 		{
 			get
@@ -22404,7 +22383,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightSetEnergyPriority", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public bool RightSetEnergyPriority
 		{
 			get
@@ -22425,7 +22404,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightKickPeople", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
 		public bool RightKickPeople
 		{
 			get
@@ -22441,6 +22420,27 @@ namespace ZkData
 					this._RightKickPeople = value;
 					this.SendPropertyChanged("RightKickPeople");
 					this.OnRightKickPeopleChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DisplayOrder", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public int DisplayOrder
+		{
+			get
+			{
+				return this._DisplayOrder;
+			}
+			set
+			{
+				if ((this._DisplayOrder != value))
+				{
+					this.OnDisplayOrderChanging(value);
+					this.SendPropertyChanging();
+					this._DisplayOrder = value;
+					this.SendPropertyChanged("DisplayOrder");
+					this.OnDisplayOrderChanged();
 				}
 			}
 		}

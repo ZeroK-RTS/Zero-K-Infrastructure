@@ -842,7 +842,6 @@
       <Column Name="IsVoteable" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="PollDurationDays" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="AppointedByRoleTypeID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="RightAppointRoles" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="RightDropshipQuota" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="RightBomberQuota" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="RightMetalQuota" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
@@ -850,6 +849,7 @@
       <Column Name="RightEditTexts" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="RightSetEnergyPriority" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="RightKickPeople" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="DisplayOrder" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="RoleType_Poll" Member="Polls" ThisKey="RoleTypeID" OtherKey="RoleTypeID" Type="Poll" />
       <Association Name="RoleType_AccountRole" Member="AccountRoles" ThisKey="RoleTypeID" OtherKey="RoleTypeID" Type="AccountRole" />
       <Association Name="RoleType_RoleTypeHierarchy" Member="RoleTypeHierarchiesByMasterRoleTypeID" ThisKey="RoleTypeID" OtherKey="MasterRoleTypeID" Type="RoleTypeHierarchy" />
