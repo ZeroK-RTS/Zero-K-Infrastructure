@@ -2,7 +2,7 @@
 @using ZkData
 @model ZkData.Account
 
-@foreach (var entry in Model.AccountRolesByAccountID) {
+@foreach (var entry in Model.AccountRolesByAccountID.OrderBy(x=>x.RoleType.DisplayOrder)) {
     <span>
         @Html.PrintRoleType(entry.RoleType) of @(entry.RoleType.IsClanOnly ? Html.PrintClan(entry.Clan) : Html.PrintFaction(entry.Faction, false))
     </span>

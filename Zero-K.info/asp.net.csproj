@@ -366,6 +366,7 @@
     <Content Include="Views\Factions\Index.cshtml" />
     <Content Include="Views\Factions\Detail.cshtml" />
     <Content Include="Views\Factions\FactionBox.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\AccountRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />
