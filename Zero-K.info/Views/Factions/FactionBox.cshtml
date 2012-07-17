@@ -11,10 +11,10 @@
         <span style="font-size: 120%; color:@f.Color;">@f.Name</span></a>
     @if (Global.Account != null) {
         if (Global.Account.FactionID == null) {
-            @Html.ActionLink("Join!", "JoinFaction", "Planetwars", new { id = f.FactionID }, null)
+            @Html.ActionLink("Join!", "JoinFaction", "Factions", new { id = f.FactionID }, null)
         }
         else if (Global.Account.FactionID == f.FactionID) {
-            @Html.ActionLink("Leave (erases influence)", "LeaveFaction", "Planetwars", null, new { @class = "delete" })
+            @Html.ActionLink("Leave (erases influence)", "LeaveFaction", "Factions", null, new { @class = "delete" })
         }
     }
     <table>
