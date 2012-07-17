@@ -5,9 +5,9 @@
     Faction f = Model;
 }
 <div style="color: @f.Color">
-    <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })">
+    <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })" nicetitle="$faction$@f.FactionID">
         <img src='@f.GetImageUrl()' style='float: left'/></a>
-    <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })">
+    <a href="@Url.Action("Detail", "Factions", new { id = f.FactionID })" nicetitle="$faction$@f.FactionID">
         <span style="font-size: 120%; color:@f.Color;">@f.Name</span></a>
     @if (Global.Account != null) {
         if (Global.Account.FactionID == null) {

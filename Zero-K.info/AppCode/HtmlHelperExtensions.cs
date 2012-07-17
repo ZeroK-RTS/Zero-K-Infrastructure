@@ -300,15 +300,15 @@ namespace System.Web.Mvc
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             if (fac != null)
             {
-                if (big) return new MvcHtmlString(string.Format("<a href='{1}'><img src='{0}'/></a>", fac.GetImageUrl(), url.Action("Detail", "Factions", new { id = fac.FactionID })));
+                if (big) return new MvcHtmlString(string.Format("<a href='{1}' nicetitle='$faction${2}'><img src='{0}'/></a>", fac.GetImageUrl(), url.Action("Detail", "Factions", new { id = fac.FactionID }), fac.FactionID));
                 else
                 {
                     return
                         new MvcHtmlString(string.Format(
-                            "<a href='{3}'><span style='color:{0}'><img src='{1}'  style='width:16px;height:16px'/>{2}</span></a>",
+                            "<a href='{3}' nicetitle='$faction${4}'><span style='color:{0}'><img src='{1}'  style='width:16px;height:16px'/>{2}</span></a>",
                             fac.Color,
                             fac.GetImageUrl(),
-                            fac.Shortcut, url.Action("Detail","Factions", new{id = fac.FactionID})));
+                            fac.Shortcut, url.Action("Detail","Factions", new{id = fac.FactionID}), fac.FactionID));
                 }
             }
             else return new MvcHtmlString("");

@@ -183,7 +183,7 @@ namespace ZkData
         }
 
         public bool CanAppoint(Account targetAccount, RoleType roleType) {
-            if (targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID) && (roleType.RestrictFactionID == null || roleType.RestrictFactionID == FactionID))
+            if (targetAccount.AccountID != AccountID && targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID) && (roleType.RestrictFactionID == null || roleType.RestrictFactionID == FactionID))
             {
                 return AccountRolesByAccountID.Any(x => x.RoleType.RoleTypeHierarchiesByMasterRoleTypeID.Any(y => y.CanAppoint && y.SlaveRoleTypeID == roleType.RoleTypeID));
             }
@@ -192,7 +192,7 @@ namespace ZkData
 
         public bool CanRecall(Account targetAccount, RoleType roleType)
         {
-            if (targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID))
+            if (targetAccount.AccountID != AccountID && targetAccount.FactionID == FactionID && (!roleType.IsClanOnly || targetAccount.ClanID == ClanID))
             {
                 return AccountRolesByAccountID.Any(x => x.RoleType.RoleTypeHierarchiesByMasterRoleTypeID.Any(y => y.CanRecall && y.SlaveRoleTypeID == roleType.RoleTypeID));
             }
