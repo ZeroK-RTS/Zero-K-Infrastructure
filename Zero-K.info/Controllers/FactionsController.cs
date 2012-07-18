@@ -164,10 +164,14 @@ namespace ZeroKWeb.Controllers
             var treaty = db.FactionTreaties.Single(x => x.FactionTreatyID == id);
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (treaty.CanCancel(acc) && treaty.TreatyState == TreatyState.Proposed) {
+                treaty.FactionByAcceptingFactionID = treaty.AcceptingFactionID == acc.FactionID
+                                                         ? treaty.FactionByProposingFactionID
+                                                         : treaty.FactionByAcceptingFactionID;
+                treaty.AccountByProposingAccountID = acc;
                 treaty.TreatyState = TreatyState.Invalid;
                 db.SubmitAndMergeChanges();
-                
-                return RedirectToAction("NewTreaty", new { acceptingFactionID = treaty.AcceptingFactionID == Global.FactionID ? treaty.ProposingFactionID : treaty.AcceptingFactionID});
+               
+                return View("FactionTreatyDefinition", treaty);
 
             }
             return Content("Not permitted");
