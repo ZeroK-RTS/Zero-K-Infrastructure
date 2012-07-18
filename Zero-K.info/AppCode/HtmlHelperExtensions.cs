@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,6 +28,14 @@ namespace System.Web.Mvc
 
     public static class HtmlHelperExtensions
     {
+
+        public static IEnumerable<SelectListItem> GetFactionItems(this HtmlHelper html, int factionID, Expression<Func<Faction, bool>> filter = null)
+        {
+            var ret = new ZkDataContext().Factions.AsQueryable().Where(x => !x.IsDeleted);
+            if (filter != null) ret = ret.Where(filter);
+            return ret.Select(x => new SelectListItem { Text = x.Name, Value = x.FactionID.ToString(), Selected = x.FactionID == factionID });
+        }
+
 
         public static MvcHtmlString AccountAvatar(this HtmlHelper helper, Account account)
         {
@@ -313,6 +322,22 @@ namespace System.Web.Mvc
             }
             else return new MvcHtmlString("");
         }
+
+        public static MvcHtmlString PrintFactionTreaty(this HtmlHelper helper, FactionTreaty treaty)
+        {
+            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            if (treaty != null)
+            {
+                
+                    return
+                        new MvcHtmlString(string.Format(
+                            "<a href='{1}' nicetitle='$treaty${0}'>TR{0}</span></a>",
+                            treaty.FactionTreatyID,
+                             url.Action("TreatyDetail", "Factions", new { id = treaty.FactionTreatyID })));
+            }
+            else return new MvcHtmlString("");
+        }
+
 
         public static MvcHtmlString PrintInfluence(this HtmlHelper helper, AccountPlanet accountPlanet)
         {

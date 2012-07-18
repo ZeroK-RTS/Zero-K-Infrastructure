@@ -683,6 +683,7 @@ namespace LobbyClient
                 switch (place)
                 {
                     case SayPlace.Channel:
+                        if (!JoinedChannels.ContainsKey(args.Channel)) JoinChannel(args.Channel);
                         if (args.IsEmote) con.SendCommand("SAYEX", args.Channel, args.Text);
                         else con.SendCommand("SAY", args.Channel, args.Text);
                         break;

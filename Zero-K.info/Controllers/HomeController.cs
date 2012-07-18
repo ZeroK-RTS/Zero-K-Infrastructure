@@ -119,6 +119,8 @@ namespace ZeroKWeb.Controllers
 			        return PartialView("~/Views/Clans/Tooltip.cshtml", db.Clans.Single(x => x.ClanID == int.Parse(args[1])));
                 case "faction":
 			        return PartialView("~/Views/Factions/FactionTooltip.cshtml", db.Factions.Single(x => x.FactionID == int.Parse(args[1])));
+                case "treaty":
+                    return PartialView("~/Views/Shared/DisplayTemplates/FactionTreaty.cshtml", db.FactionTreaties.Single(x => x.FactionTreatyID == int.Parse(args[1])));
 			}
 			return Content(ret);
 		}

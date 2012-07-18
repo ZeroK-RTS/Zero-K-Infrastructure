@@ -4,10 +4,10 @@
 @{
     AccountRole entry = Model;
 }
-@if (Global.Account.CanVoteRecall(entry.AccountByAccountID, entry.RoleType)) {
+@if (Global.Account != null && Global.Account.CanVoteRecall(entry.AccountByAccountID, entry.RoleType)) {
     <a href="@Url.Action("NominateRole", "Poll", new { roleTypeID = entry.RoleTypeID, removalAccountID = entry.AccountID, isRemoval = true })" onclick=" var text = prompt('What is the reason?', 'He failed us!'); $(this).attr('href', $(this).attr('href') + '&text=' + text); ">(vote out)</a>
 }
 <span>&nbsp;</span>
-@if (Global.Account.CanRecall(entry.AccountByAccountID, entry.RoleType)) {
+@if (Global.Account != null && Global.Account.CanRecall(entry.AccountByAccountID, entry.RoleType)) {
     <a href="@Url.Action("RecallRole", "Planetwars", new { accountID = entry.AccountID, roleTypeID = entry.RoleTypeID })">(recall)</a>
 }

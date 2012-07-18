@@ -1,0 +1,14 @@
+﻿@model ZkData.TreatyEffect
+@{
+    ViewBag.Title = "TreatyEffect";
+}
+@Html.PrintFaction(Model.FactionByGivingFactionID, false) &rarr; @Html.PrintFaction(Model.FactionByReceivingFactionID, false) 
+<span nicetitle="@Model.TreatyEffectType.Description">@Model.TreatyEffectType.Name</span>
+@if (Model.TreatyEffectType.HasValue) {
+    <span>Value: @Model.Value</span>
+}
+@if (Model.TreatyEffectType.IsPlanetBased && Model.Planet != null) {
+    <span>On planet: @Html.PrintPlanet(Model.Planet)</span>
+}
+
+

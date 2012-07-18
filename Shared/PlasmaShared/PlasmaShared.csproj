@@ -130,6 +130,7 @@
     <Compile Include="Data\EnergyPriority.cs" />
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Faction.cs" />
+    <Compile Include="Data\FactionTreaty.cs" />
     <Compile Include="Data\ForumPost.cs" />
     <Compile Include="Data\ForumThread.cs" />
     <Compile Include="Data\Galaxy.cs" />
@@ -147,6 +148,7 @@
     <Compile Include="Data\SpringBattle.cs" />
     <Compile Include="Data\Structure.cs" />
     <Compile Include="Data\StructureType.cs" />
+    <Compile Include="Data\TreatyState.cs" />
     <Compile Include="Data\Unlock.cs" />
     <Compile Include="Data\UnlockType.cs" />
     <Compile Include="Data\ZkData.cs">

@@ -1,0 +1,42 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.FactionTreaty
+@{
+    FactionTreaty tr = Model;
+}
+<div style="border: 1px solid thistle">
+    <span>@Html.PrintFaction(tr.FactionByProposingFactionID) + @Html.PrintFaction(tr.FactionByAcceptingFactionID)</span><br/>
+    @if (tr.TreatyState == TreatyState.Accepted || tr.TreatyState == TreatyState.Suspended) {
+        <span>Signed by @Html.PrintAccount(tr.AccountByProposingAccountID) and @Html.PrintAccount(tr.AccountByAcceptedAccountID)</span>
+    }
+    else if (tr.TreatyState == TreatyState.Proposed) {
+        <span>DRAFT PROPOSAL by @Html.PrintAccount(tr.AccountByProposingAccountID)</span>
+    }
+    <br/>
+    @if (tr.TreatyState == TreatyState.Suspended) {
+        <span nicetitle="Faction cannot fulfil obligations, treaty is suspended"><b>SUSPENDED</b></span>
+    }
+    <br/>
+    @if (tr.TurnsRemaining != null) {
+        <span>Signed for @tr.TurnsTotal, valid for @tr.TurnsRemaining next turns</span>
+        <br/>
+    }
+    @foreach (TreatyEffect ef in tr.TreatyEffects) {
+        @Html.DisplayFor(x => ef)<br/>
+    }
+    <br/>
+    @if (tr.CanCancel(Global.Account)) {
+        <span>
+            @Html.ActionLink("(cancel treaty)", "CancelTreaty", "Factions", new { id = tr.FactionTreatyID }, null) | 
+            @if (tr.TreatyState == TreatyState.Proposed) {
+                @Html.ActionLink("(counter proposal)", "CounterProposal", "Factions", new { id = tr.FactionTreatyID }, null) @:&nbsp;|&nbsp;
+                if (tr.CanAccept(Global.Account)) {
+                    @Html.ActionLink("(accept)", "AcceptTreaty","Factions", new {id = tr.FactionTreatyID}, new{@class="delete"})
+                    
+                }
+            }
+        </span>
+        <br/>
+    }
+    <br/>
+</div>

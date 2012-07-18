@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
       <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -10,6 +9,7 @@
       <Association Name="Event_EventAccount" Member="EventAccounts" ThisKey="EventID" OtherKey="EventID" Type="EventAccount" />
       <Association Name="Event_EventPlanet" Member="EventPlanets" ThisKey="EventID" OtherKey="EventID" Type="EventPlanet" />
       <Association Name="Event_EventSpringBattle" Member="EventSpringBattles" ThisKey="EventID" OtherKey="EventID" Type="EventSpringBattle" />
+      <Association Name="Event_EventFaction" Member="EventFactions" ThisKey="EventID" OtherKey="EventID" Type="EventFaction" />
     </Type>
   </Table>
   <Table Name="dbo.Mission" Member="Missions">
@@ -569,7 +569,7 @@
       <Association Name="Planet_EventPlanet" Member="EventPlanets" ThisKey="PlanetID" OtherKey="PlanetID" Type="EventPlanet" />
       <Association Name="Planet_PlanetOwnerHistory" Member="PlanetOwnerHistories" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetOwnerHistory" />
       <Association Name="Planet_PlanetStructure" Member="PlanetStructures" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetStructure" />
-      <Association Name="Planet_TreatyEffectPlanet" Member="TreatyEffectPlanets" ThisKey="PlanetID" OtherKey="PlanetID" Type="TreatyEffectPlanet" />
+      <Association Name="Planet_TreatyEffect" Member="TreatyEffects" ThisKey="PlanetID" OtherKey="PlanetID" Type="TreatyEffect" />
       <Association Name="Planet_PlanetFaction" Member="PlanetFactions" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetFaction" />
       <Association Name="Account_Planet" Member="Account" ThisKey="OwnerAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
       <Association Name="Galaxy_Planet" Member="Galaxy" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Galaxy" IsForeignKey="true" />
@@ -756,7 +756,7 @@
       <Column Name="Name" Type="System.String" DbType="nvarchar(200) NOT NULL" CanBeNull="false" />
       <Column Name="Shortcut" Type="System.String" DbType="nvarchar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Color" Type="System.String" DbType="varchar(20) NOT NULL" CanBeNull="false" />
-      <Column Name="IsDeleted" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="Metal" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Dropships" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Bombers" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
@@ -773,6 +773,7 @@
       <Association Name="Faction_TreatyEffect1" Member="TreatyEffectsByReceivingFactionID" ThisKey="FactionID" OtherKey="ReceivingFactionID" Type="TreatyEffect" />
       <Association Name="Faction_AccountRole" Member="AccountRoles" ThisKey="FactionID" OtherKey="FactionID" Type="AccountRole" />
       <Association Name="Faction_PlanetFaction" Member="PlanetFactions" ThisKey="FactionID" OtherKey="FactionID" Type="PlanetFaction" />
+      <Association Name="Faction_EventFaction" Member="EventFactions" ThisKey="FactionID" OtherKey="FactionID" Type="EventFaction" />
     </Type>
   </Table>
   <Table Name="dbo.Punishment" Member="Punishments">
@@ -866,9 +867,10 @@
       <Column Name="ProposingAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="AcceptingFactionID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="AcceptedAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="IsEnacted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="IsSuspended" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="TurnsRemaining" Member="TurnsRemaining" Type="System.Int32" DbType="int" IsDbGenerated="false" CanBeNull="true" IsPrimaryKey="false" />
+      <Column Name="TurnsRemaining" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="TreatyState" Type="TreatyState" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="TurnsTotal" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Association Name="FactionTreaty_TreatyEffect" Member="TreatyEffects" ThisKey="FactionTreatyID" OtherKey="FactionTreatyID" Type="TreatyEffect" />
       <Association Name="Faction_FactionTreaty" Member="FactionByProposingFactionID" ThisKey="ProposingFactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
       <Association Name="Faction_FactionTreaty1" Member="FactionByAcceptingFactionID" ThisKey="AcceptingFactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
       <Association Name="Account_FactionTreaty" Member="AccountByProposingAccountID" ThisKey="ProposingAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
@@ -878,22 +880,17 @@
   <Table Name="dbo.TreatyEffect" Member="TreatyEffects">
     <Type Name="TreatyEffect">
       <Column Name="TreatyEffectID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FactionTreatyID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="EffectTypeID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="GivingFactionID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ReceivingFactionID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="[Value]" Member="Value" Type="System.Double" DbType="float" CanBeNull="true" />
-      <Association Name="TreatyEffect_TreatyEffectPlanet" Member="TreatyEffectPlanets" ThisKey="TreatyEffectID" OtherKey="TreatyEffectID" Type="TreatyEffectPlanet" />
+      <Column Name="PlanetID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="Faction_TreatyEffect" Member="FactionByGivingFactionID" ThisKey="GivingFactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
       <Association Name="Faction_TreatyEffect1" Member="FactionByReceivingFactionID" ThisKey="ReceivingFactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
       <Association Name="TreatyEffectType_TreatyEffect" Member="TreatyEffectType" ThisKey="EffectTypeID" OtherKey="EffectTypeID" Type="TreatyEffectType" IsForeignKey="true" />
-    </Type>
-  </Table>
-  <Table Name="dbo.TreatyEffectPlanet" Member="TreatyEffectPlanets">
-    <Type Name="TreatyEffectPlanet">
-      <Column Name="TreatyEffectID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Association Name="Planet_TreatyEffectPlanet" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
-      <Association Name="TreatyEffect_TreatyEffectPlanet" Member="TreatyEffect" ThisKey="TreatyEffectID" OtherKey="TreatyEffectID" Type="TreatyEffect" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="FactionTreaty_TreatyEffect" Member="FactionTreaty" ThisKey="FactionTreatyID" OtherKey="FactionTreatyID" Type="FactionTreaty" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Planet_TreatyEffect" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.AccountRole" Member="AccountRoles">
@@ -997,6 +994,14 @@
       <Column Name="Dropships" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Planet_PlanetFaction" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Faction_PlanetFaction" Member="Faction" ThisKey="FactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EventFaction" Member="EventFactions">
+    <Type Name="EventFaction">
+      <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="FactionID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Faction_EventFaction" Member="Faction" ThisKey="FactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
+      <Association Name="Event_EventFaction" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
 </Database>

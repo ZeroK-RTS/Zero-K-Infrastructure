@@ -368,6 +368,9 @@
     <Content Include="Views\Factions\FactionBox.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\AccountRole.cshtml" />
     <Content Include="Views\Factions\FactionTooltip.cshtml" />
+    <Content Include="Views\Factions\FactionTreatyDefinition.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\TreatyEffect.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\FactionTreaty.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

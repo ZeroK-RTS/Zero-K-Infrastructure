@@ -181,6 +181,7 @@ namespace ZeroKWeb.Controllers
                                    int? accountID,
                                    int? springBattleID,
                                    int? clanID,
+                                    int? factionID,
                                    string filter,
                                    int pageSize = 0,
                                    int page = 0,
@@ -198,6 +199,7 @@ namespace ZeroKWeb.Controllers
             if (accountID.HasValue) res = res.Where(x => x.EventAccounts.Any(y => y.AccountID == accountID));
             if (clanID.HasValue) res = res.Where(x => x.EventClans.Any(y => y.ClanID == clanID));
             if (springBattleID.HasValue) res = res.Where(x => x.EventSpringBattles.Any(y => y.SpringBattleID == springBattleID));
+            if (factionID.HasValue) res = res.Where(x => x.EventFactions.Any(y => y.FactionID == factionID));
             if (!string.IsNullOrEmpty(filter)) res = res.Where(x => x.Text.Contains(filter));
             res = res.OrderByDescending(x => x.EventID);
 

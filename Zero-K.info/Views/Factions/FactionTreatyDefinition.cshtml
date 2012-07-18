@@ -1,0 +1,45 @@
+﻿@using ZkData
+@model ZkData.FactionTreaty
+@{
+    FactionTreaty tr = Model;
+
+}
+
+
+<form method="POST" action="@Url.Action("ModifyTreaty")">
+
+    <input type="hidden" name="factionTreatyID" value="@tr.FactionTreatyID"/>
+    <input type="hidden" name="delete" id="delete"/>
+    <table>
+        <tr><td>Proposing faction:</td><td>@Html.PrintFaction(tr.FactionByProposingFactionID)</td></tr>
+        <tr><td>Proposing diplomat:</td><td>@Html.PrintAccount(tr.AccountByProposingAccountID)</td></tr>
+        <tr><td>Accepting faction:</td><td>
+                                           @if (tr.FactionByAcceptingFactionID == null) {
+                                               @Html.DropDownList("acceptingFactionID", Html.GetFactionItems(tr.AcceptingFactionID, x => x.FactionID != tr.ProposingFactionID))
+                                           }
+                                           else {
+                                               <input type="hidden" name="acceptingFactionID" value="@tr.AcceptingFactionID"/>
+                                               @Html.PrintFaction(tr.FactionByAcceptingFactionID)
+                                           }
+                                       </td></tr>
+        <tr><td>Treaty duration (turns):</td><td><span nicetitle="Empty = can be cancelled by any time">@Html.Editor("turns", tr.TurnsRemaining)</span></td></tr>
+        @if (tr.TreatyEffects != null) {
+            foreach (TreatyEffect f in tr.TreatyEffects) {
+                <tr><td>@Html.DisplayFor(x => f)</td><td><button onclick=" $(this).closest('form').find('#delete').val('@f.TreatyEffectID'); $(this).closest('form').submit(); return false; "><img src="/Img/delete_icon.png"/></button></td></tr>
+            }
+        }
+        <tr><td>Add effect:</td><td>
+                                    <select name="isReverse">
+                                        <option value="false">Us to them</option>
+                                        <option value="true">Them to us</option>
+                                    </select>
+                                    @Html.DropDownList("effectTypeID", new ZkDataContext().TreatyEffectTypes.Select(x => new SelectListItem { Text = x.Name, Value = x.EffectTypeID.ToString() })) 
+                                    Value (if applicable): @Html.TextBox("effectValue")
+                                    Planet (if applicable): @Html.DropDownList("planetID", new ZkDataContext().Galaxies.First(x => x.IsDefault).Planets.OrderBy(x => x.Name).Select(x => new SelectListItem { Text = x.Name, Value = x.PlanetID.ToString() }))
+                                    <input type="submit" value="add" name="add"/>
+                                </td>
+        </tr>
+           
+    </table>
+    <input type="submit" value="Submit offer" name="propose" class="delete"/>
+</form>

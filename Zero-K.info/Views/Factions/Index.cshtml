@@ -5,7 +5,7 @@
     Page.Title = "Factions";
 }
 <h3>Read more about <a href="/Wiki/PlanetWarsFactions">history of factions</a></h3>
-
+<br/>
 @foreach (var f in new ZkDataContext().Factions.OrderBy(x => x.Planets.Count()))
 {
     <span>

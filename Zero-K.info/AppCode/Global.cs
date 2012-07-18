@@ -169,7 +169,12 @@ namespace ZeroKWeb
                 {
                     var fac = (Faction)arg;
                     args[i] = HtmlHelperExtensions.PrintFaction(null, fac, false);
-                    
+                    if (fac.FactionID != 0) ev.EventFactions.Add(new EventFaction() { FactionID = fac.FactionID });
+                    else ev.EventFactions.Add(new EventFaction() { Faction = fac});
+                }
+                else if (arg is FactionTreaty) {
+                    var tr = (FactionTreaty)arg;
+                    args[i] = HtmlHelperExtensions.PrintFactionTreaty(null, tr);
                 }
                 else if (arg is RoleType) {
                     var rt = (RoleType)arg;

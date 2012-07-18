@@ -108,9 +108,9 @@ namespace Fixer
 
         //PickHomworldOwners();
 
-		//PurgeGalaxy(21, false);
-        //RandomizeMaps(21);
-		//GenerateStructures(21);
+		PurgeGalaxy(9, false);
+        RandomizeMaps(9);
+		GenerateStructures(9);
 
 			//AddWormholes();
         //TestPrediction();
@@ -216,7 +216,6 @@ namespace Fixer
                 db.ExecuteCommand("update account set pwbombersproduced=0, pwbombersused=0, pwdropshipsproduced=0, pwdropshipsused=0, pwmetalproduced=0, pwmetalused=0");
                 if (resetclans) db.ExecuteCommand("update account set clanid=null");
 				db.ExecuteCommand("delete from event");
-				db.ExecuteCommand("delete from planetinfluencehistory");
 				db.ExecuteCommand("delete from planetownerhistory");
                 db.ExecuteCommand("delete from planetstructure");
                 db.ExecuteCommand("delete from planetfaction");
@@ -324,7 +323,7 @@ namespace Fixer
 				//else 
 				//if (rand.Next(10)<8) 
 					p.AddStruct(wormhole);
-					p.AddStruct(militia);
+					//p.AddStruct(militia);
 
 				//if (rand.Next(30) ==0) p.AddStruct(mine3);
 				//else if (rand.Next(20)==0) p.AddStruct(mine2);
