@@ -33,24 +33,24 @@ namespace ZeroKLobby.Notifications
             int xOffset = 0, yOffset = 0;
             foreach (var mode in Enum.GetValues(typeof(AutohostMode)).OfType<AutohostMode>().Where(x => x != AutohostMode.None))
             {
-                xOffset = 0 + (cnt/2)*210;
+                xOffset = 0 + (cnt/2)*180;
                 yOffset = 0 + (cnt%2)*21;
                 var item = new InfoItems();
                 Items.Add(mode, item);
 
                 Controls.Add(new Label()
-                             { Left = xOffset + 0, Width = 120, TextAlign = ContentAlignment.TopRight, Top = yOffset, Text = mode.Description() });
-                item.ComboBox = new ComboBox() { Left = xOffset + 125, Width = 60, Top = yOffset, DropDownStyle = ComboBoxStyle.DropDownList };
+                             { Left = xOffset + 0, Width = 100, TextAlign = ContentAlignment.TopRight, Top = yOffset, Text = mode.Description() });
+                item.ComboBox = new ComboBox() { Left = xOffset + 100, Width = 45, Top = yOffset, DropDownStyle = ComboBoxStyle.DropDownList };
                 foreach (var pref in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderByDescending(z => (int)z)) item.ComboBox.Items.Add(new CbItem() { Value = pref });
                 item.ComboBox.SelectedValueChanged += (sender, args) => { if (!suppressChangeEvent) SendMyConfig(true); };
 
                 Program.ToolTip.SetText(item.ComboBox,info);
 
                 Controls.Add(item.ComboBox);
-                item.Label = new Label() { Left = xOffset + 185, Top = yOffset, Width = 25 };
+                item.Label = new Label() { Left = xOffset + 145, Top = yOffset, Width = 35 };
                 Controls.Add(item.Label);
 
-                Program.ToolTip.SetText(item.Label,"How many waiting people are OK with that type of game");
+                Program.ToolTip.SetText(item.Label,"How many waiting people + how many playing");
 
                 cnt++;
             }
@@ -83,7 +83,7 @@ namespace ZeroKLobby.Notifications
                 foreach (var entry in state.ModeCounts)
                 {
                     InfoItems item;
-                    if (Items.TryGetValue(entry.Mode, out item)) item.Label.Text = "(" + entry.Count.ToString() + ")";
+                    if (Items.TryGetValue(entry.Mode, out item)) item.Label.Text = string.Format("({0}+{1})", entry.Count, entry.Playing);
                 }
             };
 

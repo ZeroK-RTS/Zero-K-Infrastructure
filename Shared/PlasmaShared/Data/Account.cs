@@ -252,13 +252,13 @@ namespace ZkData
 
     public enum GamePreference
     {
-        [Description("0: Never")]
+        [Description("Never")]
         Never = -2,
-        [Description("+1: Ok")]
+        [Description("Ok")]
         Ok = -1,
-        [Description("+2: Like")]
+        [Description("Like")]
         Like = 0,
-        [Description("+3: Best")]
+        [Description("Best")]
         Best = 1
     }
 
