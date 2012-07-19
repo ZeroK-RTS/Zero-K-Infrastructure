@@ -473,16 +473,8 @@ namespace LobbyClient
         }
 
 
-        public void JoinChannel(string channelName)
+        public void JoinChannel(string channelName, string key=null)
         {
-            if (!string.IsNullOrEmpty(channelName)) JoinChannel(channelName, null);
-        }
-
-
-        public void JoinChannel(string channelName, string key)
-        {
-            if (con == null) throw new TasClientException("Not connected");
-
             if (!String.IsNullOrEmpty(key)) con.SendCommand("JOIN", channelName, key);
             else con.SendCommand("JOIN", channelName);
         }

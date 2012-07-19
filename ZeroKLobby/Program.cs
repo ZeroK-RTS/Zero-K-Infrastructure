@@ -2,6 +2,7 @@ using System;
 using System.Collections.Specialized;
 using System.Deployment.Application;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -266,13 +267,6 @@ namespace ZeroKLobby
                         }
                     };
 
-                TasClient.MyExtensionsChanged += (sender, eventArgs) =>
-                    {
-                        var u = eventArgs.Data;
-                        if (!string.IsNullOrEmpty(u.Clan)) TasClient.JoinChannel(u.Clan);
-                        if (!string.IsNullOrEmpty(u.Faction)) TasClient.JoinChannel(u.Faction);
-                        if (!string.IsNullOrEmpty(TasClient.MyUser.Country) && TasClient.MyUser.Country != "??") TasClient.JoinChannel(TasClient.MyUser.Country);
-                    };
 
                 ConnectBar = new ConnectBar(TasClient);
                 ModStore = new ModStore();

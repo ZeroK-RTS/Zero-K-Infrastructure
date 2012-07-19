@@ -323,6 +323,8 @@ namespace ZeroKLobby.MicroLobby
             AddBattleControl();
             foreach (var friendName in Program.FriendManager.Friends) CreatePrivateMessageControl(friendName);
             foreach (var channel in Program.AutoJoinManager.Channels) Program.TasClient.JoinChannel(channel, Program.AutoJoinManager.GetPassword(channel));
+            var lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+            if (!string.IsNullOrEmpty(lang)) Program.TasClient.JoinChannel(lang);
         }
 
         void TasClient_UserAdded(object sender, EventArgs<User> e)
