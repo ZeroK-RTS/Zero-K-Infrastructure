@@ -29,7 +29,7 @@ namespace ZeroKWeb.Controllers
                 var damages = db.Damages.Where(x => gameIds.Contains(x.GameID));
                 var totalSpending = units.Where(x=>x.Unit1== unit).Sum(x => (double?)x.Cost*x.Created);
                 if (totalSpending == 0) continue;
-                if (m.Count() < 200) continue;
+                if (m.Count() < 100) continue;
                 ;
                 var unitCostHealth = units.GroupBy(x => x.Unit1).ToDictionary(x => x.Key, x => x.Select(y => (double?)y.Cost/y.Health).FirstOrDefault());
 
