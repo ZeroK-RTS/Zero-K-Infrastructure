@@ -99,7 +99,7 @@ namespace ZeroKWeb.Controllers
         public ActionResult JoinClan(int id, string password)
         {
             var db = new ZkDataContext();
-            var clan = db.Clans.Single(x => x.ClanID == id);
+            var clan = db.Clans.Single(x => x.ClanID == id && !x.IsDeleted);
             if (clan.CanJoin(Global.Account))
             {
                 if (!string.IsNullOrEmpty(clan.Password) && clan.Password != password) return View(clan.ClanID);
@@ -181,10 +181,9 @@ namespace ZeroKWeb.Controllers
                     var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                     acc.ClanID = clan.ClanID;
                     acc.FactionID = clan.FactionID;
-                    var leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople);
-                    if (leader != null) acc.AccountRolesByAccountID.Add(new AccountRole(){AccountID =  acc.AccountID, Clan = clan, RoleType = leader, Inauguration = DateTime.UtcNow});
+                    var leader = db.RoleTypes.FirstOrDefault(x => x.RightKickPeople && x.IsClanOnly);
+                    if (leader != null) db.AccountRoles.InsertOnSubmit(new AccountRole(){AccountID =  acc.AccountID, Clan = clan, RoleType = leader, Inauguration = DateTime.UtcNow});
 
-                    db.SubmitChanges();
                     db.Events.InsertOnSubmit(Global.CreateEvent("New clan {0} formed by {1}", clan, acc));
                     db.SubmitChanges();
                 }
