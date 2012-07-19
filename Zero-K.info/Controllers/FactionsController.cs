@@ -205,5 +205,17 @@ namespace ZeroKWeb.Controllers
             return Content("Cannot cancel");
 
         }
+
+        public ActionResult SetTopic(int factionID, string secretTopic) {
+            var db = new ZkDataContext();
+            var fac = db.Factions.Single(x => x.FactionID == factionID);
+            if (Global.Account.FactionID == fac.FactionID && Global.Account.HasFactionRight(x=>x.RightEditTexts)) {
+                fac.SecretTopic = secretTopic;
+                db.SubmitAndMergeChanges();
+                Global.Nightwatch.Tas.AdminSetTopic(fac.Shortcut,secretTopic);
+                return RedirectToAction("Detail", new { id = fac.FactionID });
+            }
+            return Content("Denied");
+        }
     }
 }

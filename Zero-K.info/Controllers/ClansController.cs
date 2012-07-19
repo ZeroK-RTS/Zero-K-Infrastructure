@@ -189,6 +189,8 @@ namespace ZeroKWeb.Controllers
                     db.SubmitChanges();
                 }
                 scope.Complete();
+                Global.Nightwatch.Tas.AdminSetTopic(clan.Shortcut,clan.SecretTopic);
+                Global.Nightwatch.Tas.AdminSetChannelPassword(clan.Shortcut, clan.Password);
             }
             return RedirectToAction("Detail", new { id = clan.ClanID });
         }

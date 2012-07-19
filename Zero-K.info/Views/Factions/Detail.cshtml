@@ -29,6 +29,19 @@
 
 </table>
 
+@if (Global.Account != null && Global.FactionID == f.FactionID) {
+    <b>Secret topic:</b><br />
+    if (Global.Account.HasFactionRight(x=>x.RightEditTexts)) {
+        <form action="@Url.Action("SetTopic", new{factionID = f.FactionID})" method="POST">
+            @Html.TextArea("secretTopic", f.SecretTopic, 8,80,null)
+            <input type="submit"/>
+        </form>
+    } else {
+        @Html.BBCode(f.SecretTopic)
+    }
+
+}
+
 <h3>Faction roles</h3>
 @foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => !x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == f.FactionID)).OrderBy(x => x.DisplayOrder)) {
     @Html.PrintRoleType(rt)

@@ -66,7 +66,7 @@ namespace NightWatch
                         {
                             this.client.Extensions.PublishAccountData(acc);
                             if (acc.SpringieLevel > 1 || acc.IsZeroKAdmin) client.ForceJoinChannel(e.Data.Name, ModeratorChannel);
-                            if (acc.Clan != null) client.ForceJoinChannel(e.Data.Name, acc.Clan.Shortcut);
+                            if (acc.Clan != null) client.ForceJoinChannel(e.Data.Name, acc.Clan.Shortcut, acc.Clan.Password);
                             if (acc.Faction != null) client.ForceJoinChannel(e.Data.Name, acc.Faction.Shortcut);
                         }
                         client.RequestUserIP(e.Data.Name);

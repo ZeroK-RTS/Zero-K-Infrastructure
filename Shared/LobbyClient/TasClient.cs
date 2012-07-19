@@ -489,6 +489,18 @@ namespace LobbyClient
             con.SendCommand("KICKUSER", username,reason);
         }
 
+        public void AdminSetTopic(string channel, string topic) {
+            Say(SayPlace.User, "ChanServ", string.Format("!topic #{0} {1}", channel, topic.Replace("\n","\\n")),false);
+        }
+
+        public void AdminSetChannelPassword(string channel, string password) {
+            if (string.IsNullOrEmpty(password) || password=="*") {
+                Say(SayPlace.User, "ChanServ",string.Format("!lock #{0} {1}", channel, password),false);    
+            } else {
+                Say(SayPlace.User, "ChanServ", string.Format("!unlock #{0}", channel), false);
+            }
+        }
+
         public void LeaveBattle()
         {
             if (MyBattle != null)
