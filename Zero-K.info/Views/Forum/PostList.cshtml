@@ -6,12 +6,12 @@
     <table width='100%'>
         <tr class="forumRow">
             <td width='222px' class="forumPostHead" valign="top" >
-                @Html.PrintAccount(p.Account)<br />
                 <table>
                     <tr>
                         <td>@Html.AccountAvatar(p.Account)
                         </td>
                         <td valign='top'>
+                            @Html.PrintAccount(p.Account)
                             <small>@p.Created.ToAgoString()
                                 @if (p.ForumPostEdits.Any())
                                 {
@@ -19,18 +19,15 @@
                                     <br/>
                                     <a href="@Url.Action("EditHistory", new { forumPostID = p.ForumPostID })">(edited @lastEdit.EditTime.ToAgoString())</a>
                                 }
-                            </small>
-
-                    <br/>
-                    @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
-                    {
-                        <a nicetitle='Edit the post' href='@Url.Action("NewPost", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22"/></a>
-                    }
-
-                    @if (Global.IsZeroKAdmin)
-                    {
-                         <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
-                    }
+                            </small><br/>
+                            @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
+                            {
+                                <a nicetitle='Edit the post' href='@Url.Action("NewPost", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22"/></a>
+                            }
+                            @if (Global.IsZeroKAdmin)
+                            {
+                                <a nicetitle='Delete the post' href='@Url.Action("DeletePost", "Forum", new { postID = p.ForumPostID })' class='delete'><img src="/img/delete_trashcan.png" height="22"/></a>
+                            }
                         </td>
                     </tr>
 
