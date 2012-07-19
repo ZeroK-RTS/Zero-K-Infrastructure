@@ -23,6 +23,7 @@ namespace LobbyClient
             public class ModePair
             {
                 public int Count;
+                public int Playing;
                 public AutohostMode Mode;
             }
         }

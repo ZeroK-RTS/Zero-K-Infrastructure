@@ -185,7 +185,7 @@ namespace ZeroKWeb.SpringieInterface
             db.SubmitChanges();
             */
 
-            SetPriorities(bins, juggledAccounts, manuallyPrefered);
+            SetPriorities(bins, juggledAccounts, manuallyPrefered, autohosts);
 
             sb.AppendLine("Original bins:");
             PrintBins(juggledAccounts, bins, sb);
@@ -317,7 +317,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        private static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts, Dictionary<int, AutohostMode> manuallyPrefered) {
+        private static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts, Dictionary<int, AutohostMode> manuallyPrefered, List<JugglerAutohost> autohosts) {
             foreach (var b in bins) {
                 b.PlayerPriority.Clear();
 
@@ -346,9 +346,12 @@ namespace ZeroKWeb.SpringieInterface
 
             var state = new ProtocolExtension.JugglerState();
             state.TotalPlayers = juggledAccounts.Count;
-            foreach (var grp in
-                bins.GroupBy(x => x.Mode).Select(x => new { Mode = x.Key, Count = x.Sum(y => y.PlayerPriority.Count(z => z.Value > (double)GamePreference.Never)) })) {
-                state.ModeCounts.Add(new ProtocolExtension.JugglerState.ModePair() { Mode = grp.Mode, Count = grp.Count });
+            foreach (AutohostMode mode in Enum.GetValues(typeof(AutohostMode))) {
+                var ingame =
+                    autohosts.Where(x => x.RunningGameStartContext != null && x.LobbyContext.GetConfig().AutohostMode == mode).Sum(
+                        x => (int?)x.RunningGameStartContext.Players.Count(y => !y.IsSpectator))??0;
+                var waiting = bins.Where(x => x.Mode == mode).Sum(y => (int?)y.PlayerPriority.Count(z => z.Value > (double)GamePreference.Never))??0;
+                state.ModeCounts.Add(new ProtocolExtension.JugglerState.ModePair(){ Mode = mode, Count = waiting, Playing = ingame});
             }
 
             Global.Nightwatch.Tas.Extensions.PublishJugglerState(state);
