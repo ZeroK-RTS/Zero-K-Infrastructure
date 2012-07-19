@@ -141,6 +141,7 @@ WhiteListAdditionalPlayers = 1
 WindowPosX = 0
 WindowPosY = 0
 WindowBorderless = 1
+WindowState = 0
 WindowedEdgeMove = 1
 name = UnnamedPlayer
 snd_airAbsorption = 0.1

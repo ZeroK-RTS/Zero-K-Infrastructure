@@ -640,8 +640,7 @@ namespace LobbyClient
             }
         }
 
-        public void ForceJoinChannel(string user, string channel, string password= null)
-        {
+        public void ForceJoinChannel(string user, string channel, string password= null) {
             if (string.IsNullOrEmpty(password)) con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1}", user,channel));
             else con.SendCommand(string.Format("FORGEREVERSEMSG {0} JOIN {1} {2}", user,channel,password));
         }
@@ -849,12 +848,14 @@ namespace LobbyClient
 
                     case "JOIN": // channel joined
                     {
-                        if (!JoinedChannels.ContainsKey(args[0])) JoinedChannels.Add(args[0], Channel.Create(args[0]));
-                        var cancelEventArgs = new CancelEventArgs<TasEventArgs>(new TasEventArgs(args));
-                        PreviewChannelJoined(this, cancelEventArgs);
-                        if (!cancelEventArgs.Cancel)
-                        {
-                            ChannelJoined(this, new TasEventArgs(args));
+                        if (!JoinedChannels.ContainsKey(args[0])) {
+                            JoinedChannels.Add(args[0], Channel.Create(args[0]));
+
+                            var cancelEventArgs = new CancelEventArgs<TasEventArgs>(new TasEventArgs(args));
+                            PreviewChannelJoined(this, cancelEventArgs);
+                            if (!cancelEventArgs.Cancel) {
+                                ChannelJoined(this, new TasEventArgs(args));
+                            }
                         }
                         break;
                     }

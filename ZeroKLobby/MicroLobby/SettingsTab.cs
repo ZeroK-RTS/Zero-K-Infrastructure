@@ -63,6 +63,7 @@ namespace ZeroKLobby.MicroLobby
 	    public void SaveConfig() {
             Program.EngineConfigurator.SetConfigValue("Fullscreen", cbWindowed.Checked?"0":"1");
             Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
+            Program.EngineConfigurator.SetConfigValue("WindowState", "0"); // neded for borderless
             Program.EngineConfigurator.SetConfigValue("MiniMapDrawProjectiles", cbMinimapProjectiles.Checked ? "1":"0");
             Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
             Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);

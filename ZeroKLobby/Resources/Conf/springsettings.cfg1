@@ -140,6 +140,7 @@ WhiteListAdditionalPlayers = 1
 WindowPosX = 0
 WindowPosY = 0
 WindowBorderless = 1
+WindowState = 0
 WindowPosX = 32
 WindowPosY = 32
 WindowState = 0
