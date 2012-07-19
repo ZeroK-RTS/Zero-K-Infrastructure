@@ -5,107 +5,127 @@ using System.Linq;
 using System.Windows.Forms;
 using LobbyClient;
 using PlasmaShared;
-using ZeroKLobby.MicroLobby;
 using ZkData;
 
 namespace ZeroKLobby.Notifications
 {
     public partial class JugglerBar: UserControl, INotifyBar
     {
-        public const bool AutoPopup = false;
+        public const bool AutoActivate = true;
 
         readonly Dictionary<AutohostMode, InfoItems> Items = new Dictionary<AutohostMode, InfoItems>();
         readonly TasClient client;
+        bool _isActive;
         ProtocolExtension.JugglerState lastState;
-        bool suppressChangeEvent = false;
-        public NotifyBarContainer BarContainer { get; private set; }
+        bool suppressChangeEvent;
 
-        public JugglerBar(TasClient client)
-        {
+        public JugglerBar(TasClient client) {
             InitializeComponent();
             this.client = client;
 
-            var info = "Set your game type preferences for QuickMatch. System can move you to other room, if you like that type more than type of currently joined room";
+            string info =
+                "Set your game type preferences for QuickMatch. System can move you to other room, if you like that type more than type of currently joined room";
 
-            Program.ToolTip.SetText(this,info);
+            Program.ToolTip.SetText(this, info);
+            Program.ToolTip.SetText(lbInfo,"QuickMatch will automatically find you a room of type you like most :)");
 
-            var cnt = 0;
+            int cnt = 0;
+
             int xOffset = 0, yOffset = 0;
-            foreach (var mode in Enum.GetValues(typeof(AutohostMode)).OfType<AutohostMode>().Where(x => x != AutohostMode.None))
-            {
-                xOffset = 0 + (cnt/2)*180;
+            foreach (AutohostMode mode in Enum.GetValues(typeof(AutohostMode)).OfType<AutohostMode>().Where(x => x != AutohostMode.None)) {
+                xOffset = 70 + (cnt/2)*190;
                 yOffset = 0 + (cnt%2)*21;
                 var item = new InfoItems();
                 Items.Add(mode, item);
 
-                Controls.Add(new Label()
+                Controls.Add(new Label
                              { Left = xOffset + 0, Width = 100, TextAlign = ContentAlignment.TopRight, Top = yOffset, Text = mode.Description() });
-                item.ComboBox = new ComboBox() { Left = xOffset + 100, Width = 45, Top = yOffset, DropDownStyle = ComboBoxStyle.DropDownList };
-                foreach (var pref in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderByDescending(z => (int)z)) item.ComboBox.Items.Add(new CbItem() { Value = pref });
+                item.ComboBox = new ComboBox { Left = xOffset + 105, Width = 50, Top = yOffset, DropDownStyle = ComboBoxStyle.DropDownList };
+                foreach (GamePreference pref in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderByDescending(z => (int)z)) item.ComboBox.Items.Add(new CbItem { Value = pref });
                 item.ComboBox.SelectedValueChanged += (sender, args) => { if (!suppressChangeEvent) SendMyConfig(true); };
 
-                Program.ToolTip.SetText(item.ComboBox,info);
+                Program.ToolTip.SetText(item.ComboBox, info);
 
                 Controls.Add(item.ComboBox);
-                item.Label = new Label() { Left = xOffset + 145, Top = yOffset, Width = 35 };
+                item.Label = new Label { Left = xOffset + 155, Top = yOffset, Width = 35 };
                 Controls.Add(item.Label);
 
-                Program.ToolTip.SetText(item.Label,"How many waiting people + how many playing");
+                Program.ToolTip.SetText(item.Label, "How many waiting people + how many playing");
 
                 cnt++;
             }
-            
-            client.BattleJoined += (sender, args) =>
+
+            client.BattleJoined += (sender, args) => { if (AutoActivate && args.Data.Founder.IsSpringieManaged) Activate(); };
+
+            client.BattleMyUserStatusChanged += (sender, args) =>
                 {
-                    if (AutoPopup && args.Data.Founder.IsSpringieManaged)
-                    {
-                        Activate();
+                    if (AutoActivate) {
+                        if (client.MyBattleStatus.IsSpectator) {
+                            if (IsActive) Deactivate();
+                        }
+                        else if (client.MyBattle.Founder.IsSpringieManaged && !IsActive) Activate();
                     }
                 };
 
-            client.BattleMyUserStatusChanged += (sender, args) =>
-            {
-                if (AutoPopup) {
-                    if (client.MyBattleStatus.IsSpectator) {
-                        if (Program.NotifySection.Bars.Contains(this)) Deactivate();
-                    }
-                    else {
-                        if (client.MyBattle.Founder.IsSpringieManaged && !Program.NotifySection.Bars.Contains(this)) Activate();
-                    }
-                }
-            };
-
-
             client.Extensions.JugglerStateReceived += (args, state) =>
-            {
-                lastState = state;
-                if (BarContainer != null) BarContainer.btnDetail.Text = "QuickMatch " + state.TotalPlayers + " players";
-                foreach (var entry in state.ModeCounts)
                 {
-                    InfoItems item;
-                    if (Items.TryGetValue(entry.Mode, out item)) item.Label.Text = string.Format("({0}+{1})", entry.Count, entry.Playing);
-                }
-            };
+                    lastState = state;
+                    foreach (ProtocolExtension.JugglerState.ModePair entry in state.ModeCounts) {
+                        InfoItems item;
+                        if (Items.TryGetValue(entry.Mode, out item)) item.Label.Text = string.Format("({0}+{1})", entry.Count, entry.Playing);
+                    }
+                };
 
             client.LoginAccepted += (sender, args) =>
-            {
-                SendMyConfig(false);
-            };
+                {
+                    SendMyConfig(false);
+                    if (!Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
+                };
 
-            client.Extensions.JugglerConfigReceived += (args, config) =>
-            {
-                if (args.UserName == GlobalConst.NightwatchName) UpdateMyConfig(config);
-            };
+            client.Extensions.JugglerConfigReceived += (args, config) => { if (args.UserName == GlobalConst.NightwatchName) UpdateMyConfig(config); };
         }
 
+        public NotifyBarContainer BarContainer { get; private set; }
 
-        public bool IsActive
-        {
-            get { return Program.NotifySection.Bars.Contains(this); }
+
+        public bool IsActive {
+            get { return _isActive; }
+            set {
+                _isActive = value;
+                if (IsActive) {
+                    BarContainer.btnDetail.Image = Resources.spec;
+                    lbInfo.Text = "QuickMatch\nenabled";
+                }
+                else {
+                    BarContainer.btnDetail.Image = Resources.unready;
+                    lbInfo.Text = "QuickMatch\ndisabled";
+                }
+            }
         }
 
-        public void Activate()
-        {
+        #region INotifyBar Members
+
+        public void AddedToContainer(NotifyBarContainer container) {
+            BarContainer = container;
+            container.btnStop.Visible = false;
+        }
+
+        public void CloseClicked(NotifyBarContainer container) {
+            Deactivate();
+        }
+
+        public void DetailClicked(NotifyBarContainer container) {
+            if (IsActive) Deactivate();
+            else Activate();
+        }
+
+        public Control GetControl() {
+            return this;
+        }
+
+        #endregion
+
+        public void Activate() {
             if (!IsActive) SendMyConfig(false, true);
         }
 
@@ -115,40 +135,33 @@ namespace ZeroKLobby.Notifications
         }
 
 
-        private void UpdateMyConfig(ProtocolExtension.JugglerConfig res ) {
+        void UpdateMyConfig(ProtocolExtension.JugglerConfig res) {
             suppressChangeEvent = true;
-            foreach (var entry in res.Preferences)
-            {
+            foreach (ProtocolExtension.JugglerConfig.PreferencePair entry in res.Preferences) {
                 InfoItems item;
-                if (Items.TryGetValue(entry.Mode, out item))
-                {
-                    var cb = item.ComboBox;
+                if (Items.TryGetValue(entry.Mode, out item)) {
+                    ComboBox cb = item.ComboBox;
                     cb.SelectedItem = cb.Items.OfType<CbItem>().FirstOrDefault(x => x.Value == entry.Preference);
                 }
             }
+            IsActive = res.Active;
             suppressChangeEvent = false;
-            if (res.Active && !Program.NotifySection.Bars.Contains(this)) Program.NotifySection.AddBar(this);
-            if (!res.Active && Program.NotifySection.Bars.Contains(this)) Program.NotifySection.RemoveBar(this);
         }
 
 
-        private void SendMyConfig(bool sendPreferences, bool? activate = null)
-        {
+        void SendMyConfig(bool sendPreferences, bool? activate = null) {
             var conf = new ProtocolExtension.JugglerConfig();
-            conf.Active = activate ?? Program.NotifySection.Bars.Contains(this);
-            if (sendPreferences)
-            {
+            conf.Active = activate ?? IsActive;
+            if (sendPreferences) {
                 var prefs = new List<ProtocolExtension.JugglerConfig.PreferencePair>();
-                foreach (var item in Items)
-                {
+                foreach (var item in Items) {
                     var cb = (CbItem)item.Value.ComboBox.SelectedItem;
                     ;
-                    if (cb != null)
-                    {
-                        var preference = cb.Value;
-                        var autohostMode = item.Key;
+                    if (cb != null) {
+                        GamePreference preference = cb.Value;
+                        AutohostMode autohostMode = item.Key;
 
-                        prefs.Add(new ProtocolExtension.JugglerConfig.PreferencePair() { Mode = autohostMode, Preference = preference });
+                        prefs.Add(new ProtocolExtension.JugglerConfig.PreferencePair { Mode = autohostMode, Preference = preference });
                     }
                 }
                 conf.Preferences = prefs;
@@ -156,42 +169,22 @@ namespace ZeroKLobby.Notifications
             client.Extensions.SendMyJugglerConfig(conf);
         }
 
-        public void Deactivate()
-        {
+        public void Deactivate() {
             if (IsActive) SendMyConfig(false, false);
         }
 
-        public void AddedToContainer(NotifyBarContainer container)
-        {
-            BarContainer = container;
-            container.btnDetail.Text = "QuickMatch ";
-            if (lastState != null) container.btnDetail.Text += "("+lastState.TotalPlayers + ")";
-            container.btnDetail.Enabled = false;
-        }
-
-        public void CloseClicked(NotifyBarContainer container)
-        {
-            Deactivate();
-        }
-
-        public void DetailClicked(NotifyBarContainer container)
-        {
-        }
-
-        public Control GetControl()
-        {
-            return this;
-        }
+        #region Nested type: CbItem
 
         public class CbItem
         {
             public GamePreference Value;
 
-            public override string ToString()
-            {
+            public override string ToString() {
                 return Value.Description();
             }
         }
+
+        #endregion
     }
 
     class InfoItems

@@ -38,7 +38,6 @@ namespace ZeroKLobby.Notifications
             this.cbReady = new System.Windows.Forms.CheckBox();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnQuickMatch = new System.Windows.Forms.Button();
             this.battleExtras = new System.Windows.Forms.Button();
             this.picoChat = new ZeroKLobby.MicroLobby.ChatBox();
             ((System.ComponentModel.ISupportInitialize)(this.gameBox)).BeginInit();
@@ -49,7 +48,7 @@ namespace ZeroKLobby.Notifications
             // 
             this.cbSide.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSide.FormattingEnabled = true;
-            this.cbSide.Location = new System.Drawing.Point(74, 1);
+            this.cbSide.Location = new System.Drawing.Point(4, 21);
             this.cbSide.Name = "cbSide";
             this.cbSide.Size = new System.Drawing.Size(64, 21);
             this.cbSide.TabIndex = 4;
@@ -100,7 +99,6 @@ namespace ZeroKLobby.Notifications
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.btnQuickMatch);
             this.panel1.Controls.Add(this.battleExtras);
             this.panel1.Controls.Add(this.cbSide);
             this.panel1.Controls.Add(this.lbPlayers);
@@ -112,16 +110,6 @@ namespace ZeroKLobby.Notifications
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(888, 76);
             this.panel1.TabIndex = 15;
-            // 
-            // btnQuickMatch
-            // 
-            this.btnQuickMatch.Location = new System.Drawing.Point(3, 20);
-            this.btnQuickMatch.Name = "btnQuickMatch";
-            this.btnQuickMatch.Size = new System.Drawing.Size(73, 20);
-            this.btnQuickMatch.TabIndex = 15;
-            this.btnQuickMatch.Text = "QuickMatch";
-            this.btnQuickMatch.UseVisualStyleBackColor = true;
-            this.btnQuickMatch.Click += new System.EventHandler(this.btnQuickMatch_Click);
             // 
             // battleExtras
             // 
@@ -181,7 +169,6 @@ namespace ZeroKLobby.Notifications
 				private System.Windows.Forms.CheckBox cbReady;
 				private System.Windows.Forms.ImageList imageList1;
 				private System.Windows.Forms.Panel panel1;
-				private System.Windows.Forms.Button battleExtras;
-                private System.Windows.Forms.Button btnQuickMatch;
+                private System.Windows.Forms.Button battleExtras;
     }
 }

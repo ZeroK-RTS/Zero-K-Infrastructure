@@ -24,13 +24,13 @@ namespace ZeroKLobby.Notifications
                 if (GetNotifyBarHost(bar) == null) {
                     var barContainer = new NotifyBarContainer(bar);
                     var host = new WindowsFormsHost { Height = barContainer.Height, Child = barContainer };
-                    stackPanel.Children.Add(host);
+                    stackPanel.Children.Insert(0, host);
                 }
 		}
 
 		public void AddBar(Control bar)
 		{
-			if (!stackPanel.Children.Contains(bar)) stackPanel.Children.Add(bar);
+			if (!stackPanel.Children.Contains(bar)) stackPanel.Children.Insert(0, bar);
 		}
 
 		public void RemoveBar(INotifyBar bar)
