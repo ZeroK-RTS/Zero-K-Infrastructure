@@ -64,16 +64,20 @@ namespace ZeroKLobby.MicroLobby
             if (cbWindowed.Checked) {
                 Program.EngineConfigurator.SetConfigValue("Fullscreen", "0");
                 Program.EngineConfigurator.SetConfigValue("WindowBorderless", "0");
+                Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
+                Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);
             } else {
                 Program.EngineConfigurator.SetConfigValue("Fullscreen","0");
                 Program.EngineConfigurator.SetConfigValue("WindowBorderless", "1");
-                Program.EngineConfigurator.SetConfigValue("WindowState", "0"); // neded for borderless
+                Program.EngineConfigurator.SetConfigValue("WindowState", "0");
+                Program.EngineConfigurator.SetConfigValue("WindowPosY", "0");
+                Program.EngineConfigurator.SetConfigValue("WindowPosX", "0");
+                Program.EngineConfigurator.SetConfigValue("XResolution", "0");
+                Program.EngineConfigurator.SetConfigValue("YResolution", "0");
             }
 	        Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
             Program.EngineConfigurator.SetConfigValue("WindowState", "0"); // neded for borderless
             Program.EngineConfigurator.SetConfigValue("MiniMapDrawProjectiles", cbMinimapProjectiles.Checked ? "1":"0");
-            Program.EngineConfigurator.SetConfigValue("XResolution", tbResx.Text);
-            Program.EngineConfigurator.SetConfigValue("YResolution", tbResy.Text);
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
         }
 
