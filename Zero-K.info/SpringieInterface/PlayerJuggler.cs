@@ -79,6 +79,19 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 };
 
+            // if player goes AFK disable his juggler
+            tas.UserStatusChanged += (sender, args) =>
+                {
+                    var user = tas.ExistingUsers[args.ServerParams[0]];
+                    if (user.IsAway) {
+                        var conf = tas.Extensions.GetPublishedConfig(user.Name);
+                        if (conf != null && conf.Active) {
+                            conf.Active = false;
+                            tas.Extensions.PublishPlayerJugglerConfig(conf, user.Name);
+                        }
+                    }
+                };
+
             tas.LoginAccepted += (sender, args) => { tas.JoinChannel("juggler"); };
 
             tas.JoinChannel("juggler");

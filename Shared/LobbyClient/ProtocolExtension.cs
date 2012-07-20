@@ -69,6 +69,11 @@ namespace LobbyClient
 
         readonly Dictionary<string, JugglerConfig> publishedJugglerConfigs = new Dictionary<string, JugglerConfig>();
 
+        public JugglerConfig GetPublishedConfig(string name) {
+            JugglerConfig conf;
+            publishedJugglerConfigs.TryGetValue(name, out conf);
+            return conf;
+        }
 
         readonly TasClient tas;
 
