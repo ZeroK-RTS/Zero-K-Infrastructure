@@ -44,13 +44,13 @@
             // 
             // JugglerBar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.lbInfo);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "JugglerBar";
-            this.Size = new System.Drawing.Size(572, 58);
+            this.Size = new System.Drawing.Size(572, 45);
             this.ResumeLayout(false);
             this.PerformLayout();
 

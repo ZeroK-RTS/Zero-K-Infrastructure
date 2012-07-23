@@ -83,7 +83,7 @@ namespace ZeroKLobby.Notifications
                         if (client.MyBattleStatus.IsSpectator) {
                             if (IsActive) Deactivate();
                         }
-                        else if (client.MyBattle.Founder.IsSpringieManaged && !IsActive) Activate();
+                        //else if (client.MyBattle.Founder.IsSpringieManaged && !IsActive) Activate();
                     }
                 };
 
