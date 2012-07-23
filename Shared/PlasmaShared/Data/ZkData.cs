@@ -49,7 +49,7 @@ namespace ZkData
         public static Action<ZkDataContext> DataContextCreated = context => { };
 
 
-        public ZkDataContext(): this(false) {
+        public ZkDataContext(): this(UseLiveDb) {
             
         }
 
