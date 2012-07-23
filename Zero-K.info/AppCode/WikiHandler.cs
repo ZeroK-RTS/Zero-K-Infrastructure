@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web.Mvc;
 using ZkData;
 
 namespace ZeroKWeb
@@ -64,6 +65,8 @@ namespace ZeroKWeb
             availableLanguages = FixPiece(availableLanguages);
             availableLanguages = String.IsNullOrEmpty(availableLanguages) ? "page doesn't translated" : availableLanguages;
             content = FixPiece(content);
+
+            content = HtmlHelperExtensions.ProcessAtSignTags(content);
 
             string wikiLink = "http://code.google.com/p/zero-k/wiki/" + node + (String.IsNullOrEmpty(language) ? "" : "?wl=" + language);
 

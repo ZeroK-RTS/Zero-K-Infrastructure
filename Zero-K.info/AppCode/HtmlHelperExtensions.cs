@@ -49,28 +49,7 @@ namespace System.Web.Mvc
             if (str == null) return null;
 
 
-            var db = new ZkDataContext();
-            str = Regex.Replace(str, @"@(\w+)", m =>
-            {
-                var val = m.Groups[1].Value;
-                var acc = Account.AccountByName(db, val);
-                if (acc != null) return PrintAccount(null, acc).ToString();
-                var clan = db.Clans.FirstOrDefault(x => x.Shortcut == val);
-                if (clan != null) return PrintClan(null, clan).ToString();
-                var fac = db.Factions.FirstOrDefault(x => x.Shortcut == val);
-                if (fac != null) return PrintFaction(null, fac, false).ToString();
-
-                if (val.StartsWith("b", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    var bid = 0;
-                    if (int.TryParse(val.Substring(1), out bid))
-                    {
-                        var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == bid);
-                        if (bat != null) return PrintBattle(null, bat).ToString();
-                    }
-                }
-                return "@" + val;
-            });
+            str = ProcessAtSignTags(str);
 
             Regex exp;
             // format the bold tags: [b][/b]
@@ -143,6 +122,32 @@ namespace System.Web.Mvc
 
             
             return new MvcHtmlString(str);
+        }
+
+        public static string ProcessAtSignTags(string str) {
+            var db = new ZkDataContext();
+            str = Regex.Replace(str,
+                                @"@([\w\[\]]+)",
+                                m =>
+                                    {
+                                        var val = m.Groups[1].Value;
+                                        var acc = Account.AccountByName(db, val);
+                                        if (acc != null) return PrintAccount(null, acc).ToString();
+                                        var clan = db.Clans.FirstOrDefault(x => x.Shortcut == val);
+                                        if (clan != null) return PrintClan(null, clan).ToString();
+                                        var fac = db.Factions.FirstOrDefault(x => x.Shortcut == val);
+                                        if (fac != null) return PrintFaction(null, fac, false).ToString();
+
+                                        if (val.StartsWith("b", StringComparison.InvariantCultureIgnoreCase)) {
+                                            var bid = 0;
+                                            if (int.TryParse(val.Substring(1), out bid)) {
+                                                var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == bid);
+                                                if (bat != null) return PrintBattle(null, bat).ToString();
+                                            }
+                                        }
+                                        return "@" + val;
+                                    });
+            return str;
         }
 
         public static MvcHtmlString BoolSelect(this HtmlHelper helper, string name, bool? selected, string anyItem)
