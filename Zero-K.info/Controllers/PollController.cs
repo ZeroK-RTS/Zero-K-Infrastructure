@@ -5,7 +5,7 @@ using ZkData;
 
 namespace ZeroKWeb.Controllers
 {
-    public class PollController: Controller
+    public class PollController : Controller
     {
         //
         // GET: /Poll/
@@ -30,24 +30,25 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("UserVotes", new { id = Global.AccountID });
         }
 
-        public static void AutoClosePolls() {
+        public static void AutoClosePolls()
+        {
             var db = new ZkDataContext();
-            foreach (var p in db.Polls.Where(x => x.IsHeadline && x.ExpireBy != null && x.ExpireBy < DateTime.UtcNow && x.RoleTypeID != null).ToList()) {
-                var yes = p.PollVotes.Count(x=>x.PollOption.OptionText=="Yes");
-                var no = p.PollVotes.Count(x=>x.PollOption.OptionText=="No");
+            foreach (var p in db.Polls.Where(x => x.IsHeadline && x.ExpireBy != null && x.ExpireBy < DateTime.UtcNow && x.RoleTypeID != null).ToList())
+            {
+                var yes = p.PollVotes.Count(x => x.PollOption.OptionText == "Yes");
+                var no = p.PollVotes.Count(x => x.PollOption.OptionText == "No");
                 var acc = p.AccountByRoleTargetAccountID;
-                if (yes > no) {
+                if (yes > no)
+                {
                     if (p.RoleIsRemoval)
                     {
-                        var entry = acc.AccountRolesByAccountID.FirstOrDefault(x => x.RoleTypeID == p.RoleTypeID);
-                        if (entry != null)
-                        {
-                            var toDelete = db.AccountRoles.FirstOrDefault(x => x.AccountID == acc.AccountID && x.RoleTypeID == p.RoleTypeID);
-                            db.AccountRoles.DeleteOnSubmit(toDelete);
-                            db.Events.InsertOnSubmit(Global.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no));
-                            
-                            AuthServiceClient.SendLobbyMessage(acc,string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
-                        }
+                        var toDelete = db.AccountRoles.Where(x => x.AccountID == acc.AccountID && x.RoleTypeID == p.RoleTypeID);
+                        db.AccountRoles.DeleteAllOnSubmit(toDelete);
+                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no));
+
+                        db.SubmitAndMergeChanges();
+
+                        AuthServiceClient.SendLobbyMessage(acc, string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
                     }
                     else
                     {
@@ -62,6 +63,7 @@ namespace ZeroKWeb.Controllers
                                 {
                                     previous = entries.First().AccountByAccountID;
                                     db.AccountRoles.DeleteAllOnSubmit(entries);
+                                    db.SubmitAndMergeChanges();
                                 }
                             }
 
@@ -90,15 +92,15 @@ namespace ZeroKWeb.Controllers
                                                    yes,
                                                    no));
 
-                             AuthServiceClient.SendLobbyMessage(acc, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
+                            AuthServiceClient.SendLobbyMessage(acc, string.Format("Congratulations!! You were elected into a function of {0} by a vote", p.RoleType.Name));
                         }
                     }
                 }
-                
+
                 p.IsHeadline = false;
                 db.Polls.DeleteOnSubmit(p);
             }
-            db.SubmitChanges();
+            db.SubmitAndMergeChanges();
         }
 
 
@@ -111,17 +113,21 @@ namespace ZeroKWeb.Controllers
             if (pollActive) return Content("Poll already active, wait until it ends");
 
             var rt = db.RoleTypes.Single(x => x.RoleTypeID == roleTypeID);
-            if (rt.RestrictFactionID != null && rt.RestrictFactionID!= Global.FactionID) throw new ApplicationException("Invalid faction");
+            if (rt.RestrictFactionID != null && rt.RestrictFactionID != Global.FactionID) throw new ApplicationException("Invalid faction");
             if (Global.FactionID == 0) throw new ApplicationException("No faction");
             if (rt.IsClanOnly && Global.ClanID == 0) throw new ApplicationException("No clan");
             if (!rt.IsVoteable) throw new ApplicationException("Cannot be voted");
 
             int targetID = Global.AccountID;
-            if (isRemoval) {
+            if (isRemoval)
+            {
                 var target = db.Accounts.Single(x => x.AccountID == removalAccountID);
-                if (Global.Account.CanVoteRecall(target, rt)) {
+                if (Global.Account.CanVoteRecall(target, rt))
+                {
                     targetID = removalAccountID.Value;
-                } else {
+                }
+                else
+                {
                     return Content("Cannot recall him/her");
                 }
             }
