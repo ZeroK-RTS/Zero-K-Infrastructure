@@ -42,11 +42,11 @@ namespace ZeroKWeb.Controllers
                         var entry = acc.AccountRolesByAccountID.FirstOrDefault(x => x.RoleTypeID == p.RoleTypeID);
                         if (entry != null)
                         {
-                            // FIXME
-                            //acc.AccountRolesByAccountID.Remove(entry);
-                            //db.Events.InsertOnSubmit(Global.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no));
+                            var toDelete = db.AccountRoles.FirstOrDefault(x => x.AccountID == acc.AccountID && x.RoleTypeID == p.RoleTypeID);
+                            db.AccountRoles.DeleteOnSubmit(toDelete);
+                            db.Events.InsertOnSubmit(Global.CreateEvent("{0} was removed from the {1} role of {2} by a vote - {3} for, {4} against", acc, (object)p.Clan ?? p.Faction, p.RoleType, yes, no));
                             
-                            //AuthServiceClient.SendLobbyMessage(acc,string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
+                            AuthServiceClient.SendLobbyMessage(acc,string.Format("You were recalled from the function of {0} by a vote", p.RoleType.Name));
                         }
                     }
                     else
