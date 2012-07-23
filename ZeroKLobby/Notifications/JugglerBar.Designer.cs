@@ -34,20 +34,23 @@
             // lbInfo
             // 
             this.lbInfo.AutoSize = true;
-            this.lbInfo.Location = new System.Drawing.Point(4, 4);
-            this.lbInfo.MaximumSize = new System.Drawing.Size(70, 39);
-            this.lbInfo.MinimumSize = new System.Drawing.Size(70, 39);
+            this.lbInfo.Location = new System.Drawing.Point(5, 5);
+            this.lbInfo.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lbInfo.MaximumSize = new System.Drawing.Size(93, 48);
+            this.lbInfo.MinimumSize = new System.Drawing.Size(93, 48);
             this.lbInfo.Name = "lbInfo";
-            this.lbInfo.Size = new System.Drawing.Size(70, 39);
+            this.lbInfo.Size = new System.Drawing.Size(93, 48);
             this.lbInfo.TabIndex = 0;
             // 
             // JugglerBar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.lbInfo);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "JugglerBar";
-            this.Size = new System.Drawing.Size(429, 47);
+            this.Size = new System.Drawing.Size(572, 58);
             this.ResumeLayout(false);
             this.PerformLayout();
 
