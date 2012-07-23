@@ -47,6 +47,31 @@ namespace System.Web.Mvc
         public static MvcHtmlString BBCode(this HtmlHelper helper, string str)
         {
             if (str == null) return null;
+
+
+            var db = new ZkDataContext();
+            str = Regex.Replace(str, @"@(\w+)", m =>
+            {
+                var val = m.Groups[1].Value;
+                var acc = Account.AccountByName(db, val);
+                if (acc != null) return PrintAccount(null, acc).ToString();
+                var clan = db.Clans.FirstOrDefault(x => x.Shortcut == val);
+                if (clan != null) return PrintClan(null, clan).ToString();
+                var fac = db.Factions.FirstOrDefault(x => x.Shortcut == val);
+                if (fac != null) return PrintFaction(null, fac, false).ToString();
+
+                if (val.StartsWith("b", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var bid = 0;
+                    if (int.TryParse(val.Substring(1), out bid))
+                    {
+                        var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == bid);
+                        if (bat != null) return PrintBattle(null, bat).ToString();
+                    }
+                }
+                return "@" + val;
+            });
+
             Regex exp;
             // format the bold tags: [b][/b]
             // becomes: <strong></strong>
@@ -103,25 +128,7 @@ namespace System.Web.Mvc
             str = exp.Replace(str, "<font size=\"+$1\">$2</font>");
 
 
-            var db = new ZkDataContext();
-            str = Regex.Replace(str, @"@(\w+)", m =>
-                { var val = m.Groups[1].Value;
-                    var acc= Account.AccountByName(db, val);
-                    if (acc != null) return PrintAccount(null, acc).ToString();
-                    var clan = db.Clans.FirstOrDefault(x => x.Shortcut == val);
-                    if (clan != null) return PrintClan(null, clan).ToString();
-                    var fac = db.Factions.FirstOrDefault(x => x.Shortcut == val);
-                    if (fac != null) return PrintFaction(null, fac, false).ToString();
-                    
-                    if (val.StartsWith("b",StringComparison.InvariantCultureIgnoreCase)) {
-                            var bid = 0;
-                            if (int.TryParse(val.Substring(1), out bid)) {
-                                var bat = db.SpringBattles.FirstOrDefault(x => x.SpringBattleID == bid);
-                                if (bat != null) return PrintBattle(null, bat).ToString();
-                            }
-                        }
-                    return "@" + val;
-                });
+           
 
             str = Regex.Replace(str, @"(^|[\s])((mailto|spring|http|https|ftp|ftps)\://\S+)", @"$1<a href='$2'>$2</a>");
 
