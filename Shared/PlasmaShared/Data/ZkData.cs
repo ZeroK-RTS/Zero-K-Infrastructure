@@ -48,7 +48,13 @@ namespace ZkData
 
         public static Action<ZkDataContext> DataContextCreated = context => { };
 
-        public ZkDataContext(bool? useLiveDb = null) : base(useLiveDb != null ? (useLiveDb.Value ? ConnectionStringLive : ConnectionStringLocal):(UseLiveDb ? ConnectionStringLive : ConnectionStringLocal), mapping) {
+
+        public ZkDataContext(): this(false) {
+            
+        }
+
+
+        public ZkDataContext(bool? useLiveDb) : base(useLiveDb != null ? (useLiveDb.Value ? ConnectionStringLive : ConnectionStringLocal):(UseLiveDb ? ConnectionStringLive : ConnectionStringLocal), mapping) {
 #if DEBUG
             if (!wasDbChecked)
             {
