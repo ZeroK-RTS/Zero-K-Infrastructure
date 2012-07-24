@@ -83,8 +83,6 @@
       <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="IsDeleted" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="CreditsIncome" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="CreditsExpense" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Avatar" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="SpringieLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="GamePreferences" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
