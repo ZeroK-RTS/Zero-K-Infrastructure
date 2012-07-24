@@ -284,10 +284,6 @@
     <br/>
     @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
     
-        <h3>Credits:</h3>
-	@Model.Credits.ToString("C0") (+@Model.CreditsIncome, -@Model.CreditsExpense)
-	<br />
-	
 	@if (Model.Planets.Any())
  {
 		<h3>Planets owned</h3>

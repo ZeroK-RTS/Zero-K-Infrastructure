@@ -77,7 +77,11 @@ namespace ZkData
 
         public double GetDropshipsAvailable()
         {
-            if (Faction != null) return Math.Min(GetDropshipQuota(), Faction.Dropships);
+            if (Faction != null) {
+                var q = Math.Min(GetDropshipQuota(), Faction.Dropships);
+                if (Faction.Dropships <= 1) q = Faction.Dropships; // special case for start game - anyone has quota to send first ship
+                return q;
+            }
             else return 0;
         }
 
