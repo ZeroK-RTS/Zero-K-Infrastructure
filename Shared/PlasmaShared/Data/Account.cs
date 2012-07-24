@@ -115,6 +115,40 @@ namespace ZkData
             return GetQuota(x => x.PwBombersProduced, x => x.PwBombersUsed, x => x.RightBomberQuota);
         }
 
+        public void SpendDropships(double count) {
+            PwDropshipsUsed += count;
+            Faction.Dropships -= count;
+        }
+
+        public void ProduceDropships(double count) {
+            PwDropshipsProduced += count;
+            Faction.Dropships += count;
+        }
+
+        public void SpendMetal(double count)
+        {
+            PwMetalUsed += count;
+            Faction.Metal -= count;
+        }
+
+        public void ProduceMetal(double count)
+        {
+            PwMetalProduced += count;
+            Faction.Metal += count;
+        }
+
+        public void SpendBombers(double count)
+        {
+            PwBombersUsed += count;
+            Faction.Bombers -= count;
+        }
+
+        public void ProduceBombers(double count)
+        {
+            PwBombersProduced += count;
+            Faction.Bombers += count;
+        }
+
 
         public double GetQuota(Func<Account, double> producedSelector, Func<Account, double> usedSelector, Func<RoleType, double?> quotaSelector)
         {

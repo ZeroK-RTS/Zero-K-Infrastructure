@@ -76,9 +76,7 @@
       <Column Name="IsZeroKAdmin" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Xp" Member="XP" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="[Level]" Member="Level" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="Credits" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="ClanID" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="DropshipCount" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="LastNewsRead" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="FactionID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="LobbyID" Type="System.Int32" DbType="int" CanBeNull="true" />

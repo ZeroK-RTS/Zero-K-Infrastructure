@@ -303,12 +303,6 @@ namespace ZeroKWeb.SpringieInterface
 					{
 						foreach (var ap in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
 						{
-							if (!sb.SpringBattlePlayers.Any(x => x.AccountID == ap.AccountID && !x.IsSpectator))
-							{
-								ap.Account.DropshipCount += ap.DropshipCount;
-
-								// only destroy ships if player actually played
-							}
 							ap.DropshipCount = 0;
 							noGrowAccount.Add(ap.AccountID);
 						}
@@ -361,19 +355,11 @@ namespace ZeroKWeb.SpringieInterface
                         sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(
                             x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
                     {
-                        var capacity = a.GetDropshipCapacity();
                         var income = GlobalConst.DefaultDropshipProduction +
-                                     (a.Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(
+                                     (a.PlanetStructures.Where(x => !x.IsDestroyed && x.EnergyPriority != EnergyPriority.Disabled).Sum(
                                          x => x.StructureType.EffectDropshipProduction) ?? 0);
 
-                        a.DropshipCount += income;
-                        if (Math.Floor(a.DropshipCount) > capacity) // dont exceed capacity by more than 1
-                        {
-                            a.DropshipCount -= income;
-                            if (a.DropshipCount < capacity) a.DropshipCount = capacity;
-                            AuthServiceClient.SendLobbyMessage(a,
-                                                               "You cannot produce any more dropships, fleet capacity is full, use your ships to attack enemy planet in PlanetWars");
-                        }
+                        a.ProduceDropships(income);
                     }
                     db.SubmitChanges();
 
@@ -390,48 +376,7 @@ namespace ZeroKWeb.SpringieInterface
                     db.SubmitChanges();
                     
 
-                    // income + decay
-                    foreach (var entry in gal.Planets.Where(x => x.OwnerAccountID != null))
-                    {
-                        var corruption = entry.GetCorruption();
-                        var mineIncome = (int)((entry.GetMineIncome() * (1.0 - corruption)));
-
-                        entry.Account.Credits -= entry.GetUpkeepCost();
-                        entry.Account.Credits += mineIncome / 2; // owner gets 50%
-
-                        // remaining 50% split by same faction by influences
-                        var entry1 = entry;
-                        var myFactionInfluences =
-                            entry.AccountPlanets.Where(x => x.Account.FactionID == entry1.Account.FactionID).Select(
-                                x => new { Acc = x.Account, Influence = ((int?)x.Influence + x.ShadowInfluence) ?? 0 }).ToList();
-                        var myFactionSumInflunece = myFactionInfluences.Sum(x => (int?)x.Influence) ?? 1;
-                        if (myFactionSumInflunece == 0) myFactionSumInflunece = 1;
-                        foreach (var myFacAcc in myFactionInfluences) myFacAcc.Acc.Credits += (int)Math.Ceiling(mineIncome / 2.0 * myFacAcc.Influence / (double)myFactionSumInflunece);
-
-                        /*
-                        if (corruption > 0)
-                        {
-                            foreach (var facEntries in entry.AccountPlanets.GroupBy(x => x.Account.Faction).Where(x => x.Key != null))
-                            {
-                                var cnt = facEntries.Where(x => x.Influence > 0).Count();
-                                if (cnt > 0)
-                                {
-                                    var personDecay = (int)Math.Ceiling(GlobalConst.InfluenceDecay / (double)cnt);
-                                    foreach (var e in facEntries.Where(x => x.Influence > 0)) e.Influence = e.Influence - personDecay;
-                                }
-                            }
-                        }
-                         */
-                    }
-
-                    // taxincome - based on influences
-                    //todo this might calculate other galaxies, check before adding more galaxies
-                    foreach (
-                        var ap in
-                            db.AccountPlanets.GroupBy(x => x.Account).Select(
-                                x => new { Acc = x.Key, Infl = x.Sum(y => y.Influence + y.ShadowInfluence) })) ap.Acc.Credits += (int)Math.Round(ap.Infl * GlobalConst.InfluenceTaxIncome);
-
-                    // kill structures you cannot support 
+/*                    // kill structures you cannot support 
                     foreach (var owner in gal.Planets.Where(x => x.Account != null).Select(x => x.Account).Distinct())
                     {
                         if (owner.Credits < 0)
@@ -451,7 +396,7 @@ namespace ZeroKWeb.SpringieInterface
                                                                             structToKill.Planet));
                             }
                         }
-                    }
+                    }*/
 
                     var oldOwner = planet.OwnerAccountID;
                     gal.Turn++;
@@ -532,39 +477,7 @@ namespace ZeroKWeb.SpringieInterface
                     PlanetwarsController.SetPlanetOwners(db, sb);
                     gal = db.Galaxies.Single(x => x.IsDefault);
 
-                    if (GlobalConst.ClanFreePlanets)
-                    {
-                        // give free planet to each clan with none here
-                        foreach (var kvp in
-                            sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.Account != null && x.Account.ClanID != null).GroupBy(
-                                x => x.Account.ClanID))
-                        {
-                            var clan = db.Clans.Single(x => x.ClanID == kvp.Key);
-                            var changed = false;
-                            if (clan.Accounts.Sum(x => x.Planets.Count()) == 0)
-                            {
-                                var planetList =
-                                    gal.Planets.Where(
-                                        x => x.OwnerAccountID == null && !x.PlanetStructures.Any(y => y.StructureType.EffectIsVictoryPlanet == true)).
-                                        Shuffle(); //pick planets which only have wormhole
-                                if (planetList.Count > 0)
-                                {
-                                    var freePlanet = planetList[new Random().Next(planetList.Count)];
-                                    foreach (var ac in kvp)
-                                        db.AccountPlanets.InsertOnSubmit(new AccountPlanet() { PlanetID = freePlanet.PlanetID, AccountID = ac.AccountID, Influence = 501 });
-                                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} was awarded empty planet {1} {2}", clan, freePlanet, sb));
-                                    changed = true;
-                                }
-                            }
-                            if (changed)
-                            {
-                                db.SubmitChanges();
-                                db = new ZkDataContext();
-                                PlanetwarsController.SetPlanetOwners(db, sb);
-                                gal = db.Galaxies.Single(x => x.IsDefault);
-                            }
-                        }
-                    }
+              
 
                     planet = gal.Planets.Single(x => x.Resource.InternalName == result.Map);
                     if (planet.OwnerAccountID != oldOwner && planet.OwnerAccountID != null)

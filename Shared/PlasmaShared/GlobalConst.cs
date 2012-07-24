@@ -32,12 +32,7 @@
         public const int InfluencePerInvolvedPlayer = 2;
         public const int InfluencePerShip = 2;
         public const int InfluenceMalusPerShip = 0;
-        public const double InfluenceTaxIncome = 1 / 25.0;
         public const int InfluenceDecay = 3;
-        public const int InfluenceSystemBuyPrice = 40;
-        public const int InfluenceSystemSellPrice = 15;
-        public const double PlanetwarsRepairCost = 0.5; // repair cost is 50% only
-        public const bool ClanFreePlanets = false;
         public const double CeasefireMaxInfluenceBalanceRatio = 1.5;
         public const int BaseShipsToBomb = 3;
         public const int MaxClanSkilledSize = 16;

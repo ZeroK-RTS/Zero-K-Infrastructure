@@ -108,8 +108,6 @@
         </div>
 
         <div id="starships">
-            <span nowrap="nowrap">@Model.Accounts.Sum(x => x.DropshipCount)/@(Model.Accounts.Count()*GlobalConst.DefaultDropshipCapacity + Model.Accounts.SelectMany(x => x.Planets).SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity))
-                ready to deploy</span>
             <table>
                 @foreach (var p in Model.Accounts.SelectMany(x => x.AccountPlanets).GroupBy(x => x.Planet).Select(x => new { planet = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) {
                     <tr>

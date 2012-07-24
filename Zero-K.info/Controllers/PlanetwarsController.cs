@@ -356,10 +356,10 @@ namespace ZeroKWeb.Controllers
             var capa = acc.GetDropshipCapacity();
             
             if (cnt + there > capa) return Content("Too many ships, increase fleet size");
-            cnt = Math.Min(cnt, (int)acc.DropshipCount);
+            cnt = Math.Min(cnt, (int)acc.GetDropshipsAvailable());
             if (cnt > 0)
             {
-                acc.DropshipCount = (acc.DropshipCount) - cnt;
+                acc.PwDropshipsUsed += cnt;
 
                 if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
 
@@ -502,7 +502,7 @@ namespace ZeroKWeb.Controllers
                     {
                         if (entry.Account.FactionID == planet.Account.FactionID || planet.Account.Clan.GetEffectiveTreaty(entry.Account.Clan).AllyStatus >= AllyStatus.Ceasefire)
                         {
-                            entry.Account.DropshipCount += entry.DropshipCount;
+                            entry.Account.PwDropshipsUsed -= entry.DropshipCount;
                             entry.DropshipCount = 0;
                         }
                     }
@@ -549,10 +549,10 @@ namespace ZeroKWeb.Controllers
                 if (oldStructure.IsDestroyed) return Content("Can't upgrade a destroyed structure");
 
                 var newStructureType = db.StructureTypes.Single(s => s.StructureTypeID == oldStructure.StructureType.UpgradesToStructureID);
-                if (acc.Credits < newStructureType.Cost) return Content("Insufficient credits.");
-                acc.Credits -= newStructureType.Cost;
+                if (acc.GetMetalAvailable() < newStructureType.Cost) return Content("Insufficient metal");
+                acc.SpendMetal(newStructureType.Cost);
 
-                var newStructure = new PlanetStructure { PlanetID = planetID, StructureTypeID = newStructureType.StructureTypeID };
+                var newStructure = new PlanetStructure { PlanetID = planetID, StructureTypeID = newStructureType.StructureTypeID, OwnerAccountID = acc.AccountID};
 
                 db.PlanetStructures.InsertOnSubmit(newStructure);
                 db.PlanetStructures.DeleteOnSubmit(oldStructure);

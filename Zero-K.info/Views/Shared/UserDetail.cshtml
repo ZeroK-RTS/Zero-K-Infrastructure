@@ -300,7 +300,7 @@
 	@if (Model.Clan != null)
  {
 		<h3>Starships</h3>
-		<span nowrap="nowrap">@(Model.DropshipCount)/@(Model.GetDropshipCapacity()) ready to deploy</span>
+		<span nowrap="nowrap">@(Model.GetDropshipsAvailable())/@(Model.GetDropshipCapacity()) ready to deploy</span>
 		<table>
 			@foreach (var p in Model.AccountPlanets.Where(x => x.DropshipCount > 0))
    { 

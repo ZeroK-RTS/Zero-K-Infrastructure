@@ -23,18 +23,7 @@ namespace ZkData
             return true;
         }
 
-
-
-        public int GetMineIncome() {
-            return PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectCreditsPerTurn) ?? 0;
-        }
-
       
-        public double GetCorruption() {
-            var influences = GetFactionInfluences().Select(x => (int?)x.Influence);
-            return (influences.Skip(1).FirstOrDefault() ?? 0) / (double)(influences.FirstOrDefault() ?? 1);        
-        }
-
 
 	    public string GetColor(Account viewer)
 		{
