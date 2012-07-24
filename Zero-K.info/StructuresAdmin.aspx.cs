@@ -27,7 +27,7 @@ namespace ZeroKWeb
 					EffectUnlockID = u.UnlockID,
 					IsIngameDestructible = true,
 					MapIcon = u.Code + ".png",
-					DestroyedMapIcon = u.Code + "_dead.png",
+					DisabledMapIcon = u.Code + "_dead.png",
 					IngameUnitName = "pw_" + u.Code
 				});
 
@@ -67,27 +67,11 @@ namespace ZeroKWeb
 					// first pass insert structures but without interdependencies links 
 					foreach (var s in data)
 					{
-						s.UpgradesToStructureID = null;
-						s.IngameDestructionNewStructureTypeID = null;
-
 						var org = db2.StructureTypes.SingleOrDefault(x => x.StructureTypeID == s.StructureTypeID);
 						if (org != null) db.StructureTypes.Attach(s, org);
 						else db.StructureTypes.InsertOnSubmit(s);
 					}
 
-					db.SubmitChanges();
-				}
-
-				data = (List<StructureType>)new DataContractSerializer(typeof(List<StructureType>)).ReadObject(XmlReader.Create(new StringReader(tbData.Text)));
-
-				using (var db = new ZkDataContext())
-				{
-					foreach (var s in data)
-					{
-						var ds = db.StructureTypes.Single(x => x.StructureTypeID == s.StructureTypeID);
-						ds.UpgradesToStructureID = s.UpgradesToStructureID;
-						ds.IngameDestructionNewStructureTypeID = s.IngameDestructionNewStructureTypeID;
-					}
 					db.SubmitChanges();
 				}
 

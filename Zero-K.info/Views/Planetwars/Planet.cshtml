@@ -133,7 +133,7 @@
 			var accessiblePlanets = Galaxy.DropshipAttackablePlanets(new ZkDataContext(), Global.ClanID).Select(x => x.PlanetID).ToList();
 			var isAccessible = accessiblePlanets.Contains(Model.PlanetID);
 			var jumpgates = Global.Account.GetJumpGateCapacity();
-			var defs = Model.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
+			var defs = Model.PlanetStructures.Where(x => x.IsActive ).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
 			var bombNeed = 3 + defs / 3;
 			var enemyShips = Model.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID).Sum(x => x.DropshipCount);
 			if (isAccessible || jumpgates > 0) {
@@ -160,56 +160,39 @@
      
 			<p>
 				<img  width="80" height="80" src='@structure.GetImageUrl()'/>
-				@if (structure.IsDestroyed) {
-					<span style='color: red'>DESTROYED</span>
+				@if (!structure.IsActive) {
+					<span style='color: red'>DISABLED</span>
 		}
 				@structure.StructureType.Name
 				(@structure.StructureType.Description)</p>
 	}
-		@if (Model.Account != null && Global.ClanID == Model.Account.ClanID) {
+		@if (Model.Account != null && Global.FactionID == Model.OwnerFactionID) {
 			<h2>Construction</h2>
-		foreach (var structure in Model.PlanetStructures.Where(s => !s.IsDestroyed)) {
+
 		
-				var linkText = String.Format("Repair {0} ({1:C0})", structure.StructureType.Name, structure.StructureType.Cost);
-			<p>@Html.ActionLink(linkText, "RepairStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
-			
-		}
-
-		if (Model.OwnerAccountID == Global.AccountID) {
-			foreach (var structure in Model.PlanetStructures.Where(s => !s.IsDestroyed)) {
-
-				var upgrade = structure.StructureType.ParentStructureTypeByUpgradesToStructureID;
-				if (upgrade != null) {
-					if (upgrade.Cost > Global.Account.GetMetalAvailable()) {
-			<p>@String.Format("Upgrade {0} to {1} (requires {2:C0}) - {3}", structure.StructureType.Name, upgrade.Name, upgrade.Cost, upgrade.Description)</p>
-					} else {
-						var linkText = String.Format("Upgrade {0} to {1} ({2:C0}) - {3}", structure.StructureType.Name, upgrade.Name, upgrade.Cost, upgrade.Description);
-			<p>@Html.ActionLink(linkText, "UpgradeStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })</p>
-					}
-
-				}
-			}
 
 			var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
 			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
-				if (!StructureType.HasStructureOrUpgrades(db, planet, structureType)) {
+				if (!planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
 					if (structureType.Cost > Global.Account.GetMetalAvailable()) {
-			<p>@String.Format("Build {0} (requires {1:C0}) - {2}", structureType.Name, structureType.Cost, structureType.Description)</p>
+			<p>@String.Format("Build {0} (requires {1}) - {2}", structureType.Name, structureType.Cost, structureType.Description)</p>
 					} else {
 						var linkText = String.Format("Build {0} ({1:C0}) - {2}", structureType.Name, structureType.Cost, structureType.Description);
 			<p>@Html.ActionLink(linkText, "BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })</p>
 					}
 				}
 			}
+            
+            
 			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
-				if (StructureType.HasStructureOrUpgrades(db, planet, structureType)) {
-                    var linkText = String.Format("Destroy {0}", structureType.Name, structureType.Cost);
+				if (planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
+                    var linkText = String.Format("Destroy {0} ({1})", structureType.Name, structureType.Cost);
                     var question = String.Format("Confirm destruction of {0}?", structureType.Name);
 			<p>@Html.ActionLink(linkText, "DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID }, new { @onclick = String.Format("return confirm('{0}')", question) })</p>
                 }
             }
 
-        }
+        
 
   }
 	</div>

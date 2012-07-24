@@ -311,7 +311,7 @@ namespace Fixer
   		List<Tuple<int, int>> costs = new List<Tuple<int, int>>();
 			foreach (var s in structs)
 			{
-				costs.Add(Tuple.Create(5000 / s.Cost, s.StructureTypeID)); // probabality is relative to 1200-cost
+				costs.Add(Tuple.Create((int)(5000 / s.Cost), s.StructureTypeID)); // probabality is relative to 1200-cost
 			}
   		var sumCosts = costs.Sum(x => x.Item1);
 
@@ -367,8 +367,8 @@ namespace Fixer
   	public static void AddWormholes()
 		{
 			var db = new ZkDataContext();
-			var wormhole = db.StructureTypes.Where(x => x.EffectLinkStrength > 0).OrderBy(x => x.EffectLinkStrength).First();
-			foreach (var p in db.Planets.Where(x => !x.PlanetStructures.Any(y => y.StructureType.EffectLinkStrength > 0)))
+			var wormhole = db.StructureTypes.Where(x => x.EffectInfluenceSpread > 0).OrderBy(x => x.EffectInfluenceSpread).First();
+			foreach (var p in db.Planets.Where(x => !x.PlanetStructures.Any(y => y.StructureType.EffectInfluenceSpread > 0)))
 			{
 				p.PlanetStructures.Add(new PlanetStructure() { StructureTypeID = wormhole.StructureTypeID});
 			}

@@ -17449,13 +17449,13 @@ namespace ZkData
 		
 		private int _StructureTypeID;
 		
-		private bool _IsDestroyed;
-		
 		private int _OwnerAccountID;
 		
-		private int _ActivatedOnTurn;
+		private System.Nullable<int> _ActivatedOnTurn;
 		
 		private EnergyPriority _EnergyPriority;
+		
+		private bool _IsActive;
 		
 		private EntityRef<Planet> _Planet;
 		
@@ -17471,14 +17471,14 @@ namespace ZkData
     partial void OnPlanetIDChanged();
     partial void OnStructureTypeIDChanging(int value);
     partial void OnStructureTypeIDChanged();
-    partial void OnIsDestroyedChanging(bool value);
-    partial void OnIsDestroyedChanged();
     partial void OnOwnerAccountIDChanging(int value);
     partial void OnOwnerAccountIDChanged();
-    partial void OnActivatedOnTurnChanging(int value);
+    partial void OnActivatedOnTurnChanging(System.Nullable<int> value);
     partial void OnActivatedOnTurnChanged();
     partial void OnEnergyPriorityChanging(EnergyPriority value);
     partial void OnEnergyPriorityChanged();
+    partial void OnIsActiveChanging(bool value);
+    partial void OnIsActiveChanged();
     #endregion
 		
 		public PlanetStructure()
@@ -17536,29 +17536,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsDestroyed", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public bool IsDestroyed
-		{
-			get
-			{
-				return this._IsDestroyed;
-			}
-			set
-			{
-				if ((this._IsDestroyed != value))
-				{
-					this.OnIsDestroyedChanging(value);
-					this.SendPropertyChanging();
-					this._IsDestroyed = value;
-					this.SendPropertyChanged("IsDestroyed");
-					this.OnIsDestroyedChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerAccountID", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
 		public int OwnerAccountID
 		{
 			get
@@ -17582,9 +17561,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActivatedOnTurn", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public int ActivatedOnTurn
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ActivatedOnTurn", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<int> ActivatedOnTurn
 		{
 			get
 			{
@@ -17604,7 +17583,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EnergyPriority", DbType="int NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public EnergyPriority EnergyPriority
 		{
 			get
@@ -17620,6 +17599,27 @@ namespace ZkData
 					this._EnergyPriority = value;
 					this.SendPropertyChanged("EnergyPriority");
 					this.OnEnergyPriorityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsActive", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public bool IsActive
+		{
+			get
+			{
+				return this._IsActive;
+			}
+			set
+			{
+				if ((this._IsActive != value))
+				{
+					this.OnIsActiveChanging(value);
+					this.SendPropertyChanging();
+					this._IsActive = value;
+					this.SendPropertyChanged("IsActive");
+					this.OnIsActiveChanged();
 				}
 			}
 		}
@@ -17779,9 +17779,11 @@ namespace ZkData
 		
 		private string _MapIcon;
 		
-		private string _DestroyedMapIcon;
+		private string _DisabledMapIcon;
 		
-		private System.Nullable<int> _UpgradesToStructureID;
+		private System.Nullable<double> _UpkeepEnergy;
+		
+		private System.Nullable<int> _TurnsToActivate;
 		
 		private System.Nullable<int> _EffectInfluenceDefense;
 		
@@ -17789,45 +17791,37 @@ namespace ZkData
 		
 		private System.Nullable<int> _EffectDropshipCapacity;
 		
-		private System.Nullable<double> _EffectLinkStrength;
+		private System.Nullable<double> _EffectInfluenceSpread;
 		
 		private System.Nullable<int> _EffectUnlockID;
 		
-		private System.Nullable<int> _EffectCreditsPerTurn;
+		private System.Nullable<double> _EffectEnergyPerTurn;
 		
 		private System.Nullable<bool> _EffectIsVictoryPlanet;
 		
-		private System.Nullable<int> _EffectWarpGateCapacity;
+		private System.Nullable<double> _EffectWarpProduction;
 		
-		private System.Nullable<int> _EffectDropshipDefense;
+		private System.Nullable<double> _EffectDropshipDefense;
+		
+		private System.Nullable<double> _EffectBomberDefense;
 		
 		private string _EffectBots;
 		
-		private System.Nullable<bool> _EffectBlocksEnemyTrade;
-		
 		private System.Nullable<bool> _EffectBlocksJumpgate;
 		
-		private int _Cost;
+		private double _Cost;
 		
 		private bool _IsBuildable;
 		
 		private bool _IsIngameDestructible;
 		
-		private System.Nullable<int> _IngameDestructionNewStructureTypeID;
-		
 		private bool _OwnerChangeDeletesThis;
 		
 		private bool _BattleDeletesThis;
 		
-		private int _UpkeepCost;
-		
 		private EntitySet<PlanetStructure> _PlanetStructures;
 		
 		private EntityRef<Unlock> _Unlock;
-		
-		private EntityRef<StructureType> _ParentStructureTypeByUpgradesToStructureID;
-		
-		private EntityRef<StructureType> _ParentStructureTypeByIngameDestructionNewStructureTypeID;
 		
 		private bool serializing;
 		
@@ -17845,48 +17839,46 @@ namespace ZkData
     partial void OnIngameUnitNameChanged();
     partial void OnMapIconChanging(string value);
     partial void OnMapIconChanged();
-    partial void OnDestroyedMapIconChanging(string value);
-    partial void OnDestroyedMapIconChanged();
-    partial void OnUpgradesToStructureIDChanging(System.Nullable<int> value);
-    partial void OnUpgradesToStructureIDChanged();
+    partial void OnDisabledMapIconChanging(string value);
+    partial void OnDisabledMapIconChanged();
+    partial void OnUpkeepEnergyChanging(System.Nullable<double> value);
+    partial void OnUpkeepEnergyChanged();
+    partial void OnTurnsToActivateChanging(System.Nullable<int> value);
+    partial void OnTurnsToActivateChanged();
     partial void OnEffectInfluenceDefenseChanging(System.Nullable<int> value);
     partial void OnEffectInfluenceDefenseChanged();
     partial void OnEffectDropshipProductionChanging(System.Nullable<double> value);
     partial void OnEffectDropshipProductionChanged();
     partial void OnEffectDropshipCapacityChanging(System.Nullable<int> value);
     partial void OnEffectDropshipCapacityChanged();
-    partial void OnEffectLinkStrengthChanging(System.Nullable<double> value);
-    partial void OnEffectLinkStrengthChanged();
+    partial void OnEffectInfluenceSpreadChanging(System.Nullable<double> value);
+    partial void OnEffectInfluenceSpreadChanged();
     partial void OnEffectUnlockIDChanging(System.Nullable<int> value);
     partial void OnEffectUnlockIDChanged();
-    partial void OnEffectCreditsPerTurnChanging(System.Nullable<int> value);
-    partial void OnEffectCreditsPerTurnChanged();
+    partial void OnEffectEnergyPerTurnChanging(System.Nullable<double> value);
+    partial void OnEffectEnergyPerTurnChanged();
     partial void OnEffectIsVictoryPlanetChanging(System.Nullable<bool> value);
     partial void OnEffectIsVictoryPlanetChanged();
-    partial void OnEffectWarpGateCapacityChanging(System.Nullable<int> value);
-    partial void OnEffectWarpGateCapacityChanged();
-    partial void OnEffectDropshipDefenseChanging(System.Nullable<int> value);
+    partial void OnEffectWarpProductionChanging(System.Nullable<double> value);
+    partial void OnEffectWarpProductionChanged();
+    partial void OnEffectDropshipDefenseChanging(System.Nullable<double> value);
     partial void OnEffectDropshipDefenseChanged();
+    partial void OnEffectBomberDefenseChanging(System.Nullable<double> value);
+    partial void OnEffectBomberDefenseChanged();
     partial void OnEffectBotsChanging(string value);
     partial void OnEffectBotsChanged();
-    partial void OnEffectBlocksEnemyTradeChanging(System.Nullable<bool> value);
-    partial void OnEffectBlocksEnemyTradeChanged();
     partial void OnEffectBlocksJumpgateChanging(System.Nullable<bool> value);
     partial void OnEffectBlocksJumpgateChanged();
-    partial void OnCostChanging(int value);
+    partial void OnCostChanging(double value);
     partial void OnCostChanged();
     partial void OnIsBuildableChanging(bool value);
     partial void OnIsBuildableChanged();
     partial void OnIsIngameDestructibleChanging(bool value);
     partial void OnIsIngameDestructibleChanged();
-    partial void OnIngameDestructionNewStructureTypeIDChanging(System.Nullable<int> value);
-    partial void OnIngameDestructionNewStructureTypeIDChanged();
     partial void OnOwnerChangeDeletesThisChanging(bool value);
     partial void OnOwnerChangeDeletesThisChanged();
     partial void OnBattleDeletesThisChanging(bool value);
     partial void OnBattleDeletesThisChanged();
-    partial void OnUpkeepCostChanging(int value);
-    partial void OnUpkeepCostChanged();
     #endregion
 		
 		public StructureType()
@@ -17999,54 +17991,71 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DestroyedMapIcon", DbType="nvarchar(50)")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DisabledMapIcon", DbType="nvarchar(50)")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
-		public string DestroyedMapIcon
+		public string DisabledMapIcon
 		{
 			get
 			{
-				return this._DestroyedMapIcon;
+				return this._DisabledMapIcon;
 			}
 			set
 			{
-				if ((this._DestroyedMapIcon != value))
+				if ((this._DisabledMapIcon != value))
 				{
-					this.OnDestroyedMapIconChanging(value);
+					this.OnDisabledMapIconChanging(value);
 					this.SendPropertyChanging();
-					this._DestroyedMapIcon = value;
-					this.SendPropertyChanged("DestroyedMapIcon");
-					this.OnDestroyedMapIconChanged();
+					this._DisabledMapIcon = value;
+					this.SendPropertyChanged("DisabledMapIcon");
+					this.OnDisabledMapIconChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpgradesToStructureID", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpkeepEnergy", DbType="float")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
-		public System.Nullable<int> UpgradesToStructureID
+		public System.Nullable<double> UpkeepEnergy
 		{
 			get
 			{
-				return this._UpgradesToStructureID;
+				return this._UpkeepEnergy;
 			}
 			set
 			{
-				if ((this._UpgradesToStructureID != value))
+				if ((this._UpkeepEnergy != value))
 				{
-					if (this._ParentStructureTypeByUpgradesToStructureID.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnUpgradesToStructureIDChanging(value);
+					this.OnUpkeepEnergyChanging(value);
 					this.SendPropertyChanging();
-					this._UpgradesToStructureID = value;
-					this.SendPropertyChanged("UpgradesToStructureID");
-					this.OnUpgradesToStructureIDChanged();
+					this._UpkeepEnergy = value;
+					this.SendPropertyChanged("UpkeepEnergy");
+					this.OnUpkeepEnergyChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TurnsToActivate", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<int> TurnsToActivate
+		{
+			get
+			{
+				return this._TurnsToActivate;
+			}
+			set
+			{
+				if ((this._TurnsToActivate != value))
+				{
+					this.OnTurnsToActivateChanging(value);
+					this.SendPropertyChanging();
+					this._TurnsToActivate = value;
+					this.SendPropertyChanged("TurnsToActivate");
+					this.OnTurnsToActivateChanged();
 				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectInfluenceDefense", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public System.Nullable<int> EffectInfluenceDefense
 		{
 			get
@@ -18067,7 +18076,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipProduction", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public System.Nullable<double> EffectDropshipProduction
 		{
 			get
@@ -18088,7 +18097,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipCapacity", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public System.Nullable<int> EffectDropshipCapacity
 		{
 			get
@@ -18108,29 +18117,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectLinkStrength", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public System.Nullable<double> EffectLinkStrength
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectInfluenceSpread", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		public System.Nullable<double> EffectInfluenceSpread
 		{
 			get
 			{
-				return this._EffectLinkStrength;
+				return this._EffectInfluenceSpread;
 			}
 			set
 			{
-				if ((this._EffectLinkStrength != value))
+				if ((this._EffectInfluenceSpread != value))
 				{
-					this.OnEffectLinkStrengthChanging(value);
+					this.OnEffectInfluenceSpreadChanging(value);
 					this.SendPropertyChanging();
-					this._EffectLinkStrength = value;
-					this.SendPropertyChanged("EffectLinkStrength");
-					this.OnEffectLinkStrengthChanged();
+					this._EffectInfluenceSpread = value;
+					this.SendPropertyChanged("EffectInfluenceSpread");
+					this.OnEffectInfluenceSpreadChanged();
 				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectUnlockID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
 		public System.Nullable<int> EffectUnlockID
 		{
 			get
@@ -18154,29 +18163,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectCreditsPerTurn", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
-		public System.Nullable<int> EffectCreditsPerTurn
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectEnergyPerTurn", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		public System.Nullable<double> EffectEnergyPerTurn
 		{
 			get
 			{
-				return this._EffectCreditsPerTurn;
+				return this._EffectEnergyPerTurn;
 			}
 			set
 			{
-				if ((this._EffectCreditsPerTurn != value))
+				if ((this._EffectEnergyPerTurn != value))
 				{
-					this.OnEffectCreditsPerTurnChanging(value);
+					this.OnEffectEnergyPerTurnChanging(value);
 					this.SendPropertyChanging();
-					this._EffectCreditsPerTurn = value;
-					this.SendPropertyChanged("EffectCreditsPerTurn");
-					this.OnEffectCreditsPerTurnChanged();
+					this._EffectEnergyPerTurn = value;
+					this.SendPropertyChanged("EffectEnergyPerTurn");
+					this.OnEffectEnergyPerTurnChanged();
 				}
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectIsVictoryPlanet", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public System.Nullable<bool> EffectIsVictoryPlanet
 		{
 			get
@@ -18196,30 +18205,30 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectWarpGateCapacity", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
-		public System.Nullable<int> EffectWarpGateCapacity
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectWarpProduction", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		public System.Nullable<double> EffectWarpProduction
 		{
 			get
 			{
-				return this._EffectWarpGateCapacity;
+				return this._EffectWarpProduction;
 			}
 			set
 			{
-				if ((this._EffectWarpGateCapacity != value))
+				if ((this._EffectWarpProduction != value))
 				{
-					this.OnEffectWarpGateCapacityChanging(value);
+					this.OnEffectWarpProductionChanging(value);
 					this.SendPropertyChanging();
-					this._EffectWarpGateCapacity = value;
-					this.SendPropertyChanged("EffectWarpGateCapacity");
-					this.OnEffectWarpGateCapacityChanged();
+					this._EffectWarpProduction = value;
+					this.SendPropertyChanged("EffectWarpProduction");
+					this.OnEffectWarpProductionChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipDefense", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
-		public System.Nullable<int> EffectDropshipDefense
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipDefense", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public System.Nullable<double> EffectDropshipDefense
 		{
 			get
 			{
@@ -18238,8 +18247,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBomberDefense", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		public System.Nullable<double> EffectBomberDefense
+		{
+			get
+			{
+				return this._EffectBomberDefense;
+			}
+			set
+			{
+				if ((this._EffectBomberDefense != value))
+				{
+					this.OnEffectBomberDefenseChanging(value);
+					this.SendPropertyChanging();
+					this._EffectBomberDefense = value;
+					this.SendPropertyChanged("EffectBomberDefense");
+					this.OnEffectBomberDefenseChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBots", DbType="nvarchar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
 		public string EffectBots
 		{
 			get
@@ -18259,29 +18289,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBlocksEnemyTrade", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
-		public System.Nullable<bool> EffectBlocksEnemyTrade
-		{
-			get
-			{
-				return this._EffectBlocksEnemyTrade;
-			}
-			set
-			{
-				if ((this._EffectBlocksEnemyTrade != value))
-				{
-					this.OnEffectBlocksEnemyTradeChanging(value);
-					this.SendPropertyChanging();
-					this._EffectBlocksEnemyTrade = value;
-					this.SendPropertyChanged("EffectBlocksEnemyTrade");
-					this.OnEffectBlocksEnemyTradeChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBlocksJumpgate", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
 		public System.Nullable<bool> EffectBlocksJumpgate
 		{
 			get
@@ -18301,9 +18310,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cost", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
-		public int Cost
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cost", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		public double Cost
 		{
 			get
 			{
@@ -18323,7 +18332,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBuildable", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
 		public bool IsBuildable
 		{
 			get
@@ -18344,7 +18353,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsIngameDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
 		public bool IsIngameDestructible
 		{
 			get
@@ -18360,31 +18369,6 @@ namespace ZkData
 					this._IsIngameDestructible = value;
 					this.SendPropertyChanged("IsIngameDestructible");
 					this.OnIsIngameDestructibleChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IngameDestructionNewStructureTypeID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
-		public System.Nullable<int> IngameDestructionNewStructureTypeID
-		{
-			get
-			{
-				return this._IngameDestructionNewStructureTypeID;
-			}
-			set
-			{
-				if ((this._IngameDestructionNewStructureTypeID != value))
-				{
-					if (this._ParentStructureTypeByIngameDestructionNewStructureTypeID.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnIngameDestructionNewStructureTypeIDChanging(value);
-					this.SendPropertyChanging();
-					this._IngameDestructionNewStructureTypeID = value;
-					this.SendPropertyChanged("IngameDestructionNewStructureTypeID");
-					this.OnIngameDestructionNewStructureTypeIDChanged();
 				}
 			}
 		}
@@ -18431,29 +18415,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UpkeepCost", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
-		public int UpkeepCost
-		{
-			get
-			{
-				return this._UpkeepCost;
-			}
-			set
-			{
-				if ((this._UpkeepCost != value))
-				{
-					this.OnUpkeepCostChanging(value);
-					this.SendPropertyChanging();
-					this._UpkeepCost = value;
-					this.SendPropertyChanged("UpkeepCost");
-					this.OnUpkeepCostChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_PlanetStructures", ThisKey="StructureTypeID", OtherKey="StructureTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get
@@ -18505,54 +18468,6 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_StructureType", Storage="_ParentStructureTypeByUpgradesToStructureID", ThisKey="UpgradesToStructureID", OtherKey="StructureTypeID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
-		public StructureType ParentStructureTypeByUpgradesToStructureID
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._ParentStructureTypeByUpgradesToStructureID.HasLoadedOrAssignedValue == false)))
-				{
-					return null;
-				}
-				return this._ParentStructureTypeByUpgradesToStructureID.Entity;
-			}
-			set
-			{
-				if ((this._ParentStructureTypeByUpgradesToStructureID.Entity != value))
-				{
-					this.SendPropertyChanging();
-					this._ParentStructureTypeByUpgradesToStructureID.Entity = value;
-					this.SendPropertyChanged("ParentStructureTypeByUpgradesToStructureID");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_StructureType1", Storage="_ParentStructureTypeByIngameDestructionNewStructureTypeID", ThisKey="IngameDestructionNewStructureTypeID", OtherKey="StructureTypeID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29, EmitDefaultValue=false)]
-		public StructureType ParentStructureTypeByIngameDestructionNewStructureTypeID
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._ParentStructureTypeByIngameDestructionNewStructureTypeID.HasLoadedOrAssignedValue == false)))
-				{
-					return null;
-				}
-				return this._ParentStructureTypeByIngameDestructionNewStructureTypeID.Entity;
-			}
-			set
-			{
-				if ((this._ParentStructureTypeByIngameDestructionNewStructureTypeID.Entity != value))
-				{
-					this.SendPropertyChanging();
-					this._ParentStructureTypeByIngameDestructionNewStructureTypeID.Entity = value;
-					this.SendPropertyChanged("ParentStructureTypeByIngameDestructionNewStructureTypeID");
-				}
-			}
-		}
-		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -18589,8 +18504,6 @@ namespace ZkData
 		{
 			this._PlanetStructures = new EntitySet<PlanetStructure>(new Action<PlanetStructure>(this.attach_PlanetStructures), new Action<PlanetStructure>(this.detach_PlanetStructures));
 			this._Unlock = default(EntityRef<Unlock>);
-			this._ParentStructureTypeByUpgradesToStructureID = default(EntityRef<StructureType>);
-			this._ParentStructureTypeByIngameDestructionNewStructureTypeID = default(EntityRef<StructureType>);
 			OnCreated();
 		}
 		

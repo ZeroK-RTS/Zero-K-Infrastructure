@@ -200,12 +200,12 @@ namespace ZkData
 
         public int GetDropshipCapacity() {
             return GlobalConst.DefaultDropshipCapacity +
-                   (Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
+                   (Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
         }
 
 
         public int GetJumpGateCapacity() {
-            return Planets.SelectMany(x => x.PlanetStructures).Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectWarpGateCapacity) ?? 0;
+            return (int)(Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectWarpProduction) ?? 0);
         }
 
         public static int GetXpForLevel(int level) {

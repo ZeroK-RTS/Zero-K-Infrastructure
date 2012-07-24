@@ -168,7 +168,7 @@ namespace ZeroKWeb.SpringieInterface
                     var factionTechIP = sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).
                             ToDictionary(x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count() * 6.0 / z.Count()); // FIXME make techs in db be by faction not clan!
 
-                    var planetDefs = (planet.PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
+                    var planetDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
                     var totalShips = (planet.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0);
                     double shipMultiplier = 1;
                     if (totalShips > 0 && totalShips >= planetDefs) shipMultiplier = (totalShips - planetDefs) / (double)totalShips;
@@ -318,22 +318,11 @@ namespace ZeroKWeb.SpringieInterface
                         if (handled.Contains(unitName)) continue;
                         handled.Add(unitName);
                         foreach (var s in
-                            db.PlanetStructures.Where(
-                                x => x.PlanetID == planet.PlanetID && x.StructureType.IngameUnitName == unitName && !x.IsDestroyed))
+                            db.PlanetStructures.Where(x => x.PlanetID == planet.PlanetID && x.StructureType.IngameUnitName == unitName && x.IsActive))
                         {
                             if (s.StructureType.IsIngameDestructible)
                             {
-                                if (s.StructureType.IngameDestructionNewStructureTypeID != null)
-                                {
                                     db.PlanetStructures.DeleteOnSubmit(s);
-                                    db.PlanetStructures.InsertOnSubmit(new PlanetStructure()
-                                    {
-                                        PlanetID = planet.PlanetID,
-                                        StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value,
-                                        //IsDestroyed = true
-                                    });
-                                }
-                                else s.IsDestroyed = true;
                                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}",
                                                                             s.StructureType.Name,
                                                                             defender,
@@ -347,7 +336,7 @@ namespace ZeroKWeb.SpringieInterface
                     // TODO correct IP after battle
 
                     // destroy structures (usually defenses)
-                    foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
+                    foreach (var s in planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
                     db.SubmitChanges();
 
                     // spawn new dropships
@@ -356,7 +345,7 @@ namespace ZeroKWeb.SpringieInterface
                             x => x.ClanID != null && !noGrowAccount.Contains(x.AccountID)))
                     {
                         var income = GlobalConst.DefaultDropshipProduction +
-                                     (a.PlanetStructures.Where(x => !x.IsDestroyed && x.EnergyPriority != EnergyPriority.Disabled).Sum(
+                                     (a.PlanetStructures.Where(x => x.IsActive && x.IsActive).Sum(
                                          x => x.StructureType.EffectDropshipProduction) ?? 0);
 
                         a.ProduceDropships(income);
@@ -383,7 +372,7 @@ namespace ZeroKWeb.SpringieInterface
                         {
                             var upkeepStructs =
                                 owner.Planets.SelectMany(x => x.PlanetStructures).Where(
-                                    x => !x.IsDestroyed && x.StructureType.UpkeepCost > 0 && x.StructureType.EffectIsVictoryPlanet != true).
+                                    x => x.IsActive && x.StructureType.UpkeepCost > 0 && x.StructureType.EffectIsVictoryPlanet != true).
                                     OrderByDescending(x => x.StructureType.UpkeepCost);
                             var structToKill = upkeepStructs.FirstOrDefault();
                             if (structToKill != null)

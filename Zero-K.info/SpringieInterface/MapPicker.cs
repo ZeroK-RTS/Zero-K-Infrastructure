@@ -39,7 +39,7 @@ namespace ZeroKWeb.SpringieInterface
 								{
 									Planet = x,
 									Ships = (x.AccountPlanets.Where(y => playerAccountIDs.Contains(y.AccountID)).Sum(y => (int?)y.DropshipCount) ?? 0),
-									Defenses = (x.PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)
+									Defenses = (x.PlanetStructures.Where(y => y.IsActive).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)
 								}).Where(
 									x => (x.Planet.Account == null || playerFactionIDs.Contains(x.Planet.Account.FactionID)) && x.Ships >= x.Defenses).ToList();
 					var maxc = valids.Max(x => (int?)x.Ships) ?? 0;
@@ -51,8 +51,8 @@ namespace ZeroKWeb.SpringieInterface
 							gal.Planets.Where(x => x.Account != null && biggestFactionIDs.Contains(x.Account.FactionID)).Select(
 								x =>
 								new PlanetPickEntry(x,
-								                    Math.Max(1, (2000 - x.AccountPlanets.Sum(y => (int?)y.Influence + y.ShadowInfluence) ?? 0)/200) -
-								                    (x.PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0))).ToList();
+								                    (int)(Math.Max(1, (2000 - x.AccountPlanets.Sum(y => (int?)y.Influence + y.ShadowInfluence) ?? 0)/200) -
+								                          (x.PlanetStructures.Where(y => y.IsActive).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)))).ToList();
 
 						targets.AddRange(
 							gal.Planets.Where(

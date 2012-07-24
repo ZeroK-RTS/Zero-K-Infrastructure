@@ -26,7 +26,7 @@ namespace ZkData
             var result = new Dictionary<int, ClanUnlockEntry>();
 
             return
-                planets.SelectMany(y => y.PlanetStructures).Where(x => !x.IsDestroyed && x.StructureType.EffectUnlockID != null).Select(
+                planets.SelectMany(y => y.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectUnlockID != null).Select(
                     x => new { unlock = x.StructureType.Unlock, clan = x.Planet.Account.Clan }).GroupBy(x => x.unlock).Select(
                         x =>
                         new ClanUnlockEntry() { Unlock = x.Key, Clan = x.OrderByDescending(y => y.clan.ClanID == clanID).Select(y => y.clan).First() })
@@ -60,7 +60,7 @@ namespace ZkData
                 {
                     var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
 
-                    if (thisPlanet.PlanetStructures.Where(x => !x.IsDestroyed).Max(x => x.StructureType.EffectLinkStrength) > 0) accesiblePlanets.Add(otherPlanet);
+                    if (thisPlanet.PlanetStructures.Where(x => x.IsActive).Max(x => x.StructureType.EffectInfluenceSpread) > 0) accesiblePlanets.Add(otherPlanet);
                 }
             }
 
@@ -98,7 +98,7 @@ namespace ZkData
             foreach (var thisPlanet in gal.Planets)
             {
                 var thisPlanetID = thisPlanet.PlanetID;
-                var thisLinkStrenght = thisPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectLinkStrength) ?? 0;
+                var thisLinkStrenght = thisPlanet.PlanetStructures.Where(s => s.IsActive).Sum(s => s.StructureType.EffectInfluenceSpread) ?? 0;
 
                 // clear shadow influence
                 foreach (var thisAccountPlanet in thisPlanet.AccountPlanets) thisAccountPlanet.ShadowInfluence = 0;
@@ -109,7 +109,7 @@ namespace ZkData
                 foreach (var link in gal.Links.Where(l => l.PlanetID1 == thisPlanetID || l.PlanetID2 == thisPlanetID))
                 {
                     var otherPlanet = thisPlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
-                    var otherLinkStrenght = otherPlanet.PlanetStructures.Where(s => !s.IsDestroyed).Sum(s => s.StructureType.EffectLinkStrength) ?? 0;
+                    var otherLinkStrenght = otherPlanet.PlanetStructures.Where(s => s.IsActive).Sum(s => s.StructureType.EffectInfluenceSpread) ?? 0;
 
                     // increment shadow influence of player on the other side of the link
                     var influenceFactor = (thisLinkStrenght + otherLinkStrenght)/2.0;

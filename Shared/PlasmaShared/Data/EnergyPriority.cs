@@ -7,9 +7,8 @@ namespace ZkData
 {
     public enum EnergyPriority
     {
-        Disabled = 0,
-        Low = 1,
-        Normal = 2,
-        High = 3
+        Low = -1,
+        Normal = 0,
+        High = 1
     }
 }

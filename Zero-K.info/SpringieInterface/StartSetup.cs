@@ -158,7 +158,7 @@ namespace ZeroKWeb.SpringieInterface
                                                firstEntry.Influence - secondEntry.Influence);
 
                     var pwStructures = new LuaTable();
-                    foreach (var s in planet.PlanetStructures.Where(x => !x.IsDestroyed && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
+                    foreach (var s in planet.PlanetStructures.Where(x => x.IsActive && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
                     {
                         pwStructures.Add("s" + s.StructureTypeID,
                                          new LuaTable()

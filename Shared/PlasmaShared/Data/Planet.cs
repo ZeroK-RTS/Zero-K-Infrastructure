@@ -31,15 +31,6 @@ namespace ZkData
 			else return Account.Clan.Faction.Color;// todo stupid faction way
 		}
 
-		public int GetIPToCapture()
-		{
-			var ownerIP = 0;
-			if (Account != null && Account.ClanID != null) ownerIP = AccountPlanets.Where(x => x.Account.FactionID == Account.FactionID).Sum(x => (int?)(x.Influence + x.ShadowInfluence)) ?? 0;
-			ownerIP += PlanetStructures.Where(x => !x.IsDestroyed).Sum(x => x.StructureType.EffectInfluenceDefense) ?? 0;
-
-			return ownerIP;
-		}
-
 
 		public Rectangle PlanetOverlayRectangle(Galaxy gal)
 		{
@@ -65,7 +56,11 @@ namespace ZkData
 
 	    public int GetUpkeepCost()
 	    {
-            return PlanetStructures.Where(y => !y.IsDestroyed).Sum(y => (int?)y.StructureType.UpkeepCost)??0;
+            return PlanetStructures.Sum(y => (int?)y.StructureType.UpkeepEnergy)??0;
+	    }
+
+	    public double GetIPToCapture() {
+	        return 50; // todo cleanup
 	    }
 	}
 }

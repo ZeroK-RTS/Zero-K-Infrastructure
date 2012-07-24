@@ -13,7 +13,7 @@ namespace ZkData
 	{
 		public string GetImageUrl()
 		{
-			if (IsDestroyed) return string.Format("/img/structures/{0}", StructureType.DestroyedMapIcon); 
+			if (!IsActive) return string.Format("/img/structures/{0}", StructureType.DisabledMapIcon); 
 			else return string.Format("/img/structures/{0}", StructureType.MapIcon);
 		}
 
@@ -24,7 +24,7 @@ namespace ZkData
 
 		public string GetFileNameResized(int size)
 		{
-			var fileName = IsDestroyed ? StructureType.DestroyedMapIcon : StructureType.MapIcon;
+			var fileName = !IsActive ? StructureType.DisabledMapIcon : StructureType.MapIcon;
 			var extension = Path.GetExtension(fileName);
 			return String.Format("{0}_r_{1}{2}", Path.GetFileNameWithoutExtension(fileName), size, extension);
 		}
@@ -40,7 +40,7 @@ namespace ZkData
 
 		public void GenerateResized(int size, string folder, bool destroyed)
 		{
-			using (var image = Image.FromFile(folder + "/" + (IsDestroyed ? StructureType.DestroyedMapIcon : StructureType.MapIcon)))
+			using (var image = Image.FromFile(folder + "/" + (!IsActive ? StructureType.DisabledMapIcon : StructureType.MapIcon)))
 			{
 				using (var resized = image.GetResized(size, size, InterpolationMode.HighQualityBilinear))
 				{
