@@ -22096,8 +22096,6 @@ namespace ZkData
 		
 		private int _PollDurationDays;
 		
-		private System.Nullable<int> _AppointedByRoleTypeID;
-		
 		private double _RightDropshipQuota;
 		
 		private double _RightBomberQuota;
@@ -22124,8 +22122,6 @@ namespace ZkData
 		
 		private EntityRef<Faction> _Faction;
 		
-		private EntityRef<RoleType> _ParentRoleType;
-		
 		private bool serializing;
 		
     #region Extensibility Method Definitions
@@ -22148,8 +22144,6 @@ namespace ZkData
     partial void OnIsVoteableChanged();
     partial void OnPollDurationDaysChanging(int value);
     partial void OnPollDurationDaysChanged();
-    partial void OnAppointedByRoleTypeIDChanging(System.Nullable<int> value);
-    partial void OnAppointedByRoleTypeIDChanged();
     partial void OnRightDropshipQuotaChanging(double value);
     partial void OnRightDropshipQuotaChanged();
     partial void OnRightBomberQuotaChanging(double value);
@@ -22345,33 +22339,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AppointedByRoleTypeID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public System.Nullable<int> AppointedByRoleTypeID
-		{
-			get
-			{
-				return this._AppointedByRoleTypeID;
-			}
-			set
-			{
-				if ((this._AppointedByRoleTypeID != value))
-				{
-					if (this._ParentRoleType.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnAppointedByRoleTypeIDChanging(value);
-					this.SendPropertyChanging();
-					this._AppointedByRoleTypeID = value;
-					this.SendPropertyChanged("AppointedByRoleTypeID");
-					this.OnAppointedByRoleTypeIDChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightDropshipQuota", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public double RightDropshipQuota
 		{
 			get
@@ -22392,7 +22361,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightBomberQuota", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public double RightBomberQuota
 		{
 			get
@@ -22413,7 +22382,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightMetalQuota", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public double RightMetalQuota
 		{
 			get
@@ -22434,7 +22403,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightDiplomacy", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
 		public bool RightDiplomacy
 		{
 			get
@@ -22455,7 +22424,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightEditTexts", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
 		public bool RightEditTexts
 		{
 			get
@@ -22476,7 +22445,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightSetEnergyPriority", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
 		public bool RightSetEnergyPriority
 		{
 			get
@@ -22497,7 +22466,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RightKickPeople", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public bool RightKickPeople
 		{
 			get
@@ -22518,7 +22487,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DisplayOrder", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
 		public int DisplayOrder
 		{
 			get
@@ -22539,7 +22508,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_Poll", Storage="_Polls", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
 		public EntitySet<Poll> Polls
 		{
 			get
@@ -22558,7 +22527,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_AccountRole", Storage="_AccountRoles", ThisKey="RoleTypeID", OtherKey="RoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<AccountRole> AccountRoles
 		{
 			get
@@ -22577,7 +22546,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleTypeHierarchy", Storage="_RoleTypeHierarchiesByMasterRoleTypeID", ThisKey="RoleTypeID", OtherKey="MasterRoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<RoleTypeHierarchy> RoleTypeHierarchiesByMasterRoleTypeID
 		{
 			get
@@ -22596,7 +22565,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleTypeHierarchy1", Storage="_RoleTypeHierarchiesBySlaveRoleTypeID", ThisKey="RoleTypeID", OtherKey="SlaveRoleTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<RoleTypeHierarchy> RoleTypeHierarchiesBySlaveRoleTypeID
 		{
 			get
@@ -22644,30 +22613,6 @@ namespace ZkData
 						this._RestrictFactionID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Faction");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="RoleType_RoleType", Storage="_ParentRoleType", ThisKey="AppointedByRoleTypeID", OtherKey="RoleTypeID", IsForeignKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
-		public RoleType ParentRoleType
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._ParentRoleType.HasLoadedOrAssignedValue == false)))
-				{
-					return null;
-				}
-				return this._ParentRoleType.Entity;
-			}
-			set
-			{
-				if ((this._ParentRoleType.Entity != value))
-				{
-					this.SendPropertyChanging();
-					this._ParentRoleType.Entity = value;
-					this.SendPropertyChanged("ParentRoleType");
 				}
 			}
 		}
@@ -22747,7 +22692,6 @@ namespace ZkData
 			this._RoleTypeHierarchiesByMasterRoleTypeID = new EntitySet<RoleTypeHierarchy>(new Action<RoleTypeHierarchy>(this.attach_RoleTypeHierarchiesByMasterRoleTypeID), new Action<RoleTypeHierarchy>(this.detach_RoleTypeHierarchiesByMasterRoleTypeID));
 			this._RoleTypeHierarchiesBySlaveRoleTypeID = new EntitySet<RoleTypeHierarchy>(new Action<RoleTypeHierarchy>(this.attach_RoleTypeHierarchiesBySlaveRoleTypeID), new Action<RoleTypeHierarchy>(this.detach_RoleTypeHierarchiesBySlaveRoleTypeID));
 			this._Faction = default(EntityRef<Faction>);
-			this._ParentRoleType = default(EntityRef<RoleType>);
 			OnCreated();
 		}
 		
