@@ -594,9 +594,7 @@
     <Type Name="AccountPlanet">
       <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="DropshipCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="Influence" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="ShadowInfluence" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="AttackCount" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Planet_AccountPlanet" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Account_AccountPlanet" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
@@ -669,7 +667,7 @@
       <Column Name="DisabledMapIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="UpkeepEnergy" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="TurnsToActivate" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="EffectInfluenceDefense" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="EffectInfluenceDefense" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectDropshipProduction" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectDropshipCapacity" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectInfluenceSpread" Type="System.Double" DbType="float" CanBeNull="true" />
@@ -984,6 +982,7 @@
       <Column Name="FactionID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Influence" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Dropships" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="DropshipsLastAdded" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Association Name="Planet_PlanetFaction" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Faction_PlanetFaction" Member="Faction" ThisKey="FactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
     </Type>

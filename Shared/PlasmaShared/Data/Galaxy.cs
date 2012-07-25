@@ -68,40 +68,15 @@ namespace ZkData
         }
 
 
-        /// <summary>
-        /// Removes ships which cannot be supported by current jumpgates/links
-        /// </summary>
-        public static void RemoveOrphanedShips(ZkDataContext db) {
-
-            foreach (var clanShips in db.AccountPlanets.Where(x => x.DropshipCount > 0 && x.Account.ClanID != null).GroupBy(x => x.Account.Clan)) {
-                var accessible = DropshipAttackablePlanets(db, clanShips.Key.ClanID);
-
-                foreach (var accountShips in clanShips.GroupBy(x => x.Account)) {
-                    var jumpgates = accountShips.Key.GetJumpGateCapacity();
-                    var capacity = accountShips.Key.GetDropshipCapacity();
-
-                    foreach (var planetEntry in accountShips) {
-                        var isAccessible = accessible.Contains(planetEntry.Planet);
-                        var maxCount = isAccessible ? capacity : jumpgates;
-                        if (planetEntry.DropshipCount > maxCount) {
-                            accountShips.Key.SpendDropships(planetEntry.DropshipCount - maxCount);
-                        }
-                    }
-                }
-            }
-        }
-
 
         public static void RecalculateShadowInfluence(ZkDataContext db)
         {
+            /*
             var gal = db.Galaxies.Single(x => x.IsDefault);
             foreach (var thisPlanet in gal.Planets)
             {
                 var thisPlanetID = thisPlanet.PlanetID;
                 var thisLinkStrenght = thisPlanet.PlanetStructures.Where(s => s.IsActive).Sum(s => s.StructureType.EffectInfluenceSpread) ?? 0;
-
-                // clear shadow influence
-                foreach (var thisAccountPlanet in thisPlanet.AccountPlanets) thisAccountPlanet.ShadowInfluence = 0;
 
                 // set shadow influence
 
@@ -142,6 +117,7 @@ namespace ZkData
                 }
             }
             db.SubmitChanges();
+             * */
         }
 
         public class ClanUnlockEntry

@@ -323,7 +323,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
 
                     var planetFactionId = planet.Account != null ? planet.Account.FactionID ?? 0 : 0;
-                    var attackerFactions = planet.AccountPlanets.Where(x => x.DropshipCount > 0 && x.Account.FactionID != null).Select(x => (x.Account.FactionID ?? 0)).Distinct().ToList();
+                    var attackerFactions = planet.PlanetFactions.Where(x => x.Dropships > 0).Distinct().ToList();
 
                     if (context.Players.Count < 2) return new BalanceTeamsResult() { Message = "Not enough players", CanStart = false };
 
@@ -332,12 +332,6 @@ namespace ZeroKWeb.SpringieInterface
                             var treaty = clans[i].GetEffectiveTreaty(clans[j]);
                             treaties[Tuple.Create(clans[i], clans[j])] = treaty;
                             treaties[Tuple.Create(clans[j], clans[i])] = treaty;
-
-                            // if treaty is neutral but they send ships - mark as "war"
-                            if (planet.OwnerAccountID != null && treaty.AllyStatus == AllyStatus.Neutral) {
-                                if (clans[i].ClanID == planet.Account.ClanID && planet.AccountPlanets.Any(x => x.Account.ClanID == clans[j].ClanID && x.DropshipCount > 0)) treaty.AllyStatus = AllyStatus.War;
-                                else if (clans[j].ClanID == planet.Account.ClanID && planet.AccountPlanets.Any(x => x.Account.ClanID == clans[i].ClanID && x.DropshipCount > 0)) treaty.AllyStatus = AllyStatus.War;
-                            }
                         }
                     }
 
@@ -357,11 +351,10 @@ namespace ZeroKWeb.SpringieInterface
                                     if (treaty.AllyStatus == AllyStatus.Alliance) points = 2;
                                     else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 1;
                                     else if (treaty.AllyStatus == AllyStatus.War) points = -3;
-                                    if (treaty.AllyStatus == AllyStatus.Neutral && f1 != f2) if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -3;
+                                   
                                 }
                             }
-                            else if (f1 != f2) if ((planetFactionId == f1 && attackerFactions.Contains(f2)) || (planetFactionId == f2 && attackerFactions.Contains(f1))) points = -3;
-
+                            
                             sameTeamScore[i, j] = points;
                             sameTeamScore[j, i] = points;
                             //res.Message += string.Format("{0} + {1} = {2} \n", players[i].Name, players[j].Name, points);
@@ -374,8 +367,6 @@ namespace ZeroKWeb.SpringieInterface
                         var player = players[i];
                         if (planet.OwnerAccountID == player.AccountID) mult += 1; // owner 
                         else if (planet.Account != null && planet.Account.ClanID == player.AccountID) mult += 0.5; // owner's clan 
-                        if (planet.AccountPlanets.Any(x => x.AccountID == player.AccountID && x.DropshipCount > 0)) mult += 1; // own dropship 
-                        else if (planet.AccountPlanets.Any(x => x.DropshipCount > 0 && x.Account.ClanID == player.ClanID)) mult += 0.5; // clan's dropship 
                         playerScoreMultiplier[i] = mult;
 
                         //res.Message += string.Format("{0} mult = {1} \n", players[i].Name, mult);

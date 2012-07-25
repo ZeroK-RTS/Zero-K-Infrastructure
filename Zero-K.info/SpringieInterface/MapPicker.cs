@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LobbyClient;
 using ZkData;
 
 namespace ZeroKWeb.SpringieInterface
@@ -13,6 +14,7 @@ namespace ZeroKWeb.SpringieInterface
 
 	public class MapPicker
 	{
+
 		public static RecommendedMapResult GetRecommendedMap(BattleContext context, bool pickNew) {
 			var mode = context.GetMode();
 		    var config = context.GetConfig();
@@ -20,86 +22,43 @@ namespace ZeroKWeb.SpringieInterface
 			using (var db = new ZkDataContext()) {
 				if (mode == AutohostMode.Planetwars) {
 					var playerAccounts = context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(z => z.LobbyID == x.LobbyID)).ToList();
-					var playerAccountIDs = playerAccounts.Select(x => x.AccountID).ToList();
 
-					var facGroups = playerAccounts.Where(x => x.ClanID != null).GroupBy(x => x.FactionID).Select(x => new { FactionID = x.Key, Count = x.Count() }).ToList();
-					var playerFactionIDs = facGroups.Select(x => x.FactionID).ToList();
-					var biggestFactionIDs = new List<int?>();
-					if (facGroups.Any()) {
-						var biggestGroup = facGroups.OrderByDescending(x => x.Count).Select(x => x.Count).FirstOrDefault();
-						biggestFactionIDs = facGroups.Where(x => x.Count == biggestGroup).Select(x => x.FactionID).ToList();
-					}
+				    var validAttackerFactionIDs = playerAccounts.Where(x => x.FactionID != null).GroupBy(x => x.FactionID).Select(x => x.Key).ToList();
 
-					var gal = db.Galaxies.Single(x => x.IsDefault);
+                    var validDefenderFactionIDs = playerAccounts.Where(x => x.FactionID != null && x.ClanID != null).GroupBy(x => x.FactionID).Select(x => x.Key).ToList();
 
-					var valids =
-						gal.Planets.Select(
-							x =>
-							new
-								{
-									Planet = x,
-									Ships = (x.AccountPlanets.Where(y => playerAccountIDs.Contains(y.AccountID)).Sum(y => (int?)y.DropshipCount) ?? 0),
-									Defenses = (x.PlanetStructures.Where(y => y.IsActive).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)
-								}).Where(
-									x => (x.Planet.Account == null || playerFactionIDs.Contains(x.Planet.Account.FactionID)) && x.Ships >= x.Defenses).ToList();
-					var maxc = valids.Max(x => (int?)x.Ships) ?? 0;
 
-					List<PlanetPickEntry> targets = null;
-					// if there are no dropships target unclaimed and biggest clan planets - INSURGENTS
-					if (maxc == 0) {
-						targets =
-							gal.Planets.Where(x => x.Account != null && biggestFactionIDs.Contains(x.Account.FactionID)).Select(
-								x =>
-								new PlanetPickEntry(x,
-								                    (int)(Math.Max(1, (2000 - x.AccountPlanets.Sum(y => (int?)y.Influence + y.ShadowInfluence) ?? 0)/200) -
-								                          (x.PlanetStructures.Where(y => y.IsActive).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0)))).ToList();
+				    var valid =
+				        db.PlanetFactions.Where(
+				            x => x.Dropships > 0 && validAttackerFactionIDs.Contains(x.FactionID) &&  (x.Planet.OwnerFactionID == null || validDefenderFactionIDs.Contains(x.Planet.OwnerFactionID))).
+				            Select(x => new
+				                        {
+                                            Planet = x.Planet,
+                                            Attacker = x.Faction,
 
-						targets.AddRange(
-							gal.Planets.Where(
-								x =>
-								x.OwnerAccountID == null &&
-								db.Links.Any(
-									y =>
-									(y.PlanetID1 == x.PlanetID && y.PlanetByPlanetID2.Account != null && biggestFactionIDs.Contains(y.PlanetByPlanetID2.Account.FactionID) ||
-									 (y.PlanetID2 == x.PlanetID && y.PlanetByPlanetID1.Account != null && biggestFactionIDs.Contains(y.PlanetByPlanetID1.Account.FactionID))))).Select(
-									 	x => new PlanetPickEntry(x, 16 + (x.AccountPlanets.Sum(y => (int?)y.Influence) ?? 0)/50)));
+                                            FreeShips = x.Dropships - (x.Planet.PlanetStructures.Where(y => y.IsActive).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0),
+                                            TotalShips = x.Dropships,
+                                            LastAdded = x.DropshipsLastAdded
 
-						if (!targets.Any()) targets = gal.Planets.Select(x => new PlanetPickEntry(x, 1)).ToList();
-					}
-					else targets = valids.Where(x => x.Ships == maxc).Select(x => new PlanetPickEntry(x.Planet, 1)).ToList();
-					// target valid planets with most dropships
+				                        }).Where(x=>x.FreeShips > 0).OrderByDescending(x=>x.FreeShips).ThenBy(x=>x.LastAdded).FirstOrDefault();
 
-					var r = new Random(context.AutohostName.GetHashCode() + gal.Turn);
-					// randomizer based on autohost name + turn to always return same
+                    if (valid == null) return new RecommendedMapResult()
+                                               {
+                                                   Message = "Use dropships to attack some planet!"
+                                               };
 
-					Planet planet = null;
-					var sumw = targets.Sum(x => x.Weight);
-					if (sumw > 0) {
-						var random = r.Next(sumw);
-						sumw = 0;
-						foreach (var target in targets) {
-							sumw += target.Weight;
-							if (sumw >= random) {
-								planet = target.Planet;
-								break;
-							}
-						}
-					}
-					if (planet == null) planet = targets[r.Next(targets.Count)].Planet; // this should not be needed;
-
-					res.MapName = planet.Resource.InternalName;
+				    var planet = valid.Planet;
+                    res.MapName = planet.Resource.InternalName;
 					var owner = "";
 					if (planet.Account != null) owner = planet.Account.Name;
 
-					var shipInfo = String.Join(",",
-					                           planet.AccountPlanets.Where(x => x.DropshipCount > 0 && playerAccountIDs.Contains(x.AccountID)).Select(
-					                           	x => String.Format("{0} ships from {1}", x.DropshipCount, x.Account.Name)));
+					var shipInfo = String.Format("{0} ships from {1}", valid.TotalShips, valid.Attacker.Name);
 
 					res.Message = String.Format("Welcome to {0} planet {1} http://zero-k.info/PlanetWars/Planet/{2} attacked by {3}",
 					                            owner,
 					                            planet.Name,
 					                            planet.PlanetID,
-					                            String.IsNullOrEmpty(shipInfo) ? "insurgents" : shipInfo);
+					                            shipInfo);
 
 					if (planet.OwnerAccountID != null && planet.Account.Clan != null) {
 						var be = Global.Nightwatch.Tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == context.AutohostName);
@@ -111,7 +70,11 @@ namespace ZeroKWeb.SpringieInterface
 						}
 					}
 
-					db.SubmitChanges();
+                    if (planet.OwnerFactionID != null) {
+                        Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, planet.Faction.Shortcut,string.Format("Your faction's planet {0} is about to be attacked, defend it! Come to PlanetWars spring://@join_player:{1} ", planet.Name, context.AutohostName), true);
+                    }
+
+				    db.SubmitChanges();
 				}
 				else { 
 					if (!pickNew) {

@@ -6,7 +6,7 @@
 	ViewBag.Minimal = true;
 	var g = Model;
 
-	int maxDropships = new ZkDataContext().AccountPlanets.GroupBy(x => x.PlanetID).Select(x => (int?)x.Sum(y => y.DropshipCount)).Max() ?? 1; // fake max as 1 to prevent division by zero
+	int maxDropships = new ZkDataContext().PlanetFactions.Select(x => (int?)x.Dropships).Max() ?? 1; // fake max as 1 to prevent division by zero
 	if (maxDropships == 0)
 	{
 		maxDropships = 1;
@@ -178,7 +178,7 @@ We are setting up the next round.
 	Clan clan = null;
 	var autohost = Global.Nightwatch.GetPlanetBattles(p).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
 
-	int shipCount = p.AccountPlanets.Sum(x => (int?)x.DropshipCount) ?? 0;
+	int shipCount = p.PlanetFactions.Sum(x => (int?)x.Dropships) ?? 0;
 
 	if (p.Account != null)
 	{
@@ -238,11 +238,11 @@ We are setting up the next round.
 		@if (shipCount > 0)
 		{
 			<span style="position: absolute; right: 0; top: 20%;" title='$planetDropships$@p.PlanetID'>
-                @foreach (var ships in p.AccountPlanets.Where(x => x.DropshipCount > 0 ).GroupBy(x => x.Account.Faction).Where(x=>x.Key!=null).Select(x => new {Faction=x.Key, shipCount = x.Sum(y=>y.DropshipCount) }).OrderByDescending(x=>x.shipCount))
+                @foreach (var ships in p.PlanetFactions.Where(x => x.Dropships > 0 ).OrderByDescending(x=>x.Dropships))
                 {
                     
-                    <img src='@ships.Faction.GetShipImageUrl()' width='@(Math.Round(13 + 12.0 * ships.shipCount / (double)maxDropships))' />
-                    <span style="font-size: 10px; color: #ffffff;">@ships.shipCount</span><br />
+                    <img src='@ships.Faction.GetShipImageUrl()' width='@(Math.Round(13 + 12.0 * ships.Dropships / (double)maxDropships))' />
+                    <span style="font-size: 10px; color: #ffffff;">@ships.Dropships</span><br />
                 }
 			</span>
 		}

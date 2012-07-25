@@ -297,20 +297,6 @@
 		</table>
  }
 	
-	@if (Model.Clan != null)
- {
-		<h3>Starships</h3>
-		<span nowrap="nowrap">@(Model.GetDropshipsAvailable())/@(Model.GetDropshipCapacity()) ready to deploy</span>
-		<table>
-			@foreach (var p in Model.AccountPlanets.Where(x => x.DropshipCount > 0))
-   { 
-				<tr>
-					<td>@Html.PrintPlanet(p.Planet) </td>
-					<td><img src='@Model.Faction.GetShipImageUrl()' />@p.DropshipCount</td>
-				</tr>
-   }
-		</table>
- }
 	
 	<h3>PlanetWars events</h3>
 	@Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })

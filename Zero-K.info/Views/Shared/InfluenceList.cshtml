@@ -1,39 +1,19 @@
 ﻿@using ZkData
-@model IEnumerable<AccountPlanet>
+@model IEnumerable<PlanetFaction>
 
 <table>
 
-    @foreach (var facGroup in Model.Where(ap => ap.Influence + ap.ShadowInfluence != 0).GroupBy(ap => ap.Account.Faction).Where(x=>x.Key!=null).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)))
+    @foreach (var facGroup in Model.Where(x=>x.Influence > 0).OrderByDescending(g => g.Influence))
     {
         <tr>
             <td>
-                <b><img src='@facGroup.Key.GetImageUrl()' style='width: 32px; height: 32px;'/></b>
+                <b><img src='@facGroup.Faction.GetImageUrl()' style='width: 32px; height: 32px;'/></b>
             </td>
             <td>
                 <b>
-                    @Html.PrintInfluence(facGroup.Key, facGroup.Sum(ap => ap.Influence), facGroup.Sum(ap => ap.ShadowInfluence))
+                    @Html.PrintInfluence(facGroup.Faction, facGroup.Influence)
                 </b>
             </td>
         </tr>
-  foreach (var clanGroup in facGroup.Where(ap => ap.Influence + ap.ShadowInfluence != 0).GroupBy(ap => ap.Account.Clan).OrderByDescending(g => g.Sum(ap => ap.Influence + ap.ShadowInfluence)))
-        {
-      <tr>
-          <td>
-              <b>&nbsp;&nbsp;&nbsp;@Html.PrintClan(clanGroup.Key)</b>
-          </td>
-          <td>
-              <b>&nbsp;
-                  @Html.PrintInfluence(clanGroup.Key, clanGroup.Sum(ap => ap.Influence), clanGroup.Sum(ap => ap.ShadowInfluence))
-              </b>
-          </td>
-      </tr>
-           foreach (var accountPlanet in clanGroup.OrderByDescending(ap => ap.Influence + ap.ShadowInfluence))
-            {
-                <tr>
-                    <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>@Html.PrintAccount(accountPlanet.Account)</small></td>
-                    <td>&nbsp;&nbsp;&nbsp;<small>@Html.PrintInfluence(accountPlanet)</small></td>
-                </tr>
-            }
-        }
     }
 </table>

@@ -72,7 +72,7 @@
     <br/>
 
     <table>
-        @foreach (Account a in c.Accounts.OrderByDescending(x => x.AccountPlanets.Sum(y => y.Influence + y.ShadowInfluence))) {
+        @foreach (Account a in c.Accounts) {
             <tr>
                 <td>
                     @Html.PrintAccount(a)
@@ -101,22 +101,9 @@
     <div id="tabs">
         <ul>
             <li><a href="#events"><span>Events</span></a></li>            
-            <li><a href="#starships"><span>Starships</span></a></li>
         </ul>
         <div id="events">
             @Html.Action("Events", "Planetwars", new { clanID = c.ClanID, partial = true })
-        </div>
-
-        <div id="starships">
-            <table>
-                @foreach (var p in Model.Accounts.SelectMany(x => x.AccountPlanets).GroupBy(x => x.Planet).Select(x => new { planet = x.Key, dropships = x.Sum(y => y.DropshipCount) }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) {
-                    <tr>
-                        <td>@Html.PrintPlanet(p.planet)</td>
-                        <td>
-                            <img src='@Model.Faction.GetShipImageUrl()' />@p.dropships</td>
-                    </tr>
-                }
-            </table>
         </div>
     </div>
     @Html.ActionLink("Back to clan list", "Index", "Clans")

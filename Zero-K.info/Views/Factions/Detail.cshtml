@@ -68,8 +68,25 @@
 }
 
 
-<h2>Events</h2>
+<div id="tabs">
+    <ul>
+        <li><a href="#events"><span>Events</span></a></li>            
+        <li><a href="#starships"><span>Starships</span></a></li>
+    </ul>
+    <div id="events">
+        @Html.Action("Events", "Planetwars", new { factionID = f.FactionID, partial = true })
+    </div>
 
-<div id="events">
-    @Html.Action("Events", "Planetwars", new { factionID = f.FactionID, partial = true })
+    <div id="starships">
+        <table>
+            @foreach (var p in Model.PlanetFactions.Where(x=>x.Dropships>0).OrderByDescending(x => x.Dropships)) {
+                <tr>
+                    <td>@Html.PrintPlanet(p.Planet)</td>
+                    <td>
+                        <img src='@p.Faction.GetShipImageUrl()' />@p.Dropships</td>
+                </tr>
+            }
+        </table>
+    </div>
 </div>
+

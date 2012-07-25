@@ -1,20 +1,11 @@
 ﻿@model ZkData.Planet
          
 <table>
-  @foreach (var p in Model.AccountPlanets.GroupBy(x => x.Account.Clan).Where(x=>x.Key != null).Select(x => new { clan = x.Key, dropships = x.Sum(y => y.DropshipCount), list = x }).Where(x => x.dropships > 0).OrderByDescending(x => x.dropships)) { 
+  @foreach (var p in Model.PlanetFactions.Where(x => x.Dropships > 0).OrderByDescending(x => x.Dropships)) { 
     <tr>
-      <td>@Html.PrintClan(p.clan)
+      <td>@Html.PrintFaction(p.Faction, false)
       </td>
-      <td><img src='@p.clan.Faction.GetShipImageUrl()' />
-        @p.dropships
-      </td>
+      <td><img src='@p.Faction.GetShipImageUrl()' />@p.Dropships</td>
     </tr>
-    foreach (var cp in p.list.Where(x=>x.DropshipCount> 0).OrderByDescending(x=>x.DropshipCount)) { 
-      <tr>
-      <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<small>@Html.PrintAccount(cp.Account)</small></td>
-      <td>&nbsp;&nbsp;&nbsp;<img src='@p.clan.Faction.GetShipImageUrl()' width='15'/><small>@cp.DropshipCount</small></td>
-      </tr>
-     
-    }
   }
 </table>

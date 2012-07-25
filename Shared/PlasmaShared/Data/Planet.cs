@@ -8,12 +8,9 @@ namespace ZkData
 	{
 		public const double OverlayRatio = 2.25;
 
-		public IEnumerable<FactionInfluence> GetFactionInfluences()
+		public IEnumerable<PlanetFaction> GetFactionInfluences()
 		{
-			return
-				AccountPlanets.GroupBy(x => x.Account.Faction).Where(x => x.Key != null).Select(
-					x => new FactionInfluence() { Faction = x.Key, Influence = x.Sum(y => (int?)(y.Influence + y.ShadowInfluence)) ?? 0 }).OrderByDescending(
-						x => x.Influence);
+			return PlanetFactions.Where(x=>x.Influence > 0).OrderByDescending(x => x.Influence);
 		}
 
         public bool TreatyAttackablePlanet( Clan clan)
@@ -46,12 +43,6 @@ namespace ZkData
 			var xp = (int)(X*gal.Width);
 			var yp = (int)(Y*gal.Height);
 			return new Rectangle((int)(xp - w/2), (int)(yp - w/2), (int)w, (int)w);
-		}
-
-		public class FactionInfluence
-		{
-			public Faction Faction;
-			public int Influence;
 		}
 
 	    public int GetUpkeepCost()

@@ -311,7 +311,7 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
-            var there = planet.AccountPlanets.Where(x => x.AccountID == acc.AccountID).Sum(x => (int?)x.DropshipCount) ?? 0;
+            var there = planet.PlanetFactions.Where(x => x.FactionID == acc.FactionID).Sum(x => (int?)x.Dropships) ?? 0;
             var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db, acc.ClanID.Value).Select(x => x.PlanetID).ToList();
             var accessible = accessiblePlanets.Any(x => x == planetID);
             if (!accessible)
@@ -332,7 +332,7 @@ namespace ZeroKWeb.Controllers
             cnt = Math.Min(cnt, (int)acc.GetDropshipsAvailable());
             if (cnt > 0)
             {
-                acc.PwDropshipsUsed += cnt;
+                acc.SpendDropships(cnt);
 
                 if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
 
@@ -345,13 +345,16 @@ namespace ZeroKWeb.Controllers
                                                            planet.Name,
                                                            planet.PlanetID));
                 }
-                var pac = acc.AccountPlanets.SingleOrDefault(x => x.PlanetID == planetID);
+                var pac = planet.PlanetFactions.SingleOrDefault(x => x.FactionID == acc.FactionID);
                 if (pac == null)
                 {
-                    pac = new AccountPlanet { AccountID = Global.AccountID, PlanetID = planetID };
-                    db.AccountPlanets.InsertOnSubmit(pac);
+                    pac = new PlanetFaction { FactionID = Global.FactionID, PlanetID = planetID };
+                    db.PlanetFactions.InsertOnSubmit(pac);
                 }
-                pac.DropshipCount += cnt;
+                pac.Dropships += cnt;
+                pac.DropshipsLastAdded = DateTime.UtcNow;
+          
+
                 if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} dropships to {2}", acc, cnt, planet));
                 db.SubmitChanges();
             }
@@ -372,6 +375,7 @@ namespace ZeroKWeb.Controllers
         /// <param name="sb">optional spring batle that caused this change (for event logging)</param>
         public static void SetPlanetOwners(ZkDataContext db = null, SpringBattle sb = null)
         {
+            
             if (db == null) db = new ZkDataContext();
             Galaxy.RecalculateShadowInfluence(db);
             var havePlanetsChangedHands = false;

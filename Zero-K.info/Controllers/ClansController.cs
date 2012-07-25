@@ -68,11 +68,8 @@ namespace ZeroKWeb.Controllers
 
             // remove planets
             acc.Planets.Clear();
-            
-            foreach (var entry in acc.AccountPlanets)
-            {
-                entry.DropshipCount = 0;
-            }
+           
+            acc.ResetQuotas();
             acc.Clan = null;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves clan {1}", acc, clan));
             db.SubmitChanges();

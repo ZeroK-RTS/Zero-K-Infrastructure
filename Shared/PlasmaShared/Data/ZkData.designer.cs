@@ -16119,11 +16119,7 @@ namespace ZkData
 		
 		private int _AccountID;
 		
-		private int _DropshipCount;
-		
-		private int _Influence;
-		
-		private int _ShadowInfluence;
+		private int _AttackCount;
 		
 		private EntityRef<Planet> _Planet;
 		
@@ -16137,12 +16133,8 @@ namespace ZkData
     partial void OnPlanetIDChanged();
     partial void OnAccountIDChanging(int value);
     partial void OnAccountIDChanged();
-    partial void OnDropshipCountChanging(int value);
-    partial void OnDropshipCountChanged();
-    partial void OnInfluenceChanging(int value);
-    partial void OnInfluenceChanged();
-    partial void OnShadowInfluenceChanging(int value);
-    partial void OnShadowInfluenceChanged();
+    partial void OnAttackCountChanging(int value);
+    partial void OnAttackCountChanged();
     #endregion
 		
 		public AccountPlanet()
@@ -16200,65 +16192,23 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipCount", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AttackCount", DbType="int NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int DropshipCount
+		public int AttackCount
 		{
 			get
 			{
-				return this._DropshipCount;
+				return this._AttackCount;
 			}
 			set
 			{
-				if ((this._DropshipCount != value))
+				if ((this._AttackCount != value))
 				{
-					this.OnDropshipCountChanging(value);
+					this.OnAttackCountChanging(value);
 					this.SendPropertyChanging();
-					this._DropshipCount = value;
-					this.SendPropertyChanged("DropshipCount");
-					this.OnDropshipCountChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Influence", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public int Influence
-		{
-			get
-			{
-				return this._Influence;
-			}
-			set
-			{
-				if ((this._Influence != value))
-				{
-					this.OnInfluenceChanging(value);
-					this.SendPropertyChanging();
-					this._Influence = value;
-					this.SendPropertyChanged("Influence");
-					this.OnInfluenceChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ShadowInfluence", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public int ShadowInfluence
-		{
-			get
-			{
-				return this._ShadowInfluence;
-			}
-			set
-			{
-				if ((this._ShadowInfluence != value))
-				{
-					this.OnShadowInfluenceChanging(value);
-					this.SendPropertyChanging();
-					this._ShadowInfluence = value;
-					this.SendPropertyChanged("ShadowInfluence");
-					this.OnShadowInfluenceChanged();
+					this._AttackCount = value;
+					this.SendPropertyChanged("AttackCount");
+					this.OnAttackCountChanged();
 				}
 			}
 		}
@@ -17785,7 +17735,7 @@ namespace ZkData
 		
 		private System.Nullable<int> _TurnsToActivate;
 		
-		private System.Nullable<int> _EffectInfluenceDefense;
+		private System.Nullable<double> _EffectInfluenceDefense;
 		
 		private System.Nullable<double> _EffectDropshipProduction;
 		
@@ -17845,7 +17795,7 @@ namespace ZkData
     partial void OnUpkeepEnergyChanged();
     partial void OnTurnsToActivateChanging(System.Nullable<int> value);
     partial void OnTurnsToActivateChanged();
-    partial void OnEffectInfluenceDefenseChanging(System.Nullable<int> value);
+    partial void OnEffectInfluenceDefenseChanging(System.Nullable<double> value);
     partial void OnEffectInfluenceDefenseChanged();
     partial void OnEffectDropshipProductionChanging(System.Nullable<double> value);
     partial void OnEffectDropshipProductionChanged();
@@ -18054,9 +18004,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectInfluenceDefense", DbType="int")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectInfluenceDefense", DbType="float")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public System.Nullable<int> EffectInfluenceDefense
+		public System.Nullable<double> EffectInfluenceDefense
 		{
 			get
 			{
@@ -25640,6 +25590,8 @@ namespace ZkData
 		
 		private int _Dropships;
 		
+		private System.Nullable<System.DateTime> _DropshipsLastAdded;
+		
 		private EntityRef<Planet> _Planet;
 		
 		private EntityRef<Faction> _Faction;
@@ -25656,6 +25608,8 @@ namespace ZkData
     partial void OnInfluenceChanged();
     partial void OnDropshipsChanging(int value);
     partial void OnDropshipsChanged();
+    partial void OnDropshipsLastAddedChanging(System.Nullable<System.DateTime> value);
+    partial void OnDropshipsLastAddedChanged();
     #endregion
 		
 		public PlanetFaction()
@@ -25751,6 +25705,27 @@ namespace ZkData
 					this._Dropships = value;
 					this.SendPropertyChanged("Dropships");
 					this.OnDropshipsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipsLastAdded", DbType="datetime")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public System.Nullable<System.DateTime> DropshipsLastAdded
+		{
+			get
+			{
+				return this._DropshipsLastAdded;
+			}
+			set
+			{
+				if ((this._DropshipsLastAdded != value))
+				{
+					this.OnDropshipsLastAddedChanging(value);
+					this.SendPropertyChanging();
+					this._DropshipsLastAdded = value;
+					this.SendPropertyChanged("DropshipsLastAdded");
+					this.OnDropshipsLastAddedChanged();
 				}
 			}
 		}

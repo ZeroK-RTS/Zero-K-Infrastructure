@@ -372,20 +372,16 @@ namespace System.Web.Mvc
         }
 
 
-        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, AccountPlanet accountPlanet)
+        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, PlanetFaction planetFaction)
         {
-            return PrintInfluence(helper, accountPlanet.Account.Clan, accountPlanet.Influence, accountPlanet.ShadowInfluence);
+            return PrintInfluence(helper, planetFaction.Faction, planetFaction.Influence);
         }
 
-        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Clan clan, int influence, int shadowInfluence)
+        public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Faction fac, double influence)
         {
-            var formatString = "<span style='color:{0}'>{1}</span>";
-            if (shadowInfluence > 0) formatString += "&nbsp({2}&nbsp+&nbsp<span style='color:gray'>{3}</span>)";
-            var formattedString = string.Format(formatString,
-                                                Clan.ClanColor(clan, Global.ClanID),
-                                                influence + shadowInfluence,
-                                                influence,
-                                                shadowInfluence);
+            var formattedString = string.Format("<span style='color:{0}'>{1}</span>",
+                                                Faction.FactionColor(fac, Global.FactionID),
+                                                influence);
             return new MvcHtmlString(formattedString);
         }
 

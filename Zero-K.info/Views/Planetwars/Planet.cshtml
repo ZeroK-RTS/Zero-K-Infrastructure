@@ -116,13 +116,12 @@
 		<li><a href="#influence"><span>Influence</span></a></li>
 		<li><a href="#dropships"><span>Starships</span></a></li>
 		<li><a href="#structures"><span>Structures</span></a></li>
-		<li><a href="#trade"><span>Trade</span></a></li>
 		<li><a href="#events"><span>Events</span></a></li>
 		<li><a href="#minimap"><span>Navigation</span></a></li>
 	</ul>
 	<div id="influence">
         
-        @Html.Partial("InfluenceList", Model.AccountPlanets)
+        @Html.Partial("InfluenceList", Model.PlanetFactions)
 	</div>
 	<div id="dropships">
 		@Html.Partial("PlanetDropships", Model)
@@ -135,7 +134,6 @@
 			var jumpgates = Global.Account.GetJumpGateCapacity();
 			var defs = Model.PlanetStructures.Where(x => x.IsActive ).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
 			var bombNeed = 3 + defs / 3;
-			var enemyShips = Model.AccountPlanets.Where(x => x.Account.ClanID != Global.ClanID).Sum(x => x.DropshipCount);
 			if (isAccessible || jumpgates > 0) {
 				var avail = isAccessible ? Global.Account.GetDropshipsAvailable() : Math.Min(jumpgates, Global.Account.GetDropshipsAvailable());
 			<form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
