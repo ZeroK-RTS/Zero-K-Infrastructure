@@ -408,7 +408,7 @@ namespace ZeroKWeb.Controllers
                             // best attacker
                             candidate =
                                 planet.AccountPlanets.Where(x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0).OrderByDescending(
-                                    x => x.AttackPoints).Select(x => x.Account).First();
+                                    x => x.AttackPoints).ThenBy(x=>x.Account.Planets.Count()).Select(x => x.Account).First();
 
                         }
 
