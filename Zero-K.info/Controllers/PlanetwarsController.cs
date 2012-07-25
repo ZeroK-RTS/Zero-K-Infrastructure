@@ -377,64 +377,57 @@ namespace ZeroKWeb.Controllers
         {
             
             if (db == null) db = new ZkDataContext();
-            Galaxy.RecalculateShadowInfluence(db);
-            var havePlanetsChangedHands = false;
 
             var gal = db.Galaxies.Single(x => x.IsDefault);
-            foreach (var planet in gal.Planets)
-            {
-                //if (planet.PlanetID == 2274) Debugger.Break();
-                var currentOwnerClanID = planet.Account != null ? planet.Account.ClanID : null;
-                var currentOwnerFactionID = planet.Account != null ? planet.Account.FactionID : null;
+            foreach (var planet in gal.Planets) {
 
-
-                var mostInfluentiaFactionEntry =
-                    planet.AccountPlanets.GroupBy(ap => ap.Account.Faction).Where(x => x.Key != null).Select(
-                        x => new { Faction = x.Key, FactionInfluence = (int?)x.Sum(y => y.Influence + y.ShadowInfluence) ?? 0 }).OrderByDescending(
-                            x => x.FactionInfluence).FirstOrDefault();
-
+                var best = planet.PlanetFactions.OrderByDescending(x => x.Influence).FirstOrDefault();
+                Faction newFaction = planet.Faction;
+                Account newAccount = planet.Account;
                 
-                // in case of a tie when deciding which CLAN to get a planet - give to one with less planets
-                ClanEntry mostInfluentialClanEntry = null;
-                if (mostInfluentiaFactionEntry != null &&
-                    (mostInfluentiaFactionEntry.Faction.FactionID == currentOwnerFactionID ||
-                     mostInfluentiaFactionEntry.FactionInfluence >  planet.GetIPToCapture() ))
-                {
-                    mostInfluentialClanEntry =
-                        planet.AccountPlanets.Where(
-                            x => x.Account.FactionID == mostInfluentiaFactionEntry.Faction.FactionID && x.Account.ClanID != null).GroupBy(
-                                x => x.Account.Clan).Select(x => new ClanEntry(x.Key, (int?)x.Sum(y => y.Influence) ?? 0)).OrderByDescending(x => x.ClanInfluence).ThenBy(y => y.Clan.Accounts.Sum(z => z.Planets.Count())).FirstOrDefault();
+                if (best == null || best.Influence < GlobalConst.InfluenceToCapturePlanet) { // planets belong to nobody
+
+                    newFaction = null;
+                    newAccount = null;
+                } else {
+                    if (best.Faction != planet.Faction) {
+                        newFaction = best.Faction;
+
+                        // best atatcker without planets
+                        var candidate = planet.AccountPlanets.Where(x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0 && !x.Account.Planets.Any())
+                            .OrderByDescending(x => x.AttackPoints).Select(x=>x.Account).FirstOrDefault();
+
+                        if (candidate == null) {
+                            // best player without planets
+                            candidate =
+                                newFaction.Accounts.Where(x => x.AccountPlanets.Any() && !x.Planets.Any()).OrderByDescending(
+                                    x => x.AccountPlanets.Sum(y => y.AttackPoints)).FirstOrDefault();
+
+                        }
+                        if (candidate == null) {
+                            // best attacker
+                            candidate =
+                                planet.AccountPlanets.Where(x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0).OrderByDescending(
+                                    x => x.AttackPoints).Select(x => x.Account).First();
+
+                        }
+
+                        newAccount = candidate;
+                    }
+
                 }
 
-                /*
-                if ((mostInfluentialClanEntry == null || mostInfluentialClanEntry.Clan == null || mostInfluentialClanEntry.ClanInfluence == 0) &&
-                    planet.Account != null)
-                {
-                    // disown the planet, nobody has right to own it atm
-                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {2} has abandoned planet {1}. {3}",
-                                                                planet.Account,
-                                                                planet,
-                                                                planet.Account.Clan,
-                                                                sb));
-                    planet.Account = null;
-                    havePlanetsChangedHands = true;
+                if (newFaction != planet.Faction) {
+
+                    // delete structures being lost on planet change
+                    foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) db.PlanetStructures.DeleteOnSubmit(structure);
+
+                    
+
                 }
-                else */if (mostInfluentialClanEntry != null &&  mostInfluentialClanEntry.Clan.ClanID != currentOwnerClanID && (currentOwnerClanID== null || currentOwnerFactionID != mostInfluentiaFactionEntry.Faction.FactionID || mostInfluentialClanEntry.ClanInfluence > planet.AccountPlanets.Where(x=>x.Account.ClanID == currentOwnerClanID).Sum(x=>x.Influence)))
-                {
-                    // planet changes owner, most influential clan is not current owner and has more ip to capture than needed
+                    // todo logging etc
 
-                    havePlanetsChangedHands = true;
-
-                    foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) planet.PlanetStructures.Remove(structure); //  delete structure
-
-                    // find who will own it
-                    // in case of a tie when deciding which PLAYER to get a planet - give it to one with least planets
-                    var mostInfluentialPlayer =
-                        planet.AccountPlanets.Where(x => x.Account.ClanID == mostInfluentialClanEntry.Clan.ClanID).OrderByDescending(
-                            x => x.Influence).ThenBy(x => x.Account.Planets.Count()).First().Account;
-
-                    var firstPlanet = !mostInfluentialPlayer.Planets.Any();
-
+/*
                     if (planet.OwnerAccountID == null) // no previous owner
                     {
                         planet.Account = mostInfluentialPlayer;
@@ -484,11 +477,10 @@ namespace ZeroKWeb.Controllers
                         }
                     }
 
-                }
+                }*/
             }
 
-            db.SubmitChanges();
-            if (havePlanetsChangedHands) SetPlanetOwners(db, sb); // we need another cycle because of shadow influence chain reactions
+            db.SubmitAndMergeChanges();
         }
 
 

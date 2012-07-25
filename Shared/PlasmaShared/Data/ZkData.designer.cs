@@ -16119,7 +16119,13 @@ namespace ZkData
 		
 		private int _AccountID;
 		
-		private int _AttackCount;
+		private double _AttackPoints;
+		
+		private System.Nullable<int> _Influence;
+		
+		private System.Nullable<int> _ShadowInfluence;
+		
+		private System.Nullable<int> _DropshipCount;
 		
 		private EntityRef<Planet> _Planet;
 		
@@ -16133,8 +16139,14 @@ namespace ZkData
     partial void OnPlanetIDChanged();
     partial void OnAccountIDChanging(int value);
     partial void OnAccountIDChanged();
-    partial void OnAttackCountChanging(int value);
-    partial void OnAttackCountChanged();
+    partial void OnAttackPointsChanging(double value);
+    partial void OnAttackPointsChanged();
+    partial void OnInfluenceChanging(System.Nullable<int> value);
+    partial void OnInfluenceChanged();
+    partial void OnShadowInfluenceChanging(System.Nullable<int> value);
+    partial void OnShadowInfluenceChanged();
+    partial void OnDropshipCountChanging(System.Nullable<int> value);
+    partial void OnDropshipCountChanged();
     #endregion
 		
 		public AccountPlanet()
@@ -16192,23 +16204,86 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AttackCount", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AttackPoints", DbType="float NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int AttackCount
+		public double AttackPoints
 		{
 			get
 			{
-				return this._AttackCount;
+				return this._AttackPoints;
 			}
 			set
 			{
-				if ((this._AttackCount != value))
+				if ((this._AttackPoints != value))
 				{
-					this.OnAttackCountChanging(value);
+					this.OnAttackPointsChanging(value);
 					this.SendPropertyChanging();
-					this._AttackCount = value;
-					this.SendPropertyChanged("AttackCount");
-					this.OnAttackCountChanged();
+					this._AttackPoints = value;
+					this.SendPropertyChanged("AttackPoints");
+					this.OnAttackPointsChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Influence", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.Nullable<int> Influence
+		{
+			get
+			{
+				return this._Influence;
+			}
+			set
+			{
+				if ((this._Influence != value))
+				{
+					this.OnInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._Influence = value;
+					this.SendPropertyChanged("Influence");
+					this.OnInfluenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ShadowInfluence", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public System.Nullable<int> ShadowInfluence
+		{
+			get
+			{
+				return this._ShadowInfluence;
+			}
+			set
+			{
+				if ((this._ShadowInfluence != value))
+				{
+					this.OnShadowInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._ShadowInfluence = value;
+					this.SendPropertyChanged("ShadowInfluence");
+					this.OnShadowInfluenceChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_DropshipCount", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public System.Nullable<int> DropshipCount
+		{
+			get
+			{
+				return this._DropshipCount;
+			}
+			set
+			{
+				if ((this._DropshipCount != value))
+				{
+					this.OnDropshipCountChanging(value);
+					this.SendPropertyChanging();
+					this._DropshipCount = value;
+					this.SendPropertyChanged("DropshipCount");
+					this.OnDropshipCountChanged();
 				}
 			}
 		}

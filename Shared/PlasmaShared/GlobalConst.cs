@@ -31,13 +31,9 @@
         public const int BaseInfluencePerBattle = 15;
         public const int InfluencePerInvolvedPlayer = 2;
         public const int InfluencePerShip = 2;
-        public const int InfluenceMalusPerShip = 0;
-        public const int InfluenceDecay = 3;
-        public const double CeasefireMaxInfluenceBalanceRatio = 1.5;
-        public const int BaseShipsToBomb = 3;
+	    public const int InfluenceToCapturePlanet = 51;
         public const int MaxClanSkilledSize = 16;
         public const int ClanLeaveLimit = 100;
-        public const int PlanetwarsColonizationCredits = 1000;
 
 
     public static bool IsZkMod(string name)

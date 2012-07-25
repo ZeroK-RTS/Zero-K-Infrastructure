@@ -248,7 +248,7 @@ namespace ZeroKWeb.SpringieInterface
                             db.AccountPlanets.InsertOnSubmit(entry);
                         }
 
-                        entry.AttackCount++;
+                        entry.AttackPoints++; // todo difference between win and lose
                         
                         /*
                         if (isInvolved) entry.Influence += infl;
