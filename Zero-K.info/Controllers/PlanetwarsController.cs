@@ -384,31 +384,28 @@ namespace ZeroKWeb.Controllers
                 var best = planet.PlanetFactions.OrderByDescending(x => x.Influence).FirstOrDefault();
                 Faction newFaction = planet.Faction;
                 Account newAccount = planet.Account;
-                
-                if (best == null || best.Influence < GlobalConst.InfluenceToCapturePlanet) { // planets belong to nobody
+
+                if (best == null || best.Influence < GlobalConst.InfluenceToCapturePlanet) {
+                    // planets belong to nobody
 
                     newFaction = null;
                     newAccount = null;
-                } else {
+                }
+                else {
                     if (best.Faction != planet.Faction) {
                         newFaction = best.Faction;
 
                         // best atatcker without planets
-                        var candidate = planet.AccountPlanets.Where(x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0 && !x.Account.Planets.Any())
-                            .OrderByDescending(x => x.AttackPoints).Select(x=>x.Account).FirstOrDefault();
+                        var candidate =
+                            planet.AccountPlanets.Where(
+                                x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0 && !x.Account.Planets.Any()).OrderByDescending(
+                                    x => x.AttackPoints).Select(x => x.Account).FirstOrDefault();
 
-                        if (candidate == null) {
-                            // best player without planets
-                            candidate =
-                                newFaction.Accounts.Where(x => x.AccountPlanets.Any() && !x.Planets.Any()).OrderByDescending(
-                                    x => x.AccountPlanets.Sum(y => y.AttackPoints)).FirstOrDefault();
-
-                        }
                         if (candidate == null) {
                             // best attacker
                             candidate =
                                 planet.AccountPlanets.Where(x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0).OrderByDescending(
-                                    x => x.AttackPoints).ThenBy(x=>x.Account.Planets.Count()).Select(x => x.Account).First();
+                                    x => x.AttackPoints).ThenBy(x => x.Account.Planets.Count()).Select(x => x.Account).First();
 
                         }
 
@@ -417,74 +414,85 @@ namespace ZeroKWeb.Controllers
 
                 }
 
+                // change has occured
                 if (newFaction != planet.Faction) {
+
 
                     // delete structures being lost on planet change
                     foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) db.PlanetStructures.DeleteOnSubmit(structure);
 
-                    
 
-                }
-                    // todo logging etc
-
-/*
+                    // log messages
                     if (planet.OwnerAccountID == null) // no previous owner
                     {
-                        planet.Account = mostInfluentialPlayer;
-                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2}. {3}",
-                                                                    mostInfluentialPlayer,
+                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2} {3}. {4}",
+                                                                    newAccount,
                                                                     planet,
-                                                                    mostInfluentialClanEntry.Clan,
+                                                                    newFaction,
+                                                                    newAccount.Clan,
                                                                     sb));
-                        AuthServiceClient.SendLobbyMessage(mostInfluentialPlayer,
+                        AuthServiceClient.SendLobbyMessage(newAccount,
                                                            string.Format(
                                                                "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
                                                                planet.Name,
                                                                planet.PlanetID));
                     }
-                    else
-                    {
-                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {3} has captured planet {1} from {2} of {4}. {5}",
-                                                                    mostInfluentialPlayer,
+                    else {
+                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} {2} has captured planet {3} from {4} of {5} {6}. {7}",
+                                                                    newAccount,
+                                                                    newFaction,
+                                                                    newAccount.Clan,
                                                                     planet,
                                                                     planet.Account,
-                                                                    mostInfluentialClanEntry.Clan,
+                                                                    planet.Faction,
                                                                     planet.Account.Clan,
                                                                     sb));
 
-                        AuthServiceClient.SendLobbyMessage(mostInfluentialPlayer,
+                        AuthServiceClient.SendLobbyMessage(newAccount,
                                                            string.Format(
                                                                "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
                                                                planet.Name,
                                                                planet.PlanetID));
+
                         AuthServiceClient.SendLobbyMessage(planet.Account,
                                                            string.Format(
                                                                "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
                                                                planet.Name,
                                                                planet.PlanetID));
 
-                        planet.Account = mostInfluentialPlayer;
-
                     }
 
-                    // return dropshuips home if owner is ceasefired/allied/same faction
-                    foreach (var entry in planet.AccountPlanets.Where(x => x.DropshipCount > 0))
-                    {
-                        if (entry.Account.FactionID == planet.Account.FactionID || planet.Account.Clan.GetEffectiveTreaty(entry.Account.Clan).AllyStatus >= AllyStatus.Ceasefire)
-                        {
-                            entry.Account.PwDropshipsUsed -= entry.DropshipCount;
-                            entry.DropshipCount = 0;
-                        }
-                    }
-
-                }*/
+                    planet.Faction = newFaction;
+                    planet.Account = newAccount;
+                    ReturnPeacefulDropshipsHome(db, planet);
+                }
             }
-
             db.SubmitAndMergeChanges();
         }
 
 
-       
+        public static void ReturnPeacefulDropshipsHome(ZkDataContext db, Planet planet) {
+            //    return dropshuips home if owner is ceasefired/allied/same faction
+            if (planet.Faction != null)
+            {
+
+                foreach (var entry in planet.PlanetFactions.Where(x => x.Dropships > 0))
+                {
+
+                    if (entry.FactionID == planet.OwnerFactionID ||
+                        planet.Faction.HasTreatyRight(entry.Faction, x => x.EffectPreventDropshipAttack == true, planet))
+                    {
+                        planet.Faction.SpendDropships(-entry.Dropships);
+                        entry.Dropships = 0;
+                    }
+                }
+
+            }
+            
+
+        }
+
+
         [Auth]
         public ActionResult SubmitRenamePlanet(int planetID, string newName)
         {
