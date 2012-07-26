@@ -17,12 +17,12 @@
                                 {
                                     var lastEdit = p.ForumPostEdits.OrderByDescending(x => x.EditTime).First();
                                     <br/>
-                                    <a href="@Url.Action("EditHistory", new { forumPostID = p.ForumPostID })">(edited @lastEdit.EditTime.ToAgoString())</a>
+                                    <a href="@Url.Action("EditHistory", "Forum", new { forumPostID = p.ForumPostID })">(edited @lastEdit.EditTime.ToAgoString())</a>
                                 }
                             </small>
                             @if (Global.IsZeroKAdmin || Global.AccountID == p.AuthorAccountID)
                             {
-                                <a nicetitle='Edit the post' href='@Url.Action("NewPost", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22"/></a>
+                                <a nicetitle='Edit the post' href='@Url.Action("NewPost","Forum", new { threadID = p.ForumThreadID, forumPostID = p.ForumPostID })'><img src="/img/edit_pencil.png" height="22"/></a>
                             }
                             @if (Global.IsZeroKAdmin)
                             {
