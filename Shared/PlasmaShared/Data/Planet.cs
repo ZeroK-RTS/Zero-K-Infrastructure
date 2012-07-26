@@ -47,6 +47,9 @@ namespace ZkData
             
             if (Faction != null && (Faction == attacker || Faction.HasTreatyRight(attacker, x => x.EffectPreventDropshipAttack == true, this))) return false; // attacker allied cannot strike
 
+            if (Faction == null && !attacker.Planets.Any()) return true; // attacker has no planets, planet neutral, allow strike
+
+
             // iterate links to this planet
             foreach (var link in LinksByPlanetID1.Union(LinksByPlanetID2))
             {
