@@ -115,9 +115,6 @@ namespace ZkData
     partial void InsertPollOption(PollOption instance);
     partial void UpdatePollOption(PollOption instance);
     partial void DeletePollOption(PollOption instance);
-    partial void InsertTreatyOffer(TreatyOffer instance);
-    partial void UpdateTreatyOffer(TreatyOffer instance);
-    partial void DeleteTreatyOffer(TreatyOffer instance);
     partial void InsertLink(Link instance);
     partial void UpdateLink(Link instance);
     partial void DeleteLink(Link instance);
@@ -461,14 +458,6 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<PollOption>();
-			}
-		}
-		
-		public System.Data.Linq.Table<TreatyOffer> TreatyOffers
-		{
-			get
-			{
-				return this.GetTable<TreatyOffer>();
 			}
 		}
 		
@@ -13728,264 +13717,6 @@ namespace ZkData
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.TreatyOffer")]
-	[global::System.Runtime.Serialization.DataContractAttribute()]
-	public partial class TreatyOffer : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _OfferingClanID;
-		
-		private int _TargetClanID;
-		
-		private bool _IsResearchAgreement;
-		
-		private AllyStatus _AllyStatus;
-		
-		private int _InfluenceGiven;
-		
-		private EntityRef<Clan> _ClanByOfferingClanID;
-		
-		private EntityRef<Clan> _ClanByTargetClanID;
-		
-    #region Extensibility Method Definitions
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnOfferingClanIDChanging(int value);
-    partial void OnOfferingClanIDChanged();
-    partial void OnTargetClanIDChanging(int value);
-    partial void OnTargetClanIDChanged();
-    partial void OnIsResearchAgreementChanging(bool value);
-    partial void OnIsResearchAgreementChanged();
-    partial void OnAllyStatusChanging(AllyStatus value);
-    partial void OnAllyStatusChanged();
-    partial void OnInfluenceGivenChanging(int value);
-    partial void OnInfluenceGivenChanged();
-    #endregion
-		
-		public TreatyOffer()
-		{
-			this.Initialize();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OfferingClanID", DbType="int NOT NULL", IsPrimaryKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int OfferingClanID
-		{
-			get
-			{
-				return this._OfferingClanID;
-			}
-			set
-			{
-				if ((this._OfferingClanID != value))
-				{
-					if (this._ClanByOfferingClanID.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnOfferingClanIDChanging(value);
-					this.SendPropertyChanging();
-					this._OfferingClanID = value;
-					this.SendPropertyChanged("OfferingClanID");
-					this.OnOfferingClanIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TargetClanID", DbType="int NOT NULL", IsPrimaryKey=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int TargetClanID
-		{
-			get
-			{
-				return this._TargetClanID;
-			}
-			set
-			{
-				if ((this._TargetClanID != value))
-				{
-					if (this._ClanByTargetClanID.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnTargetClanIDChanging(value);
-					this.SendPropertyChanging();
-					this._TargetClanID = value;
-					this.SendPropertyChanged("TargetClanID");
-					this.OnTargetClanIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsResearchAgreement", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public bool IsResearchAgreement
-		{
-			get
-			{
-				return this._IsResearchAgreement;
-			}
-			set
-			{
-				if ((this._IsResearchAgreement != value))
-				{
-					this.OnIsResearchAgreementChanging(value);
-					this.SendPropertyChanging();
-					this._IsResearchAgreement = value;
-					this.SendPropertyChanged("IsResearchAgreement");
-					this.OnIsResearchAgreementChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AllyStatus", DbType="int", CanBeNull=true)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public AllyStatus AllyStatus
-		{
-			get
-			{
-				return this._AllyStatus;
-			}
-			set
-			{
-				if ((this._AllyStatus != value))
-				{
-					this.OnAllyStatusChanging(value);
-					this.SendPropertyChanging();
-					this._AllyStatus = value;
-					this.SendPropertyChanged("AllyStatus");
-					this.OnAllyStatusChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InfluenceGiven", DbType="int NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
-		public int InfluenceGiven
-		{
-			get
-			{
-				return this._InfluenceGiven;
-			}
-			set
-			{
-				if ((this._InfluenceGiven != value))
-				{
-					this.OnInfluenceGivenChanging(value);
-					this.SendPropertyChanging();
-					this._InfluenceGiven = value;
-					this.SendPropertyChanged("InfluenceGiven");
-					this.OnInfluenceGivenChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_ClanByOfferingClanID", ThisKey="OfferingClanID", OtherKey="ClanID", IsForeignKey=true)]
-		public Clan ClanByOfferingClanID
-		{
-			get
-			{
-				return this._ClanByOfferingClanID.Entity;
-			}
-			set
-			{
-				Clan previousValue = this._ClanByOfferingClanID.Entity;
-				if (((previousValue != value) 
-							|| (this._ClanByOfferingClanID.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ClanByOfferingClanID.Entity = null;
-						previousValue.TreatyOffersByOfferingClanID.Remove(this);
-					}
-					this._ClanByOfferingClanID.Entity = value;
-					if ((value != null))
-					{
-						value.TreatyOffersByOfferingClanID.Add(this);
-						this._OfferingClanID = value.ClanID;
-					}
-					else
-					{
-						this._OfferingClanID = default(int);
-					}
-					this.SendPropertyChanged("ClanByOfferingClanID");
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_ClanByTargetClanID", ThisKey="TargetClanID", OtherKey="ClanID", IsForeignKey=true)]
-		public Clan ClanByTargetClanID
-		{
-			get
-			{
-				return this._ClanByTargetClanID.Entity;
-			}
-			set
-			{
-				Clan previousValue = this._ClanByTargetClanID.Entity;
-				if (((previousValue != value) 
-							|| (this._ClanByTargetClanID.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._ClanByTargetClanID.Entity = null;
-						previousValue.TreatyOffersByTargetClanID.Remove(this);
-					}
-					this._ClanByTargetClanID.Entity = value;
-					if ((value != null))
-					{
-						value.TreatyOffersByTargetClanID.Add(this);
-						this._TargetClanID = value.ClanID;
-					}
-					else
-					{
-						this._TargetClanID = default(int);
-					}
-					this.SendPropertyChanged("ClanByTargetClanID");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void Initialize()
-		{
-			this._ClanByOfferingClanID = default(EntityRef<Clan>);
-			this._ClanByTargetClanID = default(EntityRef<Clan>);
-			OnCreated();
-		}
-		
-		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
-		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
-		public void OnDeserializing(StreamingContext context)
-		{
-			this.Initialize();
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Link")]
 	[global::System.Runtime.Serialization.DataContractAttribute()]
 	public partial class Link : INotifyPropertyChanging, INotifyPropertyChanged
@@ -14291,10 +14022,6 @@ namespace ZkData
 		
 		private EntitySet<Poll> _Polls;
 		
-		private EntitySet<TreatyOffer> _TreatyOffersByOfferingClanID;
-		
-		private EntitySet<TreatyOffer> _TreatyOffersByTargetClanID;
-		
 		private EntitySet<EventClan> _EventClans;
 		
 		private EntitySet<PlanetOwnerHistory> _PlanetOwnerHistories;
@@ -14590,46 +14317,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer", Storage="_TreatyOffersByOfferingClanID", ThisKey="ClanID", OtherKey="OfferingClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
-		public EntitySet<TreatyOffer> TreatyOffersByOfferingClanID
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._TreatyOffersByOfferingClanID.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._TreatyOffersByOfferingClanID;
-			}
-			set
-			{
-				this._TreatyOffersByOfferingClanID.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_TreatyOffer1", Storage="_TreatyOffersByTargetClanID", ThisKey="ClanID", OtherKey="TargetClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
-		public EntitySet<TreatyOffer> TreatyOffersByTargetClanID
-		{
-			get
-			{
-				if ((this.serializing 
-							&& (this._TreatyOffersByTargetClanID.HasLoadedOrAssignedValues == false)))
-				{
-					return null;
-				}
-				return this._TreatyOffersByTargetClanID;
-			}
-			set
-			{
-				this._TreatyOffersByTargetClanID.Assign(value);
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_EventClan", Storage="_EventClans", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13, EmitDefaultValue=false)]
 		public EntitySet<EventClan> EventClans
 		{
 			get
@@ -14648,7 +14337,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_PlanetOwnerHistory", Storage="_PlanetOwnerHistories", ThisKey="ClanID", OtherKey="OwnerClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14, EmitDefaultValue=false)]
 		public EntitySet<PlanetOwnerHistory> PlanetOwnerHistories
 		{
 			get
@@ -14667,7 +14356,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_AccountRole", Storage="_AccountRoles", ThisKey="ClanID", OtherKey="ClanID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15, EmitDefaultValue=false)]
 		public EntitySet<AccountRole> AccountRoles
 		{
 			get
@@ -14809,30 +14498,6 @@ namespace ZkData
 			entity.Clan = null;
 		}
 		
-		private void attach_TreatyOffersByOfferingClanID(TreatyOffer entity)
-		{
-			this.SendPropertyChanging();
-			entity.ClanByOfferingClanID = this;
-		}
-		
-		private void detach_TreatyOffersByOfferingClanID(TreatyOffer entity)
-		{
-			this.SendPropertyChanging();
-			entity.ClanByOfferingClanID = null;
-		}
-		
-		private void attach_TreatyOffersByTargetClanID(TreatyOffer entity)
-		{
-			this.SendPropertyChanging();
-			entity.ClanByTargetClanID = this;
-		}
-		
-		private void detach_TreatyOffersByTargetClanID(TreatyOffer entity)
-		{
-			this.SendPropertyChanging();
-			entity.ClanByTargetClanID = null;
-		}
-		
 		private void attach_EventClans(EventClan entity)
 		{
 			this.SendPropertyChanging();
@@ -14874,8 +14539,6 @@ namespace ZkData
 			this._Accounts = new EntitySet<Account>(new Action<Account>(this.attach_Accounts), new Action<Account>(this.detach_Accounts));
 			this._ForumThreads = new EntitySet<ForumThread>(new Action<ForumThread>(this.attach_ForumThreads), new Action<ForumThread>(this.detach_ForumThreads));
 			this._Polls = new EntitySet<Poll>(new Action<Poll>(this.attach_Polls), new Action<Poll>(this.detach_Polls));
-			this._TreatyOffersByOfferingClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByOfferingClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByOfferingClanID));
-			this._TreatyOffersByTargetClanID = new EntitySet<TreatyOffer>(new Action<TreatyOffer>(this.attach_TreatyOffersByTargetClanID), new Action<TreatyOffer>(this.detach_TreatyOffersByTargetClanID));
 			this._EventClans = new EntitySet<EventClan>(new Action<EventClan>(this.attach_EventClans), new Action<EventClan>(this.detach_EventClans));
 			this._PlanetOwnerHistories = new EntitySet<PlanetOwnerHistory>(new Action<PlanetOwnerHistory>(this.attach_PlanetOwnerHistories), new Action<PlanetOwnerHistory>(this.detach_PlanetOwnerHistories));
 			this._AccountRoles = new EntitySet<AccountRole>(new Action<AccountRole>(this.attach_AccountRoles), new Action<AccountRole>(this.detach_AccountRoles));
@@ -17751,6 +17414,8 @@ namespace ZkData
 		
 		private System.Nullable<double> _EffectWarpProduction;
 		
+		private System.Nullable<bool> _EffectAllowShipTraversal;
+		
 		private System.Nullable<double> _EffectDropshipDefense;
 		
 		private System.Nullable<double> _EffectBomberDefense;
@@ -17766,6 +17431,8 @@ namespace ZkData
 		private bool _IsIngameDestructible;
 		
 		private bool _OwnerChangeDeletesThis;
+		
+		private bool _OwnerChangeDisablesThis;
 		
 		private bool _BattleDeletesThis;
 		
@@ -17811,6 +17478,8 @@ namespace ZkData
     partial void OnEffectIsVictoryPlanetChanged();
     partial void OnEffectWarpProductionChanging(System.Nullable<double> value);
     partial void OnEffectWarpProductionChanged();
+    partial void OnEffectAllowShipTraversalChanging(System.Nullable<bool> value);
+    partial void OnEffectAllowShipTraversalChanged();
     partial void OnEffectDropshipDefenseChanging(System.Nullable<double> value);
     partial void OnEffectDropshipDefenseChanged();
     partial void OnEffectBomberDefenseChanging(System.Nullable<double> value);
@@ -17827,6 +17496,8 @@ namespace ZkData
     partial void OnIsIngameDestructibleChanged();
     partial void OnOwnerChangeDeletesThisChanging(bool value);
     partial void OnOwnerChangeDeletesThisChanged();
+    partial void OnOwnerChangeDisablesThisChanging(bool value);
+    partial void OnOwnerChangeDisablesThisChanged();
     partial void OnBattleDeletesThisChanging(bool value);
     partial void OnBattleDeletesThisChanged();
     #endregion
@@ -18176,8 +17847,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipDefense", DbType="float")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectAllowShipTraversal", DbType="bit")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		public System.Nullable<bool> EffectAllowShipTraversal
+		{
+			get
+			{
+				return this._EffectAllowShipTraversal;
+			}
+			set
+			{
+				if ((this._EffectAllowShipTraversal != value))
+				{
+					this.OnEffectAllowShipTraversalChanging(value);
+					this.SendPropertyChanging();
+					this._EffectAllowShipTraversal = value;
+					this.SendPropertyChanged("EffectAllowShipTraversal");
+					this.OnEffectAllowShipTraversalChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipDefense", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
 		public System.Nullable<double> EffectDropshipDefense
 		{
 			get
@@ -18198,7 +17890,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBomberDefense", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
 		public System.Nullable<double> EffectBomberDefense
 		{
 			get
@@ -18219,7 +17911,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBots", DbType="nvarchar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
 		public string EffectBots
 		{
 			get
@@ -18240,7 +17932,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBlocksJumpgate", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
 		public System.Nullable<bool> EffectBlocksJumpgate
 		{
 			get
@@ -18261,7 +17953,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cost", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
 		public double Cost
 		{
 			get
@@ -18282,7 +17974,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBuildable", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
 		public bool IsBuildable
 		{
 			get
@@ -18303,7 +17995,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsIngameDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
 		public bool IsIngameDestructible
 		{
 			get
@@ -18324,7 +18016,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
 		public bool OwnerChangeDeletesThis
 		{
 			get
@@ -18344,8 +18036,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDisablesThis", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
+		public bool OwnerChangeDisablesThis
+		{
+			get
+			{
+				return this._OwnerChangeDisablesThis;
+			}
+			set
+			{
+				if ((this._OwnerChangeDisablesThis != value))
+				{
+					this.OnOwnerChangeDisablesThisChanging(value);
+					this.SendPropertyChanging();
+					this._OwnerChangeDisablesThis = value;
+					this.SendPropertyChanged("OwnerChangeDisablesThis");
+					this.OnOwnerChangeDisablesThisChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattleDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
 		public bool BattleDeletesThis
 		{
 			get
@@ -18366,7 +18079,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_PlanetStructures", ThisKey="StructureTypeID", OtherKey="StructureTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get

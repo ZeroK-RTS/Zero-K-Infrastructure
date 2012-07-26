@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
       <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -503,17 +502,6 @@
       <Association Name="Poll_PollOption" Member="Poll" ThisKey="PollID" OtherKey="PollID" Type="Poll" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.TreatyOffer" Member="TreatyOffers">
-    <Type Name="TreatyOffer">
-      <Column Name="OfferingClanID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="TargetClanID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="IsResearchAgreement" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Column Name="AllyStatus" Type="AllyStatus" DbType="int" CanBeNull="true" />
-      <Column Name="InfluenceGiven" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Association Name="Clan_TreatyOffer" Member="ClanByOfferingClanID" ThisKey="OfferingClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
-      <Association Name="Clan_TreatyOffer1" Member="ClanByTargetClanID" ThisKey="TargetClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.Link" Member="Links">
     <Type Name="Link">
       <Column Name="PlanetID1" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
@@ -539,8 +527,6 @@
       <Association Name="Clan_Account" Member="Accounts" ThisKey="ClanID" OtherKey="ClanID" Type="Account" />
       <Association Name="Clan_ForumThread" Member="ForumThreads" ThisKey="ClanID" OtherKey="RestrictedClanID" Type="ForumThread" />
       <Association Name="Clan_Poll" Member="Polls" ThisKey="ClanID" OtherKey="RestrictClanID" Type="Poll" />
-      <Association Name="Clan_TreatyOffer" Member="TreatyOffersByOfferingClanID" ThisKey="ClanID" OtherKey="OfferingClanID" Type="TreatyOffer" />
-      <Association Name="Clan_TreatyOffer1" Member="TreatyOffersByTargetClanID" ThisKey="ClanID" OtherKey="TargetClanID" Type="TreatyOffer" />
       <Association Name="Clan_EventClan" Member="EventClans" ThisKey="ClanID" OtherKey="ClanID" Type="EventClan" />
       <Association Name="Clan_PlanetOwnerHistory" Member="PlanetOwnerHistories" ThisKey="ClanID" OtherKey="OwnerClanID" Type="PlanetOwnerHistory" />
       <Association Name="Clan_AccountRole" Member="AccountRoles" ThisKey="ClanID" OtherKey="ClanID" Type="AccountRole" />
@@ -595,7 +581,7 @@
     <Type Name="AccountPlanet">
       <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="AttackPoints" Member="AttackPoints" Type="System.Double" DbType="float NOT NULL" IsDbGenerated="false" CanBeNull="false" IsPrimaryKey="false" />
+      <Column Name="AttackPoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Association Name="Planet_AccountPlanet" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Account_AccountPlanet" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
@@ -676,6 +662,7 @@
       <Column Name="EffectEnergyPerTurn" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectIsVictoryPlanet" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectWarpProduction" Type="System.Double" DbType="float" CanBeNull="true" />
+      <Column Name="EffectAllowShipTraversal" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectDropshipDefense" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectBomberDefense" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectBots" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
@@ -684,6 +671,7 @@
       <Column Name="IsBuildable" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IsIngameDestructible" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="OwnerChangeDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="OwnerChangeDisablesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BattleDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="StructureType_PlanetStructure" Member="PlanetStructures" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="PlanetStructure" />
       <Association Name="Unlock_StructureType" Member="Unlock" ThisKey="EffectUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />

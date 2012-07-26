@@ -310,22 +310,16 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            if (acc.Faction == null) return Content("Join a faction first");
             var planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
             var there = planet.PlanetFactions.Where(x => x.FactionID == acc.FactionID).Sum(x => (int?)x.Dropships) ?? 0;
-            var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db, acc.ClanID.Value).Select(x => x.PlanetID).ToList();
-            var accessible = accessiblePlanets.Any(x => x == planetID);
+            var accessible = planet.CanDropshipsAttack(acc.Faction);
             if (!accessible)
             {
-                int jumpGateCapacity = acc.GetJumpGateCapacity();
-                if (there + count > jumpGateCapacity) return Content(string.Format("Tha planet cannot be accessed via wormholes and your jumpgates are at capacity - you can maintain {0} ships using jumpgates", jumpGateCapacity));
+                return Content(string.Format("That planet cannot be attacked"));
             }
             var cnt = Math.Max(count, 0);
             
-            
-            if (!planet.TreatyAttackablePlanet(acc.Clan)) return Content("This is allied world");
-
-
-            if (!accessible && planet.PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectBlocksJumpgate == true)) return Content("Planetary defenses interdict your jumpgate");
             var capa = acc.GetDropshipCapacity();
             
             if (cnt + there > capa) return Content("Too many ships, increase fleet size");
@@ -417,9 +411,12 @@ namespace ZeroKWeb.Controllers
                 // change has occured
                 if (newFaction != planet.Faction) {
 
+                    // disable structures 
+                    foreach (var structure in planet.PlanetStructures.Where(x => x.StructureType.OwnerChangeDisablesThis)) structure.IsActive = false;
 
                     // delete structures being lost on planet change
                     foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) db.PlanetStructures.DeleteOnSubmit(structure);
+
 
 
                     // log messages
@@ -464,8 +461,8 @@ namespace ZeroKWeb.Controllers
 
                     planet.Faction = newFaction;
                     planet.Account = newAccount;
-                    ReturnPeacefulDropshipsHome(db, planet);
                 }
+                ReturnPeacefulDropshipsHome(db, planet);
             }
             db.SubmitAndMergeChanges();
         }

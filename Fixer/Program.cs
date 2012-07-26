@@ -360,7 +360,6 @@ namespace Fixer
 			//foreach (var p in gal.Planets.Shuffle().Take(6)) p.AddStruct(warp);
 
 			db.SubmitChanges();
-			Galaxy.RecalculateShadowInfluence(db);
 			db.SubmitChanges();
   	}
 

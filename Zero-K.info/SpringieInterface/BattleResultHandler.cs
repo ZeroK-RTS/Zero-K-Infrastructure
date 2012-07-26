@@ -163,8 +163,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                     if (!wasShipAttacked) involvedClans.Clear(); // insurgency no involved
 
-                    var factionTechIP = sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.ClanID != null).GroupBy(x => x.ClanID).
-                            ToDictionary(x => x.Key, z => Galaxy.ClanUnlocks(db, z.Key).Count() * 6.0 / z.Count()); // FIXME make techs in db be by faction not clan!
+                     // FIXME make techs in db be by faction not clan!
 
                     var planetDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
                     var totalShips = (planet.PlanetFactions.Sum(x => (int?)x.Dropships) ?? 0);
@@ -231,7 +230,7 @@ namespace ZeroKWeb.SpringieInterface
                     foreach (var p in sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && involvedPlayers.Contains(x)))
                     {
                         // this is for the benefit of the after-action text report
-                        var techBonus = p.Account.ClanID != null ? (int)factionTechIP[p.Account.ClanID] : 0;
+                        var techBonus = 0;
                         //var gapMalus = 0;
                         var shipBonus = (numShips * GlobalConst.InfluencePerShip * shipMultiplier / numInvolvedWinner);
                         //if (defender != null && p.Account.Faction == defender) gapMalus = ownerMalus;

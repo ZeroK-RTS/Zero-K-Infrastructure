@@ -36,6 +36,7 @@
   <PersistConnectString>true</PersistConnectString>
   <IgnoreTables>
     <string>dbo.sysdiagrams</string>
+    <string>dbo.TreatyOffer</string>
   </IgnoreTables>
   <IgnoreColumns />
   <IgnoreFKs />

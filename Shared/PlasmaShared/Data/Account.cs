@@ -204,10 +204,6 @@ namespace ZkData
         }
 
 
-        public int GetJumpGateCapacity() {
-            return (int)(Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectWarpProduction) ?? 0);
-        }
-
         public static int GetXpForLevel(int level) {
             if (level < 0) return 0;
             return level*80 + 20*level*level;

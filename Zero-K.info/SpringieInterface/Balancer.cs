@@ -304,7 +304,6 @@ namespace ZeroKWeb.SpringieInterface
                         else players.Add(p);
                     }
                     var clans = players.Where(x => x.Clan != null).Select(x => x.Clan).ToList();
-                    var treaties = new Dictionary<Tuple<Clan, Clan>, EffectiveTreaty>();
                     var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
 
                     // bots game
@@ -327,13 +326,7 @@ namespace ZeroKWeb.SpringieInterface
 
                     if (context.Players.Count < 2) return new BalanceTeamsResult() { Message = "Not enough players", CanStart = false };
 
-                    for (var i = 1; i < clans.Count; i++) {
-                        for (var j = 0; j < i; j++) {
-                            var treaty = clans[i].GetEffectiveTreaty(clans[j]);
-                            treaties[Tuple.Create(clans[i], clans[j])] = treaty;
-                            treaties[Tuple.Create(clans[j], clans[i])] = treaty;
-                        }
-                    }
+           
 
                     var sameTeamScore = new double[players.Count,players.Count];
                     for (var i = 1; i < players.Count; i++) {
@@ -346,13 +339,7 @@ namespace ZeroKWeb.SpringieInterface
                             if (players[i].FactionID != null && players[i].FactionID == players[j].FactionID) points = 3; // same faction weight 1
                             if (c1 != null && c2 != null) {
                                 if (c1 == c2) points = 4;
-                                else {
-                                    var treaty = treaties[Tuple.Create(players[i].Clan, players[j].Clan)];
-                                    if (treaty.AllyStatus == AllyStatus.Alliance) points = 2;
-                                    else if (treaty.AllyStatus == AllyStatus.Ceasefire) points = 1;
-                                    else if (treaty.AllyStatus == AllyStatus.War) points = -3;
-                                   
-                                }
+                  
                             }
                             
                             sameTeamScore[i, j] = points;

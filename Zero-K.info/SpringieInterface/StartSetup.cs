@@ -81,10 +81,10 @@ namespace ZeroKWeb.SpringieInterface
 
 
                             if (!userUnlocksBanned) {
-                                if (mode != AutohostMode.Planetwars || user.ClanID == null) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
+                                if (mode != AutohostMode.Planetwars || user.Faction == null) foreach (var unlock in user.AccountUnlocks.Select(x => x.Unlock)) pu.Add(unlock.Code);
                                 else {
                                     foreach (var unlock in
-                                        user.AccountUnlocks.Select(x => x.Unlock).Union(Galaxy.ClanUnlocks(db, user.ClanID).Select(x => x.Unlock))) pu.Add(unlock.Code);
+                                        user.AccountUnlocks.Select(x => x.Unlock).Union(user.Faction.GetFactionUnlocks().Select(x=>x.Unlock))) pu.Add(unlock.Code);
                                 }
                             }
 

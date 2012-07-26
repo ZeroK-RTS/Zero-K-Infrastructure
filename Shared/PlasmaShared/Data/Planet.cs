@@ -13,14 +13,7 @@ namespace ZkData
 			return PlanetFactions.Where(x=>x.Influence > 0).OrderByDescending(x => x.Influence);
 		}
 
-        public bool TreatyAttackablePlanet( Clan clan)
-        {
-            var planet = this;
-            if (planet != null && clan != null && planet.OwnerAccountID != null) if (planet.Account.FactionID == clan.FactionID || planet.Account.Clan.GetEffectiveTreaty(clan).AllyStatus >= AllyStatus.Ceasefire) return false;
-            return true;
-        }
-
-      
+     
 
 	    public string GetColor(Account viewer)
 		{
@@ -50,8 +43,31 @@ namespace ZkData
             return PlanetStructures.Sum(y => (int?)y.StructureType.UpkeepEnergy)??0;
 	    }
 
-	    public double GetIPToCapture() {
-	        return 50; // todo cleanup
-	    }
+        public bool CanDropshipsAttack(Faction attacker) {
+            
+            if (Faction != null && (Faction == attacker || Faction.HasTreatyRight(attacker, x => x.EffectPreventDropshipAttack == true, this))) return false; // attacker allied cannot strike
+
+            // iterate links to this planet
+            foreach (var link in LinksByPlanetID1.Union(LinksByPlanetID2))
+            {
+                var otherPlanet = PlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
+                
+                // planet has wormhole active
+                if (otherPlanet.PlanetStructures.Any(x=>x.IsActive && x.StructureType.EffectAllowShipTraversal == true)) {
+                    
+                    // planet belongs to attacker or person who gave attacker rights to pass
+                    if (otherPlanet.Faction != null && (otherPlanet.Faction == attacker || attacker.HasTreatyRight(otherPlanet.Faction,x=>x.EffectAllowDropshipPass == true, otherPlanet))) {
+                        return true;
+
+                    }
+
+
+                }
+            }
+            return false;
+
+
+        }
+
 	}
 }
