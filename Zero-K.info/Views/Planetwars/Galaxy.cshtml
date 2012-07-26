@@ -85,7 +85,7 @@
 <div id="victory_conquest" class="fleft border" style="min-height: 60px;">
 <b>Conquest victory (70% planets):</b>
 @{
-	var conquest = @Model.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Account.Faction).Select(x => new { Fac = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
+	var conquest = @Model.Planets.Where(x => x.OwnerAccountID != null).GroupBy(x => x.Faction).Select(x => new { Fac = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
 	
 	if (conquest != null)
 	{
@@ -107,11 +107,11 @@
 <b>Technologic victory (all artefacts and techs):</b>
 @{
 	var arts = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)).Count();
-	var artsTaken = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true) && y.OwnerAccountID != null).GroupBy(x => x.Account.Faction).Select(x => new { Faction = x.Key, Arts = x.Count() }).OrderByDescending(x=>x.Arts).FirstOrDefault();
+	var artsTaken = Model.Planets.Where(y => y.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true) && y.OwnerAccountID != null).GroupBy(x => x.Faction).Select(x => new { Faction = x.Key, Arts = x.Count() }).OrderByDescending(x=>x.Arts).FirstOrDefault();
 
 	if (artsTaken != null)
 	{
-		var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Account.Faction == artsTaken.Faction).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
+		var techs = Model.Planets.Where(x => x.OwnerAccountID != null && x.Faction == artsTaken.Faction).SelectMany(y => y.PlanetStructures).Select(y => y.StructureType).Distinct().Count(y => y.EffectUnlockID != null);
 		var owned = artsTaken.Arts;
 		var ratio_struct = techs / (double)db.StructureTypes.Where(x => x.EffectUnlockID != null).Count();
 		<span><b>@Html.PrintFaction(artsTaken.Faction)</b> </span>
