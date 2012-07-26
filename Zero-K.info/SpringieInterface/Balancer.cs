@@ -108,10 +108,8 @@ namespace ZeroKWeb.SpringieInterface
                 Planet planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
                 List<int> idList = context.Players.Select(x => x.LobbyID).ToList();
                 List<Account> players = idList.Select(x => db.Accounts.First(y => y.LobbyID == x)).ToList();
-                List<int?> presentFactions = players.Where(x => x != null).GroupBy(x => x.FactionID).Select(x => x.Key).ToList();
-                Faction attackerFaction =
-                    planet.PlanetFactions.Where(x => presentFactions.Contains(x.FactionID) && x.FactionID != planet.OwnerFactionID && x.Dropships > 0)
-                        .OrderByDescending(x => x.Dropships).ThenBy(x => x.DropshipsLastAdded).Select(x => x.Faction).FirstOrDefault();
+                List<int> presentFactions = players.Where(x => x != null).GroupBy(x => x.FactionID??0).Select(x => x.Key).ToList();
+                Faction attackerFaction = planet.GetAttacker(presentFactions);
                 if (attackerFaction == null) {
                     res.Message = "Missing attacker";
                     return res;

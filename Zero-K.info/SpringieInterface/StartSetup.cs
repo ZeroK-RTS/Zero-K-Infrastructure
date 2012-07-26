@@ -57,6 +57,26 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
+                Faction attacker = null;
+                Faction defender = null;
+
+                if (mode == AutohostMode.Planetwars) {
+                    var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
+                    var presentFactions =
+                        context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID)).Where(
+                            x => x.Faction != null).GroupBy(x => x.Faction).Select(x => x.Key.FactionID).ToList();
+                    attacker = planet.GetAttacker(presentFactions);
+                    defender = planet.Faction;
+
+                    ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair(){Key = "attackingFaction", Value = attacker.Shortcut});
+                    if (defender != null) ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair()
+                                                             {
+                                                                 Key = "defendingFaction",
+                                                                 Value = defender.Shortcut
+                                                             });
+                    ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair(){Key = "planet", Value = planet.Name});
+                }
+
                 foreach (var p in context.Players)
                 {
                     var user = db.Accounts.FirstOrDefault(x => x.LobbyID == p.LobbyID);
@@ -75,6 +95,17 @@ namespace ZeroKWeb.SpringieInterface
 
 
                         if (!p.IsSpectator) {
+
+                            if (mode == AutohostMode.Planetwars) {
+                                if (user.Faction != null && (user.Faction == attacker || user.Faction== defender)) {
+                                    userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair() { Key = "canAttackPwStructures", Value="1"});
+                                    ;
+                                }
+
+                            }
+
+
+
                             var pu = new LuaTable();
                             var userUnlocksBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanUnlocks);
                             var userCommandersBanned = user.PunishmentsByAccountID.Any(x => x.BanExpires > DateTime.UtcNow && x.BanCommanders);
@@ -145,17 +176,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     var planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
 
-                    var owner = "";
-                    var second = "";
-                    var factionInfluences = planet.GetFactionInfluences().Where(x => x.Influence > 0).ToList();
-                    var firstEntry = factionInfluences.FirstOrDefault();
-                    var ownerAccount = planet.Account;
-                    var secondEntry = factionInfluences.Skip(1).FirstOrDefault();
-                    if (ownerAccount != null) owner = string.Format("{0} of {1}", ownerAccount.Clan.Shortcut, ownerAccount.Faction.Name);
-                    if (secondEntry != null && firstEntry != null)
-                        second = string.Format("{0} needs {1} influence - ",
-                                               secondEntry.Faction.Shortcut,
-                                               firstEntry.Influence - secondEntry.Influence);
+                    var owner = planet.Faction != null ? planet.Faction.Shortcut : "";
 
                     var pwStructures = new LuaTable();
                     foreach (var s in planet.PlanetStructures.Where(x => x.IsActive && !string.IsNullOrEmpty(x.StructureType.IngameUnitName)))
@@ -165,8 +186,8 @@ namespace ZeroKWeb.SpringieInterface
                                          {
                                              { "unitname", s.StructureType.IngameUnitName },
                                              //{ "isDestroyed", s.IsDestroyed ? true : false },
-                                             { "name", owner + s.StructureType.Name },
-                                             { "description", second + s.StructureType.Description }
+                                             { "name", string.Format("{0} {1} ({2})", owner, s.StructureType.Name, s.Account.Name)},
+                                             { "description", s.StructureType.Description }
                                          });
                     }
                     ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair

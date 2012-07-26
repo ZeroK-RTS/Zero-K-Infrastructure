@@ -156,7 +156,8 @@ namespace Springie.autohost
 
                         if (!spring.IsRunning && config.Mode != AutohostMode.None)
                         {
-                            // if (SpawnConfig == null) ServerVerifyMap(false); -- automatically verify if map is valid
+                            if (SpawnConfig == null && config.Mode == AutohostMode.Planetwars) ServerVerifyMap(false); 
+
                             bool shouldStart = false;
                             if (SpawnConfig == null && timerTick % 3 == 0) shouldStart = RunServerBalance(false, null, null);
                             // autostart if all ok  
