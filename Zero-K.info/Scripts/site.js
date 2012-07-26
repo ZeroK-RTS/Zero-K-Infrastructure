@@ -13,6 +13,9 @@ $(document).ready(function () {
     $(".dialog").dialog({ width: 800 });
 
     $(".datepicker").datepicker();
+    
+    $(".js_tabs").tabs();
+
 
     /* ajax form updater and scorll based loader
     It updates form on submit using ajax - sending offset 0 to it when user clicks

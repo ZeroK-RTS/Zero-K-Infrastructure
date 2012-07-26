@@ -68,10 +68,11 @@
 }
 
 
-<div id="tabs">
+<div class="js_tabs">
     <ul>
         <li><a href="#events"><span>Events</span></a></li>            
         <li><a href="#starships"><span>Starships</span></a></li>
+        <li><a href="#technologies"><span>Technologies</span></a></li>
     </ul>
     <div id="events">
         @Html.Action("Events", "Planetwars", new { factionID = f.FactionID, partial = true })
@@ -88,5 +89,19 @@
             }
         </table>
     </div>
+    
+        <div id="technologies">
+        @foreach (var unlockEntry in Model.GetFactionUnlocks()) {
+					var unlock = unlockEntry.Unlock;
+					var giver = unlockEntry.Faction;
+  
+          <span style="color: @unlock.LabelColor; font-size:x-small; display:inline-block; width:90px;height:90px" title="$unlock$@unlock.UnlockID"  >
+            <span style='font-size:x-small'>@Html.PrintFaction(giver,false)</span>
+            <img src="@unlock.ImageUrl"/><br />
+            @unlock.Name
+          </span>
+				}
+    </div>
+
 </div>
 

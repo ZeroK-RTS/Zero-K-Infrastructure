@@ -82,8 +82,10 @@
     @foreach (var p in Model.PunishmentsByAccountID.Where(x=>x.BanExpires > DateTime.UtcNow)) {
         @Html.DisplayFor(x=>p)
     }
+        
+        
 
-    <a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
+        <a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
 	@if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
  {
 			<div>
@@ -96,16 +98,29 @@
 	<br />
 	<b>Elo:</b> @Math.Round(@Model.EffectiveElo)
 	@{var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));}
-	<div title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
-		<b class="fleft"> Level @Model.Level </b> 
-		<img src="/img/progressl_base.png" height="17" class="fleft" />
-		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio))" />
-		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio)))" />
-		<img src="/img/progressr_base.png" height="17" class="fleft" /> 
-		<b class="fleft"> Level @(Model.Level + 1) </b>
-	</div>
-	<br class="clearfloat" />
+        <div title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
+            <b class="fleft"> Level @Model.Level </b> 
+            <img src="/img/progressl_base.png" height="17" class="fleft" />
+            <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio))" />
+            <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio)))" />
+            <img src="/img/progressr_base.png" height="17" class="fleft" /> 
+            <b class="fleft"> Level @(Model.Level + 1) </b>
+        </div>
+        <br class="clearfloat" />
+       
     </p> 
+        @if (Model.Faction != null) {
+            @:Faction: @Html.PrintFaction(Model.Faction)
+        }
+        @if (Model.Clan != null) {
+            @:Clan: @Html.PrintClan(Model.Clan)
+        }
+        @if (Model.Faction != null) {
+            <br/>
+            @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
+        }
+
+  
     </div>	
     @if (Global.IsZeroKAdmin)
     {
@@ -274,15 +289,7 @@
     <br class="clearfloat" />
 
 	<div id="usr_planetwars" class="border relative">
-	
-    <h3>Faction: </h3>
-    @Html.PrintFaction(Model.Faction)
-    
-    <h3>Clan: </h3>
-    @Html.PrintClan(Model.Clan)
-    
-    <br/>
-    @Html.Partial("~/Views/Users/UserRoleList.cshtml", Model)
+
     
 	@if (Model.Planets.Any())
  {
