@@ -256,7 +256,7 @@ namespace ZeroKWeb.SpringieInterface
                                                   AutohostConfig config,
                                                   ref string actionsDescription) {
             bool ok = true;
-            foreach (var p in battleContext.Players.Select(x => new { player = x, account = dataContext.Accounts.First(y => y.LobbyID == x.LobbyID) })
+            foreach (var p in battleContext.Players.Where(x=>!x.IsSpectator).Select(x => new { player = x, account = dataContext.Accounts.First(y => y.LobbyID == x.LobbyID) })
                 ) {
                 if (config.MinLevel != null && p.account.Level < config.MinLevel) {
                     SpecPlayerOnCondition(p.player,
