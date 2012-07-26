@@ -112,15 +112,7 @@ namespace ZeroKWeb.SpringieInterface
                 var orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
                 sb.CalculateElo();
-                try
-                {
-                    db.SubmitChanges();
-                }
-                catch (ChangeConflictException e)
-                {
-                    db.ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
-                    db.SubmitChanges();
-                }
+                db.SubmitAndMergeChanges();
 
                 try {
                     foreach (var a in sb.SpringBattlePlayers.Where(x=>!x.IsSpectator).Select(x => x.Account)) Global.Nightwatch.Tas.Extensions.PublishAccountData(a);

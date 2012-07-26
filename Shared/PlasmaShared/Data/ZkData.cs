@@ -77,13 +77,9 @@ namespace ZkData
 
             catch (ChangeConflictException e)
             {
-             // Automerge database values for members that client
-                // has not modified.
-                foreach (ObjectChangeConflict occ in ChangeConflicts)
-                {
-                    occ.Resolve(RefreshMode.KeepChanges);
-                }
-                
+                // Automerge database values for members that client has modified
+                ChangeConflicts.ResolveAll(RefreshMode.KeepChanges);
+
                 // Submit succeeds on second try.
                 SubmitChanges();
             }
