@@ -417,6 +417,9 @@ namespace ZeroKWeb.Controllers
                     // delete structures being lost on planet change
                     foreach (var structure in planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) db.PlanetStructures.DeleteOnSubmit(structure);
 
+                    // reset attack points memory
+                    foreach (var acp in planet.AccountPlanets) acp.AttackPoints = 0;
+
 
 
                     // log messages

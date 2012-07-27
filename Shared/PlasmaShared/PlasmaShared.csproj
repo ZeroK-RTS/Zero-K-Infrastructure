@@ -145,6 +145,7 @@
     <Compile Include="Data\Resource.cs" />
     <Compile Include="Data\ResourceSpringHash.cs" />
     <Compile Include="Data\ResourceType.cs" />
+    <Compile Include="Data\RoleType.cs" />
     <Compile Include="Data\SpringBattle.cs" />
     <Compile Include="Data\Structure.cs" />
     <Compile Include="Data\StructureType.cs" />

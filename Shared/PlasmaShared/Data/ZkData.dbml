@@ -5,6 +5,7 @@
       <Column Name="Text" Type="System.String" DbType="nvarchar(4000) NOT NULL" CanBeNull="false" />
       <Column Name="Time" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Turn" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="PlainText" Type="System.String" DbType="nvarchar(4000)" CanBeNull="true" />
       <Association Name="Event_EventClan" Member="EventClans" ThisKey="EventID" OtherKey="EventID" Type="EventClan" />
       <Association Name="Event_EventAccount" Member="EventAccounts" ThisKey="EventID" OtherKey="EventID" Type="EventAccount" />
       <Association Name="Event_EventPlanet" Member="EventPlanets" ThisKey="EventID" OtherKey="EventID" Type="EventPlanet" />
@@ -657,6 +658,7 @@
       <Column Name="EffectInfluenceDefense" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectDropshipProduction" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectDropshipCapacity" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="EffectBomberProduction" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectInfluenceSpread" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectUnlockID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectEnergyPerTurn" Type="System.Double" DbType="float" CanBeNull="true" />
@@ -670,6 +672,7 @@
       <Column Name="Cost" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="IsBuildable" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IsIngameDestructible" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsBomberDestructible" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="OwnerChangeDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="OwnerChangeDisablesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BattleDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />

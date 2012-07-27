@@ -18,6 +18,9 @@ namespace ZkData
             return PlanetFactions.Where(x => presentFactions.Contains(x.FactionID) && x.FactionID != OwnerFactionID && x.Dropships > 0).OrderByDescending(x => x.Dropships).ThenBy(x => x.DropshipsLastAdded).Select(x => x.Faction).FirstOrDefault();
         }
 
+	    public override string ToString() {
+	        return Name;
+	    }
 
 	    public string GetColor(Account viewer)
 		{

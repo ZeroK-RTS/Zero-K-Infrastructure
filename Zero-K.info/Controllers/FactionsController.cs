@@ -117,13 +117,6 @@ namespace ZeroKWeb.Controllers
                 treaty.TreatyState = TreatyState.Proposed;
                 
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} proposes a new treaty between {1} and {2} - {3}",treaty.AccountByProposingAccountID, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, treaty));
-                var mes = string.Format("New treaty proposal between {0} and {1} offered by {2}",
-                                        treaty.FactionByProposingFactionID.Name,
-                                        treaty.FactionByAcceptingFactionID.Name,
-                                        treaty.AccountByProposingAccountID.Name);
-
-                SendFactionMessage(treaty.FactionByAcceptingFactionID, mes);
-                SendFactionMessage(treaty.FactionByProposingFactionID, mes);
 
                 db.SubmitAndMergeChanges();
                 return RedirectToAction("Detail", new { id = treaty.ProposingFactionID});
@@ -132,11 +125,7 @@ namespace ZeroKWeb.Controllers
             return View("FactionTreatyDefinition", treaty);
         }
 
-        private static void SendFactionMessage(Faction faction, string message) {
-            if (Global.Nightwatch!=null && Global.Nightwatch.Tas != null) {
-                Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, message ,true);
-            }
-        }
+     
 
         public ActionResult CancelTreaty(int id) {
             var db = new ZkDataContext();
@@ -147,12 +136,6 @@ namespace ZeroKWeb.Controllers
                 db.Events.InsertOnSubmit(Global.CreateEvent("Treaty {0} between {1} and {2} cancelled by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
                 db.SubmitAndMergeChanges();
 
-                var mes = string.Format("Treaty between {0} and {1} cancelled by {2}",
-                                        treaty.FactionByProposingFactionID.Name,
-                                        treaty.FactionByAcceptingFactionID.Name,
-                                        acc.Name);
-                SendFactionMessage(treaty.FactionByAcceptingFactionID, mes);
-                SendFactionMessage(treaty.FactionByProposingFactionID, mes);
                 
                 return RedirectToAction("Detail", new { id = Global.FactionID });
             }
@@ -193,12 +176,6 @@ namespace ZeroKWeb.Controllers
                 db.Events.InsertOnSubmit(Global.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
                 db.SubmitAndMergeChanges();
 
-                var mes = string.Format("Treaty between {0} and {1} accepted by {2}",
-                                        treaty.FactionByProposingFactionID.Name,
-                                        treaty.FactionByAcceptingFactionID.Name,
-                                        acc.Name);
-                SendFactionMessage(treaty.FactionByAcceptingFactionID, mes);
-                SendFactionMessage(treaty.FactionByProposingFactionID, mes);
 
                 return RedirectToAction("Detail", new { id = Global.FactionID });
             }

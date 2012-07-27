@@ -4,6 +4,7 @@ using System.Web.Mvc;
 using System.Globalization;
 using System.Linq;
 using CaTracker;
+using LobbyClient;
 using ZkData;
 
 namespace ZeroKWeb
@@ -128,6 +129,9 @@ namespace ZeroKWeb
         {
             var ev = new Event() { Time = DateTime.UtcNow };
 
+            ev.PlainText = string.Format(format, args);
+            
+
             for (var i = 0; i < args.Length; i++)
             {
                 var arg = args[i];
@@ -183,8 +187,20 @@ namespace ZeroKWeb
 
             }
 
-
+            
             ev.Text = string.Format(format, args);
+
+            var tas = Global.nightwatch.Tas;
+            if (tas != null) {
+                foreach (var clan in ev.EventClans.Select(x=>x.Clan)) {
+                    tas.Say(TasClient.SayPlace.Channel, clan.Shortcut, ev.PlainText, true);
+                }
+                foreach (var fac in ev.EventFactions.Select(x => x.Faction))
+                {
+                    tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, ev.PlainText, true);
+                }
+            }
+
             return ev;
         }
     }

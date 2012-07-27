@@ -29,21 +29,25 @@
 
         public const int MaxInfluencePerPlanet = 100;
         public const int BaseInfluencePerBattle = 15;
+	    public const double BaseMetalPerBattle = 100;
+	    public const int DropshipsPerBattlePlayer = 1;
         public const int InfluencePerInvolvedPlayer = 2;
         public const int InfluencePerShip = 2;
+        public const double InfluencePerTech = 0.5;
 	    public const int InfluenceToCapturePlanet = 51;
+        public const int AttackPointsForVictory = 2;
+        public const int AttackPointsForDefeat = 1;
         public const int MaxClanSkilledSize = 16;
         public const int ClanLeaveLimit = 100;
+	    public const double InfluenceCcKilledMultiplier = 0.5;
 
-
-    public static bool IsZkMod(string name)
+	    public static bool IsZkMod(string name)
     {
       if (string.IsNullOrEmpty(name)) return false;
       return name.Contains("Zero-K");
     }
 
 		public const int DefaultDropshipCapacity = 3;
-		public const int DefaultDropshipProduction = 1;
 	}
   
 }

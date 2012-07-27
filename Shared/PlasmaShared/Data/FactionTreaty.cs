@@ -16,6 +16,10 @@ namespace ZkData
             return false;
         }
 
+        public override string ToString() {
+            return "TR" + FactionTreatyID;
+        }
+
         public bool CanAccept(Account account)
         {
             if (account == null) return false;

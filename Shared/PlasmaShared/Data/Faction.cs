@@ -83,6 +83,10 @@ namespace ZkData
             return ret;
         }
 
+        public override string ToString() {
+            return Name;
+        }
+
         public class FactionUnlockEntry
         {
             public Faction Faction;

@@ -17,9 +17,13 @@ namespace ZkData
 			}
 		}
 		public string FullTitle { get { return string.Format("B{0} {1} on {2} ({3})", SpringBattleID, PlayerCount, ResourceByMapResourceID.InternalName, BattleType); } }
+	    
+        
+        public override string ToString() {
+            return "B" + SpringBattleID;
+        }
 
-
-		public void CalculateElo()
+	    public void CalculateElo()
 		{
             if (IsEloProcessed || Duration < GlobalConst.MinDurationForElo)
 			{

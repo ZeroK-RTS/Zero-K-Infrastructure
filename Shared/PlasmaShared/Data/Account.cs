@@ -27,6 +27,10 @@ namespace ZkData
         public double EffectiveElo { get { return Elo + WeightEloMalus; } }
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
 
+        public override string ToString() {
+            return Name;
+        }
+
 
         public Dictionary<AutohostMode, GamePreference> Preferences {
             get {

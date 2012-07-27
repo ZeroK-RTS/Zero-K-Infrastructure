@@ -56,11 +56,9 @@ namespace ZkData
             return clan.Faction.Color;
         }
 
-		
-
-
-
-
+	    public override string ToString() {
+	        return ClanName;
+	    }
 	}
 
 }
