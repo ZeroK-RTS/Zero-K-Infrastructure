@@ -140,6 +140,7 @@
     <Compile Include="Data\Mission.cs" />
     <Compile Include="Data\News.cs" />
     <Compile Include="Data\Planet.cs" />
+    <Compile Include="Data\PlanetStructure.cs" />
     <Compile Include="Data\ProgramID.cs" />
     <Compile Include="Data\Punishment.cs" />
     <Compile Include="Data\Resource.cs" />

@@ -18,6 +18,24 @@ namespace ZkData
         }
 
 
+        public void ProcessProduction()
+        {
+            foreach (var grp in Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).GroupBy(x=>x.Account)) {
+                var structs = grp.ToList();
+                var drops = structs.Where(x => x.StructureType.EffectDropshipProduction > 0).Sum(x => x.StructureType.EffectDropshipProduction) ?? 0;
+                grp.Key.ProduceDropships(drops);
+
+                var bombers = structs.Where(x => x.StructureType.EffectBomberProduction > 0).Sum(x => x.StructureType.EffectBomberProduction) ?? 0;
+                grp.Key.ProduceDropships(bombers);
+
+
+                var warps = structs.Where(x => x.StructureType.EffectWarpProduction > 0).Sum(x => x.StructureType.EffectWarpProduction) ?? 0;
+                grp.Key.ProduceWarps(warps);
+            }
+        }
+
+
+
         /// <summary>
         /// Spread influence through wormholes
         /// </summary>

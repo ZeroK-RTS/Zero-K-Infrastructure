@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
       <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -746,6 +747,8 @@
       <Column Name="Bombers" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="JumpgatePoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="SecretTopic" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
+      <Column Name="EnergyProducedLastTurn" Member="EnergyProducedLastTurn" Type="System.Double" DbType="float NOT NULL" IsDbGenerated="false" CanBeNull="false" IsPrimaryKey="false" />
+      <Column Name="EnergyDemandLastTurn" Member="EnergyDemandLastTurn" Type="System.Double" DbType="float NOT NULL" IsDbGenerated="false" CanBeNull="false" IsPrimaryKey="false" />
       <Association Name="Faction_Account" Member="Accounts" ThisKey="FactionID" OtherKey="FactionID" Type="Account" />
       <Association Name="Faction_Poll" Member="Polls" ThisKey="FactionID" OtherKey="RestrictFactionID" Type="Poll" />
       <Association Name="Faction_Clan" Member="Clans" ThisKey="FactionID" OtherKey="FactionID" Type="Clan" />

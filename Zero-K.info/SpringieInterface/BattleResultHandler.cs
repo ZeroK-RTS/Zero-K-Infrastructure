@@ -328,13 +328,30 @@ namespace ZeroKWeb.SpringieInterface
             foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
 
 
-
             gal.DecayInfluence();
             gal.SpreadInfluence();
 
+            // process faction energies
+            foreach (var fac in db.Factions.Where(x=>!x.IsDeleted)) fac.ProcessEnergy(gal.Turn);
+
+            // process production
+            gal.ProcessProduction();
 
 
-
+            // process trade 
+            foreach (var tr in db.FactionTreaties.Where(x=>x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended)) {
+                if (tr.ProcessTrade(false)) {
+                    tr.TreatyState = TreatyState.Accepted;
+                    if (tr.TurnsTotal != null) {
+                        tr.TurnsRemaining--;
+                        if (tr.TurnsRemaining <=0 ) {
+                            tr.TreatyState = TreatyState.Invalid;
+                            db.FactionTreaties.DeleteOnSubmit(tr);
+                        }
+                    }
+                } else tr.TreatyState = TreatyState.Suspended;
+            }
+            
    
             int? oldOwner = planet.OwnerAccountID;
             gal.Turn++;

@@ -83,6 +83,37 @@ namespace ZkData
             return ret;
         }
 
+
+        public void ProcessEnergy(int turn) {
+            var energy = EnergyProducedLastTurn;
+            var structs = Planets.SelectMany(x => x.PlanetStructures).Where(x=>x.StructureType.UpkeepEnergy > 0).ToList();
+            var demand = structs.Sum(x => (double?)x.StructureType.UpkeepEnergy) ?? 0;
+            
+            if (energy > demand) {
+                foreach (var s in structs) {
+                    s.PoweredTick(turn);
+                }
+            } else {
+
+                // todo implement complex energy behavior with multilayered distribution
+                foreach (var s in structs.OrderByDescending(x=>(int)x.EnergyPriority).ThenBy(x=>x.StructureType.UpkeepEnergy)) {
+                    if (energy > s.StructureType.UpkeepEnergy) {
+                        s.PoweredTick(turn);
+                        energy -= s.StructureType.UpkeepEnergy??0;
+                    } else {
+                        s.UnpoweredTick(turn);
+                    }
+                }
+            }
+
+            EnergyDemandLastTurn = demand;
+            EnergyProducedLastTurn =
+                Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectEnergyPerTurn > 0).Sum(
+                    x => x.StructureType.EffectEnergyPerTurn) ?? 0;
+
+        }
+
+
         public override string ToString() {
             return Name;
         }

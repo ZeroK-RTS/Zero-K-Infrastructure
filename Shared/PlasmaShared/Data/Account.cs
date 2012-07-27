@@ -129,6 +129,14 @@ namespace ZkData
             Faction.Dropships += count;
         }
 
+        public void ProduceWarps(double count)
+        {
+            // PwDropshipsProduced += count;
+            Faction.JumpgatePoints += count;
+        }
+
+
+
         public void SpendMetal(double count)
         {
             PwMetalUsed += count;
