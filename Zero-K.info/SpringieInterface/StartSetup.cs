@@ -67,7 +67,7 @@ namespace ZeroKWeb.SpringieInterface
                 if (mode == AutohostMode.Planetwars) {
                     planet = db.Galaxies.Single(x => x.IsDefault).Planets.Single(x => x.Resource.InternalName == context.Map);
                     List<int> presentFactions =
-                        context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(y => y.AccountID == x.LobbyID)).Where(
+                        context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(y => y.LobbyID == x.LobbyID)).Where(
                             x => x.Faction != null).GroupBy(x => x.Faction).Select(x => x.Key.FactionID).ToList();
                     attacker = planet.GetAttacker(presentFactions);
                     defender = planet.Faction;
