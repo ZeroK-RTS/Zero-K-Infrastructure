@@ -198,6 +198,9 @@ namespace ZeroKWeb.SpringieInterface
                 wasCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winner));
             }
 
+
+
+
             // distribute influence
             if (winner != null) {
                 double planetDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
@@ -222,7 +225,6 @@ namespace ZeroKWeb.SpringieInterface
                     planet.PlanetFactions.Add(entry);
                 }
 
-                entry.Dropships = 0;
                 entry.Influence += influence;
 
                 var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}) influence at {2} from {3} ",
@@ -255,6 +257,10 @@ namespace ZeroKWeb.SpringieInterface
                 text.AppendLine(ev.PlainText);
             }
 
+            // remove dropships
+            foreach (var pf in planet.PlanetFactions.Where(x => x.Faction == attacker)) pf.Dropships = 0;
+
+
             // produce dropships
             foreach (
                 Account acc in
@@ -284,7 +290,7 @@ namespace ZeroKWeb.SpringieInterface
                 entry.AttackPoints += acc.Faction == winner ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
             }
 
-            // destroy pw structures
+            // destroy pw structures killed ingame
             var handled = new List<string>();
             foreach (string line in extraData.Where(x => x.StartsWith("structurekilled"))) {
                 string[] data = line.Substring(16).Split(',');
@@ -297,20 +303,23 @@ namespace ZeroKWeb.SpringieInterface
                         db.PlanetStructures.DeleteOnSubmit(s);
                         var ev = Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}", s.StructureType.Name, defender, planet, sb);
                         db.Events.InsertOnSubmit(ev);
-                        db.Events.InsertOnSubmit(ev);
                         text.AppendLine(ev.PlainText);
                     }
                 }
             }
-            db.SubmitChanges();
+            db.SubmitAndMergeChanges();
 
-            // destroy structures (usually defenses)
+
+            // destroy structures by battle (usually defenses)
             foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
+
+
 
             // TODO correct IP after battle
 
             //  TODO: IP squeeze if overflow
 
+   
             int? oldOwner = planet.OwnerAccountID;
             gal.Turn++;
             db.SubmitChanges();
@@ -328,6 +337,7 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             try {
+
                 // store history
                 foreach (Planet p in gal.Planets) {
                     db.PlanetOwnerHistories.InsertOnSubmit(new PlanetOwnerHistory
