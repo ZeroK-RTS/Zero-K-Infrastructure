@@ -9694,6 +9694,8 @@ namespace ZkData
 		
 		private System.Nullable<int> _XpChange;
 		
+		private System.Nullable<int> _Influence;
+		
 		private EntityRef<SpringBattle> _SpringBattle;
 		
 		private EntityRef<Account> _Account;
@@ -9722,6 +9724,8 @@ namespace ZkData
     partial void OnEloChangeChanged();
     partial void OnXpChangeChanging(System.Nullable<int> value);
     partial void OnXpChangeChanged();
+    partial void OnInfluenceChanging(System.Nullable<int> value);
+    partial void OnInfluenceChanged();
     #endregion
 		
 		public SpringBattlePlayer()
@@ -9943,6 +9947,27 @@ namespace ZkData
 					this._XpChange = value;
 					this.SendPropertyChanged("XpChange");
 					this.OnXpChangeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Influence", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		public System.Nullable<int> Influence
+		{
+			get
+			{
+				return this._Influence;
+			}
+			set
+			{
+				if ((this._Influence != value))
+				{
+					this.OnInfluenceChanging(value);
+					this.SendPropertyChanging();
+					this._Influence = value;
+					this.SendPropertyChanged("Influence");
+					this.OnInfluenceChanged();
 				}
 			}
 		}
@@ -17424,6 +17449,8 @@ namespace ZkData
 		
 		private string _EffectBots;
 		
+		private System.Nullable<bool> _EffectBlocksInfluenceSpread;
+		
 		private System.Nullable<bool> _EffectBlocksJumpgate;
 		
 		private double _Cost;
@@ -17492,6 +17519,8 @@ namespace ZkData
     partial void OnEffectBomberDefenseChanged();
     partial void OnEffectBotsChanging(string value);
     partial void OnEffectBotsChanged();
+    partial void OnEffectBlocksInfluenceSpreadChanging(System.Nullable<bool> value);
+    partial void OnEffectBlocksInfluenceSpreadChanged();
     partial void OnEffectBlocksJumpgateChanging(System.Nullable<bool> value);
     partial void OnEffectBlocksJumpgateChanged();
     partial void OnCostChanging(double value);
@@ -17960,8 +17989,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBlocksJumpgate", DbType="bit")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBlocksInfluenceSpread", DbType="bit")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		public System.Nullable<bool> EffectBlocksInfluenceSpread
+		{
+			get
+			{
+				return this._EffectBlocksInfluenceSpread;
+			}
+			set
+			{
+				if ((this._EffectBlocksInfluenceSpread != value))
+				{
+					this.OnEffectBlocksInfluenceSpreadChanging(value);
+					this.SendPropertyChanging();
+					this._EffectBlocksInfluenceSpread = value;
+					this.SendPropertyChanged("EffectBlocksInfluenceSpread");
+					this.OnEffectBlocksInfluenceSpreadChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBlocksJumpgate", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
 		public System.Nullable<bool> EffectBlocksJumpgate
 		{
 			get
@@ -17982,7 +18032,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cost", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
 		public double Cost
 		{
 			get
@@ -18003,7 +18053,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBuildable", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
 		public bool IsBuildable
 		{
 			get
@@ -18024,7 +18074,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsIngameDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
 		public bool IsIngameDestructible
 		{
 			get
@@ -18045,7 +18095,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBomberDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
 		public bool IsBomberDestructible
 		{
 			get
@@ -18066,7 +18116,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
 		public bool OwnerChangeDeletesThis
 		{
 			get
@@ -18087,7 +18137,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDisablesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
 		public bool OwnerChangeDisablesThis
 		{
 			get
@@ -18108,7 +18158,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattleDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
 		public bool BattleDeletesThis
 		{
 			get
@@ -18129,7 +18179,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_PlanetStructures", ThisKey="StructureTypeID", OtherKey="StructureTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get

@@ -281,7 +281,7 @@ namespace ZeroKWeb.SpringieInterface
                     sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.Faction != null && x.Faction != attacker)) {
                 acc.ProduceDropships(GlobalConst.DropshipsPerBattlePlayer);
 
-                var ev = Global.CreateEvent("{0} ({4}) gained {1} dropships from battle {2} at {3}",
+                var ev = Global.CreateEvent("{0} ({4}) gained {1} dropship from battle {2} at {3}",
                                             acc,
                                             GlobalConst.DropshipsPerBattlePlayer,
                                             sb,
@@ -329,14 +329,16 @@ namespace ZeroKWeb.SpringieInterface
 
 
 
-            // TODO correct IP after battle
+            gal.DecayInfluence();
+            gal.SpreadInfluence();
 
-            //  TODO: IP squeeze if overflow
+
+
 
    
             int? oldOwner = planet.OwnerAccountID;
             gal.Turn++;
-            db.SubmitChanges();
+            db.SubmitAndMergeChanges();
 
             db = new ZkDataContext(); // is this needed - attempt to fix setplanetownersbeing buggy
             PlanetwarsController.SetPlanetOwners(db, sb);

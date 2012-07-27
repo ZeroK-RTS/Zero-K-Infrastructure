@@ -35,6 +35,7 @@
         public const int InfluencePerInvolvedPlayer = 2;
         public const int InfluencePerShip = 2;
         public const double InfluencePerTech = 0.5;
+        public const double InfluenceDecay = 1;
 	    public const int InfluenceToCapturePlanet = 51;
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
