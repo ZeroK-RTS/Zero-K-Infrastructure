@@ -143,7 +143,7 @@ namespace ZeroKWeb
                 if (arg is Account)
                 {
                     var acc = (Account)arg;
-                    args[i] = HtmlHelperExtensions.PrintAccount(null, acc, false);
+                    args[i] = HtmlHelperExtensions.PrintAccount(null, acc);
                     if (acc.AccountID != 0) {
                         if (!ev.EventAccounts.Any(x=>x.AccountID == acc.AccountID)) ev.EventAccounts.Add(new EventAccount() { AccountID = acc.AccountID });
                     }
@@ -152,7 +152,7 @@ namespace ZeroKWeb
                 else if (arg is Clan)
                 {
                     var clan = (Clan)arg;
-                    args[i] = HtmlHelperExtensions.PrintClan(null, clan, false);
+                    args[i] = HtmlHelperExtensions.PrintClan(null, clan);
                     if (clan.ClanID != 0) ev.EventClans.Add(new EventClan() { ClanID = clan.ClanID });
                     else ev.EventClans.Add(new EventClan() { Clan = clan });
                 }
