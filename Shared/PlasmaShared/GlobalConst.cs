@@ -29,7 +29,6 @@
 		public const string PasswordHashCookieName = "zk_passwordHash";
 		public const string LobbyAccessCookieName = "zk_lobby";
 
-        public const int MaxInfluencePerPlanet = 100;
         public const int BaseInfluencePerBattle = 15;
 	    public const double BaseMetalPerBattle = 100;
 	    public const int DropshipsPerBattlePlayer = 1;

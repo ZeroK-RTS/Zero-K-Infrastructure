@@ -227,6 +227,20 @@ namespace ZeroKWeb.SpringieInterface
 
                 entry.Influence += influence;
 
+                // clamping of influence
+                // gained over 100, sole owner
+                if (entry.Influence >= 100) {
+                    entry.Influence = 100;
+                    foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence = 0;
+                } else {
+                    var sumOthers = planet.PlanetFactions.Where(x => x.Faction != winner).Sum(x => (double?)x.Influence) ?? 0;
+                    if (sumOthers + entry.Influence > 100) {
+                        var exces = 100 - sumOthers - entry.Influence;
+                        foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence -= pf.Influence/sumOthers*exces;
+                    }
+                }
+
+
                 var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}) influence at {2} from {3} ",
                                             winner,
                                             influence,
