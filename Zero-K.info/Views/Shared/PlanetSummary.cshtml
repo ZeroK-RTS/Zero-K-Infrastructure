@@ -7,6 +7,7 @@
         var dropshipCapa = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipCapacity);
         var dropshipProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipProduction);
         var defense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectInfluenceDefense);
+        var bombDefense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense);
         var dropDefense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense);
         var warpProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectWarpProduction);
         var victory = Model.PlanetStructures.Where(x => x.IsActive).Any(x => x.StructureType.EffectIsVictoryPlanet == true);
@@ -25,6 +26,10 @@
                 {
                     @:, <span style='color: red'>+@defense influence</span>
                 }
+                @if (dropDefense > 0)
+                {
+                    @:, <span style='color: red'>+@bombDefense bomber defense</span>
+                }                
                 @if (dropDefense > 0)
                 {
                     @:, <span style='color: red'>+@dropDefense ship defense</span>
