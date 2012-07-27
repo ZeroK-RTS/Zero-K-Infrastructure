@@ -421,45 +421,64 @@ namespace ZeroKWeb.Controllers
                     foreach (var acp in planet.AccountPlanets) acp.AttackPoints = 0;
 
 
-
-                    // log messages
-                    if (planet.OwnerAccountID == null) // no previous owner
+                    if (newFaction == null)
                     {
-                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2} {3}. {4}",
-                                                                    newAccount,
-                                                                    planet,
-                                                                    newFaction,
-                                                                    newAccount.Clan,
-                                                                    sb));
-                        AuthServiceClient.SendLobbyMessage(newAccount,
-                                                           string.Format(
-                                                               "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
-                                                               planet.Name,
-                                                               planet.PlanetID));
-                    }
-                    else {
-                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} {2} has captured planet {3} from {4} of {5} {6}. {7}",
-                                                                    newAccount,
-                                                                    newFaction,
-                                                                    newAccount.Clan,
+                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} planet {1} owned by {2} {3} was abandoned. {4}",
+                                                                    planet.Faction,
                                                                     planet,
                                                                     planet.Account,
-                                                                    planet.Faction,
                                                                     planet.Account.Clan,
                                                                     sb));
 
-                        AuthServiceClient.SendLobbyMessage(newAccount,
-                                                           string.Format(
-                                                               "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
-                                                               planet.Name,
-                                                               planet.PlanetID));
-
                         AuthServiceClient.SendLobbyMessage(planet.Account,
-                                                           string.Format(
-                                                               "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
-                                                               planet.Name,
-                                                               planet.PlanetID));
+                                                               string.Format(
+                                                                   "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   planet.Name,
+                                                                   planet.PlanetID));
 
+                    }
+                    else {
+                        // new real owner
+
+                        // log messages
+                        if (planet.OwnerAccountID == null) // no previous owner
+                        {
+                            db.Events.InsertOnSubmit(Global.CreateEvent("{0} has claimed planet {1} for {2} {3}. {4}",
+                                                                        newAccount,
+                                                                        planet,
+                                                                        newFaction,
+                                                                        newAccount.Clan,
+                                                                        sb));
+                            AuthServiceClient.SendLobbyMessage(newAccount,
+                                                               string.Format(
+                                                                   "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   planet.Name,
+                                                                   planet.PlanetID));
+                        }
+                        else {
+                            db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} {2} has captured planet {3} from {4} of {5} {6}. {7}",
+                                                                        newAccount,
+                                                                        newFaction,
+                                                                        newAccount.Clan,
+                                                                        planet,
+                                                                        planet.Account,
+                                                                        planet.Faction,
+                                                                        planet.Account.Clan,
+                                                                        sb));
+
+                            AuthServiceClient.SendLobbyMessage(newAccount,
+                                                               string.Format(
+                                                                   "Congratulations, you now own planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   planet.Name,
+                                                                   planet.PlanetID));
+
+                            AuthServiceClient.SendLobbyMessage(planet.Account,
+                                                               string.Format(
+                                                                   "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   planet.Name,
+                                                                   planet.PlanetID));
+
+                        }
                     }
 
                     planet.Faction = newFaction;

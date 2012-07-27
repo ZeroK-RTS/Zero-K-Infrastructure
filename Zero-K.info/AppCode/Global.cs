@@ -191,16 +191,14 @@ namespace ZeroKWeb
             
             ev.Text = string.Format(format, args);
             try {
-                var tas = Global.nightwatch.Tas;
+                var tas = nightwatch.Tas;
                 if (tas != null) {
-                    if (ev.EventClans != null && ev.EventClans.Any())
-                        foreach (var clan in ev.EventClans.Select(x => x.Clan).Where(x => x != null)) {
-                            tas.Say(TasClient.SayPlace.Channel, clan.Shortcut, ev.PlainText, true);
-                        }
-                    if (ev.EventFactions != null && ev.EventFactions.Any())
-                        foreach (var fac in ev.EventFactions.Select(x => x.Faction).Where(x => x != null)) {
-                            tas.Say(TasClient.SayPlace.Channel, fac.Shortcut, ev.PlainText, true);
-                        }
+                    foreach (var clan in args.OfType<Clan>().Where(x => x != null)) {
+                        tas.Say(TasClient.SayPlace.Channel, clan.Shortcut, ev.PlainText, true);
+                    }
+                    foreach (var faction in args.OfType<Faction>().Where(x=>x!=null)) {
+                        tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, ev.PlainText, true);
+                    }
                 }
             } catch (Exception ex) {
                 Trace.TraceError("Error sending event to channels: {0}",ex);
