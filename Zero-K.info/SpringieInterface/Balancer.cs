@@ -211,7 +211,7 @@ namespace ZeroKWeb.SpringieInterface
                                                      : ". Use !random and !forcestart"));
                 }
                 else {
-                    bestTeams = bestTeams.Shuffle(); // permute
+                    //bestTeams = bestTeams.Shuffle(); // permute
 
                     string text = "(ratings ";
 
