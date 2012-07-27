@@ -349,7 +349,7 @@ namespace ZeroKWeb.Controllers
                 pac.DropshipsLastAdded = DateTime.UtcNow;
           
 
-                if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} dropships to {2}", acc, cnt, planet));
+                if (cnt > 0) db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} {2} dropships to {3} {4}", acc, cnt, acc.Faction, planet.Faction, planet));
                 db.SubmitChanges();
             }
             return RedirectToAction("Planet", new { id = planetID });
