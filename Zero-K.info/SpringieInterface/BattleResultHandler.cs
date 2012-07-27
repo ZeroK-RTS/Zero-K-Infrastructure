@@ -52,7 +52,6 @@ namespace ZeroKWeb.SpringieInterface
 
                 if (extraData == null) extraData = new List<string>();
 
-                if (mode == AutohostMode.Planetwars) db.ExecuteCommand("update account set creditsincome =0, creditsexpense=0 where creditsincome<>0 or creditsexpense<>0");
 
                 var sb = new SpringBattle
                          {
