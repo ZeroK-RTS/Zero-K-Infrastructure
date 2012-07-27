@@ -224,15 +224,17 @@ namespace ZeroKWeb.SpringieInterface
                 entry.Dropships = 0;
                 entry.Influence += influence;
 
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}) influence at {2} from {3} ",
-                                                            winner,
-                                                            influence,
-                                                            planet,
-                                                            sb,
-                                                            techBonus > 0 ? "+" + techBonus + " from techs " : "",
-                                                            playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
-                                                            shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
-                                                            ccMalus > 0 ? "" + ccMalus + " from destroyed CC " : ""));
+                var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}) influence at {2} from {3} ",
+                                            winner,
+                                            influence,
+                                            planet,
+                                            sb,
+                                            techBonus > 0 ? "+" + techBonus + " from techs " : "",
+                                            playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
+                                            shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
+                                            ccMalus > 0 ? "" + ccMalus + " from destroyed CC " : "");
+                db.Events.InsertOnSubmit(ev);
+                text.AppendLine(ev.PlainText);
             }
 
             // distribute metal
@@ -242,12 +244,14 @@ namespace ZeroKWeb.SpringieInterface
             foreach (Account w in winners) {
                 w.ProduceMetal(metalPerWinner);
 
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} ({4}) gained {1} metal from battle {2} at {3}",
-                                                            w,
-                                                            Math.Floor(metalPerWinner),
-                                                            sb,
-                                                            planet,
-                                                            w.Clan != null ? (object)w.Clan : "no clan"));
+                var ev = Global.CreateEvent("{0} ({4}) gained {1} metal from battle {2} at {3}",
+                                            w,
+                                            Math.Floor(metalPerWinner),
+                                            sb,
+                                            planet,
+                                            w.Clan != null ? (object)w.Clan : "no clan");
+                db.Events.InsertOnSubmit(ev);
+                text.AppendLine(ev.PlainText);
             }
 
             // produce dropships
@@ -256,12 +260,14 @@ namespace ZeroKWeb.SpringieInterface
                     sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.Faction != null && x.Faction != attacker)) {
                 acc.ProduceDropships(GlobalConst.DropshipsPerBattlePlayer);
 
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} ({4}) gained {1} dropships from battle {2} at {3}",
-                                                            acc,
-                                                            GlobalConst.DropshipsPerBattlePlayer,
-                                                            sb,
-                                                            planet,
-                                                            acc.Clan != null ? (object)acc.Clan : "no clan"));
+                var ev = Global.CreateEvent("{0} ({4}) gained {1} dropships from battle {2} at {3}",
+                                            acc,
+                                            GlobalConst.DropshipsPerBattlePlayer,
+                                            sb,
+                                            planet,
+                                            acc.Clan != null ? (object)acc.Clan : "no clan");
+                db.Events.InsertOnSubmit(ev);
+                text.AppendLine(ev.PlainText);
             }
 
             // add attack points
@@ -288,11 +294,10 @@ namespace ZeroKWeb.SpringieInterface
                     db.PlanetStructures.Where(x => x.PlanetID == planet.PlanetID && x.StructureType.IngameUnitName == unitName && x.IsActive)) {
                     if (s.StructureType.IsIngameDestructible) {
                         db.PlanetStructures.DeleteOnSubmit(s);
-                        db.Events.InsertOnSubmit(Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}",
-                                                                    s.StructureType.Name,
-                                                                    defender,
-                                                                    planet,
-                                                                    sb));
+                        var ev = Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}", s.StructureType.Name, defender, planet, sb);
+                        db.Events.InsertOnSubmit(ev);
+                        db.Events.InsertOnSubmit(ev);
+                        text.AppendLine(ev.PlainText);
                     }
                 }
             }
