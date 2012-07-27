@@ -47,7 +47,6 @@ namespace ZkData
 					{
 						a.Account.XP += WinnerTeamXpChange.Value;
 						a.XpChange = WinnerTeamXpChange.Value;
-						a.Influence = WinnerTeamXpChange.Value;
 					}
 					else
 					{
@@ -123,7 +122,6 @@ namespace ZkData
 
 				r.Account.XP += WinnerTeamXpChange.Value;
 				r.Player.XpChange = WinnerTeamXpChange;
-				r.Player.Influence = WinnerTeamXpChange;
 
 				if (r.Account.EloWeight < GlobalConst.EloWeightMax)
 				{

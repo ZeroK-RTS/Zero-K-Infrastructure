@@ -9694,8 +9694,6 @@ namespace ZkData
 		
 		private System.Nullable<int> _XpChange;
 		
-		private System.Nullable<int> _Influence;
-		
 		private EntityRef<SpringBattle> _SpringBattle;
 		
 		private EntityRef<Account> _Account;
@@ -9724,8 +9722,6 @@ namespace ZkData
     partial void OnEloChangeChanged();
     partial void OnXpChangeChanging(System.Nullable<int> value);
     partial void OnXpChangeChanged();
-    partial void OnInfluenceChanging(System.Nullable<int> value);
-    partial void OnInfluenceChanged();
     #endregion
 		
 		public SpringBattlePlayer()
@@ -9947,27 +9943,6 @@ namespace ZkData
 					this._XpChange = value;
 					this.SendPropertyChanged("XpChange");
 					this.OnXpChangeChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Influence", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
-		public System.Nullable<int> Influence
-		{
-			get
-			{
-				return this._Influence;
-			}
-			set
-			{
-				if ((this._Influence != value))
-				{
-					this.OnInfluenceChanging(value);
-					this.SendPropertyChanging();
-					this._Influence = value;
-					this.SendPropertyChanged("Influence");
-					this.OnInfluenceChanged();
 				}
 			}
 		}

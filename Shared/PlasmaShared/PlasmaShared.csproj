@@ -375,6 +375,9 @@
     <EmbeddedResource Include="Data\ZkData.dbml.views_002.layout">
       <DependentUpon>ZkData.dbml</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Data\ZkData.dbml.views_003.layout">
+      <DependentUpon>ZkData.dbml</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Data\ZkData.dbml.views_def.layout">
       <DependentUpon>ZkData.dbml</DependentUpon>
     </EmbeddedResource>

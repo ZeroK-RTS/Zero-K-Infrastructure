@@ -12,8 +12,10 @@
 		public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
 
-        public const int MinDurationForXP = 360;    // seconds
-        public const int MinDurationForElo = 20;
+        public const int MinDurationForXP = 240;    // seconds
+        public const int MinDurationForElo = 60;
+	    public const int MinDurationForPlanetwars = 10;
+
 		public const int XpForMissionOrBots = 25;
 		public const int XpForMissionOrBotsVictory = 50;
 		public const double EloWeightMax = 6;

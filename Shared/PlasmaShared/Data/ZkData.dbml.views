@@ -43,5 +43,14 @@
         <string>TreatyOffer</string>
       </EntitiesOfInterest>
     </DBMLView>
+    <DBMLView>
+      <ViewName>New View 3</ViewName>
+      <LayoutFileName>.views_003.layout</LayoutFileName>
+      <Selected>false</Selected>
+      <Ordinal>3</Ordinal>
+      <EntitiesOfInterest>
+        <string>SpringBattlePlayer</string>
+      </EntitiesOfInterest>
+    </DBMLView>
   </Views>
 </DBMLViews>

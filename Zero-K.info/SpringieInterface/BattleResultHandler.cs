@@ -118,7 +118,9 @@ namespace ZeroKWeb.SpringieInterface
 
                 var text = new StringBuilder();
 
-                if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2) ProcessPlanetwars(result, extraData, db, sb, text);
+                if (mode == AutohostMode.Planetwars && sb.SpringBattlePlayers.Count(x => !x.IsSpectator) >= 2 && sb.Duration >= GlobalConst.MinDurationForPlanetwars) {
+                    ProcessPlanetwars(result, extraData, db, sb, text);
+                }
 
                 foreach (Account account in sb.SpringBattlePlayers.Select(x => x.Account)) {
                     if (account.Level > orgLevels[account.AccountID]) {
@@ -192,7 +194,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 if (winNum == 0) winner = attacker;
-                else if (winNum == 1) winner = attacker;
+                else winner = defender;
                 wasCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winner));
             }
 

@@ -352,7 +352,6 @@
       <Column Name="Rank" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="EloChange" Type="System.Single" DbType="real" CanBeNull="true" UpdateCheck="WhenChanged" />
       <Column Name="XpChange" Type="System.Int32" DbType="int" CanBeNull="true" UpdateCheck="WhenChanged" />
-      <Column Name="Influence" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Association Name="SpringBattle_SpringBattlePlayer" Member="SpringBattle" ThisKey="SpringBattleID" OtherKey="SpringBattleID" Type="SpringBattle" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_SpringBattlePlayer" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>

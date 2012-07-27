@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Web;
 using System.Web.Mvc;
@@ -131,6 +132,7 @@ namespace ZeroKWeb
             var ev = new Event() { Time = DateTime.UtcNow };
 
             ev.PlainText = string.Format(format, args);
+            var orgArgs = new List<object>(args);
             
 
             for (var i = 0; i < args.Length; i++)
@@ -193,10 +195,10 @@ namespace ZeroKWeb
             try {
                 var tas = nightwatch.Tas;
                 if (tas != null) {
-                    foreach (var clan in args.OfType<Clan>().Where(x => x != null)) {
+                    foreach (var clan in orgArgs.OfType<Clan>().Where(x => x != null)) {
                         tas.Say(TasClient.SayPlace.Channel, clan.Shortcut, ev.PlainText, true);
                     }
-                    foreach (var faction in args.OfType<Faction>().Where(x=>x!=null)) {
+                    foreach (var faction in orgArgs.OfType<Faction>().Where(x=>x!=null)) {
                         tas.Say(TasClient.SayPlace.Channel, faction.Shortcut, ev.PlainText, true);
                     }
                 }
