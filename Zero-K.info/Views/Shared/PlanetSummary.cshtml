@@ -6,7 +6,6 @@
 
         var dropshipCapa = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipCapacity);
         var dropshipProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipProduction);
-        var defense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectInfluenceDefense);
         var bombDefense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense);
         var dropDefense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense);
         var warpProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectWarpProduction);
@@ -21,10 +20,9 @@
         </tr>
         <tr>
             <td>Bonuses:</td>
-            <td><span style='color: @(spread == 0 ? "red" : "")'>@spread</span> influence spread bonus
-                @if (defense > 0)
-                {
-                    @:, <span style='color: red'>+@defense influence</span>
+            <td>
+                @if (spread > 0) {
+                    <span>+@spread influence spread</span>
                 }
                 @if (dropDefense > 0)
                 {

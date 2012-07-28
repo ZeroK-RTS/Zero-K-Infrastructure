@@ -13755,8 +13755,6 @@ namespace ZkData
 		
 		private int _GalaxyID;
 		
-		private double _LinktStrength;
-		
 		private EntityRef<Planet> _PlanetByPlanetID1;
 		
 		private EntityRef<Planet> _PlanetByPlanetID2;
@@ -13773,8 +13771,6 @@ namespace ZkData
     partial void OnPlanetID2Changed();
     partial void OnGalaxyIDChanging(int value);
     partial void OnGalaxyIDChanged();
-    partial void OnLinktStrengthChanging(double value);
-    partial void OnLinktStrengthChanged();
     #endregion
 		
 		public Link()
@@ -13853,27 +13849,6 @@ namespace ZkData
 					this._GalaxyID = value;
 					this.SendPropertyChanged("GalaxyID");
 					this.OnGalaxyIDChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_LinktStrength", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
-		public double LinktStrength
-		{
-			get
-			{
-				return this._LinktStrength;
-			}
-			set
-			{
-				if ((this._LinktStrength != value))
-				{
-					this.OnLinktStrengthChanging(value);
-					this.SendPropertyChanging();
-					this._LinktStrength = value;
-					this.SendPropertyChanged("LinktStrength");
-					this.OnLinktStrengthChanged();
 				}
 			}
 		}
@@ -17423,8 +17398,6 @@ namespace ZkData
 		
 		private System.Nullable<int> _TurnsToActivate;
 		
-		private System.Nullable<double> _EffectInfluenceDefense;
-		
 		private System.Nullable<double> _EffectDropshipProduction;
 		
 		private System.Nullable<int> _EffectDropshipCapacity;
@@ -17493,8 +17466,6 @@ namespace ZkData
     partial void OnUpkeepEnergyChanged();
     partial void OnTurnsToActivateChanging(System.Nullable<int> value);
     partial void OnTurnsToActivateChanged();
-    partial void OnEffectInfluenceDefenseChanging(System.Nullable<double> value);
-    partial void OnEffectInfluenceDefenseChanged();
     partial void OnEffectDropshipProductionChanging(System.Nullable<double> value);
     partial void OnEffectDropshipProductionChanged();
     partial void OnEffectDropshipCapacityChanging(System.Nullable<int> value);
@@ -17712,29 +17683,8 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectInfluenceDefense", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
-		public System.Nullable<double> EffectInfluenceDefense
-		{
-			get
-			{
-				return this._EffectInfluenceDefense;
-			}
-			set
-			{
-				if ((this._EffectInfluenceDefense != value))
-				{
-					this.OnEffectInfluenceDefenseChanging(value);
-					this.SendPropertyChanging();
-					this._EffectInfluenceDefense = value;
-					this.SendPropertyChanged("EffectInfluenceDefense");
-					this.OnEffectInfluenceDefenseChanged();
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipProduction", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
 		public System.Nullable<double> EffectDropshipProduction
 		{
 			get
@@ -17755,7 +17705,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipCapacity", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10)]
 		public System.Nullable<int> EffectDropshipCapacity
 		{
 			get
@@ -17776,7 +17726,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBomberProduction", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11)]
 		public System.Nullable<double> EffectBomberProduction
 		{
 			get
@@ -17797,7 +17747,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectInfluenceSpread", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12)]
 		public System.Nullable<double> EffectInfluenceSpread
 		{
 			get
@@ -17818,7 +17768,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectUnlockID", DbType="int")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=13)]
 		public System.Nullable<int> EffectUnlockID
 		{
 			get
@@ -17843,7 +17793,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectEnergyPerTurn", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=14)]
 		public System.Nullable<double> EffectEnergyPerTurn
 		{
 			get
@@ -17864,7 +17814,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectIsVictoryPlanet", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=15)]
 		public System.Nullable<bool> EffectIsVictoryPlanet
 		{
 			get
@@ -17885,7 +17835,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectWarpProduction", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16)]
 		public System.Nullable<double> EffectWarpProduction
 		{
 			get
@@ -17906,7 +17856,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectAllowShipTraversal", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17)]
 		public System.Nullable<bool> EffectAllowShipTraversal
 		{
 			get
@@ -17927,7 +17877,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectDropshipDefense", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18)]
 		public System.Nullable<double> EffectDropshipDefense
 		{
 			get
@@ -17948,7 +17898,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBomberDefense", DbType="float")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
 		public System.Nullable<double> EffectBomberDefense
 		{
 			get
@@ -17969,7 +17919,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBots", DbType="nvarchar(100)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
 		public string EffectBots
 		{
 			get
@@ -17990,7 +17940,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBlocksInfluenceSpread", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21)]
 		public System.Nullable<bool> EffectBlocksInfluenceSpread
 		{
 			get
@@ -18011,7 +17961,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectBlocksJumpgate", DbType="bit")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22)]
 		public System.Nullable<bool> EffectBlocksJumpgate
 		{
 			get
@@ -18032,7 +17982,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cost", DbType="float NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23)]
 		public double Cost
 		{
 			get
@@ -18053,7 +18003,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBuildable", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
 		public bool IsBuildable
 		{
 			get
@@ -18074,7 +18024,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsIngameDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
 		public bool IsIngameDestructible
 		{
 			get
@@ -18095,7 +18045,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBomberDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
 		public bool IsBomberDestructible
 		{
 			get
@@ -18116,7 +18066,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
 		public bool OwnerChangeDeletesThis
 		{
 			get
@@ -18137,7 +18087,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDisablesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
 		public bool OwnerChangeDisablesThis
 		{
 			get
@@ -18158,7 +18108,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattleDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
 		public bool BattleDeletesThis
 		{
 			get
@@ -18179,7 +18129,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_PlanetStructures", ThisKey="StructureTypeID", OtherKey="StructureTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get

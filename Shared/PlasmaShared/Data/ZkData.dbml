@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="zero-k" EntityNamespace="ZkData" ContextNamespace="ZkData" Class="ZkDataContext" Serialization="Unidirectional" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
   <Table Name="dbo.Event" Member="Events">
     <Type Name="Event">
       <Column Name="EventID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -509,7 +508,6 @@
       <Column Name="PlanetID1" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="PlanetID2" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="GalaxyID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
-      <Column Name="LinktStrength" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Association Name="Planet_Link" Member="PlanetByPlanetID1" ThisKey="PlanetID1" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Planet_Link1" Member="PlanetByPlanetID2" ThisKey="PlanetID2" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
       <Association Name="Galaxy_Link" Member="Galaxy" ThisKey="GalaxyID" OtherKey="GalaxyID" Type="Galaxy" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
@@ -656,7 +654,6 @@
       <Column Name="DisabledMapIcon" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
       <Column Name="UpkeepEnergy" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="TurnsToActivate" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="EffectInfluenceDefense" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectDropshipProduction" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectDropshipCapacity" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectBomberProduction" Type="System.Double" DbType="float" CanBeNull="true" />
@@ -747,8 +744,8 @@
       <Column Name="Bombers" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="JumpgatePoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="SecretTopic" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
-      <Column Name="EnergyProducedLastTurn" Member="EnergyProducedLastTurn" Type="System.Double" DbType="float NOT NULL" IsDbGenerated="false" CanBeNull="false" IsPrimaryKey="false" />
-      <Column Name="EnergyDemandLastTurn" Member="EnergyDemandLastTurn" Type="System.Double" DbType="float NOT NULL" IsDbGenerated="false" CanBeNull="false" IsPrimaryKey="false" />
+      <Column Name="EnergyProducedLastTurn" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="EnergyDemandLastTurn" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Association Name="Faction_Account" Member="Accounts" ThisKey="FactionID" OtherKey="FactionID" Type="Account" />
       <Association Name="Faction_Poll" Member="Polls" ThisKey="FactionID" OtherKey="RestrictFactionID" Type="Poll" />
       <Association Name="Faction_Clan" Member="Clans" ThisKey="FactionID" OtherKey="FactionID" Type="Clan" />

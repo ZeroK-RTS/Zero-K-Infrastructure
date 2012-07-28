@@ -20,8 +20,7 @@
 		<td>
 			@foreach (var p in Model.LinksByPlanetID1.Union(Model.LinksByPlanetID2)) {
 		 var planet = p.PlanetByPlanetID1 == Model ? p.PlanetByPlanetID2 : p.PlanetByPlanetID1;
-				<li style='color:@(p.LinktStrength > 0 ? "" : "#ff0000")'>@Html.PrintPlanet(planet)
-					- link @(p.LinktStrength * 100)%</li>
+				<li style='color:@(p.LinktStrength > 0 ? "" : "#ff0000")'>@Html.PrintPlanet(planet)</li>
 	 }
 		</td>
 	</tr>
@@ -70,15 +69,8 @@
 							var y2 = p2.Y * mapHeight;
 
 
-							if (link.LinktStrength == 0) {
-                    @: var l = paper.path("@String.Format("M{0:0} {1:0}L{2:0} {3:0}", x1, y1, x2, y2)");
-                    @: l.attr({
-                    @:  "stroke-width": "2",
-                    @:  "stroke": "#d3d3d3",
-                    @:  "stroke-dasharray": "-."
-                    @: });
-                } else {
-								var width = link.LinktStrength * 10 - 2;
+							
+								var width = 2;
 								var color1 = p1.GetColor(Global.Account);
 								var color2 = p2.GetColor(Global.Account);
 								var angle = -Math.Atan2(x2 - x1, y2 - y1) / Math.PI * 180;
@@ -89,7 +81,7 @@
                     @:  "stroke": "none"
                     @: });
                     @: r.rotate(@angle, @x1, @y1);
-                }
+                
 
 						} 
 

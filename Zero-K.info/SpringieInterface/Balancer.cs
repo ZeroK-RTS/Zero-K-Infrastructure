@@ -111,12 +111,12 @@ namespace ZeroKWeb.SpringieInterface
                 List<int> presentFactions = players.Where(x => x != null).GroupBy(x => x.FactionID??0).Select(x => x.Key).ToList();
                 Faction attackerFaction = planet.GetAttacker(presentFactions);
                 if (attackerFaction == null) {
-                    res.Message = "Missing attacker";
+                    res.Message = "No planet was attacked - send your dropships somewhere!";
                     return res;
                 }
                 Faction defenderFaction = planet.Faction;
                 if (defenderFaction != null && !players.Any(x => x.Faction == defenderFaction && x.Clan != null)) {
-                    res.Message = "Missing clanned defender";
+                    res.Message = "Missing clanned defender of this planet";
                     return res;
                 }
 
