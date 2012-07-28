@@ -249,7 +249,7 @@ namespace ZeroKWeb.SpringieInterface
                                             techBonus > 0 ? "+" + techBonus + " from techs " : "",
                                             playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
                                             shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
-                                            ccMalus > 0 ? "" + ccMalus + " from destroyed CC " : "");
+                                            ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "");
                 db.Events.InsertOnSubmit(ev);
                 text.AppendLine(ev.PlainText);
             }

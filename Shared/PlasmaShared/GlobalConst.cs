@@ -14,7 +14,7 @@
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
-	    public const int MinDurationForPlanetwars = 10;
+	    public const int MinDurationForPlanetwars = 120;
 
 		public const int XpForMissionOrBots = 25;
 		public const int XpForMissionOrBotsVictory = 50;
@@ -32,8 +32,8 @@
         public const int BaseInfluencePerBattle = 15;
 	    public const double BaseMetalPerBattle = 100;
 	    public const int DropshipsPerBattlePlayer = 1;
-        public const int InfluencePerInvolvedPlayer = 2;
-        public const int InfluencePerShip = 2;
+        public const int InfluencePerInvolvedPlayer = 1;
+        public const int InfluencePerShip = 1;
         public const double InfluencePerTech = 0.5;
         public const double InfluenceDecay = 1;
 	    public const int InfluenceToCapturePlanet = 51;
