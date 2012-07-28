@@ -80,10 +80,13 @@ namespace ZkData
                         foreach (var kvp in spreads) {
                             var entry = planet.PlanetFactions.SingleOrDefault(x => x.FactionID == kvp.Key.FactionID);
                             if (entry == null) {
-                                entry = new PlanetFaction(){FactionID = kvp.Key.FactionID, PlanetID = planet.PlanetID};
-                                planet.PlanetFactions.Add(entry);
+                                    entry = new PlanetFaction() { FactionID = kvp.Key.FactionID, PlanetID = planet.PlanetID };
+                                    planet.PlanetFactions.Add(entry);
+                             }
+                            if (entry.Influence < GlobalConst.InfluenceToCapturePlanet || kvp.Key == planet.Faction)
+                            {
+                                entry.Influence += kvp.Value*squeeze;
                             }
-                            entry.Influence += kvp.Value*squeeze;
                         }
                     }
 
