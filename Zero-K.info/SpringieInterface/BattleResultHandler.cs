@@ -195,7 +195,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 if (winNum == 0) winner = attacker;
                 else winner = defender;
-                wasCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winner));
+                wasCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winNum));
             }
 
 
@@ -311,8 +311,7 @@ namespace ZeroKWeb.SpringieInterface
                 string unitName = data[0];
                 if (handled.Contains(unitName)) continue;
                 handled.Add(unitName);
-                foreach (PlanetStructure s in
-                    db.PlanetStructures.Where(x => x.PlanetID == planet.PlanetID && x.StructureType.IngameUnitName == unitName && x.IsActive)) {
+                foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.IngameUnitName == unitName)) {
                     if (s.StructureType.IsIngameDestructible) {
                         db.PlanetStructures.DeleteOnSubmit(s);
                         var ev = Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}", s.StructureType.Name, defender, planet, sb);
