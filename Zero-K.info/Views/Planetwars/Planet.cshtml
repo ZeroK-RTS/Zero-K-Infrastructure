@@ -17,12 +17,14 @@
 		<td>
 			@Html.Partial("MapInfoBox", Model.Resource)
 		</td>
-		<td>
-			@foreach (var p in Model.LinksByPlanetID1.Union(Model.LinksByPlanetID2)) {
-		 var planet = p.PlanetByPlanetID1 == Model ? p.PlanetByPlanetID2 : p.PlanetByPlanetID1;
-				<li style='color:@(p.LinktStrength > 0 ? "" : "#ff0000")'>@Html.PrintPlanet(planet)</li>
-	 }
-		</td>
+        <td>
+            <ul>
+            @foreach (var p in Model.LinksByPlanetID1.Union(Model.LinksByPlanetID2)) {
+                var planet = p.PlanetByPlanetID1 == Model ? p.PlanetByPlanetID2 : p.PlanetByPlanetID1;
+                <li>@Html.PrintPlanet(planet)</li>
+            }
+            </ul>
+        </td>
 	</tr>
 </table>
 @if (Model.OwnerAccountID == Global.AccountID && Global.Clan != null) {
