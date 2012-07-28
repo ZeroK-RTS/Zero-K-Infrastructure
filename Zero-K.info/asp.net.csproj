@@ -410,6 +410,7 @@
     <Content Include="Views\Shared\GoogleSiteSearch.cshtml" />
     <Content Include="Views\Shared\TopMenu.cshtml" />
     <Content Include="Views\Shared\PlanetIcon.cshtml" />
+    <Content Include="Views\Shared\InfluenceListShort.cshtml" />
     <Content Include="Views\Planetwars\Events.cshtml" />
     <Content Include="Views\Shared\PlanetSummary.cshtml" />
     <Content Include="Views\Home\PlanetTooltip.cshtml" />
