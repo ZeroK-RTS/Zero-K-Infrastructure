@@ -308,7 +308,7 @@ namespace System.Web.Mvc
                 factoids.Add("appoints: " + string.Join(",", rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x=>x.CanAppoint).Select(x=>x.RoleTypeBySlaveRoleTypeID.Name)));
             }
             if (rt.RoleTypeHierarchiesByMasterRoleTypeID.Any(x=>x.CanRecall)) {
-                factoids.Add("recalls: " + string.Join(",", rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x => x.CanAppoint).Select(x => x.RoleTypeBySlaveRoleTypeID.Name)));
+                factoids.Add("recalls: " + string.Join(",", rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x => x.CanRecall).Select(x => x.RoleTypeBySlaveRoleTypeID.Name)));
             }
             if (rt.RightBomberQuota != 0)
             {
