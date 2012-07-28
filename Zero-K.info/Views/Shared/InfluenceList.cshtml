@@ -19,9 +19,11 @@
                 chartArea : {left:0,top:0,width:"100%", height:"100%"},
                 legend : {position:'none'},
                 colors: [
+                    
                     @foreach (var fac in Model.Where(x=>x.Influence > 0).OrderByDescending(x=>x.Influence)) {
                         <text>'@fac.Faction.Color',</text>
                     }
+                
             '#808080'
         ]
             

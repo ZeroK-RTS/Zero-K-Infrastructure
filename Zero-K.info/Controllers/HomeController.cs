@@ -108,7 +108,7 @@ namespace ZeroKWeb.Controllers
 					return PartialView("PlanetTooltip", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])));
 
 				case "planetInfluence":
-					return PartialView("InfluenceList", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])).PlanetFactions);
+					return PartialView("InfluenceListShort", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])).PlanetFactions);
 
 				case "planetDropships":
 					return PartialView("PlanetDropships", db.Planets.Single(x => x.PlanetID == int.Parse(args[1])));

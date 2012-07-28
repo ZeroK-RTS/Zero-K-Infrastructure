@@ -69,7 +69,6 @@
 </div>
 <br />
 
-<!--	Victory message	-->
 <h1 style="color:Red">PlanetWars is closed for reworking.  Please be patient!</h1>
 
 @Html.Partial("FactionList")
@@ -155,21 +154,9 @@ We are setting up the next round.
 *@
 
 <div style="position: relative; z-index: 100" >
-	<div id="linkMap" style="position: absolute; z-index: 0"> </div> <!-- lines connecting planets-->
+	<div id="linkMap" style="position: absolute; z-index: 0"> </div>
 	<img src="/img/galaxies/render_@(g.GalaxyID).jpg" style="position: relative; top: 0; left: 0; z-index:-50; " width="@Model.Width" height="@Model.Height"/>
-	<table  width="@Model.Width" height="@Model.Height" cellpadding="0" cellspacing="0" style="position: relative; z-index: 1; display:none;">
-		@for(int i=0; i<10; i++)
-		{
-			<tr>
-			@for (int j = 0; j < 10; j++)
-			{
-				<td class="sectorgrid" width="@((Model.Width/10)-2)"  height="@((Model.Height/10)-2)" ><span class="hide sectorname" >Sector: (@(i+1),@(j+1))</span></td>
-			}
-			</tr>
-		}
-	</table>
- <!--all elements of this group(except the last) need to have position: absolute so they can be layered on top of eacher.
- The last element of this group needs to have position: relative so that the planetwars events will show below. --> 
+	
 
 @foreach (var p in Model.Planets)
 {
@@ -185,10 +172,9 @@ We are setting up the next round.
 		clan = p.Account.Clan;
 	}
 	<div style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px; font-size: 12px; font-weight: bold; " >
-		<!-- planet name and owner-->
-		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; " width="100%" height="25%"><tr>
-		<td style="vertical-align: bottom;" ><div style="display:inline-block; /*padding: 3px; box-shadow: 0 0 3px 3px #000; background: #000; border-radius: 3px; opacity: .8; */">
-			<a href='@Url.Action("Planet", new { id = p.PlanetID })' title="$planet$@p.PlanetID" style="color: #ffffff; color: @(clan!= null ? Clan.ClanColor(clan, Global.ClanID): "#ffffff");">
+		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; width:100%; height:25%;"><tr>
+		<td style="vertical-align: bottom;" ><div style="display:inline-block;">
+			<a href='@Url.Action("Planet", new { id = p.PlanetID })' nicetitle="$planet$@p.PlanetID" style="color: #ffffff; color: @(clan!= null ? Clan.ClanColor(clan, Global.ClanID): "#ffffff");">
 			@p.Name<br />
 			@if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID)
 			{
@@ -197,13 +183,11 @@ We are setting up the next round.
 			</a>
 		</div></td></tr></table>
 
-		<!--planet being/preparing for attack icon-->
 		@if (autohost != null && autohost.Users.Count > 1)
 		{ 
 			<img src='/img/planetstatus/@(autohost.IsInGame ? "attacking" : "preparing")0.png' width='@(por.Width)' style='position:absolute; left: 0;'/>
 		}
 		
-		<!planet structures>
 		<span style="position: absolute; left: @(-por.Width); top: @(por.Height/2);"  >
 		@{
 			var rendered = new List<string>();
@@ -226,18 +210,16 @@ We are setting up the next round.
 		}
 		</span>
 		
-		<!-- clan image-->
-		<span style="position: absolute; left: 0; top: 25%; width: 20px; height: 20px; z-index: 10;" title='$planetInfluence$@p.PlanetID'>
+		<span style="position: absolute; left: 0; top: 25%; width: 20px; height: 20px; z-index: 10;" nicetitle='$planetInfluence$@p.PlanetID'>
 			@if (clan != null)
 			{
 				<img src='@clan.GetImageUrl()' width='20' />
 			}
 		</span>
 
-		<!-- dropships-->
 		@if (shipCount > 0)
 		{
-			<span style="position: absolute; right: 0; top: 20%;" title='$planetDropships$@p.PlanetID'>
+			<span style="position: absolute; right: 0; top: 20%;" nicetitle='$planetDropships$@p.PlanetID'>
                 @foreach (var ships in p.PlanetFactions.Where(x => x.Dropships > 0 ).OrderByDescending(x=>x.Dropships))
                 {
                     
