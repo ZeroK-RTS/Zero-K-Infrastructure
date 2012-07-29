@@ -171,7 +171,7 @@ namespace ZeroKWeb.SpringieInterface
                     string owner = planet.Faction != null ? planet.Faction.Shortcut : "";
 
                     var pwStructures = new LuaTable();
-                    foreach (PlanetStructure s in planet.PlanetStructures.Where(x => !string.IsNullOrEmpty(x.StructureType.IngameUnitName))) {
+                    foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType!= null && !string.IsNullOrEmpty(x.StructureType.IngameUnitName))) {
                         pwStructures.Add("s" + s.StructureTypeID,
                                          new LuaTable
                                          {
