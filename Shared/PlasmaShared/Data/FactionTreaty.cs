@@ -64,7 +64,7 @@ namespace ZkData
                     else bombersFac1toFac2 -= te.Value ?? 0;
                 }
                 
-                if (tr.EffectGiveJumpgatePoints == true)
+                if (tr.EffectGiveWarps == true)
                 {
                     if (fac1 == te.FactionByGivingFactionID) warpsFac1toFac2 += te.Value ?? 0;
                     else warpsFac1toFac2 -= te.Value ?? 0;

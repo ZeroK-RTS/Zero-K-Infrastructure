@@ -945,7 +945,7 @@
       <Column Name="EffectGiveBombers" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectGiveEnergy" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectShareTechs" Type="System.Boolean" DbType="bit" CanBeNull="true" />
-      <Column Name="EffectGiveJumpgatePoints" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="EffectGiveWarps" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectPreventIngamePwStructureDestruction" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectGiveInfluence" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Association Name="TreatyEffectType_TreatyEffect" Member="TreatyEffects" ThisKey="EffectTypeID" OtherKey="EffectTypeID" Type="TreatyEffect" />

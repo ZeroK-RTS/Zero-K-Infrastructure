@@ -24382,7 +24382,7 @@ namespace ZkData
 		
 		private System.Nullable<bool> _EffectShareTechs;
 		
-		private System.Nullable<bool> _EffectGiveJumpgatePoints;
+		private System.Nullable<bool> _EffectGiveWarps;
 		
 		private System.Nullable<bool> _EffectPreventIngamePwStructureDestruction;
 		
@@ -24434,8 +24434,8 @@ namespace ZkData
     partial void OnEffectGiveEnergyChanged();
     partial void OnEffectShareTechsChanging(System.Nullable<bool> value);
     partial void OnEffectShareTechsChanged();
-    partial void OnEffectGiveJumpgatePointsChanging(System.Nullable<bool> value);
-    partial void OnEffectGiveJumpgatePointsChanged();
+    partial void OnEffectGiveWarpsChanging(System.Nullable<bool> value);
+    partial void OnEffectGiveWarpsChanged();
     partial void OnEffectPreventIngamePwStructureDestructionChanging(System.Nullable<bool> value);
     partial void OnEffectPreventIngamePwStructureDestructionChanged();
     partial void OnEffectGiveInfluenceChanging(System.Nullable<bool> value);
@@ -24846,23 +24846,23 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveJumpgatePoints", DbType="bit")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectGiveWarps", DbType="bit")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20)]
-		public System.Nullable<bool> EffectGiveJumpgatePoints
+		public System.Nullable<bool> EffectGiveWarps
 		{
 			get
 			{
-				return this._EffectGiveJumpgatePoints;
+				return this._EffectGiveWarps;
 			}
 			set
 			{
-				if ((this._EffectGiveJumpgatePoints != value))
+				if ((this._EffectGiveWarps != value))
 				{
-					this.OnEffectGiveJumpgatePointsChanging(value);
+					this.OnEffectGiveWarpsChanging(value);
 					this.SendPropertyChanging();
-					this._EffectGiveJumpgatePoints = value;
-					this.SendPropertyChanged("EffectGiveJumpgatePoints");
-					this.OnEffectGiveJumpgatePointsChanged();
+					this._EffectGiveWarps = value;
+					this.SendPropertyChanged("EffectGiveWarps");
+					this.OnEffectGiveWarpsChanged();
 				}
 			}
 		}
