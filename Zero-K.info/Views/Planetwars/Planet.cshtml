@@ -27,7 +27,8 @@
         </td>
 	</tr>
 </table>
-@if (Model.OwnerAccountID == Global.AccountID && Global.Clan != null) {
+@if (Model.OwnerAccountID == Global.AccountID || (Global.Account.FactionID == Model.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts)))
+{
 	<form method="post" action="@Url.Action("SubmitRenamePlanet")">
 	<input type="hidden" name="planetID" value="@Model.PlanetID"/>
 	<input type="text" name="newName" value="@Model.Name"/>

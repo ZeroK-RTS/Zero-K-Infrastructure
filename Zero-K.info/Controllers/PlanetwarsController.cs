@@ -516,7 +516,7 @@ namespace ZeroKWeb.Controllers
                 if (String.IsNullOrWhiteSpace(newName)) return Content("Error: the planet must have a name.");
                 var db = new ZkDataContext();
                 var planet = db.Planets.Single(p => p.PlanetID == planetID);
-                if (Global.Account.AccountID != planet.OwnerAccountID) return Content("Unauthorized");
+                if ((Global.Account.AccountID != planet.OwnerAccountID) && !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x=>x.RightEditTexts))) return Content("Unauthorized");
                 db.SubmitChanges();
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} from {2} to {3}", Global.Account, planet, planet.Name, newName));
                 planet.Name = newName;
