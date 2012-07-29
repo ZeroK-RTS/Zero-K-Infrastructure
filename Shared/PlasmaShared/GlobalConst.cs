@@ -5,8 +5,6 @@
 	    public const string InfologPathFormat=@"C:\springie_spring\infolog_{0}.txt";
 	    public const int ZkSpringieManagedCpu = 6666;
         public const int ZkLobbyUserCpu = 6667;
-	    public const bool GiveUnclannedInfluenceToClanned = false;
-	    public const int NotInvolvedIpSell = 20;
 	    public const string BaseImageUrl = "http://zero-k.info/img/";
 	    public const double EloWeightMalusFactor = -50;
 		public const int CommanderProfileCount = 6;
@@ -42,6 +40,8 @@
         public const int MaxClanSkilledSize = 16;
         public const int ClanLeaveLimit = 100;
 	    public const double InfluenceCcKilledMultiplier = 0.5;
+
+	    public const string MetalIcon = "/img/luaui/ibeam.png";
 
 	    public static bool IsZkMod(string name)
     {

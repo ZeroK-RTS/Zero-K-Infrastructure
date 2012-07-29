@@ -413,38 +413,57 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintMetal(this HtmlHelper helper, Account account)
         {
-            //const string metalIcon = "http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaUI/Images/ibeam.png";
-            double ownMetal = account.GetMetalAvailable();
-            int? factionID = account.FactionID;
-            double factionMetal = factionID != null ? Math.Floor(account.Faction.Metal) : 0;
-            //return new MvcHtmlString(string.Format("<img src='{0}' title='Metal available to you/owned by faction' width='20' height='20'/></span> {1} / {2}", metalIcon, ownMetal, factionMetal));
-            return new MvcHtmlString(string.Format("{0} ({1})", ownMetal, factionMetal));
+            if (account != null && account.Faction != null)
+            {
+                double ownMetal = account.GetMetalAvailable();
+                double factionMetal = Math.Floor(account.Faction.Metal);
+                return
+                    new MvcHtmlString(
+                        string.Format(
+                            "<span nicetitle='Metal available to you/owned by faction'><img src='{0}' width='20' height='20'/>{1} / {2}</span>",
+                            GlobalConst.MetalIcon,
+                            Math.Floor(ownMetal),
+                            Math.Floor(factionMetal)));
+            }
+            else return null;
         }
 
         public static MvcHtmlString PrintMetalCost(this HtmlHelper helper, int? cost)
         {
-            const string metalIcon = "http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaUI/Images/ibeam.png";
-            return new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' width='20' height='20'/></span>", cost, metalIcon));
+            return new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' width='20' height='20'/></span>", cost, GlobalConst.MetalIcon));
         }
 
         public static MvcHtmlString PrintDropships(this HtmlHelper helper, Account account)
         {
-            //const string shipIcon = "http://zero-k.info/img/fleets/ally_mil.png";
-            double ownShips = account.GetDropshipsAvailable();
-            int? factionID = account.FactionID;
-            double factionShips = factionID != null ? account.Faction.Dropships : 0;
-            //return new MvcHtmlString(string.Format("<img src='{0}' title='Dropships available to you/owned by faction'/></span> {1} / {2}", shipIcon, ownShips, factionShips));
-            return new MvcHtmlString(string.Format("{0} ({1})", ownShips, factionShips));
+            if (account!=null && account.Faction != null)
+            {
+                double ownShips = account.GetDropshipsAvailable();
+                double factionShips =  account.Faction.Dropships;
+                return
+                    new MvcHtmlString(
+                        string.Format("<span nicetitle='Dropships available to you/owned by faction'><img src='{0}' title=''/>{1} / {2}</span>",
+                                      account.Faction.GetShipImageUrl(),
+                                      Math.Floor(ownShips),
+                                      Math.Floor(factionShips)));
+            }
+            else return null;
         }
 
         public static MvcHtmlString PrintBombers(this HtmlHelper helper, Account account)
         {
-            //const string shipIcon = "http://zero-k.info/img/fleets/war.png";
-            double ownShips = account.GetBombersAvailable();
-            int? factionID = account.FactionID;
-            double factionShips = factionID != null ? account.Faction.Bombers : 0;
-            //return new MvcHtmlString(string.Format("<img src='{0}' title='Bombers available to you/owned by faction'/></span> {1} / {2}", shipIcon, ownShips, factionShips));
-            return new MvcHtmlString(string.Format("{0} ({1})", ownShips, factionShips));
+            const string shipIcon = "/img/fleets/neutral.png";
+            if (account != null && account.Faction != null)
+            {
+                double ownShips = account.GetBombersAvailable();
+                double factionShips = account.Faction.Bombers;
+                return
+                    new MvcHtmlString(
+                        string.Format("<span nicetitle='Bombers available to you/owned by faction'><img src='{0}' title=''/>{1} / {2}</span>",
+                                      shipIcon,
+                                      Math.Floor(ownShips),
+                                      Math.Floor(factionShips)));
+            }
+            else return null;
         }
 
         public static MvcHtmlString PrintPlanet(this HtmlHelper helper, Planet planet)
