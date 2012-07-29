@@ -22,7 +22,7 @@
 @Html.ActionLink("Back to clan list", "Index", "Clans")
 
 @if (File.Exists(Server.MapPath(c.GetBGImageUrl()))) {
-    bgStyle = string.Format("background-attachment: fixed; background: url({0}) no-repeat scroll 400px 0", c.GetBGImageUrl());
+    bgStyle = string.Format("background-attachment: fixed; background: url({0}) no-repeat scroll 0 0; background-size: 100% 100%;", c.GetBGImageUrl());
 }
 <div id="clanBlock" style="@bgStyle">
     <h2>@c.ClanName</h2>
@@ -97,6 +97,7 @@
     <br/>
     
 
+</div>
 
     <div id="tabs">
         <ul>
@@ -112,4 +113,3 @@
         Html.RenderPartial("CommentList", new CommentList { Thread = Model.ForumThread, ActionData = new { clanID = c.ClanID, threadID = Model.ForumThreadID } });
     }
 
-</div>
