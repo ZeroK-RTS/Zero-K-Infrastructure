@@ -177,7 +177,7 @@ namespace ZeroKWeb.SpringieInterface
                                          {
                                              { "unitname", s.StructureType.IngameUnitName },
                                              //{ "isDestroyed", s.IsDestroyed ? true : false },
-                                             { "name", string.Format("{0} {1} ({2})", owner, s.StructureType.Name, s.Account.Name) },
+                                             { "name", string.Format("{0} {1} ({2})", owner, s.StructureType.Name, s.Account!= null ? s.Account.Name:"unowned") },
                                              { "description", s.StructureType.Description }
                                          });
                     }
