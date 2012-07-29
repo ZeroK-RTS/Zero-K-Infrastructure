@@ -1,196 +1,189 @@
-﻿@using ZkData
+﻿@using LobbyClient
 @using ZeroKWeb
-@model Planet
+@using ZeroKWeb.Models
+@using ZkData
+@model ZkData.Planet
 @{
-	ViewBag.Title = "Planet";
-	Page.Title = "Planet " + Model.Name;
-	var autohost = Global.Nightwatch.GetPlanetBattles(Model).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
-	var db = new ZkData.ZkDataContext();
+    ViewBag.Title = "Planet";
+    Page.Title = "Planet " + Model.Name;
+    Battle autohost = Global.Nightwatch.GetPlanetBattles(Model).OrderByDescending(x => x.Users.Count).FirstOrDefault();
+    var db = new ZkDataContext();
 }
 <h1>Planet @Model.Name
 </h1>
 <table>
-	<tr>
-		<td>
-			@Html.Partial("PlanetIcon", Model)
-		</td>
-		<td>
-			@Html.Partial("MapInfoBox", Model.Resource)
-		</td>
+    <tr>
+        <td>
+            @Html.Partial("PlanetIcon", Model)
+        </td>
+        <td>
+            @Html.Partial("MapInfoBox", Model.Resource)
+        </td>
         <td>
             <ul>
-            @foreach (var p in Model.LinksByPlanetID1.Union(Model.LinksByPlanetID2)) {
-                var planet = p.PlanetByPlanetID1 == Model ? p.PlanetByPlanetID2 : p.PlanetByPlanetID1;
-                <li>@Html.PrintPlanet(planet)</li>
-            }
+                @foreach (Link p in Model.LinksByPlanetID1.Union(Model.LinksByPlanetID2)) {
+                    Planet planet = p.PlanetByPlanetID1 == Model ? p.PlanetByPlanetID2 : p.PlanetByPlanetID1;
+                    <li>@Html.PrintPlanet(planet)</li>
+                }
             </ul>
         </td>
-	</tr>
+    </tr>
 </table>
 @if (Model.OwnerAccountID == Global.AccountID && Global.Clan != null) {
-	<form method="post" action="@Url.Action("SubmitRenamePlanet")">
-	<input type="hidden" name="planetID" value="@Model.PlanetID"/>
-	<input type="text" name="newName" value="@Model.Name"/>
-	<input type='submit' value="Rename Planet" />
-	</form>
+    <form method="post" action="@Url.Action("SubmitRenamePlanet")">
+        <input type="hidden" name="planetID" value="@Model.PlanetID"/>
+        <input type="text" name="newName" value="@Model.Name"/>
+        <input type='submit' value="Rename Planet" />
+    </form>
 }
-@if (autohost != null) { 
-	<b>
-		@if (autohost.IsInGame) {
-			<a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID }, Request.Url.Scheme)@@join_player:@autohost.Founder'>
-				Battle in progress, JOIN TO WATCH</a>
-	} else {
-			<a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID }, Request.Url.Scheme)@@join_player:@autohost.Founder'>
-				Battle has @autohost.Users.Count players waiting, JOIN IT</a>
-	}
-	</b>
+@if (autohost != null) {
+    <b>
+        @if (autohost.IsInGame) {
+            <a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID }, Request.Url.Scheme)@@join_player:@autohost.Founder'>
+                Battle in progress, JOIN TO WATCH</a>
+        }
+        else {
+            <a href='spring://@Url.Action("Planet", "Planetwars", new { id = Model.PlanetID }, Request.Url.Scheme)@@join_player:@autohost.Founder'>
+                Battle has @autohost.Users.Count players waiting, JOIN IT</a>
+        }
+    </b>
 }
 @{
-	var galaxy = db.Galaxies.Single(g => g.IsDefault);
-	var mapWidth = 700;
-	var mapHeight = 500;
+    Galaxy galaxy = db.Galaxies.Single(g => g.IsDefault);
+    int mapWidth = 700;
+    int mapHeight = 500;
 }
 @section head {
-	<script type="text/javascript">
-		$(document).ready(function () {
-			$("#tabs").tabs();
-		});
-	</script>
-	<script type="text/javascript">
-        window.onload = function () 
-        {
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#tabs").tabs();
+        });
+    </script>
+    <script type="text/javascript">
+        window.onload = function() {
             var paper = Raphael(document.getElementById("minimap"), @mapWidth, @mapHeight);
 
-            @foreach (var link in galaxy.Links) {
-							var p1 = link.PlanetByPlanetID1;
-							var p2 = link.PlanetByPlanetID2;
+            @foreach (Link link in galaxy.Links) {
+                Planet p1 = link.PlanetByPlanetID1;
+                Planet p2 = link.PlanetByPlanetID2;
 
-							var x1 = p1.X * mapWidth;
-							var y1 = p1.Y * mapHeight;
-							var x2 = p2.X * mapWidth;
-							var y2 = p2.Y * mapHeight;
+                double x1 = p1.X*mapWidth;
+                double y1 = p1.Y*mapHeight;
+                double x2 = p2.X*mapWidth;
+                double y2 = p2.Y*mapHeight;
 
-
-							
-								var width = 2;
-								var color1 = p1.GetColor(Global.Account);
-								var color2 = p2.GetColor(Global.Account);
-								var angle = -Math.Atan2(x2 - x1, y2 - y1) / Math.PI * 180;
-								var length = Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-                    @: var r = paper.rect(@x1-@width/2, @y1, @width, @length);
-                    @: r.attr({
-                    @:  "fill": "90-@color2-@color1",
-                    @:  "stroke": "none"
-                    @: });
-                    @: r.rotate(@angle, @x1, @y1);
-                
-
-						} 
-
-            @foreach (var planet in galaxy.Planets) {
-							var mapIconSize = 10;
-							var stroke = "#000000";
-							if (planet.PlanetID == Model.PlanetID) {
-								mapIconSize *= 2;
-								stroke = "#ffffff";
-							}
-                @: var circle = paper.circle(@(planet.X * mapWidth), @(planet.Y * mapHeight), @mapIconSize);
+                int width = 2;
+                string color1 = p1.GetColor(Global.Account);
+                string color2 = p2.GetColor(Global.Account);
+                double angle = -Math.Atan2(x2 - x1, y2 - y1)/Math.PI*180;
+                double length = Math.Sqrt((x2 - x1)*(x2 - x1) + (y2 - y1)*(y2 - y1));
+                @: var r = paper.rect(@x1-@width/2, @y1, @width, @length);
+                @: r.attr({
+                @:  "fill": "90-  "fill": olor1",
+                @:  "stroke": "none"
+                @: });
+                @: r.rotate(@angle, @x1, @y1);
+            };
+            @foreach (Planet planet in galaxy.Planets) {
+                int mapIconSize = 10;
+                string stroke = "#000000";
+                if (planet.PlanetID == Model.PlanetID) {
+                    mapIconSize *= 2;
+                    stroke = "#ffffff";
+                }
+                @: vplanet.Y*mapHeightplanet.Y*mapHeightidth), @(planet.Y * mapHeight), @mapIconSize);
                 @: circle.attr({
-                @:  "fill": "@planet.GetColor(Global.Account)",
-                @:  "stroke": "@stroke",
+                @:  "fill": "@planet.GetColor(Glob  "fill": )",
+                @:  "stro  "stroke": e",
                 @:  "stroke-width": "3"
                 @: });
-            }
+            };
         };
-	</script>
+    </script>
 }
 @Html.Partial("PlanetSummary", Model)
 <div id="tabs">
-	<ul>
-		<li><a href="#influence"><span>Influence</span></a></li>
-		<li><a href="#dropships"><span>Starships</span></a></li>
-		<li><a href="#structures"><span>Structures</span></a></li>
-		<li><a href="#events"><span>Events</span></a></li>
-		<li><a href="#minimap"><span>Navigation</span></a></li>
-	</ul>
-	<div id="influence">
+    <ul>
+        <li><a href="#influence"><span>Influence</span></a></li>
+        <li><a href="#dropships"><span>Starships</span></a></li>
+        <li><a href="#structures"><span>Structures</span></a></li>
+        <li><a href="#events"><span>Events</span></a></li>
+        <li><a href="#minimap"><span>Navigation</span></a></li>
+    </ul>
+    <div id="influence">
         
         @Html.Partial("InfluenceList", Model.PlanetFactions)
-	</div>
-	<div id="dropships">
-		@Html.Partial("PlanetDropships", Model)
-		@if (Global.IsAccountAuthorized) {
-		if (Global.Account.GetDropshipsAvailable() <= 0) {
-			<span>You have no free starships - fight more battles</span>
-		} else {
-			
-			var isAccessible = Model.CanDropshipsAttack(Global.Account.Faction);
-			var defs = Model.PlanetStructures.Where(x => x.IsActive ).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
-			var bombNeed = 3 + defs / 3;
-			if (isAccessible) {
-				var avail = Global.Account.GetDropshipsAvailable();
-			<form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
-			Invade planet (@avail) @(!isAccessible ? "JUMPGATE" : ""):
-			<input type="text" name="count" />
-			<input type="submit" value="send" />
-			</form> <br />
-			
-		    if (avail >= bombNeed) {
-			    @Html.ActionLink("Bombard planet with " + bombNeed + " ships", "BombPlanet", new { planetID = Model.PlanetID, title="Destroys random structure and reduces 3% of influence. If there is no structure on planet, reduces 10% of influence. Bombing needs 3 + planet defense/3 ships. " })<br/>
-				}
-			} else {
-			<span>You cannot access this planet through link of wormholes</span>  
-			}
-		}
-	}
-	</div>
-	<div id="minimap">
-	</div>
-	<div id="structures">
-		@foreach (var structure in Model.PlanetStructures) {
-     
-			<p>
-				<img  width="80" height="80" src='@structure.GetImageUrl()'/>
-				@if (!structure.IsActive) {
-					<span style='color: red'>DISABLED</span>
-		}
-				@structure.StructureType.Name
-				(@structure.StructureType.Description)</p>
-	}
-		@if (Model.Account != null && Global.FactionID == Model.OwnerFactionID) {
-			<h2>Construction</h2>
+    </div>
+    <div id="dropships">
+        @Html.Partial("PlanetDropships", Model)
+        @if (Global.IsAccountAuthorized) {
+            if (Global.Account.GetDropshipsAvailable() <= 0) {
+                <span>You have no free starships - fight more battles</span>
+            }
+            else {
+                bool isAccessible = Model.CanDropshipsAttack(Global.Account.Faction);
+                double defs = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
+                double bombNeed = 3 + defs/3;
+                if (isAccessible) {
+                    double avail = Global.Account.GetDropshipsAvailable();
+                    <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
+                        Invade planet (@avail) @(!isAccessible ? "JUMPGATE" : ""):
+                        <input type="text" name="count" />
+                        <input type="submit" value="send" />
+                    </form>
+                    <br />
 
-		
+                    if (avail >= bombNeed) {
+                        @Html.ActionLink("Bombard planet with " + bombNeed + " ships", "BombPlanet", new { planetID = Model.PlanetID, title = "Destroys random structure and reduces 3% of influence. If there is no structure on planet, reduces 10% of influence. Bombing needs 3 + planet defense/3 ships. " })<br/>
+                    }
+                }
+                else {
+                    <span>You cannot access this planet through link of wormholes</span>
+                }
+            }
+        }
+    </div>
+    <div id="minimap">
+    </div>
+    <div id="structures">
+        @foreach (PlanetStructure structure in Model.PlanetStructures) {
+            <p>
+                <img  width="80" height="80" src='@structure.GetImageUrl()'/>
+                @if (!structure.IsActive) {
+                    <span style='color: red'>DISABLED</span>
+                }
+                @structure.StructureType.Name
+                (@structure.StructureType.Description)</p>
+        }
+        @if (Model.Account != null && Global.FactionID == Model.OwnerFactionID) {
+            <h2>Construction</h2>
 
-			var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
-			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
-				if (!planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
-					if (structureType.Cost > Global.Account.GetMetalAvailable()) {
-			<p>@String.Format("Build {0} (requires {1}) - {2}", structureType.Name, structureType.Cost, structureType.Description)</p>
-					} else {
-						var linkText = String.Format("Build {0} ({1:C0}) - {2}", structureType.Name, structureType.Cost, structureType.Description);
-			<p>@Html.ActionLink(linkText, "BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })</p>
-					}
-				}
-			}
-            
-            
-			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
-				if (planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
-                    var linkText = String.Format("Destroy {0} ({1})", structureType.Name, structureType.Cost);
-                    var question = String.Format("Confirm destruction of {0}?", structureType.Name);
-			<p>@Html.ActionLink(linkText, "DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID }, new { @onclick = String.Format("return confirm('{0}')", question) })</p>
+            Planet planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
+            foreach (StructureType structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
+                if (!planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID)) {
+                    if (structureType.Cost > Global.Account.GetMetalAvailable()) {
+                        <p>@String.Format("Build {0} (requires {1}) - {2}", structureType.Name, structureType.Cost, structureType.Description)</p>
+                    }
+                    else {
+                        string linkText = String.Format("Build {0} ({1:C0}) - {2}", structureType.Name, structureType.Cost, structureType.Description);
+                        <p>@Html.ActionLink(linkText, "BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })</p>
+                    }
                 }
             }
 
-        
-
-  }
-	</div>
-	<div id="events">
-		@Html.Action("Events", new { planetID = Model.PlanetID, partial = true })
-	</div>
+            foreach (StructureType structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
+                if (planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID)) {
+                    string linkText = String.Format("Destroy {0} ({1})", structureType.Name, structureType.Cost);
+                    string question = String.Format("Confirm destruction of {0}?", structureType.Name);
+                    <p>@Html.ActionLink(linkText, "DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID }, new { @onclick = String.Format("return confirm('{0}')", question) })</p>
+                }
+            }
+        }
+    </div>
+    <div id="events">
+        @Html.Action("Events", new { planetID = Model.PlanetID, partial = true })
+    </div>
 
 </div>
-	<br />
-@Html.Partial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.ForumThread, ActionData = new { planetID = Model.PlanetID, threadID = Model.ForumThreadID } })
+<br />
+@Html.Partial("CommentList", new CommentList { Thread = Model.ForumThread, ActionData = new { planetID = Model.PlanetID, threadID = Model.ForumThreadID } })

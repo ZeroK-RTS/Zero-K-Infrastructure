@@ -52,7 +52,7 @@ namespace ZkData
 
         public bool CanDropshipsAttack(Faction attacker) {
             
-            if (Faction != null && (Faction == attacker || Faction.HasTreatyRight(attacker, x => x.EffectPreventDropshipAttack == true, this))) return false; // attacker allied cannot strike
+            if (Faction != null && (OwnerFactionID == attacker.FactionID || Faction.HasTreatyRight(attacker, x => x.EffectPreventDropshipAttack == true, this))) return false; // attacker allied cannot strike
 
             if (Faction == null && !attacker.Planets.Any()) return true; // attacker has no planets, planet neutral, allow strike
 
@@ -66,7 +66,7 @@ namespace ZkData
                 if (otherPlanet.PlanetStructures.Any(x=>x.IsActive && x.StructureType.EffectAllowShipTraversal == true)) {
                     
                     // planet belongs to attacker or person who gave attacker rights to pass
-                    if (otherPlanet.Faction != null && (otherPlanet.Faction == attacker || attacker.HasTreatyRight(otherPlanet.Faction,x=>x.EffectAllowDropshipPass == true, otherPlanet))) {
+                    if (otherPlanet.Faction != null && (otherPlanet.OwnerFactionID == attacker.FactionID || attacker.HasTreatyRight(otherPlanet.Faction,x=>x.EffectAllowDropshipPass == true, otherPlanet))) {
                         return true;
 
                     }
