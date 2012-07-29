@@ -37,28 +37,28 @@ namespace ZkData
         {
             var pcnt = count / Accounts.Count();
             Dropships += count;
-            foreach (var acc in Accounts) acc.PwDropshipsProduced += count;
+            foreach (var acc in Accounts) acc.PwDropshipsProduced += pcnt;
         }
 
         public void SpendMetal(double count)
         {
             var pcnt = count / Accounts.Count();
             Metal -= count;
-            foreach (var acc in Accounts) acc.PwMetalUsed += count;
+            foreach (var acc in Accounts) acc.PwMetalUsed += pcnt;
         }
 
         public void ProduceMetal(double count)
         {
             var pcnt = count / Accounts.Count();
             Metal += count;
-            foreach (var acc in Accounts) acc.PwMetalProduced += count;
+            foreach (var acc in Accounts) acc.PwMetalProduced += pcnt;
         }
 
         public void SpendBombers(double count)
         {
             var pcnt = count / Accounts.Count();
             Bombers -= count;
-            foreach (var acc in Accounts) acc.PwBombersUsed += count;
+            foreach (var acc in Accounts) acc.PwBombersUsed += pcnt;
         }
 
         public void ProduceBombers(double count)
@@ -66,7 +66,7 @@ namespace ZkData
             var pcnt = count / Accounts.Count();
 
             Bombers += count;
-            foreach (var acc in Accounts) acc.PwBombersProduced += count;
+            foreach (var acc in Accounts) acc.PwBombersProduced += pcnt;
         }
 
         public List<FactionUnlockEntry>  GetFactionUnlocks() {
