@@ -41,7 +41,7 @@ namespace ZkData
 
             foreach (var te in TreatyEffects.Where(x=>x.TreatyEffectType.IsOneTimeOnly == oneTimeOnly)) {
                 var tr = te.TreatyEffectType;
-                if (tr.EffectGiveBombers == true) {
+                if (tr.EffectGiveMetal == true) {
                     if (fac1 == te.FactionByGivingFactionID) metalFac1toFac2 += te.Value??0;
                     else metalFac1toFac2 -= te.Value??0;
                 }
