@@ -17062,7 +17062,7 @@ namespace ZkData
 		
 		private int _StructureTypeID;
 		
-		private int _OwnerAccountID;
+		private System.Nullable<int> _OwnerAccountID;
 		
 		private System.Nullable<int> _ActivatedOnTurn;
 		
@@ -17084,7 +17084,7 @@ namespace ZkData
     partial void OnPlanetIDChanged();
     partial void OnStructureTypeIDChanging(int value);
     partial void OnStructureTypeIDChanged();
-    partial void OnOwnerAccountIDChanging(int value);
+    partial void OnOwnerAccountIDChanging(System.Nullable<int> value);
     partial void OnOwnerAccountIDChanged();
     partial void OnActivatedOnTurnChanging(System.Nullable<int> value);
     partial void OnActivatedOnTurnChanged();
@@ -17149,9 +17149,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerAccountID", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerAccountID", DbType="int")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
-		public int OwnerAccountID
+		public System.Nullable<int> OwnerAccountID
 		{
 			get
 			{
@@ -17332,7 +17332,7 @@ namespace ZkData
 					}
 					else
 					{
-						this._OwnerAccountID = default(int);
+						this._OwnerAccountID = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("Account");
 				}

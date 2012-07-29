@@ -635,7 +635,7 @@
     <Type Name="PlanetStructure">
       <Column Name="PlanetID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="StructureTypeID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="OwnerAccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="OwnerAccountID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="ActivatedOnTurn" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EnergyPriority" Type="EnergyPriority" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="IsActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />

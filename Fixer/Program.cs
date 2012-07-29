@@ -100,21 +100,52 @@ namespace Fixer
 
       static void Main(string[] args) {
 
+          var db = new ZkDataContext(true);
+          var gal = db.Galaxies.Single(x => x.IsDefault);
+          // process faction energies
+          foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) fac.ProcessEnergy(gal.Turn);
+
+          // process production
+          gal.ProcessProduction();
+
+
+          // process treaties
+          foreach (var tr in db.FactionTreaties.Where(x => x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended))
+          {
+              if (tr.ProcessTrade(false))
+              {
+                  tr.TreatyState = TreatyState.Accepted;
+                  if (tr.TurnsTotal != null)
+                  {
+                      tr.TurnsRemaining--;
+                      if (tr.TurnsRemaining <= 0)
+                      {
+                          tr.TreatyState = TreatyState.Invalid;
+                          db.FactionTreaties.DeleteOnSubmit(tr);
+                      }
+                  }
+              }
+              else tr.TreatyState = TreatyState.Suspended;
+          }
+
+
+            
+
           //FixDemoEngineVersion();
 
-      //ImportSpringiePlayers();
-      //RecalculateBattleElo();
-      //FixMaps();
+          //ImportSpringiePlayers();
+          //RecalculateBattleElo();
+          //FixMaps();
 
-        //PickHomworldOwners();
+          //PickHomworldOwners();
 
-		PurgeGalaxy(9, false);
-        RandomizeMaps(9);
-		GenerateStructures(9);
+          //PurgeGalaxy(9, false);
+          //RandomizeMaps(9);
+          //GenerateStructures(9);
 
-			//AddWormholes();
-        //TestPrediction();
-    }
+          //AddWormholes();
+          //TestPrediction();
+      }
 
 
       static void FixDemoEngineVersion()
