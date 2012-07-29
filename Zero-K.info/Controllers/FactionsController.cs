@@ -174,8 +174,8 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
             var treaty = db.FactionTreaties.Single(x => x.FactionTreatyID == id);
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-            if (treaty.CanAccept(acc) && treaty.ProcessTrade(true))
-            {
+            if (treaty.CanAccept(acc) && treaty.ProcessTrade(true)) {
+                treaty.AcceptedAccountID = acc.AccountID;
                 treaty.TreatyState = TreatyState.Accepted;
                 db.Events.InsertOnSubmit(Global.CreateEvent("Treaty {0} between {1} and {2} accepted by {3}", treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID, acc));
                 db.SubmitAndMergeChanges();

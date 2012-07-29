@@ -337,7 +337,7 @@ namespace ZeroKWeb.SpringieInterface
             gal.ProcessProduction();
 
 
-            // process trade 
+            // process treaties
             foreach (var tr in db.FactionTreaties.Where(x=>x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended)) {
                 if (tr.ProcessTrade(false)) {
                     tr.TreatyState = TreatyState.Accepted;
