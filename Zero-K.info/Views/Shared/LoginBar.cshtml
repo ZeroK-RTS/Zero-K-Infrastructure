@@ -24,7 +24,7 @@
     {        
     <form method="post" action="@Url.Action("Logout", "Home")@(Global.IsLobbyAccess ? "@logout" : "")"  style="padding: 0; margin: 0; display:inline" >
     @Html.PrintAccount(Global.Account)
-        <input type="hidden" name="referer" value="@Request.Url" /> | Clan: @Html.PrintClan(Global.Clan) | Faction: @Html.PrintFaction(Global.Account.Faction, false) | Level: @Global.Account.Level | Elo: @Math.Round(Global.Account.EffectiveElo) | Free XP: @Global.Account.AvailableXP | Metal: @Global.Account.GetMetalAvailable()  | Dropships: @(Global.Account.GetDropshipsAvailable()) | Bombers: @(Global.Account.GetBombersAvailable())
+        <input type="hidden" name="referer" value="@Request.Url" /> | Clan: @Html.PrintClan(Global.Clan) | Faction: @Html.PrintFaction(Global.Account.Faction, false) | Level: @Global.Account.Level | Elo: @Math.Round(Global.Account.EffectiveElo) | Free XP: @Global.Account.AvailableXP | Metal: @Html.PrintMetal(Global.Account) | Dropships: @Html.PrintDropships(Global.Account) | Bombers: @Html.PrintBombers(Global.Account)
     <input type="image" value="Logout" src="/img/logout.png" style="border: none; width: 25px;
         height: 25px; vertical-align: middle;" alt="Logout" title="Logout" />
     </form>

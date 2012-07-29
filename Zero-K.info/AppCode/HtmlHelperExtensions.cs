@@ -305,10 +305,10 @@ namespace System.Web.Mvc
             }
             if (rt.RoleTypeHierarchiesByMasterRoleTypeID.Any(x=>x.CanAppoint))
             {
-                factoids.Add("appoints: " + string.Join(",", rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x=>x.CanAppoint).Select(x=>x.RoleTypeBySlaveRoleTypeID.Name)));
+                factoids.Add("appoints: " + string.Join(", ", rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x=>x.CanAppoint).Select(x=>x.RoleTypeBySlaveRoleTypeID.Name)));
             }
             if (rt.RoleTypeHierarchiesByMasterRoleTypeID.Any(x=>x.CanRecall)) {
-                factoids.Add("recalls: " + string.Join(",", rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x => x.CanRecall).Select(x => x.RoleTypeBySlaveRoleTypeID.Name)));
+                factoids.Add("recalls: " + string.Join(", ", rt.RoleTypeHierarchiesByMasterRoleTypeID.Where(x => x.CanRecall).Select(x => x.RoleTypeBySlaveRoleTypeID.Name)));
             }
             if (rt.RightBomberQuota != 0)
             {
@@ -411,10 +411,37 @@ namespace System.Web.Mvc
             return new MvcHtmlString(string.Format("<a href='{0}' title='$map${1}'>{1}</a>", url.Action("DetailName", "Maps", new { name }), name));
         }
 
+        public static MvcHtmlString PrintMetal(this HtmlHelper helper, Account account)
+        {
+            //const string metalIcon = "http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaUI/Images/ibeam.png";
+            double ownMetal = account.GetMetalAvailable();
+            double factionMetal = account.Faction.Metal;
+            //return new MvcHtmlString(string.Format("<img src='{0}' title='Metal available to you/owned by faction' width='20' height='20'/></span> {1} / {2}", metalIcon, ownMetal, factionMetal));
+            return new MvcHtmlString(string.Format("Metal: {0} ({1})", ownMetal, factionMetal));
+        }
+
         public static MvcHtmlString PrintMetalCost(this HtmlHelper helper, int? cost)
         {
             const string metalIcon = "http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaUI/Images/ibeam.png";
             return new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' width='20' height='20'/></span>", cost, metalIcon));
+        }
+
+        public static MvcHtmlString PrintDropships(this HtmlHelper helper, Account account)
+        {
+            //const string shipIcon = "http://zero-k.info/img/fleets/ally_mil.png";
+            double ownShips = account.GetDropshipsAvailable();
+            double factionShips = account.Faction.Dropships;
+            //return new MvcHtmlString(string.Format("<img src='{0}' title='Dropships available to you/owned by faction'/></span> {1} / {2}", shipIcon, ownShips, factionShips));
+            return new MvcHtmlString(string.Format("Dropships: {0} ({1})", ownShips, factionShips));
+        }
+
+        public static MvcHtmlString PrintBombers(this HtmlHelper helper, Account account)
+        {
+            //const string shipIcon = "http://zero-k.info/img/fleets/war.png";
+            double ownShips = account.GetBombersAvailable();
+            double factionShips = account.Faction.Bombers;
+            //return new MvcHtmlString(string.Format("<img src='{0}' title='Bombers available to you/owned by faction'/></span> {1} / {2}", shipIcon, ownShips, factionShips));
+            return new MvcHtmlString(string.Format("Bombers: {0} ({1})", ownShips, factionShips));
         }
 
         public static MvcHtmlString PrintPlanet(this HtmlHelper helper, Planet planet)
