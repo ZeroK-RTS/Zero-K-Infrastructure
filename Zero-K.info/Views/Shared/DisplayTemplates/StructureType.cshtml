@@ -1,0 +1,53 @@
+﻿@using ZkData
+@model ZkData.StructureType
+@{
+    var s = Model;
+}
+<div>
+    <img  width="80" height="80" src='@s.GetImageUrl()'/>
+    <b>@s.Name</b><br />
+    @s.Description<br/>
+    <table>
+        <tr><td>Cost:</td><td>@Html.PrintMetalCost(@s.Cost)</td></tr>
+        <tr><td>Upkeep:</td><td>@s.UpkeepEnergy <img src="@GlobalConst.EnergyIcon" class="icon20" /></td></tr>
+        <tr><td>Turns to activate:</td><td>@s.TurnsToActivate</td></tr>
+    </table>
+    <ul>
+        @if (s.EffectAllowShipTraversal == true) {
+            <li>allows ship movement to connected planets</li>
+        }
+        @if (s.EffectBlocksInfluenceSpread == true) {
+            <li>blocks enemy influence spreading</li>
+        }
+        @if (s.EffectBlocksJumpgate == true) {
+            <li>blocks enemy warp drives</li>
+        }
+       @if (s.EffectBomberDefense > 0) {
+            <li>bomber defense +@s.EffectBomberDefense</li>
+        }
+        @if (s.EffectBomberProduction > 0) {
+            <li>products +@s.EffectBomberProduction bombers</li>
+        }
+        @if (s.EffectDropshipCapacity > 0) {
+            <li>increases fleet size by +@s.EffectDropshipCapacity</li>
+        }
+        @if (s.EffectDropshipDefense > 0) {
+            <li>dropship defense +@s.EffectDropshipDefense</li>
+        }
+        @if (s.EffectDropshipProduction > 0) {
+            <li>dropship production +@s.EffectDropshipProduction</li>
+        }
+        @if (s.EffectEnergyPerTurn > 0) {
+            <li>energy production +@s.EffectEnergyPerTurn</li>
+        }
+        @if (s.EffectInfluenceSpread > 0) {
+            <li>spreads @s.EffectInfluenceSpread influence to nearby planets each turn</li>
+        }
+        @if (s.EffectIsVictoryPlanet == true) {
+            <li>victory artefact</li>
+        }
+        @if (s.EffectWarpProduction > 0) {
+            <li>warp core production +@s.EffectWarpProduction</li>
+        }
+    </ul>
+</div>

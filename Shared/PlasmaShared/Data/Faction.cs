@@ -54,6 +54,20 @@ namespace ZkData
             foreach (var acc in Accounts) acc.PwMetalProduced += pcnt;
         }
 
+        public void ProduceWarps(double count)
+        {
+            var pcnt = count / Accounts.Count();
+            Warps += count;
+            foreach (var acc in Accounts) acc.PwWarpProduced += pcnt;
+        }
+
+        public void SpendWarps(double count)
+        {
+            var pcnt = count / Accounts.Count();
+            Warps -= count;
+            foreach (var acc in Accounts) acc.PwWarpUsed += pcnt;
+        }
+
         public void SpendBombers(double count)
         {
             var pcnt = count / Accounts.Count();

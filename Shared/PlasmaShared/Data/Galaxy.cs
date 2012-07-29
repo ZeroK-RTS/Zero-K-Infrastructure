@@ -26,7 +26,7 @@ namespace ZkData
                 grp.Key.ProduceDropships(drops);
 
                 var bombers = structs.Where(x => x.StructureType.EffectBomberProduction > 0).Sum(x => x.StructureType.EffectBomberProduction) ?? 0;
-                grp.Key.ProduceDropships(bombers);
+                grp.Key.ProduceBombers(bombers);
 
 
                 var warps = structs.Where(x => x.StructureType.EffectWarpProduction > 0).Sum(x => x.StructureType.EffectWarpProduction) ?? 0;

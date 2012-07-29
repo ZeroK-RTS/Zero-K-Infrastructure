@@ -148,45 +148,36 @@
 	<div id="minimap">
 	</div>
 	<div id="structures">
-		@foreach (var structure in Model.PlanetStructures) {
-     
-			<p>
-				<img  width="80" height="80" src='@structure.GetImageUrl()'/>
-				@if (!structure.IsActive) {
-					<span style='color: red'>DISABLED</span>
-		}
-				@structure.StructureType.Name
-				(@structure.StructureType.Description)</p>
-	}
+        <h2>Installed</h2>
+        @foreach (var structure in Model.PlanetStructures) {
+            <div style="border: 1px solid teal">
+            <b>@Html.PrintStructureState(structure)</b>
+            @Html.DisplayFor(x=>structure.StructureType)
+            </div>
+    	}
 		@if (Model.Account != null && Global.FactionID == Model.OwnerFactionID) {
 			<h2>Construction</h2>
-
-		
+      
 
 			var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
-			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
+			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable).OrderBy(x=>x.Cost)) {
 				if (!planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
 					if (structureType.Cost > Global.Account.GetMetalAvailable()) {
-			<p>@String.Format("Build {0} (requires {1}) - {2}", structureType.Name, structureType.Cost, structureType.Description)</p>
+                        <span nicetitle="$structuretype$@structureType.StructureTypeID">@structureType.Name (@Html.PrintMetalCost(structureType.Cost))</span><br/>
 					} else {
-						var linkText = String.Format("Build {0} ({1:C0}) - {2}", structureType.Name, structureType.Cost, structureType.Description);
-			<p>@Html.ActionLink(linkText, "BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })</p>
+                        <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("BuildStructure",new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })">Build @structureType.Name (@Html.PrintMetalCost(structureType.Cost))</a><br />
 					}
 				}
 			}
             
             
-			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
+            <h2>Self destruct</h2>
+            foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
 				if (planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
-                    var linkText = String.Format("Destroy {0} ({1})", structureType.Name, structureType.Cost);
-                    var question = String.Format("Confirm destruction of {0}?", structureType.Name);
-			<p>@Html.ActionLink(linkText, "DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID }, new { @onclick = String.Format("return confirm('{0}')", question) })</p>
+                    <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure",new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="delete">Destroy @structureType.Name (@Html.PrintMetalCost(@structureType.Cost))</a><br />
                 }
             }
-
-        
-
-  }
+    }
 	</div>
 	<div id="events">
 		@Html.Action("Events", new { planetID = Model.PlanetID, partial = true })

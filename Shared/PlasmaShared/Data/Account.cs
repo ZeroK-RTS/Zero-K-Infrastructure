@@ -73,6 +73,13 @@ namespace ZkData
 
         #endregion
 
+        
+        public double GetWarpAvailable()
+        {
+            if (Faction != null) return Math.Min(GetWarpQuota(), Faction.Warps);
+            else return 0;
+        }
+
 
         public double GetMetalAvailable() {
             if (Faction != null) return Math.Min(GetMetalQuota(), Faction.Metal);
@@ -119,6 +126,12 @@ namespace ZkData
             return GetQuota(x => x.PwBombersProduced, x => x.PwBombersUsed, x => x.RightBomberQuota);
         }
 
+        public double GetWarpQuota()
+        {
+            return GetQuota(x => x.PwWarpProduced, x => x.PwWarpUsed, x => x.RightWarpQuota);
+        }
+
+
         public void SpendDropships(double count) {
             PwDropshipsUsed += count;
             Faction.Dropships -= count;
@@ -129,12 +142,7 @@ namespace ZkData
             Faction.Dropships += count;
         }
 
-        public void ProduceWarps(double count)
-        {
-            // PwDropshipsProduced += count;
-            Faction.JumpgatePoints += count;
-        }
-
+       
 
 
         public void SpendMetal(double count)
@@ -161,6 +169,17 @@ namespace ZkData
             Faction.Bombers += count;
         }
 
+        public void SpendWarps(double count)
+        {
+            PwWarpUsed += count;
+            Faction.Warps -= count;
+        }
+
+        public void ProduceWarps(double count)
+        {
+            PwWarpProduced += count;
+            Faction.Warps += count;
+        }
 
         public double GetQuota(Func<Account, double> producedSelector, Func<Account, double> usedSelector, Func<RoleType, double?> quotaSelector)
         {

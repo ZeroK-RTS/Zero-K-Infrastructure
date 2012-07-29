@@ -42,6 +42,7 @@
 	    public const double InfluenceCcKilledMultiplier = 0.5;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
+        public const string EnergyIcon = "/img/luaui/energy.png";
 
 	    public static bool IsZkMod(string name)
     {

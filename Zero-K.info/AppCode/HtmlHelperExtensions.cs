@@ -36,6 +36,7 @@ namespace System.Web.Mvc
             return ret.Select(x => new SelectListItem { Text = x.Name, Value = x.FactionID.ToString(), Selected = x.FactionID == factionID });
         }
 
+        
 
         public static MvcHtmlString AccountAvatar(this HtmlHelper helper, Account account)
         {
@@ -274,6 +275,22 @@ namespace System.Web.Mvc
         }
 
 
+        public static MvcHtmlString PrintStructureState(this HtmlHelper helper, PlanetStructure s) {
+            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            string state = "";
+            if (!s.IsActive)
+            {
+                if (s.ActivatedOnTurn == null) state = "<span style='color:red'>DISABLED</span>";
+                if (s.ActivatedOnTurn != null)
+                    state = string.Format(" <span style='color:orange'>POWERING {0} turns left</span>",
+                                          s.StructureType.TurnsToActivate - s.Planet.Galaxy.Turn + s.ActivatedOnTurn);
+            }
+            else state = "<span style='color:green'>ACTIVE</span>";
+            return
+                new MvcHtmlString(state);
+        }
+
+
         public static MvcHtmlString PrintClan(this HtmlHelper helper, Clan clan, bool colorize = true)
         {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
@@ -317,6 +334,10 @@ namespace System.Web.Mvc
             if (rt.RightDropshipQuota != 0)
             {
                 factoids.Add(string.Format("dropship quota {0:F0}%", rt.RightDropshipQuota * 100));
+            }
+            if (rt.RightWarpQuota != 0)
+            {
+                factoids.Add(string.Format("warp quota {0:F0}%", rt.RightWarpQuota * 100));
             }
             if (rt.RightMetalQuota != 0)
             {
@@ -428,9 +449,10 @@ namespace System.Web.Mvc
             else return null;
         }
 
-        public static MvcHtmlString PrintMetalCost(this HtmlHelper helper, int? cost)
+
+        public static MvcHtmlString PrintMetalCost(this HtmlHelper helper, double? cost)
         {
-            return new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' width='20' height='20'/></span>", cost, GlobalConst.MetalIcon));
+            return new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' width='20' height='20'/></span>", Math.Floor(cost ?? 0), GlobalConst.MetalIcon));
         }
 
         public static MvcHtmlString PrintDropships(this HtmlHelper helper, Account account)

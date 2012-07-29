@@ -110,7 +110,7 @@
        
     </p> 
         @if (Model.Faction != null) {
-            @:Faction: @Html.PrintFaction(Model.Faction)
+            @:Faction: @Html.PrintFaction(Model.Faction, false)
         }
         @if (Model.Clan != null) {
             @:Clan: @Html.PrintClan(Model.Clan)

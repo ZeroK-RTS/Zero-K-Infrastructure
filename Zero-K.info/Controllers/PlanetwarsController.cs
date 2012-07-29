@@ -100,7 +100,7 @@ namespace ZeroKWeb.Controllers
                 if (acc.GetMetalAvailable() < structureType.Cost) return Content("Insufficient metal");
                 acc.SpendMetal(structureType.Cost);
 
-                var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID, OwnerAccountID = acc.AccountID, IsActive = false};
+                var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID, OwnerAccountID = acc.AccountID, IsActive = false, ActivatedOnTurn = planet.Galaxy.Turn};
                 db.PlanetStructures.InsertOnSubmit(newBuilding);
                 db.SubmitChanges();
 

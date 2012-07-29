@@ -371,6 +371,7 @@
     <Content Include="Views\Factions\FactionTreatyDefinition.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\TreatyEffect.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\FactionTreaty.cshtml" />
+    <Content Include="Views\Shared\DisplayTemplates\StructureType.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

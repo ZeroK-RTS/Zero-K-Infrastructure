@@ -7,5 +7,9 @@ namespace ZkData
 {
 	partial class StructureType
 	{
+
+        public string GetImageUrl() {
+            return string.Format("/img/structures/{0}", MapIcon);
+        }
 	}
 }

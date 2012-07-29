@@ -75,7 +75,7 @@ namespace ZkData
             if (fac1.EnergyProducedLastTurn < energyFac1toFac2 || fac2.EnergyProducedLastTurn < -energyFac1toFac2) return false;
             if (fac1.Dropships < dropshipsFac1toFac2 || fac2.Dropships < -dropshipsFac1toFac2) return false;
             if (fac1.Bombers < bombersFac1toFac2 || fac2.Bombers < -bombersFac1toFac2) return false;
-            if (fac1.JumpgatePoints < warpsFac1toFac2 || fac2.JumpgatePoints < -warpsFac1toFac2) return false;
+            if (fac1.Warps < warpsFac1toFac2 || fac2.Warps < -warpsFac1toFac2) return false;
 
             
             fac1.ProduceMetal(-metalFac1toFac2);
@@ -86,8 +86,8 @@ namespace ZkData
             fac2.ProduceDropships(dropshipsFac1toFac2);
             fac1.ProduceBombers(-bombersFac1toFac2);
             fac2.ProduceBombers(bombersFac1toFac2);
-            fac1.JumpgatePoints -= warpsFac1toFac2;
-            fac2.JumpgatePoints += warpsFac1toFac2;
+            fac1.ProduceWarps(-warpsFac1toFac2);
+            fac2.ProduceWarps(warpsFac1toFac2);
             return true;
         }
 

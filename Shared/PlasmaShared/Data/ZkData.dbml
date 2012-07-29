@@ -92,6 +92,8 @@
       <Column Name="PwBombersUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwMetalProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="PwMetalUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwWarpProduced" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="PwWarpUsed" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="MatchMakingActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
@@ -742,10 +744,10 @@
       <Column Name="Metal" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Dropships" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="Bombers" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
-      <Column Name="JumpgatePoints" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="SecretTopic" Type="System.String" DbType="nvarchar(500)" CanBeNull="true" />
       <Column Name="EnergyProducedLastTurn" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="EnergyDemandLastTurn" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Warps" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Association Name="Faction_Account" Member="Accounts" ThisKey="FactionID" OtherKey="FactionID" Type="Account" />
       <Association Name="Faction_Poll" Member="Polls" ThisKey="FactionID" OtherKey="RestrictFactionID" Type="Poll" />
       <Association Name="Faction_Clan" Member="Clans" ThisKey="FactionID" OtherKey="FactionID" Type="Clan" />
@@ -831,6 +833,7 @@
       <Column Name="RightDropshipQuota" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="RightBomberQuota" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="RightMetalQuota" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="RightWarpQuota" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="RightDiplomacy" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="RightEditTexts" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="RightSetEnergyPriority" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
