@@ -104,6 +104,10 @@ namespace ZeroKWeb.Controllers
                                  TreatyEffectType = effectType,
                                  FactionTreaty = treaty
                              };
+                if (effectType.HasValue) {
+                    if (effectType.MinValue.HasValue && effectValue < effectType.MinValue.Value) effectValue = effectType.MinValue;
+                    if (effectType.MaxValue.HasValue && effectValue > effectType.MaxValue.Value) effectValue = effectType.MaxValue;
+                }
                 if (effectType.HasValue) effect.Value = effectValue;
                 if (effectType.IsPlanetBased) effect.PlanetID = planetID.Value;
                 db.TreatyEffects.InsertOnSubmit(effect);
