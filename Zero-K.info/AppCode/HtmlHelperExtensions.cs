@@ -415,7 +415,8 @@ namespace System.Web.Mvc
         {
             //const string metalIcon = "http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaUI/Images/ibeam.png";
             double ownMetal = account.GetMetalAvailable();
-            double factionMetal = Math.Floor(account.Faction.Metal + 0.5);
+            int? factionID = account.FactionID;
+            double factionMetal = factionID != null ? Math.Floor(account.Faction.Metal + 0.5) : 0;
             //return new MvcHtmlString(string.Format("<img src='{0}' title='Metal available to you/owned by faction' width='20' height='20'/></span> {1} / {2}", metalIcon, ownMetal, factionMetal));
             return new MvcHtmlString(string.Format("{0} ({1})", ownMetal, factionMetal));
         }
@@ -430,7 +431,8 @@ namespace System.Web.Mvc
         {
             //const string shipIcon = "http://zero-k.info/img/fleets/ally_mil.png";
             double ownShips = account.GetDropshipsAvailable();
-            double factionShips = account.Faction.Dropships;
+            int? factionID = account.FactionID;
+            double factionShips = factionID != null ? account.Faction.Dropships : 0;
             //return new MvcHtmlString(string.Format("<img src='{0}' title='Dropships available to you/owned by faction'/></span> {1} / {2}", shipIcon, ownShips, factionShips));
             return new MvcHtmlString(string.Format("{0} ({1})", ownShips, factionShips));
         }
@@ -439,7 +441,8 @@ namespace System.Web.Mvc
         {
             //const string shipIcon = "http://zero-k.info/img/fleets/war.png";
             double ownShips = account.GetBombersAvailable();
-            double factionShips = account.Faction.Bombers;
+            int? factionID = account.FactionID;
+            double factionShips = factionID != null ? account.Faction.Bombers : 0;
             //return new MvcHtmlString(string.Format("<img src='{0}' title='Bombers available to you/owned by faction'/></span> {1} / {2}", shipIcon, ownShips, factionShips));
             return new MvcHtmlString(string.Format("{0} ({1})", ownShips, factionShips));
         }
