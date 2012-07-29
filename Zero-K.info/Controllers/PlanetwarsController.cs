@@ -85,32 +85,28 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult BuildStructure(int planetID, int structureTypeID)
         {
-            // hack
-            /*
             using (var db = new ZkDataContext())
             {
                 var planet = db.Planets.Single(p => p.PlanetID == planetID);
                 if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot build structures");
                 var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-                if (Global.ClanID != planet.Account.ClanID) return Content("Planet is not under your control.");
+                if (acc.FactionID != planet.OwnerFactionID) return Content("Planet is not under your control.");
+
                 var structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
                 if (structureType == null) return Content("Structure type does not exist.");
                 if (!structureType.IsBuildable) return Content("Structure is not buildable.");
 
-                // assumes you can only build level 1 structures! if higher level structures can be built directly, we should check down the upgrade chain too
-                if (StructureType.HasStructureOrUpgrades(db, planet, structureType)) return Content("Structure or its upgrades already built");
+                
+                if (acc.GetMetalAvailable() < structureType.Cost) return Content("Insufficient metal");
+                acc.SpendMetal(structureType.Cost);
 
-                if (acc.Credits < structureType.Cost) return Content("Insufficient credits.");
-                acc.Credits -= structureType.Cost;
-
-                var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID };
+                var newBuilding = new PlanetStructure { StructureTypeID = structureTypeID, PlanetID = planetID, OwnerAccountID = acc.AccountID, IsActive = false};
                 db.PlanetStructures.InsertOnSubmit(newBuilding);
                 db.SubmitChanges();
 
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2}.", Global.Account, newBuilding.StructureType.Name, planet));
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} has built a {1} on {2} planet {3}.", Global.Account, newBuilding.StructureType.Name, planet.Faction, planet));
                 SetPlanetOwners(db);
             }
-            */
             return RedirectToAction("Planet", new { id = planetID });
         }
 
