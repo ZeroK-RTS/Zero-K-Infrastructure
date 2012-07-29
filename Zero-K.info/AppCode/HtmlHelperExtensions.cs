@@ -417,7 +417,7 @@ namespace System.Web.Mvc
             double ownMetal = account.GetMetalAvailable();
             double factionMetal = account.Faction.Metal;
             //return new MvcHtmlString(string.Format("<img src='{0}' title='Metal available to you/owned by faction' width='20' height='20'/></span> {1} / {2}", metalIcon, ownMetal, factionMetal));
-            return new MvcHtmlString(string.Format("Metal: {0} ({1})", ownMetal, factionMetal));
+            return new MvcHtmlString(string.Format("{0} ({1})", ownMetal, factionMetal));
         }
 
         public static MvcHtmlString PrintMetalCost(this HtmlHelper helper, int? cost)
@@ -432,7 +432,7 @@ namespace System.Web.Mvc
             double ownShips = account.GetDropshipsAvailable();
             double factionShips = account.Faction.Dropships;
             //return new MvcHtmlString(string.Format("<img src='{0}' title='Dropships available to you/owned by faction'/></span> {1} / {2}", shipIcon, ownShips, factionShips));
-            return new MvcHtmlString(string.Format("Dropships: {0} ({1})", ownShips, factionShips));
+            return new MvcHtmlString(string.Format("{0} ({1})", ownShips, factionShips));
         }
 
         public static MvcHtmlString PrintBombers(this HtmlHelper helper, Account account)
@@ -441,7 +441,7 @@ namespace System.Web.Mvc
             double ownShips = account.GetBombersAvailable();
             double factionShips = account.Faction.Bombers;
             //return new MvcHtmlString(string.Format("<img src='{0}' title='Bombers available to you/owned by faction'/></span> {1} / {2}", shipIcon, ownShips, factionShips));
-            return new MvcHtmlString(string.Format("Bombers: {0} ({1})", ownShips, factionShips));
+            return new MvcHtmlString(string.Format("{0} ({1})", ownShips, factionShips));
         }
 
         public static MvcHtmlString PrintPlanet(this HtmlHelper helper, Planet planet)
