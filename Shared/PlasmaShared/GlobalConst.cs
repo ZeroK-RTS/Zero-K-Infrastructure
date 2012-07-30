@@ -50,7 +50,7 @@
       return name.Contains("Zero-K");
     }
 
-		public const int DefaultDropshipCapacity = 3;
+		public const int DefaultDropshipCapacity = 10;
 	}
   
 }
