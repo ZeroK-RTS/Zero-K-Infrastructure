@@ -11,5 +11,9 @@ namespace ZkData
         public string GetImageUrl() {
             return string.Format("/img/structures/{0}", MapIcon);
         }
+
+	    public override string ToString() {
+	        return Name;
+	    }
 	}
 }

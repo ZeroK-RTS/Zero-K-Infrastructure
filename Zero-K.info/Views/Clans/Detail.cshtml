@@ -1,5 +1,4 @@
-﻿
-@using ZeroKWeb
+﻿@using ZeroKWeb
 @using ZeroKWeb.Models
 @using ZkData
 @model ZkData.Clan
@@ -9,108 +8,109 @@
     Page.Title = Model.ClanName + " - " + Model.Shortcut + " clan detail";
     string bgStyle = "";
 }
-
-
 @section head {
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
             $("#tabs").tabs();
-            $("#clanBlock").css("height", screen.width);
         });
     </script>
 }
-
 @Html.ActionLink("Back to clan list", "Index", "Clans")
-
-@if (File.Exists(Server.MapPath(c.GetBGImageUrl()))) {
-    bgStyle = string.Format("display: block; background-attachment: fixed; background: url({0}) no-repeat; ", c.GetBGImageUrl());
-}
-<div id="clanBlock" style="@bgStyle">
+<div id="clanBlock">
     <h2>@c.ClanName</h2>
     <table>
         <tr>
             <td>
                 <h3>@Html.PrintClan(c)</h3>
                 <img  src='@c.GetImageUrl()'/><br />
+                <table>
+                    @foreach (Account a in c.Accounts)
+                    {
+                        <tr>
+                            <td>
+                                @Html.PrintAccount(a)
+                            </td>
+                            <td>
+                                @if (isMember && Global.Account.HasClanRight(x => x.RightKickPeople))
+                                {
+                                    @:&nbsp
+                        string question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
+                                    @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+                                }
+                            </td>
+                        </tr>
+                                foreach (Planet p in a.Planets)
+                                {
+                        <tr>
+                            <td><small>@Html.PrintPlanet(p)</small> </td>
+                            <td></td>
+                        </tr>
+                                }
+                    }
+                </table>
             </td>
-            <td>
+            <td style="vertical-align: top">
                 <span style='float: right'>@Html.PrintFaction(Model.Faction)</span>
                 <div style='font-size: 80%; margin: 10px;'>
                     @Html.BBCode(c.Description)
                 </div>
             </td>
+            <td style="vertical-align: top">
+                @if (File.Exists(Server.MapPath(c.GetBGImageUrl()))) {
+                    <img src="@c.GetBGImageUrl()" style="max-width: 100%" />
+                }
+            </td>
         </tr>
     </table>
-    @if (c.CanJoin(Global.Account)) {
+    @if (c.CanJoin(Global.Account))
+    {
         @Html.ActionLink("Join this clan", "JoinClan", new { id = c.ClanID }, new { @class = "delete" })<br />
     }
-
-
-    @if (isMember && Model.Accounts.Count() <= GlobalConst.ClanLeaveLimit) {
+    @if (isMember && Model.Accounts.Count() <= GlobalConst.ClanLeaveLimit)
+    {
         @Html.ActionLink("leave this clan", "LeaveClan", null, new { @class = "delete" })<br />
     }
-    @if (isMember) {
+    @if (isMember)
+    {
         <b>Secret topic:</b>
         <br />
         @Html.BBCode(c.SecretTopic)
     }
-
-    @if (isMember && Global.Account.HasClanRight(x => x.RightEditTexts)) {
+    @if (isMember && Global.Account.HasClanRight(x => x.RightEditTexts))
+    {
         //has rights
         <br />
         @Html.ActionLink("Modify clan information", "Create", new { id = c.ClanID })
     }
-    
-    <br/>
-    @foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == Model.FactionID)).OrderBy(x=>x.DisplayOrder)) {
+
+    <br />
+    @foreach (RoleType rt in new ZkDataContext().RoleTypes.Where(x => x.IsClanOnly && (x.RestrictFactionID == null || x.RestrictFactionID == Model.FactionID)).OrderBy(x => x.DisplayOrder))
+    {
         @Html.PrintRoleType(rt)
-        foreach (AccountRole acc in rt.AccountRoles.Where(x => x.AccountByAccountID.ClanID == Model.ClanID)) {
-            @Html.PrintAccount(acc.AccountByAccountID)
-            @Html.DisplayFor(x => acc)
-            <span>, &nbsp;</span>
+        foreach (AccountRole acc in rt.AccountRoles.Where(x => x.AccountByAccountID.ClanID == Model.ClanID))
+        {
+        @Html.PrintAccount(acc.AccountByAccountID)
+        @Html.DisplayFor(x => acc)
+        <span>, &nbsp;</span>
         }
     }
-    <br/>
+    <br />
 
-    <table>
-        @foreach (Account a in c.Accounts) {
-            <tr>
-                <td>
-                    @Html.PrintAccount(a)
-                </td>
-                <td>
-                    @if (isMember && Global.Account.HasClanRight(x => x.RightKickPeople)) {
-                        @:&nbsp
-                        string question = String.Format("Expelling {0} will make him sad. Are you sure you want to proceed?", a.Name);
-                        @Html.ActionLink("kick", "KickPlayerFromClan", new { clanID = c.ClanID, accountID = a.AccountID }, new { @onclick = String.Format("return confirm('{0}')", question) })
-                    }
-                </td>
-            </tr>
-            foreach (Planet p in a.Planets) {
-                <tr>
-                    <td><small>@Html.PrintPlanet(p)</small> </td>
-                    <td></td>
-                </tr>
-            }
-        }
-    </table>
 
-    <br/>
-    
 
 </div>
 
-    <div id="tabs">
-        <ul>
-            <li><a href="#events"><span>Events</span></a></li>            
-        </ul>
-        <div id="events">
-            @Html.Action("Events", "Planetwars", new { clanID = c.ClanID, partial = true })
-        </div>
+<div id="tabs">
+    <ul>
+        <li><a href="#events"><span>Events</span></a></li>
+    </ul>
+    <div id="events">
+        @Html.Action("Events", "Planetwars", new { clanID = c.ClanID, partial = true })
     </div>
-    @Html.ActionLink("Back to clan list", "Index", "Clans")
-    <hr />
-    @if (isMember) {
-        Html.RenderPartial("CommentList", new CommentList { Thread = Model.ForumThread, ActionData = new { clanID = c.ClanID, threadID = Model.ForumThreadID } });
-    }
-
+</div>
+@Html.ActionLink("Back to clan list", "Index", "Clans")
+<hr />
+@if (isMember)
+{
+    Html.RenderPartial("CommentList", new CommentList { Thread = Model.ForumThread, ActionData = new { clanID = c.ClanID, threadID = Model.ForumThreadID } });
+}

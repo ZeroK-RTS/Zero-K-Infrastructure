@@ -155,6 +155,15 @@
         @foreach (var structure in Model.PlanetStructures) {
             <div style="border: 1px solid teal">
             <b>@Html.PrintStructureState(structure)</b> owned by @Html.PrintAccount(structure.Account)
+                @if (Model.Account != null && Model.OwnerAccountID == Global.AccountID && structure.Account != Model.Account) {
+                    if (Model.Account.GetMetalAvailable() >= structure.StructureType.Cost) {
+                        <a href="@Url.Action("ConfiscateStructure","Planetwars", new{planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID})"><span> -confiscate (@Html.PrintMetal(structure.StructureType.Cost))</span></a>
+                        
+                    } else {
+                        <span> - confiscate (@Html.PrintMetal(structure.StructureType.Cost))</span>
+                    }
+
+                }
             @Html.DisplayFor(x=>structure.StructureType)
             </div>
     	}

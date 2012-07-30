@@ -179,6 +179,11 @@ namespace ZeroKWeb
                     if (fac.FactionID != 0) ev.EventFactions.Add(new EventFaction() { FactionID = fac.FactionID });
                     else ev.EventFactions.Add(new EventFaction() { Faction = fac});
                 }
+                else if (arg is StructureType)
+                {
+                    var stype = (StructureType)arg;
+                    args[i] = HtmlHelperExtensions.PrintStructureType(null, stype);
+                }
                 else if (arg is FactionTreaty) {
                     var tr = (FactionTreaty)arg;
                     args[i] = HtmlHelperExtensions.PrintFactionTreaty(null, tr);

@@ -377,6 +377,20 @@ namespace System.Web.Mvc
             else return new MvcHtmlString("");
         }
 
+        public static MvcHtmlString PrintStructureType(this HtmlHelper helper, StructureType stype)
+        {
+            var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
+            if (stype != null)
+            {
+
+                return
+                    new MvcHtmlString(string.Format("<span nicetitle='$structuretype${0}'>{1}</span>",
+                        stype.StructureTypeID, stype.Name));
+            }
+            else return new MvcHtmlString("");
+        }
+
+
         public static MvcHtmlString PrintFactionTreaty(this HtmlHelper helper, FactionTreaty treaty)
         {
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
