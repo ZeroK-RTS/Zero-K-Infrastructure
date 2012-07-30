@@ -261,7 +261,7 @@ namespace ZeroKWeb.SpringieInterface
             foreach (Account w in winners) {
                 w.ProduceMetal(metalPerWinner);
 
-                var ev = Global.CreateEvent("{0} gained {1} metal from battle {2} at {3}",
+                var ev = Global.CreateEvent("{0} gained {1} metal from battle {2}",
                                             w,
                                             Math.Floor(metalPerWinner),
                                             sb,
@@ -281,7 +281,7 @@ namespace ZeroKWeb.SpringieInterface
                     sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.Faction != null && x.Faction != attacker)) {
                 acc.ProduceDropships(GlobalConst.DropshipsPerBattlePlayer);
 
-                var ev = Global.CreateEvent("{0} gained {1} dropship from battle {2} at {3}",
+                var ev = Global.CreateEvent("{0} gained {1} dropship from battle {2}",
                                             acc,
                                             GlobalConst.DropshipsPerBattlePlayer,
                                             sb,
