@@ -163,6 +163,7 @@ We are setting up the next round.
 	var pr = p.PlanetRectangle(Model);
 	var por = p.PlanetOverlayRectangle(Model);
 	Clan clan = null;
+    Faction faction = null;
 	var autohost = Global.Nightwatch.GetPlanetBattles(p).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
 
 	int shipCount = p.PlanetFactions.Sum(x => (int?)x.Dropships) ?? 0;
@@ -170,11 +171,12 @@ We are setting up the next round.
 	if (p.Account != null)
 	{
 		clan = p.Account.Clan;
+        faction = p.Account.Faction;
 	}
 	<div style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px; font-size: 12px; font-weight: bold; " >
 		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; width:100%; height:25%;"><tr>
 		<td style="vertical-align: bottom;" ><div style="display:inline-block;">
-			<a href='@Url.Action("Planet", new { id = p.PlanetID })' nicetitle="$planet$@p.PlanetID" style="color: #ffffff; color: @(clan!= null ? Clan.ClanColor(clan, Global.ClanID): "#ffffff");">
+			<a href='@Url.Action("Planet", new { id = p.PlanetID })' nicetitle="$planet$@p.PlanetID" style="color: #ffffff; color: @(faction!= null ? Faction.FactionColor(faction, Global.FactionID): "#ffffff");">
 			@p.Name<br />
 			@if (clan != null && Global.Clan != null && clan.ClanID == Global.Clan.ClanID)
 			{
