@@ -171,7 +171,7 @@ We are setting up the next round.
 	if (p.Account != null)
 	{
 		clan = p.Account.Clan;
-        faction = p.Account.Faction;
+        faction = p.Faction;
 	}
 	<div style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px; font-size: 12px; font-weight: bold; " >
 		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; width:100%; height:25%;"><tr>
@@ -216,7 +216,9 @@ We are setting up the next round.
 			@if (clan != null)
 			{
 				<img src='@clan.GetImageUrl()' width='20' />
-			}
+			} else if (faction != null) {
+                <img src='@faction.GetImageUrl()' width='20' />
+            }
 		</span>
 
 		@if (shipCount > 0)

@@ -151,7 +151,7 @@
         <h2>Installed</h2>
         @foreach (var structure in Model.PlanetStructures) {
             <div style="border: 1px solid teal">
-            <b>@Html.PrintStructureState(structure)</b>
+            <b>@Html.PrintStructureState(structure)</b> owned by @Html.PrintAccount(structure.Account)
             @Html.DisplayFor(x=>structure.StructureType)
             </div>
     	}
@@ -163,9 +163,9 @@
 			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable).OrderBy(x=>x.Cost)) {
 				if (!planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
 					if (structureType.Cost > Global.Account.GetMetalAvailable()) {
-                        <span nicetitle="$structuretype$@structureType.StructureTypeID">@structureType.Name (@Html.PrintMetalCost(structureType.Cost))</span><br/>
+                        <span nicetitle="$structuretype$@structureType.StructureTypeID">@structureType.Name (@Html.PrintMetal(structureType.Cost))</span><br/>
 					} else {
-                        <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("BuildStructure",new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })">Build @structureType.Name (@Html.PrintMetalCost(structureType.Cost))</a><br />
+                        <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("BuildStructure",new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })">Build @structureType.Name (@Html.PrintMetal(structureType.Cost))</a><br />
 					}
 				}
 			}
@@ -174,7 +174,7 @@
             <h2>Self destruct</h2>
             foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable)) {
 				if (planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
-                    <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure",new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="delete">Destroy @structureType.Name (@Html.PrintMetalCost(@structureType.Cost))</a><br />
+                    <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure",new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="delete">Destroy @structureType.Name (@Html.PrintMetal(@structureType.Cost))</a><br />
                 }
             }
     }

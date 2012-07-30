@@ -15,6 +15,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             $("#tabs").tabs();
+            $("#clanBlock").css("height", screen.width);
         });
     </script>
 }
@@ -22,7 +23,7 @@
 @Html.ActionLink("Back to clan list", "Index", "Clans")
 
 @if (File.Exists(Server.MapPath(c.GetBGImageUrl()))) {
-    bgStyle = string.Format("background-attachment: fixed; background: url({0}) no-repeat scroll 0 0; background-size: 100% 100%;", c.GetBGImageUrl());
+    bgStyle = string.Format("display: block; background-attachment: fixed; background: url({0}) no-repeat; ", c.GetBGImageUrl());
 }
 <div id="clanBlock" style="@bgStyle">
     <h2>@c.ClanName</h2>

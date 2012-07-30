@@ -441,7 +441,7 @@ namespace System.Web.Mvc
                 return
                     new MvcHtmlString(
                         string.Format(
-                            "<span nicetitle='Metal available to you/owned by faction'><img src='{0}' width='20' height='20'/>{1} / {2}</span>",
+                            "<span style='color:#00FFFF' nicetitle='Metal available to you/owned by faction'><img src='{0}' width='20' height='20'/>{1} / {2}</span>",
                             GlobalConst.MetalIcon,
                             Math.Floor(ownMetal),
                             Math.Floor(factionMetal)));
@@ -450,9 +450,29 @@ namespace System.Web.Mvc
         }
 
 
-        public static MvcHtmlString PrintMetalCost(this HtmlHelper helper, double? cost)
+        public static MvcHtmlString PrintMetal(this HtmlHelper helper, double? cost)
         {
-            return new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' width='20' height='20'/></span>", Math.Floor(cost ?? 0), GlobalConst.MetalIcon));
+            return new MvcHtmlString(string.Format("<span style='color:#00FFFF;'>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(cost ?? 0), GlobalConst.MetalIcon));
+        }
+
+        public static MvcHtmlString PrintBombers(this HtmlHelper helper, double? count)
+        {
+            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), GlobalConst.BomberIcon));
+        }
+
+        public static MvcHtmlString PrintWarps(this HtmlHelper helper, double? count)
+        {
+            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), GlobalConst.WarpIcon));
+        }
+
+        public static MvcHtmlString PrintDropships(this HtmlHelper helper, double? count, Faction faction)
+        {
+            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), faction.GetShipImageUrl()));
+        }
+
+        public static MvcHtmlString PrintEnergy(this HtmlHelper helper, double? count)
+        {
+            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", Math.Floor(count ?? 0), GlobalConst.EnergyIcon));
         }
 
         public static MvcHtmlString PrintDropships(this HtmlHelper helper, Account account)
@@ -463,7 +483,7 @@ namespace System.Web.Mvc
                 double factionShips =  account.Faction.Dropships;
                 return
                     new MvcHtmlString(
-                        string.Format("<span nicetitle='Dropships available to you/owned by faction'><img src='{0}' title=''/>{1} / {2}</span>",
+                        string.Format("<span nicetitle='Dropships available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
                                       account.Faction.GetShipImageUrl(),
                                       Math.Floor(ownShips),
                                       Math.Floor(factionShips)));
@@ -473,17 +493,33 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintBombers(this HtmlHelper helper, Account account)
         {
-            const string shipIcon = "/img/fleets/neutral.png";
             if (account != null && account.Faction != null)
             {
                 double ownShips = account.GetBombersAvailable();
                 double factionShips = account.Faction.Bombers;
                 return
                     new MvcHtmlString(
-                        string.Format("<span nicetitle='Bombers available to you/owned by faction'><img src='{0}' title=''/>{1} / {2}</span>",
-                                      shipIcon,
+                        string.Format("<span nicetitle='Bombers available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
+                                      GlobalConst.BomberIcon,
                                       Math.Floor(ownShips),
                                       Math.Floor(factionShips)));
+            }
+            else return null;
+        }
+
+
+        public static MvcHtmlString PrintWarps(this HtmlHelper helper, Account account)
+        {
+            if (account != null && account.Faction != null)
+            {
+                double ownWarps = account.GetWarpAvailable();
+                double factionWarps = account.Faction.Warps;
+                return
+                    new MvcHtmlString(
+                        string.Format("<span nicetitle='Warp cores available to you/owned by faction'><img src='{0}' class='icon20'/>{1} / {2}</span>",
+                                      GlobalConst.WarpIcon,
+                                      Math.Floor(ownWarps),
+                                      Math.Floor(factionWarps)));
             }
             else return null;
         }

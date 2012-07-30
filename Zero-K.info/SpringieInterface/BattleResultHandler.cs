@@ -261,14 +261,14 @@ namespace ZeroKWeb.SpringieInterface
             foreach (Account w in winners) {
                 w.ProduceMetal(metalPerWinner);
 
-                var ev = Global.CreateEvent("{0} ({4}) gained {1} metal from battle {2} at {3}",
+                var ev = Global.CreateEvent("{0} gained {1} metal from battle {2} at {3}",
                                             w,
                                             Math.Floor(metalPerWinner),
                                             sb,
                                             planet,
                                             w.Clan != null ? (object)w.Clan : "no clan");
                 db.Events.InsertOnSubmit(ev);
-                text.AppendLine(ev.PlainText);
+                //text.AppendLine(ev.PlainText);
             }
 
             // remove dropships
@@ -281,14 +281,14 @@ namespace ZeroKWeb.SpringieInterface
                     sb.SpringBattlePlayers.Where(x => !x.IsSpectator).Select(x => x.Account).Where(x => x.Faction != null && x.Faction != attacker)) {
                 acc.ProduceDropships(GlobalConst.DropshipsPerBattlePlayer);
 
-                var ev = Global.CreateEvent("{0} ({4}) gained {1} dropship from battle {2} at {3}",
+                var ev = Global.CreateEvent("{0} gained {1} dropship from battle {2} at {3}",
                                             acc,
                                             GlobalConst.DropshipsPerBattlePlayer,
                                             sb,
                                             planet,
                                             acc.Clan != null ? (object)acc.Clan : "no clan");
                 db.Events.InsertOnSubmit(ev);
-                text.AppendLine(ev.PlainText);
+                //text.AppendLine(ev.PlainText);
             }
 
             // add attack points

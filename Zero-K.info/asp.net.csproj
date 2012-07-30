@@ -234,6 +234,7 @@
     <Content Include="Img\progressr_fill.png" />
     <Content Include="Img\rss.png" />
     <Content Include="Img\steam_20p.png" />
+    <Content Include="Img\warpcore.png" />
     <Content Include="Img\zk_logo_miniature.png" />
     <Content Include="LobbyStart.inc" />
     <Content Include="ResourceList.aspx" />

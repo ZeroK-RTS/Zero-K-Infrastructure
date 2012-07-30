@@ -43,6 +43,9 @@
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
+        public const string BomberIcon = "/img/fleets/neutral.png";
+	    public const string WarpIcon = "/img/warpcore.png";
+
 
 	    public static bool IsZkMod(string name)
     {

@@ -18,17 +18,17 @@
 <h3>Resources</h3>
 <table>
     <tr>
-        <td>Metal:</td><td>@Math.Floor(f.Metal)</td>
+        <td>Metal:</td><td>@Html.PrintMetal(f.Metal)</td>
     </tr>    
     <tr>
-        <td>Dropships:</td><td>@f.Dropships</td>
+        <td>Dropships:</td><td>@Html.PrintDropships(f.Dropships, f)</td>
     </tr>    
     <tr>
-        <td>Bombers:</td><td>@f.Bombers</td>
+        <td>Bombers:</td><td>@Html.PrintBombers(f.Bombers)</td>
     </tr>    
-    <tr><td>Energy produced:</td><td>@f.EnergyProducedLastTurn</td></tr>
-    <tr><td>Energy demand:</td><td>@f.EnergyDemandLastTurn</td></tr>
-
+    <tr><td>Warp cores:</td><td>@Html.PrintWarps(f.Warps)</td></tr>
+    <tr><td>Energy produced:</td><td style="color:lightgreen">+@Html.PrintEnergy(f.EnergyProducedLastTurn)</td></tr>
+    <tr><td>Energy demand:</td><td style="color:red">-@Html.PrintEnergy(f.EnergyDemandLastTurn)</td></tr>
 </table>
 
 @if (Global.Account != null && Global.FactionID == f.FactionID) {

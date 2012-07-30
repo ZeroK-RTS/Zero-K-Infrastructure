@@ -15,7 +15,7 @@ Commander name: @Html.TextBox("name", c != null ? c.Name : "Commander " + Model.
 	
     foreach (var slots in Model.Slots.GroupBy(x => x.MorphLevel).OrderBy(x => x.Key)) {
 	<h3>Morph @slots.Key:</h3>
-		@:Metal: @Html.PrintMetalCost(c.GetTotalMorphLevelCost(slots.Key) - (slots.Key > 1 ? c.GetTotalMorphLevelCost(slots.Key -1):0)) <br />
+		@:Metal: @Html.PrintMetal(c.GetTotalMorphLevelCost(slots.Key) - (slots.Key > 1 ? c.GetTotalMorphLevelCost(slots.Key -1):0)) <br />
 	foreach (var slot in slots) 
 	{
 			CommanderModule selected = c.CommanderModules.SingleOrDefault(y => y.SlotID == slot.CommanderSlotID);
