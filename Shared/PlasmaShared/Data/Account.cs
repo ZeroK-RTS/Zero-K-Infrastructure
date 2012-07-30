@@ -114,21 +114,21 @@ namespace ZkData
 
 
         public double GetDropshipQuota() {
-            return GetQuota(x => x.PwDropshipsProduced, x => x.PwDropshipsUsed, x => x.RightDropshipQuota);
+            return GetQuota(x => x.PwDropshipsProduced, x => x.PwDropshipsUsed, x => x.RightDropshipQuota, x=>x.Dropships);
         }
 
         public double GetMetalQuota() {
-            return GetQuota(x => x.PwMetalProduced, x => x.PwMetalUsed, x => x.RightMetalQuota);
+            return GetQuota(x => x.PwMetalProduced, x => x.PwMetalUsed, x => x.RightMetalQuota, x=>x.Metal);
         }
                         
         public double GetBomberQuota()
         {
-            return GetQuota(x => x.PwBombersProduced, x => x.PwBombersUsed, x => x.RightBomberQuota);
+            return GetQuota(x => x.PwBombersProduced, x => x.PwBombersUsed, x => x.RightBomberQuota,x=>x.Bombers);
         }
 
         public double GetWarpQuota()
         {
-            return GetQuota(x => x.PwWarpProduced, x => x.PwWarpUsed, x => x.RightWarpQuota);
+            return GetQuota(x => x.PwWarpProduced, x => x.PwWarpUsed, x => x.RightWarpQuota, x=>x.Warps);
         }
 
 
@@ -181,23 +181,30 @@ namespace ZkData
             Faction.Warps += count;
         }
 
-        public double GetQuota(Func<Account, double> producedSelector, Func<Account, double> usedSelector, Func<RoleType, double?> quotaSelector)
+        public double GetQuota(Func<Account, double> producedSelector, Func<Account, double> usedSelector, Func<RoleType, double?> quotaSelector, Func<Faction, double> factionResources)
         {
             double total = producedSelector(this) - usedSelector(this);
+            if (total < 0) total = 0;
 
             if (Faction != null) {
 
-                double? clanQratio = AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector);
-                double? factionQratio = AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector);
+                double clanQratio = AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector) ?? 0;
+                double factionQratio = AccountRolesByAccountID.Where(x => !x.RoleType.IsClanOnly).Select(x => x.RoleType).Max(quotaSelector) ?? 0;
 
+                var facRes = factionResources(Faction);
 
-                if (clanQratio != null || factionQratio != null) {
-
-                    foreach (var m in Faction.Accounts.Where(x=>x.AccountID != AccountID)) {
-                        var ratio = factionQratio ?? 0;
-                        if (m.ClanID == ClanID) ratio = Math.Max(ratio, clanQratio ?? 0);
-                        total += ratio*(producedSelector(m) - usedSelector(m));
+                if (factionQratio >= clanQratio) {
+                    total += facRes * factionQratio;
+                } else {
+                    if (clanQratio > 0 && Clan != null) {
+                        var sumClanProd = Clan.Accounts.Sum(producedSelector);
+                        var sumFacProd = Faction.Accounts.Sum(producedSelector);
+                        if (sumFacProd > 0) {
+                            var clanRes = facRes*sumClanProd/sumFacProd;
+                            total += clanRes*clanQratio + (facRes - clanRes)*factionQratio;
+                        }
                     }
+
                 }
             }
 
