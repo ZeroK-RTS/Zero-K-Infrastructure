@@ -6,9 +6,12 @@
 	Page.Title = "Planet " + Model.Name;
 	var autohost = Global.Nightwatch.GetPlanetBattles(Model).OrderByDescending(x=>x.Users.Count).FirstOrDefault();
 	var db = new ZkData.ZkDataContext();
+    var colorStyle = "";
+    if (Model.Faction != null) {
+        colorStyle = "color:" + Model.Faction.Color + ";";
+    }
 }
-<h1>Planet @Model.Name
-</h1>
+<h1 style="@colorStyle">Planet @Model.Name</h1>
 <table>
 	<tr>
 		<td>

@@ -26,7 +26,7 @@
             <li>bomber defense +@s.EffectBomberDefense</li>
         }
         @if (s.EffectBomberProduction > 0) {
-            <li>products +@s.EffectBomberProduction bombers</li>
+            <li>produces +@Html.PrintBombers(s.EffectBomberProduction) bombers</li>
         }
         @if (s.EffectDropshipCapacity > 0) {
             <li>increases fleet size by +@s.EffectDropshipCapacity</li>
@@ -38,7 +38,7 @@
             <li>dropship production +@s.EffectDropshipProduction</li>
         }
         @if (s.EffectEnergyPerTurn > 0) {
-            <li>energy production +@s.EffectEnergyPerTurn</li>
+            <li>energy production <span style="color:lightgreen">+@Html.PrintEnergy(s.EffectEnergyPerTurn)</span></li>
         }
         @if (s.EffectInfluenceSpread > 0) {
             <li>spreads @s.EffectInfluenceSpread influence to nearby planets each turn</li>
@@ -47,7 +47,7 @@
             <li>victory artefact</li>
         }
         @if (s.EffectWarpProduction > 0) {
-            <li>warp core production +@s.EffectWarpProduction</li>
+            <li>warp core production +@Html.PrintWarps(s.EffectWarpProduction)</li>
         }
     </ul>
 </div>

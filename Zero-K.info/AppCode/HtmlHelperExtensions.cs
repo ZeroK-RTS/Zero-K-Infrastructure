@@ -400,7 +400,7 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintInfluence(this HtmlHelper helper, Faction fac, double influence)
         {
-            var formattedString = string.Format("<span style='color:{0}'>{1}</span>",
+            var formattedString = string.Format("<span style='color:{0}'>{1:0.#}%</span>",
                                                 Faction.FactionColor(fac, Global.FactionID),
                                                 influence);
             return new MvcHtmlString(formattedString);
@@ -529,12 +529,12 @@ namespace System.Web.Mvc
             if (planet == null) return new MvcHtmlString("?");
             var url = new UrlHelper(HttpContext.Current.Request.RequestContext);
             return
-                new MvcHtmlString(string.Format("<a href='{0}' title='$planet${4}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
+                new MvcHtmlString(string.Format("<a href='{0}' title='$planet${4}' style='{5}'><img src='/img/planets/{1}' width='{2}'>{3}</a>",
                                                 url.Action("Planet", "Planetwars", new { id = planet.PlanetID }),
                                                 planet.Resource.MapPlanetWarsIcon,
                                                 planet.Resource.PlanetWarsIconSize/3,
                                                 planet.Name,
-                                                planet.PlanetID));
+                                                planet.PlanetID,planet.Faction != null ? "color:" + planet.Faction.Color:""));
         }
 
 

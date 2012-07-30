@@ -9,9 +9,14 @@
         var bombDefense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense);
         var dropDefense = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense);
         var warpProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectWarpProduction);
+        var bombProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberProduction);
         var victory = Model.PlanetStructures.Where(x => x.IsActive).Any(x => x.StructureType.EffectIsVictoryPlanet == true);
         var aliens = Model.PlanetStructures.Where(x => x.IsActive).Select(x => x.StructureType.EffectBots).Where(x => !string.IsNullOrEmpty(x)).FirstOrDefault();
         var techs = Model.PlanetStructures.Where(x => x.IsActive).Select(x => x.StructureType.Unlock).Where(x => x != null).ToList();
+        var energyProd = Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectEnergyPerTurn);
+        var allowShips = Model.PlanetStructures.Where(x => x.IsActive).Any(x => x.StructureType.EffectAllowShipTraversal == true);
+        var blockWarp = Model.PlanetStructures.Where(x => x.IsActive).Any(x => x.StructureType.EffectBlocksJumpgate == true);
+        var blockSpread = Model.PlanetStructures.Where(x => x.IsActive).Any(x => x.StructureType.EffectBlocksInfluenceSpread == true);
         var upkeep = Model.GetUpkeepCost();
 
         <tr>
@@ -19,12 +24,15 @@
             <td>@Html.PrintAccount(Model.Account)  @Html.PrintClan(Model.Account != null ? Model.Account.Clan : null)</td>
         </tr>
         <tr>
-            <td>Bonuses:</td>
+            <td>Capabilities:</td>
             <td>
-                @if (spread > 0) {
-                    <span>+@spread influence spread</span>
+                @if (allowShips) {
+                    <span>ship movement</span> 
                 }
-                @if (dropDefense > 0)
+                @if (spread > 0) {
+                    @:, <span>+@Html.PrintInfluence(Model.Faction, spread??0) influence spread</span>
+                }
+                @if (bombDefense > 0)
                 {
                     @:, <span style='color: red'>+@bombDefense bomber defense</span>
                 }                
@@ -32,23 +40,30 @@
                 {
                     @:, <span style='color: red'>+@dropDefense ship defense</span>
                 }
-                @if (upkeep > 0) {
-                    @:, <span style='color: red' title='Most structures need 2% of their cost/turn as upkeep'>-@(upkeep) upkeep/turn</span>
-                }    
-                @if (techs.Any())
-                {
-                    foreach (var t in techs)
-                    {
-                        @:, <span title='$unlock$@t.UnlockID' style='color:@t.LabelColor; white-space: nowrap;' ><img src='@t.ImageUrl' width='20'/>@t.Name</span>
-                    }
+                @if( energyProd > 0) {
+                    @:, <span style="color:lightgreen">+@Html.PrintEnergy(energyProd)</span>    
+
                 }
+                @if (upkeep > 0) {
+                    @:, <span style='color: red'>-@Html.PrintEnergy(upkeep)</span>
+                }
+                @if (bombProd > 0)
+                {
+                    @:, +@Html.PrintWarps(bombProd)
+                }    
                 @if (warpProd > 0)
                 {
-                    @:, +@warpProd warp cores
+                    @:, +@Html.PrintWarps(warpProd)
                 }
                 @if (dropshipProd > 0)
                 {
                     @:, +@dropshipProd ships/turn
+                }
+                @if (blockWarp) {
+                    <span>, blocks enemy warp</span>
+                }
+                @if (blockSpread) {
+                    <span>, blocks enemy influence spreading</span>
                 }
                 @if (dropshipCapa > 0)
                 {
@@ -58,6 +73,15 @@
                 {
                     @:, @(victory ? "ARTEFACT!" : "")
                 }
+                
+                 @if (techs.Any())
+                {
+                    foreach (var t in techs)
+                    {
+                        @:, <span title='$unlock$@t.UnlockID' style='color:@t.LabelColor; white-space: nowrap;' ><img src='@t.ImageUrl' width='20'/>@t.Name</span>
+                    }
+                }
+               
                 @if (!string.IsNullOrEmpty(aliens))
                 {
                     @:, @aliens
