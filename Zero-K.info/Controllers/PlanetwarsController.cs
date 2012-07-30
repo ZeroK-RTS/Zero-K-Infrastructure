@@ -383,9 +383,8 @@ namespace ZeroKWeb.Controllers
                     }
 
                     // delete structures being lost on planet change
-                    foreach (
-                        PlanetStructure structure in
-                            planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) db.PlanetStructures.DeleteOnSubmit(structure);
+                    foreach (PlanetStructure structure in
+                        planet.PlanetStructures.Where(structure => structure.StructureType.OwnerChangeDeletesThis).ToList()) db.PlanetStructures.DeleteOnSubmit(structure);
 
                     // reset attack points memory
                     foreach (AccountPlanet acp in planet.AccountPlanets) acp.AttackPoints = 0;
@@ -586,41 +585,42 @@ namespace ZeroKWeb.Controllers
                 return RedirectToAction("Planet", new { id = planetID });
             }
         }
-
-        #region Nested type: ClanEntry
-
-        public class ClanEntry
-        {
-            readonly Clan clan;
-            readonly int clanInfluence;
-            public int ShadowInfluence;
-
-            public ClanEntry(Clan clan, int clanInfluence) {
-                this.clan = clan;
-                this.clanInfluence = clanInfluence;
-            }
-
-            public Clan Clan { get { return clan; } }
-            public int ClanInfluence { get { return clanInfluence; } }
-        }
-
-        #endregion
-
-        #region Nested type: EventsResult
-
-        public class EventsResult
-        {
-            public int? AccountID;
-            public int? ClanID;
-            public IQueryable<Event> Events;
-            public string Filter;
-            public int Page;
-            public int PageCount;
-            public int PageSize;
-            public bool Partial;
-            public int? PlanetID;
-            public int? SpringBattleID;
-        }
-
-        #endregion
     }
+
+    #region Nested type: ClanEntry
+
+    public class ClanEntry
+    {
+        readonly Clan clan;
+        readonly int clanInfluence;
+        public int ShadowInfluence;
+
+        public ClanEntry(Clan clan, int clanInfluence) {
+            this.clan = clan;
+            this.clanInfluence = clanInfluence;
+        }
+
+        public Clan Clan { get { return clan; } }
+        public int ClanInfluence { get { return clanInfluence; } }
+    }
+
+    #endregion
+
+    #region Nested type: EventsResult
+
+    public class EventsResult
+    {
+        public int? AccountID;
+        public int? ClanID;
+        public IQueryable<Event> Events;
+        public string Filter;
+        public int Page;
+        public int PageCount;
+        public int PageSize;
+        public bool Partial;
+        public int? PlanetID;
+        public int? SpringBattleID;
+    }
+
+    #endregion
+}
