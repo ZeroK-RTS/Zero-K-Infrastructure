@@ -12,7 +12,7 @@ namespace ZkData
         public void DecayInfluence() {
             foreach (var planet in Planets.Where(x=>x.PlanetFactions.Count(y=>y.Influence > 0) > 1)) {
                 foreach (var pf in planet.PlanetFactions.Where(x=>x.Influence > 0)) {
-                    pf.Influence = Math.Min(0, pf.Influence - GlobalConst.InfluenceDecay);
+                    pf.Influence = Math.Max(0, pf.Influence - GlobalConst.InfluenceDecay);
                 }
             }
         }
