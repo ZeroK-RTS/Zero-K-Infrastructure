@@ -266,6 +266,7 @@ namespace ZkData
         }
 
 
+
         public static int GetXpForLevel(int level) {
             if (level < 0) return 0;
             return level*80 + 20*level*level;

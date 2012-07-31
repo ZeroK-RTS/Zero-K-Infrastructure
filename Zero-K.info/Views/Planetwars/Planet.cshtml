@@ -147,13 +147,41 @@
             } else if (isWarp) {
                 var avail = Math.Min(Global.Account.GetDropshipsAvailable(), Global.Account.GetWarpAvailable());
                 <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID, useWarp = true })' method="post">
-                    Warp to planet (@Html.PrintDropships(avail, Global.Account.Faction)):
+                    Warp to planet (@Html.PrintDropships(avail, Global.Account.Faction) @Html.PrintWarps(avail)):
                     <input type="text" name="count" />
                     <input type="submit" value="send" />
                 </form>
                 
             } else  {
                 <span>Dropships cannot get to this planet</span>  
+			}
+		}
+            <br/>
+        if (Global.Account.GetBombersAvailable() <= 0) {
+			<span>You have no free bombers - produce some</span>
+		} else {
+			
+			var isAccessible = Model.CanBombersAttack(Global.Account.Faction);
+            var isWarp = Model.CanBombersWarp(Global.Account.Faction) && Global.Account.GetWarpAvailable() >= 1; 
+			if (isAccessible) {
+                var avail = Global.Account.GetBombersAvailable();
+                <form action='@Url.Action("BombPlanet", "Planetwars", new { planetID = Model.PlanetID })' method="post">
+                    <span>Bomb planet (@Html.PrintBombers(avail)):</span>
+                    <input type="text" name="count" />
+                    <input type="submit" value="send" />
+                </form>
+                <br />
+
+            } else if (isWarp) {
+                var avail = Math.Min(Global.Account.GetBombersAvailable(), Global.Account.GetWarpAvailable());
+                <form action='@Url.Action("BombPlanet", "Planetwars", new { planetID = Model.PlanetID, useWarp = true })' method="post">
+                    Warp bombers (@Html.PrintBombers(avail) @Html.PrintWarps(avail)):
+                    <input type="text" name="count" />
+                    <input type="submit" value="send" />
+                </form>
+                
+            } else  {
+                <span>Bombers cannot get to this planet</span>  
 			}
 		}
 	}

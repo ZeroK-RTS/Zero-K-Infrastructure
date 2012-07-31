@@ -155,7 +155,9 @@ namespace ZeroKWeb.Controllers
                                                          ? treaty.FactionByProposingFactionID
                                                          : treaty.FactionByAcceptingFactionID;
                 treaty.AccountByProposingAccountID = acc;
-                treaty.TreatyState = TreatyState.Invalid;
+                treaty.FactionByProposingFactionID = acc.Faction;
+                treaty.TreatyState = TreatyState.Proposed;
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} modified treaty proposal {1} between {2} and {3}", acc, treaty, treaty.FactionByProposingFactionID, treaty.FactionByAcceptingFactionID));
                 db.SubmitAndMergeChanges();
                
                 return View("FactionTreatyDefinition", treaty);

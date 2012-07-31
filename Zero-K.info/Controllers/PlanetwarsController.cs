@@ -15,70 +15,84 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Planetwars/
         [Auth]
-        public ActionResult BombPlanet(int planetID) {
-            return Content("phail");
-            // hack
-            /*
-
+        public ActionResult BombPlanet(int planetID, int count, bool? useWarps) {
             var db = new ZkDataContext();
-            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-
-            var accessiblePlanets = Galaxy.DropshipAttackablePlanets(db, acc.ClanID.Value).Select(x => x.PlanetID).ToList();
-            var accessible = accessiblePlanets.Any(x => x == planetID);
-            var jumpgates = acc.GetJumpGateCapacity();
-            var avail = accessible ?Global.Account.DropshipCount : Math.Min(jumpgates, Global.Account.DropshipCount);
-            avail = Math.Min(avail, acc.GetDropshipCapacity());
-            var planet = db.Planets.Single(x => x.PlanetID == planetID);
+            Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            if (acc.Faction == null) return Content("Join some faction first");
+            Planet planet = db.Planets.Single(x => x.PlanetID == planetID);
+            bool accessible = useWarps == true ? planet.CanBombersWarp(acc.Faction) : planet.CanBombersAttack(acc.Faction);
+            if (!accessible) return Content("You cannot attack here");
             if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
-            if (!planet.TreatyAttackablePlanet(acc.Clan)) return Content("This is allied world");
 
-            if (!accessible && planet.PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectBlocksJumpgate == true)) return Content("Planetary defenses interdict your jumpgate");
+            if (count < 0) count = 0;
+            double avail = Math.Min(count, acc.GetBombersAvailable());
+            if (useWarps == true) avail = Math.Min(acc.GetWarpAvailable(), avail);
 
-            var defs = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
-            var bombNeed = GlobalConst.BaseShipsToBomb + defs / 3;
+            if (avail > 0) {
+                double defense = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
+                double effective = avail - defense;
+                if (avail < 0) return Content("Enemy defenses completely block your ships");
 
-            var structs = planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.IsIngameDestructible).ToList();
-            if (avail >= bombNeed)
-            {
-                acc.DropshipCount -= bombNeed;
-                if (structs.Count > 0)
-                {
-                    var s = structs[new Random().Next(structs.Count)];
-                    if (s.StructureType.IngameDestructionNewStructureTypeID != null)
-                    {
-                        db.PlanetStructures.DeleteOnSubmit(s);
-                        db.PlanetStructures.InsertOnSubmit(new PlanetStructure()
-                                                           {
-                                                               PlanetID = planet.PlanetID,
-                                                               StructureTypeID = s.StructureType.IngameDestructionNewStructureTypeID.Value,
-                                                               //IsDestroyed = true
-                                                           });
+                acc.SpendBombers(avail);
+                if (useWarps == true) acc.SpendWarps(avail);
+
+                var r = new Random();
+
+                double strucKillChance = effective*GlobalConst.BomberKillStructureChance;
+                int strucKillCount = Math.Floor(strucKillChance) + r.NextDouble() <= (strucKillChance - Math.Floor(strucKillChance)) ? 1 : 0;
+
+                double ipKillChance = effective*GlobalConst.BomberKillIpChance;
+                int ipKillCount = Math.Floor(ipKillChance) + r.NextDouble() <= (ipKillChance - Math.Floor(ipKillChance)) ? 1 : 0;
+
+                List<PlanetStructure> structs = planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.IsBomberDestructible).ToList();
+                var bombed = new List<PlanetStructure>();
+                while (structs.Count > 0 && strucKillCount > 0) {
+                    strucKillCount--;
+                    PlanetStructure s = structs[r.Next(structs.Count)];
+                    bombed.Add(s);
+                    structs.Remove(s);
+                    db.PlanetStructures.DeleteOnSubmit(s);
+                }
+
+                double ipKillAmmount = ipKillCount*GlobalConst.BomberKillIpAmmount;
+                if (ipKillAmmount > 0) {
+                    foreach (PlanetFaction pf in planet.PlanetFactions) {
+                        pf.Influence -= ipKillAmmount;
+                        if (pf.Influence < 0) pf.Influence = 0;
                     }
-                    else s.IsDestroyed = true;
+                }
 
-                    foreach (var entry in planet.AccountPlanets) entry.Influence = (int)(entry.Influence*0.97);
-                    db.Events.InsertOnSubmit(
-                        Global.CreateEvent("{0} bombed {1} planet {2} with {3} ships, destroying {4} and reducing influence by 3%",
-                                           acc,
-                                           planet.Account,
-                                           planet,
-                                           bombNeed,
-                                           s.StructureType));
+                var args = new List<object>
+                           {
+                               acc,
+                               acc.Faction,
+                               planet.Faction,
+                               planet,
+                               avail,
+                               defense,
+                               useWarps == true ? "They attacked suddenly using warp drives. " : "",
+                               ipKillAmmount
+                           };
+                args.AddRange(bombed);
+
+                string str = "{0} of {1} bombed {2} planet {3} using {4} bombers against {5} defenses. {6}. Ground armies lost {7} influence";
+                if (bombed.Count > 0) {
+                    str += " and ";
+                    int counter = 8;
+                    foreach (PlanetStructure b in bombed) {
+                        str += "{" + counter + "}" + ", ";
+                        counter++;
+                    }
+                    str += " were destroyed.";
                 }
-                else
-                {
-                    foreach (var entry in planet.AccountPlanets) entry.Influence = (int)(entry.Influence*0.90);
-                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} bombed {1} planet {2} with {3} ships, reducing influence by 10%",
-                                                                acc,
-                                                                planet.Account,
-                                                                planet,
-                                                                bombNeed));
-                }
+                else str += ".";
+
+                db.Events.InsertOnSubmit(Global.CreateEvent(str, args));
             }
-            db.SubmitChanges();
+
+            db.SubmitAndMergeChanges();
             SetPlanetOwners();
             return RedirectToAction("Planet", new { id = planetID });
-             * */
         }
 
         [Auth]
@@ -317,13 +331,15 @@ namespace ZeroKWeb.Controllers
                 pac.Dropships += cnt;
                 pac.DropshipsLastAdded = DateTime.UtcNow;
 
-                if (cnt > 0)
+                if (cnt > 0) {
                     db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} {2} dropships to {3} {4} {5}",
                                                                 acc,
                                                                 cnt,
                                                                 acc.Faction,
                                                                 planet.Faction,
-                                                                planet, useWarp == true? "using warp drives":""));
+                                                                planet,
+                                                                useWarp == true ? "using warp drives" : ""));
+                }
                 db.SubmitChanges();
             }
             return RedirectToAction("Planet", new { id = planetID });
