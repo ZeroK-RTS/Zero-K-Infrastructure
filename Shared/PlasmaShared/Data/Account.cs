@@ -127,14 +127,14 @@ namespace ZkData
                         
         public double GetBomberQuota()
         {
-            if (PwBombersProduced > PwBombersUsed) PwBombersUsed = PwBombersProduced;
+            if (PwBombersProduced < PwBombersUsed) PwBombersUsed = PwBombersProduced;
 
             return GetQuota(x => x.PwBombersProduced, x => x.PwBombersUsed, x => x.RightBomberQuota,x=>x.Bombers);
         }
 
         public double GetWarpQuota()
         {
-            if (PwWarpProduced > PwWarpUsed) PwWarpUsed = PwWarpProduced;
+            if (PwWarpProduced < PwWarpUsed) PwWarpUsed = PwWarpProduced;
 
             return GetQuota(x => x.PwWarpProduced, x => x.PwWarpUsed, x => x.RightWarpQuota, x=>x.Warps);
         }
@@ -162,7 +162,7 @@ namespace ZkData
             PwMetalUsed += count;
             Faction.Metal -= count;
 
-            if (PwMetalProduced < PwMetalUsed) PwMetalUsed = PwMetalProduced;
+            if (PwMetalUsed > PwMetalProduced) PwMetalUsed = PwMetalProduced;
         }
 
         public void ProduceMetal(double count)
@@ -170,7 +170,7 @@ namespace ZkData
             PwMetalProduced += count;
             Faction.Metal += count;
 
-            if (PwMetalProduced < PwMetalUsed) PwMetalUsed = PwMetalProduced;
+            if (PwMetalUsed > PwMetalProduced) PwMetalUsed = PwMetalProduced;
         }
 
         public void SpendBombers(double count)
@@ -178,7 +178,7 @@ namespace ZkData
             PwBombersUsed += count;
             Faction.Bombers -= count;
 
-            if (PwBombersProduced > PwBombersUsed) PwBombersUsed = PwBombersProduced;
+            if (PwBombersUsed > PwBombersProduced) PwBombersUsed = PwBombersProduced;
         }
 
         public void ProduceBombers(double count)
@@ -186,7 +186,7 @@ namespace ZkData
             PwBombersProduced += count;
             Faction.Bombers += count;
 
-            if (PwBombersProduced > PwBombersUsed) PwBombersUsed = PwBombersProduced;
+            if (PwBombersUsed > PwBombersProduced) PwBombersUsed = PwBombersProduced;
         }
 
         public void SpendWarps(double count)
@@ -194,7 +194,7 @@ namespace ZkData
             PwWarpUsed += count;
             Faction.Warps -= count;
 
-            if (PwWarpProduced > PwWarpUsed) PwWarpUsed = PwWarpProduced;
+            if (PwWarpUsed > PwWarpProduced) PwWarpUsed = PwWarpProduced;
         }
 
         public void ProduceWarps(double count)
@@ -202,7 +202,7 @@ namespace ZkData
             PwWarpProduced += count;
             Faction.Warps += count;
 
-            if (PwWarpProduced > PwWarpUsed) PwWarpUsed = PwWarpProduced;
+            if (PwWarpUsed > PwWarpProduced) PwWarpUsed = PwWarpProduced;
         }
 
         public double GetQuota(Func<Account, double> producedSelector, Func<Account, double> usedSelector, Func<RoleType, double?> quotaSelector, Func<Faction, double> factionResources)
