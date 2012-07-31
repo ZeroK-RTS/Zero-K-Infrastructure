@@ -209,8 +209,8 @@ namespace ZeroKWeb.SpringieInterface
                     ret.CanStart = false;
                     ret.Message = string.Format("Failed to balance {0}",
                                                 (clanwise
-                                                     ? "- too many people from same clan? Use !balance and !forcestart"
-                                                     : ". Use !random and !forcestart"));
+                                                     ? "- too many people from same clan? Try !balance and !forcestart"
+                                                     : ". Too many people from same faction"));
                     return ret;
                 }
                 
@@ -218,7 +218,7 @@ namespace ZeroKWeb.SpringieInterface
                     ret.CanStart = false;
                     ret.Message = string.Format("Failed to balance {0}",
                                                 (clanwise
-                                                     ? "- too many people from same clan? Use !balance and !forcestart"
+                                                     ? "- too many people from same clan? Try !balance and !forcestart"
                                                      : ". Use !random and !forcestart"));
                     return ret;
                 }

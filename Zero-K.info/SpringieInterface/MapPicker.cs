@@ -21,7 +21,7 @@ namespace ZeroKWeb.SpringieInterface
 			var res = new RecommendedMapResult();
 			using (var db = new ZkDataContext()) {
 				if (mode == AutohostMode.Planetwars) {
-				    var blockedMaps = Global.Nightwatch.GetPlanetWarsBattles().Select(x => x.MapName).ToList();
+				    var blockedMaps = Global.Nightwatch.GetPlanetWarsBattles().Where(x=>x.IsInGame).Select(x => x.MapName).ToList();
 					var playerAccounts = context.Players.Where(x => !x.IsSpectator).Select(x => db.Accounts.First(z => z.LobbyID == x.LobbyID)).ToList();
 
 				    var validAttackerFactionIDs = playerAccounts.Where(x => x.FactionID != null).GroupBy(x => x.FactionID).Select(x => x.Key).ToList();
