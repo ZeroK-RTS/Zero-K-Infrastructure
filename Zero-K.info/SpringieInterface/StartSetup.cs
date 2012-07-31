@@ -137,7 +137,7 @@ namespace ZeroKWeb.SpringieInterface
                                             var comdef = new LuaTable();
                                             commanderTypes[key] = comdef;
 
-                                            comdef["chassis"] = c.Unlock.Code + Math.Min(i,1);
+                                            comdef["chassis"] = c.Unlock.Code + Math.Max(i,1);
 
                                             var modules = new LuaTable();
                                             comdef["modules"] = modules;
