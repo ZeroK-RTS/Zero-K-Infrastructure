@@ -83,12 +83,14 @@ namespace ZkData
                                     entry = new PlanetFaction() { FactionID = kvp.Key.FactionID, PlanetID = planet.PlanetID };
                                     planet.PlanetFactions.Add(entry);
                              }
-                            if (entry.Influence < GlobalConst.InfluenceToCapturePlanet || kvp.Key == planet.Faction)
-                            {
-                                entry.Influence += kvp.Value*squeeze;
-                            } else {
+                            var gain = kvp.Value*squeeze;
+
+                            if (kvp.Key != planet.Faction && entry.Influence < GlobalConst.InfluenceToCapturePlanet && entry.Influence + gain >= GlobalConst.InfluenceToCapturePlanet) {
                                 entry.Influence = GlobalConst.InfluenceToCapturePlanet - 0.1;
-                            }
+                            } else entry.Influence += gain;
+
+                            if (entry.Influence > 100) entry.Influence = 100;
+
                         }
                     }
 
