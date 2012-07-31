@@ -11,7 +11,12 @@
         colorStyle = "color:" + Model.Faction.Color + ";";
     }
 }
-<h1 style="@colorStyle">Planet @Model.Name</h1>
+<h1 style="@colorStyle">
+    @if (Model.Faction != null) {
+        @Html.PrintFaction(Model.Faction)
+    } 
+    Planet @Model.Name
+</h1>
 <table>
 	<tr>
 		<td>
@@ -125,25 +130,30 @@
 		@Html.Partial("PlanetDropships", Model)
 		@if (Global.IsAccountAuthorized) {
 		if (Global.Account.GetDropshipsAvailable() <= 0) {
-			<span>You have no free starships - fight more battles</span>
+			<span>You have no free dropships - fight more battles</span>
 		} else {
 			
 			var isAccessible = Model.CanDropshipsAttack(Global.Account.Faction);
-			var defs = Model.PlanetStructures.Where(x => x.IsActive ).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
-			var bombNeed = 3 + defs / 3;
+            var isWarp = Model.CanDropshipsWarp(Global.Account.Faction) && Global.Account.GetWarpAvailable() >= 1; 
 			if (isAccessible) {
-				var avail = Global.Account.GetDropshipsAvailable();
-			<form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
-			Invade planet (@avail) @(!isAccessible ? "JUMPGATE" : ""):
-			<input type="text" name="count" />
-			<input type="submit" value="send" />
-			</form> <br />
-			
-		    if (avail >= bombNeed) {
-			    @Html.ActionLink("Bombard planet with " + bombNeed + " ships", "BombPlanet", new { planetID = Model.PlanetID, title="Destroys random structure and reduces 3% of influence. If there is no structure on planet, reduces 10% of influence. Bombing needs 3 + planet defense/3 ships. " })<br/>
-				}
-			} else {
-			<span>You cannot access this planet through link of wormholes</span>  
+                var avail = Global.Account.GetDropshipsAvailable();
+                <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID })' method="post">
+                    Invade planet (@Html.PrintDropships(avail, Global.Account.Faction)):
+                    <input type="text" name="count" />
+                    <input type="submit" value="send" />
+                </form>
+                <br />
+
+            } else if (isWarp) {
+                var avail = Math.Min(Global.Account.GetDropshipsAvailable(), Global.Account.GetWarpAvailable());
+                <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID, useWarp = true })' method="post">
+                    Warp to planet (@Html.PrintDropships(avail, Global.Account.Faction)):
+                    <input type="text" name="count" />
+                    <input type="submit" value="send" />
+                </form>
+                
+            } else  {
+                <span>Dropships cannot get to this planet</span>  
 			}
 		}
 	}

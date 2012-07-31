@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -51,8 +52,28 @@ namespace ZkData
 	    }
 
         public bool CanDropshipsAttack(Faction attacker) {
-            
-            if (Faction != null && (OwnerFactionID == attacker.FactionID || Faction.HasTreatyRight(attacker, x => x.EffectPreventDropshipAttack == true, this))) return false; // attacker allied cannot strike
+            return CheckLinkAttack(attacker, x => x.EffectPreventDropshipAttack == true, x => x.EffectAllowDropshipPass == true);
+        }
+
+        public bool CanDropshipsWarp(Faction attacker)
+        {
+            return CheckWarpAttack(attacker, x => x.EffectPreventDropshipAttack == true);
+        }
+
+        public bool CanBombersAttack(Faction attacker)
+        {
+            return CheckLinkAttack(attacker, x => x.EffectPreventBomberAttack == true, x => x.EffectAllowBomberPass == true);
+        }
+
+        public bool CanBombersWarp(Faction attacker)
+        {
+            return CheckWarpAttack(attacker, x => x.EffectPreventBomberAttack == true);
+        }
+
+
+        public bool CheckLinkAttack(Faction attacker, Func<TreatyEffectType, bool> preventingTreaty, Func<TreatyEffectType, bool> passageTreaty) {
+
+            if (Faction != null && (OwnerFactionID == attacker.FactionID || Faction.HasTreatyRight(attacker, preventingTreaty, this))) return false; // attacker allied cannot strike
 
             if (Faction == null && !attacker.Planets.Any()) return true; // attacker has no planets, planet neutral, allow strike
 
@@ -61,22 +82,31 @@ namespace ZkData
             foreach (var link in LinksByPlanetID1.Union(LinksByPlanetID2))
             {
                 var otherPlanet = PlanetID == link.PlanetID1 ? link.PlanetByPlanetID2 : link.PlanetByPlanetID1;
-                
+
                 // planet has wormhole active
-                if (otherPlanet.PlanetStructures.Any(x=>x.IsActive && x.StructureType.EffectAllowShipTraversal == true)) {
-                    
+                if (otherPlanet.PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectAllowShipTraversal == true))
+                {
+
                     // planet belongs to attacker or person who gave attacker rights to pass
-                    if (otherPlanet.Faction != null && (otherPlanet.OwnerFactionID == attacker.FactionID || attacker.HasTreatyRight(otherPlanet.Faction,x=>x.EffectAllowDropshipPass == true, otherPlanet))) {
+                    if (otherPlanet.Faction != null && (otherPlanet.OwnerFactionID == attacker.FactionID || attacker.HasTreatyRight(otherPlanet.Faction, passageTreaty, otherPlanet)))
+                    {
                         return true;
 
                     }
-
-
                 }
             }
             return false;
 
+        }
 
+
+        public bool CheckWarpAttack(Faction attacker, Func<TreatyEffectType, bool> preventingTreaty)
+        {
+
+            if (Faction != null && (OwnerFactionID == attacker.FactionID || Faction.HasTreatyRight(attacker, preventingTreaty, this))) return false; // attacker allied cannot strike
+            if (PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectBlocksJumpgate == true)) return false; // inhibitor active
+            
+            return true;
         }
 
 	}

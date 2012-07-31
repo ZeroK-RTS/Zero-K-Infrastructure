@@ -280,24 +280,26 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult SendDropships(int planetID, int count) {
+        public ActionResult SendDropships(int planetID, int count, bool? useWarp) {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (acc.Faction == null) return Content("Join a faction first");
             Planet planet = db.Planets.SingleOrDefault(x => x.PlanetID == planetID);
             int there = planet.PlanetFactions.Where(x => x.FactionID == acc.FactionID).Sum(x => (int?)x.Dropships) ?? 0;
-            bool accessible = planet.CanDropshipsAttack(acc.Faction);
+            bool accessible = useWarp == true ? planet.CanDropshipsWarp(acc.Faction) : planet.CanDropshipsAttack(acc.Faction);
             if (!accessible) return Content(string.Format("That planet cannot be attacked"));
+            if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
+
             int cnt = Math.Max(count, 0);
 
             int capa = acc.GetDropshipCapacity();
 
             if (cnt + there > capa) return Content("Too many ships, increase fleet size");
             cnt = Math.Min(cnt, (int)acc.GetDropshipsAvailable());
+            if (useWarp == true) cnt = Math.Min(cnt, (int)acc.GetWarpAvailable());
             if (cnt > 0) {
                 acc.SpendDropships(cnt);
-
-                if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot send ships");
+                if (useWarp == true) acc.SpendWarps(cnt);
 
                 if (planet.Account != null) {
                     AuthServiceClient.SendLobbyMessage(planet.Account,
@@ -316,12 +318,12 @@ namespace ZeroKWeb.Controllers
                 pac.DropshipsLastAdded = DateTime.UtcNow;
 
                 if (cnt > 0)
-                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} {2} dropships to {3} {4}",
+                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} sends {1} {2} dropships to {3} {4} {5}",
                                                                 acc,
                                                                 cnt,
                                                                 acc.Faction,
                                                                 planet.Faction,
-                                                                planet));
+                                                                planet, useWarp == true? "using warp drives":""));
                 db.SubmitChanges();
             }
             return RedirectToAction("Planet", new { id = planetID });
