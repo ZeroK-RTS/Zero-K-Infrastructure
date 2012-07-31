@@ -203,12 +203,24 @@ namespace ZeroKWeb.SpringieInterface
 
                 if (clanwise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference)) return new Balancer().LegacyBalance(teamCount, false, b, unmovablePlayers); // cbalance failed, rebalance using normal
 
+                var minSize = bestTeams.Min(x => x.Count);
+                var maxSize = bestTeams.Max(x => x.Count);
+                if (maxSize/(double)minSize > 2) {
+                    ret.CanStart = false;
+                    ret.Message = string.Format("Failed to balance {0}",
+                                                (clanwise
+                                                     ? "- too many people from same clan? Use !balance and !forcestart"
+                                                     : ". Use !random and !forcestart"));
+                    return ret;
+                }
+                
                 if (bestTeams == null) {
                     ret.CanStart = false;
                     ret.Message = string.Format("Failed to balance {0}",
                                                 (clanwise
                                                      ? "- too many people from same clan? Use !balance and !forcestart"
                                                      : ". Use !random and !forcestart"));
+                    return ret;
                 }
                 else {
                     if (unmovablePlayers == null || unmovablePlayers.Length == 0) bestTeams = bestTeams.Shuffle(); // permute when not unmovable players present
