@@ -241,7 +241,7 @@ namespace ZeroKWeb.SpringieInterface
                     text += ")";
 
                     ret.Message = String.Format("{0} players balanced {2} to {1} teams {3}. {4} combinations checked, spent {5}ms of CPU time",
-                                                accs.Count,
+                                                bestTeams.Sum(x=>x.Count),
                                                 teamCount,
                                                 clanwise ? "respecting clans" : "",
                                                 text,
