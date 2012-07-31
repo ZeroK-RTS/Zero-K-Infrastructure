@@ -123,7 +123,7 @@ namespace ZeroKWeb.SpringieInterface
                             var pc = new LuaTable();
 
                             if (!userCommandersBanned) {
-                                foreach (Commander c in user.Commanders.Where(x => x.Unlock != null)) {
+                                foreach (Commander c in user.Commanders.Where(x => x.Unlock != null && x.ProfileNumber <= GlobalConst.CommanderProfileCount)) {
                                     try {
                                         if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x => !Char.IsLetterOrDigit(x) && x != ' ')) c.Name = c.CommanderID.ToString();
                                         var morphTable = new LuaTable();
