@@ -27,10 +27,10 @@ namespace ZkData
             return effects.Any(x=>test(x.TreatyEffectType));
         }
 
-        public bool GaveTreatyRight(Faction reciever, Func<TreatyEffectType, bool> test, Planet planet = null)
+        public bool GaveTreatyRight(Planet planet, Func<TreatyEffectType, bool> test)
         {
-            if (planet == null && reciever == null) return false; // not targeted, must be either planet or faction or both
-            var effects = TreatyEffectsByGivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted  && (x.Planet == null || x.Planet == planet) &&(reciever == null || x.ReceivingFactionID == reciever.FactionID));
+            if (planet == null) return false; // not targeted, must be either planet or faction or both
+            var effects = TreatyEffectsByGivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted  && ((x.PlanetID == planet.PlanetID && (planet.OwnerFactionID == null|| planet.OwnerFactionID == x.ReceivingFactionID))||(x.PlanetID ==null&& x.ReceivingFactionID == planet.OwnerFactionID)));
             return effects.Any(x => test(x.TreatyEffectType));
         }
 

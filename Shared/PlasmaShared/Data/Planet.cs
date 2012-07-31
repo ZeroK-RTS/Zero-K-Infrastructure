@@ -73,7 +73,7 @@ namespace ZkData
 
         public bool CheckLinkAttack(Faction attacker, Func<TreatyEffectType, bool> preventingTreaty, Func<TreatyEffectType, bool> passageTreaty) {
 
-            if (OwnerFactionID == attacker.FactionID || attacker.GaveTreatyRight(Faction, preventingTreaty, this)) return false; // attacker allied cannot strike
+            if (OwnerFactionID == attacker.FactionID || attacker.GaveTreatyRight(this, preventingTreaty)) return false; // attacker allied cannot strike
 
             if (Faction == null && !attacker.Planets.Any()) return true; // attacker has no planets, planet neutral, allow strike
 
@@ -103,7 +103,7 @@ namespace ZkData
         public bool CheckWarpAttack(Faction attacker, Func<TreatyEffectType, bool> preventingTreaty)
         {
 
-            if (OwnerFactionID == attacker.FactionID || attacker.GaveTreatyRight(Faction, preventingTreaty, this)) return false; // attacker allied cannot strike
+            if (OwnerFactionID == attacker.FactionID || attacker.GaveTreatyRight(this, preventingTreaty)) return false; // attacker allied cannot strike
             if (PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectBlocksJumpgate == true)) return false; // inhibitor active
             
             return true;
