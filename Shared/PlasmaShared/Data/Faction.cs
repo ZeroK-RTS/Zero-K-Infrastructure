@@ -30,49 +30,49 @@ namespace ZkData
         public void SpendDropships(double count) {
             var pcnt = count / Accounts.Count();
             Dropships -= count;
-            foreach (var acc in Accounts) acc.PwDropshipsUsed += pcnt;
+            //foreach (var acc in Accounts) acc.PwDropshipsUsed += pcnt;
         }
 
         public void ProduceDropships(double count)
         {
             var pcnt = count / Accounts.Count();
             Dropships += count;
-            foreach (var acc in Accounts) acc.PwDropshipsProduced += pcnt;
+            //foreach (var acc in Accounts) acc.PwDropshipsProduced += pcnt;
         }
 
         public void SpendMetal(double count)
         {
             var pcnt = count / Accounts.Count();
             Metal -= count;
-            foreach (var acc in Accounts) acc.PwMetalUsed += pcnt;
+            //foreach (var acc in Accounts) acc.PwMetalUsed += pcnt;
         }
 
         public void ProduceMetal(double count)
         {
             var pcnt = count / Accounts.Count();
             Metal += count;
-            foreach (var acc in Accounts) acc.PwMetalProduced += pcnt;
+            //foreach (var acc in Accounts) acc.PwMetalProduced += pcnt;
         }
 
         public void ProduceWarps(double count)
         {
             var pcnt = count / Accounts.Count();
             Warps += count;
-            foreach (var acc in Accounts) acc.PwWarpProduced += pcnt;
+            //foreach (var acc in Accounts) acc.PwWarpProduced += pcnt;
         }
 
         public void SpendWarps(double count)
         {
             var pcnt = count / Accounts.Count();
             Warps -= count;
-            foreach (var acc in Accounts) acc.PwWarpUsed += pcnt;
+            //foreach (var acc in Accounts) acc.PwWarpUsed += pcnt;
         }
 
         public void SpendBombers(double count)
         {
             var pcnt = count / Accounts.Count();
             Bombers -= count;
-            foreach (var acc in Accounts) acc.PwBombersUsed += pcnt;
+            //foreach (var acc in Accounts) acc.PwBombersUsed += pcnt;
         }
 
         public void ProduceBombers(double count)
@@ -80,7 +80,7 @@ namespace ZkData
             var pcnt = count / Accounts.Count();
 
             Bombers += count;
-            foreach (var acc in Accounts) acc.PwBombersProduced += pcnt;
+            //foreach (var acc in Accounts) acc.PwBombersProduced += pcnt;
         }
 
         public List<FactionUnlockEntry>  GetFactionUnlocks() {
