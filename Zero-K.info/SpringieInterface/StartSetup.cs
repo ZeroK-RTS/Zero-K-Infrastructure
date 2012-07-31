@@ -128,14 +128,16 @@ namespace ZeroKWeb.SpringieInterface
                                         if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x => !Char.IsLetterOrDigit(x) && x != ' ')) c.Name = c.CommanderID.ToString();
                                         var morphTable = new LuaTable();
                                         pc["[\"" + c.Name + "\"]"] = morphTable;
-                                        for (int i = 1; i <= GlobalConst.NumCommanderLevels; i++) {
+
+                                        
+                                        for (int i = 0; i <= GlobalConst.NumCommanderLevels; i++) {
                                             string key = string.Format("c{0}_{1}_{2}", user.AccountID, c.CommanderID, i);
                                             morphTable.Add(key);
 
                                             var comdef = new LuaTable();
                                             commanderTypes[key] = comdef;
 
-                                            comdef["chassis"] = c.Unlock.Code + i;
+                                            comdef["chassis"] = c.Unlock.Code + Math.Min(i,1);
 
                                             var modules = new LuaTable();
                                             comdef["modules"] = modules;
@@ -145,8 +147,8 @@ namespace ZeroKWeb.SpringieInterface
                                             comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
 
                                             foreach (Unlock m in
-                                                c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(
-                                                    x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
+                                                    c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(
+                                                        x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
                                         }
                                     } catch (Exception ex) {
                                         throw new ApplicationException(
