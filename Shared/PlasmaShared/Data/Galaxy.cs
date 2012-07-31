@@ -57,9 +57,7 @@ namespace ZkData
                             if (otherPlanet.Faction != planet.Faction && hasInhibitor) continue;
 
                             // diplomacy check
-                            if (planet.Faction == null || !planet.Faction.HasTreatyRight(otherPlanet.Faction, x => x.EffectPreventInfluenceSpread == true, planet)) {
-
-
+                            if (!otherPlanet.Faction.GaveTreatyRight(planet.Faction, x=>x.EffectPreventInfluenceSpread == true, planet)) {
                                 var spread =
                                     otherPlanet.PlanetStructures.Where(x => x.IsActive).Sum(x => (double?)(x.StructureType.EffectInfluenceSpread ?? 0)) ??
                                     0;

@@ -27,6 +27,13 @@ namespace ZkData
             return effects.Any(x=>test(x.TreatyEffectType));
         }
 
+        public bool GaveTreatyRight(Faction reciever, Func<TreatyEffectType, bool> test, Planet planet = null)
+        {
+            var effects = TreatyEffectsByGivingFactionID.Where(x => x.FactionTreaty.TreatyState == TreatyState.Accepted  && (x.Planet == null || x.Planet == planet) &&(reciever == null || x.ReceivingFactionID == reciever.FactionID));
+            return effects.Any(x => test(x.TreatyEffectType));
+        }
+
+
         public void SpendDropships(double count) {
             var pcnt = count / Accounts.Count();
             Dropships -= count;
