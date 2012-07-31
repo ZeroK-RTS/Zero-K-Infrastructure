@@ -86,6 +86,8 @@ namespace ZkData
                             if (entry.Influence < GlobalConst.InfluenceToCapturePlanet || kvp.Key == planet.Faction)
                             {
                                 entry.Influence += kvp.Value*squeeze;
+                            } else {
+                                entry.Influence = GlobalConst.InfluenceToCapturePlanet - 0.1;
                             }
                         }
                     }

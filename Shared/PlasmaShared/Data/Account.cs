@@ -114,20 +114,28 @@ namespace ZkData
 
 
         public double GetDropshipQuota() {
+            if (PwDropshipsProduced < PwDropshipsUsed) PwDropshipsUsed = PwDropshipsProduced;
+
             return GetQuota(x => x.PwDropshipsProduced, x => x.PwDropshipsUsed, x => x.RightDropshipQuota, x=>x.Dropships);
         }
 
         public double GetMetalQuota() {
+            if (PwMetalProduced < PwMetalUsed) PwMetalUsed = PwMetalProduced;
+
             return GetQuota(x => x.PwMetalProduced, x => x.PwMetalUsed, x => x.RightMetalQuota, x=>x.Metal);
         }
                         
         public double GetBomberQuota()
         {
+            if (PwBombersProduced > PwBombersUsed) PwBombersUsed = PwBombersProduced;
+
             return GetQuota(x => x.PwBombersProduced, x => x.PwBombersUsed, x => x.RightBomberQuota,x=>x.Bombers);
         }
 
         public double GetWarpQuota()
         {
+            if (PwWarpProduced > PwWarpUsed) PwWarpUsed = PwWarpProduced;
+
             return GetQuota(x => x.PwWarpProduced, x => x.PwWarpUsed, x => x.RightWarpQuota, x=>x.Warps);
         }
 
@@ -135,11 +143,15 @@ namespace ZkData
         public void SpendDropships(double count) {
             PwDropshipsUsed += count;
             Faction.Dropships -= count;
+
+            if (PwDropshipsProduced < PwDropshipsUsed) PwDropshipsUsed = PwDropshipsProduced;
         }
 
         public void ProduceDropships(double count) {
             PwDropshipsProduced += count;
             Faction.Dropships += count;
+
+            if (PwDropshipsProduced < PwDropshipsUsed) PwDropshipsUsed = PwDropshipsProduced;
         }
 
        
@@ -149,36 +161,48 @@ namespace ZkData
         {
             PwMetalUsed += count;
             Faction.Metal -= count;
+
+            if (PwMetalProduced < PwMetalUsed) PwMetalUsed = PwMetalProduced;
         }
 
         public void ProduceMetal(double count)
         {
             PwMetalProduced += count;
             Faction.Metal += count;
+
+            if (PwMetalProduced < PwMetalUsed) PwMetalUsed = PwMetalProduced;
         }
 
         public void SpendBombers(double count)
         {
             PwBombersUsed += count;
             Faction.Bombers -= count;
+
+            if (PwBombersProduced > PwBombersUsed) PwBombersUsed = PwBombersProduced;
         }
 
         public void ProduceBombers(double count)
         {
             PwBombersProduced += count;
             Faction.Bombers += count;
+
+            if (PwBombersProduced > PwBombersUsed) PwBombersUsed = PwBombersProduced;
         }
 
         public void SpendWarps(double count)
         {
             PwWarpUsed += count;
             Faction.Warps -= count;
+
+            if (PwWarpProduced > PwWarpUsed) PwWarpUsed = PwWarpProduced;
         }
 
         public void ProduceWarps(double count)
         {
             PwWarpProduced += count;
             Faction.Warps += count;
+
+            if (PwWarpProduced > PwWarpUsed) PwWarpUsed = PwWarpProduced;
         }
 
         public double GetQuota(Func<Account, double> producedSelector, Func<Account, double> usedSelector, Func<RoleType, double?> quotaSelector, Func<Faction, double> factionResources)
