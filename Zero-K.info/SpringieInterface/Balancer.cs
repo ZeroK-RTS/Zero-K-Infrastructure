@@ -21,6 +21,7 @@ namespace ZeroKWeb.SpringieInterface
     public class Balancer
     {
         const double MaxCbalanceDifference = 150;
+        const double MaxPwEloDifference = 200;
         readonly List<BalanceTeam> teams = new List<BalanceTeam>();
         List<BalanceItem> balanceItems;
 
@@ -155,6 +156,7 @@ namespace ZeroKWeb.SpringieInterface
             var ret = new BalanceTeamsResult();
 
             try {
+                
                 ret.CanStart = true;
                 ret.Players = b.Players.ToList();
 
@@ -206,14 +208,25 @@ namespace ZeroKWeb.SpringieInterface
                 var minSize = bestTeams.Min(x => x.Count);
                 var maxSize = bestTeams.Max(x => x.Count);
                 if (maxSize/(double)minSize > 2) {
+                    if (clanwise) return new Balancer().LegacyBalance(teamCount, false, b, unmovablePlayers); // cbalance failed, rebalance using normal
+                    
                     ret.CanStart = false;
-                    ret.Message = string.Format("Failed to balance {0}",
-                                                (clanwise
-                                                     ? "- too many people from same clan? Try !balance and !forcestart"
-                                                     : ". Too many people from same faction"));
+                    ret.Message = string.Format("Failed to balance - too many people from same faction");
                     return ret;
                 }
-                
+
+                if (unmovablePlayers != null && unmovablePlayers.Length> 0) {
+                    var minElo = bestTeams.Min(x => x.AvgElo);
+                    var maxElo = bestTeams.Max(x => x.AvgElo);
+                    if (maxElo - minElo > MaxPwEloDifference) {
+                        ret.CanStart = false;
+                        ret.Message = string.Format("Team difference is too big - win chance {0}% - spectate some or wait for more people",
+                                                    Utils.GetWinChancePercent(maxElo - minElo));
+                        return ret;
+                    }
+
+                }
+
                 if (bestTeams == null) {
                     ret.CanStart = false;
                     ret.Message = string.Format("Failed to balance {0}",
