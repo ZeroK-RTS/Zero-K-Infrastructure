@@ -235,8 +235,8 @@ namespace ZeroKWeb.SpringieInterface
                 } else {
                     var sumOthers = planet.PlanetFactions.Where(x => x.Faction != winner).Sum(x => (double?)x.Influence) ?? 0;
                     if (sumOthers + entry.Influence > 100) {
-                        var exces = 100 - sumOthers - entry.Influence;
-                        foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence -= pf.Influence/sumOthers*exces;
+                        var excess = sumOthers + entry.Influence - 100;
+                        foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence -= pf.Influence/sumOthers*excess;
                     }
                 }
 
