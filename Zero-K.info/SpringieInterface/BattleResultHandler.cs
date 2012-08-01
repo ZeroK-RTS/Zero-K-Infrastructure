@@ -214,7 +214,7 @@ namespace ZeroKWeb.SpringieInterface
                 double shipBonus = winner == attacker ? (totalShips - planetDefs)*GlobalConst.InfluencePerShip : 0;
                 double techBonus = winner.GetFactionUnlocks().Count()*GlobalConst.InfluencePerTech;
                 int playerBonus = involvedCount*GlobalConst.InfluencePerInvolvedPlayer;
-                double ccMalus = wasCcDestroyed ? -influence*GlobalConst.InfluenceCcKilledMultiplier : 0;
+                double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus + playerBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
 
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
 
