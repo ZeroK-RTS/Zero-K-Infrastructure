@@ -1,7 +1,19 @@
 ﻿@using ZkData
 @using ZeroKWeb
 @model Planet
-<b>@Model.Name</b>
+@{
+    var colorStyle = "";
+    if (Model.Faction != null)
+    {
+        colorStyle = "color:" + Model.Faction.Color + ";";
+    }
+}
+<b style="@(colorStyle)">
+    @if (Model.Faction != null) {
+              @Html.PrintFaction(Model.Faction, false)
+    } 
+    @Model.Name
+</b>
 <table><tr>
 <td>@Html.Partial("PlanetIcon", Model)</td>
 <td>
