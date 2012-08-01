@@ -87,7 +87,7 @@ namespace ZeroKWeb.Controllers
                 }
                 else str += ".";
 
-                db.Events.InsertOnSubmit(Global.CreateEvent(str, args));
+                db.Events.InsertOnSubmit(Global.CreateEvent(str, args.ToArray()));
             }
 
             db.SubmitAndMergeChanges();
