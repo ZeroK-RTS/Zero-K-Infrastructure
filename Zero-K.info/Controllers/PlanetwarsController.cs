@@ -73,7 +73,7 @@ namespace ZeroKWeb.Controllers
                                useWarps == true ? "They attacked suddenly using warp drives. " : "",
                                ipKillAmmount
                            };
-                args.AddRange(bombed);
+                args.AddRange(bombed.Select(x=>x.StructureType));
 
                 string str = "{0} of {1} bombed {2} planet {3} using {4} bombers against {5} defenses. {6}. Ground armies lost {7} influence";
                 if (bombed.Count > 0) {
