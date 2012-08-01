@@ -422,18 +422,31 @@ namespace ZeroKWeb.Controllers
                     foreach (AccountPlanet acp in planet.AccountPlanets) acp.AttackPoints = 0;
 
                     if (newFaction == null) {
+                        Account account = planet.Account;
+                        String accountName = "no-one";
+                        Clan clan = null;
+                        String clanName = "no clan";
+                        if (account != null)
+                        {
+                            accountName = account.Name;
+                            clan = planet.Account != null ? planet.Account.Clan : null;
+                            if (clan != null) clanName = planet.Account.Clan.ClanName;
+                        }
+
                         db.Events.InsertOnSubmit(Global.CreateEvent("{0} planet {1} owned by {2} {3} was abandoned. {4}",
                                                                     planet.Faction,
                                                                     planet,
-                                                                    planet.Account,
-                                                                    planet.Account.Clan,
+                                                                    accountName,
+                                                                    clanName,
                                                                     sb));
-
-                        AuthServiceClient.SendLobbyMessage(planet.Account,
-                                                           string.Format(
-                                                               "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
-                                                               planet.Name,
-                                                               planet.PlanetID));
+                        if (account != null)
+                        {
+                            AuthServiceClient.SendLobbyMessage(planet.Account,
+                                                               string.Format(
+                                                                   "Warning, you just lost planet {0}!! http://zero-k.info/PlanetWars/Planet/{1}",
+                                                                   planet.Name,
+                                                                   planet.PlanetID));
+                        }
                     }
                     else {
                         // new real owner
