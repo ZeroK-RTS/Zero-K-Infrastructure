@@ -39,10 +39,10 @@ namespace ZeroKWeb.Controllers
                 var r = new Random();
 
                 double strucKillChance = effective*GlobalConst.BomberKillStructureChance;
-                int strucKillCount = Math.Floor(strucKillChance + r.NextDouble());
+                int strucKillCount = (int)Math.Floor(strucKillChance + r.NextDouble());
 
                 double ipKillChance = effective*GlobalConst.BomberKillIpChance;
-                int ipKillCount = Math.Floor(ipKillChance + r.NextDouble());
+                int ipKillCount = (int)Math.Floor(ipKillChance + r.NextDouble());
 
                 List<PlanetStructure> structs = planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.IsBomberDestructible).ToList();
                 var bombed = new List<PlanetStructure>();
