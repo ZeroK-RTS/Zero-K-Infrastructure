@@ -15,18 +15,18 @@ namespace ZeroKWeb.Controllers
         //
         // GET: /Planetwars/
         [Auth]
-        public ActionResult BombPlanet(int planetID, int count, bool? useWarps) {
+        public ActionResult BombPlanet(int planetID, int count, bool? useWarp) {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (acc.Faction == null) return Content("Join some faction first");
             Planet planet = db.Planets.Single(x => x.PlanetID == planetID);
-            bool accessible = useWarps == true ? planet.CanBombersWarp(acc.Faction) : planet.CanBombersAttack(acc.Faction);
+            bool accessible = (useWarp == true) ? planet.CanBombersWarp(acc.Faction) : planet.CanBombersAttack(acc.Faction);
             if (!accessible) return Content("You cannot attack here");
             if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
 
             if (count < 0) count = 0;
             double avail = Math.Min(count, acc.GetBombersAvailable());
-            if (useWarps == true) avail = Math.Min(acc.GetWarpAvailable(), avail);
+            if (useWarp == true) avail = Math.Min(acc.GetWarpAvailable(), avail);
 
             if (avail > 0) {
                 double defense = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
@@ -34,7 +34,7 @@ namespace ZeroKWeb.Controllers
                 if (avail < 0) return Content("Enemy defenses completely block your ships");
 
                 acc.SpendBombers(avail);
-                if (useWarps == true) acc.SpendWarps(avail);
+                if (useWarp == true) acc.SpendWarps(avail);
 
                 var r = new Random();
 
@@ -70,7 +70,7 @@ namespace ZeroKWeb.Controllers
                                planet,
                                avail,
                                defense,
-                               useWarps == true ? "They attacked suddenly using warp drives. " : "",
+                               useWarp == true ? "They attacked suddenly using warp drives. " : "",
                                ipKillAmmount
                            };
                 args.AddRange(bombed.Select(x=>x.StructureType));
