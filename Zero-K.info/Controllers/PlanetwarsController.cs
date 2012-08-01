@@ -56,7 +56,7 @@ namespace ZeroKWeb.Controllers
 
                 double ipKillAmmount = ipKillCount*GlobalConst.BomberKillIpAmmount;
                 if (ipKillAmmount > 0) {
-                    foreach (PlanetFaction pf in planet.PlanetFactions) {
+                    foreach (PlanetFaction pf in planet.PlanetFactions.Where(x=>x.FactionID != acc.FactionID)) {
                         pf.Influence -= ipKillAmmount;
                         if (pf.Influence < 0) pf.Influence = 0;
                     }
