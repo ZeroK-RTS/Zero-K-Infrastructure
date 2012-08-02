@@ -138,6 +138,7 @@ namespace ZeroKWeb.Controllers
                 if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
                 StructureType structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
+                Faction faction = planet.Faction;
                 if (structureType == null) return Content("Structure type does not exist.");
                 if (!structureType.IsBuildable) return Content("Structure is not buildable.");
 
@@ -152,8 +153,9 @@ namespace ZeroKWeb.Controllers
                 db.PlanetStructures.DeleteOnSubmit(toDestroy);
                 var refund = toDestroy.StructureType.Cost*GlobalConst.SelfDestructRefund;
                 if (toDestroy.Account != null) toDestroy.Account.ProduceMetal(refund);
-                db.SubmitChanges();
+                else faction.ProduceMetal(refund);
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} has demolished a {1} on {2}.", Global.Account, toDestroy.StructureType, planet));
+                db.SubmitChanges();
                 SetPlanetOwners(db);
             }
 
