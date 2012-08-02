@@ -40,8 +40,19 @@ namespace ZeroKWeb.Controllers
             db.AccountRoles.DeleteAllOnSubmit(acc.AccountRolesByAccountID);
             acc.ResetQuotas();
 
+            foreach (var ps in acc.PlanetStructures) {
+                ps.OwnerAccountID = null;
+            }
+
+            foreach (var planet in acc.Planets) {
+                planet.OwnerAccountID = null;
+                planet.OwnerFactionID = null;
+            }
+
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} leaves faction {1}", acc, acc.Faction));
             db.SubmitChanges();
+            PlanetwarsController.SetPlanetOwners(db);
+            
             db.Dispose();
             db = new ZkDataContext();
             Account acc2 = db.Accounts.Single(x => x.AccountID == Global.AccountID);

@@ -362,6 +362,12 @@ namespace ZeroKWeb.Controllers
 
             Galaxy gal = db.Galaxies.Single(x => x.IsDefault);
             foreach (Planet planet in gal.Planets) {
+                if (planet.OwnerAccountID != null) foreach (var ps in planet.PlanetStructures.Where(x => x.OwnerAccountID == null)) {
+                    ps.OwnerAccountID = planet.OwnerAccountID;
+                    ps.IsActive = false;
+                }
+
+
                 PlanetFaction best = planet.PlanetFactions.OrderByDescending(x => x.Influence).FirstOrDefault();
                 Faction newFaction = planet.Faction;
                 Account newAccount = planet.Account;
