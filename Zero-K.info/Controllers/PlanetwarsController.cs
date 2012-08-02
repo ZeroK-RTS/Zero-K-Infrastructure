@@ -147,11 +147,12 @@ namespace ZeroKWeb.Controllers
 
                 List<PlanetStructure> list = planet.PlanetStructures.Where(x => x.StructureTypeID == structureTypeID).ToList();
                 PlanetStructure toDestroy = list[0];
-                if (toDestroy.OwnerAccountID != Global.AccountID) return Content("Structure is not under your control.");
+                var canDestroy = toDestroy.OwnerAccountID == acc.AccountID || toDestroy.OwnerAccountID == planet.OwnerAccountID;
+                if (!canDestroy) return Content("Structure is not under your control.");
                 db.PlanetStructures.DeleteOnSubmit(toDestroy);
-
+                var refund = toDestroy.StructureType.Cost*GlobalConst.SelfDestructRefund;
+                if (toDestroy.Account != null) toDestroy.Account.ProduceMetal(refund);
                 db.SubmitChanges();
-
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} has demolished a {1} on {2}.", Global.Account, toDestroy.StructureType, planet));
                 SetPlanetOwners(db);
             }

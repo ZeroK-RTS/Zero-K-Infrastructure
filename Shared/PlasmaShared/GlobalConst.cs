@@ -35,6 +35,7 @@
         public const double InfluencePerTech = 0.5;
         public const double InfluenceDecay = 1;
 	    public const double InfluenceToCapturePlanet = 50.1;
+	    public const double SelfDestructRefund = 0.5;
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
         public const int MaxClanSkilledSize = 16;

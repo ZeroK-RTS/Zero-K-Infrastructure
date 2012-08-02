@@ -251,7 +251,8 @@ namespace ZeroKWeb.SpringieInterface
                 } while (true);
 
                 // find first bin that cannot be started due to lack of people and remove it 
-                todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.Config.MinToJuggle);
+                todel = bins.OrderBy(x => BinOrder.IndexOf(x.Mode)).FirstOrDefault(x => x.Assigned.Count < x.Config.MinToJuggle && x.ManuallyJoined.Count < (x.Config.MergeSmallerThan ??0));
+                
 
                 if (todel != null) {
                     bins.Remove(todel);
