@@ -471,12 +471,12 @@ namespace System.Web.Mvc
 
         public static MvcHtmlString PrintBombers(this HtmlHelper helper, double? count)
         {
-            return new MvcHtmlString(string.Format("<span>{0}<img src='{1:0.#}' class='icon20'/></span>", count ?? 0, GlobalConst.BomberIcon));
+            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", count ?? 0, GlobalConst.BomberIcon));
         }
 
         public static MvcHtmlString PrintWarps(this HtmlHelper helper, double? count)
         {
-            return new MvcHtmlString(string.Format("<span>{0:0.#}<img src='{1}' class='icon20'/></span>", count ?? 0, GlobalConst.WarpIcon));
+            return new MvcHtmlString(string.Format("<span>{0}<img src='{1}' class='icon20'/></span>", count ?? 0, GlobalConst.WarpIcon));
         }
 
         public static MvcHtmlString PrintDropships(this HtmlHelper helper, double? count, Faction faction)
