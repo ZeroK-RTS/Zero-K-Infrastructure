@@ -216,7 +216,7 @@
             @Html.DisplayFor(x=>structure.StructureType)
             </div>
     	}
-		@if (Model.Account != null && Global.FactionID == Model.OwnerFactionID) {
+		@if (Global.FactionID == Model.OwnerFactionID) {
 			<h2>Construction</h2>
       
 
