@@ -1,4 +1,5 @@
-﻿@using ZkData
+﻿@using PlasmaShared
+@using ZkData
 @using ZeroKWeb
 @model Planet
 @{
@@ -198,9 +199,19 @@
                         <a href="@Url.Action("ConfiscateStructure","Planetwars", new{planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID})"><span> -confiscate (@Html.PrintMetal(structure.StructureType.Cost))</span></a>
                         
                     } else {
-                        <span> - confiscate (@Html.PrintMetal(structure.StructureType.Cost))</span>
+                        <span> confiscate (@Html.PrintMetal(structure.StructureType.Cost))</span>
                     }
 
+                }
+                <br/>
+                @if (Global.Account != null && Global.Account.CanSetPriority(structure)) {
+                    var priority = structure.EnergyPriority;
+                    <form method="POST" action="@Url.Action("SetEnergyPriority", new{planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID})">
+                        Energy priority: @Html.EditorFor(x=>priority,"Enum") <input type="submit" value="change"/>
+                    </form>
+                }
+                else {
+                    <span>Energy priority: @structure.EnergyPriority.Description()</span>
                 }
             @Html.DisplayFor(x=>structure.StructureType)
             </div>

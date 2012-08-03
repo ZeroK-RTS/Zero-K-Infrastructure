@@ -57,7 +57,7 @@ namespace ZeroKWeb.Controllers
                             Account previous = null;
                             if (p.RoleType.IsOnePersonOnly)
                             {
-                                var entries = db.AccountRoles.Where(x => x.RoleTypeID == p.RoleTypeID && x.Faction == p.Faction && x.Clan == p.Clan).ToList();
+                                var entries = db.AccountRoles.Where(x => x.RoleTypeID == p.RoleTypeID && (p.RoleType.IsClanOnly ? x.ClanID == p.RestrictClanID : x.FactionID == p.RestrictFactionID)).ToList();
 
                                 if (entries.Any())
                                 {

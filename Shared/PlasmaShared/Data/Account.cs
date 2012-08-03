@@ -102,6 +102,13 @@ namespace ZkData
             else return 0;
         }
 
+        public bool CanSetPriority(PlanetStructure ps) {
+            if (Faction == null || ps.Account == null) return false;
+            if (ps.Account.FactionID == FactionID && HasFactionRight(x => x.RightSetEnergyPriority)) return true;
+            if (ClanID != null && ps.Account.ClanID == ClanID && HasClanRight(x => x.RightSetEnergyPriority)) return true;
+            return false;
+        }
+
 
         public bool HasClanRight(Func<RoleType, bool> test) {
             return AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x=>x.RoleType).Any(test);

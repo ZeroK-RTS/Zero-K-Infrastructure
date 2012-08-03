@@ -571,7 +571,7 @@ namespace ZeroKWeb.Controllers
                 if (role.IsOnePersonOnly) {
                     List<AccountRole> entries =
                         db.AccountRoles.Where(
-                            x => x.RoleTypeID == role.RoleTypeID && (x.FactionID == myAccount.FactionID || x.ClanID == myAccount.ClanID)).ToList();
+                        x => x.RoleTypeID == role.RoleTypeID && (role.IsClanOnly ? x.ClanID == myAccount.ClanID : x.FactionID == myAccount.FactionID)).ToList();
                     if (entries.Any()) {
                         previous = entries.First().AccountByAccountID;
                         db.AccountRoles.DeleteAllOnSubmit(entries);
@@ -638,6 +638,19 @@ namespace ZeroKWeb.Controllers
 
                 return RedirectToAction("Planet", new { id = planetID });
             }
+        }
+
+        [Auth]
+        public ActionResult SetEnergyPriority(int planetID, int structuretypeID, EnergyPriority priority) {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            var planet = db.Planets.Single(x => x.PlanetID == planetID);
+            var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structuretypeID);
+            if (!acc.CanSetPriority(structure)) return Content("Cannot set priority");
+            structure.EnergyPriority = priority;
+            db.Events.InsertOnSubmit(Global.CreateEvent("{0} changed energy priority of {1} on {2} to {3}", acc, structure.StructureType, planet, priority));
+            db.SubmitAndMergeChanges();
+            return RedirectToAction("Planet", new { id = planet.PlanetID });
         }
     }
 

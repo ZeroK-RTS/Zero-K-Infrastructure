@@ -373,6 +373,7 @@
     <Content Include="Views\Shared\DisplayTemplates\TreatyEffect.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\FactionTreaty.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\StructureType.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Enum.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

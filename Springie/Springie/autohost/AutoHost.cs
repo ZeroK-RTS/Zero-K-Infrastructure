@@ -897,7 +897,7 @@ namespace Springie.autohost
         }
 
 
-        const int GameDelayMinDuration = 6 * 60;
+        const int GameDelayMinDuration = 5 * 60;
         const int GameDelayRestTime = 3 * 60;
 
         void spring_SpringExited(object sender, EventArgs e)
