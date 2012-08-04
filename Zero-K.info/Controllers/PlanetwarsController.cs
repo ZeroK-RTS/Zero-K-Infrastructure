@@ -29,9 +29,9 @@ namespace ZeroKWeb.Controllers
             if (useWarp == true) avail = Math.Min(acc.GetWarpAvailable(), avail);
 
             if (avail > 0) {
-                double defense = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0;
+                double defense = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense) ?? 0;
                 double effective = avail - defense;
-                if (effective < 0) return Content("Enemy defenses completely block your ships");
+                if (effective <= 0) return Content("Enemy defenses completely block your ships");
 
                 acc.SpendBombers(avail);
                 if (useWarp == true) acc.SpendWarps(avail);
