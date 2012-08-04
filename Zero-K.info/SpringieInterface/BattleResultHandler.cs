@@ -258,6 +258,7 @@ namespace ZeroKWeb.SpringieInterface
             List<Account> winners =
                 sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
             double metalPerWinner = GlobalConst.BaseMetalPerBattle/winners.Count;
+            if (wasCcDestroyed) metalPerWinner *= GlobalConst.CcDestroyedMetalMultWinners;
             foreach (Account w in winners) {
                 w.ProduceMetal(metalPerWinner);
 
@@ -269,6 +270,25 @@ namespace ZeroKWeb.SpringieInterface
                                             w.Clan != null ? (object)w.Clan : "no clan");
                 db.Events.InsertOnSubmit(ev);
                 //text.AppendLine(ev.PlainText);
+            }
+
+            if (wasCcDestroyed) {
+                List<Account> losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
+                double metalPerLoser = GlobalConst.BaseMetalPerBattle * (1.0- GlobalConst.CcDestroyedMetalMultWinners) / losers.Count;
+                foreach (Account w in losers)
+                {
+                    w.ProduceMetal(metalPerLoser);
+
+                    var ev = Global.CreateEvent("{0} gained {1} metal from killing CC in battle {2}",
+                                                w,
+                                                Math.Floor(metalPerLoser),
+                                                sb,
+                                                planet,
+                                                w.Clan != null ? (object)w.Clan : "no clan");
+                    db.Events.InsertOnSubmit(ev);
+                    //text.AppendLine(ev.PlainText);
+                }   
+
             }
 
             // remove dropships
