@@ -56,7 +56,7 @@
 }
 
 <h2>Diplomacy</h2>
-@if (Global.Account != null && Global.FactionID == f.FactionID && Global.Account.HasFactionRight(x => x.RightDiplomacy)) {
+@if (Global.Account != null && Global.Account.HasFactionRight(x => x.RightDiplomacy)) {
     @Html.ActionLink("(propose new treaty)", "NewTreaty")
 }
 <br/>
