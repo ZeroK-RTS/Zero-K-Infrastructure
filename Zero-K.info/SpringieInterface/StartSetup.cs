@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using PlasmaShared;
 using ZkData;
@@ -125,7 +126,11 @@ namespace ZeroKWeb.SpringieInterface
                             if (!userCommandersBanned) {
                                 foreach (Commander c in user.Commanders.Where(x => x.Unlock != null && x.ProfileNumber <= GlobalConst.CommanderProfileCount)) {
                                     try {
-                                        if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x => !Char.IsLetterOrDigit(x) && x != ' ')) c.Name = c.CommanderID.ToString();
+                                        if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x => !Char.IsLetterOrDigit(x)
+                                                && !(CharUnicodeInfo.GetUnicodeCategory(x) >= UnicodeCategory.DashPunctuation && CharUnicodeInfo.GetUnicodeCategory(x) <= UnicodeCategory.ClosePunctuation)))
+                                        {
+                                            c.Name = c.CommanderID.ToString();
+                                        }
                                         var morphTable = new LuaTable();
                                         pc["[\"" + c.Name + "\"]"] = morphTable;
 
