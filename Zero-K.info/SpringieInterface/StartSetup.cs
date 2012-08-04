@@ -143,12 +143,12 @@ namespace ZeroKWeb.SpringieInterface
 
                                             comdef["chassis"] = c.Unlock.Code + Math.Max(i,1);
 
+                                            var modules = new LuaTable();
+                                            comdef["modules"] = modules;
+
                                             comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
                                             if (i > 0)
                                             {
-                                                var modules = new LuaTable();
-                                                comdef["modules"] = modules;
-
                                                 comdef["cost"] = c.GetTotalMorphLevelCost(i);
 
                                                 if (prevKey != null) comdef["prev"] = prevKey;
