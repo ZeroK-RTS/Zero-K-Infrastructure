@@ -446,17 +446,22 @@ namespace ZeroKWeb.SpringieInterface
                     {
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!map", false);
+                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
+                        Thread.Sleep(3000);
+                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
                     }
-                    tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
-                    tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                    Thread.Sleep(3000);
-                    if (!tas.ExistingUsers[splitTo.Founder.Name].IsInGame) {
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
-                    }
-                    if (!tas.ExistingUsers[context.AutohostName].IsInGame) {
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!cbalance", false);
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
+                    else {
+                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
+                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
+                        Thread.Sleep(3000);
+                        if (!tas.ExistingUsers[splitTo.Founder.Name].IsInGame) {
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
+                        }
+                        if (!tas.ExistingUsers[context.AutohostName].IsInGame) {
+                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!cbalance", false);
+                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
+                        }
                     }
                     PlayerJuggler.SuppressJuggler = false;
                 }
