@@ -126,8 +126,7 @@ namespace ZeroKWeb.SpringieInterface
                             if (!userCommandersBanned) {
                                 foreach (Commander c in user.Commanders.Where(x => x.Unlock != null && x.ProfileNumber <= GlobalConst.CommanderProfileCount)) {
                                     try {
-                                        if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x => !Char.IsLetterOrDigit(x)
-                                                && !(CharUnicodeInfo.GetUnicodeCategory(x) >= UnicodeCategory.DashPunctuation && CharUnicodeInfo.GetUnicodeCategory(x) <= UnicodeCategory.ClosePunctuation)))
+                                        if (string.IsNullOrEmpty(c.Name) || c.Name.Any(x => x == '"') )
                                         {
                                             c.Name = c.CommanderID.ToString();
                                         }
