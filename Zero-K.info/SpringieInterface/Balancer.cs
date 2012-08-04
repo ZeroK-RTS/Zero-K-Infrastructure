@@ -433,7 +433,8 @@ namespace ZeroKWeb.SpringieInterface
                     }
 
                     // split while keeping clan groups together
-                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
+                    // note disabled splittinhg by clan - use "x.ClanID ?? x.LobbyID" for clan balance
+                    foreach (var clanGrp in users.GroupBy(x => x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
                         toMove.AddRange(clanGrp);
                         if (toMove.Count >= moveCount) break;
                     }
