@@ -160,8 +160,12 @@
             <br/>
         if (Global.Account.GetBombersAvailable() <= 0) {
 			<span>You have no free bombers - produce some</span>
-		} else {
-			
+		} 
+        else if (Global.Account.GetBombersAvailable() <= (Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense) ?? 0)) 
+        {
+			<span>Insufficient bombers to overcome planet defenses</span>
+        }
+        else {
 			var isAccessible = Model.CanBombersAttack(Global.Account.Faction);
             var isWarp = Model.CanBombersWarp(Global.Account.Faction) && Global.Account.GetWarpAvailable() >= 1; 
 			if (isAccessible) {
