@@ -129,9 +129,9 @@ namespace ZeroKWeb.SpringieInterface
                                         var morphTable = new LuaTable();
                                         pc["[\"" + c.Name + "\"]"] = morphTable;
 
-                                        
+                                        string prevKey = null;
                                         for (int i = 0; i <= GlobalConst.NumCommanderLevels; i++) {
-                                            string key = string.Format("c{0}_{1}_{2}", user.AccountID, c.CommanderID, i);
+                                            string key = string.Format("c{0}_{1}_{2}", user.AccountID, c.ProfileNumber, i);
                                             morphTable.Add(key);
 
                                             var comdef = new LuaTable();
@@ -139,16 +139,21 @@ namespace ZeroKWeb.SpringieInterface
 
                                             comdef["chassis"] = c.Unlock.Code + Math.Max(i,1);
 
-                                            var modules = new LuaTable();
-                                            comdef["modules"] = modules;
-
-                                            comdef["cost"] = c.GetTotalMorphLevelCost(i);
-
                                             comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
+                                            if (i > 0)
+                                            {
+                                                var modules = new LuaTable();
+                                                comdef["modules"] = modules;
 
-                                            foreach (Unlock m in
-                                                    c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel <= i && x.Unlock != null).OrderBy(
-                                                        x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
+                                                comdef["cost"] = c.GetTotalMorphLevelCost(i);
+
+                                                if (prevKey != null) comdef["prev"] = prevKey;
+
+                                                prevKey = key;
+                                                foreach (Unlock m in
+                                                        c.CommanderModules.Where(x => x.CommanderSlot.MorphLevel == i && x.Unlock != null).OrderBy(
+                                                            x => x.Unlock.UnlockType).ThenBy(x => x.SlotID).Select(x => x.Unlock)) modules.Add(m.Code);
+                                            }
                                         }
                                     } catch (Exception ex) {
                                         throw new ApplicationException(
