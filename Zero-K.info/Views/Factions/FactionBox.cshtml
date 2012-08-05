@@ -24,7 +24,8 @@
         </tr>
         <tr>
             <td>Commanders:</td>
-            <td>@f.Accounts.Count()</td>
+            <td>@f.Accounts.Count(x=>x.PwDropshipsProduced > 0)</td>
         </tr>
+        <tr><td>Combat skill:</td><td>@Math.Round(f.Accounts.Where(x=>x.PwDropshipsProduced > 0).Average(x=>x.EffectiveElo))</td></tr>
     </table>
 </div>
