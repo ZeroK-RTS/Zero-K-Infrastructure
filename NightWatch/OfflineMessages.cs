@@ -75,12 +75,13 @@ namespace NightWatch
 					{
 						try
 						{
-							var chanusers = new List<string>(client.JoinedChannels[e.Channel].ChannelUsers);
 							using (var db = new ZkDataContext())
 							{
-								foreach (var s in db.LobbyChannelSubscriptions.Where(x => x.Channel == e.Channel))
+                               
+                                var chanusers = client.JoinedChannels[e.Channel].ChannelUsers.ToList();
+								foreach (var s in db.LobbyChannelSubscriptions.Where(x => x.Channel == e.Channel).Select(x=>x.Account))
 								{
-									if (!chanusers.Contains(s.Name))
+									if (!chanusers.Any(x=>x == s.Name))
 									{
 										var message = new LobbyMessage()
 										              {
@@ -137,12 +138,12 @@ namespace NightWatch
 										var chan = regex.Groups[1].Value;
 										if (chan != "main")
 										{
-											using (var db = new ZkDataContext())
-											{
-												var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Name == e.UserName && x.Channel == chan);
+											using (var db = new ZkDataContext()) {
+											    var accountID = Account.AccountByName(db, e.UserName).AccountID;
+												var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x =>x.AccountID == accountID && x.Channel == chan);
 												if (subs == null)
 												{
-													subs = new LobbyChannelSubscription() { Name = e.UserName, Channel = chan };
+													subs = new LobbyChannelSubscription() { AccountID = accountID, Channel = chan };
 													db.LobbyChannelSubscriptions.InsertOnSubmit(subs);
 													db.SubmitChanges();
 													client.JoinChannel(chan);
@@ -159,9 +160,9 @@ namespace NightWatch
 									{
 										var chan = regex.Groups[1].Value;
 
-										using (var db = new ZkDataContext())
-										{
-											var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.Name == e.UserName && x.Channel == chan);
+										using (var db = new ZkDataContext()) {
+										    var accountID = Account.AccountByName(db, e.UserName).AccountID;
+											var subs = db.LobbyChannelSubscriptions.FirstOrDefault(x => x.AccountID == accountID && x.Channel == chan);
 											if (subs != null)
 											{
 												db.LobbyChannelSubscriptions.DeleteOnSubmit(subs);
@@ -175,8 +176,9 @@ namespace NightWatch
                                 {
                                     using (var db = new ZkDataContext())
                                     {
+                                        var accountID = Account.AccountByName(db, e.UserName).AccountID;
                                         var subscriptionList = "No channels subscribed.";
-                                        var subs = db.LobbyChannelSubscriptions.Where(x => x.Name == e.UserName).OrderBy(x => x.Channel).Select(x => x.Channel );
+                                        var subs = db.LobbyChannelSubscriptions.Where(x => x.AccountID == accountID).OrderBy(x => x.Channel).Select(x => x.Channel );
                                         if (subs != null)
                                         {
                                             subscriptionList = "Subscribed to: " + String.Join(", ", subs);

@@ -98,6 +98,7 @@
       <Column Name="MatchMakingActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
+      <Association Name="Account_LobbyChannelSubscription" Member="LobbyChannelSubscriptions" ThisKey="AccountID" OtherKey="AccountID" Type="LobbyChannelSubscription" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
       <Association Name="Account_ForumThread1" Member="ForumThreadsByLastPostAccountID" ThisKey="AccountID" OtherKey="LastPostAccountID" Type="ForumThread" />
       <Association Name="Account_Resource" Member="Resources" ThisKey="AccountID" OtherKey="TaggedByAccountID" Type="Resource" />
@@ -151,8 +152,9 @@
   </Table>
   <Table Name="dbo.LobbyChannelSubscription" Member="LobbyChannelSubscriptions">
     <Type Name="LobbyChannelSubscription">
-      <Column Name="Name" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="Channel" Type="System.String" DbType="nvarchar(100) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Account_LobbyChannelSubscription" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.ForumThread" Member="ForumThreads">
@@ -659,6 +661,7 @@
       <Column Name="EffectDropshipProduction" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectDropshipCapacity" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectBomberProduction" Type="System.Double" DbType="float" CanBeNull="true" />
+      <Column Name="EffectBomberCapacity" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectInfluenceSpread" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectUnlockID" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EffectEnergyPerTurn" Type="System.Double" DbType="float" CanBeNull="true" />
