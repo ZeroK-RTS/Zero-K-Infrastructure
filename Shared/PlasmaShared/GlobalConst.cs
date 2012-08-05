@@ -59,6 +59,7 @@
     }
 
 		public const int DefaultDropshipCapacity = 10;
+        public const int DefaultBomberCapacity = 10;
 	}
   
 }

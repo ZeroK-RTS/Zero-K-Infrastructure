@@ -268,9 +268,16 @@ namespace ZkData
 
 
         public int GetDropshipCapacity() {
-            if (Faction == null) return GlobalConst.DefaultDropshipCapacity;
+            if (Faction == null) return 0;
             return GlobalConst.DefaultDropshipCapacity +
                    (Faction.Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipCapacity) ?? 0);
+        }
+
+        public int GetBomberCapacity()
+        {
+            if (Faction == null) return 0;
+            return GlobalConst.DefaultBomberCapacity +
+                   (Faction.Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberCapacity) ?? 0);
         }
 
 

@@ -28,6 +28,9 @@ namespace ZeroKWeb.Controllers
             double avail = Math.Min(count, acc.GetBombersAvailable());
             if (useWarp == true) avail = Math.Min(acc.GetWarpAvailable(), avail);
 
+            var capa = acc.GetBomberCapacity();
+            if (avail > capa) return Content("Too many bombers, increase bomber fleet size capacity");
+
             if (avail > 0) {
                 double defense = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense) ?? 0;
                 double effective = avail - defense;
