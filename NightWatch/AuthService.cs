@@ -242,8 +242,9 @@ namespace NightWatch
                                 var fac = db.Factions.FirstOrDefault(x => x.Shortcut == channel);
                                 if (fac != null) {
                                     // faction channel
-                                    var acc = Account.AccountByName(db, user);
-                                    if (acc.FactionID != fac.FactionID || acc.Level < GlobalConst.FactionChannelMinLevel) client.ForceLeaveChannel(user, channel);
+                                    var u = client.ExistingUsers[user];
+                                    var acc = Account.AccountByLobbyID(db, u.LobbyID);
+                                    if (acc == null || acc.FactionID != fac.FactionID || acc.Level < GlobalConst.FactionChannelMinLevel) client.ForceLeaveChannel(user, channel);
                                 }
 
                             }
@@ -272,6 +273,10 @@ namespace NightWatch
                     }
 
                 };
+
+            using (var db= new ZkDataContext()) {
+                foreach (var fac in db.Factions.Where(x=>!x.IsDeleted)) client.JoinChannel(fac.Shortcut);
+            }
         }
 
 
