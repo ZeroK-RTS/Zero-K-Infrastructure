@@ -81,18 +81,22 @@ namespace NightWatch
                                 var chanusers = client.JoinedChannels[e.Channel].ChannelUsers.ToList();
 								foreach (var s in db.LobbyChannelSubscriptions.Where(x => x.Channel == e.Channel).Select(x=>x.Account))
 								{
-									if (!chanusers.Any(x=>x == s.Name))
-									{
-										var message = new LobbyMessage()
-										              {
-										              	SourceLobbyID = user.LobbyID,
-										              	SourceName = e.UserName,
-										              	Created = DateTime.UtcNow,
-										              	Message = e.Text,
-										              	TargetName = s.Name,
-										              	Channel = e.Channel
-										              };
-										db.LobbyMessages.InsertOnSubmit(message);
+									if (!chanusers.Any(x=>x == s.Name)) {
+									    var fac = db.Factions.FirstOrDefault(x => x.Shortcut == e.Channel);
+                                        // if faction channel check if allowed
+                                        if (fac == null || (fac.FactionID == s.AccountID && s.Level >= GlobalConst.FactionChannelMinLevel)) {
+
+                                            var message = new LobbyMessage()
+                                                          {
+                                                              SourceLobbyID = user.LobbyID,
+                                                              SourceName = e.UserName,
+                                                              Created = DateTime.UtcNow,
+                                                              Message = e.Text,
+                                                              TargetName = s.Name,
+                                                              Channel = e.Channel
+                                                          };
+                                            db.LobbyMessages.InsertOnSubmit(message);
+                                        }
 									}
 								}
 								db.SubmitChanges();

@@ -45,6 +45,7 @@
 	    public const double BomberKillStructureChance = 0.1;
         public const double BomberKillIpChance = 0.8;
         public const double BomberKillIpAmmount = 1;
+	    public const int FactionChannelMinLevel = 8;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";

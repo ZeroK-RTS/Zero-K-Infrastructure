@@ -67,7 +67,8 @@ namespace NightWatch
                             this.client.Extensions.PublishAccountData(acc);
                             if (acc.SpringieLevel > 1 || acc.IsZeroKAdmin) client.ForceJoinChannel(e.Data.Name, ModeratorChannel);
                             if (acc.Clan != null) client.ForceJoinChannel(e.Data.Name, acc.Clan.Shortcut, acc.Clan.Password);
-                            if (acc.Faction != null) client.ForceJoinChannel(e.Data.Name, acc.Faction.Shortcut);
+                            if (acc.Faction != null && acc.Level >= GlobalConst.FactionChannelMinLevel) client.ForceJoinChannel(e.Data.Name, acc.Faction.Shortcut);
+                            
                         }
                         client.RequestUserIP(e.Data.Name);
                         client.RequestUserID(e.Data.Name);
@@ -236,6 +237,17 @@ namespace NightWatch
                         {
                             var u = client.ExistingUsers[user];
                             if (u.SpringieLevel <= 1 && !u.IsZeroKAdmin) client.ForceLeaveChannel(user, ModeratorChannel);
+                        } else {
+                            using (var db = new ZkDataContext()) {
+                                var fac = db.Factions.FirstOrDefault(x => x.Shortcut == channel);
+                                if (fac != null) {
+                                    // faction channel
+                                    var acc = Account.AccountByName(db, user);
+                                    if (acc.FactionID != fac.FactionID || acc.Level < GlobalConst.FactionChannelMinLevel) client.ForceLeaveChannel(user, channel);
+                                }
+
+                            }
+
                         }
                     } catch (Exception ex)
                     {
