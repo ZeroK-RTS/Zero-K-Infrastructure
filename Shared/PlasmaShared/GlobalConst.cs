@@ -7,8 +7,8 @@
         public const int ZkLobbyUserCpu = 6667;
 	    public const string BaseImageUrl = "http://zero-k.info/img/";
 	    public const double EloWeightMalusFactor = -50;
-		public const int CommanderProfileCount = 4;
-        public const int NumCommanderLevels = 4;
+		public const int CommanderProfileCount = 6;
+        public const int NumCommanderLevels = 5;
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
@@ -54,10 +54,10 @@
 
 
 	    public static bool IsZkMod(string name)
-    {
-      if (string.IsNullOrEmpty(name)) return false;
-      return name.Contains("Zero-K");
-    }
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            return name.Contains("Zero-K");
+        }
 
 		public const int DefaultDropshipCapacity = 10;
         public const int DefaultBomberCapacity = 10;
