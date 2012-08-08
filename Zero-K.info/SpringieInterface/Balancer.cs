@@ -120,6 +120,9 @@ namespace ZeroKWeb.SpringieInterface
                     res.Message = "Missing clanned defender of this planet";
                     return res;
                 }
+				
+				// "backup" defender of other faction with most influence here
+				if (defenderFaction == null) defenderFaction = planet.PlanetFactions.Where(x=>x.FactionID != attackerFaction.FactionID && x.Influence > 0).OrderByDescending(x=>x.Influence).Select(x=>x.Faction).FirstOrDefault();
 
                 // bots game
                 if (planet.PlanetStructures.Any(x => !string.IsNullOrEmpty(x.StructureType.EffectBots))) {
