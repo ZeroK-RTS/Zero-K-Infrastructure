@@ -70,6 +70,12 @@ namespace ZkData
                         }
                     }
 
+                    // same-planet spread
+                    var autospread = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => (double?)(x.StructureType.EffectInfluenceSpread ?? 0)) ?? 0;
+                    double oldVal2;
+                    spreads.TryGetValue(planet.Faction, out oldVal2);
+                    spreads[planet.Faction] = oldVal2 + autospread;
+
                     if (spreads.Count > 0) {
                         var sumSpreads = spreads.Sum(x => x.Value);
                         double squeeze = 1.0;

@@ -57,7 +57,7 @@ namespace ZeroKWeb.Controllers
                     db.PlanetStructures.DeleteOnSubmit(s);
                 }
 
-                double ipKillAmmount = ipKillCount*GlobalConst.BomberKillIpAmmount;
+                double ipKillAmmount = ipKillCount*GlobalConst.BomberKillIpAmount;
                 if (ipKillAmmount > 0) {
                     foreach (PlanetFaction pf in planet.PlanetFactions.Where(x=>x.FactionID != acc.FactionID)) {
                         pf.Influence -= ipKillAmmount;
@@ -387,7 +387,7 @@ namespace ZeroKWeb.Controllers
                     if (best.Faction != planet.Faction) {
                         newFaction = best.Faction;
 
-                        // best atatcker without planets
+                        // best attacker without planets
                         Account candidate =
                             planet.AccountPlanets.Where(
                                 x => x.Account.FactionID == newFaction.FactionID && x.AttackPoints > 0 && !x.Account.Planets.Any()).OrderByDescending(

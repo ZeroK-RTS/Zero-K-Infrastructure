@@ -219,7 +219,7 @@ namespace ZeroKWeb.SpringieInterface
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
 
                 // save influence gains
-                PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == winner);
+                PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == winner && x.Faction != defender);
                 if (entry == null) {
                     entry = new PlanetFaction { Faction = winner, Planet = planet, };
                     planet.PlanetFactions.Add(entry);
