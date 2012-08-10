@@ -533,7 +533,8 @@ namespace ZeroKWeb.Controllers
                 var db = new ZkDataContext();
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
                 if ((Global.Account.AccountID != planet.OwnerAccountID) &&
-                    !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts))) return Content("Unauthorized");
+                    !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts) || Global.Account.IsZeroKAdmin)) 
+                    return Content("Unauthorized");
                 db.SubmitChanges();
                 db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} from {2} to {3}", Global.Account, planet, planet.Name, newName));
                 planet.Name = newName;
