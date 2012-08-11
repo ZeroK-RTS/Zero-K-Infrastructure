@@ -198,8 +198,10 @@
         @foreach (var structure in Model.PlanetStructures) {
             <div style="border: 1px solid teal">
             <b>@Html.PrintStructureState(structure)</b> owned by @Html.PrintAccount(structure.Account)
-                @if (Model.Account != null && (Model.Account.HasFactionRight(x => x.RightMetalQuota > 0) || Model.OwnerAccountID == Global.AccountID) && structure.Account != Model.Account) {
-                    if (Model.Account.HasFactionRight(x => x.RightMetalQuota > 0)){
+                @if (Model.Account != null && 
+                        (Global.Account != null && Global.Account.HasFactionRight(x => x.RightMetalQuota > 0) || Model.OwnerAccountID == Global.AccountID) && 
+                        structure.Account != Model.Account) {
+                    if (Global.Account!= null && Global.Account.HasFactionRight(x => x.RightMetalQuota > 0)){
                         <a href="@Url.Action("ConfiscateStructure","Planetwars", new{planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID})"><span> -confiscate</span></a>
                     }
                     else if (Model.Account.GetMetalAvailable() >= structure.StructureType.Cost) {
