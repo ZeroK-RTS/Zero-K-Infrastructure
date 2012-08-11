@@ -619,7 +619,7 @@ namespace ZeroKWeb.Controllers
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
                 //if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-                bool factionLeader = acc.HasFactionRight(x => x.RightMetalQuota > 0) && (acc.FactionID == planet.FactionID);
+                bool factionLeader = acc.HasFactionRight(x => x.RightMetalQuota > 0) && (acc.Faction == planet.Faction);
                 if ((planet.OwnerAccountID != acc.AccountID) && !factionLeader) return Content("Planet not yours");
                 StructureType structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
                 if (structureType == null) return Content("Structure type does not exist.");

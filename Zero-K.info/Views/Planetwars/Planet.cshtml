@@ -198,57 +198,76 @@
         @foreach (var structure in Model.PlanetStructures) {
             <div style="border: 1px solid teal">
             <b>@Html.PrintStructureState(structure)</b> owned by @Html.PrintAccount(structure.Account)
-                @if (   (Global.Account != null) &&
+                @if ((Global.Account != null) &&
                         (Global.Account.FactionID == Model.OwnerFactionID) &&
-                        ( (Global.Account.HasFactionRight(x => x.RightMetalQuota > 0)) || Model.OwnerAccountID == Global.AccountID) && 
-                        structure.OwnerAccountID != Global.AccountID) {
-                    if (Global.Account.HasFactionRight(x => x.RightMetalQuota > 0)){
-                        <a href="@Url.Action("ConfiscateStructure","Planetwars", new{planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID})"><span> - confiscate</span></a>
+                        ((Global.Account.HasFactionRight(x => x.RightMetalQuota > 0)) || Model.OwnerAccountID == Global.AccountID) &&
+                        structure.OwnerAccountID != Global.AccountID)
+                {
+                    if (Global.Account.HasFactionRight(x => x.RightMetalQuota > 0))
+                    {
+                        <a href="@Url.Action("ConfiscateStructure", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })"><span> - confiscate</span></a>
                     }
-                    else if (Model.Account.GetMetalAvailable() >= structure.StructureType.Cost) {
-                        <a href="@Url.Action("ConfiscateStructure","Planetwars", new{planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID})"><span> - confiscate (@Html.PrintMetal(structure.StructureType.Cost))</span></a>
+                    else if (Model.Account.GetMetalAvailable() >= structure.StructureType.Cost)
+                    {
+                        <a href="@Url.Action("ConfiscateStructure", "Planetwars", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })"><span> - confiscate (@Html.PrintMetal(structure.StructureType.Cost))</span></a>
                         
-                    } else {
+                    }
+                    else
+                    {
                         <span> - confiscate (@Html.PrintMetal(structure.StructureType.Cost))</span>
                     }
 
                 }
+                else
+                {
+                    <span> - DEBUG - @Global.AccountID, @Global.Account.FactionID, @Model.OwnerFactionID, @structure.OwnerAccountID</span>
+                }
                 <br/>
-                @if (Global.Account != null && Global.Account.CanSetPriority(structure)) {
+                @if (Global.Account != null && Global.Account.CanSetPriority(structure))
+                {
                     var priority = structure.EnergyPriority;
-                    <form method="POST" action="@Url.Action("SetEnergyPriority", new{planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID})">
-                        Energy priority: @Html.EditorFor(x=>priority,"Enum") <input type="submit" value="change"/>
+                    <form method="POST" action="@Url.Action("SetEnergyPriority", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
+                        Energy priority: @Html.EditorFor(x => priority, "Enum") <input type="submit" value="change"/>
                     </form>
                 }
-                else {
+                else
+                {
                     <span>Energy priority: @structure.EnergyPriority.Description()</span>
                 }
-            @Html.DisplayFor(x=>structure.StructureType)
+            @Html.DisplayFor(x => structure.StructureType)
             </div>
-    	}
-		@if (Global.FactionID == Model.OwnerFactionID) {
+        }
+		@if (Global.FactionID == Model.OwnerFactionID)
+  {
 			<h2>Construction</h2>
       
 
-			var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
-			foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable).OrderBy(x=>x.Cost)) {
-				if (!planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
-					if (structureType.Cost > Global.Account.GetMetalAvailable()) {
+      var planet = db.Planets.Single(p => p.PlanetID == Model.PlanetID);
+      foreach (var structureType in db.StructureTypes.Where(s => s.IsBuildable).OrderBy(x => x.Cost))
+      {
+          if (!planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID))
+          {
+              if (structureType.Cost > Global.Account.GetMetalAvailable())
+              {
                         <span nicetitle="$structuretype$@structureType.StructureTypeID">@structureType.Name (@Html.PrintMetal(structureType.Cost))</span><br/>
-					} else {
-                        <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("BuildStructure",new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })">Build @structureType.Name (@Html.PrintMetal(structureType.Cost))</a><br />
-					}
-				}
-			}
+              }
+              else
+              {
+                        <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("BuildStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })">Build @structureType.Name (@Html.PrintMetal(structureType.Cost))</a><br />
+              }
+          }
+      }
             
             
             <h2>Self destruct</h2>
-            foreach (var structureType in planet.PlanetStructures.Where(s => s.StructureType.IsBuildable && (planet.OwnerAccountID == Global.AccountID || s.OwnerAccountID == Global.AccountID)).Select(x=>x.StructureType)) {
-				if (planet.PlanetStructures.Any(x=>x.StructureTypeID == structureType.StructureTypeID)) {
-                    <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure",new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="delete">Destroy @structureType.Name (@Html.PrintMetal(structureType.Cost * GlobalConst.SelfDestructRefund))</a><br />
-                }
-            }
-    }
+      foreach (var structureType in planet.PlanetStructures.Where(s => s.StructureType.IsBuildable && (planet.OwnerAccountID == Global.AccountID || s.OwnerAccountID == Global.AccountID)).Select(x => x.StructureType))
+      {
+          if (planet.PlanetStructures.Any(x => x.StructureTypeID == structureType.StructureTypeID))
+          {
+                    <a nicetitle="$structuretype$@structureType.StructureTypeID" href="@Url.Action("DestroyStructure", new { planetID = Model.PlanetID, structureTypeID = structureType.StructureTypeID })" class="delete">Destroy @structureType.Name (@Html.PrintMetal(structureType.Cost * GlobalConst.SelfDestructRefund))</a><br />
+          }
+      }
+  }
 	</div>
 	<div id="events">
 		@Html.Action("Events", new { planetID = Model.PlanetID, partial = true })
