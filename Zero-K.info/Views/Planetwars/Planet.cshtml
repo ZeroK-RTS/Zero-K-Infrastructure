@@ -199,9 +199,9 @@
             <div style="border: 1px solid teal">
             <b>@Html.PrintStructureState(structure)</b> owned by @Html.PrintAccount(structure.Account)
                 @if (   (Global.Account != null) &&
-                        (Global.Account.Faction == Model.Faction) &&
+                        (Global.Account.FactionID == Model.OwnerFactionID) &&
                         ( (Global.Account.HasFactionRight(x => x.RightMetalQuota > 0)) || Model.OwnerAccountID == Global.AccountID) && 
-                        structure.Account != Global.Account) {
+                        structure.OwnerAccountID != Global.AccountID) {
                     if (Global.Account.HasFactionRight(x => x.RightMetalQuota > 0)){
                         <a href="@Url.Action("ConfiscateStructure","Planetwars", new{planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID})"><span> - confiscate</span></a>
                     }
