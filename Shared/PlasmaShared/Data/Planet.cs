@@ -73,7 +73,13 @@ namespace ZkData
 
         public bool CheckLinkAttack(Faction attacker, Func<TreatyEffectType, bool> preventingTreaty, Func<TreatyEffectType, bool> passageTreaty) {
 
-            if (OwnerFactionID == attacker.FactionID || attacker.GaveTreatyRight(this, preventingTreaty)) return false; // attacker allied cannot strike
+            if (attacker.GaveTreatyRight(this, preventingTreaty)) return false; // attacker allied cannot strike
+
+            if (OwnerFactionID == attacker.FactionID)   // bomb own planet - only allow if other factions have IP
+            {
+                var otherFactions = PlanetFactions.Count(x => x.FactionID != attacker.FactionID && x.Influence > 0);
+                return (otherFactions > 0);
+            }
 
             if (Faction == null && !attacker.Planets.Any()) return true; // attacker has no planets, planet neutral, allow strike
 

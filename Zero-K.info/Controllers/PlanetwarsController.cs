@@ -617,20 +617,22 @@ namespace ZeroKWeb.Controllers
         public ActionResult ConfiscateStructure(int planetID, int structureTypeID) {
             using (var db = new ZkDataContext()) {
                 Planet planet = db.Planets.Single(p => p.PlanetID == planetID);
-                if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
+                //if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot destroy structures");
                 Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
-                if (planet.OwnerAccountID != acc.AccountID) return Content("Planet not yours");
+                bool factionLeader = acc.HasFactionRight(x => x.RightMetalQuota > 0);
+                if ((planet.OwnerAccountID != acc.AccountID) && !factionLeader) return Content("Planet not yours");
                 StructureType structureType = db.StructureTypes.SingleOrDefault(s => s.StructureTypeID == structureTypeID);
                 if (structureType == null) return Content("Structure type does not exist.");
-                if (!structureType.IsBuildable) return Content("Structure is not buildable.");
+                //if (!structureType.IsBuildable) return Content("Structure is not buildable.");
 
                 if (!planet.PlanetStructures.Any(x => x.StructureTypeID == structureTypeID)) return Content("Structure or its upgrades not present");
                 List<PlanetStructure> list = planet.PlanetStructures.Where(x => x.StructureTypeID == structureTypeID).ToList();
                 PlanetStructure toDestroy = list[0];
                 Account orgAc = toDestroy.Account;
+                double cost = (!factionLeader)? toDestroy.StructureType.Cost : 0;
                 if (toDestroy.Account != null) {
-                    toDestroy.Account.SpendMetal(-toDestroy.StructureType.Cost);
-                    acc.SpendMetal(toDestroy.StructureType.Cost);
+                    toDestroy.Account.SpendMetal(-cost);
+                    acc.SpendMetal(cost);
                     toDestroy.Account = acc;
                     db.SubmitChanges();
                     db.Events.InsertOnSubmit(Global.CreateEvent("{0} has confiscated {1} structure {2} on {3}.",
