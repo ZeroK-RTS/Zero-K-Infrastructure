@@ -157,7 +157,7 @@
 			}
 		}
             <br/>
-        bool ownPlanet = Model.OwnerFactionID != Global.Account.FactionID;
+        bool ownPlanet = Model.OwnerFactionID == Global.Account.FactionID;
         if (Global.Account.GetBombersAvailable() <= 0) {
 			<span>You have no free bombers - produce some</span>
 		} 
