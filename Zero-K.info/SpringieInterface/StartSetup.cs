@@ -72,6 +72,7 @@ namespace ZeroKWeb.SpringieInterface
                             x => x.Faction != null).GroupBy(x => x.Faction).Select(x => x.Key.FactionID).ToList();
                     attacker = planet.GetAttacker(presentFactions);
                     defender = planet.Faction;
+                    if (attacker == defender) defender = null;
 
                     ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "attackingFaction", Value = attacker.Shortcut });
                     if (defender != null) ret.ModOptions.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "defendingFaction", Value = defender.Shortcut });

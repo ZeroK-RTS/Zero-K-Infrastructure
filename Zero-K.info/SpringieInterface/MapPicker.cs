@@ -37,7 +37,7 @@ namespace ZeroKWeb.SpringieInterface
                                             Planet = x.Planet,
                                             Attacker = x.Faction,
 
-                                            FreeShips = x.Dropships - (x.Planet.PlanetStructures.Where(y => y.IsActive).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0),
+                                            FreeShips = x.Dropships - (x.Planet.PlanetStructures.Where(y => y.IsActive && (y.Planet.OwnerFactionID != x.FactionID)).Sum(y => y.StructureType.EffectDropshipDefense) ?? 0),
                                             TotalShips = x.Dropships,
                                             LastAdded = x.DropshipsLastAdded
 
