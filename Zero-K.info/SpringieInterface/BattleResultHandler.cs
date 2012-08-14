@@ -219,41 +219,44 @@ namespace ZeroKWeb.SpringieInterface
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
 
                 // save influence gains
-                PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == winner && x.Faction != defender);
-                if (entry == null) {
-                    entry = new PlanetFaction { Faction = winner, Planet = planet, };
-                    planet.PlanetFactions.Add(entry);
-                }
-
-                entry.Influence += influence;
-
-                // clamping of influence
-                // gained over 100, sole owner
-                if (entry.Influence >= 100) {
-                    entry.Influence = 100;
-                    foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence = 0;
-                } else {
-                    var sumOthers = planet.PlanetFactions.Where(x => x.Faction != winner).Sum(x => (double?)x.Influence) ?? 0;
-                    if (sumOthers + entry.Influence > 100) {
-                        var excess = sumOthers + entry.Influence - 100;
-                        foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence -= pf.Influence/sumOthers*excess;
+                if (winner != defender)
+                {
+                    PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == winner);
+                    if (entry == null)
+                    {
+                        entry = new PlanetFaction { Faction = winner, Planet = planet, };
+                        planet.PlanetFactions.Add(entry);
                     }
+
+                    entry.Influence += influence;
+                
+
+                    // clamping of influence
+                    // gained over 100, sole owner
+                    if (entry.Influence >= 100) {
+                        entry.Influence = 100;
+                        foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence = 0;
+                    } else {
+                        var sumOthers = planet.PlanetFactions.Where(x => x.Faction != winner).Sum(x => (double?)x.Influence) ?? 0;
+                        if (sumOthers + entry.Influence > 100) {
+                            var excess = sumOthers + entry.Influence - 100;
+                            foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence -= pf.Influence/sumOthers*excess;
+                        }
+                    }
+
+                    var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}) influence at {2} from {3} ",
+                                                winner,
+                                                influence,
+                                                planet,
+                                                sb,
+                                                techBonus > 0 ? "+" + techBonus + " from techs " : "",
+                                                playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
+                                                shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
+                                                ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "");
+                    db.Events.InsertOnSubmit(ev);
+                    text.AppendLine(ev.PlainText);
                 }
-
-
-                var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}) influence at {2} from {3} ",
-                                            winner,
-                                            influence,
-                                            planet,
-                                            sb,
-                                            techBonus > 0 ? "+" + techBonus + " from techs " : "",
-                                            playerBonus > 0 ? "+" + playerBonus + " from commanders " : "",
-                                            shipBonus > 0 ? "+" + shipBonus + " from ships " : "",
-                                            ccMalus != 0 ? "" + ccMalus + " from destroyed CC " : "");
-                db.Events.InsertOnSubmit(ev);
-                text.AppendLine(ev.PlainText);
             }
-            db.SubmitAndMergeChanges();
 
             // distribute metal
             List<Account> winners =
@@ -272,7 +275,6 @@ namespace ZeroKWeb.SpringieInterface
                 db.Events.InsertOnSubmit(ev);
                 //text.AppendLine(ev.PlainText);
             }
-            db.SubmitAndMergeChanges();
 
             if (wasCcDestroyed) {
                 List<Account> losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
@@ -291,7 +293,6 @@ namespace ZeroKWeb.SpringieInterface
                     //text.AppendLine(ev.PlainText);
                 }   
             }
-            db.SubmitAndMergeChanges();
 
             // remove dropships
             foreach (var pf in planet.PlanetFactions.Where(x => x.Faction == attacker)) pf.Dropships = 0;
@@ -312,7 +313,6 @@ namespace ZeroKWeb.SpringieInterface
                 db.Events.InsertOnSubmit(ev);
                 //text.AppendLine(ev.PlainText);
             }
-            db.SubmitAndMergeChanges();
 
             // add attack points
             foreach (
