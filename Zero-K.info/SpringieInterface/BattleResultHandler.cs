@@ -253,6 +253,7 @@ namespace ZeroKWeb.SpringieInterface
                 db.Events.InsertOnSubmit(ev);
                 text.AppendLine(ev.PlainText);
             }
+            db.SubmitAndMergeChanges();
 
             // distribute metal
             List<Account> winners =
@@ -271,6 +272,7 @@ namespace ZeroKWeb.SpringieInterface
                 db.Events.InsertOnSubmit(ev);
                 //text.AppendLine(ev.PlainText);
             }
+            db.SubmitAndMergeChanges();
 
             if (wasCcDestroyed) {
                 List<Account> losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
@@ -288,8 +290,8 @@ namespace ZeroKWeb.SpringieInterface
                     db.Events.InsertOnSubmit(ev);
                     //text.AppendLine(ev.PlainText);
                 }   
-
             }
+            db.SubmitAndMergeChanges();
 
             // remove dropships
             foreach (var pf in planet.PlanetFactions.Where(x => x.Faction == attacker)) pf.Dropships = 0;
@@ -310,6 +312,7 @@ namespace ZeroKWeb.SpringieInterface
                 db.Events.InsertOnSubmit(ev);
                 //text.AppendLine(ev.PlainText);
             }
+            db.SubmitAndMergeChanges();
 
             // add attack points
             foreach (
