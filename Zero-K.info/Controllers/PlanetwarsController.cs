@@ -24,6 +24,7 @@ namespace ZeroKWeb.Controllers
             if (!accessible) return Content("You cannot attack here");
             if (Global.Nightwatch.GetPlanetBattles(planet).Any(x => x.IsInGame)) return Content("Battle in progress on the planet, cannot bomb planet");
 
+            bool selfbomb = acc.FactionID == planet.OwnerFactionID;
             if (count < 0) count = 0;
             double avail = Math.Min(count, acc.GetBombersAvailable());
             if (useWarp == true) avail = Math.Min(acc.GetWarpAvailable(), avail);
@@ -33,7 +34,9 @@ namespace ZeroKWeb.Controllers
 
             if (avail > 0) {
                 double defense = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense) ?? 0;
-                double effective = avail - defense;
+                double effective = avail;
+                if (!selfbomb) effective = effective - defense;
+
                 if (effective <= 0) return Content("Enemy defenses completely block your ships");
 
                 acc.SpendBombers(avail);
@@ -41,7 +44,7 @@ namespace ZeroKWeb.Controllers
 
                 var r = new Random();
 
-                double strucKillChance = effective*GlobalConst.BomberKillStructureChance;
+                double strucKillChance = !selfbomb ? effective*GlobalConst.BomberKillStructureChance : 0;
                 int strucKillCount = (int)Math.Floor(strucKillChance + r.NextDouble());
 
                 double ipKillChance = effective*GlobalConst.BomberKillIpChance;
@@ -69,7 +72,7 @@ namespace ZeroKWeb.Controllers
                            {
                                acc,
                                acc.Faction,
-                               planet.Faction,
+                               selfbomb == true ? planet.Faction.ToString() : "own",
                                planet,
                                avail,
                                defense,

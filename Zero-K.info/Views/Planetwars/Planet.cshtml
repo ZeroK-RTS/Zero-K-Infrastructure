@@ -133,7 +133,6 @@
 		if (Global.Account.GetDropshipsAvailable() <= 0) {
 			<span>You have no free dropships - fight more battles</span>
 		} else {
-			
 			var isAccessible = Model.CanDropshipsAttack(Global.Account.Faction);
             var isWarp = Model.CanDropshipsWarp(Global.Account.Faction) && Global.Account.GetWarpAvailable() >= 1; 
 			if (isAccessible) {
@@ -158,10 +157,11 @@
 			}
 		}
             <br/>
+        bool ownPlanet = Model.OwnerFactionID != Global.Account.FactionID;
         if (Global.Account.GetBombersAvailable() <= 0) {
 			<span>You have no free bombers - produce some</span>
 		} 
-        else if (Global.Account.GetBombersAvailable() <= (Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense) ?? 0)) 
+        else if (!ownPlanet && Global.Account.GetBombersAvailable() <= (Model.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense) ?? 0)) 
         {
 			<span>Insufficient bombers to overcome planet defenses</span>
         }
