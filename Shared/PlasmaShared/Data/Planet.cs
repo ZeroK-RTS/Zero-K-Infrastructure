@@ -96,7 +96,8 @@ namespace ZkData
                     // planet belongs to attacker or person who gave attacker rights to pass
                     if (otherPlanet.Faction != null && (otherPlanet.OwnerFactionID == attacker.FactionID || attacker.HasTreatyRight(otherPlanet.Faction, passageTreaty, otherPlanet)))
                     {
-                        return true;
+                        // if planet's faction has blocking treaty with attacker dont allow attack
+                        if (Faction == null || !Faction.HasTreatyRight(otherPlanet.Faction, preventingTreaty, this)) return true;
 
                     }
                 }
