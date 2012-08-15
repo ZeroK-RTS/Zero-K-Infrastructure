@@ -70,10 +70,6 @@ namespace ZkData
                     else warpsFac1toFac2 -= te.Value ?? 0;
                 }
 
-                // check influence
-                if (tr.EffectGiveInfluence == true) {
-                    if (!te.Planet.PlanetFactions.Any(x => x.FactionID == te.GivingFactionID && x.Influence >= te.Value)) return false;
-                }
             }
 
             if (fac1.Metal < metalFac1toFac2 || fac2.Metal < -metalFac1toFac2) return false;
@@ -97,14 +93,18 @@ namespace ZkData
             fac2.ProduceWarps(warpsFac1toFac2);
 
             foreach (var te in TreatyEffects.Where(x => x.TreatyEffectType.IsOneTimeOnly == oneTimeOnly && x.TreatyEffectType.EffectGiveInfluence == true)) {
-                var org = te.Planet.PlanetFactions.Single(x => x.FactionID == te.GivingFactionID);
-                var entry = te.Planet.PlanetFactions.FirstOrDefault(x => x.FactionID == te.ReceivingFactionID);
-                if (entry == null) {
-                    entry = new PlanetFaction() {PlanetID = te.Planet.PlanetID, FactionID = te.ReceivingFactionID};
-                    te.Planet.PlanetFactions.Add(entry);
+                var org = te.Planet.PlanetFactions.FirstOrDefault(x => x.FactionID == te.GivingFactionID);
+                if (org != null)
+                {
+                    var entry = te.Planet.PlanetFactions.FirstOrDefault(x => x.FactionID == te.ReceivingFactionID);
+                    if (entry == null)
+                    {
+                        entry = new PlanetFaction() { PlanetID = te.Planet.PlanetID, FactionID = te.ReceivingFactionID };
+                        te.Planet.PlanetFactions.Add(entry);
+                    }
+                    entry.Influence += org.Influence;
+                    org.Influence = 0;
                 }
-                entry.Influence += te.Value ??0;
-                org.Influence -= te.Value??0;
             }
 
             return true;
