@@ -72,7 +72,7 @@ namespace ZeroKWeb.Controllers
                            {
                                acc,
                                acc.Faction,
-                               selfbomb == true ? planet.Faction.ToString() : "own",
+                               planet.Faction,
                                planet,
                                avail,
                                defense,
@@ -81,7 +81,9 @@ namespace ZeroKWeb.Controllers
                            };
                 args.AddRange(bombed.Select(x=>x.StructureType));
 
-                string str = "{0} of {1} bombed {2} planet {3} using {4} bombers against {5} defenses. {6}. Ground armies lost {7} influence";
+                string str;
+                if (selfbomb) str = "{0} of {1} bombed own planet {3} using {4} bombers against {5} defenses. {6}. Ground armies lost {7} influence";
+                else str = "{0} of {1} bombed {2} planet {3} using {4} bombers against {5} defenses. {6}. Ground armies lost {7} influence";
                 if (bombed.Count > 0) {
                     str += " and ";
                     int counter = 8;
