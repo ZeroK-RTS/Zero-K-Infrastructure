@@ -52,11 +52,13 @@ namespace ZkData
 	    }
 
         public bool CanDropshipsAttack(Faction attacker) {
+            if (attacker.FactionID == OwnerFactionID) return false; // cannot attack own
             return CheckLinkAttack(attacker, x => x.EffectPreventDropshipAttack == true, x => x.EffectAllowDropshipPass == true);
         }
 
         public bool CanDropshipsWarp(Faction attacker)
         {
+            if (attacker.FactionID == OwnerFactionID) return false; // cannot attack own
             return CheckWarpAttack(attacker, x => x.EffectPreventDropshipAttack == true);
         }
 
