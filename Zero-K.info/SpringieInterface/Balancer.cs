@@ -21,7 +21,8 @@ namespace ZeroKWeb.SpringieInterface
     public class Balancer
     {
         const double MaxCbalanceDifference = 150;
-        const double MaxPwEloDifference = 200;
+        const double MaxPwEloDifference = 150;
+        const double MaxTeamSizeDifferenceRatio = 2;
         readonly List<BalanceTeam> teams = new List<BalanceTeam>();
         List<BalanceItem> balanceItems;
 
@@ -210,7 +211,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 var minSize = bestTeams.Min(x => x.Count);
                 var maxSize = bestTeams.Max(x => x.Count);
-                if (maxSize/(double)minSize > 2) {
+                if (maxSize/(double)minSize > MaxTeamSizeDifferenceRatio) {
                     if (clanwise) return new Balancer().LegacyBalance(teamCount, false, b, unmovablePlayers); // cbalance failed, rebalance using normal
                     
                     ret.CanStart = false;
