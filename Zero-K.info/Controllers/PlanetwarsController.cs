@@ -50,7 +50,7 @@ namespace ZeroKWeb.Controllers
                 double ipKillChance = effective*GlobalConst.BomberKillIpChance;
                 int ipKillCount = (int)Math.Floor(ipKillChance + r.NextDouble());
 
-                List<PlanetStructure> structs = planet.PlanetStructures.Where(x => x.IsActive && x.StructureType.IsBomberDestructible).ToList();
+                List<PlanetStructure> structs = planet.PlanetStructures.Where(x => x.StructureType.IsBomberDestructible).ToList();
                 var bombed = new List<PlanetStructure>();
                 while (structs.Count > 0 && strucKillCount > 0) {
                     strucKillCount--;
