@@ -328,21 +328,30 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             // destroy pw structures killed ingame
-            var handled = new List<string>();
-            foreach (string line in extraData.Where(x => x.StartsWith("structurekilled"))) {
-                string[] data = line.Substring(16).Split(',');
-                string unitName = data[0];
-                if (handled.Contains(unitName)) continue;
-                handled.Add(unitName);
-                foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.IngameUnitName == unitName)) {
-                    if (s.StructureType.IsIngameDestructible) {
-                        db.PlanetStructures.DeleteOnSubmit(s);
-                        var ev = Global.CreateEvent("{0} has been destroyed on {1} planet {2}. {3}", s.StructureType.Name, defender, planet, sb);
-                        db.Events.InsertOnSubmit(ev);
-                        text.AppendLine(ev.PlainText);
+            if (winner != attacker) {
+                var handled = new List<string>();
+                foreach (string line in extraData.Where(x => x.StartsWith("structurekilled"))) {
+                    string[] data = line.Substring(16).Split(',');
+                    string unitName = data[0];
+                    if (handled.Contains(unitName)) continue;
+                    handled.Add(unitName);
+                    foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.IngameUnitName == unitName)) {
+                        if (s.StructureType.IsIngameDestructible) {
+                            s.IsActive = false;
+                            var ev = Global.CreateEvent("{0} has been disabled on {1} planet {2}. {3}", s.StructureType.Name, defender, planet, sb);
+                            db.Events.InsertOnSubmit(ev);
+                            text.AppendLine(ev.PlainText);
+                        }
                     }
                 }
+            } else {
+                // attacker won disable all
+                foreach (var s in planet.PlanetStructures.Where(x => x.StructureType.IsIngameDestructible)) s.IsActive = false;
+                var ev = Global.CreateEvent("All structures have been disabled on {0} planet {1}. {2}", defender, planet, sb);
+                db.Events.InsertOnSubmit(ev);
+                text.AppendLine(ev.PlainText);
             }
+
             db.SubmitAndMergeChanges();
 
 
