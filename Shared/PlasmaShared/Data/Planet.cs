@@ -109,7 +109,7 @@ namespace ZkData
 
         public bool CheckWarpAttack(Faction attacker, Func<TreatyEffectType, bool> preventingTreaty)
         {
-
+            if (!Galaxy.IsDefault) return false;    // no exo-galaxy strikes
             if (OwnerFactionID == attacker.FactionID || attacker.GaveTreatyRight(this, preventingTreaty)) return false; // attacker allied cannot strike
             if (PlanetStructures.Any(x => x.IsActive && x.StructureType.EffectBlocksJumpgate == true)) return false; // inhibitor active
             
