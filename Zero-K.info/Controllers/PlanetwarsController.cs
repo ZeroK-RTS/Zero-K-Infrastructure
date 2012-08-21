@@ -72,7 +72,7 @@ namespace ZeroKWeb.Controllers
                            {
                                acc,
                                acc.Faction,
-                               planet.Faction,
+                               !selfbomb ? planet.Faction : null,
                                planet,
                                avail,
                                defense,
