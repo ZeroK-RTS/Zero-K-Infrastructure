@@ -11,7 +11,6 @@ namespace ZeroKLobby.Notifications
 {
     public partial class JugglerBar: UserControl, INotifyBar
     {
-        public const bool AutoActivate = true;
 
         readonly Dictionary<AutohostMode, InfoItems> Items = new Dictionary<AutohostMode, InfoItems>();
         readonly TasClient client;
@@ -75,11 +74,12 @@ namespace ZeroKLobby.Notifications
                 cnt++;
             }
 
-            client.BattleJoined += (sender, args) => { if (AutoActivate && args.Data.Founder.IsSpringieManaged) Activate(); };
+            client.BattleJoined += (sender, args) => { if (Program.Conf.AutoActivateQuickmatch && args.Data.Founder.IsSpringieManaged) Activate(); };
 
             client.BattleMyUserStatusChanged += (sender, args) =>
                 {
-                    if (AutoActivate) {
+                    if (Program.Conf.AutoActivateQuickmatch)
+                    {
                         if (client.MyBattleStatus.IsSpectator) {
                             if (IsActive) Deactivate();
                         }

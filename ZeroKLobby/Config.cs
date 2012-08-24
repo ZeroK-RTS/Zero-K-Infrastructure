@@ -146,6 +146,11 @@ namespace ZeroKLobby
         [DisplayName("Idle User Time")]
         [Description("Idle minutes after which Zero-K lobby assumes the user is gone and quickmatching is stopped.")]
         public int IdleTime { get { return idleTime; } set { idleTime = value; } }
+
+        [Category("Quickmatching")]
+        [DisplayName("Auto activate")]
+        [Description("Auto activate/deactivate quickmatch when joining starred hosts")]
+        public bool AutoActivateQuickmatch { get { return autoActivateQuickmatch; } set { autoActivateQuickmatch = value; } }
         [Category("Chat")]
         [DisplayName("Ignored Users")]
         [Description("The messages of these users are ignored.")]
@@ -335,6 +340,7 @@ namespace ZeroKLobby
         public string AdLines = "Faster, smarter, nicer! \r\n";
         [Browsable(false)]
         public string AdPreffix = "Join ZK \r\njoin zero-k. \r\nJoin ZK. \r\n";
+        bool autoActivateQuickmatch = true;
         [Browsable(false)]
         public bool UseSafeMode { get; set; }
     }
