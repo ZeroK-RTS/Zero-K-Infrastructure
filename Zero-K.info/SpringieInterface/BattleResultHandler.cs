@@ -420,7 +420,7 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             //rotate map
-            var mapList = db.Resources.Where(x => x.Planets.Count == 0 && x.MapPlanetWarsIcon!=null && x.MapRating >= 3 && x.FeaturedOrder != null).ToList();
+            var mapList = db.Resources.Where(x => x.Planets.Count == 0 && x.MapPlanetWarsIcon!=null && x.FeaturedOrder != null).ToList();
             if (mapList.Count > 0)
             {
                 int r = new Random().Next(mapList.Count);
