@@ -675,11 +675,78 @@ namespace ZeroKWeb.Controllers
             var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
             structure.PlanetByTargetPlanetID = target;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
-            // todo implement effect like creating link or busting planet
+            
+            if (structure.IsActive && !structure.StructureType.IsSingleUse) return ActivateTargetedStructure(planet, structure, target);
+            
             db.SubmitAndMergeChanges();
             return RedirectToAction("Planet", new { id = planet.PlanetID });
-            
         }
+
+        [Auth]
+        public ActionResult ActivateTargetedStructure(Planet planet, PlanetStructure structure, Planet target)
+        {
+            var db = new ZkDataContext();
+
+            ActionResult ret = null;
+            if (structure.StructureType.EffectCreateLink == true)
+            {
+                ret = CreateLink(planet, structure, target);
+            }
+            if (structure.StructureType.EffectPlanetBuster == true)
+            {
+                ret = FirePlanetBuster(planet, structure, target);
+            }
+            
+            if (structure.StructureType.IsSingleUse)    // single-use structure, remove
+            {
+                DestroyStructure(planet.PlanetID, structure.StructureTypeID);
+            }
+
+            db.SubmitAndMergeChanges();
+
+            if (ret != null) return ret;
+            return RedirectToAction("Planet", new { id = planet.PlanetID });
+        }
+
+        [Auth]
+        public ActionResult CreateLink(Planet planet, PlanetStructure structure, Planet target)
+        {
+            var db = new ZkDataContext();
+
+            // warp jammers protect against link creation
+            // FIXME: this is probably not the best limitation to put on them, may want a new idea
+            var warpDefense = target.PlanetStructures.Where(x => x.StructureType.EffectBlocksJumpgate == true).ToList();
+            if (warpDefense.Count > 0) return Content("Warp jamming prevents string creation");
+
+            // TODO: actually add the link
+            db.Events.InsertOnSubmit(Global.CreateEvent("A new link was created between {0} planet {1} and {2} planet {3} by the {4}", planet.Faction, planet, target.Faction, target, structure.StructureType));
+
+            return null;
+        }
+
+        [Auth]
+        public ActionResult FirePlanetBuster(Planet planet, PlanetStructure structure, Planet target)
+        {
+            var db = new ZkDataContext();
+
+            var structures = target.PlanetStructures.Where(x => !(x.StructureType.EffectIsVictoryPlanet == true)).ToList(); // artefacts won't be blown up (but everything else will)
+            foreach (PlanetStructure toExplode in structures)
+            {
+                DestroyStructure(target.PlanetID, toExplode.StructureTypeID);
+            }
+            var influence = target.GetFactionInfluences();
+            foreach (var pf in planet.PlanetFactions.Where(x => x.Influence > 0))
+            {
+                pf.Influence = 0;
+            }
+            // TODO: remove links
+
+            db.Events.InsertOnSubmit(Global.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", planet.Faction, planet, target.Faction, target, structure.StructureType));
+
+            return null;
+        }
+
+
     }
 
     #region Nested type: ClanEntry

@@ -40,6 +40,7 @@ namespace ZkData
         /// Spread influence through wormholes
         /// </summary>
         public void SpreadInfluence() {
+            // TODO handle guerilla jumpgates
 
             foreach (var planet in Planets) {
                 var sumInfluence = planet.PlanetFactions.Sum(x => (double?)x.Influence) ?? 0;
