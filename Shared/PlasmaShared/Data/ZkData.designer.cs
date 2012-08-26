@@ -14731,7 +14731,9 @@ namespace ZkData
 		
 		private EntitySet<PlanetOwnerHistory> _PlanetOwnerHistories;
 		
-		private EntitySet<PlanetStructure> _PlanetStructures;
+		private EntitySet<PlanetStructure> _PlanetStructuresByPlanetID;
+		
+		private EntitySet<PlanetStructure> _PlanetStructuresByTargetPlanetID;
 		
 		private EntitySet<TreatyEffect> _TreatyEffects;
 		
@@ -15101,27 +15103,46 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure", Storage="_PlanetStructures", ThisKey="PlanetID", OtherKey="PlanetID")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure", Storage="_PlanetStructuresByPlanetID", ThisKey="PlanetID", OtherKey="PlanetID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=16, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._PlanetStructures.HasLoadedOrAssignedValues == false)))
+							&& (this._PlanetStructuresByPlanetID.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._PlanetStructures;
+				return this._PlanetStructuresByPlanetID;
 			}
 			set
 			{
-				this._PlanetStructures.Assign(value);
+				this._PlanetStructuresByPlanetID.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure1", Storage="_PlanetStructuresByTargetPlanetID", ThisKey="PlanetID", OtherKey="TargetPlanetID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		public EntitySet<PlanetStructure> PlanetStructuresByTargetPlanetID
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._PlanetStructuresByTargetPlanetID.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._PlanetStructuresByTargetPlanetID;
+			}
+			set
+			{
+				this._PlanetStructuresByTargetPlanetID.Assign(value);
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_TreatyEffect", Storage="_TreatyEffects", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=17, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
 		public EntitySet<TreatyEffect> TreatyEffects
 		{
 			get
@@ -15140,7 +15161,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetFaction", Storage="_PlanetFactions", ThisKey="PlanetID", OtherKey="PlanetID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=18, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
 		public EntitySet<PlanetFaction> PlanetFactions
 		{
 			get
@@ -15420,16 +15441,28 @@ namespace ZkData
 			entity.Planet = null;
 		}
 		
-		private void attach_PlanetStructures(PlanetStructure entity)
+		private void attach_PlanetStructuresByPlanetID(PlanetStructure entity)
 		{
 			this.SendPropertyChanging();
 			entity.Planet = this;
 		}
 		
-		private void detach_PlanetStructures(PlanetStructure entity)
+		private void detach_PlanetStructuresByPlanetID(PlanetStructure entity)
 		{
 			this.SendPropertyChanging();
 			entity.Planet = null;
+		}
+		
+		private void attach_PlanetStructuresByTargetPlanetID(PlanetStructure entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlanetByTargetPlanetID = this;
+		}
+		
+		private void detach_PlanetStructuresByTargetPlanetID(PlanetStructure entity)
+		{
+			this.SendPropertyChanging();
+			entity.PlanetByTargetPlanetID = null;
 		}
 		
 		private void attach_TreatyEffects(TreatyEffect entity)
@@ -15464,7 +15497,8 @@ namespace ZkData
 			this._AccountPlanets = new EntitySet<AccountPlanet>(new Action<AccountPlanet>(this.attach_AccountPlanets), new Action<AccountPlanet>(this.detach_AccountPlanets));
 			this._EventPlanets = new EntitySet<EventPlanet>(new Action<EventPlanet>(this.attach_EventPlanets), new Action<EventPlanet>(this.detach_EventPlanets));
 			this._PlanetOwnerHistories = new EntitySet<PlanetOwnerHistory>(new Action<PlanetOwnerHistory>(this.attach_PlanetOwnerHistories), new Action<PlanetOwnerHistory>(this.detach_PlanetOwnerHistories));
-			this._PlanetStructures = new EntitySet<PlanetStructure>(new Action<PlanetStructure>(this.attach_PlanetStructures), new Action<PlanetStructure>(this.detach_PlanetStructures));
+			this._PlanetStructuresByPlanetID = new EntitySet<PlanetStructure>(new Action<PlanetStructure>(this.attach_PlanetStructuresByPlanetID), new Action<PlanetStructure>(this.detach_PlanetStructuresByPlanetID));
+			this._PlanetStructuresByTargetPlanetID = new EntitySet<PlanetStructure>(new Action<PlanetStructure>(this.attach_PlanetStructuresByTargetPlanetID), new Action<PlanetStructure>(this.detach_PlanetStructuresByTargetPlanetID));
 			this._TreatyEffects = new EntitySet<TreatyEffect>(new Action<TreatyEffect>(this.attach_TreatyEffects), new Action<TreatyEffect>(this.detach_TreatyEffects));
 			this._PlanetFactions = new EntitySet<PlanetFaction>(new Action<PlanetFaction>(this.attach_PlanetFactions), new Action<PlanetFaction>(this.detach_PlanetFactions));
 			this._Account = default(EntityRef<Account>);
@@ -17195,11 +17229,15 @@ namespace ZkData
 		
 		private bool _IsActive;
 		
-		private EntityRef<Planet> _Planet;
+		private System.Nullable<int> _TargetPlanetID;
+		
+		private EntityRef<Planet> _PlanetByPlanetID;
 		
 		private EntityRef<StructureType> _StructureType;
 		
 		private EntityRef<Account> _Account;
+		
+		private EntityRef<Planet> _PlanetByTargetPlanetID;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -17217,6 +17255,8 @@ namespace ZkData
     partial void OnEnergyPriorityChanged();
     partial void OnIsActiveChanging(bool value);
     partial void OnIsActiveChanged();
+    partial void OnTargetPlanetIDChanging(System.Nullable<int> value);
+    partial void OnTargetPlanetIDChanged();
     #endregion
 		
 		public PlanetStructure()
@@ -17236,7 +17276,7 @@ namespace ZkData
 			{
 				if ((this._PlanetID != value))
 				{
-					if (this._Planet.HasLoadedOrAssignedValue)
+					if (this._PlanetByPlanetID.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
@@ -17362,26 +17402,51 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TargetPlanetID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public System.Nullable<int> TargetPlanetID
+		{
+			get
+			{
+				return this._TargetPlanetID;
+			}
+			set
+			{
+				if ((this._TargetPlanetID != value))
+				{
+					if (this._PlanetByTargetPlanetID.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnTargetPlanetIDChanging(value);
+					this.SendPropertyChanging();
+					this._TargetPlanetID = value;
+					this.SendPropertyChanged("TargetPlanetID");
+					this.OnTargetPlanetIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure", Storage="_PlanetByPlanetID", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
 		public Planet Planet
 		{
 			get
 			{
-				return this._Planet.Entity;
+				return this._PlanetByPlanetID.Entity;
 			}
 			set
 			{
-				Planet previousValue = this._Planet.Entity;
+				Planet previousValue = this._PlanetByPlanetID.Entity;
 				if (((previousValue != value) 
-							|| (this._Planet.HasLoadedOrAssignedValue == false)))
+							|| (this._PlanetByPlanetID.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._Planet.Entity = null;
+						this._PlanetByPlanetID.Entity = null;
 						previousValue.PlanetStructures.Remove(this);
 					}
-					this._Planet.Entity = value;
+					this._PlanetByPlanetID.Entity = value;
 					if ((value != null))
 					{
 						value.PlanetStructures.Add(this);
@@ -17464,6 +17529,40 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Planet_PlanetStructure1", Storage="_PlanetByTargetPlanetID", ThisKey="TargetPlanetID", OtherKey="PlanetID", IsForeignKey=true)]
+		public Planet PlanetByTargetPlanetID
+		{
+			get
+			{
+				return this._PlanetByTargetPlanetID.Entity;
+			}
+			set
+			{
+				Planet previousValue = this._PlanetByTargetPlanetID.Entity;
+				if (((previousValue != value) 
+							|| (this._PlanetByTargetPlanetID.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._PlanetByTargetPlanetID.Entity = null;
+						previousValue.PlanetStructuresByTargetPlanetID.Remove(this);
+					}
+					this._PlanetByTargetPlanetID.Entity = value;
+					if ((value != null))
+					{
+						value.PlanetStructuresByTargetPlanetID.Add(this);
+						this._TargetPlanetID = value.PlanetID;
+					}
+					else
+					{
+						this._TargetPlanetID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("PlanetByTargetPlanetID");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -17486,9 +17585,10 @@ namespace ZkData
 		
 		private void Initialize()
 		{
-			this._Planet = default(EntityRef<Planet>);
+			this._PlanetByPlanetID = default(EntityRef<Planet>);
 			this._StructureType = default(EntityRef<StructureType>);
 			this._Account = default(EntityRef<Account>);
+			this._PlanetByTargetPlanetID = default(EntityRef<Planet>);
 			OnCreated();
 		}
 		
@@ -17553,6 +17653,12 @@ namespace ZkData
 		
 		private System.Nullable<bool> _EffectBlocksJumpgate;
 		
+		private System.Nullable<bool> _EffectRemoteInfluenceSpread;
+		
+		private System.Nullable<bool> _EffectCreateLink;
+		
+		private System.Nullable<bool> _EffectPlanetBuster;
+		
 		private double _Cost;
 		
 		private bool _IsBuildable;
@@ -17566,6 +17672,10 @@ namespace ZkData
 		private bool _OwnerChangeDisablesThis;
 		
 		private bool _BattleDeletesThis;
+		
+		private bool _IsSingleUse;
+		
+		private bool _RequiresPlanetTarget;
 		
 		private EntitySet<PlanetStructure> _PlanetStructures;
 		
@@ -17623,6 +17733,12 @@ namespace ZkData
     partial void OnEffectBlocksInfluenceSpreadChanged();
     partial void OnEffectBlocksJumpgateChanging(System.Nullable<bool> value);
     partial void OnEffectBlocksJumpgateChanged();
+    partial void OnEffectRemoteInfluenceSpreadChanging(System.Nullable<bool> value);
+    partial void OnEffectRemoteInfluenceSpreadChanged();
+    partial void OnEffectCreateLinkChanging(System.Nullable<bool> value);
+    partial void OnEffectCreateLinkChanged();
+    partial void OnEffectPlanetBusterChanging(System.Nullable<bool> value);
+    partial void OnEffectPlanetBusterChanged();
     partial void OnCostChanging(double value);
     partial void OnCostChanged();
     partial void OnIsBuildableChanging(bool value);
@@ -17637,6 +17753,10 @@ namespace ZkData
     partial void OnOwnerChangeDisablesThisChanged();
     partial void OnBattleDeletesThisChanging(bool value);
     partial void OnBattleDeletesThisChanged();
+    partial void OnIsSingleUseChanging(bool value);
+    partial void OnIsSingleUseChanged();
+    partial void OnRequiresPlanetTargetChanging(bool value);
+    partial void OnRequiresPlanetTargetChanged();
     #endregion
 		
 		public StructureType()
@@ -18131,8 +18251,71 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cost", DbType="float NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectRemoteInfluenceSpread", DbType="bit")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
+		public System.Nullable<bool> EffectRemoteInfluenceSpread
+		{
+			get
+			{
+				return this._EffectRemoteInfluenceSpread;
+			}
+			set
+			{
+				if ((this._EffectRemoteInfluenceSpread != value))
+				{
+					this.OnEffectRemoteInfluenceSpreadChanging(value);
+					this.SendPropertyChanging();
+					this._EffectRemoteInfluenceSpread = value;
+					this.SendPropertyChanged("EffectRemoteInfluenceSpread");
+					this.OnEffectRemoteInfluenceSpreadChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectCreateLink", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
+		public System.Nullable<bool> EffectCreateLink
+		{
+			get
+			{
+				return this._EffectCreateLink;
+			}
+			set
+			{
+				if ((this._EffectCreateLink != value))
+				{
+					this.OnEffectCreateLinkChanging(value);
+					this.SendPropertyChanging();
+					this._EffectCreateLink = value;
+					this.SendPropertyChanged("EffectCreateLink");
+					this.OnEffectCreateLinkChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectPlanetBuster", DbType="bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
+		public System.Nullable<bool> EffectPlanetBuster
+		{
+			get
+			{
+				return this._EffectPlanetBuster;
+			}
+			set
+			{
+				if ((this._EffectPlanetBuster != value))
+				{
+					this.OnEffectPlanetBusterChanging(value);
+					this.SendPropertyChanging();
+					this._EffectPlanetBuster = value;
+					this.SendPropertyChanged("EffectPlanetBuster");
+					this.OnEffectPlanetBusterChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Cost", DbType="float NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
 		public double Cost
 		{
 			get
@@ -18153,7 +18336,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBuildable", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
 		public bool IsBuildable
 		{
 			get
@@ -18174,7 +18357,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsIngameDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
 		public bool IsIngameDestructible
 		{
 			get
@@ -18195,7 +18378,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsBomberDestructible", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=27)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
 		public bool IsBomberDestructible
 		{
 			get
@@ -18216,7 +18399,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=28)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31)]
 		public bool OwnerChangeDeletesThis
 		{
 			get
@@ -18237,7 +18420,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_OwnerChangeDisablesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=29)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=32)]
 		public bool OwnerChangeDisablesThis
 		{
 			get
@@ -18258,7 +18441,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_BattleDeletesThis", DbType="bit NOT NULL")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=30)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=33)]
 		public bool BattleDeletesThis
 		{
 			get
@@ -18278,8 +18461,50 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsSingleUse", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=34)]
+		public bool IsSingleUse
+		{
+			get
+			{
+				return this._IsSingleUse;
+			}
+			set
+			{
+				if ((this._IsSingleUse != value))
+				{
+					this.OnIsSingleUseChanging(value);
+					this.SendPropertyChanging();
+					this._IsSingleUse = value;
+					this.SendPropertyChanged("IsSingleUse");
+					this.OnIsSingleUseChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiresPlanetTarget", DbType="bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=35)]
+		public bool RequiresPlanetTarget
+		{
+			get
+			{
+				return this._RequiresPlanetTarget;
+			}
+			set
+			{
+				if ((this._RequiresPlanetTarget != value))
+				{
+					this.OnRequiresPlanetTargetChanging(value);
+					this.SendPropertyChanging();
+					this._RequiresPlanetTarget = value;
+					this.SendPropertyChanged("RequiresPlanetTarget");
+					this.OnRequiresPlanetTargetChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="StructureType_PlanetStructure", Storage="_PlanetStructures", ThisKey="StructureTypeID", OtherKey="StructureTypeID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=31, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=36, EmitDefaultValue=false)]
 		public EntitySet<PlanetStructure> PlanetStructures
 		{
 			get

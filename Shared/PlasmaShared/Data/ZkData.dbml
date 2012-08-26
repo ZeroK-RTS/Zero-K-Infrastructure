@@ -555,7 +555,8 @@
       <Association Name="Planet_AccountPlanet" Member="AccountPlanets" ThisKey="PlanetID" OtherKey="PlanetID" Type="AccountPlanet" />
       <Association Name="Planet_EventPlanet" Member="EventPlanets" ThisKey="PlanetID" OtherKey="PlanetID" Type="EventPlanet" />
       <Association Name="Planet_PlanetOwnerHistory" Member="PlanetOwnerHistories" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetOwnerHistory" />
-      <Association Name="Planet_PlanetStructure" Member="PlanetStructures" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetStructure" />
+      <Association Name="Planet_PlanetStructure" Member="PlanetStructures" Storage="_PlanetStructuresByPlanetID" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetStructure" />
+      <Association Name="Planet_PlanetStructure1" Member="PlanetStructuresByTargetPlanetID" ThisKey="PlanetID" OtherKey="TargetPlanetID" Type="PlanetStructure" />
       <Association Name="Planet_TreatyEffect" Member="TreatyEffects" ThisKey="PlanetID" OtherKey="PlanetID" Type="TreatyEffect" />
       <Association Name="Planet_PlanetFaction" Member="PlanetFactions" ThisKey="PlanetID" OtherKey="PlanetID" Type="PlanetFaction" />
       <Association Name="Account_Planet" Member="Account" ThisKey="OwnerAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
@@ -643,9 +644,11 @@
       <Column Name="ActivatedOnTurn" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="EnergyPriority" Type="EnergyPriority" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="IsActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
-      <Association Name="Planet_PlanetStructure" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Column Name="TargetPlanetID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Association Name="Planet_PlanetStructure" Member="Planet" Storage="_PlanetByPlanetID" ThisKey="PlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="StructureType_PlanetStructure" Member="StructureType" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="StructureType" IsForeignKey="true" />
       <Association Name="Account_PlanetStructure" Member="Account" ThisKey="OwnerAccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Planet_PlanetStructure1" Member="PlanetByTargetPlanetID" ThisKey="TargetPlanetID" OtherKey="PlanetID" Type="Planet" IsForeignKey="true" />
     </Type>
   </Table>
   <Table Name="dbo.StructureType" Member="StructureTypes">
@@ -673,6 +676,9 @@
       <Column Name="EffectBots" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="EffectBlocksInfluenceSpread" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectBlocksJumpgate" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="EffectRemoteInfluenceSpread" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="EffectCreateLink" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="EffectPlanetBuster" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="Cost" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="IsBuildable" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="IsIngameDestructible" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
@@ -680,6 +686,8 @@
       <Column Name="OwnerChangeDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="OwnerChangeDisablesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="BattleDeletesThis" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsSingleUse" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
+      <Column Name="RequiresPlanetTarget" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="StructureType_PlanetStructure" Member="PlanetStructures" ThisKey="StructureTypeID" OtherKey="StructureTypeID" Type="PlanetStructure" />
       <Association Name="Unlock_StructureType" Member="Unlock" ThisKey="EffectUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
     </Type>
