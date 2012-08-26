@@ -420,13 +420,14 @@ namespace ZeroKWeb.SpringieInterface
             }
 
             //rotate map
-            //var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon!=null && x.Planets.Count == 0 && x.FeaturedOrder != null).ToList();
-            //if (mapList.Count > 0)
-            //{
-            //    int r = new Random().Next(mapList.Count);
-            //    planet.MapResourceID = mapList[r].ResourceID;
-            //}
-            //db.SubmitAndMergeChanges();
+            var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon!=null && x.Planets.Count == 0 && x.FeaturedOrder != null).ToList();
+            if (mapList.Count > 0)
+            {
+                int r = new Random().Next(mapList.Count);
+                int resourceID = mapList[r].ResourceID;
+                planet.MapResourceID = db.Resources.Single(x => x.ResourceID == resourceID).ResourceID;
+            }
+            db.SubmitAndMergeChanges();
         }
     }
 }
