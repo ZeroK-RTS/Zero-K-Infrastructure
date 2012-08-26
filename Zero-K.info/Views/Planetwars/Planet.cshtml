@@ -145,9 +145,10 @@
                 <br />
 
             } else if (isWarp) {
-                var avail = Math.Min(Global.Account.GetDropshipsAvailable(), Global.Account.GetWarpAvailable());
+                var availD = Global.Account.GetDropshipsAvailable();
+                var availW = Global.Account.GetWarpAvailable();
                 <form action='@Url.Action("SendDropships", "Planetwars", new { planetID = Model.PlanetID, useWarp = true })' method="post">
-                    Warp to planet (@Html.PrintDropships(avail, Global.Account.Faction) @Html.PrintWarps(avail)):
+                    Warp to planet (@Html.PrintDropships(availD, Global.Account.Faction) @Html.PrintWarps(availW)):
                     <input type="text" name="count" />
                     <input type="submit" value="send" />
                 </form>
