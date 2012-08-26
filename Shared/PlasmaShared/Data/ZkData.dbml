@@ -676,7 +676,7 @@
       <Column Name="EffectBots" Type="System.String" DbType="nvarchar(100)" CanBeNull="true" />
       <Column Name="EffectBlocksInfluenceSpread" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectBlocksJumpgate" Type="System.Boolean" DbType="bit" CanBeNull="true" />
-      <Column Name="EffectRemoteInfluenceSpread" Type="System.Boolean" DbType="bit" CanBeNull="true" />
+      <Column Name="EffectRemoteInfluenceSpread" Type="System.Double" DbType="float" CanBeNull="true" />
       <Column Name="EffectCreateLink" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="EffectPlanetBuster" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Column Name="Cost" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />

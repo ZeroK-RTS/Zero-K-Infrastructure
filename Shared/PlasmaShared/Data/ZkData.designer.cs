@@ -17653,7 +17653,7 @@ namespace ZkData
 		
 		private System.Nullable<bool> _EffectBlocksJumpgate;
 		
-		private System.Nullable<bool> _EffectRemoteInfluenceSpread;
+		private System.Nullable<double> _EffectRemoteInfluenceSpread;
 		
 		private System.Nullable<bool> _EffectCreateLink;
 		
@@ -17733,7 +17733,7 @@ namespace ZkData
     partial void OnEffectBlocksInfluenceSpreadChanged();
     partial void OnEffectBlocksJumpgateChanging(System.Nullable<bool> value);
     partial void OnEffectBlocksJumpgateChanged();
-    partial void OnEffectRemoteInfluenceSpreadChanging(System.Nullable<bool> value);
+    partial void OnEffectRemoteInfluenceSpreadChanging(System.Nullable<double> value);
     partial void OnEffectRemoteInfluenceSpreadChanged();
     partial void OnEffectCreateLinkChanging(System.Nullable<bool> value);
     partial void OnEffectCreateLinkChanged();
@@ -18251,9 +18251,9 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectRemoteInfluenceSpread", DbType="bit")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_EffectRemoteInfluenceSpread", DbType="float")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24)]
-		public System.Nullable<bool> EffectRemoteInfluenceSpread
+		public System.Nullable<double> EffectRemoteInfluenceSpread
 		{
 			get
 			{
