@@ -425,7 +425,12 @@ namespace ZeroKWeb.SpringieInterface
             {
                 int r = new Random().Next(mapList.Count);
                 int resourceID = mapList[r].ResourceID;
+                text.AppendLine(String.Format("DEBUG: Map cycler - {0} maps found, selected map ID {1} to replace map ID {2}", mapList.Count, resourceID, planet.MapResourceID));
                 planet.MapResourceID = db.Resources.Single(x => x.ResourceID == resourceID).ResourceID;
+            }
+            else
+            {
+                text.AppendLine("DEBUG: Map cycler - no maps found");
             }
             db.SubmitAndMergeChanges();
         }
