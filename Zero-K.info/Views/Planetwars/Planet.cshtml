@@ -178,9 +178,10 @@
                 <br />
 
             } else if (isWarp) {
-                var avail = Math.Min(Global.Account.GetBombersAvailable(), Global.Account.GetWarpAvailable());
+                var availB = Global.Account.GetBombersAvailable();
+                var availW = Global.Account.GetWarpAvailable();
                 <form action='@Url.Action("BombPlanet", "Planetwars", new { planetID = Model.PlanetID, useWarp = true })' method="post">
-                    Warp bombers (@Html.PrintBombers(avail) @Html.PrintWarps(avail)):
+                    Warp bombers (@Html.PrintBombers(availB) @Html.PrintWarps(availW)):
                     <input type="text" name="count" />
                     <input type="submit" value="send" />
                 </form>
