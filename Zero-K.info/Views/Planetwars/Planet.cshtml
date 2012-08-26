@@ -232,7 +232,19 @@
                 {
                     <span>Energy priority: @structure.EnergyPriority.Description()</span>
                 }
-            @Html.DisplayFor(x => structure.StructureType)
+                <br />
+
+                @if (Global.Account!= null && Global.Account.CanSetStructureTarget(structure)) {
+                    <form method="POST" action="@Url.Action("SetStructureTarget", new {planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID})">
+                        Target planet: @Html.DropDownList("targetPlanetID", structure.Planet.Galaxy.Planets.Select(x=>new SelectListItem(){ Text = x.Name, Value = x.PlanetID.ToString()}))
+                    </form>
+                    
+                } else {
+                    <span>Target planet: @Html.PrintPlanet(structure.PlanetByTargetPlanetID)</span>
+                }
+                
+
+                @Html.DisplayFor(x => structure.StructureType)
             </div>
         }
 		@if (Global.FactionID == Model.OwnerFactionID)

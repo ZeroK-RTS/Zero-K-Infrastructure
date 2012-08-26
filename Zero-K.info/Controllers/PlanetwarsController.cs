@@ -663,6 +663,23 @@ namespace ZeroKWeb.Controllers
             db.SubmitAndMergeChanges();
             return RedirectToAction("Planet", new { id = planet.PlanetID });
         }
+
+        [Auth]
+        public ActionResult SetStructureTarget(int planetID, int structuretypeID, int targetPlanetID)
+        {
+            var db = new ZkDataContext();
+            var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            var planet = db.Planets.Single(x => x.PlanetID == planetID);
+            var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structuretypeID);
+            if (!acc.CanSetStructureTarget(structure)) return Content("Cannot set target");
+            var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
+            structure.PlanetByTargetPlanetID = target;
+            db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
+            // todo implement effect like creating link or busting planet
+            db.SubmitAndMergeChanges();
+            return RedirectToAction("Planet", new { id = planet.PlanetID });
+            
+        }
     }
 
     #region Nested type: ClanEntry

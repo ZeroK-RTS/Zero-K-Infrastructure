@@ -109,6 +109,15 @@ namespace ZkData
             return false;
         }
 
+        public bool CanSetStructureTarget(PlanetStructure ps)
+        {
+            if (Faction == null || ps.Account == null) return false;
+            if (ps.OwnerAccountID == AccountID || ps.Planet.OwnerAccountID == AccountID) return true; // owner of planet or owner of structure
+            if (ps.Account.FactionID == FactionID && HasFactionRight(x => x.RightDropshipQuota > 0)) return true;
+            return false;
+        }
+
+
 
         public bool HasClanRight(Func<RoleType, bool> test) {
             return AccountRolesByAccountID.Where(x => x.RoleType.IsClanOnly).Select(x=>x.RoleType).Any(test);
