@@ -36,16 +36,19 @@
         public const double InfluencePerTech = 0.5;
         public const double InfluenceDecay = 1;
 	    public const double InfluenceToCapturePlanet = 50.1;
+        public const double InfluenceCcKilledMultiplier = 0.5;
 	    public const double SelfDestructRefund = 0.5;
+	    public const double BomberKillStructureChance = 0.1;
+        public const double BomberKillIpChance = 0.8;
+        public const double BomberKillIpAmount = 1;
+        public const double StructureIngameDisableTimeMult = 4;
+        public const int DefaultDropshipCapacity = 10;
+        public const int DefaultBomberCapacity = 10;
         public const int AttackPointsForVictory = 2;
         public const int AttackPointsForDefeat = 1;
         public const int MaxClanSkilledSize = 16;
         public const int ClanLeaveLimit = 100;
-	    public const double InfluenceCcKilledMultiplier = 0.5;
-	    public const double BomberKillStructureChance = 0.1;
-        public const double BomberKillIpChance = 0.8;
-        public const double BomberKillIpAmount = 1;
-	    public const int FactionChannelMinLevel = 8;
+        public const int FactionChannelMinLevel = 8;
 
 	    public const string MetalIcon = "/img/luaui/ibeam.png";
         public const string EnergyIcon = "/img/luaui/energy.png";
@@ -58,9 +61,6 @@
             if (string.IsNullOrEmpty(name)) return false;
             return name.Contains("Zero-K");
         }
-
-		public const int DefaultDropshipCapacity = 10;
-        public const int DefaultBomberCapacity = 10;
 	}
   
 }
