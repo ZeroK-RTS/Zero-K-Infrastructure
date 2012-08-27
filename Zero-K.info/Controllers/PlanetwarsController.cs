@@ -709,6 +709,18 @@ namespace ZeroKWeb.Controllers
             return RedirectToAction("Planet", new { id = planet.PlanetID });
         }
 
+        // this overload is called from Planet.cshtml; used because cshtml can't send objects, only IDs
+        [Auth]
+        public ActionResult ActivateTargetedStructure(int planetID, int structureTypeID, int targetID)
+        {
+            var db = new ZkDataContext();
+            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
+            PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
+            Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
+
+            return ActivateTargetedStructure(planet, structure, target);
+        }
+
         [Auth]
         public ActionResult CreateLink(Planet planet, PlanetStructure structure, Planet target)
         {
