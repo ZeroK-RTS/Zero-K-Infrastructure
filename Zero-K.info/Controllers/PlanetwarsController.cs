@@ -685,7 +685,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult ActivateTargetedStructure(Planet planet, PlanetStructure structure, Planet target)
         {
-            if (!structure.IsActive) return Content(String.Format("Structure {1} is inactive", structure.StructureType.Name));
+            if (!structure.IsActive) return Content(String.Format("Structure {0} is inactive", structure.StructureType.Name));
             var db = new ZkDataContext();
 
             ActionResult ret = null;
