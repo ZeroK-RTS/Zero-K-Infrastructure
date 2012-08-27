@@ -82,7 +82,7 @@ namespace ZeroKWeb.Controllers
                 args.AddRange(bombed.Select(x=>x.StructureType));
 
                 string str;
-                if (selfbomb) str = "{0} of {1} bombed own planet {3} using {4} bombers against {5} defenses. {6}. Ground armies lost {7} influence";
+                if (selfbomb) str = "{0} of {1} bombed own planet {3} using {4} bombers against {5} defenses. {6} Ground armies lost {7} influence";
                 else str = "{0} of {1} bombed {2} planet {3} using {4} bombers against {5} defenses. {6}. Ground armies lost {7} influence";
                 if (bombed.Count > 0) {
                     str += " and ";
@@ -541,7 +541,7 @@ namespace ZeroKWeb.Controllers
                     !(Global.Account.FactionID == planet.OwnerFactionID && Global.Account.HasFactionRight(x => x.RightEditTexts) || Global.Account.IsZeroKAdmin)) 
                     return Content("Unauthorized");
                 db.SubmitChanges();
-                db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} from {2} to {3}", Global.Account, planet, planet.Name, newName));
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} renamed planet {1} to {2}", Global.Account, planet, newName));
                 planet.Name = newName;
                 db.SubmitChanges();
                 scope.Complete();
