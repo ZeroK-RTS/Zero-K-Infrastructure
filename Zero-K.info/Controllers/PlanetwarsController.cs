@@ -665,28 +665,32 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult SetStructureTarget(int planetID, int structuretypeID, int targetPlanetID)
+        public ActionResult SetStructureTarget(int planetID, int structureTypeID, int targetPlanetID)
         {
             var db = new ZkDataContext();
             var acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             var planet = db.Planets.Single(x => x.PlanetID == planetID);
-            var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structuretypeID);
+            var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structureTypeID);
             if (!acc.CanSetStructureTarget(structure)) return Content("Cannot set target");
             var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
             structure.PlanetByTargetPlanetID = target;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
             
-            if (structure.IsActive && !structure.StructureType.IsSingleUse) return ActivateTargetedStructure(planet, structure, target);
+            if (structure.IsActive && !structure.StructureType.IsSingleUse) return ActivateTargetedStructure(planetID, structureTypeID, targetPlanetID);
             
             db.SubmitAndMergeChanges();
             return RedirectToAction("Planet", new { id = planet.PlanetID });
         }
 
         [Auth]
-        public ActionResult ActivateTargetedStructure(Planet planet, PlanetStructure structure, Planet target)
+        public ActionResult ActivateTargetedStructure(int planetID, int structureTypeID, int targetID)
         {
-            if (!structure.IsActive) return Content(String.Format("Structure {0} is inactive", structure.StructureType.Name));
             var db = new ZkDataContext();
+            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
+            PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
+            Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
+
+            if (!structure.IsActive) return Content(String.Format("Structure {0} is inactive", structure.StructureType.Name));
 
             ActionResult ret = null;
             if (structure.StructureType.EffectCreateLink == true)
@@ -697,7 +701,7 @@ namespace ZeroKWeb.Controllers
             {
                 ret = FirePlanetBuster(planet, structure, target);
             }
-            
+
             if (structure.StructureType.IsSingleUse)    // single-use structure, remove
             {
                 DestroyStructure(planet.PlanetID, structure.StructureTypeID);
@@ -707,18 +711,6 @@ namespace ZeroKWeb.Controllers
 
             if (ret != null) return ret;
             return RedirectToAction("Planet", new { id = planet.PlanetID });
-        }
-
-        // this overload is called from Planet.cshtml; used because cshtml can't send objects, only IDs
-        [Auth]
-        public ActionResult ActivateTargetedStructure(int planetID, int structureTypeID, int targetID)
-        {
-            var db = new ZkDataContext();
-            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
-            PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
-            Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
-
-            return ActivateTargetedStructure(planet, structure, target);
         }
 
         [Auth]
