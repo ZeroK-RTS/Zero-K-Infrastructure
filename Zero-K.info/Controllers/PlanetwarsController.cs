@@ -685,6 +685,7 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult ActivateTargetedStructure(Planet planet, PlanetStructure structure, Planet target)
         {
+            if (!structure.IsActive) return Content(String.Format("Structure {1} is inactive", structure.StructureType.Name));
             var db = new ZkDataContext();
 
             ActionResult ret = null;
@@ -718,7 +719,9 @@ namespace ZeroKWeb.Controllers
             var warpDefense = target.PlanetStructures.Where(x => x.StructureType.EffectBlocksJumpgate == true).ToList();
             if (warpDefense.Count > 0) return Content("Warp jamming prevents string creation");
 
-            // TODO: actually add the link
+            if (planet.GalaxyID != target.GalaxyID) return Content("Cannot form exo-galaxy link");
+
+            db.Links.InsertOnSubmit(new Link { PlanetID1 = planet.PlanetID, PlanetID2 = target.PlanetID, GalaxyID = planet.GalaxyID } );
             db.Events.InsertOnSubmit(Global.CreateEvent("A new link was created between {0} planet {1} and {2} planet {3} by the {4}", planet.Faction, planet, target.Faction, target, structure.StructureType));
 
             return null;
