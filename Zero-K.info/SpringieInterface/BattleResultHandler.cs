@@ -339,7 +339,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (s.StructureType.IsIngameDestructible) {
                             s.IsActive = false;
                             if (s.ActivatedOnTurn == null) s.ActivatedOnTurn = gal.Turn;
-                            s.ActivatedOnTurn = s.ActivatedOnTurn + s.StructureType.TurnsToActivate * GlobalConst.StructureIngameDisableTimeMult;
+                            s.ActivatedOnTurn = s.ActivatedOnTurn + (int)(s.StructureType.TurnsToActivate * GlobalConst.StructureIngameDisableTimeMult);
 
                             var ev = Global.CreateEvent("{0} has been disabled on {1} planet {2}. {3}", s.StructureType.Name, defender, planet, sb);
                             db.Events.InsertOnSubmit(ev);
@@ -353,7 +353,7 @@ namespace ZeroKWeb.SpringieInterface
                 {
                     s.IsActive = false;
                     if (s.ActivatedOnTurn == null) s.ActivatedOnTurn = gal.Turn;
-                    s.ActivatedOnTurn = s.ActivatedOnTurn + s.StructureType.TurnsToActivate * GlobalConst.StructureIngameDisableTimeMult;
+                    s.ActivatedOnTurn = s.ActivatedOnTurn + (int)(s.StructureType.TurnsToActivate * GlobalConst.StructureIngameDisableTimeMult);
                 }
                 var ev = Global.CreateEvent("All structures have been disabled on {0} planet {1}. {2}", defender, planet, sb);
                 db.Events.InsertOnSubmit(ev);

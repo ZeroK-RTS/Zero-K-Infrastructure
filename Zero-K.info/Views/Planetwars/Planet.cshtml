@@ -245,9 +245,8 @@
                     </form>
                         if (structure.StructureType.IsSingleUse && structure.IsActive && structure.TargetPlanetID != null)
                         {
-                        @:&nbsp
                         string question = String.Format("WARNING: {0} will be used once on the specified target, after which it will be removed. Proceed?", structure.StructureType.Name);
-                        @Html.ActionLink("activate", "ActivateTargetedStructure", new { planet = Model, structure = structure, target = structure.PlanetByTargetPlanetID }, new { @onclick = String.Format("return confirm('{0}')", question) })
+                        @Html.ActionLink("Activate", "ActivateTargetedStructure", new { planet = Model, structure = structure, target = structure.PlanetByTargetPlanetID }, new { @onclick = String.Format("return confirm('{0}')", question) })
                         }
                     }
                     else
