@@ -867,6 +867,7 @@
       <Column Name="TurnsRemaining" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="TreatyState" Type="TreatyState" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="TurnsTotal" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="TreatyNote" Type="System.String" DbType="nvarchar(max)" CanBeNull="true"/>
       <Association Name="FactionTreaty_TreatyEffect" Member="TreatyEffects" ThisKey="FactionTreatyID" OtherKey="FactionTreatyID" Type="TreatyEffect" />
       <Association Name="Faction_FactionTreaty" Member="FactionByProposingFactionID" ThisKey="ProposingFactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
       <Association Name="Faction_FactionTreaty1" Member="FactionByAcceptingFactionID" ThisKey="AcceptingFactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />

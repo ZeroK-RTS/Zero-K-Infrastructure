@@ -39,6 +39,10 @@
                                     <input type="submit" value="add" name="add"/>
                                 </td>
         </tr>
+        <tr><td>Diplomatic note:</td><td>
+                @Html.TextArea("treatyNote", tr.TreatyNote, 8,80,null)
+        </tr>
+
            
     </table>
     <input type="submit" value="Submit offer" name="propose" class="delete"/>

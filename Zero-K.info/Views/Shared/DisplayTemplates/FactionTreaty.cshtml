@@ -24,6 +24,10 @@
     @foreach (TreatyEffect ef in tr.TreatyEffects) {
         @Html.DisplayFor(x => ef)<br/>
     }
+    @if (tr.TreatyState == TreatyState.Proposed && tr.TreatyNote != null) {
+        <span><i>@tr.TreatyNote</i></span>
+        <br />
+    }
     <br/>
     @if (tr.CanCancel(Global.Account)) {
         <span>
@@ -31,7 +35,7 @@
             @if (tr.TreatyState == TreatyState.Proposed) {
                 @Html.ActionLink("(counter proposal)", "CounterProposal", "Factions", new { id = tr.FactionTreatyID }, null) @:&nbsp;|&nbsp;
                 if (tr.CanAccept(Global.Account)) {
-                    @Html.ActionLink("(accept)", "AcceptTreaty","Factions", new {id = tr.FactionTreatyID}, new{@class="delete"})
+                    @Html.ActionLink("(accept)", "AcceptTreaty", "Factions", new { id = tr.FactionTreatyID }, new { @class = "delete" })
                     
                 }
             }

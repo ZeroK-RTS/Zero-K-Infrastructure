@@ -82,7 +82,8 @@ namespace ZeroKWeb.Controllers
                                          double? effectValue,
                                          int? planetID,
                                          bool? isReverse,
-                                         string add,int? delete, string propose) {
+                                         string note,
+                                         string add,int? delete,string propose) {
             if (!Global.Account.HasFactionRight(x => x.RightDiplomacy)) return Content("Not a diplomat!");
 
             FactionTreaty treaty;
@@ -103,6 +104,7 @@ namespace ZeroKWeb.Controllers
             treaty.FactionByProposingFactionID = db.Factions.Single(x => x.FactionID == Global.FactionID);
             treaty.TurnsRemaining = turns;
             treaty.TurnsTotal = turns;
+            treaty.TreatyNote = note;
             
 
             if (!string.IsNullOrEmpty(add)) {
