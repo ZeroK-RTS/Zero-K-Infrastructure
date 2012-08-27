@@ -704,7 +704,7 @@ namespace ZeroKWeb.Controllers
 
             if (structure.StructureType.IsSingleUse)    // single-use structure, remove
             {
-                DestroyStructure(planet.PlanetID, structure.StructureTypeID);
+                db.PlanetStructures.DeleteOnSubmit(structure);
             }
 
             db.SubmitAndMergeChanges();
@@ -721,7 +721,7 @@ namespace ZeroKWeb.Controllers
             // warp jammers protect against link creation
             // FIXME: this is probably not the best limitation to put on them, may want a new idea
             var warpDefense = target.PlanetStructures.Where(x => x.StructureType.EffectBlocksJumpgate == true).ToList();
-            if (warpDefense.Count > 0) return Content("Warp jamming prevents string creation");
+            if (warpDefense.Count > 0) return Content("Warp jamming prevents link creation");
 
             if (planet.GalaxyID != target.GalaxyID) return Content("Cannot form exo-galaxy link");
 
@@ -737,16 +737,14 @@ namespace ZeroKWeb.Controllers
             var db = new ZkDataContext();
 
             var structures = target.PlanetStructures.Where(x => !(x.StructureType.EffectIsVictoryPlanet == true)).ToList(); // artefacts won't be blown up (but everything else will)
-            foreach (PlanetStructure toExplode in structures)
-            {
-                DestroyStructure(target.PlanetID, toExplode.StructureTypeID);
-            }
+            db.PlanetStructures.DeleteAllOnSubmit(structures);
             var influence = target.GetFactionInfluences();
             foreach (var pf in planet.PlanetFactions.Where(x => x.Influence > 0))
             {
                 pf.Influence = 0;
             }
-            // TODO: remove links
+            var links = db.Links.Where(x => x.PlanetID1 == target.PlanetID || x.PlanetID2 == target.PlanetID);
+            db.Links.DeleteAllOnSubmit(links);
 
             db.Events.InsertOnSubmit(Global.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", planet.Faction, planet, target.Faction, target, structure.StructureType));
 
