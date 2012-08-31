@@ -736,6 +736,10 @@ namespace ZeroKWeb.Controllers
         {
             var db = new ZkDataContext();
 
+            Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
+            if (acc.Faction == null) return Content("Join some faction first");
+            if (!target.CanFirePlanetBuster(acc.Faction)) return Content("You cannot attack here");
+
             var structures = target.PlanetStructures.Where(x => !(x.StructureType.EffectIsVictoryPlanet == true)).ToList(); // artefacts won't be blown up (but everything else will)
             db.PlanetStructures.DeleteAllOnSubmit(structures);
             var influence = target.GetFactionInfluences();

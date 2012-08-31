@@ -19,6 +19,22 @@ namespace ZkData
             return PlanetFactions.Where(x => presentFactions.Contains(x.FactionID) && x.FactionID != OwnerFactionID && x.Dropships > 0).OrderByDescending(x => x.Dropships).ThenBy(x => x.DropshipsLastAdded).Select(x => x.Faction).FirstOrDefault();
         }
 
+        /*
+        public Faction GetAttacker(IEnumerable<int> presentFactions, Planet planet) {
+            List<PlanetFaction> factions = PlanetFactions.Where(x => presentFactions.Contains(x.FactionID) && x.Dropships > 0).ToList();
+            Dictionary<int, double> dropships = new Dictionary<int, double>();
+            foreach (PlanetFaction f in factions) {
+                if (f.FactionID == planet.OwnerFactionID)
+                {
+                    var defense = planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectBomberDefense) ?? 0;
+                    dropships.Add(f.FactionID, f.Dropships + defense);
+                }
+                else dropships.Add(f.FactionID, f.Dropships);
+            }
+            return factions.OrderByDescending(x => dropships[x.FactionID]).ThenBy(x => x.DropshipsLastAdded).Select(x => x.Faction).FirstOrDefault();
+        }
+        */
+
 	    public override string ToString() {
 	        return Name;
 	    }
@@ -70,6 +86,14 @@ namespace ZkData
         public bool CanBombersWarp(Faction attacker)
         {
             return CheckWarpAttack(attacker, x => x.EffectPreventBomberAttack == true);
+        }
+
+        public bool CanFirePlanetBuster(Faction attacker)
+        {
+            if (!Galaxy.IsDefault) return false;    // no exo-galaxy strikes
+            if (OwnerFactionID == attacker.FactionID || attacker.GaveTreatyRight(this, x => x.EffectPreventBomberAttack == true)) return false; // attacker allied cannot strike
+            if (PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)) return false; // artefact protects planet
+            return true;
         }
 
 
