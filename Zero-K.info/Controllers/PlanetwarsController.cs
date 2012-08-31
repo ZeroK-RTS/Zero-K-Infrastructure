@@ -708,6 +708,7 @@ namespace ZeroKWeb.Controllers
             }
 
             db.SubmitAndMergeChanges();
+            SetPlanetOwners();//this is needed for the buster to update ownership after planet destruction
 
             if (ret != null) return ret;
             return RedirectToAction("Planet", new { id = planet.PlanetID });
@@ -740,8 +741,12 @@ namespace ZeroKWeb.Controllers
             if (acc.Faction == null) return Content("Join some faction first");
             if (!target.CanFirePlanetBuster(acc.Faction)) return Content("You cannot attack here");
 
-            var structures = target.PlanetStructures.Where(x => !(x.StructureType.EffectIsVictoryPlanet == true)).ToList(); // artefacts won't be blown up (but everything else will)
+            //Get rid of all strutures
+            var structures =  target.PlanetStructures.ToList();            
             db.PlanetStructures.DeleteAllOnSubmit(structures);
+            
+
+            //kill all IP
             var influence = target.GetFactionInfluences();
             foreach (var pf in planet.PlanetFactions.Where(x => x.Influence > 0))
             {
