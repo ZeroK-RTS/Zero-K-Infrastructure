@@ -21,7 +21,7 @@ namespace MissionEditor2
 	{
 		CreateUnitsAction action;
 		DragInfo dragInfo;
-		int gridSize = 16;
+		int gridSize = 8;   //16
 		DateTime mouseDownDate;
 		ObservableCollection<UnitIcon> unitIcons = new ObservableCollection<UnitIcon>();
 

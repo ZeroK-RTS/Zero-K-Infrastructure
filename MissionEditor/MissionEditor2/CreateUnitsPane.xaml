@@ -49,6 +49,17 @@
                         <ListBox x:Name="playerListBox" ItemsSource="{Binding Mission.Players, Source={x:Static local:MainWindow.Instance}}" IsSynchronizedWithCurrentItem="True" />
                     </ad:DockableContent>
                 </ad:DockablePane>
+                <ad:DockablePane ad:ResizingPanel.ResizeHeight="70">
+                    <ad:DockableContent Title="Insertion Method">
+                        <DockPanel>
+                            <CheckBox DockPanel.Dock="Top" IsChecked="{Binding UseOrbitalDrop}">Orbital Drop</CheckBox>
+                            <DockPanel DockPanel.Dock="Bottom">
+                                <Label DockPanel.Dock="Left">CEG</Label>
+                                <TextBox Text="{Binding CEG, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxLines="1"/>
+                            </DockPanel>
+                        </DockPanel>
+                    </ad:DockableContent>
+                </ad:DockablePane>
                 <ad:DockablePane>
                     <ad:DockableContent Title="Help">
                         <ScrollViewer Background="White">

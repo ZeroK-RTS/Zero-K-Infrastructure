@@ -423,22 +423,30 @@ namespace MissionEditor2
 			                {
 			                	FileName = springExe,
 			                	Arguments = String.Format("\"{0}\"", scriptFile),
-			                	RedirectStandardError = true,
-			                	RedirectStandardOutput = true,
+                                RedirectStandardError = Debugger.IsAttached,
+                                RedirectStandardOutput = Debugger.IsAttached,
 			                	UseShellExecute = false
 			                };
 			var springProcess = new Process { StartInfo = startInfo };
-			Utils.InvokeInNewThread(delegate
-				{
-					if (!springProcess.Start()) throw new Exception("Failed to start Spring");
-					while (!springProcess.HasExited)
-					{
-						var line = springProcess.StandardOutput.ReadLine();
-						if (!String.IsNullOrEmpty(line)) Console.WriteLine(line);
-						var output = springProcess.StandardOutput.ReadToEnd();
-						if (!String.IsNullOrEmpty(output)) Console.WriteLine(output);
-					}
-				});
+            if (Debugger.IsAttached)    // this code seems to cause it to hang at Loading Weapon Definitions or LuaRules, depending on engine version
+            {
+                Utils.InvokeInNewThread(delegate
+                    {
+                        if (!springProcess.Start()) throw new Exception("Failed to start Spring");
+
+                        while (!springProcess.HasExited)
+                        {
+                            var line = springProcess.StandardOutput.ReadLine();
+                            if (!String.IsNullOrEmpty(line)) Console.WriteLine(line);
+                            var output = springProcess.StandardOutput.ReadToEnd();
+                            if (!String.IsNullOrEmpty(output)) Console.WriteLine(output);
+                        }
+                    });
+            }
+            else   // no hang
+            {
+                springProcess.Start();
+            }
 		}
 
 		void DeleteTriggerLogic(TriggerLogic item)

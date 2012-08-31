@@ -34,7 +34,7 @@ if (gadgetHandler:IsSyncedCode()) then
 local mission = VFS.Include("mission.lua")
 local triggers = mission.triggers -- array
 local allTriggers = {unpack(triggers)} -- we'll never remove triggers from here, so the indices will stay correct
-local unitGroups = {} -- key: unitID, value: group set
+local unitGroups = {} -- key: unitID, value: group set (an array of strings)
 local gaiaTeamID = Spring.GetGaiaTeamID()
 local cheatingWasEnabled = false
 local scoreSent = false
@@ -621,11 +621,14 @@ local function ExecuteTrigger(trigger, frame)
                 
                 local unitID, drop
                 local height = Spring.GetGroundHeight(unit.x, unit.y)
-                if GG.DropUnit then
+                if GG.DropUnit and (action.args.useOrbitalDrop) then
                   drop = true
                   unitID = GG.DropUnit(unit.unitDefName, unit.x, height, unit.y, cardinalHeading, unit.player)
                 else
                   unitID = Spring.CreateUnit(unit.unitDefName, unit.x, height, unit.y, cardinalHeading, unit.player)
+                end
+                if action.args.ceg and action.args.ceg ~= '' then
+                  Spring.SpawnCEG(action.args.ceg, unit.x, height, unit.y, 0, 1, 0)
                 end
                 if unitID then
                   if not isBuilding then

@@ -8,8 +8,8 @@ namespace CMissionLib.Actions
 	public class AddObjectiveAction : Action
 	{
         string id;
-		string title;
-        string description;
+		string title="Objective Name";
+        string description="Some text to describe your objective";
         string status = "Incomplete";
         //bool useCustomColor;
         //int[] color;
