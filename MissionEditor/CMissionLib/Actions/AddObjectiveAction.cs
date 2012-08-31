@@ -10,7 +10,7 @@ namespace CMissionLib.Actions
         string id;
 		string title;
         string description;
-        string status;
+        string status = "Incomplete";
         //bool useCustomColor;
         //int[] color;
         bool hasCameraTarget;

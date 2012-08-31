@@ -274,7 +274,7 @@ namespace CMissionLib
 			{
 				File.WriteAllText("startscript.txt", script);
 				File.WriteAllText("modinfo.txt", modInfo);
-				File.WriteAllText("mission.lua", luaMissionData);
+				//File.WriteAllText("mission.lua", luaMissionData);
 			}
 			var textEncoding = Encoding.GetEncoding("iso-8859-1"); // ASCIIEncoding()
 			using (var zip = new ZipFile())
@@ -343,6 +343,8 @@ namespace CMissionLib
 						}
 					}
 				}
+                string directory = Path.GetDirectoryName(mutatorPath);
+                if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
 
 				zip.Save(mutatorPath);
 			}
