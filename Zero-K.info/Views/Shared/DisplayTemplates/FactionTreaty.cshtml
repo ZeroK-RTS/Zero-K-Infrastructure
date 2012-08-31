@@ -25,7 +25,7 @@
         @Html.DisplayFor(x => ef)<br/>
     }
     @if (tr.TreatyState == TreatyState.Proposed && tr.TreatyNote != null) {
-        <span><i>@tr.TreatyNote</i></span>
+        <span>@Html.BBCode(tr.TreatyNote)</span>
         <br />
     }
     <br/>
