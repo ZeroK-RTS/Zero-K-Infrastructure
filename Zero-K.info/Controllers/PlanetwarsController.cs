@@ -695,7 +695,7 @@ namespace ZeroKWeb.Controllers
             Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
             Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
-
+            
             if (!structure.IsActive) return Content(String.Format("Structure {0} is inactive", structure.StructureType.Name));
 
             ActionResult ret = null;
@@ -712,9 +712,9 @@ namespace ZeroKWeb.Controllers
             {
                 db.PlanetStructures.DeleteOnSubmit(structure);
             }
-
+            
             db.SubmitAndMergeChanges();
-            SetPlanetOwners();//this is needed for the buster to update ownership after planet destruction
+            SetPlanetOwners(db);//this is needed for the buster to update ownership after planet destruction
 
             if (ret != null) return ret;
             return RedirectToAction("Planet", new { id = planet.PlanetID });
