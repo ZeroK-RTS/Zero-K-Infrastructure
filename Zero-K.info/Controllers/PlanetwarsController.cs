@@ -691,9 +691,10 @@ namespace ZeroKWeb.Controllers
             //This call is never to be called before/outside of SetStructureTarget
             var db = new ZkDataContext();
             //Get the pre-set target planet ID
-            int targetID = structure.TargetPlanetID;
-            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
+            int targetID = structure.TargetPlanetID ?? -1;
+            if (targetID == -1) return Content("Structure has no target");
+            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
             Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
             
             if (!structure.IsActive) return Content(String.Format("Structure {0} is inactive", structure.StructureType.Name));
