@@ -738,7 +738,7 @@ namespace ZeroKWeb.Controllers
 
             db.Links.InsertOnSubmit(new Link { PlanetID1 = planet.PlanetID, PlanetID2 = target.PlanetID, GalaxyID = planet.GalaxyID } );
             db.Events.InsertOnSubmit(Global.CreateEvent("A new link was created between {0} planet {1} and {2} planet {3} by the {4}", planet.Faction, planet, target.Faction, target, structure.StructureType));
-
+            db.SubmitAndMergeChanges();
             return null;
         }
 
@@ -769,7 +769,7 @@ namespace ZeroKWeb.Controllers
             db.Links.DeleteAllOnSubmit(links);
 
             db.Events.InsertOnSubmit(Global.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", planet.Faction, planet, target.Faction, target, structure.StructureType));
-
+            db.SubmitAndMergeChanges();
             return null;
         }
 
