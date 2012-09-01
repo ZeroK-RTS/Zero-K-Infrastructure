@@ -760,8 +760,7 @@ namespace ZeroKWeb.Controllers
             
 
             //kill all IP
-            var influence = target.GetFactionInfluences();
-            foreach (var pf in planet.PlanetFactions.Where(x => x.Influence > 0))
+            foreach (var pf in target.PlanetFactions.Where(x => x.Influence > 0))
             {
                 pf.Influence = 0;
             }
