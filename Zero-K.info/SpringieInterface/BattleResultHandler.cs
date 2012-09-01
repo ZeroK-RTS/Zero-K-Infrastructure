@@ -427,7 +427,8 @@ namespace ZeroKWeb.SpringieInterface
                 text.AppendLine("error saving history: " + ex);
             }
 
-            //rotate map
+            //rotate map - broken
+            /*
             db = new ZkDataContext();
             planet = gal.Planets.Single(x => x.Resource.InternalName == result.Map);
             var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon!=null && x.Planets.Count == 0 && x.FeaturedOrder != null && x.ResourceID != planet.MapResourceID).ToList();
@@ -443,6 +444,7 @@ namespace ZeroKWeb.SpringieInterface
                 text.AppendLine("DEBUG: Map cycler - no maps found");
             }
             db.SubmitAndMergeChanges();
+             */
         }
     }
 }
