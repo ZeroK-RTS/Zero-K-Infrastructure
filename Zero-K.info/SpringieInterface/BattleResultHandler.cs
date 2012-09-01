@@ -436,12 +436,14 @@ namespace ZeroKWeb.SpringieInterface
             {
                 int r = new Random().Next(mapList.Count);
                 int resourceID = mapList[r].ResourceID;
-                text.AppendLine(String.Format("DEBUG: Map cycler - {0} maps found, selected map ID {1} to replace map ID {2}", mapList.Count, resourceID, planet.MapResourceID));
-                planet.Resource = db.Resources.Single(x => x.ResourceID == resourceID);
+                Resource newMap = db.Resources.Single(x => x.ResourceID == resourceID);
+                text.AppendLine(String.Format("Map cycler - {0} maps found, selected map {1} to replace map {2}", mapList.Count, newMap.InternalName, planet.Resource.InternalName));
+                planet.Resource = newMap;
+                gal.IsDirty = true;
             }
             else
             {
-                text.AppendLine("DEBUG: Map cycler - no maps found");
+                text.AppendLine("Map cycler - no maps found");
             }
             db.SubmitAndMergeChanges();
         }
