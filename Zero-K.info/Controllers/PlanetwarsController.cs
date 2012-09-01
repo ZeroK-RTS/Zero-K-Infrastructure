@@ -749,10 +749,12 @@ namespace ZeroKWeb.Controllers
             if (!target.CanFirePlanetBuster(acc.Faction)) return Content("You cannot attack here");
 
             //Get rid of all strutures
-            var structures =  target.PlanetStructures.ToList();            
-            db.PlanetStructures.DeleteAllOnSubmit(structures);
+            List<PlanetStructure> structures = target.PlanetStructures.ToList();
+            foreach (PlanetStructure toDestroy in structures)
+            {
+                db.PlanetStructures.DeleteOnSubmit(toDestroy);
+            }
             
-
             //kill all IP
             var influence = target.GetFactionInfluences();
             foreach (var pf in planet.PlanetFactions.Where(x => x.Influence > 0))
