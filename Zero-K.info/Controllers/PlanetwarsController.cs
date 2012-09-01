@@ -673,7 +673,9 @@ namespace ZeroKWeb.Controllers
             var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structureTypeID);
             if (!acc.CanSetStructureTarget(structure)) return Content("Cannot set target");
             var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
+            //Set target planet ID
             structure.TargetPlanetID = targetPlanetID;
+            //Set target planet itself (FIXME: This is so lame why is it even here?)
             structure.PlanetByTargetPlanetID = target;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
             
@@ -686,7 +688,9 @@ namespace ZeroKWeb.Controllers
         [Auth]
         public ActionResult ActivateTargetedStructure(int planetID, int structureTypeID)
         {
+            //This call is never to be called before/outside of SetStructureTarget
             var db = new ZkDataContext();
+            //Get the pre-set target planet ID
             int targetID = structure.TargetPlanetID;
             Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
