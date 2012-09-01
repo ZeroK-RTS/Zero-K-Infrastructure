@@ -431,7 +431,7 @@ namespace ZeroKWeb.SpringieInterface
             db = new ZkDataContext();
             gal = db.Galaxies.Single(x => x.IsDefault);
             planet = gal.Planets.Single(x => x.Resource.InternalName == result.Map);
-            var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon!=null && x.Planets.Count == 0 && x.FeaturedOrder != null 
+            var mapList = db.Resources.Where(x => x.MapPlanetWarsIcon != null && x.Planets.Where(p => p.GalaxyID == gal.GalaxyID).Count() == 0 && x.FeaturedOrder != null 
                 && x.ResourceID != planet.MapResourceID && x.MapWaterLevel == planet.Resource.MapWaterLevel).ToList();
             if (mapList.Count > 0)
             {
