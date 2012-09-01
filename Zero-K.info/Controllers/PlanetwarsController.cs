@@ -752,6 +752,7 @@ namespace ZeroKWeb.Controllers
             List<PlanetStructure> structures = target.PlanetStructures.ToList();
             foreach (PlanetStructure toDestroy in structures)
             {
+                db.PlanetStructures.Attach(toDestroy);
                 db.PlanetStructures.DeleteOnSubmit(toDestroy);
             }
             
