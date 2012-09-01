@@ -41,8 +41,8 @@ namespace ZkData
 
 	    public string GetColor(Account viewer)
 		{
-            if (Account == null || Account.Faction == null) return "#808080";
-            else return Account.Faction.Color;
+            if (OwnerFactionID == null) return "#808080";
+            else return Faction.Color;
 		}
 
 
