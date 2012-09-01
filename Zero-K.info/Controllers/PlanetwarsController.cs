@@ -702,11 +702,12 @@ namespace ZeroKWeb.Controllers
             {
                 ret = CreateLink(planetID, structureTypeID, targetID);
             }
+            if (ret != null) return ret;
             if (structure.StructureType.EffectPlanetBuster == true)
             {
                 ret = FirePlanetBuster(planetID, structureTypeID, targetID);
             }
-
+            if (ret != null) return ret;
             if (structure.StructureType.IsSingleUse)    // single-use structure, remove
             {
                 db.PlanetStructures.DeleteOnSubmit(structure);
@@ -754,7 +755,7 @@ namespace ZeroKWeb.Controllers
             if (!target.CanFirePlanetBuster(acc.Faction)) return Content("You cannot attack here");
 
             //Get rid of all strutures
-            List<PlanetStructure> structures =  target.PlanetStructures.ToList();            
+            List<PlanetStructure> structures = target.PlanetStructures.ToList();            
             db.PlanetStructures.DeleteAllOnSubmit(structures);
             
 
