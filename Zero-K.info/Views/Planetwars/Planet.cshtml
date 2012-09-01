@@ -236,6 +236,7 @@
 
                 @if (structure.StructureType.RequiresPlanetTarget)
                 {
+                    <span>Target planet: @Html.PrintPlanet(structure.PlanetByTargetPlanetID)</span>
                     if (Global.Account != null && Global.Account.CanSetStructureTarget(structure))
                     {
                     <form method="POST" action="@Url.Action("SetStructureTarget", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
@@ -245,14 +246,10 @@
                     </form>
                         if (structure.StructureType.IsSingleUse && structure.IsActive && structure.TargetPlanetID != null)
                         {
-                        string question = String.Format("WARNING: {0} will be used once on the specified target, after which it will be removed. Proceed?", structure.StructureType.Name);
-                        @Html.ActionLink("Activate", "ActivateTargetedStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID, targetID = structure.TargetPlanetID },
+                        string question = String.Format("WARNING: {0} will be used once on the specified target {1}, after which it will be removed. Proceed?", structure.StructureType.Name, structure.TargetPlanetID);
+                        @Html.ActionLink("Activate", "ActivateTargetedStructure", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID},
                             new { @onclick = String.Format("return confirm('{0}')", question) })
                         }
-                    }
-                    else
-                    {
-                    <span>Target planet: @Html.PrintPlanet(structure.PlanetByTargetPlanetID)</span>
                     }
                 }
                 

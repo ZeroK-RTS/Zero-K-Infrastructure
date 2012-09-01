@@ -673,19 +673,21 @@ namespace ZeroKWeb.Controllers
             var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structureTypeID);
             if (!acc.CanSetStructureTarget(structure)) return Content("Cannot set target");
             var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
+            structure.TargetPlanetID = targetPlanetID;
             structure.PlanetByTargetPlanetID = target;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
             
-            if (structure.IsActive && !structure.StructureType.IsSingleUse) return ActivateTargetedStructure(planetID, structureTypeID, targetPlanetID);
+            if (structure.IsActive && !structure.StructureType.IsSingleUse) return ActivateTargetedStructure(planetID, structureTypeID);
             
             db.SubmitAndMergeChanges();
             return RedirectToAction("Planet", new { id = planet.PlanetID });
         }
 
         [Auth]
-        public ActionResult ActivateTargetedStructure(int planetID, int structureTypeID, int targetID)
+        public ActionResult ActivateTargetedStructure(int planetID, int structureTypeID)
         {
             var db = new ZkDataContext();
+            int targetID = structure.TargetPlanetID;
             Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
             Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
