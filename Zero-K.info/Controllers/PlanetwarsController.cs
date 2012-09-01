@@ -755,7 +755,7 @@ namespace ZeroKWeb.Controllers
             if (!target.CanFirePlanetBuster(acc.Faction)) return Content("You cannot attack here");
 
             //Get rid of all strutures
-            List<PlanetStructure> structures = target.PlanetStructures.ToList();            
+            var structures = target.PlanetStructures.Where(x => x.StructureType.EffectIsVictoryPlanet == false);            
             db.PlanetStructures.DeleteAllOnSubmit(structures);
             
 
@@ -764,8 +764,17 @@ namespace ZeroKWeb.Controllers
             {
                 pf.Influence = 0;
             }
-            var links = db.Links.Where(x => x.PlanetID1 == target.PlanetID || x.PlanetID2 == target.PlanetID);
-            db.Links.DeleteAllOnSubmit(links);
+            var links = db.Links.Where(x => (x.PlanetID1 == target.PlanetID || x.PlanetID2 == target.PlanetID));
+            foreach (Link link in links)
+            {
+                Planet planet1 = db.Planets.FirstOrDefault(x => x.PlanetID == link.PlanetID1);
+                Planet planet2 = db.Planets.FirstOrDefault(x => x.PlanetID == link.PlanetID2);
+                if (!(planet1.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)) &&
+                    !(planet2.PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)) )
+                {
+                    db.Links.DeleteOnSubmit(link);
+                }
+            }
 
             db.Events.InsertOnSubmit(Global.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", planet.Faction, planet, target.Faction, target, structure.StructureType));
             db.SubmitAndMergeChanges();

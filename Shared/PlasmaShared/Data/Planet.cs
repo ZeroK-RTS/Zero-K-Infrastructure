@@ -92,7 +92,7 @@ namespace ZkData
         {
             if (!Galaxy.IsDefault) return false;    // no exo-galaxy strikes
             if (OwnerFactionID == attacker.FactionID || attacker.GaveTreatyRight(this, x => x.EffectPreventBomberAttack == true)) return false; // attacker allied cannot strike
-            if (PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)) return false; // artefact protects planet
+            //if (PlanetStructures.Any(x => x.StructureType.EffectIsVictoryPlanet == true)) return false; // artefact protects planet
             return true;
         }
 
