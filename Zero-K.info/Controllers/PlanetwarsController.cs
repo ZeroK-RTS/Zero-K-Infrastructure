@@ -694,19 +694,17 @@ namespace ZeroKWeb.Controllers
             PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
             int targetID = structure.TargetPlanetID ?? -1;
             if (targetID == -1) return Content("Structure has no target");
-            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
-            Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
             
             if (!structure.IsActive) return Content(String.Format("Structure {0} is inactive", structure.StructureType.Name));
 
             ActionResult ret = null;
             if (structure.StructureType.EffectCreateLink == true)
             {
-                ret = CreateLink(planet, structure, target);
+                ret = CreateLink(planetID, structureTypeID, targetID);
             }
             if (structure.StructureType.EffectPlanetBuster == true)
             {
-                ret = FirePlanetBuster(planet, structure, target);
+                ret = FirePlanetBuster(planetID, structureTypeID, targetID);
             }
 
             if (structure.StructureType.IsSingleUse)    // single-use structure, remove
@@ -718,13 +716,17 @@ namespace ZeroKWeb.Controllers
             SetPlanetOwners(db);//this is needed for the buster to update ownership after planet destruction
 
             if (ret != null) return ret;
-            return RedirectToAction("Planet", new { id = planet.PlanetID });
+            return RedirectToAction("Planet", new { id = planetID });
         }
 
         [Auth]
-        public ActionResult CreateLink(Planet planet, PlanetStructure structure, Planet target)
+        public ActionResult CreateLink(int planetID, int structureTypeID, int targetID)
         {
             var db = new ZkDataContext();
+
+            PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
+            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
+            Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
 
             // warp jammers protect against link creation
             // FIXME: this is probably not the best limitation to put on them, may want a new idea
@@ -740,22 +742,22 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth]
-        public ActionResult FirePlanetBuster(Planet planet, PlanetStructure structure, Planet target)
+        public ActionResult FirePlanetBuster(int planetID, int structureTypeID, int targetID)
         {
             var db = new ZkDataContext();
+            PlanetStructure structure = db.PlanetStructures.FirstOrDefault(x => x.PlanetID == planetID && x.StructureTypeID == structureTypeID);
+            Planet planet = db.Planets.FirstOrDefault(x => x.PlanetID == planetID);
+            Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
 
             Account acc = db.Accounts.Single(x => x.AccountID == Global.AccountID);
             if (acc.Faction == null) return Content("Join some faction first");
             if (!target.CanFirePlanetBuster(acc.Faction)) return Content("You cannot attack here");
 
             //Get rid of all strutures
-            List<PlanetStructure> structures = target.PlanetStructures.ToList();
-            foreach (PlanetStructure toDestroy in structures)
-            {
-                db.PlanetStructures.Attach(toDestroy);
-                db.PlanetStructures.DeleteOnSubmit(toDestroy);
-            }
+            List<PlanetStructure> structures =  target.PlanetStructures.ToList();            
+            db.PlanetStructures.DeleteAllOnSubmit(structures);
             
+
             //kill all IP
             var influence = target.GetFactionInfluences();
             foreach (var pf in planet.PlanetFactions.Where(x => x.Influence > 0))
