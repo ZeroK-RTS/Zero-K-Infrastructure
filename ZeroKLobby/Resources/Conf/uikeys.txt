@@ -144,7 +144,7 @@ bind                 f2  showpathtraversability
 bind               C+f2  viewta
 bind                 f3  lastmsgpos
 //bind               C+f3  viewtw
-bind                 f4  showmetalmap
+//bind                 f4  showmetalmap
 //bind               C+f4  viewrot
 //bind               C+f5  viewfree
 bind             Any+f5  HideInterface
