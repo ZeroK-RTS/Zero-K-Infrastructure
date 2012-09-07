@@ -632,20 +632,21 @@ namespace ZeroKWeb.Controllers
 
                 if (!planet.PlanetStructures.Any(x => x.StructureTypeID == structureTypeID)) return Content("Structure or its upgrades not present");
                 List<PlanetStructure> list = planet.PlanetStructures.Where(x => x.StructureTypeID == structureTypeID).ToList();
-                PlanetStructure toDestroy = list[0];
-                Account orgAc = toDestroy.Account;
-                double cost = (!factionLeader)? toDestroy.StructureType.Cost : 0;
-                if (toDestroy.Account != null) {
-                    toDestroy.Account.SpendMetal(-cost);
+                PlanetStructure structure = list[0];
+                Account orgAc = structure.Account;
+                double cost = (!factionLeader) ? structure.StructureType.Cost : 0;
+                if (orgAc != null)
+                {
+                    structure.Account.SpendMetal(-cost);
                     acc.SpendMetal(cost);
-                    toDestroy.Account = acc;
-                    db.SubmitChanges();
-                    db.Events.InsertOnSubmit(Global.CreateEvent("{0} has confiscated {1} structure {2} on {3}.",
-                                                                Global.Account,
-                                                                orgAc,
-                                                                toDestroy.StructureType,
-                                                                planet));
                 }
+                structure.Account = acc;
+                db.Events.InsertOnSubmit(Global.CreateEvent("{0} has confiscated {1} structure {2} on {3}.",
+                                                            Global.Account,
+                                                            orgAc,
+                                                            structure.StructureType,
+                                                            planet));
+                db.SubmitChanges();
 
                 return RedirectToAction("Planet", new { id = planetID });
             }
