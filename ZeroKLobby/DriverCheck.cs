@@ -9,6 +9,8 @@ namespace ZeroKLobby
     class DriverCheck
     {
         public static void DoCheck() {
+            return;// most drivers work now check not needed
+
             ManagementObjectSearcher searcher
          = new ManagementObjectSearcher("SELECT * FROM Win32_DisplayConfiguration");
 

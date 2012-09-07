@@ -35,8 +35,6 @@ namespace ZeroKLobby.MicroLobby
 			                                     (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "LuaUI", "ctrlpanel.txt"))));
             cmDisplay.MenuItems.Add(new MenuItem("Edit UI keys", (o, x) => Utils.SafeStart(Utils.MakePath(cfRoot, "uikeys.txt"))));
 
-            Program.ToolTip.SetText(cbMinimapProjectiles,"Draws weapon projectiles on minimap - can cause huge circles on ATI video cards");
-
             Program.ToolTip.SetText(cbSafeMode,"Use safe mode - all effects reduce to minimum, use if the game is crashing");
 
             Program.ToolTip.SetText(cbHwCursor,"HW cursor moves faster with no lag, but it can become invisible on some machines");
@@ -50,9 +48,8 @@ namespace ZeroKLobby.MicroLobby
 		{
             refreshingConfig = true;
 			propertyGrid1.SelectedObject = Program.Conf;
-            cbWindowed.Checked = Program.EngineConfigurator.GetConfigValue("Fullscreen") == "0";
+            cbWindowed.Checked = Program.EngineConfigurator.GetConfigValue("WindowBorderless") == "0";
             cbHwCursor.Checked = Program.EngineConfigurator.GetConfigValue("HardwareCursor") == "1";
-            cbMinimapProjectiles.Checked = Program.EngineConfigurator.GetConfigValue("MiniMapDrawProjectiles") != "0";
             tbResx.Text = Program.EngineConfigurator.GetConfigValue("XResolution");
             tbResy.Text = Program.EngineConfigurator.GetConfigValue("YResolution");
             refreshingConfig = false;
@@ -77,7 +74,6 @@ namespace ZeroKLobby.MicroLobby
             }
 	        Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
             Program.EngineConfigurator.SetConfigValue("WindowState", "0"); // neded for borderless
-            Program.EngineConfigurator.SetConfigValue("MiniMapDrawProjectiles", cbMinimapProjectiles.Checked ? "1":"0");
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
         }
 
