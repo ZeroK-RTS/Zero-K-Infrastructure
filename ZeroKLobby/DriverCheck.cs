@@ -38,10 +38,6 @@ namespace ZeroKLobby
                 {
                     Program.MainWindow.InvokeFunc(() => Utils.OpenWeb("http://zero-k.info/Wiki/AtiDrivers"));
                 }
-                if (!Program.Conf.AtiMinimapRenderingChecked) {
-                    Program.EngineConfigurator.SetConfigValue("MiniMapDrawProjectiles", "0");
-                    Program.Conf.AtiMinimapRenderingChecked = true;
-                }
             }
            
             if (graphicsCard.ToLower().Contains("intel")) Program.MainWindow.InvokeFunc(()=>Utils.OpenWeb("http://zero-k.info/Wiki/IntelDrivers"));

@@ -220,7 +220,7 @@ namespace LobbyClient
         /// <param name="userName">lobby user name - used to submit score</param>
         /// <param name="passwordHash">lobby password hash - used to submit score</param>
         /// <returns>generates script</returns>
-        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false) {
+        public string StartGame(TasClient client, ProcessPriorityClass? priority, int? affinity, string scriptOverride, bool useSafeMode = false, bool useMultithreaded=false) {
             if (!File.Exists(paths.Executable) && !File.Exists(paths.DedicatedServer)) throw new ApplicationException("Spring or dedicated server executable not found");
 
             this.client = client;
@@ -307,7 +307,7 @@ namespace LobbyClient
                 }
                 else {
                     process.StartInfo.EnvironmentVariables.Remove("SPRING_ISOLATED");
-                    process.StartInfo.FileName = paths.Executable;
+                    process.StartInfo.FileName = useMultithreaded ? paths.MtExecutable : paths.Executable;
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(paths.Executable);
                 }
 

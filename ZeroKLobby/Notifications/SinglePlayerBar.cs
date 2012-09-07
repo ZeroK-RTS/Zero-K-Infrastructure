@@ -61,7 +61,7 @@ namespace ZeroKLobby.Notifications
         spring.StartGame(Program.TasClient,
                          null,
                          null,
-                         profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name), Program.Conf.UseSafeMode);
+                         profile.StartScript.Replace("%MOD%", modInternalName).Replace("%MAP%", profile.MapName).Replace("%NAME%", name), Program.Conf.UseSafeMode, Program.Conf.UseMtEngine);
         var serv = new ContentService() { Proxy = null };
         serv.NotifyMissionRunAsync(Program.Conf.LobbyPlayerName, profile.Name);
       }

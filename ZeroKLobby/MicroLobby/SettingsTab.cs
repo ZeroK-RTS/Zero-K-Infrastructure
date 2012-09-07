@@ -38,6 +38,7 @@ namespace ZeroKLobby.MicroLobby
             Program.ToolTip.SetText(cbSafeMode,"Use safe mode - all effects reduce to minimum, use if the game is crashing");
 
             Program.ToolTip.SetText(cbHwCursor,"HW cursor moves faster with no lag, but it can become invisible on some machines");
+            Program.ToolTip.SetText(cbMtEngine, "MT engine is experimental and it *can* improve or *decrease* performance, cause crashes and desyncs. \r\nUse at own risk");
 
 			
 		}
@@ -54,6 +55,7 @@ namespace ZeroKLobby.MicroLobby
             tbResy.Text = Program.EngineConfigurator.GetConfigValue("YResolution");
             refreshingConfig = false;
             cbSafeMode.Checked = Program.Conf.UseSafeMode;
+		    cbMtEngine.Checked = Program.Conf.UseMtEngine;
 		}
 
 
@@ -75,7 +77,8 @@ namespace ZeroKLobby.MicroLobby
 	        Program.EngineConfigurator.SetConfigValue("HardwareCursor", cbHwCursor.Checked?"1":"0");
             Program.EngineConfigurator.SetConfigValue("WindowState", "0"); // neded for borderless
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
-        }
+	        Program.Conf.UseMtEngine = cbMtEngine.Checked;
+	    }
 
 	    public string PathHead { get { return "settings"; } }
 
@@ -243,6 +246,11 @@ namespace ZeroKLobby.MicroLobby
         private void cbSafeMode_CheckedChanged(object sender, EventArgs e)
         {
             Program.Conf.UseSafeMode = cbSafeMode.Checked;
+            Program.SaveConfig();
+        }
+
+        private void cbMtEngine_CheckedChanged(object sender, EventArgs e) {
+            Program.Conf.UseMtEngine = cbMtEngine.Checked;
             Program.SaveConfig();
         }
 	}

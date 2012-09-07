@@ -160,8 +160,6 @@ namespace ZeroKLobby
         public StringCollection IgnoredUsers { get { return ignoredUsers; } set { ignoredUsers = value; } }
         public bool IsFirstRun = true;
 
-        [Browsable(false)]
-        public bool AtiMinimapRenderingChecked { get; set; }
 
         [Category("Chat")]
         [DisplayName("Color: Joins")]
@@ -343,6 +341,8 @@ namespace ZeroKLobby
         bool autoActivateQuickmatch = true;
         [Browsable(false)]
         public bool UseSafeMode { get; set; }
+        [Browsable(false)]
+        public bool UseMtEngine { get; set; }
     }
 
 

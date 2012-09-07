@@ -19,6 +19,7 @@ namespace PlasmaShared
         public List<string> DataDirectories { get; private set; }
         public string DedicatedServer { get; private set; }
         public string Executable { get; private set; }
+        public string MtExecutable { get; private set; }
         public string SpringVersion { get { return springVersion; } }
         public string UnitSyncDirectory { get; private set; }
         public string WritableDirectory { get; private set; }
@@ -129,6 +130,7 @@ namespace PlasmaShared
             UnitSyncDirectory = springPath;
 
             Executable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring" : "spring.exe");
+            MtExecutable = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-multithreaded" : "spring-multithreaded.exe");
             DedicatedServer = Utils.MakePath(springPath, Environment.OSVersion.Platform == PlatformID.Unix ? "spring-dedicated" : "spring-dedicated.exe");
             Cache = Utils.MakePath(WritableDirectory, "cache", "SD");
 

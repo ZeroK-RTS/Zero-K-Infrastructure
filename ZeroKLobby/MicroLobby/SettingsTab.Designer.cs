@@ -52,6 +52,7 @@
             this.logButton = new System.Windows.Forms.Button();
             this.helpButton = new System.Windows.Forms.Button();
             this.problemButton = new System.Windows.Forms.Button();
+            this.cbMtEngine = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -92,6 +93,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.cbMtEngine);
             this.panel1.Controls.Add(this.cbSafeMode);
             this.panel1.Controls.Add(this.btnDefaults);
             this.panel1.Controls.Add(this.btnRestart);
@@ -323,6 +325,17 @@
             this.problemButton.UseVisualStyleBackColor = true;
             this.problemButton.Click += new System.EventHandler(this.problemButton_Click);
             // 
+            // cbMtEngine
+            // 
+            this.cbMtEngine.AutoSize = true;
+            this.cbMtEngine.Location = new System.Drawing.Point(338, 79);
+            this.cbMtEngine.Name = "cbMtEngine";
+            this.cbMtEngine.Size = new System.Drawing.Size(193, 17);
+            this.cbMtEngine.TabIndex = 37;
+            this.cbMtEngine.Text = "Multithreaded engine (experimental)";
+            this.cbMtEngine.UseVisualStyleBackColor = true;
+            this.cbMtEngine.CheckedChanged += new System.EventHandler(this.cbMtEngine_CheckedChanged);
+            // 
             // SettingsTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -364,5 +377,6 @@
         private System.Windows.Forms.Button btnRestart;
         private System.Windows.Forms.Button btnDefaults;
         private System.Windows.Forms.CheckBox cbSafeMode;
+        private System.Windows.Forms.CheckBox cbMtEngine;
     }
 }
