@@ -36,6 +36,7 @@
         public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;
 	    public const double InfluenceToCapturePlanet = 50.1;
+        public const double InfluenceToLosePlanet = 10;
         public const double InfluenceCcKilledMultiplier = 0.5;
 	    public const double SelfDestructRefund = 0.5;
 	    public const double BomberKillStructureChance = 0.1;

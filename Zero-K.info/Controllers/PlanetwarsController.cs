@@ -383,10 +383,18 @@ namespace ZeroKWeb.Controllers
                 Account newAccount = planet.Account;
 
                 if (best == null || best.Influence < GlobalConst.InfluenceToCapturePlanet) {
-                    // planets belong to nobody
+                    // planet not capture 
 
-                    newFaction = null;
-                    newAccount = null;
+                    if (planet.Faction != null) {
+                        var curFacInfluence =
+                            planet.PlanetFactions.Where(x => x.FactionID == planet.OwnerFactionID).Select(x => x.Influence).FirstOrDefault();
+
+                        if (curFacInfluence <= GlobalConst.InfluenceToLosePlanet) {
+                            // owners have too small influence, planet belong to nobody
+                            newFaction = null;
+                            newAccount = null;
+                        }
+                    }
                 }
                 else {
                     if (best.Faction != planet.Faction) {
