@@ -776,6 +776,13 @@ namespace ZeroKWeb.Controllers
 
             db.Events.InsertOnSubmit(Global.CreateEvent("A {4} fired from {0} {1} has destroyed {2} {3}!", planet.Faction, planet, target.Faction, target, structure.StructureType));
             db.SubmitAndMergeChanges();
+
+            var residue = db.StructureTypes.First(x => x.Name == "Residue"); // todo not nice use constant instead
+            target.PlanetStructures.Add(new PlanetStructure(){StructureType = residue, IsActive = true});
+            db.SubmitAndMergeChanges();
+
+            
+
             return null;
         }
 

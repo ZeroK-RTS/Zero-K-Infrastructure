@@ -240,7 +240,7 @@
                     if (Global.Account != null && Global.Account.CanSetStructureTarget(structure))
                     {
                     <form method="POST" action="@Url.Action("SetStructureTarget", new { planetID = Model.PlanetID, structureTypeID = structure.StructureTypeID })">
-                        Target planet: @Html.DropDownList("targetPlanetID", structure.Planet.Galaxy.Planets.Select(x => new SelectListItem() { Text = x.Name, Value = x.PlanetID.ToString() }))
+                        Target planet: @Html.DropDownList("targetPlanetID", structure.Planet.Galaxy.Planets.OrderBy(x=>x.Name).Select(x => new SelectListItem() { Text = x.Name, Value = x.PlanetID.ToString() }))
                     <input type="submit" value="change"/>
 
                     </form>
