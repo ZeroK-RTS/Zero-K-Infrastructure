@@ -40,7 +40,7 @@ namespace ZkData
         /// Spread influence through wormholes
         /// </summary>
         public void SpreadInfluence() {
-            // TODO handle guerilla jumpgates
+            
 
             foreach (var planet in Planets) {
                 var sumInfluence = planet.PlanetFactions.Sum(x => (double?)x.Influence) ?? 0;
@@ -70,6 +70,27 @@ namespace ZkData
 
                         }
                     }
+
+                    // handle guerilla jumpgates
+                    foreach (var guerillaWormhole in planet.PlanetStructuresByTargetPlanetID.Where(x=>x.IsActive && x.StructureType.EffectRemoteInfluenceSpread > 0)) {
+                        var otherPlanet = guerillaWormhole.Planet;
+
+                        if (otherPlanet.Faction != null)
+                        {
+                            if (otherPlanet.Faction != planet.Faction && hasInhibitor) continue;
+
+                            // diplomacy check
+                            if (!otherPlanet.Faction.GaveTreatyRight(planet, x => x.EffectPreventInfluenceSpread == true)) {
+                                var spread = guerillaWormhole.StructureType.EffectRemoteInfluenceSpread ?? 0;
+
+                                double oldVal;
+                                spreads.TryGetValue(otherPlanet.Faction, out oldVal);
+                                spreads[otherPlanet.Faction] = oldVal + spread;
+                            }
+
+                        }
+                    }
+
 
                     // same-planet spread
                     if (planet.Faction != null)
