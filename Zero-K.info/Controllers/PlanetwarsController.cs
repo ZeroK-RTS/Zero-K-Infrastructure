@@ -674,10 +674,8 @@ namespace ZeroKWeb.Controllers
             var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structureTypeID);
             if (!acc.CanSetStructureTarget(structure)) return Content("Cannot set target");
             var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
-            //Set target planet ID
-            structure.TargetPlanetID = targetPlanetID;
-            //Set target planet itself (FIXME: This is so lame why is it even here?)
             structure.PlanetByTargetPlanetID = target;
+            structure.IsActive = false;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
             
             if (structure.IsActive && !structure.StructureType.IsSingleUse) return ActivateTargetedStructure(planetID, structureTypeID);
@@ -731,9 +729,8 @@ namespace ZeroKWeb.Controllers
             Planet target = db.Planets.FirstOrDefault(x => x.PlanetID == targetID);
 
             // warp jammers protect against link creation
-            // FIXME: this is probably not the best limitation to put on them, may want a new idea
-            var warpDefense = target.PlanetStructures.Where(x => x.StructureType.EffectBlocksJumpgate == true).ToList();
-            if (warpDefense.Count > 0) return Content("Warp jamming prevents link creation");
+            //var warpDefense = target.PlanetStructures.Where(x => x.StructureType.EffectBlocksJumpgate == true).ToList();
+            //if (warpDefense.Count > 0) return Content("Warp jamming prevents link creation");
 
             if (planet.GalaxyID != target.GalaxyID) return Content("Cannot form exo-galaxy link");
 
