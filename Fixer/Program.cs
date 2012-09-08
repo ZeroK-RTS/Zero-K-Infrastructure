@@ -20,116 +20,111 @@ using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace Fixer
 {
-  public static class Program
-  {
+    public static class Program
+    {
 
 
 
-      public static void FixHashes() {
-          var db = new ZkDataContext();
-          var lo = new DataLoadOptions();
-          lo.LoadWith<Resource>(x=>x.ResourceSpringHashes);
-          db.LoadOptions = lo;
-          foreach (var r in db.Resources) {
-              var h84 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84").Select(x => x.SpringHash).SingleOrDefault();
-              var h840 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84.0").Select(x => x.SpringHash).SingleOrDefault();
+        public static void FixHashes() {
+            var db = new ZkDataContext();
+            var lo = new DataLoadOptions();
+            lo.LoadWith<Resource>(x => x.ResourceSpringHashes);
+            db.LoadOptions = lo;
+            foreach (var r in db.Resources) {
+                var h84 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84").Select(x => x.SpringHash).SingleOrDefault();
+                var h840 = r.ResourceSpringHashes.Where(x => x.SpringVersion == "84.0").Select(x => x.SpringHash).SingleOrDefault();
 
-              if (h84 != h840) {
-                  var entry = r.ResourceSpringHashes.SingleOrDefault(x => x.SpringVersion == "84.0");
-                  if (h84 != 0)
-                  {
-                        if (entry == null)
-                      {
-                          entry = new ResourceSpringHash() { SpringVersion = "84.0" };
-                          r.ResourceSpringHashes.Add(entry);
-                      }
-                      entry.SpringHash = h84;
-                  }
-                  else {
-                      if (entry != null) db.ResourceSpringHashes.DeleteOnSubmit(entry);
-                  }
-              }
+                if (h84 != h840) {
+                    var entry = r.ResourceSpringHashes.SingleOrDefault(x => x.SpringVersion == "84.0");
+                    if (h84 != 0) {
+                        if (entry == null) {
+                            entry = new ResourceSpringHash() { SpringVersion = "84.0" };
+                            r.ResourceSpringHashes.Add(entry);
+                        }
+                        entry.SpringHash = h84;
+                    }
+                    else {
+                        if (entry != null) db.ResourceSpringHashes.DeleteOnSubmit(entry);
+                    }
+                }
             }
-          db.SubmitChanges();
-      }
+            db.SubmitChanges();
+        }
 
 
-      public static void SetFFATeams() {
-          var db = new ZkDataContext();
-          foreach (var m in db.Resources.Where(x => x.FeaturedOrder != null && x.TypeID == ResourceType.Map)) {
-              var lg = m.SpringBattlesByMapResourceID.Take(100).ToList();
-              double cnt = lg.Count;
-              if (cnt == 0) continue; ;
-              if (lg.Count(x => x.HasBots) / (double)cnt > 0.5)
-              {
-                  m.MapIsChickens = true;
-              }
-              
-                  if (lg.Count(x => x.PlayerCount == 2) / cnt > 0.4)
-                  {
-                      m.MapIs1v1 = true;
-                  }
-              
-                      var teams = m.SpringBattlesByMapResourceID.Take(100).GroupBy(x => x.SpringBattlePlayers.Where(y => !y.IsSpectator).Select(y => y.AllyNumber).Distinct().Count()).OrderByDescending(x => x.Count()).Select(x => x.Key).FirstOrDefault();
-                      if (teams > 2)
-                      {
-                          m.MapIsFfa = true;
-                          m.MapFFAMaxTeams = teams;
-                      }
-                      else
-                      {
-                      }
+        public static void SetFFATeams() {
+            var db = new ZkDataContext();
+            foreach (var m in db.Resources.Where(x => x.FeaturedOrder != null && x.TypeID == ResourceType.Map)) {
+                var lg = m.SpringBattlesByMapResourceID.Take(100).ToList();
+                double cnt = lg.Count;
+                if (cnt == 0) continue;
+                ;
+                if (lg.Count(x => x.HasBots)/(double)cnt > 0.5) {
+                    m.MapIsChickens = true;
+                }
 
-              
+                if (lg.Count(x => x.PlayerCount == 2)/cnt > 0.4) {
+                    m.MapIs1v1 = true;
+                }
 
-          }
-          db.SubmitChanges();
-
-      }
+                var teams =
+                    m.SpringBattlesByMapResourceID.Take(100).GroupBy(
+                        x => x.SpringBattlePlayers.Where(y => !y.IsSpectator).Select(y => y.AllyNumber).Distinct().Count()).OrderByDescending(
+                            x => x.Count()).Select(x => x.Key).FirstOrDefault();
+                if (teams > 2) {
+                    m.MapIsFfa = true;
+                    m.MapFFAMaxTeams = teams;
+                }
+                else {}
 
 
-      public static void FixDemoFiles() {
-          var db = new ZkDataContext();
-          foreach (var sb in db.SpringBattles) {
-              //sb.ReplayFileName = sb.ReplayFileName.Replace("http://springdemos.licho.eu/","http://zero-k.info/replays/");
-          }
-          //db.SubmitChanges();
 
-      }
+            }
+            db.SubmitChanges();
+
+        }
 
 
-      static void Main(string[] args) {
+        public static void FixDemoFiles() {
+            var db = new ZkDataContext();
+            foreach (var sb in db.SpringBattles) {
+                //sb.ReplayFileName = sb.ReplayFileName.Replace("http://springdemos.licho.eu/","http://zero-k.info/replays/");
+            }
+            //db.SubmitChanges();
 
-          var db = new ZkDataContext(true);
-          var gal = db.Galaxies.Single(x => x.IsDefault);
-          // process faction energies
-          foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) fac.ProcessEnergy(gal.Turn);
-
-          // process production
-          gal.ProcessProduction();
-
-
-          // process treaties
-          foreach (var tr in db.FactionTreaties.Where(x => x.TreatyState == TreatyState.Accepted || x.TreatyState == TreatyState.Suspended))
-          {
-              if (tr.ProcessTrade(false))
-              {
-                  tr.TreatyState = TreatyState.Accepted;
-                  if (tr.TurnsTotal != null)
-                  {
-                      tr.TurnsRemaining--;
-                      if (tr.TurnsRemaining <= 0)
-                      {
-                          tr.TreatyState = TreatyState.Invalid;
-                          db.FactionTreaties.DeleteOnSubmit(tr);
-                      }
-                  }
-              }
-              else tr.TreatyState = TreatyState.Suspended;
-          }
+        }
 
 
+        public static void GenerateTechs() {
+            var db = new ZkDataContext();
+            db.StructureTypes.DeleteAllOnSubmit(db.StructureTypes.Where(x => x.Unlock != null));
+            db.SubmitAndMergeChanges();
             
+            foreach (var u in db.Unlocks.Where(x=>x.UnlockType== UnlockTypes.Unit)) {
+                var s = new StructureType()
+                        {
+                            BattleDeletesThis = false,
+                            Cost = u.XpCost/2,
+                            MapIcon = "techlab.png",
+                            DisabledMapIcon = "techlab_dead.png",
+                            Name = u.Name,
+                            Description = string.Format("Access to {0} and increases influence gains", u.Name),
+                            TurnsToActivate = u.XpCost/100,
+                            IsBuildable = true,
+                            IsIngameDestructible = true,
+                            IsBomberDestructible = true,
+                            Unlock = u,
+                            UpkeepEnergy = u.XpCost/5,
+                            IngameUnitName = "pw_" + u.Code,
+                        };
+                db.StructureTypes.InsertOnSubmit(s);
+            }
+            db.SubmitAndMergeChanges();
+
+        }
+
+        static void Main(string[] args) {
+          GenerateTechs();
 
           //FixDemoEngineVersion();
 

@@ -33,7 +33,7 @@
 	    public const int DropshipsPerBattlePlayer = 1;
         public const int InfluencePerInvolvedPlayer = 1;
         public const int InfluencePerShip = 1;
-        public const double InfluencePerTech = 0.5;
+        public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;
 	    public const double InfluenceToCapturePlanet = 50.1;
         public const double InfluenceCcKilledMultiplier = 0.5;
