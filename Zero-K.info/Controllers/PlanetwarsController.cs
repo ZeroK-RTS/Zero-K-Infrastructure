@@ -674,8 +674,11 @@ namespace ZeroKWeb.Controllers
             var structure = planet.PlanetStructures.Single(x => x.StructureTypeID == structureTypeID);
             if (!acc.CanSetStructureTarget(structure)) return Content("Cannot set target");
             var target = db.Planets.Single(x => x.PlanetID == targetPlanetID);
+            if (target != structure.PlanetByTargetPlanetID) {
+                structure.IsActive = false; // deactivate on target change
+                structure.ActivatedOnTurn = null;
+            }
             structure.PlanetByTargetPlanetID = target;
-            structure.IsActive = false;
             db.Events.InsertOnSubmit(Global.CreateEvent("{0} of {1} aimed {2} located at {3} to {4} planet {5}", acc, acc.Faction, structure.StructureType, planet, target.Faction, target));
             
             if (structure.IsActive && !structure.StructureType.IsSingleUse) return ActivateTargetedStructure(planetID, structureTypeID);
