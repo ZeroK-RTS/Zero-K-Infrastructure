@@ -82,20 +82,20 @@
 @if (g.Turn > 100) { // hide before turn 100
 
 <div id="victory_conquest" class="fleft border" style="min-height: 60px;">
-<b>Conquest victory (60% planets):</b>
+<b>Conquest victory (50% planets):</b>
 @{
 	var conquest = @Model.Planets.Where(x => x.Faction != null).GroupBy(x => x.Faction).Select(x => new { Fac = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count).FirstOrDefault();
 	
 	if (conquest != null)
 	{
-        var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.6);
+        var ratio_planets = @conquest.Count / @Math.Round(Model.Planets.Count() * 0.5);
 		<span><b>@Html.PrintFaction(conquest.Fac)</b></span>
 	<br />
 		<img src="/img/progressl_base.png" height="17" class="fleft" />
 		<img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio_planets))" />
 		<img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio_planets)))" />
 		<img src="/img/progressr_base.png" height="17" class="fleft" />
-		<span class="fleft">@conquest.Count / @Math.Round(Model.Planets.Count() * 0.6) planets </span>
+		<span class="fleft">@conquest.Count / @Math.Round(Model.Planets.Count() * 0.5) planets </span>
 		<br class="clearfloat" />
 	}
 }
