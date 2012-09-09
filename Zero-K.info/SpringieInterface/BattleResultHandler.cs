@@ -355,6 +355,9 @@ namespace ZeroKWeb.SpringieInterface
                     if (s.ActivatedOnTurn == null) s.ActivatedOnTurn = gal.Turn;
                     s.ActivatedOnTurn = s.ActivatedOnTurn + (int)(s.StructureType.TurnsToActivate * GlobalConst.StructureIngameDisableTimeMult);
                 }
+                // destroy structures by battle (usually defenses)
+                foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
+                
                 var ev = Global.CreateEvent("All structures have been disabled on {0} planet {1}. {2}", defender, planet, sb);
                 db.Events.InsertOnSubmit(ev);
                 text.AppendLine(ev.PlainText);
@@ -363,8 +366,6 @@ namespace ZeroKWeb.SpringieInterface
             db.SubmitAndMergeChanges();
 
 
-            // destroy structures by battle (usually defenses)
-            foreach (PlanetStructure s in planet.PlanetStructures.Where(x => x.StructureType.BattleDeletesThis).ToList()) planet.PlanetStructures.Remove(s);
 
 
             gal.DecayInfluence();
