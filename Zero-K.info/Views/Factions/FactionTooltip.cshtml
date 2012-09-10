@@ -19,6 +19,7 @@
     <tr><td>Warp cores:</td><td>@Html.PrintWarps(f.Warps)</td></tr>
     <tr><td>Energy produced:</td><td style="color:lightgreen">+@Html.PrintEnergy(f.EnergyProducedLastTurn)</td></tr>
     <tr><td>Energy demand:</td><td style="color:red">-@Html.PrintEnergy(f.EnergyDemandLastTurn)</td></tr>
+    <tr><td>Infrastructure: </td><td>@Html.PrintMetal(f.Planets.SelectMany(x=>x.PlanetStructures).Where(x=>x.StructureType.IsBuildable).Sum(x=>x.StructureType.Cost))</td></tr>
 </table>
 
 <br/>
