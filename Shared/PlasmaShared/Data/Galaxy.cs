@@ -73,7 +73,7 @@ namespace ZkData
 
                     // handle guerilla jumpgates
                     foreach (var guerillaWormhole in planet.PlanetStructuresByTargetPlanetID.Where(x=>x.IsActive && x.StructureType.EffectRemoteInfluenceSpread > 0)) {
-                        var otherPlanet = guerillaWormhole.Planet;
+                        var otherPlanet = Planets.FirstOrDefault(x => x.PlanetID == guerillaWormhole.TargetPlanetID);
 
                         if (otherPlanet.Faction != null)
                         {
