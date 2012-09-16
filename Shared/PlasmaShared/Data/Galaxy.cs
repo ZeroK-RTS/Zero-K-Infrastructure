@@ -73,19 +73,20 @@ namespace ZkData
 
                     // handle guerilla jumpgates
                     foreach (var guerillaWormhole in planet.PlanetStructuresByTargetPlanetID.Where(x=>x.IsActive && x.StructureType.EffectRemoteInfluenceSpread > 0)) {
-                        var otherPlanet = Planets.FirstOrDefault(x => x.PlanetID == guerillaWormhole.TargetPlanetID);
+                        var sourcePlanet = guerillaWormhole.Planet;
 
-                        if (otherPlanet.Faction != null)
+                        if (sourcePlanet.Faction != null)
                         {
-                            if (otherPlanet.Faction != planet.Faction && hasInhibitor) continue;
+                            if (sourcePlanet.Faction != planet.Faction && hasInhibitor) continue;
 
                             // diplomacy check
-                            if (!otherPlanet.Faction.GaveTreatyRight(planet, x => x.EffectPreventInfluenceSpread == true)) {
+                            if (!sourcePlanet.Faction.GaveTreatyRight(planet, x => x.EffectPreventInfluenceSpread == true))
+                            {
                                 var spread = guerillaWormhole.StructureType.EffectRemoteInfluenceSpread ?? 0;
 
                                 double oldVal;
-                                spreads.TryGetValue(otherPlanet.Faction, out oldVal);
-                                spreads[otherPlanet.Faction] = oldVal + spread;
+                                spreads.TryGetValue(sourcePlanet.Faction, out oldVal);
+                                spreads[sourcePlanet.Faction] = oldVal + spread;
                             }
 
                         }
