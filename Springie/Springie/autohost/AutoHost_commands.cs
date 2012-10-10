@@ -355,16 +355,16 @@ namespace Springie.autohost
                 string[] usrs;
                 int[] idx;
                 if (FilterUsers(words, out usrs, out idx) == 0)
-				{
-				    Respond(e, "no such player found");
-					return;
-				}
-				
-				if (usrs[0] == tas.UserName)
-				{
-				    Respond(e, "you flatter me, but no");
-					return;
-				}
+                {
+                    Respond(e, "no such player found");
+                    return;
+                }
+                
+                if (usrs[0] == tas.UserName)
+                {
+                    Respond(e, "you flatter me, but no");
+                    return;
+                }
 
                 SayBattle("New boss is " + usrs[0]);
                 bossName = usrs[0];
