@@ -124,7 +124,8 @@ namespace Fixer
         }
 
         static void Main(string[] args) {
-          GenerateTechs();
+          Test1v1Elo();
+            //GenerateTechs();
 
           //FixDemoEngineVersion();
 
@@ -156,8 +157,91 @@ namespace Fixer
           db.SubmitChanges();
       }
 
+        public class EloEntry
+        {
+            public double Elo = 1500;
+            public int Cnt = 0;
 
-      public static void TestPrediction() {
+        }
+
+        public static void Test1v1Elo() {
+          var db = new ZkDataContext();
+          Dictionary<Account, EloEntry> PlayerElo = new Dictionary<Account, EloEntry>();
+
+          int cnt = 0;
+          foreach (var sb in db.SpringBattles.Where(x => !x.IsMission && !x.HasBots && !x.IsFfa && x.PlayerCount == 2).OrderBy(x => x.SpringBattleID)) {
+              cnt++;
+
+              double winnerElo = 0;
+              double loserElo = 0;
+
+              var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
+              var winners = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
+
+              if (losers.Count != 1 || winners.Count != 1)
+              {
+                  continue;
+              }
+
+              foreach (var r in winners)
+              {
+                  EloEntry el;
+                  if (!PlayerElo.TryGetValue(r.Account, out el)) el = new EloEntry();
+                  winnerElo += el.Elo;
+              }
+              foreach (var r in losers)
+              {
+                  EloEntry el;
+                  if (!PlayerElo.TryGetValue(r.Account, out el)) el = new EloEntry();
+                  loserElo += el.Elo;
+              }
+
+              winnerElo = winnerElo / winners.Count;
+              loserElo = loserElo / losers.Count;
+
+              var eWin = 1 / (1 + Math.Pow(10, (loserElo - winnerElo) / 400));
+              var eLose = 1 / (1 + Math.Pow(10, (winnerElo - loserElo) / 400));
+
+              var sumCount = losers.Count + winners.Count;
+              var scoreWin = Math.Sqrt(sumCount / 2.0) * 32 * (1 - eWin);
+              var scoreLose = Math.Sqrt(sumCount / 2.0) * 32 * (0 - eLose);
+
+              foreach (var r in winners)
+              {
+                  var change = (float)(scoreWin);
+                  EloEntry elo;
+                  if (!PlayerElo.TryGetValue(r.Account, out elo)) {
+                      elo = new EloEntry();
+                      PlayerElo[r.Account] = elo;
+                  }
+                  elo.Elo += change;
+                  elo.Cnt++;
+              }
+
+              foreach (var r in losers)
+              {
+                  var change = (float)(scoreLose);
+                  EloEntry elo;
+                  if (!PlayerElo.TryGetValue(r.Account, out elo))
+                  {
+                      elo = new EloEntry();
+                      PlayerElo[r.Account] = elo;
+                  }
+                  elo.Elo += change;
+                  elo.Cnt++;
+              }
+          }
+
+
+          Console.WriteLine("Total battles: {0}", cnt);
+          foreach (var entry in PlayerElo.Where(x=>x.Value.Cnt > 40).OrderByDescending(x=>x.Value.Elo)) {
+              Console.WriteLine("{0}   team elo: {1:f2}   1v1 elo: {2:f2}", entry.Key.Name, entry.Key.EffectiveElo, entry.Value.Elo);
+          }
+
+      }
+
+
+        public static void TestPrediction() {
         var db = new ZkDataContext();
         var factWinCnt= 0;
         var factWinSum = 0.0;
