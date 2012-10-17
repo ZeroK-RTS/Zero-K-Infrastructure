@@ -169,7 +169,7 @@ namespace ZeroKLobby
             break;
 
           case "host_mission":
-            SpawnAutohost(arg, String.Format("{0}'s {1}", Program.Conf.LobbyPlayerName, arg), null, false, 0, 0, 0, null);
+            SpawnAutohost(arg, String.Format("{0}'s {1}", Program.Conf.LobbyPlayerName, arg), null, null);
             break;
           case "start_script_mission":
             StartScriptMission(arg);
@@ -180,7 +180,7 @@ namespace ZeroKLobby
             else
             {
               var name = String.Format("{0}'s game", Program.Conf.LobbyPlayerName);
-              SpawnAutohost(KnownGames.List.First(x => x.IsPrimary).RapidTag, name, null, false, 0, 0, 0, new List<string> { "!map " + arg });
+              SpawnAutohost(KnownGames.List.First(x => x.IsPrimary).RapidTag, name, null, new List<string> { "!map " + arg });
             }
             break;
 
@@ -215,14 +215,7 @@ namespace ZeroKLobby
       Program.MainWindow.DisplayLog();
     }
 
-    public static void SpawnAutohost(string gameName,
-                                     string battleTitle,
-                                     string password,
-                                     bool useManage,
-                                     int minPlayers,
-                                     int maxPlayers,
-                                     int teams,
-                                     IEnumerable<string> springieCommands)
+    public static void SpawnAutohost(string gameName, string battleTitle, string password, IEnumerable<string> springieCommands)
     {
       var hostSpawnerName = SpringieCommand.GetHostSpawnerName(gameName);
 
@@ -246,7 +239,6 @@ namespace ZeroKLobby
               {
                 if (e2.Data.BattleID == battle.BattleID)
                 {
-                  if (useManage) SpringieCommand.Manage(minPlayers, maxPlayers, teams).SilentlyExcecute(myHostName);
                   if (springieCommands != null)
                   {
                     foreach (var command in springieCommands)

@@ -12,7 +12,6 @@ using PlasmaShared;
 using PlasmaShared.ContentService;
 using PlasmaShared.SpringieInterfaceReference;
 using PlasmaShared.UnitSyncLib;
-using Springie.AutoHostNamespace;
 using Springie.autohost.Polls;
 using ZkData;
 using AutohostMode = PlasmaShared.SpringieInterfaceReference.AutohostMode;
@@ -33,7 +32,6 @@ namespace Springie.autohost
 
         ResourceLinkProvider linkProvider;
 
-        AutoManager manager;
 
         Timer pollTimer;
         string requestedEngineChange = null;
@@ -182,16 +180,13 @@ namespace Springie.autohost
         {
             Stop();
             tas.UnsubscribeEvents(this);
-            tas.UnsubscribeEvents(manager);
             spring.UnsubscribeEvents(this);
             springPaths.UnsubscribeEvents(this);
             Program.main.Downloader.UnsubscribeEvents(this);
             Program.main.paths.UnsubscribeEvents(this);
             tas.Disconnect();
             pollTimer.Dispose();
-            if (manager != null) manager.Stop();
             if (timer != null) timer.Dispose();
-            manager = null;
             pollTimer = null;
             linkProvider = null;
         }
@@ -391,11 +386,11 @@ namespace Springie.autohost
                     break;
 
                 case "lock":
-                    if (!manager.Enabled) tas.ChangeLock(true);
+                    tas.ChangeLock(true);
                     break;
 
                 case "unlock":
-                    if (!manager.Enabled) tas.ChangeLock(false);
+                    tas.ChangeLock(false);
                     break;
 
                 case "vote":
@@ -516,13 +511,6 @@ namespace Springie.autohost
                     break;
 
 
-                case "manage":
-                    ComManage(e, words, false);
-                    break;
-
-                case "cmanage":
-                    ComManage(e, words, true);
-                    break;
 
                 case "notify":
                     ComNotify(e, words);
@@ -659,8 +647,6 @@ namespace Springie.autohost
         {
             Stop();
 
-            manager = new AutoManager(this, tas, spring);
-
             if (String.IsNullOrEmpty(modname)) modname = config.Mod;
             if (String.IsNullOrEmpty(mapname)) mapname = config.Map;
 
@@ -721,7 +707,6 @@ namespace Springie.autohost
 
         public void Stop()
         {
-            if (manager != null) manager.Stop();
             StopVote();
             spring.ExitGame();
             tas.ChangeMyUserStatus(false, false);

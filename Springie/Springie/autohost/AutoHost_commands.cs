@@ -599,22 +599,6 @@ namespace Springie.autohost
         }
 
 
-        public void ComManage(TasSayEventArgs e, string[] words, bool clanBased)
-        {
-            if (words.Length < 1)
-            {
-                Respond(e, "this command needs 1 parameters (minimum number of players to manage for)");
-                return;
-            }
-            var min = 0;
-            Int32.TryParse(words[0], out min);
-            var max = min;
-            if (words.Length > 1) Int32.TryParse(words[1], out max);
-            var allyCount = 2;
-            if (words.Length > 2) Int32.TryParse(words[2], out allyCount);
-            manager.Manage(min, max, allyCount, e, clanBased);
-        }
-
         public void ComMap(TasSayEventArgs e, params string[] words)
         {
             if (spring.IsRunning)

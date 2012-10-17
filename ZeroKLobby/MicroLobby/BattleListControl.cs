@@ -338,10 +338,6 @@ namespace ZeroKLobby.MicroLobby
                 ActionHandler.SpawnAutohost(dialog.GameName,
                                             dialog.BattleTitle,
                                             dialog.Password,
-                                            dialog.IsManageEnabled,
-                                            dialog.MinPlayers,
-                                            dialog.MaxPlayers,
-                                            dialog.Teams,
                                             springieCommands);
             }
         }

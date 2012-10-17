@@ -129,19 +129,11 @@ namespace ZeroKLobby
         [Browsable(false)]
         public bool HasHosted { get; set; }
         [Browsable(false)]
-        public int HostBattle_MaxPlayers { get; set; }
-        [Browsable(false)]
-        public int HostBattle_MinPlayers { get; set; }
-        [Browsable(false)]
         public string HostBattle_RapidTag { get; set; }
         [Browsable(false)]
         public string HostBattle_SpringieCommands { get; set; }
         [Browsable(false)]
-        public int HostBattle_Teams { get; set; }
-        [Browsable(false)]
         public string HostBattle_Title { get; set; }
-        [Browsable(false)]
-        public bool HostBattle_UseManage { get; set; }
         [Category("Quickmatching")]
         [DisplayName("Idle User Time")]
         [Description("Idle minutes after which Zero-K lobby assumes the user is gone and quickmatching is stopped.")]

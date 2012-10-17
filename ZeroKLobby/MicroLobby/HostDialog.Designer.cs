@@ -36,14 +36,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.okButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.teamsBar = new System.Windows.Forms.TrackBar();
-            this.maxPlayersBar = new System.Windows.Forms.TrackBar();
-            this.minPlayersBar = new System.Windows.Forms.TrackBar();
-            this.maxPlayersLabel = new System.Windows.Forms.Label();
-            this.minPlayersLabel = new System.Windows.Forms.Label();
-            this.teamsLabel = new System.Windows.Forms.Label();
-            this.enableManageBox = new System.Windows.Forms.CheckBox();
             this.gameBox = new System.Windows.Forms.ComboBox();
             this.showAdvancedButton = new System.Windows.Forms.Button();
             this.advancedOptionsGroup = new System.Windows.Forms.GroupBox();
@@ -53,10 +45,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.teamsBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.maxPlayersBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.minPlayersBar)).BeginInit();
             this.advancedOptionsGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -113,7 +101,7 @@
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.okButton.Location = new System.Drawing.Point(295, 582);
+            this.okButton.Location = new System.Drawing.Point(295, 330);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(118, 29);
             this.okButton.TabIndex = 8;
@@ -125,103 +113,12 @@
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancelButton.Location = new System.Drawing.Point(419, 582);
+            this.cancelButton.Location = new System.Drawing.Point(419, 330);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(109, 29);
             this.cancelButton.TabIndex = 9;
             this.cancelButton.Text = "Cancel";
             this.cancelButton.UseVisualStyleBackColor = true;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.teamsBar);
-            this.groupBox1.Controls.Add(this.maxPlayersBar);
-            this.groupBox1.Controls.Add(this.minPlayersBar);
-            this.groupBox1.Controls.Add(this.maxPlayersLabel);
-            this.groupBox1.Controls.Add(this.minPlayersLabel);
-            this.groupBox1.Controls.Add(this.teamsLabel);
-            this.groupBox1.Controls.Add(this.enableManageBox);
-            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(9, 152);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(515, 229);
-            this.groupBox1.TabIndex = 10;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Automatically Manage Battle";
-            // 
-            // teamsBar
-            // 
-            this.teamsBar.Location = new System.Drawing.Point(156, 181);
-            this.teamsBar.Maximum = 16;
-            this.teamsBar.Minimum = 2;
-            this.teamsBar.Name = "teamsBar";
-            this.teamsBar.Size = new System.Drawing.Size(353, 45);
-            this.teamsBar.TabIndex = 7;
-            this.teamsBar.Value = 2;
-            // 
-            // maxPlayersBar
-            // 
-            this.maxPlayersBar.Location = new System.Drawing.Point(156, 130);
-            this.maxPlayersBar.Maximum = 16;
-            this.maxPlayersBar.Minimum = 2;
-            this.maxPlayersBar.Name = "maxPlayersBar";
-            this.maxPlayersBar.Size = new System.Drawing.Size(353, 45);
-            this.maxPlayersBar.TabIndex = 6;
-            this.maxPlayersBar.Value = 16;
-            // 
-            // minPlayersBar
-            // 
-            this.minPlayersBar.Location = new System.Drawing.Point(156, 79);
-            this.minPlayersBar.Maximum = 16;
-            this.minPlayersBar.Minimum = 1;
-            this.minPlayersBar.Name = "minPlayersBar";
-            this.minPlayersBar.Size = new System.Drawing.Size(353, 45);
-            this.minPlayersBar.TabIndex = 5;
-            this.minPlayersBar.Value = 8;
-            // 
-            // maxPlayersLabel
-            // 
-            this.maxPlayersLabel.AutoSize = true;
-            this.maxPlayersLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.maxPlayersLabel.Location = new System.Drawing.Point(3, 130);
-            this.maxPlayersLabel.Name = "maxPlayersLabel";
-            this.maxPlayersLabel.Size = new System.Drawing.Size(147, 17);
-            this.maxPlayersLabel.TabIndex = 4;
-            this.maxPlayersLabel.Text = "Maximum Players (16)";
-            // 
-            // minPlayersLabel
-            // 
-            this.minPlayersLabel.AutoSize = true;
-            this.minPlayersLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.minPlayersLabel.Location = new System.Drawing.Point(6, 79);
-            this.minPlayersLabel.Name = "minPlayersLabel";
-            this.minPlayersLabel.Size = new System.Drawing.Size(136, 17);
-            this.minPlayersLabel.TabIndex = 3;
-            this.minPlayersLabel.Text = "Minimum Players (6)";
-            // 
-            // teamsLabel
-            // 
-            this.teamsLabel.AutoSize = true;
-            this.teamsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.teamsLabel.Location = new System.Drawing.Point(6, 181);
-            this.teamsLabel.Name = "teamsLabel";
-            this.teamsLabel.Size = new System.Drawing.Size(73, 17);
-            this.teamsLabel.TabIndex = 2;
-            this.teamsLabel.Text = "Teams (2)";
-            // 
-            // enableManageBox
-            // 
-            this.enableManageBox.AutoSize = true;
-            this.enableManageBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.enableManageBox.Location = new System.Drawing.Point(9, 41);
-            this.enableManageBox.Name = "enableManageBox";
-            this.enableManageBox.Size = new System.Drawing.Size(71, 21);
-            this.enableManageBox.TabIndex = 1;
-            this.enableManageBox.Text = "Enable";
-            this.enableManageBox.UseVisualStyleBackColor = true;
-            this.enableManageBox.CheckedChanged += new System.EventHandler(this.enableManageBox_CheckedChanged);
             // 
             // gameBox
             // 
@@ -233,7 +130,7 @@
             // showAdvancedButton
             // 
             this.showAdvancedButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.showAdvancedButton.Location = new System.Drawing.Point(13, 585);
+            this.showAdvancedButton.Location = new System.Drawing.Point(13, 333);
             this.showAdvancedButton.Name = "showAdvancedButton";
             this.showAdvancedButton.Size = new System.Drawing.Size(133, 23);
             this.showAdvancedButton.TabIndex = 12;
@@ -248,7 +145,7 @@
             this.advancedOptionsGroup.Controls.Add(this.label5);
             this.advancedOptionsGroup.Controls.Add(this.label3);
             this.advancedOptionsGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.advancedOptionsGroup.Location = new System.Drawing.Point(8, 388);
+            this.advancedOptionsGroup.Location = new System.Drawing.Point(8, 141);
             this.advancedOptionsGroup.Name = "advancedOptionsGroup";
             this.advancedOptionsGroup.Size = new System.Drawing.Size(516, 181);
             this.advancedOptionsGroup.TabIndex = 13;
@@ -316,13 +213,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancelButton;
-            this.ClientSize = new System.Drawing.Size(540, 623);
+            this.ClientSize = new System.Drawing.Size(540, 371);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.advancedOptionsGroup);
             this.Controls.Add(this.showAdvancedButton);
             this.Controls.Add(this.gameBox);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.label4);
@@ -335,11 +231,6 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Host a new battle";
             this.Load += new System.EventHandler(this.HostDialog_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.teamsBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.maxPlayersBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.minPlayersBar)).EndInit();
             this.advancedOptionsGroup.ResumeLayout(false);
             this.advancedOptionsGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -355,15 +246,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancelButton;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ComboBox gameBox;
-        private System.Windows.Forms.Label maxPlayersLabel;
-        private System.Windows.Forms.Label minPlayersLabel;
-        private System.Windows.Forms.Label teamsLabel;
-        private System.Windows.Forms.CheckBox enableManageBox;
-        private System.Windows.Forms.TrackBar teamsBar;
-        private System.Windows.Forms.TrackBar maxPlayersBar;
-        private System.Windows.Forms.TrackBar minPlayersBar;
         private System.Windows.Forms.Button showAdvancedButton;
         private System.Windows.Forms.GroupBox advancedOptionsGroup;
         private System.Windows.Forms.TextBox springieCommandsBox;
