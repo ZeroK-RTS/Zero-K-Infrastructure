@@ -148,33 +148,9 @@
     {
         <h3><a href="#" onclick="$('#usr_gamePreferences').toggle()">Game preferences</a></h3>
         <div id="usr_gamePreferences" style="display: none">
-            <a href="@Url.Action("Index", "Wiki", new { node = "PlayerJuggler" })">what is this for?</a>
             @if (Model.AccountID == Global.AccountID)
             {
-                <form action="@Url.Action("GamePreferences", "My")" method="POST">
-                    Active: <input type="checkbox" name="active" value="true" @(Model.MatchMakingActive?"checked='checked'":"") /><br/>
-                    <table>
-                        @foreach (var kvp in Model.Preferences.Where(x => x.Key != AutohostMode.None).OrderBy(x => x.Key))
-                        {
-                            <tr>
-                                <td>
-                                    @kvp.Key.Description() :
-                                </td>
-                                <td>
-                                    <select name="preference">
-                                        @foreach (GamePreference o in Enum.GetValues(typeof(GamePreference)).OfType<GamePreference>().OrderBy(x => x))
-                                        {
-                                            <option value="@o" @(kvp.Value == o ? "selected='selected'" : "")>@o.Description()</option>
-                                        }
-                                    </select>
-                                </td>
-                            </tr>
-
-                        }
-                    </table>
-                    <input type="submit"/>
-                </form>
-				
+                
 				<form action="@Url.Action("LanguageChange", "My")" method="POST">
                     Select preferrable language:
 					<select name="language">
@@ -185,7 +161,7 @@
 					</select>
                     <input type="submit"/>
                 </form>
-                
+               
                 
                 var notes = typeof(UserLanguage).GetMember(Global.DisplayLanguageAsEnum.ToString())[0].GetCustomAttributes(typeof(UserLanguageNoteAttribute), false);
                 if (notes.Length > 0)
@@ -196,16 +172,6 @@
                 }
 
             }
-            else
-            {
-                <table>
-                    @foreach (var kvp in Model.Preferences.Where(x => x.Key != AutohostMode.None).OrderBy(x => x.Key))
-                    {
-                        <tr><td>@kvp.Key.Description()</td><td>@kvp.Value.Description()</td></tr>
-                    }
-                </table>
-            }
-
         </div>
     }
 
