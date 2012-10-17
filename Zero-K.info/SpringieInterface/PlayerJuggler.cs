@@ -112,41 +112,26 @@ namespace ZeroKWeb.SpringieInterface
 
             var tas = Global.Nightwatch.Tas;
 
+            //only non passworded battles
             autohosts = autohosts.Where(x => !tas.ExistingBattles.Values.Any(y => y.Founder.Name == x.LobbyContext.AutohostName && y.IsPassworded)).ToList();
-            //only non pw battles
+            
 
-            var ingames = tas.ExistingUsers.Where(x => x.Value.IsInGame).Select(x => x.Value.LobbyID).ToDictionary(x => x);
-            foreach (var ah in autohosts) {
-                if (ah.RunningGameStartContext == null) lobbyIds.AddRange(ah.LobbyContext.Players.Where(x => !x.IsSpectator).Select(x => (int?)x.LobbyID));
-                    // game not running add all nonspecs
-                else {
-                    /*var notPlaying =
-                        ah.LobbyContext.Players.Where(
-                            x =>
-                            !x.IsSpectator && !x.IsIngame && !ingames.ContainsKey(x.LobbyID) && 
-                            !ah.RunningGameStartContext.Players.Any(y => y.LobbyID == x.LobbyID && !y.IsSpectator && y.IsIngame)).Select(
-                                x => (int?)x.LobbyID).ToList();
-                    // game running, add all those that are not playing and are not specs
-                     lobbyIds.AddRange(notPlaying);*/
-                }
-            }
-
-            var roomLessLobbyID = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
+            var lobbyIDs = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
             foreach (var ah in autohosts) {
                 // safeguard - remove those known to be playing or speccing
                 if (ah.RunningGameStartContext != null) {
                     foreach (var id in ah.RunningGameStartContext.Players.Where(x => !x.IsSpectator && x.IsIngame).Select(x => x.LobbyID)) {
-                        roomLessLobbyID.Remove(id);
+                        lobbyIDs.Remove(id);
                     }
                 }
                 if (ah.LobbyContext != null) {
                     foreach (var id in ah.LobbyContext.Players.Where(x => x.IsIngame).Select(x => x.LobbyID)) {
-                        roomLessLobbyID.Remove(id);
+                        lobbyIDs.Remove(id);
                     }
                 }
             }
 
-            var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID) || (roomLessLobbyID.Contains(x.LobbyID) && x.MatchMakingActive)).ToDictionary(x => x.LobbyID ?? 0);
+            var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID) && x.MatchMakingActive).ToDictionary(x => x.LobbyID ?? 0);
 
             // make bins from non-running games with players by each type
             foreach (var grp in

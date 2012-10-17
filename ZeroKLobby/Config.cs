@@ -129,8 +129,6 @@ namespace ZeroKLobby
         [Browsable(false)]
         public bool HasHosted { get; set; }
         [Browsable(false)]
-        public string HostBattle_RapidTag { get; set; }
-        [Browsable(false)]
         public string HostBattle_SpringieCommands { get; set; }
         [Browsable(false)]
         public string HostBattle_Title { get; set; }
