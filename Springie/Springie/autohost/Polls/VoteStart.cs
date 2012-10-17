@@ -1,4 +1,5 @@
 using LobbyClient;
+using System.Linq;
 
 namespace Springie.autohost.Polls
 {
@@ -13,6 +14,7 @@ namespace Springie.autohost.Polls
             if (!spring.IsRunning)
             {
                 question = "Start game?";
+                winCount = tas.MyBattle.Users.Count(x => !x.IsSpectator) / 2 + 1;
                 return true;
             }
             else
@@ -20,6 +22,16 @@ namespace Springie.autohost.Polls
                 AutoHost.Respond(tas, spring, e, "battle already started");
                 return false;
             }
+        }
+
+        protected override bool AllowVote(TasSayEventArgs e) {
+            var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName);
+            if (entry == null || entry.IsSpectator)
+            {
+                ah.Respond(e, string.Format("Only players can vote"));
+                return false;
+            }
+            else return true;            
         }
 
         protected override void SuccessAction() {

@@ -1431,17 +1431,5 @@ namespace Springie.autohost
             }
         }
 
-        void ComResign(TasSayEventArgs e, string[] words)
-        {
-            if (spring.IsRunning) {
-                var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName && !x.IsSpectator);
-                if (entry != null) {
-                    SayBattle("Resigning");
-                    foreach (var u in spring.StartContext.Players.Where(x=>x.AllyID== entry.AllyID && !x.IsSpectator)) spring.ResignPlayer(u.Name);
-                    return;
-                }
-            }
-            Respond(e,"You cannot resign at this time");
-        }
     }
 }

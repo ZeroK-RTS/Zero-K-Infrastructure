@@ -67,11 +67,6 @@ namespace Springie.autohost
                                          0,
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
-            AddMissing(new CommandConfig("resign",
-                                                     3,
-                                                     " - resigns the game",
-                                                     0,
-                                                     new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
             AddMissing(new CommandConfig("lock", 1, " - locks the game"));
 

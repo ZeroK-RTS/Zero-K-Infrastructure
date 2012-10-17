@@ -346,7 +346,15 @@ namespace Springie.autohost
                     break;
 
                 case "start":
-                    ComStart(e, words);
+                    if (tas.MyBattle != null) {
+                        var cnt = tas.MyBattle.NonSpectatorCount;
+                        if (cnt == 1) ComStart(e,words);
+                        else {
+                            if (config != null && config.SplitBiggerThan != null && config.SplitBiggerThan < cnt) StartVote(new VoteSplitPlayers(tas,spring,this),e,words);
+                            else StartVote(new VoteStart(tas, spring, this), e, words); 
+                        }
+                    }
+                    
                     break;
 
                 case "forcestart":
@@ -415,10 +423,6 @@ namespace Springie.autohost
 
                 case "votespec":
                     StartVote(new VoteSpec(tas, spring, this), e, words);
-                    break;
-
-                case "resign":
-                    ComResign(e, words);
                     break;
 
                 case "voteresign":
