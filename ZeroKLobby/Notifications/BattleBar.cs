@@ -25,6 +25,7 @@ namespace ZeroKLobby.Notifications
 		string lastScript;
 		Battle previousBattle;
 
+
 		readonly Random random = new Random();
         readonly Spring spring;
 		bool suppressSideChangeEvent;
@@ -468,7 +469,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		public void CloseClicked(NotifyBarContainer container)
 		{
 			Stop();
-            Program.JugglerBar.Deactivate();
 		}
 
 		public void DetailClicked(NotifyBarContainer container)
@@ -498,6 +498,7 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		{
 			cbReady.ImageIndex = cbReady.Checked ? 1 : 2;
 			cbReady.Text = cbReady.Checked ? "Play" : "Watch";
+		    desiredSpectatorState = !cbReady.Checked;
 			if (!suppressSpecChange) client.ChangeMyBattleStatus(spectate: !cbReady.Checked);
 		}
 

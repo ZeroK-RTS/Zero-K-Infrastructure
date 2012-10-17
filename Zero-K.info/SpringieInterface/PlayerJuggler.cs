@@ -83,7 +83,7 @@ namespace ZeroKWeb.SpringieInterface
             tas.UserStatusChanged += (sender, args) =>
                 {
                     var user = tas.ExistingUsers[args.ServerParams[0]];
-                    if (user.IsAway) {
+                    if (user.IsAway || user.IsInGame) {
                         var conf = tas.Extensions.GetPublishedConfig(user.Name);
                         if (conf != null && conf.Active) {
                             conf.Active = false;
@@ -125,7 +125,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
                 if (ah.LobbyContext != null) {
-                    foreach (var id in ah.LobbyContext.Players.Where(x => x.IsIngame).Select(x => x.LobbyID)) {
+                    foreach (var id in ah.LobbyContext.Players.Where(x => x.IsIngame || x.IsSpectator).Select(x => x.LobbyID)) {
                         lobbyIDs.Remove(id);
                     }
                 }

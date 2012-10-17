@@ -75,7 +75,11 @@ namespace ZeroKLobby.Notifications
             }
 
             client.BattleJoined += (sender, args) => { };
-            client.BattleMyUserStatusChanged += (sender, args) => {};
+            client.BattleMyUserStatusChanged += (sender, args) =>
+                {
+                    if (client.MyBattleStatus != null && client.MyBattleStatus.IsSpectator) Deactivate();
+
+                };
 
             client.Extensions.JugglerStateReceived += (args, state) =>
                 {
@@ -136,7 +140,10 @@ namespace ZeroKLobby.Notifications
         #endregion
 
         public void Activate() {
-            if (!IsActive) SendMyConfig(false, true);
+            if (!IsActive) {
+                client.ChangeMyBattleStatus(spectate:false);
+                SendMyConfig(false, true);
+            }
         }
 
         public void SwitchState() {

@@ -98,6 +98,8 @@ namespace ZeroKLobby
       Program.TasClient.BattleJoined += battleJoinHandler;
       Program.TasClient.JoinBattleFailed += battleJoinFailedHandler;
 
+      Program.JugglerBar.Deactivate();
+
       Program.BattleBar.StartManualBattle(battleID, password);
     }
 
