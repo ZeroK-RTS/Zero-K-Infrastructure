@@ -160,9 +160,6 @@ namespace Springie.autohost
 
                             bool shouldStart = false;
                             if (SpawnConfig == null && timerTick % 3 == 0) shouldStart = RunServerBalance(false, null, null);
-                            // autostart if all ok  
-                            if (config.Mode != AutohostMode.None && config.Mode != AutohostMode.Planetwars && shouldStart && !spring.IsRunning &&
-                                DateTime.Now.Subtract(spring.GameExited).TotalMinutes > 3 && DateTime.Now > postponeUntil) ComStart(TasSayEventArgs.Default, new string[] { });
                         }
                     }
                     catch (Exception ex)
@@ -557,10 +554,6 @@ namespace Springie.autohost
 
                 case "specafk":
                     ComForceSpectatorAfk(e, words);
-                    break;
-
-                case "postpone":
-                    ComPostpone(e,words);
                     break;
 
 

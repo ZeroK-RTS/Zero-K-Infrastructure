@@ -16,7 +16,6 @@ namespace Springie.autohost
     public partial class AutoHost
     {
         const int MaxMapListLength = 400;
-        DateTime postponeUntil;
 
         readonly List<string> toNotify = new List<string>();
 
@@ -659,11 +658,6 @@ namespace Springie.autohost
             tas.ForceJoinBattle(name, target);
         }
 
-        public void ComPostpone(TasSayEventArgs e, string[] words)
-        {
-            Respond(e, "Automated start postponed by 5 minutes");
-            postponeUntil = DateTime.Now.AddMinutes(5);
-        }
 
         public void ComPredict(TasSayEventArgs e, string[] words)
         {
