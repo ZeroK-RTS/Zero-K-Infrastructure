@@ -257,9 +257,9 @@ namespace LobbyClient
                     string name = parts[1];
                     Dictionary<string, string> data = Deserialize(parts[2]);
 
-                    Dictionary<string, string> dict;
-                    userAttributes.TryGetValue(name, out dict);
-                    dict = dict ?? new Dictionary<string, string>();
+                    Dictionary<string, string> dict = new Dictionary<string, string>();
+                    //userAttributes.TryGetValue(name, out dict);
+                    //dict = dict ?? new Dictionary<string, string>();
 
                     foreach (var kvp in data) dict[kvp.Key] = kvp.Value;
                     userAttributes[name] = dict;

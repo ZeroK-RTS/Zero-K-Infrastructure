@@ -234,8 +234,9 @@ namespace Fixer
 
 
           Console.WriteLine("Total battles: {0}", cnt);
+            Console.WriteLine("Name;1v1Elo;TeamElo;1v1Played;TeamPlayed");
           foreach (var entry in PlayerElo.Where(x=>x.Value.Cnt > 40).OrderByDescending(x=>x.Value.Elo)) {
-              Console.WriteLine("{0}   team elo: {1:f2}   1v1 elo: {2:f2}", entry.Key.Name, entry.Key.EffectiveElo, entry.Value.Elo);
+              Console.WriteLine("{0};{1:f0};{2:f0};{3};{4}", entry.Key.Name,entry.Value.Elo, entry.Key.EffectiveElo, entry.Value.Cnt, entry.Key.SpringBattlePlayers.Count(x=>!x.IsSpectator && x.SpringBattle.PlayerCount > 2));
           }
 
       }
