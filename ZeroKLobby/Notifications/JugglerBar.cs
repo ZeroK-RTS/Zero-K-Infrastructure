@@ -47,6 +47,7 @@ namespace ZeroKLobby.Notifications
 
             Program.ToolTip.SetText(this, info);
             Program.ToolTip.SetText(lbInfo,"QuickMatch will automatically find you a room of type you like most :)");
+            
 
             int cnt = 0;
 
@@ -87,6 +88,8 @@ namespace ZeroKLobby.Notifications
                     foreach (ProtocolExtension.JugglerState.ModePair entry in state.ModeCounts) {
                         InfoItems item;
                         if (Items.TryGetValue(entry.Mode, out item)) item.Label.Text = string.Format("({0}+{1})", entry.Count, entry.Playing);
+
+                        if (IsActive) lbInfo.Text = string.Format("in queue\n{0} playing\n{1} waiting", state.ModeCounts.Sum(x => x.Playing), state.ModeCounts.Sum(x => x.Count));
                     }
                 };
 
@@ -108,11 +111,11 @@ namespace ZeroKLobby.Notifications
                 _isActive = value;
                 if (IsActive) {
                     BarContainer.btnDetail.Image = Resources.spec;
-                    lbInfo.Text = "QuickMatch\nenabled";
+                    lbInfo.Text = "in queue";
                 }
                 else {
                     BarContainer.btnDetail.Image = Resources.quickmatch_off;
-                    lbInfo.Text = "QuickMatch\ndisabled";
+                    lbInfo.Text = "disabled";
                 }
             }
         }
@@ -122,6 +125,7 @@ namespace ZeroKLobby.Notifications
         public void AddedToContainer(NotifyBarContainer container) {
             BarContainer = container;
             container.btnStop.Visible = false;
+            Program.ToolTip.SetText(BarContainer.btnDetail, "Enabled or disable QuickMatch");
         }
 
         public void CloseClicked(NotifyBarContainer container) {
