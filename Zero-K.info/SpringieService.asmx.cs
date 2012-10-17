@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -67,6 +68,31 @@ namespace ZeroKWeb
             var db = new ZkDataContext();
             return db.Resources.Single(x => x.InternalName == mapName).MapSpringieCommands;
         }
+
+        public class MovePlayerEntry
+        {
+            public string PlayerName;
+            public string BattleHost;
+        }
+
+        [WebMethod]
+        public void MovePlayers(string autohostName, string autohostPassword, List<MovePlayerEntry> moves) {
+
+            var db = new ZkDataContext();
+            var acc = AuthServiceClient.VerifyAccountPlain(autohostName, autohostPassword);
+            if (acc == null) throw new Exception("Invalid password");
+            var name = autohostName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
+            var entry = db.AutohostConfigs.SingleOrDefault(x => x.Login == name);
+            if (entry == null) throw new Exception("Not an autohost");
+
+            PlayerJuggler.SuppressJuggler = true;
+            foreach (var m in moves) {
+                Global.Nightwatch.Tas.ForceJoinBattle(m.PlayerName, m.BattleHost);
+            }
+            PlayerJuggler.SuppressJuggler = false;
+
+        }
+
 
         [WebMethod]
         public JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
