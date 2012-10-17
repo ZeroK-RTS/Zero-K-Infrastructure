@@ -576,6 +576,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\PlayerStates\quickmatch_off.png" />
     <None Include="Resources\star.png" />
     <Resource Include="Images\add.png" />
     <Content Include="lua5.1.dll">

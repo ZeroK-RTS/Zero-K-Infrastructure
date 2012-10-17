@@ -74,18 +74,8 @@ namespace ZeroKLobby.Notifications
                 cnt++;
             }
 
-            client.BattleJoined += (sender, args) => { if (Program.Conf.AutoActivateQuickmatch && args.Data.Founder.IsSpringieManaged) Activate(); };
-
-            client.BattleMyUserStatusChanged += (sender, args) =>
-                {
-                    if (Program.Conf.AutoActivateQuickmatch)
-                    {
-                        if (client.MyBattleStatus.IsSpectator) {
-                            if (IsActive) Deactivate();
-                        }
-                        //else if (client.MyBattle.Founder.IsSpringieManaged && !IsActive) Activate();
-                    }
-                };
+            client.BattleJoined += (sender, args) => { };
+            client.BattleMyUserStatusChanged += (sender, args) => {};
 
             client.Extensions.JugglerStateReceived += (args, state) =>
                 {
@@ -117,7 +107,7 @@ namespace ZeroKLobby.Notifications
                     lbInfo.Text = "QuickMatch\nenabled";
                 }
                 else {
-                    BarContainer.btnDetail.Image = Resources.unready;
+                    BarContainer.btnDetail.Image = Resources.quickmatch_off;
                     lbInfo.Text = "QuickMatch\ndisabled";
                 }
             }
