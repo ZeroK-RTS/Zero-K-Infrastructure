@@ -26,7 +26,8 @@ namespace Springie.autohost.Polls
 
         protected override bool AllowVote(TasSayEventArgs e)
         {
-            var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName);
+            if (tas.MyBattle == null) return false;
+            var entry = tas.MyBattle.Users.FirstOrDefault(x => x.Name == e.UserName);
             if (entry == null || entry.IsSpectator)
             {
                 ah.Respond(e, string.Format("Only players can vote"));
