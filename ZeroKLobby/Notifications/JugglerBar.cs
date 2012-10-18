@@ -89,7 +89,7 @@ namespace ZeroKLobby.Notifications
                         InfoItems item;
                         if (Items.TryGetValue(entry.Mode, out item)) item.Label.Text = string.Format("({0}+{1})", entry.Count, entry.Playing);
 
-                        if (IsActive) lbInfo.Text = string.Format("in queue\n{0} playing\n{1} waiting", state.ModeCounts.Sum(x => x.Playing), state.ModeCounts.Sum(x => x.Count));
+                        if (IsActive) lbInfo.Text = string.Format("in queue\n{0} playing\n{1} waiting", state.ModeCounts.Sum(x => x.Playing), state.TotalPlayers);
                     }
                 };
 

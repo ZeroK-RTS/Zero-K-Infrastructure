@@ -204,10 +204,18 @@ namespace ZeroKWeb.SpringieInterface
                                 var acc = juggledAccounts[person];
                                 var current = bins.FirstOrDefault(x => x.Assigned.Contains(person));
 
-                                var saveBattleRule = false;
-                                if (current != null && current != b && acc.Preferences[current.Mode] <= acc.Preferences[b.Mode]) if (b.Assigned.Count < b.Config.MinToJuggle && current.Assigned.Count >= current.Config.MinToJuggle + 1) saveBattleRule = true;
 
-                                if (current == null || saveBattleRule) {
+                                var canMove = false;
+
+                                if (current == null) canMove = true;
+                                else {
+                                    if (current != b) {
+                                        if (acc.Preferences[current.Mode] <= acc.Preferences[b.Mode]) canMove = true;
+                                        if (acc.Preferences[current.Mode] == acc.Preferences[b.Mode]) if (b.Assigned.Count < b.Config.MinToJuggle && current.Assigned.Count >= current.Config.MinToJuggle + 1) canMove = true;
+                                    }
+                                }
+
+                                if (canMove) {
                                     Move(bins, person, b);
                                     moved = true;
                                     break;
@@ -283,7 +291,6 @@ namespace ZeroKWeb.SpringieInterface
                                 string.Join(",", b.Assigned.Select(x => allAccounts[x].Name)),
                                 string.Join(",", b.PlayerPriority.OrderByDescending(x => x.Value).Select(x => string.Format("{0}:{1}", allAccounts[x.Key].Name, x.Value))));
             }
-            sb.AppendFormat("Free people: {0}\n", string.Join(",", allAccounts.Where(x => !bins.Any(y => y.Assigned.Contains(x.Key))).Select(x => x.Value.Name)));
         }
 
         private static void ResetAssigned(List<Bin> bins) {
