@@ -5,37 +5,34 @@ namespace Springie.autohost.Polls
 {
     public class VoteStart: AbstractPoll
     {
+        string host;
         public VoteStart(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
       
         protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
             winCount = 0;
             question = null;
-            if (!spring.IsRunning)
+            if (words.Length < 1)
             {
-                question = "Start game?";
-                winCount = tas.MyBattle.Users.Count(x => !x.IsSpectator) / 2 + 1;
-                return true;
-            }
-            else
-            {
-                AutoHost.Respond(tas, spring, e, "battle already started");
+                ah.Respond(e, "<target hostname>");
                 return false;
             }
+            host = words[0];
+
+            if (!tas.ExistingBattles.Values.Any(x => x.Founder.Name == host))
+            {
+                ah.Respond(e, string.Format("Host {0} not found", words[0]));
+                return false;
+            }
+            
+            question = "Move all to host {0}?";
+            return true;
+            
         }
 
-        protected override bool AllowVote(TasSayEventArgs e) {
-            var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName);
-            if (entry == null || entry.IsSpectator)
-            {
-                ah.Respond(e, string.Format("Only players can vote"));
-                return false;
-            }
-            else return true;            
-        }
 
         protected override void SuccessAction() {
-            ah.ComStart(TasSayEventArgs.Default, new string[]{});
+            ah.ComMove(TasSayEventArgs.Default, new string[]{ host});
         }
     }
 }

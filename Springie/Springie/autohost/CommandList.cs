@@ -242,7 +242,8 @@ namespace Springie.autohost
                                          }));
 
             AddMissing(new CommandConfig("saveboxes", 3, "- saves boxes for current map"));
-            AddMissing(new CommandConfig("move", 3, "<who> <where> - moves player forcibly to a new autohost"));
+            AddMissing(new CommandConfig("move", 3, "<where> - moves players to a new host"));
+            AddMissing(new CommandConfig("votemove", 1, "<where> - vote to move players to a new host"));
             AddMissing(new CommandConfig("juggle", 4, "- executes player juggler moving players between managed autohosts"));
 
             if (config != null && config.CommandLevels != null)

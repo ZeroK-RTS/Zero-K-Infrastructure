@@ -594,6 +594,10 @@ namespace Springie.autohost
                     ComMove(e,words);
                     break;
 
+                case "votemove":
+                    StartVote(new VoteMove(tas,spring,this),e,words );
+                    break;
+
                 case "juggle":
                     ComJuggle(e,words);
                     break;

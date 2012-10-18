@@ -630,16 +630,28 @@ namespace Springie.autohost
 
         public void ComMove(TasSayEventArgs e, string[] words)
         {
-            if (words.Length < 2)
+            if (words.Length < 1)
             {
-                Respond(e, "<who> <to>");
+                Respond(e, "<target hostname>");
                 return;
             }
-            var name = words[0];
-            var target = words[1];
+            var host = words[0];
 
-            tas.Say(TasClient.SayPlace.BattlePrivate, name, string.Format("You are being moved to {0} by QuickMatch", target), true);
-            tas.ForceJoinBattle(name, target);
+            if (!tas.ExistingBattles.Values.Any(x=>x.Founder.Name ==host)) {
+                Respond(e,string.Format("Host {0} not found", words[0]));
+                return;
+            }
+
+            var serv = new SpringieService();
+            var moves = new List<MovePlayerEntry>();
+            foreach (var u in tas.MyBattle.Users.Where(x=>x.LobbyUser.Name != tas.MyBattle.Founder.Name)) {
+                moves.Add(new MovePlayerEntry()
+                          {
+                              PlayerName = u.Name,
+                              BattleHost = host
+                          });
+            }
+            serv.MovePlayers(tas.UserName,tas.UserPassword, moves.ToArray());
         }
 
 
@@ -786,35 +798,9 @@ namespace Springie.autohost
 
         public void ComSplitPlayers(TasSayEventArgs e, string[] words)
         {
-            if (tas.MyBattle != null)
-            {
-                var target =
-                    tas.ExistingBattles.Values.FirstOrDefault(
-                        x => x.Founder.Name.StartsWith(config.Login) && x.Founder.Name != GetAccountName() && x.NonSpectatorCount == 0);
-
-                if (target != null)
-                {
-                    var plist = tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && !x.IsSpectator && x.Name != tas.MyBattle.Founder.Name).ToList();
-                    var slist = tas.MyBattle.Users.Where(x => !x.LobbyUser.IsInGame && x.IsSpectator && x.Name != tas.MyBattle.Founder.Name).ToList();
-
-                    // group people by clans - if he has no clan use lobbyid as clan name, order by average elo
-                    var groups =
-                        plist.GroupBy(x => !String.IsNullOrEmpty(x.LobbyUser.Clan) ? x.LobbyUser.Clan : x.LobbyUser.LobbyID.ToString()).
-                            OrderByDescending(x => x.Average(y => y.LobbyUser.EffectiveElo));
-
-                    var moveCnt = plist.Count/2;
-                    var moved = 0;
-
-                    // take half players with top elo and move them - incuding specs from same clan
-                    foreach (var g in groups)
-                    {
-                        foreach (var p in g) ComMove(TasSayEventArgs.Default, new[] { p.Name, target.Founder.Name });
-                        foreach (var p in slist.Where(x => x.LobbyUser.Clan == g.Key)) ComMove(TasSayEventArgs.Default, new[] { p.Name, target.Founder.Name });
-
-                        moved += g.Count();
-                        if (moved > moveCnt) break;
-                    }
-                }
+            if (tas.MyBattle != null && !spring.IsRunning) {
+                var serv = new SpringieService();
+                serv.SplitAutohost(tas.MyBattle.GetContext(), tas.UserPassword);
             }
         }
 
