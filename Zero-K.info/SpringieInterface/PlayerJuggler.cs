@@ -108,7 +108,6 @@ namespace ZeroKWeb.SpringieInterface
             var bins = new List<Bin>();
             var db = new ZkDataContext();
             var sb = new StringBuilder();
-            var lobbyIds = new List<int?>();
 
             var manuallyPrefered = new Dictionary<int, AutohostMode>();
 
@@ -136,7 +135,7 @@ namespace ZeroKWeb.SpringieInterface
 
             var existing = tas.ExistingUsers.Values.Select(y => (int?)y.LobbyID).ToList();
             var allAccounts = db.Accounts.Where(x => existing.Contains(x.LobbyID)).ToDictionary(x => x.LobbyID ?? 0);
-            var juggledAccounts = db.Accounts.Where(x => lobbyIds.Contains(x.LobbyID) && x.MatchMakingActive).ToDictionary(x => x.LobbyID ?? 0);
+            var juggledAccounts = db.Accounts.Where(x => juggledLobbyIDs.Contains(x.LobbyID) && x.MatchMakingActive).ToDictionary(x => x.LobbyID ?? 0);
 
             // make bins from non-running games with players by each type
             foreach (var grp in
