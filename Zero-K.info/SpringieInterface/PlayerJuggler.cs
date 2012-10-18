@@ -18,7 +18,6 @@ namespace ZeroKWeb.SpringieInterface
 
     public class PlayerJuggler
     {
-        const double JoinedBattlePreference = 0;
 
         public static bool SuppressJuggler = false;
 
@@ -109,7 +108,6 @@ namespace ZeroKWeb.SpringieInterface
             var db = new ZkDataContext();
             var sb = new StringBuilder();
 
-            var manuallyPrefered = new Dictionary<int, AutohostMode>();
 
             var tas = Global.Nightwatch.Tas;
 
@@ -141,14 +139,6 @@ namespace ZeroKWeb.SpringieInterface
             foreach (var grp in
                 autohosts.Where(x => x.LobbyContext != null).GroupBy(x => x.LobbyContext.GetMode())) {
                 var groupBins = new List<Bin>();
-
-                // set manual preference for all juggleable people who are in games
-                foreach (var ah in grp) {
-                    foreach (var u in ah.LobbyContext.Players.Where(x => juggledAccounts.ContainsKey(x.LobbyID))) {
-                        manuallyPrefered[u.LobbyID] = grp.Key;
-                    }
-                }
-
                 // make bins from existing battles that are not running and have some players
                 foreach (var ah in grp.Where(x => x.RunningGameStartContext == null && x.LobbyContext.Players.Any(y => !y.IsSpectator))) {
                     var bin = new Bin(ah);
@@ -187,12 +177,12 @@ namespace ZeroKWeb.SpringieInterface
             db.SubmitChanges();
             */
 
-            SetPriorities(bins, juggledAccounts, manuallyPrefered, autohosts);
+            SetPriorities(bins, juggledAccounts, autohosts);
 
             sb.AppendLine("Original bins:");
             PrintBins(juggledAccounts, bins, sb);
 
-            foreach (var b in bins.Where(x => x.Config.MinToJuggle > x.PlayerPriority.Count).ToList()) {
+            foreach (var b in bins.Where(x => x.Config.MinToJuggle > x.PlayerPriority.Count + x.ManuallyJoined.Count).ToList()) {
                 bins.Remove(b); // remove those that cant be possible handled
             }
             sb.AppendLine("First purge:");
@@ -314,7 +304,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        private static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts, Dictionary<int, AutohostMode> manuallyPrefered, List<JugglerAutohost> autohosts) {
+        private static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts,List<JugglerAutohost> autohosts) {
             foreach (var b in bins) {
                 b.PlayerPriority.Clear();
 
@@ -322,7 +312,6 @@ namespace ZeroKWeb.SpringieInterface
                     var lobbyID = a.Key;
                     var battlePref = a.Value.MatchMakingActive ? (double)a.Value.Preferences[b.Mode] : (double)GamePreference.Never;
                     AutohostMode manualPref;
-                    if (manuallyPrefered.TryGetValue(lobbyID, out manualPref) && manualPref == b.Mode) battlePref += JoinedBattlePreference; // player joined manually same type add 0.5
 
                     if (b.Config.MinLevel != null && a.Value.Level < b.Config.MinLevel) continue; // dont queue who cannot join PW
                     if (b.Config.MinElo != null && a.Value.EffectiveElo < b.Config.MinElo) continue; // dont queue those who cannot join high skill host
