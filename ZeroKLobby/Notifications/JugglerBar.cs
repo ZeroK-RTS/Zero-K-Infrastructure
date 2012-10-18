@@ -146,6 +146,7 @@ namespace ZeroKLobby.Notifications
         public void Activate() {
             if (!IsActive) {
                 client.ChangeMyBattleStatus(spectate:false);
+                Program.BattleBar.ChangeDesiredSpectatorState(false);
                 SendMyConfig(false, true);
             }
         }
