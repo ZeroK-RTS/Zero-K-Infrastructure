@@ -300,13 +300,9 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		/// <returns>true if change allowed</returns>
 		public bool ChangeDesiredSpectatorState(bool state)
 		{
-			if (cbReady.Enabled && cbReady.Visible)
-			{
-                desiredSpectatorState = state;
-				ChangeGuiSpectatorWithoutEvent(state);
-				return true;
-			}
-			return false;
+            desiredSpectatorState = state;
+        	ChangeGuiSpectatorWithoutEvent(state);
+			return true;
 		}
 
 		public static bool DownloadFailed(string name)
@@ -439,7 +435,6 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		{
 			if (isVisible) Stop();
 			isVisible = true;
-			cbReady.Checked = true;
 			Program.NotifySection.AddBar(this);
 		}
 
@@ -498,8 +493,10 @@ x => !b.Users.Any(y => y.AllyNumber == x.AllyID && y.TeamNumber == x.TeamID && !
 		{
 			cbReady.ImageIndex = cbReady.Checked ? 1 : 2;
 			cbReady.Text = cbReady.Checked ? "Play" : "Watch";
-		    desiredSpectatorState = !cbReady.Checked;
-			if (!suppressSpecChange) client.ChangeMyBattleStatus(spectate: !cbReady.Checked);
+		    if (!suppressSpecChange) {
+                desiredSpectatorState = !cbReady.Checked;
+                client.ChangeMyBattleStatus(spectate: !cbReady.Checked);
+		    }
 		}
 
 		void cbReady_Click(object sender, EventArgs e)
