@@ -410,7 +410,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        static void SplitAutohost(BattleContext context) {
+        public static void SplitAutohost(BattleContext context) {
             TasClient tas = Global.Nightwatch.Tas;
             try {
                 //find first one that isnt running and is using same mode (by name)
@@ -457,7 +457,7 @@ namespace ZeroKWeb.SpringieInterface
                     else {
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
-                        Thread.Sleep(3000);
+                        /*Thread.Sleep(3000);
                         if (!tas.ExistingUsers[splitTo.Founder.Name].IsInGame) {
                             tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
                             tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
@@ -465,7 +465,7 @@ namespace ZeroKWeb.SpringieInterface
                         if (!tas.ExistingUsers[context.AutohostName].IsInGame) {
                             tas.Say(TasClient.SayPlace.User, context.AutohostName, "!cbalance", false);
                             tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
-                        }
+                        }*/
                     }
                     PlayerJuggler.SuppressJuggler = false;
                 }

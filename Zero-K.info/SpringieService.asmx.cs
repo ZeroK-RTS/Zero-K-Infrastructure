@@ -93,6 +93,13 @@ namespace ZeroKWeb
 
         }
 
+        [WebMethod]
+        public void SplitAutohost(BattleContext context, string password) {
+            if (AuthServiceClient.VerifyAccountPlain(context.AutohostName, password) == null) throw new Exception("Invalid password");
+            if (context.GetConfig() == null) throw new Exception("Not an autohost");
+            Balancer.SplitAutohost(context);
+        }
+
 
         [WebMethod]
         public JugglerResult JugglePlayers(List<JugglerAutohost> autohosts)
