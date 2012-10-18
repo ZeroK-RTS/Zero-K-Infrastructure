@@ -87,8 +87,13 @@ namespace ZeroKWeb.SpringieInterface
                     if (user.IsAway || user.IsInGame) {
                         var conf = tas.Extensions.GetPublishedConfig(user.Name);
                         if (conf != null && conf.Active) {
-                            conf.Active = false;
-                            tas.Extensions.PublishPlayerJugglerConfig(conf, user.Name);
+                            using (var db = new ZkDataContext())
+                            {
+                                var acc = Account.AccountByName(db, user.Name);
+                                acc.MatchMakingActive = false;
+                                db.SubmitAndMergeChanges();
+                                SendAccountConfig(acc);
+                            }
                         }
                     }
                 };
