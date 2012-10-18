@@ -28,7 +28,7 @@ namespace Springie.autohost.Polls
                 return false;
             }
 
-            question = "Move all to host {0}?";
+            question = string.Format("Move all to {0}?", host);
             return true;
 
         }
