@@ -164,29 +164,17 @@ namespace ZeroKWeb.SpringieInterface
                 bins.AddRange(groupBins);
             }
 
-            /*
-            // those who manually joined a game and have preference set to never -> upgrade prefernece to ok
-            foreach (var kvp in manuallyPrefered) {
-                var acc = juggledAccounts[kvp.Key];
-                if (acc.Preferences[kvp.Value] <= GamePreference.Never) {
-                   acc.Preferences[kvp.Value] =  GamePreference.Ok;
-                   acc.SetPreferences(acc.Preferences);
-                   tas.Extensions.PublishPlayerJugglerConfig(new ProtocolExtension.JugglerConfig(acc), acc.Name );
-                }
-            }
-            db.SubmitChanges();
-            */
 
             SetPriorities(bins, juggledAccounts, autohosts);
 
             sb.AppendLine("Original bins:");
-            PrintBins(juggledAccounts, bins, sb);
+            PrintBins(allAccounts, bins, sb);
 
             foreach (var b in bins.Where(x => x.Config.MinToJuggle > x.PlayerPriority.Count + x.ManuallyJoined.Count).ToList()) {
                 bins.Remove(b); // remove those that cant be possible handled
             }
             sb.AppendLine("First purge:");
-            PrintBins(juggledAccounts, bins, sb);
+            PrintBins(allAccounts, bins, sb);
 
             Bin todel = null;
             do {
@@ -236,19 +224,19 @@ namespace ZeroKWeb.SpringieInterface
                 if (todel != null) {
                     bins.Remove(todel);
                     sb.AppendLine("removing bin " + todel.Mode);
-                    PrintBins(juggledAccounts, bins, sb);
+                    PrintBins(allAccounts, bins, sb);
                 }
             } while (todel != null);
 
             sb.AppendLine("Final bins:");
-            PrintBins(juggledAccounts, bins, sb);
+            PrintBins(allAccounts, bins, sb);
 
             ret.PlayerMoves = new List<JugglerMove>();
 
             if (bins.Any()) {
                 foreach (var b in bins) {
                     foreach (var a in b.Assigned) {
-                        var acc = juggledAccounts[a];
+                        var acc = allAccounts[a];
                         var origAh = autohosts.FirstOrDefault(x => x.LobbyContext.Players.Any(y => y.Name == acc.Name));
                         if (origAh == null || origAh.LobbyContext.AutohostName != b.Autohost.LobbyContext.AutohostName) {
                             ret.PlayerMoves.Add(new JugglerMove()
@@ -287,15 +275,15 @@ namespace ZeroKWeb.SpringieInterface
             if (!target.Assigned.Contains(lobbyID)) target.Assigned.Add(lobbyID);
         }
 
-        private static void PrintBins(Dictionary<int, Account> juggledAccounts, List<Bin> bins, StringBuilder sb) {
+        private static void PrintBins(Dictionary<int, Account> allAccounts, List<Bin> bins, StringBuilder sb) {
             foreach (var b in bins) {
                 sb.AppendFormat("{0} {1}: {2}    - ({3})\n",
                                 b.Mode,
                                 b.Autohost.LobbyContext.AutohostName,
-                                string.Join(",", b.Assigned.Select(x => juggledAccounts[x].Name)),
-                                string.Join(",", b.PlayerPriority.OrderByDescending(x => x.Value).Select(x => string.Format("{0}:{1}", juggledAccounts[x.Key].Name, x.Value))));
+                                string.Join(",", b.Assigned.Select(x => allAccounts[x].Name)),
+                                string.Join(",", b.PlayerPriority.OrderByDescending(x => x.Value).Select(x => string.Format("{0}:{1}", allAccounts[x.Key].Name, x.Value))));
             }
-            sb.AppendFormat("Free people: {0}\n", string.Join(",", juggledAccounts.Where(x => !bins.Any(y => y.Assigned.Contains(x.Key))).Select(x => x.Value.Name)));
+            sb.AppendFormat("Free people: {0}\n", string.Join(",", allAccounts.Where(x => !bins.Any(y => y.Assigned.Contains(x.Key))).Select(x => x.Value.Name)));
         }
 
         private static void ResetAssigned(List<Bin> bins) {
@@ -338,6 +326,7 @@ namespace ZeroKWeb.SpringieInterface
                         x => (int?)x.RunningGameStartContext.Players.Count(y => !y.IsSpectator))??0;
                 var waitingJugglers = bins.Where(x => x.Mode == mode).SelectMany(x=>x.PlayerPriority).Where(x=>x.Value > (double)GamePreference.Never).Select(x=>x.Key);
                 var waitingManual = bins.Where(x => x.Mode == mode).SelectMany(x => x.ManuallyJoined);
+                state.TotalPlayers += waitingManual.Count();
                 state.ModeCounts.Add(new ProtocolExtension.JugglerState.ModePair(){ Mode = mode, Count = waitingJugglers.Union(waitingManual).Distinct().Count(), Playing = ingame});
             }
 
