@@ -7,35 +7,36 @@ namespace Springie.autohost.Polls
     {
         public VoteMove(TasClient tas, Spring spring, AutoHost ah): base(tas, spring, ah) {}
 
-      
-        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount) {
+
+        string host;
+
+
+        protected override bool PerformInit(TasSayEventArgs e, string[] words, out string question, out int winCount)
+        {
             winCount = 0;
             question = null;
-            if (!spring.IsRunning)
+            if (words.Length < 1)
             {
-                question = "Start game?";
-                winCount = tas.MyBattle.Users.Count(x => !x.IsSpectator) / 2 + 1;
-                return true;
-            }
-            else
-            {
-                AutoHost.Respond(tas, spring, e, "battle already started");
+                ah.Respond(e, "<target hostname>");
                 return false;
             }
-        }
+            host = words[0];
 
-        protected override bool AllowVote(TasSayEventArgs e) {
-            var entry = spring.StartContext.Players.FirstOrDefault(x => x.Name == e.UserName);
-            if (entry == null || entry.IsSpectator)
+            if (!tas.ExistingBattles.Values.Any(x => x.Founder.Name == host))
             {
-                ah.Respond(e, string.Format("Only players can vote"));
+                ah.Respond(e, string.Format("Host {0} not found", words[0]));
                 return false;
             }
-            else return true;            
+
+            question = "Move all to host {0}?";
+            return true;
+
         }
 
-        protected override void SuccessAction() {
-            ah.ComStart(TasSayEventArgs.Default, new string[]{});
+
+        protected override void SuccessAction()
+        {
+            ah.ComMove(TasSayEventArgs.Default, new string[] { host });
         }
     }
 }
