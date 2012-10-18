@@ -10,6 +10,7 @@ namespace Springie.autohost.Polls
         protected AutoHost ah;
         protected Spring spring;
         protected TasClient tas;
+        bool ended = false;
 
         protected Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
 
@@ -45,7 +46,8 @@ namespace Springie.autohost.Polls
         }
 
         public void End() {
-            ah.SayBattle(string.Format("Poll: {0} [END:FAILED]", Question));
+            if (!ended) ah.SayBattle(string.Format("Poll: {0} [END:FAILED]", Question));
+            ended = true; // silly hack to avoid duplicate messages 
         }
 
 
@@ -58,6 +60,7 @@ namespace Springie.autohost.Polls
                 if (yes >= WinCount) {
                     ah.SayBattle(string.Format("Poll: {0} [END:SUCCESS]", Question));
                     SuccessAction();
+                    ended = true;
                     return true;
                 }
                 else if (no >= WinCount) {
