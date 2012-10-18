@@ -130,13 +130,7 @@ namespace Springie.autohost
             tas.LoginAccepted += tas_LoginAccepted;
             tas.Said += tas_Said;
             tas.MyBattleStarted += tas_MyStatusChangedToInGame;
-            tas.PreviewSaid += (s, e) =>
-            {
-                User user;
-                if (tas.ExistingUsers.TryGetValue(e.Data.UserName, out user) && user.BanMute) e.Cancel = true;
-            };
-
-
+            
             linkProvider = new ResourceLinkProvider(this);
 
             tas.Connect(Program.main.Config.ServerHost, Program.main.Config.ServerPort);
