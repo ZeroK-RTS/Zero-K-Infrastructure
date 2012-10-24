@@ -54,6 +54,8 @@ namespace Springie.autohost
 
         static Dictionary<AutohostMode, DateTime> lastEnded = new Dictionary<AutohostMode, DateTime>();
 
+        int lastSplitPlayersCountCalled;
+
         public AutoHost(MetaDataCache cache, AhConfig config, int hostingPort, SpawnConfig spawn)
         {
             this.config = config;
@@ -153,6 +155,17 @@ namespace Springie.autohost
                             bool shouldStart = false;
                             if (SpawnConfig == null && timerTick % 3 == 0) shouldStart = RunServerBalance(false, null, null);
                         }
+
+                        
+                        if (config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
+                            var cnt = tas.MyBattle.NonSpectatorCount;
+                            if (cnt > lastSplitPlayersCountCalled && cnt % 2 == 0) {
+                                StartVote(new VoteSplitPlayers(tas, spring, this), TasSayEventArgs.Default, new string[] { });
+                                lastSplitPlayersCountCalled = cnt;
+                            }
+
+                        }
+
                     }
                     catch (Exception ex)
                     {
@@ -344,8 +357,7 @@ namespace Springie.autohost
                         var cnt = tas.MyBattle.NonSpectatorCount;
                         if (cnt == 1) ComStart(e,words);
                         else {
-                            if (config != null && config.SplitBiggerThan != null && config.SplitBiggerThan < cnt) StartVote(new VoteSplitPlayers(tas,spring,this),e,words);
-                            else StartVote(new VoteStart(tas, spring, this), e, words); 
+                            StartVote(new VoteStart(tas, spring, this), e, words); 
                         }
                     }
                     

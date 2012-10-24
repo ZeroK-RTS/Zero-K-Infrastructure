@@ -555,6 +555,7 @@ namespace Springie.autohost
                 {
                     SayBattle("please wait, game is about to start");
                     StopVote();
+                    lastSplitPlayersCountCalled = 0;
                     tas.StartGame();
                 }
             }
@@ -562,6 +563,7 @@ namespace Springie.autohost
             {
                 SayBattle("please wait, game is about to start");
                 StopVote();
+                lastSplitPlayersCountCalled = 0;
                 tas.StartGame();
             }
         }
@@ -886,6 +888,7 @@ namespace Springie.autohost
 
             SayBattle("please wait, game is about to start");
             StopVote();
+            lastSplitPlayersCountCalled = 0;
             tas.StartGame();
         }
 
