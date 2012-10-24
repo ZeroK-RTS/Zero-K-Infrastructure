@@ -884,8 +884,11 @@ namespace Springie.autohost
         void spring_PlayerSaid(object sender, SpringLogEventArgs e)
         {
             tas.GameSaid(e.Username, e.Line);
+            User us;
+            tas.ExistingUsers.TryGetValue(e.Username, out us);
+            var isMuted = us != null && us.BanMute;
             if (Program.main.Config.RedirectGameChat && e.Username != tas.UserName && !e.Line.StartsWith("Allies:") &&
-                !e.Line.StartsWith("Spectators:")) tas.Say(TasClient.SayPlace.Battle, "", "[" + e.Username + "]" + e.Line, false);
+                !e.Line.StartsWith("Spectators:") && !isMuted) tas.Say(TasClient.SayPlace.Battle, "", "[" + e.Username + "]" + e.Line, false);
         }
 
 
@@ -1086,7 +1089,7 @@ namespace Springie.autohost
         {
             if (String.IsNullOrEmpty(e.UserName)) return;
             if (Program.main.Config.RedirectGameChat && e.Place == TasSayEventArgs.Places.Battle && e.Origin == TasSayEventArgs.Origins.Player &&
-                e.UserName != tas.UserName && e.IsEmote == false) spring.SayGame("[" + e.UserName + "]" + e.Text);
+                e.UserName != tas.UserName && e.IsEmote == false && !tas.ExistingUsers[e.UserName].BanMute) spring.SayGame("[" + e.UserName + "]" + e.Text);
 
             // check if it's command
             if (e.Origin == TasSayEventArgs.Origins.Player && !e.IsEmote && e.Text.StartsWith("!"))
