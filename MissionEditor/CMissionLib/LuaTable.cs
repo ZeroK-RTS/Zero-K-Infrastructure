@@ -71,7 +71,8 @@ namespace CMissionLib
 				else if (kvp.Value is double) value = ((double) kvp.Value).ToString(CultureInfo.InvariantCulture);
 				else if (kvp.Value is bool) value = kvp.Value.ToString().ToLower();
 				else if (kvp.Value is string) value = "[[" + kvp.Value + "]]";
-				else throw new Exception("Unable to convert value type to lua: " + kvp.Value.GetType().Name);
+                else if (kvp.Value == null) value = "nil";
+				else throw new Exception("Unable to convert value at key to lua: " + kvp.Key);
 
 
 
