@@ -413,7 +413,7 @@ namespace LobbyClient
                     if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
                     if (line.Contains("SCORE: ") && !isCheating && battleResult.IsMission) {
-                        var match = Regex.Match(line, "ID: ([^ ]+)");
+                        var match = Regex.Match(line, "SCORE: ([^ ]+)");
                         if (match.Success) {
                             try {
                                 // game score
