@@ -354,9 +354,8 @@
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description">
-                    <TextBlock TextWrapping="WrapWithOverflow">
-                        This action displays a conversation message box. It goes away on its own after the specified time, can have a sound,\n
-                        and remains visible during cutscenes. If a current convo message is already being displayed, the new one will be added to a queue.
+                    <TextBlock TextWrapping="Wrap">
+                        This action displays a conversation message box. It goes away on its own after the specified time, can have a sound, and remains visible during cutscenes. If a current convo message is already being displayed, the new one will be added to a queue.
                     </TextBlock>
                 </GroupBox>
             </Grid>
