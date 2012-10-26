@@ -10,7 +10,8 @@ function widget:GetInfo()
     date      = "Sept 11, 2008",
     license   = "GPL v2 or later",
     layer     = 0,
-    enabled   = true --  loaded by default?
+    enabled   = true, --  loaded by default?
+    api       = true
   }
 end
 
@@ -52,6 +53,14 @@ function MissionEvent(e)
       if WG.HidePersistentMessageBox then
         WG.HidePersistentMessageBox()
       end
+  elseif e.logicType == "ConvoMessageAction" then
+      if WG.AddConvo then
+        WG.AddConvo(e.message, e.fontSize, (e.image and "LuaUI/Images/"..e.image) or nil, e.sound and "LuaUI/sounds/convo/"..e.sound or nil, e.time)
+      end
+  elseif e.logicType == "ClearConvoMessageQueueAction" then
+      if WG.ClearConvoQueue then
+        WG.ClearConvoQueue()
+      end  
   elseif e.logicType == "AddObjectiveAction" then
       if WG.AddObjective then
         WG.AddObjective(e.id, e.title, e.description, nil, e.status)
@@ -59,6 +68,14 @@ function MissionEvent(e)
   elseif e.logicType == "ModifyObjectiveAction" then
       if WG.ModifyObjective then
         WG.ModifyObjective(e.id, e.title, e.description, nil, e.status)
+      end
+  elseif e.logicType == "EnterCutsceneAction" then
+      if WG.Cutscene and WG.Cutscene.EnterCutscene then
+        WG.Cutscene.EnterCutscene()
+      end
+  elseif e.logicType == "LeaveCutsceneAction" then
+      if WG.Cutscene and WG.Cutscene.LeaveCutscene then
+        WG.Cutscene.LeaveCutscene()
       end
   elseif e.logicType == "PauseAction" then
     Spring.SendCommands"pause"

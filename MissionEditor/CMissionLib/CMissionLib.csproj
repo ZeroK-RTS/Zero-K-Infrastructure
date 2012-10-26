@@ -74,6 +74,10 @@
     <Compile Include="Action.cs" />
     <Compile Include="Actions\AllowUnitTransfersAction.cs" />
     <Compile Include="Actions\AddObjectiveAction.cs" />
+    <Compile Include="Actions\ConvoMessageAction.cs" />
+    <Compile Include="Actions\ClearConvoMessageQueueAction.cs" />
+    <Compile Include="Actions\LeaveCutsceneAction.cs" />
+    <Compile Include="Actions\EnterCutsceneAction.cs" />
     <Compile Include="Actions\CustomAction2.cs" />
     <Compile Include="Actions\ModifyObjectiveAction.cs" />
     <Compile Include="Actions\HideGuiMessagePersistentAction.cs" />

@@ -120,6 +120,16 @@
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will cause the Sun to set.</TextBlock>
         </DataTemplate>
 
+        <!-- ======== Cutscene Templates ======== -->
+
+        <DataTemplate x:Key="enterCutsceneTemplate">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will start a cutscene. The GUI is hidden and the player's controls are disabled.</TextBlock>
+        </DataTemplate>
+
+        <DataTemplate x:Key="leaveCutsceneTemplate">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will leave the current cutscene, if any.</TextBlock>
+        </DataTemplate>        
+        
         <!-- ======== PlayerDied Template ======== -->
 
         <DataTemplate x:Key="playerDiedConditionTemplate">
@@ -280,6 +290,84 @@
         <DataTemplate x:Key="hideGuiMessagePersistentTemplate">
             <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">This action hides the current Persistent GUI Message, if any.</TextBlock>
         </DataTemplate>
+
+        <!-- ======== ConvoMessage Template ======== -->
+
+        <DataTemplate x:Key="convoMessageTemplate">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <GroupBox Header="Settings">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label>Message</Label>
+                            <TextBox Grid.Column="1" Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
+                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="20" TextWrapping="Wrap" />
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="60" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label>Length (frames)</Label>
+                            <TextBox Grid.Column="1" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <DockPanel>
+                            <Label DockPanel.Dock="Left">Font Size:</Label>
+                            <Label DockPanel.Dock="Left" Content="{Binding FontSize, Mode=TwoWay}" />
+                            <Slider Minimum="8" Maximum="72" Value="{Binding FontSize, Mode=TwoWay}" />
+                        </DockPanel>
+                        <Label>Image:</Label>
+                        <Viewbox Width="150" Height="150">
+                            <Grid>
+                                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" TextBlock.FontSize="12">?</TextBlock>
+                                <!--if the image is found, it will hide the question mark-->
+                                <Image Source="{Binding ImagePath}" />
+                            </Grid>
+                        </Viewbox>
+                        <Button Loaded="ConvoMessageButtonLoadedImg" Tag="{Binding}">Select</Button>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Label>Sound:</Label>
+                            <TextBox Grid.Column="1" Grid.Row="0" IsReadOnly="True"  Text="{Binding SoundPath, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                            <Button Grid.Column="0" Grid.Row="1" Loaded="ConvoMessageButtonLoadedSound" Tag="{Binding}">Select</Button>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Description">
+                    <TextBlock TextWrapping="WrapWithOverflow">
+                        This action displays a conversation message box. It goes away on its own after the specified time, can have a sound,\n
+                        and remains visible during cutscenes. If a current convo message is already being displayed, the new one will be added to a queue.
+                    </TextBlock>
+                </GroupBox>
+            </Grid>
+        </DataTemplate>
+        
+        <!-- ======== ClearConvoMessageQueue Template ======== -->
+
+        <DataTemplate x:Key="clearConvoMessageQueueTemplate">
+            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">This action hides the current Convo Message (if any) and clears the queue.</TextBlock>
+        </DataTemplate>
+        
 
         <!-- ======== AddObjective Template ======== -->
 

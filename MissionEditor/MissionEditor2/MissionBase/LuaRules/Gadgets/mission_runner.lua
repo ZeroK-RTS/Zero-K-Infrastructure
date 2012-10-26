@@ -40,6 +40,7 @@ local cheatingWasEnabled = false
 local scoreSent = false
 local scores = {}
 local gameStarted = false
+local isInCutscene = false
 local events = {} -- key: frame, value: event array
 local counters = {} -- key: name, value: count
 local countdowns = {} -- key: name, value: frame
@@ -705,23 +706,32 @@ local function ExecuteTrigger(trigger, frame)
              action.logicType == "GuiMessageAction" or
              action.logicType == "GuiMessagePersistentAction" or
              action.logicType == "HideGuiMessagePersistentAction" or
+             action.logicType == "ConvoMessageAction" or
+             action.logicType == "ClearConvoMessageQueueAction" or
              action.logicType == "AddObjectiveAction" or
              action.logicType == "ModifyObjectiveAction" or
              action.logicType == "SoundAction" or 
              action.logicType == "SunriseAction" or 
-             action.logicType == "SunsetAction" then
+             action.logicType == "SunsetAction" or
+             action.logicType == "EnterCutsceneAction" or
+             action.logicType == "LeaveCutsceneAction" then
         Event = function()
           action.args.logicType = action.logicType
           _G.missionEventArgs = action.args
           SendToUnsynced"MissionEvent"
           _G.missionEventArgs = nil
         end
-		if action.logicType == "AddObjectiveAction" then
-			objectives[action.args.id] = {title = action.args.title, description = action.args.description}
-		elseif action.logicType == "ModifyObjectiveAction" then
-			if objectives[action.args.id] then
-			end
-		end
+	if action.logicType == "AddObjectiveAction" then
+	  objectives[action.args.id] = {title = action.args.title, description = action.args.description}
+	elseif action.logicType == "ModifyObjectiveAction" then
+	  if objectives[action.args.id] then
+            -- TBD
+	  end
+        elseif action.logicType == "EnterCutsceneAction" then
+          isInCutscene = true
+        elseif action.logicType == "LeaveCutsceneAction" then
+          isInCutscene = false
+	end
       elseif action.logicType == "GiveOrdersAction" then
         Event = function()
           local orderedUnits
@@ -1101,7 +1111,10 @@ end
 
 
 
-function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions)
+function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions, cmdTag, synced)
+  if isInCutscene and (not synced) then
+    return false
+  end
   -- prevent widgets from building disabled units
   if disabledUnitDefIDs[-cmdID] then
     return false
@@ -1296,7 +1309,7 @@ function ScoreEvent()
   local teamID = Spring.GetLocalTeamID()
   local score = Spring.GetTeamRulesParam(teamID, "score")
   if score then
-    print("ID: "..GG.Base64Encode(tostring(Spring.GetGameFrame()).."/"..tostring(math.floor(score))))
+    Spring.SendCommands( "wbynum 255 SPRINGIE:score,"..GG.Base64Encode(tostring(Spring.GetGameFrame()).."/"..tostring(math.floor(score))) )
   end
 end
 

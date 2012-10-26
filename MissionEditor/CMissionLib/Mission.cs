@@ -258,7 +258,7 @@ namespace CMissionLib
 			gameStartTrigger.Logic.Add(new CreateUnitsAction(startUnits));
             var widgets = new[] { "gui_pauseScreen.lua", "cmd_unit_mover.lua", "init_startup_info_selector.lua", "gui_center_n_select.lua", "gui_take_remind.lua", "gui_startup_info_selector.lua", "gui_local_colors.lua", "spring_direct_launch.lua" };
 			foreach (var widget in widgets) DisabledWidgets.Add(widget);
-			var gadgets = new string[] { };
+			var gadgets = new string[] { "game_over.lua", "game_end.lua", "awards.lua" };
 			foreach (var gadget in gadgets) DisabledGadgets.Add(gadget);
 			if (game.Name.Contains("Complete")) RapidTag = "zk:stable";
 			Items = new CompositeObservableCollection<Trigger, Region>(Triggers, Regions);
@@ -333,15 +333,29 @@ namespace CMissionLib
                             zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
                         }
                     }
-					else if (item is SoundAction)
-					{
-						var action = (SoundAction)item;
-						if (!String.IsNullOrEmpty(action.SoundPath) && File.Exists(action.SoundPath))
-						{
-							if (!File.Exists(action.SoundPath)) throw new Exception("Sound not found: " + action.SoundPath);
-							zip.SafeAddFile(action.SoundPath, "LuaUI/Sounds/");
-						}
-					}
+                    else if (item is ConvoMessageAction)
+                    {
+                        var action = (ConvoMessageAction)item;
+                        if (!String.IsNullOrEmpty(action.ImagePath))
+                        {
+                            if (!File.Exists(action.ImagePath)) throw new Exception("Image not found: " + action.ImagePath);
+                            zip.SafeAddFile(action.ImagePath, "LuaUI/Images/");
+                        }
+                        if (!String.IsNullOrEmpty(action.SoundPath) && File.Exists(action.SoundPath))
+                        {
+                            if (!File.Exists(action.SoundPath)) throw new Exception("Sound not found: " + action.SoundPath);
+                            zip.SafeAddFile(action.SoundPath, "LuaUI/Sounds/convo");
+                        }
+                    }
+                    else if (item is SoundAction)
+                    {
+                        var action = (SoundAction)item;
+                        if (!String.IsNullOrEmpty(action.SoundPath) && File.Exists(action.SoundPath))
+                        {
+                            if (!File.Exists(action.SoundPath)) throw new Exception("Sound not found: " + action.SoundPath);
+                            zip.SafeAddFile(action.SoundPath, "LuaUI/Sounds/");
+                        }
+                    }
 				}
                 string directory = Path.GetDirectoryName(mutatorPath);
                 if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);

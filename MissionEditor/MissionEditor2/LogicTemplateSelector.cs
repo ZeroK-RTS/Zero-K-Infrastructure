@@ -20,6 +20,7 @@ namespace MissionEditor2
 			
 			string resourceName = null;
 			// older templates, in MainWindow.xaml
+            // FIXME surely there must be a more sensible doing the selection?
 			if (item is ConsoleMessageAction) resourceName = "showConsoleMessageTemplate";
 			else if (item is GameStartedCondition) resourceName = "gameStartedConditionTemplate";
 			else if (item is GameEndedCondition) resourceName = "gameEndedConditionTemplate";
@@ -29,12 +30,16 @@ namespace MissionEditor2
             else if (item is GuiMessageAction) resourceName = "guiMessageTemplate";
             else if (item is GuiMessagePersistentAction) resourceName = "guiMessagePersistentTemplate";
             else if (item is HideGuiMessagePersistentAction) resourceName = "hideGuiMessagePersistentTemplate";
+            else if (item is ConvoMessageAction) resourceName = "convoMessageTemplate";
+            else if (item is ClearConvoMessageQueueAction) resourceName = "clearConvoMessageQueueTemplate";
             else if (item is AddObjectiveAction) resourceName = "addObjectiveTemplate";
             else if (item is ModifyObjectiveAction) resourceName = "modifyObjectiveTemplate";
 			else if (item is UnitDestroyedCondition) resourceName = "unitDestroyedTemplate";
 			else if (item is DummyCondition || item is DummyAction || item is ConditionsFolder || item is ActionsFolder) resourceName = "dummyTemplate";
 			else if (item is SunriseAction) resourceName = "sunriseTemplate";
 			else if (item is SunsetAction) resourceName = "sunsetTemplate";
+            else if (item is EnterCutsceneAction) resourceName = "enterCutsceneTemplate";
+            else if (item is LeaveCutsceneAction) resourceName = "leaveCutsceneTemplate";
 			else if (item is SendScoreAction) resourceName = "sendScoreTemplate";
 			else if (item is WaitAction) resourceName = "waitActionTemplate";
 			else if (item is AllowUnitTransfersAction) resourceName = "allowUnitTransfersTemplate";

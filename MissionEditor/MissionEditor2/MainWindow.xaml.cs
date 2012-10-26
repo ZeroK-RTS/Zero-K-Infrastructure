@@ -74,6 +74,12 @@ namespace MissionEditor2
 			Mission.RaisePropertyChanged(String.Empty);
 		}
 
+        void CopyTrigger(Trigger source)
+        {
+            Trigger trigger;
+
+        }
+
 		void BuildMission(bool hideFromModList = false)
 		{
 			var filter = "Spring Mod Archive (*.sdz)|*.sdz|All files (*.*)|*.*";
@@ -136,6 +142,8 @@ namespace MissionEditor2
 			addAction("Create Units", () => new CreateUnitsAction());
 			addAction("Custom Action", () => new CustomAction());
             addAction("Custom Action (alternate)", () => new CustomAction2());
+            addAction("Enter Cutscene", () => new EnterCutsceneAction());
+            addAction("Leave Cutscene", () => new LeaveCutsceneAction());
 			addAction("Destroy Units", () => new DestroyUnitsAction());
 			addAction("Disable Triggers", () => new DisableTriggersAction());
 			addAction("Display Counters", () => new DisplayCountersAction());
@@ -161,6 +169,8 @@ namespace MissionEditor2
 			addAction("Show GUI Message", () => new GuiMessageAction("Hello!"));
             addAction("Show GUI Message (Persistent)", () => new GuiMessagePersistentAction(GuiMessagePersistentDesc));
             addAction("Hide GUI Message (Persistent)", () => new HideGuiMessagePersistentAction());
+            addAction("Show Convo Message", () => new ConvoMessageAction("Hello! I am a talking head for missions!"));
+            addAction("Clear Convo Message Queue", () => new ClearConvoMessageQueueAction());
 			addAction("Show Marker Point", () => new MarkerPointAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
 			addAction("Start Countdown", () => new StartCountdownAction(GetNewCountdownName()));
 			addAction("Transfer Units", () => new TransferUnitsAction(Mission.Players.First()));
@@ -499,6 +509,36 @@ namespace MissionEditor2
             };
         }
 
+        void ConvoMessageButtonLoadedImg(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)e.Source;
+            button.Click += delegate
+            {
+                var filter = "Image Files(*.BMP;*.JPG;*.PNG)|*.BMP;*.JPG;*.PNG|All files (*.*)|*.*";
+                var dialog = new OpenFileDialog { Filter = filter, RestoreDirectory = true };
+                if (dialog.ShowDialog() == true)
+                {
+                    var action = (ConvoMessageAction)button.Tag;
+                    action.ImagePath = dialog.FileName;
+                }
+            };
+        }
+
+        void ConvoMessageButtonLoadedSound(object sender, RoutedEventArgs e)
+        {
+            var button = (Button)e.Source;
+            button.Click += delegate
+            {
+                var filter = "Sound Files(*.WAV;*.OGG)|*.WAV;*.OGG|All files (*.*)|*.*";
+                var dialog = new OpenFileDialog { Filter = filter, RestoreDirectory = true };
+                if (dialog.ShowDialog() == true)
+                {
+                    var action = (ConvoMessageAction)button.Tag;
+                    action.SoundPath = dialog.FileName;
+                }
+            };
+        }
+
 		void UnitDestroyedGroupsListLoaded(object sender, RoutedEventArgs e)
 		{
 			var collection = ((UnitDestroyedCondition)CurrentLogic).Groups;
@@ -534,6 +574,7 @@ namespace MissionEditor2
 			var menu = new ContextMenu();
 			menu.AddAction("New Trigger", CreateNewTrigger);
 			menu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
+            menu.AddAction("Copy Trigger", CreateNewTrigger);
 			menu.Items.Add(GetNewActionMenu(trigger));
 			menu.Items.Add(GetNewConditionMenu(trigger));
 			menu.Items.Add(new Separator());
