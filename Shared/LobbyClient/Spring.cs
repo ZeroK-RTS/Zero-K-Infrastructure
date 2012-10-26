@@ -399,9 +399,10 @@ namespace LobbyClient
                         }
                     }
 
-                    if (mapName == null && line.StartsWith("using map")) mapName = line.Substring(10).Trim();
+                    // FIXME: why are these even null in the first place?
+                    if (mapName == null && line.StartsWith("Using map")) mapName = line.Substring(10).Trim();
 
-                    if (modName == null && line.StartsWith("using mod")) modName = line.Substring(10).Trim();
+                    if (modName == null && line.StartsWith("Using game")) modName = line.Substring(11).Trim();
 
                     if (line.StartsWith("recording demo")) demoFileName = Path.GetFileName(line.Substring(15).Trim());
 
@@ -411,13 +412,16 @@ namespace LobbyClient
 
                     if (line.StartsWith("STATS:")) statsData.Add(line.Substring(6));
 
-                    if (line.Contains("ID: ") && !isCheating && battleResult.IsMission) {
+                    if (line.Contains("SCORE: ") && !isCheating && battleResult.IsMission) {
                         var match = Regex.Match(line, "ID: ([^ ]+)");
                         if (match.Success) {
                             try {
                                 // game score
-                                var data = Encoding.ASCII.GetString(Convert.FromBase64String(match.Groups[1].Value));
-
+                                var data = match.Groups[1].Value;
+                                //Trace.TraceInformation("Score data (raw) : " + data);
+                                data = Encoding.ASCII.GetString(Convert.FromBase64String(match.Groups[1].Value));
+                                //Trace.TraceInformation("Score data (decoded) : " + data);
+                                Trace.TraceInformation("Mission name: " + modName);
                                 var parts = data.Split('/');
                                 var score = 0;
                                 if (parts.Length > 1) {

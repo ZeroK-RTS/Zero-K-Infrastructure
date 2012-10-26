@@ -1309,7 +1309,7 @@ function ScoreEvent()
   local teamID = Spring.GetLocalTeamID()
   local score = Spring.GetTeamRulesParam(teamID, "score")
   if score then
-    Spring.SendCommands( "wbynum 255 SPRINGIE:score,"..GG.Base64Encode(tostring(Spring.GetGameFrame()).."/"..tostring(math.floor(score))) )
+    print("SCORE: "..GG.Base64Encode(tostring(Spring.GetGameFrame()).."/"..tostring(math.floor(score))))
   end
 end
 
