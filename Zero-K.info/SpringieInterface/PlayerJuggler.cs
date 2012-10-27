@@ -170,7 +170,7 @@ namespace ZeroKWeb.SpringieInterface
             }
 
 
-            SetPriorities(bins, juggledAccounts, autohosts);
+            SetPriorities(bins, juggledAccounts, autohosts, allAccounts);
 
             sb.AppendLine("Original bins:");
             PrintBins(allAccounts, bins, sb);
@@ -304,7 +304,8 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        private static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts,List<JugglerAutohost> autohosts) {
+        private static void SetPriorities(List<Bin> bins, Dictionary<int, Account> juggledAccounts, List<JugglerAutohost> autohosts, Dictionary<int, Account> allAccounts)
+        {
             foreach (var b in bins) {
                 b.PlayerPriority.Clear();
 
@@ -321,7 +322,7 @@ namespace ZeroKWeb.SpringieInterface
                     else {
                         if (b.Config.MaxToJuggle != null && b.ManuallyJoined.Count() >= b.Config.MaxToJuggle) continue; // full 1v1
                         if (b.Config.MaxEloDifference != null && b.ManuallyJoined.Count >= 1) {
-                            var avgElo = b.ManuallyJoined.Average(x => juggledAccounts[x].EffectiveElo);
+                            var avgElo = b.ManuallyJoined.Average(x => allAccounts[x].EffectiveElo);
                             if (Math.Abs(a.Value.EffectiveElo - avgElo) > b.Config.MaxEloDifference) continue; //effective elo difference > 250 dont try to combine
                         }
 
