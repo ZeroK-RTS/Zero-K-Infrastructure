@@ -32,6 +32,11 @@ namespace ZkData
                 var warps = structs.Where(x => x.StructureType.EffectWarpProduction > 0).Sum(x => x.StructureType.EffectWarpProduction) ?? 0;
                 grp.Key.ProduceWarps(warps);
             }
+
+            // planets generate metal
+            foreach (var p in Planets.Where(x=>x.Faction != null && x.Account != null)) {
+                p.Account.ProduceMetal(GlobalConst.PlanetMetalPerTurn);
+            }
         }
 
 

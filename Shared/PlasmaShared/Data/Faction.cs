@@ -145,5 +145,21 @@ namespace ZkData
             public Faction Faction;
             public Unlock Unlock;
         }
+
+        public void ConvertExcessEnergyToMetal() {
+            var metal = (EnergyProducedLastTurn - EnergyDemandLastTurn)*GlobalConst.PlanetWarsEnergyToMetalRatio;
+            if (metal > 0) {
+                var productions =
+                    Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectEnergyPerTurn > 0).GroupBy(
+                        x => x.Account).Select(x=>new {Account = x.Key, Energy = x.Sum(y=>y.StructureType.EffectEnergyPerTurn) ?? 0}).ToDictionary(x=>x.Account, x=>x.Energy);
+                var totalEnergy = productions.Sum(x => x.Value);
+
+                if (totalEnergy > 0) {
+                    foreach (var prod in productions) {
+                        prod.Key.ProduceMetal(prod.Value / totalEnergy * metal);
+                    }
+                }
+            }
+        }
     }
 }

@@ -198,7 +198,7 @@ namespace ZeroKWeb.SpringieInterface
                 wasCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winNum));
             }
 
-            // distribute metal
+            
             List<Account> winners =
                 sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
 
@@ -290,6 +290,7 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
 
+            // distribute metal
             double metalPerWinner = GlobalConst.BaseMetalPerBattle/winners.Count;
             if (wasCcDestroyed) metalPerWinner *= GlobalConst.CcDestroyedMetalMultWinners;
             foreach (Account w in winners) {
@@ -420,7 +421,10 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 } else tr.TreatyState = TreatyState.Suspended;
             }
-            
+
+            // burn extra energy
+            foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) fac.ConvertExcessEnergyToMetal();
+
    
             int? oldOwner = planet.OwnerAccountID;
             gal.Turn++;

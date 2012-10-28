@@ -9,6 +9,9 @@
 	    public const double EloWeightMalusFactor = -50;
 		public const int CommanderProfileCount = 6;
         public const int NumCommanderLevels = 5;
+	    public const double PlanetMetalPerTurn = 1;
+        public const double PlanetWarsEnergyToMetalRatio = 1/20;
+
 
         public const int MinDurationForXP = 240;    // seconds
         public const int MinDurationForElo = 60;
