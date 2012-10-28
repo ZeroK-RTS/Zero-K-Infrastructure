@@ -26,12 +26,9 @@ namespace ZeroKWeb.SpringieInterface
 
 				    var validAttackerFactionIDs = playerAccounts.Where(x => x.FactionID != null).GroupBy(x => x.FactionID).Select(x => x.Key).ToList();
 
-                    var validDefenderFactionIDs = playerAccounts.Where(x => x.FactionID != null && x.ClanID != null).GroupBy(x => x.FactionID).Select(x => x.Key).ToList();
-
-
 				    var valid =
 				        db.PlanetFactions.Where(
-				            x => x.Dropships > 0 && !blockedMaps.Contains(x.Planet.Resource.InternalName) && validAttackerFactionIDs.Contains(x.FactionID) &&  (x.Planet.OwnerFactionID == null || validDefenderFactionIDs.Contains(x.Planet.OwnerFactionID))).
+				            x => x.Dropships > 0 && !blockedMaps.Contains(x.Planet.Resource.InternalName) && validAttackerFactionIDs.Contains(x.FactionID)).
 				            Select(x => new
 				                        {
                                             Planet = x.Planet,
