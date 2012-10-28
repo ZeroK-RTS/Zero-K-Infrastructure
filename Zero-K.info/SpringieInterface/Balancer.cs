@@ -132,12 +132,19 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                return LegacyBalance(2, true, context, attackers, defenders);
+                return LegacyBalance(2, BalanceMode.FactionWise, context, attackers, defenders);
             }
         }
 
 
-        BalanceTeamsResult LegacyBalance(int teamCount, bool clanwise, BattleContext b, params List<Account>[] unmovablePlayers) {
+        public enum BalanceMode
+        {
+            Normal,
+            ClanWise,
+            FactionWise
+        }
+
+        BalanceTeamsResult LegacyBalance(int teamCount, BalanceMode mode, BattleContext b, params List<Account>[] unmovablePlayers) {
             var ret = new BalanceTeamsResult();
 
             try {
@@ -173,12 +180,18 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
                 balanceItems = new List<BalanceItem>();
-                if (clanwise) {
+                if (mode == BalanceMode.ClanWise) {
                     List<IGrouping<int?, Account>> clanGroups = accs.GroupBy(x => x.ClanID ?? x.LobbyID).ToList();
-                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) clanwise = false;
+                    if (teamCount > clanGroups.Count() || clanGroups.Any(x => x.Count() > maxTeamSize)) mode = BalanceMode.Normal;
                     else balanceItems.AddRange(clanGroups.Select(x => new BalanceItem(x.ToArray())));
                 }
-                if (!clanwise) {
+                if (mode == BalanceMode.FactionWise) {
+                    balanceItems.Clear();
+                    List<IGrouping<int?, Account>> factionGroups = accs.GroupBy(x => x.FactionID ?? x.LobbyID).ToList();
+                    balanceItems.AddRange(factionGroups.Select(x => new BalanceItem(x.ToArray())));
+                }
+
+                if (mode == BalanceMode.Normal) {
                     balanceItems.Clear();
                     balanceItems.AddRange(accs.Select(x => new BalanceItem(x)));
                 }
@@ -188,12 +201,12 @@ namespace ZeroKWeb.SpringieInterface
                 RecursiveBalance(0);
                 sw.Stop();
 
-                if (clanwise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference)) return new Balancer().LegacyBalance(teamCount, false, b, unmovablePlayers); // cbalance failed, rebalance using normal
+                if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference)) return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers); // cbalance failed, rebalance using normal
 
                 var minSize = bestTeams.Min(x => x.Count);
                 var maxSize = bestTeams.Max(x => x.Count);
                 if (maxSize/(double)minSize > MaxTeamSizeDifferenceRatio) {
-                    if (clanwise) return new Balancer().LegacyBalance(teamCount, false, b, unmovablePlayers); // cbalance failed, rebalance using normal
+                    if (mode == BalanceMode.ClanWise) return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers); // cbalance failed, rebalance using normal
                     
                     ret.CanStart = false;
                     ret.Message = string.Format("Failed to balance - too many people from same faction");
@@ -214,10 +227,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 if (bestTeams == null) {
                     ret.CanStart = false;
-                    ret.Message = string.Format("Failed to balance {0}",
-                                                (clanwise
-                                                     ? "- too many people from same clan? Try !balance and !forcestart"
-                                                     : ". Use !random and !forcestart"));
+                    ret.Message = string.Format("Failed to balance {0} - too many people from same clan or faction (in teams game you can try !random and !forcestart)");
                     return ret;
                 }
                 else {
@@ -241,7 +251,7 @@ namespace ZeroKWeb.SpringieInterface
                     ret.Message = String.Format("{0} players balanced {2} to {1} teams {3}. {4} combinations checked, spent {5}ms of CPU time",
                                                 bestTeams.Sum(x=>x.Count),
                                                 teamCount,
-                                                clanwise ? "respecting clans" : "",
+                                                mode,
                                                 text,
                                                 iterationsChecked,
                                                 sw.ElapsedMilliseconds);
@@ -311,7 +321,7 @@ namespace ZeroKWeb.SpringieInterface
                 switch (mode) {
                     case AutohostMode.None:
                     {
-                        if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? false, context);
+                        if (!isGameStart) res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == true ? BalanceMode.ClanWise : BalanceMode.Normal, context);
                     }
                         break;
                     case AutohostMode.SmallTeams:
@@ -319,14 +329,14 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.BigTeams:
                     {
                         Resource map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise ?? true, context);
-                        else res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? true, context);
+                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                        else res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                         res.DeleteBots = true;
                         return res;
                     }
                     case AutohostMode.Game1v1:
                     {
-                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise ?? true, context);
+                        res = new Balancer().LegacyBalance(allyCount ?? 2, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                         res.DeleteBots = true;
                     }
                         break;
@@ -352,8 +362,8 @@ namespace ZeroKWeb.SpringieInterface
                     case AutohostMode.GameFFA:
                     {
                         Resource map = db.Resources.Single(x => x.InternalName == context.Map);
-                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise ?? true, context);
-                        else res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, clanWise ?? true, context);
+                        if (map.MapFFAMaxTeams != null) res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams.Value, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
+                        else res = new Balancer().LegacyBalance(allyCount ?? map.MapFFAMaxTeams ?? 8, clanWise == false ? BalanceMode.Normal : BalanceMode.ClanWise, context);
                         return res;
                     }
                     case AutohostMode.Planetwars:
