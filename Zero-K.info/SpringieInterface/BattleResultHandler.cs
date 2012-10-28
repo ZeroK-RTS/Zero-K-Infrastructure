@@ -182,7 +182,7 @@ namespace ZeroKWeb.SpringieInterface
             }
             Faction defender = planet.Faction;
 
-            Faction winner = null;
+            Faction winnerFaction = null;
             bool wasCcDestroyed = false;
             List<int> winnerTeams =
                 sb.SpringBattlePlayers.Where(x => x.IsInVictoryTeam && !x.IsSpectator).Select(x => x.AllyNumber).Distinct().ToList();
@@ -193,38 +193,70 @@ namespace ZeroKWeb.SpringieInterface
                     return;
                 }
 
-                if (winNum == 0) winner = attacker;
-                else winner = defender;
+                if (winNum == 0) winnerFaction = attacker;
+                else winnerFaction = defender;
                 wasCcDestroyed = extraData.Any(x => x.StartsWith("hqkilled," + winNum));
             }
 
+            // distribute metal
+            List<Account> winners =
+                sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
 
-
-
+            
             // distribute influence
-            if (winner != null) {
+            if (winnerFaction != null) {
                 double planetDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
                 int totalShips = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
                 int involvedCount =
                     sb.SpringBattlePlayers.Count(
-                        x => !x.IsSpectator && x.Account.Faction != null && (x.Account.Faction == winner || x.Account.Faction == defender));
+                        x => !x.IsSpectator && x.Account.Faction != null && (x.Account.Faction == winnerFaction || x.Account.Faction == defender));
 
                 double influence = GlobalConst.BaseInfluencePerBattle;
 
-                double shipBonus = winner == attacker ? (totalShips - planetDefs)*GlobalConst.InfluencePerShip : 0;
-                double techBonus = winner.GetFactionUnlocks().Count()*GlobalConst.InfluencePerTech;
+                double shipBonus = winnerFaction == attacker ? (totalShips - planetDefs)*GlobalConst.InfluencePerShip : 0;
+                double techBonus = winnerFaction.GetFactionUnlocks().Count()*GlobalConst.InfluencePerTech;
                 int playerBonus = involvedCount*GlobalConst.InfluencePerInvolvedPlayer;
+                
                 double ccMalus = wasCcDestroyed ? -(influence+ shipBonus + techBonus + playerBonus)*GlobalConst.InfluenceCcKilledMultiplier : 0;
-
+                
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
 
+                
                 // save influence gains
-                if (winner != defender)
-                {
-                    PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == winner);
+                if (winnerFaction != defender) {
+                    
+                    // distribute influence to helping factions
+                    var helpers = winners.Where(x => x.Faction != winnerFaction).GroupBy(x => x.Faction).Select(x => x.Key).ToList(); // other factions that helped winners 
+                    if (helpers.Count > 0) {
+                        var helperInfluence = (influence - shipBonus - techBonus)/helpers.Count; // they gain influence without ship bonus and tech bonus 
+
+                        foreach (var helpFac in helpers) {
+                            PlanetFaction helperEntry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == helpFac);
+                            if (helperEntry == null) {
+                                helperEntry = new PlanetFaction { Faction = helpFac, Planet = planet, };
+                                planet.PlanetFactions.Add(helperEntry);
+                            }
+                            helperEntry.Influence += helperInfluence;
+                            if (helperEntry.Influence > 100) helperEntry.Influence = 100;
+
+                            var helpEv = Global.CreateEvent("{0} gained {1} influence at {2} for helping {3} during battle {4} ",
+                                                helpFac,
+                                                helperInfluence,
+                                                planet,
+                                                winnerFaction,
+                                                sb);
+
+                            db.Events.InsertOnSubmit(helpEv);
+                            text.AppendLine(helpEv.PlainText);
+                        }
+                    }
+
+
+                    // main winner influence 
+                    PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == winnerFaction);
                     if (entry == null)
                     {
-                        entry = new PlanetFaction { Faction = winner, Planet = planet, };
+                        entry = new PlanetFaction { Faction = winnerFaction, Planet = planet, };
                         planet.PlanetFactions.Add(entry);
                     }
 
@@ -235,17 +267,17 @@ namespace ZeroKWeb.SpringieInterface
                     // gained over 100, sole owner
                     if (entry.Influence >= 100) {
                         entry.Influence = 100;
-                        foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence = 0;
+                        foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winnerFaction)) pf.Influence = 0;
                     } else {
-                        var sumOthers = planet.PlanetFactions.Where(x => x.Faction != winner).Sum(x => (double?)x.Influence) ?? 0;
+                        var sumOthers = planet.PlanetFactions.Where(x => x.Faction != winnerFaction).Sum(x => (double?)x.Influence) ?? 0;
                         if (sumOthers + entry.Influence > 100) {
                             var excess = sumOthers + entry.Influence - 100;
-                            foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winner)) pf.Influence -= pf.Influence/sumOthers*excess;
+                            foreach (var pf in planet.PlanetFactions.Where(x => x.Faction != winnerFaction)) pf.Influence -= pf.Influence/sumOthers*excess;
                         }
                     }
 
                     var ev = Global.CreateEvent("{0} gained {1} ({4}{5}{6}{7}) influence at {2} from {3} ",
-                                                winner,
+                                                winnerFaction,
                                                 influence,
                                                 planet,
                                                 sb,
@@ -258,9 +290,6 @@ namespace ZeroKWeb.SpringieInterface
                 }
             }
 
-            // distribute metal
-            List<Account> winners =
-                sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam && x.Account.Faction != null).Select(x => x.Account).ToList();
             double metalPerWinner = GlobalConst.BaseMetalPerBattle/winners.Count;
             if (wasCcDestroyed) metalPerWinner *= GlobalConst.CcDestroyedMetalMultWinners;
             foreach (Account w in winners) {
@@ -324,11 +353,11 @@ namespace ZeroKWeb.SpringieInterface
                     entry = new AccountPlanet { AccountID = acc.AccountID, PlanetID = planet.PlanetID };
                     db.AccountPlanets.InsertOnSubmit(entry);
                 }
-                entry.AttackPoints += acc.Faction == winner ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
+                entry.AttackPoints += acc.Faction == winnerFaction ? GlobalConst.AttackPointsForVictory : GlobalConst.AttackPointsForDefeat;
             }
 
             // destroy pw structures killed ingame
-            if (winner != attacker) {
+            if (winnerFaction != attacker) {
                 var handled = new List<string>();
                 foreach (string line in extraData.Where(x => x.StartsWith("structurekilled"))) {
                     string[] data = line.Substring(16).Split(',');
