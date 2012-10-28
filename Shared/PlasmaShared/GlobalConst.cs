@@ -27,12 +27,12 @@
 		public const string PasswordHashCookieName = "zk_passwordHash";
 		public const string LobbyAccessCookieName = "zk_lobby";
 
-        public const int BaseInfluencePerBattle = 15;
-	    public const double BaseMetalPerBattle = 100;
+        public const int BaseInfluencePerBattle = 25;
+	    public const double BaseMetalPerBattle = 200;
         public const double CcDestroyedMetalMultWinners = 0.75;
 	    public const int DropshipsPerBattlePlayer = 1;
         public const int InfluencePerInvolvedPlayer = 1;
-        public const int InfluencePerShip = 1;
+        public const int InfluencePerShip = 2;
         public const double InfluencePerTech = 1;
         public const double InfluenceDecay = 1;
 	    public const double InfluenceToCapturePlanet = 50.1;
