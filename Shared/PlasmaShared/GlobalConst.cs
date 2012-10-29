@@ -31,6 +31,7 @@
 		public const string LobbyAccessCookieName = "zk_lobby";
 
         public const int BaseInfluencePerBattle = 25;
+        public const double AssistInfluencePerBattle = 15;
 	    public const double BaseMetalPerBattle = 200;
         public const double CcDestroyedMetalMultWinners = 0.75;
 	    public const int DropshipsPerBattlePlayer = 1;

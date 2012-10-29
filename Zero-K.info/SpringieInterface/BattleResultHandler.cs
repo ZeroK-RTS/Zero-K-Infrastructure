@@ -205,6 +205,9 @@ namespace ZeroKWeb.SpringieInterface
             
             // distribute influence
             if (winnerFaction != null) {
+
+                
+                // give influence to main attac
                 double planetDefs = (planet.PlanetStructures.Where(x => x.IsActive).Sum(x => x.StructureType.EffectDropshipDefense) ?? 0);
                 int totalShips = (planet.PlanetFactions.Where(x => x.Faction == attacker).Sum(x => (int?)x.Dropships) ?? 0);
                 int involvedCount =
@@ -221,18 +224,27 @@ namespace ZeroKWeb.SpringieInterface
                 
                 influence = influence + shipBonus + techBonus + playerBonus + ccMalus;
 
+
+
+
                 
                 // save influence gains
                 if (winnerFaction != defender) {
-                    
+
+                    // give influence to helpers
                     // distribute influence to helping factions
                     var helpers = winners.Where(x => x.Faction != winnerFaction).GroupBy(x => x.Faction).Select(x => x.Key).ToList(); // other factions that helped winners 
-                    if (helpers.Count > 0) {
-                        var helperInfluence = (influence - shipBonus - techBonus)/helpers.Count; // they gain influence without ship bonus and tech bonus 
+                    if (helpers.Count > 0)
+                    {
+                        var helperInfluence = GlobalConst.AssistInfluencePerBattle;
+                        if (wasCcDestroyed) helperInfluence = helperInfluence * GlobalConst.CcDestroyedMetalMultWinners;
+                        helperInfluence = helperInfluence / helpers.Count;
 
-                        foreach (var helpFac in helpers) {
+                        foreach (var helpFac in helpers)
+                        {
                             PlanetFaction helperEntry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == helpFac);
-                            if (helperEntry == null) {
+                            if (helperEntry == null)
+                            {
                                 helperEntry = new PlanetFaction { Faction = helpFac, Planet = planet, };
                                 planet.PlanetFactions.Add(helperEntry);
                             }
@@ -252,6 +264,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
 
 
+                   
                     // main winner influence 
                     PlanetFaction entry = planet.PlanetFactions.FirstOrDefault(x => x.Faction == winnerFaction);
                     if (entry == null)
