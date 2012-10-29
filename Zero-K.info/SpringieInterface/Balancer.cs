@@ -98,10 +98,6 @@ namespace ZeroKWeb.SpringieInterface
                     return res;
                 }
                 Faction defenderFaction = planet.Faction;
-                if (defenderFaction != null && !players.Any(x => x.Faction == defenderFaction && x.Clan != null)) {
-                    res.Message = "Missing clanned defender of this planet";
-                    return res;
-                }
 				
 				// "backup" defender of other faction with most influence here
 				if (defenderFaction == null) defenderFaction = planet.PlanetFactions.Where(x=>x.FactionID != attackerFaction.FactionID && x.Influence > 0).OrderByDescending(x=>x.Influence).Select(x=>x.Faction).FirstOrDefault();
