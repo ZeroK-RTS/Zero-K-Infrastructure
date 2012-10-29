@@ -10,6 +10,7 @@ using System.Windows.Media.Animation;
 using LobbyClient;
 using PlasmaShared;
 using ZeroKLobby.Lines;
+using ZkData;
 using Point = System.Drawing.Point;
 
 namespace ZeroKLobby.MicroLobby
@@ -452,7 +453,7 @@ namespace ZeroKLobby.MicroLobby
 			{
 				if (e.Place == TasSayEventArgs.Places.Channel)
 				{
-					if (e.Text.Contains(Program.Conf.LobbyPlayerName))
+                    if (e.Text.Contains(Program.Conf.LobbyPlayerName) && e.UserName != GlobalConst.NightwatchName)
 					{
 						Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, string.Format("{0}: {1}", e.UserName, e.Text), false, true);
 					}
