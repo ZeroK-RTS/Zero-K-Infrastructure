@@ -146,8 +146,19 @@ namespace ZkData
             public Unlock Unlock;
         }
 
-        public void ConvertExcessEnergyToMetal() {
+        public double GetMetalFromPlanets() {
+            return Planets.Count()*GlobalConst.PlanetMetalPerTurn;
+        }
+
+
+        public double GetEnergyToMetalConversion() {
             var metal = (EnergyProducedLastTurn - EnergyDemandLastTurn)*GlobalConst.PlanetWarsEnergyToMetalRatio;
+            if (metal > 0) return metal;
+            else return 0;
+        }
+
+        public void ConvertExcessEnergyToMetal() {
+            var metal = GetEnergyToMetalConversion();
             if (metal > 0) {
                 var productions =
                     Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectEnergyPerTurn > 0).GroupBy(
