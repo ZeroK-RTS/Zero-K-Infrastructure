@@ -13,6 +13,7 @@ namespace CMissionLib.Actions
 		public SoundAction()
 			: base() {}
 
+        [DataMember]
 		public string SoundPath
 		{
 			get { return soundPath; }

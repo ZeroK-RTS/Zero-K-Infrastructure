@@ -33,8 +33,8 @@
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>2.1.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>2.2.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -135,6 +135,9 @@
     <Compile Include="AreaDragInfo.xaml.cs" />
     <Compile Include="CircleDragInfo.xaml.cs" />
     <Compile Include="ConditionsFolder.cs" />
+    <Compile Include="MusicActionControl.xaml.cs">
+      <DependentUpon>MusicActionControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DragInfo.xaml.cs" />
     <Compile Include="ErrorDialog.xaml.cs">
       <DependentUpon>ErrorDialog.xaml</DependentUpon>
@@ -208,6 +211,10 @@
     </Compile>
     <Compile Include="ZoomControl.cs" />
     <Compile Include="ZoomConverter.cs" />
+    <Page Include="MusicActionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="CreateUnitsPane.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

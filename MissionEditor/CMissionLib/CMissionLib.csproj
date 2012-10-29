@@ -76,6 +76,12 @@
     <Compile Include="Actions\AddObjectiveAction.cs" />
     <Compile Include="Actions\ConvoMessageAction.cs" />
     <Compile Include="Actions\ClearConvoMessageQueueAction.cs" />
+    <Compile Include="Actions\ShakeCameraAction.cs" />
+    <Compile Include="Actions\SetCameraPosDirAction.cs" />
+    <Compile Include="Actions\FadeOutAction.cs" />
+    <Compile Include="Actions\FadeInAction.cs" />
+    <Compile Include="Actions\StopMusicAction.cs" />
+    <Compile Include="Actions\MusicAction.cs" />
     <Compile Include="Actions\LeaveCutsceneAction.cs" />
     <Compile Include="Actions\EnterCutsceneAction.cs" />
     <Compile Include="Actions\CustomAction2.cs" />

@@ -5,11 +5,11 @@ using System.Runtime.Serialization;
 namespace CMissionLib.Actions
 {
 	[DataContract]
-	public class LeaveCutsceneAction : Action
+	public class FadeOutAction : Action
 	{
         bool instant = false;
 
-		public LeaveCutsceneAction()
+		public FadeOutAction()
 			: base() {}
 
         [DataMember]
@@ -34,7 +34,7 @@ namespace CMissionLib.Actions
 
 		public override string GetDefaultName()
 		{
-			return "Leave Cutscene";
+			return "Fade Out";
 		}
 	}
 }

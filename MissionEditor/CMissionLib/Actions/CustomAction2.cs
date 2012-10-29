@@ -8,6 +8,7 @@ namespace CMissionLib.Actions
 	public class CustomAction2 : Action
 	{
         string codeStr;
+        bool synced = true;
 
         public CustomAction2()
 		{
@@ -25,11 +26,24 @@ namespace CMissionLib.Actions
             }
         }
 
+        [DataMember]
+        public bool Synced
+        {
+            get { return synced; }
+            set
+            {
+                synced = value;
+                RaisePropertyChanged("Synced");
+            }
+        }
+
+
 		public override LuaTable GetLuaTable(Mission mission)
 		{
             var map = new Dictionary<object, object>
 				{
 					{"codeStr", CodeStr},
+                    {"synced", Synced},
 				};
             return new LuaTable(map);
 		}

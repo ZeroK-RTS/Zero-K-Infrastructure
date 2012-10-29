@@ -244,6 +244,15 @@ local function FindUnitsInGroup(searchGroup)
   return results
 end
 
+local function FindUnitInGroup(searchGroup)
+  local results = FindUnitsInGroup(searchGroup)
+  for unitID in pairs(results) do
+    return unitID
+  end
+end
+
+GG.mission.FindUnitsInGroup = FindUnitsInGroup
+GG.mission.FindUnitInGroup = FindUnitInGroup
 
 local function FindUnitsInGroups(searchGroups)
   local results = {}
@@ -384,8 +393,15 @@ local function ExecuteTrigger(trigger, frame)
         end
 	  elseif action.logicType == "CustomAction2" then
         Event = function()
-          local func = loadstring(action.args.codeStr)
-		  func()
+          if action.args.synced then
+            local func = loadstring(action.args.codeStr)
+	    func()
+          else
+            action.args.logicType = action.logicType
+            _G.missionEventArgs = action.args
+            SendToUnsynced"MissionEvent"
+            _G.missionEventArgs = nil
+          end
         end
       elseif action.logicType == "DestroyUnitsAction" then
         Event = function()
@@ -635,7 +651,8 @@ local function ExecuteTrigger(trigger, frame)
                   if not isBuilding then
                     local heading = (unit.heading - 180)/360 * 2 * math.pi
                     if drop and gameframe > 1 then
-                      Spring.MoveCtrl.SetRotation(unitID, 0, heading, 0)
+                      --Spring.MoveCtrl.SetRotation(unitID, 0, heading, 0)
+                      Spring.SetUnitRotation(unitID, 0, heading, 0)
                     else
                       Spring.SetUnitRotation(unitID, 0, heading, 0)
                     end
@@ -663,6 +680,8 @@ local function ExecuteTrigger(trigger, frame)
             local _, _, _, isAI, _, allyTeam = Spring.GetTeamInfo(unitTeam)
             if isAI then
               aiAllyTeams[#aiAllyTeams+1] = allyTeam
+            else
+              Spring.KillTeam(unitTeam)
             end
           end
 	  Spring.GameOver(aiAllyTeams)
@@ -702,7 +721,9 @@ local function ExecuteTrigger(trigger, frame)
         end
       elseif action.logicType == "PauseAction" or
              action.logicType == "MarkerPointAction" or 
-             action.logicType == "SetCameraPointTargetAction" or 
+             action.logicType == "SetCameraPointTargetAction" or
+             action.logicType == "SetCameraPosDirAction" or
+             action.logicType == "ShakeCameraAction" or
              action.logicType == "GuiMessageAction" or
              action.logicType == "GuiMessagePersistentAction" or
              action.logicType == "HideGuiMessagePersistentAction" or
@@ -710,11 +731,15 @@ local function ExecuteTrigger(trigger, frame)
              action.logicType == "ClearConvoMessageQueueAction" or
              action.logicType == "AddObjectiveAction" or
              action.logicType == "ModifyObjectiveAction" or
-             action.logicType == "SoundAction" or 
+             action.logicType == "SoundAction" or
+             action.logicType == "MusicAction" or
+             action.logicType == "StopMusicAction" or
              action.logicType == "SunriseAction" or 
              action.logicType == "SunsetAction" or
              action.logicType == "EnterCutsceneAction" or
-             action.logicType == "LeaveCutsceneAction" then
+             action.logicType == "LeaveCutsceneAction" or
+	     action.logicType == "FadeOutAction" or
+             action.logicType == "FadeInAction" then
         Event = function()
           action.args.logicType = action.logicType
           _G.missionEventArgs = action.args
@@ -856,7 +881,7 @@ function gadget:UnitDamaged(unitID, unitDefID, unitTeam, damage, paralyzer,
     for conditionIndex=1, #trigger.logic do
       local condition = trigger.logic[conditionIndex]
       if condition.logicType == "UnitDamagedCondition" and
-         not paralizer and
+         --not paralyzer and
          (Spring.GetUnitHealth(unitID) < condition.args.value) and
          (condition.args.anyAttacker or FindUnitsInGroup(condition.args.attackerGroup)[attackerID]) and
          (condition.args.anyVictim or FindUnitsInGroup(condition.args.victimGroup)[unitID]) then
@@ -869,7 +894,7 @@ end
 
 
 function gadget:AllowUnitTransfer(unitID, unitDefID, oldTeam, newTeam, capture)
-  return allowTransfer
+  return capture or allowTransfer
 end
 
 
@@ -1112,9 +1137,9 @@ end
 
 
 function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOptions, cmdTag, synced)
-  if isInCutscene and (not synced) then
-    return false
-  end
+  --if isInCutscene and (not synced) then
+  --  return false
+  --end
   -- prevent widgets from building disabled units
   if disabledUnitDefIDs[-cmdID] then
     return false

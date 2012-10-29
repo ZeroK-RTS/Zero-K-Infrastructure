@@ -40,8 +40,12 @@ namespace MissionEditor2
 			else if (item is SunsetAction) resourceName = "sunsetTemplate";
             else if (item is EnterCutsceneAction) resourceName = "enterCutsceneTemplate";
             else if (item is LeaveCutsceneAction) resourceName = "leaveCutsceneTemplate";
+            else if (item is FadeOutAction) resourceName = "fadeOutTemplate";
+            else if (item is FadeInAction) resourceName = "fadeInTemplate";
 			else if (item is SendScoreAction) resourceName = "sendScoreTemplate";
 			else if (item is WaitAction) resourceName = "waitActionTemplate";
+            else if (item is SetCameraPosDirAction) resourceName = "setCameraPosDirActionTemplate";
+            else if (item is ShakeCameraAction) resourceName = "shakeCameraActionTemplate";
 			else if (item is AllowUnitTransfersAction) resourceName = "allowUnitTransfersTemplate";
             else if (item is CustomAction2) resourceName = "customAction2Template";
 

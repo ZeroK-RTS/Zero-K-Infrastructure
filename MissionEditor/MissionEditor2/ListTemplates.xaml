@@ -33,7 +33,17 @@
         <DataTemplate x:Key="SoundAction">
             <local:SoundActionControl />
         </DataTemplate>
-        
+
+        <DataTemplate x:Key="MusicAction">
+            <local:MusicActionControl />
+        </DataTemplate>
+
+        <DataTemplate x:Key="StopMusicAction">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <CheckBox IsChecked="{Binding NoContinue}">Prevent music player from starting next track</CheckBox>
+            </StackPanel>
+        </DataTemplate>
+
         <DataTemplate x:Key="UnitBuiltOnGhostCondition">
             <local:UnitBuiltOnGhostConditionControl />
         </DataTemplate>

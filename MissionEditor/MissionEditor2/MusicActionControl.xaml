@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="MissionEditor2.MusicActionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <DockPanel>
+                <Label DockPanel.Dock="Left">Track:</Label>
+                <Button Loaded="MusicButtonLoaded" DockPanel.Dock="Right">Browse</Button>
+                <TextBox Text="{Binding TrackPath}" />
+            </DockPanel>
+            <GroupBox Grid.Row="1" Header="Description">
+                This action plays an OGG track. Any currently playing track will be stopped. If no track is specified, the music player (if available) will play a random track.
+            </GroupBox>
+        </Grid>
+    </Grid>
+</UserControl>

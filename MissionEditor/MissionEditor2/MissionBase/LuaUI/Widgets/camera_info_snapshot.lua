@@ -13,6 +13,6 @@ end
 function widget:KeyPress(key)
   if key == 291 then	-- F10
     local cam = Spring.GetCameraState()
-    Spring.Echo(cam.px, cam.py, cam.pz, math.deg(cam.rx), math.deg(cam.ry))
+    Spring.Echo(math.floor(cam.px+0.5), math.floor(cam.py+0.5), math.floor(cam.pz+0.5), math.deg(cam.rx), math.deg(cam.ry))
   end
 end

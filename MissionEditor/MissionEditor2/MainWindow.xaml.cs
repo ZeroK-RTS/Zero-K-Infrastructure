@@ -77,7 +77,6 @@ namespace MissionEditor2
         void CopyTrigger(Trigger source)
         {
             Trigger trigger;
-
         }
 
 		void BuildMission(bool hideFromModList = false)
@@ -150,6 +149,8 @@ namespace MissionEditor2
 			addAction("Enable Triggers", () => new EnableTriggersAction());
 			addAction("Execute Random Trigger", () => new ExecuteRandomTriggerAction());
 			addAction("Execute Triggers", () => new ExecuteTriggersAction());
+            addAction("Fade Out", () => new FadeOutAction());
+            addAction("Fade In", () => new FadeInAction());
 			addAction("Give Factory Orders", () => new GiveFactoryOrdersAction());
 			addAction("Give Orders", () => new GiveOrdersAction());
 			addAction("Lock Units", () => new LockUnitsAction());
@@ -162,14 +163,18 @@ namespace MissionEditor2
 			addAction("Modify Unit Health", () => new ModifyUnitHealthAction());
 			addAction("Pause", () => new PauseAction());
 			addAction("Play Sound", () => new SoundAction());
+            addAction("Play Music", () => new MusicAction());
+            addAction("Stop Music", () => new StopMusicAction());
 			addAction("Point Camera at Map Position", () => new SetCameraPointTargetAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
 			addAction("Point Camera at Unit", () => new SetCameraUnitTargetAction());
+            addAction("Set Camera Position/Direction", () => new SetCameraPosDirAction());
+            addAction("Shake Camera", () => new ShakeCameraAction());
 			addAction("Send Scores", () => new SendScoreAction());
 			addAction("Show Console Message", () => new ConsoleMessageAction("Hello!"));
 			addAction("Show GUI Message", () => new GuiMessageAction("Hello!"));
             addAction("Show GUI Message (Persistent)", () => new GuiMessagePersistentAction(GuiMessagePersistentDesc));
             addAction("Hide GUI Message (Persistent)", () => new HideGuiMessagePersistentAction());
-            addAction("Show Convo Message", () => new ConvoMessageAction("Hello! I am a talking head for missions!"));
+            addAction("Show Convo Message", () => new ConvoMessageAction("Hello! I am a talking head for missions! I require a custom widget to work!"));
             addAction("Clear Convo Message Queue", () => new ClearConvoMessageQueueAction());
 			addAction("Show Marker Point", () => new MarkerPointAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
 			addAction("Start Countdown", () => new StartCountdownAction(GetNewCountdownName()));
@@ -257,57 +262,112 @@ namespace MissionEditor2
 		}
 
 
-		void MoveCurrentItem(MoveDirection direction)
+		bool MoveCurrentItem(MoveDirection direction)
 		{
-			if (logicGrid.SelectedItem is Trigger)
-			{
-				MoveTrigger(direction, CurrentTrigger);
-			}
-			else if (logicGrid.SelectedItem is TriggerLogic)
-			{
-				MoveItem(direction, CurrentLogic);
-			}
-			else if (logicGrid.SelectedItem == null) MessageBox.Show("No item selected.");
-			else MessageBox.Show("Moving the selected item is not supported.");
+            return MoveCurrentItem(direction, false);
 		}
 
-		void MoveItem(MoveDirection direction, TriggerLogic item)
+        bool MoveCurrentItem(MoveDirection direction, int count)
+        {
+            bool cont = true;
+            for (int i = 0; i < count; i++)
+            {
+                cont = MoveCurrentItem(direction);
+                if (cont == false) return false;
+            }
+            return true;
+        }
+
+        bool MoveCurrentItem(MoveDirection direction, bool toEnd)
+        {
+            if (logicGrid.SelectedItem is Trigger)
+            {
+                return MoveTrigger(direction, CurrentTrigger, toEnd);
+            }
+            else if (logicGrid.SelectedItem is TriggerLogic)
+            {
+                return MoveItem(direction, CurrentLogic, toEnd);
+            }
+            else if (logicGrid.SelectedItem == null) MessageBox.Show("No item selected.");
+            else MessageBox.Show("Moving the selected item is not supported.");
+            return false;
+        }
+
+		bool MoveItem(MoveDirection direction, TriggerLogic item)
 		{
-			if (item == null) return;
-			var trigger = Mission.FindLogicOwner(item);
-			var index = trigger.Logic.IndexOf(item);
-			if (direction == MoveDirection.Up)
-			{
-				if (index == 0) return;
-				trigger.Logic.Move(index, index - 1);
-			}
-			else if (direction == MoveDirection.Down)
-			{
-				if (index + 2 > Mission.Triggers.Count) return;
-				trigger.Logic.Move(index, index + 1);
-			}
-			var displacedType = trigger.Logic[index];
-			if ((displacedType is Action && item is Condition) ||
-				(displacedType is Condition && item is Action)) MoveItem(direction, item);
-			Mission.RaisePropertyChanged("AllLogic");
+            return MoveItem(direction, item, false);
 		}
 
-		void MoveTrigger(MoveDirection direction, Trigger trigger)
+        bool MoveItem(MoveDirection direction, TriggerLogic item, int count)
+        {
+            bool cont = true;
+            for (int i = 0; i < count; i++)
+            {
+                cont = MoveItem(direction, item);
+                if (cont == false) return false;
+            }
+            return true;
+        }
+
+        bool MoveItem(MoveDirection direction, TriggerLogic item, bool toEnd)
+        {
+            if (item == null) return false;
+            var trigger = Mission.FindLogicOwner(item);
+            var index = trigger.Logic.IndexOf(item);
+            if (direction == MoveDirection.Up)
+            {
+                if (index == 0) return false;
+                if (toEnd) trigger.Logic.Move(index, 0);
+                else trigger.Logic.Move(index, index - 1);
+            }
+            else if (direction == MoveDirection.Down)
+            {
+                if (index + 2 > trigger.Logic.Count) return false;
+                if (toEnd) trigger.Logic.Move(index, trigger.Logic.Count - 1);
+                else trigger.Logic.Move(index, index + 1);
+            }
+            var displacedType = trigger.Logic[index];
+            if ((displacedType is Action && item is Condition) ||
+                (displacedType is Condition && item is Action)) MoveItem(direction, item);
+            Mission.RaisePropertyChanged("AllLogic");
+            return true;
+        }
+
+		bool MoveTrigger(MoveDirection direction, Trigger trigger)
 		{
-			if (trigger == null) return;
-			var index = Mission.Triggers.IndexOf(trigger);
-			if (direction == MoveDirection.Up)
-			{
-				if (index == 0) return;
-				Mission.Triggers.Move(index, index - 1);
-			}
-			else if (direction == MoveDirection.Down)
-			{
-				if (index + 2 > Mission.Triggers.Count) return;
-				Mission.Triggers.Move(index, index + 1);
-			}
-			Mission.RaisePropertyChanged("AllLogic");
+            return MoveTrigger(direction, trigger, false);
 		}
+
+        bool MoveTrigger(MoveDirection direction, Trigger trigger, int count)
+        {
+            bool cont = true;
+            for (int i = 0; i < count; i++)
+            {
+                cont = MoveTrigger(direction, trigger);
+                if (cont == false) return false;
+            }
+            return true;
+        }
+
+        bool MoveTrigger(MoveDirection direction, Trigger trigger, bool toEnd)
+        {
+            if (trigger == null) return false;
+            var index = Mission.Triggers.IndexOf(trigger);
+            if (direction == MoveDirection.Up)
+            {
+                if (index == 0) return false;
+                if (toEnd) Mission.Triggers.Move(index, 0);
+                else Mission.Triggers.Move(index, index - 1);
+            }
+            else if (direction == MoveDirection.Down)
+            {
+                if (index + 2 > Mission.Triggers.Count) return false;
+                if (toEnd) Mission.Triggers.Move(index, Mission.Triggers.Count - 1);
+                else Mission.Triggers.Move(index, index + 1);
+            }
+            Mission.RaisePropertyChanged("AllLogic");
+            return true;
+        }
 
 		void RenameLogicItem(TriggerLogic item)
 		{
@@ -474,7 +534,11 @@ namespace MissionEditor2
 			border.ContextMenu = menu;
 			menu.AddAction("Rename", () => RenameLogicItem(item));
 			menu.AddAction("Move Up", () => MoveItem(MoveDirection.Up, item));
+            menu.AddAction("Move Up 5 Spaces", () => MoveItem(MoveDirection.Up, item, 5));
+            menu.AddAction("Move to Top", () => MoveItem(MoveDirection.Up, item, true));
 			menu.AddAction("Move Down", () => MoveItem(MoveDirection.Down, item));
+            menu.AddAction("Move Down 5 Spaces", () => MoveItem(MoveDirection.Down, item, 5));
+            menu.AddAction("Move to Bottom", () => MoveItem(MoveDirection.Down, item, true));
 			menu.AddAction("Delete", () => DeleteTriggerLogic(item));
 			border.ContextMenu = menu;
 		}
@@ -574,12 +638,16 @@ namespace MissionEditor2
 			var menu = new ContextMenu();
 			menu.AddAction("New Trigger", CreateNewTrigger);
 			menu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
-            menu.AddAction("Copy Trigger", CreateNewTrigger);
+            //menu.AddAction("Copy Trigger", CreateNewTrigger);
 			menu.Items.Add(GetNewActionMenu(trigger));
 			menu.Items.Add(GetNewConditionMenu(trigger));
 			menu.Items.Add(new Separator());
 			menu.AddAction("Move Up", () => MoveTrigger(MoveDirection.Up, trigger));
+            menu.AddAction("Move Up 5 Spaces", () => MoveTrigger(MoveDirection.Up, trigger, 5));
+            menu.AddAction("Move to Top", () => MoveTrigger(MoveDirection.Up, trigger, true));
 			menu.AddAction("Move Down", () => MoveTrigger(MoveDirection.Down, trigger));
+            menu.AddAction("Move Down 5 Spaces", () => MoveTrigger(MoveDirection.Down, trigger, 5));
+            menu.AddAction("Move to Bottom", () => MoveTrigger(MoveDirection.Down, trigger, true));
 			menu.AddAction("Rename", () => RenameTrigger(trigger));
 			menu.AddAction("Delete", () => DeleteTrigger(trigger));
 			menu.Items.Add(new Separator());
@@ -635,7 +703,11 @@ namespace MissionEditor2
 			editMenu.AddAction("Rename", RenameCurrentItem);
 			editMenu.AddAction("Delete", DeleteCurrentItem);
 			editMenu.AddAction("Move Up", () => MoveCurrentItem(MoveDirection.Up));
+            editMenu.AddAction("Move Up 5 Spaces", () => MoveCurrentItem(MoveDirection.Up, 5));
+            editMenu.AddAction("Move To Top", () => MoveCurrentItem(MoveDirection.Up, true));
 			editMenu.AddAction("Move Down", () => MoveCurrentItem(MoveDirection.Down));
+            editMenu.AddAction("Move Down 5 Spaces", () => MoveCurrentItem(MoveDirection.Down, 5));
+            editMenu.AddAction("Move To Bottom", () => MoveCurrentItem(MoveDirection.Down, true));
 			editMenu.AddAction("Expand All Triggers", ExpandAllTriggers);
 			editMenu.AddAction("Collapse All Triggers", CollapseAllTriggers);
 

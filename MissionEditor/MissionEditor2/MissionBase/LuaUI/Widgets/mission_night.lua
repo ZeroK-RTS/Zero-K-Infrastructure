@@ -1,12 +1,7 @@
 -- $Id: gfx_night.lua 3171 2008-11-06 09:06:29Z det $
-local versionNumber = "v1.5.4m"
+local versionNumber = "v1.5.5"
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
---[[
-desc      = versionNumber .. " Makes map appear as nighttime and gives units searchlights.\n"
-                          .. "toggles: /luaui [night_preunit | night_beam | night_cycle] \n"
-                          .. "searchlight strength: /luaui night_setsearchlight [number]; base type: /luaui night_basetype [0-2]"
---]]
 
 function widget:GetInfo()
   return {
@@ -22,16 +17,14 @@ function widget:GetInfo()
 end
 
 --------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
 --config
 --------------------------------------------------------------------------------
 
-local nightColorMap        = {{0.4, 0.5, 0.6}, --midnight
-                              {0.4, 0.5, 0.6},
-                              {0.4, 0.5, 0.6},
+local nightColorMap        = {{0.2, 0.25, 0.3}, --midnight
+                              {0.2, 0.25, 0.3},
+                              {0.2, 0.25, 0.3},
                               
+							  {0.4, 0.5, 0.6},
                               {1, 0.8, 0.6},
                               {1, 1, 1},
                               {1, 1, 1},
@@ -42,7 +35,8 @@ local nightColorMap        = {{0.4, 0.5, 0.6}, --midnight
                               
                               {1, 0.8, 0.6},
                               {0.4, 0.5, 0.6},
-                              {0.4, 0.5, 0.6}}
+							  {0.2, 0.25, 0.3},
+                              {0.2, 0.25, 0.3},}
                               
 local searchlightBeamColor = {1, 1, 0.75, 0.05}  --searchlight beam color
 local searchlightStrength  = 0.6                 --searchlight strength; <= 0 to turn off
@@ -79,6 +73,37 @@ local noLightList = {}
 local vsx, vsy
 
 --------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+local function UpdateColors() end	-- redefined below
+
+options_path = 'Settings/Graphics/Effects/Night'
+options_order = {"coloredUnits", "cycle", "time", "beam", "bases"}
+options = {
+	coloredUnits = {
+		name = "Night Colored Units",
+		type = 'bool',
+		value = false,
+		desc = 'Bright units even at night',
+	},	
+	beam = {
+		name = "Searchlight Beams",
+		type = 'bool',
+		value = true,
+		desc = 'Display searchlight beams',
+	},
+	bases = {
+		name = "Searchlight Bases",
+		type = 'list',
+		items = {
+			{ key = 'none', name = 'None', },
+			{ key = 'simple', name = 'Simple', },
+			{ key = 'full', name = 'Full', },
+		},
+		value = 'simple',
+	},
+}
+
+--------------------------------------------------------------------------------
 -- speedups and constants
 --------------------------------------------------------------------------------
 
@@ -91,6 +116,7 @@ local GetUnitHeading = Spring.GetUnitHeading
 local GetUnitDefID = Spring.GetUnitDefID
 local GetUnitVelocity = Spring.GetUnitVelocity
 local GetUnitIsCloaked = Spring.GetUnitIsCloaked
+local GetUnitIsDead = Spring.GetUnitIsDead
 local GetUnitHealth = Spring.GetUnitHealth
 local GetUnitRadius = Spring.GetUnitRadius
 local GetGameSpeed = Spring.GetGameSpeed
@@ -128,7 +154,7 @@ local RADIANS_PER_COBANGLE = math.pi / 32768
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-local function UpdateColors()
+UpdateColors = function()
   local currHour = math.floor(currDayTime * hoursPerDay) + 1
   local currHourPart = currDayTime * hoursPerDay - currHour + 1
   local startColor = nightColorMap[currHour]
@@ -208,6 +234,7 @@ end
 
 local function DrawSearchlights()
   if (searchlightVertexCount < 2) then return end
+  if (options.bases.value == "none") and (options.beam.value == false) then return end 
   
   local visibleUnits = GetVisibleUnits(-1, 30, false)
   local cx, cy, cz = GetCameraPosition()
@@ -217,79 +244,86 @@ local function DrawSearchlights()
   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
   
   for _, unitID in pairs(visibleUnits) do
-    local _, _, _, _, buildProgress = GetUnitHealth(unitID)
-    local unitRadius = GetUnitRadius(unitID)
-    if unitRadius then
-      local px, py, pz = GetUnitPosition(unitID)
-      py = py + searchlightHeightOffset * unitRadius
-      local groundy = math.max(GetGroundHeight(px, pz), 0)
-      local height = py - groundy
-      local unitDefID = GetUnitDefID(unitID)
-      local unitDef = UnitDefs[unitDefID]
-      local speed = unitDef.speed
-      
-      if (height > 0
-          and (not buildProgress or buildProgress >= 1)
-          and not noLightList[unitDefID]
-          and timeFromNoon > (0.25 + ((unitID * 97) % 256) / 8192)
-          and not GetUnitIsCloaked(unitID)
-          and not GetUnitTransporter(unitID)
-          ) then
-        local leadDistance
-        local radius
-        local ecc
-        local heading
-        local baseX, baseZ
-        
-        if (not speed or speed == 0) then
-          heading = searchlightBuildingAngle * (0.5 + ((unitID * 137) % 256) / 512)
-          leadDistance = unitRadius * 2
-          radius = unitRadius
-        elseif (unitDef.type == "Bomber" or unitDef.type == "Fighter") then
-          local vx, _, vz = GetUnitVelocity(unitID)
-          heading = math.atan2(vz, vx)
-          leadDistance = searchlightAirLeadTime * math.sqrt(vx * vx + vz * vz) * 30
-          radius = unitRadius * 2
-        elseif (unitDef.canFly) then
-          heading = -GetUnitHeading(unitID) * RADIANS_PER_COBANGLE + math.pi / 2
-          local range = math.max(unitDef.buildDistance, unitDef.maxWeaponRange)
-          leadDistance = math.sqrt(math.max(range * range - unitDef.wantedHeight * unitDef.wantedHeight, 0)) * 0.8
-          radius = unitRadius * 2
-        else
-          heading = -GetUnitHeading(unitID) * RADIANS_PER_COBANGLE + math.pi / 2
-          leadDistance = searchlightGroundLeadTime * speed
-          radius = unitRadius
-        end
-        
-        baseX = px + leadDistance * math.cos(heading)
-        baseZ = pz + leadDistance * math.sin(heading)
-        ecc = math.min(1 - 2 / (leadDistance / height + 2), 0.75)
-        
-        --base
-        glBlending(GL_DST_COLOR, GL_ONE)
-        glColor(currColorInverse)
-        
-        if (baseType == 2) then
-          glDepthTest(true)
-          glBeginEnd(GL_TRIANGLE_FAN, ConeVertices, baseX, baseZ, radius, ecc, heading, cx, cy, cz, groundy)
-        elseif (baseType == 1) then
-          glDepthTest(false)
-          glBeginEnd(GL_POLYGON, BaseVertices, baseX, baseZ, radius, ecc, heading)
-        end
-        
-        --beam
-        glBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        
-        if (drawBeam) then
-          glColor(searchlightBeamColor)
-          glDepthTest(true)
-          glBeginEnd(GL_TRIANGLE_FAN, BeamVertices, baseX, baseZ, radius, ecc, heading, px, py, pz)
-        end
-        
-        glColor(1, 1, 1, 1)
-        glDepthTest(false)
-      end
-    end
+	if GetUnitPosition(unitID) and not GetUnitIsDead(unitID) then
+		local _, _, _, _, buildProgress = GetUnitHealth(unitID)
+		local unitRadius = GetUnitRadius(unitID) or 10
+		local _,_,_,px, py, pz = GetUnitPosition(unitID,true) --get mid position. Since Spring 89: it return baseposition instead of midposition unless you add "true" to second argument.
+		local relativeHeight = searchlightHeightOffset * unitRadius
+		py = py + relativeHeight
+		local groundy = math.max(GetGroundHeight(px, pz), 0)
+		local absHeight = py - groundy
+		local unitDefID = GetUnitDefID(unitID)
+		local unitDef = UnitDefs[unitDefID]
+		local speed = unitDef.speed
+		
+		if (absHeight > 0
+			and (not buildProgress or buildProgress >= 1)
+			and not noLightList[unitDefID]
+			and timeFromNoon > (0.25 + ((unitID * 97) % 256) / 8192)
+			and not GetUnitIsCloaked(unitID)
+			and not GetUnitTransporter(unitID)
+			) then
+		  local leadDistance
+		  local radius
+		  local ecc
+		  local heading
+		  local baseX, baseZ
+		  
+		  if (not speed or speed == 0) then
+			heading = searchlightBuildingAngle * (0.5 + ((unitID * 137) % 256) / 512)
+			leadDistance = unitRadius * 2
+			radius = unitRadius
+		  elseif (unitDef.type == "Bomber" or unitDef.type == "Fighter") then
+			local vx, _, vz = GetUnitVelocity(unitID)
+			heading = math.atan2(vz, vx)
+			leadDistance = searchlightAirLeadTime * math.sqrt(vx * vx + vz * vz) * 30
+			radius = unitRadius * 2
+		  elseif (unitDef.canFly) then
+			heading = -1*(GetUnitHeading(unitID) or 0) * RADIANS_PER_COBANGLE + math.pi / 2
+			local range = math.max(unitDef.buildDistance, unitDef.maxWeaponRange)
+			leadDistance = math.sqrt(math.max(range * range - unitDef.wantedHeight * unitDef.wantedHeight, 0)) * 0.8
+			radius = unitRadius * 2
+		  else
+			heading = -1*(not (GetUnitIsDead(unitID)) and GetUnitHeading(unitID) or 0) * RADIANS_PER_COBANGLE + math.pi / 2
+			leadDistance = searchlightGroundLeadTime * speed
+			radius = unitRadius
+		  end
+		  
+		  baseX = px + leadDistance * math.cos(heading)
+		  baseZ = pz + leadDistance * math.sin(heading)
+		  ecc = math.min(1 - 2 / (leadDistance / absHeight + 2), 0.75)
+		  
+		  --base
+		  glBlending(GL_DST_COLOR, GL_ONE)
+		  glColor(currColorInverse)
+		  
+		  --scale radius based on height--
+		  local originalRatio= radius/math.sqrt(leadDistance*leadDistance+ relativeHeight*relativeHeight) --ratio of radius-over-distance for original beam
+		  local newSize = originalRatio*math.sqrt(leadDistance*leadDistance+ absHeight*absHeight) --explaination: The same radius-over-distance ratio must apply for all height
+		  radius = newSize
+		  
+		  if (options.bases.value == "full") then
+			glDepthTest(true)
+			glBeginEnd(GL_TRIANGLE_FAN, ConeVertices, baseX, baseZ, radius, ecc, heading, cx, cy, cz, groundy)
+		  elseif (options.bases.value == "simple") then
+			glDepthTest(false)
+			glBeginEnd(GL_POLYGON, BaseVertices, baseX, baseZ, radius, ecc, heading)
+		  end
+		  
+		  --beam
+		  glBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+		  
+		  if (options.beam.value) then
+			glColor(searchlightBeamColor)
+			glDepthTest(true)
+			glBeginEnd(GL_TRIANGLE_FAN, BeamVertices, baseX, baseZ, radius, ecc, heading, px, py, pz)
+		  end
+		  
+		  glColor(1, 1, 1, 1)
+		  glDepthTest(false)
+		  
+		end
+	end
   end
   
 end
@@ -328,6 +362,15 @@ local function SetSearchlightStrength(_,_,words)
   UpdateColors()
 end
 
+local function ToggleDayNightCycle()
+  dayNightCycle = not dayNightCycle
+  if (dayNightCycle) then
+    SendMessage("Day/night cycle turned on.")
+  else
+    SendMessage("Day/night cycle turned off.")
+  end
+end
+
 --------------------------------------------------------------------------------
 --callins
 --------------------------------------------------------------------------------
@@ -348,6 +391,24 @@ function widget:Initialize()
       noLightList[unitDefID] = true
     end
   end
+
+  --[[  
+  widgetHandler:AddAction("night_preunit", TogglePreUnit, nil, "t")
+  widgetHandler:AddAction("night_basetype", SetBaseType, nil, "t")
+  widgetHandler:AddAction("night_beam", ToggleBeam, nil, "t")
+  widgetHandler:AddAction("night_setsearchlight", SetSearchlightStrength, nil, "t")
+  widgetHandler:AddAction("night_cycle", ToggleDayNightCycle, nil, "t")
+  ]]--
+end
+
+function widget:Shutdown()
+  --[[
+  widgetHandler:RemoveAction("night_preunit")
+  widgetHandler:RemoveAction("night_basetype")
+  widgetHandler:RemoveAction("night_beam")
+  widgetHandler:RemoveAction("night_setsearchlight")
+  widgetHandler:RemoveAction("night_cycle")
+  ]]--
 end
 
 function widget:ViewResize(viewSizeX, viewSizeY)
@@ -373,13 +434,13 @@ function widget:Update(dt)
 end
 
 function widget:DrawWorldPreUnit()
-  if (preUnit) then
+  if (options.coloredUnits.value) then
     DrawNight()
   end
 end
 
 function widget:DrawWorld()
-  if (not preUnit) then
+  if (not options.coloredUnits.value) then
     DrawNight()
   end
   if (searchlightStrength > 0 and math.abs(currDayTime - 0.5) > 0.25) then

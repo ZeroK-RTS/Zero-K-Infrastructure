@@ -61,9 +61,10 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="1">Code</Label>
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CodeStr, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
+                        <Label Grid.Row="0">Code</Label>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CodeStr, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
                                     HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="20" TextWrapping="Wrap" />
+                        <CheckBox Grid.Row="1" IsChecked="{Binding Synced}">Synced</CheckBox>
                     </Grid>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description">
@@ -104,6 +105,54 @@
             </Grid>
         </DataTemplate>
 
+        <!-- ======== SetCameraPosDirAction Template ======== -->
+
+        <DataTemplate x:Key="setCameraPosDirActionTemplate">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0">Position (x)</Label>
+                <Label Grid.Column="0" Grid.Row="1">Position (y)</Label>
+                <Label Grid.Column="0" Grid.Row="2">Position (z)</Label>
+                <Label Grid.Column="0" Grid.Row="3">Rotation (x)</Label>
+                <Label Grid.Column="0" Grid.Row="4">Rotation (y)</Label>
+                <Label Grid.Column="0" Grid.Row="5">Cam time (seconds)</Label>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding PX, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding PY, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding PZ, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding RX, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding RY, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock TextWrapping="WrapWithOverflow" Grid.Row="6" Grid.ColumnSpan="2">
+                    This action sets the position and rotation of the camera. Fields left blank will be unchanged.
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+
+        <!-- ======== ShakeCameraAction Template ======== -->
+
+        <DataTemplate x:Key="shakeCameraActionTemplate">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0">Strength</Label>
+                <TextBox Grid.Column="1" Text="{Binding Strength, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </DataTemplate>
+
         <!-- ======== GameEndedCondition Template ======== -->
 
         <DataTemplate x:Key="gameEndedConditionTemplate">
@@ -123,13 +172,33 @@
         <!-- ======== Cutscene Templates ======== -->
 
         <DataTemplate x:Key="enterCutsceneTemplate">
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will start a cutscene. The GUI is hidden and the player's controls are disabled.</TextBlock>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <CheckBox IsChecked="{Binding Instant}">Instant</CheckBox>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will start a cutscene. The GUI is hidden and the player's controls are disabled.</TextBlock>
+            </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="leaveCutsceneTemplate">
-            <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will leave the current cutscene, if any.</TextBlock>
-        </DataTemplate>        
-        
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <CheckBox IsChecked="{Binding Instant}">Instant</CheckBox>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will leave the current cutscene, if any.</TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="fadeOutTemplate">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <CheckBox IsChecked="{Binding Instant}">Instant</CheckBox>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will cause the screen to fade to black. Controls are unaffected.</TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="fadeInTemplate">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <CheckBox IsChecked="{Binding Instant}">Instant</CheckBox>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"> This action will cause the screen to fade in from black.</TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
         <!-- ======== PlayerDied Template ======== -->
 
         <DataTemplate x:Key="playerDiedConditionTemplate">

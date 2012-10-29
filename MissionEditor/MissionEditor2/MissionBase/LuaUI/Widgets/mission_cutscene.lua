@@ -17,9 +17,15 @@ end
 --------------------------------------------------------------------------------
 include("keysym.h.lua")
 
+local spWarpMouse = Spring.WarpMouse
+local spSetMouseCursor = Spring.SetMouseCursor
+local glColor = gl.Color
+local glRect = gl.Rect
+
 local LETTERBOX_ENTER_SPEED = 0.1  -- % of screen height/s
 local LETTERBOX_LEAVE_SPEED = 0.1
 local LETTERBOX_BOUNDARY = 0.15
+local FADE_SPEED = 0.5  -- 50% faded out after 1s
 local UPDATE_PERIOD = 0.05
 
 local vsx, vsy = gl.GetViewSizes()
@@ -27,34 +33,51 @@ local isInCutscene = false
 local isEnteringCutscene = false  -- transition into cutscene
 local isExitingCutscene = false   -- transition out of cutscene
 local letterboxPos = 0
+local isFadingIn = false
+local isFadingOut = false
+local screenFadeAlpha = 0
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-local function EnterCutscene()
+local function EnterCutscene(instant)
   isInCutscene = true
-  isEnteringCutscene = true
-  isExitingCutscene = false
   WG.HideGUI()
   local paused = select(3, Spring.GetGameSpeed())
   if paused then
     Spring.SendCommands("pause")
   end
+  Spring.SelectUnitArray({})
+  
+  if instant then
+    letterboxPos = LETTERBOX_BOUNDARY
+    isEnteringCutscene = false
+    isExitingCutscene = false
+  else
+    isEnteringCutscene = true
+    isExitingCutscene = false
+  end
 end
 
-local function LeaveCutscene()
-  isExitingCutscene = true
-  isEnteringCutscene = false
+local function LeaveCutscene(instant)
+  if instant then
+    letterboxPos = 0
+    isEnteringCutscene = false
+    isExitingCutscene = false
+  else
+    isExitingCutscene = true
+    isEnteringCutscene = false
+  end
 end
 
-local function ProgressCutsceneEntrance()
-  letterboxPos = letterboxPos + LETTERBOX_LEAVE_SPEED*UPDATE_PERIOD
+local function ProgressCutsceneEntrance(dt)
+  letterboxPos = letterboxPos + LETTERBOX_LEAVE_SPEED*dt
   if letterboxPos >= LETTERBOX_BOUNDARY then
     letterboxPos = LETTERBOX_BOUNDARY
     isEnteringCutscene = false
   end
 end
 
-local function ProgressCutsceneExit()
-  letterboxPos = letterboxPos - LETTERBOX_LEAVE_SPEED*UPDATE_PERIOD
+local function ProgressCutsceneExit(dt)
+  letterboxPos = letterboxPos - LETTERBOX_LEAVE_SPEED*dt
   
   if letterboxPos <= 0 then
     letterboxPos = 0
@@ -64,17 +87,35 @@ local function ProgressCutsceneExit()
   end
 end
 
+-- controls fade-out/fade-in/letterboxing progression; hides and locks mouse
 local timer = 0
---local timer2 = 0
 function widget:Update(dt)
+    if isInCutscene and WG.IsGUIHidden() then
+      spSetMouseCursor('none')
+    end
     timer = timer + dt
-    --timer2 = timer2 + dt
     if timer > UPDATE_PERIOD then
       if isInCutscene then
+        if WG.IsGUIHidden() then
+          --spWarpMouse(vsx/2, vsy/2)
+        end
         if isExitingCutscene then
-          ProgressCutsceneExit()
+          ProgressCutsceneExit(timer)
         elseif isEnteringCutscene then
-          ProgressCutsceneEntrance()
+          ProgressCutsceneEntrance(timer)
+        end
+      end
+      if isFadingIn then
+        screenFadeAlpha = screenFadeAlpha - FADE_SPEED*timer
+        if screenFadeAlpha <= 0 then
+          screenFadeAlpha = 0
+          isFadingIn = false
+        end
+      elseif isFadingOut then
+        screenFadeAlpha = screenFadeAlpha + FADE_SPEED*timer
+        if screenFadeAlpha >= 1 then
+          screenFadeAlpha = 1
+          isFadingOut = false
         end
       end
       timer = 0
@@ -84,6 +125,24 @@ function widget:Update(dt)
     --  LeaveCutscene()
     --  timer2 = 0
     --end
+end
+
+local function FadeOut(instant)
+  if instant then
+    screenFadeAlpha = 1
+  else
+    isFadingOut = true
+    isFadingIn = false
+  end
+end
+
+local function FadeIn(instant)
+  if instant then
+    screenFadeAlpha = 0
+  else
+    isFadingIn = true
+    isFadingOut = false
+  end
 end
 
 function widget:Initialize()
@@ -99,6 +158,8 @@ function widget:Initialize()
   
   WG.Cutscene.IsInCutscene = function() return isInCutscene end
   
+  WG.Cutscene.FadeIn = FadeIn
+  WG.Cutscene.FadeOut = FadeOut
   --WG.AddNoHideWidget(self)
 end
 
@@ -110,6 +171,7 @@ function widget:Shutdown()
   WG.Cutscene = nil
 end
 
+-- block all keypresses that aren't pause or Esc while in cutscene
 function widget:KeyPress(key, modifier, isRepeat)
   if isInCutscene then
     local guiHidden = WG.IsGUIHidden()
@@ -150,17 +212,31 @@ function widget:MouseWheel()
   return false
 end
 
+-- draw letterbox/blackout effects
 function widget:DrawScreenEffects()
   if isInCutscene then
-    gl.Color(0,0,0,1)
-    gl.Rect(0, vsy*(1-letterboxPos), vsx, vsy)  --top letterbox
-    gl.Rect(0, 0, vsx, vsy*letterboxPos)  --bottom letterbox
-    gl.Color(1,1,1,1)
+    glColor(0,0,0,1)
+    glRect(0, vsy*(1-letterboxPos), vsx, vsy)  --top letterbox
+    glRect(0, 0, vsx, vsy*letterboxPos)  --bottom letterbox
+    glColor(1,1,1,1)
+  end
+  if screenFadeAlpha > 0 then
+    glColor(0,0,0,screenFadeAlpha)
+    glRect(0, vsy, vsx, 0)
+    glColor(1,1,1,1)
   end
 end
 
 function widget:ViewResize(viewSizeX, viewSizeY)
   vsx, vsy = viewSizeX, viewSizeY
+end
+
+-- block commands while in cutscene
+function widget:CommandNotify()
+  if isInCutscene and WG.IsGUIHidden() then
+    return true
+  end
+  return false
 end
 
 --------------------------------------------------------------------------------

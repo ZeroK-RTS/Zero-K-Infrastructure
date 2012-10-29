@@ -356,6 +356,14 @@ namespace CMissionLib
                             zip.SafeAddFile(action.SoundPath, "LuaUI/Sounds/");
                         }
                     }
+                    else if (item is MusicAction)
+                    {
+                        var action = (MusicAction)item;
+                        if (!String.IsNullOrEmpty(action.TrackPath) && File.Exists(action.TrackPath))
+                        {
+                            zip.SafeAddFile(action.TrackPath, "LuaUI/Sounds/music/");
+                        }
+                    }
 				}
                 string directory = Path.GetDirectoryName(mutatorPath);
                 if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);

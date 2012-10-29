@@ -71,11 +71,19 @@ function MissionEvent(e)
       end
   elseif e.logicType == "EnterCutsceneAction" then
       if WG.Cutscene and WG.Cutscene.EnterCutscene then
-        WG.Cutscene.EnterCutscene()
+        WG.Cutscene.EnterCutscene(e.instant)
       end
   elseif e.logicType == "LeaveCutsceneAction" then
       if WG.Cutscene and WG.Cutscene.LeaveCutscene then
-        WG.Cutscene.LeaveCutscene()
+        WG.Cutscene.LeaveCutscene(e.instant)
+      end
+  elseif e.logicType == "FadeOutAction" then
+      if WG.Cutscene and WG.Cutscene.FadeOut then
+        WG.Cutscene.FadeOut(e.instant)
+      end
+  elseif e.logicType == "FadeInAction" then
+      if WG.Cutscene and WG.Cutscene.FadeIn then
+        WG.Cutscene.FadeIn(e.instant)
       end
   elseif e.logicType == "PauseAction" then
     Spring.SendCommands"pause"
@@ -88,12 +96,41 @@ function MissionEvent(e)
   elseif e.logicType == "SetCameraPointTargetAction" then
     local height = Spring.GetGroundHeight(e.x, e.y)
     Spring.SetCameraTarget(e.x, height, e.y, 1)
+  elseif e.logicType == "SetCameraPosDirAction" then
+    if e.rx then e.rx = math.rad(e.rx) end
+    if e.ry then e.ry = math.rad(e.ry) end
+    local cam = {
+      px = e.px, py = e.py, pz = e.pz, rx = e.rx, ry = e.ry, mode = 4,
+    }
+    Spring.SetCameraState(cam, math.max(e.time, 0))
+  elseif e.logicType == "ShakeCameraAction" then
+      if WG.ShakeCamera then WG.ShakeCamera(e.strength) end
   elseif e.logicType == "SoundAction" then
     PlaySound(e.sound)
+  elseif e.logicType == "MusicAction" then
+    if WG.Music and WG.Music.StartTrack then
+      if e.track then
+	WG.Music.StartTrack("LuaUI/Sounds/music/"..e.track)
+      else
+	WG.Music.StartTrack()
+      end
+    elseif e.track ~= nil then
+      Spring.StopSoundStream()
+      Spring.PlaySoundStream("LuaUI/Sounds/music/"..e.track, 0.5)
+    end
+  elseif e.logicType == "StopMusicAction" then
+    if WG.Music and WG.Music.StopTrack then
+      WG.Music.StopTrack(e.noContinue)
+    else
+      Spring.StopSoundStream()
+    end
   elseif e.logicType == "SunriseAction" then
     WG.noonWanted = true
   elseif e.logicType == "SunsetAction" then
     WG.midnightWanted = true
+  elseif e.logicType == "CustomAction2" then
+    local func = loadstring(e.codeStr)
+    func()
   end
 end
 
