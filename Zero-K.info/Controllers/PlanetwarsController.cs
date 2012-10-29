@@ -239,7 +239,7 @@ namespace ZeroKWeb.Controllers
                         foreach (Planet p in gal.Planets) {
                             string planetIconPath = null;
                             try {
-                                planetIconPath = "/img/planets/" + p.Resource.MapPlanetWarsIcon;
+                                planetIconPath = "/img/planets/" + (p.Resource.MapPlanetWarsIcon ?? "1.png"); // backup image is 1.png
                                 using (Image pi = Image.FromFile(Server.MapPath(planetIconPath))) {
                                     double aspect = pi.Height/(double)pi.Width;
                                     var width = (int)(p.Resource.PlanetWarsIconSize*zoom);
