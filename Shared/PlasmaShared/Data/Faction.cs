@@ -161,7 +161,7 @@ namespace ZkData
             var metal = GetEnergyToMetalConversion();
             if (metal > 0) {
                 var productions =
-                    Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectEnergyPerTurn > 0).GroupBy(
+                    Planets.SelectMany(x => x.PlanetStructures).Where(x => x.IsActive && x.StructureType.EffectEnergyPerTurn > 0 && x.Account != null).GroupBy(
                         x => x.Account).Select(x=>new {Account = x.Key, Energy = x.Sum(y=>y.StructureType.EffectEnergyPerTurn) ?? 0}).ToDictionary(x=>x.Account, x=>x.Energy);
                 var totalEnergy = productions.Sum(x => x.Value);
 
