@@ -1,3 +1,4 @@
+using System.Threading;
 using LobbyClient;
 using System.Linq;
 
@@ -12,9 +13,17 @@ namespace Springie.autohost.Polls
         {
             winCount = 0;
             question = null;
-            if (!spring.IsRunning)
-            {
-                question = "Start game?";
+            if (!spring.IsRunning) {
+                question = "Start game? ";
+
+                var invalid = tas.MyBattle.Users.Where(x => !x.IsSpectator && (x.SyncStatus != SyncStatuses.Synced || x.LobbyUser.IsAway)).ToList();
+                if (invalid.Count > 0) {
+                    foreach (var inv in invalid) {
+                        ah.ComRing(e, new []{inv.Name});
+                    }
+                    ah.SayBattle(string.Join(",", invalid) + " will be forced spectators if they don't download their maps and stop being afk when vote ends");
+                }
+
                 winCount = tas.MyBattle.Users.Count(x => !x.IsSpectator) / 2 + 1;
                 return true;
             }
@@ -39,6 +48,11 @@ namespace Springie.autohost.Polls
 
         protected override void SuccessAction()
         {
+            foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && (x.SyncStatus != SyncStatuses.Synced || x.LobbyUser.IsAway))) {
+                ah.ComForceSpectator(TasSayEventArgs.Default, new string[]{user.Name});
+            }
+            Thread.Sleep(400); // sleep to register spectating
+
             ah.ComStart(TasSayEventArgs.Default, new string[] { });
         }
     }

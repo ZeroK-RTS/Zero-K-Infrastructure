@@ -60,22 +60,9 @@ namespace ZeroKWeb.SpringieInterface
 
                     if (res.MapName != context.Map)
                     {
-                        if (planet.OwnerAccountID != null && planet.Account.Clan != null)
-                        {
-                            var be = Global.Nightwatch.Tas.ExistingBattles.Values.FirstOrDefault(x => x.Founder.Name == context.AutohostName);
-                            if (be != null && !be.Founder.IsInGame && be.MapName != res.MapName && be.NonSpectatorCount > 0)
-                            {
-                                foreach (var a in planet.Account.Clan.Accounts)
-                                {
-                                    AuthServiceClient.SendLobbyMessage(a,
-                                                                       String.Format("Your clan's planet {0} is about to be attacked, defend it! Come to PlanetWars spring://@join_player:{1} ", planet.Name, context.AutohostName));
-                                }
-                            }
-                        }
-
                         if (planet.OwnerFactionID != null)
                         {
-                            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, planet.Faction.Shortcut, string.Format("Your faction's planet {0} is about to be attacked, defend it! Come to PlanetWars spring://@join_player:{1} ", planet.Name, context.AutohostName), true);
+                            Global.Nightwatch.Tas.Say(TasClient.SayPlace.Channel, planet.Faction.Shortcut, string.Format("Your planet {0} is about to be attacked, defend it! Come to PlanetWars spring://@join_player:{1} ", planet.Name, context.AutohostName), true);
                         }
                     }
 				    db.SubmitChanges();

@@ -859,7 +859,7 @@ namespace Springie.autohost
             List<string> usname;
             if (!AllReadyAndSynced(out usname))
             {
-                SayBattle("cannot start, " + Utils.Glue(usname.ToArray()) + " not ready and synced");
+                SayBattle("cannot start, " + Utils.Glue(usname.ToArray()) + " does not have the map/game yet");
                 return;
             }
 

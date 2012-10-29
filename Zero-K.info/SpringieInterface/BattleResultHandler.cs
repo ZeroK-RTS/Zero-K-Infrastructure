@@ -130,7 +130,7 @@ namespace ZeroKWeb.SpringieInterface
                                               account.Name,
                                               account.Level,
                                               account.AccountID);
-                            text.AppendLine(message);
+                            //text.AppendLine(message);
                             AuthServiceClient.SendLobbyMessage(account, message);
                         } catch (Exception ex) {
                             Trace.TraceError("Error sending level up lobby message: {0}", ex);
@@ -138,8 +138,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                text.AppendLine(string.Format("Debriefing room for a battle at {0}", context.Map));
-                text.AppendLine(string.Format("View full battle details and demo at http://zero-k.info/Battles/Detail/{0}", sb.SpringBattleID));
+                text.AppendLine(string.Format("BATTLE DETAILS AND REPLAY ----> http://zero-k.info/Battles/Detail/{0} <-----", sb.SpringBattleID));
 
                 // create debriefing room, join players there and output message
                 string channelName = "B" + sb.SpringBattleID;
@@ -158,7 +157,7 @@ namespace ZeroKWeb.SpringieInterface
                 tas.Say(TasClient.SayPlace.Channel, channelName, text.ToString(), true);
                 tas.LeaveChannel(channelName);
 
-                text.Append(string.Format("Debriefing in #{0} - spring://chat/channel/{0}  ", channelName));
+                //text.Append(string.Format("Debriefing in #{0} - spring://chat/channel/{0}  ", channelName));
                 return text.ToString();
             } catch (Exception ex) {
                 return ex.ToString();
