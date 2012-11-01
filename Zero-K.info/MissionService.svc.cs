@@ -138,9 +138,7 @@ namespace ZeroKWeb
 			db.SubmitChanges();
 
             var updater = new MissionUpdater();
-            //throw new ApplicationException("STOP 3");
             updater.UpdateMission(db, mission, modInfo);
-            //throw new ApplicationException("STOP 4");
 
 			mission.IsDeleted = false;
 			db.SubmitChanges();

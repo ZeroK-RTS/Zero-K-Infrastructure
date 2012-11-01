@@ -84,7 +84,7 @@ namespace MissionEditor2
 					PlasmaShared.UnitSyncLib.Mod mod;
 					using (var unitSync = new PlasmaShared.UnitSyncLib.UnitSync(paths))
 					{
-						mod = unitSync.GetModFromArchive(missionFileName);
+						mod = unitSync.GetModFromArchive(mission.Mod.ArchiveName);
 						if (mod == null) throw new Exception("Mod metadata not extracted: mod not found");
 					}
 					info.Mutator = new Binary(File.ReadAllBytes(tempPath));
