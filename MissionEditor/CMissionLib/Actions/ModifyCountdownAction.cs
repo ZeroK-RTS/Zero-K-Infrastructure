@@ -98,7 +98,7 @@ namespace CMissionLib.Actions
 			var map = new Dictionary<object, object>
 				{
 					{"countdown", Countdown},
-					{"actions", Mode},
+					{"action", Mode},
 					{"frames", Math.Floor(Frames)},
 				};
 			return new LuaTable(map);

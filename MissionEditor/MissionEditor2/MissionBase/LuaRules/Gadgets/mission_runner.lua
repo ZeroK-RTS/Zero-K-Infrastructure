@@ -326,6 +326,8 @@ local function AddUnitGroup(unitID, group)
   end
 end
 
+GG.mission.AddUnitGroup = AddUnitGroup
+
 local function AddUnitGroups(unitID, groups)
   for group in pairs(groups) do
     AddUnitGroup(unitID, group)
@@ -394,7 +396,11 @@ local function ExecuteTrigger(trigger, frame)
 	  elseif action.logicType == "CustomAction2" then
         Event = function()
           if action.args.synced then
-            local func = loadstring(action.args.codeStr)
+            local func, err = loadstring(action.args.codeStr)
+            if err then
+              error("Failed to load custom action: ".. action.args.codeStr)
+              return
+            end
 	    func()
           else
             action.args.logicType = action.logicType
