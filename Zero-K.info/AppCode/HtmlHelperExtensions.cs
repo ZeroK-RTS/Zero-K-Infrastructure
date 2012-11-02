@@ -59,8 +59,8 @@ namespace System.Web.Mvc
             str = exp.Replace(str, "<strong>$1</strong>");
 
             // format the quote tags: [quote][/quote]
-            // becomes: <em></em>
-            exp = new Regex(@"\[quote\](.+?)\[/quote\]");
+            // becomes: stuff
+            exp = new Regex(@"\[quote\]((.|\n)+?)\[/quote\]");
             str = exp.Replace(str, "<table border=\"0\" cellpadding=\"6\" cellspacing=\"0\" width=\"100%\"><tbody><tr><td style=\"border: 1px inset;\"><em>quote:<br>$1</em></td></tr></tbody></table>");
  			
 			
