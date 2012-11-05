@@ -76,6 +76,8 @@
     <Compile Include="Actions\AddObjectiveAction.cs" />
     <Compile Include="Actions\ConvoMessageAction.cs" />
     <Compile Include="Actions\ClearConvoMessageQueueAction.cs" />
+    <Compile Include="Actions\RestoreCameraStateAction.cs" />
+    <Compile Include="Actions\SaveCameraStateAction.cs" />
     <Compile Include="Actions\ShakeCameraAction.cs" />
     <Compile Include="Actions\SetCameraPosDirAction.cs" />
     <Compile Include="Actions\FadeOutAction.cs" />
@@ -201,6 +203,11 @@
       <Project>{B24E7FB3-A3FB-4B67-A499-721F9B34A404}</Project>
       <Name>PlasmaShared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Actions\Camera\" />
+    <Folder Include="Actions\GUI\" />
+    <Folder Include="Actions\Logic\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

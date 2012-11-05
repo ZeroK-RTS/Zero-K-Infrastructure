@@ -10,7 +10,7 @@ namespace CMissionLib
 	public class UnitStartInfo: Positionable
 	{
 		ObservableCollection<string> groups;
-		double heading;
+        double heading = 0;
 		bool isGhost;
 		Player player;
 		UnitInfo unitDef;

@@ -655,12 +655,14 @@ local function ExecuteTrigger(trigger, frame)
                 end
                 if unitID then
                   if not isBuilding then
-                    local heading = (unit.heading - 180)/360 * 2 * math.pi
-                    if drop and gameframe > 1 then
-                      --Spring.MoveCtrl.SetRotation(unitID, 0, heading, 0)
-                      Spring.SetUnitRotation(unitID, 0, heading, 0)
-                    else
-                      Spring.SetUnitRotation(unitID, 0, heading, 0)
+                    if unit.heading ~= 0 then
+                      local heading = (unit.heading - 180)/360 * 2 * math.pi
+                      if drop and gameframe > 1 then
+                        --Spring.MoveCtrl.SetRotation(unitID, 0, heading, 0)
+                        Spring.SetUnitRotation(unitID, 0, heading, 0)
+                      else
+                        Spring.SetUnitRotation(unitID, 0, heading, 0)
+                      end
                     end
                   end
                   createdUnits[unitID] = true
@@ -729,6 +731,8 @@ local function ExecuteTrigger(trigger, frame)
              action.logicType == "MarkerPointAction" or 
              action.logicType == "SetCameraPointTargetAction" or
              action.logicType == "SetCameraPosDirAction" or
+             action.logicType == "SaveCameraStateAction" or
+             action.logicType == "RestoreCameraStateAction" or
              action.logicType == "ShakeCameraAction" or
              action.logicType == "GuiMessageAction" or
              action.logicType == "GuiMessagePersistentAction" or

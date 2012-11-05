@@ -17,6 +17,7 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+local camState = {}
 
 local function PlaySound(fileName, ...)
   local path = "LuaUI/Sounds/"..fileName
@@ -103,6 +104,10 @@ function MissionEvent(e)
       px = e.px, py = e.py, pz = e.pz, rx = e.rx, ry = e.ry, mode = 4,
     }
     Spring.SetCameraState(cam, math.max(e.time, 0))
+  elseif e.logicType == "SaveCameraStateAction" then
+      camState = Spring.GetCameraState()
+  elseif e.logicType == "RestoreCameraStateAction" then
+      Spring.SetCameraState(camState, 1)
   elseif e.logicType == "ShakeCameraAction" then
       if WG.ShakeCamera then WG.ShakeCamera(e.strength) end
   elseif e.logicType == "SoundAction" then
@@ -129,7 +134,11 @@ function MissionEvent(e)
   elseif e.logicType == "SunsetAction" then
     WG.midnightWanted = true
   elseif e.logicType == "CustomAction2" then
-    local func = loadstring(e.codeStr)
+    local func, err = loadstring(e.codeStr)
+    if err then
+      error("Failed to load custom action: ".. e.codeStr)
+      return
+    end
     func()
   end
 end

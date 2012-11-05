@@ -16,11 +16,9 @@ namespace MissionEditor2
 		{
 			if (DesignerProperties.GetIsInDesignMode(container) || item == null) return null;
 
-
-			
 			string resourceName = null;
 			// older templates, in MainWindow.xaml
-            // FIXME surely there must be a more sensible doing the selection?
+			// don't add new ones here, see how ListTemplates.xaml does it instead!
 			if (item is ConsoleMessageAction) resourceName = "showConsoleMessageTemplate";
 			else if (item is GameStartedCondition) resourceName = "gameStartedConditionTemplate";
 			else if (item is GameEndedCondition) resourceName = "gameEndedConditionTemplate";
@@ -38,14 +36,8 @@ namespace MissionEditor2
 			else if (item is DummyCondition || item is DummyAction || item is ConditionsFolder || item is ActionsFolder) resourceName = "dummyTemplate";
 			else if (item is SunriseAction) resourceName = "sunriseTemplate";
 			else if (item is SunsetAction) resourceName = "sunsetTemplate";
-            else if (item is EnterCutsceneAction) resourceName = "enterCutsceneTemplate";
-            else if (item is LeaveCutsceneAction) resourceName = "leaveCutsceneTemplate";
-            else if (item is FadeOutAction) resourceName = "fadeOutTemplate";
-            else if (item is FadeInAction) resourceName = "fadeInTemplate";
 			else if (item is SendScoreAction) resourceName = "sendScoreTemplate";
 			else if (item is WaitAction) resourceName = "waitActionTemplate";
-            else if (item is SetCameraPosDirAction) resourceName = "setCameraPosDirActionTemplate";
-            else if (item is ShakeCameraAction) resourceName = "shakeCameraActionTemplate";
 			else if (item is AllowUnitTransfersAction) resourceName = "allowUnitTransfersTemplate";
             else if (item is CustomAction2) resourceName = "customAction2Template";
 

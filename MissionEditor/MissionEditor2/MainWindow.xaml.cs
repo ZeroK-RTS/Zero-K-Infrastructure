@@ -169,6 +169,8 @@ namespace MissionEditor2
 			addAction("Point Camera at Unit", () => new SetCameraUnitTargetAction());
             addAction("Set Camera Position/Direction", () => new SetCameraPosDirAction());
             addAction("Shake Camera", () => new ShakeCameraAction());
+            addAction("Save Camera State", () => new SaveCameraStateAction());
+            addAction("Restore Camera State", () => new RestoreCameraStateAction());
 			addAction("Send Scores", () => new SendScoreAction());
 			addAction("Show Console Message", () => new ConsoleMessageAction("Hello!"));
 			addAction("Show GUI Message", () => new GuiMessageAction("Hello!"));

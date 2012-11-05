@@ -19,6 +19,7 @@ include("keysym.h.lua")
 
 local spWarpMouse = Spring.WarpMouse
 local spSetMouseCursor = Spring.SetMouseCursor
+local spGetMapDrawMode = Spring.GetMapDrawMode
 local glColor = gl.Color
 local glRect = gl.Rect
 
@@ -36,6 +37,16 @@ local letterboxPos = 0
 local isFadingIn = false
 local isFadingOut = false
 local screenFadeAlpha = 0
+
+local lastDrawMode = "normal"
+local lastIconDist = 150
+local DRAW_MODE_COMMANDS = {
+  height = "showelevation",
+  metal = "showmetalmap",
+  pathTraversability = "showpathtraversability",
+  los = "togglelos",
+}
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 local function EnterCutscene(instant)
@@ -47,6 +58,15 @@ local function EnterCutscene(instant)
   end
   Spring.SelectUnitArray({})
   
+  -- set view settings to remove gameplay-oriented stuff
+  lastIconDist = Spring.GetConfigInt("UnitIconDist", 150)
+  Spring.SendCommands("disticon " .. 1000)
+  local drawMode = spGetMapDrawMode()
+  if drawMode ~= "normal" then
+    local cmd = DRAW_MODE_COMMANDS[drawMode]
+    lastDrawMode = drawMode
+  end
+  
   if instant then
     letterboxPos = LETTERBOX_BOUNDARY
     isEnteringCutscene = false
@@ -57,11 +77,21 @@ local function EnterCutscene(instant)
   end
 end
 
+-- restore user's view settings as needed; unhide GUI
+local function RestoreFromCutscene()
+  letterboxPos = 0
+  isInCutscene = false
+  isExitingCutscene = false
+  if lastDrawMode ~= "normal" then
+    Spring.SendCommands(DRAW_MODE_COMMANDS[lastDrawMode])
+  end
+  Spring.SendCommands("disticon " .. lastIconDist)
+  WG.UnhideGUI()
+end
+
 local function LeaveCutscene(instant)
   if instant then
-    letterboxPos = 0
-    isEnteringCutscene = false
-    isExitingCutscene = false
+    RestoreFromCutscene()
   else
     isExitingCutscene = true
     isEnteringCutscene = false
@@ -80,10 +110,7 @@ local function ProgressCutsceneExit(dt)
   letterboxPos = letterboxPos - LETTERBOX_LEAVE_SPEED*dt
   
   if letterboxPos <= 0 then
-    letterboxPos = 0
-    isInCutscene = false
-    isExitingCutscene = false
-    WG.UnhideGUI()
+    RestoreFromCutscene()
   end
 end
 
@@ -96,9 +123,9 @@ function widget:Update(dt)
     timer = timer + dt
     if timer > UPDATE_PERIOD then
       if isInCutscene then
-        if WG.IsGUIHidden() then
-          --spWarpMouse(vsx/2, vsy/2)
-        end
+        --if WG.IsGUIHidden() then
+        --  spWarpMouse(vsx/2, vsy/2)
+        --end
         if isExitingCutscene then
           ProgressCutsceneExit(timer)
         elseif isEnteringCutscene then
