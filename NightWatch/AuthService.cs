@@ -144,6 +144,7 @@ namespace NightWatch
                                     if (resolved != null && resolved.Length > 0) {
                                         client.AdminKickFromLobby(args.Name, "Bye, proxy not allowed!");
                                     }
+
                                     string hostname = Dns.GetHostEntry(args.IP).HostName;
                                     if (blockedHosts.Any(hostname.Contains)) client.AdminKickFromLobby(args.Name, "Bye, proxy not allowed!");
                                 }
