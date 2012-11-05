@@ -421,7 +421,7 @@ namespace LobbyClient
                                 //Trace.TraceInformation("Score data (raw) : " + data);
                                 data = Encoding.ASCII.GetString(Convert.FromBase64String(match.Groups[1].Value));
                                 //Trace.TraceInformation("Score data (decoded) : " + data);
-                                Trace.TraceInformation("Mission name: " + modName);
+                                Trace.TraceInformation("Submitting score for mission " + modName);
                                 var parts = data.Split('/');
                                 var score = 0;
                                 if (parts.Length > 1) {
