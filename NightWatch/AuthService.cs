@@ -22,6 +22,7 @@ namespace NightWatch
         int messageId;
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
         public static string[] blockedHosts = new[] { "anchorfree.com", "leaseweb.com", "uk2net.com" };
+        public static string[] allowedAccounts = new[] { "[KO1]RageQuit" };
 
 
         public AuthService(TasClient client)
@@ -136,13 +137,16 @@ namespace NightWatch
                                     db.SubmitChanges();
                                 }
 
-                                var reversedIP = string.Join(".", args.IP.Split('.').Reverse().ToArray());
-                                var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
-                                if (resolved != null && resolved.Length > 0) {
-                                    client.AdminKickFromLobby(args.Name, "Bye, proxy not allowed!");
+
+                                if (!allowedAccounts.Contains(args.Name)) {
+                                    var reversedIP = string.Join(".", args.IP.Split('.').Reverse().ToArray());
+                                    var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
+                                    if (resolved != null && resolved.Length > 0) {
+                                        client.AdminKickFromLobby(args.Name, "Bye, proxy not allowed!");
+                                    }
+                                    string hostname = Dns.GetHostEntry(args.IP).HostName;
+                                    if (blockedHosts.Any(hostname.Contains)) client.AdminKickFromLobby(args.Name, "Bye, proxy not allowed!");
                                 }
-                                string hostname = Dns.GetHostEntry(args.IP).HostName;
-                                if (blockedHosts.Any(hostname.Contains)) client.AdminKickFromLobby(args.Name, "Bye, proxy not allowed!");
                             }
                             catch (Exception ex)
                             {
