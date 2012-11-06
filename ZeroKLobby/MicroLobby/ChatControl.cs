@@ -28,12 +28,12 @@ namespace ZeroKLobby.MicroLobby
 		public event EventHandler<EventArgs<string>> ChatLine { add { sendBox.LineEntered += value; } remove { sendBox.LineEntered -= value; } }
 		public GameInfo GameInfo { get; set; }
 
-	    public class ChannelLineArgs:EventArgs {
-            public string Channel;
-            public IChatLine Line;
-        }
+		public class ChannelLineArgs:EventArgs {
+			public string Channel;
+			public IChatLine Line;
+		}
 
-        public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
+		public static EventHandler<ChannelLineArgs> ChannelLineAdded = (sender, args) => { };
 
 		public ChatControl() {}
 
@@ -57,16 +57,16 @@ namespace ZeroKLobby.MicroLobby
 		{
 			InitializeComponent();
 
-      var isDesignMode = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working in constructor
+	  var isDesignMode = Process.GetCurrentProcess().ProcessName == "devenv"; // workaround for this.DesignMode not working in constructor
 			if (isDesignMode) return;
 
-      var extras = new Button();
-      extras.Text = "Extras";
-      extras.Click += (s, e) => { ContextMenus.GetChannelContextMenu(this).Show(extras, new Point(0, 0)); };
-      ChatBox.Controls.Add(extras);
+	  var extras = new Button();
+	  extras.Text = "Extras";
+	  extras.Click += (s, e) => { ContextMenus.GetChannelContextMenu(this).Show(extras, new Point(0, 0)); };
+	  ChatBox.Controls.Add(extras);
 
 
-      playerBox.DrawMode = DrawMode.OwnerDrawVariable;
+	  playerBox.DrawMode = DrawMode.OwnerDrawVariable;
 			playerBox.MeasureItem += (s, e) => { }; // needed for ListBox.OnMeasureItem
 			playerBox.BackColor = Program.Conf.BgColor;
 			playerBox.ForeColor = Program.Conf.TextColor;
@@ -153,10 +153,11 @@ namespace ZeroKLobby.MicroLobby
 
 		public virtual void AddLine(IChatLine line)
 		{
-			if ((line is SaidLine && Program.Conf.IgnoredUsers.Contains(((SaidLine)line).AuthorName)) ||
-			    (line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName))) return;
+			if (ChannelName != "zkadmin" &&
+			   ((line is SaidLine && Program.Conf.IgnoredUsers.Contains(((SaidLine)line).AuthorName)) ||
+				(line is SaidExLine && Program.Conf.IgnoredUsers.Contains(((SaidExLine)line).AuthorName)))) return;
 			ChatBox.AddLine(line);
-            ChannelLineAdded(this, new ChannelLineArgs() { Channel = ChannelName, Line = line});
+			ChannelLineAdded(this, new ChannelLineArgs() { Channel = ChannelName, Line = line});
 			HistoryManager.LogLine(ChannelName, line);
 		}
 
@@ -221,8 +222,8 @@ namespace ZeroKLobby.MicroLobby
 						var userNameFound = playerListItem.UserName.ToUpper().Contains(word);
 						var countryFound = user.Country.ToUpper() == word;
 						var countryNameFound = user.CountryName.ToUpper() == word;
-                        var clanFound = user.Clan != null && user.Clan.ToUpper() == word;
-                        var factionFound = user.Faction != null && user.Faction.ToUpper() == word;
+						var clanFound = user.Clan != null && user.Clan.ToUpper() == word;
+						var factionFound = user.Faction != null && user.Faction.ToUpper() == word;
 						if (!negation)
 						{
 							if (!(userNameFound || countryFound || countryNameFound || clanFound || factionFound))
@@ -365,8 +366,8 @@ namespace ZeroKLobby.MicroLobby
 		{
 			if (e.ServerParams[0] != ChannelName) return;
 			playerListItems = (from name in Program.TasClient.JoinedChannels[ChannelName].ChannelUsers
-			                   let user = Program.TasClient.ExistingUsers[name]
-			                   select new PlayerListItem { UserName = user.Name }).ToList();
+							   let user = Program.TasClient.ExistingUsers[name]
+							   select new PlayerListItem { UserName = user.Name }).ToList();
 
 			if (filtering) FilterPlayers();
 			else
@@ -453,7 +454,7 @@ namespace ZeroKLobby.MicroLobby
 			{
 				if (e.Place == TasSayEventArgs.Places.Channel)
 				{
-                    if (e.Text.Contains(Program.Conf.LobbyPlayerName) && e.UserName != GlobalConst.NightwatchName)
+					if (e.Text.Contains(Program.Conf.LobbyPlayerName) && e.UserName != GlobalConst.NightwatchName)
 					{
 						Program.MainWindow.NotifyUser("chat/channel/" + e.Channel, string.Format("{0}: {1}", e.UserName, e.Text), false, true);
 					}
@@ -488,7 +489,7 @@ namespace ZeroKLobby.MicroLobby
 			if (item != null && item.UserName != null)
 			{
 				playerBox.SelectedItem = item;
-        if (item.User != null && !Program.Conf.LeftClickSelectsPlayer) ShowPlayerContextMenu(item.User, playerBox, e.Location);
+		if (item.User != null && !Program.Conf.LeftClickSelectsPlayer) ShowPlayerContextMenu(item.User, playerBox, e.Location);
 			}
 		  //playerBox.ClearSelected();
 		}
