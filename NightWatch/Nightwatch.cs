@@ -74,6 +74,9 @@ namespace CaTracker
 			tas.LoginDenied += tas_LoginDenied;
 			tas.LoginAccepted += tas_LoginAccepted;
 
+            Auth = new AuthService(tas);
+            offlineMessages = new OfflineMessages(tas);
+            playerMover = new PlayerMover(tas);
             
 
 			try
@@ -85,9 +88,6 @@ namespace CaTracker
 				recon.Start();
 			}
 
-            Auth = new AuthService(tas);
-            offlineMessages = new OfflineMessages(tas);
-            playerMover = new PlayerMover(tas);
 
 			return true;
 		}
