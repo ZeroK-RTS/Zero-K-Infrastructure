@@ -125,9 +125,7 @@ namespace LobbyClient
 
         public void Publish(string name, Dictionary<string, string> data)
         {
-            Dictionary<string, string> dict;
-            publishedUserAttributes.TryGetValue(name, out dict);
-            dict = dict ?? new Dictionary<string, string>();
+            Dictionary<string, string> dict = new Dictionary<string, string>();
             foreach (var kvp in data) dict[kvp.Key] = kvp.Value;
             publishedUserAttributes[name] = dict;
             tas.Say(TasClient.SayPlace.Channel, ExtensionChannelName, FormatMessage(name, data), false);

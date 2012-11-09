@@ -44,10 +44,10 @@ namespace ZeroKLobby
                     {
                         var name = match.Groups[1].Value;
 						User userData;
-						bool ban = Program.TasClient.ExistingUsers.TryGetValue(name, out userData);
+						bool ban = Program.TasClient.ExistingUsers.TryGetValue(name, out userData) && userData.BanMute;
                         var sayText = match.Groups[2].Value;
                         bool validText = (name != Program.Conf.LobbyPlayerName && !string.IsNullOrEmpty(text) && !Regex.IsMatch(sayText, "Start [0-9]+$"));
-                        if (validText && !(ban && userData.BanMute))
+                        if (validText && !ban)
                         {
                             if (voices.Count > 1) speechSynthesizer.SelectVoice(voices[name.GetHashCode()%voices.Count].VoiceInfo.Name);
                             speechSynthesizer.SpeakAsync(sayText);
