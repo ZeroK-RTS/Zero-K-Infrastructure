@@ -41,8 +41,13 @@ namespace NightWatch
       };*/
 
             this.client.LoginAccepted += (s, e) =>
-                { requests.Clear();
+                { 
+                    requests.Clear();
                     client.JoinChannel(ModeratorChannel);
+                    using (var db = new ZkDataContext())
+                    {
+                        foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) client.JoinChannel(fac.Shortcut);
+                    }
                 };
 
             this.client.TestLoginAccepted += (s, e) =>
@@ -286,9 +291,6 @@ namespace NightWatch
 
                 };
 
-            using (var db= new ZkDataContext()) {
-                foreach (var fac in db.Factions.Where(x=>!x.IsDeleted)) client.JoinChannel(fac.Shortcut);
-            }
         }
 
 
