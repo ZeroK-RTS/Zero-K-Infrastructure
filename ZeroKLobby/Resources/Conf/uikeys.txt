@@ -110,8 +110,8 @@ bind             Ctrl+v  pastetext
 bind                  w  wait
 bind            Shift+w  wait queued
 bind             ctrl+w  areamex
-bind                  x  onoff
-bind            Shift+x  onoff
+bind                  o  onoff
+bind            Shift+o  onoff
 bind              Any+x  buildspacing dec
 bind              Any+z  buildspacing inc
 bind         Any+delete  edit_delete
