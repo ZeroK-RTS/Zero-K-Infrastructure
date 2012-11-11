@@ -247,6 +247,7 @@ namespace ZeroKLobby.MicroLobby
             else if (e.Origin == TasSayEventArgs.Origins.Server &&
                      (e.Place == TasSayEventArgs.Places.Motd || e.Place == TasSayEventArgs.Places.MessageBox ||
                       e.Place == TasSayEventArgs.Places.Server || e.Place == TasSayEventArgs.Places.Broadcast)) Trace.TraceInformation("TASC: {0}", e.Text);
+            if (e.Place == TasSayEventArgs.Places.Server || e.Place == TasSayEventArgs.Places.MessageBox || e.Place == TasSayEventArgs.Places.Broadcast) WarningBar.DisplayWarning(e.Text);
         }
 
         void FriendManager_FriendAdded(object sender, EventArgs<string> e)
