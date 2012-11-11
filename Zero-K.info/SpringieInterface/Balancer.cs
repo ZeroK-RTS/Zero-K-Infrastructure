@@ -36,7 +36,7 @@ namespace ZeroKWeb.SpringieInterface
             int playerCount = context.Players.Count(x => !x.IsSpectator);
 
             // dont allow to start alone
-            if (context.Players.Count() <= 1 && !context.Bots.Any()) return new BalanceTeamsResult { CanStart = false, Message = "Cannot play alone, you can add bots using button on bottom left." };
+            if (playerCount <= 1 && !context.Bots.Any()) return new BalanceTeamsResult { CanStart = false, Message = "Cannot play alone, you can add bots using button on bottom left." };
 
             if (clanWise == null &&
                 (config.AutohostMode == AutohostMode.BigTeams || config.AutohostMode == AutohostMode.SmallTeams ||
@@ -44,20 +44,17 @@ namespace ZeroKWeb.SpringieInterface
 
             BalanceTeamsResult res = PerformBalance(context, isGameStart, allyCount, clanWise, config, playerCount);
 
-            if (!isGameStart) {
+            if (isGameStart) {
                 if (playerCount < (config.MinToStart ?? 0)) {
-                    //res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
+                    res.Message = string.Format("This host needs at least {0} people to start", config.MinToStart);
                     res.CanStart = false;
-                    //return res;
+                    return res;
                 }
-                else if (playerCount > (config.MaxToStart ?? 99) || playerCount > (config.SplitBiggerThan ?? 99)) {
-                    //res.Message = string.Format("This host can only start with less than {0} people, wait for juggler to split you", Math.Min(config.MaxToStart??0, config.SplitBiggerThan??0));
+                if (playerCount > (config.MaxToStart ?? 99) || playerCount > (config.SplitBiggerThan ?? 99)) {
+                    res.Message = string.Format("This host can only start with less than {0} people, wait for juggler to split you", Math.Min(config.MaxToStart??0, config.SplitBiggerThan??0));
                     res.CanStart = false;
-                    //return res;
+                    return res;
                 }
-                if (playerCount%2 == 1 && playerCount < 8) res.CanStart = false;
-                if (config.AutohostMode == AutohostMode.Game1v1 || config.AutohostMode == AutohostMode.GameFFA ||
-                    config.AutohostMode == AutohostMode.None) res.CanStart = false;
             }
 
             if (isGameStart) VerifySpecCheaters(context, res);
@@ -128,7 +125,9 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                return LegacyBalance(2, BalanceMode.FactionWise, context, attackers, defenders);
+                res= LegacyBalance(2, BalanceMode.FactionWise, context, attackers, defenders);
+                res.DeleteBots = true;
+                return res;
             }
         }
 
@@ -363,6 +362,7 @@ namespace ZeroKWeb.SpringieInterface
                         return res;
                     }
                     case AutohostMode.Planetwars:
+                        
                         return new Balancer().PlanetwarsBalance(context);
                 }
                 return res;
