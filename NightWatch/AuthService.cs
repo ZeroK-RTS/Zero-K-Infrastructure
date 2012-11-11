@@ -148,11 +148,11 @@ namespace NightWatch
                                     var reversedIP = string.Join(".", args.IP.Split('.').Reverse().ToArray());
                                     var resolved = Dns.GetHostEntry(string.Format("{0}.dnsbl.tornevall.org", reversedIP)).AddressList;
                                     if (resolved != null && resolved.Length > 0) {
-                                        client.AdminKickFromLobby(args.Name, "Bye, proxy not allowed!");
+                                        client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
                                     }
 
                                     string hostname = Dns.GetHostEntry(args.IP).HostName;
-                                    if (blockedHosts.Any(hostname.Contains)) client.AdminKickFromLobby(args.Name, "Bye, proxy not allowed!");
+                                    if (blockedHosts.Any(hostname.Contains)) client.AdminKickFromLobby(args.Name, "Connection using proxy or VPN is not allowed! (You can ask for exception)");
                                 }
                             }
                             catch (Exception ex)
