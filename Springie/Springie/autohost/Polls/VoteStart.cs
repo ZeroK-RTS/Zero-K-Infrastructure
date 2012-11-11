@@ -48,12 +48,15 @@ namespace Springie.autohost.Polls
 
         protected override void SuccessAction()
         {
+            ah.ComForceSpectatorAfk(TasSayEventArgs.Default, new string[]{});
             foreach (var user in tas.MyBattle.Users.Where(x => !x.IsSpectator && (x.SyncStatus != SyncStatuses.Synced || x.LobbyUser.IsAway))) {
                 ah.ComForceSpectator(TasSayEventArgs.Default, new string[]{user.Name});
             }
-            Thread.Sleep(400); // sleep to register spectating
-
-            ah.ComStart(TasSayEventArgs.Default, new string[] { });
+            new Thread(()=>
+                {
+                    Thread.Sleep(500); // sleep to register spectating        
+                    ah.ComStart(TasSayEventArgs.Default, new string[] { });
+                }).Start();
         }
     }
 }
