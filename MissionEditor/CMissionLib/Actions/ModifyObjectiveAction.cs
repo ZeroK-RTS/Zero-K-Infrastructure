@@ -10,7 +10,8 @@ namespace CMissionLib.Actions
         string id;
 		string title;
         string description;
-        string status;
+        public static string[] Statuses = new[] { "Complete", "Incomplete", "Failed" };
+        string status = Statuses[1];
         //bool useCustomColor;
         //int[] color;
         bool hasCameraTarget;

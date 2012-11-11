@@ -10,7 +10,6 @@ namespace CMissionLib.Actions
         string id;
 		string title="Objective Name";
         string description="Some text to describe your objective";
-        string status = "Incomplete";
         //bool useCustomColor;
         //int[] color;
         bool hasCameraTarget;
@@ -52,17 +51,6 @@ namespace CMissionLib.Actions
             {
                 description = value;
                 RaisePropertyChanged("Description");
-            }
-        }
-
-		[DataMember]
-        public string Status
-        {
-            get { return status; }
-            set
-            {
-                status = value;
-                RaisePropertyChanged("Status");
             }
         }
 
@@ -119,7 +107,6 @@ namespace CMissionLib.Actions
 					{"id", ID},
 					{"title", title},
                     {"description", description},
-					{"status", status},
 				};
             //if(useCustomColor)
 			return new LuaTable(map);

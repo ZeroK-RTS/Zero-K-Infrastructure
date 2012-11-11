@@ -77,7 +77,7 @@ local vsx, vsy
 local function UpdateColors() end	-- redefined below
 
 options_path = 'Settings/Graphics/Effects/Night'
-options_order = {"coloredUnits", "cycle", "time", "beam", "bases"}
+options_order = {"coloredUnits", "beam", "bases"}
 options = {
 	coloredUnits = {
 		name = "Night Colored Units",

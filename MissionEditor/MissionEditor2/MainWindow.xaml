@@ -394,26 +394,11 @@
                             <TextBox Grid.Column="1" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" MaxWidth="500" MaxHeight="500" MinLines="3"
                                     HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible" MaxLines="10" TextWrapping="Wrap" />
                         </Grid>
-                        <DockPanel>
-                            <Label DockPanel.Dock="Left">Status</Label>
-                            <TextBox DockPanel.Dock="Left" Text="{Binding Status, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
-                        </DockPanel>
-                        <!-->
-                        <DockPanel>
-                            <Label DockPanel.Dock="Left">Status</Label>
-                            <ComboBox x:Name ="StatusComboBox" DockPanel.Dock="Left" Text="Status" SelectedItem="{Binding Status}">
-                                <ComboBoxItem Name="Complete">Complete</ComboBoxItem>
-                                <ComboBoxItem Name="Incomplete">Incomplete</ComboBoxItem>
-                                <ComboBoxItem Name="Failed">Failed</ComboBoxItem>
-                            </ComboBox>
-                        </DockPanel>
-                        </!-->
                     </StackPanel>
                 </GroupBox>
                 <GroupBox Grid.Row="1" Header="Description">
                     <TextBlock TextWrapping="Wrap">
                         This action creates a new objective with the specified ID. You can define the objective title and description.
-                        Objective status can be "Complete", "Incomplete" or "Failed". In the future these will be selected from a drop-down box.
                     </TextBlock>
                 </GroupBox>
             </Grid>
@@ -452,7 +437,7 @@
                         </Grid>
                         <DockPanel>
                             <Label DockPanel.Dock="Left">Status</Label>
-                            <TextBox DockPanel.Dock="Left" Text="{Binding Status, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="False" MaxWidth="200" MaxLines="1"/>
+                            <ComboBox DockPanel.Dock="Left" ItemsSource="{x:Static Actions:ModifyObjectiveAction.Statuses}" SelectedItem="{Binding Status}" />
                         </DockPanel>
                         <!-->
                         <DockPanel>
@@ -469,7 +454,6 @@
                 <GroupBox Grid.Row="1" Header="Description">
                     <TextBlock TextWrapping="Wrap">
                         This action modifies the objective with the specified ID. You can define the objective title and description.
-                        Objective status can be "Complete", "Incomplete" or "Failed". In the future these will be selected from a drop-down box.
                     </TextBlock>
                 </GroupBox>
             </Grid>

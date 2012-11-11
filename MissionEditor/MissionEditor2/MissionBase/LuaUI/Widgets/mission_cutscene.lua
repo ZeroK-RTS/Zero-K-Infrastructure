@@ -4,13 +4,13 @@
 function widget:GetInfo()
   return {
     name      = "Cutscenes",
-    desc      = "v0.1 Letterboxes and camera control for cutscenes",
+    desc      = "v0.5 Letterboxes and camera control for cutscenes",
     author    = "KingRaptor (L.J. Lim)",
     date      = "2012.10.25",
     license   = "GNU GPL, v2 or later",
     layer     = -math.huge,
     enabled   = true  --  loaded by default?
-  };
+  }
 end
 
 --------------------------------------------------------------------------------
@@ -39,7 +39,8 @@ local isFadingOut = false
 local screenFadeAlpha = 0
 
 local lastDrawMode = "normal"
-local lastIconDist = 150
+local lastIconDist = Spring.GetConfigInt("UnitIconDist", 150)
+local useEdgeScroll = Spring.GetConfigInt("WindowedEdgeMove", 1)
 local DRAW_MODE_COMMANDS = {
   height = "showelevation",
   metal = "showmetalmap",
@@ -61,9 +62,12 @@ local function EnterCutscene(instant)
   -- set view settings to remove gameplay-oriented stuff
   lastIconDist = Spring.GetConfigInt("UnitIconDist", 150)
   Spring.SendCommands("disticon " .. 1000)
+  --useEdgeScroll = Spring.GetConfigInt("WindowedEdgeMove", 1)
+  --Spring.SetConfigInt( "WindowedEdgeMove", 0 )
   local drawMode = spGetMapDrawMode()
   if drawMode ~= "normal" then
     local cmd = DRAW_MODE_COMMANDS[drawMode]
+    Spring.SendCommands(cmd)
     lastDrawMode = drawMode
   end
   
@@ -83,9 +87,11 @@ local function RestoreFromCutscene()
   isInCutscene = false
   isExitingCutscene = false
   if lastDrawMode ~= "normal" then
-    Spring.SendCommands(DRAW_MODE_COMMANDS[lastDrawMode])
+    local cmd = DRAW_MODE_COMMANDS[lastDrawMode]
+    Spring.SendCommands(cmd)
   end
   Spring.SendCommands("disticon " .. lastIconDist)
+  --Spring.SetConfigInt( "WindowedEdgeMove", useEdgeScroll )
   WG.UnhideGUI()
 end
 
@@ -123,9 +129,9 @@ function widget:Update(dt)
     timer = timer + dt
     if timer > UPDATE_PERIOD then
       if isInCutscene then
-        --if WG.IsGUIHidden() then
-        --  spWarpMouse(vsx/2, vsy/2)
-        --end
+        if WG.IsGUIHidden() then
+          --spWarpMouse(vsx/2, vsy/2)
+        end
         if isExitingCutscene then
           ProgressCutsceneExit(timer)
         elseif isEnteringCutscene then
@@ -195,6 +201,13 @@ function widget:Shutdown()
     --WG.RemoveNoHideWidget(self)
     WG.UnhideGUI()
   end
+  
+  if lastDrawMode ~= "normal" then
+    local cmd = DRAW_MODE_COMMANDS[drawMode]
+    Spring.SendCommands(cmd)
+  end
+  Spring.SendCommands("disticon " .. lastIconDist)
+  
   WG.Cutscene = nil
 end
 

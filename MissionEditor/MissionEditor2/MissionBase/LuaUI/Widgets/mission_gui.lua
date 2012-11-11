@@ -64,7 +64,7 @@ function MissionEvent(e)
       end  
   elseif e.logicType == "AddObjectiveAction" then
       if WG.AddObjective then
-        WG.AddObjective(e.id, e.title, e.description, nil, e.status)
+        WG.AddObjective(e.id, e.title, e.description, nil, "Incomplete")
       end
   elseif e.logicType == "ModifyObjectiveAction" then
       if WG.ModifyObjective then
