@@ -842,20 +842,6 @@ namespace Springie.autohost
                 return;
             }*/
 
-            var secondsFromLastGame = spring.Duration >= GameDelayMinDuration ? DateTime.Now.Subtract(spring.GameEnded).TotalSeconds: GameDelayRestTime + 9999;
-            if (config != null && SpawnConfig == null && config.Mode != AutohostMode.None) {
-                DateTime groupLast;
-                lastEnded.TryGetValue(config.Mode, out groupLast);
-                var groupSeconds = DateTime.Now.Subtract(groupLast).TotalSeconds;
-                if (groupSeconds < secondsFromLastGame) secondsFromLastGame = groupSeconds;
-            }
-
-            if (secondsFromLastGame < GameDelayRestTime)
-            {
-                SayBattle(string.Format("cannot start yet, give people some time to rest - wait {0} seconds", Math.Round(GameDelayRestTime - secondsFromLastGame)));
-                return;
-            }
-
             List<string> usname;
             if (!AllReadyAndSynced(out usname))
             {
