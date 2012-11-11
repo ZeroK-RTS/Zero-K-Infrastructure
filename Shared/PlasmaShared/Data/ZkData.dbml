@@ -418,6 +418,8 @@
       <Column Name="MetalCostMorph3" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MetalCostMorph4" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="MetalCostMorph5" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="KudosCost" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="IsKudosOnly" Type="System.Boolean" DbType="bit" CanBeNull="true" />
       <Association Name="Unlock_Unlock" Member="ChildUnlocks" ThisKey="UnlockID" OtherKey="RequiredUnlockID" Type="Unlock" />
       <Association Name="Unlock_AccountUnlock" Member="AccountUnlocks" ThisKey="UnlockID" OtherKey="UnlockID" Type="AccountUnlock" />
       <Association Name="Unlock_Commander" Member="Commanders" ThisKey="UnlockID" OtherKey="ChassisUnlockID" Type="Commander" />
@@ -867,7 +869,7 @@
       <Column Name="TurnsRemaining" Type="System.Int32" DbType="int" CanBeNull="true" />
       <Column Name="TreatyState" Type="TreatyState" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="TurnsTotal" Type="System.Int32" DbType="int" CanBeNull="true" />
-      <Column Name="TreatyNote" Type="System.String" DbType="nvarchar(max)" CanBeNull="true"/>
+      <Column Name="TreatyNote" Type="System.String" DbType="nvarchar(max)" CanBeNull="true" />
       <Association Name="FactionTreaty_TreatyEffect" Member="TreatyEffects" ThisKey="FactionTreatyID" OtherKey="FactionTreatyID" Type="TreatyEffect" />
       <Association Name="Faction_FactionTreaty" Member="FactionByProposingFactionID" ThisKey="ProposingFactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
       <Association Name="Faction_FactionTreaty1" Member="FactionByAcceptingFactionID" ThisKey="AcceptingFactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
