@@ -46,7 +46,6 @@
         @if (unlock.KudosCost != null) {
             @:<span style='color:#FFFF88;'>Kudos: @unlock.KudosCost</span><br />
         }
-		
 		@if (unlock.ParentUnlock != null)
         {
 			@:,<br /> need: <span title='$unlock$@unlock.RequiredUnlockID'><img src="@unlock.ParentUnlock.ImageUrl" height="20"width="20" class="vcenter" /></span>
