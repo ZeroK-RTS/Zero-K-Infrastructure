@@ -25,11 +25,11 @@ namespace ZkData
         Dictionary<AutohostMode, GamePreference> preferences;
 
         // FIXME: get a sensible implementation of kudos
-        public int XPFromKudos;
+        public int XPFromKudos = 0;
         public int AvailableXP { get { return GetXpForLevel(Level) + XPFromKudos - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
-        public int TotalKudos;
+        public int TotalKudos = 0;
         public int AvailableKudos { get { return TotalKudos + KudosSpent; } }
-        public int KudosSpent;
+        public int KudosSpent = 0;
         public double EffectiveElo { get { return Elo + WeightEloMalus; } }
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
 
