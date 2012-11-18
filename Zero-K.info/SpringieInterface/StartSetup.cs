@@ -144,15 +144,21 @@ namespace ZeroKWeb.SpringieInterface
 
                                             comdef["chassis"] = c.Unlock.Code + Math.Max(i,1);
 
-                                            var modules = new LuaTable();
-                                            comdef["modules"] = modules;
+                                            var decorations = new LuaTable();
+                                            comdef["decorations"] = decorations;
+                                            foreach (Unlock m in
+                                                        c.CommanderDecorations.Where(x => x.Unlock != null).OrderBy(x => x.SlotID).Select(x => x.Unlock)) 
+                                                        decorations.Add(m.Code);
 
                                             comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
+
                                             if (i > 0)
                                             {
                                                 comdef["cost"] = c.GetTotalMorphLevelCost(i);
 
                                                 //if (prevKey != null) comdef["prev"] = prevKey;
+                                                var modules = new LuaTable();
+                                                comdef["modules"] = modules;
 
                                                 //prevKey = key;
                                                 foreach (Unlock m in
