@@ -23,7 +23,13 @@ namespace ZkData
             CompiledQuery.Compile<ZkDataContext, string, string, Account>(
                 (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null));
         Dictionary<AutohostMode, GamePreference> preferences;
-        public int AvailableXP { get { return GetXpForLevel(Level) - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
+
+        // FIXME: get a sensible implementation of kudos
+        public int XPFromKudos;
+        public int AvailableXP { get { return GetXpForLevel(Level) + XPFromKudos - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
+        public int TotalKudos;
+        public int AvailableKudos { get { return TotalKudos + KudosSpent; } }
+        public int KudosSpent;
         public double EffectiveElo { get { return Elo + WeightEloMalus; } }
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
 
@@ -295,6 +301,7 @@ namespace ZkData
             if (level < 0) return 0;
             return level*80 + 20*level*level;
         }
+
 
         partial void OnCreated() {
             FirstLogin = DateTime.UtcNow;

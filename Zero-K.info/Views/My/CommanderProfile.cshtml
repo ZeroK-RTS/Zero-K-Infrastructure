@@ -3,34 +3,66 @@
 @using ZkData
 
 @{var c = Model.Commander;
-	Layout = null;
+  Layout = null;
 }
 <h2>@(c != null ? c.Name : "Commander " + Model.ProfileID)</h2>
 
 Commander name: @Html.TextBox("name", c != null ? c.Name : "Commander " + Model.ProfileID)
 <input type="image" src="@(c != null ? "http://cdn1.iconfinder.com/data/icons/dellipack/32/interact.png" : "/img/add.png")" alt="@(c != null ? "Update" : "Construct!")" id="commanderUpdate@(Model.ProfileID)" class="vcenter noborder" /><br />
-@if (c != null) {
+@if (c != null)
+{
 	<span style='color:@c.Unlock.LabelColor' title='$unlock$@c.ChassisUnlockID'><img src='@c.Unlock.ImageUrl' />@c.Unlock.Name</span>
 	<input type="submit" name="deleteCommander" value="Delete commander" />
 	
-    foreach (var slots in Model.Slots.GroupBy(x => x.MorphLevel).OrderBy(x => x.Key)) {
+    foreach (var slots in Model.Slots.GroupBy(x => x.MorphLevel).OrderBy(x => x.Key))
+    {
 	<h3>Morph @slots.Key:</h3>
-		@:Metal: @Html.PrintMetal(c.GetTotalMorphLevelCost(slots.Key) - (slots.Key > 1 ? c.GetTotalMorphLevelCost(slots.Key -1):0)) <br />
-	foreach (var slot in slots) 
-	{
-			CommanderModule selected = c.CommanderModules.SingleOrDefault(y => y.SlotID == slot.CommanderSlotID);
-		<span>Slot@(slot.CommanderSlotID) (@slot.UnlockType):
-		@if (selected != null) {
-			<span style='color:@selected.Unlock.LabelColor' title='$unlock$@selected.ModuleUnlockID'>
-				<img src='@selected.Unlock.ImageUrl' width='20' height='20' />@selected.Unlock.Name</span>
-			<input type="image" name="deleteSlot@(slot.CommanderSlotID)" src='/img/delete_icon.png' class="vcenter noborder" />
-		} else {
-			@Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => x.UnlockType == slot.UnlockType && x.MorphLevel <= slot.MorphLevel).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.UnlockID && y.SlotID == slot.CommanderSlotID) : false }).Union(new SelectListItem[] { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderModules.Any(y => y.SlotID == slot.CommanderSlotID) : true } }), new { onchange = "document.getElementById(\"commanderUpdate" +	Model.ProfileID + "\").click()"})
-		}
-		<br />
-		</span>
-	}
-	}
-} else { 
+		@:Metal: @Html.PrintMetal(c.GetTotalMorphLevelCost(slots.Key) - (slots.Key > 1 ? c.GetTotalMorphLevelCost(slots.Key - 1) : 0)) <br />
+	    foreach (var slot in slots)
+        {
+            CommanderModule selected = c.CommanderModules.SingleOrDefault(y => y.SlotID == slot.CommanderSlotID);
+	    	<span>Slot @(slot.CommanderSlotID) (@slot.UnlockType):
+	    	@if (selected != null)
+            {
+	    		<span style='color:@selected.Unlock.LabelColor' title='$unlock$@selected.ModuleUnlockID'>
+	    			<img src='@selected.Unlock.ImageUrl' width='20' height='20' />@selected.Unlock.Name</span>
+	    		<input type="image" name="deleteSlot@(slot.CommanderSlotID)" src='/img/delete_icon.png' class="vcenter noborder" />
+            }
+            else
+            {
+	    		@Html.DropDownList("m" + slot.CommanderSlotID, Model.Unlocks.Where(x => x.UnlockType == slot.UnlockType && x.MorphLevel <= slot.MorphLevel).Select(x => new SelectListItem() 
+                    { Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? c.CommanderModules.Any(y => y.ModuleUnlockID == x.UnlockID && y.SlotID == slot.CommanderSlotID) : false }).Union(new SelectListItem[] 
+                    { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderModules.Any(y => y.SlotID == slot.CommanderSlotID) : true } }), 
+                    new { onchange = "document.getElementById(\"commanderUpdate" + Model.ProfileID + "\").click()" })
+            }
+	    	<br />
+	    	</span>
+        }
+    }
+    <h3>Decorations:</h3>
+    foreach (var decSlot in Model.DecorationSlots.ToList())
+    {
+        CommanderDecoration selected = c.CommanderDecorations.SingleOrDefault(y => y.SlotID == decSlot.CommanderDecorationSlotID);
+	    <span>Slot @(decSlot.CommanderDecorationSlotID)
+	    @if (selected != null)
+        {
+	    	<span style='color:@selected.Unlock.LabelColor' title='$unlock$@selected.DecorationUnlockID'>
+	    		<img src='@selected.Unlock.ImageUrl' width='20' height='20' />@selected.Unlock.Name</span>
+	    	<input type="image" name="deleteDecorationSlot@(decSlot.CommanderDecorationSlotID)" src='/img/delete_icon.png' class="vcenter noborder" />
+        }
+        else
+        {
+	    	@Html.DropDownList("d" + decSlot.CommanderDecorationSlotID, Model.Unlocks.Where(x => x.UnlockType == UnlockTypes.Decoration).Select(x => new SelectListItem() { 
+                Text = x.Name, Value = x.UnlockID.ToString(), Selected = c != null ? 
+                c.CommanderDecorations.Any(y => y.DecorationUnlockID == x.UnlockID && y.SlotID == decSlot.CommanderDecorationSlotID) : false }).Union(new SelectListItem[] 
+                { new SelectListItem() { Text = "", Value = "", Selected = c != null ? !c.CommanderDecorations.Any(y => y.SlotID == decSlot.CommanderDecorationSlotID) : true } }), 
+                new { onchange = "document.getElementById(\"commanderUpdate" + Model.ProfileID + "\").click()" })
+        }
+	    <br />
+	    </span>
+    }
+}
+else
+{ 
 	@:Chassis: @Html.DropDownList("chassis", Model.Unlocks.Where(x => x.UnlockType == ZkData.UnlockTypes.Chassis).Select(x => new SelectListItem() { Text = x.Name, Value = x.UnlockID.ToString(), Selected = (c != null ? c.ChassisUnlockID == x.UnlockID : false) }))
 }

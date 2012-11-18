@@ -10,7 +10,12 @@
 <img src='@u.ImageUrl' alt='@u.Name'/><br/>
 Type: <span style='color:@u.LabelColor;'>@u.UnlockType</span><br/>
 Level: @u.NeededLevel<br/>
-Points: @u.XpCost<br/>
+@if (u.IsKudosOnly != true) {
+    @:Points: <span style='color:#00FFFF;'>@u.XpCost</span><br/>
+}
+@if (u.KudosCost != null) {
+    @:Kudos: <span style='color:#FFFF88;'>@u.KudosCost</span><br/>
+}
 @if (u.ParentUnlock != null) {
   @:Required unit: <img src='@u.ParentUnlock.ImageUrl' height='20' width='20'/> @u.ParentUnlock.Name<br/>
 }

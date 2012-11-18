@@ -18,6 +18,8 @@ namespace ZkData
             return "#FFFF00";
           case UnlockTypes.Weapon:
             return "#FF0000";
+          case UnlockTypes.Decoration:
+            return "#FF00FF";
         }
         return "#FFFFFF";
       }

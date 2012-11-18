@@ -446,6 +446,7 @@
       <Column Name="Name" Type="System.String" DbType="nvarchar(200)" CanBeNull="true" />
       <Column Name="ChassisUnlockID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="Commander_CommanderModule" Member="CommanderModules" ThisKey="CommanderID" OtherKey="CommanderID" Type="CommanderModule" />
+      <Association Name="Commander_CommanderDecoration" Member="CommanderDecorations" ThisKey="CommanderID" OtherKey="CommanderID" Type="CommanderDecoration" />
       <Association Name="Unlock_Commander" Member="Unlock" ThisKey="ChassisUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Account_Commander" Member="AccountByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
     </Type>
@@ -460,12 +461,28 @@
       <Association Name="Unlock_CommanderModule" Member="Unlock" ThisKey="ModuleUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
     </Type>
   </Table>
+  <Table Name="dbo.CommanderDecoration" Member="CommanderDecorations">
+    <Type Name="CommanderDecoration">
+      <Column Name="CommanderID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="DecorationUnlockID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="SlotID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Commander_CommanderDecoration" Member="Commander" ThisKey="CommanderID" OtherKey="CommanderID" Type="Commander" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="CommanderDecorationSlot_CommanderDecoration" Member="CommanderDecorationSlot" ThisKey="SlotID" OtherKey="CommanderDecorationSlotID" Type="CommanderDecorationSlot" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Unlock_CommanderDecoration" Member="Unlock" ThisKey="DecorationUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
+    </Type>
+  </Table>
   <Table Name="dbo.CommanderSlot" Member="CommanderSlots">
     <Type Name="CommanderSlot">
       <Column Name="CommanderSlotID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="MorphLevel" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
       <Column Name="UnlockType" Type="UnlockTypes" DbType="int NOT NULL" CanBeNull="false" />
       <Association Name="CommanderSlot_CommanderModule" Member="CommanderModules" ThisKey="CommanderSlotID" OtherKey="SlotID" Type="CommanderModule" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CommanderDecorationSlot" Member="CommanderDecorationSlots">
+    <Type Name="CommanderDecorationSlot">
+      <Column Name="CommanderDecorationSlotID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Association Name="CommanderDecorationSlot_CommanderDecoration" Member="CommanderDecorations" ThisKey="CommanderDecorationSlotID" OtherKey="SlotID" Type="CommanderDecoration" />
     </Type>
   </Table>
   <Table Name="dbo.Poll" Member="Polls">

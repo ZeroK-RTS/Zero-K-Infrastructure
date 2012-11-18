@@ -258,6 +258,10 @@ namespace ZeroKWeb.Controllers
 					                module.Unlock.LabelColor);
 				}
 			}
+            foreach (var decSlots in c.CommanderDecorations.ToList())
+            {
+				// TBD
+            }
 			return sb.ToString();
 		}
 

@@ -23,7 +23,7 @@ namespace ZeroKWeb.Controllers
 
 				var unlocks = db.AccountUnlocks.Where(x => x.AccountID == Global.AccountID);
 
-				var comm = db.Commanders.SingleOrDefault(x => x.ProfileNumber == profileNumber && x.AccountID == Global.AccountID);
+				Commander comm = db.Commanders.SingleOrDefault(x => x.ProfileNumber == profileNumber && x.AccountID == Global.AccountID);
 				if (comm != null)
 				{
 					if (!string.IsNullOrEmpty(deleteCommander)) // delete commander
@@ -53,6 +53,7 @@ namespace ZeroKWeb.Controllers
 
 				if (!string.IsNullOrEmpty(name)) comm.Name = name;
 
+                // process modules
 				foreach (var key in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
 				{
 					var m = Regex.Match(key, "m([0-9]+)");
@@ -64,8 +65,8 @@ namespace ZeroKWeb.Controllers
 
 						if (unlockId > 0)
 						{
-							var slot = db.CommanderSlots.Single(x => x.CommanderSlotID == slotId);
-							var unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
+							CommanderSlot slot = db.CommanderSlots.Single(x => x.CommanderSlotID == slotId);
+							Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
 
 							if (!unlocks.Any(x => x.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
 							if (slot.MorphLevel < unlock.MorphLevel) return Content(string.Format("WTF cannot use {0} in slot {1}", unlock.Name, slot.CommanderSlotID));
@@ -91,15 +92,61 @@ namespace ZeroKWeb.Controllers
 					}
 				}
 
-				foreach (var toDel in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
-				{
+                // process decorations
+                foreach (var key in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
+                {
+                    var d = Regex.Match(key, "d([0-9]+)");
+                    if (d.Success)
+                    {
+                        var slotId = int.Parse(d.Groups[1].Value);
+                        int unlockId;
+                        int.TryParse(Request.Form[key], out unlockId);
+
+                        if (unlockId > 0)
+                        {
+                            CommanderDecorationSlot decSlot = db.CommanderDecorationSlots.Single(x => x.CommanderDecorationSlotID == slotId);
+                            Unlock unlock = db.Unlocks.Single(x => x.UnlockID == unlockId);
+
+                            if (!unlocks.Any(x => x.UnlockID == unlock.UnlockID)) return Content("WTF get lost!");
+                            if (!string.IsNullOrEmpty(unlock.LimitForChassis))
+                            {
+                                var validChassis = unlock.LimitForChassis.Split(',');
+                                if (!validChassis.Contains(comm.Unlock.Code)) return Content(string.Format("{0} cannot be used in commander {1}", unlock.Name, comm.Unlock.Name));
+                            }
+
+                            var comSlot = comm.CommanderDecorations.SingleOrDefault(x => x.SlotID == slotId);
+                            if (comSlot == null)
+                            {
+                                comSlot = new CommanderDecoration() { SlotID = slotId };
+                                comm.CommanderDecorations.Add(comSlot);
+                            }
+                            comSlot.DecorationUnlockID = unlockId;
+                        }
+                        else
+                        {
+                            var oldDecoration = comm.CommanderDecorations.FirstOrDefault(x => x.SlotID == slotId);
+                            if (oldDecoration != null) comm.CommanderDecorations.Remove(oldDecoration);
+                        }
+                    }
+                }
+
+                // remove a module/decoration if ordered to
+                foreach (var toDel in Request.Form.AllKeys.Where(x => !string.IsNullOrEmpty(x)))
+                {
 					var m = Regex.Match(toDel, "deleteSlot([0-9]+)");
 					if (m.Success)
 					{
 						var slotId = int.Parse(m.Groups[1].Value);
 						comm.CommanderModules.Remove(comm.CommanderModules.SingleOrDefault(x => x.SlotID == slotId));
 					}
-				}
+                
+                    var d = Regex.Match(toDel, "deleteDecorationSlot([0-9]+)");
+                    if (d.Success)
+                    {
+                        var decSlotId = int.Parse(d.Groups[1].Value);
+                        comm.CommanderDecorations.Remove(comm.CommanderDecorations.SingleOrDefault(x => x.SlotID == decSlotId));
+                    }
+                }
 
 				db.SubmitChanges();
 				foreach (var unlock in comm.CommanderModules.GroupBy(x => x.Unlock))
@@ -135,7 +182,7 @@ namespace ZeroKWeb.Controllers
 			var ret = new CommandersModel();
 			ret.Unlocks =
 				Global.Account.AccountUnlocks.Where(
-					x => x.Unlock.UnlockType == UnlockTypes.Module || x.Unlock.UnlockType == UnlockTypes.Weapon || x.Unlock.UnlockType == UnlockTypes.Chassis).ToList
+					x => x.Unlock.UnlockType != UnlockTypes.Unit).ToList
 					();
 			return View(ret);
 		}
@@ -154,8 +201,13 @@ namespace ZeroKWeb.Controllers
 			return RedirectToAction("UnlockList");
 		}
 
+        [Auth]
+        public ActionResult Unlock(int id)
+        {
+            return Unlock_Overload(id, false);  // fixme: find a non-stupid way to overload
+        }
 		[Auth]
-		public ActionResult Unlock(int id)
+		public ActionResult Unlock_Overload(int id, bool useKudos)
 		{
 			using (var db = new ZkDataContext())
 			using (var scope = new TransactionScope())
@@ -168,6 +220,8 @@ namespace ZeroKWeb.Controllers
 
 				if (unlocks.Any(x => x.UnlockID == id))
 				{
+                    Unlock unlock = db.Unlocks.FirstOrDefault(x => x.UnlockID == id);
+                    if (!useKudos && unlock.IsKudosOnly == true) return Content("That unlock cannot be bought using XP");
 					var au = db.AccountUnlocks.SingleOrDefault(x => x.AccountID == Global.AccountID && x.UnlockID == id);
 					if (au == null)
 					{
@@ -175,6 +229,9 @@ namespace ZeroKWeb.Controllers
 						db.AccountUnlocks.InsertOnSubmit(au);
 					}
 					else au.Count++;
+                    if (useKudos)   // TODO
+                    {
+                    }
 					db.SubmitChanges();
 				}
 				scope.Complete();
@@ -203,15 +260,17 @@ namespace ZeroKWeb.Controllers
 			                   	ProfileID = profile,
 			                   	Commander = com,
 			                   	Slots = db.CommanderSlots.ToList(),
+                                DecorationSlots = db.CommanderDecorationSlots.ToList(),
 			                   	Unlocks =
 			                   		db.AccountUnlocks.Where(
 			                   			x =>
 			                   			x.AccountID == Global.AccountID &&
-			                   			(x.Unlock.UnlockType == UnlockTypes.Module || x.Unlock.UnlockType == UnlockTypes.Weapon ||
-			                   			 x.Unlock.UnlockType == UnlockTypes.Chassis)).ToList().Where(
+			                   			(x.Unlock.UnlockType != UnlockTypes.Unit)).ToList().Where(
 			                   			 	x =>
 			                   			 	(com == null || x.Unlock.LimitForChassis == null || x.Unlock.LimitForChassis.Contains(com.Unlock.Code)) &&
-			                   			 	(com == null || x.Count > com.CommanderModules.Count(y => y.ModuleUnlockID == x.UnlockID))).Select(x => x.Unlock).ToList()
+			                   			 	(com == null || x.Count > com.CommanderModules.Count(y => y.ModuleUnlockID == x.UnlockID)) &&
+                                            (com == null || x.Count > com.CommanderDecorations.Count(y => y.DecorationUnlockID == x.UnlockID))
+                                            ).Select(x => x.Unlock).ToList()
 			                   });
 		}
 
@@ -240,6 +299,7 @@ namespace ZeroKWeb.Controllers
 			public Commander Commander;
 			public int ProfileID;
 			public List<CommanderSlot> Slots;
+            public List<CommanderDecorationSlot> DecorationSlots;
 			public List<Unlock> Unlocks;
 		}
 
