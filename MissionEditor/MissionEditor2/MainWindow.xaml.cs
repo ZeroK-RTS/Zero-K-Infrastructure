@@ -485,6 +485,7 @@ namespace MissionEditor2
 			{
 				if (Debugger.IsAttached) throw;
 				MessageBox.Show(e.Message);
+                return;
 			}
 			finally
 			{
