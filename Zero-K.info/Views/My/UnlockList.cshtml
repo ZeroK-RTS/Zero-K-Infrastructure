@@ -39,9 +39,8 @@
 		<img src="@unlock.ImageUrl" alt="unlocks"  title="$unlock$@unlock.UnlockID" class="fleft" />
 		<span style="color: @unlock.LabelColor;">@unlock.Name</span><br />
 		Level: @unlock.NeededLevel
-		<br />
         @if (unlock.IsKudosOnly != true) {
-            @:,<br /> :XP: @unlock.XpCost
+            @:,<br /> XP: @unlock.XpCost
         }
         @if (unlock.KudosCost != null) {
             @:,<br /> <span style='color:#FFFF88;'>Kudos: @unlock.KudosCost</span>
