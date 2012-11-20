@@ -41,10 +41,10 @@
 		Level: @unlock.NeededLevel
 		<br />
         @if (unlock.IsKudosOnly != true) {
-            @:XP: @unlock.XpCost<br />
+            @:,<br /> :XP: @unlock.XpCost
         }
         @if (unlock.KudosCost != null) {
-            @:<span style='color:#FFFF88;'>Kudos: @unlock.KudosCost</span><br />
+            @:,<br /> <span style='color:#FFFF88;'>Kudos: @unlock.KudosCost</span>
         }
 		@if (unlock.ParentUnlock != null)
         {
