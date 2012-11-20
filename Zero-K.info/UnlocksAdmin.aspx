@@ -22,6 +22,8 @@
           <asp:BoundField DataField="Name" HeaderText="Name" 
             SortExpression="Name" />
           <asp:BoundField DataField="XpCost" HeaderText="XpCost" SortExpression="XpCost" />
+          <asp:BoundField DataField="KudosCost" HeaderText="KudosCost" SortExpression="KudosCost" />
+          <asp:BoundField DataField="IsKudosOnly" HeaderText="IsKudosOnly" SortExpression="IsKudosOnly" />
           <asp:BoundField DataField="NeededLevel" HeaderText="Level" 
              SortExpression="NeededLevel" />
           <asp:BoundField DataField="RequiredUnlockID" HeaderText="RequiredID" 
