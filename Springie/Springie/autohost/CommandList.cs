@@ -39,7 +39,7 @@ namespace Springie.autohost
             AddMissing(new CommandConfig("forcestart", 2, " - starts game forcibly (ignoring warnings)", 5));
 
             AddMissing(new CommandConfig("say",
-                                         1,
+                                         3,
                                          "<text> - says something in game",
                                          0,
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
