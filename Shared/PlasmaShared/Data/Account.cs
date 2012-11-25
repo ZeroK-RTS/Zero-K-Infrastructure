@@ -26,7 +26,7 @@ namespace ZkData
 
         // FIXME: get a sensible implementation of kudos
         public int XPFromKudos = 0;
-        public int AvailableXP { get { return GetXpForLevel(Level) + XPFromKudos - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
+        public int AvailableXP { get { return GetXpForLevel(Level) - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
         public int TotalKudos = 0;
         public int AvailableKudos { get { return TotalKudos + KudosSpent; } }
         public int KudosSpent = 0;
