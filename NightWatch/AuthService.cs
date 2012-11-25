@@ -25,7 +25,6 @@ namespace NightWatch
         // FIXME: do it in a way that doesn't break on rename
         public static string[] allowedAccounts = new[] { "[KO1]RageQuit","[PRO]Jools","[V]Aneque","AlphaT","[PO]Mishel","[Vak]Jaronidas" };
 
-
         public AuthService(TasClient client)
         {
             this.client = client;
