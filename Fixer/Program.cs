@@ -7,6 +7,9 @@ using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -124,24 +127,31 @@ namespace Fixer
         }
 
         static void Main(string[] args) {
-          Test1v1Elo();
+            Console.WriteLine("Used UDP ports: ");
+            foreach (var udp in IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().OrderBy(x=>x.Port)) {
+              Console.WriteLine(udp.Port);
+
+            }
+            Console.ReadLine();
+
+            //Test1v1Elo();
             //GenerateTechs();
 
-          //FixDemoEngineVersion();
+            //FixDemoEngineVersion();
 
-          //ImportSpringiePlayers();
-          //RecalculateBattleElo();
-          //FixMaps();
+            //ImportSpringiePlayers();
+            //RecalculateBattleElo();
+            //FixMaps();
 
-          //PickHomworldOwners();
+            //PickHomworldOwners();
 
-          //PurgeGalaxy(9, false);
-          //RandomizeMaps(9);
-          //GenerateStructures(9);
+            //PurgeGalaxy(9, false);
+            //RandomizeMaps(9);
+            //GenerateStructures(9);
 
-          //AddWormholes();
-          //TestPrediction();
-      }
+            //AddWormholes();
+            //TestPrediction();
+        }
 
 
       static void FixDemoEngineVersion()

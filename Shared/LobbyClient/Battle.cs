@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using PlasmaShared;
@@ -85,8 +87,19 @@ namespace LobbyClient
         public Battle(string engineVersion, string password, int port, int maxplayers, int rank, Map map, string title, Mod mod, BattleDetails details): this()
         {
             if (!String.IsNullOrEmpty(password)) Password = password;
-            if (port == 0) HostPort = 8452;
-            else HostPort = port;
+            if (port == 0) HostPort = 8452; else HostPort = port;
+            try {
+                var ports = IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().OrderBy(x => x.Port).Select(x=>x.Port).ToList();
+                if (ports.Contains(HostPort)) {
+                    var blockedPort = HostPort;
+                    while (ports.Contains(HostPort)) HostPort++;
+                    Trace.TraceWarning("Host port {0} was used, using backup port {1}", blockedPort, HostPort);
+                }
+            } catch {}
+
+
+
+
             EngineVersion = engineVersion;
             MaxPlayers = maxplayers;
             Rank = rank;
