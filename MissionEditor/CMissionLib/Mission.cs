@@ -60,6 +60,7 @@ namespace CMissionLib
 				groups.AddRange(AllUnits.SelectMany(u => u.Groups));
 				groups.AddRange(AllLogic.OfType<GiveFactoryOrdersAction>().SelectMany(a => a.BuiltUnitsGroups));
 				foreach (var player in players) groups.Add("Latest Factory Built Unit (" + player.Name + ")");
+                foreach (var player in players) groups.Add("Any Unit (" + player.Name + ")");
 				foreach (var region in Regions)
 				{
 					foreach (var player in players) groups.Add(string.Format("Units in {0} ({1})", region.Name, player.Name));

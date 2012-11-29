@@ -1,4 +1,3 @@
--- $Id: mission_runner.lua 3171 2008-11-06 09:06:29Z det $
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -34,7 +33,7 @@ if (gadgetHandler:IsSyncedCode()) then
 local mission = VFS.Include("mission.lua")
 local triggers = mission.triggers -- array
 local allTriggers = {unpack(triggers)} -- we'll never remove triggers from here, so the indices will stay correct
-local unitGroups = {} -- key: unitID, value: group set (an array of strings)
+local unitGroups = {} -- key: unitID, value: group set (a table of strings)
 local gaiaTeamID = Spring.GetGaiaTeamID()
 local cheatingWasEnabled = false
 local scoreSent = false
@@ -189,7 +188,8 @@ end
 local function GetUnitsInRegion(region, teamID)
   local regionUnits = {}
   if Spring.GetTeamInfo(teamID) then
-    for _, area in ipairs(region.areas) do
+    for i=1, #region.areas do
+      local area = region.areas[i]
       local areaUnits
       if area.category == "cylinder" then
         areaUnits = Spring.GetUnitsInCylinder(area.x, area.y, area.r, teamID)
@@ -206,6 +206,45 @@ local function GetUnitsInRegion(region, teamID)
   return regionUnits
 end
 
+local function IsUnitInRegion(unitID, region)
+  local x, y, z = Spring.GetUnitPosition(unitID)
+  for i=1,#region.areas do
+    local area = region.areas[i]
+    if area.category == "cylinder" then
+      local dist = ( (x - area.x)^2 + (z - area.y)^2 )^0.5
+      if dist <= area.r then
+        return true
+      end
+    elseif area.category == "rectangle" then
+      local rx1, rx2, rz1, rz2 = area.x, area.x + area.width, area.y, area.y + area.height
+      if x >= rx1 and x <= rx2 and z >= rz1 and z <= rz2 then
+        return true
+      end
+    else
+      error "area category not supported"
+    end    
+  end
+  return false
+end
+
+local function GetRegionsUnitIsIn(unitID)
+  local regions = {}
+  local ret = false
+  for i=1,#mission.regions do
+    local region = mission.regions[i]
+    if IsUnitInRegion(unitID, region) then
+      regions[#region + 1] = region
+      ret = true
+    end
+  end
+  if ret then
+    return regions
+  else
+    return nil
+  end
+end
+
+GG.mission.IsUnitInRegion = IsUnitInRegion
 
 local function SetUnitGroup(unitID, group)
   unitGroups[unitID] = unitGroups[unitID] or {}
@@ -216,7 +255,8 @@ end
 local function FindUnitsInGroup(searchGroup)
   local results = {}
   if StartsWith(searchGroup, "Units in ") then
-    for _, region in ipairs(mission.regions) do
+    for i=1,#mission.regions do
+      local region = mission.regions[i]
       for playerIndex, playerName in ipairs(mission.players) do
         if searchGroup == string.format("Units in %s (%s)", region.name, playerName) then
           local teamID = playerIndex - 1
@@ -225,15 +265,29 @@ local function FindUnitsInGroup(searchGroup)
       end
     end
   elseif StartsWith(searchGroup, "Latest Factory Built Unit (") then
-    for playerIndex, player in ipairs(mission.players) do
+    for playerIndex=1, #mission.players do
+      local player = mission.players[i]
       if searchGroup == "Latest Factory Built Unit ("..player..")" then
-        local teamID = playerIndex
+        local teamID = playerIndex - 1
         if lastFinishedUnits[teamID] then
           results[lastFinishedUnits[teamID]] = true
         end
       end
     end
     return results
+  elseif StartsWith(searchGroup, "Any Unit (") then
+    for playerIndex=1, #mission.players do
+      local player = mission.players[i]
+      if searchGroup == "Any Unit ("..player..")" then
+        local teamID = playerIndex - 1
+        local units = Spring.GetTeamUnits(teamID)
+        local ret = {}
+        for i=1,#units do
+          ret[units[i]] = true
+        end
+        return ret
+      end
+    end
   end
   -- static group
   for unitID, groups in pairs(unitGroups) do
@@ -244,15 +298,13 @@ local function FindUnitsInGroup(searchGroup)
   return results
 end
 
+-- returns first unitID it finds in a group
 local function FindUnitInGroup(searchGroup)
   local results = FindUnitsInGroup(searchGroup)
   for unitID in pairs(results) do
     return unitID
   end
 end
-
-GG.mission.FindUnitsInGroup = FindUnitsInGroup
-GG.mission.FindUnitInGroup = FindUnitInGroup
 
 local function FindUnitsInGroups(searchGroups)
   local results = {}
@@ -261,6 +313,10 @@ local function FindUnitsInGroups(searchGroups)
   end
   return results
 end
+
+GG.mission.FindUnitsInGroup = FindUnitsInGroup
+GG.mission.FindUnitInGroup = FindUnitInGroup
+GG.mission.FindUnitsInGroups = FindUnitsInGroups
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -1063,21 +1119,59 @@ function gadget:TeamDied(teamID)
 end
 
 
-function gadget:UnitDestroyed(unitID)
-  if unitGroups[unitID] then
+function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
+  for _, trigger in ipairs(triggers) do
+    for _, condition in ipairs(trigger.logic) do
+      if condition.logicType == "UnitDestroyedCondition" then
+        local execute = false
+        -- check if the unit is in a region the trigger is watching
+        for groupName in pairs(condition.args.groups) do
+          if FindUnitsInGroup(groupName)[unitID] then
+            ExecuteTrigger(trigger)
+            break
+          end
+        end
+      end
+    end
+  end
+  unitGroups[unitID] = nil
+  factoryExpectedUnits[unitID] = nil
+  repeatFactoryGroups[unitID] = nil
+  
+  -- old crappy implementation
+  --[[
+  local regions = GetRegionsUnitIsIn(unitID)
+  if unitGroups[unitID] or regions then
     for _, trigger in ipairs(triggers) do
       for _, condition in ipairs(trigger.logic) do
-        if condition.logicType == "UnitDestroyedCondition" and 
-          DoSetsIntersect(condition.args.groups, unitGroups[unitID]) then
-          ExecuteTrigger(trigger)
-          break
+        if condition.logicType == "UnitDestroyedCondition" then
+          local execute = false
+          local groupsToMatch = CopyTable(unitGroups[unitID])
+          
+          -- check if the unit is in a region the trigger is watching
+          for groupName in pairs(condition.args.groups) do
+            if StartsWith(groupName, "Units in ") then
+              for i=1,#regions do
+                local region = regions[i]
+                local playerName = mission.players[unitTeam + 1]
+                if groupName == string.format("Units in %s (%s)", region.name, playerName) then
+                  execute = true
+                  break
+                end
+              end
+            end
+          end
+          if execute or DoSetsIntersect(condition.args.groups, groupsToMatch) then
+            ExecuteTrigger(trigger)
+            break
+          end
+          
         end
       end
     end
     unitGroups[unitID] = nil
   end
-  factoryExpectedUnits[unitID] = nil
-  repeatFactoryGroups[unitID] = nil
+  ]]--
 end
 
 
