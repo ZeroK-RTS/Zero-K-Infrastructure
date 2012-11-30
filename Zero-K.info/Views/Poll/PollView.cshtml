@@ -47,7 +47,7 @@
                                 />
                         </td>
                         <td>
-                            @option.OptionText
+                            @Html.BBCode(option.OptionText)
                         </td>
                         <td>
                             @Math.Round(100.0 * option.Votes / maxVotes)% (@option.Votes)
