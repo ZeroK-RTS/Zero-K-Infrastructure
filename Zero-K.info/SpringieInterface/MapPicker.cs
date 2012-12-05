@@ -92,7 +92,7 @@ namespace ZeroKWeb.SpringieInterface
 
 							break;
 						case AutohostMode.Game1v1:
-							list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIs1v1 == true && x.MapIsFfa != true && x.MapIsChickens != true).ToList();
+							list = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && x.MapIs1v1 == true && x.MapIsFfa != true && x.MapIsChickens != true && x.MapIsSpecial != true).ToList();
 							break;
 						case AutohostMode.GameChickens:
 							ret = db.Resources.Where(x => x.TypeID == ResourceType.Map && x.FeaturedOrder != null && (x.MapIsChickens == true || x.MapWaterLevel == 1));
