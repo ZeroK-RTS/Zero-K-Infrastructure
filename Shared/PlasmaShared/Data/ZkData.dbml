@@ -66,8 +66,9 @@
       <Column Name="FirstLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="LastLogin" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Aliases" Type="System.String" DbType="varchar(max)" CanBeNull="true" UpdateCheck="WhenChanged" />
-      <Column Name="Elo" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
-      <Column Name="EloWeight" Type="System.Single" DbType="real NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
+      <Column Name="Elo" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="EloWeight" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
+      <Column Name="Elo1v1" Type="System.Double" DbType="float NOT NULL" CanBeNull="false" />
       <Column Name="IsLobbyAdministrator" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="IsBot" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" UpdateCheck="WhenChanged" />
       <Column Name="Password" Type="System.String" DbType="varchar(100)" CanBeNull="true" UpdateCheck="WhenChanged" />
@@ -425,6 +426,7 @@
       <Association Name="Unlock_AccountUnlock" Member="AccountUnlocks" ThisKey="UnlockID" OtherKey="UnlockID" Type="AccountUnlock" />
       <Association Name="Unlock_Commander" Member="Commanders" ThisKey="UnlockID" OtherKey="ChassisUnlockID" Type="Commander" />
       <Association Name="Unlock_CommanderModule" Member="CommanderModules" ThisKey="UnlockID" OtherKey="ModuleUnlockID" Type="CommanderModule" />
+      <Association Name="Unlock_CommanderDecoration" Member="CommanderDecorations" ThisKey="UnlockID" OtherKey="DecorationUnlockID" Type="CommanderDecoration" />
       <Association Name="Unlock_StructureType" Member="StructureTypes" ThisKey="UnlockID" OtherKey="EffectUnlockID" Type="StructureType" />
       <Association Name="Unlock_Unlock" Member="ParentUnlock" ThisKey="RequiredUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
     </Type>
@@ -481,7 +483,7 @@
   </Table>
   <Table Name="dbo.CommanderDecorationSlot" Member="CommanderDecorationSlots">
     <Type Name="CommanderDecorationSlot">
-      <Column Name="CommanderDecorationSlotID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CommanderDecorationSlotID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Association Name="CommanderDecorationSlot_CommanderDecoration" Member="CommanderDecorations" ThisKey="CommanderDecorationSlotID" OtherKey="SlotID" Type="CommanderDecoration" />
     </Type>
   </Table>

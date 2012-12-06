@@ -107,7 +107,7 @@ namespace ZeroKWeb.SpringieInterface
 
                 Dictionary<int, int> orgLevels = sb.SpringBattlePlayers.Select(x => x.Account).ToDictionary(x => x.AccountID, x => x.Level);
 
-                sb.CalculateElo();
+                sb.CalculateAllElo();
                 db.SubmitAndMergeChanges();
 
                 try {

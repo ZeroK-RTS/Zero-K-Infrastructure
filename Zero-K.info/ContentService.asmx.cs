@@ -288,9 +288,9 @@ namespace ZeroKWeb
                 IsLobbyAdmin = acc.IsLobbyAdministrator,
                 IsZeroKAdmin= acc.IsZeroKAdmin,
                 Avatar = acc.Avatar,
-                Elo =acc.Elo,
+                Elo =(float)acc.Elo,
                 EffectiveElo = acc.EffectiveElo,
-                EloWeight = acc.EloWeight,
+                EloWeight = (float)acc.EloWeight,
                 FactionID = acc.FactionID??0,
                 FactionName = acc.Faction != null? acc.Faction.Name:null,
                 SpringieLevel = acc.SpringieLevel

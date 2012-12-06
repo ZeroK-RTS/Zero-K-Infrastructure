@@ -126,13 +126,10 @@ namespace Fixer
 
         }
 
-        static void Main(string[] args) {
-            Console.WriteLine("Used UDP ports: ");
-            foreach (var udp in IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().OrderBy(x=>x.Port)) {
-              Console.WriteLine(udp.Port);
 
-            }
-            Console.ReadLine();
+
+        static void Main(string[] args) {
+
 
             //Test1v1Elo();
             //GenerateTechs();
@@ -502,7 +499,7 @@ namespace Fixer
 				foreach (var b in db.SpringBattles.Where(x => !x.IsEloProcessed).ToList())
 				{
 					Console.WriteLine(b.SpringBattleID);
-					b.CalculateElo();
+					b.CalculateAllElo();
 				}
 				db.SubmitChanges();
 			}

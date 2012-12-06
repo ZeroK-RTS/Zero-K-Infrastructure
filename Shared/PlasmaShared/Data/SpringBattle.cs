@@ -23,7 +23,7 @@ namespace ZkData
             return "B" + SpringBattleID;
         }
 
-	    public void CalculateElo()
+	    public void CalculateAllElo()
 		{
             if (IsEloProcessed || Duration < GlobalConst.MinDurationForElo)
 			{
@@ -64,8 +64,8 @@ namespace ZkData
 			double winnerInvW = 0;
 			double loserInvW = 0;
 
-			double winnerElo = 1;
-			double loserElo = 1;
+			double winnerElo = 0;
+			double loserElo = 0;
 
 			var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
 			var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
@@ -103,13 +103,10 @@ namespace ZkData
 
 			var sumW = winnerW + loserW;
 
-			WinnerTeamXpChange = (int)(20 + (300 + 600*(1 - eWin))/(3.0 + winners.Count));
-			WinnerTeamXpChange = WinnerTeamXpChange;    // what the christ does this line even do
-            LoserTeamXpChange = (int)(20 + (200 + 400 * (1 - eLose)) / (2.0 + losers.Count));
-            LoserTeamXpChange = LoserTeamXpChange;  // again
-
-            if (Duration < 360)
-            {
+            if (Duration >= GlobalConst.MinDurationForXP) {
+                WinnerTeamXpChange = (int)(20 + (300 + 600*(1 - eWin))/(3.0 + winners.Count));
+                LoserTeamXpChange = (int)(20 + (200 + 400*(1 - eLose))/(2.0 + losers.Count));
+            } else {
                 WinnerTeamXpChange = 0;
                 LoserTeamXpChange = 0;
             }
@@ -147,8 +144,33 @@ namespace ZkData
 				}
 			}
 
+	        Calculate1v1Elo();
+
 			IsEloProcessed = true;
 		}
+
+        public void Calculate1v1Elo() {
+            if (!HasBots) {
+                var losers = SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => x.Account).ToList();
+                var winners = SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => x.Account).ToList();
+                if (losers.Count == 1 && winners.Count == 1) {
+                    var winner = winners.First();
+                    var loser = losers.First();
+
+                    var winnerElo = winner.Elo1v1;
+                    var loserElo = loser.Elo1v1;
+
+                    var eWin = 1/(1 + Math.Pow(10, (loserElo - winnerElo)/400));
+                    var eLose = 1/(1 + Math.Pow(10, (winnerElo - loserElo)/400));
+
+                    var scoreWin = 32*(1 - eWin);
+                    var scoreLose = 32*(0 - eLose);
+
+                    winner.Elo1v1 += scoreWin;
+                    loser.Elo1v1 += scoreLose;
+                }
+            }
+        }
 
 	}
 }
