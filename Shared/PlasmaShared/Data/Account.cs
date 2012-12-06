@@ -30,9 +30,9 @@ namespace ZkData
         public int TotalKudos = 0;
         public int AvailableKudos { get { return TotalKudos + KudosSpent; } }
         public int KudosSpent = 0;
-        public double EffectiveElo { get { return Elo + WeightEloMalus; } }
+        public double EffectiveElo { get { return Elo + (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
-        public double Effective1v1Elo { get { return Elo1v1 + WeightEloMalus; } }
+        public double Effective1v1Elo { get { return Elo1v1Weight > 1 ?  Elo1v1 + (GlobalConst.EloWeightMax - Elo1v1Weight)*GlobalConst.EloWeightMalusFactor : 0; } }
 
         public override string ToString() {
             return Name;
@@ -59,7 +59,15 @@ namespace ZkData
                 return preferences;
             }
         }
-        public double WeightEloMalus { get { return (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
+
+        public static double AdjustEloWeight(double currentWeight, double sumWeight, int sumCount) {
+            if (currentWeight < GlobalConst.EloWeightMax)
+            {
+                currentWeight = (currentWeight + ((sumWeight - currentWeight) / (sumCount - 1)) / GlobalConst.EloWeightLearnFactor);
+                if (currentWeight > GlobalConst.EloWeightMax) currentWeight =GlobalConst.EloWeightMax;
+            }
+            return currentWeight;
+        }
 
         #region IIdentity Members
 
@@ -309,6 +317,7 @@ namespace ZkData
             Elo = 1500;
             Elo1v1 = 1500;
             EloWeight = 1;
+            Elo1v1Weight = 1;
             SpringieLevel = 1;
         }
 

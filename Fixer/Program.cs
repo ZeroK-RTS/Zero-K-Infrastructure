@@ -129,6 +129,12 @@ namespace Fixer
 
 
         static void Main(string[] args) {
+            var db = new ZkDataContext();
+            foreach (var sb in db.SpringBattles.Where( x=>x.PlayerCount==2).ToList()) {
+                sb.Calculate1v1Elo();
+               
+            }
+            db.SubmitAndMergeChanges();
 
 
             //Test1v1Elo();

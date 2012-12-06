@@ -120,11 +120,7 @@ namespace ZkData
 				r.Account.XP += WinnerTeamXpChange.Value;
 				r.Player.XpChange = WinnerTeamXpChange;
 
-				if (r.Account.EloWeight < GlobalConst.EloWeightMax)
-				{
-					r.Account.EloWeight = (float)(r.Account.EloWeight + ((sumW - r.Account.EloWeight)/(sumCount - 1))/GlobalConst.EloWeightLearnFactor);
-					if (r.Account.EloWeight > GlobalConst.EloWeightMax) r.Account.EloWeight = (float)GlobalConst.EloWeightMax;
-				}
+                r.Account.EloWeight = Account.AdjustEloWeight(r.Account.EloWeight, sumW, sumCount);
 			}
 
 			foreach (var r in losers)
@@ -136,12 +132,8 @@ namespace ZkData
 				r.Account.XP += LoserTeamXpChange.Value;
 				r.Player.XpChange = LoserTeamXpChange.Value;
 
-				
-				if (r.Account.EloWeight < GlobalConst.EloWeightMax)
-				{
-					r.Account.EloWeight = (float)(r.Account.EloWeight + ((sumW - r.Account.EloWeight)/(sumCount - 1))/GlobalConst.EloWeightLearnFactor);
-					if (r.Account.EloWeight > GlobalConst.EloWeightMax) r.Account.EloWeight = (float)GlobalConst.EloWeightMax;
-				}
+
+			    r.Account.EloWeight = Account.AdjustEloWeight(r.Account.EloWeight, sumW, sumCount);
 			}
 
 	        Calculate1v1Elo();
@@ -168,6 +160,10 @@ namespace ZkData
 
                     winner.Elo1v1 += scoreWin;
                     loser.Elo1v1 += scoreLose;
+
+                    var sumW = winner.Elo1v1Weight + loser.Elo1v1Weight;
+                    winner.Elo1v1Weight  = Account.AdjustEloWeight(winner.Elo1v1Weight, sumW, 2);
+                    loser.Elo1v1Weight = Account.AdjustEloWeight(loser.Elo1v1Weight, sumW, 2);
                 }
             }
         }
