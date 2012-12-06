@@ -97,7 +97,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
                                        { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "level", Value = user.Level.ToString() });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = eloOrder.IndexOf(user) }); // elo for ingame is just ordering for auto /take
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = eloOrder.IndexOf(user).ToString() }); // elo for ingame is just ordering for auto /take
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
 
                         if (!p.IsSpectator) {
