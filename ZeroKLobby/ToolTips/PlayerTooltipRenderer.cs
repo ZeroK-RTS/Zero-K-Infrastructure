@@ -102,7 +102,7 @@ namespace ZeroKLobby
             if (!user.IsBot)
             {
                 drawImage(Images.GetRank(user.Level), 16, 16);
-                drawString(string.Format("Level: {0}, Skill: {1}", user.Level, user.EffectiveElo));
+                drawString(string.Format("Level: {0}, 1v1 elo: {1}", user.Level, user.EffectiveElo));
                 newLine();
                 if (user.IsAway)
                 {

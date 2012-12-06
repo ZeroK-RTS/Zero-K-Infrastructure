@@ -32,7 +32,7 @@ namespace ZkData
         public int KudosSpent = 0;
         public double EffectiveElo { get { return Elo + WeightEloMalus; } }
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
-        public double Effective1v1Elo { get { return Elo + WeightEloMalus; } }
+        public double Effective1v1Elo { get { return Elo1v1 + WeightEloMalus; } }
 
         public override string ToString() {
             return Name;
