@@ -228,14 +228,16 @@ namespace ZeroKWeb.SpringieInterface
                 else {
                     if (unmovablePlayers == null || unmovablePlayers.Length == 0) bestTeams = bestTeams.Shuffle(); // permute when not unmovable players present
 
-                    string text = "(ratings ";
+                    string text = "( ";
 
                     double lastTeamElo = 0.0;
                     int allyNum = 0;
                     foreach (BalanceTeam team in bestTeams) {
                         if (allyNum > 0) text += " : ";
-                        text += string.Format("{0}={1}", (allyNum + 1), Math.Round(team.AvgElo));
-                        if (allyNum > 0) text += string.Format(" ({0}%)", Utils.GetWinChancePercent(lastTeamElo - team.AvgElo));
+                        text += string.Format("{0}", (allyNum + 1));
+                        if (allyNum > 0) {
+                            text += string.Format("={0}%)", Utils.GetWinChancePercent(lastTeamElo - team.AvgElo));
+                        }
                         lastTeamElo = team.AvgElo;
 
                         foreach (int u in team.Items.SelectMany(x => x.LobbyId)) ret.Players.Single(x => x.LobbyID == u).AllyID = allyNum;
@@ -283,14 +285,14 @@ namespace ZeroKWeb.SpringieInterface
                                                         config.MinLevel);
                     ok = false;
                 }
-                else if (config.MinElo != null && p.account.EffectiveElo < config.MinElo) {
+                else if (config.MinElo != null && p.account.Effective1v1Elo < config.MinElo) {
                     SpecPlayerOnCondition(p.player,
                                           p.account,
                                           string.Format("Sorry, minimum elo skill is {0} on this host. You can spectate/observe this game however.",
                                                         config.MinElo));
                     actionsDescription += string.Format("{0} cannot play, his elo is {1}, minimum elo is {2}\n",
                                                         p.account.Name,
-                                                        p.account.EffectiveElo,
+                                                        p.account.Effective1v1Elo,
                                                         config.MinElo);
                     ok = false;
                 }

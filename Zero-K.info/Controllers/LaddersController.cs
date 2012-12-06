@@ -110,7 +110,7 @@ namespace ZeroKWeb.Controllers
 			}
 
 			var top50Accounts =
-				db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo).
+				db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo1v1).
 					Take(50);
 
 			var ladderModel = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts };

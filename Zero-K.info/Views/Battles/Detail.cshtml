@@ -110,7 +110,7 @@
                 <span>
                     @Html.PrintAccount(u.Account)
                     @(u.LoseTime.HasValue ? "died in " + TimeSpan.FromSeconds(u.LoseTime.Value).ToNiceString() : "")
-                    @if (u.EloChange.HasValue)
+                    @if (u.EloChange.HasValue && Global.IsZeroKAdmin)
                     {
                         @:Elo: @u.EloChange.Value.ToString("F1")
                     		}

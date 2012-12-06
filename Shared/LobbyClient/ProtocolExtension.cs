@@ -105,7 +105,7 @@ namespace LobbyClient
                 var data = new Dictionary<string, string>
                            {
                                { Keys.Level.ToString(), acc.Level.ToString() },
-                               { Keys.EffectiveElo.ToString(), ((int)acc.EffectiveElo).ToString() },
+                               { Keys.EffectiveElo.ToString(), ((int)acc.Effective1v1Elo).ToString() },
                                { Keys.Faction.ToString(), acc.Faction != null ? acc.Faction.Shortcut : "" },
                                { Keys.Clan.ToString(), acc.Clan != null ? acc.Clan.Shortcut : "" },
                                { Keys.Avatar.ToString(), acc.Avatar },
