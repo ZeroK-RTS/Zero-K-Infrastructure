@@ -92,7 +92,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
                                        { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "level", Value = user.Level.ToString() });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = user.EffectiveElo.ToString() });
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = user.Effective1v1Elo.ToString() });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
 
                         if (!p.IsSpectator) {
