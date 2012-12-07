@@ -76,7 +76,7 @@ namespace ZeroKWeb
             using (var db = new ZkDataContext())
             return
                 db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(
-                    x => x.Elo).Select(x => x.Name).Take(10).ToList();
+                    x => x.Elo1v1).Select(x => x.Name).Take(10).ToList();
         }
 
 
@@ -289,7 +289,7 @@ namespace ZeroKWeb
                 IsZeroKAdmin= acc.IsZeroKAdmin,
                 Avatar = acc.Avatar,
                 Elo =(float)acc.Elo,
-                EffectiveElo = acc.Effective1v1Elo,
+                EffectiveElo = acc.EffectiveEloBracket,
                 EloWeight = (float)acc.EloWeight,
                 FactionID = acc.FactionID??0,
                 FactionName = acc.Faction != null? acc.Faction.Name:null,

@@ -80,12 +80,9 @@ namespace ZeroKWeb.SpringieInterface
                 }
 
 
-                var idlist = context.Players.Select(x => (int?)x.LobbyID).ToList();
-                // ordered account list by elo
-                var eloOrder = db.Accounts.Where(x => idlist.Contains(x.LobbyID)).OrderBy(x => x.EloWeight*x.Elo).ToList(); 
                 
                 foreach (PlayerTeam p in context.Players) {
-                    Account user = eloOrder.FirstOrDefault(x => x.LobbyID == p.LobbyID);
+                    Account user = Account.AccountByLobbyID(db, p.LobbyID);
                     if (user != null) {
                         var userParams = new List<SpringBattleStartSetup.ScriptKeyValuePair>();
                         ret.UserParameters.Add(new SpringBattleStartSetup.UserCustomParameters { LobbyID = p.LobbyID, Parameters = userParams });
@@ -97,7 +94,7 @@ namespace ZeroKWeb.SpringieInterface
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair
                                        { Key = "clan", Value = user.Clan != null ? user.Clan.Shortcut : "" });
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "level", Value = user.Level.ToString() });
-                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = eloOrder.IndexOf(user).ToString() }); // elo for ingame is just ordering for auto /take
+                        userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "elo", Value = Math.Round(user.EffectiveElo).ToString() }); // elo for ingame is just ordering for auto /take
                         userParams.Add(new SpringBattleStartSetup.ScriptKeyValuePair { Key = "avatar", Value = user.Avatar });
 
                         if (!p.IsSpectator) {

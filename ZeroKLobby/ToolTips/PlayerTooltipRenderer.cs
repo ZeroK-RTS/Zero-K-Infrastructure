@@ -93,16 +93,16 @@ namespace ZeroKLobby
                 drawString("Friend");
                 newLine();
             }
-            if (user.IsZkLobbyUser)
+            if (!user.IsZkLobbyUser)
             {
-							drawImage(Resources.ZK_logo_square, 16, 16);
+				drawImage(Resources.ZK_logo_square, 16, 16);
                 drawString("ZK Lobby (Windows) User");
                 newLine();
             }
             if (!user.IsBot)
             {
                 drawImage(Images.GetRank(user.Level), 16, 16);
-                drawString(string.Format("Level: {0}, 1v1 elo: {1}", user.Level, user.EffectiveElo));
+                drawString(string.Format("Level: {0}", user.Level));
                 newLine();
                 if (user.IsAway)
                 {

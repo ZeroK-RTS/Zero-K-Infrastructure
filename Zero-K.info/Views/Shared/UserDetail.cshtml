@@ -1,117 +1,132 @@
-@model ZkData.Account
 @using PlasmaShared
-@using ZeroKWeb;
-@using ZkData;
-@{Page.Title = Model.Name + " user page";}
+@using ZeroKWeb
+@using ZkData
+@model ZkData.Account
+@{ Page.Title = Model.Name + " user page"; }
  
-@if (Model.AccountID == Global.AccountID)
-{
-    foreach (var p in Global.Account.ValidPolls().Where(x => x.IsHeadline && (x.RoleTargetAccountID == null || !x.PollVotes.Any(y => y.AccountID == Global.AccountID)))) 
-    {
+@if (Model.AccountID == Global.AccountID) {
+    foreach (Poll p in Global.Account.ValidPolls().Where(x => x.IsHeadline && (x.RoleTargetAccountID == null || !x.PollVotes.Any(y => y.AccountID == Global.AccountID)))) {
         Html.RenderAction("Index", "Poll", new { pollID = p.PollID });
     }
 }
 
 @{
-	var badge_width = 60;
-	var padding = 5;
-	 <style>
-	 #levelrank{ height: @(badge_width*2.5)px; width: @(badge_width+padding*2)px; }
-	 #badge-star{ height: @(badge_width*2.5)px; width: @(badge_width)px; top: @(-badge_width*1.25)px; left: @(padding)px; }
-	 #badge-chevrons{ height: @(badge_width*2.5)px; width: @(badge_width)px; top: @(-badge_width*1.25)px; left: @(padding)px; }
-	 #badge-bars{ height: @(badge_width*2.5)px; width: @(badge_width)px; top: @(-badge_width*3.75)px; left: @(padding)px; }
-	 </style>
+    int badge_width = 60;
+    int padding = 5;
+    <style>
+        #levelrank {
+            height: @(badge_width*2.5)px;
+            width: @(badge_width + padding*2)px;
+        }
+
+        #badge-star {
+            height: @(badge_width*2.5)px;
+            left: @(padding)px;
+            top: @(-badge_width*1.25)px;
+            width: @(badge_width)px;
+        }
+
+        #badge-chevrons {
+            height: @(badge_width*2.5)px;
+            left: @(padding)px;
+            top: @(-badge_width*1.25)px;
+            width: @(badge_width)px;
+        }
+
+        #badge-bars {
+            height: @(badge_width*2.5)px;
+            left: @(padding)px;
+            top: @(-badge_width*3.75)px;
+            width: @(badge_width)px;
+        }
+    </style>
 }
 
 @* User Profile Page! *@
 <div>
 
-	<div id="usr_info" class="">
+    <div id="usr_info" class="">
 
-	@if (!Global.IsLobbyAccess)
-	{
-	var star = 0;
-	var chev = 0;
-	var bars = 0;
-	<div id="badge" class="fleft" >
-		<div id="levelrank" title="This is a graphical representation of your level. Play more games to gain more rank!">
-		<div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>
-		<div id="badge-center">
-			@if(Model.Level > 125)
-			{
-				star = 125;
-				<div id="badge-star">
-					<img src="../../img/ranks/level-elo/star.png" class="rank star" />
-				</div>
-			}
-			<div id="badge-chevrons">
-			@for(int i=0 ; i<(Model.Level-star)/25; i++)
-			{
-				<img src="../../img/ranks/level-elo/chevron_gold.png" class="rank chev chev-@(i+1)" />
-				chev += 25;
-			}
-			</div>
-			<div id="badge-bars">
-			@for (int i=0; i<(Model.Level-star-chev)/5; i++)
-			{
-				<img src="../../img/ranks/level-elo/bar_gold.png" class="rank bar bar-@(i+1)" />
-				bars += 1;
-			}
-			<div class="rank dotline bar-@(bars+1)">
-				@for (int i=0; i<(Model.Level-star-chev)%5; i++)
-				{
-					<img src="../../img/ranks/level-elo/dot_gold.png" class="dot" />
-				}
-			</div>
-			</div>
-		</div>
-		</div>
-	</div>
- }
-    <p class="fright" align="right">
-    <a href="@Url.Action("ReportToAdmin","Users", new{id = Model.AccountID})" nicetitle="Report abuse to administrators">Report Player<img src="/img/abuse.png" height="32"/></a>
-        <br/>
-    <a href="http://zero-k.info/Wiki/CodeOfConduct" nicetitle="Code of Conduct"><b><img src="/img/conduct.png" height="32"/></b></a>
-    </p>
+        @if (!Global.IsLobbyAccess) {
+            int star = 0;
+            int chev = 0;
+            int bars = 0;
+            <div id="badge" class="fleft" >
+                <div id="levelrank" title="This is a graphical representation of your level. Play more games to gain more rank!">
+                    <div id="velvet"><img src="../../img/ranks/level-elo/velvetbacking.jpg" width="100%" height="100%" /></div>
+                    <div id="badge-center">
+                        @if (Model.Level > 125) {
+                            star = 125;
+                            <div id="badge-star">
+                                <img src="../../img/ranks/level-elo/star.png" class="rank star" />
+                            </div>
+                        }
+                        <div id="badge-chevrons">
+                            @for (int i = 0; i < (Model.Level - star)/25; i++) {
+                                <img src="../../img/ranks/level-elo/chevron_gold.png" class="rank chev chev-@(i + 1)" />
+                                chev += 25;
+                            }
+                        </div>
+                        <div id="badge-bars">
+                            @for (int i = 0; i < (Model.Level - star - chev)/5; i++) {
+                                <img src="../../img/ranks/level-elo/bar_gold.png" class="rank bar bar-@(i + 1)" />
+                                bars += 1;
+                            }
+                            <div class="rank dotline bar-@(bars + 1)">
+                                @for (int i = 0; i < (Model.Level - star - chev)%5; i++) {
+                                    <img src="../../img/ranks/level-elo/dot_gold.png" class="dot" />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <p class="fright" align="right">
+            <a href="@Url.Action("ReportToAdmin", "Users", new { id = Model.AccountID })" nicetitle="Report abuse to administrators">Report Player<img src="/img/abuse.png" height="32"/></a>
+            <br/>
+            <a href="http://zero-k.info/Wiki/CodeOfConduct" nicetitle="Code of Conduct"><b><img src="/img/conduct.png" height="32"/></b></a>
+        </p>
     
-    <p class="fleft"> 
+        <p class="fleft"> 
     
-    <span style="float:left;">@Html.AccountAvatar(Model)</span>
-	<h2>@Html.PrintAccount(Model)</h2>
+            <span style="float: left;">@Html.AccountAvatar(Model)</span>
+            <h2>@Html.PrintAccount(Model)</h2>
     
-    @foreach (var p in Model.PunishmentsByAccountID.Where(x=>x.BanExpires > DateTime.UtcNow)) {
-        @Html.DisplayFor(x=>p)
-    }
+            @foreach (Punishment p in Model.PunishmentsByAccountID.Where(x => x.BanExpires > DateTime.UtcNow)) {
+                @Html.DisplayFor(x => p)
+            }
         
         
 
-        <a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
-	@if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin)
- {
-			<div>
-				<b> @Model.Name </b> is an <b>Administrator</b> for: 
-				@(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
-			</div>
- }
+            <a href='spring://chat/user/@Model.Name'> Chat with @Model.Name in the lobby </a><br />
+            @if (Model.IsLobbyAdministrator || Model.IsZeroKAdmin) {
+                <div>
+                    <b> @Model.Name </b> is an <b>Administrator</b> for: 
+                    @(Model.IsLobbyAdministrator ? "Lobby" : "Zero-K")
+                </div>
+            }
  
-	<b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
-	<br />
-	<b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
-     @if (Global.IsZeroKAdmin) {
-         <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
-     }
-        @{var ratio = (Model.XP - Account.GetXpForLevel(Model.Level)) / (double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level));}
-        <div title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio * 100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
-            <b class="fleft"> Level @Model.Level </b> 
-            <img src="/img/progressl_base.png" height="17" class="fleft" />
-            <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300 * ratio))" />
-            <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300 * (1 - ratio)))" />
-            <img src="/img/progressr_base.png" height="17" class="fleft" /> 
-            <b class="fleft"> Level @(Model.Level + 1) </b>
-        </div>
-        <br class="clearfloat" />
+            <b>First Login:</b> @Model.FirstLogin.ToAgoString(), <b>Last Login:</b> @Model.LastLogin.ToAgoString()
+            <br />
+            @if (Global.IsZeroKAdmin) {
+                <div class="admin">
+                    <b>Elo (1v1):</b> @Math.Round(@Model.Effective1v1Elo)
+                    <b>Elo (all):</b> @Math.Round(@Model.EffectiveElo)
+                </div>
+            }
+            @{ double ratio = (Model.XP - Account.GetXpForLevel(Model.Level))/(double)(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)); }
+            <div title='Your XP: @Model.XP (next level at: @(Account.GetXpForLevel(Model.Level + 1))) <br /> Your levelprogress: @((int)(ratio*100))% <br /> Points for unlocks on next level: @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level))'>
+                <b class="fleft"> Level @Model.Level </b> 
+                <img src="/img/progressl_base.png" height="17" class="fleft" />
+                <img src="/img/progressl_fill.png" height="17" class="fleft" width="@((int)(300*ratio))" />
+                <img src="/img/progressr_fill.png" height="17" class="fleft" width="@((int)(300*(1 - ratio)))" />
+                <img src="/img/progressr_base.png" height="17" class="fleft" /> 
+                <b class="fleft"> Level @(Model.Level + 1) </b>
+            </div>
+            <br class="clearfloat" />
        
-    </p> 
+        </p> 
         @if (Model.Faction != null) {
             @:Faction: @Html.PrintFaction(Model.Faction, false)
         }
@@ -125,8 +140,7 @@
 
   
     </div>	
-    @if (Global.IsZeroKAdmin)
-    {
+    @if (Global.IsZeroKAdmin) {
         <div class="admin">
             @Html.ActionLink("Admin user", "AdminUserDetail", "Users", new { id = Model.AccountID }, null)
         </div>
@@ -134,8 +148,7 @@
 	
     <div id="usr_trophies" class="">
         <h3>Trophies:</h3>
-        @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count()))
-        {
+        @foreach (var award in Model.AccountBattleAwards.GroupBy(x => x.AwardKey).OrderByDescending(x => x.Count())) {
             <div class="fleft border" style="margin: 3px;">
                 <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(award.Key).png" height="30" alt="@award.Key" title="@award.First().AwardDescription.Split(',').First()"/>
                 <br />
@@ -147,147 +160,128 @@
     
     
 	
-    @if (!Global.IsLobbyAccess)
-    {
-        <h3><a href="#" onclick="$('#usr_gamePreferences').toggle()">Game preferences</a></h3>
+    @if (!Global.IsLobbyAccess) {
+        <h3><a href="#" onclick=" $('#usr_gamePreferences').toggle() ">Game preferences</a></h3>
         <div id="usr_gamePreferences" style="display: none">
-            @if (Model.AccountID == Global.AccountID)
-            {
-                
-				<form action="@Url.Action("LanguageChange", "My")" method="POST">
+            @if (Model.AccountID == Global.AccountID) {
+                <form action="@Url.Action("LanguageChange", "My")" method="POST">
                     Select preferrable language:
-					<select name="language">
-						@foreach (UserLanguage o in Enum.GetValues(typeof(UserLanguage)).OfType<UserLanguage>().OrderBy(x => x))
-                        {
-                            <option value="@o" @(Model.Language == o.ToString() || (String.IsNullOrEmpty(Model.Language) && o == UserLanguage.auto)? "selected='selected'" : "")>@o.Description()</option>
+                    <select name="language">
+                        @foreach (UserLanguage o in Enum.GetValues(typeof(UserLanguage)).OfType<UserLanguage>().OrderBy(x => x)) {
+                            <option value="@o" @(Model.Language == o.ToString() || (String.IsNullOrEmpty(Model.Language) && o == UserLanguage.auto) ? "selected='selected'" : "")>@o.Description()</option>
                         }
-					</select>
+                    </select>
                     <input type="submit"/>
                 </form>
-               
-                
-                var notes = typeof(UserLanguage).GetMember(Global.DisplayLanguageAsEnum.ToString())[0].GetCustomAttributes(typeof(UserLanguageNoteAttribute), false);
-                if (notes.Length > 0)
-                {
-                    <br />
-                    @Html.Raw(((UserLanguageNoteAttribute)notes[0]).Note);
-                    <br /><br />
-                }
 
+                object[] notes = typeof(UserLanguage).GetMember(Global.DisplayLanguageAsEnum.ToString())[0].GetCustomAttributes(typeof(UserLanguageNoteAttribute), false);
+                if (notes.Length > 0) {
+                    <br />
+                    @Html.Raw(((UserLanguageNoteAttribute)notes[0]).Note)
+                    ;
+                    <br />
+                    <br />
+                }
             }
         </div>
     }
 
 
     <div id="usr_technology" class="">
-		<h3>Technologies: </h3>
+        <h3>Technologies: </h3>
 		
-		@if (Model.AccountID == ZeroKWeb.Global.AccountID)
-  {
-			<span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)">
-				<a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a>
-			</span>
-  }
-  else
-  {
-			<text>@Model.Name can unlock technologies worth @Model.AvailableXP points</text>
-  }
-		<!--div>
-			@Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
-		</div-->
-	</div>
+        @if (Model.AccountID == Global.AccountID) {
+            <span title="You only get new points for unlocks after reaching the next level (Lvl: @(Model.Level + 1) with @(Account.GetXpForLevel(Model.Level + 1) - Account.GetXpForLevel(Model.Level)) XP)">
+                <a href='@Url.Action("UnlockList", "My")'>You can unlock technologies worth @Model.AvailableXP points</a>
+            </span>
+        }
+        else {<text>@Model.Name can unlock technologies worth @Model.AvailableXP points</text>
+        }
+        <!--div>
+            @Html.Partial("UnlockedTechnologies", Model.AccountUnlocks)
+        </div-->
+    </div>
 
     <div id="usr_commanders" class="">
         <h3>Commanders: </h3>
 		
-        @if (Model.AccountID == ZeroKWeb.Global.AccountID)
-        {
+        @if (Model.AccountID == Global.AccountID) {
             <a href='@Url.Action("Commanders", "My")'>Configure Commanders</a>
         } 
         <br />
-        @foreach (var comm in Model.Commanders)
-        {
+        @foreach (Commander comm in Model.Commanders) {
             <span class="fleft border"><center><img src='@comm.Unlock.ImageUrl' alt="unlock" title='$commander$@comm.CommanderID'/><br />@comm.Name</center></span>
         }
         <br class="clearfloat" />
     </div>
     
 	
-    @if (Model.SpringBattlePlayers.Any())
-    {
-		<div id="usr_recentbattles" class="fleft border">
-			<h3>@Html.ActionLink("Last battles", "Index", "Battles")</h3>
-			<span>
-				@Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
-				watched, @Model.MissionRunCount missions 
-			</span>
-			<br />
-			@foreach (var b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Take(10))
-   {
-				<small>@Html.PrintBattle(b)</small><br />
-   }
-		</div>
+    @if (Model.SpringBattlePlayers.Any()) {
+        <div id="usr_recentbattles" class="fleft border">
+            <h3>@Html.ActionLink("Last battles", "Index", "Battles")</h3>
+            <span>
+                @Model.SpringBattlePlayers.Count(x => !x.IsSpectator) played, @Model.SpringBattlePlayers.Count(x => x.IsSpectator)
+                watched, @Model.MissionRunCount missions 
+            </span>
+            <br />
+            @foreach (SpringBattlePlayer b in Model.SpringBattlePlayers.OrderByDescending(x => x.SpringBattleID).Take(10)) {
+                <small>@Html.PrintBattle(b)</small>
+                <br />
+            }
+        </div>
     }
 	
-	@if (Model.ForumPosts.Any())
- {
-		<div id="usr_forumposts" class="fleft border">
-			<h3>@Html.ActionLink("Posted threads", "Index", "Forum")</h3>
-			<span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
-			<br />
-			@foreach (var t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10))
-   {
-				<small>@Html.Print(t)</small>
-				<br />
-   }
-		</div>
- }
- @if (Model.PollVotes.Any())
- {
-     <div class="fleft border">
-         <h3>@Html.ActionLink("Poll votes", "UserVotes", "Poll", new { id = Model.AccountID }, null)</h3>
-         <ul>
-        @foreach (var pv in Model.PollVotes.Where(x => !x.Poll.IsAnonymous).OrderByDescending(x => x.PollID).Take(5))
-        {
-            <li><small>@pv.Poll.QuestionText : <b>@pv.PollOption.OptionText</b></small></li>
-        }
-        </ul>
-     </div>
-
- }
+    @if (Model.ForumPosts.Any()) {
+        <div id="usr_forumposts" class="fleft border">
+            <h3>@Html.ActionLink("Posted threads", "Index", "Forum")</h3>
+            <span>@Model.ForumPosts.Count() posts in @Model.ForumThreadsByLastPostAccountID.Count threads</span>
+            <br />
+            @foreach (ForumThread t in Model.ForumPosts.OrderByDescending(x => x.ForumPostID).Select(x => x.ForumThread).Distinct().Take(10)) {
+                <small>@Html.Print(t)</small>
+                <br />
+            }
+        </div>
+    }
+    @if (Model.PollVotes.Any()) {
+        <div class="fleft border">
+            <h3>@Html.ActionLink("Poll votes", "UserVotes", "Poll", new { id = Model.AccountID }, null)</h3>
+            <ul>
+                @foreach (PollVote pv in Model.PollVotes.Where(x => !x.Poll.IsAnonymous).OrderByDescending(x => x.PollID).Take(5)) {
+                    <li><small>@pv.Poll.QuestionText : <b>@pv.PollOption.OptionText</b></small></li>
+                }
+            </ul>
+        </div>
+    }
     <br class="clearfloat" />
 
-	<div id="usr_planetwars" class="border relative">
+    <div id="usr_planetwars" class="border relative">
 
     
-	@if (Model.Planets.Any())
- {
-		<h3>Planets owned</h3>
-		<table>
-			@foreach (var p in Model.Planets)
-   { 
-				<tr>
-					<td>@Html.PrintPlanet(p) </td>
-				</tr>
-   }
-		</table>
- }
+        @if (Model.Planets.Any()) {
+            <h3>Planets owned</h3>
+            <table>
+                @foreach (Planet p in Model.Planets) {
+                    <tr>
+                        <td>@Html.PrintPlanet(p) </td>
+                    </tr>
+                }
+            </table>
+        }
 	
 	
-	<h3>PlanetWars events</h3>
-	@Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
+        <h3>PlanetWars events</h3>
+        @Html.Action("Events", "Planetwars", new { accountID = Model.AccountID, partial = true })
 
-	<span style="position: absolute; font-family:Skir; top: 5%; right: 5%; font-size: 500%; color: #222; opacity: .75; z-index: -20">PlanetWars</span>
-	</div>
+        <span style="color: #222; font-family: Skir; font-size: 500%; opacity: .75; position: absolute; right: 5%; top: 5%; z-index: -20">PlanetWars</span>
+    </div>
 	
 
-@if (ZeroKWeb.Global.IsZeroKAdmin && ZeroKWeb.Global.AccountID == Model.AccountID)
-{
-	<div class="admin">
-	<h3>Admin extras</h3>
-	<a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
-	<a href="@Url.Content("~/StructuresAdmin.aspx")">Planetwars structures admin</a><br />
-	<a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
-	</div>
-}
+    @if (Global.IsZeroKAdmin && Global.AccountID == Model.AccountID) {
+        <div class="admin">
+            <h3>Admin extras</h3>
+            <a href="@Url.Content("~/UnlocksAdmin.aspx")">Unlocks admin</a><br />
+            <a href="@Url.Content("~/StructuresAdmin.aspx")">Planetwars structures admin</a><br />
+            <a href="@Url.Content("~/ResourceList.aspx")">Resource list</a><br />
+        </div>
+    }
 </div>

@@ -315,7 +315,7 @@ namespace ZeroKWeb.SpringieInterface
                     AutohostMode manualPref;
 
                     if (b.Config.MinLevel != null && a.Value.Level < b.Config.MinLevel) continue; // dont queue who cannot join PW
-                    if (b.Config.MinElo != null && a.Value.Effective1v1Elo < b.Config.MinElo) continue; // dont queue those who cannot join high skill host
+                    if (b.Config.MinElo != null && a.Value.EffectiveElo < b.Config.MinElo) continue; // dont queue those who cannot join high skill host
                     
                     if (b.ManuallyJoined.Contains(lobbyID)) // was he there already
                         b.PlayerPriority[lobbyID] = battlePref; // player joined it already

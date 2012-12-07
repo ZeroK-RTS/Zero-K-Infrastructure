@@ -285,14 +285,14 @@ namespace ZeroKWeb.SpringieInterface
                                                         config.MinLevel);
                     ok = false;
                 }
-                else if (config.MinElo != null && p.account.Effective1v1Elo < config.MinElo) {
+                else if (config.MinElo != null && p.account.EffectiveElo < config.MinElo) {
                     SpecPlayerOnCondition(p.player,
                                           p.account,
                                           string.Format("Sorry, minimum elo skill is {0} on this host. You can spectate/observe this game however.",
                                                         config.MinElo));
-                    actionsDescription += string.Format("{0} cannot play, his elo is {1}, minimum elo is {2}\n",
+                    actionsDescription += string.Format("{0} cannot play here, his elo is {1}, minimum elo is {2}\n",
                                                         p.account.Name,
-                                                        p.account.Effective1v1Elo,
+                                                        p.account.EffectiveElo,
                                                         config.MinElo);
                     ok = false;
                 }

@@ -5,9 +5,11 @@
 }
 <span style="float:left;">@Html.AccountAvatar(u)</span><b>@Html.PrintAccount(u)</b><br/>
 <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
-<b>Elo (1v1):</b> @Math.Round(@u.Effective1v1Elo)
 @if (Global.IsZeroKAdmin) {
-    <b>Elo (all):</b> @Math.Round(@u.EffectiveElo)
+    <div class="admin">
+        <b>Elo (1v1): </b> @Math.Round(@u.Effective1v1Elo)
+        <b>Elo (all): </b> @Math.Round(@u.EffectiveElo)
+    </div>
 }
 <b>Level:</b> @u.Level<br/>
 <br/>

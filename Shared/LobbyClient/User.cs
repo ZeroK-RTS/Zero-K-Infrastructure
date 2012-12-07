@@ -21,20 +21,28 @@ namespace LobbyClient
         /// times (in hours) to reach given rank
         /// </summary>
         public static readonly int[] RankLimits = { 0, 5, 15, 30, 100, 300, 1000, 3000, 5000 }; // last two are just a guess
+        public int LobbyID;
+        public int SpringieLevel = 1;
 
         string country;
 
+        static User() {
+            Assembly assembly = Assembly.GetAssembly(typeof(User));
+            var reader = new StreamReader(assembly.GetManifestResourceStream("Resources.CountryNames.txt"));
+
+            string line;
+            while ((line = reader.ReadLine()) != null) {
+                string[] parts = line.Split('\t');
+                CountryNames.Add(parts[0], parts[1]);
+            }
+        }
+
         public DateTime? AwaySince { get; protected set; }
         public string Clan { get; private set; }
-        // todo: set by tasclient (use "User Battle" instead?)
-        
         public string Avatar { get; private set; }
-
-        public string Country
-        {
+        public string Country {
             get { return country; }
-            set
-            {
+            set {
                 country = value;
                 string name;
                 if (CountryNames.TryGetValue(country, out name)) CountryName = name;
@@ -60,43 +68,24 @@ namespace LobbyClient
 
         public int Level { get; private set; }
 
-        public int LobbyID;
-        public bool IsZkLobbyUser { get { return Cpu == GlobalConst.ZkLobbyUserCpu || Cpu==GlobalConst.ZkSpringieManagedCpu; } }
+        public bool IsZkLobbyUser { get { return Cpu == GlobalConst.ZkLobbyUserCpu || Cpu == GlobalConst.ZkSpringieManagedCpu; } }
         public bool IsSpringieManaged { get { return Cpu == GlobalConst.ZkSpringieManagedCpu; } }
         public string Name { get; protected set; }
         public int Rank { get; protected set; }
+        public bool IsZeroKAdmin { get; protected set; }
 
-        static User()
-        {
-            var assembly = Assembly.GetAssembly(typeof(User));
-            var reader = new StreamReader(assembly.GetManifestResourceStream("Resources.CountryNames.txt"));
-
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                var parts = line.Split('\t');
-                CountryNames.Add(parts[0], parts[1]);
-            }
-        }
-
-        public User Clone()
-        {
+        public User Clone() {
             return (User)MemberwiseClone();
         }
 
-        public User() {
-        }
-
-        public static User Create(string name)
-        {
+        public static User Create(string name) {
             var u = new User();
             u.Name = name;
             return u;
         }
 
-        public void FromInt(int status)
-        {
-            var old = IsInGame;
+        public void FromInt(int status) {
+            bool old = IsInGame;
             IsInGame = (status & 1) > 0;
             if (IsInGame && !old) InGameSince = DateTime.Now;
             if (!IsInGame) InGameSince = null;
@@ -111,8 +100,7 @@ namespace LobbyClient
             Rank = (status & 28) >> 2;
         }
 
-        internal void SetExtension(Dictionary<string, string> data)
-        {
+        internal void SetExtension(Dictionary<string, string> data) {
             Extensions = data;
             int ret;
             if (int.TryParse(GetExtension(ProtocolExtension.Keys.Level), out ret)) Level = ret;
@@ -123,30 +111,23 @@ namespace LobbyClient
             Clan = GetExtension(ProtocolExtension.Keys.Clan);
             Avatar = GetExtension(ProtocolExtension.Keys.Avatar);
 
-            if (GetExtension(ProtocolExtension.Keys.ZkAdmin) == "1") IsZeroKAdmin =true;
+            if (GetExtension(ProtocolExtension.Keys.ZkAdmin) == "1") IsZeroKAdmin = true;
             if (GetExtension(ProtocolExtension.Keys.BanMute) == "1") BanMute = true;
             if (GetExtension(ProtocolExtension.Keys.BanLobby) == "1") BanLobby = true;
-            
         }
 
-        public int SpringieLevel =1;
-        public bool IsZeroKAdmin { get; protected set; }
-
-        public int ToInt()
-        {
-            var res = 0;
+        public int ToInt() {
+            int res = 0;
             res |= IsInGame ? 1 : 0;
             res |= IsAway ? 2 : 0;
             return res;
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return Name;
         }
 
-        string GetExtension(ProtocolExtension.Keys key)
-        {
+        string GetExtension(ProtocolExtension.Keys key) {
             string txt;
             Extensions.TryGetValue(key.ToString(), out txt);
             return txt;
