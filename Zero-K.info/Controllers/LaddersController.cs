@@ -113,7 +113,11 @@ namespace ZeroKWeb.Controllers
 				db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo1v1).
 					Take(50);
 
-			var ladderModel = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts };
+            var top50Teams =
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo).
+                    Take(50);
+
+			var ladderModel = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams};
 			return View("Ladders", ladderModel);
 		}
 
@@ -143,6 +147,7 @@ namespace ZeroKWeb.Controllers
 		{
 			public List<AwardItem> AwardItems;
 			public IQueryable<Account> Top50Accounts;
+            public IQueryable<Account> Top50Teams;
 		}
 	}
 }

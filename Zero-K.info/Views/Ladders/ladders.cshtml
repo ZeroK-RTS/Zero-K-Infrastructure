@@ -1,64 +1,80 @@
-﻿@model ZeroKWeb.Controllers.LaddersController.LadderModel
+﻿@using ZeroKWeb.Controllers
+@using ZkData
+@model ZeroKWeb.Controllers.LaddersController.LadderModel
 @{
     Page.Title = "Award ladders";
-    var awardItems = Model.AwardItems;
-    var top50Players = Model.Top50Accounts;
-    var playerIndex = 1;
+    List<LaddersController.AwardItem> awardItems = Model.AwardItems;
+    int playerIndex = 1;
 }
 
 
-<h2>Top 50 Players</h2>
-<br />
 
-<span>
-@foreach (var acct in top50Players)
-{
-    if (playerIndex == 21)
-    {
-        @:</span> <br /> <span style="font-size: small" >
-    }
-    <text>
-    @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.Effective1v1Elo)) <br />
-    </text>
-    playerIndex++;
-}
-</span>
+<table><tr><td>
+               <h2>Top 50 1v1 Players</h2>
+               <br />
+               <span>
+                   @foreach (Account acct in Model.Top50Accounts) {
+                       if (playerIndex == 21) {
+                           @:</span> <br /> <span style="font-size: small" >
+                       }
+                       <text>
+                           @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.Effective1v1Elo)) <br />
+                       </text>
+                       playerIndex++;
+                   }
+               </span>
+    
+           </td><td>@{
+                        playerIndex = 1;
+                    }
+                    <h2>Top 50 Team Players</h2>
+                    <br />
+                    <span>
+                        @foreach (Account acct in Model.Top50Teams) {
+                            if (playerIndex == 21) {
+                                @:</span> <br /> <span style="font-size: small" >
+                            }
+                            <text>
+                                @(playerIndex) ) @Html.PrintAccount(acct) - @(Math.Round(acct.Effective1v1Elo)) <br />
+                            </text>
+                            playerIndex++;
+                        }
+                    </span>
+                    
+
+                </td></tr></table>
 
 <br />
 
 <h2>Awards Hall of Fame - @DateTime.Now.ToString("MMMM")</h2>
 <br />
 
-@foreach (var awardItem in awardItems)
-{   
-    <div style="height:80px;  ">
-        <div style="width:60px; position:absolute; " >
+@foreach (LaddersController.AwardItem awardItem in awardItems) {
+    <div style="height: 80px;">
+        <div style="position: absolute; width: 60px;" >
             <span title="@awardItem.AwardTitle">
                 <img src="http://zero-k.googlecode.com/svn/trunk/mods/zk/LuaRules/Images/awards/trophy_@(awardItem.AwardType).png" height="30" alt="@awardItem.AwardType" />
             </span>
         </div>
         
-            <div style="position:absolute; left:70px; " >
-                <div style="font-weight:bold; " >
-                    Top Collector(s) -
-                    @{var first = true; }
-                    @foreach (var collector in awardItem.TopCollectorsM)
-                    {
-                        if (!first)
-                        {
-                            @:,
-                        }
-                        first = false;
-                        @Html.PrintAccount(collector)
-                    
+        <div style="left: 70px; position: absolute;" >
+            <div style="font-weight: bold;" >
+                Top Collector(s) -
+                @{ bool first = true; }
+                @foreach (Account collector in awardItem.TopCollectorsM) {
+                    if (!first) {
+                        @:,
                     }
-                    - <span style="color:lightgreen; ">@awardItem.TopCollectorCountM</span> collected
-                </div>
-                <div style="font-weight:bold; " >
+                    first = false;
+                    @Html.PrintAccount(collector)
+                }
+                - <span style="color: lightgreen;">@awardItem.TopCollectorCountM</span> collected
+            </div>
+            <div style="font-weight: bold;" >
 
-                    Top Score - @Html.PrintAccount(awardItem.TopScoreHolderM) - <span style="color:lightgreen; ">@awardItem.TopScoreDescM</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayerM)
-                </div>
-                @*
+                Top Score - @Html.PrintAccount(awardItem.TopScoreHolderM) - <span style="color: lightgreen;">@awardItem.TopScoreDescM</span> - @Html.PrintBattle(awardItem.TopScoreBattlePlayerM)
+            </div>
+            @*
                 <div style="position:absolute; left:20px; font-size:small; " >
                     <div>
                         Top Collector(s): 
@@ -81,7 +97,7 @@
                     </div>
                 </div>
                 *@
-            </div>
+        </div>
             
         
         
