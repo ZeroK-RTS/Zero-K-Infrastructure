@@ -289,7 +289,7 @@ namespace ZeroKWeb
                 IsZeroKAdmin= acc.IsZeroKAdmin,
                 Avatar = acc.Avatar,
                 Elo =(float)acc.Elo,
-                EffectiveElo = acc.EffectiveEloBracket,
+                EffectiveElo = acc.EffectiveElo,
                 EloWeight = (float)acc.EloWeight,
                 FactionID = acc.FactionID??0,
                 FactionName = acc.Faction != null? acc.Faction.Name:null,
