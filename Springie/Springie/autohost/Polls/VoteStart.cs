@@ -23,8 +23,14 @@ namespace Springie.autohost.Polls
                     }
                     ah.SayBattle(string.Join(",", invalid) + " will be forced spectators if they don't download their maps and stop being afk when vote ends");
                 }
-
-                winCount = (tas.MyBattle.Users.Count(x => !x.IsSpectator) + 1) / 2 + 1;
+                if (tas.MyBattle.Users.Count(x => !x.IsSpectator) >= 2)
+                {
+                  winCount = (tas.MyBattle.Users.Count(x => !x.IsSpectator) + 1) / 2 + 1;
+                }
+                else
+                {
+                  winCount = 1;
+                }
                 return true;
             }
             else
