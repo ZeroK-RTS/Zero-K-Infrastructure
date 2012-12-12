@@ -365,7 +365,9 @@ namespace ZeroKLobby
 
         static void TasClientInvoker(TasClient.Invoker a)
         {
-            if (!CloseOnNext) MainWindow.Dispatcher.Invoke(a);
+            if (!CloseOnNext)
+                if (!MainWindow.Dispatcher.CheckAccess()) MainWindow.Dispatcher.Invoke(a);
+                else a.Invoke();
         }
 
         static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
