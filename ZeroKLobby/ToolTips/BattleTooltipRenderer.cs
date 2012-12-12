@@ -118,6 +118,11 @@ namespace ZeroKLobby
 
                     if (clan.Item1 != null) drawImage(clan.Item1, 16, 16);
                 }
+                /*
+                if (user.IsZkLobbyUser)
+                {
+                    drawImage(Resources.ZK_logo_square, 16, 16);
+                }*/
                 drawString(player.Name);
 
                 var top10 = Program.SpringieServer.GetTop10Rank(user.Name);

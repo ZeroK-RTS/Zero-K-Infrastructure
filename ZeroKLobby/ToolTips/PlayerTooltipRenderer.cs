@@ -93,7 +93,7 @@ namespace ZeroKLobby
                 drawString("Friend");
                 newLine();
             }
-            if (!user.IsZkLobbyUser)
+            if (user.IsZkLobbyUser)
             {
 				drawImage(Resources.ZK_logo_square, 16, 16);
                 drawString("ZK Lobby (Windows) User");
