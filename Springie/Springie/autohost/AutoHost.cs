@@ -684,7 +684,7 @@ namespace Springie.autohost
 
             Map mapi = null;
             cache.GetMap(mapname, (m, x, y, z) => { mapi = m; }, (e) => { }, springPaths.SpringVersion);
-            int mint, maxt;
+            //int mint, maxt;
             var b = new Battle(springPaths.SpringVersion, password, hostingPort, config.MaxPlayers, 0, mapi, title, hostedMod, new BattleDetails());
             // if hole punching enabled then we use it
             if (Program.main.Config.UseHolePunching) b.Nat = Battle.NatMode.HolePunching;
