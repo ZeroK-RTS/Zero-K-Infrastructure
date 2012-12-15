@@ -1,7 +1,7 @@
 ﻿@model ZeroKWeb.Controllers.MyController.UnlockListResult
 @{Page.Title = "Technology unlocks";}
 <center><h2>Owned technologies</h2></center>
-@{Html.RenderPartial("UnlockedTechnologies", Model.Account.AccountUnlocks);}
+@{Html.RenderPartial("UnlockedTechnologies", Model.Account.AccountUnlocks.ToList().OrderBy(x => x.Unlock.UnlockType).ThenBy(x => x.Unlock.Name));}
 
 <div class="border" style="position: fixed; bottom: 10%; left: 40%; z-index: 100; border: #fff;" title="Want more points? <br /> First you have to reach the next level before you'll receive new points. <br /> Gain XP just by playing the game, win or lose!">
 	<h3>You have <span style="color: red; font-size: 130%;"> @Model.Account.AvailableXP </span> points available</h3>
