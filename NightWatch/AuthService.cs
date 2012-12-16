@@ -23,7 +23,7 @@ namespace NightWatch
         readonly ConcurrentDictionary<int, RequestInfo> requests = new ConcurrentDictionary<int, RequestInfo>();
         public static string[] blockedHosts = new[] { "anchorfree.com", "leaseweb.com", "uk2net.com" };
         // FIXME: do it in a way that doesn't break on rename
-        public static string[] allowedAccounts = new[] { "[KO1]RageQuit","[PRO]Jools","[V]Aneque","AlphaT","[PO]Mishel","[Vak]Jaronidas","zzNoXzz","Loryk","nicb1" };
+        public static string[] allowedAccounts = new[] { "[KO1]RageQuit","[PRO]Jools","[V]Aneque","AlphaT","[PO]mishel","[Vak]Jaronidas","zzNoXzz","Loryk","nicb1" };
 
         public AuthService(TasClient client)
         {
