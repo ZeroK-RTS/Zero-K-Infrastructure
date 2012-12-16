@@ -50,7 +50,7 @@
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>5</ApplicationRevision>
+    <ApplicationRevision>6</ApplicationRevision>
     <ApplicationVersion>2.75.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
@@ -625,6 +625,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MicroLobby\AskBattlePasswordForm.resx">
       <DependentUpon>AskBattlePasswordForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="AcceptAgreementForm.resx">
       <DependentUpon>AcceptAgreementForm.cs</DependentUpon>

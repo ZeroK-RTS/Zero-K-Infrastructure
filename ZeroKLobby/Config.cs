@@ -200,6 +200,7 @@ namespace ZeroKLobby
 
         [Category("Account")]
         [DisplayName("Lobby Password")]
+        [PasswordPropertyText(true)]
         [Description("Player password from lobby (tasclient), needed for widget online profile")]
         public string LobbyPlayerPassword
         {
