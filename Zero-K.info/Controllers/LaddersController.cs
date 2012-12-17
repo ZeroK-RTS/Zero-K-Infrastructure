@@ -98,9 +98,9 @@ namespace ZeroKWeb.Controllers
 				                {
 				                	AwardType = awardType,
 				                	AwardTitle = titleName,
-				                	TopScoreHolderM = db.Accounts.Single(x=>x.AccountID == topActID),
+				                	TopScoreHolderM = db.Accounts.SingleOrDefault(x=>x.AccountID == topActID),
 				                	TopScoreDescM = fullTitleM,
-				                	TopScoreBattlePlayerM = db.SpringBattlePlayers.Single(x=>x.AccountID == topActID && x.SpringBattleID == topBattleID),
+				                	TopScoreBattlePlayerM = db.SpringBattlePlayers.SingleOrDefault(x=>x.AccountID == topActID && x.SpringBattleID == topBattleID),
 				                	TopCollectorsM = topCollectorsM,
 				                	TopCollectorCountM = topCountM,
 				                };
