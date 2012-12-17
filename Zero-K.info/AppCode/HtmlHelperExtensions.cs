@@ -242,8 +242,8 @@ namespace System.Web.Mvc
 
        
 
-        public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattlePlayer battlePlayer)
-        {
+        public static MvcHtmlString PrintBattle(this HtmlHelper helper, SpringBattlePlayer battlePlayer) {
+            if (battlePlayer == null) return null;
             return PrintBattle(helper, battlePlayer.SpringBattle, battlePlayer.IsSpectator ? null : (bool?)battlePlayer.IsInVictoryTeam);
         }
 
