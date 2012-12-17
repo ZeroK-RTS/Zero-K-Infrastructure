@@ -74,7 +74,7 @@ namespace ZeroKWeb.Controllers
 
 
 				var topScore = 0;
-                var titleName = "";
+                string titleName = null;
 
                 topScore = 0;
 				var fullTitleM = "";
@@ -82,19 +82,17 @@ namespace ZeroKWeb.Controllers
                 int topBattleID = 0;
                 foreach (var award in awardsByType)
 				{
-					var score = Convert.ToInt32(Regex.Replace(award.AwardDescription, @"\D", String.Empty));
-                    titleName = award.AwardDescription.Split(',').First();
-                    
-					if (score > topScore)
-					{
-                        topActID = award.AccountID;
-                        topBattleID = award.SpringBattleID;
-                        topScore = score;
-						fullTitleM = string.Join(" ", award.AwardDescription.Split(',').Skip(1));
-					}
-
-                    
-				}
+                    if (titleName == null) titleName = award.AwardDescription.Split(',').First();
+                    int score;
+                    if (int.TryParse(Regex.Replace(award.AwardDescription, @"\D", String.Empty), out score)) {
+                        if (score > topScore) {
+                            topActID = award.AccountID;
+                            topBattleID = award.SpringBattleID;
+                            topScore = score;
+                            fullTitleM = string.Join(" ", award.AwardDescription.Split(',').Skip(1));
+                        }
+                    }
+                }
 
 				var awardItem = new AwardItem
 				                {
