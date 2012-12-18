@@ -1224,7 +1224,7 @@ namespace LobbyClient
                             var battleStatus = MyBattle.Users[userIndex];
                             battleStatus.SetFrom(int.Parse(args[1]), int.Parse(args[2]));
                             MyBattle.Users[userIndex] = battleStatus;
-                            if (MyBattle.Founder.Name == UserName) UpdateSpectators(); 
+                            if (MyBattle.Founder.Name == username) UpdateSpectators(); 
                             if (battleStatus.Name == username)
                             {
                                 lastUserBattleStatus = battleStatus.ToInt();
