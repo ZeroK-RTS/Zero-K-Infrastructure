@@ -127,7 +127,8 @@ namespace ZeroKLobby
                         tooltip.Dispose();
                     }
 
-                    if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == (int)MainWindow.Instance.Handle;
+                    if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == (int)MainWindow.Instance.Handle || WindowsApi.GetForegroundWindow() == WindowsApi.GetActiveWindow();
+                    //Get active window handle. Reference:http://msdn.microsoft.com/en-us/library/windows/desktop/ms646292(v=vs.85).aspx
 
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive) {
                         tooltip = ToolTipForm.CreateToolTipForm(text);

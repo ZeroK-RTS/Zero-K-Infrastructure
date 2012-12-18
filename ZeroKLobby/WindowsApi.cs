@@ -50,6 +50,9 @@ namespace ZeroKLobby
 		[DllImport("user32.dll")]
 		public static extern int GetForegroundWindow();
 
+        [DllImport("user32.dll")]
+        public static extern int GetActiveWindow();
+
 		[DllImport("user32.dll")]
 		static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
@@ -77,5 +80,5 @@ namespace ZeroKLobby
 			public int Top;
 			public int Bottom;
 		}
-	}
+    }
 }
