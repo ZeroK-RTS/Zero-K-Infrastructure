@@ -127,12 +127,9 @@ namespace ZeroKLobby
                         tooltip.Dispose();
                     }
 
-                    if (doActiveWindowCheck) {
-                        var lastForm = System.Windows.Forms.Application.OpenForms.OfType<Form>().LastOrDefault(x => !(x is ToolTipForm) && x.Visible);
-                        isWindowActive = MainWindow.Instance.IsActive || (lastForm != null && (int)lastForm.Handle ==  WindowsApi.GetForegroundWindow());
+                    if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == (int)MainWindow.Instance.Handle || WindowsApi.GetForegroundWindow() == WindowsApi.GetActiveWindow();
 
-                    }
-
+                    
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive) {
                         tooltip = ToolTipForm.CreateToolTipForm(text);
                         if (tooltip != null) tooltip.Visible = true;
