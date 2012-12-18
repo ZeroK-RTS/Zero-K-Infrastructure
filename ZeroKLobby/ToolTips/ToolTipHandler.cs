@@ -127,8 +127,11 @@ namespace ZeroKLobby
                         tooltip.Dispose();
                     }
 
-                    if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == (int)MainWindow.Instance.Handle || WindowsApi.GetForegroundWindow() == WindowsApi.GetActiveWindow();
-                    //Get active window handle. Reference:http://msdn.microsoft.com/en-us/library/windows/desktop/ms646292(v=vs.85).aspx
+                    if (doActiveWindowCheck) {
+                        var lastForm = System.Windows.Forms.Application.OpenForms.OfType<Form>().LastOrDefault(x => !(x is ToolTipForm) && x.Visible);
+                        isWindowActive = MainWindow.Instance.IsActive || (lastForm != null && (int)lastForm.Handle ==  WindowsApi.GetForegroundWindow());
+
+                    }
 
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive) {
                         tooltip = ToolTipForm.CreateToolTipForm(text);
@@ -136,7 +139,7 @@ namespace ZeroKLobby
                     }
 
                     lastText = text;
-                    lastVisible = Visible;
+                    lastVisible = tooltip != null && tooltip.Visible;
                     lastActive = isWindowActive;
                 }
                 if (tooltip != null) {

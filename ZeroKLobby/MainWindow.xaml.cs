@@ -122,8 +122,11 @@ namespace ZeroKLobby
 
         public Control GetHoveredControl()
         {
-            var lastForm = System.Windows.Forms.Application.OpenForms.OfType<Form>().LastOrDefault(x=>!(x is ToolTipForm));
-            if (lastForm != null) return lastForm.GetHoveredControl();
+            var lastForm = System.Windows.Forms.Application.OpenForms.OfType<Form>().LastOrDefault(x=>!(x is ToolTipForm) && x.Visible);
+            if (lastForm != null) {
+                var hovered = lastForm.GetHoveredControl();
+                if (hovered != null) return hovered;
+            }
 
             var c = GetHoveredControlOfWindowsFormsHost(navigationControl.GetWindowsFormsHostOfCurrentTab());
             if (c != null) return c;
