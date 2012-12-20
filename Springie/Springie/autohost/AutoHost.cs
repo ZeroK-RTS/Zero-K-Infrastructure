@@ -811,19 +811,14 @@ namespace Springie.autohost
                 if (version != null)
                 {
                     var latest = version.InternalName;
-                    if (!String.IsNullOrEmpty(latest) && cache.GetResourceDataByInternalName(latest) != null)
+                    if (!String.IsNullOrEmpty(latest) && (tas.MyBattle == null || tas.MyBattle.ModName != latest))
                     {
-                        var b = tas.MyBattle;
-                        if (b != null && b.ModName != latest)
+                        if (cache.GetResourceDataByInternalName(latest) != null && !spring.IsRunning)
                         {
                             config.Mod = latest;
-                            if (!spring.IsRunning)
-                            {
-                                SayBattle("Updating to latest mod version: " + latest);
-                                ComRehost(TasSayEventArgs.Default, new[] { latest });
-                            }
-                            else delayedModChange = latest;
-                        }
+                            SayBattle("Updating to latest mod version: " + latest);
+                            ComRehost(TasSayEventArgs.Default, new[] { latest });
+                        } else delayedModChange = latest;
                     }
                 }
             }
@@ -838,7 +833,7 @@ namespace Springie.autohost
                 if (activePoll != null) activePoll.End();
                 StopVote();
 
-                if (!spring.IsRunning && delayedModChange != null)
+                if (!spring.IsRunning && delayedModChange != null && cache.GetResourceDataByInternalName(delayedModChange) != null)
                 {
                     var mod = delayedModChange;
                     delayedModChange = null;
