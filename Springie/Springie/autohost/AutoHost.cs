@@ -811,8 +811,7 @@ namespace Springie.autohost
                 if (version != null)
                 {
                     var latest = version.InternalName;
-                    if (!String.IsNullOrEmpty(latest) && (tas.MyBattle == null || tas.MyBattle.ModName != latest))
-                    {
+                    if (!String.IsNullOrEmpty(latest) && (tas.MyBattle == null || tas.MyBattle.ModName != latest)) {
                         if (cache.GetResourceDataByInternalName(latest) != null && !spring.IsRunning)
                         {
                             config.Mod = latest;
@@ -837,6 +836,7 @@ namespace Springie.autohost
                 {
                     var mod = delayedModChange;
                     delayedModChange = null;
+                    config.Mod = mod;
                     SayBattle("Updating to latest mod version: " + mod);
                     ComRehost(TasSayEventArgs.Default, new[] { mod });
                 }

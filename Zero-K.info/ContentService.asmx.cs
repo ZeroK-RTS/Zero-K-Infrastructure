@@ -98,7 +98,9 @@ namespace ZeroKWeb
         public PlasmaServer.ResourceData GetResourceDataByInternalName(string internalName)
         {
             var db = new ZkDataContext();
-            return new PlasmaServer.ResourceData(db.Resources.Single(x => x.InternalName == internalName));
+            var entry = db.Resources.SingleOrDefault(x => x.InternalName == internalName);
+            if (entry != null) return new PlasmaServer.ResourceData(entry);
+            else return null;
         }
 
         [WebMethod]
