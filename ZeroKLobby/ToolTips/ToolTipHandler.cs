@@ -18,7 +18,6 @@ namespace ZeroKLobby
 
 
         private const int WM_MOUSEMOVE = 0x200;
-        private bool isWindowActive = true;
         private bool lastActive = true;
         private Point lastMousePos;
         private string lastText;
@@ -34,7 +33,7 @@ namespace ZeroKLobby
             get { return visible; }
             set {
                 visible = value;
-                RefreshToolTip(false, true);
+                RefreshToolTip(false);
             }
         }
 
@@ -94,7 +93,7 @@ namespace ZeroKLobby
             UpdateTooltip(control, GetUserToolTipString(name));
         }
 
-        private void RefreshToolTip(bool invalidate, bool doActiveWindowCheck) {
+        private void RefreshToolTip(bool invalidate) {
             if (Program.MainWindow != null && Program.MainWindow.IsLoaded && !Program.CloseOnNext && Program.MainWindow.IsVisible && Program.MainWindow.WindowState != WindowState.Minimized) {
 
                 var control = MainWindow.Instance.GetHoveredControl();
@@ -121,24 +120,25 @@ namespace ZeroKLobby
                     }
                 }
 
+                bool isWindowActive = WindowsApi.GetForegroundWindow() == (int)MainWindow.Instance.Handle || WindowsApi.GetForegroundWindow() == WindowsApi.GetActiveWindow();
+
                 if (lastText != text || lastVisible != Visible || lastActive != isWindowActive) {
                     if (tooltip != null) {
                         tooltip.Close();
                         tooltip.Dispose();
+                        tooltip = null;
                     }
 
-                    if (doActiveWindowCheck) isWindowActive = WindowsApi.GetForegroundWindow() == (int)MainWindow.Instance.Handle || WindowsApi.GetForegroundWindow() == WindowsApi.GetActiveWindow();
-
-                    
                     if (!string.IsNullOrEmpty(text) && Visible && isWindowActive) {
                         tooltip = ToolTipForm.CreateToolTipForm(text);
                         if (tooltip != null) tooltip.Visible = true;
                     }
 
                     lastText = text;
-                    lastVisible = tooltip != null && tooltip.Visible;
+                    lastVisible = visible;
                     lastActive = isWindowActive;
                 }
+
                 if (tooltip != null) {
                     var mp = System.Windows.Forms.Control.MousePosition;
 
@@ -170,7 +170,7 @@ namespace ZeroKLobby
 
         private void UpdateTooltip(object control, string s) {
             tooltips[control] = s;
-            RefreshToolTip(false, true);
+            RefreshToolTip(false);
         }
 
         public bool PreFilterMessage(ref Message m) {
@@ -178,7 +178,7 @@ namespace ZeroKLobby
                 var mp = System.Windows.Forms.Control.MousePosition;
                 /*int xp = (int)m.LParam & 0xFFFF;
                 int yp = (int)m.LParam >> 16;*/
-                if (mp != lastMousePos) RefreshToolTip(false, false);
+                if (mp != lastMousePos) RefreshToolTip(false);
                 lastMousePos = mp;
             }
 
@@ -187,7 +187,7 @@ namespace ZeroKLobby
 
 
         private void timer_Tick(object sender, EventArgs e) {
-            RefreshToolTip(true, true);
+            RefreshToolTip(true);
         }
     }
 
