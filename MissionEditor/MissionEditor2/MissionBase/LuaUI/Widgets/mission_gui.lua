@@ -134,12 +134,13 @@ function MissionEvent(e)
   elseif e.logicType == "SunsetAction" then
     WG.midnightWanted = true
   elseif e.logicType == "CustomAction2" then
-    local func, err = loadstring(e.codeStr)
+    -- workaround to make WG accessible to the customaction
+    local func, err = loadstring("local WG = ({...})[1]; " .. e.codeStr)
     if err then
       error("Failed to load custom action: ".. e.codeStr)
       return
     end
-    func()
+    func(WG)
   end
 end
 

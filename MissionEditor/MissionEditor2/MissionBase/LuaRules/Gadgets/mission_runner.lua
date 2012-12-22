@@ -33,7 +33,7 @@ if (gadgetHandler:IsSyncedCode()) then
 local mission = VFS.Include("mission.lua")
 local triggers = mission.triggers -- array
 local allTriggers = {unpack(triggers)} -- we'll never remove triggers from here, so the indices will stay correct
-local unitGroups = {} -- key: unitID, value: group set (a table of strings)
+local unitGroups = {} -- key: unitID, value: group set (an array of strings)
 local gaiaTeamID = Spring.GetGaiaTeamID()
 local cheatingWasEnabled = false
 local scoreSent = false
@@ -55,6 +55,7 @@ GG.mission = {
   counters = counters,
   countdowns = countdowns,
   unitGroups = unitGroups,
+  triggers = triggers,
 }
 
 for _, counter in ipairs(mission.counters) do
@@ -907,7 +908,18 @@ local function ExecuteTrigger(trigger, frame)
     RemoveTrigger(trigger) -- the trigger is no longer needed
   end
 end
+GG.mission.ExecuteTrigger = ExecuteTrigger
 
+local function ExecuteTriggerByName(name)
+  local triggers = GG.mission.triggers
+  for i=1,#triggers do
+    local trigger = triggers[i]
+    if trigger and trigger.name == name then
+      ExecuteTrigger(trigger)
+    end
+  end
+end
+GG.mission.ExecuteTriggerByName = ExecuteTriggerByName
 
 local function CheckUnitsEnteredGroups(unitID, condition)
   if not next(condition.args.groups) then return true end -- no group selected: any unit is ok
@@ -1137,41 +1149,6 @@ function gadget:UnitDestroyed(unitID, unitDefID, unitTeam)
   unitGroups[unitID] = nil
   factoryExpectedUnits[unitID] = nil
   repeatFactoryGroups[unitID] = nil
-  
-  -- old crappy implementation
-  --[[
-  local regions = GetRegionsUnitIsIn(unitID)
-  if unitGroups[unitID] or regions then
-    for _, trigger in ipairs(triggers) do
-      for _, condition in ipairs(trigger.logic) do
-        if condition.logicType == "UnitDestroyedCondition" then
-          local execute = false
-          local groupsToMatch = CopyTable(unitGroups[unitID])
-          
-          -- check if the unit is in a region the trigger is watching
-          for groupName in pairs(condition.args.groups) do
-            if StartsWith(groupName, "Units in ") then
-              for i=1,#regions do
-                local region = regions[i]
-                local playerName = mission.players[unitTeam + 1]
-                if groupName == string.format("Units in %s (%s)", region.name, playerName) then
-                  execute = true
-                  break
-                end
-              end
-            end
-          end
-          if execute or DoSetsIntersect(condition.args.groups, groupsToMatch) then
-            ExecuteTrigger(trigger)
-            break
-          end
-          
-        end
-      end
-    end
-    unitGroups[unitID] = nil
-  end
-  ]]--
 end
 
 

@@ -139,6 +139,7 @@ namespace CMissionLib
 			}
 			var map = new Dictionary<object, object>
 				{
+                    {"name", name},
 					{"logic", LuaTable.CreateArray(logicMaps)},
 					{"maxOccurrences", MaxOccurrences},
 					{"enabled", enabled},
