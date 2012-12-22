@@ -22,6 +22,7 @@
       <Column Name="Mutator" Type="System.Data.Linq.Binary" DbType="varbinary(max)" CanBeNull="true" UpdateCheck="Never" IsDelayLoaded="true" />
       <Column Name="Image" Type="System.Data.Linq.Binary" DbType="varbinary(max) NOT NULL" CanBeNull="false" UpdateCheck="Never" IsDelayLoaded="true" />
       <Column Name="Description" Type="System.String" DbType="Text" CanBeNull="true" UpdateCheck="Never" />
+      <Column Name="DescriptionStory" Type="System.String" DbType="text" CanBeNull="true" UpdateCheck="Never" />
       <Column Name="CreatedTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="ModifiedTime" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
       <Column Name="ScoringMethod" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
