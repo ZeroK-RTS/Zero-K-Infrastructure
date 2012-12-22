@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Text;
@@ -155,52 +156,54 @@ namespace ZeroKLobby.MicroLobby
 
 		void DrawMinimap()
 		{
-			if (minimap == null) return;
-			var boxColors = new[]
-			                {
-			                	Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon, Color.Navy,
-			                	Color.Olive, Color.Purple, Color.Silver, Color.Teal, Color.White,
-			                };
-			var xScale = (double)minimapBox.Width/minimapSize.Width; // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
-			var yScale = (double)minimapBox.Height/minimapSize.Height;
-			var scale = Math.Min(xScale, yScale);
-			minimapBox.Image = minimap.GetResized((int)(scale*minimapSize.Width), (int)(scale*minimapSize.Height), InterpolationMode.HighQualityBicubic);
-			using (var g = Graphics.FromImage(minimapBox.Image))
-			{
-				g.TextRenderingHint = TextRenderingHint.AntiAlias;
-				g.SmoothingMode = SmoothingMode.HighQuality;
-				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-				foreach (var kvp in Program.TasClient.MyBattle.Rectangles)
-				{
-					var startRect = kvp.Value;
-					var allyTeam = kvp.Key;
-					var left = startRect.Left*minimapBox.Image.Width/BattleRect.Max;
-					var top = startRect.Top*minimapBox.Image.Height/BattleRect.Max;
-					var right = startRect.Right*minimapBox.Image.Width/BattleRect.Max;
-					var bottom = startRect.Bottom*minimapBox.Image.Height/BattleRect.Max;
-					var width = right - left;
-					var height = bottom - top;
-					if (width < 1 || height < 1) continue;
-					var drawRect = new Rectangle(left, top, width, height);
-					var color = allyTeam < boxColors.Length
-					            	? Color.FromArgb(255/2, boxColors[allyTeam].R, boxColors[allyTeam].G, boxColors[allyTeam].B)
-					            	: Color.Black;
-					using (var brush = new SolidBrush(color)) g.FillRectangle(brush, drawRect);
-					var middleX = left + width/2;
-					var middleY = top + height/2;
-					const int numberSize = 40;
-					var numberRect = new Rectangle(middleX - numberSize/2, middleY - numberSize/2, numberSize, numberSize);
-					using (var format = new StringFormat())
-					{
-						format.Alignment = StringAlignment.Center;
-						format.LineAlignment = StringAlignment.Center;
+		    try {
+		        if (minimap == null) return;
+		        var boxColors = new[]
+		                        {
+		                            Color.Green, Color.Red, Color.Blue, Color.Cyan, Color.Yellow, Color.Magenta, Color.Gray, Color.Lime, Color.Maroon,
+		                            Color.Navy, Color.Olive, Color.Purple, Color.Silver, Color.Teal, Color.White,
+		                        };
+		        var xScale = (double)minimapBox.Width/minimapSize.Width;
+		        // todo remove minimapSize and use minimap image directly when plasmaserver stuff fixed
+		        var yScale = (double)minimapBox.Height/minimapSize.Height;
+		        var scale = Math.Min(xScale, yScale);
+		        minimapBox.Image = minimap.GetResized((int)(scale*minimapSize.Width), (int)(scale*minimapSize.Height), InterpolationMode.HighQualityBicubic);
+		        using (var g = Graphics.FromImage(minimapBox.Image)) {
+		            g.TextRenderingHint = TextRenderingHint.AntiAlias;
+		            g.SmoothingMode = SmoothingMode.HighQuality;
+		            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+		            foreach (var kvp in Program.TasClient.MyBattle.Rectangles) {
+		                var startRect = kvp.Value;
+		                var allyTeam = kvp.Key;
+		                var left = startRect.Left*minimapBox.Image.Width/BattleRect.Max;
+		                var top = startRect.Top*minimapBox.Image.Height/BattleRect.Max;
+		                var right = startRect.Right*minimapBox.Image.Width/BattleRect.Max;
+		                var bottom = startRect.Bottom*minimapBox.Image.Height/BattleRect.Max;
+		                var width = right - left;
+		                var height = bottom - top;
+		                if (width < 1 || height < 1) continue;
+		                var drawRect = new Rectangle(left, top, width, height);
+		                var color = allyTeam < boxColors.Length
+		                                ? Color.FromArgb(255/2, boxColors[allyTeam].R, boxColors[allyTeam].G, boxColors[allyTeam].B)
+		                                : Color.Black;
+		                using (var brush = new SolidBrush(color)) g.FillRectangle(brush, drawRect);
+		                var middleX = left + width/2;
+		                var middleY = top + height/2;
+		                const int numberSize = 40;
+		                var numberRect = new Rectangle(middleX - numberSize/2, middleY - numberSize/2, numberSize, numberSize);
+		                using (var format = new StringFormat()) {
+		                    format.Alignment = StringAlignment.Center;
+		                    format.LineAlignment = StringAlignment.Center;
 
-						using (var font = new Font("Arial", 13f, FontStyle.Bold)) g.DrawStringWithOutline((allyTeam + 1).ToString(), font, Brushes.White, Brushes.Black, numberRect, format, 5);
-					}
-				}
-			}
-			minimapBox.Invalidate();
-			// todo: drawing start points goes here, once we have the metadata
+		                    using (var font = new Font("Arial", 13f, FontStyle.Bold)) g.DrawStringWithOutline((allyTeam + 1).ToString(), font, Brushes.White, Brushes.Black, numberRect, format, 5);
+		                }
+		            }
+		        }
+		        minimapBox.Invalidate();
+		        // todo: drawing start points goes here, once we have the metadata
+		    } catch (Exception ex) {
+		        Trace.TraceError("Error updating minimap: {0}",ex);
+		    }
 		}
 
 		MissionSlot GetSlotByTeamID(int teamID)
