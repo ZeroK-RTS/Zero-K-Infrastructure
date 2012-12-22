@@ -126,13 +126,13 @@
             <GroupBox Header="Mission Story">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition MinHeight="72" />
+                        <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Text="{Binding DescriptionStory}" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                    <TextBox Text="{Binding DescriptionStory}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MinLines="3" MaxLines="6"/>
                     <TextBlock Grid.Row="2" TextWrapping="WrapWithOverflow">Suppports BBCode.<LineBreak />It is suggested that you format in a<LineBreak />text editor and paste here.</TextBlock>
                 </Grid>
             </GroupBox>

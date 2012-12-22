@@ -1,6 +1,13 @@
 ﻿@model ZeroKWeb.Controllers.MissionDetailData
 @using PlasmaShared
 @using ZeroKWeb
+<script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
+<script type="text/javascript">
+$(function() {
+    $("h3.expand").toggler({ speed: 0}); 
+});
+</script>
+
 @{
   var m = Model.Mission;
   Page.Title = m.Name + " mission";
@@ -32,7 +39,7 @@
         <pre>
 !balance
 !start
-</pre>
+        </pre>
         Alternative manual download: <a href='@Url.Action("File", "Missions", new { name = m.MissionID })'>@m.SanitizedFileName</a>
         and <a href='@Url.Action("Script", "Missions", new { id = m.MissionID })'>script.txt</a>
       </div>
@@ -161,6 +168,14 @@
     </table>
   </div>
   <!close scores>
+  @if (m.DescriptionStory != String.Empty) {
+    <br />
+    <br />
+    <h3 class="expand">Story</h3>
+    <div id="story" class="collapse">
+        @Html.BBCode(m.DescriptionStory)
+    </div>
+  }
 </div>
 <!close wrapper>
 @{Html.RenderPartial("CommentList", new ZeroKWeb.Models.CommentList() { Thread = Model.Mission.ForumThread });}
