@@ -27,6 +27,7 @@ namespace ZeroKLobby.MicroLobby
 		public LoginForm()
 		{
 			InitializeComponent();
+		    tabControl1.SelectedTab = tabPage2; // register as primary
 			tbLogin.Text = Program.Conf.LobbyPlayerName;
 			tbPassword.Text = Program.Conf.LobbyPlayerPassword;
 		}
