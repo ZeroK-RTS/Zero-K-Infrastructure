@@ -72,55 +72,57 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Action.cs" />
-    <Compile Include="Actions\AllowUnitTransfersAction.cs" />
-    <Compile Include="Actions\AddObjectiveAction.cs" />
-    <Compile Include="Actions\ConvoMessageAction.cs" />
-    <Compile Include="Actions\ClearConvoMessageQueueAction.cs" />
-    <Compile Include="Actions\RestoreCameraStateAction.cs" />
-    <Compile Include="Actions\SaveCameraStateAction.cs" />
-    <Compile Include="Actions\ShakeCameraAction.cs" />
-    <Compile Include="Actions\SetCameraPosDirAction.cs" />
-    <Compile Include="Actions\FadeOutAction.cs" />
-    <Compile Include="Actions\FadeInAction.cs" />
+    <Compile Include="Actions\MusicLoopAction.cs" />
+    <Compile Include="Actions\Logic\AllowUnitTransfersAction.cs" />
+    <Compile Include="Actions\GUI\AddObjectiveAction.cs" />
+    <Compile Include="Actions\GUI\ConvoMessageAction.cs" />
+    <Compile Include="Actions\GUI\ClearConvoMessageQueueAction.cs" />
+    <Compile Include="Actions\GUI\RestoreCameraStateAction.cs" />
+    <Compile Include="Actions\GUI\SaveCameraStateAction.cs" />
+    <Compile Include="Actions\GUI\ShakeCameraAction.cs" />
+    <Compile Include="Actions\GUI\SetCameraPosDirAction.cs" />
+    <Compile Include="Actions\GUI\FadeOutAction.cs" />
+    <Compile Include="Actions\GUI\FadeInAction.cs" />
     <Compile Include="Actions\StopMusicAction.cs" />
     <Compile Include="Actions\MusicAction.cs" />
-    <Compile Include="Actions\LeaveCutsceneAction.cs" />
-    <Compile Include="Actions\EnterCutsceneAction.cs" />
+    <Compile Include="Actions\GUI\LeaveCutsceneAction.cs" />
+    <Compile Include="Actions\GUI\EnterCutsceneAction.cs" />
     <Compile Include="Actions\CustomAction2.cs" />
-    <Compile Include="Actions\ModifyObjectiveAction.cs" />
-    <Compile Include="Actions\HideGuiMessagePersistentAction.cs" />
-    <Compile Include="Actions\GuiMessagePersistentAction.cs" />
-    <Compile Include="Actions\ExecuteRandomTriggerAction.cs" />
-    <Compile Include="Actions\GiveFactoryOrdersAction.cs" />
-    <Compile Include="Actions\StartCountdownAction.cs" />
-    <Compile Include="Actions\CancelCountdownAction.cs" />
+    <Compile Include="Actions\GUI\ModifyObjectiveAction.cs" />
+    <Compile Include="Actions\GUI\HideGuiMessagePersistentAction.cs" />
+    <Compile Include="Actions\GUI\GuiMessagePersistentAction.cs" />
+    <Compile Include="Actions\Logic\ExecuteRandomTriggerAction.cs" />
+    <Compile Include="Actions\Logic\GiveFactoryOrdersAction.cs" />
+    <Compile Include="Actions\Logic\StartCountdownAction.cs" />
+    <Compile Include="Actions\Logic\CancelCountdownAction.cs" />
     <Compile Include="Actions\CustomAction.cs" />
-    <Compile Include="Actions\DestroyUnitsAction.cs" />
-    <Compile Include="Actions\DisableTriggersAction.cs" />
-    <Compile Include="Actions\DisplayCountersAction.cs" />
-    <Compile Include="Actions\EnableTriggersAction.cs" />
-    <Compile Include="Actions\ExecuteTriggersAction.cs" />
-    <Compile Include="Actions\LockUnitsAction.cs" />
-    <Compile Include="Actions\MakeUnitsAlwaysVisibleAction.cs" />
-    <Compile Include="Actions\ModifyCountdownAction.cs" />
-    <Compile Include="Actions\ModifyCounterAction.cs" />
-    <Compile Include="Actions\ModifyResourcesAction.cs" />
-    <Compile Include="Actions\ModifyScoreAction.cs" />
-    <Compile Include="Actions\ModifyUnitHealthAction.cs" />
+    <Compile Include="Actions\Logic\DestroyUnitsAction.cs" />
+    <Compile Include="Actions\Logic\DisableTriggersAction.cs" />
+    <Compile Include="Actions\GUI\DisplayCountersAction.cs" />
+    <Compile Include="Actions\Logic\EnableTriggersAction.cs" />
+    <Compile Include="Actions\Logic\ExecuteTriggersAction.cs" />
+    <Compile Include="Actions\Logic\LockUnitsAction.cs" />
+    <Compile Include="Actions\Logic\MakeUnitsAlwaysVisibleAction.cs" />
+    <Compile Include="Actions\Logic\ModifyCountdownAction.cs" />
+    <Compile Include="Actions\Logic\ModifyCounterAction.cs" />
+    <Compile Include="Actions\Logic\ModifyResourcesAction.cs" />
+    <Compile Include="Actions\Logic\ModifyScoreAction.cs" />
+    <Compile Include="Actions\Logic\ModifyUnitHealthAction.cs" />
     <Compile Include="Actions\PauseAction.cs" />
     <Compile Include="Actions\RenameTriggersAction.cs" />
-    <Compile Include="Actions\SendScoreAction.cs" />
-    <Compile Include="Actions\SetCameraPointTargetAction.cs" />
-    <Compile Include="Actions\TransferUnitsAction.cs" />
+    <Compile Include="Actions\Logic\SendScoreAction.cs" />
+    <Compile Include="Actions\GUI\SetCameraPointTargetAction.cs" />
+    <Compile Include="Actions\Logic\TransferUnitsAction.cs" />
     <Compile Include="Actions\TriggersAction.cs" />
-    <Compile Include="Actions\UnlockUnitsAction.cs" />
+    <Compile Include="Actions\Logic\UnlockUnitsAction.cs" />
     <Compile Include="Actions\WaitAction.cs" />
     <Compile Include="Area.cs" />
     <Compile Include="CompositeObservableCollection.cs" />
     <Compile Include="Condition.cs" />
+    <Compile Include="Conditions\GamePreloadCondition.cs" />
     <Compile Include="Conditions\CountdownTickCondition.cs" />
-    <Compile Include="Actions\ConsoleMessageAction.cs" />
-    <Compile Include="Actions\CreateUnitsAction.cs" />
+    <Compile Include="Actions\GUI\ConsoleMessageAction.cs" />
+    <Compile Include="Actions\Logic\CreateUnitsAction.cs" />
     <Compile Include="Conditions\CountdownEndedCondition.cs" />
     <Compile Include="Conditions\CounterModifiedCondition.cs" />
     <Compile Include="Conditions\CustomCondition.cs" />
@@ -141,20 +143,20 @@
     <Compile Include="Conditions\UnitSelectedCondition.cs" />
     <Compile Include="Objective.cs" />
     <Compile Include="Cylinder.cs" />
-    <Compile Include="Actions\DefeatAction.cs" />
+    <Compile Include="Actions\Logic\DefeatAction.cs" />
     <Compile Include="Actions\DummyAction.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Conditions\GameStartedCondition.cs" />
-    <Compile Include="Actions\GiveOrdersAction.cs" />
-    <Compile Include="Actions\GuiMessageAction.cs" />
+    <Compile Include="Actions\Logic\GiveOrdersAction.cs" />
+    <Compile Include="Actions\GUI\GuiMessageAction.cs" />
     <Compile Include="INamed.cs" />
     <Compile Include="LuaTable.cs" />
-    <Compile Include="Actions\MarkerPointAction.cs" />
+    <Compile Include="Actions\GUI\MarkerPointAction.cs" />
     <Compile Include="Actions\SoundAction.cs" />
-    <Compile Include="Actions\SunriseAction.cs" />
-    <Compile Include="Actions\SunsetAction.cs" />
-    <Compile Include="Actions\SetCameraUnitTargetAction.cs" />
+    <Compile Include="Actions\GUI\SunriseAction.cs" />
+    <Compile Include="Actions\GUI\SunsetAction.cs" />
+    <Compile Include="Actions\GUI\SetCameraUnitTargetAction.cs" />
     <Compile Include="Conditions\UnitCreatedCondition.cs" />
     <Compile Include="MyCol.cs" />
     <Compile Include="Orders\AttackOrder.cs" />
@@ -204,11 +206,7 @@
       <Name>PlasmaShared</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Actions\Camera\" />
-    <Folder Include="Actions\GUI\" />
-    <Folder Include="Actions\Logic\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

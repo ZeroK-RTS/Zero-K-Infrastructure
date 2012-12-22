@@ -164,6 +164,7 @@ namespace MissionEditor2
 			addAction("Pause", () => new PauseAction());
 			addAction("Play Sound", () => new SoundAction());
             addAction("Play Music", () => new MusicAction());
+            addAction("Play Looping Music", () => new MusicLoopAction());
             addAction("Stop Music", () => new StopMusicAction());
 			addAction("Point Camera at Map Position", () => new SetCameraPointTargetAction(Mission.Map.Texture.Width/2, Mission.Map.Texture.Height/2));
 			addAction("Point Camera at Unit", () => new SetCameraUnitTargetAction());

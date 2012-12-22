@@ -107,6 +107,7 @@ namespace ZeroKWeb
 			{
 				if (prev.AccountID != acc.AccountID && !acc.IsLobbyAdministrator && !acc.IsZeroKAdmin) throw new ApplicationException("Invalid author or password");
 				prev.Description = mission.Description;
+                prev.DescriptionStory = mission.DescriptionStory;
 				prev.Mod = mission.Mod;
 				prev.Map = mission.Map;
 				prev.Name = mission.Name;

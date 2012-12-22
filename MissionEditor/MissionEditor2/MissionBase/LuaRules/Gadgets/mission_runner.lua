@@ -800,6 +800,7 @@ local function ExecuteTrigger(trigger, frame)
              action.logicType == "ModifyObjectiveAction" or
              action.logicType == "SoundAction" or
              action.logicType == "MusicAction" or
+	     action.logicType == "MusicLoopAction" or
              action.logicType == "StopMusicAction" or
              action.logicType == "SunriseAction" or 
              action.logicType == "SunsetAction" or
@@ -975,6 +976,15 @@ function gadget:AllowUnitTransfer(unitID, unitDefID, oldTeam, newTeam, capture)
   return capture or allowTransfer
 end
 
+function gadget:GamePreload()
+  for _, trigger in ipairs(triggers) do
+    for _, condition in ipairs(trigger.logic) do
+      if condition.logicType == "GamePreloadCondition" then
+        ExecuteTrigger(trigger, n)
+      end
+    end
+  end
+end
 
 function gadget:GameFrame(n)
 

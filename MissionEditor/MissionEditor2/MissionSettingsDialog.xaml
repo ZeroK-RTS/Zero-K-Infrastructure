@@ -123,6 +123,19 @@
                     <TextBlock Grid.ColumnSpan="2" Grid.Row="2">Files in this folder will be <LineBreak /> included in the mission.</TextBlock>
                 </Grid>
             </GroupBox>
+            <GroupBox Header="Mission Story">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition MinHeight="72" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding DescriptionStory}" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+                    <TextBlock Grid.Row="2" TextWrapping="WrapWithOverflow">Suppports BBCode.<LineBreak />It is suggested that you format in a<LineBreak />text editor and paste here.</TextBlock>
+                </Grid>
+            </GroupBox>
         </StackPanel>
         <Button Grid.Row="2" Grid.Column="3" IsCancel="True" IsDefault="True" Width="70" Content="O_K" HorizontalAlignment="Right" Margin="3" />
     </Grid>

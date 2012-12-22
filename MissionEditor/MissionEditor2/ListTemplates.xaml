@@ -40,6 +40,10 @@
             <local:MusicActionControl />
         </DataTemplate>
 
+        <DataTemplate x:Key="MusicLoopAction">
+            <local:MusicLoopActionControl />
+        </DataTemplate>
+
         <DataTemplate x:Key="StopMusicAction">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <CheckBox IsChecked="{Binding NoContinue}">Prevent music player from starting next track</CheckBox>

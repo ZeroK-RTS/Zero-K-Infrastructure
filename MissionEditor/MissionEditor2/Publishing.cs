@@ -44,6 +44,7 @@ namespace MissionEditor2
 				var info = new ZkData.Mission()
 				           {
 				           	Description = mission.Description,
+                            DescriptionStory = mission.DescriptionStory,
 				           	Map = mission.Map.Name,
 				           	Mod = mission.Mod.Name,
 				           	Name = mission.Name,

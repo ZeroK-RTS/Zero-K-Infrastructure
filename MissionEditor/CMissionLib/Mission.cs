@@ -30,6 +30,7 @@ namespace CMissionLib
 		string contentFolderPath;
 		ObservableCollection<string> counters = new ObservableCollection<string>();
 		string description = String.Empty;
+        string descriptionStory = String.Empty;
 		ObservableCollection<string> disabledGadgets = new ObservableCollection<string>();
 		ObservableCollection<string> disabledUnits = new ObservableCollection<string>();
 		ObservableCollection<string> disabledWidgets = new ObservableCollection<string>();
@@ -112,7 +113,16 @@ namespace CMissionLib
 				RaisePropertyChanged("Description");
 			}
 		}
-
+        [DataMember]
+        public string DescriptionStory
+        {
+            get { return descriptionStory; }
+            set
+            {
+                descriptionStory = value;
+                RaisePropertyChanged("DescriptionStory");
+            }
+        }
 		[DataMember]
 		public ObservableCollection<string> DisabledGadgets { get { return disabledGadgets; } set { disabledGadgets = value; } }
 
@@ -363,6 +373,18 @@ namespace CMissionLib
                         if (!String.IsNullOrEmpty(action.TrackPath) && File.Exists(action.TrackPath))
                         {
                             zip.SafeAddFile(action.TrackPath, "LuaUI/Sounds/music/");
+                        }
+                    }
+                    else if (item is MusicLoopAction)
+                    {
+                        var action = (MusicLoopAction)item;
+                        if (!String.IsNullOrEmpty(action.TrackIntroPath) && File.Exists(action.TrackIntroPath))
+                        {
+                            zip.SafeAddFile(action.TrackIntroPath, "LuaUI/Sounds/music/");
+                        }
+                        if (!String.IsNullOrEmpty(action.TrackLoopPath) && File.Exists(action.TrackLoopPath))
+                        {
+                            zip.SafeAddFile(action.TrackLoopPath, "LuaUI/Sounds/music/");
                         }
                     }
 				}

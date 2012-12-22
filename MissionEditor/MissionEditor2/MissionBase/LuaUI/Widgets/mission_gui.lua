@@ -123,6 +123,12 @@ function MissionEvent(e)
       Spring.StopSoundStream()
       Spring.PlaySoundStream("LuaUI/Sounds/music/"..e.track, 0.5)
     end
+  elseif e.logicType == "MusicLoopAction" then
+    if WG.Music and WG.Music.StartLoopingTrack then
+      if e.trackIntro and e.trackLoop then
+	WG.Music.StartLoopingTrack("LuaUI/Sounds/music/"..e.trackIntro, "LuaUI/Sounds/music/"..e.trackLoop)
+      end
+    end
   elseif e.logicType == "StopMusicAction" then
     if WG.Music and WG.Music.StopTrack then
       WG.Music.StopTrack(e.noContinue)
