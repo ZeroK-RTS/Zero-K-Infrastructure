@@ -44,7 +44,7 @@ function widget:DrawScreen()
         fontHandler.UseFont(font)
         gl.Color(1, 1, 1, 1)
         y = y + fontSize + lineSpacing
-        fontHandler.Draw(text, (viewSizeX-width)/2, y)
+        fontHandler.Draw(text, (viewSizeX-width)/2, y, 16)
       end
     end
   end
