@@ -94,10 +94,6 @@ namespace ZeroKLobby
         [Description("This path will be used for downloaded maps, games, logs, settings etc.")]
         public string DataFolder { get; set; }
 
-        [Browsable(false)] // hidden because it crashes tasc connection
-        public bool EnableServerConsole { get; set; }
-
-
         [Browsable(false)]
         public int DefaultPlayerColorInt = 16776960; // default teal color
         [Category("Chat")]

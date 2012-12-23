@@ -13,10 +13,9 @@ namespace ZeroKLobby.Lines
         {
             Command = command;
             Date = DateTime.Now;
-            Args = String.Join(" ", args);
+            if (args != null) Args = String.Join(" ", args);
 
-            Text = TextColor.Text + "[" + TextColor.Date + Date.ToShortTimeString() + TextColor.Text + "] " + TextColor.OutgoingCommand + Command +
-                   TextColor.Args + " " + Args;
+            Text = string.Format("{0}[{1}{2}{0}] {3}{4}{5} {6}", TextColor.Text, TextColor.Date, Date.ToShortTimeString(), TextColor.OutgoingCommand, Command, TextColor.Args, Args);
         }
 
         public string Text { get; private set; }

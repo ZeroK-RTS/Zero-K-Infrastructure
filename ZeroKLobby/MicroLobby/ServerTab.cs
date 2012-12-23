@@ -16,6 +16,10 @@ namespace ZeroKLobby.MicroLobby
         SendBox sendBox;
         ChatBox textBox;
 
+        List<IChatLine> entries = new  List<IChatLine>();
+
+        bool prevVis = false;
+
         public ServerTab()
         {
             InitializeComponent();
@@ -30,28 +34,34 @@ namespace ZeroKLobby.MicroLobby
             Program.TasClient.Output += TasClient_Output;
             sendBox.LineEntered += (s, e) => Program.TasClient.SendRaw(e.Data);
             filterBox.LineEntered += (s, e) => textBox.TextFilter = e.Data;
+            this.VisibleChanged += (sender, args) =>
+                {
+                    if (prevVis != Visible && Visible) {
+                        textBox.ClearTextWindow();
+                        foreach (var chatLine in entries) {
+                            textBox.AddLine(chatLine);
+                        }
+                    }
+                    prevVis = Visible;
+                };
         }
 
         void TasClient_Input(object sender, TasInputArgs e)
         {
-            try
-            {
-                if (Program.Conf.EnableServerConsole) textBox.AddLine(new FromServerLine(e.Command, e.Args));
-                // File.AppendAllText("C:\\serverlog.txt", new FromServerLine(e.Command, e.Args).Text.StripAllCodes() + Environment.NewLine);
+            if (e != null && e.Command != null) {
+                var entry = new FromServerLine(e.Command, e.Args);
+                entries.Add(entry);
+                if (prevVis) Program.MainWindow.InvokeFunc(() => textBox.AddLine(entry));
             }
-            catch (Exception ex) {
-                Trace.TraceError(ex.ToString());
-            }
+
         }
 
         void TasClient_Output(object sender, EventArgs<KeyValuePair<string, object[]>> e)
         {
-            try
-            {
-                if (Program.Conf.EnableServerConsole) textBox.AddLine(new ToServerLine(e.Data.Key, e.Data.Value.Select(a => a.ToString()).ToArray()));
-            }
-            catch (Exception ex) {
-                Trace.TraceError(ex.ToString());
+            if (e != null && e.Data.Value != null) {
+                var entry = new ToServerLine(e.Data.Key, e.Data.Value.Select(a => a.ToString()).ToArray());
+                entries.Add(entry);
+                if (prevVis) Program.MainWindow.InvokeFunc(() => textBox.AddLine(entry));
             }
         }
 

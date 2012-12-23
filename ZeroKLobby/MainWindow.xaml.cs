@@ -143,9 +143,9 @@ namespace ZeroKLobby
 
         public void InvokeFunc(Action funcToInvoke)
         {
-            try
-            {
-                Dispatcher.Invoke(funcToInvoke);
+            try {
+                if (!Dispatcher.CheckAccess()) Dispatcher.Invoke(funcToInvoke);
+                else funcToInvoke();
             }
             catch (Exception ex)
             {
