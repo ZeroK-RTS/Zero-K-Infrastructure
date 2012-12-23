@@ -144,8 +144,7 @@ $(function() {
     }
   }
   <div class="border-test abs top right">
-    <h3>
-      Top scores</h3>
+    <h3>Top scores</h3>
     @Html.BBCode(m.ScoringMethod ?? "")
     <table>
       @{int cnt = 1;}
@@ -173,7 +172,7 @@ $(function() {
     <br />
     <br />
     <h3 class="expand">Story</h3>
-    <div id="story" class="collapse">
+    <div id="story" class="collapse width-90">
         @Html.BBCode(m.DescriptionStory)
     </div>
   }

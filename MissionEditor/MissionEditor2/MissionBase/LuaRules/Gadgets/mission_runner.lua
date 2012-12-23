@@ -1184,7 +1184,7 @@ function gadget:UnitFromFactory(unitID, unitDefID, unitTeam, factID, factDefID, 
   for _, trigger in ipairs(triggers) do
     for _, condition in ipairs(trigger.logic) do
       if condition.logicType == "UnitFinishedInFactoryCondition" and 
-        (condition.args.unitDefIDs[unitDefID] or not condition.args.units[0]) then
+        (condition.args.unitDefIDs[unitDefID] or not condition.args.units[1]) then
         if not next(condition.args.players) or ArrayContains(condition.args.players, unitTeam) then
           ExecuteTrigger(trigger)
           break
@@ -1199,7 +1199,7 @@ function gadget:UnitFinished(unitID, unitDefID, unitTeam)
   for _, trigger in ipairs(triggers) do
     for _, condition in ipairs(trigger.logic) do
       if condition.logicType == "UnitFinishedCondition" and 
-        (condition.args.unitDefIDs[unitDefID] or not condition.args.units[0]) then
+        (condition.args.unitDefIDs[unitDefID] or not condition.args.units[1]) then
         if not next(condition.args.players) or ArrayContains(condition.args.players, unitTeam) then
           ExecuteTrigger(trigger)
           break
@@ -1215,7 +1215,7 @@ function gadget:UnitCreated(unitID, unitDefID, unitTeam)
   for _, trigger in ipairs(triggers) do
     for _, condition in ipairs(trigger.logic) do
       if condition.logicType == "UnitCreatedCondition" and
-        (condition.args.unitDefIDs[unitDefID] or not condition.args.units[0]) then
+        (condition.args.unitDefIDs[unitDefID] or not condition.args.units[1]) then
         if not next(condition.args.players) or ArrayContains(condition.args.players, unitTeam) then
           ExecuteTrigger(trigger)
           break
