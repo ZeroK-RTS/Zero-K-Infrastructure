@@ -145,22 +145,37 @@ namespace Springie.autohost
                     {
                         timer.Stop();
                         timerTick++;
+
+                        // auto update engine branch
                         if (!String.IsNullOrEmpty(config.AutoUpdateSpringBranch) && timerTick % 4 == 0) CheckEngineBranch();
 
+                        // auto verify pw map
                         if (!spring.IsRunning && config.Mode != AutohostMode.None)
                         {
                             if (SpawnConfig == null && config.Mode == AutohostMode.Planetwars) ServerVerifyMap(false); 
                         }
 
-                        
+
+                        // auto start split vote
                         if (config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
                             var cnt = tas.MyBattle.NonSpectatorCount;
-                            if (cnt > lastSplitPlayersCountCalled && cnt % 2 == 0) {
+                            if (cnt > lastSplitPlayersCountCalled && cnt%2 == 0) {
                                 StartVote(new VoteSplitPlayers(tas, spring, this), TasSayEventArgs.Default, new string[] { });
                                 lastSplitPlayersCountCalled = cnt;
                             }
-
                         }
+
+                        // auto rehost to latest mod version
+                        if (!spring.IsRunning && delayedModChange != null && cache.GetResourceDataByInternalName(delayedModChange) != null)
+                        {
+                            var mod = delayedModChange;
+                            delayedModChange = null;
+                            config.Mod = mod;
+                            SayBattle("Updating to latest mod version: " + mod);
+                            ComRehost(TasSayEventArgs.Default, new[] { mod });
+                        }
+
+
 
                     }
                     catch (Exception ex)
@@ -831,15 +846,6 @@ namespace Springie.autohost
                 pollTimer.Stop();
                 if (activePoll != null) activePoll.End();
                 StopVote();
-
-                if (!spring.IsRunning && delayedModChange != null && cache.GetResourceDataByInternalName(delayedModChange) != null)
-                {
-                    var mod = delayedModChange;
-                    delayedModChange = null;
-                    config.Mod = mod;
-                    SayBattle("Updating to latest mod version: " + mod);
-                    ComRehost(TasSayEventArgs.Default, new[] { mod });
-                }
             }
             catch { }
             finally {pollTimer.Start();}
