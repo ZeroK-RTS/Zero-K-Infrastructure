@@ -258,8 +258,9 @@ local function FindUnitsInGroup(searchGroup)
   if StartsWith(searchGroup, "Units in ") then
     for i=1,#mission.regions do
       local region = mission.regions[i]
-      for playerIndex, playerName in ipairs(mission.players) do
-        if searchGroup == string.format("Units in %s (%s)", region.name, playerName) then
+      for playerIndex=1, #mission.players do
+        local player = mission.players[playerIndex]
+        if searchGroup == string.format("Units in %s (%s)", region.name, player) then
           local teamID = playerIndex - 1
           return GetUnitsInRegion(region, teamID)          
         end
@@ -267,7 +268,7 @@ local function FindUnitsInGroup(searchGroup)
     end
   elseif StartsWith(searchGroup, "Latest Factory Built Unit (") then
     for playerIndex=1, #mission.players do
-      local player = mission.players[i]
+      local player = mission.players[playerIndex]
       if searchGroup == "Latest Factory Built Unit ("..player..")" then
         local teamID = playerIndex - 1
         if lastFinishedUnits[teamID] then
@@ -278,7 +279,7 @@ local function FindUnitsInGroup(searchGroup)
     return results
   elseif StartsWith(searchGroup, "Any Unit (") then
     for playerIndex=1, #mission.players do
-      local player = mission.players[i]
+      local player = mission.players[playerIndex]
       if searchGroup == "Any Unit ("..player..")" then
         local teamID = playerIndex - 1
         local units = Spring.GetTeamUnits(teamID)
