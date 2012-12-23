@@ -132,7 +132,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBox Text="{Binding DescriptionStory}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MinLines="3" MaxLines="6"/>
+                    <TextBox Text="{Binding DescriptionStory}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" MinLines="3" MaxLines="6" MaxWidth="400" />
                     <TextBlock Grid.Row="2" TextWrapping="WrapWithOverflow">Suppports BBCode.<LineBreak />It is suggested that you format in a<LineBreak />text editor and paste here.</TextBlock>
                 </Grid>
             </GroupBox>
