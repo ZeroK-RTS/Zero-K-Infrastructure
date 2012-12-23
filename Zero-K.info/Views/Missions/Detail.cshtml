@@ -168,7 +168,8 @@ $(function() {
     </table>
   </div>
   <!close scores>
-  @if (m.DescriptionStory != String.Empty) {
+  @if (m.DescriptionStory != null && m.DescriptionStory != String.Empty)
+  {
     <br />
     <br />
     <h3 class="expand">Story</h3>

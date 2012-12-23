@@ -120,6 +120,7 @@ namespace ZeroKWeb
 				prev.SpringVersion = mission.SpringVersion;
 				prev.Revision++;
 				prev.Mutator = mission.Mutator;
+                prev.ForumThread.Title = mission.Name;
 				mission = prev;
 			}
 			else
