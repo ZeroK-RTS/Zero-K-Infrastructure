@@ -30,7 +30,7 @@
         }
         else
         {
-            <h4>@p.QuestionText</h4>
+            <h4>@Html.BBCode(p.QuestionText)</h4>
         }
         @if (p.IsAnonymous) {
             <span>(anonymous poll)</span>
