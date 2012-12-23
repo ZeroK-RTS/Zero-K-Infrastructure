@@ -33,7 +33,7 @@ namespace ZeroKLobby
             get { return visible; }
             set {
                 visible = value;
-                RefreshToolTip(false);
+                RefreshToolTip(true);
             }
         }
 
@@ -170,7 +170,7 @@ namespace ZeroKLobby
 
         private void UpdateTooltip(object control, string s) {
             tooltips[control] = s;
-            RefreshToolTip(false);
+            RefreshToolTip(true);
         }
 
         public bool PreFilterMessage(ref Message m) {
