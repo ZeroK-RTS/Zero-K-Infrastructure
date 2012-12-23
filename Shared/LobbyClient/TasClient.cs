@@ -1513,5 +1513,9 @@ namespace LobbyClient
         {
             SendUdpPacket(lastUdpSourcePort, serverHost, serverUdpHolePunchingPort);
         }
+
+        public void ChangePassword(string old, string newPass) {
+            con.SendCommand("CHANGEPASSWORD", Utils.HashLobbyPassword(old), Utils.HashLobbyPassword(newPass));
+        }
     }
 }

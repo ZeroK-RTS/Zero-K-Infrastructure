@@ -44,10 +44,16 @@ namespace ZeroKLobby.MicroLobby
 												Program.SaveConfig();
                         MessageBox.Show("Renaming account to: " + words[1] + ".\r\n The server will disconnect you now.");
                     }
+                    else if (words[0] == "/changepassword") {
+                        if (words.Length != 3) {
+                            MessageBox.Show("Enter /changepassword <old> <newpassword>");
+                        }
+                        Program.TasClient.ChangePassword(words[1], words[2]);
+
+                    }
                     else if (words[0] == "/raw") Program.TasClient.SendRaw(PlasmaShared.Utils.Glue(words, 1));
-					else if (words[0] == "/help") NavigationControl.Instance.Path = "help";
-                    else
-											MainWindow.Instance.NotifyUser("server", "Command not recognized");  
+                    else if (words[0] == "/help") NavigationControl.Instance.Path = "help";
+                    else MainWindow.Instance.NotifyUser("server", "Command not recognized");
                 }
             }
         }
