@@ -129,12 +129,6 @@ namespace Fixer
 
 
         static void Main(string[] args) {
-            var db = new ZkDataContext();
-            foreach (var sb in db.SpringBattles.Where( x=>x.PlayerCount==2).ToList()) {
-                sb.Calculate1v1Elo();
-               
-            }
-            db.SubmitAndMergeChanges();
 
 
             //Test1v1Elo();
@@ -153,7 +147,7 @@ namespace Fixer
             //GenerateStructures(9);
 
             //AddWormholes();
-            //TestPrediction();
+            TestPrediction();
         }
 
 
@@ -257,70 +251,41 @@ namespace Fixer
 
         public static void TestPrediction() {
         var db = new ZkDataContext();
-        var factWinCnt= 0;
-        var factWinSum = 0.0;
-        var predWinSum = 0.0;
-        var predWinCnt = 0;
-        var err = 0.0;
-        var i = 0;
-        var nsum = 0.0;
-        foreach (var sb in db.SpringBattles.Where(x=>!x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.EventSpringBattles.Any()).OrderByDescending(x => x.SpringBattleID)) {
+        var cnt = 0;
+            var winPro = 0;
+            var winLessNub = 0;
+            var winMoreVaried = 0;
+            var winPredicted = 0;
+
+
+        foreach (var sb in db.SpringBattles.Where(x=>!x.IsMission && !x.HasBots && !x.IsFfa && x.IsEloProcessed && x.PlayerCount >=8 && !x.EventSpringBattles.Any()).OrderByDescending(x => x.SpringBattleID)) {
 
             var losers = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && !x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
             var winners = sb.SpringBattlePlayers.Where(x => !x.IsSpectator && x.IsInVictoryTeam).Select(x => new { Player = x, x.Account }).ToList();
 
             if (losers.Count == 0 || winners.Count == 0 || losers.Count == winners.Count) continue;
 
-            var winnerEloSum = winners.Sum(x => x.Account.EffectiveElo);
-            var loserEloSum = losers.Sum(x => x.Account.EffectiveElo);
+            if (winners.Select(x => x.Account.EffectiveElo).Max() > losers.Select(x => x.Account.EffectiveElo).Max()) winPro++;
+            if (winners.Select(x => x.Account.EffectiveElo).Min() > losers.Select(x => x.Account.EffectiveElo).Min()) winLessNub++;
 
-            /*if (winners.Count > losers.Count) loserEloSum += loserEloSum / losers.Count;
-            else if (losers.Count > winners.Count) winnerEloSum += winnerEloSum / winners.Count;
-
-            var ts = Math.Sqrt(Math.Max(winners.Count, losers.Count));
-            var winnerElo = winnerEloSum / ts;
-            var loserElo = loserEloSum / ts;*/
+            if (winners.Select(x => x.Account.EffectiveElo).StdDev() > losers.Select(x => x.Account.EffectiveElo).StdDev()) winMoreVaried++;
 
 
-            var winnerElo = 1.0;
-            foreach (var w in winners) winnerElo *= w.Account.EffectiveElo;
-            winnerElo = Math.Pow(winnerElo, 1.0 / winners.Count);
 
-            var loserElo = 1.0;
-            foreach (var l in losers) loserElo *= l.Account.EffectiveElo;
-            loserElo = Math.Pow(loserElo, 1.0 / losers.Count);
-
-            //var winnerElo = winnerEloSum / Math.Sqrt(winners.Count);
-            //var loserElo = loserEloSum / Math.Sqrt(losers.Count);
-
-            //var winnerElo = winnerEloSum / winners.Count;
-            //var loserElo = loserEloSum / losers.Count;
+            var winnerElo = winners.Select(x => x.Account.EffectiveElo).Average();
+            var loserElo = losers.Select(x => x.Account.EffectiveElo).Average();
 
             var eWin = 1 / (1 + Math.Pow(10, (loserElo - winnerElo) / 400));
             var eLose = 1 / (1 + Math.Pow(10, (winnerElo - loserElo) / 400));
 
-            if (eWin > eLose)
-            {
-                factWinSum += eWin * 100.0;
-                nsum += eWin * 100;
-                factWinCnt++;
-            }
-            else {
-                err += Math.Abs(eWin - eLose);
-                predWinSum += eWin * 100.0;
-                nsum += eLose * 100;
-                predWinCnt++;
-            }
-            i++;
-            if (i >= 100) break;
-        }
-        var fwp = factWinSum / factWinCnt;
-        var pwp = predWinSum / predWinCnt;
-        var cnt = factWinCnt + predWinCnt;
-        var ns = nsum / cnt;
-        var predGood = 100.0*factWinCnt / cnt;
+            if (eWin > eLose) winPredicted ++;
 
-        Console.WriteLine("fwin: {0},  ns: {1} factwin%: {2}  predwin%: {3}: err: {4}", predGood, ns,fwp ,pwp, err );
+                
+            cnt++;
+            if (cnt == 200) break;
+        }
+
+        Console.WriteLine("prwin: {0},  lessnubwin: {1},  morevaried: {2},  count: {3}, predicted:{4}",winPro, winLessNub, winMoreVaried, cnt, winPredicted );
 
     }
 
