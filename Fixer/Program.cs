@@ -270,8 +270,6 @@ namespace Fixer
 
             if (winners.Select(x => x.Account.EffectiveElo).StdDev() > losers.Select(x => x.Account.EffectiveElo).StdDev()) winMoreVaried++;
 
-
-
             var winnerElo = winners.Select(x => x.Account.EffectiveElo).Average();
             var loserElo = losers.Select(x => x.Account.EffectiveElo).Average();
 

@@ -750,24 +750,25 @@ namespace Springie.autohost
 
 
         void UpdateRapidMod(string tag) {
-            if (!string.IsNullOrEmpty(delayedModChange)) {
+            if (!string.IsNullOrEmpty(delayedModChange) && !spring.IsRunning) {
                 string latest = delayedModChange;
                 delayedModChange = null;
                 config.Mod = latest;
                 SayBattle("Updating to latest mod version: " + latest);
                 ComRehost(TasSayEventArgs.Default, new[] { latest });
             }
-
-            PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(tag);
-            if (version != null) {
-                string latest = version.InternalName;
-                if (!String.IsNullOrEmpty(latest) && (tas.MyBattle == null || tas.MyBattle.ModName != latest)) {
-                    if (cache.GetResourceDataByInternalName(latest) != null && !spring.IsRunning) {
-                        config.Mod = latest;
-                        SayBattle("Updating to latest mod version: " + latest);
-                        ComRehost(TasSayEventArgs.Default, new[] { latest });
+            else {
+                PackageDownloader.Version version = Program.main.Downloader.PackageDownloader.GetByTag(tag);
+                if (version != null) {
+                    string latest = version.InternalName;
+                    if (!String.IsNullOrEmpty(latest) && (tas.MyBattle == null || tas.MyBattle.ModName != latest)) {
+                        if (cache.GetResourceDataByInternalName(latest) != null && !spring.IsRunning) {
+                            config.Mod = latest;
+                            SayBattle("Updating to latest mod version: " + latest);
+                            ComRehost(TasSayEventArgs.Default, new[] { latest });
+                        }
+                        else delayedModChange = latest;
                     }
-                    else delayedModChange = latest;
                 }
             }
         }
