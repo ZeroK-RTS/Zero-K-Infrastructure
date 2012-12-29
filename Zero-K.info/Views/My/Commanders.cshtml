@@ -3,7 +3,7 @@
 @using ZkData
 <h2>Unlocked technologies</h2>
 <a href="/My/UnlockList">View all unlocks</a>
-@{Html.RenderPartial("UnlockedTechnologies", Model.Unlocks);}
+@{Html.RenderPartial("UnlockedTechnologies", Model.Unlocks.OrderBy(x=> x.Unlock.UnlockType).ThenBy(x=> x.Unlock.Name));}
 <h2>HowTo</h2>
 <a href="/Wiki/CommanderGuide">Official commander guide</a>
 <ol>

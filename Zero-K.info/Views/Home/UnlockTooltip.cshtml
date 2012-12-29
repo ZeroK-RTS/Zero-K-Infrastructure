@@ -17,7 +17,7 @@ Level: @u.NeededLevel<br/>
     @:Kudos: <span style='color:#FFFF88;'>@u.KudosCost</span><br/>
 }
 @if (u.ParentUnlock != null) {
-  @:Required unit: <img src='@u.ParentUnlock.ImageUrl' height='20' width='20'/> @u.ParentUnlock.Name<br/>
+  @:Required unlock: <img src='@u.ParentUnlock.ImageUrl' height='20' width='20'/> @u.ParentUnlock.Name<br/>
 }
 
 @if (!string.IsNullOrEmpty(u.LimitForChassis)) {
