@@ -55,7 +55,7 @@ namespace System.Web.Mvc
             Regex exp;
             // format the bold tags: [b][/b]
             // becomes: <strong></strong>
-            exp = new Regex(@"\[b\](.+?)\[/b\]");
+            exp = new Regex(@"\[b\]((.|\n)+?)\[/b\]");
             str = exp.Replace(str, "<strong>$1</strong>");
 
             // format the quote tags: [quote][/quote]
@@ -66,17 +66,17 @@ namespace System.Web.Mvc
 			
             // format the italic tags: [i][/i]
             // becomes: <em></em>
-            exp = new Regex(@"\[i\](.+?)\[/i\]");
+            exp = new Regex(@"\[i\]((.|\n)+?)\[/i\]");
             str = exp.Replace(str, "<em>$1</em>");
 
             // format the underline tags: [u][/u]
             // becomes: <u></u>
-            exp = new Regex(@"\[u\](.+?)\[/u\]");
+            exp = new Regex(@"\[u\]((.|\n)+?)\[/u\]");
             str = exp.Replace(str, "<u>$1</u>");
 
             // format the strike tags: [s][/s]
             // becomes: <strike></strike>
-            exp = new Regex(@"\[s\](.+?)\[/s\]");
+            exp = new Regex(@"\[s\]((.|\n)+?)\[/s\]");
             str = exp.Replace(str, "<strike>$1</strike>");
 
             // format the url tags: [url=www.website.com]my site[/url]
