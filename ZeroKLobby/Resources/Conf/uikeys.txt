@@ -67,9 +67,9 @@ bind                  ]  buildfacing dec
 bind            Shift+]  buildfacing dec
 bind              Any+`  drawinmap
 
-bind                  a  attack
+bind                  a  fight
 bind              Alt+a  areaattack
-bind            Shift+a  attack
+bind            Shift+a  fight
 bind        Alt+Shift+a  areaattack
 bind              Alt+n  debug
 bind              Alt+b  debugcolvol
@@ -82,9 +82,9 @@ bind                  d  oneclickwep
 bind            Shift+d  oneclickwep
 bind                  e  reclaim
 bind            Shift+e  reclaim
-bind                  f  fight
+bind                  f  attack
 bind              Alt+f  forcestart
-bind            Shift+f  fight
+bind            Shift+f  attack
 bind                  g  guard
 bind            Shift+g  guard
 bind                  h  sharedialog
