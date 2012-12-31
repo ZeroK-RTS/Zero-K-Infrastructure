@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
@@ -86,10 +87,15 @@ namespace ZeroKLobby.MicroLobby
                     if (e.Button == MouseButtons.Right)
                     {
                         var point = new Point(button.Bounds.Location.X + e.X, button.Bounds.Location.Y + e.Y);
-                        Program.ToolTip.Visible = false;
-                        if (control is ChatControl) ContextMenus.GetChannelContextMenu((ChatControl)control).Show(toolStrip, point);
-                        else if (control is PrivateMessageControl) ContextMenus.GetPrivateMessageContextMenu((PrivateMessageControl)control).Show(toolStrip, point);
-                        Program.ToolTip.Visible = true;
+                        try {
+                            Program.ToolTip.Visible = false;
+                            if (control is ChatControl) ContextMenus.GetChannelContextMenu((ChatControl)control).Show(toolStrip, point);
+                            else if (control is PrivateMessageControl) ContextMenus.GetPrivateMessageContextMenu((PrivateMessageControl)control).Show(toolStrip, point);
+                        } catch (Exception ex) {
+                            Trace.TraceError("Error displaying tooltip:{0}", ex);
+                        } finally {
+                            Program.ToolTip.Visible = true;
+                        }
                     }
                     else if (e.Button == MouseButtons.Middle)
                     {

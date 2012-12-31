@@ -342,8 +342,13 @@ namespace ZeroKLobby.MicroLobby
 				{
 					var cm = ContextMenus.GetPlayerContextMenu(Program.TasClient.MyUser, true);
 					Program.ToolTip.Visible = false;
-					cm.Show(playerBox, mea.Location);
-					Program.ToolTip.Visible = true;
+				    try {
+				        cm.Show(playerBox, mea.Location);
+				    } catch (Exception ex) {
+				        Trace.TraceError("Error displaying tooltip: {0}", ex);
+				    } finally {
+				        Program.ToolTip.Visible = true;
+				    }
 				}
 			}
 			if (playerBox.HoverItem != null)
@@ -353,8 +358,13 @@ namespace ZeroKLobby.MicroLobby
 					playerBox.SelectedItem = playerBox.HoverItem;
 					var cm = ContextMenus.GetBotContextMenu(playerBox.HoverItem.BotBattleStatus.Name);
 					Program.ToolTip.Visible = false;
-					cm.Show(playerBox, mea.Location);
-					Program.ToolTip.Visible = true;
+				    try {
+				        cm.Show(playerBox, mea.Location);
+				    } catch (Exception ex) {
+				        Trace.TraceError("Error displaying tooltip: {0}", ex);
+				    } finally {
+				        Program.ToolTip.Visible = true;
+				    }
 				}
 				/*
 					if (playerBox.HoverItem.UserBattleStatus != null) {

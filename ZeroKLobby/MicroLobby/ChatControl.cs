@@ -297,20 +297,28 @@ namespace ZeroKLobby.MicroLobby
 		void ShowChatContextMenu(Point location)
 		{
 			var contextMenu = ContextMenus.GetChannelContextMenu(this);
-
-			Program.ToolTip.Visible = false;
-			contextMenu.Show(ChatBox, location);
-			Program.ToolTip.Visible = true;
+		    try {
+		        Program.ToolTip.Visible = false;
+		        contextMenu.Show(ChatBox, location);
+		    } catch (Exception ex) {
+		        Trace.TraceError("Error displaying tooltip:{0}", ex);
+		    } finally {
+		        Program.ToolTip.Visible = true;
+		    }
 		}
 
 
 		void ShowPlayerContextMenu(User user, Control control, Point location)
 		{
 			var contextMenu = ContextMenus.GetPlayerContextMenu(user, this is BattleChatControl);
-
-			Program.ToolTip.Visible = false;
-			contextMenu.Show(control, location);
-			Program.ToolTip.Visible = true;
+		    try {
+		        Program.ToolTip.Visible = false;
+		        contextMenu.Show(control, location);
+		    } catch (Exception ex) {
+		        Trace.TraceError("Error displaying tooltip:{0}", ex);
+		    } finally {
+		        Program.ToolTip.Visible = true;
+		    }
 		}
 
 		protected virtual void SortByTeam() {}
