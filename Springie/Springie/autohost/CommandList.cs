@@ -230,6 +230,12 @@ namespace Springie.autohost
                                          "enables/disables .cheats in game",
                                          0,
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
+            
+            AddMissing(new CommandConfig("hostsay",
+                                         4,
+                                         "says something as host, useful for /nocost etc",
+                                         0,
+                                         new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
             AddMissing(new CommandConfig("notify",
                                          0,

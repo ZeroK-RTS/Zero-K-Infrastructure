@@ -544,6 +544,11 @@ namespace Springie.autohost
                     else Respond(e, "Cannot set cheats, game not running");
                     break;
 
+                case "hostsay":
+                    if (spring.IsRunning) spring.SayGame(Utils.Glue(words));
+                    else Respond(e, "Game not running");
+                    break;
+
                 case "listoptions":
                     ComListOptions(e, words);
                     break;
