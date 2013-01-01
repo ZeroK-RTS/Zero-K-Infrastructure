@@ -11352,6 +11352,8 @@ namespace ZkData
 		
 		private System.Nullable<bool> _IsKudosOnly;
 		
+		private System.Nullable<int> _KudosToAutoUnlock;
+		
 		private EntitySet<Unlock> _ChildUnlocks;
 		
 		private EntitySet<AccountUnlock> _AccountUnlocks;
@@ -11410,6 +11412,8 @@ namespace ZkData
     partial void OnKudosCostChanged();
     partial void OnIsKudosOnlyChanging(System.Nullable<bool> value);
     partial void OnIsKudosOnlyChanged();
+    partial void OnKudosToAutoUnlockChanging(System.Nullable<int> value);
+    partial void OnKudosToAutoUnlockChanged();
     #endregion
 		
 		public Unlock()
@@ -11799,8 +11803,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_KudosToAutoUnlock", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19)]
+		public System.Nullable<int> KudosToAutoUnlock
+		{
+			get
+			{
+				return this._KudosToAutoUnlock;
+			}
+			set
+			{
+				if ((this._KudosToAutoUnlock != value))
+				{
+					this.OnKudosToAutoUnlockChanging(value);
+					this.SendPropertyChanging();
+					this._KudosToAutoUnlock = value;
+					this.SendPropertyChanged("KudosToAutoUnlock");
+					this.OnKudosToAutoUnlockChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ChildUnlocks", ThisKey="UnlockID", OtherKey="RequiredUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=19, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
 		public EntitySet<Unlock> ChildUnlocks
 		{
 			get
@@ -11819,7 +11844,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_AccountUnlock", Storage="_AccountUnlocks", ThisKey="UnlockID", OtherKey="UnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=20, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
 		public EntitySet<AccountUnlock> AccountUnlocks
 		{
 			get
@@ -11838,7 +11863,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Commander", Storage="_Commanders", ThisKey="UnlockID", OtherKey="ChassisUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=21, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
 		public EntitySet<Commander> Commanders
 		{
 			get
@@ -11857,7 +11882,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderModule", Storage="_CommanderModules", ThisKey="UnlockID", OtherKey="ModuleUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=22, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
 		public EntitySet<CommanderModule> CommanderModules
 		{
 			get
@@ -11876,7 +11901,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_CommanderDecoration", Storage="_CommanderDecorations", ThisKey="UnlockID", OtherKey="DecorationUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=23, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
 		public EntitySet<CommanderDecoration> CommanderDecorations
 		{
 			get
@@ -11895,7 +11920,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_StructureType", Storage="_StructureTypes", ThisKey="UnlockID", OtherKey="EffectUnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=24, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
 		public EntitySet<StructureType> StructureTypes
 		{
 			get
@@ -11914,7 +11939,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_KudosChange", Storage="_KudosChanges", ThisKey="UnlockID", OtherKey="UnlockID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=26, EmitDefaultValue=false)]
 		public EntitySet<KudosChange> KudosChanges
 		{
 			get

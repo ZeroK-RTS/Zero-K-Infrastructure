@@ -202,42 +202,37 @@ namespace ZeroKWeb.Controllers
 		}
 
         [Auth]
-        public ActionResult Unlock(int id)
+        public ActionResult Unlock(int id, bool useKudos = false)
         {
-            return Unlock_Overload(id, false);  // fixme: find a non-stupid way to overload
-        }
-		[Auth]
-		public ActionResult Unlock_Overload(int id, bool useKudos)
-		{
-			using (var db = new ZkDataContext())
-			using (var scope = new TransactionScope())
-			{
+            using (var db = new ZkDataContext())
+            using (var scope = new TransactionScope())
+            {
 
-				List<Unlock> unlocks;
-				List<Unlock> future;
+                List<Unlock> unlocks;
+                List<Unlock> future;
 
-				GetUnlockLists(db, out unlocks, out future);
+                GetUnlockLists(db, out unlocks, out future);
 
-				if (unlocks.Any(x => x.UnlockID == id))
-				{
+                if (unlocks.Any(x => x.UnlockID == id))
+                {
                     Unlock unlock = db.Unlocks.FirstOrDefault(x => x.UnlockID == id);
                     if (!useKudos && unlock.IsKudosOnly == true) return Content("That unlock cannot be bought using XP");
-					var au = db.AccountUnlocks.SingleOrDefault(x => x.AccountID == Global.AccountID && x.UnlockID == id);
-					if (au == null)
-					{
-						au = new AccountUnlock() { AccountID = Global.AccountID, UnlockID = id, Count = 1 };
-						db.AccountUnlocks.InsertOnSubmit(au);
-					}
-					else au.Count++;
+                    var au = db.AccountUnlocks.SingleOrDefault(x => x.AccountID == Global.AccountID && x.UnlockID == id);
+                    if (au == null)
+                    {
+                        au = new AccountUnlock() { AccountID = Global.AccountID, UnlockID = id, Count = 1 };
+                        db.AccountUnlocks.InsertOnSubmit(au);
+                    }
+                    else au.Count++;
                     if (useKudos)   // TODO
                     {
                     }
-					db.SubmitChanges();
-				}
-				scope.Complete();
-			}
-			return RedirectToAction("UnlockList");
-		}
+                    db.SubmitChanges();
+                }
+                scope.Complete();
+            }
+            return RedirectToAction("UnlockList");
+        }
 
 		[Auth]
 		public ActionResult UnlockList()

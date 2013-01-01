@@ -21,14 +21,19 @@ namespace ZkData
         public static Func<ZkDataContext, string, string, Account> AccountVerify =
             CompiledQuery.Compile<ZkDataContext, string, string, Account>(
                 (db, login, passwordHash) => db.Accounts.FirstOrDefault(x => x.Name == login && x.Password == passwordHash && x.LobbyID != null));
-        public int KudosSpent = 0;
-        public int TotalKudos = 0;
 
-        // FIXME: get a sensible implementation of kudos
-        public int XPFromKudos = 0;
         Dictionary<AutohostMode, GamePreference> preferences;
-        public int AvailableXP { get { return GetXpForLevel(Level) - AccountUnlocks.Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0; } }
-        public int AvailableKudos { get { return TotalKudos + KudosSpent; } }
+        public int AvailableXP { get {
+            var kudosGained = KudosGained;
+            return GetXpForLevel(Level) - AccountUnlocks.Where(x=> x.Unlock.KudosToAutoUnlock == null || x.Unlock.KudosToAutoUnlock > kudosGained).Sum(x => (int?)(x.Unlock.XpCost*x.Count)) ?? 0;
+        } }
+        
+        public int KudosAvailable { get { return KudosGained - KudosSpent; } }
+        public int KudosGained { get { return KudosChanges.Where(x => x.KudosValue > 0).Sum(x => x.KudosValue); } }
+        public int KudosSpent { get { return -KudosChanges.Where(x => x.KudosValue < 0).Sum(x => x.KudosValue); } }
+
+
+
         public double EffectiveElo { get { return Elo + (GlobalConst.EloWeightMax - EloWeight)*GlobalConst.EloWeightMalusFactor; } }
         public double EloInvWeight { get { return GlobalConst.EloWeightMax + 1 - EloWeight; } }
         public double Effective1v1Elo { get { return Elo1v1Weight > 1 ? Elo1v1 + (GlobalConst.EloWeightMax - Elo1v1Weight)*GlobalConst.EloWeightMalusFactor : 0; } }
