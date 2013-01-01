@@ -154,11 +154,13 @@ namespace Springie.autohost
 
                         // auto start split vote
                         if (config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
-                            int cnt = tas.MyBattle.NonSpectatorCount;
+                            ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
+
+                            /*int cnt = tas.MyBattle.NonSpectatorCount;
                             if (cnt > lastSplitPlayersCountCalled && cnt%2 == 0) {
                                 StartVote(new VoteSplitPlayers(tas, spring, this), TasSayEventArgs.Default, new string[] { });
                                 lastSplitPlayersCountCalled = cnt;
-                            }
+                            }*/
                         }
 
                         // auto rehost to latest mod version
