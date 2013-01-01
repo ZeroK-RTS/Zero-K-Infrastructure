@@ -60,6 +60,8 @@
         public const string BomberIcon = "/img/fleets/neutral.png";
 	    public const string WarpIcon = "/img/warpcore.png";
 
+	    public const bool VpnCheckEnabled = false;
+
 
 	    public static bool IsZkMod(string name)
         {
