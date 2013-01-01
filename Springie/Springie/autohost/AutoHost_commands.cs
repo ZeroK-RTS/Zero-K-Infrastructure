@@ -211,6 +211,8 @@ namespace Springie.autohost
             }
         }
 
+
+
         public bool BalancedTeams(out int allyno, out int alliances)
         {
             if (hostedMod.IsMission)
@@ -265,6 +267,30 @@ namespace Springie.autohost
                 }
             }
             return true;
+        }
+
+        DateTime lockedUntil = DateTime.MinValue;
+
+        public void ComLock(TasSayEventArgs e, string[] words)
+        {
+            if (words != null && words.Length == 1) {
+                int timer;
+                if (int.TryParse(words[0], out timer)) {
+                    if (timer < 0) timer = 0;
+                    if (timer > 60) timer = 60;
+                    lockedUntil = DateTime.UtcNow.AddSeconds(timer);
+                }
+            }
+            tas.ChangeLock(true);
+        }
+
+        public void ComUnlock(TasSayEventArgs e, string[] words)
+        {
+            if (DateTime.UtcNow < lockedUntil) Respond(e, string.Format("Lock is timed, wait {0} seconds", (int)lockedUntil.Subtract(DateTime.UtcNow).TotalSeconds));
+            else {
+                tas.ChangeLock(false);
+                lockedUntil = DateTime.MinValue;
+            }
         }
 
 

@@ -154,25 +154,21 @@ namespace Springie.autohost
 
                         // auto start split vote
                         if (config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
-                            ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
-
-                            /*int cnt = tas.MyBattle.NonSpectatorCount;
+                            int cnt = tas.MyBattle.NonSpectatorCount;
                             if (cnt > lastSplitPlayersCountCalled && cnt%2 == 0) {
                                 StartVote(new VoteSplitPlayers(tas, spring, this), TasSayEventArgs.Default, new string[] { });
                                 lastSplitPlayersCountCalled = cnt;
-                            }*/
+                            }
                         }
 
                         // auto rehost to latest mod version
                         if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag) && SpawnConfig == null) UpdateRapidMod(config.AutoUpdateRapidTag);
 
-                        if (!spring.IsRunning && delayedModChange != null && cache.GetResourceDataByInternalName(delayedModChange) != null) {
-                            string mod = delayedModChange;
-                            delayedModChange = null;
-                            config.Mod = mod;
-                            SayBattle("Updating to latest mod version: " + mod);
-                            ComRehost(TasSayEventArgs.Default, new[] { mod });
+                        if (lockedUntil != DateTime.MinValue && lockedUntil < DateTime.UtcNow) {
+                            ComUnlock(TasSayEventArgs.Default, new string[]{});
                         }
+
+
                     } catch (Exception ex) {
                         Trace.TraceError(ex.ToString());
                     } finally {
@@ -382,11 +378,11 @@ namespace Springie.autohost
                     break;
 
                 case "lock":
-                    tas.ChangeLock(true);
+                    ComLock(e,words);
                     break;
 
                 case "unlock":
-                    tas.ChangeLock(false);
+                    ComUnlock(e,words);
                     break;
 
                 case "vote":
@@ -837,6 +833,7 @@ namespace Springie.autohost
 
         void spring_SpringExited(object sender, EventArgs e) {
             StopVote();
+            lockedUntil = DateTime.MinValue;
             tas.ChangeLock(false);
             tas.ChangeMyUserStatus(false, false);
             Battle b = tas.MyBattle;
@@ -851,6 +848,7 @@ namespace Springie.autohost
         }
 
         void spring_SpringStarted(object sender, EventArgs e) {
+            lockedUntil = DateTime.MinValue;
             tas.ChangeLock(false);
             if (hostedMod.IsMission) using (var service = new ContentService { Proxy = null }) foreach (UserBattleStatus u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRunAsync(u.Name, hostedMod.ShortName);
             StopVote();
@@ -940,6 +938,7 @@ namespace Springie.autohost
             Battle battle = tas.MyBattle;
             if (battle.IsLocked && battle.Users.Count < 2) {
                 // player left and only 2 remaining (springie itself + some noob) -> unlock
+                lockedUntil = DateTime.MinValue;
                 tas.ChangeLock(false);
             }
         }
