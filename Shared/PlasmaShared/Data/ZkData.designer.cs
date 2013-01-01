@@ -217,6 +217,9 @@ namespace ZkData
     partial void InsertEventFaction(EventFaction instance);
     partial void UpdateEventFaction(EventFaction instance);
     partial void DeleteEventFaction(EventFaction instance);
+    partial void InsertKudosChange(KudosChange instance);
+    partial void UpdateKudosChange(KudosChange instance);
+    partial void DeleteKudosChange(KudosChange instance);
     #endregion
 		
 		public ZkDataContext(string connection) : 
@@ -736,6 +739,14 @@ namespace ZkData
 			get
 			{
 				return this.GetTable<EventFaction>();
+			}
+		}
+		
+		public System.Data.Linq.Table<KudosChange> KudosChanges
+		{
+			get
+			{
+				return this.GetTable<KudosChange>();
 			}
 		}
 	}
@@ -1364,7 +1375,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mutator", DbType="varbinary(max)", UpdateCheck=UpdateCheck.Never)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mutator", DbType="varbinary(max)", CanBeNull=true, UpdateCheck=UpdateCheck.Never)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public System.Data.Linq.Binary Mutator
 		{
@@ -2451,7 +2462,7 @@ namespace ZkData
 		
 		private string _Language;
 		
-		private int _KudosGained;
+		private bool _HasVpnException;
 		
 		private EntitySet<Mission> _Missions;
 		
@@ -2526,6 +2537,8 @@ namespace ZkData
 		private EntitySet<AbuseReport> _AbuseReportsByAccountID;
 		
 		private EntitySet<AbuseReport> _AbuseReportsByReporterAccountID;
+		
+		private EntitySet<KudosChange> _KudosChanges;
 		
 		private EntityRef<Clan> _Clan;
 		
@@ -2613,8 +2626,8 @@ namespace ZkData
     partial void OnMatchMakingActiveChanged();
     partial void OnLanguageChanging(string value);
     partial void OnLanguageChanged();
-    partial void OnKudosGainedChanging(int value);
-    partial void OnKudosGainedChanged();
+    partial void OnHasVpnExceptionChanging(bool value);
+    partial void OnHasVpnExceptionChanged();
     #endregion
 		
 		public Account()
@@ -3428,23 +3441,23 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_KudosGained", DbType="int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HasVpnException", DbType="bit NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=39)]
-		public int KudosGained
+		public bool HasVpnException
 		{
 			get
 			{
-				return this._KudosGained;
+				return this._HasVpnException;
 			}
 			set
 			{
-				if ((this._KudosGained != value))
+				if ((this._HasVpnException != value))
 				{
-					this.OnKudosGainedChanging(value);
+					this.OnHasVpnExceptionChanging(value);
 					this.SendPropertyChanging();
-					this._KudosGained = value;
-					this.SendPropertyChanged("KudosGained");
-					this.OnKudosGainedChanged();
+					this._HasVpnException = value;
+					this.SendPropertyChanged("HasVpnException");
+					this.OnHasVpnExceptionChanged();
 				}
 			}
 		}
@@ -4152,6 +4165,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_KudosChange", Storage="_KudosChanges", ThisKey="AccountID", OtherKey="AccountID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=77, EmitDefaultValue=false)]
+		public EntitySet<KudosChange> KudosChanges
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._KudosChanges.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._KudosChanges;
+			}
+			set
+			{
+				this._KudosChanges.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Clan_Account", Storage="_Clan", ThisKey="ClanID", OtherKey="ClanID", IsForeignKey=true)]
 		public Clan Clan
 		{
@@ -4684,6 +4716,18 @@ namespace ZkData
 			entity.AccountByReporterAccountID = null;
 		}
 		
+		private void attach_KudosChanges(KudosChange entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = this;
+		}
+		
+		private void detach_KudosChanges(KudosChange entity)
+		{
+			this.SendPropertyChanging();
+			entity.Account = null;
+		}
+		
 		private void Initialize()
 		{
 			this._Missions = new EntitySet<Mission>(new Action<Mission>(this.attach_Missions), new Action<Mission>(this.detach_Missions));
@@ -4723,6 +4767,7 @@ namespace ZkData
 			this._AccountUserIDS = new EntitySet<AccountUserID>(new Action<AccountUserID>(this.attach_AccountUserIDS), new Action<AccountUserID>(this.detach_AccountUserIDS));
 			this._AbuseReportsByAccountID = new EntitySet<AbuseReport>(new Action<AbuseReport>(this.attach_AbuseReportsByAccountID), new Action<AbuseReport>(this.detach_AbuseReportsByAccountID));
 			this._AbuseReportsByReporterAccountID = new EntitySet<AbuseReport>(new Action<AbuseReport>(this.attach_AbuseReportsByReporterAccountID), new Action<AbuseReport>(this.detach_AbuseReportsByReporterAccountID));
+			this._KudosChanges = new EntitySet<KudosChange>(new Action<KudosChange>(this.attach_KudosChanges), new Action<KudosChange>(this.detach_KudosChanges));
 			this._Clan = default(EntityRef<Clan>);
 			this._Faction = default(EntityRef<Faction>);
 			OnCreated();
@@ -11319,6 +11364,8 @@ namespace ZkData
 		
 		private EntitySet<StructureType> _StructureTypes;
 		
+		private EntitySet<KudosChange> _KudosChanges;
+		
 		private EntityRef<Unlock> _ParentUnlock;
 		
 		private bool serializing;
@@ -11866,6 +11913,25 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_KudosChange", Storage="_KudosChanges", ThisKey="UnlockID", OtherKey="UnlockID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=25, EmitDefaultValue=false)]
+		public EntitySet<KudosChange> KudosChanges
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._KudosChanges.HasLoadedOrAssignedValues == false)))
+				{
+					return null;
+				}
+				return this._KudosChanges;
+			}
+			set
+			{
+				this._KudosChanges.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_Unlock", Storage="_ParentUnlock", ThisKey="RequiredUnlockID", OtherKey="UnlockID", IsForeignKey=true)]
 		public Unlock ParentUnlock
 		{
@@ -11992,6 +12058,18 @@ namespace ZkData
 			entity.Unlock = null;
 		}
 		
+		private void attach_KudosChanges(KudosChange entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = this;
+		}
+		
+		private void detach_KudosChanges(KudosChange entity)
+		{
+			this.SendPropertyChanging();
+			entity.Unlock = null;
+		}
+		
 		private void Initialize()
 		{
 			this._ChildUnlocks = new EntitySet<Unlock>(new Action<Unlock>(this.attach_ChildUnlocks), new Action<Unlock>(this.detach_ChildUnlocks));
@@ -12000,6 +12078,7 @@ namespace ZkData
 			this._CommanderModules = new EntitySet<CommanderModule>(new Action<CommanderModule>(this.attach_CommanderModules), new Action<CommanderModule>(this.detach_CommanderModules));
 			this._CommanderDecorations = new EntitySet<CommanderDecoration>(new Action<CommanderDecoration>(this.attach_CommanderDecorations), new Action<CommanderDecoration>(this.detach_CommanderDecorations));
 			this._StructureTypes = new EntitySet<StructureType>(new Action<StructureType>(this.attach_StructureTypes), new Action<StructureType>(this.detach_StructureTypes));
+			this._KudosChanges = new EntitySet<KudosChange>(new Action<KudosChange>(this.attach_KudosChanges), new Action<KudosChange>(this.detach_KudosChanges));
 			this._ParentUnlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
@@ -26858,6 +26937,364 @@ namespace ZkData
 		{
 			this._Faction = default(EntityRef<Faction>);
 			this._Event1 = default(EntityRef<Event>);
+			OnCreated();
+		}
+		
+		[global::System.Runtime.Serialization.OnDeserializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnDeserializing(StreamingContext context)
+		{
+			this.Initialize();
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.KudosChange")]
+	[global::System.Runtime.Serialization.DataContractAttribute()]
+	public partial class KudosChange : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _KudosChangeID;
+		
+		private int _AccountID;
+		
+		private int _KudosValue;
+		
+		private System.DateTime _Time;
+		
+		private System.Nullable<int> _UnlockID;
+		
+		private string _PaypalTransactionID;
+		
+		private string _PaypalConfirmationNumber;
+		
+		private System.Nullable<double> _Euros;
+		
+		private string _Description;
+		
+		private EntityRef<Account> _Account;
+		
+		private EntityRef<Unlock> _Unlock;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnKudosChangeIDChanging(int value);
+    partial void OnKudosChangeIDChanged();
+    partial void OnAccountIDChanging(int value);
+    partial void OnAccountIDChanged();
+    partial void OnKudosValueChanging(int value);
+    partial void OnKudosValueChanged();
+    partial void OnTimeChanging(System.DateTime value);
+    partial void OnTimeChanged();
+    partial void OnUnlockIDChanging(System.Nullable<int> value);
+    partial void OnUnlockIDChanged();
+    partial void OnPaypalTransactionIDChanging(string value);
+    partial void OnPaypalTransactionIDChanged();
+    partial void OnPaypalConfirmationNumberChanging(string value);
+    partial void OnPaypalConfirmationNumberChanged();
+    partial void OnEurosChanging(System.Nullable<double> value);
+    partial void OnEurosChanged();
+    partial void OnDescriptionChanging(string value);
+    partial void OnDescriptionChanged();
+    #endregion
+		
+		public KudosChange()
+		{
+			this.Initialize();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_KudosChangeID", AutoSync=AutoSync.OnInsert, DbType="int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
+		public int KudosChangeID
+		{
+			get
+			{
+				return this._KudosChangeID;
+			}
+			set
+			{
+				if ((this._KudosChangeID != value))
+				{
+					this.OnKudosChangeIDChanging(value);
+					this.SendPropertyChanging();
+					this._KudosChangeID = value;
+					this.SendPropertyChanged("KudosChangeID");
+					this.OnKudosChangeIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AccountID", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
+		public int AccountID
+		{
+			get
+			{
+				return this._AccountID;
+			}
+			set
+			{
+				if ((this._AccountID != value))
+				{
+					if (this._Account.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnAccountIDChanging(value);
+					this.SendPropertyChanging();
+					this._AccountID = value;
+					this.SendPropertyChanged("AccountID");
+					this.OnAccountIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_KudosValue", DbType="int NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=3)]
+		public int KudosValue
+		{
+			get
+			{
+				return this._KudosValue;
+			}
+			set
+			{
+				if ((this._KudosValue != value))
+				{
+					this.OnKudosValueChanging(value);
+					this.SendPropertyChanging();
+					this._KudosValue = value;
+					this.SendPropertyChanged("KudosValue");
+					this.OnKudosValueChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Name="[Time]", Storage="_Time", DbType="datetime NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public System.DateTime Time
+		{
+			get
+			{
+				return this._Time;
+			}
+			set
+			{
+				if ((this._Time != value))
+				{
+					this.OnTimeChanging(value);
+					this.SendPropertyChanging();
+					this._Time = value;
+					this.SendPropertyChanged("Time");
+					this.OnTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockID", DbType="int")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		public System.Nullable<int> UnlockID
+		{
+			get
+			{
+				return this._UnlockID;
+			}
+			set
+			{
+				if ((this._UnlockID != value))
+				{
+					if (this._Unlock.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnUnlockIDChanging(value);
+					this.SendPropertyChanging();
+					this._UnlockID = value;
+					this.SendPropertyChanged("UnlockID");
+					this.OnUnlockIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PaypalTransactionID", DbType="nvarchar(50)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		public string PaypalTransactionID
+		{
+			get
+			{
+				return this._PaypalTransactionID;
+			}
+			set
+			{
+				if ((this._PaypalTransactionID != value))
+				{
+					this.OnPaypalTransactionIDChanging(value);
+					this.SendPropertyChanging();
+					this._PaypalTransactionID = value;
+					this.SendPropertyChanged("PaypalTransactionID");
+					this.OnPaypalTransactionIDChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PaypalConfirmationNumber", DbType="nchar(10)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
+		public string PaypalConfirmationNumber
+		{
+			get
+			{
+				return this._PaypalConfirmationNumber;
+			}
+			set
+			{
+				if ((this._PaypalConfirmationNumber != value))
+				{
+					this.OnPaypalConfirmationNumberChanging(value);
+					this.SendPropertyChanging();
+					this._PaypalConfirmationNumber = value;
+					this.SendPropertyChanged("PaypalConfirmationNumber");
+					this.OnPaypalConfirmationNumberChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Euros", DbType="float")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<double> Euros
+		{
+			get
+			{
+				return this._Euros;
+			}
+			set
+			{
+				if ((this._Euros != value))
+				{
+					this.OnEurosChanging(value);
+					this.SendPropertyChanging();
+					this._Euros = value;
+					this.SendPropertyChanged("Euros");
+					this.OnEurosChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Description", DbType="nvarchar(400)")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9)]
+		public string Description
+		{
+			get
+			{
+				return this._Description;
+			}
+			set
+			{
+				if ((this._Description != value))
+				{
+					this.OnDescriptionChanging(value);
+					this.SendPropertyChanging();
+					this._Description = value;
+					this.SendPropertyChanged("Description");
+					this.OnDescriptionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Account_KudosChange", Storage="_Account", ThisKey="AccountID", OtherKey="AccountID", IsForeignKey=true)]
+		public Account Account
+		{
+			get
+			{
+				return this._Account.Entity;
+			}
+			set
+			{
+				Account previousValue = this._Account.Entity;
+				if (((previousValue != value) 
+							|| (this._Account.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Account.Entity = null;
+						previousValue.KudosChanges.Remove(this);
+					}
+					this._Account.Entity = value;
+					if ((value != null))
+					{
+						value.KudosChanges.Add(this);
+						this._AccountID = value.AccountID;
+					}
+					else
+					{
+						this._AccountID = default(int);
+					}
+					this.SendPropertyChanged("Account");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Unlock_KudosChange", Storage="_Unlock", ThisKey="UnlockID", OtherKey="UnlockID", IsForeignKey=true)]
+		public Unlock Unlock
+		{
+			get
+			{
+				return this._Unlock.Entity;
+			}
+			set
+			{
+				Unlock previousValue = this._Unlock.Entity;
+				if (((previousValue != value) 
+							|| (this._Unlock.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Unlock.Entity = null;
+						previousValue.KudosChanges.Remove(this);
+					}
+					this._Unlock.Entity = value;
+					if ((value != null))
+					{
+						value.KudosChanges.Add(this);
+						this._UnlockID = value.UnlockID;
+					}
+					else
+					{
+						this._UnlockID = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Unlock");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void Initialize()
+		{
+			this._Account = default(EntityRef<Account>);
+			this._Unlock = default(EntityRef<Unlock>);
 			OnCreated();
 		}
 		

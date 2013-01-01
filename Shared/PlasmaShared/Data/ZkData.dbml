@@ -100,7 +100,7 @@
       <Column Name="LastLobbyVersionCheck" Type="System.DateTime" DbType="datetime" CanBeNull="true" />
       <Column Name="MatchMakingActive" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Column Name="[Language]" Member="Language" Type="System.String" DbType="nvarchar(2)" CanBeNull="true" />
-      <Column Name="KudosGained" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="HasVpnException" Type="System.Boolean" DbType="bit NOT NULL" CanBeNull="false" />
       <Association Name="Account_Mission" Member="Missions" ThisKey="AccountID" OtherKey="AccountID" Type="Mission" />
       <Association Name="Account_LobbyChannelSubscription" Member="LobbyChannelSubscriptions" ThisKey="AccountID" OtherKey="AccountID" Type="LobbyChannelSubscription" />
       <Association Name="Account_ForumThread" Member="ForumThreadsByCreatedAccountID" ThisKey="AccountID" OtherKey="CreatedAccountID" Type="ForumThread" />
@@ -138,6 +138,7 @@
       <Association Name="Account_AccountUserID" Member="AccountUserIDS" ThisKey="AccountID" OtherKey="AccountID" Type="AccountUserID" />
       <Association Name="Account_AbuseReport" Member="AbuseReportsByAccountID" ThisKey="AccountID" OtherKey="AccountID" Type="AbuseReport" />
       <Association Name="Account_AbuseReport1" Member="AbuseReportsByReporterAccountID" ThisKey="AccountID" OtherKey="ReporterAccountID" Type="AbuseReport" />
+      <Association Name="Account_KudosChange" Member="KudosChanges" ThisKey="AccountID" OtherKey="AccountID" Type="KudosChange" />
       <Association Name="Clan_Account" Member="Clan" ThisKey="ClanID" OtherKey="ClanID" Type="Clan" IsForeignKey="true" />
       <Association Name="Faction_Account" Member="Faction" ThisKey="FactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
     </Type>
@@ -430,6 +431,7 @@
       <Association Name="Unlock_CommanderModule" Member="CommanderModules" ThisKey="UnlockID" OtherKey="ModuleUnlockID" Type="CommanderModule" />
       <Association Name="Unlock_CommanderDecoration" Member="CommanderDecorations" ThisKey="UnlockID" OtherKey="DecorationUnlockID" Type="CommanderDecoration" />
       <Association Name="Unlock_StructureType" Member="StructureTypes" ThisKey="UnlockID" OtherKey="EffectUnlockID" Type="StructureType" />
+      <Association Name="Unlock_KudosChange" Member="KudosChanges" ThisKey="UnlockID" OtherKey="UnlockID" Type="KudosChange" />
       <Association Name="Unlock_Unlock" Member="ParentUnlock" ThisKey="RequiredUnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
     </Type>
   </Table>
@@ -1025,6 +1027,21 @@
       <Column Name="FactionID" Type="System.Int32" DbType="int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Association Name="Faction_EventFaction" Member="Faction" ThisKey="FactionID" OtherKey="FactionID" Type="Faction" IsForeignKey="true" />
       <Association Name="Event_EventFaction" Member="Event1" ThisKey="EventID" OtherKey="EventID" Type="Event" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.KudosChange" Member="KudosChanges">
+    <Type Name="KudosChange">
+      <Column Name="KudosChangeID" Type="System.Int32" DbType="int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="AccountID" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="KudosValue" Type="System.Int32" DbType="int NOT NULL" CanBeNull="false" />
+      <Column Name="[Time]" Member="Time" Type="System.DateTime" DbType="datetime NOT NULL" CanBeNull="false" />
+      <Column Name="UnlockID" Type="System.Int32" DbType="int" CanBeNull="true" />
+      <Column Name="PaypalTransactionID" Type="System.String" DbType="nvarchar(50)" CanBeNull="true" />
+      <Column Name="PaypalConfirmationNumber" Type="System.String" DbType="nchar(10)" CanBeNull="true" />
+      <Column Name="Euros" Type="System.Double" DbType="float" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="nvarchar(400)" CanBeNull="true" />
+      <Association Name="Account_KudosChange" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" />
+      <Association Name="Unlock_KudosChange" Member="Unlock" ThisKey="UnlockID" OtherKey="UnlockID" Type="Unlock" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
