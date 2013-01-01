@@ -95,6 +95,7 @@
     <form method="post" action="@Url.Action("ChangePermissions", "Users", new { accountID = Model.AccountID })">
         Springie level: @Html.TextBox("springieLevel", Model.SpringieLevel)
         Zero K admin: @Html.CheckBox("zkAdmin", Model.IsZeroKAdmin)
+        VPN exception: @Html.CheckBox("vpnException", Model.HasVpnException)
         <input type="submit" />
     </form>
 

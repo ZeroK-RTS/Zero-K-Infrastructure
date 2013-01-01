@@ -7,8 +7,9 @@
 <b>First Login:</b> @u.FirstLogin.ToAgoString(), <b>Last Login:</b> @u.LastLogin.ToAgoString()<br />
 @if (Global.IsZeroKAdmin) {
     <div class="admin">
-        <b>Elo (1v1): </b> @Math.Round(@u.Effective1v1Elo)
         <b>Elo (all): </b> @Math.Round(@u.EffectiveElo)
+        <b>Elo (1v1): </b> @Math.Round(@u.Effective1v1Elo)
+        <b>Lobby rank: </b> <img src='/img/ranks/@(u.LobbyTimeRank+1).png'  class='icon16'/>
     </div>
 }
 <b>Level:</b> @u.Level<br/>

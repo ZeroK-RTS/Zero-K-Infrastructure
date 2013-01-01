@@ -73,12 +73,13 @@ namespace ZeroKWeb.Controllers
         }
 
         [Auth(Role = AuthRole.ZkAdmin)]
-        public ActionResult ChangePermissions(int accountID, int springieLevel, bool zkAdmin)
+        public ActionResult ChangePermissions(int accountID, int springieLevel, bool zkAdmin, bool vpnException)
         {
             var db = new ZkDataContext();
             Account acc = db.Accounts.Single(x => x.AccountID == accountID);
             acc.SpringieLevel = springieLevel;
             acc.IsZeroKAdmin = zkAdmin;
+            acc.HasVpnException = vpnException;
             db.SubmitChanges();
             Global.Nightwatch.Tas.Extensions.PublishAccountData(acc);
             
