@@ -438,6 +438,7 @@ namespace ZeroKWeb.SpringieInterface
                     if (context.GetMode() == AutohostMode.Planetwars)
                     {
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock", false);
+                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!map", false);
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
@@ -446,6 +447,7 @@ namespace ZeroKWeb.SpringieInterface
                     }
                     else {
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock", false);
+                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock", false);
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                         /*Thread.Sleep(3000);
