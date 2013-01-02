@@ -222,10 +222,11 @@ namespace ZeroKWeb.SpringieInterface
                     } while (moved);
                 } while (true);
 
-                // find first bin that cannot be started due to lack of people and remove it 
+                
+                // find first bin that cannot be started due to lack of people or first bin that can be merged into other bin and delete it
                 todel =
                     bins.OrderBy(x => BinOrder.IndexOf(x.Mode))
-                        .FirstOrDefault(x => x.Assigned.Count < x.Config.MinToJuggle && x.ManuallyJoined.Count < (x.Config.MergeSmallerThan ?? 0));
+                        .FirstOrDefault(x => x.Assigned.Count < x.Config.MinToJuggle || (x.ManuallyJoined.Count < (x.Config.MergeSmallerThan ?? 0) && bins.Any(y=>y != x && y.Mode == x.Mode) ));
 
                 if (todel != null) {
                     bins.Remove(todel);
