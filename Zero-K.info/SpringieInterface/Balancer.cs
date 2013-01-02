@@ -435,9 +435,9 @@ namespace ZeroKWeb.SpringieInterface
                     try {
                         PlayerJuggler.SuppressJuggler = true;
                         foreach (Account m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
+                        Thread.Sleep(5000);
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 60", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock 60", false);
-                        Thread.Sleep(5000);
                         if (context.GetMode() == AutohostMode.Planetwars) {
                             tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
                             tas.Say(TasClient.SayPlace.User, context.AutohostName, "!map", false);
