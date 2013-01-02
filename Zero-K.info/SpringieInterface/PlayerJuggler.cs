@@ -152,10 +152,6 @@ namespace ZeroKWeb.SpringieInterface
                     }
                 }
 
-                // remove all but biggest below merge limit
-                //var biggest = groupBins.OrderByDescending(x => x.ManuallyJoined.Count).FirstOrDefault();
-                //groupBins.RemoveAll(x => x != biggest && x.ManuallyJoined.Count < (x.Config.MergeSmallerThan ?? 0));
-
                 bins.AddRange(groupBins);
             }
 
@@ -164,9 +160,11 @@ namespace ZeroKWeb.SpringieInterface
             sb.AppendLine("Original bins:");
             PrintBins(allAccounts, bins, sb);
 
+            /*
             foreach (Bin b in bins.Where(x => x.Config.MinToJuggle > x.PlayerPriority.Count + x.ManuallyJoined.Count).ToList()) bins.Remove(b); // remove those that cant be possible handled
             sb.AppendLine("First purge:");
             PrintBins(allAccounts, bins, sb);
+            */
 
             Bin todel = null;
             do {
