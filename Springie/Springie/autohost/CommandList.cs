@@ -68,7 +68,7 @@ namespace Springie.autohost
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
 
 
-            AddMissing(new CommandConfig("lock", 2, "[<seconds>] - locks the game, optional min limit in seconds"));
+            AddMissing(new CommandConfig("lock", 1, "[<seconds>] - locks the game, optional min limit in seconds"));
 
             AddMissing(new CommandConfig("unlock", 1, " - unlocks the game"));
 
