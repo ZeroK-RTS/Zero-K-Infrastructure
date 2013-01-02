@@ -432,35 +432,39 @@ namespace ZeroKWeb.SpringieInterface
                         if (toMove.Count >= moveCount) break;
                     }
 
-                    PlayerJuggler.SuppressJuggler = true;
-                    foreach (Account m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
-                    Thread.Sleep(5000);
-                    if (context.GetMode() == AutohostMode.Planetwars)
-                    {
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 60", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock 60", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!map", false);
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                        Thread.Sleep(3000);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);  
-                    }
-                    else {
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 60", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock 60", false);
-                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
-                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
-                        /*Thread.Sleep(3000);
-                        if (!tas.ExistingUsers[splitTo.Founder.Name].IsInGame) {
-                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
-                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
+                    try {
+                        PlayerJuggler.SuppressJuggler = true;
+                        foreach (Account m in toMove) tas.ForceJoinBattle(m.Name, splitTo.BattleID);
+                        Thread.Sleep(5000);
+                        if (context.GetMode() == AutohostMode.Planetwars) {
+                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 60", false);
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock 60", false);
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
+                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!map", false);
+                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
+                            Thread.Sleep(3000);
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
                         }
-                        if (!tas.ExistingUsers[context.AutohostName].IsInGame) {
-                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!cbalance", false);
-                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
-                        }*/
+                        else {
+                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 60", false);
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock 60", false);
+                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
+                            /*Thread.Sleep(3000);
+                            if (!tas.ExistingUsers[splitTo.Founder.Name].IsInGame) {
+                                tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!cbalance", false);
+                                tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
+                            }
+                            if (!tas.ExistingUsers[context.AutohostName].IsInGame) {
+                                tas.Say(TasClient.SayPlace.User, context.AutohostName, "!cbalance", false);
+                                tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
+                            }*/
+                        }
+                    } catch (Exception ex) {
+                        Trace.TraceError("Error when splitting: {0}", ex);
+                    } finally {
+                        PlayerJuggler.SuppressJuggler = false;
                     }
-                    PlayerJuggler.SuppressJuggler = false;
                 }
             } catch (Exception ex) {
                 tas.Say(TasClient.SayPlace.User, "Licho[0K]", ex.ToString(), false);

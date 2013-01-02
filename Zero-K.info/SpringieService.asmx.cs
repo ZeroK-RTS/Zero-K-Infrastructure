@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Web.Services;
@@ -85,11 +86,16 @@ namespace ZeroKWeb
             var entry = db.AutohostConfigs.SingleOrDefault(x => x.Login == name);
             if (entry == null) throw new Exception("Not an autohost");
 
-            PlayerJuggler.SuppressJuggler = true;
-            foreach (var m in moves) {
-                Global.Nightwatch.Tas.ForceJoinBattle(m.PlayerName, m.BattleHost);
+            try {
+                PlayerJuggler.SuppressJuggler = true;
+                foreach (var m in moves) {
+                    Global.Nightwatch.Tas.ForceJoinBattle(m.PlayerName, m.BattleHost);
+                }
+            } catch (Exception ex) {
+                Trace.TraceError("Error while moving players: {0}", ex);
+            } finally {
+                PlayerJuggler.SuppressJuggler = false;
             }
-            PlayerJuggler.SuppressJuggler = false;
 
         }
 
