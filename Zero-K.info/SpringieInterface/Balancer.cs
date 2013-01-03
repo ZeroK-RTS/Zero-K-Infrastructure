@@ -21,7 +21,7 @@ namespace ZeroKWeb.SpringieInterface
     public class Balancer
     {
         const double MaxCbalanceDifference = 150;
-        const double MaxPwEloDifference = 150;
+        const double MaxPwEloDifference = 300;
         const double MaxTeamSizeDifferenceRatio = 2;
         readonly List<BalanceTeam> teams = new List<BalanceTeam>();
         List<BalanceItem> balanceItems;

@@ -60,8 +60,8 @@ namespace ZeroKLobby.MicroLobby
               if (user.IsBot) return Resources.robot;
               if (Program.FriendManager.Friends.Contains(user.Name)) return Resources.Friend;
               if (user.IsAdmin|| user.IsZeroKAdmin) return Resources.police;
-              if (user.EffectiveElo > 1800)  return Resources.napoleon;
-              if (user.EffectiveElo > 1600) return Resources.soldier;
+              if (user.EffectiveElo >= 1800)  return Resources.napoleon;
+              if (user.EffectiveElo >= 1600) return Resources.soldier;
               if (user.EffectiveElo < 1400) return Resources.smurf;
                 
             } else return Resources.Grayuser;
