@@ -112,7 +112,7 @@ namespace ZeroKWeb.SpringieInterface
             //only non passworded battles
             autohosts =
                 autohosts.Where(
-                    x => !tas.ExistingBattles.Values.Any(y => y.Founder.Name == x.LobbyContext.AutohostName && (y.IsPassworded))) //  || y.IsLocked
+                    x => !tas.ExistingBattles.Values.Any(y => y.Founder.Name == x.LobbyContext.AutohostName && (y.IsPassworded || y.IsLocked))) //  
                          .ToList();
 
             List<int?> juggledLobbyIDs = tas.ExistingUsers.Values.Where(x => !x.IsInGame).Select(x => (int?)x.LobbyID).ToList();
