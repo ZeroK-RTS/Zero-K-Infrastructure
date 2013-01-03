@@ -850,8 +850,8 @@ namespace Springie.autohost
         }
 
         void spring_SpringStarted(object sender, EventArgs e) {
-            lockedUntil = DateTime.MinValue;
-            tas.ChangeLock(false);
+            //lockedUntil = DateTime.MinValue;
+            //tas.ChangeLock(false);
             if (hostedMod.IsMission) using (var service = new ContentService { Proxy = null }) foreach (UserBattleStatus u in tas.MyBattle.Users.Where(x => !x.IsSpectator)) service.NotifyMissionRunAsync(u.Name, hostedMod.ShortName);
             StopVote();
         }
