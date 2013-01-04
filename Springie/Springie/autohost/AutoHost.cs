@@ -154,7 +154,7 @@ namespace Springie.autohost
 
                         // auto start split vote
                         if (config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
-                            ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
+                            if (DateTime.UtcNow.Subtract(spring.GameEnded).TotalSeconds >= 60) ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
                             /*
                             int cnt = tas.MyBattle.NonSpectatorCount;
                             if (cnt > lastSplitPlayersCountCalled && cnt%2 == 0) {

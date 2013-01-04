@@ -35,6 +35,27 @@ namespace ZeroKWeb.SpringieInterface
             AutohostConfig config = context.GetConfig();
             int playerCount = context.Players.Count(x => !x.IsSpectator);
 
+            // game is managed, is bigger than split limit and wants to start -> split into two and issue starts
+            if (isGameStart && context.GetMode() != AutohostMode.None && config.SplitBiggerThan != null && config.SplitBiggerThan < playerCount)
+            {
+                new Thread(() =>
+                {
+                    try
+                    {
+                        SplitAutohost(context, true);
+                    }
+                    catch (Exception ex) { Trace.TraceError("Error when splitting game:{0}",ex);}
+                }).Start();
+                return new BalanceTeamsResult
+                {
+                    CanStart = false,
+                    Message =
+                        string.Format(
+                            "Game too big - splitting into two - max players is {0} here",
+                            config.SplitBiggerThan)
+                };
+            }
+
             // dont allow to start alone
             if (playerCount <= 1 && !context.Bots.Any()) return new BalanceTeamsResult { CanStart = false, Message = "Cannot play alone, you can add bots using button on bottom left." };
 
@@ -399,7 +420,7 @@ namespace ZeroKWeb.SpringieInterface
             }
         }
 
-        public static void SplitAutohost(BattleContext context) {
+        public static void SplitAutohost(BattleContext context, bool forceStart = false) {
             TasClient tas = Global.Nightwatch.Tas;
             try {
                 //find first one that isnt running and is using same mode (by name)
@@ -444,6 +465,13 @@ namespace ZeroKWeb.SpringieInterface
                             Thread.Sleep(500);
                             tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
                         }
+                        if (forceStart) {
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!balance", false);
+                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!balance", false);
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!forcestart", false);
+                            tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
+                        }
+
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                     } catch (Exception ex) {
