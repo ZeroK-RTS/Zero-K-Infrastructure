@@ -25,7 +25,6 @@ namespace ZeroKLobby
           Shortcut = "dota",
           FullName = "Zero-K DOTA",
           Channel = "zk",
-          IsPrimary = true,
           Regex = new Regex("Zero-K DOTA.*"),
           RapidTag = "zkdota:stable",
         },
