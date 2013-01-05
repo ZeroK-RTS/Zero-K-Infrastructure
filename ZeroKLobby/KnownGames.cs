@@ -20,6 +20,15 @@ namespace ZeroKLobby
           Regex = new Regex("Zero-K.*"),
           RapidTag = "zk:stable",
         },
+        new GameInfo
+        {
+          Shortcut = "dota",
+          FullName = "Zero-K DOTA",
+          Channel = "zk",
+          IsPrimary = true,
+          Regex = new Regex("Zero-K DOTA.*"),
+          RapidTag = "zkdota:stable",
+        },
         new GameInfo { Shortcut = "S44", FullName = "Spring: 1944", Channel = "s44", Regex = new Regex("Spring: 1944.*"), RapidTag = "s44:latest", },
         new GameInfo { Shortcut = "Cursed", FullName = "The Cursed", Channel = "cursed", Regex = new Regex("The Cursed.*"), RapidTag = "thecursed:latest", },
         new GameInfo { Shortcut = "Evo", FullName = "Evolution RTS", Channel = "evolution", Regex = new Regex("Evolution RTS.*"), RapidTag = "evo:test", },

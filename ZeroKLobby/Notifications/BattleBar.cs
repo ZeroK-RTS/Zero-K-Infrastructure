@@ -111,10 +111,12 @@ namespace ZeroKLobby.Notifications
 					                                           					var pickedItem = cbSide.Items.OfType<SideItem>().FirstOrDefault(x => x.Side == previousSide);
 
 					                                           					suppressSideChangeEvent = true;
-					                                           					if (pickedItem != null) cbSide.SelectedItem = pickedItem;
-					                                           					else cbSide.SelectedIndex = random.Next(cbSide.Items.Count);
 					                                           					cbSide.Visible = mod.Sides.Length > 1;
-					                                           					suppressSideChangeEvent = false;
+					                                           				    if (cbSide.Visible) {
+					                                           				        if (pickedItem != null) cbSide.SelectedItem = pickedItem;
+					                                           				        else cbSide.SelectedIndex = random.Next(cbSide.Items.Count);
+					                                           				    }
+					                                           				    suppressSideChangeEvent = false;
 					                                           				}));
 					                                           		}
 					                                           	},
