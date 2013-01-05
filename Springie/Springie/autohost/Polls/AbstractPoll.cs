@@ -11,6 +11,7 @@ namespace Springie.autohost.Polls
         protected Spring spring;
         protected TasClient tas;
         bool ended = false;
+        protected bool CountNoIntoWinCount = false;
 
         protected Dictionary<string, bool> userVotes = new Dictionary<string, bool>();
 
@@ -56,8 +57,8 @@ namespace Springie.autohost.Polls
                 userVotes[e.UserName] = vote;
                 var yes = userVotes.Count(x => x.Value == true);
                 var no = userVotes.Count(x => x.Value == false);
-                ah.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Question, yes, no, WinCount));
-                if (yes >= WinCount) {
+                ah.SayBattle(string.Format("Poll: {0} [!y={1}/{3}, !n={2}/{3}]", Question, yes, no, CountNoIntoWinCount ? WinCount + no : WinCount));
+                if ((!CountNoIntoWinCount && yes >= WinCount) || (CountNoIntoWinCount && yes >= WinCount + no)) {
                     ah.SayBattle(string.Format("Poll: {0} [END:SUCCESS]", Question));
                     SuccessAction();
                     ended = true;

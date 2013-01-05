@@ -634,6 +634,8 @@ namespace Springie.autohost
         public void Start(string modname, string mapname) {
             Stop();
 
+            lastMapChange = DateTime.Now;
+
             if (String.IsNullOrEmpty(modname)) modname = config.Mod;
             if (String.IsNullOrEmpty(mapname)) mapname = config.Map;
 
@@ -971,7 +973,11 @@ namespace Springie.autohost
             }
         }
 
+        public DateTime lastMapChange = DateTime.Now;
+
         void tas_MyBattleMapChanged(object sender, BattleInfoEventArgs e1) {
+            lastMapChange = DateTime.Now;
+
             Battle b = tas.MyBattle;
             string mapName = b.MapName.ToLower();
 

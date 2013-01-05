@@ -10,6 +10,9 @@ namespace Springie
 	public class MainConfig: IPlasmaDownloaderConfig
 	{
 		public const string SpringieVersion = "Springie 2.6.0";
+	    public const int MaxLockTime = 120;
+	    public const int MapChangeDownloadWait = 120;
+
 
 		string executableName = "spring-dedicated.exe";
 		bool gargamelMode = true;

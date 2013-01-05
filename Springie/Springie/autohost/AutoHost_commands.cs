@@ -277,7 +277,7 @@ namespace Springie.autohost
                 int timer;
                 if (int.TryParse(words[0], out timer)) {
                     if (timer < 0) timer = 0;
-                    if (timer > 120) timer = 120;
+                    if (timer > MainConfig.MaxLockTime) timer = MainConfig.MaxLockTime;
                     lockedUntil = DateTime.UtcNow.AddSeconds(timer);
                 }
             }
