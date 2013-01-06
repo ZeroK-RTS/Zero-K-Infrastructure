@@ -441,10 +441,11 @@ namespace ZeroKWeb.SpringieInterface
                     var toMove = new List<Account>();
 
                     double moveCount = Math.Ceiling(users.Count/2.0);
-                    if (users.Count%2 == 0 && users.Count%4 != 0) {
+                    
+                    /*if (users.Count%2 == 0 && users.Count%4 != 0) {
                         // in case of say 18 people, move 10 nubs out, keep 8 pros
                         moveCount = users.Count/2 + 1;
-                    }
+                    }*/
 
                     // split while keeping clan groups together
                     // note disabled splittinhg by clan - use "x.ClanID ?? x.LobbyID" for clan balance
