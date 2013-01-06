@@ -278,7 +278,7 @@ namespace Springie.autohost
                 if (int.TryParse(words[0], out timer)) {
                     if (timer < 0) timer = 0;
                     if (timer > MainConfig.MaxLockTime) timer = MainConfig.MaxLockTime;
-                    lockedUntil = DateTime.UtcNow.AddSeconds(timer);
+                    lockedUntil = DateTime.Now.AddSeconds(timer);
                 }
             }
             tas.ChangeLock(true);
@@ -286,7 +286,7 @@ namespace Springie.autohost
 
         public void ComUnlock(TasSayEventArgs e, string[] words)
         {
-            if (DateTime.UtcNow < lockedUntil) Respond(e, string.Format("Lock is timed, wait {0} seconds", (int)lockedUntil.Subtract(DateTime.UtcNow).TotalSeconds));
+            if (DateTime.Now < lockedUntil) Respond(e, string.Format("Lock is timed, wait {0} seconds", (int)lockedUntil.Subtract(DateTime.UtcNow).TotalSeconds));
             else {
                 tas.ChangeLock(false);
                 lockedUntil = DateTime.MinValue;

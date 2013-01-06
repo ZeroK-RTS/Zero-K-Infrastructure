@@ -154,7 +154,7 @@ namespace Springie.autohost
 
                         // auto start split vote
                         if (config.SplitBiggerThan != null && tas.MyBattle != null && config.SplitBiggerThan < tas.MyBattle.NonSpectatorCount) {
-                            if (DateTime.UtcNow.Subtract(spring.GameEnded).TotalSeconds >= 60) ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
+                            if (DateTime.Now.Subtract(spring.GameEnded).TotalSeconds >= 60) ComSplitPlayers(TasSayEventArgs.Default, new string[]{});
                             /*
                             int cnt = tas.MyBattle.NonSpectatorCount;
                             if (cnt > lastSplitPlayersCountCalled && cnt%2 == 0) {
@@ -166,7 +166,7 @@ namespace Springie.autohost
                         // auto rehost to latest mod version
                         if (!string.IsNullOrEmpty(config.AutoUpdateRapidTag) && SpawnConfig == null) UpdateRapidMod(config.AutoUpdateRapidTag);
 
-                        if (lockedUntil != DateTime.MinValue && lockedUntil < DateTime.UtcNow) {
+                        if (lockedUntil != DateTime.MinValue && lockedUntil < DateTime.Now) {
                             ComUnlock(TasSayEventArgs.Default, new string[]{});
                         }
 
