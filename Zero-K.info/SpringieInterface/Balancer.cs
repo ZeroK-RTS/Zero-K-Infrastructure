@@ -217,13 +217,13 @@ namespace ZeroKWeb.SpringieInterface
                 RecursiveBalance(0);
                 sw.Stop();
 
-                if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference)) return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers); // cbalance failed, rebalance using normal
-
                 var minSize = bestTeams.Min(x => x.Count);
                 var maxSize = bestTeams.Max(x => x.Count);
-                if (maxSize/(double)minSize > MaxTeamSizeDifferenceRatio) {
-                    if (mode == BalanceMode.ClanWise) return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers); // cbalance failed, rebalance using normal
-                    
+                var sizesWrong = maxSize/(double)minSize > MaxTeamSizeDifferenceRatio;
+                // cbalance failed, rebalance using normal
+                if (mode == BalanceMode.ClanWise && (bestTeams == null || GetTeamsDifference(bestTeams) > MaxCbalanceDifference || sizesWrong)) return new Balancer().LegacyBalance(teamCount, BalanceMode.Normal, b, unmovablePlayers); // cbalance failed, rebalance using normal
+                
+                if (sizesWrong && mode == BalanceMode.FactionWise) {
                     ret.CanStart = false;
                     ret.Message = string.Format("Failed to balance - too many people from same faction");
                     return ret;
