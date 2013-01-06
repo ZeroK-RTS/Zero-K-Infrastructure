@@ -417,6 +417,9 @@
     <Content Include="MissionBase\LuaUI\Widgets\camera_info_snapshot.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="MissionBase\LuaUI\Widgets\camera_beautyshot.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\DataSources\ZkData.Mission.datasource" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

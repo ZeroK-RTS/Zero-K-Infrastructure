@@ -8,7 +8,7 @@ function widget:GetInfo()
     author    = "KingRaptor (L.J. Lim)",
     date      = "2012.10.25",
     license   = "GNU GPL, v2 or later",
-    layer     = -math.huge,
+    layer     = -1*10^7,
     enabled   = true  --  loaded by default?
   }
 end
