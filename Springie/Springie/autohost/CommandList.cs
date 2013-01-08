@@ -232,7 +232,7 @@ namespace Springie.autohost
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
             
             AddMissing(new CommandConfig("hostsay",
-                                         4,
+                                         2,
                                          "says something as host, useful for /nocost etc",
                                          0,
                                          new[] { TasSayEventArgs.Places.Normal, TasSayEventArgs.Places.Battle, TasSayEventArgs.Places.Game }));
