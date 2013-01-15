@@ -1,26 +1,26 @@
 @font-face {
     font-family: sm;
-    src: url('../SM.eot'); /* IE9 Compat Modes */
-    src: url('../SM.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('../SM.ttf') format('truetype'); /* Safari, Android, iOS */
+    src: url('../Fonts/SM.eot'); /* IE9 Compat Modes */
+    src: url('../Fonts/SM.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../Fonts/SM.ttf') format('truetype'); /* Safari, Android, iOS */
 }
 @font-face 
 {
-    src: url( ../tomorrow.eot );
+    src: url( ../Fonts/tomorrow.eot );
     font-family: curly;
-    src: local("curly"), url( ../tomorrow.ttf ) format("truetype");
+    src: local("curly"), url( ../Fonts/tomorrow.ttf ) format("truetype");
 }
 
 @font-face 
 {
-    src: url( ../RevoPop.eot );
+    src: url( ../Fonts/RevoPop.eot );
     font-family: revo;
-    src: local("revo"), url( ../RevoPop.ttf ) format("truetype");
+    src: local("revo"), url( ../Fonts/RevoPop.ttf ) format("truetype");
 }
 
 @font-face 
 {
-    src: url( ../PetitaMedium.eot );
+    src: url( ../Fonts/PetitaMedium.eot );
     font-family: petita;
-    src: local("petita"), url( ../PetitaMedium.ttf ) format("truetype");
+    src: local("petita"), url( ../Fonts/PetitaMedium.ttf ) format("truetype");
 }
