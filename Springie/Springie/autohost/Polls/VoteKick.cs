@@ -23,8 +23,16 @@ namespace Springie.autohost.Polls
             if (AutoHost.FilterUsers(words, tas, spring, out players, out indexes) > 0)
             {
                 player = players[0];
-                question = "Kick " + player + "?";
-                return true;
+                if (player == tas.UserName)
+                {
+                    ah.Respond(e, "won't kick myself, not in suicidal mood today");
+                    return false;
+                }
+                else
+                {
+                    question = "Kick " + player + "?";
+                    return true;
+                }
             }
             else
             {
