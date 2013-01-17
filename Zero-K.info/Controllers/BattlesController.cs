@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -57,7 +57,7 @@ namespace ZeroKWeb.Controllers
             //if (user == null && Global.IsAccountAuthorized) user = Global.Account.Name;
             if (!string.IsNullOrEmpty(user)) {
                 var aid = (from account in db.Accounts
-                           where account.Name.Contains(user)
+                          where account.Name = user
                            select account.AccountID).FirstOrDefault();
                 if(aid != 0)
                     q = q.Where(b => b.SpringBattlePlayers.Any(p => p.AccountID == aid));
