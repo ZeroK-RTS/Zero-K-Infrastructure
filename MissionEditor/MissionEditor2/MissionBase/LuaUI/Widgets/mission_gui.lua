@@ -49,6 +49,8 @@ function MissionEvent(e)
   elseif e.logicType == "GuiMessagePersistentAction" then
       if WG.ShowPersistentMessageBox then
         WG.ShowPersistentMessageBox(e.message, e.width, e.height, e.fontSize, (e.image and "LuaUI/Images/"..e.image) or nil)
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
       end
   elseif e.logicType == "HideGuiMessagePersistentAction" then
       if WG.HidePersistentMessageBox then
@@ -57,18 +59,26 @@ function MissionEvent(e)
   elseif e.logicType == "ConvoMessageAction" then
       if WG.AddConvo then
         WG.AddConvo(e.message, e.fontSize, (e.image and "LuaUI/Images/"..e.image) or nil, e.sound and "LuaUI/sounds/convo/"..e.sound or nil, e.time)
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
       end
   elseif e.logicType == "ClearConvoMessageQueueAction" then
       if WG.ClearConvoQueue then
         WG.ClearConvoQueue()
-      end  
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing message box widget for action " .. e.logicType)
+      end 
   elseif e.logicType == "AddObjectiveAction" then
       if WG.AddObjective then
         WG.AddObjective(e.id, e.title, e.description, nil, "Incomplete")
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
       end
   elseif e.logicType == "ModifyObjectiveAction" then
       if WG.ModifyObjective then
         WG.ModifyObjective(e.id, e.title, e.description, nil, e.status)
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Objectives widget for action " .. e.logicType)
       end
   elseif e.logicType == "EnterCutsceneAction" then
       if WG.Cutscene and WG.Cutscene.EnterCutscene then
@@ -109,7 +119,11 @@ function MissionEvent(e)
   elseif e.logicType == "RestoreCameraStateAction" then
       Spring.SetCameraState(camState, 1)
   elseif e.logicType == "ShakeCameraAction" then
-      if WG.ShakeCamera then WG.ShakeCamera(e.strength) end
+      if WG.ShakeCamera then
+	WG.ShakeCamera(e.strength)
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing camera shake widget for action " .. e.logicType)
+      end
   elseif e.logicType == "SoundAction" then
     PlaySound(e.sound)
   elseif e.logicType == "MusicAction" then
@@ -127,6 +141,8 @@ function MissionEvent(e)
     if WG.Music and WG.Music.StartLoopingTrack then
       if e.trackIntro and e.trackLoop then
 	WG.Music.StartLoopingTrack("LuaUI/Sounds/music/"..e.trackIntro, "LuaUI/Sounds/music/"..e.trackLoop)
+      else
+	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing Music Player widget for action " .. e.logicType)
       end
     end
   elseif e.logicType == "StopMusicAction" then
