@@ -449,7 +449,7 @@ namespace ZeroKWeb.SpringieInterface
 
                     // split while keeping clan groups together
                     // note disabled splittinhg by clan - use "x.ClanID ?? x.LobbyID" for clan balance
-                    foreach (var clanGrp in users.GroupBy(x => x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
+                    foreach (var clanGrp in users.GroupBy(x => x.ClanID ?? x.LobbyID).OrderBy(x => x.Average(y => y.EffectiveElo))) {
                         toMove.AddRange(clanGrp);
                         if (toMove.Count >= moveCount) break;
                     }
@@ -460,10 +460,13 @@ namespace ZeroKWeb.SpringieInterface
                         Thread.Sleep(5000);
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!lock 120", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!lock 120", false);
-                        if (context.GetMode() == AutohostMode.Planetwars || !forceStart) {
+                        if (context.GetMode() == AutohostMode.Planetwars) {
                             tas.Say(TasClient.SayPlace.User, context.AutohostName, "!map", false);
                             Thread.Sleep(500);
                             tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map", false);
+                        }
+                        else {
+                            tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!map " + context.Map, false);
                         }
                         if (forceStart) {
                             tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!balance", false);
