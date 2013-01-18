@@ -475,6 +475,9 @@ namespace ZeroKWeb.SpringieInterface
                             tas.Say(TasClient.SayPlace.User, context.AutohostName, "!forcestart", false);
                         }
 
+                        tas.Say(TasClient.SayPlace.User, context.AutohostName, "!endvote", false);
+                        tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!endvote", false);
+
                         tas.Say(TasClient.SayPlace.User, context.AutohostName, "!start", false);
                         tas.Say(TasClient.SayPlace.User, splitTo.Founder.Name, "!start", false);
                     } catch (Exception ex) {
