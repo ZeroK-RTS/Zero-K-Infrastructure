@@ -1,0 +1,53 @@
+﻿@using ZeroKWeb
+@using ZkData
+@model ZkData.Campaign
+
+@{
+    var campaign = Model;
+    var mapWidth = 700;
+    var mapHeight = 500;
+}
+
+@section head {
+    <script type="text/javascript">
+        window.onload = function () 
+        {
+            var paper = Raphael(document.getElementById("notepad"), @mapWidth, @mapHeight);
+
+            @foreach (var link in Model.CampaignLinks)
+            { 
+                var p1 = db.CampaignPlanets.First(x => x.PlanetID == link.PlanetToUnlock);
+                var p2 = db.CampaignPlanets.First(x => x.PlanetID == link.UnlockingPlanet);
+
+                var x1 = p1.X * Model.MapWidth;
+                var y1 = p1.Y * Model.MapHeight;
+                var x2 = p2.X * Model.MapWidth;
+                var y2 = p2.Y * Model.MapHeight;
+          
+                var width = 2;
+                var color1 = p1.GetColor(Global.Account);
+                var color2 = p2.GetColor(Global.Account);
+                var angle = -Math.Atan2(x2 - x1, y2 - y1) / Math.PI * 180;
+                var length = Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+                @: var r = paper.rect(@x1-@width/2, @y1, @width, @length);
+                @: r.attr({
+                @:  "fill": "90-@color2-@color1",
+                @:  "stroke": "none",
+                @: });
+                @: r.rotate(@angle, @x1, @y1);
+            } 
+
+            @foreach (var planet in campaign.CampaignPlanets)
+            { 
+                @: var circle = paper.circle(@(planet.X * mapWidth), @(planet.Y * mapHeight), 10);
+                @: circle.attr({
+                @:  "fill": "@planet.GetColor(Global.Account)",
+                @:  "stroke": "black",
+                @:  "stroke-width": "3",
+                @: });      
+            }
+       };
+    </script>
+}
+
+<div id="notepad"></div> 

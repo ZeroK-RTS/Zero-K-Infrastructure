@@ -127,6 +127,7 @@
     <Compile Include="Data\Avatar.cs" />
     <Compile Include="Data\Clan.cs" />
     <Compile Include="Data\Commander.cs" />
+    <Compile Include="Data\CampaignPlanet.cs" />
     <Compile Include="Data\EnergyPriority.cs" />
     <Compile Include="Data\Event.cs" />
     <Compile Include="Data\Faction.cs" />

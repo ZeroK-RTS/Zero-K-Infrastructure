@@ -104,6 +104,7 @@
       <DependentUpon>ModStatsDb.dbml</DependentUpon>
     </Compile>
     <Compile Include="Controllers\ClansController.cs" />
+    <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\FactionsController.cs" />
     <Compile Include="Controllers\UnitStatsController.cs" />
     <Compile Include="SpringieInterface\AutohostConfigs.cs" />
@@ -375,6 +376,11 @@
     <Content Include="Views\Shared\DisplayTemplates\FactionTreaty.cshtml" />
     <Content Include="Views\Shared\DisplayTemplates\StructureType.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Enum.cshtml" />
+    <Content Include="Views\Campaign\CampaignMap.cshtml" />
+    <Content Include="Views\Campaign\Index.cshtml" />
+    <Content Include="Views\Campaign\Minimap.cshtml" />
+    <Content Include="Views\Campaign\CampaignPlanet.cshtml" />
+    <Content Include="Views\Home\PlanetTooltipCampaign.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\_ViewStart.cshtml" />

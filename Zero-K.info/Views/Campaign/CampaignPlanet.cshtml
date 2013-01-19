@@ -1,0 +1,85 @@
+﻿@using PlasmaShared
+@using ZkData
+@using ZeroKWeb
+@model CampaignPlanet
+@{
+	ViewBag.Title = "Planet";
+	Page.Title = "Planet " + Model.Name;
+	var db = new ZkDataContext();
+    var colorStyle = "";
+    Account account = Global.Account;
+    var progress = db.AccountCampaignProgress.First(x=> x.AccountID == account.AccountID);
+    bool unlocked = progress != null && progress.IsUnlocked == true;
+    if (unlocked) {
+        colorStyle = "color:#88FF88;";
+    }
+}
+<h1 style="@colorStyle">
+    Planet @Model.Name
+</h1>
+<table>
+	<tr>
+		<td>
+			@Html.Partial("PlanetIcon", Model)
+		</td>
+		<td>
+			@Html.Partial("MapInfoBox", Model.Mission.Resources)
+		</td>
+	</tr>
+</table>
+@{
+	var campaign = db.Campaigns.FirstOrDefault(c => c.CampaignID == Model.CampaignID);
+	var mapWidth = 700;
+	var mapHeight = 500;
+}
+@section head {
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#tabs").tabs();
+		});
+	</script>
+	<script type="text/javascript">
+        window.onload = function () 
+        {
+            var paper = Raphael(document.getElementById("minimap"), @mapWidth, @mapHeight);
+
+            @foreach (var link in Model.CampaignLinks)
+            { 
+                var p1 = db.CampaignPlanets.First(x => x.PlanetID == link.PlanetToUnlock);
+                var p2 = db.CampaignPlanets.First(x => x.PlanetID == link.UnlockingPlanet);
+
+                var x1 = p1.X * mapWidth;
+                var y1 = p1.Y * mapHeight;
+                var x2 = p2.X * mapWidth;
+                var y2 = p2.Y * mapHeight;
+          
+                var width = 2;
+                var color1 = p1.GetColor(Global.Account);
+                var color2 = p2.GetColor(Global.Account);
+                var angle = -Math.Atan2(x2 - x1, y2 - y1) / Math.PI * 180;
+                var length = Math.Sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+                @: var r = paper.rect(@x1-@width/2, @y1, @width, @length);
+                @: r.attr({
+                @:  "fill": "90-@color2-@color1",
+                @:  "stroke": "none",
+                @: });
+                @: r.rotate(@angle, @x1, @y1);
+            } 
+
+            @foreach (var planet in campaign.CampaignPlanets) {
+							var mapIconSize = 10;
+							var stroke = "#000000";
+							if (planet.PlanetID == Model.PlanetID) {
+								mapIconSize *= 2;
+								stroke = "#ffffff";
+							}
+                @: var circle = paper.circle(@(planet.X * mapWidth), @(planet.Y * mapHeight), @mapIconSize);
+                @: circle.attr({
+                @:  "fill": "@planet.GetColor(Global.Account)",
+                @:  "stroke": "@stroke",
+                @:  "stroke-width": "3"
+                @: });
+            }
+        };
+	</script>
+}

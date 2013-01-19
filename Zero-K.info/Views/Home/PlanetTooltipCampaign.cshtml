@@ -1,0 +1,18 @@
+﻿@using ZkData
+@using ZeroKWeb
+@model CampaignPlanet
+@{
+    var colorStyle = "";
+}
+<b style="@(colorStyle)">
+    @Model.Name
+</b>
+<table><tr>
+<td>@Html.Partial("PlanetIcon", Model)</td>
+<td>
+@Html.Partial("MapInfoBox",Model.Mission.Resources)
+</td>
+</tr></table>
+<small>
+@Html.Partial("PlanetSummary", Model)
+</small>
