@@ -6,13 +6,7 @@
 	ViewBag.Title = "Planet";
 	Page.Title = "Planet " + Model.Name;
 	var db = new ZkDataContext();
-    var colorStyle = "";
-    Account account = Global.Account;
-    var progress = db.AccountCampaignProgress.First(x=> x.AccountID == account.AccountID);
-    bool unlocked = progress != null && progress.IsUnlocked == true;
-    if (unlocked) {
-        colorStyle = "color:#88FF88;";
-    }
+    var colorStyle = Model.GetColor();
 }
 <h1 style="@colorStyle">
     Planet @Model.Name
@@ -83,3 +77,5 @@
         };
 	</script>
 }
+
+@Html.Partial("Mission", Model.Mission)

@@ -379,7 +379,7 @@
     <Content Include="Views\Campaign\CampaignMap.cshtml" />
     <Content Include="Views\Campaign\Index.cshtml" />
     <Content Include="Views\Campaign\Minimap.cshtml" />
-    <Content Include="Views\Campaign\CampaignPlanet.cshtml" />
+    <Content Include="Views\Campaign\Planet.cshtml" />
     <Content Include="Views\Home\PlanetTooltipCampaign.cshtml" />
   </ItemGroup>
   <ItemGroup>
