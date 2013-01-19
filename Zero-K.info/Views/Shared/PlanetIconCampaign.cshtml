@@ -1,13 +1,12 @@
 ﻿@using ZkData
-@model Planet
-@{         
-  var planetIconUrl = "/img/planets/" + Model.Resource.MapPlanetWarsIcon;
-  var size = Model.Resource.PlanetWarsIconSize * Planet.OverlayRatio;
-  var offset = (Model.Resource.PlanetWarsIconSize * Planet.OverlayRatio - Model.Resource.PlanetWarsIconSize) / 2;
+@model CampaignPlanet
+@{
+    var db = new ZkDataContext();
+    Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Model.Mission.Map);
+    var planetIconUrl = "/img/planets/" + map.MapPlanetWarsIcon;
+    var size = map.PlanetWarsIconSize * Planet.OverlayRatio;
+    var offset = (map.PlanetWarsIconSize * Planet.OverlayRatio - Model.Mission.Resources.PlanetWarsIconSize) / 2;
 }
 <span style='width: @(size)px; height:@(size)px; display: inline-block;'>
-  <img src='@planetIconUrl' width='@(Model.Resource.PlanetWarsIconSize)' style='position:absolute; padding-left: @(offset)px; padding-top: @(offset)px' />
-  @foreach (var s in Model.PlanetStructures) {
-    <img src='@s.GetImageUrl()' width='@size' style='position:absolute' />
-  }
+  <img src='@planetIconUrl' width='@(map.PlanetWarsIconSize)' style='position:absolute; padding-left: @(offset)px; padding-top: @(offset)px' />
 </span>
