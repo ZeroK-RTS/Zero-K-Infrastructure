@@ -65,7 +65,7 @@ namespace ZeroKWeb.Controllers
             if (campaignID != null) camp = db.Campaigns.Single(x => x.CampaignID == campaignID);
             else camp = db.Campaigns.Single(x => x.CampaignID == 1);
             string cachePath = Server.MapPath(string.Format("/img/galaxies/campaign/render_{0}.jpg", camp.CampaignID));
-            /*
+            // /*
             if (camp.IsDirty || !System.IO.File.Exists(cachePath)) {
                 using (Bitmap im = GenerateGalaxyImage(camp.CampaignID)) {
                     im.SaveJpeg(cachePath, 85);
@@ -75,7 +75,7 @@ namespace ZeroKWeb.Controllers
                     db.SubmitChanges();
                 }
             }
-            */
+            // */
             return View("CampaignMap", camp);
         }
 

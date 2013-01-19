@@ -2,7 +2,7 @@
 @using ZeroKWeb
 @model CampaignPlanet
 @{
-    var colorStyle = "";
+    var colorStyle = Model.GetColor(Global.Account);
     var db = new ZkDataContext();
     Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Model.Mission.Map);
 }
@@ -10,11 +10,11 @@
     @Model.Name
 </b>
 <table><tr>
-<td>@Html.Partial("PlanetIcon", Model)</td>
+<td>@Html.Partial("PlanetIconCampaign", Model)</td>
 <td>
 @Html.Partial("MapInfoBox", map)
 </td>
 </tr></table>
 <small>
-@Html.Partial("PlanetSummary", Model)
+@Html.BBCode(Model.Description)
 </small>

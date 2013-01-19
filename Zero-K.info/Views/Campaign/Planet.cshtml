@@ -7,8 +7,17 @@
 	Page.Title = "Planet " + Model.Name;
 	var db = new ZkDataContext();
     Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Model.Mission.Map);
-    var colorStyle = "";//"color:" + Model.GetColor(Global.Account) + ";";
+    AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == Global.AccountID && x.CampaignID == Model.CampaignID && x.PlanetID == Model.PlanetID);
+    var colorStyle = "color:" + Model.GetColor(Global.Account) + ";";
+    var journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID && x.PlanetID == Model.PlanetID).ToList();
 }
+<script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
+<script type="text/javascript">
+    $(function () {
+        $("h3.expand").toggler({ speed: 0 });
+    });
+</script>
+
 <h1 style="@colorStyle">
     Planet @Model.Name
 </h1>
@@ -24,11 +33,32 @@
 </table>
     @Html.BBCode(@Model.Description)
     <br /><br />
-    <h3>Mission: @Html.ActionLink(Model.Mission.Name, "Detail", new { id = Model.MissionID })</h3>
+    @if ((progress != null && progress.IsUnlocked) || Model.StartsUnlocked){
+        <h3>Mission: @Html.ActionLink(Model.Mission.Name, "../Missions/Detail", new { id = Model.MissionID })</h3>
+    }
+
+    @if (journals != null) {
+        <br />
+        <h3 class="expand">Journals</h3>
+        <div id="journals" class="collapse width-90">
+            @foreach (var journal in journals){
+                if (!journal.RequiresCompletion || (progress != null && progress.IsCompleted))
+                {
+                    <h4>@(journal.Title)</h4>
+                    @Html.BBCode(journal.Text)
+                }
+                else
+                {
+                    <h4 style="color:Gray">@journal.Title</h4>
+                }
+                <br />
+            }
+        </div>
+    }
 @{
-	var campaign = db.Campaigns.FirstOrDefault(c => c.CampaignID == Model.CampaignID);
-	var mapWidth = 700;
-	var mapHeight = 500;
+    Campaign campaign = db.Campaigns.FirstOrDefault(c => c.CampaignID == Model.CampaignID);
+    var mapWidth = 700;
+    var mapHeight = 500;
 }
 @section head {
 	<script type="text/javascript">
@@ -42,7 +72,7 @@
             var paper = Raphael(document.getElementById("minimap"), @mapWidth, @mapHeight);
 
             @foreach (var link in Model.CampaignLinks)
-            { 
+            {
                 var p1 = db.CampaignPlanets.First(x => x.PlanetID == link.PlanetToUnlock);
                 var p2 = db.CampaignPlanets.First(x => x.PlanetID == link.UnlockingPlanet);
 
@@ -50,7 +80,7 @@
                 var y1 = p1.Y * mapHeight;
                 var x2 = p2.X * mapWidth;
                 var y2 = p2.Y * mapHeight;
-          
+
                 var width = 2;
                 var color1 = p1.GetColor(Global.Account);
                 var color2 = p2.GetColor(Global.Account);
@@ -64,16 +94,18 @@
                 @: r.rotate(@angle, @x1, @y1);
             } 
 
-            @foreach (var planet in campaign.CampaignPlanets) {
-							var mapIconSize = 10;
-							var stroke = "#000000";
-							if (planet.PlanetID == Model.PlanetID) {
-								mapIconSize *= 2;
-								stroke = "#ffffff";
-							}
+            @foreach (var planet in campaign.CampaignPlanets)
+            {
+                var mapIconSize = 10;
+                var stroke = "#000000";
+                if (planet.PlanetID == Model.PlanetID)
+                {
+                    mapIconSize *= 2;
+                    stroke = "#ffffff";
+                }
                 @: var circle = paper.circle(@(planet.X * mapWidth), @(planet.Y * mapHeight), @mapIconSize);
                 @: circle.attr({
-                //@:  "fill": "@planet.GetColor(Global.Account)",
+                @:  "fill": "@planet.GetColor(Global.Account)",
                 @:  "stroke": "@stroke",
                 @:  "stroke-width": "3"
                 @: });

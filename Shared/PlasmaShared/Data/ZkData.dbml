@@ -1051,8 +1051,9 @@
   <Table Name="dbo.CampaignJournal" Member="CampaignJournals">
     <Type Name="CampaignJournal">
       <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="JournalID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="JournalID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="PlanetID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+	  <Column Name="RequiresCompletion" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="Title" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Text" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
       <Association Name="Campaign_CampaignJournal" Member="Campaign" ThisKey="CampaignID" OtherKey="CampaignID" Type="Campaign" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />

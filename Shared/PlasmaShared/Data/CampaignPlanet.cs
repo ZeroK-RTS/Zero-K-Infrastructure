@@ -13,18 +13,23 @@ namespace ZkData
 	        return Name;
 	    }
 
-        //fixme
 	    public string GetColor(Account viewer)
 		{
             var db = new ZkDataContext();
-            var progress = db.AccountCampaignProgress.First(x => x.AccountID == viewer.AccountID && x.PlanetID == PlanetID);
-            if (progress == null) return "#808080";
+            AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == viewer.AccountID && x.CampaignID == CampaignID && x.PlanetID == PlanetID);
+            if (progress == null) return StartsUnlocked ? "" : "#808080";
             bool isUnlocked = progress.IsUnlocked || StartsUnlocked;
             bool isCompleted = progress.IsCompleted;
 
-            if (isCompleted) return "#00FF00";
-            else if (isUnlocked) return "#FFFF00";
-            else return "#808080";
+            if (isCompleted)
+            {
+                return "#00FFFF";
+            }
+            else if (isUnlocked)
+            {
+                return "";
+            }
+            return "#808080";
 		}
 
 		public Rectangle PlanetOverlayRectangle(Campaign camp)

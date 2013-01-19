@@ -154,6 +154,12 @@ namespace ZeroKWeb.SpringieInterface
                                             foreach (Unlock m in
                                                         c.CommanderDecorations.Where(x => x.Unlock != null).OrderBy(x => x.SlotID).Select(x => x.Unlock)) 
                                                         decorations.Add(m.Code);
+                                            
+                                            //var decorationData = new LuaTable();
+                                            //comdef["decorationData"] = decorationData;
+                                            //decorationData.Add("icon_chest", TBD); 
+                                            //decorationData.Add("icon_shoulders", TBD); 
+                                            //decorationData.Add("icon_back", TBD); 
 
                                             comdef["name"] = c.Name.Substring(0, Math.Min(25, c.Name.Length)) + " level " + i;
 

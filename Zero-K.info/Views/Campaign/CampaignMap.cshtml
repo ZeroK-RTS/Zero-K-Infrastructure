@@ -66,7 +66,7 @@
 		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; width:100%; height:25%;"><tr>
 		<td style="vertical-align: bottom;" ><div style="display:inline-block;">
             @if((progress != null && progress.IsUnlocked) || p.StartsUnlocked) {
-                <a href='@Url.Action("Planet", new { id = p.PlanetID })' nicetitle="$campaignplanet$@p.PlanetID" style="color: #ffffff">@p.Name<br /></a>
+                <a href='@Url.Action("Planet", new { id = p.PlanetID })' nicetitle="$campaignplanet$@p.PlanetID" style="color: #ffffff; color: @p.GetColor(Global.Account)">@p.Name<br /></a>
             }
             else
             {

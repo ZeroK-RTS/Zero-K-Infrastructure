@@ -27471,6 +27471,8 @@ namespace ZkData
 		
 		private int _PlanetID;
 		
+		private bool _RequiresCompletion;
+		
 		private string _Title;
 		
 		private string _Text;
@@ -27489,6 +27491,8 @@ namespace ZkData
     partial void OnJournalIDChanged();
     partial void OnPlanetIDChanging(int value);
     partial void OnPlanetIDChanged();
+    partial void OnRequiresCompletionChanging(bool value);
+    partial void OnRequiresCompletionChanged();
     partial void OnTitleChanging(string value);
     partial void OnTitleChanged();
     partial void OnTextChanging(string value);
@@ -27525,7 +27529,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_JournalID", DbType="Int NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_JournalID", DbType="Int NOT NULL", IsPrimaryKey=true)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
 		public int JournalID
 		{
@@ -27571,8 +27575,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiresCompletion", DbType="Bit NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool RequiresCompletion
+		{
+			get
+			{
+				return this._RequiresCompletion;
+			}
+			set
+			{
+				if ((this._RequiresCompletion != value))
+				{
+					this.OnRequiresCompletionChanging(value);
+					this.SendPropertyChanging();
+					this._RequiresCompletion = value;
+					this.SendPropertyChanged("RequiresCompletion");
+					this.OnRequiresCompletionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public string Title
 		{
 			get
@@ -27593,7 +27618,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="NVarChar(MAX)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public string Text
 		{
 			get
