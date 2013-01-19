@@ -6,7 +6,8 @@
 	ViewBag.Title = "Planet";
 	Page.Title = "Planet " + Model.Name;
 	var db = new ZkDataContext();
-    var colorStyle = Model.GetColor();
+    Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Model.Mission.Map);
+    var colorStyle = "";//"color:" + Model.GetColor(Global.Account) + ";";
 }
 <h1 style="@colorStyle">
     Planet @Model.Name
@@ -17,10 +18,13 @@
 			@Html.Partial("PlanetIcon", Model)
 		</td>
 		<td>
-			@Html.Partial("MapInfoBox", Model.Mission.Resources)
+			@Html.Partial("MapInfoBox", map)
 		</td>
 	</tr>
 </table>
+    @Html.BBCode(@Model.Description)
+    <br /><br />
+    <h3>Mission: @Html.ActionLink(Model.Mission.Name, "Detail", new { id = Model.MissionID })</h3>
 @{
 	var campaign = db.Campaigns.FirstOrDefault(c => c.CampaignID == Model.CampaignID);
 	var mapWidth = 700;
@@ -69,13 +73,12 @@
 							}
                 @: var circle = paper.circle(@(planet.X * mapWidth), @(planet.Y * mapHeight), @mapIconSize);
                 @: circle.attr({
-                @:  "fill": "@planet.GetColor(Global.Account)",
+                //@:  "fill": "@planet.GetColor(Global.Account)",
                 @:  "stroke": "@stroke",
                 @:  "stroke-width": "3"
                 @: });
             }
         };
 	</script>
-}
-
-@Html.Partial("Mission", Model.Mission)
+        
+)}

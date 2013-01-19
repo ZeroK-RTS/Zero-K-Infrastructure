@@ -27,11 +27,12 @@ namespace ZeroKWeb.Controllers
 
                         foreach (CampaignPlanet p in camp.CampaignPlanets) {
                             string planetIconPath = null;
+                            Resource map = db.Resources.FirstOrDefault(m => m.InternalName == p.Mission.Map);
                             try {
-                                planetIconPath = "/img/planets/" + (p.Mission.Resources.MapPlanetWarsIcon ?? "1.png"); // backup image is 1.png
+                                planetIconPath = "/img/planets/" + (map.MapPlanetWarsIcon ?? "1.png"); // backup image is 1.png
                                 using (Image pi = Image.FromFile(Server.MapPath(planetIconPath))) {
                                     double aspect = pi.Height/(double)pi.Width;
-                                    var width = (int)(p.Mission.Resources.PlanetWarsIconSize * zoom);
+                                    var width = (int)(map.PlanetWarsIconSize * zoom);
                                     var height = (int)(width*aspect);
                                     gr.DrawImage(pi, (int)(p.X*im.Width) - width/2, (int)(p.Y*im.Height) - height/2, width, height);
                                 }
@@ -40,7 +41,7 @@ namespace ZeroKWeb.Controllers
                                     string.Format("Cannot process planet image {0} for planet {1} map {2}",
                                                   planetIconPath,
                                                   p.PlanetID,
-                                                  p.Mission.Resources.ResourceID),
+                                                  map.ResourceID),
                                     ex);
                             }
                         }
@@ -64,6 +65,7 @@ namespace ZeroKWeb.Controllers
             if (campaignID != null) camp = db.Campaigns.Single(x => x.CampaignID == campaignID);
             else camp = db.Campaigns.Single(x => x.CampaignID == 1);
             string cachePath = Server.MapPath(string.Format("/img/galaxies/campaign/render_{0}.jpg", camp.CampaignID));
+            
             if (camp.IsDirty || !System.IO.File.Exists(cachePath)) {
                 using (Bitmap im = GenerateGalaxyImage(camp.CampaignID)) {
                     im.SaveJpeg(cachePath, 85);
@@ -73,6 +75,7 @@ namespace ZeroKWeb.Controllers
                     db.SubmitChanges();
                 }
             }
+            
             return View("CampaignMap", camp);
         }
 

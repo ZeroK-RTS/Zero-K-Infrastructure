@@ -29,7 +29,9 @@ namespace ZkData
 
 		public Rectangle PlanetOverlayRectangle(Campaign camp)
 		{
-			var w = Mission.Resources.PlanetWarsIconSize*OverlayRatio;
+            var db = new ZkDataContext();
+            Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Mission.Map);  
+			var w = map.PlanetWarsIconSize*OverlayRatio;
 			var xp = (int)(X*camp.MapWidth);
 			var yp = (int)(Y*camp.MapHeight);
 			return new Rectangle((int)(xp - w/2), (int)(yp - w/2), (int)w, (int)w);
@@ -37,7 +39,9 @@ namespace ZkData
 
         public Rectangle PlanetRectangle(Campaign camp)
 		{
-			var w = Mission.Resources.PlanetWarsIconSize;
+            var db = new ZkDataContext();
+            Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Mission.Map);  
+			var w = map.PlanetWarsIconSize;
             var xp = (int)(X * camp.MapWidth);
             var yp = (int)(Y * camp.MapHeight);
 			return new Rectangle((int)(xp - w/2), (int)(yp - w/2), (int)w, (int)w);

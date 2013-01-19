@@ -3,6 +3,8 @@
 @model CampaignPlanet
 @{
     var colorStyle = "";
+    var db = new ZkDataContext();
+    Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Model.Mission.Map);
 }
 <b style="@(colorStyle)">
     @Model.Name
@@ -10,7 +12,7 @@
 <table><tr>
 <td>@Html.Partial("PlanetIcon", Model)</td>
 <td>
-@Html.Partial("MapInfoBox",Model.Mission.Resources)
+@Html.Partial("MapInfoBox", map)
 </td>
 </tr></table>
 <small>
