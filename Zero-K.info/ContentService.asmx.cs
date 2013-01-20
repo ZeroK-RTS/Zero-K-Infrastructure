@@ -244,7 +244,7 @@ namespace ZeroKWeb
                             AccountCampaignProgress progress2 = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == toUnlock.PlanetID);
                             if (progress2 == null)
                             {
-                                progress2 = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = planet.CampaignID, PlanetID = planet.PlanetID, IsCompleted = false, IsUnlocked = true };
+                                progress2 = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = planet.CampaignID, PlanetID = toUnlock.PlanetID, IsCompleted = false, IsUnlocked = true };
                                 db.AccountCampaignProgress.InsertOnSubmit(progress2);
                             }
                             else progress2.IsUnlocked = true;
