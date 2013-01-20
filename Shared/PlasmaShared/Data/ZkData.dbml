@@ -1098,8 +1098,8 @@
   <Table Name="dbo.AccountCampaignProgress" Member="AccountCampaignProgress">
     <Type Name="AccountCampaignProgress">
       <Column Name="AccountID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="PlanetID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true"  CanBeNull="false" />
+      <Column Name="PlanetID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true"  CanBeNull="false" />
       <Column Name="IsUnlocked" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="IsCompleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="Account_AccountCampaignProgress" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />

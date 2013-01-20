@@ -2,7 +2,7 @@
 @using ZeroKWeb
 @model CampaignPlanet
 @{
-    var colorStyle = Model.GetColor(Global.Account);
+    var colorStyle = "color:" + Model.GetColor(Global.Account) + ";";
     var db = new ZkDataContext();
     Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Model.Mission.Map);
 }
@@ -15,6 +15,7 @@
 @Html.Partial("MapInfoBox", map)
 </td>
 </tr></table>
+Mission: @Model.Mission.Name
 <small>
 @Html.BBCode(Model.Description)
 </small>
