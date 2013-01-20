@@ -17,17 +17,17 @@ namespace ZkData
 		{
             var db = new ZkDataContext();
             AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == viewer.AccountID && x.CampaignID == CampaignID && x.PlanetID == PlanetID);
-            if (progress == null) return StartsUnlocked ? "" : "#808080";
+            if (progress == null) return StartsUnlocked ? "#FFFFFF" : "#808080";
             bool isUnlocked = progress.IsUnlocked || StartsUnlocked;
             bool isCompleted = progress.IsCompleted;
 
             if (isCompleted)
             {
-                return "#00FFFF";
+                return "#00FF88";
             }
             else if (isUnlocked)
             {
-                return "";
+                return "#FFFFFF";
             }
             return "#808080";
 		}

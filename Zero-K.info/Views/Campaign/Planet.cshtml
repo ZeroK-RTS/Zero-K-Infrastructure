@@ -12,61 +12,22 @@
     bool unlocked = (progress != null && progress.IsUnlocked || Model.StartsUnlocked);
     var colorStyle = "color:" + Model.GetColor(Global.Account) + ";";
     var journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID && x.PlanetID == Model.PlanetID && (!x.RequiresUnlock || unlocked)).ToList();
-}
-<script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
-<script type="text/javascript">
-    $(function () {
-        $("h3.expand").toggler({ speed: 0 });
-    });
-</script>
-
-<h1 style="@colorStyle">
-    Planet @Model.Name
-</h1>
-<table>
-	<tr>
-		<td>
-			@Html.Partial("PlanetIconCampaign", Model)
-		</td>
-		<td>
-			@Html.Partial("MapInfoBox", map)
-		</td>
-	</tr>
-</table>
-    @Html.BBCode(@Model.Description)
-    <br /><br />
-    @if ((progress != null && progress.IsUnlocked) || Model.StartsUnlocked){
-        <h3>Mission: @Html.ActionLink(Model.Mission.Name, "../Missions/Detail", new { id = Model.MissionID })</h3>
-    }
-
-    @if (journals != null && journals.Count > 0) {
-        <br />
-        <h3 class="expand">Journals</h3>
-        <div id="journals" class="collapse width-90">
-            @foreach (var journal in journals){
-                if (!journal.RequiresCompletion || complete)
-                {
-                    <h4>@(journal.Title)</h4>
-                    @Html.BBCode(journal.Text)
-                }
-                else
-                {
-                    <h4 style="color:Gray">@journal.Title</h4>
-                }
-                <br />
-            }
-        </div>
-    }
-@{
+    
     Campaign campaign = db.Campaigns.Single(c => c.CampaignID == Model.CampaignID);
     var mapWidth = 700;
     var mapHeight = 500;
 }
 @section head {
+    <script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
+    <script type="text/javascript">
+        $(function () {
+            $("h3.expand").toggler({ speed: 0 });
+        });
+    </script>
 	<script type="text/javascript">
-		$(document).ready(function () {
-			$("#tabs").tabs();
-		});
+	    $(document).ready(function () {
+	        $("#tabs").tabs();
+	    });
 	</script>
 	<script type="text/javascript">
         window.onload = function () 
@@ -75,8 +36,8 @@
 
             @foreach (var link in Model.CampaignLinks)
             {
-                var p1 = db.CampaignPlanets.First(x => x.PlanetID == link.PlanetToUnlock);
-                var p2 = db.CampaignPlanets.First(x => x.PlanetID == link.UnlockingPlanet);
+                CampaignPlanet p1 = link.PlanetToUnlock;
+                CampaignPlanet p2 = link.UnlockingPlanet;
 
                 var x1 = p1.X * mapWidth;
                 var y1 = p1.Y * mapHeight;
@@ -103,7 +64,7 @@
                 if (planet.PlanetID == Model.PlanetID)
                 {
                     mapIconSize *= 2;
-                    stroke = "#ffffff";
+                    stroke = "#8888FF";
                 }
                 @: var circle = paper.circle(@(planet.X * mapWidth), @(planet.Y * mapHeight), @mapIconSize);
                 @: circle.attr({
@@ -113,6 +74,48 @@
                 @: });
             }
         };
-	</script>
-        
+	</script>   
 )}
+
+
+<h1 style="@colorStyle">
+    Planet @Model.Name
+</h1>
+<table>
+	<tr>
+		<td>
+			@Html.Partial("PlanetIconCampaign", Model)
+		</td>
+		<td>
+			@Html.Partial("MapInfoBox", map)
+		</td>
+	</tr>
+</table>
+@Html.BBCode(@Model.Description)
+<br /><br />
+@if ((progress != null && progress.IsUnlocked) || Model.StartsUnlocked){
+    <h3>Mission: @Html.ActionLink(Model.Mission.Name, "../Missions/Detail", new { id = Model.MissionID })</h3>
+}
+<br />
+<h3>Galaxy</h3>
+<div id="minimap">
+</div>
+
+@if (journals != null && journals.Count > 0) {
+    <br />
+    <h3 class="expand">Journals</h3>
+    <div id="journals" class="collapse width-90">
+        @foreach (var journal in journals){
+            if (!journal.RequiresCompletion || complete)
+            {
+                <h4>@(journal.Title)</h4>
+                @Html.BBCode(journal.Text)
+            }
+            else
+            {
+                <h4 style="color:Gray">@journal.Title</h4>
+            }
+            <br />
+        }
+    </div>
+}
