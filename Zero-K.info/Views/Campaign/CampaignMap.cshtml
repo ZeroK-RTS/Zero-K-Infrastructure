@@ -45,12 +45,13 @@
                 Resource map2 = db.Resources.FirstOrDefault(m => m.InternalName == p2.Mission.Map);
 				lineY += map1.PlanetWarsIconSize / 2 * 1.5;
 				length -= map2.PlanetWarsIconSize * 1.5;
-                @: var r = paper.rect(@x1-@width/2, @y1, @width, @length);
-                @: r.attr({
-                @:  "fill": "90-@color2-@color1",
-                @:  "stroke": "none",
-                @: });
-                @: r.rotate(@angle, @x1, @y1);
+
+				@: var r = paper.rect(@String.Format("{0:0}, {1:0}, {2:0}, {3:0}", lineX, lineY, width, length));
+				@: r.attr({
+				@:	"fill": "90-@color2-@color1",
+				@:	"stroke": "none"
+				@: });
+				@: r.rotate(@angle, @String.Format("{0:0}", x1), @String.Format("{0:0}", y1));
             } 
 		} )
 	</script>
