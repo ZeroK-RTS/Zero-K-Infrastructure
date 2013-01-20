@@ -4,6 +4,7 @@
 
 @{
     var campaign = Model;
+    var db = new ZkDataContext();
     var mapWidth = 700;
     var mapHeight = 500;
 }
@@ -16,8 +17,8 @@
 
             @foreach (var link in Model.CampaignLinks)
             { 
-                var p1 = db.CampaignPlanets.First(x => x.PlanetID == link.PlanetToUnlock);
-                var p2 = db.CampaignPlanets.First(x => x.PlanetID == link.UnlockingPlanet);
+                CampaignPlanet p1 = link.PlanetToUnlock;
+                CampaignPlanet p2 = link.UnlockingPlanet;
 
                 var x1 = p1.X * Model.MapWidth;
                 var y1 = p1.Y * Model.MapHeight;

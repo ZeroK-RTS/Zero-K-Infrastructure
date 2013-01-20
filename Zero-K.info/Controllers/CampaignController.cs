@@ -79,6 +79,19 @@ namespace ZeroKWeb.Controllers
             return View("CampaignMap", camp);
         }
 
+        public ActionResult JournalList(int? campaignID = null)
+        {
+            if (Global.Account == null) return Content("You must be logged in to view campaign info");
+
+            var db = new ZkDataContext();
+
+            Campaign camp;
+            if (campaignID != null) camp = db.Campaigns.Single(x => x.CampaignID == campaignID);
+            else camp = db.Campaigns.Single(x => x.CampaignID == 1);
+
+            return View("JournalList", camp);
+        }
+
         /*
         public ActionResult Minimap() {
             var db = new ZkDataContext();

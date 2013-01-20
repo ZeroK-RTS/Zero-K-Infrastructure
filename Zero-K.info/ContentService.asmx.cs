@@ -194,27 +194,64 @@ namespace ZeroKWeb
 
                 var mission = db.Missions.Single(x => x.Name == missionName);
 
-                var scoreEntry = mission.MissionScores.FirstOrDefault(x => x.AccountID == acc.AccountID);
-                if (scoreEntry == null)
+                if (score != 0)
                 {
-                    scoreEntry = new MissionScore() { MissionID = mission.MissionID, AccountID = acc.AccountID, Score = int.MinValue };
-                    mission.MissionScores.Add(scoreEntry);
+                    var scoreEntry = mission.MissionScores.FirstOrDefault(x => x.AccountID == acc.AccountID);
+                    if (scoreEntry == null)
+                    {
+                        scoreEntry = new MissionScore() { MissionID = mission.MissionID, AccountID = acc.AccountID, Score = int.MinValue };
+                        mission.MissionScores.Add(scoreEntry);
+                    }
+
+                    if (score > scoreEntry.Score)
+                    {
+                        var max = mission.MissionScores.Max(x => (int?)x.Score);
+                        if (max == null || max <= score)
+                        {
+                            mission.TopScoreLine = login;
+                            acc.XP += 150; // 150 for getting top score
+                        }
+                        scoreEntry.Score = score;
+                        scoreEntry.Time = DateTime.UtcNow;
+                        scoreEntry.MissionRevision = mission.Revision;
+                        scoreEntry.GameSeconds = gameSeconds;
+                    }
                 }
 
-                if (score > scoreEntry.Score)
+                // campaign stuff
+                CampaignPlanet planet = db.CampaignPlanets.FirstOrDefault(p => p.MissionID == mission.MissionID);
+                if (planet != null)
                 {
-                    var max = mission.MissionScores.Max(x => (int?)x.Score);
-                    if (max == null || max <= score)
+                    // first mark this planet as completed - but only if it's already unlocked
+                    AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
+
+                    if (progress == null && planet.StartsUnlocked)
                     {
-                        mission.TopScoreLine = login;
-                        acc.XP += 150; // 150 for getting top score
+                        progress = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = planet.CampaignID, PlanetID = planet.PlanetID, IsCompleted = false, IsUnlocked = true };
+                        db.AccountCampaignProgress.InsertOnSubmit(progress);
                     }
-                    scoreEntry.Score = score;
-                    scoreEntry.Time = DateTime.UtcNow;
-                    scoreEntry.MissionRevision = mission.Revision;
-                    scoreEntry.GameSeconds = gameSeconds;
-                    db.SubmitChanges();
+
+                    if (progress != null && (planet.StartsUnlocked || progress.IsUnlocked))
+                    {
+                        progress.IsCompleted = true;
+
+                        // unlock planets made available by completing this one
+                        // FIXME: use the UnlockSet column to allow unlocking only when multiple prerequisite planets are complete
+                        var links = db.CampaignLinks.Where(x => x.UnlockingPlanetID == planet.PlanetID && x.CampaignID == planet.CampaignID);
+                        foreach (CampaignLink link in links)
+                        {
+                            CampaignPlanet toUnlock = link.PlanetToUnlock;
+                            AccountCampaignProgress progress2 = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == acc.AccountID && x.PlanetID == toUnlock.PlanetID);
+                            if (progress2 == null)
+                            {
+                                progress2 = new AccountCampaignProgress() { AccountID = acc.AccountID, CampaignID = planet.CampaignID, PlanetID = planet.PlanetID, IsCompleted = false, IsUnlocked = true };
+                                db.AccountCampaignProgress.InsertOnSubmit(progress2);
+                            }
+                            else progress2.IsUnlocked = true;
+                        }
+                    }
                 }
+                db.SubmitChanges();
             }
         }
 

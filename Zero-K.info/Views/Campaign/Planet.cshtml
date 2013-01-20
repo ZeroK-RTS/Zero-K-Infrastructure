@@ -8,8 +8,10 @@
 	var db = new ZkDataContext();
     Resource map = db.Resources.FirstOrDefault(m => m.InternalName == Model.Mission.Map);
     AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == Global.AccountID && x.CampaignID == Model.CampaignID && x.PlanetID == Model.PlanetID);
+    bool complete = (progress != null && progress.IsCompleted);
+    bool unlocked = (progress != null && progress.IsUnlocked || Model.StartsUnlocked);
     var colorStyle = "color:" + Model.GetColor(Global.Account) + ";";
-    var journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID && x.PlanetID == Model.PlanetID).ToList();
+    var journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID && x.PlanetID == Model.PlanetID && (!x.RequiresUnlock || unlocked)).ToList();
 }
 <script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
 <script type="text/javascript">
@@ -37,12 +39,12 @@
         <h3>Mission: @Html.ActionLink(Model.Mission.Name, "../Missions/Detail", new { id = Model.MissionID })</h3>
     }
 
-    @if (journals != null) {
+    @if (journals != null && journals.Count > 0) {
         <br />
         <h3 class="expand">Journals</h3>
         <div id="journals" class="collapse width-90">
             @foreach (var journal in journals){
-                if (!journal.RequiresCompletion || (progress != null && progress.IsCompleted))
+                if (!journal.RequiresCompletion || complete)
                 {
                     <h4>@(journal.Title)</h4>
                     @Html.BBCode(journal.Text)
@@ -56,7 +58,7 @@
         </div>
     }
 @{
-    Campaign campaign = db.Campaigns.FirstOrDefault(c => c.CampaignID == Model.CampaignID);
+    Campaign campaign = db.Campaigns.Single(c => c.CampaignID == Model.CampaignID);
     var mapWidth = 700;
     var mapHeight = 500;
 }

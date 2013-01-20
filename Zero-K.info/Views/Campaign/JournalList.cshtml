@@ -1,0 +1,40 @@
+@using ZeroKWeb
+@using ZkData
+@model Campaign
+@{
+    Page.Title = "Campaign " + Model.Name + " - Journal";
+    var db = new ZkDataContext();
+    Campaign camp = Model;
+    List<CampaignJournal> journals = db.CampaignJournals.Where(x => x.CampaignID == Model.CampaignID).OrderBy(x=> x.Title).ToList();
+}
+<script type="text/javascript" src='@Href("~/Scripts/jquery.expand.js")' > </script>
+<script type="text/javascript">
+    $(function () {
+        $("h3.expand").toggler({ speed: 0 });
+    });
+</script>
+
+<h1>
+    Campaign @Model.Name - Journal
+</h1>
+
+@Html.BBCode(@Model.Description)
+<br /><br />
+
+<h2>Journals</h2>
+@if (journals != null && journals.Count > 0)
+{
+    foreach (var journal in journals)
+    {
+        AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.AccountID == Global.AccountID && x.CampaignID == Model.CampaignID && x.PlanetID == journal.PlanetID);
+        CampaignPlanet planet = db.CampaignPlanets.Single(x => x.CampaignID == Model.CampaignID && x.PlanetID == journal.PlanetID);
+        if ((!journal.RequiresCompletion || (progress != null && progress.IsCompleted)) && (!journal.RequiresUnlock || (progress != null && progress.IsUnlocked || planet.StartsUnlocked)) ) 
+        {
+            <h3 class="expand">@journal.Title</h3>
+            <div id="journals" class="collapse width-90">
+                @Html.BBCode(journal.Text)
+            </div>
+            <br />
+        }
+    } 
+}

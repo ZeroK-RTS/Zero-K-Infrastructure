@@ -27471,6 +27471,8 @@ namespace ZkData
 		
 		private int _PlanetID;
 		
+		private bool _RequiresUnlock;
+		
 		private bool _RequiresCompletion;
 		
 		private string _Title;
@@ -27491,6 +27493,8 @@ namespace ZkData
     partial void OnJournalIDChanged();
     partial void OnPlanetIDChanging(int value);
     partial void OnPlanetIDChanged();
+    partial void OnRequiresUnlockChanging(bool value);
+    partial void OnRequiresUnlockChanged();
     partial void OnRequiresCompletionChanging(bool value);
     partial void OnRequiresCompletionChanged();
     partial void OnTitleChanging(string value);
@@ -27575,8 +27579,29 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiresCompletion", DbType="Bit NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiresUnlock", DbType="Bit NOT NULL")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=4)]
+		public bool RequiresUnlock
+		{
+			get
+			{
+				return this._RequiresUnlock;
+			}
+			set
+			{
+				if ((this._RequiresUnlock != value))
+				{
+					this.OnRequiresUnlockChanging(value);
+					this.SendPropertyChanging();
+					this._RequiresUnlock = value;
+					this.SendPropertyChanged("RequiresUnlock");
+					this.OnRequiresUnlockChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RequiresCompletion", DbType="Bit NOT NULL")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
 		public bool RequiresCompletion
 		{
 			get
@@ -27597,7 +27622,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Title", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=5)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
 		public string Title
 		{
 			get
@@ -27618,7 +27643,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Text", DbType="NVarChar(MAX)")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=7)]
 		public string Text
 		{
 			get
@@ -27762,11 +27787,13 @@ namespace ZkData
 		
 		private string _MapImageName;
 		
+		private System.Nullable<bool> _IsHidden;
+		
 		private EntityRef<CampaignJournal> _CampaignJournal;
 		
 		private EntitySet<CampaignPlanet> _CampaignPlanets;
 		
-		private EntitySet<AccountCampaignProgress> _AccountCampaignProgresses;
+		private EntitySet<AccountCampaignProgress> _AccountCampaignProgress;
 		
 		private EntitySet<CampaignLink> _CampaignLinks;
 		
@@ -27790,6 +27817,8 @@ namespace ZkData
     partial void OnIsDirtyChanged();
     partial void OnMapImageNameChanging(string value);
     partial void OnMapImageNameChanged();
+    partial void OnIsHiddenChanging(System.Nullable<bool> value);
+    partial void OnIsHiddenChanged();
     #endregion
 		
 		public Campaign()
@@ -27944,8 +27973,29 @@ namespace ZkData
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_IsHidden", DbType="Bit")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8)]
+		public System.Nullable<bool> IsHidden
+		{
+			get
+			{
+				return this._IsHidden;
+			}
+			set
+			{
+				if ((this._IsHidden != value))
+				{
+					this.OnIsHiddenChanging(value);
+					this.SendPropertyChanging();
+					this._IsHidden = value;
+					this.SendPropertyChanged("IsHidden");
+					this.OnIsHiddenChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignJournal", Storage="_CampaignJournal", ThisKey="CampaignID", OtherKey="CampaignID", IsUnique=true, IsForeignKey=false)]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=8, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
 		public CampaignJournal CampaignJournal
 		{
 			get
@@ -27980,7 +28030,7 @@ namespace ZkData
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignPlanet", Storage="_CampaignPlanets", ThisKey="CampaignID", OtherKey="CampaignID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=9, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
 		public EntitySet<CampaignPlanet> CampaignPlanets
 		{
 			get
@@ -27998,27 +28048,27 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_AccountCampaignProgress", Storage="_AccountCampaignProgresses", ThisKey="CampaignID", OtherKey="CampaignID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=10, EmitDefaultValue=false)]
-		public EntitySet<AccountCampaignProgress> AccountCampaignProgresses
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_AccountCampaignProgress", Storage="_AccountCampaignProgress", ThisKey="CampaignID", OtherKey="CampaignID")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		public EntitySet<AccountCampaignProgress> AccountCampaignProgress
 		{
 			get
 			{
 				if ((this.serializing 
-							&& (this._AccountCampaignProgresses.HasLoadedOrAssignedValues == false)))
+							&& (this._AccountCampaignProgress.HasLoadedOrAssignedValues == false)))
 				{
 					return null;
 				}
-				return this._AccountCampaignProgresses;
+				return this._AccountCampaignProgress;
 			}
 			set
 			{
-				this._AccountCampaignProgresses.Assign(value);
+				this._AccountCampaignProgress.Assign(value);
 			}
 		}
 		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Campaign_CampaignLink", Storage="_CampaignLinks", ThisKey="CampaignID", OtherKey="CampaignID")]
-		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<CampaignLink> CampaignLinks
 		{
 			get
@@ -28068,13 +28118,13 @@ namespace ZkData
 			entity.Campaign = null;
 		}
 		
-		private void attach_AccountCampaignProgresses(AccountCampaignProgress entity)
+		private void attach_AccountCampaignProgress(AccountCampaignProgress entity)
 		{
 			this.SendPropertyChanging();
 			entity.Campaign = this;
 		}
 		
-		private void detach_AccountCampaignProgresses(AccountCampaignProgress entity)
+		private void detach_AccountCampaignProgress(AccountCampaignProgress entity)
 		{
 			this.SendPropertyChanging();
 			entity.Campaign = null;
@@ -28096,7 +28146,7 @@ namespace ZkData
 		{
 			this._CampaignJournal = default(EntityRef<CampaignJournal>);
 			this._CampaignPlanets = new EntitySet<CampaignPlanet>(new Action<CampaignPlanet>(this.attach_CampaignPlanets), new Action<CampaignPlanet>(this.detach_CampaignPlanets));
-			this._AccountCampaignProgresses = new EntitySet<AccountCampaignProgress>(new Action<AccountCampaignProgress>(this.attach_AccountCampaignProgresses), new Action<AccountCampaignProgress>(this.detach_AccountCampaignProgresses));
+			this._AccountCampaignProgress = new EntitySet<AccountCampaignProgress>(new Action<AccountCampaignProgress>(this.attach_AccountCampaignProgress), new Action<AccountCampaignProgress>(this.detach_AccountCampaignProgress));
 			this._CampaignLinks = new EntitySet<CampaignLink>(new Action<CampaignLink>(this.attach_CampaignLinks), new Action<CampaignLink>(this.detach_CampaignLinks));
 			OnCreated();
 		}
@@ -28405,7 +28455,7 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_CampaignLink", ThisKey="PlanetID", OtherKey="PlanetToUnlock", IsUnique=true, IsForeignKey=false)]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_CampaignLink", ThisKey="PlanetID", OtherKey="PlanetToUnlockID", IsUnique=true, IsForeignKey=false)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=11, EmitDefaultValue=false)]
 		public CampaignLink CampaignLink
 		{
@@ -28428,19 +28478,19 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._CampaignLink.Entity = null;
-						previousValue.CampaignPlanet = null;
+						previousValue.PlanetToUnlock = null;
 					}
 					this._CampaignLink.Entity = value;
 					if ((value != null))
 					{
-						value.CampaignPlanet = this;
+						value.PlanetToUnlock = this;
 					}
 					this.SendPropertyChanged("CampaignLink");
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_CampaignLinks", ThisKey="PlanetID", OtherKey="UnlockingPlanet")]
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_CampaignLinks", ThisKey="PlanetID", OtherKey="UnlockingPlanetID")]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=12, EmitDefaultValue=false)]
 		public EntitySet<CampaignLink> CampaignLinks
 		{
@@ -28562,13 +28612,13 @@ namespace ZkData
 		private void attach_CampaignLinks(CampaignLink entity)
 		{
 			this.SendPropertyChanging();
-			entity.CampaignPlanet1 = this;
+			entity.UnlockingPlanet = this;
 		}
 		
 		private void detach_CampaignLinks(CampaignLink entity)
 		{
 			this.SendPropertyChanging();
-			entity.CampaignPlanet1 = null;
+			entity.UnlockingPlanet = null;
 		}
 		
 		private void Initialize()
@@ -28623,6 +28673,10 @@ namespace ZkData
 		private EntityRef<Account> _Account;
 		
 		private EntityRef<Campaign> _Campaign;
+		
+		private EntityRef<CampaignPlanet> _Planet;
+		
+		private bool serializing;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -28707,6 +28761,10 @@ namespace ZkData
 			{
 				if ((this._PlanetID != value))
 				{
+					if (this._Planet.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnPlanetIDChanging(value);
 					this.SendPropertyChanging();
 					this._PlanetID = value;
@@ -28809,12 +28867,12 @@ namespace ZkData
 					if ((previousValue != null))
 					{
 						this._Campaign.Entity = null;
-						previousValue.AccountCampaignProgresses.Remove(this);
+						previousValue.AccountCampaignProgress.Remove(this);
 					}
 					this._Campaign.Entity = value;
 					if ((value != null))
 					{
-						value.AccountCampaignProgresses.Add(this);
+						value.AccountCampaignProgress.Add(this);
 						this._CampaignID = value.CampaignID;
 					}
 					else
@@ -28822,6 +28880,30 @@ namespace ZkData
 						this._CampaignID = default(int);
 					}
 					this.SendPropertyChanged("Campaign");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_AccountCampaignProgress", Storage="_Planet", ThisKey="PlanetID", OtherKey="PlanetID", IsForeignKey=true, DeleteOnNull=true, DeleteRule="CASCADE")]
+		[global::System.Runtime.Serialization.DataMemberAttribute(Order=6, EmitDefaultValue=false)]
+		public CampaignPlanet Planet
+		{
+			get
+			{
+				if ((this.serializing 
+							&& (this._Planet.HasLoadedOrAssignedValue == false)))
+				{
+					return null;
+				}
+				return this._Planet.Entity;
+			}
+			set
+			{
+				if ((this._Planet.Entity != value))
+				{
+					this.SendPropertyChanging();
+					this._Planet.Entity = value;
+					this.SendPropertyChanged("Planet");
 				}
 			}
 		}
@@ -28850,6 +28932,7 @@ namespace ZkData
 		{
 			this._Account = default(EntityRef<Account>);
 			this._Campaign = default(EntityRef<Campaign>);
+			this._Planet = default(EntityRef<CampaignPlanet>);
 			OnCreated();
 		}
 		
@@ -28858,6 +28941,20 @@ namespace ZkData
 		public void OnDeserializing(StreamingContext context)
 		{
 			this.Initialize();
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializingAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerializing(StreamingContext context)
+		{
+			this.serializing = true;
+		}
+		
+		[global::System.Runtime.Serialization.OnSerializedAttribute()]
+		[global::System.ComponentModel.EditorBrowsableAttribute(EditorBrowsableState.Never)]
+		public void OnSerialized(StreamingContext context)
+		{
+			this.serializing = false;
 		}
 	}
 	
@@ -28868,9 +28965,9 @@ namespace ZkData
 		
 		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
 		
-		private int _PlanetToUnlock;
+		private int _PlanetToUnlockID;
 		
-		private int _UnlockingPlanet;
+		private int _UnlockingPlanetID;
 		
 		private int _UnlockSet;
 		
@@ -28878,18 +28975,18 @@ namespace ZkData
 		
 		private EntityRef<Campaign> _Campaign;
 		
-		private EntityRef<CampaignPlanet> _CampaignPlanet;
+		private EntityRef<CampaignPlanet> _PlanetToUnlock;
 		
-		private EntityRef<CampaignPlanet> _CampaignPlanet1;
+		private EntityRef<CampaignPlanet> _UnlockingPlanet;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
     partial void OnCreated();
-    partial void OnPlanetToUnlockChanging(int value);
-    partial void OnPlanetToUnlockChanged();
-    partial void OnUnlockingPlanetChanging(int value);
-    partial void OnUnlockingPlanetChanged();
+    partial void OnPlanetToUnlockIDChanging(int value);
+    partial void OnPlanetToUnlockIDChanged();
+    partial void OnUnlockingPlanetIDChanging(int value);
+    partial void OnUnlockingPlanetIDChanged();
     partial void OnUnlockSetChanging(int value);
     partial void OnUnlockSetChanged();
     partial void OnCampaignIDChanging(int value);
@@ -28901,52 +28998,52 @@ namespace ZkData
 			this.Initialize();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetToUnlock", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PlanetToUnlockID", DbType="Int NOT NULL", IsPrimaryKey=true)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=1)]
-		public int PlanetToUnlock
+		public int PlanetToUnlockID
 		{
 			get
 			{
-				return this._PlanetToUnlock;
+				return this._PlanetToUnlockID;
 			}
 			set
 			{
-				if ((this._PlanetToUnlock != value))
+				if ((this._PlanetToUnlockID != value))
 				{
-					if (this._CampaignPlanet.HasLoadedOrAssignedValue)
+					if (this._PlanetToUnlock.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnPlanetToUnlockChanging(value);
+					this.OnPlanetToUnlockIDChanging(value);
 					this.SendPropertyChanging();
-					this._PlanetToUnlock = value;
-					this.SendPropertyChanged("PlanetToUnlock");
-					this.OnPlanetToUnlockChanged();
+					this._PlanetToUnlockID = value;
+					this.SendPropertyChanged("PlanetToUnlockID");
+					this.OnPlanetToUnlockIDChanged();
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockingPlanet", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_UnlockingPlanetID", DbType="Int NOT NULL", IsPrimaryKey=true)]
 		[global::System.Runtime.Serialization.DataMemberAttribute(Order=2)]
-		public int UnlockingPlanet
+		public int UnlockingPlanetID
 		{
 			get
 			{
-				return this._UnlockingPlanet;
+				return this._UnlockingPlanetID;
 			}
 			set
 			{
-				if ((this._UnlockingPlanet != value))
+				if ((this._UnlockingPlanetID != value))
 				{
-					if (this._CampaignPlanet1.HasLoadedOrAssignedValue)
+					if (this._UnlockingPlanet.HasLoadedOrAssignedValue)
 					{
 						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
 					}
-					this.OnUnlockingPlanetChanging(value);
+					this.OnUnlockingPlanetIDChanging(value);
 					this.SendPropertyChanging();
-					this._UnlockingPlanet = value;
-					this.SendPropertyChanged("UnlockingPlanet");
-					this.OnUnlockingPlanetChanged();
+					this._UnlockingPlanetID = value;
+					this.SendPropertyChanged("UnlockingPlanetID");
+					this.OnUnlockingPlanetIDChanged();
 				}
 			}
 		}
@@ -29031,70 +29128,70 @@ namespace ZkData
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_CampaignPlanet", ThisKey="PlanetToUnlock", OtherKey="PlanetID", IsForeignKey=true)]
-		public CampaignPlanet CampaignPlanet
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink", Storage="_PlanetToUnlock", ThisKey="PlanetToUnlockID", OtherKey="PlanetID", IsForeignKey=true)]
+		public CampaignPlanet PlanetToUnlock
 		{
 			get
 			{
-				return this._CampaignPlanet.Entity;
+				return this._PlanetToUnlock.Entity;
 			}
 			set
 			{
-				CampaignPlanet previousValue = this._CampaignPlanet.Entity;
+				CampaignPlanet previousValue = this._PlanetToUnlock.Entity;
 				if (((previousValue != value) 
-							|| (this._CampaignPlanet.HasLoadedOrAssignedValue == false)))
+							|| (this._PlanetToUnlock.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._CampaignPlanet.Entity = null;
+						this._PlanetToUnlock.Entity = null;
 						previousValue.CampaignLink = null;
 					}
-					this._CampaignPlanet.Entity = value;
+					this._PlanetToUnlock.Entity = value;
 					if ((value != null))
 					{
 						value.CampaignLink = this;
-						this._PlanetToUnlock = value.PlanetID;
+						this._PlanetToUnlockID = value.PlanetID;
 					}
 					else
 					{
-						this._PlanetToUnlock = default(int);
+						this._PlanetToUnlockID = default(int);
 					}
-					this.SendPropertyChanged("CampaignPlanet");
+					this.SendPropertyChanged("PlanetToUnlock");
 				}
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_CampaignPlanet1", ThisKey="UnlockingPlanet", OtherKey="PlanetID", IsForeignKey=true)]
-		public CampaignPlanet CampaignPlanet1
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="CampaignPlanet_CampaignLink1", Storage="_UnlockingPlanet", ThisKey="UnlockingPlanetID", OtherKey="PlanetID", IsForeignKey=true)]
+		public CampaignPlanet UnlockingPlanet
 		{
 			get
 			{
-				return this._CampaignPlanet1.Entity;
+				return this._UnlockingPlanet.Entity;
 			}
 			set
 			{
-				CampaignPlanet previousValue = this._CampaignPlanet1.Entity;
+				CampaignPlanet previousValue = this._UnlockingPlanet.Entity;
 				if (((previousValue != value) 
-							|| (this._CampaignPlanet1.HasLoadedOrAssignedValue == false)))
+							|| (this._UnlockingPlanet.HasLoadedOrAssignedValue == false)))
 				{
 					this.SendPropertyChanging();
 					if ((previousValue != null))
 					{
-						this._CampaignPlanet1.Entity = null;
+						this._UnlockingPlanet.Entity = null;
 						previousValue.CampaignLinks.Remove(this);
 					}
-					this._CampaignPlanet1.Entity = value;
+					this._UnlockingPlanet.Entity = value;
 					if ((value != null))
 					{
 						value.CampaignLinks.Add(this);
-						this._UnlockingPlanet = value.PlanetID;
+						this._UnlockingPlanetID = value.PlanetID;
 					}
 					else
 					{
-						this._UnlockingPlanet = default(int);
+						this._UnlockingPlanetID = default(int);
 					}
-					this.SendPropertyChanged("CampaignPlanet1");
+					this.SendPropertyChanged("UnlockingPlanet");
 				}
 			}
 		}
@@ -29122,8 +29219,8 @@ namespace ZkData
 		private void Initialize()
 		{
 			this._Campaign = default(EntityRef<Campaign>);
-			this._CampaignPlanet = default(EntityRef<CampaignPlanet>);
-			this._CampaignPlanet1 = default(EntityRef<CampaignPlanet>);
+			this._PlanetToUnlock = default(EntityRef<CampaignPlanet>);
+			this._UnlockingPlanet = default(EntityRef<CampaignPlanet>);
 			OnCreated();
 		}
 		

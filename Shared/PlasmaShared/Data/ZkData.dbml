@@ -1053,6 +1053,7 @@
       <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="JournalID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="PlanetID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RequiresUnlock" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
 	  <Column Name="RequiresCompletion" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="Title" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="Text" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
@@ -1069,9 +1070,10 @@
       <Column Name="MapHeight" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="IsDirty" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="MapImageName" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+      <Column Name="IsHidden" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Association Name="Campaign_CampaignJournal" Member="CampaignJournal" ThisKey="CampaignID" OtherKey="CampaignID" Type="CampaignJournal" Cardinality="One" />
       <Association Name="Campaign_CampaignPlanet" Member="CampaignPlanets" ThisKey="CampaignID" OtherKey="CampaignID" Type="CampaignPlanet" />
-      <Association Name="Campaign_AccountCampaignProgress" Member="AccountCampaignProgresses" ThisKey="CampaignID" OtherKey="CampaignID" Type="AccountCampaignProgress" />
+      <Association Name="Campaign_AccountCampaignProgress" Member="AccountCampaignProgress" ThisKey="CampaignID" OtherKey="CampaignID" Type="AccountCampaignProgress" />
       <Association Name="Campaign_CampaignLink" Member="CampaignLinks" ThisKey="CampaignID" OtherKey="CampaignID" Type="CampaignLink" />
     </Type>
   </Table>
@@ -1090,7 +1092,7 @@
       <Association Name="CampaignPlanet_CampaignLink" Member="CampaignLink" ThisKey="PlanetID" OtherKey="PlanetToUnlock" Type="CampaignLink" Cardinality="One" />
       <Association Name="CampaignPlanet_CampaignLink1" Member="CampaignLinks" ThisKey="PlanetID" OtherKey="UnlockingPlanet" Type="CampaignLink" />
       <Association Name="Campaign_CampaignPlanet" Member="Campaign" ThisKey="CampaignID" OtherKey="CampaignID" Type="Campaign" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
-      <Association Name="Mission_CampaignPlanet" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true" />
+      <Association Name="Mission_CampaignPlanet" Member="Mission" ThisKey="MissionID" OtherKey="MissionID" Type="Mission" IsForeignKey="true"/>
     </Type>
   </Table>
   <Table Name="dbo.AccountCampaignProgress" Member="AccountCampaignProgress">
@@ -1102,17 +1104,18 @@
       <Column Name="IsCompleted" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="Account_AccountCampaignProgress" Member="Account" ThisKey="AccountID" OtherKey="AccountID" Type="Account" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
       <Association Name="Campaign_AccountCampaignProgress" Member="Campaign" ThisKey="CampaignID" OtherKey="CampaignID" Type="Campaign" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="CampaignPlanet_AccountCampaignProgress" Member="Planet" ThisKey="PlanetID" OtherKey="PlanetID" Type="CampaignPlanet" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.CampaignLink" Member="CampaignLinks">
     <Type Name="CampaignLink">
-      <Column Name="PlanetToUnlock" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
-      <Column Name="UnlockingPlanet" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PlanetToUnlockID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UnlockingPlanetID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
       <Column Name="UnlockSet" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="CampaignID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Association Name="Campaign_CampaignLink" Member="Campaign" ThisKey="CampaignID" OtherKey="CampaignID" Type="Campaign" IsForeignKey="true" />
-      <Association Name="CampaignPlanet_CampaignLink" Member="CampaignPlanet" ThisKey="PlanetToUnlock" OtherKey="PlanetID" Type="CampaignPlanet" IsForeignKey="true" />
-      <Association Name="CampaignPlanet_CampaignLink1" Member="CampaignPlanet1" ThisKey="UnlockingPlanet" OtherKey="PlanetID" Type="CampaignPlanet" IsForeignKey="true" />
+      <Association Name="CampaignPlanet_CampaignLink" Member="PlanetToUnlock" ThisKey="PlanetToUnlockID" OtherKey="PlanetID" Type="CampaignPlanet" IsForeignKey="true" />
+      <Association Name="CampaignPlanet_CampaignLink1" Member="UnlockingPlanet" ThisKey="UnlockingPlanetID" OtherKey="PlanetID" Type="CampaignPlanet" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>

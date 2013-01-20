@@ -2,7 +2,7 @@
 @using ZkData
 @model Campaign
 @{
-    Page.Title = "Campaign " + Model.Name + " - galaxy view";
+    Page.Title = "Campaign " + Model.Name + " - Galaxy Map";
 	ViewBag.Minimal = true;
     var db = new ZkDataContext();
 	Campaign camp = Model;
@@ -23,8 +23,8 @@
 
             @foreach (var link in Model.CampaignLinks)
             { 
-                var p1 = db.CampaignPlanets.First(x => x.PlanetID == link.PlanetToUnlock);
-                var p2 = db.CampaignPlanets.First(x => x.PlanetID == link.UnlockingPlanet);
+                var p1 = db.CampaignPlanets.First(x => x.PlanetID == link.PlanetToUnlockID);
+                var p2 = db.CampaignPlanets.First(x => x.PlanetID == link.UnlockingPlanetID);
 
                 var x1 = p1.X * Model.MapWidth;
                 var y1 = p1.Y * Model.MapHeight;
@@ -52,6 +52,11 @@
 <br style="clear:both"/>
 <br class="clearfloat" />
 
+<div class="">
+    <h3>@Html.ActionLink("Journal", "JournalList")</h3>
+</div>
+<br />
+
 <div style="position: relative; z-index: 100" >
 	<div id="linkMap" style="position: absolute; z-index: 0"> </div>
 	<img src="/img/galaxies/campaign/render_@(camp.CampaignID).jpg" style="position: relative; top: 0; left: 0; z-index:-50; " width="@Model.MapWidth" height="@Model.MapHeight"/>
@@ -70,7 +75,7 @@
             }
             else
             {
-                <a nicetitle="$campaignplanet$@p.PlanetID" style="color: #ffffff">@p.Name<br /></a>
+                <span nicetitle="$campaignplanet$@p.PlanetID" style="color: #ffffff; color: @p.GetColor(Global.Account)">@p.Name<br /></span>
             }
 		</div></td></tr></table>
 	</div>
