@@ -9,13 +9,15 @@
 <b style="@(colorStyle)">
     @Model.Name
 </b>
+<br />
+Mission: @Model.Mission.Name
+<br />
 <table><tr>
 <td>@Html.Partial("PlanetIconCampaign", Model)</td>
 <td>
 @Html.Partial("MapInfoBox", map)
 </td>
 </tr></table>
-Mission: @Model.Mission.Name<br />
 <small>
 @Html.BBCode(Model.Description)
 </small>

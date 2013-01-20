@@ -1424,7 +1424,7 @@ end
 
 function ScoreEvent()
   local teamID = Spring.GetLocalTeamID()
-  local score = Spring.GetTeamRulesParam(teamID, "score")
+  local score = Spring.GetTeamRulesParam(teamID, "score") or 0
   if score then
     print("SCORE: "..GG.Base64Encode(tostring(Spring.GetGameFrame()).."/"..tostring(math.floor(score))))
   end
