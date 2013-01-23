@@ -11,7 +11,7 @@ namespace NightWatch
         List<Account> top1v1 = new List<Account>();
         List<Account> topTeam = new List<Account>();
 
-        List<int> exceptions = new List<int>() { 5986 }; // licho
+        List<int> exceptions = new List<int>() { 5986, 45679 }; // licho, nightwatch
 
         const int TakeCount = 100;
         const int RefreshMinutes = 60;

@@ -16,6 +16,9 @@ namespace NightWatch
     {
         const int AuthServiceTestLoginWait = 8000;
         public const string ModeratorChannel = "zkadmin";
+        public const string Top20Channel = "zktop20";
+
+        TopPlayers topPlayers = new TopPlayers();
 
         readonly TasClient client;
 
@@ -41,6 +44,7 @@ namespace NightWatch
                 { 
                     requests.Clear();
                     client.JoinChannel(ModeratorChannel);
+                    client.JoinChannel(Top20Channel);
                     using (var db = new ZkDataContext())
                     {
                         foreach (var fac in db.Factions.Where(x => !x.IsDeleted)) client.JoinChannel(fac.Shortcut);
@@ -70,6 +74,7 @@ namespace NightWatch
                         {
                             this.client.Extensions.PublishAccountData(acc);
                             if (acc.SpringieLevel > 1 || acc.IsZeroKAdmin) client.ForceJoinChannel(e.Data.Name, ModeratorChannel);
+                            if (topPlayers.IsTop20(e.Data.LobbyID)) client.ForceJoinChannel(e.Data.Name, Top20Channel);
                             if (acc.Clan != null) client.ForceJoinChannel(e.Data.Name, acc.Clan.Shortcut, acc.Clan.Password);
                             if (acc.Faction != null && acc.Level >= GlobalConst.FactionChannelMinLevel) client.ForceJoinChannel(e.Data.Name, acc.Faction.Shortcut);
                             
@@ -254,11 +259,15 @@ namespace NightWatch
                     {
                         var channel = args.ServerParams[0];
                         var user = args.ServerParams[1];
-                        if (channel == ModeratorChannel)
-                        {
+                        if (channel == ModeratorChannel) {
                             var u = client.ExistingUsers[user];
                             if (u.SpringieLevel <= 1 && !u.IsZeroKAdmin) client.ForceLeaveChannel(user, ModeratorChannel);
-                        } else {
+                        } else if (channel == Top20Channel) {
+                            var u = client.ExistingUsers[user];
+                            if (!topPlayers.IsTop20(u.LobbyID) && u.Name != client.UserName) client.ForceLeaveChannel(user, Top20Channel);
+                            
+                        }
+                        else {
                             using (var db = new ZkDataContext()) {
                                 var fac = db.Factions.FirstOrDefault(x => x.Shortcut == channel);
                                 if (fac != null) {
