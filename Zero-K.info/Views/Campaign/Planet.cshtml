@@ -94,7 +94,7 @@
 @Html.BBCode(@Model.Description)
 <br /><br />
 @if ((progress != null && progress.IsUnlocked) || Model.StartsUnlocked){
-    <h3>Mission: @Html.ActionLink(Model.Mission.Name, "../Missions/Detail", new { id = Model.MissionID })</h3>
+    <h3>Mission: @Html.ActionLink(Model.Mission.Name, "Detail", "Missions", new { id = Model.MissionID }, null)</h3>
 }
 <br />
 
