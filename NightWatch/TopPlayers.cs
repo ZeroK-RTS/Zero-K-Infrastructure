@@ -1,38 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ZkData;
 
 namespace NightWatch
 {
     public class TopPlayers
     {
+        const int RefreshMinutes = 60;
+        const int TakeCount = 100;
+        readonly List<int> exceptions = new List<int> { 5986, 45679 }; // licho, nightwatch
+
+        DateTime lastRefresh = DateTime.MinValue;
         List<Account> top1v1 = new List<Account>();
         List<Account> topTeam = new List<Account>();
 
-        List<int> exceptions = new List<int>() { 5986, 45679 }; // licho, nightwatch
 
-        const int TakeCount = 100;
-        const int RefreshMinutes = 60;
-
-        DateTime lastRefresh = DateTime.MinValue;
-        
-        
-        public void Refresh() {
-            using (var db = new ZkDataContext()) {
-                topTeam = db.Accounts.OrderByDescending(x => x.Elo).Take(TakeCount).ToList();
-                top1v1 = db.Accounts.OrderByDescending(x => x.Elo1v1).Take(TakeCount).ToList();
-                lastRefresh = DateTime.UtcNow;
-            }
+        public List<Account> GetTop1v1() {
+            return top1v1.ToList();
         }
 
         public List<Account> GetTopTeam() {
             return topTeam.ToList();
-        }
-
-        public List<Account> GetTop1v1() {
-            return top1v1.ToList();
         }
 
         public bool IsTop20(int lobbyID) {
@@ -42,5 +31,20 @@ namespace NightWatch
             else return false;
         }
 
+        public void Refresh() {
+            using (var db = new ZkDataContext()) {
+                topTeam =
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)))
+                      .OrderByDescending(x => x.Elo)
+                      .Take(TakeCount)
+                      .ToList();
+                top1v1 =
+                    db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1)))
+                      .OrderByDescending(x => x.Elo1v1)
+                      .Take(TakeCount)
+                      .ToList();
+                lastRefresh = DateTime.UtcNow;
+            }
+        }
     }
 }
