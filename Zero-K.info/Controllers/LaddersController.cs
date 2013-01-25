@@ -46,47 +46,52 @@ namespace ZeroKWeb.Controllers
             return File(chart.GetBytes("png"), "image/png");
 		}
 
-		//
-		// GET: /Ladders/
-		[OutputCache(Duration = 3600*2, VaryByCustom = GlobalConst.LobbyAccessCookieName)] // cache for 2 hours - different look for lobby and for normal
-		public ActionResult Index()
-		{
-			var db = new ZkDataContext();
+        private LadderModel GetLadder()
+        {
+            LadderModel cached = (LadderModel)HttpContext.Cache.Get("ladderModel");
+            if (cached != null) {
+                return cached;
+            }
+
+            var db = new ZkDataContext();
             db.CommandTimeout = 300;
 
             var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var validAwards = db.SpringBattles.Where(x => x.StartTime >= monthStart && !x.ResourceByMapResourceID.InternalName.Contains("SpeedMetal")).SelectMany(x => x.AccountBattleAwards).GroupBy(x => x.AwardKey);
 
-			var awardItems = new List<AwardItem>();
-            
-			foreach (var awardsByType in validAwards)
-			{
-				var awardType = awardsByType.Key;
+            var awardItems = new List<AwardItem>();
 
-                var awardCounts = awardsByType.GroupBy(x => x.Account).Select(x => new { Account = x.Key, Count = x.Count()}).OrderByDescending(x=>x.Count);
+            foreach (var awardsByType in validAwards)
+            {
+                var awardType = awardsByType.Key;
+
+                var awardCounts = awardsByType.GroupBy(x => x.Account).Select(x => new { Account = x.Key, Count = x.Count() }).OrderByDescending(x => x.Count);
 
                 var topCountM = awardCounts.First().Count;
                 var topCollectorsM = new List<Account>();
-                foreach (var award in awardCounts) {
+                foreach (var award in awardCounts)
+                {
                     if (award.Count == topCountM) topCollectorsM.Add(award.Account);
                     else break;
                 }
-			    
 
 
-				var topScore = 0;
+
+                var topScore = 0;
                 string titleName = null;
 
                 topScore = 0;
-				var fullTitleM = "";
+                var fullTitleM = "";
                 int topActID = 0;
                 int topBattleID = 0;
                 foreach (var award in awardsByType)
-				{
+                {
                     if (titleName == null) titleName = award.AwardDescription.Split(',').First();
                     int score;
-                    if (int.TryParse(Regex.Replace(award.AwardDescription, @"\D", String.Empty), out score)) {
-                        if (score > topScore) {
+                    if (int.TryParse(Regex.Replace(award.AwardDescription, @"\D", String.Empty), out score))
+                    {
+                        if (score > topScore)
+                        {
                             topActID = award.AccountID;
                             topBattleID = award.SpringBattleID;
                             topScore = score;
@@ -95,28 +100,37 @@ namespace ZeroKWeb.Controllers
                     }
                 }
 
-				var awardItem = new AwardItem
-				                {
-				                	AwardType = awardType,
-				                	AwardTitle = titleName,
-				                	TopScoreHolderM = db.Accounts.SingleOrDefault(x=>x.AccountID == topActID),
-				                	TopScoreDescM = fullTitleM,
-				                	TopScoreBattlePlayerM = db.SpringBattlePlayers.SingleOrDefault(x=>x.AccountID == topActID && x.SpringBattleID == topBattleID),
-				                	TopCollectorsM = topCollectorsM,
-				                	TopCollectorCountM = topCountM,
-				                };
-				awardItems.Add(awardItem);
-			}
+                var awardItem = new AwardItem
+                {
+                    AwardType = awardType,
+                    AwardTitle = titleName,
+                    TopScoreHolderM = db.Accounts.SingleOrDefault(x => x.AccountID == topActID),
+                    TopScoreDescM = fullTitleM,
+                    TopScoreBattlePlayerM = db.SpringBattlePlayers.SingleOrDefault(x => x.AccountID == topActID && x.SpringBattleID == topBattleID),
+                    TopCollectorsM = topCollectorsM,
+                    TopCollectorCountM = topCountM,
+                };
+                awardItems.Add(awardItem);
+            }
 
-			var top50Accounts =
-				db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo1v1).
-					Take(50);
+            var top50Accounts =
+                db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo1v1).
+                    Take(50);
 
             var top50Teams =
                 db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo).
                     Take(50);
 
-			var ladderModel = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams};
+            LadderModel ladder = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams };
+            HttpContext.Cache.Add("ladderModel", ladder, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(2), System.Web.Caching.CacheItemPriority.Default, null);
+
+            return new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams };
+        }
+		//
+		// GET: /Ladders/
+		public ActionResult Index()
+		{
+            var ladderModel = GetLadder();
 			return View("Ladders", ladderModel);
 		}
 
