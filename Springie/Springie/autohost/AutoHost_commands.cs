@@ -716,20 +716,35 @@ namespace Springie.autohost
             foreach (var u in b.Users) if (!u.IsSpectator) actUsers.Add(u);
 
             var teamCount = 0;
+            var teamnum = new List<int>();
             if (words.Length > 0) Int32.TryParse(words[0], out teamCount);
             else teamCount = 2;
             if (teamCount < 2) teamCount = 2;
-            if (teamCount > actUsers.Count) teamCount = 2;
+            if (teamCount > actUsers.Count)
+            {
+                for (int i = 0; i < teamCount; i++) teamnum.Add(i);
+                teamCount = actUsers.Count;
+            }
             var r = new Random();
 
-            var al = 0;
+            var al = -1;
+            var index = -1;
             while (actUsers.Count > 0)
             {
-                var index = r.Next(actUsers.Count);
+                if (teamnum.Count > 0)
+                {
+                    index++;
+                    al = r.Next(teamnum.Count);
+                    teamnum.RemoveAt(al);
+                }
+                else
+                {
+                    index = r.Next(actUsers.Count);
+                    al++;
+                    al = al % teamCount;
+                }
                 tas.ForceAlly(actUsers[index].Name, al);
                 actUsers.RemoveAt(index);
-                al++;
-                al = al%teamCount;
             }
             SayBattle("players assigned to " + teamCount + " random teams");
         }
