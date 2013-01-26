@@ -162,18 +162,15 @@ namespace PlasmaDownloader
             try
             {
                 var request = WebRequest.Create(url);
-                Trace.TraceInformation("Verifying URL {0}", url);
                 request.Method = "HEAD";
                 request.Timeout = 4000;
                 var res = request.GetResponse();
                 var len = res.ContentLength;
                 request.Abort();
-                Trace.TraceInformation("Resource length from URL {0}: {1}", url, len);
                 return len > 100000;
             }
             catch (Exception ex)
             {
-                Trace.TraceInformation("Exception in VerifyFile: {0}", ex);
                 return false;
             }
         }
