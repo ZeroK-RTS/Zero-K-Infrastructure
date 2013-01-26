@@ -122,7 +122,7 @@ namespace ZeroKWeb.Controllers
                     Take(50);
 
             LadderModel ladder = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams };
-            HttpContext.Cache.Add("ladderModel", ladder, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(2), System.Web.Caching.CacheItemPriority.Default, null);
+            HttpContext.Cache.Add("ladderModel", ladder, null, DateTime.Now.AddHours(2), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Default, null);
 
             return new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams };
         }

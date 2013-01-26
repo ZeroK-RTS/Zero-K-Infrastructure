@@ -173,7 +173,7 @@ namespace PlasmaDownloader
             }
             catch (Exception ex)
             {
-                Trace.TraceInformation("Exception in VerifyFile: {ex}", ex);
+                Trace.TraceInformation("Exception in VerifyFile: {0}", ex);
                 return false;
             }
         }
