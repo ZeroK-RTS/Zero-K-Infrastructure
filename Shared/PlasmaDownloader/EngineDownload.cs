@@ -38,9 +38,6 @@ namespace PlasmaDownloader
                     paths.Add(string.Format("{0}buildbot/default/release/{1}/spring_{{release}}{1}_minimal-portable+dedicated.zip",
                                             EngineDownloadPath,
                                             Name));
-                    paths.Add(string.Format("{0}buildbot/default/post_release/{1}/spring_{{post_release}}{1}_minimal-portable+dedicated.zip",
-                                            EngineDownloadPath,
-                                            Name));
                     paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/spring_{{MTsim}}{1}_minimal-portable+dedicated.zip",
                                             EngineDownloadPath,
                                             Name));
@@ -51,9 +48,6 @@ namespace PlasmaDownloader
                                             EngineDownloadPath,
                                             Name));
                     paths.Add(string.Format("{0}buildbot/default/release/{1}/win32/spring_{{release}}{1}_minimal-portable+dedicated.zip",
-                                            EngineDownloadPath,
-                                            Name));
-                    paths.Add(string.Format("{0}buildbot/default/post_release/{1}/win32/spring_{{post_release}}{1}_minimal-portable+dedicated.zip",
                                             EngineDownloadPath,
                                             Name));
                     paths.Add(string.Format("{0}buildbot/default/MTsim/{1}/win32/spring_{{MTsim}}{1}_minimal-portable+dedicated.zip",
@@ -173,6 +167,7 @@ namespace PlasmaDownloader
                 var res = request.GetResponse();
                 var len = res.ContentLength;
                 request.Abort();
+                Trace.TraceInformation("Resource length from URL {0}: {1}", url, len);
                 return len > 100000;
             }
             catch (Exception ex)
