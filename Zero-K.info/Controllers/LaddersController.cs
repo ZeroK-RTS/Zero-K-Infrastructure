@@ -1,5 +1,6 @@
 ﻿﻿using System;
 using System.Collections.Generic;
+﻿using System.Data.Linq;
 ﻿using System.Data.Linq.SqlClient;
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
@@ -55,6 +56,10 @@ namespace ZeroKWeb.Controllers
 
             var db = new ZkDataContext();
             db.CommandTimeout = 300;
+            var options = new DataLoadOptions();
+            options.LoadWith<Account>(x=>x.Clan);
+            options.LoadWith<Account>(x => x.Faction);
+            db.LoadOptions = options;
 
             var monthStart = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             var validAwards = db.SpringBattles.Where(x => x.StartTime >= monthStart && !x.ResourceByMapResourceID.InternalName.Contains("SpeedMetal")).SelectMany(x => x.AccountBattleAwards).GroupBy(x => x.AwardKey);
@@ -115,11 +120,11 @@ namespace ZeroKWeb.Controllers
 
             var top50Accounts =
                 db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo1v1).
-                    Take(50);
+                    Take(50).ToList();
 
             var top50Teams =
                 db.Accounts.Where(x => x.SpringBattlePlayers.Any(y => y.SpringBattle.StartTime > DateTime.UtcNow.AddMonths(-1))).OrderByDescending(x => x.Elo).
-                    Take(50);
+                    Take(50).ToList();
 
             LadderModel ladder = new LadderModel { AwardItems = awardItems, Top50Accounts = top50Accounts, Top50Teams = top50Teams };
             HttpContext.Cache.Add("ladderModel", ladder, null, DateTime.Now.AddHours(2), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Default, null);
@@ -159,8 +164,8 @@ namespace ZeroKWeb.Controllers
 		public class LadderModel
 		{
 			public List<AwardItem> AwardItems;
-			public IQueryable<Account> Top50Accounts;
-            public IQueryable<Account> Top50Teams;
+			public List<Account> Top50Accounts;
+            public List<Account> Top50Teams;
 		}
 	}
 }
