@@ -162,6 +162,7 @@ namespace PlasmaDownloader
             try
             {
                 var request = WebRequest.Create(url);
+                Trace.TraceInformation("Verifying URL {0}", url);
                 request.Method = "HEAD";
                 request.Timeout = 4000;
                 var res = request.GetResponse();
@@ -172,6 +173,7 @@ namespace PlasmaDownloader
             }
             catch (Exception ex)
             {
+                Trace.TraceInformation("Exception in VerifyFile: {ex}", ex);
                 return false;
             }
         }
