@@ -76,7 +76,7 @@
 {
 	var pr = p.PlanetRectangle(Model);
 	var por = p.PlanetOverlayRectangle(Model);
-    AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.CampaignID == Model.CampaignID && x.PlanetID == p.PlanetID);
+    AccountCampaignProgress progress = db.AccountCampaignProgress.FirstOrDefault(x => x.CampaignID == Model.CampaignID && x.AccountID == Global.AccountID && x.PlanetID == p.PlanetID);
 	<div style="position: absolute; left: @(por.Left)px; top: @(por.Top)px; width: @(por.Width)px; height: @(por.Height)px; font-size: 12px; font-weight: bold; " >
 		<table style="position: absolute; border: 0; padding: 0; text-align: center; font-size: 10px; z-index: 5; line-height: .85; width:100%; height:25%;"><tr>
 		<td style="vertical-align: bottom;" ><div style="display:inline-block;">
