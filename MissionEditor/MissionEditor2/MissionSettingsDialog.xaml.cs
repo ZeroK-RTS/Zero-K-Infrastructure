@@ -62,6 +62,11 @@ namespace MissionEditor2
 			new ModSelectionDialog { Owner = this }.ShowDialog();
 		}
 
+        private void ModOptionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            new ModOptionsDialog { Owner = MainWindow.Instance }.ShowDialog();
+        }
+
 		private void newPlayerButton_Click(object sender, RoutedEventArgs e)
 		{
 			var player = new Player();

@@ -1,6 +1,6 @@
 function widget:GetInfo()
   return {
-    name      = "Beauty Shot AI",
+    name      = "Beauty Shot",
     desc      = "Positions camera for glamor shot of a unit",
     author    = "KingRaptor (L.J. Lim)",
     date      = "2012.12.17",
@@ -10,7 +10,7 @@ function widget:GetInfo()
   }
 end
 
-local defaults = {time = 0, maxCamOffset = 10, minHeading = 15, maxHeading = 165, minPitch = -10, maxPitch = 15}
+local defaults = {time = 0, maxCamOffset = 10, minHeading = 15, maxHeading = 165, minPitch = -10, maxPitch = 15, minDistance = 150, maxDistance = 200}
 local MAX_TRIES = 50
 local tau = 2*math.pi
 
@@ -20,11 +20,14 @@ local function BeautyShot(unitID, params)
     params[i] = params[i] or v
   end
   
+  local validUnit
   local x, y, z = params.x, params.y, params.z
   if not (x and y and z) then
-    if unitID and Spring.ValidUnitID(unitID) and Spring.AreTeamsAllied(Spring.GetMyTeamID(),Spring.GetUnitTeam(unitID)) then
+    if (Spring.GetSpectatingState() or (unitID and Spring.ValidUnitID(unitID) and Spring.GetUnitLOSState(unitID, Spring.GetMyAllyTeamID())) then
       _,_,_,x,y,z = Spring.GetUnitPosition(unitID, true)
-    else
+      validUnit = true
+    end
+    if not (x and y and z) then
       Spring.Log(widget:GetInfo().name, LOG.ERROR, "No valid unit and no position, cannot make beauty shot")
       return
     end
@@ -35,13 +38,13 @@ local function BeautyShot(unitID, params)
       camFromTargetHeading = -camFromTargetHeading
     end
     camFromTargetHeading = math.rad(camFromTargetHeading)
-    if unitID then
+    if validUnitID then
       local unitHeading = Spring.GetUnitHeading(unitID)/65536*tau
       camFromTargetHeading = camFromTargetHeading + unitHeading
     end
     local angleMod = math.random(-params.maxCamOffset, params.maxCamOffset)
     angleMod = math.rad(angleMod)
-    local dist2d = params.distance or math.random(150,250)
+    local dist2d = params.distance or math.random(params.minDistance,params.maxDistance)
     local camPitch = math.random(params.minPitch, params.maxPitch)
     camPitch = math.rad(camPitch)
     local dy = dist2d*math.tan(camPitch)

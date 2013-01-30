@@ -17,6 +17,7 @@ using Ionic.Zip;
 using Microsoft.SqlServer.Server;
 using MissionEditor2;
 using PlasmaShared.UnitSyncLib;
+using CMissionLib.UnitSyncLib;
 using ZkData;
 using Map = CMissionLib.UnitSyncLib.Map;
 using Mod = CMissionLib.UnitSyncLib.Mod;
@@ -29,6 +30,7 @@ namespace CMissionLib
 		string author = "Default Author";
 		string contentFolderPath;
 		ObservableCollection<string> counters = new ObservableCollection<string>();
+        string customModOptions = String.Empty;
 		string description = String.Empty;
         string descriptionStory = String.Empty;
 		ObservableCollection<string> disabledGadgets = new ObservableCollection<string>();
@@ -42,6 +44,7 @@ namespace CMissionLib
 		int maxUnits = 5000;
 		Mod mod;
 		string modName;
+        Dictionary<string, string> modOptions;
 		string name;
 		ObservableCollection<Player> players = new ObservableCollection<Player>();
 		string rapidTag = "zk:stable";
@@ -103,6 +106,16 @@ namespace CMissionLib
 				RaisePropertyChanged("Counters");
 			}
 		}
+        [DataMember]
+        public string CustomModOptions
+        {
+            get { return customModOptions; }
+            set
+            {
+                customModOptions = value;
+                RaisePropertyChanged("CustomModOptions");
+            }
+        }
 		[DataMember]
 		public string Description
 		{
@@ -181,12 +194,20 @@ namespace CMissionLib
 			{
 				mod = value;
 				modName = mod.Name;
-				RaisePropertyChanged("Mod");
+                /*ModOptions = new Dictionary<string, string>();
+                var options = mod.Options;
+                foreach (CMissionLib.UnitSyncLib.Option option in options)
+                {
+                    if (option.Type != CMissionLib.UnitSyncLib.OptionType.Section) ModOptions.Add(option.Key, option.Name);
+                }
+                */
+                RaisePropertyChanged("Mod"); 
 			}
 		}
 		[DataMember]
 		public string ModName { get { return modName; } set { modName = value; } }
-
+        //[DataMember]
+        //public Dictionary<string, string> ModOptions { get { return modOptions; } set { modOptions = value; } }
 		[DataMember]
 		public string Name { get { return name; } set { name = value; } }
 		[DataMember]
@@ -482,6 +503,28 @@ namespace CMissionLib
 			line("NumRestrictions", "0");
 			line("MaxSpeed", "20");
 			line("MinSpeed", "0.1");
+
+            sb.AppendLine("\t[MODOPTIONS]");
+            sb.AppendLine("\t{");
+
+            if (customModOptions != null)
+            {
+                List<string> modopts = new List<string>(customModOptions.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries));
+                foreach (string modopt in modopts) sb.Append("\t\t" + modopt + ";");
+            }
+            /*
+            // put standard modoptions to options dictionary
+            var options = new Dictionary<string, string>();
+            foreach (var o in mod.Options.Where(x => x.Type != CMissionLib.UnitSyncLib.OptionType.Section))
+            {
+                var v = o.Default;
+                options[o.Key] = v;
+            }
+
+            // write final options to script
+            foreach (var kvp in options) line(kvp.Key, kvp.Value);
+            */
+            sb.AppendLine("\n\t}");
 
 			foreach (var player in Players) WritePlayer(sb, player);
 			foreach (var player in Players) WriteTeam(sb, player);

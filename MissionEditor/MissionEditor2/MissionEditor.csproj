@@ -33,8 +33,8 @@
     <PublisherName>Zero-K</PublisherName>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>3</ApplicationRevision>
-    <ApplicationVersion>2.2.5.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>2.2. 6.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -135,6 +135,7 @@
     <Compile Include="AreaDragInfo.xaml.cs" />
     <Compile Include="CircleDragInfo.xaml.cs" />
     <Compile Include="ConditionsFolder.cs" />
+    <Compile Include="ModOptionsDialog.xaml.cs" />
     <Compile Include="MusicLoopActionControl.xaml.cs">
       <DependentUpon>MusicLoopActionControl.xaml</DependentUpon>
     </Compile>
@@ -214,6 +215,10 @@
     </Compile>
     <Compile Include="ZoomControl.cs" />
     <Compile Include="ZoomConverter.cs" />
+    <Page Include="ModOptionsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MusicLoopActionControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -418,6 +423,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="MissionBase\LuaUI\Widgets\camera_beautyshot.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MissionBase\LuaRules\Configs\mission_config.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="Properties\DataSources\ZkData.Mission.datasource" />

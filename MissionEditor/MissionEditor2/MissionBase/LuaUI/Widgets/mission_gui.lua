@@ -114,16 +114,18 @@ function MissionEvent(e)
       px = e.px, py = e.py, pz = e.pz, rx = e.rx, ry = e.ry, mode = 4,
     }
     Spring.SetCameraState(cam, math.max(e.time, 0))
+  elseif e.logicType == "BeautyShotAction" then
+    WG.BeautyShot(e.unitID, e)
   elseif e.logicType == "SaveCameraStateAction" then
-      camState = Spring.GetCameraState()
+    camState = Spring.GetCameraState()
   elseif e.logicType == "RestoreCameraStateAction" then
-      Spring.SetCameraState(camState, 1)
+    Spring.SetCameraState(camState, 1)
   elseif e.logicType == "ShakeCameraAction" then
-      if WG.ShakeCamera then
-	WG.ShakeCamera(e.strength)
-      else
-	Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing camera shake widget for action " .. e.logicType)
-      end
+    if WG.ShakeCamera then
+      WG.ShakeCamera(e.strength)
+    else
+      Spring.Log(widget:GetInfo().name, LOG.ERROR, "Missing camera shake widget for action " .. e.logicType)
+    end
   elseif e.logicType == "SoundAction" then
     PlaySound(e.sound)
   elseif e.logicType == "MusicAction" then

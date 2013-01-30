@@ -371,6 +371,22 @@ local function ToggleDayNightCycle()
   end
 end
 
+local function SetDayTime(time)
+  if time > 1 then time = 1 
+  elseif time < 0 then time = 0
+  end
+  
+  currDayTime = time
+end
+
+local function SetWantedDayTime(time)
+  if time > 1 then time = 1 
+  elseif time < 0 then time = 0
+  end
+
+  wantedTime = time
+end
+
 --------------------------------------------------------------------------------
 --callins
 --------------------------------------------------------------------------------
@@ -399,6 +415,10 @@ function widget:Initialize()
   widgetHandler:AddAction("night_setsearchlight", SetSearchlightStrength, nil, "t")
   widgetHandler:AddAction("night_cycle", ToggleDayNightCycle, nil, "t")
   ]]--
+  WG.Night = WG.Night or {}
+  
+  WG.Night.SetDayTime = SetDayTime
+  WG.Night.SetWantedDayTime = SetWantedDayTime
 end
 
 function widget:Shutdown()
@@ -409,6 +429,8 @@ function widget:Shutdown()
   widgetHandler:RemoveAction("night_setsearchlight")
   widgetHandler:RemoveAction("night_cycle")
   ]]--
+  WG.Night.SetDayTime = nil
+  WG.Night.SetWantedDayTime = nil
 end
 
 function widget:ViewResize(viewSizeX, viewSizeY)
@@ -429,6 +451,9 @@ function widget:Update(dt)
         WG.midnightWanted = false
       end
       UpdateColors()
+    elseif wantedTime ~= currDayTime then
+      currDayTime = currDayTime + dt * speedFactor / secondsPerDay
+      currDayTime = currDayTime - math.floor(currDayTime)
     end
   end
 end

@@ -29,6 +29,7 @@ local magic = "--mt\r\n"
 if (gadgetHandler:IsSyncedCode()) then 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+VFS.Include("LuaRules/Configs/mission_config.lua")
 
 local mission = VFS.Include("mission.lua")
 local triggers = mission.triggers -- array
@@ -887,7 +888,7 @@ local function ExecuteTrigger(trigger, frame)
         Event = function()
           for unitID, groups in pairs(unitGroups) do
             if groups[action.args.group] then
-              local x, _, y = Spring.GetUnitPosition(unitID)
+              local _,_,_,x,_,y = Spring.GetUnitPosition(unitID, true)
               local args = {
                 x = x,
                 y = y,
@@ -896,6 +897,24 @@ local function ExecuteTrigger(trigger, frame)
               _G.missionEventArgs = args
               SendToUnsynced("MissionEvent")
               _G.missionEventArgs = nil
+              break
+            end
+          end
+        end
+      elseif action.logicType == "BeautyShotAction" then
+        Event = function()
+          for unitID, groups in pairs(unitGroups) do
+            if groups[action.args.group] then
+              local _,_,_,x,y,z = Spring.GetUnitPosition(unitID, true)
+              action.args.x = x
+              action.args.y = y
+              action.args.z = z
+              action.args.unitID = unitID
+              action.args.logicType = action.logicType
+              _G.missionEventArgs = action.args
+              SendToUnsynced("MissionEvent")
+              _G.missionEventArgs = nil
+              break
             end
           end
         end
@@ -1234,7 +1253,8 @@ function gadget:AllowCommand(unitID, unitDefID, teamID, cmdID, cmdParams, cmdOpt
   --end
   -- prevent widgets from building disabled units
   if disabledUnitDefIDs[-cmdID] then
-    return false
+    local luaAI = Spring.GetTeamLuaAI(teamID) or ''
+    return (luaAI ~= '') and EXEMPT_AI_FROM_UNIT_LOCK
   end
   return true
 end

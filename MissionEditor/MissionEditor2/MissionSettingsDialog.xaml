@@ -15,7 +15,8 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="44*" />
+                <ColumnDefinition Width="150*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -29,28 +30,30 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Label Grid.Row="0">Name</Label>
-            <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Name}" Margin="2" />
+            <TextBox Grid.Column="1" Text="{Binding Name}" Margin="2" Grid.ColumnSpan="2" />
             <Label Grid.Row="1">Author</Label>
-            <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Author}" Margin="2" />
+            <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Author}" Margin="2" Grid.ColumnSpan="2" />
             <Label Grid.Row="2">Description</Label>
             <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Description}" AcceptsReturn="True" TextWrapping="WrapWithOverflow" MinLines="2" Margin="2"
-                    VerticalScrollBarVisibility="Auto" />
+                    VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2" />
             <Label Grid.Row="3">Map</Label>
-            <Button Grid.Column="1" Grid.Row="3" Content="{Binding Map}" x:Name="MapButton" x:FieldModifier="public" Margin="2" Click="MapButton_Click" />
+            <Button Grid.Column="1" Grid.Row="3" Content="{Binding Map}" x:Name="MapButton" x:FieldModifier="public" Margin="2" Click="MapButton_Click" Grid.ColumnSpan="2" />
             <Label Grid.Row="4">Mod</Label>
-            <Button Grid.Column="1" Grid.Row="4" Content="{Binding Mod}" x:Name="ModButton" x:FieldModifier="public" Margin="2" Click="ModButton_Click" />
+            <Button Grid.Column="1" Grid.Row="4" Content="{Binding Mod}" x:Name="ModButton" x:FieldModifier="public" Margin="2" Click="ModButton_Click" Grid.ColumnSpan="2" />
             <Label Grid.Row="5">Starting Player</Label>
-            <ComboBox Grid.Column="1" Grid.Row="5" ItemsSource="{Binding Players}" SelectedItem="{Binding StartingPlayer}" Margin="2" />
+            <ComboBox Grid.Column="1" Grid.Row="5" ItemsSource="{Binding Players}" SelectedItem="{Binding StartingPlayer}" Margin="2" Grid.ColumnSpan="2" />
             <Label Grid.Row="6">Scoring Explanation</Label>
-            <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding ScoringMethod}" Margin="2" AcceptsReturn="True" />
+            <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding ScoringMethod}" Margin="2" AcceptsReturn="True" Grid.ColumnSpan="2" />
             <Label Grid.Row="7">Rapid Tag</Label>
-            <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding RapidTag}" Margin="2" />
+            <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding RapidTag}" Margin="2" Grid.ColumnSpan="2" />
             <Label Grid.Row="8" Visibility="Collapsed">Starting Energy</Label>
-            <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding StartingEnergy}" Margin="2" Visibility="Collapsed" />
+            <TextBox Grid.Column="1" Grid.Row="10" Text="{Binding StartingEnergy}" Margin="2" Visibility="Collapsed" Grid.ColumnSpan="2" />
+            <Button Grid.Row="11" Grid.ColumnSpan="3" Margin="2" Click="ModOptionsButton_Click">Mod Options</Button>
         </Grid>
-        <GroupBox Header="Players" Grid.Row="1">
+        <GroupBox Header="Players" Margin="0,6,0,0" Grid.Row="1">
             <DockPanel>
                 <TextBlock DockPanel.Dock="Bottom">Use Test AI for no AI.</TextBlock>
                 <UniformGrid DockPanel.Dock="Bottom" Rows="1">
@@ -71,7 +74,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridComboBoxColumn Header="AI" SelectedItemBinding="{Binding AI}">
+                        <DataGridComboBoxColumn Header="AI" SelectedItemBinding="{Binding AI}" MinWidth="32">
                             <DataGridComboBoxColumn.EditingElementStyle>
                                 <Style TargetType="ComboBox">
                                     <EventSetter Event="Loaded" Handler="AIBox_Loaded" />
@@ -118,7 +121,7 @@
                         <RowDefinition />
                         <RowDefinition />
                     </Grid.RowDefinitions>
-                    <TextBox Text="{Binding ContentFolderPath}" />
+                    <TextBox Text="{Binding ContentFolderPath}" MaxWidth="320" />
                     <Button Grid.Column="2" Click="BrowseButton_Click">Browse</Button>
                     <TextBlock Grid.ColumnSpan="2" Grid.Row="2">Files in this folder will be <LineBreak /> included in the mission.</TextBlock>
                 </Grid>

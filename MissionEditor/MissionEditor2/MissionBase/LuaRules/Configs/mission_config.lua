@@ -1,0 +1,1 @@
+EXEMPT_AI_FROM_UNIT_LOCK = false	-- if true, LuaAIs will not be affected by locking a unit

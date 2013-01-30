@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -110,7 +111,22 @@ namespace MissionEditor2
 
 		MenuItem GetNewActionMenu(Func<Trigger> getTrigger)
 		{
-			var menu = new MenuItem { Header = "New Action" };
+			MenuItem menu = new MenuItem { Header = "New Action" };
+
+            /*
+            Dictionary<String, MenuItem> submenus = new Dictionary<String, MenuItem>
+            {
+                {"Logic", new MenuItem { Header = "Logic" }},
+                {"Camera", new MenuItem { Header = "Camera" }},
+                {"GUI", new MenuItem { Header = "GUI" }},
+                {"Misc", new MenuItem { Header = "Misc." }},
+            };
+            foreach (var submenu in submenus)
+            {
+                menu.Items.Add(submenu);
+            }
+            */
+
 			Action<string, Func<TriggerLogic>> addAction = (name, makeItem) =>
 				{
 					var item = new MenuItem { Header = name };
@@ -133,6 +149,7 @@ namespace MissionEditor2
 
             addAction("Add Objective", () => new AddObjectiveAction("newObj"));
 			addAction("Allow Unit Transfers", () => new AllowUnitTransfersAction());
+            addAction("Beauty Shot", () => new BeautyShotAction());
 			addAction("Cancel Countdown", () => new CancelCountdownAction(Mission.Countdowns.FirstOrDefault()));
 			addAction("Cause Defeat", () => new DefeatAction());
 			addAction("Cause Sunrise", () => new SunriseAction());
@@ -702,6 +719,19 @@ namespace MissionEditor2
 			mission.AddAction("Publish", ShowMissionManagement);
 			mission.AddAction("Settings", ShowMissionSettings);
 
+            var newMenu = MainMenu.AddContainer("New");
+            newMenu.AddAction("New Trigger", CreateNewTrigger);
+            newMenu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
+            newMenu.AddAction("New Region", CreateNewRegion);
+            newMenu.Items.Add(GetNewConditionMenu(delegate
+            {
+                if (logicGrid.SelectedItem is Trigger) return CurrentTrigger;
+                if (logicGrid.SelectedItem is ActionsFolder) return CurrentActionsFolder.Trigger;
+                if (logicGrid.SelectedItem is ConditionsFolder) return CurrentConditionsFolder.Trigger;
+                if (logicGrid.SelectedItem is TriggerLogic) return Mission.FindLogicOwner(CurrentLogic);
+                return null;
+            }));
+            newMenu.Items.Add(GetNewActionMenu(() => CurrentTrigger));
 
 			var editMenu = MainMenu.AddContainer("Edit");
 			editMenu.AddAction("Rename", RenameCurrentItem);
@@ -717,20 +747,6 @@ namespace MissionEditor2
 
 			//var help = MainMenu.AddContainer("Help");
 			//help.AddAction("Basic Help", () => new Help().ShowDialog());
-
-			var newMenu = MainMenu.AddContainer("New");
-			newMenu.AddAction("New Trigger", CreateNewTrigger);
-			newMenu.AddAction("New Trigger (Repeating)", CreateNewRepeatingTrigger);
-			newMenu.AddAction("New Region", CreateNewRegion);
-			newMenu.Items.Add(GetNewConditionMenu(delegate
-			{
-				if (logicGrid.SelectedItem is Trigger) return CurrentTrigger;
-				if (logicGrid.SelectedItem is ActionsFolder) return CurrentActionsFolder.Trigger;
-				if (logicGrid.SelectedItem is ConditionsFolder) return CurrentConditionsFolder.Trigger;
-				if (logicGrid.SelectedItem is TriggerLogic) return Mission.FindLogicOwner(CurrentLogic);
-				return null;
-			}));
-			newMenu.Items.Add(GetNewActionMenu(() => CurrentTrigger));
 
 			var welcomeScreen = new WelcomeDialog { ShowInTaskbar = true, Owner = this };
 			welcomeScreen.ShowDialog();

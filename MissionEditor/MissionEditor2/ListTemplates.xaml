@@ -474,6 +474,50 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="BeautyShotAction">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <DockPanel>
+                    <Label DockPanel.Dock="Left">Group:</Label>
+                    <ComboBox ItemsSource="{Binding Mission.AllGroups, ElementName=window}" MaxHeight="200" SelectedItem="{Binding Group}" />
+                </DockPanel>
+                <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Label Grid.Column="0" Grid.Row="0">Min heading</Label>
+                    <Label Grid.Column="0" Grid.Row="1">Max heading</Label>
+                    <Label Grid.Column="0" Grid.Row="2">Min pitch</Label>
+                    <Label Grid.Column="0" Grid.Row="3">Max pitch</Label>
+                    <Label Grid.Column="0" Grid.Row="4">Max camera Y-axis offset (°)</Label>
+                    <Label Grid.Column="0" Grid.Row="5">Cam time (seconds)</Label>
+                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding MinHeading, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding MaxHeading, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding MinPitch, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding MaxPitch, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding MaxCamOffset, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding Time, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+                <GroupBox Header="Help">
+                    <TextBlock TextWrapping="WrapWithOverflow">
+                    This action takes a beauty shot of the first unit found that is marked with the selected group.
+                    <LineBreak />
+                    You can add units to groups by editing the groups column of the unit list in the Create Units display, or by right-clicking on unit icons.
+                    <LineBreak />
+                    Separate multiple groups with commas and no spaces.
+                    </TextBlock>
+                </GroupBox>
+            </StackPanel>
+        </DataTemplate>        
+        
         <!-- ======== Other camera action Templates ======== -->
 
         <DataTemplate x:Key="SaveCameraStateAction">
